@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../avocado-ios/Avocado/Avocado/Plugin.swift"
+            timestampString = "532733564.093241"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "PluginCallError"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "default argument 2 of Avocado.PluginCallError.init(message: Swift.String, error: Swift.Error, data: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Avocado.PluginCallError"
+                  moduleName = "Avocado"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/max/git/avocado-ios/Avocado/Avocado/Plugin.swift"
+                  timestampString = "532732628.535644"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Avocado.PluginCallError.__allocating_init(message: Swift.String, error: Swift.Error, data: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Avocado.PluginCallError"
+                  moduleName = "Avocado"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/max/git/avocado-ios/Avocado/Avocado/Plugin.swift"
+                  timestampString = "532732628.540692"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Avocado.PluginCallError.init(message: Swift.String, error: Swift.Error, data: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Avocado.PluginCallError"
+                  moduleName = "Avocado"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/max/git/avocado-ios/Avocado/Avocado/Plugin.swift"
+                  timestampString = "532732628.542788"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "82">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

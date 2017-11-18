@@ -1,0 +1,11 @@
+{
+  name: "My App",
+  icon: "",
+  version: "1.0.0",
+  ios: {
+    bundleIdentifier: "com.ionicframework.coolapp"
+  },
+  android: {
+    package: "com.ionicframework.coolapp"
+  }
+}
