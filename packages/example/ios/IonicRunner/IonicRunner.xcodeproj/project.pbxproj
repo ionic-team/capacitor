@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		50503F1A1FC08C83003606DC /* Avocado.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 50503F161FC08C3C003606DC /* Avocado.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		50503F1E1FC08C9F003606DC /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503F161FC08C3C003606DC /* Avocado.framework */; };
+		501CBAB41FC0E2B5009B0D4D /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; };
+		501CBAB51FC0E2B5009B0D4D /* Avocado.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3394176F7AE51239517122DA /* Pods_IonicRunner.framework */; };
 		A3729E091E83246400B7334A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E081E83246400B7334A /* AppDelegate.swift */; };
 		A3729E0B1E83246400B7334A /* AvocadoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E0A1E83246400B7334A /* AvocadoViewController.swift */; };
@@ -20,23 +20,23 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		50503F151FC08C3C003606DC /* PBXContainerItemProxy */ = {
+		501CBAB01FC0E268009B0D4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 50503F101FC08C3C003606DC /* Avocado.xcodeproj */;
+			containerPortal = 501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 50503EDF1FC08594003606DC;
 			remoteInfo = Avocado;
 		};
-		50503F171FC08C3C003606DC /* PBXContainerItemProxy */ = {
+		501CBAB21FC0E268009B0D4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 50503F101FC08C3C003606DC /* Avocado.xcodeproj */;
+			containerPortal = 501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 50503EE81FC08595003606DC;
 			remoteInfo = AvocadoTests;
 		};
-		50503F1B1FC08C83003606DC /* PBXContainerItemProxy */ = {
+		501CBAB61FC0E2B5009B0D4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 50503F101FC08C3C003606DC /* Avocado.xcodeproj */;
+			containerPortal = 501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 50503EDE1FC08594003606DC;
 			remoteInfo = Avocado;
@@ -57,7 +57,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				50503F1A1FC08C83003606DC /* Avocado.framework in Embed Frameworks */,
+				501CBAB51FC0E2B5009B0D4D /* Avocado.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -67,7 +67,7 @@
 /* Begin PBXFileReference section */
 		3394176F7AE51239517122DA /* Pods_IonicRunner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IonicRunner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		39D67306E24BC63D39C111B8 /* Pods-IonicRunner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicRunner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner.debug.xcconfig"; sourceTree = "<group>"; };
-		50503F101FC08C3C003606DC /* Avocado.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Avocado.xcodeproj; path = "../../../../avocado-ios/Avocado/Avocado.xcodeproj"; sourceTree = "<group>"; };
+		501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Avocado.xcodeproj; path = ../../../ios/Avocado/Avocado.xcodeproj; sourceTree = "<group>"; };
 		9CC588CF2A94FA052A66DC48 /* Pods-IonicRunner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicRunner.release.xcconfig"; path = "Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner.release.xcconfig"; sourceTree = "<group>"; };
 		A3729E051E83246400B7334A /* IonicRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IonicRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3729E081E83246400B7334A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -86,7 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50503F1E1FC08C9F003606DC /* Avocado.framework in Frameworks */,
+				501CBAB41FC0E2B5009B0D4D /* Avocado.framework in Frameworks */,
 				6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,11 +94,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		50503F111FC08C3C003606DC /* Products */ = {
+		501CBAAC1FC0E268009B0D4D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				50503F161FC08C3C003606DC /* Avocado.framework */,
-				50503F181FC08C3C003606DC /* AvocadoTests.xctest */,
+				501CBAB11FC0E268009B0D4D /* Avocado.framework */,
+				501CBAB31FC0E268009B0D4D /* AvocadoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,7 +115,7 @@
 		A3729DFC1E83246400B7334A = {
 			isa = PBXGroup;
 			children = (
-				50503F101FC08C3C003606DC /* Avocado.xcodeproj */,
+				501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */,
 				A3729E1A1E83331B00B7334A /* www */,
 				A3729E071E83246400B7334A /* IonicRunner */,
 				A3729E061E83246400B7334A /* Products */,
@@ -181,7 +181,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				50503F1C1FC08C83003606DC /* PBXTargetDependency */,
+				501CBAB71FC0E2B5009B0D4D /* PBXTargetDependency */,
 			);
 			name = IonicRunner;
 			productName = IonicRunner;
@@ -218,8 +218,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 50503F111FC08C3C003606DC /* Products */;
-					ProjectRef = 50503F101FC08C3C003606DC /* Avocado.xcodeproj */;
+					ProductGroup = 501CBAAC1FC0E268009B0D4D /* Products */;
+					ProjectRef = 501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */;
 				},
 				{
 					ProductGroup = C2BF9B271E874A960050F782 /* Products */;
@@ -234,18 +234,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		50503F161FC08C3C003606DC /* Avocado.framework */ = {
+		501CBAB11FC0E268009B0D4D /* Avocado.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Avocado.framework;
-			remoteRef = 50503F151FC08C3C003606DC /* PBXContainerItemProxy */;
+			remoteRef = 501CBAB01FC0E268009B0D4D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		50503F181FC08C3C003606DC /* AvocadoTests.xctest */ = {
+		501CBAB31FC0E268009B0D4D /* AvocadoTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = AvocadoTests.xctest;
-			remoteRef = 50503F171FC08C3C003606DC /* PBXContainerItemProxy */;
+			remoteRef = 501CBAB21FC0E268009B0D4D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C2BF9B2C1E874A960050F782 /* Pods_IonicRunner.framework */ = {
@@ -333,10 +333,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		50503F1C1FC08C83003606DC /* PBXTargetDependency */ = {
+		501CBAB71FC0E2B5009B0D4D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Avocado;
-			targetProxy = 50503F1B1FC08C83003606DC /* PBXContainerItemProxy */;
+			targetProxy = 501CBAB61FC0E2B5009B0D4D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
