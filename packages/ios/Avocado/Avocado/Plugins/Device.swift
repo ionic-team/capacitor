@@ -10,8 +10,8 @@ import Foundation
 public typealias DeviceInfo = [String:Any]
 
 public class Device: Plugin {
-  public init() {
-    super.init(id: "com.avocadojs.plugin.device")
+  public init(_ avocado: Avocado) {
+    super.init(avocado: avocado, id: "com.avocadojs.plugin.device")
   }
   
   @objc public func getInfo(_ call: PluginCall) {

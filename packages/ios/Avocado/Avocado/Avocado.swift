@@ -2,7 +2,7 @@
 //  Avocado.swift
 //  Avocado
 //
-//  Created by Max Lynch on 11/18/17.
+//  Created by Max Lynch
 //  Copyright © 2017 Drifty Co. All rights reserved.
 //
 
@@ -16,8 +16,12 @@ public class Avocado {
   public var plugins =  [String:Plugin]()
   
   public init() {
-    let device = Device()
-    let geo = Geolocation()
+    registerCorePlugins()
+  }
+  
+  func registerCorePlugins() {
+    let device = Device(self)
+    let geo = Geolocation(self)
     self.registerPlugin(plugin: device)
     self.registerPlugin(plugin: geo)
   }
@@ -28,13 +32,16 @@ public class Avocado {
   
   public func registerPlugin(plugin: Plugin) {
     self.plugins[plugin.getId()] = plugin
-    print("Plugins", self.plugins)
   }
   
   public func getPlugin(pluginName: String) -> Plugin? {
     return self.plugins[pluginName]
   }
   
+  /**
+   * Handle a call from JavaScript. First, find the corresponding plugin,
+   * construct a selector, and perform that selector on the plugin instance.
+   */
   public func handleJSCall(call: JSCall) {
     // Create a selector to send to the plugin
     let selector = NSSelectorFromString("\(call.method):")
@@ -62,15 +69,20 @@ public class Avocado {
     }
   }
   
+  /**
+   * Send a successful result to the JavaScript layer.
+   */
   public func toJs(result: JSResult) {
     self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', data: '\(result.toJson())'})") { (result, error) in
       if error != nil && result != nil {
         print(result!)
       }
     }
-
   }
   
+  /**
+   * Send an error result to the JavaScript layer.
+   */
   public func toJsError(error: JSResultError) {
     self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: '\(error.toJson())'})") { (result, error) in
       if error != nil && result != nil {
