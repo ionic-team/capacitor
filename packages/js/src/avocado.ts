@@ -33,6 +33,9 @@ export interface StoredPluginCall {
   callbackHandler: PluginCallbackHandler;
 }
 
+export interface PluginResultError {
+  message: string;
+}
 /**
  * A resulting call back from the native layer.
  */
@@ -42,7 +45,7 @@ export interface PluginResult {
   data: any;
   callbackId?: string;
   success: boolean;
-  error?: any;
+  error?: PluginResultError;
 }
 
 // TODO: Get more complex custom promise type
