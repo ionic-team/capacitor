@@ -70,6 +70,7 @@ class GetLocationHandler:NSObject, CLLocationManagerDelegate {
 public class Geolocation : Plugin {
   // TODO: Figure out better way to save the call hander (strong reference)
   var locationHandler: CLLocationManagerDelegate?
+  var watchLocationHandler: CLLocationManagerDelegate?
   
   public init(_ avocado: Avocado) {
     super.init(avocado: avocado, id: "com.avocadojs.plugin.geolocation")
@@ -82,7 +83,7 @@ public class Geolocation : Plugin {
   }
   
   @objc public func watchPosition(_ call: PluginCall) {
-    self.locationHandler = GetLocationHandler(call: call, options:[
+    self.watchLocationHandler = GetLocationHandler(call: call, options:[
       "watch": true
     ]);
   }
