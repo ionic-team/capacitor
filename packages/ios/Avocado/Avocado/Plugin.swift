@@ -16,9 +16,11 @@ import Foundation
  */
 public class Plugin: NSObject {
   public var pluginId: String
+  var avocado: Avocado
   
-  public init(id: String) {
+  public init(avocado: Avocado, id: String) {
     self.pluginId = id
+    self.avocado = avocado
   }
   
   public func getId() -> String {

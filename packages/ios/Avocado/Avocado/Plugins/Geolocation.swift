@@ -72,8 +72,8 @@ public class Geolocation : Plugin {
   // TODO: Figure out better way to save the call hander (strong reference)
   var locationHandler: CLLocationManagerDelegate?
   
-  public init() {
-    super.init(id: "com.avocadojs.plugin.geolocation")
+  public init(_ avocado: Avocado) {
+    super.init(avocado: avocado, id: "com.avocadojs.plugin.geolocation")
   }
   
   @objc public func getCurrentPosition(_ call: PluginCall) {
