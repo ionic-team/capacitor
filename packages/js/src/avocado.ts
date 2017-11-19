@@ -171,10 +171,10 @@ export class Avocado {
 
     switch(storedCall.call.callbackType) {
       case 'promise': {
-        if(result.success === true) {
-          callbackHandler.$resolve(result.data);
-        } else {
+        if(result.success === false) {
           callbackHandler.$reject(error);
+        } else {
+          callbackHandler.$resolve(results);
         }
         break;
       }

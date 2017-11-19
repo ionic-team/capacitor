@@ -14,14 +14,14 @@ public class Device: Plugin {
     super.init(id: "com.avocadojs.plugin.device")
   }
   
-  func getInfo() -> DeviceInfo {
-    return [
+  @objc public func getInfo(_ call: PluginCall) {
+    call.successCallback(PluginResult(data: [
       "model": UIDevice.current.model,
       "osVersion": UIDevice.current.systemVersion,
       "platform": "ios",
       "manufacturer": "Apple",
       "uuid": UIDevice.current.identifierForVendor!.uuidString,
       "battery": UIDevice.current.batteryLevel
-    ]
+    ]))
   }
 }
