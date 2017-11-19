@@ -6,7 +6,7 @@ export declare class Plugin {
     avocado: Avocado;
     constructor();
     nativeCallback(method: string, data: any, callbackFunction: Function, webFallback?: Function): any;
-    nativePromise(method: string, data: any, webFallback?: Function): any;
+    nativePromise(method: string, data?: any, webFallback?: Function): any;
     /**
      * Call a native plugin method, or a web API fallback.
      */

@@ -11,7 +11,7 @@ public typealias DeviceInfo = [String:Any]
 
 public class Device: Plugin {
   public init() {
-    super.init(name: "Device")
+    super.init(id: "com.avocadojs.plugin.device")
   }
   
   func getInfo() -> DeviceInfo {

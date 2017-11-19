@@ -2,7 +2,7 @@ import { Component, NgZone } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
 
-import { CameraPlugin, GeolocationPlugin } from '../../plugins';
+import { CameraPlugin, GeolocationPlugin, DevicePlugin } from '../../plugins';
 
 @Component({
   selector: 'page-home',
@@ -48,6 +48,16 @@ export class HomePage {
     }, (err) => {
       alert('WebView geo error');
       console.error(err);
+    });
+  }
+
+  getDeviceInfo() {
+    let device = new DevicePlugin();
+    device.getInfo().then((info) => {
+      console.log('Device info');
+      console.log(info);
+    }, (err) => {
+      console.error('Unable to get device info', err);
     });
   }
 }

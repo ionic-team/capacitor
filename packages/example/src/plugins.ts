@@ -31,9 +31,21 @@ export class CameraPlugin extends Plugin {
 }
 
 @AvocadoPlugin({
+  name: 'Device',
+  id: 'com.avocadojs.plugin.geolocation'
+})
+export class DevicePlugin extends Plugin {
+  constructor() {
+    super();
+  }
+  getInfo() {
+    return this.nativePromise('getInfo', {}, null);
+  }
+}
+
+@AvocadoPlugin({
   name: 'Geolocation',
-  id: 'geolocation',
-  platforms: ['ios', 'android', 'web', 'electron']
+  id: 'com.avocadojs.plugin.geolocation'
 })
 export class GeolocationPlugin extends Plugin {
   constructor() {

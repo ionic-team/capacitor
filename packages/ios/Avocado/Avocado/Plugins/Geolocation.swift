@@ -73,7 +73,7 @@ public class Geolocation : Plugin {
   var locationHandler: CLLocationManagerDelegate?
   
   public init() {
-    super.init(name: "Geolocation")
+    super.init(id: "com.avocadojs.plugin.geolocation")
   }
   
   public func getCurrentPosition(call: PluginCall) {

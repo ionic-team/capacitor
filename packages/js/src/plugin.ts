@@ -15,7 +15,7 @@ export class Plugin {
     return this.native(method, data, 'callback', callbackFunction, webFallback)
   }
 
-  nativePromise(method: string, data: any, webFallback?: Function) {
+  nativePromise(method: string, data: any = {}, webFallback?: Function) {
     return this.native(method, data, 'promise', null, webFallback)
   }
 
