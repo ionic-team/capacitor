@@ -150,8 +150,6 @@ export class Avocado {
 
     const { call, callbackHandler } = storedCall;
 
-    this.log('Found callback', storedCall.callbackHandler);
-
     this._fromNativeCallback(result, storedCall);
   }
 

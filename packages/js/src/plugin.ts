@@ -1,4 +1,5 @@
 import { Avocado } from './avocado';
+
 /**
  * Base class for all 3rd party plugins.
  */

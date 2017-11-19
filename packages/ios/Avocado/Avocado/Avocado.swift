@@ -52,7 +52,7 @@ public class Avocado {
       
       if !plugin.responds(to: selector) {
         print("Error: Plugin \(plugin.getId()) does not respond to method call \(call.method).")
-        print("Ensure plugin method uses @objc in its declaration")
+        print("Ensure plugin method exists and uses @objc in its declaration")
         return
       }
       
@@ -73,7 +73,8 @@ public class Avocado {
    * Send a successful result to the JavaScript layer.
    */
   public func toJs(result: JSResult) {
-    self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', data: '\(result.toJson())'})") { (result, error) in
+    print(result.toJson())
+    self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', data: \(result.toJson())})") { (result, error) in
       if error != nil && result != nil {
         print(result!)
       }
