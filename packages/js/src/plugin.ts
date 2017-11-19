@@ -1,5 +1,7 @@
 import { Avocado } from './avocado';
 
+import { PluginCallback } from './definitions';
+
 /**
  * Base class for all 3rd party plugins.
  */
@@ -12,7 +14,7 @@ export class Plugin {
     this.avocado.registerPlugin(this);
   }
 
-  nativeCallback(method: string, data: any, callbackFunction: Function, webFallback?: Function) {
+  nativeCallback(method: string, data: any, callbackFunction: PluginCallback, webFallback?: Function) {
     return this.native(method, data, 'callback', callbackFunction, webFallback)
   }
 
@@ -23,7 +25,7 @@ export class Plugin {
   /**
    * Call a native plugin method, or a web API fallback.
    */
-  native(method: any, data: any, callbackType: string, callbackFunction: Function, webFallback: Function) {
+  native(method: any, data: any, callbackType: string, callbackFunction: PluginCallback, webFallback: Function) {
 
     let d = (<any>this).constructor.getPluginInfo();
 

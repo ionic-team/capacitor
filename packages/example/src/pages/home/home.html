@@ -6,17 +6,27 @@
 
 <ion-content padding>
   <ion-list>
+    <!--
     <ion-item>
       <img [src]="image">
       <button (click)="takePicture()" ion-button color="primary">
         Take Picture</button>
     </ion-item>
+  -->
     <ion-item>
-      <button (click)="getCoordinates()" ion-button color="primary">
-        Get Coordinates
+      <button (click)="getCurrentPosition()" ion-button color="primary">
+        Geolocation.getCurrentPosition
       </button>
       <div>
-        Lat: {{coordinates.latitude}} Long: {{coordinates.longitude}}
+        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}
+      </div>
+    </ion-item>
+    <ion-item>
+      <button (click)="watchPosition()" ion-button color="primary">
+        Geolocation.watchPosition
+      </button>
+      <div>
+        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}
       </div>
     </ion-item>
     <ion-item>

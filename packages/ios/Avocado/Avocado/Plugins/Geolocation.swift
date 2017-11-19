@@ -53,15 +53,14 @@ class GetLocationHandler:NSObject, CLLocationManagerDelegate {
     if let location = locations.first  {
       print("location = \(location.coordinate.latitude) \(location.coordinate.longitude)")
       
-      if let callback = self.call?.successCallback {
-        let result = PluginResult(data: [
-          "coords": [
-            "latitude": location.coordinate.latitude,
-            "longitude": location.coordinate.longitude
-          ]
-        ])
-        callback(result)
-      }
+      let result = PluginResult(data: [
+        "coords": [
+          "latitude": location.coordinate.latitude,
+          "longitude": location.coordinate.longitude
+        ]
+      ])
+      call!.successCallback(result)
+
     } else {
       // TODO: Handle case where location is nil
     }
@@ -82,13 +81,11 @@ public class Geolocation : Plugin {
     ])
   }
   
-  /*
-  public func watchPosition(success: @escaping PluginSuccessCallback) {
-    self.locationHandler = GetLocationHandler(callback: callback, options:[
+  @objc public func watchPosition(_ call: PluginCall) {
+    self.locationHandler = GetLocationHandler(call: call, options:[
       "watch": true
     ]);
   }
- */
   
 }
 
