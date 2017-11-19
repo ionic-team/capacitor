@@ -15,13 +15,19 @@ public class Device: Plugin {
   }
   
   @objc public func getInfo(_ call: PluginCall) {
+    var isSimulator = false
+    #if arch(i386) || arch(x86_64)
+      isSimulator = true
+    #endif
+    
     call.successCallback(PluginResult(data: [
       "model": UIDevice.current.model,
       "osVersion": UIDevice.current.systemVersion,
       "platform": "ios",
       "manufacturer": "Apple",
       "uuid": UIDevice.current.identifierForVendor!.uuidString,
-      "battery": UIDevice.current.batteryLevel
+      "battery": UIDevice.current.batteryLevel,
+      "isVirtual": isSimulator
     ]))
   }
 }
