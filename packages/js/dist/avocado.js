@@ -77,8 +77,8 @@ var Avocado = (function () {
     Avocado.prototype.fromNative = function (result) {
         console.log('From Native', result);
         var storedCall = this.calls[result.callbackId];
+        console.log('Stored call', storedCall);
         var call = storedCall.call, callbackHandler = storedCall.callbackHandler;
-        this.log('Found callback', storedCall.callbackHandler);
         this._fromNativeCallback(result, storedCall);
     };
     Avocado.prototype._fromNativeCallback = function (result, storedCall) {
@@ -94,11 +94,8 @@ var Avocado = (function () {
                 break;
             }
             case 'callback': {
-                if (typeof callbackHandler == 'function' && result.success) {
-                    callbackHandler(result.data);
-                }
-                else {
-                    // TODO: Should pass us an error callback
+                if (typeof callbackHandler == 'function') {
+                    result.success ? callbackHandler(null, result.data) : callbackHandler(result.error, null);
                 }
             }
         }

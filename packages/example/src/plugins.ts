@@ -62,6 +62,10 @@ export class GeolocationPlugin extends Plugin {
     }, this.getLocationWeb.bind(this));
   }
 
+  watchPosition(callback) {
+    return this.nativeCallback('watchPosition', {}, callback);
+  }
+
   getLocationWeb() {
     console.log('Geolocation calling web fallback');
 

@@ -74,7 +74,7 @@ public class Avocado {
    */
   public func toJs(result: JSResult) {
     print(result.toJson())
-    self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', data: \(result.toJson())})") { (result, error) in
+    self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(result.toJson())})") { (result, error) in
       if error != nil && result != nil {
         print(result!)
       }

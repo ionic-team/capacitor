@@ -1,55 +1,16 @@
+import {
+  PluginCallback,
+  PluginCallbackHandler,
+  PluginCaller,
+  PluginCall,
+  PluginResult,
+  StoredPluginCall
+} from './definitions';
+
 import { Platform } from './platform';
 import { Plugin } from './plugin';
 
 declare var window: any;
-
-/**
- * Data that won't be sent to the native layer
- * from the caller. For example, a callback function
- * that cannot be cloned in JS
- */
-export interface PluginCaller {
-  callbackFunction?: Function;
-}
-
-/**
- * Metadata about a native plugin call.
- */
-export interface PluginCall {
-  pluginId: string;
-  methodName: string;
-  data: any;
-
-  callbackId?: string;
-
-  callbackFunction?: Function;
-
-  // The type of callback we want
-  callbackType?: string;//"callback" | "promise" | "observable";
-}
-
-export interface StoredPluginCall {
-  call: PluginCall;
-  callbackHandler: PluginCallbackHandler;
-}
-
-export interface PluginResultError {
-  message: string;
-}
-/**
- * A resulting call back from the native layer.
- */
-export interface PluginResult {
-  pluginId: string;
-  methodName: string;
-  data: any;
-  callbackId?: string;
-  success: boolean;
-  error?: PluginResultError;
-}
-
-// TODO: Get more complex custom promise type
-export type PluginCallbackHandler = Function | any;
 
 /**
  * Main class for interacting with the Avocado runtime.
@@ -148,6 +109,8 @@ export class Avocado {
 
     const storedCall = this.calls[result.callbackId];
 
+    console.log('Stored call', storedCall);
+
     const { call, callbackHandler } = storedCall;
 
     this._fromNativeCallback(result, storedCall);
@@ -166,10 +129,8 @@ export class Avocado {
         break;
       }
       case 'callback': {
-        if(typeof callbackHandler == 'function' && result.success) {
-          callbackHandler(result.data);
-        } else {
-          // TODO: Should pass us an error callback
+        if(typeof callbackHandler == 'function') {
+          result.success ? callbackHandler(null, result.data) : callbackHandler(result.error, null);
         }
       }
     }

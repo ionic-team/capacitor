@@ -1,43 +1,6 @@
+import { PluginCaller, PluginCall, PluginResult } from './definitions';
 import { Platform } from './platform';
 import { Plugin } from './plugin';
-/**
- * Data that won't be sent to the native layer
- * from the caller. For example, a callback function
- * that cannot be cloned in JS
- */
-export interface PluginCaller {
-    callbackFunction?: Function;
-}
-/**
- * Metadata about a native plugin call.
- */
-export interface PluginCall {
-    pluginId: string;
-    methodName: string;
-    data: any;
-    callbackId?: string;
-    callbackFunction?: Function;
-    callbackType?: string;
-}
-export interface StoredPluginCall {
-    call: PluginCall;
-    callbackHandler: PluginCallbackHandler;
-}
-export interface PluginResultError {
-    message: string;
-}
-/**
- * A resulting call back from the native layer.
- */
-export interface PluginResult {
-    pluginId: string;
-    methodName: string;
-    data: any;
-    callbackId?: string;
-    success: boolean;
-    error?: PluginResultError;
-}
-export declare type PluginCallbackHandler = Function | any;
 /**
  * Main class for interacting with the Avocado runtime.
  */
