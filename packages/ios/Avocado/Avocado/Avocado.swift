@@ -35,39 +35,34 @@ public class Avocado {
     return self.plugins[pluginName]
   }
   
-  public func handleJSCall2(call: JSCall) {
-    print("handlg js call 2", call)
-    let selector = NSSelectorFromString("\(call.method):")
-    if let plugin = self.getPlugin(pluginName: call.pluginId) {
-      print("Calling plugin method \(call.method) on plugin \(plugin.getId())")
-    }
-  }
-  
   public func handleJSCall(call: JSCall) {
-    // TODO: Don't hard code
-    print("Handling JS Call")
-    if call.pluginId == "geolocation" {
-      print("Geolocation")
-      // TODO: Temporary strong reference
+    // Create a selector to send to the plugin
+    let selector = NSSelectorFromString("\(call.method):")
+    
+    // Get the plugin from the list of loaded, registered plugins
+    if let plugin = self.getPlugin(pluginName: call.pluginId) {
+      print("Calling method \(call.method) on plugin \(plugin.getId())")
+      
+      if !plugin.responds(to: selector) {
+        print("Error: Plugin \(plugin.getId()) does not respond to method call \(call.method).")
+        print("Ensure plugin method uses @objc in its declaration")
+        return
+      }
+      
+      // Create a plugin call object and handle the success/error callbacks
       let pluginCall = PluginCall(success: {(result: PluginResult) -> Void in
-        let data = result.data
-        let coords = data["coords"]! as! [String:Any]
-        print("In Callback - ", coords["latitude"]!, coords["longitude"]!)
         self.toJs(result: JSResult(call: call, result: result.data))
       }, error: {(error: PluginCallError) -> Void in
-        print("Here's where to handle the plugin call error")
         self.toJsError(error: JSResultError(call: call, error: error.data))
       })
-    
-      self.lastPlugin = Geolocation()
-      (self.lastPlugin as! Geolocation).getCurrentPosition(call: pluginCall)
+      
+      // Perform the plugin call
+      // TODO: Different thread?
+      plugin.perform(selector, with: pluginCall)
     }
   }
   
-  
   public func toJs(result: JSResult) {
-    print("Serializing data", result);
-
     self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', data: '\(result.toJson())'})") { (result, error) in
       if error != nil && result != nil {
         print(result!)

@@ -10,9 +10,11 @@ import Foundation
 
 
 /**
- * Base class for all plugins
+ * Base class for all plugins.
+ *
+ * Extends NSObject to allow for calling methods with selectors
  */
-public class Plugin {
+public class Plugin: NSObject {
   public var pluginId: String
   
   public init(id: String) {
@@ -31,7 +33,7 @@ public typealias PluginErrorCallback = (_ error: PluginCallError) -> Void
 /**
  * A call down to a native plugin
  */
-public class PluginCall {
+@objc public class PluginCall : NSObject {
   public var successCallback: PluginSuccessCallback
   public var errorCallback: PluginErrorCallback
   public init(success: @escaping PluginSuccessCallback, error: @escaping PluginErrorCallback) {

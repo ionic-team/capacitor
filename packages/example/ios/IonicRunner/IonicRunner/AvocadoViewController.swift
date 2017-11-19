@@ -66,30 +66,22 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   }
   
   public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    
-    
     let body = message.body
     if let dict = body as? [String:Any] {
       let pluginId = dict["pluginId"] as! String
       let method = dict["methodName"] as! String
       let callbackId = dict["callbackId"] as! String
       
+      print("To Native -> ", pluginId, method, callbackId)
       
-      print("Native: ", pluginId, method, callbackId)
-      print(dict)
-      
-      self.avocado.handleJSCall2(call: JSCall(pluginId: pluginId, method: method, callbackId: callbackId))
-
+      self.avocado.handleJSCall(call: JSCall(pluginId: pluginId, method: method, callbackId: callbackId))
     }
   }
-
-  
 
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
-
   
   func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
     

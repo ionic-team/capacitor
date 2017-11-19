@@ -37,27 +37,25 @@ export class HomePage {
     });
   }
 
-  getCoordinates() {
+  async getCoordinates() {
     let geo = new GeolocationPlugin();
-    geo.getLocation().then((coordinates) => {
-      alert(coordinates);
+
+    try {
+      const coordinates = await geo.getCurrentPosition()
       console.log(coordinates);
       this.zone.run(() => {
-        this.coordinates = coordinates;
+        this.coordinates = coordinates.coords;
       });
-    }, (err) => {
+    } catch(e) {
       alert('WebView geo error');
-      console.error(err);
-    });
+      console.error(e);
+    }
   }
 
-  getDeviceInfo() {
+  async getDeviceInfo() {
     let device = new DevicePlugin();
-    device.getInfo().then((info) => {
-      console.log('Device info');
-      console.log(info);
-    }, (err) => {
-      console.error('Unable to get device info', err);
-    });
+    const info = await device.getInfo()
+    console.log('Device info');
+    console.log(info);
   }
 }

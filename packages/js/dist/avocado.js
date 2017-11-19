@@ -99,11 +99,11 @@ var Avocado = (function () {
         var call = storedCall.call, callbackHandler = storedCall.callbackHandler;
         switch (storedCall.call.callbackType) {
             case 'promise': {
-                if (result.success === true) {
-                    callbackHandler.$resolve(result.data);
+                if (result.success === false) {
+                    callbackHandler.$reject(error);
                 }
                 else {
-                    callbackHandler.$reject(error);
+                    callbackHandler.$resolve(results);
                 }
                 break;
             }
