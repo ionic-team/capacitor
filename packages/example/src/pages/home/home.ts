@@ -12,6 +12,7 @@ export class HomePage {
   image: string;
   singleCoords = { lat: 0, lng: 0 }
   watchCoords = { lat: 0, lng: 0 }
+  deviceInfoJson: string;
 
   constructor(public navCtrl: NavController, public zone: NgZone) {}
 
@@ -59,7 +60,10 @@ export class HomePage {
   async getDeviceInfo() {
     let device = new DevicePlugin();
     const info = await device.getInfo()
-    console.log('Device info');
-    console.log(info);
+    this.zone.run(() => {
+      this.deviceInfoJson = JSON.stringify(info, null, 2);
+      console.log('Device info');
+      console.log(info);
+    });
   }
 }

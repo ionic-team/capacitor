@@ -31,8 +31,13 @@
     </ion-item>
     <ion-item>
       <button (click)="getDeviceInfo()" ion-button>
-        Log Device Info
+        Device Info
       </button>
+      <div *ngIf="deviceInfoJson">
+        <pre style="height: 200px; overflow: auto">
+{{deviceInfoJson}}
+        </pre>
+      </div>
     </ion-item>
   </ion-list>
 </ion-content>
