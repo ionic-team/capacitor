@@ -147,40 +147,26 @@ export class Avocado {
 
     const { call, callbackHandler } = storedCall;
 
-    let data = {};
-    try {
-      data = JSON.parse(result.data);
-      this.log(data);
-    } catch(e) {
-      // TODO: whatdawedo?
-    }
-
-    let error = {}
-    try {
-      error = JSON.parse(result.error);
-    } catch(e) {
-    }
-
     this.log('Found callback', storedCall.callbackHandler);
 
-    this._fromNativeCallback(result, storedCall, data, error);
+    this._fromNativeCallback(result, storedCall);
   }
 
-  private _fromNativeCallback(result: PluginResult, storedCall: StoredPluginCall, results: any, error: any) {
+  private _fromNativeCallback(result: PluginResult, storedCall: StoredPluginCall) {
     const { call, callbackHandler } = storedCall;
 
     switch(storedCall.call.callbackType) {
       case 'promise': {
         if(result.success === false) {
-          callbackHandler.$reject(error);
+          callbackHandler.$reject(result.error);
         } else {
-          callbackHandler.$resolve(results);
+          callbackHandler.$resolve(result.data);
         }
         break;
       }
       case 'callback': {
         if(typeof callbackHandler == 'function' && result.success) {
-          callbackHandler(results);
+          callbackHandler(result.data);
         } else {
           // TODO: Should pass us an error callback
         }

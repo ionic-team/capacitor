@@ -57,7 +57,7 @@ export declare class Avocado {
      * Process a response from the native layer.
      */
     fromNative(result: PluginResult): void;
-    private _fromNativeCallback(result, storedCall, results, error);
+    private _fromNativeCallback(result, storedCall);
     /**
      * @return whether or not we're running in a browser sandbox environment
      * with no acces to native functionality (progressive web, desktop browser, etc).

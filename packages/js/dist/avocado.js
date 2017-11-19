@@ -78,38 +78,24 @@ var Avocado = (function () {
         console.log('From Native', result);
         var storedCall = this.calls[result.callbackId];
         var call = storedCall.call, callbackHandler = storedCall.callbackHandler;
-        var data = {};
-        try {
-            data = JSON.parse(result.data);
-            this.log(data);
-        }
-        catch (e) {
-            // TODO: whatdawedo?
-        }
-        var error = {};
-        try {
-            error = JSON.parse(result.error);
-        }
-        catch (e) {
-        }
         this.log('Found callback', storedCall.callbackHandler);
-        this._fromNativeCallback(result, storedCall, data, error);
+        this._fromNativeCallback(result, storedCall);
     };
-    Avocado.prototype._fromNativeCallback = function (result, storedCall, results, error) {
+    Avocado.prototype._fromNativeCallback = function (result, storedCall) {
         var call = storedCall.call, callbackHandler = storedCall.callbackHandler;
         switch (storedCall.call.callbackType) {
             case 'promise': {
                 if (result.success === false) {
-                    callbackHandler.$reject(error);
+                    callbackHandler.$reject(result.error);
                 }
                 else {
-                    callbackHandler.$resolve(results);
+                    callbackHandler.$resolve(result.data);
                 }
                 break;
             }
             case 'callback': {
                 if (typeof callbackHandler == 'function' && result.success) {
-                    callbackHandler(results);
+                    callbackHandler(result.data);
                 }
                 else {
                     // TODO: Should pass us an error callback
