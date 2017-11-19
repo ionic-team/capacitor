@@ -13,6 +13,7 @@ var Plugin = (function () {
         return this.native(method, data, 'callback', callbackFunction, webFallback);
     };
     Plugin.prototype.nativePromise = function (method, data, webFallback) {
+        if (data === void 0) { data = {}; }
         return this.native(method, data, 'promise', null, webFallback);
     };
     /**

@@ -9,15 +9,18 @@
 import Foundation
 
 
-
 /**
  * Base class for all plugins
  */
 public class Plugin {
-  public var pluginName: String
+  public var pluginId: String
   
-  public init(name: String) {
-    self.pluginName = name
+  public init(id: String) {
+    self.pluginId = id
+  }
+  
+  public func getId() -> String {
+    return self.pluginId
   }
 }
 

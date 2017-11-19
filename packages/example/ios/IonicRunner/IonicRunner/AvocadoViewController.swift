@@ -78,7 +78,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
       print("Native: ", pluginId, method, callbackId)
       print(dict)
       
-      self.avocado.handleJSCall(call: JSCall(pluginId: pluginId, method: method, callbackId: callbackId))
+      self.avocado.handleJSCall2(call: JSCall(pluginId: pluginId, method: method, callbackId: callbackId))
 
     }
   }

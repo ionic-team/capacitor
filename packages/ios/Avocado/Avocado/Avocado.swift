@@ -13,6 +13,7 @@ public class Avocado {
   public var webView: WKWebView?
   
   public var lastPlugin: Plugin?
+  public var plugins =  [String:Plugin]()
   
   public init() {
     let device = Device()
@@ -26,6 +27,20 @@ public class Avocado {
   }
   
   public func registerPlugin(plugin: Plugin) {
+    self.plugins[plugin.getId()] = plugin
+    print("Plugins", self.plugins)
+  }
+  
+  public func getPlugin(pluginName: String) -> Plugin? {
+    return self.plugins[pluginName]
+  }
+  
+  public func handleJSCall2(call: JSCall) {
+    print("handlg js call 2", call)
+    let selector = NSSelectorFromString("\(call.method):")
+    if let plugin = self.getPlugin(pluginName: call.pluginId) {
+      print("Calling plugin method \(call.method) on plugin \(plugin.getId())")
+    }
   }
   
   public func handleJSCall(call: JSCall) {
