@@ -73,8 +73,10 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
       let type = dict["type"] as! String? ?? ""
       
       if type == "js.error" {
-        let message = dict["message"] as! String? ?? ""
-        print("JS ERROR", message)
+        print("JS ERORR")
+        if let error = dict["error"] as! [String:Any]? {
+          handleJSStartupError(error)
+        }
       } else if type == "message" {
         // TODO Don't just blindly cast here
         let pluginId = dict["pluginId"] as! String
@@ -88,6 +90,24 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
         self.avocado!.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
       }
     }
+  }
+  
+  func handleJSStartupError(_ error: [String:Any]) {
+    let message = error["message"] ?? "No message"
+    let url = error["url"] as! String? ?? ""
+    let line = error["line"] ?? ""
+    let col = error["col"] ?? ""
+    var filename = ""
+    if let filenameIndex = url.range(of: "/", options: .backwards)?.lowerBound {
+      let index = url.index(after: filenameIndex)
+      filename = String(url[index...])
+    }
+    
+    print("\n------ STARTUP JS ERROR ------\n")
+    print("\(message)")
+    print("URL: \(url)")
+    print("\(filename):\(line):\(col)")
+    print("\nSee above for help with debugging blank-screen issues")
   }
 
   override func didReceiveMemoryWarning() {
