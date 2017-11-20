@@ -81,7 +81,7 @@ let HomePage = class HomePage {
     */
     getCurrentPosition() {
         return __awaiter(this, void 0, void 0, function* () {
-            let geo = new __WEBPACK_IMPORTED_MODULE_2__plugins__["b" /* GeolocationPlugin */]();
+            let geo = new __WEBPACK_IMPORTED_MODULE_2__plugins__["c" /* GeolocationPlugin */]();
             try {
                 const coordinates = yield geo.getCurrentPosition();
                 console.log('Current', coordinates);
@@ -96,7 +96,7 @@ let HomePage = class HomePage {
         });
     }
     watchPosition() {
-        let geo = new __WEBPACK_IMPORTED_MODULE_2__plugins__["b" /* GeolocationPlugin */]();
+        let geo = new __WEBPACK_IMPORTED_MODULE_2__plugins__["c" /* GeolocationPlugin */]();
         try {
             const wait = geo.watchPosition((err, position) => {
                 console.log('Watch', position);
@@ -112,7 +112,7 @@ let HomePage = class HomePage {
     }
     getDeviceInfo() {
         return __awaiter(this, void 0, void 0, function* () {
-            let device = new __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* DevicePlugin */]();
+            let device = new __WEBPACK_IMPORTED_MODULE_2__plugins__["b" /* DevicePlugin */]();
             const info = yield device.getInfo();
             this.zone.run(() => {
                 this.deviceInfoJson = JSON.stringify(info, null, 2);
@@ -122,44 +122,48 @@ let HomePage = class HomePage {
         });
     }
     changeStatusBar() {
-        let statusBar = new __WEBPACK_IMPORTED_MODULE_2__plugins__["e" /* StatusBarPlugin */]();
+        let statusBar = new __WEBPACK_IMPORTED_MODULE_2__plugins__["f" /* StatusBarPlugin */]();
         statusBar.setStyle({
-            style: this.isStatusBarLight ? __WEBPACK_IMPORTED_MODULE_2__plugins__["f" /* StatusBarStyle */].Dark : __WEBPACK_IMPORTED_MODULE_2__plugins__["f" /* StatusBarStyle */].Light
+            style: this.isStatusBarLight ? __WEBPACK_IMPORTED_MODULE_2__plugins__["g" /* StatusBarStyle */].Dark : __WEBPACK_IMPORTED_MODULE_2__plugins__["g" /* StatusBarStyle */].Light
         }, () => { });
         this.isStatusBarLight = !this.isStatusBarLight;
     }
-    hapticsImpact(style = __WEBPACK_IMPORTED_MODULE_2__plugins__["c" /* HapticsImpactStyle */].Heavy) {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsPlugin */]();
+    hapticsImpact(style = __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsImpactStyle */].Heavy) {
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["e" /* HapticsPlugin */]();
         haptics.impact({
             style: style
         });
     }
     hapticsImpactMedium(style) {
-        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2__plugins__["c" /* HapticsImpactStyle */].Medium);
+        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsImpactStyle */].Medium);
     }
     hapticsImpactLight(style) {
-        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2__plugins__["c" /* HapticsImpactStyle */].Light);
+        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsImpactStyle */].Light);
     }
     hapticsVibrate() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsPlugin */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["e" /* HapticsPlugin */]();
         haptics.vibrate();
     }
     hapticsSelectionStart() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsPlugin */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["e" /* HapticsPlugin */]();
         haptics.selectionStart();
     }
     hapticsSelectionChanged() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsPlugin */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["e" /* HapticsPlugin */]();
         haptics.selectionChanged();
     }
     hapticsSelectionEnd() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsPlugin */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["e" /* HapticsPlugin */]();
         haptics.selectionEnd();
+    }
+    browserOpen() {
+        let browser = new __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* BrowserPlugin */]();
+        browser.open('http://ionicframework.com');
     }
 };
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <!--\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n  -->\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n    </ion-item>\n    <ion-item>\n      Haptics\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsImpact()" ion-button color="primary">\n        Heavy\n      </button>\n      <button (click)="hapticsImpactMedium()" ion-button color="primary">\n        Medium\n      </button>\n      <button (click)="hapticsImpactLight()" ion-button color="primary">\n        Light \n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsVibrate()" ion-button color="primary">\n        Haptics Vibrate\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsSelectionStart()" ion-button color="primary">\n        Haptics Start\n      </button>\n      <button (click)="hapticsSelectionChanged()" ion-button color="primary">\n        Haptics Changed\n      </button>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <!--\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n  -->\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n    </ion-item>\n    <ion-item>\n      Haptics\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsImpact()" ion-button color="primary">\n        Heavy\n      </button>\n      <button (click)="hapticsImpactMedium()" ion-button color="primary">\n        Medium\n      </button>\n      <button (click)="hapticsImpactLight()" ion-button color="primary">\n        Light \n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsVibrate()" ion-button color="primary">\n        Haptics Vibrate\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsSelectionStart()" ion-button color="primary">\n        Haptics Start\n      </button>\n      <button (click)="hapticsSelectionChanged()" ion-button color="primary">\n        Haptics Changed\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="browserOpen()" ion-button color="primary">\n        Browser Open\n      </button>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* NavController */], __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]])
 ], HomePage);
@@ -287,13 +291,14 @@ MyApp = __decorate([
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return HapticsImpactStyle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return HapticsPlugin; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return StatusBarStyle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return StatusBarPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return BrowserPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return HapticsImpactStyle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return HapticsPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return StatusBarStyle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return StatusBarPlugin; });
 /* unused harmony export CameraPlugin */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DevicePlugin; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return GeolocationPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DevicePlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return GeolocationPlugin; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_avocado_js__ = __webpack_require__(272);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -312,6 +317,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
+let BrowserPlugin = class BrowserPlugin extends __WEBPACK_IMPORTED_MODULE_0_avocado_js__["b" /* Plugin */] {
+    constructor() { super(); }
+    open(url) {
+        this.nativeCallback('open', { url });
+    }
+};
+BrowserPlugin = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0_avocado_js__["a" /* AvocadoPlugin */])({
+        name: 'Browser',
+        id: 'com.avocadojs.plugin.browser'
+    }),
+    __metadata("design:paramtypes", [])
+], BrowserPlugin);
 
 var HapticsImpactStyle;
 (function (HapticsImpactStyle) {

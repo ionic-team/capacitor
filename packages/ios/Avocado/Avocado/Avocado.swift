@@ -9,13 +9,18 @@
 import Foundation
 import WebKit
 
+
 public class Avocado {
+  public var viewController: UIViewController
+  
   public var webView: WKWebView?
   
   public var lastPlugin: Plugin?
   public var plugins =  [String:Plugin]()
   
-  public init() {
+  public init(_ vc: UIViewController) {
+    self.viewController = vc
+
     registerCorePlugins()
   }
   
@@ -24,10 +29,12 @@ public class Avocado {
     let geo = Geolocation(self)
     let statusbar = StatusBar(self)
     let haptics = Haptics(self)
+    let browser = Browser(self)
     self.registerPlugin(device)
     self.registerPlugin(geo)
     self.registerPlugin(statusbar)
     self.registerPlugin(haptics)
+    self.registerPlugin(browser)
   }
   
   public func setWebView(webView: WKWebView) {
