@@ -45,6 +45,9 @@
       </button>
     </ion-item>
     <ion-item>
+      Haptics
+    </ion-item>
+    <ion-item>
       <button (click)="hapticsImpact()" ion-button color="primary">
         Heavy
       </button>
@@ -58,6 +61,14 @@
     <ion-item>
       <button (click)="hapticsVibrate()" ion-button color="primary">
         Haptics Vibrate
+      </button>
+    </ion-item>
+    <ion-item>
+      <button (click)="hapticsSelectionStart()" ion-button color="primary">
+        Haptics Start
+      </button>
+      <button (click)="hapticsSelectionChanged()" ion-button color="primary">
+        Haptics Changed
       </button>
     </ion-item>
   </ion-list>

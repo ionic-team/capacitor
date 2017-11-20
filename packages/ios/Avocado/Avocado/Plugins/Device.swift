@@ -1,10 +1,3 @@
-//
-//  Device.swift
-//  avocado-ios
-//
-//  Copyright © 2017 Drifty Co. All rights reserved.
-//
-
 import Foundation
 
 public typealias DeviceInfo = [String:Any]
