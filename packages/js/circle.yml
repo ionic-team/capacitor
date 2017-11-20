@@ -1,8 +1,0 @@
-machine:
-  node:
-    version: 6.9.5
-  post:
-    - npm install -g npm@3.x.x
-test:
-  override:
-    - nvm use 6 && npm test

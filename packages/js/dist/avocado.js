@@ -1,17 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var platform_1 = require("./platform");
+import { Platform } from './platform';
 /**
  * Main class for interacting with the Avocado runtime.
  */
-var Avocado = (function () {
+var Avocado = /** @class */ (function () {
     function Avocado() {
         // Storage of calls for associating w/ native callback later
         this.calls = {};
         this.callbackIdCount = 0;
         this.log('initializing...');
         this.log('Detecting platform');
-        this.platform = new platform_1.Platform();
+        this.platform = new Platform();
         this.loadPlugins();
     }
     Avocado.prototype.log = function () {
@@ -119,4 +117,4 @@ var Avocado = (function () {
     };
     return Avocado;
 }());
-exports.Avocado = Avocado;
+export { Avocado };

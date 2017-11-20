@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Platform = (function () {
+var Platform = /** @class */ (function () {
     function Platform() {
     }
     return Platform;
 }());
-exports.Platform = Platform;
+export { Platform };

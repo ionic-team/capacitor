@@ -1,5 +1,2 @@
-export class Platform {
-  constructor() {
-    
-  }
-}
+
+export class Platform {}
