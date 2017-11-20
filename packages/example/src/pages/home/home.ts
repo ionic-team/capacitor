@@ -7,7 +7,9 @@ import {
   GeolocationPlugin,
   DevicePlugin,
   StatusBarPlugin,
-  StatusBarStyle
+  StatusBarStyle,
+  HapticsPlugin,
+  HapticsImpactStyle
 } from '../../plugins';
 
 @Component({
@@ -80,5 +82,12 @@ export class HomePage {
       style: this.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
     }, () => {});
     this.isStatusBarLight = !this.isStatusBarLight;
+  }
+
+  hapticsImpact() {
+    let haptics = new HapticsPlugin()
+    haptics.impact({
+      style: HapticsImpactStyle.Heavy
+    }, () => {});
   }
 }
