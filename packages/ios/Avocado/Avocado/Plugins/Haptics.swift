@@ -1,15 +1,9 @@
-//
-//  Vibration.swift
-//  Avocado
-//
-//  Created by Max Lynch on 11/19/17.
-//  Copyright © 2017 Drifty Co. All rights reserved.
-//
-
 import Foundation
 import AudioToolbox
 
 public class Haptics: Plugin {
+  var selectionFeedbackGenerator: UISelectionFeedbackGenerator?
+  
   public init(_ avocado: Avocado) {
     super.init(avocado: avocado, id: "com.avocadojs.plugin.haptics")
   }
@@ -29,6 +23,22 @@ public class Haptics: Plugin {
       let generator = UIImpactFeedbackGenerator(style: .heavy)
       generator.impactOccurred()
     }
+  }
+  
+  @objc public func selectionStart(_ call: PluginCall) {
+    selectionFeedbackGenerator = UISelectionFeedbackGenerator()
+    selectionFeedbackGenerator?.prepare()
+  }
+  
+  @objc public func selectionChanged(_ call: PluginCall) {
+    if let generator = selectionFeedbackGenerator {
+      generator.selectionChanged()
+      generator.prepare()
+    }
+  }
+  
+  @objc public func selectionEnd(_ call: PluginCall) {
+    selectionFeedbackGenerator = nil
   }
   
   @objc public func vibrate(_ call: PluginCall) {

@@ -19,6 +19,18 @@ export class HapticsPlugin extends Plugin {
   vibrate() {
     this.nativeCallback('vibrate');
   }
+
+  selectionStart() {
+    this.nativeCallback('selectionStart');
+  }
+
+  selectionChanged() {
+    this.nativeCallback('selectionChanged');
+  }
+
+  selectionEnd() {
+    this.nativeCallback('selectionEnd');
+  }
 }
 
 export enum StatusBarStyle {

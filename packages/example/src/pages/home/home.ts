@@ -103,4 +103,19 @@ export class HomePage {
     let haptics = new HapticsPlugin()
     haptics.vibrate();
   }
+
+  hapticsSelectionStart() {
+    let haptics = new HapticsPlugin()
+    haptics.selectionStart();
+  }
+
+  hapticsSelectionChanged() {
+    let haptics = new HapticsPlugin()
+    haptics.selectionChanged();
+  }
+
+  hapticsSelectionEnd() {
+    let haptics = new HapticsPlugin()
+    haptics.selectionEnd();
+  }
 }

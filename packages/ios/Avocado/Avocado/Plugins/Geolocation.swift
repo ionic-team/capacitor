@@ -1,8 +1,3 @@
-//
-// Geolocation.swift
-//
-// Created by Max Lynch
-
 import Foundation
 import UIKit
 import CoreLocation
