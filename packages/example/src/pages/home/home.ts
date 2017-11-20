@@ -13,6 +13,8 @@ import {
   BrowserPlugin
 } from '../../plugins';
 
+import { ConsolePlugin } from '../../plugins/console';
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -24,7 +26,10 @@ export class HomePage {
   deviceInfoJson: string;
   isStatusBarLight = true
 
-  constructor(public navCtrl: NavController, public zone: NgZone) {}
+  constructor(public navCtrl: NavController, public zone: NgZone) {
+    // Todo: make this global
+    let console = new ConsolePlugin();
+  }
 
   /*
   takePicture() {

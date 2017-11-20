@@ -1,8 +1,12 @@
 import Foundation
 
+/**
+ * StatusBar plugin. Requires "View controller-based status bar appearance" to
+ * be "NO" in Info.plist
+ */
 public class StatusBar: Plugin {
   public init(_ avocado: Avocado) {
-    super.init(avocado: avocado, id: "com.avocadojs.plugin.statusbar")
+    super.init(avocado, id: "com.avocadojs.plugin.statusbar")
   }
   
   @objc public func setStyle(_ call: PluginCall) {

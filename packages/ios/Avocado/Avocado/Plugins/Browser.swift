@@ -5,7 +5,7 @@ public class Browser : Plugin, SFSafariViewControllerDelegate {
   var vc: SFSafariViewController?
   
   public init(_ avocado: Avocado) {
-    super.init(avocado: avocado, id: "com.avocadojs.plugin.browser")
+    super.init(avocado, id: "com.avocadojs.plugin.browser")
   }
   
   @objc public func open(_ call: PluginCall) {

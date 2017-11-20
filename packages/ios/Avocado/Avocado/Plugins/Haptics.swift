@@ -5,12 +5,11 @@ public class Haptics: Plugin {
   var selectionFeedbackGenerator: UISelectionFeedbackGenerator?
   
   public init(_ avocado: Avocado) {
-    super.init(avocado: avocado, id: "com.avocadojs.plugin.haptics")
+    super.init(avocado, id: "com.avocadojs.plugin.haptics")
   }
   
   @objc public func impact(_ call: PluginCall) {
     if let style = call.options["style"] as? String {
-      print("Style", style)
       var impactStyle = UIImpactFeedbackStyle.heavy
       if style == "MEDIUM" {
         impactStyle = UIImpactFeedbackStyle.medium

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Dispatch
 import WebKit
 
 
@@ -17,6 +18,7 @@ public class Avocado {
   
   public var lastPlugin: Plugin?
   public var plugins =  [String:Plugin]()
+  public var dispatchQueue = DispatchQueue(label: "avocado")
   
   public init(_ vc: UIViewController) {
     self.viewController = vc
@@ -25,11 +27,13 @@ public class Avocado {
   }
   
   func registerCorePlugins() {
+    let console = Console(self)
     let device = Device(self)
     let geo = Geolocation(self)
     let statusbar = StatusBar(self)
     let haptics = Haptics(self)
     let browser = Browser(self)
+    self.registerPlugin(console)
     self.registerPlugin(device)
     self.registerPlugin(geo)
     self.registerPlugin(statusbar)
@@ -68,15 +72,21 @@ public class Avocado {
       }
       
       // Create a plugin call object and handle the success/error callbacks
-      let pluginCall = PluginCall(options: call.options, success: {(result: PluginResult) -> Void in
-        self.toJs(result: JSResult(call: call, result: result.data))
-      }, error: {(error: PluginCallError) -> Void in
-        self.toJsError(error: JSResultError(call: call, error: error.data))
-      })
-      
-      // Perform the plugin call
-      // TODO: Different thread?
-      plugin.perform(selector, with: pluginCall)
+      dispatchQueue.sync {
+        let startTime = CFAbsoluteTimeGetCurrent()
+        
+        let pluginCall = PluginCall(options: call.options, success: {(result: PluginResult) -> Void in
+          self.toJs(result: JSResult(call: call, result: result.data))
+        }, error: {(error: PluginCallError) -> Void in
+          self.toJsError(error: JSResultError(call: call, error: error.data))
+        })
+        // Perform the plugin call
+        // TODO: Different thread?
+        plugin.perform(selector, with: pluginCall)
+        
+        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+        print("Native call took", timeElapsed)
+      }
     }
   }
   
