@@ -12,11 +12,13 @@ import Foundation
  * A call originating from JavaScript land
  */
 public class JSCall {
+  public var options: [String:Any] = [:]
   public var pluginId: String = ""
   public var method: String = ""
   public var callbackId: String = ""
   
-  public init(pluginId: String, method: String, callbackId: String) {
+  public init(options: [String:Any], pluginId: String, method: String, callbackId: String) {
+    self.options = options
     self.pluginId = pluginId
     self.method = method
     self.callbackId = callbackId

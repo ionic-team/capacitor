@@ -1,5 +1,22 @@
 import { AvocadoPlugin, Plugin } from 'avocado-js';
 
+export enum StatusBarStyle {
+  Dark = 'DARK',
+  Light = 'LIGHT'
+};
+
+@AvocadoPlugin({
+  name: 'StatusBar',
+  id: 'com.avocadojs.plugin.statusbar'
+})
+export class StatusBarPlugin extends Plugin {
+  constructor() { super(); }
+
+  setStyle(options: { style: StatusBarStyle }, callback) {
+    this.nativeCallback('setStyle', options, callback);
+  }
+}
+
 @AvocadoPlugin({
   name: 'Camera',
   id: 'camera',

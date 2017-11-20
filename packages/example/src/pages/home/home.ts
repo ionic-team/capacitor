@@ -2,7 +2,13 @@ import { Component, NgZone } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
 
-import { CameraPlugin, GeolocationPlugin, DevicePlugin } from '../../plugins';
+import {
+  CameraPlugin,
+  GeolocationPlugin,
+  DevicePlugin,
+  StatusBarPlugin,
+  StatusBarStyle
+} from '../../plugins';
 
 @Component({
   selector: 'page-home',
@@ -13,6 +19,7 @@ export class HomePage {
   singleCoords = { lat: 0, lng: 0 }
   watchCoords = { lat: 0, lng: 0 }
   deviceInfoJson: string;
+  isStatusBarLight = true
 
   constructor(public navCtrl: NavController, public zone: NgZone) {}
 
@@ -65,5 +72,13 @@ export class HomePage {
       console.log('Device info');
       console.log(info);
     });
+  }
+
+  changeStatusBar() {
+    let statusBar = new StatusBarPlugin();
+    statusBar.setStyle({
+      style: this.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
+    }, () => {});
+    this.isStatusBarLight = !this.isStatusBarLight;
   }
 }

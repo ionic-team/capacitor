@@ -22,8 +22,10 @@ public class Avocado {
   func registerCorePlugins() {
     let device = Device(self)
     let geo = Geolocation(self)
+    let statusbar = StatusBar(self)
     self.registerPlugin(plugin: device)
     self.registerPlugin(plugin: geo)
+    self.registerPlugin(plugin: statusbar)
   }
   
   public func setWebView(webView: WKWebView) {
@@ -57,7 +59,7 @@ public class Avocado {
       }
       
       // Create a plugin call object and handle the success/error callbacks
-      let pluginCall = PluginCall(success: {(result: PluginResult) -> Void in
+      let pluginCall = PluginCall(options: call.options, success: {(result: PluginResult) -> Void in
         self.toJs(result: JSResult(call: call, result: result.data))
       }, error: {(error: PluginCallError) -> Void in
         self.toJsError(error: JSResultError(call: call, error: error.data))

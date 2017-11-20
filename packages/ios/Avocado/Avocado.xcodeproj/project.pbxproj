@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
+		501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBAB81FC26770009B0D4D /* StatusBar.swift */; };
 		50503EE91FC08595003606DC /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Avocado.framework */; };
 		50503EEE1FC08595003606DC /* AvocadoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* AvocadoTests.swift */; };
 		50503EF01FC08595003606DC /* Avocado.h in Headers */ = {isa = PBXBuildFile; fileRef = 50503EE21FC08594003606DC /* Avocado.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		501CBAB81FC26770009B0D4D /* StatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBar.swift; sourceTree = "<group>"; };
 		50503EDF1FC08594003606DC /* Avocado.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Avocado.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE21FC08594003606DC /* Avocado.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Avocado.h; sourceTree = "<group>"; };
 		50503EE31FC08594003606DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			children = (
 				50503EFD1FC08662003606DC /* Device.swift */,
 				50503EFE1FC08662003606DC /* Geolocation.swift */,
+				501CBAB81FC26770009B0D4D /* StatusBar.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 				50503F211FC0962F003606DC /* JS.swift in Sources */,
 				50503F231FC0968E003606DC /* Avocado.swift in Sources */,
 				50503F001FC08662003606DC /* Geolocation.swift in Sources */,
+				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
 				50503F251FC098A3003606DC /* Plugin.swift in Sources */,
 				50503EFF1FC08662003606DC /* Device.swift in Sources */,
 			);
