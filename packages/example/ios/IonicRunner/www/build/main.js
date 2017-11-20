@@ -122,16 +122,22 @@ let HomePage = class HomePage {
         });
     }
     changeStatusBar() {
-        let statusBar = new __WEBPACK_IMPORTED_MODULE_2__plugins__["c" /* StatusBarPlugin */]();
+        let statusBar = new __WEBPACK_IMPORTED_MODULE_2__plugins__["e" /* StatusBarPlugin */]();
         statusBar.setStyle({
-            style: this.isStatusBarLight ? __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* StatusBarStyle */].Dark : __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* StatusBarStyle */].Light
+            style: this.isStatusBarLight ? __WEBPACK_IMPORTED_MODULE_2__plugins__["f" /* StatusBarStyle */].Dark : __WEBPACK_IMPORTED_MODULE_2__plugins__["f" /* StatusBarStyle */].Light
         }, () => { });
         this.isStatusBarLight = !this.isStatusBarLight;
+    }
+    hapticsImpact() {
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__plugins__["d" /* HapticsPlugin */]();
+        haptics.impact({
+            style: __WEBPACK_IMPORTED_MODULE_2__plugins__["c" /* HapticsImpactStyle */].Heavy
+        }, () => { });
     }
 };
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <!--\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n  -->\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <!--\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n  -->\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsImpact()" ion-button color="primary">\n        Haptics Impact\n      </button>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* NavController */], __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]])
 ], HomePage);
@@ -259,8 +265,10 @@ MyApp = __decorate([
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return StatusBarStyle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return StatusBarPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return HapticsImpactStyle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return HapticsPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return StatusBarStyle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return StatusBarPlugin; });
 /* unused harmony export CameraPlugin */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DevicePlugin; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return GeolocationPlugin; });
@@ -282,6 +290,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
+var HapticsImpactStyle;
+(function (HapticsImpactStyle) {
+    HapticsImpactStyle["Heavy"] = "HEAVY";
+})(HapticsImpactStyle || (HapticsImpactStyle = {}));
+;
+let HapticsPlugin = class HapticsPlugin extends __WEBPACK_IMPORTED_MODULE_0_avocado_js__["b" /* Plugin */] {
+    constructor() { super(); }
+    impact(options, callback) {
+        this.nativeCallback('impact', options, callback);
+    }
+};
+HapticsPlugin = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0_avocado_js__["a" /* AvocadoPlugin */])({
+        name: 'Haptics',
+        id: 'com.avocadojs.plugin.haptics'
+    }),
+    __metadata("design:paramtypes", [])
+], HapticsPlugin);
 
 var StatusBarStyle;
 (function (StatusBarStyle) {

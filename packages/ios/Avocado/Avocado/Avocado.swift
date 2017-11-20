@@ -23,16 +23,18 @@ public class Avocado {
     let device = Device(self)
     let geo = Geolocation(self)
     let statusbar = StatusBar(self)
-    self.registerPlugin(plugin: device)
-    self.registerPlugin(plugin: geo)
-    self.registerPlugin(plugin: statusbar)
+    let haptics = Haptics(self)
+    self.registerPlugin(device)
+    self.registerPlugin(geo)
+    self.registerPlugin(statusbar)
+    self.registerPlugin(haptics)
   }
   
   public func setWebView(webView: WKWebView) {
     self.webView = webView
   }
   
-  public func registerPlugin(plugin: Plugin) {
+  public func registerPlugin(_ plugin: Plugin) {
     self.plugins[plugin.getId()] = plugin
   }
   

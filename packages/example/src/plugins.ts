@@ -1,5 +1,20 @@
 import { AvocadoPlugin, Plugin } from 'avocado-js';
 
+export enum HapticsImpactStyle {
+  Heavy = 'HEAVY'
+};
+@AvocadoPlugin({
+  name: 'Haptics',
+  id: 'com.avocadojs.plugin.haptics'
+})
+export class HapticsPlugin extends Plugin {
+  constructor() { super(); }
+
+  impact(options: { style: HapticsImpactStyle }, callback) {
+    this.nativeCallback('impact', options, callback);
+  }
+}
+
 export enum StatusBarStyle {
   Dark = 'DARK',
   Light = 'LIGHT'
