@@ -84,11 +84,19 @@ export class HomePage {
     this.isStatusBarLight = !this.isStatusBarLight;
   }
 
-  hapticsImpact() {
+  hapticsImpact(style = HapticsImpactStyle.Heavy) {
     let haptics = new HapticsPlugin()
     haptics.impact({
-      style: HapticsImpactStyle.Heavy
+      style: style
     });
+  }
+
+  hapticsImpactMedium(style) {
+    this.hapticsImpact(HapticsImpactStyle.Medium);
+  }
+
+  hapticsImpactLight(style) {
+    this.hapticsImpact(HapticsImpactStyle.Light);
   }
 
   hapticsVibrate() {

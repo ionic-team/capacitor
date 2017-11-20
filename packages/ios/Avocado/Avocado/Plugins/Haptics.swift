@@ -15,8 +15,20 @@ public class Haptics: Plugin {
   }
   
   @objc public func impact(_ call: PluginCall) {
-    let generator = UIImpactFeedbackGenerator(style: .heavy)
-    generator.impactOccurred()
+    if let style = call.options["style"] as? String {
+      print("Style", style)
+      var impactStyle = UIImpactFeedbackStyle.heavy
+      if style == "MEDIUM" {
+        impactStyle = UIImpactFeedbackStyle.medium
+      } else if style == "LIGHT" {
+        impactStyle = UIImpactFeedbackStyle.light
+      }
+      let generator = UIImpactFeedbackGenerator(style: impactStyle)
+      generator.impactOccurred()
+    } else {
+      let generator = UIImpactFeedbackGenerator(style: .heavy)
+      generator.impactOccurred()
+    }
   }
   
   @objc public func vibrate(_ call: PluginCall) {

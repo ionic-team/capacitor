@@ -1,7 +1,9 @@
 import { AvocadoPlugin, Plugin } from 'avocado-js';
 
 export enum HapticsImpactStyle {
-  Heavy = 'HEAVY'
+  Heavy = 'HEAVY',
+  Medium = 'MEDIUM',
+  Light = 'LIGHT'
 };
 @AvocadoPlugin({
   name: 'Haptics',
@@ -11,7 +13,7 @@ export class HapticsPlugin extends Plugin {
   constructor() { super(); }
 
   impact(options: { style: HapticsImpactStyle }) {
-    this.nativeCallback('impact');
+    this.nativeCallback('impact', options);
   }
 
   vibrate() {
