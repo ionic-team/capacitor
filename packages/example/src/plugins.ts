@@ -1,5 +1,17 @@
 import { AvocadoPlugin, Plugin } from 'avocado-js';
 
+@AvocadoPlugin({
+  name: 'Browser',
+  id: 'com.avocadojs.plugin.browser'
+})
+export class BrowserPlugin extends Plugin {
+  constructor() { super(); }
+  open(url: string) {
+    this.nativeCallback('open', { url })
+  }
+}
+
+
 export enum HapticsImpactStyle {
   Heavy = 'HEAVY',
   Medium = 'MEDIUM',

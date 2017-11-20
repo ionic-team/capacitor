@@ -9,7 +9,8 @@ import {
   StatusBarPlugin,
   StatusBarStyle,
   HapticsPlugin,
-  HapticsImpactStyle
+  HapticsImpactStyle,
+  BrowserPlugin
 } from '../../plugins';
 
 @Component({
@@ -117,5 +118,10 @@ export class HomePage {
   hapticsSelectionEnd() {
     let haptics = new HapticsPlugin()
     haptics.selectionEnd();
+  }
+
+  browserOpen() {
+    let browser = new BrowserPlugin()
+    browser.open('http://ionicframework.com');
   }
 }

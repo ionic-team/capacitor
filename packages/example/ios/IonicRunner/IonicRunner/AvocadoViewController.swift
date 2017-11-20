@@ -15,9 +15,11 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   private var webView: WKWebView?
   
   // Construct the avocado runtime
-  public let avocado: Avocado = Avocado()
+  public var avocado: Avocado?
   
   override func loadView() {
+    avocado = Avocado(self)
+    
     let webViewConfiguration = WKWebViewConfiguration()
     
     let o = WKUserContentController()
@@ -34,7 +36,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
     
     view = webView
     
-    self.avocado.setWebView(webView: webView!)
+    self.avocado!.setWebView(webView: webView!)
   }
   
   override func viewDidLoad() {
@@ -78,7 +80,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
       
       print("To Native -> ", pluginId, method, callbackId, options)
       
-      self.avocado.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
+      self.avocado!.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
     }
   }
 
