@@ -43,6 +43,9 @@ var Avocado = /** @class */ (function () {
             case undefined:
                 ret = this._toNativePromise(call, caller);
             case 'callback':
+                if (typeof caller.callbackFunction !== 'function') {
+                    caller.callbackFunction = function () { };
+                }
                 ret = this._toNativeCallback(call, caller);
                 break;
             case 'promise':
@@ -133,28 +136,28 @@ var Plugin = /** @class */ (function () {
         this.avocado.registerPlugin(this);
     }
     Plugin.prototype.nativeCallback = function (method, options, callbackFunction, webFallback) {
-        return this.native(method, options, 'callback', callbackFunction, webFallback);
+        return this.native(method, options, 'callback', callbackFunction);
     };
     Plugin.prototype.nativePromise = function (method, options, webFallback) {
-        if (options === void 0) { options = {}; }
-        return this.native(method, options, 'promise', null, webFallback);
+        return this.native(method, options, 'promise', null);
     };
     /**
      * Call a native plugin method, or a web API fallback.
      */
-    Plugin.prototype.native = function (method, options, callbackType, callbackFunction, webFallback) {
+    Plugin.prototype.native = function (method, options, callbackType, callbackFunction) {
         var d = this.constructor.getPluginInfo();
         console.log("Avocado Plugin Call: " + d.id + " - " + method);
         // If avocado is running in a browser environment, call our
         // web fallback
-        if (this.avocado.isBrowser()) {
-            if (webFallback) {
-                return webFallback(options);
-            }
-            else {
-                throw new Error('Tried calling a native plugin method in the browser but no web fallback is available.');
-            }
+        /*
+        if(this.avocado.isBrowser()) {
+          if(webFallback) {
+            return webFallback(options);
+          } else {
+            throw new Error('Tried calling a native plugin method in the browser but no web fallback is available.');
+          }
         }
+        */
         // Avocado is running in a non-sandbox browser environment, call
         // the native code underneath
         return this.avocado.toNative({

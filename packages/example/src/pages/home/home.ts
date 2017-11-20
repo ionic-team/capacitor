@@ -88,6 +88,11 @@ export class HomePage {
     let haptics = new HapticsPlugin()
     haptics.impact({
       style: HapticsImpactStyle.Heavy
-    }, () => {});
+    });
+  }
+
+  hapticsVibrate() {
+    let haptics = new HapticsPlugin()
+    haptics.vibrate();
   }
 }

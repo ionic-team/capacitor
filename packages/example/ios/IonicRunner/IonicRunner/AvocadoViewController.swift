@@ -73,8 +73,8 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
       let pluginId = dict["pluginId"] as! String
       let method = dict["methodName"] as! String
       let callbackId = dict["callbackId"] as! String
-      // Especially here
-      let options = dict["options"] as! [String:Any]
+
+      let options = dict["options"] as! [String:Any]? ?? [:]
       
       print("To Native -> ", pluginId, method, callbackId, options)
       

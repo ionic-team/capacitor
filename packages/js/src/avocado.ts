@@ -60,6 +60,9 @@ export class Avocado {
       case undefined:
         ret = this._toNativePromise(call, caller);
       case 'callback':
+        if (typeof caller.callbackFunction !== 'function') {
+          caller.callbackFunction = () => {}
+        }
         ret = this._toNativeCallback(call, caller);
         break;
       case 'promise':
