@@ -14,18 +14,18 @@ export class Plugin {
     this.avocado.registerPlugin(this);
   }
 
-  nativeCallback(method: string, options: any, callbackFunction: PluginCallback, webFallback?: Function) {
-    return this.native(method, options, 'callback', callbackFunction, webFallback)
+  nativeCallback(method: string, options?: any, callbackFunction?: PluginCallback, webFallback?: Function) {
+    return this.native(method, options, 'callback', callbackFunction)
   }
 
-  nativePromise(method: string, options: any = {}, webFallback?: Function) {
-    return this.native(method, options, 'promise', null, webFallback)
+  nativePromise(method: string, options?: any, webFallback?: Function) {
+    return this.native(method, options, 'promise', null)
   }
 
   /**
    * Call a native plugin method, or a web API fallback.
    */
-  native(method: any, options: any, callbackType: string, callbackFunction: PluginCallback, webFallback: Function) {
+  native(method: any, options: any, callbackType: string, callbackFunction?: PluginCallback) {
 
     let d = (<any>this).constructor.getPluginInfo();
 
@@ -33,6 +33,7 @@ export class Plugin {
 
     // If avocado is running in a browser environment, call our
     // web fallback
+    /*
     if(this.avocado.isBrowser()) {
       if(webFallback) {
         return webFallback(options);
@@ -40,6 +41,7 @@ export class Plugin {
         throw new Error('Tried calling a native plugin method in the browser but no web fallback is available.');
       }
     }
+    */
 
     // Avocado is running in a non-sandbox browser environment, call
     // the native code underneath

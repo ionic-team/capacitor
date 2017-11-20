@@ -38,6 +38,9 @@ var Avocado = /** @class */ (function () {
             case undefined:
                 ret = this._toNativePromise(call, caller);
             case 'callback':
+                if (typeof caller.callbackFunction !== 'function') {
+                    caller.callbackFunction = function () { };
+                }
                 ret = this._toNativeCallback(call, caller);
                 break;
             case 'promise':

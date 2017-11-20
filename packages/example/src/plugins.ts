@@ -10,8 +10,12 @@ export enum HapticsImpactStyle {
 export class HapticsPlugin extends Plugin {
   constructor() { super(); }
 
-  impact(options: { style: HapticsImpactStyle }, callback) {
-    this.nativeCallback('impact', options, callback);
+  impact(options: { style: HapticsImpactStyle }) {
+    this.nativeCallback('impact');
+  }
+
+  vibrate() {
+    this.nativeCallback('vibrate');
   }
 }
 
