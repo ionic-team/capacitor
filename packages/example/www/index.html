@@ -15,17 +15,27 @@
   <meta name="theme-color" content="#4e8ef7">
   
   <script>
-    window.onerror = function(err) {
-      console.log('window.onerror', err);
-      window.webkit.messageHandlers.avocado.postMessage({
-        type: 'js.error',
-        message: err.message
-      });
-    }
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+      var string = msg.toLowerCase();
+      var substring = "script error";
+      if (string.indexOf(substring) > -1) {
+      } else {
+        window.webkit.messageHandlers.avocado.postMessage({
+          type: 'js.error',
+          error: {
+            message: msg,
+            url: url,
+            line: lineNo,
+            col: columnNo,
+            errorObject: JSON.stringify(error)
+          }
+        });
+      }
 
-    setTimeout(function() {
-      (asdfasdf).blah();
-    }, 10);
+      return false;
+    };
+
+    (asdfasdf).blah();
   </script>
 
   <!-- un-comment this code to enable service worker

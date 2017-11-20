@@ -12,8 +12,6 @@ public struct GeolocationCoords {
   }
 }
 
-
-
 class GetLocationHandler:NSObject, CLLocationManagerDelegate {
   var locationManager = CLLocationManager()
   var call: PluginCall?
@@ -46,8 +44,6 @@ class GetLocationHandler:NSObject, CLLocationManagerDelegate {
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     if let location = locations.first  {
-      print("location = \(location.coordinate.latitude) \(location.coordinate.longitude)")
-      
       let result = PluginResult(data: [
         "coords": [
           "latitude": location.coordinate.latitude,

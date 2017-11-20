@@ -713,10 +713,10 @@ let ConsolePlugin = class ConsolePlugin extends __WEBPACK_IMPORTED_MODULE_0_avoc
         const originalLog = window.console.log;
         window.console.log = (...args) => {
             //const str = args.map(a => a.toString()).join(' ');
-            this.queue.push(args);
+            this.queue.push(['log', ...args]);
             originalLog.apply(originalLog, args);
         };
-        setTimeout(function syncQueue() {
+        const syncQueue = () => {
             if (this.queue.length) {
                 while (this.queue.length) {
                     const logMessage = this.queue.shift();
@@ -724,7 +724,8 @@ let ConsolePlugin = class ConsolePlugin extends __WEBPACK_IMPORTED_MODULE_0_avoc
                 }
             }
             setTimeout(syncQueue, 100);
-        });
+        };
+        setTimeout(syncQueue);
     }
 };
 ConsolePlugin = __decorate([

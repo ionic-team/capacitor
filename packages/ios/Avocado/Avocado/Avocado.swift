@@ -73,7 +73,7 @@ public class Avocado {
       
       // Create a plugin call object and handle the success/error callbacks
       dispatchQueue.sync {
-        let startTime = CFAbsoluteTimeGetCurrent()
+        //let startTime = CFAbsoluteTimeGetCurrent()
         
         let pluginCall = PluginCall(options: call.options, success: {(result: PluginResult) -> Void in
           self.toJs(result: JSResult(call: call, result: result.data))
@@ -81,11 +81,10 @@ public class Avocado {
           self.toJsError(error: JSResultError(call: call, error: error.data))
         })
         // Perform the plugin call
-        // TODO: Different thread?
         plugin.perform(selector, with: pluginCall)
         
-        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        print("Native call took", timeElapsed)
+        //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+        //print("Native call took", timeElapsed)
       }
     }
   }
@@ -94,7 +93,6 @@ public class Avocado {
    * Send a successful result to the JavaScript layer.
    */
   public func toJs(result: JSResult) {
-    print(result.toJson())
     self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(result.toJson())})") { (result, error) in
       if error != nil && result != nil {
         print(result!)

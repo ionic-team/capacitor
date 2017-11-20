@@ -17,11 +17,11 @@ export class ConsolePlugin extends Plugin {
 
     window.console.log = (...args) => {
       //const str = args.map(a => a.toString()).join(' ');
-      this.queue.push(args);
+      this.queue.push(['log', ...args]);
       originalLog.apply(originalLog, args);
     };
       
-    setTimeout(function syncQueue() {
+    const syncQueue = () => {
       if (this.queue.length) {
         while(this.queue.length) {
           const logMessage = this.queue.shift();
@@ -29,6 +29,7 @@ export class ConsolePlugin extends Plugin {
         }
       }
       setTimeout(syncQueue, 100);
-    });
+    };
+    setTimeout(syncQueue);
   }
 }
