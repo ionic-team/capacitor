@@ -1,181 +1,122 @@
 <div class="ion-diagnostic">
-<div class="ion-diagnostic-masthead" title="typescript error: 2420">
+<div class="ion-diagnostic-masthead" title="typescript error: 2304">
 <div class="ion-diagnostic-title">Typescript Error</div>
-<div class="ion-diagnostic-message" data-error-code="typescript-2420">Class &#039;NavControllerBase&#039; incorrectly implements interface &#039;NavController&#039;.
-  Types of property &#039;popTo&#039; are incompatible.
-    Type &#039;(indexOrViewCtrl: any, opts?: NavOptions, done?: Function) =&gt; Promise&lt;any&gt;&#039; is not assignable to type &#039;(page: any, params?: any, opts?: NavOptions, done?: Function) =&gt; Promise&lt;any&gt;&#039;.
-      Types of parameters &#039;done&#039; and &#039;opts&#039; are incompatible.
-        Type &#039;NavOptions&#039; is not assignable to type &#039;Function&#039;.
-          Property &#039;apply&#039; is missing in type &#039;NavOptions&#039;.</div>
+<div class="ion-diagnostic-message" data-error-code="typescript-2304">Cannot find name &#039;PluginCall&#039;.</div>
 </div>
 <div class="ion-diagnostic-file">
-<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/node_modules/ionic-angular/navigation/nav-controller-base.d.ts">node_modules/ionic-angular/navigation/nav-controller-base.d.ts</div>
+<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/node_modules/avocado-js/dist/avocado.d.ts">node_modules/avocado-js/dist/avocado.d.ts</div>
 <div class="ion-diagnostic-blob">
 <table class="ion-diagnostic-table">
-<tr>
-<td class="ion-diagnostic-blob-num" data-line-number="19"></td>
-<td class="ion-diagnostic-blob-code"> *<span class="hljs-regexp">/</span></td>
-</tr>
-<tr class="ion-diagnostic-error-line">
-<td class="ion-diagnostic-blob-num" data-line-number="20"></td>
-<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">export</span> <span class="hljs-keyword">declare</span> <span class="hljs-keyword">class</span> <span class="ion-diagnostics-error-chr">N</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">v</span><span class="ion-diagnostics-error-chr">C</span><span class="ion-diagnostics-error-chr">o</span><span class="ion-diagnostics-error-chr">n</span><span class="ion-diagnostics-error-chr">t</span><span class="ion-diagnostics-error-chr">r</span><span class="ion-diagnostics-error-chr">o</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">r</span><span class="ion-diagnostics-error-chr">B</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">e</span> extends Ion <span class="hljs-keyword">implements</span> NavController {</td>
-</tr>
-<tr>
-<td class="ion-diagnostic-blob-num" data-line-number="21"></td>
-<td class="ion-diagnostic-blob-code">    parent: <span class="hljs-built_in">any</span>;</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="ion-diagnostic">
-<div class="ion-diagnostic-masthead" title="typescript error: 2415">
-<div class="ion-diagnostic-title">Typescript Error</div>
-<div class="ion-diagnostic-message" data-error-code="typescript-2415">Class &#039;Subject&lt;T&gt;&#039; incorrectly extends base class &#039;Observable&lt;T&gt;&#039;.
-  Types of property &#039;lift&#039; are incompatible.
-    Type &#039;&lt;R&gt;(operator: Operator&lt;T, R&gt;) =&gt; Observable&lt;T&gt;&#039; is not assignable to type &#039;&lt;R&gt;(operator: Operator&lt;T, R&gt;) =&gt; Observable&lt;R&gt;&#039;.
-      Type &#039;Observable&lt;T&gt;&#039; is not assignable to type &#039;Observable&lt;R&gt;&#039;.
-        Type &#039;T&#039; is not assignable to type &#039;R&#039;.</div>
-</div>
-<div class="ion-diagnostic-file">
-<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/node_modules/rxjs/Subject.d.ts">node_modules/rxjs/Subject.d.ts</div>
-<div class="ion-diagnostic-blob">
-<table class="ion-diagnostic-table">
-<tr>
-<td class="ion-diagnostic-blob-num" data-line-number="15"></td>
-<td class="ion-diagnostic-blob-code"> *<span class="hljs-regexp">/</span></td>
-</tr>
-<tr class="ion-diagnostic-error-line">
-<td class="ion-diagnostic-blob-num" data-line-number="16"></td>
-<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">export</span> <span class="hljs-keyword">declare</span> <span class="hljs-keyword">class</span> <span class="ion-diagnostics-error-chr">S</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">b</span><span class="ion-diagnostics-error-chr">j</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">c</span><span class="ion-diagnostics-error-chr">t</span>&lt;T&gt; extends Observable&lt;T&gt; <span class="hljs-keyword">implements</span> ISubscription {</td>
-</tr>
 <tr>
 <td class="ion-diagnostic-blob-num" data-line-number="17"></td>
-<td class="ion-diagnostic-blob-code">    observers: Observer&lt;T&gt;[];</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="ion-diagnostic">
-<div class="ion-diagnostic-masthead" title="typescript error: 2554">
-<div class="ion-diagnostic-title">Typescript Error</div>
-<div class="ion-diagnostic-message" data-error-code="typescript-2554">Expected 2 arguments, but got 1.</div>
-</div>
-<div class="ion-diagnostic-file">
-<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/src/pages/home/home.ts">src/pages/home/home.ts</div>
-<div class="ion-diagnostic-blob">
-<table class="ion-diagnostic-table">
-<tr>
-<td class="ion-diagnostic-blob-num" data-line-number="78"></td>
-<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">let</span> statusBar = <span class="hljs-keyword">new</span> StatusBarPlugin();</td>
+<td class="ion-diagnostic-blob-code"> *<span class="hljs-regexp">/</span></td>
 </tr>
 <tr class="ion-diagnostic-error-line">
-<td class="ion-diagnostic-blob-num" data-line-number="79"></td>
-<td class="ion-diagnostic-blob-code"><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">t</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">t</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">B</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">r</span><span class="ion-diagnostics-error-chr">.</span><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">t</span><span class="ion-diagnostics-error-chr">S</span><span class="ion-diagnostics-error-chr">t</span><span class="ion-diagnostics-error-chr">y</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">(</span><span class="ion-diagnostics-error-chr">{</span></td>
+<td class="ion-diagnostic-blob-num" data-line-number="18"></td>
+<td class="ion-diagnostic-blob-code">toNative(call: <span class="ion-diagnostics-error-chr">P</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">g</span><span class="ion-diagnostics-error-chr">i</span><span class="ion-diagnostics-error-chr">n</span><span class="ion-diagnostics-error-chr">C</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">l</span>, caller: PluginCaller): <span class="hljs-built_in">any</span>;</td>
 </tr>
 <tr>
-<td class="ion-diagnostic-blob-num" data-line-number="80"></td>
-<td class="ion-diagnostic-blob-code">  style: <span class="hljs-keyword">this</span>.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light</td>
+<td class="ion-diagnostic-blob-num" data-line-number="19"></td>
+<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">private</span> _toNativeCallback(call, caller);</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="ion-diagnostic">
-<div class="ion-diagnostic-masthead" title="typescript error: 2346">
+<div class="ion-diagnostic-masthead" title="typescript error: 2304">
 <div class="ion-diagnostic-title">Typescript Error</div>
-<div class="ion-diagnostic-message" data-error-code="typescript-2346">Call target does not contain any signatures.</div>
+<div class="ion-diagnostic-message" data-error-code="typescript-2304">Cannot find name &#039;PluginCaller&#039;.</div>
 </div>
 <div class="ion-diagnostic-file">
-<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/src/plugins.ts">src/plugins.ts</div>
+<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/node_modules/avocado-js/dist/avocado.d.ts">node_modules/avocado-js/dist/avocado.d.ts</div>
 <div class="ion-diagnostic-blob">
 <table class="ion-diagnostic-table">
 <tr>
-<td class="ion-diagnostic-blob-num" data-line-number="12"></td>
-<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> StatusBarPlugin extends Plugin {</td>
+<td class="ion-diagnostic-blob-num" data-line-number="17"></td>
+<td class="ion-diagnostic-blob-code"> *<span class="hljs-regexp">/</span></td>
 </tr>
 <tr class="ion-diagnostic-error-line">
-<td class="ion-diagnostic-blob-num" data-line-number="13"></td>
-<td class="ion-diagnostic-blob-code">  <span class="hljs-keyword">constructor</span>() { <span class="hljs-keyword"><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">p</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">r</span></span><span class="ion-diagnostics-error-chr">(</span><span class="ion-diagnostics-error-chr">)</span>; }</td>
+<td class="ion-diagnostic-blob-num" data-line-number="18"></td>
+<td class="ion-diagnostic-blob-code">toNative(call: PluginCall, caller: <span class="ion-diagnostics-error-chr">P</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">g</span><span class="ion-diagnostics-error-chr">i</span><span class="ion-diagnostics-error-chr">n</span><span class="ion-diagnostics-error-chr">C</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">r</span>): <span class="hljs-built_in">any</span>;</td>
 </tr>
 <tr>
-<td class="ion-diagnostic-blob-num" data-line-number="14"></td>
-<td class="ion-diagnostic-blob-code"></td>
+<td class="ion-diagnostic-blob-num" data-line-number="19"></td>
+<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">private</span> _toNativeCallback(call, caller);</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="ion-diagnostic">
-<div class="ion-diagnostic-masthead" title="typescript error: 2346">
+<div class="ion-diagnostic-masthead" title="typescript error: 2304">
 <div class="ion-diagnostic-title">Typescript Error</div>
-<div class="ion-diagnostic-message" data-error-code="typescript-2346">Call target does not contain any signatures.</div>
+<div class="ion-diagnostic-message" data-error-code="typescript-2304">Cannot find name &#039;PluginResult&#039;.</div>
 </div>
 <div class="ion-diagnostic-file">
-<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/src/plugins.ts">src/plugins.ts</div>
+<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/node_modules/avocado-js/dist/avocado.d.ts">node_modules/avocado-js/dist/avocado.d.ts</div>
 <div class="ion-diagnostic-blob">
 <table class="ion-diagnostic-table">
+<tr>
+<td class="ion-diagnostic-blob-num" data-line-number="24"></td>
+<td class="ion-diagnostic-blob-code"> *<span class="hljs-regexp">/</span></td>
+</tr>
+<tr class="ion-diagnostic-error-line">
+<td class="ion-diagnostic-blob-num" data-line-number="25"></td>
+<td class="ion-diagnostic-blob-code">fromNative(result: <span class="ion-diagnostics-error-chr">P</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">g</span><span class="ion-diagnostics-error-chr">i</span><span class="ion-diagnostics-error-chr">n</span><span class="ion-diagnostics-error-chr">R</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">t</span>): <span class="hljs-built_in">void</span>;</td>
+</tr>
 <tr>
 <td class="ion-diagnostic-blob-num" data-line-number="26"></td>
-<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">constructor</span>() {</td>
-</tr>
-<tr class="ion-diagnostic-error-line">
-<td class="ion-diagnostic-blob-num" data-line-number="27"></td>
-<td class="ion-diagnostic-blob-code">  <span class="hljs-keyword"><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">p</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">r</span></span><span class="ion-diagnostics-error-chr">(</span><span class="ion-diagnostics-error-chr">)</span>;</td>
-</tr>
-<tr>
-<td class="ion-diagnostic-blob-num" data-line-number="28"></td>
-<td class="ion-diagnostic-blob-code">}</td>
+<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">private</span> _fromNativeCallback(result, storedCall);</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="ion-diagnostic">
-<div class="ion-diagnostic-masthead" title="typescript error: 2346">
+<div class="ion-diagnostic-masthead" title="typescript error: 2304">
 <div class="ion-diagnostic-title">Typescript Error</div>
-<div class="ion-diagnostic-message" data-error-code="typescript-2346">Call target does not contain any signatures.</div>
+<div class="ion-diagnostic-message" data-error-code="typescript-2304">Cannot find name &#039;PluginCallback&#039;.</div>
 </div>
 <div class="ion-diagnostic-file">
-<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/src/plugins.ts">src/plugins.ts</div>
+<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/node_modules/avocado-js/dist/plugin.d.ts">node_modules/avocado-js/dist/plugin.d.ts</div>
 <div class="ion-diagnostic-blob">
 <table class="ion-diagnostic-table">
 <tr>
-<td class="ion-diagnostic-blob-num" data-line-number="55"></td>
-<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">constructor</span>() {</td>
+<td class="ion-diagnostic-blob-num" data-line-number="8"></td>
+<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">constructor</span>();</td>
 </tr>
 <tr class="ion-diagnostic-error-line">
-<td class="ion-diagnostic-blob-num" data-line-number="56"></td>
-<td class="ion-diagnostic-blob-code">  <span class="hljs-keyword"><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">p</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">r</span></span><span class="ion-diagnostics-error-chr">(</span><span class="ion-diagnostics-error-chr">)</span>;</td>
+<td class="ion-diagnostic-blob-num" data-line-number="9"></td>
+<td class="ion-diagnostic-blob-code">nativeCallback(method: <span class="hljs-built_in">string</span>, options: <span class="hljs-built_in">any</span>, callbackFunction: <span class="ion-diagnostics-error-chr">P</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">g</span><span class="ion-diagnostics-error-chr">i</span><span class="ion-diagnostics-error-chr">n</span><span class="ion-diagnostics-error-chr">C</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">b</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">c</span><span class="ion-diagnostics-error-chr">k</span>, webFallback?: <span class="hljs-built_in">Function</span>): <span class="hljs-built_in">any</span>;</td>
 </tr>
 <tr>
-<td class="ion-diagnostic-blob-num" data-line-number="57"></td>
-<td class="ion-diagnostic-blob-code">}</td>
+<td class="ion-diagnostic-blob-num" data-line-number="10"></td>
+<td class="ion-diagnostic-blob-code">nativePromise(method: <span class="hljs-built_in">string</span>, options?: <span class="hljs-built_in">any</span>, webFallback?: <span class="hljs-built_in">Function</span>): <span class="hljs-built_in">any</span>;</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="ion-diagnostic">
-<div class="ion-diagnostic-masthead" title="typescript error: 2346">
+<div class="ion-diagnostic-masthead" title="typescript error: 2304">
 <div class="ion-diagnostic-title">Typescript Error</div>
-<div class="ion-diagnostic-message" data-error-code="typescript-2346">Call target does not contain any signatures.</div>
+<div class="ion-diagnostic-message" data-error-code="typescript-2304">Cannot find name &#039;PluginCallback&#039;.</div>
 </div>
 <div class="ion-diagnostic-file">
-<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/src/plugins.ts">src/plugins.ts</div>
+<div class="ion-diagnostic-file-header" title="/Users/max/git/avocado/packages/example/node_modules/avocado-js/dist/plugin.d.ts">node_modules/avocado-js/dist/plugin.d.ts</div>
 <div class="ion-diagnostic-blob">
 <table class="ion-diagnostic-table">
 <tr>
-<td class="ion-diagnostic-blob-num" data-line-number="68"></td>
-<td class="ion-diagnostic-blob-code"><span class="hljs-keyword">constructor</span>() {</td>
+<td class="ion-diagnostic-blob-num" data-line-number="13"></td>
+<td class="ion-diagnostic-blob-code">     *<span class="hljs-regexp">/</span></td>
 </tr>
 <tr class="ion-diagnostic-error-line">
-<td class="ion-diagnostic-blob-num" data-line-number="69"></td>
-<td class="ion-diagnostic-blob-code">  <span class="hljs-keyword"><span class="ion-diagnostics-error-chr">s</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">p</span><span class="ion-diagnostics-error-chr">e</span><span class="ion-diagnostics-error-chr">r</span></span><span class="ion-diagnostics-error-chr">(</span><span class="ion-diagnostics-error-chr">)</span>;</td>
+<td class="ion-diagnostic-blob-num" data-line-number="14"></td>
+<td class="ion-diagnostic-blob-code">    native(method: <span class="hljs-built_in">any</span>, options: <span class="hljs-built_in">any</span>, callbackType: <span class="hljs-built_in">string</span>, callbackFunction: <span class="ion-diagnostics-error-chr">P</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">u</span><span class="ion-diagnostics-error-chr">g</span><span class="ion-diagnostics-error-chr">i</span><span class="ion-diagnostics-error-chr">n</span><span class="ion-diagnostics-error-chr">C</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">l</span><span class="ion-diagnostics-error-chr">b</span><span class="ion-diagnostics-error-chr">a</span><span class="ion-diagnostics-error-chr">c</span><span class="ion-diagnostics-error-chr">k</span>, webFallback: <span class="hljs-built_in">Function</span>): <span class="hljs-built_in">any</span>;</td>
 </tr>
 <tr>
-<td class="ion-diagnostic-blob-num" data-line-number="70"></td>
+<td class="ion-diagnostic-blob-num" data-line-number="15"></td>
 <td class="ion-diagnostic-blob-code">}</td>
 </tr>
 </table>
