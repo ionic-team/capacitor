@@ -3,35 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "homepage": "",
-  "author": "",
+  "author": "Ionic Team",
   "license": "MIT",
   "files": [
-    "bin/",
-    "config/",
-    "dist/",
-    "lab",
-    "LICENSE",
-    "README.md"
+    "dist/"
   ],
   "scripts": {
-    "build": "npm run clean && tsc",
-    "build-and-test": "jest",
-    "changelog": "./node_modules/.bin/conventional-changelog -p angular -i CHANGELOG.md -s",
-    "clean": "rimraf ./dist",
-    "github-release": "node ./scripts/create-github-release.js",
-    "lint": "tslint -c ./tslint.json --project ./tsconfig.json",
-    "nightly": "npm run build && node ./scripts/publish-nightly.js",
-    "test": "jest",
-    "watch": "npm run clean && tsc --watch & npm run sass-watch"
+    "build": "npm run clean && npm run transpile && npm run bundle",
+    "transpile": "tsc",
+    "bundle": "rollup --input dist/index.js --output.file dist/index.js --output.format es",
+    "post.bundle": "",
+    "clean": "rimraf ./dist"
   },
   "main": "dist/index.js",
-  "dependencies": {},
+  "typings": "dist/index.d.ts",
   "devDependencies": {
-    "@types/jest": "^19.2.2",
-    "@types/node": "^7.0.10",
     "rimraf": "^2.6.1",
+    "rollup": "^0.51.8",
     "tslint-ionic-rules": "0.0.8",
-    "typescript": "~2.2.1"
+    "typescript": "^2.6.1"
   },
   "repository": {
     "type": "git",
@@ -39,23 +29,5 @@
   },
   "bugs": {
     "url": "https://github.com/driftyco/avocado-js/issues"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/ionic-cz-conventional-changelog"
-    }
-  },
-  "typings": "dist/index.d.ts",
-  "jest": {
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(ts)$": "<rootDir>/preprocessor.js"
-    },
-    "testRegex": "/src/.*\\.spec\\.(ts|js)$",
-    "coverageDirectory": "coverage"
   }
 }

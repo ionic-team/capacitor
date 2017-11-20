@@ -3,19 +3,12 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "lib": ["dom", "es2015"],
-    "module": "commonjs",
-    "outDir": "./dist",
+    "module": "es2015",
+    "outDir": "dist",
     "target": "es5",
-    "noImplicitAny": false,
-    "types": [
-      "node",
-      "jest"
-    ]
+    "noImplicitAny": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
+  "files": [
+    "src/index.ts"
   ]
 }

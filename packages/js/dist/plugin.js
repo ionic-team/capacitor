@@ -1,12 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var avocado_1 = require("./avocado");
+import { Avocado } from './avocado';
 /**
  * Base class for all 3rd party plugins.
  */
-var Plugin = (function () {
+var Plugin = /** @class */ (function () {
     function Plugin() {
-        this.avocado = avocado_1.Avocado.instance();
+        this.avocado = Avocado.instance();
         this.avocado.registerPlugin(this);
     }
     Plugin.prototype.nativeCallback = function (method, data, callbackFunction, webFallback) {
@@ -45,11 +43,11 @@ var Plugin = (function () {
     };
     return Plugin;
 }());
-exports.Plugin = Plugin;
+export { Plugin };
 /**
  * Decorator for AvocadoPlugin's
  */
-function AvocadoPlugin(config) {
+export function AvocadoPlugin(config) {
     return function (cls) {
         cls['_avocadoPlugin'] = Object.assign({}, config);
         cls['getPluginInfo'] = function () {
@@ -58,4 +56,3 @@ function AvocadoPlugin(config) {
         return cls;
     };
 }
-exports.AvocadoPlugin = AvocadoPlugin;
