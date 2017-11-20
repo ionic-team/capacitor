@@ -1,3 +1,4 @@
+*.map
 .sourcemaps
 xcuserdata/
 node_modules/
