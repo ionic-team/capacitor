@@ -25,7 +25,9 @@ export class ConsolePlugin extends Plugin {
       if (this.queue.length) {
         while(this.queue.length) {
           const logMessage = this.queue.shift();
-          this.nativeCallback('log', { message: logMessage });
+          const level = logMessage[0];
+          const message = logMessage.slice(1)
+          this.nativeCallback('log', { level: level, message: message });
         }
       }
       setTimeout(syncQueue, 100);

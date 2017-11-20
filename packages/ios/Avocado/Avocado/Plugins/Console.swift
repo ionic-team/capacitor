@@ -9,7 +9,7 @@ public class Console : Plugin {
     let data = call.options
     let message = data["message"] ?? ""
     let level = data["level"] ?? "LOG"
-    print("[\(level) ] \(self.pluginId) - \(message)")
+    print("[\(level)] \(self.pluginId) - \(message)")
   }
 }
 

@@ -42,6 +42,8 @@ var Avocado = /** @class */ (function () {
     };
     /**
      * Send a plugin method call to the native layer.
+     *
+     * NO CONSOLE LOGS HERE, WILL CAUSE CONSOLE.LOG INFINITE LOOP
      */
     Avocado.prototype.toNative = function (call, caller) {
         var ret;
@@ -61,7 +63,6 @@ var Avocado = /** @class */ (function () {
             case 'observable':
                 break;
         }
-        console.log('To native', call);
         // Send this call to the native layer
         window.webkit.messageHandlers.avocado.postMessage(__assign({ type: 'message' }, call));
         return ret;
@@ -151,10 +152,12 @@ var Plugin = /** @class */ (function () {
     };
     /**
      * Call a native plugin method, or a web API fallback.
+     *
+     * NO CONSOLE LOGS IN THIS METHOD! Can throw our
+     * custom console handler into an infinite loop
      */
     Plugin.prototype.native = function (method, options, callbackType, callbackFunction) {
         var d = this.constructor.getPluginInfo();
-        console.log("Avocado Plugin Call: " + d.id + " - " + method);
         // If avocado is running in a browser environment, call our
         // web fallback
         /*

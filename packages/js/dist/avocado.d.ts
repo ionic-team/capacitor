@@ -14,6 +14,8 @@ export declare class Avocado {
     registerPlugin(plugin: Plugin): void;
     /**
      * Send a plugin method call to the native layer.
+     *
+     * NO CONSOLE LOGS HERE, WILL CAUSE CONSOLE.LOG INFINITE LOOP
      */
     toNative(call: PluginCall, caller: PluginCaller): any;
     private _toNativeCallback(call, caller);

@@ -10,6 +10,9 @@ export declare class Plugin {
     nativePromise(method: string, options?: any, webFallback?: Function): any;
     /**
      * Call a native plugin method, or a web API fallback.
+     *
+     * NO CONSOLE LOGS IN THIS METHOD! Can throw our
+     * custom console handler into an infinite loop
      */
     native(method: any, options: any, callbackType: string, callbackFunction?: PluginCallback): any;
 }

@@ -24,12 +24,13 @@ export class Plugin {
 
   /**
    * Call a native plugin method, or a web API fallback.
+   * 
+   * NO CONSOLE LOGS IN THIS METHOD! Can throw our
+   * custom console handler into an infinite loop
    */
   native(method: any, options: any, callbackType: string, callbackFunction?: PluginCallback) {
 
     let d = (<any>this).constructor.getPluginInfo();
-
-    console.log(`Avocado Plugin Call: ${d.id} - ${method}`);
 
     // If avocado is running in a browser environment, call our
     // web fallback
