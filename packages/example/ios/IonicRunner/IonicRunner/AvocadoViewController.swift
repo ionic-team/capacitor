@@ -68,13 +68,17 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     let body = message.body
     if let dict = body as? [String:Any] {
+      
+      // TODO Don't just blindly cast here
       let pluginId = dict["pluginId"] as! String
       let method = dict["methodName"] as! String
       let callbackId = dict["callbackId"] as! String
+      // Especially here
+      let options = dict["options"] as! [String:Any]
       
-      print("To Native -> ", pluginId, method, callbackId)
+      print("To Native -> ", pluginId, method, callbackId, options)
       
-      self.avocado.handleJSCall(call: JSCall(pluginId: pluginId, method: method, callbackId: callbackId))
+      self.avocado.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
     }
   }
 

@@ -45,6 +45,7 @@ var Avocado = /** @class */ (function () {
             case 'observable':
                 break;
         }
+        console.log('To native', call);
         // Send this call to the native layer
         window.webkit.messageHandlers.avocado.postMessage(call);
         return ret;

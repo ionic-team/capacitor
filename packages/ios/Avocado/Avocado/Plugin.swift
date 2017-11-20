@@ -36,9 +36,11 @@ public typealias PluginErrorCallback = (_ error: PluginCallError) -> Void
  * A call down to a native plugin
  */
 @objc public class PluginCall : NSObject {
+  public var options: [String:Any] = [:]
   public var successCallback: PluginSuccessCallback
   public var errorCallback: PluginErrorCallback
-  public init(success: @escaping PluginSuccessCallback, error: @escaping PluginErrorCallback) {
+  public init(options: [String:Any], success: @escaping PluginSuccessCallback, error: @escaping PluginErrorCallback) {
+    self.options = options
     self.successCallback = success
     self.errorCallback = error
   }

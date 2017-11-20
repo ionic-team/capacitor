@@ -68,6 +68,8 @@ export class Avocado {
         break;
     }
 
+    console.log('To native', call);
+
     // Send this call to the native layer
     window.webkit.messageHandlers.avocado.postMessage(call);
 

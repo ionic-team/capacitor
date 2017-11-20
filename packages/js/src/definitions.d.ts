@@ -17,7 +17,7 @@ export interface PluginCaller {
 export interface PluginCall {
   pluginId: string;
   methodName: string;
-  data: any;
+  options: any;
 
   callbackId?: string;
 
