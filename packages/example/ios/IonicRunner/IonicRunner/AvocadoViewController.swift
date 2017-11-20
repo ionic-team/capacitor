@@ -70,17 +70,23 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     let body = message.body
     if let dict = body as? [String:Any] {
+      let type = dict["type"] as! String? ?? ""
       
-      // TODO Don't just blindly cast here
-      let pluginId = dict["pluginId"] as! String
-      let method = dict["methodName"] as! String
-      let callbackId = dict["callbackId"] as! String
+      if type == "js.error" {
+        let message = dict["message"] as! String? ?? ""
+        print("JS ERROR", message)
+      } else if type == "message" {
+        // TODO Don't just blindly cast here
+        let pluginId = dict["pluginId"] as! String
+        let method = dict["methodName"] as! String
+        let callbackId = dict["callbackId"] as! String
 
-      let options = dict["options"] as! [String:Any]? ?? [:]
-      
-      print("To Native -> ", pluginId, method, callbackId, options)
-      
-      self.avocado!.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
+        let options = dict["options"] as! [String:Any]? ?? [:]
+        
+        print("To Native -> ", pluginId, method, callbackId, options)
+        
+        self.avocado!.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
+      }
     }
   }
 
@@ -140,6 +146,22 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
     
     self.present(alertController, animated: true, completion: nil)
   }
+  
+  /**
+   * Add hooks to detect failed HTTP requests
+ 
+  func webView(webView: WKWebView,
+               didFailProvisionalNavigation navigation: WKNavigation!,
+               withError error: NSError) {
+    if error.code == -1001 { // TIMED OUT:
+      // CODE to handle TIMEOUT
+    } else if error.code == -1003 { // SERVER CANNOT BE FOUND
+      // CODE to handle SERVER not found
+    } else if error.code == -1100 { // URL NOT FOUND ON SERVER
+      // CODE to handle URL not found
+    }
+  }
+ */
 
 }
 
