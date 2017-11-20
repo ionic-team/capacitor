@@ -37,6 +37,8 @@ var Avocado = /** @class */ (function () {
     };
     /**
      * Send a plugin method call to the native layer.
+     *
+     * NO CONSOLE LOGS HERE, WILL CAUSE CONSOLE.LOG INFINITE LOOP
      */
     Avocado.prototype.toNative = function (call, caller) {
         var ret;
@@ -56,7 +58,6 @@ var Avocado = /** @class */ (function () {
             case 'observable':
                 break;
         }
-        console.log('To native', call);
         // Send this call to the native layer
         window.webkit.messageHandlers.avocado.postMessage(__assign({ type: 'message' }, call));
         return ret;
