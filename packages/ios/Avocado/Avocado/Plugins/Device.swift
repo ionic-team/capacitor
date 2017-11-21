@@ -13,7 +13,7 @@ public class Device: Plugin {
       isSimulator = true
     #endif
     
-    call.successCallback(PluginResult(data: [
+    call.successCallback(PluginResult([
       "model": UIDevice.current.model,
       "osVersion": UIDevice.current.systemVersion,
       "platform": "ios",

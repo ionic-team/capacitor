@@ -20,6 +20,6 @@ public class StatusBar: Plugin {
       }
     }
     
-    call.successCallback(PluginResult(data: [:]))
+    call.successCallback(PluginResult([:]))
   }
 }

@@ -13,6 +13,8 @@ import {
   BrowserPlugin
 } from '../../plugins';
 
+import { FSPlugin } from 'avocado-js';
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -124,5 +126,17 @@ export class HomePage {
   browserOpen() {
     let browser = new BrowserPlugin()
     browser.open('http://ionicframework.com');
+  }
+
+  fileWrite() {
+    let fs = new FSPlugin()
+    fs.writeFile('text.txt', "This is a test")
+    console.log('Wrote file');
+  }
+
+  async fileRead() {
+    let fs = new FSPlugin()
+    let contents = await fs.readFile('text.txt');
+    console.log(contents);
   }
 }

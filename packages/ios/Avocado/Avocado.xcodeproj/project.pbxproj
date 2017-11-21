@@ -13,6 +13,7 @@
 		501CBABD1FC29EDE009B0D4D /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */; };
 		501CBABF1FC2A22A009B0D4D /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBABE1FC2A22A009B0D4D /* Browser.swift */; };
 		50474F051FC36E5700AA0184 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F041FC36E5700AA0184 /* Console.swift */; };
+		50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F061FC3B54800AA0184 /* Filesystem.swift */; };
 		50503EE91FC08595003606DC /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Avocado.framework */; };
 		50503EEE1FC08595003606DC /* AvocadoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* AvocadoTests.swift */; };
 		50503EF01FC08595003606DC /* Avocado.h in Headers */ = {isa = PBXBuildFile; fileRef = 50503EE21FC08594003606DC /* Avocado.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -40,6 +41,7 @@
 		501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		501CBABE1FC2A22A009B0D4D /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		50474F041FC36E5700AA0184 /* Console.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
+		50474F061FC3B54800AA0184 /* Filesystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filesystem.swift; sourceTree = "<group>"; };
 		50503EDF1FC08594003606DC /* Avocado.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Avocado.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE21FC08594003606DC /* Avocado.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Avocado.h; sourceTree = "<group>"; };
 		50503EE31FC08594003606DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */,
 				501CBABE1FC2A22A009B0D4D /* Browser.swift */,
 				50474F041FC36E5700AA0184 /* Console.swift */,
+				50474F061FC3B54800AA0184 /* Filesystem.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -256,6 +259,7 @@
 				50503F001FC08662003606DC /* Geolocation.swift in Sources */,
 				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
 				50503F251FC098A3003606DC /* Plugin.swift in Sources */,
+				50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */,
 				50503EFF1FC08662003606DC /* Device.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -70,7 +70,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     let body = message.body
     if let dict = body as? [String:Any] {
-      let type = dict["type"] as! String? ?? ""
+      let type = dict["type"] as? String ?? ""
       
       if type == "js.error" {
         print("JS ERORR")
@@ -78,11 +78,10 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
           handleJSStartupError(error)
         }
       } else if type == "message" {
-        // TODO Don't just blindly cast here
-        let pluginId = dict["pluginId"] as! String
-        let method = dict["methodName"] as! String
-        let callbackId = dict["callbackId"] as! String
-
+        let pluginId = dict["pluginId"] as? String ?? ""
+        let method = dict["methodName"] as? String ?? ""
+        let callbackId = dict["callbackId"] as? String ?? ""
+        
         let options = dict["options"] as! [String:Any]? ?? [:]
         
         print("To Native -> ", pluginId, method, callbackId, options)
@@ -94,7 +93,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   
   func handleJSStartupError(_ error: [String:Any]) {
     let message = error["message"] ?? "No message"
-    let url = error["url"] as! String? ?? ""
+    let url = error["url"] as? String ?? ""
     let line = error["line"] ?? ""
     let col = error["col"] ?? ""
     var filename = ""
