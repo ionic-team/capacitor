@@ -2,9 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const shelljs_1 = require("shelljs");
 const path_1 = require("path");
-const utils_1 = require("../utils");
-function open(args) {
-    const platform = args.shift();
+const common_1 = require("../utils/common");
+function open(files) {
+    const platform = files.shift();
+    console.log(files);
     const platformFolders = shelljs_1.ls(platform);
     const first = platformFolders[0];
     if (!first) {
@@ -12,14 +13,14 @@ function open(args) {
     }
     const dest = path_1.join(platform, first);
     if (platform == 'ios') {
-        utils_1.log('ls');
+        common_1.log('ls');
         const proj = shelljs_1.ls(dest).filter(f => f.indexOf('.xcodeproj') >= 0)[0];
         if (!proj) {
-            utils_1.logError('open', 'Unable to find Xcode project');
+            common_1.logError('open', 'Unable to find Xcode project');
             return 1;
         }
         const fullPath = path_1.join(dest, proj);
-        utils_1.log('open', fullPath);
+        common_1.log('open', fullPath);
         shelljs_1.exec(`open ${fullPath}`);
     }
 }

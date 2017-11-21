@@ -1,5 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function compile(args) {
+function compile() {
 }
 exports.compile = compile;

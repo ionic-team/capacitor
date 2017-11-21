@@ -1,5 +1,5 @@
 
-export function compile(args: any[]) {
+export function compile() {
 
 }
 

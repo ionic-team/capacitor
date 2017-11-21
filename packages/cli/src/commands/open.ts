@@ -1,10 +1,11 @@
 import { ls, exec } from 'shelljs';
 import { join } from 'path';
-import { log, logError } from '../utils';
+import { log, logError } from '../utils/common';
 
-export function open(args: any[]) {
-  const platform = args.shift();
+export function open(files: any[]) {
+  const platform = files.shift();
 
+  console.log(files);
   const platformFolders = ls(platform);
   const first = platformFolders[0];
   if(!first) {

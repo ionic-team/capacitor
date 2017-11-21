@@ -1,5 +1,5 @@
 import {exec} from 'shelljs';
 
-export function build(args: any[]) {
+export function build() {
   exec('npm run build');
 }
