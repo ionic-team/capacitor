@@ -13,8 +13,6 @@ import {
   BrowserPlugin
 } from '../../plugins';
 
-import { ConsolePlugin } from '../../plugins/console';
-
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -27,8 +25,6 @@ export class HomePage {
   isStatusBarLight = true
 
   constructor(public navCtrl: NavController, public zone: NgZone) {
-    // Todo: make this global
-    let console = new ConsolePlugin();
   }
 
   /*

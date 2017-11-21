@@ -10,6 +10,8 @@ import {
 import { Platform } from './platform';
 import { Plugin } from './plugin';
 
+import { ConsolePlugin } from './plugins/console';
+
 declare var window: any;
 
 /**
@@ -18,27 +20,28 @@ declare var window: any;
 export class Avocado {
   platform: Platform;
 
+  console: ConsolePlugin;
+
   // Storage of calls for associating w/ native callback later
   private calls: { [key: string]: StoredPluginCall } = {}
 
   private callbackIdCount = 0;
 
   constructor() {
-    this.log('initializing...');
+    // Load console plugin first to avoid race conditions
 
-    this.log('Detecting platform');
     this.platform = new Platform();
 
-    this.loadPlugins();
+    setTimeout(() => { this.loadCorePlugins(); } )
   }
 
   private log(...args: any[]) {
     args.unshift('Avocado: ');
-    console.log.apply(console, args);
+    this.console && this.console.windowLog(args);
   }
 
-  loadPlugins() {
-    this.log('Loading plugins');
+  loadCorePlugins() {
+    this.console = new ConsolePlugin();
   }
 
   registerPlugin(plugin: Plugin) {
@@ -49,7 +52,7 @@ export class Avocado {
   /**
    * Send a plugin method call to the native layer.
    * 
-   * NO CONSOLE LOGS HERE, WILL CAUSE CONSOLE.LOG INFINITE LOOP
+   * NO CONSOLE.LOG HERE, WILL CAUSE INFINITE LOOP WITH CONSOLE PLUGIN
    */
   toNative(call: PluginCall, caller: PluginCaller) {
     let ret;
@@ -72,6 +75,8 @@ export class Avocado {
       case 'observable':
         break;
     }
+
+    //this.log('To native', call);
 
     // Send this call to the native layer
     window.webkit.messageHandlers.avocado.postMessage({

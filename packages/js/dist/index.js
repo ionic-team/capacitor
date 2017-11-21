@@ -4,6 +4,125 @@ var Platform = /** @class */ (function () {
     return Platform;
 }());
 
+/**
+ * Base class for all 3rd party plugins.
+ */
+var Plugin = /** @class */ (function () {
+    function Plugin() {
+        this.avocado = Avocado.instance();
+        this.avocado.registerPlugin(this);
+    }
+    Plugin.prototype.nativeCallback = function (method, options, callbackFunction, webFallback) {
+        return this.native(method, options, 'callback', callbackFunction);
+    };
+    Plugin.prototype.nativePromise = function (method, options, webFallback) {
+        return this.native(method, options, 'promise', null);
+    };
+    /**
+     * Call a native plugin method, or a web API fallback.
+     *
+     * NO CONSOLE LOGS IN THIS METHOD! Can throw our
+     * custom console handler into an infinite loop
+     */
+    Plugin.prototype.native = function (method, options, callbackType, callbackFunction) {
+        var d = this.constructor.getPluginInfo();
+        // If avocado is running in a browser environment, call our
+        // web fallback
+        /*
+        if(this.avocado.isBrowser()) {
+          if(webFallback) {
+            return webFallback(options);
+          } else {
+            throw new Error('Tried calling a native plugin method in the browser but no web fallback is available.');
+          }
+        }
+        */
+        // Avocado is running in a non-sandbox browser environment, call
+        // the native code underneath
+        return this.avocado.toNative({
+            pluginId: d.id,
+            methodName: method,
+            options: options,
+            callbackType: callbackType
+        }, {
+            callbackFunction: callbackFunction
+        });
+    };
+    return Plugin;
+}());
+/**
+ * Decorator for AvocadoPlugin's
+ */
+function AvocadoPlugin(config) {
+    return function (cls) {
+        cls['_avocadoPlugin'] = Object.assign({}, config);
+        cls['getPluginInfo'] = function () {
+            return cls['_avocadoPlugin'];
+        };
+        return cls;
+    };
+}
+
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var ConsolePlugin = /** @class */ (function (_super) {
+    __extends(ConsolePlugin, _super);
+    function ConsolePlugin() {
+        var _this = _super.call(this) || this;
+        _this.queue = [];
+        _this.originalLog = window.console.log;
+        window.console.log = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            //const str = args.map(a => a.toString()).join(' ');
+            _this.queue.push(['log'].concat(args));
+            _this.originalLog.apply(console, args);
+        };
+        var syncQueue = function () {
+            var queue = _this.queue.slice();
+            while (queue.length) {
+                var logMessage = queue.shift();
+                var level = logMessage[0];
+                var message = logMessage.slice(1);
+                _this.nativeCallback('log', { level: level, message: message });
+            }
+            setTimeout(syncQueue, 100);
+        };
+        setTimeout(syncQueue);
+        return _this;
+    }
+    ConsolePlugin.prototype.windowLog = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        this.originalLog.apply(this.originalLog, args);
+    };
+    ConsolePlugin = __decorate([
+        AvocadoPlugin({
+            name: 'Console',
+            id: 'com.avocadojs.plugin.console'
+        })
+    ], ConsolePlugin);
+    return ConsolePlugin;
+}(Plugin));
+
 var __assign = (undefined && undefined.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -17,13 +136,13 @@ var __assign = (undefined && undefined.__assign) || Object.assign || function(t)
  */
 var Avocado = /** @class */ (function () {
     function Avocado() {
+        // Load console plugin first to avoid race conditions
+        var _this = this;
         // Storage of calls for associating w/ native callback later
         this.calls = {};
         this.callbackIdCount = 0;
-        this.log('initializing...');
-        this.log('Detecting platform');
         this.platform = new Platform();
-        this.loadPlugins();
+        setTimeout(function () { _this.loadCorePlugins(); });
     }
     Avocado.prototype.log = function () {
         var args = [];
@@ -31,10 +150,10 @@ var Avocado = /** @class */ (function () {
             args[_i] = arguments[_i];
         }
         args.unshift('Avocado: ');
-        console.log.apply(console, args);
+        this.console && this.console.windowLog(args);
     };
-    Avocado.prototype.loadPlugins = function () {
-        this.log('Loading plugins');
+    Avocado.prototype.loadCorePlugins = function () {
+        this.console = new ConsolePlugin();
     };
     Avocado.prototype.registerPlugin = function (plugin) {
         var info = plugin.constructor.getPluginInfo();
@@ -43,7 +162,7 @@ var Avocado = /** @class */ (function () {
     /**
      * Send a plugin method call to the native layer.
      *
-     * NO CONSOLE LOGS HERE, WILL CAUSE CONSOLE.LOG INFINITE LOOP
+     * NO CONSOLE.LOG HERE, WILL CAUSE INFINITE LOOP WITH CONSOLE PLUGIN
      */
     Avocado.prototype.toNative = function (call, caller) {
         var ret;
@@ -63,6 +182,7 @@ var Avocado = /** @class */ (function () {
             case 'observable':
                 break;
         }
+        //this.log('To native', call);
         // Send this call to the native layer
         window.webkit.messageHandlers.avocado.postMessage(__assign({ type: 'message' }, call));
         return ret;
@@ -136,63 +256,4 @@ var Avocado = /** @class */ (function () {
     return Avocado;
 }());
 
-/**
- * Base class for all 3rd party plugins.
- */
-var Plugin = /** @class */ (function () {
-    function Plugin() {
-        this.avocado = Avocado.instance();
-        this.avocado.registerPlugin(this);
-    }
-    Plugin.prototype.nativeCallback = function (method, options, callbackFunction, webFallback) {
-        return this.native(method, options, 'callback', callbackFunction);
-    };
-    Plugin.prototype.nativePromise = function (method, options, webFallback) {
-        return this.native(method, options, 'promise', null);
-    };
-    /**
-     * Call a native plugin method, or a web API fallback.
-     *
-     * NO CONSOLE LOGS IN THIS METHOD! Can throw our
-     * custom console handler into an infinite loop
-     */
-    Plugin.prototype.native = function (method, options, callbackType, callbackFunction) {
-        var d = this.constructor.getPluginInfo();
-        // If avocado is running in a browser environment, call our
-        // web fallback
-        /*
-        if(this.avocado.isBrowser()) {
-          if(webFallback) {
-            return webFallback(options);
-          } else {
-            throw new Error('Tried calling a native plugin method in the browser but no web fallback is available.');
-          }
-        }
-        */
-        // Avocado is running in a non-sandbox browser environment, call
-        // the native code underneath
-        return this.avocado.toNative({
-            pluginId: d.id,
-            methodName: method,
-            options: options,
-            callbackType: callbackType
-        }, {
-            callbackFunction: callbackFunction
-        });
-    };
-    return Plugin;
-}());
-/**
- * Decorator for AvocadoPlugin's
- */
-function AvocadoPlugin(config) {
-    return function (cls) {
-        cls['_avocadoPlugin'] = Object.assign({}, config);
-        cls['getPluginInfo'] = function () {
-            return cls['_avocadoPlugin'];
-        };
-        return cls;
-    };
-}
-
-export { Avocado, Platform, Plugin, AvocadoPlugin };
+export { Avocado, Platform, Plugin, AvocadoPlugin, ConsolePlugin };

@@ -7,18 +7,19 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 import { Platform } from './platform';
+import { ConsolePlugin } from './plugins/console';
 /**
  * Main class for interacting with the Avocado runtime.
  */
 var Avocado = /** @class */ (function () {
     function Avocado() {
+        // Load console plugin first to avoid race conditions
+        var _this = this;
         // Storage of calls for associating w/ native callback later
         this.calls = {};
         this.callbackIdCount = 0;
-        this.log('initializing...');
-        this.log('Detecting platform');
         this.platform = new Platform();
-        this.loadPlugins();
+        setTimeout(function () { _this.loadCorePlugins(); });
     }
     Avocado.prototype.log = function () {
         var args = [];
@@ -26,10 +27,10 @@ var Avocado = /** @class */ (function () {
             args[_i] = arguments[_i];
         }
         args.unshift('Avocado: ');
-        console.log.apply(console, args);
+        this.console && this.console.windowLog(args);
     };
-    Avocado.prototype.loadPlugins = function () {
-        this.log('Loading plugins');
+    Avocado.prototype.loadCorePlugins = function () {
+        this.console = new ConsolePlugin();
     };
     Avocado.prototype.registerPlugin = function (plugin) {
         var info = plugin.constructor.getPluginInfo();
@@ -38,7 +39,7 @@ var Avocado = /** @class */ (function () {
     /**
      * Send a plugin method call to the native layer.
      *
-     * NO CONSOLE LOGS HERE, WILL CAUSE CONSOLE.LOG INFINITE LOOP
+     * NO CONSOLE.LOG HERE, WILL CAUSE INFINITE LOOP WITH CONSOLE PLUGIN
      */
     Avocado.prototype.toNative = function (call, caller) {
         var ret;
@@ -58,6 +59,7 @@ var Avocado = /** @class */ (function () {
             case 'observable':
                 break;
         }
+        //this.log('To native', call);
         // Send this call to the native layer
         window.webkit.messageHandlers.avocado.postMessage(__assign({ type: 'message' }, call));
         return ret;
