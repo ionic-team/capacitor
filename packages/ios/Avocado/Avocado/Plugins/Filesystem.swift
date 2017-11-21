@@ -83,7 +83,7 @@ public class Filesystem : Plugin {
       return
     }
     
-    let intermediateDirectories = call.get("intermediateDirectories") as? Bool ?? false
+    let createIntermediateDirectories = call.get("createIntermediateDirectories") as? Bool ?? false
     let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
     let directory = getDirectory(directory: directoryOption)
     
@@ -95,7 +95,31 @@ public class Filesystem : Plugin {
     let fileUrl = dir.appendingPathComponent(path)
     
     do {
-      try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: intermediateDirectories, attributes: nil)
+      try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: createIntermediateDirectories, attributes: nil)
+      call.success()
+    } catch let error as NSError {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
+  
+  @objc func rmdir(_ call: PluginCall) {
+    guard let path = call.get("path") as? String else {
+      handleError(call, "Path must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directory = getDirectory(directory: directoryOption)
+    
+    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
+      handleError(call, "Invalid device directory '\(directoryOption)'")
+      return
+    }
+    
+    let fileUrl = dir.appendingPathComponent(path)
+    
+    do {
+      try FileManager.default.removeItem(at: fileUrl)
       call.success()
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)

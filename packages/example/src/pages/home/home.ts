@@ -3,17 +3,16 @@ import { Component, NgZone } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
 import {
-  CameraPlugin,
-  GeolocationPlugin,
-  DevicePlugin,
-  StatusBarPlugin,
+  Geolocation,
+  Device,
+  Filesystem,
+  FilesystemDirectory,
+  StatusBar,
   StatusBarStyle,
-  HapticsPlugin,
+  Haptics,
   HapticsImpactStyle,
-  BrowserPlugin
-} from '../../plugins';
-
-import { FSPlugin } from 'avocado-js';
+  Browser
+} from 'avocado-js';
 
 @Component({
   selector: 'page-home',
@@ -40,7 +39,7 @@ export class HomePage {
   */
 
   async getCurrentPosition() {
-    let geo = new GeolocationPlugin();
+    let geo = new Geolocation();
 
     try {
       const coordinates = await geo.getCurrentPosition()
@@ -55,7 +54,7 @@ export class HomePage {
   }
 
   watchPosition() {
-    let geo = new GeolocationPlugin();
+    let geo = new Geolocation();
 
     try {
       const wait = geo.watchPosition((err, position) => {
@@ -71,7 +70,7 @@ export class HomePage {
   }
 
   async getDeviceInfo() {
-    let device = new DevicePlugin();
+    let device = new Device();
     const info = await device.getInfo()
     this.zone.run(() => {
       this.deviceInfoJson = JSON.stringify(info, null, 2);
@@ -81,7 +80,7 @@ export class HomePage {
   }
 
   changeStatusBar() {
-    let statusBar = new StatusBarPlugin();
+    let statusBar = new StatusBar();
     statusBar.setStyle({
       style: this.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
     }, () => {});
@@ -89,7 +88,7 @@ export class HomePage {
   }
 
   hapticsImpact(style = HapticsImpactStyle.Heavy) {
-    let haptics = new HapticsPlugin()
+    let haptics = new Haptics()
     haptics.impact({
       style: style
     });
@@ -104,39 +103,59 @@ export class HomePage {
   }
 
   hapticsVibrate() {
-    let haptics = new HapticsPlugin()
+    let haptics = new Haptics()
     haptics.vibrate();
   }
 
   hapticsSelectionStart() {
-    let haptics = new HapticsPlugin()
+    let haptics = new Haptics()
     haptics.selectionStart();
   }
 
   hapticsSelectionChanged() {
-    let haptics = new HapticsPlugin()
+    let haptics = new Haptics()
     haptics.selectionChanged();
   }
 
   hapticsSelectionEnd() {
-    let haptics = new HapticsPlugin()
+    let haptics = new Haptics()
     haptics.selectionEnd();
   }
 
   browserOpen() {
-    let browser = new BrowserPlugin()
+    let browser = new Browser()
     browser.open('http://ionicframework.com');
   }
 
   fileWrite() {
-    let fs = new FSPlugin()
-    fs.writeFile('text.txt', "This is a test")
+    let fs = new Filesystem()
+    fs.writeFile('text.txt', "This is a test", FilesystemDirectory.Documents)
     console.log('Wrote file');
   }
 
   async fileRead() {
-    let fs = new FSPlugin()
-    let contents = await fs.readFile('text.txt');
+    let fs = new Filesystem()
+    let contents = await fs.readFile('text.txt', FilesystemDirectory.Documents);
     console.log(contents);
+  }
+
+  async mkdir() {
+    let fs = new Filesystem()
+    try {
+      let ret = await fs.mkdir('secrets', FilesystemDirectory.Documents);
+      console.log('Made dir', ret);
+    } catch(e) {
+      console.error('Unable to make directory', e);
+    }
+  }
+
+  async rmdir() {
+    let fs = new Filesystem()
+    try {
+      let ret = await fs.rmdir('secrets', FilesystemDirectory.Documents);
+      console.log('Removed dir', ret);
+    } catch(e) {
+      console.error('Unable to remove directory', e);
+    }
   }
 }

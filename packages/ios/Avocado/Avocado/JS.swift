@@ -53,16 +53,20 @@ public class JSResult {
 }
 
 public class JSResultError {
-  public var call: JSCall
-  public var error: JSResultBody
+  var call: JSCall
+  var error: JSResultBody
+  var message: String
   
-  public init(call: JSCall, error: JSResultBody) {
+  public init(call: JSCall, message: String, error: JSResultBody) {
     self.call = call
+    self.message = message
     self.error = error
   }
   
   public func toJson() -> String {
     var jsonResponse = "{}"
+    
+    error["message"] = self.message
     
     if let theJSONData = try? JSONSerialization.data(withJSONObject: error, options: []) {
       jsonResponse = String(data: theJSONData,

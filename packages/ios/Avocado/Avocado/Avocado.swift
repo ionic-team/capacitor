@@ -80,7 +80,7 @@ public class Avocado {
         let pluginCall = PluginCall(options: call.options, success: {(result: PluginResult) -> Void in
           self.toJs(result: JSResult(call: call, result: result.data))
         }, error: {(error: PluginCallError) -> Void in
-          self.toJsError(error: JSResultError(call: call, error: error.data))
+          self.toJsError(error: JSResultError(call: call, message: error.message, error: error.data))
         })
         // Perform the plugin call
         plugin.perform(selector, with: pluginCall)
@@ -106,6 +106,7 @@ public class Avocado {
    * Send an error result to the JavaScript layer.
    */
   public func toJsError(error: JSResultError) {
+    print("Sending JS Error", error.toJson())
     self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: '\(error.toJson())'})") { (result, error) in
       if error != nil && result != nil {
         print(result!)

@@ -15,40 +15,56 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { AvocadoPlugin, Plugin } from '../plugin';
-export var Directory;
-(function (Directory) {
-    Directory["Application"] = "APPLICATION";
-    Directory["Documents"] = "DOCUMENTS";
-    Directory["Data"] = "DATA";
-    Directory["Cache"] = "CACHE";
-    Directory["External"] = "EXTERNAL";
-    Directory["ExternalStorage"] = "EXTERNAL_STORAGE"; // Android only
-})(Directory || (Directory = {}));
-;
-var FSPlugin = /** @class */ (function (_super) {
-    __extends(FSPlugin, _super);
-    function FSPlugin() {
+export var FilesystemDirectory;
+(function (FilesystemDirectory) {
+    FilesystemDirectory["Application"] = "APPLICATION";
+    FilesystemDirectory["Documents"] = "DOCUMENTS";
+    FilesystemDirectory["Data"] = "DATA";
+    FilesystemDirectory["Cache"] = "CACHE";
+    FilesystemDirectory["External"] = "EXTERNAL";
+    FilesystemDirectory["ExternalStorage"] = "EXTERNAL_STORAGE"; // Android only
+})(FilesystemDirectory || (FilesystemDirectory = {}));
+var Filesystem = /** @class */ (function (_super) {
+    __extends(Filesystem, _super);
+    function Filesystem() {
         return _super.call(this) || this;
     }
-    FSPlugin.prototype.writeFile = function (file, data, options) {
+    Filesystem.prototype.writeFile = function (file, data, directory, encoding) {
+        if (encoding === void 0) { encoding = 'utf8'; }
         return this.nativePromise('writeFile', {
-            directory: options && options.directory || Directory.Documents,
             file: file,
-            data: data
+            data: data,
+            directory: directory,
+            encoding: encoding
         });
     };
-    FSPlugin.prototype.readFile = function (file, options) {
+    Filesystem.prototype.readFile = function (file, directory, encoding) {
+        if (encoding === void 0) { encoding = 'utf8'; }
         return this.nativePromise('readFile', {
-            directory: options && options.directory || Directory.Documents,
-            file: file
+            file: file,
+            directory: directory,
+            encoding: encoding
         });
     };
-    FSPlugin = __decorate([
+    Filesystem.prototype.mkdir = function (path, directory, createIntermediateDirectories) {
+        if (createIntermediateDirectories === void 0) { createIntermediateDirectories = false; }
+        return this.nativePromise('mkdir', {
+            path: path,
+            directory: directory,
+            createIntermediateDirectories: createIntermediateDirectories
+        });
+    };
+    Filesystem.prototype.rmdir = function (path, directory) {
+        return this.nativePromise('rmdir', {
+            path: path
+        });
+    };
+    Filesystem = __decorate([
         AvocadoPlugin({
-            name: 'FS',
+            name: 'Filesystem',
             id: 'com.avocadojs.plugin.fs'
         })
-    ], FSPlugin);
-    return FSPlugin;
+    ], Filesystem);
+    return Filesystem;
 }(Plugin));
-export { FSPlugin };
+export { Filesystem };
