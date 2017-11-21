@@ -1,5 +1,5 @@
 import { Plugin } from '../plugin';
-export declare enum Directory {
+export declare enum FilesystemDirectory {
     Application = "APPLICATION",
     Documents = "DOCUMENTS",
     Data = "DATA",
@@ -7,14 +7,10 @@ export declare enum Directory {
     External = "EXTERNAL",
     ExternalStorage = "EXTERNAL_STORAGE",
 }
-export declare class FSPlugin extends Plugin {
+export declare class Filesystem extends Plugin {
     constructor();
-    writeFile(file: string, data: string, options?: {
-        encoding: string;
-        directory: Directory;
-    }): any;
-    readFile(file: string, options?: {
-        encoding: string;
-        directory: Directory;
-    }): any;
+    writeFile(file: string, data: string, directory: FilesystemDirectory, encoding?: string): any;
+    readFile(file: string, directory: FilesystemDirectory, encoding?: string): any;
+    mkdir(path: string, directory: FilesystemDirectory, createIntermediateDirectories?: boolean): any;
+    rmdir(path: string, directory: FilesystemDirectory): any;
 }
