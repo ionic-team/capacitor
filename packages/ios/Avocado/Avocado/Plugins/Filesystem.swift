@@ -7,6 +7,7 @@ public class Filesystem : Plugin {
     super.init(avocado, id: "com.avocadojs.plugin.fs")
   }
   
+  // Get the SearchPathDirectory corresponding to the JS string
   func getDirectory(directory: String) -> FileManager.SearchPathDirectory {
     switch directory {
     case "DOCUMENTS":
@@ -20,6 +21,10 @@ public class Filesystem : Plugin {
     }
   }
   
+  
+  /**
+   * Read a file from the filesystem.
+   */
   @objc func readFile(_ call: PluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
@@ -47,6 +52,10 @@ public class Filesystem : Plugin {
     }
   }
   
+  
+  /**
+   * Write a file to the filesystem.
+   */
   @objc func writeFile(_ call: PluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
@@ -76,7 +85,11 @@ public class Filesystem : Plugin {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
+
+
+  /**
+   * Append to a file.
+   */
   @objc func appendFile(_ call: PluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
@@ -124,6 +137,9 @@ public class Filesystem : Plugin {
   }
   
   
+  /**
+   * Make a new directory, optionally creating parent folders first.
+   */
   @objc func mkdir(_ call: PluginCall) {
     guard let path = call.get("path") as? String else {
       handleError(call, "Path must be provided and must be a string.")
@@ -149,6 +165,10 @@ public class Filesystem : Plugin {
     }
   }
   
+  
+  /**
+   * Remove a directory.
+   */
   @objc func rmdir(_ call: PluginCall) {
     guard let path = call.get("path") as? String else {
       handleError(call, "Path must be provided and must be a string.")
@@ -172,7 +192,40 @@ public class Filesystem : Plugin {
       handleError(call, error.localizedDescription, error)
     }
   }
+  
+  
+  /**
+   * Read the contents of a directory.
+   */
+  @objc func readdir(_ call: PluginCall) {
+    guard let path = call.get("path") as? String else {
+      handleError(call, "Path must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directory = getDirectory(directory: directoryOption)
+    
+    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
+      handleError(call, "Invalid device directory '\(directoryOption)'")
+      return
+    }
+    
+    let dirUrl = dir.appendingPathComponent(path)
+    
+    do {
 
+      let directoryContents = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: nil, options: [])
+
+      call.success([
+        "files": directoryContents
+      ])
+    } catch {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
+
+  // Helper function for handling errors
   func handleError(_ call: PluginCall, _ message: String, _ error: Error? = nil) {
     call.error(message, error)
   }
