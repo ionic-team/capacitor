@@ -6,13 +6,29 @@ const build_1 = require("./commands/build");
 const compile_1 = require("./commands/compile");
 const update_1 = require("./commands/update");
 const open_1 = require("./commands/open");
+const clean_1 = require("./commands/clean");
+const recreate_1 = require("./commands/recreate");
+exports.PROJECT_DIR = __dirname;
 function run(process) {
     program
         .version('0.0.1');
     program
-        .command('copy')
+        .command('update [mode]')
+        .option('-f, --force', 'forces a version update')
+        .description('updates the native plugins')
+        .action(update_1.updateCommand);
+    program
+        .command('clean')
+        .description('WARNING! removes iOS and android folders')
+        .action(clean_1.clean);
+    program
+        .command('recreate [mode]')
+        .description('WARNING! removes iOS and android folders')
+        .action(recreate_1.recreateCommand);
+    program
+        .command('copy [mode]')
         .description('copies the content of something')
-        .action(copy_1.copy);
+        .action(copy_1.copyCommand);
     program
         .command('build')
         .description('builds avocado')
@@ -25,10 +41,6 @@ function run(process) {
         .command('open')
         .description('opens avocado')
         .action(open_1.open);
-    program
-        .command('update [mode]')
-        .description('updates the native plugins')
-        .action(update_1.update);
     program.parse(process.argv);
 }
 exports.run = run;

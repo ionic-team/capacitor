@@ -16,8 +16,9 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "lint": "tslint --config tslint.js --project tsconfig.json --type-check",
-    "build": "npm run clean && tsc",
-    "watch": "tsc -w",
+    "build": "npm run copy-assets && npm run clean && tsc",
+    "copy-assets": "mkdir -p dist && cp -a assets dist/",
+    "watch": "npm run copy-assets && tsc -w",
     "version": "npm run build"
   },
   "files": [

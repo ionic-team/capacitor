@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const shelljs_1 = require("shelljs");
 const path_1 = require("path");
-const common_1 = require("../utils/common");
+const common_1 = require("../common");
 function open(files) {
     const platform = files.shift();
     console.log(files);

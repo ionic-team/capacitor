@@ -1,6 +1,6 @@
 import { ls, exec } from 'shelljs';
 import { join } from 'path';
-import { log, logError } from '../utils/common';
+import { log, logError } from '../common';
 
 export function open(files: any[]) {
   const platform = files.shift();
