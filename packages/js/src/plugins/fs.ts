@@ -57,7 +57,22 @@ export class Filesystem extends Plugin {
 
   rmdir(path: string, directory: FilesystemDirectory) {
     return this.nativePromise('rmdir', {
-      path
+      path,
+      directory
+    });
+  }
+
+  readdir(path: string, directory: FilesystemDirectory) {
+    return this.nativePromise('readdir', {
+      path,
+      directory
+    });
+  }
+
+  stat(path: string, directory: FilesystemDirectory) {
+    return this.nativePromise('stat', {
+      path,
+      directory
     });
   }
 }

@@ -95,10 +95,18 @@ public class Avocado {
    * Send a successful result to the JavaScript layer.
    */
   public func toJs(result: JSResult) {
-    self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(result.toJson())})") { (result, error) in
-      if error != nil && result != nil {
-        print(result!)
+    do {
+      print("Trying to go to json")
+      let resultJson = try result.toJson()
+      print("ERROR GOING OT JSON")
+      
+      self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
+        if error != nil && result != nil {
+          print(result!)
+        }
       }
+    } catch {
+      
     }
   }
   

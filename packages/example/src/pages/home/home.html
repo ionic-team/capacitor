@@ -78,6 +78,17 @@
     </ion-item>
     <ion-item>FS</ion-item>
     <ion-item>
+      <button (click)="mkdir()" ion-button>
+        mkdir
+      </button>
+      <button (click)="rmdir()" ion-button>
+        rmdir
+      </button>
+      <button (click)="readdir()" ion-button>
+        readdir
+      </button>
+    </ion-item>
+    <ion-item>
       <button (click)="fileWrite()" ion-button>
         File Write
       </button>
@@ -87,11 +98,8 @@
       <button (click)="fileAppend()" ion-button>
         File Append
       </button>
-      <button (click)="mkdir()" ion-button>
-        mkdir
-      </button>
-      <button (click)="rmdir()" ion-button>
-        rmdir
+      <button (click)="stat()" ion-button>
+        Stat
       </button>
     </ion-item>
   </ion-list>

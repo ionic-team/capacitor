@@ -65,7 +65,20 @@ var Filesystem = /** @class */ (function (_super) {
     };
     Filesystem.prototype.rmdir = function (path, directory) {
         return this.nativePromise('rmdir', {
-            path: path
+            path: path,
+            directory: directory
+        });
+    };
+    Filesystem.prototype.readdir = function (path, directory) {
+        return this.nativePromise('readdir', {
+            path: path,
+            directory: directory
+        });
+    };
+    Filesystem.prototype.stat = function (path, directory) {
+        return this.nativePromise('stat', {
+            path: path,
+            directory: directory
         });
     };
     Filesystem = __decorate([

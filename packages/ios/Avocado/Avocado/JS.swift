@@ -41,14 +41,22 @@ public class JSResult {
   }
   
   public func toJson() -> String {
-    var jsonResponse = "{}"
-    
-    if let theJSONData = try? JSONSerialization.data(withJSONObject: result, options: []) {
-      jsonResponse = String(data: theJSONData,
-                            encoding: .ascii)!
+    do {
+      if JSONSerialization.isValidJSONObject(result) {
+        let theJSONData = try JSONSerialization.data(withJSONObject: result, options: [])
+        
+        return String(data: theJSONData,
+                                encoding: .utf8)!
+      } else {
+        print("[Avocado Module Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
+              "Ensure that all data passed to success callback from module method is JSON serializable!")
+        
+      }
+    } catch let error as Error {
+      print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
     }
     
-    return jsonResponse
+    return "{}"
   }
 }
 
@@ -84,7 +92,7 @@ public class JSResultError {
     
     if let theJSONData = try? JSONSerialization.data(withJSONObject: error, options: []) {
       jsonResponse = String(data: theJSONData,
-                            encoding: .ascii)!
+                            encoding: .utf8)!
     }
     
     return jsonResponse

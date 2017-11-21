@@ -216,9 +216,42 @@ public class Filesystem : Plugin {
     do {
 
       let directoryContents = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: nil, options: [])
-
+      
+      let directoryPathStrings = directoryContents.map {(url: URL) -> String in
+        return url.path
+      }
+      
       call.success([
-        "files": directoryContents
+        "files": directoryPathStrings
+      ])
+    } catch {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
+  
+  @objc func stat(_ call: PluginCall) {
+    guard let path = call.get("path") as? String else {
+      handleError(call, "Path must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directory = getDirectory(directory: directoryOption)
+    
+    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
+      handleError(call, "Invalid device directory '\(directoryOption)'")
+      return
+    }
+    
+    let pathUrl = dir.appendingPathComponent(path)
+    
+    do {
+      let attr = try FileManager.default.attributesOfItem(atPath: pathUrl.path)
+      call.success([
+        "type": attr[.type] as! String,
+        "size": attr[.size] as! UInt64,
+        "ctime": (attr[.creationDate] as! Date).timeIntervalSince1970,
+        "mtime": (attr[.modificationDate] as! Date).timeIntervalSince1970
       ])
     } catch {
       handleError(call, error.localizedDescription, error)
