@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/assets"/><source path="/Users/tim/Work/avocado/packages/example/android/plugins/device/build/generated/assets/shaders/debug"/></dataSet><dataSet config="debug"><source path="/Users/tim/Work/avocado/packages/example/android/plugins/device/src/debug/assets"/></dataSet></merger>

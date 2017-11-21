@@ -1,0 +1,23 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:1-5:12
+	package
+		ADDED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:3:11-54
+		INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml
+		INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml
+	android:versionName
+		ADDED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:3:81-108
+		INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml
+		INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:2:11-69
+	android:versionCode
+		ADDED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml:3:55-80
+		INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml
+		INJECTED from /Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/AndroidManifest.xml
