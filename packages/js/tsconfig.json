@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "experimentalDecorators": true,
     "lib": ["dom", "es2015"],
     "module": "es2015",
     "outDir": "dist",

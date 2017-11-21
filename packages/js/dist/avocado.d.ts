@@ -1,21 +1,23 @@
 import { PluginCaller, PluginCall, PluginResult } from './definitions';
 import { Platform } from './platform';
 import { Plugin } from './plugin';
+import { ConsolePlugin } from './plugins/console';
 /**
  * Main class for interacting with the Avocado runtime.
  */
 export declare class Avocado {
     platform: Platform;
+    console: ConsolePlugin;
     private calls;
     private callbackIdCount;
     constructor();
     private log(...args);
-    loadPlugins(): void;
+    loadCorePlugins(): void;
     registerPlugin(plugin: Plugin): void;
     /**
      * Send a plugin method call to the native layer.
      *
-     * NO CONSOLE LOGS HERE, WILL CAUSE CONSOLE.LOG INFINITE LOOP
+     * NO CONSOLE.LOG HERE, WILL CAUSE INFINITE LOOP WITH CONSOLE PLUGIN
      */
     toNative(call: PluginCall, caller: PluginCaller): any;
     private _toNativeCallback(call, caller);
