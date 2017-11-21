@@ -9,3 +9,4 @@ export { Geolocation } from './plugins/geolocation';
 export { StatusBar, StatusBarStyle } from './plugins/statusbar';
 export { Haptics, HapticsImpactStyle } from './plugins/haptics';
 export { Filesystem, FilesystemDirectory } from './plugins/fs';
+export { Motion } from './plugins/motion';

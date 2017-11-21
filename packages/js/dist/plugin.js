@@ -8,6 +8,10 @@ var Plugin = /** @class */ (function () {
         this.avocado.registerPlugin(this);
     }
     Plugin.prototype.nativeCallback = function (method, options, callbackFunction, webFallback) {
+        if (typeof options === 'function') {
+            callbackFunction = options;
+            options = {};
+        }
         return this.native(method, options, 'callback', callbackFunction);
     };
     Plugin.prototype.nativePromise = function (method, options, webFallback) {

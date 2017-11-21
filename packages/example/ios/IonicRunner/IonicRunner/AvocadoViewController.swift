@@ -73,7 +73,6 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
       let type = dict["type"] as? String ?? ""
       
       if type == "js.error" {
-        print("JS ERORR")
         if let error = dict["error"] as! [String:Any]? {
           handleJSStartupError(error)
         }

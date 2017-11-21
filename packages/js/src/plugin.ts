@@ -15,11 +15,15 @@ export class Plugin {
   }
 
   nativeCallback(method: string, options?: any, callbackFunction?: PluginCallback, webFallback?: Function) {
-    return this.native(method, options, 'callback', callbackFunction)
+    if (typeof options === 'function') {
+      callbackFunction = options;
+      options = {};
+    }
+    return this.native(method, options, 'callback', callbackFunction);
   }
 
   nativePromise(method: string, options?: any, webFallback?: Function) {
-    return this.native(method, options, 'promise', null)
+    return this.native(method, options, 'promise', null);
   }
 
   /**

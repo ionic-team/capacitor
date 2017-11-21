@@ -34,6 +34,7 @@ public class Avocado {
     let statusbar = StatusBar(self)
     let haptics = Haptics(self)
     let browser = Browser(self)
+    let motion = Motion(self)
     self.registerPlugin(console)
     self.registerPlugin(filesystem)
     self.registerPlugin(device)
@@ -41,6 +42,7 @@ public class Avocado {
     self.registerPlugin(statusbar)
     self.registerPlugin(haptics)
     self.registerPlugin(browser)
+    self.registerPlugin(motion)
   }
   
   public func setWebView(webView: WKWebView) {
@@ -88,6 +90,8 @@ public class Avocado {
         //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
         //print("Native call took", timeElapsed)
       }
+    } else {
+      print("Error! No plugin \(call.pluginId) registered. Double check the plugin id is correct.")
     }
   }
   
@@ -96,9 +100,7 @@ public class Avocado {
    */
   public func toJs(result: JSResult) {
     do {
-      print("Trying to go to json")
       let resultJson = try result.toJson()
-      print("ERROR GOING OT JSON")
       
       self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
         if error != nil && result != nil {

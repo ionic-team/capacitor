@@ -11,7 +11,8 @@ import {
   StatusBarStyle,
   Haptics,
   HapticsImpactStyle,
-  Browser
+  Browser,
+  Motion
 } from 'avocado-js';
 
 @Component({
@@ -187,5 +188,12 @@ export class HomePage {
     } catch(e) {
       console.error('Unable to stat file', e);
     }
+  }
+
+  watchAccel() {
+    let m = new Motion();
+    m.watchAccel((values) => {
+      console.log('Accel', values);
+    });
   }
 }
