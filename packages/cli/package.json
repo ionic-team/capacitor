@@ -1,15 +1,55 @@
 {
-  "name": "avocado-cli",
+  "name": "@avocado/cli",
+  "private": true,
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Avocado: The universal App container",
+  "homepage": "https://ionicframework.com",
+  "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
+  "bin": {
+    "avocado": "./bin/avocado"
   },
-  "author": "",
+  "engines": {
+    "node": ">=8.3.0"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "lint": "tslint --config tslint.js --project tsconfig.json --type-check",
+    "build": "npm run clean && tsc",
+    "watch": "tsc -w",
+    "version": "npm run build"
+  },
+  "files": [
+    "bin/",
+    "dist/"
+  ],
+  "keywords": [
+    "ionic",
+    "ionic framework",
+    "avocado",
+    "cordova",
+    "universal app",
+    "cross platform",
+    "phonegap"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ionic-team/avocado.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ionic-team/avocado/issues"
+  },
   "license": "MIT",
   "dependencies": {
-    "shelljs": "^0.7.8",
-    "minimist": "^1.2.0"
+    "@ionic/cli-utils": "^1.18.0",
+    "chalk": "^2.3.0",
+    "commander": "^2.11.0",
+    "shelljs": "^0.7.8"
+  },
+  "devDependencies": {
+    "@types/commander": "^2.11.0",
+    "@types/shelljs": "^0.7.6",
+    "typescript": "^2.6.1"
   }
 }
