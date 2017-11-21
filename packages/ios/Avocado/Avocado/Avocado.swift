@@ -107,7 +107,7 @@ public class Avocado {
    */
   public func toJsError(error: JSResultError) {
     print("Sending JS Error", error.toJson())
-    self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: '\(error.toJson())'})") { (result, error) in
+    self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
       if error != nil && result != nil {
         print(result!)
       }

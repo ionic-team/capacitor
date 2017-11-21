@@ -63,10 +63,24 @@ public class JSResultError {
     self.error = error
   }
   
+  /**
+   * Return a linkable error that we can use to help users find help for common exceptions,
+   * much like AngularJS back in the day.
+   */
+  func getLinkableError(_ message: String) -> String? {
+    guard let data = message.data(using: .utf8)?.base64EncodedString() else {
+      return nil
+    }
+    
+    return "http://avocadojs.com/error/ios?m=\(data)"
+  }
+  
   public func toJson() -> String {
     var jsonResponse = "{}"
-    
+
+    print("TO JSON MESSAGE", self.message)
     error["message"] = self.message
+    error["_exlink"] = getLinkableError(self.message)
     
     if let theJSONData = try? JSONSerialization.data(withJSONObject: error, options: []) {
       jsonResponse = String(data: theJSONData,
