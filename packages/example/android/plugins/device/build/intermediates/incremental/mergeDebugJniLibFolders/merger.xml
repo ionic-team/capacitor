@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/Users/tim/Work/avocado/packages/example/android/plugins/device/src/main/jniLibs"/></dataSet><dataSet config="debug"><source path="/Users/tim/Work/avocado/packages/example/android/plugins/device/src/debug/jniLibs"/></dataSet></merger>
