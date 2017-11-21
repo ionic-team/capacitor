@@ -28,12 +28,14 @@ public class Avocado {
   
   func registerCorePlugins() {
     let console = Console(self)
+    let filesystem = Filesystem(self)
     let device = Device(self)
     let geo = Geolocation(self)
     let statusbar = StatusBar(self)
     let haptics = Haptics(self)
     let browser = Browser(self)
     self.registerPlugin(console)
+    self.registerPlugin(filesystem)
     self.registerPlugin(device)
     self.registerPlugin(geo)
     self.registerPlugin(statusbar)

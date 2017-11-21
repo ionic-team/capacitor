@@ -44,7 +44,7 @@ class GetLocationHandler:NSObject, CLLocationManagerDelegate {
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     if let location = locations.first  {
-      let result = PluginResult(data: [
+      let result = PluginResult([
         "coords": [
           "latitude": location.coordinate.latitude,
           "longitude": location.coordinate.longitude

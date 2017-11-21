@@ -44,6 +44,10 @@ public typealias PluginErrorCallback = (_ error: PluginCallError) -> Void
     self.successCallback = success
     self.errorCallback = error
   }
+  
+  public func get(_ key: String, defaultValue: Any? = nil) -> Any? {
+    return self.options[key] ?? defaultValue
+  }
 }
 
 /**
@@ -71,7 +75,7 @@ public typealias PluginResultData = [String:Any]
 
 public class PluginResult {
   var data: PluginResultData
-  public init(data: PluginResultData) {
+  public init(_ data: PluginResultData = [:]) {
     self.data = data
   }
 }
