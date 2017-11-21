@@ -15,6 +15,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { AvocadoPlugin, Plugin } from '../plugin';
+export var Directory;
+(function (Directory) {
+    Directory["Application"] = "APPLICATION";
+    Directory["Documents"] = "DOCUMENTS";
+    Directory["DocumentsSynced"] = "DOCUMENTS_SYNCED";
+    Directory["Data"] = "DATA";
+    Directory["DataSynced"] = "DATA_SYNCED";
+    Directory["Cache"] = "CACHE";
+})(Directory || (Directory = {}));
+;
 var FSPlugin = /** @class */ (function (_super) {
     __extends(FSPlugin, _super);
     function FSPlugin() {
@@ -22,12 +32,14 @@ var FSPlugin = /** @class */ (function (_super) {
     }
     FSPlugin.prototype.writeFile = function (file, data, options) {
         return this.nativePromise('writeFile', {
+            directory: options && options.directory || Directory.Documents,
             file: file,
             data: data
         });
     };
     FSPlugin.prototype.readFile = function (file, options) {
         return this.nativePromise('readFile', {
+            directory: options && options.directory || Directory.Documents,
             file: file
         });
     };
