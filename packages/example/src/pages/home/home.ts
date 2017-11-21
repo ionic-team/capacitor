@@ -139,6 +139,12 @@ export class HomePage {
     console.log(contents);
   }
 
+  async fileAppend() {
+    let fs = new Filesystem()
+    await fs.appendFile('text.txt', "MORE TESTS", FilesystemDirectory.Documents);
+    console.log('Appended');
+  }
+
   async mkdir() {
     let fs = new Filesystem()
     try {

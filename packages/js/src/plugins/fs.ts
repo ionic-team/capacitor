@@ -30,6 +30,15 @@ export class Filesystem extends Plugin {
     });
   }
 
+  appendFile(file: string, data: string, directory: FilesystemDirectory, encoding: string = 'utf8') {
+    return this.nativePromise('appendFile', {
+      file,
+      data,
+      directory,
+      encoding
+    });
+  }
+
   readFile(file: string, directory: FilesystemDirectory, encoding: string = 'utf8') {
     return this.nativePromise('readFile', {
       file,

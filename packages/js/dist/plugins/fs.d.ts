@@ -10,6 +10,7 @@ export declare enum FilesystemDirectory {
 export declare class Filesystem extends Plugin {
     constructor();
     writeFile(file: string, data: string, directory: FilesystemDirectory, encoding?: string): any;
+    appendFile(file: string, data: string, directory: FilesystemDirectory, encoding?: string): any;
     readFile(file: string, directory: FilesystemDirectory, encoding?: string): any;
     mkdir(path: string, directory: FilesystemDirectory, createIntermediateDirectories?: boolean): any;
     rmdir(path: string, directory: FilesystemDirectory): any;

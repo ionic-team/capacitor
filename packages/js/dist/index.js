@@ -585,6 +585,15 @@ var Filesystem = /** @class */ (function (_super) {
             encoding: encoding
         });
     };
+    Filesystem.prototype.appendFile = function (file, data, directory, encoding) {
+        if (encoding === void 0) { encoding = 'utf8'; }
+        return this.nativePromise('appendFile', {
+            file: file,
+            data: data,
+            directory: directory,
+            encoding: encoding
+        });
+    };
     Filesystem.prototype.readFile = function (file, directory, encoding) {
         if (encoding === void 0) { encoding = 'utf8'; }
         return this.nativePromise('readFile', {
