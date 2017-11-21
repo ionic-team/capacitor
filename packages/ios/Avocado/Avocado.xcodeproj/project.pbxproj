@@ -22,6 +22,7 @@
 		50503F211FC0962F003606DC /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F201FC0962F003606DC /* JS.swift */; };
 		50503F231FC0968E003606DC /* Avocado.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F221FC0968E003606DC /* Avocado.swift */; };
 		50503F251FC098A3003606DC /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F241FC098A3003606DC /* Plugin.swift */; };
+		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		50503F201FC0962F003606DC /* JS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		50503F221FC0968E003606DC /* Avocado.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avocado.swift; sourceTree = "<group>"; };
 		50503F241FC098A3003606DC /* Plugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plugin.swift; sourceTree = "<group>"; };
+		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +137,7 @@
 				501CBABE1FC2A22A009B0D4D /* Browser.swift */,
 				50474F041FC36E5700AA0184 /* Console.swift */,
 				50474F061FC3B54800AA0184 /* Filesystem.swift */,
+				50BFB9071FC4E82C00C19F8B /* Motion.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				501CBABD1FC29EDE009B0D4D /* SplashScreen.swift in Sources */,
+				50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */,
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
 				501CBABF1FC2A22A009B0D4D /* Browser.swift in Sources */,
