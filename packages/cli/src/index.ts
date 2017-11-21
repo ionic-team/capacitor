@@ -1,10 +1,14 @@
 import * as program from 'commander';
 
-import { copy } from './commands/copy';
+import { copyCommand } from './commands/copy';
 import { build } from './commands/build';
 import { compile } from './commands/compile';
-import { update } from './commands/update';
+import { updateCommand } from './commands/update';
 import { open } from './commands/open';
+import { clean } from './commands/clean';
+import { recreateCommand } from './commands/recreate';
+
+export const PROJECT_DIR = __dirname;
 
 export function run(process: any) {
 
@@ -12,9 +16,25 @@ export function run(process: any) {
     .version('0.0.1');
 
   program
-    .command('copy')
+    .command('update [mode]')
+    .option('-f, --force', 'forces a version update')
+    .description('updates the native plugins')
+    .action(updateCommand);
+
+  program
+    .command('clean')
+    .description('WARNING! removes iOS and android folders')
+    .action(clean);
+
+  program
+    .command('recreate [mode]')
+    .description('WARNING! removes iOS and android folders')
+    .action(recreateCommand);
+
+  program
+    .command('copy [mode]')
     .description('copies the content of something')
-    .action(copy);
+    .action(copyCommand);
 
   program
     .command('build')
@@ -30,11 +50,6 @@ export function run(process: any) {
     .command('open')
     .description('opens avocado')
     .action(open);
-
-  program
-    .command('update [mode]')
-    .description('updates the native plugins')
-    .action(update);
 
   program.parse(process.argv);
 }

@@ -1,10 +1,9 @@
-import { getPlugins, Plugin, PluginType } from '../utils/plugin';
-import { createXcodeProject, updateIOSPlugins } from '../utils/ios';
-import { log, logError, checkEnvironment, runCommand, askMode } from '../utils/common';
+import { updateIOS } from '../platforms/ios/update';
+import { log, logError, askMode } from '../common';
 import { exit } from 'shelljs';
 
 
-export async function update(mode: string) {
+export async function updateCommand(mode: string, options: any) {
   const finalMode = await askMode(mode);
 
   // try {
@@ -16,35 +15,21 @@ export async function update(mode: string) {
   // }
 
   try {
-    if (finalMode === 'ios') {
-      await updateIOS()
-    } else if (finalMode === 'android') {
-      await updateAndroid();
-    } else {
-      throw `Platform ${finalMode} is not valid. Try with iOS or android`;
-    }
+    const needsUpdate = !!options.force;
+    await update(finalMode, needsUpdate);
+    exit(0);
   } catch (e) {
     logError(e);
     exit(-1);
   }
 }
 
-async function updateIOS() {
-  log('updating plugins for platform: iOS');
-  const plugins = await getPlugins();
-  checkEnvironment();
-  await createXcodeProject('');
-  await updateIOSPlugins(plugins);
-  log('DONE! Native modules are updated 🎉');
-  log('Opening your xcode workspace, hold on a sec...');
-
-  const opn = require('opn');
-  opn('AvocadoApp/AvocadoApp.xcworkspace');
-  exit(0);
+export async function update(mode: string, needsUpdate: boolean) {
+  if (mode === 'ios') {
+    await updateIOS(needsUpdate)
+  } else if (mode === 'android') {
+    // await updateAndroid();
+  } else {
+    throw `Platform ${mode} is not valid. Try with iOS or android`;
+  }
 }
-
-async function updateAndroid() {
-  log('updating plugins for platform: androd');
-}
-
-
