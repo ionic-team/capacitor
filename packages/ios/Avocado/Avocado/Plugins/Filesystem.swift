@@ -77,6 +77,53 @@ public class Filesystem : Plugin {
     }
   }
   
+  @objc func appendFile(_ call: PluginCall) {
+    //let encoding = call.get("encoding") as? String ?? "utf8"
+    // TODO: Allow them to switch encoding
+    guard let file = call.get("file") as? String else {
+      handleError(call, "File must be provided and must be a string.")
+      return
+    }
+    
+    guard let data = call.get("data") as? String else {
+      handleError(call, "Data must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directory = getDirectory(directory: directoryOption)
+    
+    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
+      handleError(call, "Invalid device directory '\(directoryOption)'")
+      return
+    }
+    
+    let fileUrl = dir.appendingPathComponent(file)
+    
+    do {
+      if FileManager.default.fileExists(atPath: fileUrl.path) {
+        let fileHandle = try FileHandle.init(forWritingTo: fileUrl)
+        
+        guard let writeData = data.data(using: .utf8) else {
+          handleError(call, "Unable to encode data to utf-8")
+          return
+        }
+        
+        defer {
+          fileHandle.closeFile()
+        }
+        fileHandle.seekToEndOfFile()
+        fileHandle.write(writeData)
+      } else {
+        try data.write(to: fileUrl, atomically: false, encoding: .utf8)
+      }
+      call.success()
+    } catch let error as NSError {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
+  
+  
   @objc func mkdir(_ call: PluginCall) {
     guard let path = call.get("path") as? String else {
       handleError(call, "Path must be provided and must be a string.")
@@ -125,7 +172,7 @@ public class Filesystem : Plugin {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
+
   func handleError(_ call: PluginCall, _ message: String, _ error: Error? = nil) {
     call.error(message, error)
   }
