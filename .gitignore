@@ -1,4 +1,9 @@
-*.map
+dist
 .sourcemaps
 xcuserdata/
 node_modules/
+packages/cli/dist/commands/copy.js
+Pods/
+test_project/
+Podfile
+

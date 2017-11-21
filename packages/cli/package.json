@@ -45,10 +45,14 @@
     "@ionic/cli-utils": "^1.18.0",
     "chalk": "^2.3.0",
     "commander": "^2.11.0",
+    "inquirer": "^4.0.0",
+    "opn": "^5.1.0",
     "shelljs": "^0.7.8"
   },
   "devDependencies": {
     "@types/commander": "^2.11.0",
+    "@types/inquirer": "0.0.35",
+    "@types/opn": "^5.1.0",
     "@types/shelljs": "^0.7.6",
     "typescript": "^2.6.1"
   }
