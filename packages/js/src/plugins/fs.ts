@@ -5,10 +5,10 @@ declare var window;
 export enum Directory {
   Application = 'APPLICATION',
   Documents = 'DOCUMENTS',
-  DocumentsSynced = 'DOCUMENTS_SYNCED',
   Data = 'DATA',
-  DataSynced = 'DATA_SYNCED',
-  Cache = 'CACHE'
+  Cache = 'CACHE',
+  External = 'EXTERNAL', // Android only
+  ExternalStorage = 'EXTERNAL_STORAGE' // Android only
 };
 
 @AvocadoPlugin({

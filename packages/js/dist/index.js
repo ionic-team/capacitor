@@ -276,10 +276,10 @@ var Directory;
 (function (Directory) {
     Directory["Application"] = "APPLICATION";
     Directory["Documents"] = "DOCUMENTS";
-    Directory["DocumentsSynced"] = "DOCUMENTS_SYNCED";
     Directory["Data"] = "DATA";
-    Directory["DataSynced"] = "DATA_SYNCED";
     Directory["Cache"] = "CACHE";
+    Directory["External"] = "EXTERNAL";
+    Directory["ExternalStorage"] = "EXTERNAL_STORAGE"; // Android only
 })(Directory || (Directory = {}));
 
 var FSPlugin = /** @class */ (function (_super) {

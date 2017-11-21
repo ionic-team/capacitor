@@ -2,10 +2,10 @@ import { Plugin } from '../plugin';
 export declare enum Directory {
     Application = "APPLICATION",
     Documents = "DOCUMENTS",
-    DocumentsSynced = "DOCUMENTS_SYNCED",
     Data = "DATA",
-    DataSynced = "DATA_SYNCED",
     Cache = "CACHE",
+    External = "EXTERNAL",
+    ExternalStorage = "EXTERNAL_STORAGE",
 }
 export declare class FSPlugin extends Plugin {
     constructor();
