@@ -14,4 +14,6 @@ export declare class Filesystem extends Plugin {
     readFile(file: string, directory: FilesystemDirectory, encoding?: string): any;
     mkdir(path: string, directory: FilesystemDirectory, createIntermediateDirectories?: boolean): any;
     rmdir(path: string, directory: FilesystemDirectory): any;
+    readdir(path: string, directory: FilesystemDirectory): any;
+    stat(path: string, directory: FilesystemDirectory): any;
 }
