@@ -470,6 +470,16 @@ var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var Directory;
+(function (Directory) {
+    Directory["Application"] = "APPLICATION";
+    Directory["Documents"] = "DOCUMENTS";
+    Directory["DocumentsSynced"] = "DOCUMENTS_SYNCED";
+    Directory["Data"] = "DATA";
+    Directory["DataSynced"] = "DATA_SYNCED";
+    Directory["Cache"] = "CACHE";
+})(Directory || (Directory = {}));
+
 var FSPlugin = /** @class */ (function (_super) {
     __extends$1(FSPlugin, _super);
     function FSPlugin() {
@@ -477,12 +487,14 @@ var FSPlugin = /** @class */ (function (_super) {
     }
     FSPlugin.prototype.writeFile = function (file, data, options) {
         return this.nativePromise('writeFile', {
+            directory: options && options.directory || Directory.Documents,
             file: file,
             data: data
         });
     };
     FSPlugin.prototype.readFile = function (file, options) {
         return this.nativePromise('readFile', {
+            directory: options && options.directory || Directory.Documents,
             file: file
         });
     };
