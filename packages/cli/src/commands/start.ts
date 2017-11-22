@@ -1,4 +1,4 @@
-import { askPlatform, logError } from "../common";
+import { askPlatform, logFatal } from "../common";
 import { exit } from "shelljs";
 import { startIOS } from "../platforms/ios/start";
 import { prepare } from "./prepare";
@@ -11,8 +11,7 @@ export async function startCommand(platform: string) {
     await prepare(finalPlatform)
     exit(0);
   } catch (e) {
-    logError(e);
-    exit(-1);
+    logFatal(e);
   }
 }
 

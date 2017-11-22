@@ -1,4 +1,4 @@
-import { askPlatform, logError } from "../common";
+import { askPlatform, logFatal } from "../common";
 import { update } from "./update";
 import { copy } from "./copy";
 import { exit } from "shelljs";
@@ -11,8 +11,7 @@ export async function prepareCommand(platform: string) {
     await prepare(platform);
     exit(0);
   } catch (e) {
-    logError(e);
-    exit(-1);
+    logFatal(e);
   }
 }
 

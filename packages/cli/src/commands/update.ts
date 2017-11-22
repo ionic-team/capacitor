@@ -1,5 +1,5 @@
 import { updateIOS } from '../platforms/ios/update';
-import { log, logError, askPlatform } from '../common';
+import { askPlatform, logFatal } from '../common';
 import { exit } from 'shelljs';
 
 
@@ -10,8 +10,7 @@ export async function updateCommand(platform: string) {
     await update(finalPlatform, true);
     exit(0);
   } catch (e) {
-    logError(e);
-    exit(-1);
+    logFatal(e);
   }
 }
 

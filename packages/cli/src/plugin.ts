@@ -48,7 +48,7 @@ export async function getPluginNames(): Promise<string[]> {
     .filter(isAvocadoPlugin);
 }
 
-function isAvocadoPlugin(fullname: string): boolean {
+export function isAvocadoPlugin(fullname: string): boolean {
   const name = (fullname[0] === '@')
     ? fullname.split('/')[1]
     : fullname;
@@ -60,11 +60,11 @@ function isAvocadoPlugin(fullname: string): boolean {
   }
 }
 
-function fixName(name: string): string {
+export function fixName(name: string): string {
   name = name
-    .replace('/', '_')
-    .replace('-', '_')
-    .replace('@', '')
+    .replace(/\//g, '_')
+    .replace(/-/g, '_')
+    .replace(/@/g, '')
     .replace(/_\w/g, (m) => m[1].toUpperCase());
 
   return name.charAt(0).toUpperCase() + name.slice(1);

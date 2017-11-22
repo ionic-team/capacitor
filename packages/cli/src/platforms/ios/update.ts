@@ -1,7 +1,6 @@
 import { getPlugins, PluginType, Plugin } from "../../plugin";
-import { getIOSPlugins, checkIOSProject } from "./common";
-import { log, writeFileAsync, runCommand, readFileAsync, isInstalled } from "../../common";
-import { exit } from "shelljs";
+import { checkIOSProject, getIOSPlugins } from "./common";
+import { log, writeFileAsync, runCommand, isInstalled } from "../../common";
 import { join } from "path";
 import { IOS_PATH, IOS_RUNTIME_POD, IOS_MIN_VERSION } from "../../config";
 
