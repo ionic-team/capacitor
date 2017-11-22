@@ -1,6 +1,6 @@
-import { ls, exec, exit } from 'shelljs';
+import { exec, exit, ls } from 'shelljs';
 import { join } from 'path';
-import { log, askPlatform, logFatal } from '../common';
+import { askPlatform, log, logFatal } from '../common';
 import { findXcodePath } from '../platforms/ios/common';
 const opn = require('opn');
 

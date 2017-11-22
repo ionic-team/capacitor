@@ -1,7 +1,7 @@
-import { log, askPlatform, getRootPath } from '../common';
-import { ls, cp } from 'shelljs';
+import { askPlatform, getRootPath, log } from '../common';
+import { cp, ls } from 'shelljs';
 import { join } from 'path';
-import { IOS_PATH, ANDROID_PATH } from '../config';
+import { ANDROID_PATH, IOS_PATH } from '../config';
 
 
 export async function copyCommand(mode: string) {

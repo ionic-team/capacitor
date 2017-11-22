@@ -1,10 +1,10 @@
 import { promisify } from 'util';
-import { readFile, writeFile, readdir } from 'fs';
+import { readFile, readdir, writeFile } from 'fs';
 import chalk from 'chalk';
-import { which, exec, ls, exit } from 'shelljs';
+import { exec, exit, ls, which } from 'shelljs';
 import { prompt } from 'inquirer';
-import { exists } from "fs";
-import { PLATFORMS, IOS_PATH, ANDROID_PATH } from './config';
+import { exists } from 'fs';
+import { ANDROID_PATH, IOS_PATH, PLATFORMS } from './config';
 import { join } from 'path';
 
 export const readFileAsync = promisify(readFile);

@@ -1,4 +1,4 @@
-import { checkIOSProject } from "./common";
+import { checkIOSProject } from './common';
 
 
 export async function doctorIOS() {

@@ -1,9 +1,9 @@
-import { PluginType, Plugin } from "../../plugin";
-import { readdirAsync, writeFileAsync, runCommand, log, existsAsync, isInstalled } from "../../common";
-import { join } from "path";
-import { IOS_BASE_PROJECT_PATH, IOS_PATH } from "../../config";
-import { ls, cp } from "shelljs";
-import { PROJECT_DIR } from "../../index";
+import { Plugin, PluginType } from '../../plugin';
+import { existsAsync, isInstalled, log, readdirAsync, runCommand, writeFileAsync } from '../../common';
+import { join, resolve } from 'path';
+import { IOS_BASE_PROJECT_PATH, IOS_PATH } from '../../config';
+import { cp, ls } from 'shelljs';
+import { PROJECT_DIR } from '../../index';
 
 export function findXcodePath(): string | null {
   for (let file of ls(IOS_PATH)) {
@@ -25,7 +25,7 @@ export function isIOSAvailable(): Promise<boolean> {
 }
 
 export function getIOSBaseProject(): string {
-  return join(PROJECT_DIR, IOS_BASE_PROJECT_PATH);
+  return resolve(PROJECT_DIR, IOS_BASE_PROJECT_PATH);
 }
 
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
@@ -48,7 +48,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin> {
     const podSpec = files.find(file => file.endsWith('.podspec'));
     if (podSpec) {
       plugin.ios.type = PluginType.Cocoapods;
-      plugin.ios.name = podSpec.split('.')[0]
+      plugin.ios.name = podSpec.split('.')[0];
     }
   } catch (e) {
 

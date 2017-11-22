@@ -1,5 +1,5 @@
-import { askPlatform } from "../common";
-import { doctorIOS } from "../platforms/ios/doctor";
+import { askPlatform } from '../common';
+import { doctorIOS } from '../platforms/ios/doctor';
 
 
 export async function doctorCommand(platform: string) {
