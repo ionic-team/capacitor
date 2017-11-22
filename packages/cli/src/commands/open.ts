@@ -1,28 +1,29 @@
-import { ls, exec } from 'shelljs';
+import { ls, exec, exit } from 'shelljs';
 import { join } from 'path';
-import { log, logError } from '../common';
+import { log, logError, askPlatform } from '../common';
+import { findXcodePath } from '../platforms/ios/common';
+const opn = require('opn');
 
-export function open(files: any[]) {
-  const platform = files.shift();
-
-  console.log(files);
-  const platformFolders = ls(platform);
-  const first = platformFolders[0];
-  if(!first) {
-    return 1;
+export async function openCommand(platform: string) {
+  const finalMode = await askPlatform(platform);
+  try {
+    open(finalMode);
+    exit(0);
+  } catch (e) {
+    logError(e);
+    exit(-1);
   }
+}
 
-  const dest = join(platform, first);
-
-  if (platform == 'ios') {
-    log('ls', )
-    const proj = ls(dest).filter(f => f.indexOf('.xcodeproj') >= 0)[0];
-    if (!proj) {
-      logError('open', 'Unable to find Xcode project');
-      return 1;
+export function open(platform: string) {
+  if (platform === 'ios') {
+    log('Opening your xcode workspace, hold on a sec...');
+    const xcodeProject = findXcodePath();
+    if (xcodeProject) {
+      opn(xcodeProject);
+      exit(0);
+    } else {
+      throw 'Xcode workspace does not exist. Run "avocado start ios" to bootstrap a native ios project.';
     }
-    const fullPath = join(dest, proj);
-    log('open', fullPath);
-    exec(`open ${fullPath}`);
   }
 }

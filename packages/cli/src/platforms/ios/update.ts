@@ -1,20 +1,21 @@
 import { getPlugins, PluginType, Plugin } from "../../plugin";
-import { prepareIOS, getIOSPlugins } from "./common";
-import { log, writeFileAsync, runCommand, readFileAsync } from "../../common";
+import { getIOSPlugins, checkIOSProject } from "./common";
+import { log, writeFileAsync, runCommand, readFileAsync, isInstalled } from "../../common";
 import { exit } from "shelljs";
 import { join } from "path";
 import { IOS_PATH, IOS_RUNTIME_POD, IOS_MIN_VERSION } from "../../config";
-const opn = require('opn');
 
 
 export async function updateIOS(needsUpdate: boolean) {
+  if (!isInstalled('pod')) {
+    throw 'cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation';
+  }
+  await checkIOSProject();
+
   const plugins = await getPlugins();
-  await prepareIOS();
   await updatePlugins(plugins, needsUpdate);
 
   log('DONE! Native modules are updated 🎉');
-  log('Opening your xcode workspace, hold on a sec...');
-  opn(`${IOS_PATH}/AvocadoApp.xcworkspace`); // TODO, we should find the xcode, no hardcoded
 }
 
 export async function updatePlugins(allPlugins: Plugin[], needsUpdate: boolean) {

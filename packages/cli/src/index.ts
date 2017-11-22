@@ -2,11 +2,10 @@ import * as program from 'commander';
 
 import { copyCommand } from './commands/copy';
 import { build } from './commands/build';
-import { compile } from './commands/compile';
 import { updateCommand } from './commands/update';
-import { open } from './commands/open';
-import { clean } from './commands/clean';
-import { recreateCommand } from './commands/recreate';
+import { open, openCommand } from './commands/open';
+import { prepareCommand } from './commands/prepare';
+import { startCommand } from './commands/start';
 
 export const PROJECT_DIR = __dirname;
 
@@ -16,40 +15,35 @@ export function run(process: any) {
     .version('0.0.1');
 
   program
-    .command('update [mode]')
+    .command('prepare [platform]')
+    .description('updates the native plugins')
+    .action(prepareCommand);
+
+  program
+    .command('update [platform]')
     .option('-f, --force', 'forces a version update')
     .description('updates the native plugins')
     .action(updateCommand);
 
   program
-    .command('clean')
-    .description('WARNING! removes iOS and android folders')
-    .action(clean);
-
-  program
-    .command('recreate [mode]')
-    .description('WARNING! removes iOS and android folders')
-    .action(recreateCommand);
-
-  program
-    .command('copy [mode]')
-    .description('copies the content of something')
+    .command('copy [platform]')
+    .description('copies the WWW folder into the native app')
     .action(copyCommand);
 
   program
-    .command('build')
+    .command('open [platform]')
+    .description('opens native project')
+    .action(openCommand);
+
+  program
+    .command('start [platform]')
+    .description('starts a native project')
+    .action(startCommand);
+
+  program
+    .command('build [platform]')
     .description('builds avocado')
     .action(build);
-
-  program
-    .command('compile')
-    .description('compiles avocado')
-    .action(compile);
-
-  program
-    .command('open')
-    .description('opens avocado')
-    .action(open);
 
   program.parse(process.argv);
 }
