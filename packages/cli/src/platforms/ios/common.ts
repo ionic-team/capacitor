@@ -5,23 +5,26 @@ import { IOS_BASE_PROJECT_PATH, IOS_PATH } from "../../config";
 import { ls, cp } from "shelljs";
 import { PROJECT_DIR } from "../../index";
 
-export async function checkIOSEnvironment() {
-  if (!isInstalled('pod')) {
-    throw 'cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation';
+export function findXcodePath(): string | null {
+  for (let file of ls(IOS_PATH)) {
+    if (file.endsWith('.xcworkspace')) {
+      return join(IOS_PATH, file);
+    }
+  }
+  return null;
+}
+
+export async function checkIOSProject() {
+  if (!await isIOSAvailable()) {
+    throw 'iOS was not created yet. Run `avocado start ios`.';
   }
 }
 
-export async function prepareIOS() {
-  checkIOSEnvironment();
-
-  const exist = await existsAsync(IOS_PATH);
-  if (!exist) {
-    cp('-R', getIOSBaseProject(), IOS_PATH);
-  }
+export function isIOSAvailable(): Promise<boolean> {
+  return existsAsync(IOS_PATH);
 }
 
 export function getIOSBaseProject(): string {
-  console.log(PROJECT_DIR);
   return join(PROJECT_DIR, IOS_BASE_PROJECT_PATH);
 }
 

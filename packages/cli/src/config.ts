@@ -1,4 +1,5 @@
 /** GENERAL */
+export const CONFIG_FILE = ['iOS', 'android'];
 export const PLATFORMS = ['iOS', 'android'];
 export const PLUGIN_PREFIX = 'avo-plugin-';
 

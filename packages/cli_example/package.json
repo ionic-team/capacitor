@@ -2,8 +2,7 @@
   "name": "demo",
   "private": true,
   "dependencies": {
-    "shelljs": "^0.7.8",
-    "@avocado/avo-plugin-ionic-discover": "0.0.1"
+    "shelljs": "^0.7.8"
   },
   "devDependencies": {
     "@types/inquirer": "0.0.35"

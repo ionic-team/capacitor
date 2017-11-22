@@ -1,22 +1,13 @@
 import { updateIOS } from '../platforms/ios/update';
-import { log, logError, askMode } from '../common';
+import { log, logError, askPlatform } from '../common';
 import { exit } from 'shelljs';
 
 
-export async function updateCommand(mode: string, options: any) {
-  const finalMode = await askMode(mode);
-
-  // try {
-  //   await runCommand('npm install');
-  // } catch (e) {
-  //   logError('Looks like npm install failed, make sure package.json is valid and points to valid dependencies.');
-  //   logError(e);
-  //   exit(-1);
-  // }
+export async function updateCommand(platform: string) {
+  const finalPlatform = await askPlatform(platform);
 
   try {
-    const needsUpdate = !!options.force;
-    await update(finalMode, needsUpdate);
+    await update(finalPlatform, true);
     exit(0);
   } catch (e) {
     logError(e);
@@ -24,12 +15,12 @@ export async function updateCommand(mode: string, options: any) {
   }
 }
 
-export async function update(mode: string, needsUpdate: boolean) {
-  if (mode === 'ios') {
+export async function update(platform: string, needsUpdate: boolean) {
+  if (platform === 'ios') {
     await updateIOS(needsUpdate)
-  } else if (mode === 'android') {
+  } else if (platform === 'android') {
     // await updateAndroid();
   } else {
-    throw `Platform ${mode} is not valid. Try with iOS or android`;
+    throw `Platform ${platform} is not valid. Try with iOS or android`;
   }
 }
