@@ -1,7 +1,6 @@
 import * as program from 'commander';
 
 import { copyCommand } from './commands/copy';
-import { build } from './commands/build';
 import { updateCommand } from './commands/update';
 import { open, openCommand } from './commands/open';
 import { prepareCommand } from './commands/prepare';
@@ -16,13 +15,12 @@ export function run(process: any) {
 
   program
     .command('prepare [platform]')
-    .description('updates the native plugins')
+    .description('updates + copy')
     .action(prepareCommand);
 
   program
     .command('update [platform]')
-    .option('-f, --force', 'forces a version update')
-    .description('updates the native plugins')
+    .description(`updates the native plugins and dependencies based in package.json`)
     .action(updateCommand);
 
   program
@@ -32,18 +30,13 @@ export function run(process: any) {
 
   program
     .command('open [platform]')
-    .description('opens native project')
+    .description('opens the native project workspace (xcode for iOS)')
     .action(openCommand);
 
   program
     .command('start [platform]')
     .description('starts a native project')
     .action(startCommand);
-
-  program
-    .command('build [platform]')
-    .description('builds avocado')
-    .action(build);
 
   program.parse(process.argv);
 }
