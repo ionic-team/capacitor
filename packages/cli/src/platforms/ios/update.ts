@@ -2,7 +2,7 @@ import { Plugin, PluginType, getPlugins } from '../../plugin';
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import { check, isInstalled, log, runCommand, writeFileAsync } from '../../common';
 import { join } from 'path';
-import { IOS_MIN_VERSION, IOS_PATH, IOS_RUNTIME_POD } from '../../config';
+import { IOS_MIN_VERSION, IOS_PATH, IOS_RUNTIME_POD, LIST_FILE } from '../../config';
 
 
 export async function updateIOS(needsUpdate: boolean) {
@@ -76,7 +76,6 @@ export async function updatePodfile(plugins: Plugin[], needsUpdate: boolean) {
 }
 
 export function generatePodFile(plugins: Plugin[]) {
-  // project 'AvocadoApp.xcodeproj'
   const pods = plugins
     .map((p) => `pod '${p.ios!.name}', :path => '${p.ios!.path}'`);
 

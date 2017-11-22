@@ -15,6 +15,7 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "lint": "tslint --project tsconfig.json",
+    "test": "jest",
     "build": "npm run clean && tsc",
     "watch": "tsc -w",
     "version": "npm run lint && npm run build",
@@ -53,11 +54,27 @@
   "devDependencies": {
     "@types/commander": "^2.11.0",
     "@types/inquirer": "0.0.35",
+    "@types/jest": "^21.1.7",
+    "@types/mock-fs": "^3.6.30",
     "@types/opn": "^5.1.0",
     "@types/shelljs": "^0.7.6",
+    "jest": "^21.2.1",
+    "mock-fs": "^4.4.2",
     "np": "^2.17.0",
+    "ts-jest": "^21.2.3",
     "tslint": "^5.8.0",
     "tslint-ionic-rules": "0.0.11",
     "typescript": "^2.6.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts)$": "ts-jest"
+    },
+    "testRegex": "/src/.*\\.spec\\.(ts|tsx|js)$"
   }
 }

@@ -6,7 +6,7 @@
       "module": "commonjs",
       "target": "es2017",            // specify ECMAScript target version
       "moduleResolution": "node",
-      "types" : ["node"],
+      "types" : ["node", "jest"],
       "pretty": true
   },
   "include": [
