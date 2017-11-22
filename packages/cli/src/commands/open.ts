@@ -5,9 +5,9 @@ import { findXcodePath } from '../platforms/ios/common';
 const opn = require('opn');
 
 export async function openCommand(platform: string) {
-  const finalMode = await askPlatform(platform);
+  platform = await askPlatform(platform);
   try {
-    open(finalMode);
+    open(platform);
     exit(0);
   } catch (e) {
     logFatal(e);

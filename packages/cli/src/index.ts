@@ -7,6 +7,7 @@ import { prepareCommand } from './commands/prepare';
 import { startCommand } from './commands/start';
 import { exit } from 'shelljs';
 import { logError } from './common';
+import { doctorCommand } from './commands/doctor';
 
 export const PROJECT_DIR = __dirname;
 
@@ -39,6 +40,11 @@ export function run(process: any) {
     .command('start [platform]')
     .description('starts a native project')
     .action(startCommand);
+
+  program
+    .command('doctor [platform]')
+    .description('checks the current setup for common errors')
+    .action(doctorCommand);
 
   program
     .command('*')

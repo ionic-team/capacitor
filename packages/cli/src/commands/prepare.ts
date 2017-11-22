@@ -6,7 +6,7 @@ import { open } from './open';
 
 
 export async function prepareCommand(platform: string) {
-  const finalPlatform = await askPlatform(platform);
+  platform = await askPlatform(platform);
   try {
     await prepare(platform);
     exit(0);

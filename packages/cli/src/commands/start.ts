@@ -5,10 +5,10 @@ import { prepare } from './prepare';
 
 
 export async function startCommand(platform: string) {
-  const finalPlatform = await askPlatform(platform);
+  platform = await askPlatform(platform);
   try {
-    await start(finalPlatform);
-    await prepare(finalPlatform);
+    await start(platform);
+    await prepare(platform);
     exit(0);
   } catch (e) {
     logFatal(e);

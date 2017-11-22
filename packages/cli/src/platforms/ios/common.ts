@@ -14,10 +14,27 @@ export function findXcodePath(): string | null {
   return null;
 }
 
-export async function checkIOSProject() {
-  if (!await isIOSAvailable()) {
-    throw 'iOS was not created yet. Run `avocado start ios`.';
+export async function checkCocoaPods(): Promise<string | null> {
+  if (!isInstalled('pod')) {
+    return 'cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation';
   }
+  return null;
+}
+
+export async function checkIOSProject(): Promise <string | null> {
+  const exists = await isIOSAvailable();
+  if (!exists) {
+    return 'iOS was not created yet. Run `avocado start ios`.';
+  }
+  return null;
+}
+
+export async function checkNoIOSProject(): Promise <string | null> {
+  const exists = await isIOSAvailable();
+  if (exists) {
+    return 'An iOS project already exist';
+  }
+  return null;
 }
 
 export function isIOSAvailable(): Promise<boolean> {

@@ -1,13 +1,15 @@
-import { getIOSBaseProject, isIOSAvailable } from './common';
-import { log } from '../../common';
+import { checkCocoaPods, checkNoIOSProject, getIOSBaseProject} from './common';
+import { check, log } from '../../common';
 import { cp } from 'shelljs';
 import { IOS_PATH } from '../../config';
 
 
 export async function startIOS() {
-  if (await isIOSAvailable()) {
-    throw 'An iOS project already exist';
-  }
+  await check(
+    checkCocoaPods,
+    checkNoIOSProject
+  );
+
   log(`creating a native xcode project in ${IOS_PATH}`);
   cp('-R', getIOSBaseProject(), IOS_PATH);
 }

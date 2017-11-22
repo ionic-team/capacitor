@@ -4,10 +4,10 @@ import { exit } from 'shelljs';
 
 
 export async function updateCommand(platform: string) {
-  const finalPlatform = await askPlatform(platform);
+  platform = await askPlatform(platform);
 
   try {
-    await update(finalPlatform, true);
+    await update(platform, true);
     exit(0);
   } catch (e) {
     logFatal(e);

@@ -12,6 +12,16 @@ export const writeFileAsync = promisify(writeFile);
 export const existsAsync = promisify(exists);
 export const readdirAsync = promisify(readdir);
 
+export type CheckFunction = () => Promise<string | null>;
+
+export async function check(...checks: CheckFunction[]): Promise<void> {
+  const results = await Promise.all(checks.map(f => f()));
+  const errors = results.filter(r => r !== null) as string[];
+  if (errors.length > 0) {
+    throw errors.join('\n');
+  }
+}
+
 export async function readJSON(path: string): Promise<any> {
   const data = await readFileAsync(path, 'utf8');
   return JSON.parse(data);
