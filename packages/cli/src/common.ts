@@ -1,7 +1,7 @@
 import { promisify } from 'util';
 import { readFile, writeFile, readdir } from 'fs';
 import chalk from 'chalk';
-import { which, exec, ls } from 'shelljs';
+import { which, exec, ls, exit } from 'shelljs';
 import { prompt } from 'inquirer';
 import { exists } from "fs";
 import { PLATFORMS, IOS_PATH, ANDROID_PATH } from './config';
@@ -23,6 +23,11 @@ export function log(...args: any[]) {
 
 export function logError(...args: any[]) {
   console.log(chalk.red('[avocado]'), ...args);
+}
+
+export function logFatal(...args: any[]) {
+  logError(...args);
+  exit(-1);
 }
 
 export function isInstalled(command: string): boolean {

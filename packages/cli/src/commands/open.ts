@@ -1,6 +1,6 @@
 import { ls, exec, exit } from 'shelljs';
 import { join } from 'path';
-import { log, logError, askPlatform } from '../common';
+import { log, askPlatform, logFatal } from '../common';
 import { findXcodePath } from '../platforms/ios/common';
 const opn = require('opn');
 
@@ -10,8 +10,7 @@ export async function openCommand(platform: string) {
     open(finalMode);
     exit(0);
   } catch (e) {
-    logError(e);
-    exit(-1);
+    logFatal(e);
   }
 }
 

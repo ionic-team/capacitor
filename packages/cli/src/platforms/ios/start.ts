@@ -1,5 +1,5 @@
 import { isIOSAvailable, getIOSBaseProject } from "./common";
-import { logError, log } from "../../common";
+import { log } from "../../common";
 import { cp } from "shelljs";
 import { IOS_PATH } from "../../config";
 

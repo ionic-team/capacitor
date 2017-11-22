@@ -5,13 +5,15 @@ import { updateCommand } from './commands/update';
 import { open, openCommand } from './commands/open';
 import { prepareCommand } from './commands/prepare';
 import { startCommand } from './commands/start';
+import { exit } from 'shelljs';
+import { logError } from './common';
 
 export const PROJECT_DIR = __dirname;
 
 export function run(process: any) {
 
   program
-    .version('0.0.1');
+    .version(require('../package.json').version);
 
   program
     .command('prepare [platform]')
@@ -38,5 +40,16 @@ export function run(process: any) {
     .description('starts a native project')
     .action(startCommand);
 
+  program
+    .command('*')
+    .description('starts a native project')
+    .action((cmd) => {
+      logError('command', cmd, 'does not exist');
+      program.help();
+    });
+
   program.parse(process.argv);
+  if (!program.args.length) {
+    program.help();
+  }
 }
