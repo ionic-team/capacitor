@@ -1,8 +1,8 @@
-import { askPlatform, logFatal } from "../common";
-import { update } from "./update";
-import { copy } from "./copy";
-import { exit } from "shelljs";
-import { open } from "./open";
+import { askPlatform, logFatal } from '../common';
+import { update } from './update';
+import { copy } from './copy';
+import { exit } from 'shelljs';
+import { open } from './open';
 
 
 export async function prepareCommand(platform: string) {

@@ -16,7 +16,7 @@ export async function updateCommand(platform: string) {
 
 export async function update(platform: string, needsUpdate: boolean) {
   if (platform === 'ios') {
-    await updateIOS(needsUpdate)
+    await updateIOS(needsUpdate);
   } else if (platform === 'android') {
     // await updateAndroid();
   } else {

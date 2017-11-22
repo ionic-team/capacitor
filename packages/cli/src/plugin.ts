@@ -1,6 +1,6 @@
-import { join, resolve } from "path";
-import { readJSON } from "./common";
-import { PLUGIN_PREFIX } from "./config";
+import { join, resolve } from 'path';
+import { readJSON } from './common';
+import { PLUGIN_PREFIX } from './config';
 
 export const enum PluginType {
   Code,
@@ -8,17 +8,17 @@ export const enum PluginType {
 }
 export interface Plugin {
   id: string;
-  name: string,
+  name: string;
   rootPath: string;
   meta: any;
   ios?: {
     name: string;
     type: PluginType;
     path: string;
-  }
+  };
   android?: {
     path: string
-  }
+  };
 }
 
 export async function getPlugins(): Promise<Plugin[]> {

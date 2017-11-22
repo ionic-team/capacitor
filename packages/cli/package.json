@@ -12,16 +12,16 @@
     "node": ">=8.3.0"
   },
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "lint": "tslint --config tslint.js --project tsconfig.json --type-check",
-    "build": "npm run copy-assets && npm run clean && tsc",
-    "copy-assets": "mkdir -p dist && cp -a assets dist/",
-    "watch": "npm run copy-assets && tsc -w",
-    "version": "npm run build"
+    "lint": "tslint --project tsconfig.json",
+    "build": "npm run clean && tsc",
+    "watch": "tsc -w",
+    "version": "npm run lint && npm run build",
+    "deploy": "np"
   },
   "files": [
+    "assets/",
     "bin/",
     "dist/"
   ],
@@ -55,6 +55,9 @@
     "@types/inquirer": "0.0.35",
     "@types/opn": "^5.1.0",
     "@types/shelljs": "^0.7.6",
+    "np": "^2.17.0",
+    "tslint": "^5.8.0",
+    "tslint-ionic-rules": "0.0.11",
     "typescript": "^2.6.1"
   }
 }

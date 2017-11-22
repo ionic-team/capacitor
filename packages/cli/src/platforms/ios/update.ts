@@ -1,8 +1,8 @@
-import { getPlugins, PluginType, Plugin } from "../../plugin";
-import { checkIOSProject, getIOSPlugins } from "./common";
-import { log, writeFileAsync, runCommand, isInstalled } from "../../common";
-import { join } from "path";
-import { IOS_PATH, IOS_RUNTIME_POD, IOS_MIN_VERSION } from "../../config";
+import { Plugin, PluginType, getPlugins } from '../../plugin';
+import { checkIOSProject, getIOSPlugins } from './common';
+import { isInstalled, log, runCommand, writeFileAsync } from '../../common';
+import { join } from 'path';
+import { IOS_MIN_VERSION, IOS_PATH, IOS_RUNTIME_POD } from '../../config';
 
 
 export async function updateIOS(needsUpdate: boolean) {
