@@ -25,6 +25,7 @@ export class HomePage {
   watchCoords = { lat: 0, lng: 0 }
   deviceInfoJson: string;
   isStatusBarLight = true
+  accel = null
 
   constructor(public navCtrl: NavController, public zone: NgZone) {
   }
@@ -192,8 +193,15 @@ export class HomePage {
 
   watchAccel() {
     let m = new Motion();
-    m.watchAccel((values) => {
-      console.log('Accel', values);
+    m.watchAccel((err, values) => {
+      this.zone.run(() => {
+        const v = {
+          x: values.x.toFixed(4),
+          y: values.y.toFixed(4),
+          z: values.z.toFixed(4)
+        }
+        this.accel = v;
+      });
     });
   }
 }
