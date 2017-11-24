@@ -7,15 +7,15 @@ var Plugin = /** @class */ (function () {
         this.avocado = Avocado.instance();
         this.avocado.registerPlugin(this);
     }
-    Plugin.prototype.nativeCallback = function (method, options, callbackFunction, webFallback) {
+    Plugin.prototype.nativeCallback = function (method, options, callbackFunction, callOptions) {
         if (typeof options === 'function') {
             callbackFunction = options;
             options = {};
         }
         return this.native(method, options, 'callback', callbackFunction);
     };
-    Plugin.prototype.nativePromise = function (method, options, webFallback) {
-        return this.native(method, options, 'promise', null);
+    Plugin.prototype.nativePromise = function (method, options, callOptions) {
+        return this.native(method, options, 'promise', null, callOptions);
     };
     /**
      * Call a native plugin method, or a web API fallback.
@@ -23,7 +23,7 @@ var Plugin = /** @class */ (function () {
      * NO CONSOLE LOGS IN THIS METHOD! Can throw our
      * custom console handler into an infinite loop
      */
-    Plugin.prototype.native = function (method, options, callbackType, callbackFunction) {
+    Plugin.prototype.native = function (method, options, callbackType, callbackFunction, callOptions) {
         var d = this.constructor.getPluginInfo();
         // If avocado is running in a browser environment, call our
         // web fallback

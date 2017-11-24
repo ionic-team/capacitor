@@ -1,6 +1,6 @@
 import { Avocado } from './avocado';
 
-import { PluginCallback } from './definitions';
+import { PluginCallback, PluginCallOptions } from './definitions';
 
 /**
  * Base class for all 3rd party plugins.
@@ -14,7 +14,7 @@ export class Plugin {
     this.avocado.registerPlugin(this);
   }
 
-  nativeCallback(method: string, options?: any, callbackFunction?: PluginCallback, webFallback?: Function) {
+  nativeCallback(method: string, options?: any, callbackFunction?: PluginCallback, callOptions?: PluginCallOptions) {
     if (typeof options === 'function') {
       callbackFunction = options;
       options = {};
@@ -22,8 +22,8 @@ export class Plugin {
     return this.native(method, options, 'callback', callbackFunction);
   }
 
-  nativePromise(method: string, options?: any, webFallback?: Function) {
-    return this.native(method, options, 'promise', null);
+  nativePromise(method: string, options?: any, callOptions?: PluginCallOptions) {
+    return this.native(method, options, 'promise', null, callOptions);
   }
 
   /**
@@ -32,7 +32,7 @@ export class Plugin {
    * NO CONSOLE LOGS IN THIS METHOD! Can throw our
    * custom console handler into an infinite loop
    */
-  native(method: any, options: any, callbackType: string, callbackFunction?: PluginCallback) {
+  native(method: any, options: any, callbackType: string, callbackFunction?: PluginCallback, callOptions?: PluginCallOptions) {
 
     let d = (<any>this).constructor.getPluginInfo();
 

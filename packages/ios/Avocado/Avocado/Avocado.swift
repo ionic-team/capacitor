@@ -11,17 +11,22 @@ public class Avocado {
   public var lastPlugin: Plugin?
   public var plugins =  [String:Plugin]()
   public var dispatchQueue = DispatchQueue(label: "avocado")
+  	
   
-  public init(_ vc: UIViewController) {
+  public init(_ vc: UIViewController, _ pluginIds: [String]) {
     self.viewController = vc
 
-    registerCorePlugins()
-    let d = Diagnostics()
-    print("Memory usage: ", d.getMemoryUsage())
-    print("Disk free", d.getFreeDiskSize())
-    print("Disk total", d.getTotalDiskSize())
+    let moduleClasses = AvocadoGetModuleClasses()
+    print("These modules classes are ready")
+    for module in moduleClasses! {
+      print(module)
+    }
+    
+    //registerCorePlugins()
+    registerPlugins(pluginIds)
   }
   
+  /*
   func registerCorePlugins() {
     let console = Console(self)
     let filesystem = Filesystem(self)
@@ -39,11 +44,15 @@ public class Avocado {
     self.registerPlugin(haptics)
     self.registerPlugin(browser)
     self.registerPlugin(motion)
+  }*/
+  
+  func registerPlugins(_ pluginIds: [String]) {
+    for pluginId in pluginIds {
+      //print("Registering plugin", pluginId)
+      //registerPlugin(plugin)
+    }
   }
   
-  public func getDiagnostics() {
-    
-  }
   
   public func setWebView(webView: WKWebView) {
     self.webView = webView

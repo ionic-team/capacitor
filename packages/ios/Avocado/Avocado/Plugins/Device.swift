@@ -2,6 +2,7 @@ import Foundation
 
 public typealias DeviceInfo = [String:Any]
 
+@objc(Device)
 public class Device: Plugin {
   let diagnostics: Diagnostics = Diagnostics()
   
