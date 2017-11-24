@@ -26,6 +26,10 @@ export class HomePage {
   deviceInfoJson: string;
   isStatusBarLight = true
   accel = null
+  profiling = false;
+  profileTimeout = null;
+  profileNumCallsTimeout = null;
+  profileSamples = null;
 
   constructor(public navCtrl: NavController, public zone: NgZone) {
   }
@@ -76,8 +80,6 @@ export class HomePage {
     const info = await device.getInfo()
     this.zone.run(() => {
       this.deviceInfoJson = JSON.stringify(info, null, 2);
-      console.log('Device info');
-      console.log(info);
     });
   }
 
@@ -203,5 +205,31 @@ export class HomePage {
         this.accel = v;
       });
     });
+  }
+
+  startProfile() {
+    this.profiling = true;
+    var samples = [];
+    var numCalls = 0;
+    const pCalls = () => {
+      samples.push(numCalls);
+      numCalls = 0;
+      setTimeout(pCalls, 1000);
+    };
+    const p = () => {
+      this.getDeviceInfo();
+      numCalls++;
+      this.profileTimeout = setTimeout(p);
+    };
+    this.profileNumCallsTimeout = setTimeout(pCalls);
+    this.profileTimeout = setTimeout(p);
+  }
+
+  endProfile() {
+    this.profiling = false;
+    var avgPerSecond = this.profileSamples.reduce((acc, val) => acc + val) / this.profileSamples.length;
+    this.profileSamples = [];
+    alert(`Profile: ${avgPerSecond}/second calls (avg)`);
+    clearTimeout(this.profileTimeout);
   }
 }
