@@ -1,3 +1,7 @@
+## JS Module Dev Guide
+
+Use (function(err, data) for callback modes?)
+
 ## iOS Module Development Guide
 
 

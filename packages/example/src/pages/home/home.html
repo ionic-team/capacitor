@@ -109,6 +109,9 @@
       <button (click)="watchAccel()" ion-button>
         Watch Accel
       </button>
+      <div *ngIf="accel">
+        <b>x</b>: {{accel.x}} <b>y</b>: {{accel.y}} <b>z</b>: {{accel.z}}
+      </div>
     </ion-item>
   </ion-list>
 </ion-content>
