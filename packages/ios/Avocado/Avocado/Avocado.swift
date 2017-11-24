@@ -24,6 +24,8 @@ public class Avocado {
     self.viewController = vc
 
     registerCorePlugins()
+    let d = Diagnostics()
+    print("Memory usage: ", d.getMemoryUsage())
   }
   
   func registerCorePlugins() {
@@ -43,6 +45,10 @@ public class Avocado {
     self.registerPlugin(haptics)
     self.registerPlugin(browser)
     self.registerPlugin(motion)
+  }
+  
+  public func getDiagnostics() {
+    
   }
   
   public func setWebView(webView: WKWebView) {

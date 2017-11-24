@@ -26,6 +26,7 @@
 		50503F231FC0968E003606DC /* Avocado.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F221FC0968E003606DC /* Avocado.swift */; };
 		50503F251FC098A3003606DC /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F241FC098A3003606DC /* Plugin.swift */; };
 		5053E8FD1FC874DE00166FBE /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FC1FC874DE00166FBE /* Loader.swift */; };
+		5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FE1FC8755F00166FBE /* Diagnostics.swift */; };
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,7 @@
 		50503F221FC0968E003606DC /* Avocado.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avocado.swift; sourceTree = "<group>"; };
 		50503F241FC098A3003606DC /* Plugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plugin.swift; sourceTree = "<group>"; };
 		5053E8FC1FC874DE00166FBE /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
+		5053E8FE1FC8755F00166FBE /* Diagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
 		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +124,7 @@
 				50503F221FC0968E003606DC /* Avocado.swift */,
 				50503F241FC098A3003606DC /* Plugin.swift */,
 				5053E8FC1FC874DE00166FBE /* Loader.swift */,
+				5053E8FE1FC8755F00166FBE /* Diagnostics.swift */,
 			);
 			path = Avocado;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 				50503F001FC08662003606DC /* Geolocation.swift in Sources */,
 				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
 				50503F251FC098A3003606DC /* Plugin.swift in Sources */,
+				5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */,
 				50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */,
 				50503EFF1FC08662003606DC /* Device.swift in Sources */,
 				50474F0D1FC5284D00AA0184 /* Camera.swift in Sources */,

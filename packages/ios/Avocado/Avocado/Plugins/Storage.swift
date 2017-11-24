@@ -11,5 +11,4 @@ public class Storage : Plugin {
   }
 }
 
-Avocado.plugin(Storage)
 
