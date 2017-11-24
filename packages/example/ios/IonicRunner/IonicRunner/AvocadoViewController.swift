@@ -19,9 +19,8 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   
   override func loadView() {
     avocado = Avocado(self, [
-      Device,
-      Geolocation,
-      StatusBar
+      "com.avocadojs.plugin.device",
+      "com.avocadojs.plugin.geolocation",
     ])
     
     let webViewConfiguration = WKWebViewConfiguration()
