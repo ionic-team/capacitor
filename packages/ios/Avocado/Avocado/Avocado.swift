@@ -1,11 +1,3 @@
-//
-//  Avocado.swift
-//  Avocado
-//
-//  Created by Max Lynch
-//  Copyright © 2017 Drifty Co. All rights reserved.
-//
-
 import Foundation
 import Dispatch
 import WebKit
