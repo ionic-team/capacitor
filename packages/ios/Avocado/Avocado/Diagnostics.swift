@@ -9,6 +9,9 @@
 import Foundation
 
 public class Diagnostics {
+  /**
+   * Get current memory usage
+   */
   public func getMemoryUsage() -> UInt64 {
     var taskInfo = mach_task_basic_info()
     var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
@@ -23,5 +26,31 @@ public class Diagnostics {
     } else {
       return 0
     }
+  }
+  
+  /**
+   * Get free disk space
+   */
+  public func getFreeDiskSize() -> Int64? {
+    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+    if let dictionary = try? FileManager.default.attributesOfFileSystem(forPath: paths.last!) {
+      if let freeSize = dictionary[FileAttributeKey.systemFreeSize] as? NSNumber {
+        return freeSize.int64Value
+      }
+    }
+    return nil
+  }
+  
+  /**
+   * Get total disk size
+   */
+  public func getTotalDiskSize() -> Int64?{
+    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+    if let dictionary = try? FileManager.default.attributesOfFileSystem(forPath: paths.last!) {
+      if let freeSize = dictionary[FileAttributeKey.systemSize] as? NSNumber {
+        return freeSize.int64Value
+      }
+    }
+    return nil
   }
 }

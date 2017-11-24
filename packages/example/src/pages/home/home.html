@@ -14,6 +14,17 @@
     </ion-item>
   -->
     <ion-item>
+      <ion-item>
+        Profile
+      </ion-item>
+      <ion-item>
+        <button (click)="startProfile()" ion-button color="primary" *ngIf="!profiling">
+          Start Profile
+        </button>
+        <button (click)="endProfile()" ion-button color="primary" *ngIf="profiling">
+          End Profile
+        </button>
+      </ion-item>
       <button (click)="getCurrentPosition()" ion-button color="primary">
         Geolocation.getCurrentPosition
       </button>

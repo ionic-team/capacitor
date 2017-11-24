@@ -26,6 +26,8 @@ public class Avocado {
     registerCorePlugins()
     let d = Diagnostics()
     print("Memory usage: ", d.getMemoryUsage())
+    print("Disk free", d.getFreeDiskSize())
+    print("Disk total", d.getTotalDiskSize())
   }
   
   func registerCorePlugins() {

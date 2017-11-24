@@ -8,6 +8,9 @@ export declare type PluginCallbackHandler = PluginCallback | any;
 export interface PluginCaller {
     callbackFunction?: PluginCallback;
 }
+export interface PluginCallOptions {
+    onMainThread: boolean;
+}
 /**
  * Metadata about a native plugin call.
  */
