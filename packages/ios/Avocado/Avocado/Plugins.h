@@ -13,7 +13,7 @@
 
 #define AVOCADO_EXPORT_MODULE(module_id) \
 AVC_EXTERN void AvocadoRegisterModule(Class); \
-+ (NSString *)moduleId { return @#module_id; } \
++ (NSString *)moduleId { return @module_id; } \
 + (void)load { AvocadoRegisterModule(self); }
 
 + (NSString *)moduleId;

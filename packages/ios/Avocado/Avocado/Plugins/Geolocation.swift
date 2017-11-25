@@ -63,10 +63,6 @@ public class Geolocation : Plugin {
   var locationHandler: CLLocationManagerDelegate?
   var watchLocationHandler: CLLocationManagerDelegate?
   
-  public init(_ avocado: Avocado) {
-    super.init(avocado, id: "com.avocadojs.plugin.geolocation")
-  }
-  
   @objc public func getCurrentPosition(_ call: PluginCall) {
     self.locationHandler = GetLocationHandler(call: call, options:[
       "watch": false

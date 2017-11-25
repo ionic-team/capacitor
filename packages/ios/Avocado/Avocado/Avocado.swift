@@ -25,10 +25,10 @@ public class Avocado {
     var numClasses = UInt32(0);
     let classes = objc_copyClassList(&numClasses)
     for i in 0..<Int(numClasses) {
-      //print("CLASS", classes![i])
       let c = classes![i]
       if class_conformsToProtocol(c, AvocadoBridgeModule.self) {
-        print("Found a class", c)
+        let pluginType = c as! Plugin.Type
+        registerModule(pluginType)
       }
     }
     let moduleClasses = AvocadoGetModuleClasses()
@@ -36,8 +36,15 @@ public class Avocado {
     for module in moduleClasses! {
       print(module)
     }
-    
   }
+  
+  func registerModule(_ pluginType: Plugin.Type) {
+    let bridgeType = pluginType as! AvocadoBridgeModule.Type
+    let m = pluginType.init(self, id: bridgeType.moduleId())
+    print("Instantiated module", pluginType, m)
+    registerPlugin(m)
+  }
+  
   /*
   func registerCorePlugins() {
     let console = Console(self)
@@ -56,26 +63,21 @@ public class Avocado {
     self.registerPlugin(haptics)
     self.registerPlugin(browser)
     self.registerPlugin(motion)
-  }*/
-  
-  func registerPlugins(_ pluginIds: [String]) {
-    for pluginId in pluginIds {
-      //print("Registering plugin", pluginId)
-      //registerPlugin(plugin)
-    }
   }
-  
+ */
   
   public func setWebView(webView: WKWebView) {
     self.webView = webView
   }
   
   public func registerPlugin(_ plugin: Plugin) {
+    print("Registering plugin", plugin.getId())
     self.plugins[plugin.getId()] = plugin
   }
   
-  public func getPlugin(pluginName: String) -> Plugin? {
-    return self.plugins[pluginName]
+  public func getPlugin(pluginId: String) -> Plugin? {
+    print("Checking for plugin", pluginId, plugins)
+    return self.plugins[pluginId]
   }
   
   /**
@@ -87,7 +89,7 @@ public class Avocado {
     let selector = NSSelectorFromString("\(call.method):")
     
     // Get the plugin from the list of loaded, registered plugins
-    if let plugin = self.getPlugin(pluginName: call.pluginId) {
+    if let plugin = self.getPlugin(pluginId: call.pluginId) {
       print("Calling method \(call.method) on plugin \(plugin.getId())")
       
       if !plugin.responds(to: selector) {

@@ -3,10 +3,6 @@ import Foundation
 public class Filesystem : Plugin {
   let DEFAULT_DIRECTORY = "DOCUMENTS"
   
-  public init(_ avocado: Avocado) {
-    super.init(avocado, id: "com.avocadojs.plugin.fs")
-  }
-  
   // Get the SearchPathDirectory corresponding to the JS string
   func getDirectory(directory: String) -> FileManager.SearchPathDirectory {
     switch directory {

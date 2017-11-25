@@ -1,11 +1,7 @@
 import Foundation
 import CoreMotion
 
-public class Storage : Plugin {
-  public init(_ avocado: Avocado) {
-    super.init(avocado, id: "com.avocadojs.plugin.storage")
-  }
-  
+public class Storage : Plugin {  
   @objc func setItem(_ call: PluginCall) {
     
   }
