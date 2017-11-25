@@ -10,7 +10,7 @@ import {
 import { Platform } from './platform';
 import { Plugin } from './plugin';
 
-import { ConsolePlugin } from './plugins/console';
+import { Console } from './modules/console';
 
 declare var window: any;
 
@@ -20,7 +20,7 @@ declare var window: any;
 export class Avocado {
   platform: Platform;
 
-  console: ConsolePlugin;
+  console: Console;
 
   // Storage of calls for associating w/ native callback later
   private calls: { [key: string]: StoredPluginCall } = {}
@@ -32,7 +32,7 @@ export class Avocado {
 
     this.platform = new Platform();
 
-    setTimeout(() => { this.loadCorePlugins(); } )
+    setTimeout(() => { this.loadCoreModules(); } )
   }
 
   private log(...args: any[]) {
@@ -40,8 +40,8 @@ export class Avocado {
     this.console && this.console.windowLog(args);
   }
 
-  loadCorePlugins() {
-    this.console = new ConsolePlugin();
+  loadCoreModules() {
+    this.console = new Console();
   }
 
   registerPlugin(plugin: Plugin) {

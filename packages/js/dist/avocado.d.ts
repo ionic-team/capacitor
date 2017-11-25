@@ -1,18 +1,18 @@
 import { PluginCaller, PluginCall, PluginResult } from './definitions';
 import { Platform } from './platform';
 import { Plugin } from './plugin';
-import { ConsolePlugin } from './plugins/console';
+import { Console } from './modules/console';
 /**
  * Main class for interacting with the Avocado runtime.
  */
 export declare class Avocado {
     platform: Platform;
-    console: ConsolePlugin;
+    console: Console;
     private calls;
     private callbackIdCount;
     constructor();
     private log(...args);
-    loadCorePlugins(): void;
+    loadCoreModules(): void;
     registerPlugin(plugin: Plugin): void;
     /**
      * Send a plugin method call to the native layer.

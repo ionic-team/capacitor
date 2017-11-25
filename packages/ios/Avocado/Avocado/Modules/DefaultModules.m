@@ -5,6 +5,9 @@
 @interface AVOCADO_MODULE("com.avocadojs.plugin.browser", Browser)
 @end
 
+@interface AVOCADO_MODULE("com.avocadojs.plugin.camera", Camera)
+@end
+
 @interface AVOCADO_MODULE("com.avocadojs.plugin.console", Console)
 @end
 

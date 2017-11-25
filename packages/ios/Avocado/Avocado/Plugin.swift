@@ -49,7 +49,7 @@ public class Plugin: NSObject {
     successCallback(PluginResult(data))
   }
   
-  public func error(_ message: String, _ error: Error?, _ data: PluginCallErrorData = [:]) {
+  public func error(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
     errorCallback(PluginCallError(message: message, error: error, data: data))
   }
 }
