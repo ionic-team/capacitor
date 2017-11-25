@@ -83,9 +83,9 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var ConsolePlugin = /** @class */ (function (_super) {
-    __extends(ConsolePlugin, _super);
-    function ConsolePlugin() {
+var Console = /** @class */ (function (_super) {
+    __extends(Console, _super);
+    function Console() {
         var _this = _super.call(this) || this;
         _this.queue = [];
         _this.originalLog = window.console.log;
@@ -111,20 +111,20 @@ var ConsolePlugin = /** @class */ (function (_super) {
         setTimeout(syncQueue);
         return _this;
     }
-    ConsolePlugin.prototype.windowLog = function () {
+    Console.prototype.windowLog = function () {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
         this.originalLog.apply(this.originalLog, args);
     };
-    ConsolePlugin = __decorate([
+    Console = __decorate([
         AvocadoPlugin({
             name: 'Console',
             id: 'com.avocadojs.plugin.console'
         })
-    ], ConsolePlugin);
-    return ConsolePlugin;
+    ], Console);
+    return Console;
 }(Plugin));
 
 var __assign = (undefined && undefined.__assign) || Object.assign || function(t) {
@@ -146,7 +146,7 @@ var Avocado = /** @class */ (function () {
         this.calls = {};
         this.callbackIdCount = 0;
         this.platform = new Platform();
-        setTimeout(function () { _this.loadCorePlugins(); });
+        setTimeout(function () { _this.loadCoreModules(); });
     }
     Avocado.prototype.log = function () {
         var args = [];
@@ -156,8 +156,8 @@ var Avocado = /** @class */ (function () {
         args.unshift('Avocado: ');
         this.console && this.console.windowLog(args);
     };
-    Avocado.prototype.loadCorePlugins = function () {
-        this.console = new ConsolePlugin();
+    Avocado.prototype.loadCoreModules = function () {
+        this.console = new Console();
     };
     Avocado.prototype.registerPlugin = function (plugin) {
         var info = plugin.constructor.getPluginInfo();
@@ -276,21 +276,21 @@ var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var Browser = /** @class */ (function (_super) {
-    __extends$1(Browser, _super);
-    function Browser() {
+var Camera = /** @class */ (function (_super) {
+    __extends$1(Camera, _super);
+    function Camera() {
         return _super.call(this) || this;
     }
-    Browser.prototype.open = function (url) {
-        this.nativeCallback('open', { url: url });
+    Camera.prototype.open = function () {
+        return this.nativePromise('open');
     };
-    Browser = __decorate$1([
+    Camera = __decorate$1([
         AvocadoPlugin({
-            name: 'Browser',
-            id: 'com.avocadojs.plugin.browser'
+            name: 'Camera',
+            id: 'com.avocadojs.plugin.camera'
         })
-    ], Browser);
-    return Browser;
+    ], Camera);
+    return Camera;
 }(Plugin));
 
 var __extends$2 = (undefined && undefined.__extends) || (function () {
@@ -304,6 +304,39 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var Browser = /** @class */ (function (_super) {
+    __extends$2(Browser, _super);
+    function Browser() {
+        return _super.call(this) || this;
+    }
+    Browser.prototype.open = function (url) {
+        this.nativeCallback('open', { url: url });
+    };
+    Browser = __decorate$2([
+        AvocadoPlugin({
+            name: 'Browser',
+            id: 'com.avocadojs.plugin.browser'
+        })
+    ], Browser);
+    return Browser;
+}(Plugin));
+
+var __extends$3 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -345,7 +378,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
     }
 };
 var Device = /** @class */ (function (_super) {
-    __extends$2(Device, _super);
+    __extends$3(Device, _super);
     function Device() {
         return _super.call(this) || this;
     }
@@ -356,7 +389,7 @@ var Device = /** @class */ (function (_super) {
             });
         });
     };
-    Device = __decorate$2([
+    Device = __decorate$3([
         AvocadoPlugin({
             name: 'Device',
             id: 'com.avocadojs.plugin.device'
@@ -365,7 +398,7 @@ var Device = /** @class */ (function (_super) {
     return Device;
 }(Plugin));
 
-var __extends$3 = (undefined && undefined.__extends) || (function () {
+var __extends$4 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -375,7 +408,7 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -417,7 +450,7 @@ var __generator$1 = (undefined && undefined.__generator) || function (thisArg, b
     }
 };
 var Geolocation = /** @class */ (function (_super) {
-    __extends$3(Geolocation, _super);
+    __extends$4(Geolocation, _super);
     function Geolocation() {
         return _super.call(this) || this;
     }
@@ -452,51 +485,13 @@ var Geolocation = /** @class */ (function (_super) {
             });
         }
     };
-    Geolocation = __decorate$3([
+    Geolocation = __decorate$4([
         AvocadoPlugin({
             name: 'Geolocation',
             id: 'com.avocadojs.plugin.geolocation'
         })
     ], Geolocation);
     return Geolocation;
-}(Plugin));
-
-var __extends$4 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var StatusBarStyle;
-(function (StatusBarStyle) {
-    StatusBarStyle["Dark"] = "DARK";
-    StatusBarStyle["Light"] = "LIGHT";
-})(StatusBarStyle || (StatusBarStyle = {}));
-var StatusBar = /** @class */ (function (_super) {
-    __extends$4(StatusBar, _super);
-    function StatusBar() {
-        return _super.call(this) || this;
-    }
-    StatusBar.prototype.setStyle = function (options, callback) {
-        this.nativeCallback('setStyle', options, callback);
-    };
-    StatusBar = __decorate$4([
-        AvocadoPlugin({
-            name: 'StatusBar',
-            id: 'com.avocadojs.plugin.statusbar'
-        })
-    ], StatusBar);
-    return StatusBar;
 }(Plugin));
 
 var __extends$5 = (undefined && undefined.__extends) || (function () {
@@ -515,39 +510,26 @@ var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var HapticsImpactStyle;
-(function (HapticsImpactStyle) {
-    HapticsImpactStyle["Heavy"] = "HEAVY";
-    HapticsImpactStyle["Medium"] = "MEDIUM";
-    HapticsImpactStyle["Light"] = "LIGHT";
-})(HapticsImpactStyle || (HapticsImpactStyle = {}));
-var Haptics = /** @class */ (function (_super) {
-    __extends$5(Haptics, _super);
-    function Haptics() {
+var StatusBarStyle;
+(function (StatusBarStyle) {
+    StatusBarStyle["Dark"] = "DARK";
+    StatusBarStyle["Light"] = "LIGHT";
+})(StatusBarStyle || (StatusBarStyle = {}));
+var StatusBar = /** @class */ (function (_super) {
+    __extends$5(StatusBar, _super);
+    function StatusBar() {
         return _super.call(this) || this;
     }
-    Haptics.prototype.impact = function (options) {
-        this.nativeCallback('impact', options);
+    StatusBar.prototype.setStyle = function (options, callback) {
+        this.nativeCallback('setStyle', options, callback);
     };
-    Haptics.prototype.vibrate = function () {
-        this.nativeCallback('vibrate');
-    };
-    Haptics.prototype.selectionStart = function () {
-        this.nativeCallback('selectionStart');
-    };
-    Haptics.prototype.selectionChanged = function () {
-        this.nativeCallback('selectionChanged');
-    };
-    Haptics.prototype.selectionEnd = function () {
-        this.nativeCallback('selectionEnd');
-    };
-    Haptics = __decorate$5([
+    StatusBar = __decorate$5([
         AvocadoPlugin({
-            name: 'Haptics',
-            id: 'com.avocadojs.plugin.haptics'
+            name: 'StatusBar',
+            id: 'com.avocadojs.plugin.statusbar'
         })
-    ], Haptics);
-    return Haptics;
+    ], StatusBar);
+    return StatusBar;
 }(Plugin));
 
 var __extends$6 = (undefined && undefined.__extends) || (function () {
@@ -566,6 +548,57 @@ var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var HapticsImpactStyle;
+(function (HapticsImpactStyle) {
+    HapticsImpactStyle["Heavy"] = "HEAVY";
+    HapticsImpactStyle["Medium"] = "MEDIUM";
+    HapticsImpactStyle["Light"] = "LIGHT";
+})(HapticsImpactStyle || (HapticsImpactStyle = {}));
+var Haptics = /** @class */ (function (_super) {
+    __extends$6(Haptics, _super);
+    function Haptics() {
+        return _super.call(this) || this;
+    }
+    Haptics.prototype.impact = function (options) {
+        this.nativeCallback('impact', options);
+    };
+    Haptics.prototype.vibrate = function () {
+        this.nativeCallback('vibrate');
+    };
+    Haptics.prototype.selectionStart = function () {
+        this.nativeCallback('selectionStart');
+    };
+    Haptics.prototype.selectionChanged = function () {
+        this.nativeCallback('selectionChanged');
+    };
+    Haptics.prototype.selectionEnd = function () {
+        this.nativeCallback('selectionEnd');
+    };
+    Haptics = __decorate$6([
+        AvocadoPlugin({
+            name: 'Haptics',
+            id: 'com.avocadojs.plugin.haptics'
+        })
+    ], Haptics);
+    return Haptics;
+}(Plugin));
+
+var __extends$7 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var FilesystemDirectory;
 (function (FilesystemDirectory) {
     FilesystemDirectory["Application"] = "APPLICATION";
@@ -576,7 +609,7 @@ var FilesystemDirectory;
     FilesystemDirectory["ExternalStorage"] = "EXTERNAL_STORAGE"; // Android only
 })(FilesystemDirectory || (FilesystemDirectory = {}));
 var Filesystem = /** @class */ (function (_super) {
-    __extends$6(Filesystem, _super);
+    __extends$7(Filesystem, _super);
     function Filesystem() {
         return _super.call(this) || this;
     }
@@ -632,7 +665,7 @@ var Filesystem = /** @class */ (function (_super) {
             directory: directory
         });
     };
-    Filesystem = __decorate$6([
+    Filesystem = __decorate$7([
         AvocadoPlugin({
             name: 'Filesystem',
             id: 'com.avocadojs.plugin.fs'
@@ -641,7 +674,7 @@ var Filesystem = /** @class */ (function (_super) {
     return Filesystem;
 }(Plugin));
 
-var __extends$7 = (undefined && undefined.__extends) || (function () {
+var __extends$8 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -651,21 +684,21 @@ var __extends$7 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Motion = /** @class */ (function (_super) {
-    __extends$7(Motion, _super);
+    __extends$8(Motion, _super);
     function Motion() {
         return _super.call(this) || this;
     }
     Motion.prototype.watchAccel = function (callback) {
         this.nativeCallback('watchAccel', callback);
     };
-    Motion = __decorate$7([
+    Motion = __decorate$8([
         AvocadoPlugin({
             name: 'Motion',
             id: 'com.avocadojs.plugin.motion'
@@ -674,4 +707,4 @@ var Motion = /** @class */ (function (_super) {
     return Motion;
 }(Plugin));
 
-export { Avocado, Platform, Plugin, AvocadoPlugin, ConsolePlugin, Browser, Device, Geolocation, StatusBar, StatusBarStyle, Haptics, HapticsImpactStyle, Filesystem, FilesystemDirectory, Motion };
+export { Avocado, Platform, Plugin, AvocadoPlugin, Camera, Console, Browser, Device, Geolocation, StatusBar, StatusBarStyle, Haptics, HapticsImpactStyle, Filesystem, FilesystemDirectory, Motion };

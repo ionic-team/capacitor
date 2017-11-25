@@ -31,6 +31,7 @@ public class Avocado {
         registerModule(pluginType)
       }
     }
+    
     let moduleClasses = AvocadoGetModuleClasses()
     print("These modules classes are ready")
     for module in moduleClasses! {
@@ -45,26 +46,24 @@ public class Avocado {
     registerPlugin(m)
   }
   
-  /*
-  func registerCorePlugins() {
-    let console = Console(self)
-    let filesystem = Filesystem(self)
-    let device = Device(self)
-    let geo = Geolocation(self)
-    let statusbar = StatusBar(self)
-    let haptics = Haptics(self)
-    let browser = Browser(self)
-    let motion = Motion(self)
-    self.registerPlugin(console)
-    self.registerPlugin(filesystem)
-    self.registerPlugin(device)
-    self.registerPlugin(geo)
-    self.registerPlugin(statusbar)
-    self.registerPlugin(haptics)
-    self.registerPlugin(browser)
-    self.registerPlugin(motion)
+  public func isSimulator() -> Bool {
+    var isSimulator = false
+    #if arch(i386) || arch(x86_64)
+      isSimulator = true
+    #endif
+    return isSimulator
   }
- */
+  
+  public func modulePrint(_ plugin: Plugin, _ items: Any...) {
+    let output = items.map { "\($0)" }.joined(separator: " ")
+    Swift.print(plugin.pluginId, "-", output)
+  }
+  
+  public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: nil))
+    self.viewController.present(alert, animated: true, completion: nil)
+  }
   
   public func setWebView(webView: WKWebView) {
     self.webView = webView
