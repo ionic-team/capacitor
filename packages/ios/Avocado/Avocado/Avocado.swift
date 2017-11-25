@@ -59,6 +59,12 @@ public class Avocado {
     Swift.print(plugin.pluginId, "-", output)
   }
   
+  public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: nil))
+    self.viewController.present(alert, animated: true, completion: nil)
+  }
+  
   public func setWebView(webView: WKWebView) {
     self.webView = webView
   }

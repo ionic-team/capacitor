@@ -8,6 +8,7 @@ public class Camera : Plugin {
   @objc func open(_ call: PluginCall) {
     if(avocado.isSimulator()) {
       avocado.modulePrint(self, "Camera not available in simulator")
+      avocado.alert("Camera Error", "Camera not available in Simulator")
       return
     }
     cameraViewController = CameraViewController()
