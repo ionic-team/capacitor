@@ -1,6 +1,7 @@
 import Foundation
 import AudioToolbox
 
+@objc(Haptics)
 public class Haptics: Plugin {
   var selectionFeedbackGenerator: UISelectionFeedbackGenerator?
   

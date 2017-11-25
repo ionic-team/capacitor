@@ -1,6 +1,7 @@
 import Foundation
 import SafariServices
 
+@objc(Browser)
 public class Browser : Plugin, SFSafariViewControllerDelegate {
   var vc: SFSafariViewController?
   
