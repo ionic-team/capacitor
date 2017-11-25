@@ -21,6 +21,9 @@
                                 <rect key="frame" x="0.0" y="548" width="256" height="119"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Capture"/>
+                                <connections>
+                                    <action selector="takePicture:" destination="4Sz-Yp-Zmc" eventType="touchUpInside" id="feH-Jb-nc0"/>
+                                </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iJA-Jv-mPx">
                                 <rect key="frame" x="253" y="552" width="122" height="115"/>
@@ -35,6 +38,11 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <viewLayoutGuide key="safeArea" id="Ib3-ur-LDj"/>
                     </view>
+                    <connections>
+                        <outlet property="captureButton" destination="zs7-6R-bve" id="f7L-NJ-890"/>
+                        <outlet property="lastImageView" destination="iJA-Jv-mPx" id="YJ7-A9-wKB"/>
+                        <outlet property="previewView" destination="uLf-bV-AMF" id="zdG-qg-Dyz"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e8i-BF-F0Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

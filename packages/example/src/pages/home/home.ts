@@ -3,16 +3,17 @@ import { Component, NgZone } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
 import {
-  Geolocation,
+  Browser,
+  Camera,
   Device,
   Filesystem,
   FilesystemDirectory,
-  StatusBar,
-  StatusBarStyle,
+  Geolocation,
   Haptics,
   HapticsImpactStyle,
-  Browser,
-  Motion
+  Motion,
+  StatusBar,
+  StatusBarStyle
 } from 'avocado-js';
 
 @Component({
@@ -34,15 +35,13 @@ export class HomePage {
   constructor(public navCtrl: NavController, public zone: NgZone) {
   }
 
-  /*
   takePicture() {
-    let camera = new CameraPlugin();
-    camera.getPicture().then((image) => {
+    let camera = new Camera();
+    camera.open().then((image) => {
       console.log('Got picture callback');
       this.image = image && image.data;
     });
   }
-  */
 
   async getCurrentPosition() {
     let geo = new Geolocation();

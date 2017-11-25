@@ -34,9 +34,15 @@ public class CameraViewController : UIViewController {
   var stillImageOutput: AVCapturePhotoOutput?
   var videoPreviewLayer: AVCaptureVideoPreviewLayer?
   
-  @IBOutlet public func takePicture() {
-    
+  
+  @IBOutlet weak var previewView: UIView!
+  @IBOutlet weak var captureButton: UIButton!
+  @IBOutlet weak var lastImageView: UIImageView!
+  
+  @IBAction func takePicture(_ sender: Any) {
+    print("Taking picture")
   }
+
   
   override public func viewDidLoad() {
     super.viewDidLoad()
@@ -79,9 +85,15 @@ public class CameraViewController : UIViewController {
     }
   }
   
-  override func viewDidAppear(_ animated: Bool) {
+  override public func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    videoPreviewLayer!.frame = previewView.bounds
+    
+    guard let previewLayer = videoPreviewLayer else {
+      print("No preview layer available on camera appear")
+      return
+    }
+    
+    previewLayer.frame = previewView.bounds
   }
   
 }
