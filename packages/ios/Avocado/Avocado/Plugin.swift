@@ -16,7 +16,7 @@ public class Plugin: NSObject {
   public var pluginId: String
   var avocado: Avocado
   
-  public init(_ avocado: Avocado, id: String) {
+  public required init(_ avocado: Avocado, id: String) {
     self.pluginId = id
     self.avocado = avocado
   }

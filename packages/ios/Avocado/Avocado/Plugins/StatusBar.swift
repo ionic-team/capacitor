@@ -5,10 +5,6 @@ import Foundation
  * be "NO" in Info.plist
  */
 public class StatusBar: Plugin {
-  public init(_ avocado: Avocado) {
-    super.init(avocado, id: "com.avocadojs.plugin.statusbar")
-  }
-  
   @objc public func setStyle(_ call: PluginCall) {
     let options = call.options
 

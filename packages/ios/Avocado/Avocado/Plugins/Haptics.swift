@@ -4,10 +4,6 @@ import AudioToolbox
 public class Haptics: Plugin {
   var selectionFeedbackGenerator: UISelectionFeedbackGenerator?
   
-  public init(_ avocado: Avocado) {
-    super.init(avocado, id: "com.avocadojs.plugin.haptics")
-  }
-  
   @objc public func impact(_ call: PluginCall) {
     if let style = call.options["style"] as? String {
       var impactStyle = UIImpactFeedbackStyle.heavy

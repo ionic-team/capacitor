@@ -6,10 +6,6 @@ public typealias DeviceInfo = [String:Any]
 public class Device: Plugin {
   let diagnostics: Diagnostics = Diagnostics()
   
-  public init(_ avocado: Avocado) {
-    super.init(avocado, id: "com.avocadojs.plugin.device")
-  }
-  
   @objc func getInfo(_ call: PluginCall) {
     var isSimulator = false
     #if arch(i386) || arch(x86_64)

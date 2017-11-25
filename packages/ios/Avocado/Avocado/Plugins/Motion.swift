@@ -5,10 +5,6 @@ public class Motion : Plugin {
   var motion: CMMotionManager?
   var timer: Timer?
   
-  public init(_ avocado: Avocado) {
-    super.init(avocado, id: "com.avocadojs.plugin.motion")
-  }
-  
   @objc func watchAccel(_ call: PluginCall) {
     self.motion = CMMotionManager()
     
