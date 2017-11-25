@@ -58,6 +58,7 @@ class GetLocationHandler:NSObject, CLLocationManagerDelegate {
   }
 }
 
+@objc(Geolocation)
 public class Geolocation : Plugin {
   // TODO: Figure out better way to save the call hander (strong reference)
   var locationHandler: CLLocationManagerDelegate?

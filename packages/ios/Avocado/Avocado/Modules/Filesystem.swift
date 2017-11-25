@@ -1,5 +1,6 @@
 import Foundation
 
+@objc(Filesystem)
 public class Filesystem : Plugin {
   let DEFAULT_DIRECTORY = "DOCUMENTS"
   

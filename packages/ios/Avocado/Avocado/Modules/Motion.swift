@@ -1,6 +1,7 @@
 import Foundation
 import CoreMotion
 
+@objc(Motion)
 public class Motion : Plugin {
   var motion: CMMotionManager?
   var timer: Timer?

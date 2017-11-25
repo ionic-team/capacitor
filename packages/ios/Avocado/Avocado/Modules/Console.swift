@@ -1,5 +1,6 @@
 import Foundation
 
+@objc(Console)
 public class Console : Plugin {
 
   @objc public func log(_ call: PluginCall) {

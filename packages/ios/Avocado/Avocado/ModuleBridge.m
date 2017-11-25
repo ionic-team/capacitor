@@ -1,6 +1,6 @@
 #import <foundation/foundation.h>
 
-#import "Plugins.h"
+#import "ModuleBridge.h"
 
 static NSMutableArray<Class> *AvocadoModuleClasses;
 NSArray<Class> *AvocadoGetModuleClasses(void)

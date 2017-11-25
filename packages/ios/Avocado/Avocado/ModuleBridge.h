@@ -1,5 +1,5 @@
-#ifndef Plugins_h
-#define Plugins_h
+#ifndef ModuleBridge_h
+#define ModuleBridge_h
 
 
 #if defined(__cplusplus)
@@ -20,8 +20,8 @@ AVC_EXTERN void AvocadoRegisterModule(Class); \
 
 @optional
 
-#define AVOCADO_MODULE(module_id, objc_name, objc_supername) \
-objc_name : objc_supername \
+#define AVOCADO_MODULE(module_id, objc_name) \
+objc_name : NSObject \
 @end \
 @interface objc_name (AvocadoExternModule) <AvocadoBridgeModule> \
 @end \
@@ -30,4 +30,4 @@ AVOCADO_EXPORT_MODULE(module_id)
 
 @end
 
-#endif /* Plugins_h */
+#endif /* ModuleBridge_h */
