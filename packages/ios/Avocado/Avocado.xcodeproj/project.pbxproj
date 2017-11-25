@@ -30,6 +30,7 @@
 		5053E90B1FC8D01200166FBE /* Plugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90A1FC8D01200166FBE /* Plugins.m */; };
 		5053E90D1FC8D24000166FBE /* CorePlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E90C1FC8D1D800166FBE /* CorePlugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5053E90F1FC8D51100166FBE /* CorePlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90E1FC8D51100166FBE /* CorePlugins.m */; };
+		5053E9101FC8FEEC00166FBE /* Plugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E9091FC8CD1000166FBE /* Plugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
 /* End PBXBuildFile section */
 
@@ -175,6 +176,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5053E9101FC8FEEC00166FBE /* Plugins.h in Headers */,
 				5053E90D1FC8D24000166FBE /* CorePlugins.h in Headers */,
 				50503EF01FC08595003606DC /* Avocado.h in Headers */,
 			);

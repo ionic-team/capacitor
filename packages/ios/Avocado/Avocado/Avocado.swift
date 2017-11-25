@@ -2,6 +2,7 @@ import Foundation
 import Dispatch
 import WebKit
 
+// @objc protocol AvocadoBridgeModule {}
 
 public class Avocado {
   public var viewController: UIViewController
@@ -16,16 +17,27 @@ public class Avocado {
   public init(_ vc: UIViewController, _ pluginIds: [String]) {
     self.viewController = vc
 
+    //registerCorePlugins()
+    registerPlugins()
+  }
+  
+  func registerPlugins() {
+    var numClasses = UInt32(0);
+    let classes = objc_copyClassList(&numClasses)
+    for i in 0..<Int(numClasses) {
+      //print("CLASS", classes![i])
+      let c = classes![i]
+      if class_conformsToProtocol(c, AvocadoBridgeModule.self) {
+        print("Found a class", c)
+      }
+    }
     let moduleClasses = AvocadoGetModuleClasses()
     print("These modules classes are ready")
     for module in moduleClasses! {
       print(module)
     }
     
-    //registerCorePlugins()
-    registerPlugins(pluginIds)
   }
-  
   /*
   func registerCorePlugins() {
     let console = Console(self)

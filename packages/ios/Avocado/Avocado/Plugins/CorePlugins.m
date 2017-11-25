@@ -10,7 +10,6 @@
 
 #import "Plugins.h"
 
-//@interface Device : NSObject
 @interface AVOCADO_MODULE("com.avocadojs.plugin.device", Device, NSObject)
 
 @end
