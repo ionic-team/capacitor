@@ -1,9 +1,9 @@
 import AVFoundation
 import UIKit
 
-public class CameraViewController : UIViewController {
+public class CameraViewController : UIViewController, AVCapturePhotoCaptureDelegate {
   public enum CameraOrientation {
-    case front
+    case fron
     case rear
   }
   
@@ -41,6 +41,15 @@ public class CameraViewController : UIViewController {
   
   @IBAction func takePicture(_ sender: Any) {
     print("Taking picture")
+    let settings = AVCapturePhotoSettings()
+    
+    stillImageOutput?.capturePhoto(with: settings, delegate: self)
+  }
+
+  public func photoOutput(_ output: AVCapturePhotoOutput,
+                            didFinishProcessingPhoto photo: AVCapturePhoto,
+                            error: Error?) {
+    print("Captured", output)
   }
 
   
