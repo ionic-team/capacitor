@@ -11,6 +11,7 @@ import {
   Geolocation,
   Haptics,
   HapticsImpactStyle,
+  Modals,
   Motion,
   SplashScreen,
   StatusBar,
@@ -39,8 +40,22 @@ export class HomePage {
   showSplash() {
     let splash = new SplashScreen();
     splash.show({}, () => {
-      
     });
+  }
+
+  showAlert() {
+    let modals = new Modals()
+    modals.alert('Stop', 'this is an error', 'Okay');
+  }
+
+  showConfirm() {
+    let modals = new Modals()
+    modals.confirm('Stop', 'this is an error', 'Okay');
+  }
+
+  showPrompt() {
+    let modals = new Modals()
+    modals.prompt('Stop', 'this is an error', 'Okay');
   }
 
   takePicture() {

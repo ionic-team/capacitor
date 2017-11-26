@@ -61,7 +61,7 @@ var Avocado = /** @class */ (function () {
         }
         //this.log('To native', call);
         // Send this call to the native layer
-        window.webkit.messageHandlers.avocado.postMessage(__assign({ type: 'message' }, call));
+        window.webkit.messageHandlers.bridge.postMessage(__assign({ type: 'message' }, call));
         return ret;
     };
     Avocado.prototype._toNativeCallback = function (call, caller) {

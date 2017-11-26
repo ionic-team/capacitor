@@ -1,9 +1,9 @@
 #import <UIKit/UIKit.h>
 
-//! Project version number for Avocado.
+//! Project version number for bridge.
 FOUNDATION_EXPORT double AvocadoVersionNumber;
 
-//! Project version string for Avocado.
+//! Project version string for bridge.
 FOUNDATION_EXPORT const unsigned char AvocadoVersionString[];
 
 extern NSArray<Class> *AvocadoGetModuleClasses(void);

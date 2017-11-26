@@ -14,11 +14,11 @@ public typealias PluginCallOptions = [String:Any]
  */
 public class Plugin: NSObject {
   public var pluginId: String
-  var avocado: Avocado
+  var bridge: Bridge
   
-  public required init(_ avocado: Avocado, id: String) {
+  public required init(_ bridge: Bridge, id: String) {
     self.pluginId = id
-    self.avocado = avocado
+    self.bridge = bridge
   }
   
   public func getId() -> String {
