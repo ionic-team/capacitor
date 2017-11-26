@@ -12,6 +12,17 @@
       </button>
     </ion-item>
     <ion-item>
+      <button (click)="showAlert()" ion-button color="primary">
+        Alert
+      </button>
+      <button (click)="showConfirm()" ion-button color="primary">
+        Confirm
+      </button>
+      <button (click)="showPrompt()" ion-button color="primary">
+        Prompt
+      </button>
+    </ion-item>
+    <ion-item>
       <img [src]="image">
       <button (click)="takePicture()" ion-button color="primary">
         Take Picture</button>

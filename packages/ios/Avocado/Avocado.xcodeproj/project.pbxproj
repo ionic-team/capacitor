@@ -23,7 +23,7 @@
 		50503EFF1FC08662003606DC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EFD1FC08662003606DC /* Device.swift */; };
 		50503F001FC08662003606DC /* Geolocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EFE1FC08662003606DC /* Geolocation.swift */; };
 		50503F211FC0962F003606DC /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F201FC0962F003606DC /* JS.swift */; };
-		50503F231FC0968E003606DC /* Avocado.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F221FC0968E003606DC /* Avocado.swift */; };
+		50503F231FC0968E003606DC /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F221FC0968E003606DC /* Bridge.swift */; };
 		50503F251FC098A3003606DC /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F241FC098A3003606DC /* Plugin.swift */; };
 		5053E8FD1FC874DE00166FBE /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FC1FC874DE00166FBE /* Loader.swift */; };
 		5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FE1FC8755F00166FBE /* Diagnostics.swift */; };
@@ -35,6 +35,9 @@
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
 		50ED86EE1FC9D84700E48884 /* Camera.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50ED86ED1FC9D84700E48884 /* Camera.storyboard */; };
 		50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86EF1FCA66CB00E48884 /* DocLinks.swift */; };
+		50ED86F31FCB728D00E48884 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F21FCB728D00E48884 /* Network.swift */; };
+		50ED86F51FCB737300E48884 /* Modals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F41FCB737300E48884 /* Modals.swift */; };
+		50ED86F71FCB759B00E48884 /* DevMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F61FCB759B00E48884 /* DevMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,7 +70,7 @@
 		50503EFD1FC08662003606DC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		50503EFE1FC08662003606DC /* Geolocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geolocation.swift; sourceTree = "<group>"; };
 		50503F201FC0962F003606DC /* JS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
-		50503F221FC0968E003606DC /* Avocado.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avocado.swift; sourceTree = "<group>"; };
+		50503F221FC0968E003606DC /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
 		50503F241FC098A3003606DC /* Plugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plugin.swift; sourceTree = "<group>"; };
 		5053E8FC1FC874DE00166FBE /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
 		5053E8FE1FC8755F00166FBE /* Diagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
@@ -79,6 +82,9 @@
 		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
 		50ED86ED1FC9D84700E48884 /* Camera.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Camera.storyboard; sourceTree = "<group>"; };
 		50ED86EF1FCA66CB00E48884 /* DocLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocLinks.swift; sourceTree = "<group>"; };
+		50ED86F21FCB728D00E48884 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		50ED86F41FCB737300E48884 /* Modals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modals.swift; sourceTree = "<group>"; };
+		50ED86F61FCB759B00E48884 /* DevMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevMode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,17 +137,18 @@
 		50503EE11FC08594003606DC /* Avocado */ = {
 			isa = PBXGroup;
 			children = (
-				50503F1F1FC095EA003606DC /* Modules */,
+				50503F1F1FC095EA003606DC /* Plugins */,
 				50503EE21FC08594003606DC /* Avocado.h */,
 				50503EE31FC08594003606DC /* Info.plist */,
 				50503F201FC0962F003606DC /* JS.swift */,
-				50503F221FC0968E003606DC /* Avocado.swift */,
+				50503F221FC0968E003606DC /* Bridge.swift */,
 				50503F241FC098A3003606DC /* Plugin.swift */,
 				5053E8FC1FC874DE00166FBE /* Loader.swift */,
 				5053E8FE1FC8755F00166FBE /* Diagnostics.swift */,
 				5053E9091FC8CD1000166FBE /* ModuleBridge.h */,
 				5053E90A1FC8D01200166FBE /* ModuleBridge.m */,
 				50ED86EF1FCA66CB00E48884 /* DocLinks.swift */,
+				50ED86F61FCB759B00E48884 /* DevMode.swift */,
 			);
 			path = Avocado;
 			sourceTree = "<group>";
@@ -155,7 +162,7 @@
 			path = AvocadoTests;
 			sourceTree = "<group>";
 		};
-		50503F1F1FC095EA003606DC /* Modules */ = {
+		50503F1F1FC095EA003606DC /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
 				5053E9111FC9C13400166FBE /* Camera */,
@@ -172,8 +179,10 @@
 				50474F0E1FC5285900AA0184 /* BarCode.swift */,
 				5053E90C1FC8D1D800166FBE /* DefaultModules.h */,
 				5053E90E1FC8D51100166FBE /* DefaultModules.m */,
+				50ED86F21FCB728D00E48884 /* Network.swift */,
+				50ED86F41FCB737300E48884 /* Modals.swift */,
 			);
-			path = Modules;
+			path = Plugins;
 			sourceTree = "<group>";
 		};
 		5053E9111FC9C13400166FBE /* Camera */ = {
@@ -306,16 +315,19 @@
 				5053E90B1FC8D01200166FBE /* ModuleBridge.m in Sources */,
 				50474F0F1FC5285900AA0184 /* BarCode.swift in Sources */,
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
+				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
 				50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */,
 				501CBABF1FC2A22A009B0D4D /* Browser.swift in Sources */,
 				50503F211FC0962F003606DC /* JS.swift in Sources */,
-				50503F231FC0968E003606DC /* Avocado.swift in Sources */,
+				50503F231FC0968E003606DC /* Bridge.swift in Sources */,
+				50ED86F71FCB759B00E48884 /* DevMode.swift in Sources */,
 				50503F001FC08662003606DC /* Geolocation.swift in Sources */,
 				5053E90F1FC8D51100166FBE /* DefaultModules.m in Sources */,
 				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
 				50503F251FC098A3003606DC /* Plugin.swift in Sources */,
 				5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */,
+				50ED86F31FCB728D00E48884 /* Network.swift in Sources */,
 				50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */,
 				50503EFF1FC08662003606DC /* Device.swift in Sources */,
 				50474F0D1FC5284D00AA0184 /* Camera.swift in Sources */,
