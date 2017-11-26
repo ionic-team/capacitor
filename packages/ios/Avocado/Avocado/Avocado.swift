@@ -17,7 +17,6 @@ public class Avocado {
   public init(_ vc: UIViewController, _ pluginIds: [String]) {
     self.viewController = vc
 
-    //registerCorePlugins()
     registerPlugins()
   }
   
@@ -30,12 +29,6 @@ public class Avocado {
         let pluginType = c as! Plugin.Type
         registerModule(pluginType)
       }
-    }
-    
-    let moduleClasses = AvocadoGetModuleClasses()
-    print("These modules classes are ready")
-    for module in moduleClasses! {
-      print(module)
     }
   }
   
