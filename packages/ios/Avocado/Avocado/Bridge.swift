@@ -76,6 +76,13 @@ public class Bridge {
     devMode.show()
   }
   
+  public func reload() {
+    guard let webView = self.webView else {
+      return
+    }
+    webView.reload()
+  }
+  
   public func modulePrint(_ plugin: Plugin, _ items: Any...) {
     let output = items.map { "\($0)" }.joined(separator: " ")
     Swift.print(plugin.pluginId, "-", output)
