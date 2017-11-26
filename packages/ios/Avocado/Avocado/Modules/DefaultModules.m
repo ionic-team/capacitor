@@ -2,30 +2,30 @@
 
 #import "ModuleBridge.h"
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.browser", Browser)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.browser", Browser)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.camera", Camera)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.camera", Camera)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.console", Console)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.console", Console)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.device", Device)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.device", Device)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.filesystem", Filesystem)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.filesystem", Filesystem)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.geolocation", Geolocation)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.geolocation", Geolocation)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.haptics", Haptics)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.haptics", Haptics)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.motion", Motion)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.motion", Motion)
 @end
 
-@interface AVOCADO_MODULE("com.avocadojs.plugin.statusbar", StatusBar)
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.statusbar", StatusBar)
 @end
 

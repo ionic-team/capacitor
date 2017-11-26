@@ -11,22 +11,22 @@
 
 @protocol AvocadoBridgeModule <NSObject>
 
-#define AVOCADO_EXPORT_MODULE(module_id) \
+#define AVOCADO_EXPORT_PLUGIN(plugin_id) \
 AVC_EXTERN void AvocadoRegisterModule(Class); \
-+ (NSString *)moduleId { return @module_id; } \
++ (NSString *)pluginId { return @plugin_id; } \
 + (void)load { AvocadoRegisterModule(self); }
 
-+ (NSString *)moduleId;
++ (NSString *)pluginId;
 
 @optional
 
-#define AVOCADO_MODULE(module_id, objc_name) \
+#define AVOCADO_PLUGIN(plugin_id, objc_name) \
 objc_name : NSObject \
 @end \
 @interface objc_name (AvocadoExternModule) <AvocadoBridgeModule> \
 @end \
 @implementation objc_name (AvocadoExternModule) \
-AVOCADO_EXPORT_MODULE(module_id)
+AVOCADO_EXPORT_PLUGIN(plugin_id)
 
 @end
 
