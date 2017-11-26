@@ -10,9 +10,15 @@ public class Avocado {
   public var webView: WKWebView?
   
   public var lastPlugin: Plugin?
+  
+  // Map of all loaded and instantiated plugins by pluginId -> instance
   public var plugins =  [String:Plugin]()
+  // List of known plugins by pluginId -> Plugin Type
+  public var knownPlugins = [String:Plugin.Type]()
+  
+  // Dispatch queue for our operations
+  // TODO: Unique label?
   public var dispatchQueue = DispatchQueue(label: "avocado")
-  	
   
   public init(_ vc: UIViewController, _ pluginIds: [String]) {
     self.viewController = vc
@@ -26,17 +32,31 @@ public class Avocado {
     for i in 0..<Int(numClasses) {
       let c = classes![i]
       if class_conformsToProtocol(c, AvocadoBridgeModule.self) {
-        let pluginType = c as! Plugin.Type
-        registerModule(pluginType)
+        let moduleType = c as! Plugin.Type
+        registerPlugin(moduleType)
       }
     }
   }
   
-  func registerModule(_ pluginType: Plugin.Type) {
+  func registerPlugin(_ pluginType: Plugin.Type) {
     let bridgeType = pluginType as! AvocadoBridgeModule.Type
-    let m = pluginType.init(self, id: bridgeType.moduleId())
-    print("Instantiated module", pluginType, m)
-    registerPlugin(m)
+    knownPlugins[bridgeType.pluginId()] = pluginType
+  }
+  
+  public func getPlugin(pluginId: String) -> Plugin? {
+    return self.plugins[pluginId]
+  }
+  
+  public func loadPlugin(pluginId: String) -> Plugin? {
+    guard let moduleType = knownPlugins[pluginId] else {
+      print("Unable to load plugin \(pluginId). No such module found.")
+      return nil
+    }
+    
+    let bridgeType = moduleType as! AvocadoBridgeModule.Type
+    let m = moduleType.init(self, id: bridgeType.pluginId())
+    self.plugins[bridgeType.pluginId()] = m
+    return m
   }
   
   public func isSimulator() -> Bool {
@@ -61,16 +81,7 @@ public class Avocado {
   public func setWebView(webView: WKWebView) {
     self.webView = webView
   }
-  
-  public func registerPlugin(_ plugin: Plugin) {
-    print("Registering plugin", plugin.getId())
-    self.plugins[plugin.getId()] = plugin
-  }
-  
-  public func getPlugin(pluginId: String) -> Plugin? {
-    print("Checking for plugin", pluginId, plugins)
-    return self.plugins[pluginId]
-  }
+
   
   /**
    * Handle a call from JavaScript. First, find the corresponding plugin,
@@ -80,33 +91,33 @@ public class Avocado {
     // Create a selector to send to the plugin
     let selector = NSSelectorFromString("\(call.method):")
     
-    // Get the plugin from the list of loaded, registered plugins
-    if let plugin = self.getPlugin(pluginId: call.pluginId) {
-      print("Calling method \(call.method) on plugin \(plugin.getId())")
+    guard let plugin = self.getPlugin(pluginId: call.pluginId) ?? self.loadPlugin(pluginId: call.pluginId) else {
+      print("Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
+      return
+    }
+    
+    print("Calling method \(call.method) on plugin \(plugin.getId())")
+    
+    if !plugin.responds(to: selector) {
+      print("Error: Plugin \(plugin.getId()) does not respond to method call \(call.method).")
+      print("Ensure plugin method exists and uses @objc in its declaration")
+      return
+    }
+    
+    // Create a plugin call object and handle the success/error callbacks
+    dispatchQueue.sync {
+      //let startTime = CFAbsoluteTimeGetCurrent()
       
-      if !plugin.responds(to: selector) {
-        print("Error: Plugin \(plugin.getId()) does not respond to method call \(call.method).")
-        print("Ensure plugin method exists and uses @objc in its declaration")
-        return
-      }
+      let pluginCall = PluginCall(options: call.options, success: {(result: PluginResult) -> Void in
+        self.toJs(result: JSResult(call: call, result: result.data))
+      }, error: {(error: PluginCallError) -> Void in
+        self.toJsError(error: JSResultError(call: call, message: error.message, error: error.data))
+      })
+      // Perform the plugin call
+      plugin.perform(selector, with: pluginCall)
       
-      // Create a plugin call object and handle the success/error callbacks
-      dispatchQueue.sync {
-        //let startTime = CFAbsoluteTimeGetCurrent()
-        
-        let pluginCall = PluginCall(options: call.options, success: {(result: PluginResult) -> Void in
-          self.toJs(result: JSResult(call: call, result: result.data))
-        }, error: {(error: PluginCallError) -> Void in
-          self.toJsError(error: JSResultError(call: call, message: error.message, error: error.data))
-        })
-        // Perform the plugin call
-        plugin.perform(selector, with: pluginCall)
-        
-        //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        //print("Native call took", timeElapsed)
-      }
-    } else {
-      print("Error! No plugin \(call.pluginId) registered. Double check the plugin id is correct.")
+      //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+      //print("Native call took", timeElapsed)
     }
   }
   
