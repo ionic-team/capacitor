@@ -48,15 +48,16 @@ public class Avocado {
   }
   
   public func loadPlugin(pluginId: String) -> Plugin? {
-    guard let moduleType = knownPlugins[pluginId] else {
+    guard let pluginType = knownPlugins[pluginId] else {
       print("Unable to load plugin \(pluginId). No such module found.")
       return nil
     }
     
-    let bridgeType = moduleType as! AvocadoBridgeModule.Type
-    let m = moduleType.init(self, id: bridgeType.pluginId())
-    self.plugins[bridgeType.pluginId()] = m
-    return m
+    let bridgeType = pluginType as! AvocadoBridgeModule.Type
+    let p = pluginType.init(self, id: bridgeType.pluginId())
+    p.load()
+    self.plugins[bridgeType.pluginId()] = p
+    return p
   }
   
   public func isSimulator() -> Bool {

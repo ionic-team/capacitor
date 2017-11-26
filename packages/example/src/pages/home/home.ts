@@ -12,6 +12,7 @@ import {
   Haptics,
   HapticsImpactStyle,
   Motion,
+  SplashScreen,
   StatusBar,
   StatusBarStyle
 } from 'avocado-js';
@@ -33,6 +34,13 @@ export class HomePage {
   profileSamples = null;
 
   constructor(public navCtrl: NavController, public zone: NgZone) {
+  }
+
+  showSplash() {
+    let splash = new SplashScreen();
+    splash.show({}, () => {
+      
+    });
   }
 
   takePicture() {

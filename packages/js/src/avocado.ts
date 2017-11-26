@@ -10,7 +10,7 @@ import {
 import { Platform } from './platform';
 import { Plugin } from './plugin';
 
-import { Console } from './modules/console';
+import { Console } from './plugins/console';
 
 declare var window: any;
 

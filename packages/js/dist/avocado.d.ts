@@ -1,7 +1,7 @@
 import { PluginCaller, PluginCall, PluginResult } from './definitions';
 import { Platform } from './platform';
 import { Plugin } from './plugin';
-import { Console } from './modules/console';
+import { Console } from './plugins/console';
 /**
  * Main class for interacting with the Avocado runtime.
  */
