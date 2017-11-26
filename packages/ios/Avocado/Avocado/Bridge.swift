@@ -21,7 +21,7 @@ public class Bridge {
   public init(_ vc: UIViewController, _ pluginIds: [String]) {
     self.viewController = vc
 
-    showDevMode()
+    //showDevMode()
     registerPlugins()
   }
   
