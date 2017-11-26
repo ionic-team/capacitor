@@ -24,6 +24,11 @@ public class Plugin: NSObject {
   public func getId() -> String {
     return self.pluginId
   }
+  
+  // Called after init if the plugin wants to do
+  // some loading so the plugin author doesn't
+  // need to override init()
+  public func load() {}
 }
 
 
@@ -40,7 +45,7 @@ public class Plugin: NSObject {
     self.successCallback = success
     self.errorCallback = error
   }
-  
+
   public func get(_ key: String, defaultValue: Any? = nil) -> Any? {
     return self.options[key] ?? defaultValue
   }

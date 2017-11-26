@@ -7,6 +7,11 @@
 <ion-content padding>
   <ion-list>
     <ion-item>
+      <button (click)="showSplash()" ion-button color="primary">
+        Show Splash
+      </button>
+    </ion-item>
+    <ion-item>
       <img [src]="image">
       <button (click)="takePicture()" ion-button color="primary">
         Take Picture</button>
