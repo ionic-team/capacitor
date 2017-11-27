@@ -314,8 +314,8 @@ var Camera = /** @class */ (function (_super) {
     function Camera() {
         return _super.call(this) || this;
     }
-    Camera.prototype.open = function (options) {
-        return this.nativePromise('open', options);
+    Camera.prototype.getPhoto = function (options) {
+        return this.nativePromise('getPhoto', options);
     };
     Camera = __decorate$2([
         AvocadoPlugin({

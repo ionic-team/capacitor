@@ -12,6 +12,9 @@ class DevMode {
       print("Reloading")
       self.bridge.reload()
     }))
+    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
+      alert.dismiss(animated: true, completion: nil)
+    }))
     self.bridge.viewController.present(alert, animated: true, completion: nil)
   }
 }

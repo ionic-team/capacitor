@@ -3,9 +3,8 @@ import { AvocadoPlugin, Plugin } from '../plugin';
 declare var window;
 
 export interface CameraOptions {
-  flashMode?: "on"|"off"|"auto";
-  cameraDirection?: "front"|"rear";
-  enableFrontFlash?: boolean;
+  quality?: number;
+  allowEditing?: boolean;
 }
 
 @AvocadoPlugin({
@@ -15,7 +14,7 @@ export interface CameraOptions {
 export class Camera extends Plugin {
   constructor() { super(); }
 
-  open(options: CameraOptions) {
-    return this.nativePromise('open', options)
+  getPhoto(options: CameraOptions) {
+    return this.nativePromise('getPhoto', options)
   }
 }
