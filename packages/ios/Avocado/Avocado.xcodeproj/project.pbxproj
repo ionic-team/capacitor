@@ -39,6 +39,7 @@
 		50ED86F51FCB737300E48884 /* Modals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F41FCB737300E48884 /* Modals.swift */; };
 		50ED86F71FCB759B00E48884 /* DevMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F61FCB759B00E48884 /* DevMode.swift */; };
 		50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F81FCC69C200E48884 /* LocalNotifications.swift */; };
+		50ED86FB1FCC9D6600E48884 /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		50ED86F41FCB737300E48884 /* Modals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modals.swift; sourceTree = "<group>"; };
 		50ED86F61FCB759B00E48884 /* DevMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevMode.swift; sourceTree = "<group>"; };
 		50ED86F81FCC69C200E48884 /* LocalNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotifications.swift; sourceTree = "<group>"; };
+		50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotifications.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,23 +169,24 @@
 		50503F1F1FC095EA003606DC /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				5053E9111FC9C13400166FBE /* Camera */,
-				50503EFD1FC08662003606DC /* Device.swift */,
-				50503EFE1FC08662003606DC /* Geolocation.swift */,
-				501CBAB81FC26770009B0D4D /* StatusBar.swift */,
-				501CBABA1FC28768009B0D4D /* Haptics.swift */,
-				501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */,
+				5053E90C1FC8D1D800166FBE /* DefaultModules.h */,
+				5053E90E1FC8D51100166FBE /* DefaultModules.m */,
+				50474F0E1FC5285900AA0184 /* BarCode.swift */,
 				501CBABE1FC2A22A009B0D4D /* Browser.swift */,
 				50474F041FC36E5700AA0184 /* Console.swift */,
+				50503EFD1FC08662003606DC /* Device.swift */,
 				50474F061FC3B54800AA0184 /* Filesystem.swift */,
-				50BFB9071FC4E82C00C19F8B /* Motion.swift */,
-				50474F0A1FC527CA00AA0184 /* Storage.swift */,
-				50474F0E1FC5285900AA0184 /* BarCode.swift */,
-				50ED86F21FCB728D00E48884 /* Network.swift */,
-				50ED86F41FCB737300E48884 /* Modals.swift */,
+				50503EFE1FC08662003606DC /* Geolocation.swift */,
+				501CBABA1FC28768009B0D4D /* Haptics.swift */,
 				50ED86F81FCC69C200E48884 /* LocalNotifications.swift */,
-				5053E90E1FC8D51100166FBE /* DefaultModules.m */,
-				5053E90C1FC8D1D800166FBE /* DefaultModules.h */,
+				50ED86F41FCB737300E48884 /* Modals.swift */,
+				50BFB9071FC4E82C00C19F8B /* Motion.swift */,
+				50ED86F21FCB728D00E48884 /* Network.swift */,
+				50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */,
+				501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */,
+				501CBAB81FC26770009B0D4D /* StatusBar.swift */,
+				50474F0A1FC527CA00AA0184 /* Storage.swift */,
+				5053E9111FC9C13400166FBE /* Camera */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -330,6 +333,7 @@
 				5053E90F1FC8D51100166FBE /* DefaultModules.m in Sources */,
 				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
 				50503F251FC098A3003606DC /* Plugin.swift in Sources */,
+				50ED86FB1FCC9D6600E48884 /* PushNotifications.swift in Sources */,
 				5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */,
 				50ED86F31FCB728D00E48884 /* Network.swift in Sources */,
 				50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */,
