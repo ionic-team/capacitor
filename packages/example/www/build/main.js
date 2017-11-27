@@ -94,7 +94,9 @@ let HomePage = class HomePage {
     }
     takePicture() {
         let camera = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["b" /* Camera */]();
-        camera.open().then((image) => {
+        camera.open({
+            flashMode: "on"
+        }).then((image) => {
             console.log('Got picture callback');
             this.image = image && image.data;
         });
@@ -742,8 +744,8 @@ var Camera = /** @class */ (function (_super) {
     function Camera() {
         return _super.call(this) || this;
     }
-    Camera.prototype.open = function () {
-        return this.nativePromise('open');
+    Camera.prototype.open = function (options) {
+        return this.nativePromise('open', options);
     };
     Camera = __decorate$2([
         AvocadoPlugin({

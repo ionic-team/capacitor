@@ -3,6 +3,7 @@ import CoreMotion
 
 @objc(BarCode)
 public class BarCode : Plugin {
+  
 }
 
 

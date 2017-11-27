@@ -19,10 +19,14 @@ public class Camera : Plugin {
       return
     }
     
-    let viewController = UIStoryboard.init(name: "Camera", bundle: Bundle(for: type(of: self))).instantiateViewController(withIdentifier: "CameraViewController")
-    
-    self.bridge.viewController.present(viewController, animated: true) {
+    if let viewController = UIStoryboard.init(name: "Camera", bundle: Bundle(for: type(of: self))).instantiateViewController(withIdentifier: "CameraViewController") as? CameraViewController {
+      viewController.setPluginCall(call)
+      self.bridge.viewController.present(viewController, animated: true) {
+      }
+    } else {
+      call.error("Unable to build CameraViewController. Please file an issue")
     }
+
   }
   
   
