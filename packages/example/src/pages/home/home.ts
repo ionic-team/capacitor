@@ -60,11 +60,10 @@ export class HomePage {
 
   takePicture() {
     let camera = new Camera();
-    camera.open({
-      flashMode: "on"
+    camera.getPhoto({
+      quality: 1
     }).then((image) => {
-      console.log('Got picture callback');
-      this.image = image && image.data;
+      this.image = image && ('data:image/jpeg;base64,' + image.base64_data);
     });
   }
 

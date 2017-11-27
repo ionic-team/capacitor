@@ -94,11 +94,10 @@ let HomePage = class HomePage {
     }
     takePicture() {
         let camera = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["b" /* Camera */]();
-        camera.open({
-            flashMode: "on"
+        camera.getPhoto({
+            quality: 1
         }).then((image) => {
-            console.log('Got picture callback');
-            this.image = image && image.data;
+            this.image = image && ('data:image/jpeg;base64,' + image.base64_data);
         });
     }
     getCurrentPosition() {
@@ -744,8 +743,8 @@ var Camera = /** @class */ (function (_super) {
     function Camera() {
         return _super.call(this) || this;
     }
-    Camera.prototype.open = function (options) {
-        return this.nativePromise('open', options);
+    Camera.prototype.getPhoto = function (options) {
+        return this.nativePromise('getPhoto', options);
     };
     Camera = __decorate$2([
         AvocadoPlugin({
