@@ -44,6 +44,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    self.becomeFirstResponder()
     
     /*
     if let url = URL(string: "https://google.com") {
@@ -114,6 +115,19 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
+  }
+  
+  override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+    if motion == .motionShake {
+      bridge?.showDevMode()
+    }
+  }
+  
+  // We are willing to become first responder to get shake motion
+  override var canBecomeFirstResponder: Bool {
+    get {
+      return true
+    }
   }
   
   func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
