@@ -1,28 +1,20 @@
 import { exec, exit, ls } from 'shelljs';
 import { join } from 'path';
-import { askPlatform, log, logFatal } from '../common';
-import { findXcodePath } from '../platforms/ios/common';
-const opn = require('opn');
+import { askPlatform, logFatal, runTask } from '../common';
+import { openIOS } from '../platforms/ios/open';
 
 export async function openCommand(platform: string) {
   platform = await askPlatform(platform);
   try {
-    open(platform);
+    await open(platform);
     exit(0);
   } catch (e) {
     logFatal(e);
   }
 }
 
-export function open(platform: string) {
+export async function open(platform: string) {
   if (platform === 'ios') {
-    log('Opening your xcode workspace, hold on a sec...');
-    const xcodeProject = findXcodePath();
-    if (xcodeProject) {
-      opn(xcodeProject);
-      exit(0);
-    } else {
-      throw 'Xcode workspace does not exist. Run "avocado start ios" to bootstrap a native ios project.';
-    }
+    await runTask('Opening the xcode workspace, hold on a sec...', openIOS);
   }
 }
