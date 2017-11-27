@@ -46,7 +46,7 @@ public class Plugin: NSObject {
     self.errorCallback = error
   }
 
-  public func get(_ key: String, defaultValue: Any? = nil) -> Any? {
+  public func get(_ key: String, _ defaultValue: Any? = nil) -> Any? {
     return self.options[key] ?? defaultValue
   }
   

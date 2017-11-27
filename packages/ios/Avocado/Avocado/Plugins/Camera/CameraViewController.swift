@@ -2,34 +2,8 @@ import AVFoundation
 import UIKit
 
 public class CameraViewController : UIViewController, AVCapturePhotoCaptureDelegate {
-  public enum CameraOrientation {
-    case fron
-    case rear
-  }
-  
-  public enum FlashMode {
-    case on
-    case auto
-    case off
-  }
-  
-  public enum VideoQuality {
-    case high
-    case medium
-    case low
-    case r352x288
-    case r640x480
-    case r1280x720
-    case r1920x1080
-    case r3840x2160
-    case i960x540
-    case i1280x720
-  }
-  
-  var videoQuality : VideoQuality = .high
-  var cameraOrientation: CameraOrientation = .rear
-  var flashMode: FlashMode = .auto
-  
+  var call: PluginCall?
+
   var session = AVCaptureSession()
   var stillImageOutput: AVCapturePhotoOutput?
   var videoPreviewLayer: AVCaptureVideoPreviewLayer?
@@ -38,10 +12,24 @@ public class CameraViewController : UIViewController, AVCapturePhotoCaptureDeleg
   @IBOutlet weak var captureButton: UIButton!
   @IBOutlet weak var lastImageView: UIImageView!
   
+  func setPluginCall(_ call: PluginCall) {
+    self.call = call
+  }
+  
+  func getFlashMode() -> AVCaptureDevice.FlashMode {
+    let flashMode = call?.get("flashMode", "off") as! String
+    return [
+      "off": AVCaptureDevice.FlashMode.off,
+      "on": AVCaptureDevice.FlashMode.on,
+      "auto": AVCaptureDevice.FlashMode.auto
+      ][flashMode] ?? AVCaptureDevice.FlashMode.off
+  }
+  
+  // Action outlet for the capture button
   @IBAction func takePicture(_ sender: Any) {
     let settings = AVCapturePhotoSettings.init(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
     settings.isAutoStillImageStabilizationEnabled = true
-    settings.flashMode = .off
+    settings.flashMode = getFlashMode()
     stillImageOutput?.capturePhoto(with: settings, delegate: self)
   }
 
@@ -66,12 +54,16 @@ public class CameraViewController : UIViewController, AVCapturePhotoCaptureDeleg
       return
     }
     
+    // Grab options
+    let saveToAlbum = self.call?.options["saveToPhotos"] as? Bool ?? false
+    let quality = self.call?.options["quality"] as? Float ?? 100
+    
     // Get original image width/height
     let imgWidth = capturedImage.size.width
     let imgHeight = capturedImage.size.height
     // Get origin of cropped image
     let imgOrigin = CGPoint(x: (imgWidth - imgHeight)/2, y: (imgHeight - imgHeight)/2)
-    // Get size of cropped iamge
+    // Get size of cropped image
     let imgSize = CGSize(width: imgHeight, height: imgHeight)
     
     // Check if image could be cropped successfully
@@ -82,19 +74,29 @@ public class CameraViewController : UIViewController, AVCapturePhotoCaptureDeleg
     
     // Convert cropped image ref to UIImage
     let imageToSave = UIImage(cgImage: imageRef, scale: 1.0, orientation: .down)
-    UIImageWriteToSavedPhotosAlbum(imageToSave, nil, nil, nil)
+    
+    if saveToAlbum {
+      UIImageWriteToSavedPhotosAlbum(imageToSave, nil, nil, nil)
+    }
     
     lastImageView.image = imageToSave
+    
+    guard let jpeg = UIImageJPEGRepresentation(imageToSave, CGFloat(quality/100)) else {
+      print("Unable to convert image to jpeg")
+      call?.error("Unable to convert image to jpeg")
+      return
+    }
+    
+    let base64String = jpeg.base64EncodedString()
+    
+    call?.success([
+      "base64_data": base64String,
+      "format": "jpeg"
+    ])
     
     // Stop video capturing session (Freeze preview)
     session.stopRunning()
   }
-  
-  // TODO:
-  func getDepthData(photo: AVCapturePhoto) -> Float32 {
-    return 0
-  }
-
   
   override public func viewDidLoad() {
     super.viewDidLoad()
@@ -112,7 +114,6 @@ public class CameraViewController : UIViewController, AVCapturePhotoCaptureDeleg
     
     var error: NSError?
     var input: AVCaptureDeviceInput!
-    
     
     do {
       input = try AVCaptureDeviceInput(device: backCamera)
