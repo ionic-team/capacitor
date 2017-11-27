@@ -177,10 +177,10 @@
 				50BFB9071FC4E82C00C19F8B /* Motion.swift */,
 				50474F0A1FC527CA00AA0184 /* Storage.swift */,
 				50474F0E1FC5285900AA0184 /* BarCode.swift */,
-				5053E90C1FC8D1D800166FBE /* DefaultModules.h */,
-				5053E90E1FC8D51100166FBE /* DefaultModules.m */,
 				50ED86F21FCB728D00E48884 /* Network.swift */,
 				50ED86F41FCB737300E48884 /* Modals.swift */,
+				5053E90E1FC8D51100166FBE /* DefaultModules.m */,
+				5053E90C1FC8D1D800166FBE /* DefaultModules.h */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
