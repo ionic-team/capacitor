@@ -46,8 +46,8 @@ public class Plugin: NSObject {
     self.errorCallback = error
   }
 
-  public func get(_ key: String, _ defaultValue: Any? = nil) -> Any? {
-    return self.options[key] ?? defaultValue
+  public func get<T>(_ key: String, _ ofType: T.Type, _ defaultValue: T? = nil) -> T? {
+    return self.options[key] as? T ?? defaultValue
   }
   
   public func success(_ data: PluginResultData = [:]) {
