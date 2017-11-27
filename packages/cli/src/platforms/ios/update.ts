@@ -1,31 +1,31 @@
 import { Plugin, PluginType, getPlugins } from '../../plugin';
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { check, isInstalled, log, runCommand, writeFileAsync } from '../../common';
+import { check, isInstalled, logInfo, runCommand, runTask, writeFileAsync } from '../../common';
 import { join } from 'path';
 import { IOS_MIN_VERSION, IOS_PATH, IOS_RUNTIME_POD, LIST_FILE } from '../../config';
 
 
 export async function updateIOS(needsUpdate: boolean) {
-  await check(
+  await runTask('Checking environment', () => (check(
     checkCocoaPods,
     checkIOSProject
-  );
+  )));
 
-  const allplugins = await getPlugins();
-  const plugins = await getIOSPlugins(allplugins);
+  const plugins = await runTask('Fetching plugins', async () => {
+    const allplugins = await getPlugins();
+    const iosPlugins = await getIOSPlugins(allplugins);
+    return iosPlugins;
+  });
 
   if (plugins.length > 0) {
-    log('found', plugins.length, 'native modules\n',
+    logInfo('found', plugins.length, 'native modules\n',
       plugins.map(p => p.id).join('\n'), '\n');
   } else {
-    log('no avocado plugin was found, that\'s ok, you can add more plugins later');
+    logInfo('no avocado plugin was found, that\'s ok, you can add more plugins later');
   }
-
 
   await autoGeneratePods(plugins);
   await installCocoaPodsPlugins(plugins, needsUpdate);
-
-  log('DONE! Native modules are updated 🎉');
 }
 
 export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
@@ -59,7 +59,9 @@ export async function installCocoaPodsPlugins(plugins: Plugin[], needsUpdate: bo
   const pods = plugins
     .filter(p => p.ios!.type === PluginType.Cocoapods);
 
-  await updatePodfile(pods, needsUpdate);
+  await runTask('Updating iOS native dependencies', () => {
+    return updatePodfile(pods, needsUpdate);
+  });
 }
 
 export async function updatePodfile(plugins: Plugin[], needsUpdate: boolean) {
@@ -67,10 +69,8 @@ export async function updatePodfile(plugins: Plugin[], needsUpdate: boolean) {
   const podfilePath = join(IOS_PATH, 'Podfile');
   await writeFileAsync(podfilePath, content, 'utf8');
   if (needsUpdate) {
-    log('🐎 cocoapods is resolving native dependencies...');
     await runCommand(`cd ${IOS_PATH} && pod update`);
   } else {
-    log('🐎 cocoapods is resolving native dependencies...');
     await runCommand(`cd ${IOS_PATH} && pod install`);
   }
 }

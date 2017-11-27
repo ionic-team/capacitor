@@ -1,5 +1,5 @@
 import { updateIOS } from '../platforms/ios/update';
-import { askPlatform, logFatal } from '../common';
+import { askPlatform, logFatal, runTask } from '../common';
 import { exit } from 'shelljs';
 
 
@@ -12,6 +12,7 @@ export async function updateCommand(platform: string) {
   } catch (e) {
     logFatal(e);
   }
+
 }
 
 export async function update(platform: string, needsUpdate: boolean) {

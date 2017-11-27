@@ -6,6 +6,8 @@ import { prompt } from 'inquirer';
 import { exists } from 'fs';
 import { ANDROID_PATH, IOS_PATH, PLATFORMS } from './config';
 import { join } from 'path';
+import ora = require('ora');
+import { setTimeout } from 'timers';
 
 export const readFileAsync = promisify(readFile);
 export const writeFileAsync = promisify(writeFile);
@@ -27,12 +29,12 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
-export function log(...args: any[]) {
-  console.log(chalk.green('[avocado]'), ...args);
+export function logInfo(...args: any[]) {
+  console.log(chalk.yellow('  [info]'), ...args);
 }
 
 export function logError(...args: any[]) {
-  console.log(chalk.red('[avocado]'), ...args);
+  console.log(chalk.red('[error]'), ...args);
 }
 
 export function logFatal(...args: any[]) {
@@ -66,12 +68,25 @@ export async function askPlatform(platform: string | undefined): Promise<string>
   }
 }
 
+export function wait(time: number) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T> {
+  const spinner = ora(title).start();
+  try {
+    const value = await fn();
+    spinner.succeed();
+    return value;
+  } catch (e) {
+    spinner.fail(e);
+    throw e;
+  }
+}
+
 export function runCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    exec(command, {
-      async: true,
-      silent: true,
-    }, (code, stdout, stderr) => {
+    exec(command, { async: true, silent: true }, (code, stdout, stderr) => {
       if (code === 0) {
         resolve(stdout);
       } else {

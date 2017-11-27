@@ -1,5 +1,5 @@
 import { Plugin, PluginType } from '../../plugin';
-import { existsAsync, isInstalled, log, readdirAsync, runCommand, writeFileAsync } from '../../common';
+import { existsAsync, isInstalled, readdirAsync, runCommand, writeFileAsync } from '../../common';
 import { join, resolve } from 'path';
 import { IOS_BASE_PROJECT_PATH, IOS_PATH } from '../../config';
 import { cp, ls } from 'shelljs';

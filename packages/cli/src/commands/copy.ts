@@ -1,4 +1,4 @@
-import { askPlatform, getRootPath, log, logFatal } from '../common';
+import { askPlatform, getRootPath, logFatal, runTask } from '../common';
 import { cp, exit, ls } from 'shelljs';
 import { join } from 'path';
 import { ANDROID_PATH, IOS_PATH } from '../config';
@@ -7,7 +7,7 @@ import { ANDROID_PATH, IOS_PATH } from '../config';
 export async function copyCommand(platform: string) {
   platform = await askPlatform(platform);
   try {
-    copy(platform);
+    await copy(platform);
     exit(0);
   } catch (e) {
     logFatal(e);
@@ -15,8 +15,9 @@ export async function copyCommand(platform: string) {
 }
 
 export async function copy(platform: string) {
-  const modeRoot = getRootPath(platform);
-  const dest = platform + '/';
-  log(`copying www -> ${dest}www`);
-  cp('-R', 'www', dest);
+  await runTask('Copying www -> ios/www', async () => {
+    const modeRoot = getRootPath(platform);
+    const dest = platform + '/';
+    cp('-R', 'www', dest);
+  });
 }
