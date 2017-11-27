@@ -118,11 +118,7 @@ export class Avocado {
    * Process a response from the native layer.
    */
   fromNative(result: PluginResult) {
-    console.log('From Native', result);
-
     const storedCall = this.calls[result.callbackId];
-
-    console.log('Stored call', storedCall);
 
     const { call, callbackHandler } = storedCall;
 
