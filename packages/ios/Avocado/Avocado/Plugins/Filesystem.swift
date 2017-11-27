@@ -25,12 +25,12 @@ public class Filesystem : Plugin {
   @objc func readFile(_ call: PluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
-    guard let file = call.get("file") as? String else {
+    guard let file = call.get("file", String.self) else {
       handleError(call, "File must be provided and must be a string.")
       return
     }
       
-    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     let directory = getDirectory(directory: directoryOption)
 
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
@@ -56,17 +56,17 @@ public class Filesystem : Plugin {
   @objc func writeFile(_ call: PluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
-    guard let file = call.get("file") as? String else {
+    guard let file = call.get("file", String.self) else {
       handleError(call, "File must be provided and must be a string.")
       return
     }
     
-    guard let data = call.get("data") as? String else {
+    guard let data = call.get("data", String.self) else {
       handleError(call, "Data must be provided and must be a string.")
       return
     }
       
-    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
     let directory = getDirectory(directory: directoryOption)
     
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
@@ -90,17 +90,17 @@ public class Filesystem : Plugin {
   @objc func appendFile(_ call: PluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
-    guard let file = call.get("file") as? String else {
+    guard let file = call.get("file", String.self) else {
       handleError(call, "File must be provided and must be a string.")
       return
     }
     
-    guard let data = call.get("data") as? String else {
+    guard let data = call.get("data", String.self) else {
       handleError(call, "Data must be provided and must be a string.")
       return
     }
     
-    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
     let directory = getDirectory(directory: directoryOption)
     
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
@@ -138,13 +138,13 @@ public class Filesystem : Plugin {
    * Make a new directory, optionally creating parent folders first.
    */
   @objc func mkdir(_ call: PluginCall) {
-    guard let path = call.get("path") as? String else {
+    guard let path = call.get("path", String.self) else {
       handleError(call, "Path must be provided and must be a string.")
       return
     }
     
-    let createIntermediateDirectories = call.get("createIntermediateDirectories") as? Bool ?? false
-    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let createIntermediateDirectories = call.get("createIntermediateDirectories", Bool.self, false)!
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     let directory = getDirectory(directory: directoryOption)
     
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
@@ -167,12 +167,12 @@ public class Filesystem : Plugin {
    * Remove a directory.
    */
   @objc func rmdir(_ call: PluginCall) {
-    guard let path = call.get("path") as? String else {
+    guard let path = call.get("path", String.self) else {
       handleError(call, "Path must be provided and must be a string.")
       return
     }
     
-    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     let directory = getDirectory(directory: directoryOption)
     
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
@@ -195,12 +195,12 @@ public class Filesystem : Plugin {
    * Read the contents of a directory.
    */
   @objc func readdir(_ call: PluginCall) {
-    guard let path = call.get("path") as? String else {
+    guard let path = call.get("path", String.self) else {
       handleError(call, "Path must be provided and must be a string.")
       return
     }
     
-    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     let directory = getDirectory(directory: directoryOption)
     
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
@@ -227,12 +227,12 @@ public class Filesystem : Plugin {
   }
   
   @objc func stat(_ call: PluginCall) {
-    guard let path = call.get("path") as? String else {
+    guard let path = call.get("path", String.self) else {
       handleError(call, "Path must be provided and must be a string.")
       return
     }
     
-    let directoryOption = call.get("directory") as? String ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     let directory = getDirectory(directory: directoryOption)
     
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {

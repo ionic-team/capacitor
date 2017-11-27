@@ -3,8 +3,6 @@ import CoreMotion
 
 @objc(Camera)
 public class Camera : Plugin {
-  var cameraViewController: CameraViewController?
-  
   @objc func open(_ call: PluginCall) {
     if(bridge.isSimulator()) {
       bridge.modulePrint(self, "Camera not available in simulator")
@@ -19,14 +17,15 @@ public class Camera : Plugin {
       return
     }
     
-    if let viewController = UIStoryboard.init(name: "Camera", bundle: Bundle(for: type(of: self))).instantiateViewController(withIdentifier: "CameraViewController") as? CameraViewController {
-      viewController.setPluginCall(call)
-      self.bridge.viewController.present(viewController, animated: true) {
-      }
-    } else {
-      call.error("Unable to build CameraViewController. Please file an issue")
-    }
-
+    let allowEditing = call.get("allowEditing", Bool.self, false)!
+    
+    let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+    alert.addAction(UIAlertAction(title: "From Photos", style: .destructive, handler: { (action: UIAlertAction) in
+      self.bridge.reload()
+    }))
+    alert.addAction(UIAlertAction(title: "Take Picture", style: .destructive, handler: { (action: UIAlertAction) in
+      self.bridge.reload()
+    }))
   }
   
   
@@ -47,5 +46,6 @@ public class Camera : Plugin {
     return nil
   }
 }
+
 
 
