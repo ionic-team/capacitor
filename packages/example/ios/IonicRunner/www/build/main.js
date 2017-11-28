@@ -74,14 +74,14 @@ let HomePage = class HomePage {
         this.profileTimeout = null;
         this.profileNumCallsTimeout = null;
         this.profileSamples = null;
-        let network = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["l" /* Network */]();
+        let network = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["m" /* Network */]();
         network.onStatusChange((err, status) => {
             console.log("Network status changed", status);
             alert('New network status: ' + JSON.stringify(status));
         });
     }
     scheduleLocalNotification() {
-        let ln = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* LocalNotifications */]();
+        let ln = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["j" /* LocalNotifications */]();
         ln.schedule({
             title: 'Get 20% off!',
             body: 'Swipe to learn more',
@@ -94,21 +94,30 @@ let HomePage = class HomePage {
             console.log('Scheduled notification', r);
         });
     }
-    showSplash() {
-        let splash = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["m" /* SplashScreen */]();
-        splash.show({}, () => {
+    clipboardSetString() {
+        let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+        c.set({
+            string: "Hello, Moto"
+        });
+    }
+    clipboardGetString() {
+        let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+        c.get({
+            type: "string"
+        }).then((str) => {
+            console.log('Got string from clipboard:', str);
         });
     }
     showAlert() {
-        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["j" /* Modals */]();
+        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
         modals.alert('Stop', 'this is an error', 'Okay');
     }
     showConfirm() {
-        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["j" /* Modals */]();
+        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
         modals.confirm('Stop', 'this is an error', 'Okay');
     }
     showPrompt() {
-        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["j" /* Modals */]();
+        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
         modals.prompt('Stop', 'this is an error', 'Okay');
     }
     takePicture() {
@@ -122,7 +131,7 @@ let HomePage = class HomePage {
     }
     getCurrentPosition() {
         return __awaiter(this, void 0, void 0, function* () {
-            let geo = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* Geolocation */]();
+            let geo = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Geolocation */]();
             try {
                 const coordinates = yield geo.getCurrentPosition();
                 console.log('Current', coordinates);
@@ -137,7 +146,7 @@ let HomePage = class HomePage {
         });
     }
     watchPosition() {
-        let geo = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* Geolocation */]();
+        let geo = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Geolocation */]();
         try {
             const wait = geo.watchPosition((err, position) => {
                 console.log('Watch', position);
@@ -153,7 +162,7 @@ let HomePage = class HomePage {
     }
     getDeviceInfo() {
         return __awaiter(this, void 0, void 0, function* () {
-            let device = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Device */]();
+            let device = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Device */]();
             const info = yield device.getInfo();
             this.zone.run(() => {
                 this.deviceInfoJson = JSON.stringify(info, null, 2);
@@ -167,32 +176,32 @@ let HomePage = class HomePage {
         }, () => { });
         this.isStatusBarLight = !this.isStatusBarLight;
     }
-    hapticsImpact(style = __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* HapticsImpactStyle */].Heavy) {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Haptics */]();
+    hapticsImpact(style = __WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* HapticsImpactStyle */].Heavy) {
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
         haptics.impact({
             style: style
         });
     }
     hapticsImpactMedium(style) {
-        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* HapticsImpactStyle */].Medium);
+        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* HapticsImpactStyle */].Medium);
     }
     hapticsImpactLight(style) {
-        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* HapticsImpactStyle */].Light);
+        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* HapticsImpactStyle */].Light);
     }
     hapticsVibrate() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
         haptics.vibrate();
     }
     hapticsSelectionStart() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
         haptics.selectionStart();
     }
     hapticsSelectionChanged() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
         haptics.selectionChanged();
     }
     hapticsSelectionEnd() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
         haptics.selectionEnd();
     }
     browserOpen() {
@@ -200,9 +209,9 @@ let HomePage = class HomePage {
         browser.open('http://ionicframework.com');
     }
     fileWrite() {
-        let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Filesystem */]();
+        let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
         try {
-            fs.writeFile('secrets/text.txt', "This is a test", __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* FilesystemDirectory */].Documents);
+            fs.writeFile('secrets/text.txt', "This is a test", __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
         }
         catch (e) {
             console.error('Unable to write file (press mkdir first, silly)', e);
@@ -211,23 +220,23 @@ let HomePage = class HomePage {
     }
     fileRead() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Filesystem */]();
-            let contents = yield fs.readFile('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* FilesystemDirectory */].Documents);
+            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+            let contents = yield fs.readFile('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
             console.log(contents);
         });
     }
     fileAppend() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Filesystem */]();
-            yield fs.appendFile('secrets/text.txt', "MORE TESTS", __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* FilesystemDirectory */].Documents);
+            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+            yield fs.appendFile('secrets/text.txt', "MORE TESTS", __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
             console.log('Appended');
         });
     }
     mkdir() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.mkdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.mkdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
                 console.log('Made dir', ret);
             }
             catch (e) {
@@ -237,9 +246,9 @@ let HomePage = class HomePage {
     }
     rmdir() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.rmdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.rmdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
                 console.log('Removed dir', ret);
             }
             catch (e) {
@@ -249,9 +258,9 @@ let HomePage = class HomePage {
     }
     readdir() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.readdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.readdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
                 console.log('Read dir', ret);
             }
             catch (e) {
@@ -261,9 +270,9 @@ let HomePage = class HomePage {
     }
     stat() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.stat('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.stat('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
                 console.log('STAT', ret);
             }
             catch (e) {
@@ -272,7 +281,7 @@ let HomePage = class HomePage {
         });
     }
     watchAccel() {
-        let m = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Motion */]();
+        let m = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["l" /* Motion */]();
         m.watchAccel((err, values) => {
             this.zone.run(() => {
                 const v = {
@@ -311,7 +320,7 @@ let HomePage = class HomePage {
 };
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <ion-item>\n      <button (click)="showSplash()" ion-button color="primary">\n        Show Splash\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="showAlert()" ion-button color="primary">\n        Alert\n      </button>\n      <button (click)="showConfirm()" ion-button color="primary">\n        Confirm\n      </button>\n      <button (click)="showPrompt()" ion-button color="primary">\n        Prompt\n      </button>\n    </ion-item>\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n    <!--\n    <ion-item>\n      Profile\n    </ion-item>\n    <ion-item>\n      <button (click)="startProfile()" ion-button color="primary" *ngIf="!profiling">\n        Start Profile\n      </button>\n      <button (click)="endProfile()" ion-button color="primary" *ngIf="profiling">\n        End Profile\n      </button>\n    </ion-item>\n    -->\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="scheduleLocalNotification()" ion-button>\n        Schedule Local Notification\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n    </ion-item>\n    <ion-item>\n      Haptics\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsImpact()" ion-button color="primary">\n        Heavy\n      </button>\n      <button (click)="hapticsImpactMedium()" ion-button color="primary">\n        Medium\n      </button>\n      <button (click)="hapticsImpactLight()" ion-button color="primary">\n        Light \n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsVibrate()" ion-button color="primary">\n        Haptics Vibrate\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsSelectionStart()" ion-button color="primary">\n        Haptics Start\n      </button>\n      <button (click)="hapticsSelectionChanged()" ion-button color="primary">\n        Haptics Changed\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="browserOpen()" ion-button color="primary">\n        Browser Open\n      </button>\n    </ion-item>\n    <ion-item>FS</ion-item>\n    <ion-item>\n      <button (click)="mkdir()" ion-button>\n        mkdir\n      </button>\n      <button (click)="rmdir()" ion-button>\n        rmdir\n      </button>\n      <button (click)="readdir()" ion-button>\n        readdir\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="fileWrite()" ion-button>\n        File Write\n      </button>\n      <button (click)="fileRead()" ion-button>\n        File Read\n      </button>\n      <button (click)="fileAppend()" ion-button>\n        File Append\n      </button>\n      <button (click)="stat()" ion-button>\n        Stat\n      </button>\n    </ion-item>\n    <ion-item>\n      Motion\n    </ion-item>\n    <ion-item>\n      <button (click)="watchAccel()" ion-button>\n        Watch Accel\n      </button>\n      <div *ngIf="accel">\n        <b>x</b>: {{accel.x}} <b>y</b>: {{accel.y}} <b>z</b>: {{accel.z}}\n      </div>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <ion-item>\n      <button (click)="showSplash()" ion-button color="primary">\n        Show Splash\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="showAlert()" ion-button color="primary">\n        Alert\n      </button>\n      <button (click)="showConfirm()" ion-button color="primary">\n        Confirm\n      </button>\n      <button (click)="showPrompt()" ion-button color="primary">\n        Prompt\n      </button>\n    </ion-item>\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n    <!--\n    <ion-item>\n      Profile\n    </ion-item>\n    <ion-item>\n      <button (click)="startProfile()" ion-button color="primary" *ngIf="!profiling">\n        Start Profile\n      </button>\n      <button (click)="endProfile()" ion-button color="primary" *ngIf="profiling">\n        End Profile\n      </button>\n    </ion-item>\n    -->\n    <ion-item>\n      <button (click)="clipboardSetString()" ion-button color="primary">\n        Clipboard Set String\n      </button>\n      <button (click)="clipboardSetURL()" ion-button color="primary">\n        Clipboard Set URL\n      </button>\n      <button (click)="clipboardSetImage()" ion-button color="primary">\n        Clipboard Set Image\n      </button>\n      <div>\n      </div>\n      <button (click)="clipboardGetString()" ion-button color="primary">\n        Clipboard Get String\n      </button>\n      <button (click)="clipboardGetURL()" ion-button color="primary">\n        Clipboard Get URL\n      </button>\n      <button (click)="clipboardGetImage()" ion-button color="primary">\n        Clipboard Get Image\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="scheduleLocalNotification()" ion-button>\n        Schedule Local Notification\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n    </ion-item>\n    <ion-item>\n      Haptics\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsImpact()" ion-button color="primary">\n        Heavy\n      </button>\n      <button (click)="hapticsImpactMedium()" ion-button color="primary">\n        Medium\n      </button>\n      <button (click)="hapticsImpactLight()" ion-button color="primary">\n        Light \n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsVibrate()" ion-button color="primary">\n        Haptics Vibrate\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsSelectionStart()" ion-button color="primary">\n        Haptics Start\n      </button>\n      <button (click)="hapticsSelectionChanged()" ion-button color="primary">\n        Haptics Changed\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="browserOpen()" ion-button color="primary">\n        Browser Open\n      </button>\n    </ion-item>\n    <ion-item>FS</ion-item>\n    <ion-item>\n      <button (click)="mkdir()" ion-button>\n        mkdir\n      </button>\n      <button (click)="rmdir()" ion-button>\n        rmdir\n      </button>\n      <button (click)="readdir()" ion-button>\n        readdir\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="fileWrite()" ion-button>\n        File Write\n      </button>\n      <button (click)="fileRead()" ion-button>\n        File Read\n      </button>\n      <button (click)="fileAppend()" ion-button>\n        File Append\n      </button>\n      <button (click)="stat()" ion-button>\n        Stat\n      </button>\n    </ion-item>\n    <ion-item>\n      Motion\n    </ion-item>\n    <ion-item>\n      <button (click)="watchAccel()" ion-button>\n        Watch Accel\n      </button>\n      <div *ngIf="accel">\n        <b>x</b>: {{accel.x}} <b>y</b>: {{accel.y}} <b>z</b>: {{accel.z}}\n      </div>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* NavController */], __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]])
 ], HomePage);
@@ -435,18 +444,19 @@ MyApp = __decorate([
 /* unused harmony export AvocadoPlugin */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Browser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Camera; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return Clipboard; });
 /* unused harmony export Console */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return Device; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return Filesystem; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return FilesystemDirectory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return Geolocation; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return Haptics; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return HapticsImpactStyle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return LocalNotifications; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return Modals; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return Motion; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return Network; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return SplashScreen; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return Device; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return Filesystem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return FilesystemDirectory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return Geolocation; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return Haptics; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return HapticsImpactStyle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return LocalNotifications; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return Modals; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return Motion; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return Network; });
+/* unused harmony export SplashScreen */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return StatusBar; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return StatusBarStyle; });
 var Platform = /** @class */ (function () {
@@ -731,8 +741,44 @@ var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var Clipboard = /** @class */ (function (_super) {
+    __extends$2(Clipboard, _super);
+    function Clipboard() {
+        return _super.call(this) || this;
+    }
+    Clipboard.prototype.set = function (options) {
+        return this.nativePromise('set', options);
+    };
+    Clipboard.prototype.get = function (options) {
+        return this.nativePromise('get', options);
+    };
+    Clipboard = __decorate$2([
+        AvocadoPlugin({
+            name: 'Clipboard',
+            id: 'com.avocadojs.plugin.clipboard'
+        })
+    ], Clipboard);
+    return Clipboard;
+}(Plugin));
+
+var __extends$3 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var Console = /** @class */ (function (_super) {
-    __extends$2(Console, _super);
+    __extends$3(Console, _super);
     function Console() {
         var _this = _super.call(this) || this;
         _this.queue = [];
@@ -766,7 +812,7 @@ var Console = /** @class */ (function (_super) {
         }
         this.originalLog.apply(this.originalLog, args);
     };
-    Console = __decorate$2([
+    Console = __decorate$3([
         AvocadoPlugin({
             name: 'Console',
             id: 'com.avocadojs.plugin.console'
@@ -775,7 +821,7 @@ var Console = /** @class */ (function (_super) {
     return Console;
 }(Plugin));
 
-var __extends$3 = (undefined && undefined.__extends) || (function () {
+var __extends$4 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -785,7 +831,7 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -827,7 +873,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
     }
 };
 var Device = /** @class */ (function (_super) {
-    __extends$3(Device, _super);
+    __extends$4(Device, _super);
     function Device() {
         return _super.call(this) || this;
     }
@@ -838,7 +884,7 @@ var Device = /** @class */ (function (_super) {
             });
         });
     };
-    Device = __decorate$3([
+    Device = __decorate$4([
         AvocadoPlugin({
             name: 'Device',
             id: 'com.avocadojs.plugin.device'
@@ -847,7 +893,7 @@ var Device = /** @class */ (function (_super) {
     return Device;
 }(Plugin));
 
-var __extends$4 = (undefined && undefined.__extends) || (function () {
+var __extends$5 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -857,7 +903,7 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -873,7 +919,7 @@ var FilesystemDirectory;
     FilesystemDirectory["ExternalStorage"] = "EXTERNAL_STORAGE"; // Android only
 })(FilesystemDirectory || (FilesystemDirectory = {}));
 var Filesystem = /** @class */ (function (_super) {
-    __extends$4(Filesystem, _super);
+    __extends$5(Filesystem, _super);
     function Filesystem() {
         return _super.call(this) || this;
     }
@@ -929,7 +975,7 @@ var Filesystem = /** @class */ (function (_super) {
             directory: directory
         });
     };
-    Filesystem = __decorate$4([
+    Filesystem = __decorate$5([
         AvocadoPlugin({
             name: 'Filesystem',
             id: 'com.avocadojs.plugin.fs'
@@ -938,7 +984,7 @@ var Filesystem = /** @class */ (function (_super) {
     return Filesystem;
 }(Plugin));
 
-var __extends$5 = (undefined && undefined.__extends) || (function () {
+var __extends$6 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -948,7 +994,7 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -990,7 +1036,7 @@ var __generator$1 = (undefined && undefined.__generator) || function (thisArg, b
     }
 };
 var Geolocation = /** @class */ (function (_super) {
-    __extends$5(Geolocation, _super);
+    __extends$6(Geolocation, _super);
     function Geolocation() {
         return _super.call(this) || this;
     }
@@ -1025,64 +1071,13 @@ var Geolocation = /** @class */ (function (_super) {
             });
         }
     };
-    Geolocation = __decorate$5([
+    Geolocation = __decorate$6([
         AvocadoPlugin({
             name: 'Geolocation',
             id: 'com.avocadojs.plugin.geolocation'
         })
     ], Geolocation);
     return Geolocation;
-}(Plugin));
-
-var __extends$6 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var HapticsImpactStyle;
-(function (HapticsImpactStyle) {
-    HapticsImpactStyle["Heavy"] = "HEAVY";
-    HapticsImpactStyle["Medium"] = "MEDIUM";
-    HapticsImpactStyle["Light"] = "LIGHT";
-})(HapticsImpactStyle || (HapticsImpactStyle = {}));
-var Haptics = /** @class */ (function (_super) {
-    __extends$6(Haptics, _super);
-    function Haptics() {
-        return _super.call(this) || this;
-    }
-    Haptics.prototype.impact = function (options) {
-        this.nativeCallback('impact', options);
-    };
-    Haptics.prototype.vibrate = function () {
-        this.nativeCallback('vibrate');
-    };
-    Haptics.prototype.selectionStart = function () {
-        this.nativeCallback('selectionStart');
-    };
-    Haptics.prototype.selectionChanged = function () {
-        this.nativeCallback('selectionChanged');
-    };
-    Haptics.prototype.selectionEnd = function () {
-        this.nativeCallback('selectionEnd');
-    };
-    Haptics = __decorate$6([
-        AvocadoPlugin({
-            name: 'Haptics',
-            id: 'com.avocadojs.plugin.haptics'
-        })
-    ], Haptics);
-    return Haptics;
 }(Plugin));
 
 var __extends$7 = (undefined && undefined.__extends) || (function () {
@@ -1101,21 +1096,39 @@ var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var LocalNotifications = /** @class */ (function (_super) {
-    __extends$7(LocalNotifications, _super);
-    function LocalNotifications() {
+var HapticsImpactStyle;
+(function (HapticsImpactStyle) {
+    HapticsImpactStyle["Heavy"] = "HEAVY";
+    HapticsImpactStyle["Medium"] = "MEDIUM";
+    HapticsImpactStyle["Light"] = "LIGHT";
+})(HapticsImpactStyle || (HapticsImpactStyle = {}));
+var Haptics = /** @class */ (function (_super) {
+    __extends$7(Haptics, _super);
+    function Haptics() {
         return _super.call(this) || this;
     }
-    LocalNotifications.prototype.schedule = function (notification) {
-        return this.nativePromise('schedule', notification);
+    Haptics.prototype.impact = function (options) {
+        this.nativeCallback('impact', options);
     };
-    LocalNotifications = __decorate$7([
+    Haptics.prototype.vibrate = function () {
+        this.nativeCallback('vibrate');
+    };
+    Haptics.prototype.selectionStart = function () {
+        this.nativeCallback('selectionStart');
+    };
+    Haptics.prototype.selectionChanged = function () {
+        this.nativeCallback('selectionChanged');
+    };
+    Haptics.prototype.selectionEnd = function () {
+        this.nativeCallback('selectionEnd');
+    };
+    Haptics = __decorate$7([
         AvocadoPlugin({
-            name: 'LocalNotifications',
-            id: 'com.avocadojs.plugin.localnotifications'
+            name: 'Haptics',
+            id: 'com.avocadojs.plugin.haptics'
         })
-    ], LocalNotifications);
-    return LocalNotifications;
+    ], Haptics);
+    return Haptics;
 }(Plugin));
 
 var __extends$8 = (undefined && undefined.__extends) || (function () {
@@ -1134,8 +1147,41 @@ var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var LocalNotifications = /** @class */ (function (_super) {
+    __extends$8(LocalNotifications, _super);
+    function LocalNotifications() {
+        return _super.call(this) || this;
+    }
+    LocalNotifications.prototype.schedule = function (notification) {
+        return this.nativePromise('schedule', notification);
+    };
+    LocalNotifications = __decorate$8([
+        AvocadoPlugin({
+            name: 'LocalNotifications',
+            id: 'com.avocadojs.plugin.localnotifications'
+        })
+    ], LocalNotifications);
+    return LocalNotifications;
+}(Plugin));
+
+var __extends$9 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var Modals = /** @class */ (function (_super) {
-    __extends$8(Modals, _super);
+    __extends$9(Modals, _super);
     function Modals() {
         return _super.call(this) || this;
     }
@@ -1160,46 +1206,13 @@ var Modals = /** @class */ (function (_super) {
             buttonTitle: buttonTitle
         });
     };
-    Modals = __decorate$8([
+    Modals = __decorate$9([
         AvocadoPlugin({
             name: 'Modals',
             id: 'com.avocadojs.plugin.modals'
         })
     ], Modals);
     return Modals;
-}(Plugin));
-
-var __extends$9 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var Motion = /** @class */ (function (_super) {
-    __extends$9(Motion, _super);
-    function Motion() {
-        return _super.call(this) || this;
-    }
-    Motion.prototype.watchAccel = function (callback) {
-        this.nativeCallback('watchAccel', callback);
-    };
-    Motion = __decorate$9([
-        AvocadoPlugin({
-            name: 'Motion',
-            id: 'com.avocadojs.plugin.motion'
-        })
-    ], Motion);
-    return Motion;
 }(Plugin));
 
 var __extends$10 = (undefined && undefined.__extends) || (function () {
@@ -1218,21 +1231,21 @@ var __decorate$10 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var Network = /** @class */ (function (_super) {
-    __extends$10(Network, _super);
-    function Network() {
+var Motion = /** @class */ (function (_super) {
+    __extends$10(Motion, _super);
+    function Motion() {
         return _super.call(this) || this;
     }
-    Network.prototype.onStatusChange = function (callback) {
-        this.nativeCallback('onStatusChange', callback);
+    Motion.prototype.watchAccel = function (callback) {
+        this.nativeCallback('watchAccel', callback);
     };
-    Network = __decorate$10([
+    Motion = __decorate$10([
         AvocadoPlugin({
-            name: 'Network',
-            id: 'com.avocadojs.plugin.network'
+            name: 'Motion',
+            id: 'com.avocadojs.plugin.motion'
         })
-    ], Network);
-    return Network;
+    ], Motion);
+    return Motion;
 }(Plugin));
 
 var __extends$11 = (undefined && undefined.__extends) || (function () {
@@ -1251,24 +1264,21 @@ var __decorate$11 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var SplashScreen = /** @class */ (function (_super) {
-    __extends$11(SplashScreen, _super);
-    function SplashScreen() {
+var Network = /** @class */ (function (_super) {
+    __extends$11(Network, _super);
+    function Network() {
         return _super.call(this) || this;
     }
-    SplashScreen.prototype.show = function (options, callback) {
-        this.nativeCallback('show', options, callback);
+    Network.prototype.onStatusChange = function (callback) {
+        this.nativeCallback('onStatusChange', callback);
     };
-    SplashScreen.prototype.hide = function (options, callback) {
-        this.nativeCallback('hide', options, callback);
-    };
-    SplashScreen = __decorate$11([
+    Network = __decorate$11([
         AvocadoPlugin({
-            name: 'SplashScreen',
-            id: 'com.avocadojs.plugin.splashscreen'
+            name: 'Network',
+            id: 'com.avocadojs.plugin.network'
         })
-    ], SplashScreen);
-    return SplashScreen;
+    ], Network);
+    return Network;
 }(Plugin));
 
 var __extends$12 = (undefined && undefined.__extends) || (function () {
@@ -1287,20 +1297,56 @@ var __decorate$12 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var SplashScreen = /** @class */ (function (_super) {
+    __extends$12(SplashScreen, _super);
+    function SplashScreen() {
+        return _super.call(this) || this;
+    }
+    SplashScreen.prototype.show = function (options, callback) {
+        this.nativeCallback('show', options, callback);
+    };
+    SplashScreen.prototype.hide = function (options, callback) {
+        this.nativeCallback('hide', options, callback);
+    };
+    SplashScreen = __decorate$12([
+        AvocadoPlugin({
+            name: 'SplashScreen',
+            id: 'com.avocadojs.plugin.splashscreen'
+        })
+    ], SplashScreen);
+    return SplashScreen;
+}(Plugin));
+
+var __extends$13 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var StatusBarStyle;
 (function (StatusBarStyle) {
     StatusBarStyle["Dark"] = "DARK";
     StatusBarStyle["Light"] = "LIGHT";
 })(StatusBarStyle || (StatusBarStyle = {}));
 var StatusBar = /** @class */ (function (_super) {
-    __extends$12(StatusBar, _super);
+    __extends$13(StatusBar, _super);
     function StatusBar() {
         return _super.call(this) || this;
     }
     StatusBar.prototype.setStyle = function (options, callback) {
         this.nativeCallback('setStyle', options, callback);
     };
-    StatusBar = __decorate$12([
+    StatusBar = __decorate$13([
         AvocadoPlugin({
             name: 'StatusBar',
             id: 'com.avocadojs.plugin.statusbar'

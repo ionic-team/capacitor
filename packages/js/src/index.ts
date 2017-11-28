@@ -5,6 +5,7 @@ export { Plugin, AvocadoPlugin } from './plugin';
 
 export { Browser } from './plugins/browser';
 export { Camera } from './plugins/camera';
+export { Clipboard } from './plugins/clipboard';
 export { Console } from './plugins/console';
 export { Device } from './plugins/device';
 export { Filesystem, FilesystemDirectory } from './plugins/fs';

@@ -5,6 +5,7 @@ import { NavController } from 'ionic-angular';
 import {
   Browser,
   Camera,
+  Clipboard,
   Device,
   Filesystem,
   FilesystemDirectory,
@@ -59,9 +60,18 @@ export class HomePage {
     });
   }
 
-  showSplash() {
-    let splash = new SplashScreen();
-    splash.show({}, () => {
+  clipboardSetString() {
+    let c = new Clipboard();
+    c.set({
+      string: "Hello, Moto"
+    });
+  }
+  clipboardGetString() {
+    let c = new Clipboard();
+    c.get({
+      type: "string"
+    }).then((str) => {
+      console.log('Got string from clipboard:', str);
     });
   }
 

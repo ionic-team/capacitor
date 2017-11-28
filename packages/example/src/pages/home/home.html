@@ -41,6 +41,28 @@
     </ion-item>
     -->
     <ion-item>
+      <button (click)="clipboardSetString()" ion-button color="primary">
+        Copy String
+      </button>
+      <button (click)="clipboardSetURL()" ion-button color="primary">
+        Copy URL
+      </button>
+      <button (click)="clipboardSetImage()" ion-button color="primary">
+        Copy Image
+      </button>
+      <div>
+      </div>
+      <button (click)="clipboardGetString()" ion-button color="primary">
+        Paste String
+      </button>
+      <button (click)="clipboardGetURL()" ion-button color="primary">
+        Paste URL
+      </button>
+      <button (click)="clipboardGetImage()" ion-button color="primary">
+        Paste Image
+      </button>
+    </ion-item>
+    <ion-item>
       <button (click)="getCurrentPosition()" ion-button color="primary">
         Geolocation.getCurrentPosition
       </button>
