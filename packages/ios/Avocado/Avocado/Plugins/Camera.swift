@@ -9,7 +9,7 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
   
   @objc func getPhoto(_ call: PluginCall) {
     self.call = call
-    self.quality = call.get("quality", Float.self, 1.0)!
+    self.quality = call.get("quality", Float.self, 100)!
     let allowEditing = call.get("allowEditing", Bool.self, false)!
     
     // Make sure they have all the necessary info.plist settings
@@ -63,7 +63,7 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
       // Use originalImage Here
       image = originalImage
     }
-    
+
     guard let jpeg = UIImageJPEGRepresentation(image!, CGFloat(quality/100)) else {
       print("Unable to convert image to jpeg")
       self.call?.error("Unable to convert image to jpeg")
