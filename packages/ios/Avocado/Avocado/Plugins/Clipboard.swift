@@ -23,7 +23,7 @@ public class Clipboard : Plugin {
     call.success()
   }
   
-  @objc func getValue(_ call: PluginCall) {
+  @objc func get(_ call: PluginCall) {
     let type = call.get("type", String.self, "string")!
     
     if type == "string" && UIPasteboard.general.hasStrings {

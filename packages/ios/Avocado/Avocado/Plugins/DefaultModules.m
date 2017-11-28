@@ -8,6 +8,9 @@
 @interface AVOCADO_PLUGIN("com.avocadojs.plugin.camera", Camera)
 @end
 
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.clipboard", Clipboard)
+@end
+
 @interface AVOCADO_PLUGIN("com.avocadojs.plugin.console", Console)
 @end
 
