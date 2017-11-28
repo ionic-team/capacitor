@@ -650,8 +650,41 @@ var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var LocalNotifications = /** @class */ (function (_super) {
+    __extends$7(LocalNotifications, _super);
+    function LocalNotifications() {
+        return _super.call(this) || this;
+    }
+    LocalNotifications.prototype.schedule = function (notification) {
+        return this.nativePromise('schedule', notification);
+    };
+    LocalNotifications = __decorate$7([
+        AvocadoPlugin({
+            name: 'LocalNotifications',
+            id: 'com.avocadojs.plugin.localnotifications'
+        })
+    ], LocalNotifications);
+    return LocalNotifications;
+}(Plugin));
+
+var __extends$8 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var Modals = /** @class */ (function (_super) {
-    __extends$7(Modals, _super);
+    __extends$8(Modals, _super);
     function Modals() {
         return _super.call(this) || this;
     }
@@ -676,46 +709,13 @@ var Modals = /** @class */ (function (_super) {
             buttonTitle: buttonTitle
         });
     };
-    Modals = __decorate$7([
+    Modals = __decorate$8([
         AvocadoPlugin({
             name: 'Modals',
             id: 'com.avocadojs.plugin.modals'
         })
     ], Modals);
     return Modals;
-}(Plugin));
-
-var __extends$8 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var Motion = /** @class */ (function (_super) {
-    __extends$8(Motion, _super);
-    function Motion() {
-        return _super.call(this) || this;
-    }
-    Motion.prototype.watchAccel = function (callback) {
-        this.nativeCallback('watchAccel', callback);
-    };
-    Motion = __decorate$8([
-        AvocadoPlugin({
-            name: 'Motion',
-            id: 'com.avocadojs.plugin.motion'
-        })
-    ], Motion);
-    return Motion;
 }(Plugin));
 
 var __extends$9 = (undefined && undefined.__extends) || (function () {
@@ -734,21 +734,21 @@ var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var Network = /** @class */ (function (_super) {
-    __extends$9(Network, _super);
-    function Network() {
+var Motion = /** @class */ (function (_super) {
+    __extends$9(Motion, _super);
+    function Motion() {
         return _super.call(this) || this;
     }
-    Network.prototype.onStatusChange = function (callback) {
-        this.nativeCallback('onStatusChange', callback);
+    Motion.prototype.watchAccel = function (callback) {
+        this.nativeCallback('watchAccel', callback);
     };
-    Network = __decorate$9([
+    Motion = __decorate$9([
         AvocadoPlugin({
-            name: 'Network',
-            id: 'com.avocadojs.plugin.network'
+            name: 'Motion',
+            id: 'com.avocadojs.plugin.motion'
         })
-    ], Network);
-    return Network;
+    ], Motion);
+    return Motion;
 }(Plugin));
 
 var __extends$10 = (undefined && undefined.__extends) || (function () {
@@ -767,24 +767,21 @@ var __decorate$10 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var SplashScreen = /** @class */ (function (_super) {
-    __extends$10(SplashScreen, _super);
-    function SplashScreen() {
+var Network = /** @class */ (function (_super) {
+    __extends$10(Network, _super);
+    function Network() {
         return _super.call(this) || this;
     }
-    SplashScreen.prototype.show = function (options, callback) {
-        this.nativeCallback('show', options, callback);
+    Network.prototype.onStatusChange = function (callback) {
+        this.nativeCallback('onStatusChange', callback);
     };
-    SplashScreen.prototype.hide = function (options, callback) {
-        this.nativeCallback('hide', options, callback);
-    };
-    SplashScreen = __decorate$10([
+    Network = __decorate$10([
         AvocadoPlugin({
-            name: 'SplashScreen',
-            id: 'com.avocadojs.plugin.splashscreen'
+            name: 'Network',
+            id: 'com.avocadojs.plugin.network'
         })
-    ], SplashScreen);
-    return SplashScreen;
+    ], Network);
+    return Network;
 }(Plugin));
 
 var __extends$11 = (undefined && undefined.__extends) || (function () {
@@ -803,20 +800,56 @@ var __decorate$11 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var SplashScreen = /** @class */ (function (_super) {
+    __extends$11(SplashScreen, _super);
+    function SplashScreen() {
+        return _super.call(this) || this;
+    }
+    SplashScreen.prototype.show = function (options, callback) {
+        this.nativeCallback('show', options, callback);
+    };
+    SplashScreen.prototype.hide = function (options, callback) {
+        this.nativeCallback('hide', options, callback);
+    };
+    SplashScreen = __decorate$11([
+        AvocadoPlugin({
+            name: 'SplashScreen',
+            id: 'com.avocadojs.plugin.splashscreen'
+        })
+    ], SplashScreen);
+    return SplashScreen;
+}(Plugin));
+
+var __extends$12 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var StatusBarStyle;
 (function (StatusBarStyle) {
     StatusBarStyle["Dark"] = "DARK";
     StatusBarStyle["Light"] = "LIGHT";
 })(StatusBarStyle || (StatusBarStyle = {}));
 var StatusBar = /** @class */ (function (_super) {
-    __extends$11(StatusBar, _super);
+    __extends$12(StatusBar, _super);
     function StatusBar() {
         return _super.call(this) || this;
     }
     StatusBar.prototype.setStyle = function (options, callback) {
         this.nativeCallback('setStyle', options, callback);
     };
-    StatusBar = __decorate$11([
+    StatusBar = __decorate$12([
         AvocadoPlugin({
             name: 'StatusBar',
             id: 'com.avocadojs.plugin.statusbar'
@@ -825,4 +858,4 @@ var StatusBar = /** @class */ (function (_super) {
     return StatusBar;
 }(Plugin));
 
-export { Avocado, Platform, Plugin, AvocadoPlugin, Browser, Camera, Console, Device, Filesystem, FilesystemDirectory, Geolocation, Haptics, HapticsImpactStyle, Modals, Motion, Network, SplashScreen, StatusBar, StatusBarStyle };
+export { Avocado, Platform, Plugin, AvocadoPlugin, Browser, Camera, Console, Device, Filesystem, FilesystemDirectory, Geolocation, Haptics, HapticsImpactStyle, LocalNotifications, Modals, Motion, Network, SplashScreen, StatusBar, StatusBarStyle };
