@@ -32,6 +32,17 @@ landing-page {
     font-weight: 400;
   }
 
+  #cta-form {
+    input {
+      height: 40px;
+      font-size: 14px;
+      width: 200px;
+      background-color: #333;
+      border: 1px solid #555;
+      border-radius: 4px;
+    }
+  }
+
   button {
     &:first-child {
       margin-left: 0;

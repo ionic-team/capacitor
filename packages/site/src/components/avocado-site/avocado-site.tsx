@@ -111,7 +111,7 @@ export class App {
         </div>
       </div>,
 
-      <footer>
+      <footer style={{display: this.isLandingPage ? 'none' : 'block'}}>
         <div id="open-source">
           <a href="http://ionicframework.com/" title="IonicFramework.com" rel="noopener">
             <img src="/assets/img/ionic-os-logo.png" alt="Ionic Open Source Logo"></img>
