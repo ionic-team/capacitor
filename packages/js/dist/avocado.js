@@ -7,7 +7,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 import { Platform } from './platform';
-import { Console } from './plugins/console';
 /**
  * Main class for interacting with the Avocado runtime.
  */
@@ -30,7 +29,7 @@ var Avocado = /** @class */ (function () {
         this.console && this.console.windowLog(args);
     };
     Avocado.prototype.loadCoreModules = function () {
-        this.console = new Console();
+        //this.console = new Console();
     };
     Avocado.prototype.registerPlugin = function (plugin) {
         var info = plugin.constructor.getPluginInfo();

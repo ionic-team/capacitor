@@ -142,7 +142,7 @@ public class Bridge {
    */
   public func toJs(result: JSResult) {
     let resultJson = result.toJson()
-    
+    print("TO JS", result.toJson())
     self.webView?.evaluateJavaScript("window.avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
       if error != nil && result != nil {
         print(result!)

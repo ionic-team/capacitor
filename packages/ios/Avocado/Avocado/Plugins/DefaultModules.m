@@ -29,6 +29,9 @@
 @interface AVOCADO_PLUGIN("com.avocadojs.plugin.motion", Motion)
 @end
 
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.network", Network)
+@end
+
 @interface AVOCADO_PLUGIN("com.avocadojs.plugin.splashscreen", SplashScreen)
 @end
 
