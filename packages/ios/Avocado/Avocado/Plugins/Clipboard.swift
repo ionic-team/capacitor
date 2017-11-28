@@ -14,9 +14,13 @@ public class Clipboard : Plugin {
       }
     }
     if let imageBase64 = call.get("image", String.self) {
+      print(imageBase64)
       if let data = Data(base64Encoded: imageBase64) {
         let image = UIImage(data: data)
+        print("Loaded image", image!.size.width, image!.size.height)
         UIPasteboard.general.image = image
+      } else {
+        print("Unable to encode image")
       }
     }
 

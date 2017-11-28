@@ -36,7 +36,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
     webView?.uiDelegate = self
     //If you want to implement the delegate
     //webView?.navigationDelegate = self
-    
+    webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
     self.bridge!.setWebView(webView: webView!)

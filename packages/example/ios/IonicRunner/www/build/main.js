@@ -88,13 +88,12 @@ let HomePage = class HomePage {
                 .then(blob => new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    this.base64Image = reader.result;
+                    this.base64Image = reader.result.replace('data:;base64,', '');
                 };
                 reader.onerror = reject;
                 reader.readAsDataURL(blob);
             }));
-            toDataURL('http://ionicframework.com/img/ionic-logo.png').then((base64) => {
-            });
+            toDataURL('assets/ionitron.png');
         });
     }
     scheduleLocalNotification() {
@@ -118,10 +117,11 @@ let HomePage = class HomePage {
         });
     }
     clipboardGetString() {
-        let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
-        c.get({
-            type: "string"
-        }).then((str) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+            let str = yield c.get({
+                type: "string"
+            });
             console.log('Got string from clipboard:', str);
         });
     }
@@ -132,13 +132,17 @@ let HomePage = class HomePage {
         });
     }
     clipboardGetURL() {
-        let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
-        c.get({
-            type: "url"
+        return __awaiter(this, void 0, void 0, function* () {
+            let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+            let url = c.get({
+                type: "url"
+            });
+            console.log("Get URL from clipboard", url);
         });
     }
     clipboardSetImage() {
         let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+        console.log('Setting image', this.base64Image);
         c.set({
             image: this.base64Image
         });
@@ -485,7 +489,7 @@ MyApp = __decorate([
 /* unused harmony export Avocado */
 /* unused harmony export Platform */
 /* unused harmony export Plugin */
-/* unused harmony export AvocadoPlugin */
+/* unused harmony export NativePlugin */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Browser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Camera; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return Clipboard; });
@@ -693,7 +697,7 @@ var Plugin = /** @class */ (function () {
 /**
  * Decorator for AvocadoPlugin's
  */
-function AvocadoPlugin(config) {
+function NativePlugin(config) {
     return function (cls) {
         cls['_avocadoPlugin'] = Object.assign({}, config);
         cls['getPluginInfo'] = function () {
@@ -728,7 +732,7 @@ var Browser = /** @class */ (function (_super) {
         this.nativeCallback('open', { url: url });
     };
     Browser = __decorate([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Browser',
             id: 'com.avocadojs.plugin.browser'
         })
@@ -761,7 +765,7 @@ var Camera = /** @class */ (function (_super) {
         return this.nativePromise('getPhoto', options);
     };
     Camera = __decorate$1([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Camera',
             id: 'com.avocadojs.plugin.camera'
         })
@@ -797,7 +801,7 @@ var Clipboard = /** @class */ (function (_super) {
         return this.nativePromise('get', options);
     };
     Clipboard = __decorate$2([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Clipboard',
             id: 'com.avocadojs.plugin.clipboard'
         })
@@ -857,7 +861,7 @@ var Console = /** @class */ (function (_super) {
         this.originalLog.apply(this.originalLog, args);
     };
     Console = __decorate$3([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Console',
             id: 'com.avocadojs.plugin.console'
         })
@@ -929,7 +933,7 @@ var Device = /** @class */ (function (_super) {
         });
     };
     Device = __decorate$4([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Device',
             id: 'com.avocadojs.plugin.device'
         })
@@ -1020,7 +1024,7 @@ var Filesystem = /** @class */ (function (_super) {
         });
     };
     Filesystem = __decorate$5([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Filesystem',
             id: 'com.avocadojs.plugin.fs'
         })
@@ -1116,7 +1120,7 @@ var Geolocation = /** @class */ (function (_super) {
         }
     };
     Geolocation = __decorate$6([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Geolocation',
             id: 'com.avocadojs.plugin.geolocation'
         })
@@ -1167,7 +1171,7 @@ var Haptics = /** @class */ (function (_super) {
         this.nativeCallback('selectionEnd');
     };
     Haptics = __decorate$7([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Haptics',
             id: 'com.avocadojs.plugin.haptics'
         })
@@ -1200,7 +1204,7 @@ var LocalNotifications = /** @class */ (function (_super) {
         return this.nativePromise('schedule', notification);
     };
     LocalNotifications = __decorate$8([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'LocalNotifications',
             id: 'com.avocadojs.plugin.localnotifications'
         })
@@ -1251,7 +1255,7 @@ var Modals = /** @class */ (function (_super) {
         });
     };
     Modals = __decorate$9([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Modals',
             id: 'com.avocadojs.plugin.modals'
         })
@@ -1284,7 +1288,7 @@ var Motion = /** @class */ (function (_super) {
         this.nativeCallback('watchAccel', callback);
     };
     Motion = __decorate$10([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Motion',
             id: 'com.avocadojs.plugin.motion'
         })
@@ -1317,7 +1321,7 @@ var Network = /** @class */ (function (_super) {
         this.nativeCallback('onStatusChange', callback);
     };
     Network = __decorate$11([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Network',
             id: 'com.avocadojs.plugin.network'
         })
@@ -1353,7 +1357,7 @@ var SplashScreen = /** @class */ (function (_super) {
         this.nativeCallback('hide', options, callback);
     };
     SplashScreen = __decorate$12([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'SplashScreen',
             id: 'com.avocadojs.plugin.splashscreen'
         })
@@ -1391,7 +1395,7 @@ var StatusBar = /** @class */ (function (_super) {
         this.nativeCallback('setStyle', options, callback);
     };
     StatusBar = __decorate$13([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'StatusBar',
             id: 'com.avocadojs.plugin.statusbar'
         })
