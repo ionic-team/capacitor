@@ -23,6 +23,9 @@
 @interface AVOCADO_PLUGIN("com.avocadojs.plugin.haptics", Haptics)
 @end
 
+@interface AVOCADO_PLUGIN("com.avocadojs.plugin.localnotifications", LocalNotifications)
+@end
+
 @interface AVOCADO_PLUGIN("com.avocadojs.plugin.modals", Modals)
 @end
 

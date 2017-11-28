@@ -11,6 +11,7 @@ import {
   Geolocation,
   Haptics,
   HapticsImpactStyle,
+  LocalNotifications,
   Modals,
   Motion,
   Network,
@@ -40,6 +41,21 @@ export class HomePage {
     network.onStatusChange((err, status) => {
       console.log("Network status changed", status);
       alert('New network status: ' + JSON.stringify(status))
+    });
+  }
+
+  scheduleLocalNotification() {
+    let ln = new LocalNotifications();
+    ln.schedule({
+      title: 'Get 20% off!',
+      body: 'Swipe to learn more',
+      identifier: 'special-deal',
+      scheduleAt: {
+        hour: 23,
+        minute: 26
+      }
+    }).then((r) => {
+      console.log('Scheduled notification', r);
     });
   }
 
