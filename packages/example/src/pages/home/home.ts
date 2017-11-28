@@ -61,7 +61,8 @@ export class HomePage {
   takePicture() {
     let camera = new Camera();
     camera.getPhoto({
-      quality: 1
+      quality: 90,
+      allowEditing: true
     }).then((image) => {
       this.image = image && ('data:image/jpeg;base64,' + image.base64_data);
     });
