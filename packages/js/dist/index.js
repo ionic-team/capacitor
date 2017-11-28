@@ -188,7 +188,7 @@ var Plugin = /** @class */ (function () {
 /**
  * Decorator for AvocadoPlugin's
  */
-function AvocadoPlugin(config) {
+function NativePlugin(config) {
     return function (cls) {
         cls['_avocadoPlugin'] = Object.assign({}, config);
         cls['getPluginInfo'] = function () {
@@ -223,7 +223,7 @@ var Browser = /** @class */ (function (_super) {
         this.nativeCallback('open', { url: url });
     };
     Browser = __decorate([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Browser',
             id: 'com.avocadojs.plugin.browser'
         })
@@ -256,7 +256,7 @@ var Camera = /** @class */ (function (_super) {
         return this.nativePromise('getPhoto', options);
     };
     Camera = __decorate$1([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Camera',
             id: 'com.avocadojs.plugin.camera'
         })
@@ -292,7 +292,7 @@ var Clipboard = /** @class */ (function (_super) {
         return this.nativePromise('get', options);
     };
     Clipboard = __decorate$2([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Clipboard',
             id: 'com.avocadojs.plugin.clipboard'
         })
@@ -352,7 +352,7 @@ var Console = /** @class */ (function (_super) {
         this.originalLog.apply(this.originalLog, args);
     };
     Console = __decorate$3([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Console',
             id: 'com.avocadojs.plugin.console'
         })
@@ -424,7 +424,7 @@ var Device = /** @class */ (function (_super) {
         });
     };
     Device = __decorate$4([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Device',
             id: 'com.avocadojs.plugin.device'
         })
@@ -515,7 +515,7 @@ var Filesystem = /** @class */ (function (_super) {
         });
     };
     Filesystem = __decorate$5([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Filesystem',
             id: 'com.avocadojs.plugin.fs'
         })
@@ -611,7 +611,7 @@ var Geolocation = /** @class */ (function (_super) {
         }
     };
     Geolocation = __decorate$6([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Geolocation',
             id: 'com.avocadojs.plugin.geolocation'
         })
@@ -662,7 +662,7 @@ var Haptics = /** @class */ (function (_super) {
         this.nativeCallback('selectionEnd');
     };
     Haptics = __decorate$7([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Haptics',
             id: 'com.avocadojs.plugin.haptics'
         })
@@ -695,7 +695,7 @@ var LocalNotifications = /** @class */ (function (_super) {
         return this.nativePromise('schedule', notification);
     };
     LocalNotifications = __decorate$8([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'LocalNotifications',
             id: 'com.avocadojs.plugin.localnotifications'
         })
@@ -746,7 +746,7 @@ var Modals = /** @class */ (function (_super) {
         });
     };
     Modals = __decorate$9([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Modals',
             id: 'com.avocadojs.plugin.modals'
         })
@@ -779,7 +779,7 @@ var Motion = /** @class */ (function (_super) {
         this.nativeCallback('watchAccel', callback);
     };
     Motion = __decorate$10([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Motion',
             id: 'com.avocadojs.plugin.motion'
         })
@@ -812,7 +812,7 @@ var Network = /** @class */ (function (_super) {
         this.nativeCallback('onStatusChange', callback);
     };
     Network = __decorate$11([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'Network',
             id: 'com.avocadojs.plugin.network'
         })
@@ -848,7 +848,7 @@ var SplashScreen = /** @class */ (function (_super) {
         this.nativeCallback('hide', options, callback);
     };
     SplashScreen = __decorate$12([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'SplashScreen',
             id: 'com.avocadojs.plugin.splashscreen'
         })
@@ -886,7 +886,7 @@ var StatusBar = /** @class */ (function (_super) {
         this.nativeCallback('setStyle', options, callback);
     };
     StatusBar = __decorate$13([
-        AvocadoPlugin({
+        NativePlugin({
             name: 'StatusBar',
             id: 'com.avocadojs.plugin.statusbar'
         })
@@ -894,4 +894,4 @@ var StatusBar = /** @class */ (function (_super) {
     return StatusBar;
 }(Plugin));
 
-export { Avocado, Platform, Plugin, AvocadoPlugin, Browser, Camera, Clipboard, Console, Device, Filesystem, FilesystemDirectory, Geolocation, Haptics, HapticsImpactStyle, LocalNotifications, Modals, Motion, Network, SplashScreen, StatusBar, StatusBarStyle };
+export { Avocado, Platform, Plugin, NativePlugin, Browser, Camera, Clipboard, Console, Device, Filesystem, FilesystemDirectory, Geolocation, Haptics, HapticsImpactStyle, LocalNotifications, Modals, Motion, Network, SplashScreen, StatusBar, StatusBarStyle };

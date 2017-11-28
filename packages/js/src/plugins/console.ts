@@ -1,8 +1,8 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
 declare var window;
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'Console',
   id: 'com.avocadojs.plugin.console'
 })

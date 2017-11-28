@@ -1,6 +1,6 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'SplashScreen',
   id: 'com.avocadojs.plugin.splashscreen'
 })

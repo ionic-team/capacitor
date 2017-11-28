@@ -19,4 +19,4 @@ export declare class Plugin {
 /**
  * Decorator for AvocadoPlugin's
  */
-export declare function AvocadoPlugin(config: any): (cls: any) => any;
+export declare function NativePlugin(config: any): (cls: any) => any;

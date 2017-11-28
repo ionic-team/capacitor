@@ -1,4 +1,4 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
 export enum HapticsImpactStyle {
   Heavy = 'HEAVY',
@@ -6,7 +6,7 @@ export enum HapticsImpactStyle {
   Light = 'LIGHT'
 }
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'Haptics',
   id: 'com.avocadojs.plugin.haptics'
 })

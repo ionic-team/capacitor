@@ -1,4 +1,4 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
 declare var window;
 
@@ -12,7 +12,7 @@ export enum FilesystemDirectory {
 }
 
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'Filesystem',
   id: 'com.avocadojs.plugin.fs'
 })
