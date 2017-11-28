@@ -25,10 +25,16 @@ export class LandingPage {
       <div>
 
         <main>
-          <h1 id="action-call">Universal Runtime<br/> for Web Applications</h1>
-          <h3 id="action-more">Build cross-platform apps with HTML, CSS, and JavaScript</h3>
+          <h1 id="action-call">Avocado: Universal Runtime<br/> for Web Applications</h1>
+          <h3 id="action-more">Build cross-platform apps easily with HTML, CSS, and JavaScript</h3>
           <section id="buttons">
-
+            Coming soon! Enter your email for updates
+            <form id="cta-form">
+              <div>
+                <input type="text" />
+              </div>
+            </form>
+            {/*
             <stencil-route-link url="/docs/getting-started">
               <button id="get-started">
                 Get Started
@@ -40,6 +46,7 @@ export class LandingPage {
                 Learn More
               </button>
             </stencil-route-link>
+            */}
           </section>
         </main>
 
