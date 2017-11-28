@@ -15,6 +15,7 @@ class DevMode {
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
       alert.dismiss(animated: true, completion: nil)
     }))
-    self.bridge.viewController.present(alert, animated: true, completion: nil)
+    
+    UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
   }
 }

@@ -1,0 +1,63 @@
+$link-color: #69D353;
+
+site-menu {
+  
+    .star-button {
+      margin-bottom: -2px;
+      width: 120px;
+      margin-top: 26px;
+    }
+  
+    h4 {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+
+    #menu-list {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      -webkit-padding-start: 0;
+
+      ul {
+        padding: 0;
+        color: #2d2d4c;
+        font-size: 15px;
+        line-height: 2em;
+        margin: 0px 0 28px;
+      }
+
+      li {
+        list-style: none;
+        margin: 0;
+        text-indent: 0;
+        font-size: 14px;
+        font-weight: 400;
+      }
+  
+    }
+
+    a {
+      color: #484854;
+      text-decoration: none;
+    }
+
+    stencil-route-link a{
+      color: #484854;
+      text-decoration: none;
+    }
+
+    stencil-route-link .link-active {
+      font-weight: bold;
+      color: $link-color;
+      letter-spacing: -0.013em;
+    }
+  
+    stencil-route-link:hover a {
+      color: #2f2f35 !important;
+      font-weight: 500;
+      letter-spacing: -0.013em;
+    }
+  
+  }

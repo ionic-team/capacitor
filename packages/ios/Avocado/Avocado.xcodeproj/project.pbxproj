@@ -16,7 +16,6 @@
 		50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F061FC3B54800AA0184 /* Filesystem.swift */; };
 		50474F0B1FC527CA00AA0184 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F0A1FC527CA00AA0184 /* Storage.swift */; };
 		50474F0D1FC5284D00AA0184 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F0C1FC5284D00AA0184 /* Camera.swift */; };
-		50474F0F1FC5285900AA0184 /* BarCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F0E1FC5285900AA0184 /* BarCode.swift */; };
 		504C7E371FCCE6BC0020DFD2 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504C7E361FCCE6BC0020DFD2 /* Reachability.swift */; };
 		50503EE91FC08595003606DC /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Avocado.framework */; };
 		50503EEE1FC08595003606DC /* AvocadoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* AvocadoTests.swift */; };
@@ -61,7 +60,6 @@
 		50474F061FC3B54800AA0184 /* Filesystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filesystem.swift; sourceTree = "<group>"; };
 		50474F0A1FC527CA00AA0184 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		50474F0C1FC5284D00AA0184 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
-		50474F0E1FC5285900AA0184 /* BarCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarCode.swift; sourceTree = "<group>"; };
 		504C7E361FCCE6BC0020DFD2 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		50503EDF1FC08594003606DC /* Avocado.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Avocado.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE21FC08594003606DC /* Avocado.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Avocado.h; sourceTree = "<group>"; };
@@ -180,7 +178,6 @@
 				50474F0C1FC5284D00AA0184 /* Camera.swift */,
 				5053E90C1FC8D1D800166FBE /* DefaultModules.h */,
 				5053E90E1FC8D51100166FBE /* DefaultModules.m */,
-				50474F0E1FC5285900AA0184 /* BarCode.swift */,
 				501CBABE1FC2A22A009B0D4D /* Browser.swift */,
 				50474F041FC36E5700AA0184 /* Console.swift */,
 				50503EFD1FC08662003606DC /* Device.swift */,
@@ -315,7 +312,6 @@
 				50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */,
 				50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */,
 				5053E90B1FC8D01200166FBE /* ModuleBridge.m in Sources */,
-				50474F0F1FC5285900AA0184 /* BarCode.swift in Sources */,
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
 				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,

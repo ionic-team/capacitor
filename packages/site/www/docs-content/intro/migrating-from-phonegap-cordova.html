@@ -1,0 +1,9 @@
+<h1 id="migrating-from-cordova-phonegap-to-avocado">Migrating from Cordova/PhoneGap to Avocado</h1>
+<p>Migrating from Cordova/PhoneGap to Avocado requires moving web assets to a new folder, and then configuring each
+platform-specific configuration file based on past values in <code>config.xml</code>. Finally, plugins are managed
+through a different process and need to be added to a new configuration system.</p>
+<h2 id="move-web-assets-to-src-">Move web assets to src/</h2>
+<p>Avocado eschews the <code>www</code> folder for a root <code>src</code> folder that contains the original web code for your app.</p>
+<p>This <code>src</code> folder is either built or copied based on the structure of your project, and used as the core web content for each platform.</p>
+<p>Cordova/PhoneGap projects should move the contents of their <code>www</code> folder into <code>src/</code>.</p>
+<h2 id="move">Move</h2>
