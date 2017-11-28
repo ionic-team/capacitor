@@ -1,0 +1,32 @@
+<h1 id="handling-arrays-and-objects">Handling arrays and objects</h1>
+<p>Stencil components update when props or state on a component change. For performance and simplicity, Stencil only compares references for changes, and will not re-render when data inside of an array or object changes.</p>
+<p>To update array or object data, use the following techniques which are fast-becoming a core part of the modern JavaScript  toolbox.</p>
+<h3 id="updating-arrays">Updating arrays</h3>
+<p>For arrays, this means that the standard mutable array operations such as <code>push()</code> and <code>unshift()</code> won&#39;t work. Instead, non-mutable array operators such as <code>map()</code> and <code>filter()</code>, and the ES6 spread operator syntax, should be used as they return a copy of a new array.</p>
+<p>For example, to push a new item to an array, create a new array with the existing values and the new value at the end:</p>
+<pre><code>// our original<span class="hljs-built_in"> array
+</span>this.items = ['ionic', 'stencil', 'webcomponents'];
+
+// update the<span class="hljs-built_in"> array
+</span>this.items = [
+<span class="hljs-keyword">  .</span>..this.items,
+  'awesomeness'
+]
+</code></pre><p>The <code>...this.items</code> syntax is a relatively new feature of JavaScript that &quot;expands&quot; the given object in place. Read more about the Spread operator <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator">here</a>.</p>
+<h3 id="updating-an-object">Updating an object</h3>
+<p>The spread operator should also be used to update objects. As with arrays, mutating an object will not trigger a view update in Stencil, but returning a new copy of the object will. Below is an example:</p>
+<pre><code><span class="hljs-comment">// our original object</span>
+let myCoolObject = {<span class="hljs-string">first:</span> <span class="hljs-string">'1'</span>, <span class="hljs-string">second:</span> <span class="hljs-string">'2'</span>}
+
+<span class="hljs-comment">// update our object</span>
+myCoolObject = { ...myCoolObject, <span class="hljs-string">third:</span> <span class="hljs-string">'3'</span> }
+</code></pre><p><stencil-route-link url="/docs/forms" router="#router" custom="true">
+  <button class="backButton">
+    Back
+  </button>
+</stencil-route-link></p>
+<p><stencil-route-link url="/docs/testing" custom="true">
+  <button class="nextButton">
+    Next
+  </button>
+</stencil-route-link></p>

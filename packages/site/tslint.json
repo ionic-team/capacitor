@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "quotemark": [true, "single", "jsx-double"],
+    "no-duplicate-variable": true,
+    "no-unused-variable": [
+      true
+    ]
+  }
+}

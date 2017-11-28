@@ -1,0 +1,166 @@
+<h1 id="understanding-stencil-config-js">Understanding stencil.config.js</h1>
+<p>The <code>stencil.config.js</code> file is used by the compiler at build time. It comes with many configuration options, but in many cases the defaults will do and the config can (and should) stay small.</p>
+<h3 id="bundles">Bundles</h3>
+<p>The <code>bundles</code> property is the most useful config since it allows each app to bundle similar components together. While every component &quot;can&quot; be entirely stand-alone, there are many cases where grouping certain components together makes sense. For example, Ionic has an <code>ion-card</code> component, along with <code>ion-card-header</code> and <code>ion-card-content</code>. If an app uses <code>ion-card</code>, chances are it&#39;ll also need to use <code>ion-card-content</code>. All things considered, it&#39;s best to place each of these components bundled in one file.</p>
+<pre><code class="lang-javascript">exports.config = {
+  bundles: [
+    { components: [<span class="hljs-symbol">'ion</span>-card', <span class="hljs-symbol">'ion</span>-card-header', <span class="hljs-symbol">'ion</span>-card-content'] }
+  ]
+}
+</code></pre>
+<h3 id="collections">Collections</h3>
+<p>An application can work stand-alone, without any external components. However, to include
+an external library of components, apps can use <code>collections</code>. For example, Ionic is a collection
+which can be used. Collections can be published and installed via <code>npm</code>.</p>
+<pre><code class="lang-javascript">exports<span class="hljs-selector-class">.config</span> = {
+  colllections: [
+    <span class="hljs-string">'@ionic/core'</span>
+  ]
+}
+</code></pre>
+<h3 id="advanced-config-properties">Advanced Config Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Config Property</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src</code></td>
+<td>Source directory of typescript files.</td>
+<td><code>src</code></td>
+</tr>
+<tr>
+<td><code>buildDir</code></td>
+<td>Build directory for output files.</td>
+<td><code>www/build</code></td>
+</tr>
+<tr>
+<td><code>indexHtmlSrc</code></td>
+<td>Source index.html file.</td>
+<td><code>src/index.html</code></td>
+</tr>
+<tr>
+<td><code>indexHtmlBuild</code></td>
+<td>Output of the build&#39;s index.html file.</td>
+<td><code>www/index.html</code></td>
+</tr>
+<tr>
+<td><code>prerenderIndex</code></td>
+<td>Config for prerendering the index.html file.</td>
+<td><a href="#prerender-index">Prerender Config</a></td>
+</tr>
+<tr>
+<td><code>namespace</code></td>
+<td>App namespace.</td>
+<td><code>App</code></td>
+</tr>
+<tr>
+<td><code>publicPath</code></td>
+<td>Client-side url path to the build directory.</td>
+<td><code>build/</code></td>
+</tr>
+<tr>
+<td><code>generateDistribution</code></td>
+<td>Generate a library collection for sharing.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>generateWWW</code></td>
+<td>Generate a WWW directory</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>collectionDir</code></td>
+<td>Collection directory for distribution.</td>
+<td><code>dist/collection</code></td>
+</tr>
+<tr>
+<td><code>hashFileNames</code></td>
+<td>If filenames should be hashed or not in prod mode.</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>hashedFileNameLength</code></td>
+<td>Number of hash characters in the filenames.</td>
+<td><code>8</code></td>
+</tr>
+<tr>
+<td><code>global</code></td>
+<td>Global source file to bundled with the core.</td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>serviceWorker</code></td>
+<td>Service worker workbox config</td>
+<td><a href="#service-worker">Service Worker Config</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="prerender-index">Prerender Index</h3>
+<p>By default, <code>www/index.html</code> (the <code>indexHtmlSrc</code> config property), is automatically prerendered.
+This means that the index.html already has all of the HTML the client-side code &quot;would&quot; have created,
+except it was done at build-time. It also inlines the exact CSS needed for the HTML, and inlines
+the loader script. Prerendering the index.html file allows for blazing fast startup times, while also
+allowing the app to become a Single Page App.</p>
+<table>
+<thead>
+<tr>
+<th>Prefrender Config</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inlineLoaderScript</code></td>
+<td>Inline the loader script.</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>inlineStyles</code></td>
+<td>Inline the styles from the components used.</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>removeUnusedStyles</code></td>
+<td>If styles are inlined, remove any styles not actually used.</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>reduceHtmlWhitepace</code></td>
+<td>Reduce any unneeded HTML whitespace.</td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="default-prerender-index-config-property">Default Prerender Index Config Property</h4>
+<pre><code class="lang-javascript"><span class="hljs-string">exports.config</span> <span class="hljs-string">=</span> <span class="hljs-string">{</span>
+<span class="hljs-attr">  prerenderIndex:</span> <span class="hljs-string">{</span>
+<span class="hljs-attr">    inlineLoaderScript:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
+<span class="hljs-attr">    inlineStyles:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
+<span class="hljs-attr">    removeUnusedStyles:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
+<span class="hljs-attr">    reduceHtmlWhitepace:</span> <span class="hljs-literal">true</span>
+  <span class="hljs-string">}</span>
+<span class="hljs-string">}</span>
+</code></pre>
+<p>To disable prerendering entirely, set <code>prerenderIndex</code> to <code>null</code>.</p>
+<pre><code class="lang-javascript"><span class="hljs-string">exports.config</span> <span class="hljs-string">=</span> <span class="hljs-string">{</span>
+<span class="hljs-attr">  prerenderIndex:</span> <span class="hljs-literal">null</span>
+<span class="hljs-string">}</span>
+</code></pre>
+<h3 id="global">Global</h3>
+<p>In general, apps should strive to not have anything that is global across all components. Components should be self-contained and should not be dependent on anything else. That said, there may be a few cases where a global property or object is needed. In Ionic&#39;s case, all components need access to its global <code>config</code> object. By using the <code>global</code> config property, Ionic&#39;s stencil.config.js file points to an entry typescript file, that gets bundled into the core.</p>
+<h3 id="service-worker">Service Worker</h3>
+<p>The service worker config can use any of the Workbox config options found <a href="https://workboxjs.org/reference-docs/latest/module-workbox-build.html#.Configuration">here</a>. Our default config is as follows: </p>
+<pre><code><span class="hljs-string">{</span>
+<span class="hljs-attr">  skipWaiting:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
+<span class="hljs-attr">  clientsClaim:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
+<span class="hljs-attr">  globPatterns:</span> <span class="hljs-string">[</span>
+    <span class="hljs-string">'**/*.{js,css,json,html,ico,png,svg}'</span>
+  <span class="hljs-string">]</span>
+<span class="hljs-string">};</span>
+</code></pre>

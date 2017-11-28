@@ -1,0 +1,66 @@
+<h1 id="service-workers">Service Workers</h1>
+<p><a href="https://developers.google.com/web/fundamentals/getting-started/primers/service-workers">Service workers</a> are a very powerful api that is essential for <a href="https://blog.ionic.io/what-is-a-progressive-web-app/">PWAs</a>, but can be hard to use. To help with this, we decided to build support for Service Workers into Stencil itself using <a href="https://workboxjs.org/">Workbox</a>. </p>
+<h3 id="usage">Usage</h3>
+<p>When doing a production build of an app built using Stencil, the Stencil compiler will automatically generate a service worker for you and inject the necessary code to register the service worker in your index.html. Also, because the files Stencil generates are hashed, every time you do a production build and push an update to your app the service worker will know to update, therefore ensuring your users are never stuck on a stale version of your site.</p>
+<h3 id="config">Config</h3>
+<p>Stencil uses Workbox underneath and therefore supports all of the <a href="https://workboxjs.org/reference-docs/latest/module-workbox-build.html#.Configuration">Workbox config options</a>. Here is the default config Stencil uses:</p>
+<pre><code><span class="hljs-string">{</span>
+<span class="hljs-attr">  skipWaiting:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
+<span class="hljs-attr">  clientsClaim:</span> <span class="hljs-literal">true</span><span class="hljs-string">,</span>
+<span class="hljs-attr">  globPatterns:</span> <span class="hljs-string">[</span>
+    <span class="hljs-string">'**/*.{js,css,json,html,ico,png,svg}'</span>
+  <span class="hljs-string">]</span>
+<span class="hljs-string">};</span>
+</code></pre><p>This configuration does pre-caching of all of your apps assets.</p>
+<p>To modify this config you can use the <code>serviceWorker</code> param of your Stencil config. Here is an example:</p>
+<pre><code>exports.config = {
+  bundles: [
+    ...
+  ],
+  collections: [
+    ...
+  ],
+  serviceWorker: {
+    globPatterns: [
+      <span class="hljs-string">'**/*.{js,css,json,html,ico,png}'</span>
+    ]
+  }
+};
+</code></pre><h3 id="using-a-custom-service-worker">Using a custom service worker</h3>
+<p>Already have a service worker or want to include some custom code? We support that too.</p>
+<p>Lets go through the steps needed for this functionality:</p>
+<ul>
+<li>First we need to pass the path to our custom service worker to the <code>swSrc</code> command in the serviceWorker config. Here is an example:</li>
+</ul>
+<pre><code><span class="hljs-string">exports.config</span> <span class="hljs-string">=</span> <span class="hljs-string">{</span>
+<span class="hljs-attr">  bundles:</span> <span class="hljs-string">[</span>
+    <span class="hljs-string">...</span>
+  <span class="hljs-string">],</span>
+<span class="hljs-attr">  collections:</span> <span class="hljs-string">[</span>
+    <span class="hljs-string">...</span>
+  <span class="hljs-string">],</span>
+<span class="hljs-attr">  serviceWorker:</span> <span class="hljs-string">{</span>
+<span class="hljs-attr">    swSrc:</span> <span class="hljs-string">'src/sw.js'</span>
+  <span class="hljs-string">}</span>
+<span class="hljs-string">};</span>
+</code></pre><ul>
+<li>Now we need to include some boilerplate code in our custom service worker:</li>
+</ul>
+<pre><code>importScripts(<span class="hljs-string">'workbox-sw.prod.v2.1.0.js'</span>);
+
+<span class="hljs-keyword">const</span> workboxSW = <span class="hljs-keyword">new</span> <span class="hljs-keyword">self</span>.WorkboxSW();
+
+<span class="hljs-comment">// your custom service worker code</span>
+
+workboxSW.precache([]);
+</code></pre><p>This code imports the workbox library, creates a new instance of the service worker and tells workbox where to insert the pre-cache array.</p>
+<p><stencil-route-link url="/docs/server-side-rendering" router="#router" custom="true">
+  <button class="backButton">
+    Back
+  </button>
+</stencil-route-link></p>
+<p><stencil-route-link url="/docs/distribution" custom="true">
+  <button class="nextButton">
+    Next
+  </button>
+</stencil-route-link></p>

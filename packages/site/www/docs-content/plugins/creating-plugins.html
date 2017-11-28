@@ -1,0 +1,121 @@
+<h1 id="creating-avocado-plugins">Creating Avocado Plugins</h1>
+<p>An Avocado plugin relies on a JavaScript layer that proxies calls to Avocado&#39;s cross-platform runtime which runs
+the corresponding native or pure-web code to handle the operation.</p>
+<p>Thus, an Avocado plugin consists of some JavaScript and then a native implementation for each platform that requires it.</p>
+<p>Let&#39;s implement a simple Todo plugin that stores a list of Todo&#39;s in native device storage or web storage depending on the platform available.</p>
+<h2 id="javascript-side">JavaScript Side</h2>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'avocado-js'</span>;
+
+<span class="hljs-keyword">import</span> { Todo } <span class="hljs-keyword">from</span> <span class="hljs-string">'./definitions'</span>;
+
+@Plugin({
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'Todo'</span>,
+  <span class="hljs-attr">id</span>: <span class="hljs-string">'avocado-plugin-todo'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> </span>{
+  <span class="hljs-keyword">async</span> create(todo: Todo) : Todo {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.nativePromise(<span class="hljs-string">'create'</span>, {
+      todo
+    });
+  }
+
+  <span class="hljs-keyword">async</span> update(todo: Todo) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.nativePromise(<span class="hljs-string">'update'</span>, {
+      todo
+    });
+  }
+
+  <span class="hljs-keyword">async</span> <span class="hljs-keyword">delete</span>(todo: Todo) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.nativePromise(<span class="hljs-string">'delete'</span>, {
+      todo
+    });
+  }
+
+  onChange(callback) {
+    <span class="hljs-keyword">this</span>.callback(<span class="hljs-string">'onChange'</span>, callback);
+  }
+}
+</code></pre>
+<h2 id="ios-plugin">iOS Plugin</h2>
+<pre><code class="lang-bash">avocado <span class="hljs-keyword">generate</span> plugin avocado-plugin-todo AvocadoTodo ios
+</code></pre>
+<p><code>plugin/AvocadoTodo.swift</code></p>
+<pre><code class="lang-swift"><span class="hljs-keyword">import</span> Avocado
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AvocadoTodo</span> <span class="hljs-title">extends</span> <span class="hljs-title">Plugin</span> </span>{
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">init</span>() {
+  }
+
+  <span class="hljs-meta">@objc</span> <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">create</span><span class="hljs-params">(<span class="hljs-number">_</span> call: PluginCall)</span></span> {
+    <span class="hljs-comment">// Create the Todo</span>
+    <span class="hljs-keyword">let</span> todo = <span class="hljs-type">Todo</span>()
+    <span class="hljs-comment">// Save it somewhere</span>
+    <span class="hljs-comment">// ...</span>
+
+    <span class="hljs-comment">// Construct a new PluginResult object with the</span>
+    <span class="hljs-comment">// data we'll send back to the client</span>
+    <span class="hljs-keyword">let</span> result = <span class="hljs-type">PluginResult</span>(data: [
+      <span class="hljs-string">"todoId"</span>: todo.id
+    ])
+
+    <span class="hljs-comment">// Send the result back to the client</span>
+    call.successCallback(result)
+  }
+
+  <span class="hljs-meta">@objc</span> <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">update</span><span class="hljs-params">(<span class="hljs-number">_</span> call: PluginCall)</span></span> {
+  }
+
+  <span class="hljs-meta">@objc</span> <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">delete</span><span class="hljs-params">(<span class="hljs-number">_</span> call: PluginCall)</span></span> {
+  }
+}
+
+## <span class="hljs-type">Web</span> <span class="hljs-type">Plugin</span>
+
+<span class="hljs-type">The</span> <span class="hljs-type">Web</span> <span class="hljs-type">Plugin</span> implements <span class="hljs-type">Todo</span> <span class="hljs-type">CRUD</span> operations <span class="hljs-keyword">in</span> a pure browser environment, such <span class="hljs-keyword">as</span> a <span class="hljs-type">Progressive</span> <span class="hljs-type">Web</span> <span class="hljs-type">App</span>, that may only have access to standard <span class="hljs-type">Web</span> <span class="hljs-type">APIs</span>.
+
+<span class="hljs-type">Generally</span>, the <span class="hljs-type">Web</span> <span class="hljs-type">API</span> and the <span class="hljs-type">JavaScript</span> <span class="hljs-type">API</span> site side-by-side to enforce the importance of web support or sane web fallbacks <span class="hljs-keyword">for</span> plugin operations.
+
+```typescript
+<span class="hljs-keyword">import</span> { Plugin, App } from '@avocado/plugin';
+
+<span class="hljs-keyword">import</span> { Todo } from './definitions';
+
+@<span class="hljs-type">PluginWeb</span>({
+  name: '<span class="hljs-type">Todo'</span>,
+  id: 'avocado-plugin-todo'
+})
+export <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> </span>{
+  <span class="hljs-keyword">open</span>: any;
+
+  constructor(avocado: <span class="hljs-type">App</span>) {
+    <span class="hljs-keyword">var</span> indexedDB = window.indexedDB;
+
+    <span class="hljs-comment">// Open (or create) the database</span>
+    <span class="hljs-keyword">var</span> <span class="hljs-keyword">open</span> = indexedDB.<span class="hljs-keyword">open</span>(<span class="hljs-string">"AvocadoTodos"</span>, <span class="hljs-number">1</span>);
+
+    <span class="hljs-comment">// Create the schema</span>
+    <span class="hljs-keyword">open</span>.onupgradeneeded = () =&gt; {
+      <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">open</span>.result;
+      <span class="hljs-keyword">var</span> store = db.createObjectStore(<span class="hljs-string">"AvocadoTodoObjectStore"</span>, {keyPath: <span class="hljs-string">"id"</span>});
+    };
+
+    <span class="hljs-keyword">open</span>.onsuccess = () =&gt; {};
+
+    this.<span class="hljs-keyword">open</span> = <span class="hljs-keyword">open</span>;
+  }
+
+  create(<span class="hljs-number">_</span> call: <span class="hljs-type">PluginCall</span>) {
+    <span class="hljs-keyword">return</span> new <span class="hljs-type">Promise</span>((resolve, reject) =&gt; {
+      <span class="hljs-keyword">var</span> db = this.<span class="hljs-keyword">open</span>.result;
+      <span class="hljs-keyword">var</span> tx = db.transaction(<span class="hljs-string">"AvocadoTodoObjectStore"</span>, <span class="hljs-string">"readwrite"</span>);
+      <span class="hljs-keyword">var</span> store = tx.objectStore(<span class="hljs-string">"AvocadoTodoObjectStore"</span>);
+      const res = store.put(call.data);
+      <span class="hljs-keyword">return</span> res.complete.then(() =&gt; {
+        resolve(todo);
+      });
+    })
+  }
+  <span class="hljs-comment">// ...</span>
+}
+`
+</code></pre>
