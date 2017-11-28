@@ -55,14 +55,13 @@ export class HomePage {
     .then(blob => new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onloadend = () => {
-        this.base64Image = reader.result;
+        this.base64Image = reader.result.replace('data:;base64,', '');
       }
       reader.onerror = reject
       reader.readAsDataURL(blob)
     }))
 
-    toDataURL('http://ionicframework.com/img/ionic-logo.png').then((base64) => {
-    })
+    toDataURL('assets/ionitron.png');
   }
 
   scheduleLocalNotification() {
@@ -87,13 +86,12 @@ export class HomePage {
     });
   }
 
-  clipboardGetString() {
+  async clipboardGetString() {
     let c = new Clipboard();
-    c.get({
+    let str = await c.get({
       type: "string"
-    }).then((str) => {
-      console.log('Got string from clipboard:', str);
     });
+    console.log('Got string from clipboard:', str);
   }
 
   clipboardSetURL() {
@@ -103,15 +101,17 @@ export class HomePage {
     });
   }
 
-  clipboardGetURL() {
+  async clipboardGetURL() {
     let c = new Clipboard();
-    c.get({
+    let url = c.get({
       type: "url"
     });
+    console.log("Get URL from clipboard", url);
   }
 
   clipboardSetImage () {
     let c = new Clipboard();
+    console.log('Setting image', this.base64Image);
     c.set({
       image: this.base64Image
     });
