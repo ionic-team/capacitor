@@ -61,6 +61,7 @@ declare global {
           mode?: string,
           color?: string,
         
+          isLandingPage?: boolean
       }
   }
 }

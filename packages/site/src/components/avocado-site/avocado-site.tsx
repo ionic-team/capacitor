@@ -1,13 +1,15 @@
-import { Component } from '@stencil/core';
+import { Component, Prop } from '@stencil/core';
 
 @Component({
   tag: 'avocado-site',
   styleUrl: 'avocado-site.scss'
 })
 export class App {
+  @Prop() isLandingPage = false;
+
   render() {
     return [
-      <div id="main-div">
+      <div id="main-div" class={this.isLandingPage ? "landing-page" : ""}>
         <site-header />
         <div class="app">
           <stencil-router>

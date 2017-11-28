@@ -17,6 +17,18 @@ avocado-site {
 #main-div {
   flex-grow: 1;
   flex-shrink: 0;
+
+  &.landing-page {
+    background-color: #030A04;
+    color: #fff;
+  }
+
+  site-header {
+    background: none;
+    stencil-route-link a {
+      color: #fff;
+    }
+  }
 }
 
 ::selection {

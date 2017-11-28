@@ -10,7 +10,14 @@ export class LandingPage {
   @Element() el: Element;
 
   constructor() {
+    let root: any = document.querySelector('avocado-site');
+    root.isLandingPage = true;
     document.title = `Avocado: Universal Web Applications`;
+  }
+
+  componentDidUnload() {
+    let root: any = document.querySelector('avocado-site');
+    root.isLandingPage = false;
   }
 
   render() {
@@ -19,7 +26,7 @@ export class LandingPage {
 
         <main>
           <h1 id="action-call">Universal Runtime<br/> for Web Applications</h1>
-
+          <h3 id="action-more">Build cross-platform apps with HTML, CSS, and JavaScript</h3>
           <section id="buttons">
 
             <stencil-route-link url="/docs/getting-started">

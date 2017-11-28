@@ -1,3 +1,12 @@
+.landing-page landing-page {
+  h1, h2 {
+    color: #fff;
+  }
+  p {
+    color: #BCC0BE;
+  }
+}
+
 landing-page {
   main {
     display: flex;
@@ -14,9 +23,20 @@ landing-page {
     font-size: 3em;
     line-height: normal;
     margin-top: 20px;
+    font-weight: 500;
+    margin-bottom: 0.4em;
+  }
+  #action-more {
+    margin: 0.2em 0 1em;
+    color: #D0D5D3;
+    font-weight: 400;
   }
 
   button {
+    &:first-child {
+      margin-left: 0;
+    }
+
     margin: 8px;
     border: none;
     font-size: 13px;
@@ -42,8 +62,8 @@ landing-page {
   }
 
   #learn-more {
-    background: white;
-    color: #7fd02e;
+    background: #222823;
+    color: #72D477;
   }
 
   #youtube-video {
@@ -92,14 +112,12 @@ landing-page {
   #three-points {
     display: flex;
     justify-content: space-around;
-    text-align: center;
     margin-top: 3.2em;
     margin-bottom: 2.8em;
   }
 
   .point-card {
     flex: 1;
-    margin: 2.4em;
     position: relative;
 
     h2 {
@@ -107,7 +125,6 @@ landing-page {
     }
 
     p {
-      color: #626177;
       font-weight: 400;
       font-size: 16px;
       letter-spacing: -0.02em;
