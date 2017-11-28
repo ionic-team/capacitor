@@ -215,9 +215,7 @@ var Avocado = /** @class */ (function () {
      * Process a response from the native layer.
      */
     Avocado.prototype.fromNative = function (result) {
-        console.log('From Native', result);
         var storedCall = this.calls[result.callbackId];
-        console.log('Stored call', storedCall);
         var call = storedCall.call, callbackHandler = storedCall.callbackHandler;
         this._fromNativeCallback(result, storedCall);
     };
