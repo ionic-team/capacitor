@@ -1,11 +1,11 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
 export enum StatusBarStyle {
   Dark = 'DARK',
   Light = 'LIGHT'
 }
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'StatusBar',
   id: 'com.avocadojs.plugin.statusbar'
 })

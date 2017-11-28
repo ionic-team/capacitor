@@ -1,4 +1,4 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
 export interface NotificationScheduleAt {
   month?: number;
@@ -14,7 +14,7 @@ export interface LocalNotification {
   identifier: string;
   scheduleAt?: NotificationScheduleAt
 }
-@AvocadoPlugin({
+@NativePlugin({
   name: 'LocalNotifications',
   id: 'com.avocadojs.plugin.localnotifications'
 })

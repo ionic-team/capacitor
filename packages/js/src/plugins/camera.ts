@@ -1,4 +1,4 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
 declare var window;
 
@@ -7,7 +7,7 @@ export interface CameraOptions {
   allowEditing?: boolean;
 }
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'Camera',
   id: 'com.avocadojs.plugin.camera'
 })

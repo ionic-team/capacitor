@@ -1,6 +1,6 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'Network',
   id: 'com.avocadojs.plugin.network'
 })

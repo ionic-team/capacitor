@@ -20,12 +20,14 @@ import {
   StatusBar,
   StatusBarStyle
 } from 'avocado-js';
+import { toBase64String } from '@angular/compiler/src/output/source_map';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
+  base64Image: string;
   image: string;
   singleCoords = { lat: 0, lng: 0 }
   watchCoords = { lat: 0, lng: 0 }
@@ -43,6 +45,24 @@ export class HomePage {
       console.log("Network status changed", status);
       alert('New network status: ' + JSON.stringify(status))
     });
+
+    this.doStuff();
+  }
+
+  async doStuff() {
+    const toDataURL = url => fetch(url)
+    .then(response => response.blob())
+    .then(blob => new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        this.base64Image = reader.result;
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    }))
+
+    toDataURL('http://ionicframework.com/img/ionic-logo.png').then((base64) => {
+    })
   }
 
   scheduleLocalNotification() {
@@ -66,6 +86,7 @@ export class HomePage {
       string: "Hello, Moto"
     });
   }
+
   clipboardGetString() {
     let c = new Clipboard();
     c.get({
@@ -73,6 +94,35 @@ export class HomePage {
     }).then((str) => {
       console.log('Got string from clipboard:', str);
     });
+  }
+
+  clipboardSetURL() {
+    let c = new Clipboard();
+    c.set({
+      url: "http://google.com/"
+    });
+  }
+
+  clipboardGetURL() {
+    let c = new Clipboard();
+    c.get({
+      type: "url"
+    });
+  }
+
+  clipboardSetImage () {
+    let c = new Clipboard();
+    c.set({
+      image: this.base64Image
+    });
+  }
+
+  async clipboardGetImage() {
+    let c = new Clipboard();
+    const image = await c.get({
+      type: "image"
+    });
+    console.log('Got image', image);
   }
 
   showAlert() {

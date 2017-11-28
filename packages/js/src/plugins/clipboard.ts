@@ -1,4 +1,4 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
 declare var window;
 
@@ -12,7 +12,7 @@ export interface ClipboardGet {
   type: "string" | "url" | "image";
 }
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'Clipboard',
   id: 'com.avocadojs.plugin.clipboard'
 })

@@ -64,7 +64,7 @@ export class Plugin {
 /**
  * Decorator for AvocadoPlugin's
  */
-export function AvocadoPlugin(config: any) {
+export function NativePlugin(config: any) {
   return function(cls: any) {
     cls['_avocadoPlugin'] = Object.assign({
     }, config);

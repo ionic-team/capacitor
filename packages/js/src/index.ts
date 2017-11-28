@@ -1,7 +1,7 @@
 export * from './definitions';
 export { Avocado } from './avocado';
 export { Platform } from './platform';
-export { Plugin, AvocadoPlugin } from './plugin';
+export { Plugin, NativePlugin } from './plugin';
 
 export { Browser } from './plugins/browser';
 export { Camera } from './plugins/camera';

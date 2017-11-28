@@ -1,6 +1,6 @@
-import { AvocadoPlugin, Plugin } from '../plugin';
+import { NativePlugin, Plugin } from '../plugin';
 
-@AvocadoPlugin({
+@NativePlugin({
   name: 'Modals',
   id: 'com.avocadojs.plugin.modals'
 })
