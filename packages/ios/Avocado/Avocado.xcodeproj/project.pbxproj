@@ -31,6 +31,8 @@
 		5053E90D1FC8D24000166FBE /* DefaultModules.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E90C1FC8D1D800166FBE /* DefaultModules.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5053E90F1FC8D51100166FBE /* DefaultModules.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90E1FC8D51100166FBE /* DefaultModules.m */; };
 		5053E9101FC8FEEC00166FBE /* ModuleBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E9091FC8CD1000166FBE /* ModuleBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		50B80BE81FCDE1E8000717DF /* Clipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE71FCDE1E8000717DF /* Clipboard.swift */; };
+		50B80BEA1FCDECE2000717DF /* Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE91FCDECE2000717DF /* Share.swift */; };
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
 		50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86EF1FCA66CB00E48884 /* DocLinks.swift */; };
 		50ED86F31FCB728D00E48884 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F21FCB728D00E48884 /* Network.swift */; };
@@ -78,6 +80,8 @@
 		5053E90A1FC8D01200166FBE /* ModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ModuleBridge.m; sourceTree = "<group>"; };
 		5053E90C1FC8D1D800166FBE /* DefaultModules.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultModules.h; sourceTree = "<group>"; };
 		5053E90E1FC8D51100166FBE /* DefaultModules.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DefaultModules.m; sourceTree = "<group>"; };
+		50B80BE71FCDE1E8000717DF /* Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clipboard.swift; sourceTree = "<group>"; };
+		50B80BE91FCDECE2000717DF /* Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Share.swift; sourceTree = "<group>"; };
 		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
 		50ED86EF1FCA66CB00E48884 /* DocLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocLinks.swift; sourceTree = "<group>"; };
 		50ED86F21FCB728D00E48884 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
@@ -191,6 +195,8 @@
 				501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */,
 				501CBAB81FC26770009B0D4D /* StatusBar.swift */,
 				50474F0A1FC527CA00AA0184 /* Storage.swift */,
+				50B80BE71FCDE1E8000717DF /* Clipboard.swift */,
+				50B80BE91FCDECE2000717DF /* Share.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -330,7 +336,9 @@
 				50ED86F31FCB728D00E48884 /* Network.swift in Sources */,
 				50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */,
 				50503EFF1FC08662003606DC /* Device.swift in Sources */,
+				50B80BEA1FCDECE2000717DF /* Share.swift in Sources */,
 				50474F0D1FC5284D00AA0184 /* Camera.swift in Sources */,
+				50B80BE81FCDE1E8000717DF /* Clipboard.swift in Sources */,
 				5053E8FD1FC874DE00166FBE /* Loader.swift in Sources */,
 				50474F0B1FC527CA00AA0184 /* Storage.swift in Sources */,
 			);
