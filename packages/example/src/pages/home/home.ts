@@ -13,6 +13,7 @@ import {
   HapticsImpactStyle,
   Modals,
   Motion,
+  Network,
   SplashScreen,
   StatusBar,
   StatusBarStyle
@@ -35,6 +36,11 @@ export class HomePage {
   profileSamples = null;
 
   constructor(public navCtrl: NavController, public zone: NgZone) {
+    let network = new Network();
+    network.onStatusChange((err, status) => {
+      console.log("Network status changed", status);
+      alert('New network status: ' + JSON.stringify(status))
+    });
   }
 
   showSplash() {

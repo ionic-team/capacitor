@@ -4,129 +4,6 @@ var Platform = /** @class */ (function () {
     return Platform;
 }());
 
-/**
- * Base class for all 3rd party plugins.
- */
-var Plugin = /** @class */ (function () {
-    function Plugin() {
-        this.avocado = Avocado.instance();
-        this.avocado.registerPlugin(this);
-    }
-    Plugin.prototype.nativeCallback = function (method, options, callbackFunction, callOptions) {
-        if (typeof options === 'function') {
-            callbackFunction = options;
-            options = {};
-        }
-        return this.native(method, options, 'callback', callbackFunction);
-    };
-    Plugin.prototype.nativePromise = function (method, options, callOptions) {
-        return this.native(method, options, 'promise', null, callOptions);
-    };
-    /**
-     * Call a native plugin method, or a web API fallback.
-     *
-     * NO CONSOLE LOGS IN THIS METHOD! Can throw our
-     * custom console handler into an infinite loop
-     */
-    Plugin.prototype.native = function (method, options, callbackType, callbackFunction, callOptions) {
-        var d = this.constructor.getPluginInfo();
-        // If avocado is running in a browser environment, call our
-        // web fallback
-        /*
-        if(this.avocado.isBrowser()) {
-          if(webFallback) {
-            return webFallback(options);
-          } else {
-            throw new Error('Tried calling a native plugin method in the browser but no web fallback is available.');
-          }
-        }
-        */
-        // Avocado is running in a non-sandbox browser environment, call
-        // the native code underneath
-        return this.avocado.toNative({
-            pluginId: d.id,
-            methodName: method,
-            options: options,
-            callbackType: callbackType
-        }, {
-            callbackFunction: callbackFunction
-        });
-    };
-    return Plugin;
-}());
-/**
- * Decorator for AvocadoPlugin's
- */
-function AvocadoPlugin(config) {
-    return function (cls) {
-        cls['_avocadoPlugin'] = Object.assign({}, config);
-        cls['getPluginInfo'] = function () {
-            return cls['_avocadoPlugin'];
-        };
-        return cls;
-    };
-}
-
-var __extends = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var Console = /** @class */ (function (_super) {
-    __extends(Console, _super);
-    function Console() {
-        var _this = _super.call(this) || this;
-        _this.queue = [];
-        _this.originalLog = window.console.log;
-        window.console.log = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            //const str = args.map(a => a.toString()).join(' ');
-            _this.queue.push(['log'].concat(args));
-            _this.originalLog.apply(console, args);
-        };
-        var syncQueue = function () {
-            var queue = _this.queue.slice();
-            while (queue.length) {
-                var logMessage = queue.shift();
-                var level = logMessage[0];
-                var message = logMessage.slice(1);
-                _this.nativeCallback('log', { level: level, message: message });
-            }
-            setTimeout(syncQueue, 100);
-        };
-        setTimeout(syncQueue);
-        return _this;
-    }
-    Console.prototype.windowLog = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        this.originalLog.apply(this.originalLog, args);
-    };
-    Console = __decorate([
-        AvocadoPlugin({
-            name: 'Console',
-            id: 'com.avocadojs.plugin.console'
-        })
-    ], Console);
-    return Console;
-}(Plugin));
-
 var __assign = (undefined && undefined.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -157,7 +34,7 @@ var Avocado = /** @class */ (function () {
         this.console && this.console.windowLog(args);
     };
     Avocado.prototype.loadCoreModules = function () {
-        this.console = new Console();
+        //this.console = new Console();
     };
     Avocado.prototype.registerPlugin = function (plugin) {
         var info = plugin.constructor.getPluginInfo();
@@ -258,6 +135,102 @@ var Avocado = /** @class */ (function () {
     return Avocado;
 }());
 
+/**
+ * Base class for all 3rd party plugins.
+ */
+var Plugin = /** @class */ (function () {
+    function Plugin() {
+        this.avocado = Avocado.instance();
+        this.avocado.registerPlugin(this);
+    }
+    Plugin.prototype.nativeCallback = function (method, options, callbackFunction, callOptions) {
+        if (typeof options === 'function') {
+            callbackFunction = options;
+            options = {};
+        }
+        return this.native(method, options, 'callback', callbackFunction);
+    };
+    Plugin.prototype.nativePromise = function (method, options, callOptions) {
+        return this.native(method, options, 'promise', null, callOptions);
+    };
+    /**
+     * Call a native plugin method, or a web API fallback.
+     *
+     * NO CONSOLE LOGS IN THIS METHOD! Can throw our
+     * custom console handler into an infinite loop
+     */
+    Plugin.prototype.native = function (method, options, callbackType, callbackFunction, callOptions) {
+        var d = this.constructor.getPluginInfo();
+        // If avocado is running in a browser environment, call our
+        // web fallback
+        /*
+        if(this.avocado.isBrowser()) {
+          if(webFallback) {
+            return webFallback(options);
+          } else {
+            throw new Error('Tried calling a native plugin method in the browser but no web fallback is available.');
+          }
+        }
+        */
+        // Avocado is running in a non-sandbox browser environment, call
+        // the native code underneath
+        return this.avocado.toNative({
+            pluginId: d.id,
+            methodName: method,
+            options: options,
+            callbackType: callbackType
+        }, {
+            callbackFunction: callbackFunction
+        });
+    };
+    return Plugin;
+}());
+/**
+ * Decorator for AvocadoPlugin's
+ */
+function AvocadoPlugin(config) {
+    return function (cls) {
+        cls['_avocadoPlugin'] = Object.assign({}, config);
+        cls['getPluginInfo'] = function () {
+            return cls['_avocadoPlugin'];
+        };
+        return cls;
+    };
+}
+
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var Browser = /** @class */ (function (_super) {
+    __extends(Browser, _super);
+    function Browser() {
+        return _super.call(this) || this;
+    }
+    Browser.prototype.open = function (url) {
+        this.nativeCallback('open', { url: url });
+    };
+    Browser = __decorate([
+        AvocadoPlugin({
+            name: 'Browser',
+            id: 'com.avocadojs.plugin.browser'
+        })
+    ], Browser);
+    return Browser;
+}(Plugin));
+
 var __extends$1 = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -274,21 +247,21 @@ var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var Browser = /** @class */ (function (_super) {
-    __extends$1(Browser, _super);
-    function Browser() {
+var Camera = /** @class */ (function (_super) {
+    __extends$1(Camera, _super);
+    function Camera() {
         return _super.call(this) || this;
     }
-    Browser.prototype.open = function (url) {
-        this.nativeCallback('open', { url: url });
+    Camera.prototype.getPhoto = function (options) {
+        return this.nativePromise('getPhoto', options);
     };
-    Browser = __decorate$1([
+    Camera = __decorate$1([
         AvocadoPlugin({
-            name: 'Browser',
-            id: 'com.avocadojs.plugin.browser'
+            name: 'Camera',
+            id: 'com.avocadojs.plugin.camera'
         })
-    ], Browser);
-    return Browser;
+    ], Camera);
+    return Camera;
 }(Plugin));
 
 var __extends$2 = (undefined && undefined.__extends) || (function () {
@@ -307,21 +280,48 @@ var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var Camera = /** @class */ (function (_super) {
-    __extends$2(Camera, _super);
-    function Camera() {
-        return _super.call(this) || this;
+var Console = /** @class */ (function (_super) {
+    __extends$2(Console, _super);
+    function Console() {
+        var _this = _super.call(this) || this;
+        _this.queue = [];
+        _this.originalLog = window.console.log;
+        window.console.log = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            //const str = args.map(a => a.toString()).join(' ');
+            _this.queue.push(['log'].concat(args));
+            _this.originalLog.apply(console, args);
+        };
+        var syncQueue = function () {
+            var queue = _this.queue.slice();
+            while (queue.length) {
+                var logMessage = queue.shift();
+                var level = logMessage[0];
+                var message = logMessage.slice(1);
+                _this.nativeCallback('log', { level: level, message: message });
+            }
+            setTimeout(syncQueue, 100);
+        };
+        setTimeout(syncQueue);
+        return _this;
     }
-    Camera.prototype.getPhoto = function (options) {
-        return this.nativePromise('getPhoto', options);
+    Console.prototype.windowLog = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        this.originalLog.apply(this.originalLog, args);
     };
-    Camera = __decorate$2([
+    Console = __decorate$2([
         AvocadoPlugin({
-            name: 'Camera',
-            id: 'com.avocadojs.plugin.camera'
+            name: 'Console',
+            id: 'com.avocadojs.plugin.console'
         })
-    ], Camera);
-    return Camera;
+    ], Console);
+    return Console;
 }(Plugin));
 
 var __extends$3 = (undefined && undefined.__extends) || (function () {
@@ -734,24 +734,21 @@ var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var SplashScreen = /** @class */ (function (_super) {
-    __extends$9(SplashScreen, _super);
-    function SplashScreen() {
+var Network = /** @class */ (function (_super) {
+    __extends$9(Network, _super);
+    function Network() {
         return _super.call(this) || this;
     }
-    SplashScreen.prototype.show = function (options, callback) {
-        this.nativeCallback('show', options, callback);
+    Network.prototype.onStatusChange = function (callback) {
+        this.nativeCallback('onStatusChange', callback);
     };
-    SplashScreen.prototype.hide = function (options, callback) {
-        this.nativeCallback('hide', options, callback);
-    };
-    SplashScreen = __decorate$9([
+    Network = __decorate$9([
         AvocadoPlugin({
-            name: 'SplashScreen',
-            id: 'com.avocadojs.plugin.splashscreen'
+            name: 'Network',
+            id: 'com.avocadojs.plugin.network'
         })
-    ], SplashScreen);
-    return SplashScreen;
+    ], Network);
+    return Network;
 }(Plugin));
 
 var __extends$10 = (undefined && undefined.__extends) || (function () {
@@ -770,20 +767,56 @@ var __decorate$10 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var SplashScreen = /** @class */ (function (_super) {
+    __extends$10(SplashScreen, _super);
+    function SplashScreen() {
+        return _super.call(this) || this;
+    }
+    SplashScreen.prototype.show = function (options, callback) {
+        this.nativeCallback('show', options, callback);
+    };
+    SplashScreen.prototype.hide = function (options, callback) {
+        this.nativeCallback('hide', options, callback);
+    };
+    SplashScreen = __decorate$10([
+        AvocadoPlugin({
+            name: 'SplashScreen',
+            id: 'com.avocadojs.plugin.splashscreen'
+        })
+    ], SplashScreen);
+    return SplashScreen;
+}(Plugin));
+
+var __extends$11 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var StatusBarStyle;
 (function (StatusBarStyle) {
     StatusBarStyle["Dark"] = "DARK";
     StatusBarStyle["Light"] = "LIGHT";
 })(StatusBarStyle || (StatusBarStyle = {}));
 var StatusBar = /** @class */ (function (_super) {
-    __extends$10(StatusBar, _super);
+    __extends$11(StatusBar, _super);
     function StatusBar() {
         return _super.call(this) || this;
     }
     StatusBar.prototype.setStyle = function (options, callback) {
         this.nativeCallback('setStyle', options, callback);
     };
-    StatusBar = __decorate$10([
+    StatusBar = __decorate$11([
         AvocadoPlugin({
             name: 'StatusBar',
             id: 'com.avocadojs.plugin.statusbar'
@@ -792,4 +825,4 @@ var StatusBar = /** @class */ (function (_super) {
     return StatusBar;
 }(Plugin));
 
-export { Avocado, Platform, Plugin, AvocadoPlugin, Browser, Camera, Console, Device, Filesystem, FilesystemDirectory, Geolocation, Haptics, HapticsImpactStyle, Modals, Motion, SplashScreen, StatusBar, StatusBarStyle };
+export { Avocado, Platform, Plugin, AvocadoPlugin, Browser, Camera, Console, Device, Filesystem, FilesystemDirectory, Geolocation, Haptics, HapticsImpactStyle, Modals, Motion, Network, SplashScreen, StatusBar, StatusBarStyle };

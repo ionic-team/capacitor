@@ -41,7 +41,7 @@ export class Avocado {
   }
 
   loadCoreModules() {
-    this.console = new Console();
+    //this.console = new Console();
   }
 
   registerPlugin(plugin: Plugin) {
@@ -119,7 +119,7 @@ export class Avocado {
    */
   fromNative(result: PluginResult) {
     const storedCall = this.calls[result.callbackId];
-
+    
     const { call, callbackHandler } = storedCall;
 
     this._fromNativeCallback(result, storedCall);
