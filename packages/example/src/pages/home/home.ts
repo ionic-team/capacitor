@@ -49,7 +49,6 @@ export class HomePage {
     let network = new Network();
     network.onStatusChange((err, status) => {
       console.log("Network status changed", status);
-      alert('New network status: ' + JSON.stringify(status))
     });
 
     this.doStuff();
@@ -68,6 +67,14 @@ export class HomePage {
     }))
 
     toDataURL('assets/ionitron.png');
+  }
+
+  showSplash() {
+    let s = new SplashScreen();
+    s.show();
+    setTimeout(() => {
+      s.hide();
+    }, 3000);
   }
 
   scheduleLocalNotification() {
