@@ -8,10 +8,9 @@
 
 import UIKit
 import WebKit
-import Avocado
 
-class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDelegate {
-
+class BridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelegate {
+  
   private var webView: WKWebView?
   
   // Construct the avocado runtime
@@ -21,7 +20,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
     bridge = Bridge(self, [
       "com.avocadojs.plugin.device",
       "com.avocadojs.plugin.geolocation",
-    ])
+      ])
     
     let webViewConfiguration = WKWebViewConfiguration()
     
@@ -47,11 +46,11 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
     self.becomeFirstResponder()
     
     /*
-    if let url = URL(string: "https://google.com") {
-      let req = URLRequest(url: url)
-      webView?.load(req)
-    }
- */
+     if let url = URL(string: "https://google.com") {
+     let req = URLRequest(url: url)
+     webView?.load(req)
+     }
+     */
     
     let index = Bundle.main.path(forResource: "www/index", ofType: "html");
     
@@ -111,7 +110,7 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
     print("\(filename):\(line):\(col)")
     print("\nSee above for help with debugging blank-screen issues")
   }
-
+  
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
@@ -184,19 +183,19 @@ class AvocadoViewController: UIViewController, WKScriptMessageHandler, WKUIDeleg
   
   /**
    * Add hooks to detect failed HTTP requests
- 
-  func webView(webView: WKWebView,
-               didFailProvisionalNavigation navigation: WKNavigation!,
-               withError error: NSError) {
-    if error.code == -1001 { // TIMED OUT:
-      // CODE to handle TIMEOUT
-    } else if error.code == -1003 { // SERVER CANNOT BE FOUND
-      // CODE to handle SERVER not found
-    } else if error.code == -1100 { // URL NOT FOUND ON SERVER
-      // CODE to handle URL not found
-    }
-  }
- */
-
+   
+   func webView(webView: WKWebView,
+   didFailProvisionalNavigation navigation: WKNavigation!,
+   withError error: NSError) {
+   if error.code == -1001 { // TIMED OUT:
+   // CODE to handle TIMEOUT
+   } else if error.code == -1003 { // SERVER CANNOT BE FOUND
+   // CODE to handle SERVER not found
+   } else if error.code == -1100 { // URL NOT FOUND ON SERVER
+   // CODE to handle URL not found
+   }
+   }
+   */
+  
 }
 
