@@ -74,7 +74,7 @@ export class HomePage {
     s.show();
     setTimeout(() => {
       s.hide();
-    }, 3000);
+    }, 6000);
   }
 
   scheduleLocalNotification() {
