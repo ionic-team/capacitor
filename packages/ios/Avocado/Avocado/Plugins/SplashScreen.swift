@@ -5,7 +5,9 @@ import AudioToolbox
 public class SplashScreen : Plugin {
   var imageView = UIImageView()
   var image: UIImage?
+  var call: PluginCall?
   
+  let defaultDuration = 200
   
   public override func load() {
     buildViews()
@@ -13,12 +15,14 @@ public class SplashScreen : Plugin {
   
   // Show the splash screen
   @objc public func show(_ call: PluginCall) {
+    self.call = call
     showSplash()
     call.success()
   }
   
   // Hide the splash screen
   @objc public func hide(_ call: PluginCall) {
+    self.call = call
     hideSplash()
     call.success()
   }
@@ -36,6 +40,11 @@ public class SplashScreen : Plugin {
     self.updateSplashImageBounds()
   }
   
+  func tearDown() {
+    bridge.viewController.view.isUserInteractionEnabled = true
+    self.imageView.removeFromSuperview()
+  }
+  
   // Update the bounds for the splash image. This will also be called when
   // the parent view observers fire
   func updateSplashImageBounds() {
@@ -49,6 +58,7 @@ public class SplashScreen : Plugin {
       return
     }
     
+    imageView.alpha = 0
     imageView.image = image
     imageView.frame = CGRect.init(origin: CGPoint.init(x: 0, y: 0), size: window.bounds.size)
     imageView.contentMode = .scaleAspectFill
@@ -59,19 +69,35 @@ public class SplashScreen : Plugin {
   }
   
   func showSplash() {
+    guard let call = self.call else {
+      return
+    }
+    
     bridge.viewController.view.addSubview(imageView)
     
     bridge.viewController.view.isUserInteractionEnabled = false
     
+    let duration = call.get("duration", Int.self, defaultDuration)!
+    
     // TODO: Fade in
+    UIView.transition(with: imageView, duration: TimeInterval(Double(duration) / 1000), options: .curveLinear, animations: {
+      self.imageView.alpha = 1
+    }) { (finished: Bool) in
+      
+    }
   }
   
   func hideSplash() {
-    bridge.viewController.view.isUserInteractionEnabled = true
-
-    imageView.removeFromSuperview()
+    guard let call = self.call else {
+      return
+    }
     
-    // TODO: Fade out
+    let duration = call.get("duration", Int.self, defaultDuration)!
+    UIView.transition(with: imageView, duration: TimeInterval(Double(duration) / 1000), options: .curveLinear, animations: {
+      self.imageView.alpha = 0
+    }) { (finished: Bool) in
+      self.tearDown()
+    }
   }
 }
 
