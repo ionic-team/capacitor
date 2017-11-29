@@ -16,7 +16,7 @@ public class Bridge {
   
   // Dispatch queue for our operations
   // TODO: Unique label?
-  public var dispatchQueue = DispatchQueue(label: "b")
+  public var dispatchQueue = DispatchQueue(label: "bridge")
   
   public init(_ vc: UIViewController, _ pluginIds: [String]) {
     self.viewController = vc

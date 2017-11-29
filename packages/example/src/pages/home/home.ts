@@ -71,10 +71,20 @@ export class HomePage {
 
   showSplash() {
     let s = new SplashScreen();
-    s.show();
+    s.show({
+      autoHide: false
+    });
     setTimeout(() => {
       s.hide();
     }, 6000);
+  }
+
+  showSplashAutoFade() {
+    let s = new SplashScreen();
+    s.show({
+      showDuration: 2000,
+      autoHide: true
+    });
   }
 
   scheduleLocalNotification() {
