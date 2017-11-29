@@ -40,6 +40,7 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
         self.bridge.modulePrint(self, "Camera not available in simulator")
         self.bridge.alert("Camera Error", "Camera not available in Simulator")
         call.error("Camera not available while running in Simulator")
+        return
       }
       
       self.imagePicker!.sourceType = .camera
