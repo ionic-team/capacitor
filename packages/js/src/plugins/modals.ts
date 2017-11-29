@@ -1,11 +1,11 @@
 import { NativePlugin, Plugin } from '../plugin';
 
+
 @NativePlugin({
   name: 'Modals',
   id: 'com.avocadojs.plugin.modals'
 })
 export class Modals extends Plugin {
-  constructor() { super(); }
 
   alert(title: string, message: string, buttonTitle: string) {
     return this.nativePromise('alert', {
@@ -30,4 +30,5 @@ export class Modals extends Plugin {
       buttonTitle
     });
   }
+
 }

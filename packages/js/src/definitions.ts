@@ -1,39 +1,3 @@
-export type PluginCallback = (error: PluginResultError, data: PluginResultData) => void;
-// TODO: Get more complex custom promise type
-export type PluginCallbackHandler = PluginCallback | any;
-
-/**
- * Data that won't be sent to the native layer
- * from the caller. For example, a callback function
- * that cannot be cloned in JS
- */
-export interface PluginCaller {
-  callbackFunction?: PluginCallback;
-}
-
-export interface PluginCallOptions {
-  onMainThread: boolean
-}
-/**
- * Metadata about a native plugin call.
- */
-export interface PluginCall {
-  pluginId: string;
-  methodName: string;
-  options: any;
-
-  callbackId?: string;
-
-  callbackFunction?: Function;
-
-  // The type of callback we want
-  callbackType?: string;//"callback" | "promise" | "observable";
-}
-
-export interface StoredPluginCall {
-  call: PluginCall;
-  callbackHandler: PluginCallbackHandler;
-}
 
 export interface PluginResultData {
   [key: string]: any;
@@ -42,18 +6,48 @@ export interface PluginResultData {
 export interface PluginResultError {
   message: string;
 }
+
+export type PluginCallback = (error: PluginResultError, data: PluginResultData) => void;
+
+/**
+ * Data sent over to native
+ */
+export interface PluginCall {
+  callbackId: string;
+  pluginId: string;
+  methodName: string;
+  options: any;
+}
+
+/**
+ * Callback data kept on the client
+ * to be called after native response
+ */
+export interface StoredCallback {
+  callbackFunction?: PluginCallback;
+  callbackResolve?: Function;
+  callbackReject?: Function;
+}
+
+/**
+ * Collection of all the callback data
+ */
+export interface StoredCallbacks {
+  [callbackId: string]: StoredCallback;
+}
+
 /**
  * A resulting call back from the native layer.
  */
 export interface PluginResult {
-  pluginId: string;
+  callbackId?: string;
   methodName: string;
   data: PluginResultData;
-  callbackId?: string;
   success: boolean;
   error?: PluginResultError;
 }
 
-export interface NativePostMessage {
-  (call: PluginCall, caller: PluginCaller): void;
+export interface PluginConfig {
+  id: string;
+  name: string;
 }

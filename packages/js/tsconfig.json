@@ -3,11 +3,17 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "experimentalDecorators": true,
-    "lib": ["dom", "es2015"],
+    "lib": [
+      "dom",
+      "es2015"
+    ],
     "module": "es2015",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "outDir": "dist",
-    "target": "es5",
-    "noImplicitAny": false
+    "sourceMap": true,
+    "target": "es5"
   },
   "files": [
     "src/index.ts"

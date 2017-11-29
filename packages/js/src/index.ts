@@ -1,6 +1,5 @@
 export * from './definitions';
 export { Avocado } from './avocado';
-export { Platform } from './platform';
 export { Plugin, NativePlugin } from './plugin';
 
 export { Browser } from './plugins/browser';

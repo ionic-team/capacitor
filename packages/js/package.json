@@ -9,25 +9,23 @@
     "dist/"
   ],
   "scripts": {
-    "build": "npm run clean && npm run transpile && npm run bundle",
-    "transpile": "tsc",
-    "bundle": "rollup --input dist/index.js --output.file dist/index.js --output.format es",
-    "post.bundle": "",
-    "clean": "rimraf ./dist"
+    "build": "npm run clean && npm run transpile",
+    "clean": "rimraf ./dist",
+    "transpile": "tsc"
   },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "devDependencies": {
     "rimraf": "^2.6.1",
-    "rollup": "^0.51.8",
+    "tslint": "^5.6.0",
     "tslint-ionic-rules": "0.0.8",
-    "typescript": "^2.6.1"
+    "typescript": "^2.6.2"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/driftyco/avocado-js.git"
+    "url": "git+https://github.com/ionic-team/avocado-js.git"
   },
   "bugs": {
-    "url": "https://github.com/driftyco/avocado-js/issues"
+    "url": "https://github.com/ionic-team/avocado-js/issues"
   }
 }

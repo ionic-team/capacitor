@@ -1,19 +1,13 @@
 import { NativePlugin, Plugin } from '../plugin';
 
-export enum HapticsImpactStyle {
-  Heavy = 'HEAVY',
-  Medium = 'MEDIUM',
-  Light = 'LIGHT'
-}
 
 @NativePlugin({
   name: 'Haptics',
   id: 'com.avocadojs.plugin.haptics'
 })
 export class Haptics extends Plugin {
-  constructor() { super(); }
 
-  impact(options: { style: HapticsImpactStyle }) {
+  impact(options: HapticsImpactOptions) {
     this.nativeCallback('impact', options);
   }
 
@@ -32,4 +26,15 @@ export class Haptics extends Plugin {
   selectionEnd() {
     this.nativeCallback('selectionEnd');
   }
+}
+
+
+export interface HapticsImpactOptions {
+  style: HapticsImpactStyle;
+}
+
+export enum HapticsImpactStyle {
+  Heavy = 'HEAVY',
+  Medium = 'MEDIUM',
+  Light = 'LIGHT'
 }
