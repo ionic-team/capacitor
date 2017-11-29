@@ -7,7 +7,9 @@ public class SplashScreen : Plugin {
   var image: UIImage?
   var call: PluginCall?
   
-  let defaultDuration = 200
+  let defaultFadeDuration = 200
+  let defaultShowDuration = 3000
+  let defaultAutoHide = true
   
   public override func load() {
     buildViews()
@@ -77,13 +79,19 @@ public class SplashScreen : Plugin {
     
     bridge.viewController.view.isUserInteractionEnabled = false
     
-    let duration = call.get("duration", Int.self, defaultDuration)!
+    let showDuration = call.get("showDuration", Int.self, defaultShowDuration)!
+    let fadeDuration = call.get("fadeDuration", Int.self, defaultFadeDuration)!
+    let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
     
     // TODO: Fade in
-    UIView.transition(with: imageView, duration: TimeInterval(Double(duration) / 1000), options: .curveLinear, animations: {
+    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeDuration) / 1000), options: .curveLinear, animations: {
       self.imageView.alpha = 1
     }) { (finished: Bool) in
-      
+      if autoHide {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (Double(showDuration) / 1000), execute: {
+          self.hideSplash()
+        })
+      }
     }
   }
   
@@ -92,8 +100,8 @@ public class SplashScreen : Plugin {
       return
     }
     
-    let duration = call.get("duration", Int.self, defaultDuration)!
-    UIView.transition(with: imageView, duration: TimeInterval(Double(duration) / 1000), options: .curveLinear, animations: {
+    let fadeDuration = call.get("duration", Int.self, defaultFadeDuration)!
+    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeDuration) / 1000), options: .curveLinear, animations: {
       self.imageView.alpha = 0
     }) { (finished: Bool) in
       self.tearDown()
