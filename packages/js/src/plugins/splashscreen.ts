@@ -7,6 +7,10 @@ export interface SplashScreenShowOptions {
   showDuration?: number;
 }
 
+export interface SplashScreenHideOptions {
+  fadeOutDuration?: number;
+}
+
 @NativePlugin({
   name: 'SplashScreen',
   id: 'com.avocadojs.plugin.splashscreen'
