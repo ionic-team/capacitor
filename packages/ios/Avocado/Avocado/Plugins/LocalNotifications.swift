@@ -29,6 +29,9 @@ public class LocalNotifications : Plugin {
     if let scheduleAt = call.get("scheduleAt", [String:Int].self) {
       // Configure the trigger for a 7am wakeup.
       var dateInfo = DateComponents()
+      if let year = scheduleAt["year"] {
+        dateInfo.year = year
+      }
       if let month = scheduleAt["month"] {
         dateInfo.month = month
       }
