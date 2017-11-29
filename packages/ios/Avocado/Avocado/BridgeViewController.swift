@@ -63,6 +63,10 @@ class BridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelega
     }
   }
   
+  public override func viewWillAppear(_ animated: Bool) {
+    bridge!.willAppear()
+  }
+  
   public func configureWebView(configuration: WKWebViewConfiguration) {
     configuration.allowsInlineMediaPlayback = true
     configuration.suppressesIncrementalRendering = false

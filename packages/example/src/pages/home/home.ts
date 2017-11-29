@@ -46,6 +46,9 @@ export class HomePage {
   profileSamples = null;
 
   constructor(public navCtrl: NavController, public zone: NgZone) {
+    let splash = new SplashScreen();
+    splash.hide();
+    
     let network = new Network();
     network.onStatusChange((err, status) => {
       console.log("Network status changed", status);

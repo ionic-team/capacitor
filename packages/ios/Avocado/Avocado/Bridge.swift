@@ -25,6 +25,12 @@ public class Bridge {
     registerPlugins()
   }
   
+  public func willAppear() {
+    if let splash = getOrLoadPlugin(pluginId: "com.avocadojs.plugin.splashscreen") as? SplashScreen {
+      splash.showOnLaunch()
+    }
+  }
+  
   func registerPlugins() {
     var numClasses = UInt32(0);
     let classes = objc_copyClassList(&numClasses)
@@ -40,6 +46,13 @@ public class Bridge {
   func registerPlugin(_ pluginType: Plugin.Type) {
     let bridgeType = pluginType as! AvocadoBridgeModule.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
+  }
+  
+  public func getOrLoadPlugin(pluginId: String) -> Plugin? {
+    guard let plugin = self.getPlugin(pluginId: pluginId) ?? self.loadPlugin(pluginId: pluginId) else {
+      return nil
+    }
+    return plugin
   }
   
   public func getPlugin(pluginId: String) -> Plugin? {

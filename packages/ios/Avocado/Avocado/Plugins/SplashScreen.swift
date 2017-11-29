@@ -6,8 +6,13 @@ public class SplashScreen : Plugin {
   var imageView = UIImageView()
   var image: UIImage?
   var call: PluginCall?
+  var hideTask: Any?
+  var isVisible: Bool = false
   
-  let defaultFadeDuration = 200
+  let launchShowDuration = 10000
+  
+  let defaultFadeInDuration = 200
+  let defaultFadeOutDuration = 200
   let defaultShowDuration = 3000
   let defaultAutoHide = true
   
@@ -18,14 +23,22 @@ public class SplashScreen : Plugin {
   // Show the splash screen
   @objc public func show(_ call: PluginCall) {
     self.call = call
-    showSplash()
-    call.success()
+    
+    let showDuration = call.get("showDuration", Int.self, defaultShowDuration)!
+    let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
+    let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
+    let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
+    
+    showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, completion: {
+      call.success()
+    })
   }
   
   // Hide the splash screen
   @objc public func hide(_ call: PluginCall) {
     self.call = call
-    hideSplash()
+    let fadeDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
+    hideSplash(fadeOutDuration: fadeDuration)
     call.success()
   }
   
@@ -43,6 +56,7 @@ public class SplashScreen : Plugin {
   }
   
   func tearDown() {
+    self.isVisible = false
     bridge.viewController.view.isUserInteractionEnabled = true
     self.imageView.removeFromSuperview()
   }
@@ -70,38 +84,36 @@ public class SplashScreen : Plugin {
     updateSplashImageBounds()
   }
   
-  func showSplash() {
-    guard let call = self.call else {
-      return
-    }
-    
+  func showOnLaunch() {
+    showSplash(showDuration: launchShowDuration, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: true, completion: {
+      
+    })
+  }
+  
+  func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, completion: @escaping () -> Void) {
     bridge.viewController.view.addSubview(imageView)
     
     bridge.viewController.view.isUserInteractionEnabled = false
-    
-    let showDuration = call.get("showDuration", Int.self, defaultShowDuration)!
-    let fadeDuration = call.get("fadeDuration", Int.self, defaultFadeDuration)!
-    let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
-    
+ 
     // TODO: Fade in
-    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeDuration) / 1000), options: .curveLinear, animations: {
+    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
       self.imageView.alpha = 1
     }) { (finished: Bool) in
+      self.isVisible = true
+      
       if autoHide {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (Double(showDuration) / 1000), execute: {
-          self.hideSplash()
+        self.hideTask = DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (Double(showDuration) / 1000), execute: {
+          self.hideSplash(fadeOutDuration: fadeOutDuration)
+          completion()
         })
       }
     }
   }
   
-  func hideSplash() {
-    guard let call = self.call else {
-      return
-    }
+  func hideSplash(fadeOutDuration: Int) {
+    if !isVisible { return }
     
-    let fadeDuration = call.get("duration", Int.self, defaultFadeDuration)!
-    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeDuration) / 1000), options: .curveLinear, animations: {
+    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeOutDuration) / 1000), options: .curveLinear, animations: {
       self.imageView.alpha = 0
     }) { (finished: Bool) in
       self.tearDown()
