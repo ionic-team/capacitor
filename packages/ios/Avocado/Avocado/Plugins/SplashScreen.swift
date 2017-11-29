@@ -35,15 +35,15 @@ public class SplashScreen : Plugin {
       return
     }
     
-    let image = UIImage.init(named: launchImage)
+    print("Building splash view")
+    let image = UIImage.init(named: "Splash")
     
-    imageView.alpha = 0
+    //imageView.alpha = 0
     imageView.image = image
     imageView.frame = CGRect.init(origin: CGPoint.init(x: 0, y: 0), size: window.bounds.size)
     imageView.backgroundColor = UIColor.red
     print("Image frame", imageView.frame)
     imageView.contentMode = .scaleAspectFill
-
   }
   
   func showSplash() {
@@ -55,6 +55,7 @@ public class SplashScreen : Plugin {
   func hideSplash() {
     bridge.viewController.view.isUserInteractionEnabled = true
 
+    imageView.removeFromSuperview()
   }
 }
 
