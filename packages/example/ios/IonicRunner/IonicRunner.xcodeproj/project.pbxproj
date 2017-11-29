@@ -11,12 +11,10 @@
 		501CBAB51FC0E2B5009B0D4D /* Avocado.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3394176F7AE51239517122DA /* Pods_IonicRunner.framework */; };
 		A3729E091E83246400B7334A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E081E83246400B7334A /* AppDelegate.swift */; };
-		A3729E0B1E83246400B7334A /* AvocadoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E0A1E83246400B7334A /* AvocadoViewController.swift */; };
 		A3729E0E1E83246400B7334A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3729E0C1E83246400B7334A /* Main.storyboard */; };
 		A3729E101E83246400B7334A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3729E0F1E83246400B7334A /* Assets.xcassets */; };
 		A3729E131E83246400B7334A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3729E111E83246400B7334A /* LaunchScreen.storyboard */; };
 		A3729E1B1E83331B00B7334A /* www in Resources */ = {isa = PBXBuildFile; fileRef = A3729E1A1E83331B00B7334A /* www */; };
-		A3729E1F1E84574800B7334A /* AvocadoContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E1E1E84574800B7334A /* AvocadoContentController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,13 +69,11 @@
 		9CC588CF2A94FA052A66DC48 /* Pods-IonicRunner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicRunner.release.xcconfig"; path = "Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner.release.xcconfig"; sourceTree = "<group>"; };
 		A3729E051E83246400B7334A /* IonicRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IonicRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3729E081E83246400B7334A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A3729E0A1E83246400B7334A /* AvocadoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvocadoViewController.swift; sourceTree = "<group>"; };
 		A3729E0D1E83246400B7334A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A3729E0F1E83246400B7334A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A3729E121E83246400B7334A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A3729E141E83246400B7334A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A3729E1A1E83331B00B7334A /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
-		A3729E1E1E84574800B7334A /* AvocadoContentController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvocadoContentController.swift; sourceTree = "<group>"; };
 		C2BF9B261E874A960050F782 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -136,12 +132,10 @@
 			isa = PBXGroup;
 			children = (
 				A3729E081E83246400B7334A /* AppDelegate.swift */,
-				A3729E0A1E83246400B7334A /* AvocadoViewController.swift */,
 				A3729E0C1E83246400B7334A /* Main.storyboard */,
 				A3729E0F1E83246400B7334A /* Assets.xcassets */,
 				A3729E111E83246400B7334A /* LaunchScreen.storyboard */,
 				A3729E141E83246400B7334A /* Info.plist */,
-				A3729E1E1E84574800B7334A /* AvocadoContentController.swift */,
 			);
 			path = IonicRunner;
 			sourceTree = "<group>";
@@ -324,9 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A3729E0B1E83246400B7334A /* AvocadoViewController.swift in Sources */,
 				A3729E091E83246400B7334A /* AppDelegate.swift in Sources */,
-				A3729E1F1E84574800B7334A /* AvocadoContentController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
