@@ -29,7 +29,7 @@ export class Avocado {
     if (win.androidBridge) {
       // android platform
       this.postToNative = (data: any) => {
-        win.androidBridge.postMessage(data);
+        win.androidBridge.postMessage(JSON.stringify(data));
       };
       this.isNative = true;
       this.platform = 'android';
