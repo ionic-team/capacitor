@@ -6,6 +6,9 @@
   "scripts": {
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
+    "copy": "npm run copy.ios && npm run copy.md",
+    "copy.ios": "cp -R www/* ios/IonicRunner/www/",
+    "copy.md": "cp -R www/* android/app/src/main/assets/www/",
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve"
   },
