@@ -4,6 +4,8 @@ import AudioToolbox
 @objc(SplashScreen)
 public class SplashScreen : Plugin {
   var imageView = UIImageView()
+  var image: UIImage?
+  
   
   public override func load() {
     buildViews()
@@ -25,25 +27,35 @@ public class SplashScreen : Plugin {
       return
     }
     
+    print("Building splash view")
+    image = UIImage.init(named: "Splash")
+    
+    // TODO: Handle rotation for screens/ipad
+    let parentView = self.bridge.viewController.view
+    parentView?.addObserver(self, forKeyPath: "frame", options: .new, context: nil)
+    parentView?.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
+    
+    self.updateSplashImageBounds()
+  }
+  
+  func updateSplashImageBounds() {
     guard let delegate = UIApplication.shared.delegate else {
       bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
-    
+
     guard let window = delegate.window as? UIWindow else {
       bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
-    
-    print("Building splash view")
-    let image = UIImage.init(named: "Splash")
-    
-    //imageView.alpha = 0
     imageView.image = image
     imageView.frame = CGRect.init(origin: CGPoint.init(x: 0, y: 0), size: window.bounds.size)
-    imageView.backgroundColor = UIColor.red
-    print("Image frame", imageView.frame)
     imageView.contentMode = .scaleAspectFill
+  }
+  
+  public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    print("Updating splash image bounds")
+    updateSplashImageBounds()
   }
   
   func showSplash() {
