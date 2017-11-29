@@ -18,14 +18,14 @@ public class MessageHandler {
 
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(this, "avocadoAndroid");
+        webView.addJavascriptInterface(this, "androidBridge");
     }
 
     @JavascriptInterface
     public void postMessage(String jsonStr) {
         try {
             JSONObject postData = new JSONObject(jsonStr);
-            int callbackId = postData.getInt("callbackId");
+            String callbackId = postData.getString("callbackId");
             String pluginId = postData.getString("pluginId");
             String methodName = postData.getString("methodName");
             JSONObject methodData = postData.getJSONObject("data");
@@ -39,7 +39,7 @@ public class MessageHandler {
         }
     }
 
-    void callPluginMethod(int callbackId, String pluginId, String methodName, JSONObject methodData) {
+    void callPluginMethod(String callbackId, String pluginId, String methodName, JSONObject methodData) {
         PluginCall call = new PluginCall(this, callbackId, methodData);
 
         try {
@@ -62,7 +62,7 @@ public class MessageHandler {
         }
     }
 
-    public void responseMessage(int callbackId, PluginResult successResult, PluginResult errorResult) {
+    public void responseMessage(String callbackId, PluginResult successResult, PluginResult errorResult) {
         try {
             PluginResult data = new PluginResult();
             data.put("callbackId", callbackId);

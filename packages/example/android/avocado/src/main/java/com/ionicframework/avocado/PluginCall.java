@@ -6,11 +6,11 @@ import org.json.JSONObject;
 
 public class PluginCall {
     private MessageHandler msgHandler;
-    private int callbackId;
+    private String callbackId;
     JSONObject data;
 
 
-    public PluginCall(MessageHandler msgHandler, int callbackId, JSONObject data) {
+    public PluginCall(MessageHandler msgHandler, String callbackId, JSONObject data) {
         this.msgHandler = msgHandler;
         this.callbackId = callbackId;
         this.data = data;
