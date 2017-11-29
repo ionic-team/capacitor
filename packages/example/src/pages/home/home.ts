@@ -29,8 +29,14 @@ import { toBase64String } from '@angular/compiler/src/output/source_map';
 export class HomePage {
   base64Image: string;
   image: string;
-  singleCoords = { lat: 0, lng: 0 }
-  watchCoords = { lat: 0, lng: 0 }
+  singleCoords = {
+    latitude: 0,
+    longitude: 0
+  };
+  watchCoords = {
+    latitude: 0,
+    longitude: 0
+  };
   deviceInfoJson: string;
   isStatusBarLight = true
   accel = null
