@@ -1,20 +1,21 @@
-Ionic 2 App Base
+Build Example
 =====================
 
-This is the base template for Ionic 2 starter apps.
-
-## Using this project
-
-You'll need the Ionic CLI with support for v2 apps:
-
-```bash
-$ npm install -g ionic
 ```
+Build the JS avocado client, inside of packages/js, run:
 
-Then run:
+npm run build
+npm link
 
-```bash
-$ ionic start myApp
+
+Build the ionic 2 app and copy assets, inside of packages/example, run:
+
+npm link avocado-js
+npm run build && cp -R www/* ios/IonicRunner/www/
+
+
+Open in XCode
+example/ios/IonicRunner/IonicRunner.xcodeproj
+
+
 ```
-
-More info on this can be found on the Ionic [Getting Started](http://ionicframework.com/docs/v2/getting-started/) page.
