@@ -459,7 +459,7 @@ var Avocado = /** @class */ (function () {
         if (win.androidBridge) {
             // android platform
             this.postToNative = function (data) {
-                win.androidBridge.postMessage(data);
+                win.androidBridge.postMessage(JSON.stringify(data));
             };
             this.isNative = true;
             this.platform = 'android';

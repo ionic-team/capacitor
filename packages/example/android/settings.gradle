@@ -1,2 +1,3 @@
+include ':lib'
 include 'app', 'avocado', 'plugins', 'plugins:device'
 

@@ -1,21 +1,40 @@
 Build Example
 =====================
 
+## Build Avocado JS Module
+
 ```
-Build the JS avocado client, inside of packages/js, run:
+cd to packages/js
 
 npm run build
 npm link
+```
 
 
-Build the ionic 2 app and copy assets, inside of packages/example, run:
+## Build Example App
+
+This will npm link to the AvocadoJS package, build the app, and copy the build files to the correct `www` directories for both the iOS and Android example apps.
+
+```
+cd to packages/example
 
 npm link avocado-js
-npm run build && cp -R www/* ios/IonicRunner/www/
+npm run build
+npm run copy
+```
 
 
+## Build iOS App
+
+```
 Open in XCode
 example/ios/IonicRunner/IonicRunner.xcodeproj
+```
 
 
+## Build Android App
+
+```
+Open in Android Studio
+example/android
 ```
