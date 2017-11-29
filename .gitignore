@@ -6,4 +6,5 @@ packages/cli/dist/commands/copy.js
 Pods/
 test_project/
 Podfile
-
+*.map
+www/
