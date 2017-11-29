@@ -5,17 +5,17 @@ import { exit } from 'shelljs';
 import { open } from './open';
 
 
-export async function prepareCommand(platform: string) {
+export async function syncCommand(platform: string) {
   platform = await askPlatform(platform);
   try {
-    await prepare(platform);
+    await sync(platform);
     exit(0);
   } catch (e) {
     logFatal(e);
   }
 }
 
-export async function prepare(platform: string) {
+export async function sync(platform: string) {
   await update(platform, false);
   await copy(platform);
   await open(platform);
