@@ -2,7 +2,8 @@ import { NativePlugin, Plugin } from '../plugin';
 
 export interface SplashScreenShowOptions {
   autoHide?: boolean;
-  fadeDuration?: number;
+  fadeInDuration?: number;
+  fadeOutDuration?: number;
   showDuration?: number;
 }
 
