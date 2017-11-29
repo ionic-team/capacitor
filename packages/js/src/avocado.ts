@@ -1,116 +1,92 @@
 import {
-  PluginCallback,
-  PluginCallbackHandler,
-  PluginCaller,
   PluginCall,
   PluginResult,
-  StoredPluginCall
+  StoredCallback,
+  StoredCallbacks
 } from './definitions';
-
-import { Platform } from './platform';
-import { Plugin } from './plugin';
-
 import { Console } from './plugins/console';
 
-declare var window: any;
 
 /**
  * Main class for interacting with the Avocado runtime.
  */
 export class Avocado {
-  platform: Platform;
-
-  console: Console;
+  private console: Console;
+  private postToNative: (call: PluginCall) => void;
 
   // Storage of calls for associating w/ native callback later
-  private calls: { [key: string]: StoredPluginCall } = {}
-
+  private calls: StoredCallbacks = {};
   private callbackIdCount = 0;
 
+  // public properties
+  isNative: boolean;
+  platform: string;
+
+
   constructor() {
+    const win: any = window;
+
+    if (win.androidBridge) {
+      // android platform
+      this.postToNative = (data: any) => {
+        win.androidBridge.postMessage(data);
+      };
+      this.isNative = true;
+      this.platform = 'android';
+
+    } else if (win.webkit && win.webkit.messageHandlers && win.webkit.messageHandlers.bridge) {
+      // ios platform
+      this.postToNative = (data) => {
+        (data as any).type = 'message';
+        win.webkit.messageHandlers.bridge.postMessage(data);
+      };
+      this.isNative = true;
+      this.platform = 'ios';
+
+    } else {
+      // browser platform
+      this.isNative = false;
+      this.platform = 'browser';
+    }
+
     // Load console plugin first to avoid race conditions
-
-    this.platform = new Platform();
-
-    setTimeout(() => { this.loadCoreModules(); } )
+    setTimeout(() => { this.loadCoreModules(); } );
   }
 
-  private log(...args: any[]) {
+  log(...args: any[]) {
     args.unshift('Avocado: ');
     this.console && this.console.windowLog(args);
   }
 
-  loadCoreModules() {
-    //this.console = new Console();
-  }
-
-  registerPlugin(plugin: Plugin) {
-    let info = (<any>plugin).constructor.getPluginInfo();
-    this.log('Registering plugin', info);
+  private loadCoreModules() {
+    // this.console = new Console();
   }
 
   /**
    * Send a plugin method call to the native layer.
-   * 
+   *
    * NO CONSOLE.LOG HERE, WILL CAUSE INFINITE LOOP WITH CONSOLE PLUGIN
    */
-  toNative(call: PluginCall, caller: PluginCaller) {
-    let ret;
+  toNative(pluginId: string, methodName: string, options: any, storedCallback: StoredCallback) {
+    if (this.isNative) {
+      // create a unique id for this callback
+      const callbackId = ++this.callbackIdCount + '';
 
-    let callbackId = call.pluginId + ++this.callbackIdCount;
+      if (typeof storedCallback.callbackFunction === 'function' || typeof storedCallback.callbackResolve === 'function') {
+        // store the call for later lookup
+        this.calls[callbackId] = storedCallback;
+      }
 
-    call.callbackId = callbackId;
+      // post the call data to native
+      this.postToNative({
+        callbackId,
+        pluginId,
+        methodName,
+        options: options || {}
+      });
 
-    switch(call.callbackType) {
-      case undefined:
-        ret = this._toNativePromise(call, caller);
-      case 'callback':
-        if (typeof caller.callbackFunction !== 'function') {
-          caller.callbackFunction = () => {}
-        }
-        ret = this._toNativeCallback(call, caller);
-        break;
-      case 'promise':
-        ret = this._toNativePromise(call, caller);
-      case 'observable':
-        break;
-    }
-
-    //this.log('To native', call);
-
-    // Send this call to the native layer
-    window.webkit.messageHandlers.bridge.postMessage({
-      type: 'message',
-      ...call
-    });
-
-    return ret;
-  }
-
-  private _toNativeCallback(call: PluginCall, caller: PluginCaller) {
-    this._saveCallback(call, caller.callbackFunction);
-  }
-
-  private _toNativePromise(call: PluginCall, caller: PluginCaller) {
-    let promiseCall: any = {};
-
-    let promise = new Promise((resolve, reject) => {
-      promiseCall['$resolve'] = resolve;
-      promiseCall['$reject'] = reject;
-    });
-
-    promiseCall['$promise'] = promise;
-
-    this._saveCallback(call, promiseCall);
-
-    return promise;
-  }
-
-  private _saveCallback(call: PluginCall, callbackHandler: PluginCallbackHandler) {
-    call.callbackId = call.callbackId;
-    this.calls[call.callbackId] = {
-      call,
-      callbackHandler
+    } else {
+      console.warn(`browser implementation unavailable for: ${pluginId}`);
     }
   }
 
@@ -118,49 +94,51 @@ export class Avocado {
    * Process a response from the native layer.
    */
   fromNative(result: PluginResult) {
+    // get the stored call, if it exists
     const storedCall = this.calls[result.callbackId];
-    
-    const { call, callbackHandler } = storedCall;
 
-    this._fromNativeCallback(result, storedCall);
-  }
+    if (storedCall) {
+      // looks like we've got a stored call
 
-  private _fromNativeCallback(result: PluginResult, storedCall: StoredPluginCall) {
-    const { call, callbackHandler } = storedCall;
-
-    switch(storedCall.call.callbackType) {
-      case 'promise': {
-        if(result.success === false) {
-          callbackHandler.$reject(result.error);
+      if (typeof storedCall.callbackFunction === 'function') {
+        // callback
+        if (result.success) {
+          storedCall.callbackFunction(null, result.data);
         } else {
-          callbackHandler.$resolve(result.data);
+          storedCall.callbackFunction(result.error, null);
         }
-        break;
-      }
-      case 'callback': {
-        if(typeof callbackHandler == 'function') {
-          result.success ? callbackHandler(null, result.data) : callbackHandler(result.error, null);
-        }
-      }
-    }
-  }
 
-  /**
-   * @return whether or not we're running in a browser sandbox environment
-   * with no acces to native functionality (progressive web, desktop browser, etc).
-   */
-  isBrowser() {
-    // TODO: Make this generic
-    return !!!(<any>window).webkit;
+      } else if (typeof storedCall.callbackResolve === 'function') {
+        // promise
+        if (result.success) {
+          storedCall.callbackResolve(result.data);
+        } else {
+          storedCall.callbackReject(result.error);
+        }
+
+        // no need to keep this stored callback
+        // around for a one time resolve promise
+        delete this.calls[result.callbackId];
+      }
+
+    } else if (!result.success && result.error) {
+      // no stored callback, but if there was an error let's log it
+      console.error(result.error);
+    }
+
+    // always delete to prevent memory leaks
+    // overkill but we're not sure what apps will do with this data
+    delete result.data;
+    delete result.error;
   }
 
   /**
    * @return the instance of Avocado
    */
   static instance() {
-    if((<any>window).avocado) {
-      return (<any>window).avocado;
+    if ((window as any).avocado) {
+      return (window as any).avocado;
     }
-    return (<any>window).avocado = new Avocado();
+    return (window as any).avocado = new Avocado();
   }
 }

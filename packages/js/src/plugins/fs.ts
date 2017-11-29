@@ -1,25 +1,11 @@
 import { NativePlugin, Plugin } from '../plugin';
 
-declare var window;
-
-export enum FilesystemDirectory {
-  Application = 'APPLICATION',
-  Documents = 'DOCUMENTS',
-  Data = 'DATA',
-  Cache = 'CACHE',
-  External = 'EXTERNAL', // Android only
-  ExternalStorage = 'EXTERNAL_STORAGE' // Android only
-}
-
 
 @NativePlugin({
   name: 'Filesystem',
   id: 'com.avocadojs.plugin.fs'
 })
 export class Filesystem extends Plugin {
-  constructor() {
-    super();
-  }
 
   writeFile(file: string, data: string, directory: FilesystemDirectory, encoding: string = 'utf8') {
     return this.nativePromise('writeFile', {
@@ -75,4 +61,15 @@ export class Filesystem extends Plugin {
       directory
     });
   }
+
+}
+
+
+export enum FilesystemDirectory {
+  Application = 'APPLICATION',
+  Documents = 'DOCUMENTS',
+  Data = 'DATA',
+  Cache = 'CACHE',
+  External = 'EXTERNAL', // Android only
+  ExternalStorage = 'EXTERNAL_STORAGE' // Android only
 }
