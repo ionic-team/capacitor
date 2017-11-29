@@ -1,15 +1,15 @@
-import { checkCocoaPods, checkNoIOSProject, getIOSBaseProject} from './common';
-import { check, runTask } from '../../common';
+import { checkCocoaPods, checkNoIOSProject} from './common';
+import { check, getAssetsPath, runTask } from '../../common';
 import { cp } from 'shelljs';
 import { IOS_PATH } from '../../config';
 
 
-export async function startIOS() {
+export async function createIOS() {
   await check(
     checkCocoaPods,
     checkNoIOSProject
   );
   await runTask(`Creating a native xcode project in ${IOS_PATH}`, async () => {
-    cp('-R', getIOSBaseProject(), IOS_PATH);
+    cp('-R', getAssetsPath('xcode-base'), IOS_PATH);
   });
 }

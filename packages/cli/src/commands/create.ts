@@ -1,23 +1,23 @@
 import { askPlatform, logFatal } from '../common';
 import { exit } from 'shelljs';
-import { startIOS } from '../platforms/ios/start';
-import { prepare } from './prepare';
+import { createIOS } from '../platforms/ios/create';
+import { sync } from './sync';
 
 
-export async function startCommand(platform: string) {
+export async function createCommand(platform: string) {
   platform = await askPlatform(platform);
   try {
-    await start(platform);
-    await prepare(platform);
+    await create(platform);
+    await sync(platform);
     exit(0);
   } catch (e) {
     logFatal(e);
   }
 }
 
-export async function start(platform: string) {
+export async function create(platform: string) {
   if (platform === 'ios') {
-    await startIOS();
+    await createIOS();
   } else if (platform === 'android') {
     // android
   }

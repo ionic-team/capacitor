@@ -4,10 +4,11 @@ import chalk from 'chalk';
 import { exec, exit, ls, which } from 'shelljs';
 import { prompt } from 'inquirer';
 import { exists } from 'fs';
-import { ANDROID_PATH, IOS_PATH, PLATFORMS } from './config';
-import { join } from 'path';
+import { ANDROID_PATH, ASSETS_PATH, IOS_PATH, PLATFORMS } from './config';
+import { join, resolve } from 'path';
 import ora = require('ora');
 import { setTimeout } from 'timers';
+import { PROJECT_DIR } from './index';
 
 export const readFileAsync = promisify(readFile);
 export const writeFileAsync = promisify(writeFile);
@@ -44,6 +45,10 @@ export function logFatal(...args: any[]) {
 
 export function isInstalled(command: string): boolean {
   return !!which(command);
+}
+
+export function getAssetsPath(resource: string): string {
+  return resolve(PROJECT_DIR, ASSETS_PATH, resource);
 }
 
 export function getRootPath(mode: string) {
