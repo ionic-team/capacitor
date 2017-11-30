@@ -1,19 +1,12 @@
-import { Avocado } from './avocado';
-import { PluginConfig, PluginCallback } from './definitions';
+import { PluginConfig, PluginCallback, WindowAvocado } from './definitions';
+
+declare const window: WindowAvocado;
+
 
 /**
  * Base class for all 3rd party plugins.
  */
 export class Plugin {
-  private avocado: Avocado;
-  isNative: boolean;
-  platform: string;
-
-  constructor() {
-    this.avocado = Avocado.instance();
-    this.isNative = this.avocado.isNative;
-    this.platform = this.avocado.platform;
-  }
 
   nativeCallback(methodName: string, callback?: PluginCallback): void;
   nativeCallback(methodName: string, callback?: Function): void;
@@ -28,23 +21,30 @@ export class Plugin {
       options = {};
     }
 
-    this.avocado.toNative(this.pluginId(), methodName, options, {
-      callbackFunction: callback
+    window.avocado.toNative(this.config.id, methodName, options, {
+      callback
     });
   }
 
   nativePromise(methodName: string, options?: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.avocado.toNative(this.pluginId(), methodName, options, {
-        callbackResolve: resolve,
-        callbackReject: reject
+      window.avocado.toNative(this.config.id, methodName, options, {
+        resolve,
+        reject
       });
     });
   }
 
-  pluginId() {
-    const config: PluginConfig = (this as any).constructor.getPluginInfo();
-    return config.id;
+  get config(): PluginConfig {
+    return (this as any).constructor._config;
+  }
+
+  get isNative() {
+    return window.avocado.isNative;
+  }
+
+  get platform() {
+    return window.avocado.platform;
   }
 
 }
@@ -54,8 +54,7 @@ export class Plugin {
  */
 export function NativePlugin(config: PluginConfig) {
   return function(cls: any) {
-    cls['_avocadoPlugin'] = Object.assign({}, config);
-    cls['getPluginInfo'] = () => cls['_avocadoPlugin'];
+    cls._config = Object.assign({}, config);
     return cls;
   };
 }

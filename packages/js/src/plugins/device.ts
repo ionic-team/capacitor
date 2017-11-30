@@ -25,6 +25,7 @@ export class Device extends Plugin {
 
 }
 
+
 export interface DeviceInfo {
   model: string;
   platform: string;
