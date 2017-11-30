@@ -27,10 +27,10 @@
 		50503F251FC098A3003606DC /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F241FC098A3003606DC /* Plugin.swift */; };
 		5053E8FD1FC874DE00166FBE /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FC1FC874DE00166FBE /* Loader.swift */; };
 		5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FE1FC8755F00166FBE /* Diagnostics.swift */; };
-		5053E90B1FC8D01200166FBE /* ModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90A1FC8D01200166FBE /* ModuleBridge.m */; };
-		5053E90D1FC8D24000166FBE /* DefaultModules.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E90C1FC8D1D800166FBE /* DefaultModules.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5053E90F1FC8D51100166FBE /* DefaultModules.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90E1FC8D51100166FBE /* DefaultModules.m */; };
-		5053E9101FC8FEEC00166FBE /* ModuleBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E9091FC8CD1000166FBE /* ModuleBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5053E90B1FC8D01200166FBE /* PluginBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90A1FC8D01200166FBE /* PluginBridge.m */; };
+		5053E90D1FC8D24000166FBE /* DefaultPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5053E90F1FC8D51100166FBE /* DefaultPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90E1FC8D51100166FBE /* DefaultPlugins.m */; };
+		5053E9101FC8FEEC00166FBE /* PluginBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E9091FC8CD1000166FBE /* PluginBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50B80BE81FCDE1E8000717DF /* Clipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE71FCDE1E8000717DF /* Clipboard.swift */; };
 		50B80BEA1FCDECE2000717DF /* Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE91FCDECE2000717DF /* Share.swift */; };
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
@@ -77,10 +77,10 @@
 		50503F241FC098A3003606DC /* Plugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plugin.swift; sourceTree = "<group>"; };
 		5053E8FC1FC874DE00166FBE /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
 		5053E8FE1FC8755F00166FBE /* Diagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
-		5053E9091FC8CD1000166FBE /* ModuleBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModuleBridge.h; sourceTree = "<group>"; };
-		5053E90A1FC8D01200166FBE /* ModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ModuleBridge.m; sourceTree = "<group>"; };
-		5053E90C1FC8D1D800166FBE /* DefaultModules.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultModules.h; sourceTree = "<group>"; };
-		5053E90E1FC8D51100166FBE /* DefaultModules.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DefaultModules.m; sourceTree = "<group>"; };
+		5053E9091FC8CD1000166FBE /* PluginBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginBridge.h; sourceTree = "<group>"; };
+		5053E90A1FC8D01200166FBE /* PluginBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginBridge.m; sourceTree = "<group>"; };
+		5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultPlugins.h; sourceTree = "<group>"; };
+		5053E90E1FC8D51100166FBE /* DefaultPlugins.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DefaultPlugins.m; sourceTree = "<group>"; };
 		50B80BE71FCDE1E8000717DF /* Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clipboard.swift; sourceTree = "<group>"; };
 		50B80BE91FCDECE2000717DF /* Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Share.swift; sourceTree = "<group>"; };
 		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
@@ -160,8 +160,8 @@
 				50503F241FC098A3003606DC /* Plugin.swift */,
 				5053E8FC1FC874DE00166FBE /* Loader.swift */,
 				5053E8FE1FC8755F00166FBE /* Diagnostics.swift */,
-				5053E9091FC8CD1000166FBE /* ModuleBridge.h */,
-				5053E90A1FC8D01200166FBE /* ModuleBridge.m */,
+				5053E9091FC8CD1000166FBE /* PluginBridge.h */,
+				5053E90A1FC8D01200166FBE /* PluginBridge.m */,
 				50ED86EF1FCA66CB00E48884 /* DocLinks.swift */,
 				50ED86F61FCB759B00E48884 /* DevMode.swift */,
 				50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */,
@@ -182,8 +182,8 @@
 			isa = PBXGroup;
 			children = (
 				504C7E351FCCE6AD0020DFD2 /* Network */,
-				5053E90C1FC8D1D800166FBE /* DefaultModules.h */,
-				5053E90E1FC8D51100166FBE /* DefaultModules.m */,
+				5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */,
+				5053E90E1FC8D51100166FBE /* DefaultPlugins.m */,
 				501CBABE1FC2A22A009B0D4D /* Browser.swift */,
 				50474F0C1FC5284D00AA0184 /* Camera.swift */,
 				50B80BE71FCDE1E8000717DF /* Clipboard.swift */,
@@ -211,8 +211,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5053E9101FC8FEEC00166FBE /* ModuleBridge.h in Headers */,
-				5053E90D1FC8D24000166FBE /* DefaultModules.h in Headers */,
+				5053E9101FC8FEEC00166FBE /* PluginBridge.h in Headers */,
+				5053E90D1FC8D24000166FBE /* DefaultPlugins.h in Headers */,
 				50503EF01FC08595003606DC /* Avocado.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,7 +320,7 @@
 				501CBABD1FC29EDE009B0D4D /* SplashScreen.swift in Sources */,
 				50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */,
 				50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */,
-				5053E90B1FC8D01200166FBE /* ModuleBridge.m in Sources */,
+				5053E90B1FC8D01200166FBE /* PluginBridge.m in Sources */,
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
 				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
@@ -332,7 +332,7 @@
 				504C7E371FCCE6BC0020DFD2 /* Reachability.swift in Sources */,
 				50ED86F71FCB759B00E48884 /* DevMode.swift in Sources */,
 				50503F001FC08662003606DC /* Geolocation.swift in Sources */,
-				5053E90F1FC8D51100166FBE /* DefaultModules.m in Sources */,
+				5053E90F1FC8D51100166FBE /* DefaultPlugins.m in Sources */,
 				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
 				50503F251FC098A3003606DC /* Plugin.swift in Sources */,
 				50ED86FB1FCC9D6600E48884 /* PushNotifications.swift in Sources */,

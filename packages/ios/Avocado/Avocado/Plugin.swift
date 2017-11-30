@@ -13,7 +13,7 @@ public typealias PluginEventListener = PluginCall
  *
  * Extends NSObject to allow for calling methods with selectors
  */
-public class Plugin: NSObject {
+open class Plugin: NSObject {
   public var pluginId: String
   var bridge: Bridge
   

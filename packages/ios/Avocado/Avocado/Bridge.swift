@@ -2,6 +2,7 @@ import Foundation
 import Dispatch
 import WebKit
 
+
 public class Bridge {
   public var viewController: UIViewController
   
@@ -36,7 +37,7 @@ public class Bridge {
     let classes = objc_copyClassList(&numClasses)
     for i in 0..<Int(numClasses) {
       let c = classes![i]
-      if class_conformsToProtocol(c, AvocadoBridgeModule.self) {
+      if class_conformsToProtocol(c, AvocadoBridgePlugin.self) {
         let moduleType = c as! Plugin.Type
         registerPlugin(moduleType)
       }
@@ -44,7 +45,7 @@ public class Bridge {
   }
   
   func registerPlugin(_ pluginType: Plugin.Type) {
-    let bridgeType = pluginType as! AvocadoBridgeModule.Type
+    let bridgeType = pluginType as! AvocadoBridgePlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
   }
   
@@ -65,7 +66,7 @@ public class Bridge {
       return nil
     }
     
-    let bridgeType = pluginType as! AvocadoBridgeModule.Type
+    let bridgeType = pluginType as! AvocadoBridgePlugin.Type
     let p = pluginType.init(self, id: bridgeType.pluginId())
     p.load()
     self.plugins[bridgeType.pluginId()] = p

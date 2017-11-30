@@ -16,3 +16,4 @@ export { Motion } from './plugins/motion';
 export { Network } from './plugins/network';
 export { SplashScreen } from './plugins/splashscreen';
 export { StatusBar, StatusBarStyle } from './plugins/statusbar';
+export { Test } from './plugins/test';
