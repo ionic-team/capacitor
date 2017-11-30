@@ -18,7 +18,8 @@ import {
   Network,
   SplashScreen,
   StatusBar,
-  StatusBarStyle
+  StatusBarStyle,
+  Test
 } from 'avocado-js';
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 
@@ -53,6 +54,9 @@ export class HomePage {
     network.onStatusChange((err, status) => {
       console.log("Network status changed", status);
     });
+
+    let t = new Test();
+    t.test();
 
     this.doStuff();
   }
