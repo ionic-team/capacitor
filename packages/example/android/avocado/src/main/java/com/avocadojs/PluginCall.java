@@ -7,7 +7,7 @@ import org.json.JSONObject;
 public class PluginCall {
     private MessageHandler msgHandler;
     private String callbackId;
-    JSONObject data;
+    public JSONObject data;
 
 
     public PluginCall(MessageHandler msgHandler, String callbackId, JSONObject data) {
@@ -17,7 +17,10 @@ public class PluginCall {
     }
 
     public void successCallback(PluginResult successResult) {
-        this.msgHandler.responseMessage(this.callbackId, successResult, null);
+        if (this.callbackId != "-1") {
+            // don't bother sending back response if the callbackId was "-1"
+            this.msgHandler.responseMessage(this.callbackId, successResult, null);
+        }
     }
 
     public void errorCallback(String msg) {
