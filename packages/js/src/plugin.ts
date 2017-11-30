@@ -8,6 +8,10 @@ declare const window: WindowAvocado;
  */
 export class Plugin {
 
+  constructor() {
+    (window.avocado as any)[this.config.name] = this;
+  }
+
   nativeCallback(methodName: string, callback?: PluginCallback): void;
   nativeCallback(methodName: string, callback?: Function): void;
   nativeCallback(methodName: string, options?: any): void;
