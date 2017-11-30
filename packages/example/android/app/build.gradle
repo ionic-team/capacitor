@@ -25,6 +25,7 @@ android {
 
 dependencies {
     implementation project(':avocado')
+    implementation project(':plugins:console')
     implementation project(':plugins:device')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'

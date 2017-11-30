@@ -1,3 +1,2 @@
-include ':lib'
-include 'app', 'avocado', 'plugins', 'plugins:device'
+include 'app', 'avocado', 'plugins', 'plugins:console', 'plugins:device'
 
