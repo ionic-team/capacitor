@@ -24,9 +24,9 @@ export interface PluginCall {
  * to be called after native response
  */
 export interface StoredCallback {
-  callbackFunction?: PluginCallback;
-  callbackResolve?: Function;
-  callbackReject?: Function;
+  callback?: PluginCallback;
+  resolve?: Function;
+  reject?: Function;
 }
 
 /**
@@ -50,4 +50,29 @@ export interface PluginResult {
 export interface PluginConfig {
   id: string;
   name: string;
+}
+
+export interface Avocado {
+  isNative?: boolean;
+  platform?: string;
+  toNative?: (pluginId: string, methodName: string, options: any, storedCallback?: StoredCallback) => void;
+  fromNative?: (result: PluginResult) => void;
+}
+
+export interface WindowAvocado {
+  avocado: Avocado;
+  androidBridge: {
+    postMessage: (data: any) => void;
+  };
+  webkit: {
+    messageHandlers: {
+      bridge: {
+        postMessage: (data: any) => void;
+      };
+    };
+  };
+  console: {
+    [level: string]: Function;
+  };
+  window: any;
 }
