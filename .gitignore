@@ -7,4 +7,7 @@ Pods/
 test_project/
 Podfile
 *.map
-www/
+.DS_Store
+packages/example/www/
+packages/example/ios/IonicRunner/www/*
+!packages/example/ios/IonicRunner/www/.gitkeep
