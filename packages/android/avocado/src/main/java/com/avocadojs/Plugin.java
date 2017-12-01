@@ -4,18 +4,18 @@ import android.util.Log;
 
 
 public class Plugin {
-    private String pluginId;
-    public Avocado avocado;
+  private String pluginId;
+  public Avocado avocado;
 
-    public Plugin(Avocado avocado, String id) {
-        Log.d("PLUGIN", id);
+  public Plugin(Avocado avocado, String id) {
+    Log.d("PLUGIN", id);
 
-        this.avocado = avocado;
-        this.pluginId = id;
-    }
+    this.avocado = avocado;
+    this.pluginId = id;
+  }
 
-    public String getId() {
-        return this.pluginId;
-    }
+  public String getId() {
+    return this.pluginId;
+  }
 
 }
