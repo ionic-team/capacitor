@@ -24,6 +24,7 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
     imagePicker!.delegate = self
     imagePicker!.modalPresentationStyle = .popover
     imagePicker!.popoverPresentationController?.delegate = self
+    self.setPopover(self.imagePicker!)
     //imagePicker!.popoverPresentationController?.sourceView = view
     
     // Build the action sheet
@@ -31,7 +32,7 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
     alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
       self.imagePicker!.sourceType = .photoLibrary
       self.imagePicker!.allowsEditing = allowEditing
-      
+
       self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
     }))
     
@@ -44,9 +45,10 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
       }
       
       self.imagePicker!.sourceType = .camera
+
       self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
     }))
-    
+    setPopover(alert)
     self.bridge.viewController.present(alert, animated: true, completion: nil)
   }
   
@@ -108,6 +110,15 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
     }
     
     return nil
+  }
+
+  /**
+   * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered
+   */
+  func setPopover (_ vc:UIViewController) {
+    vc.popoverPresentationController?.sourceRect = CGRect(x: self.bridge.viewController.view.center.x, y: self.bridge.viewController.view.center.y, width: 0, height: 0)
+    vc.popoverPresentationController?.sourceView = self.bridge.viewController.view
+    vc.popoverPresentationController?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
   }
 }
 
