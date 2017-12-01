@@ -20,6 +20,7 @@ sudo npm link
 
 ```
 cd packages/example
+npm link avocado-js
 npm run build && cp -R www/* ios/IonicRunner/www/
 ```
 
