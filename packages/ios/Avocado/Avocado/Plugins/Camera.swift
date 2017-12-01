@@ -87,11 +87,23 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
    */
   func checkUsageDescriptions() -> String? {
     if let dict = Bundle.main.infoDictionary {
-      let hasPhotoLibraryUsage = dict["NSPhotoLibraryAddUsageDescription"] != nil
-      if !hasPhotoLibraryUsage {
+      let hasPhotoLibraryAddUsage = dict["NSPhotoLibraryAddUsageDescription"] != nil
+      if !hasPhotoLibraryAddUsage {
         let docLink = DocLinks.NSPhotoLibraryAddUsageDescription
         return "You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file." +
         " Camera will not function without it. Learn more: \(docLink.rawValue)"
+      }
+      let hasPhotoLibraryUsage = dict["NSPhotoLibraryUsageDescription"] != nil
+      if !hasPhotoLibraryUsage {
+          let docLink = DocLinks.NSPhotoLibraryUsageDescription
+          return "You are missing NSPhotoLibraryUsageDescription in your Info.plist file." +
+          " Camera will not function without it. Learn more: \(docLink.rawValue)"
+      }
+      let hasCameraUsage = dict["NSCameraUsageDescription"] != nil
+      if !hasCameraUsage {
+          let docLink = DocLinks.NSCameraUsageDescription
+          return "You are missing NSCameraUsageDescription in your Info.plist file." +
+          " Camera will not function without it. Learn more: \(docLink.rawValue)"
       }
     }
     
