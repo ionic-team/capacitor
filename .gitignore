@@ -9,5 +9,7 @@ Podfile
 *.map
 .DS_Store
 packages/example/www/
+packages/example/android/app/src/main/assets/www/*
+!packages/example/android/app/src/main/assets/www/.gitkeep
 packages/example/ios/IonicRunner/www/*
 !packages/example/ios/IonicRunner/www/.gitkeep
