@@ -6,7 +6,6 @@ import android.webkit.WebView;
 
 import org.json.JSONObject;
 
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 
 
@@ -49,31 +48,11 @@ public class MessageHandler {
     }
   }
 
-  private void callPluginMethodHandle(String callbackId, String pluginId, String methodName, JSONObject methodData) {
-    PluginCall call = new PluginCall(this, callbackId, methodData);
-
-    try {
-      Plugin plugin = this.avocado.getPlugin(pluginId);
-      if (plugin == null) {
-        Log.e("callPluginMethod", "unable to find plugin : " + pluginId);
-        call.errorCallback("unable to find plugin : " + pluginId);
-        return;
-      }
-
-      Log.d("callPluginMethod", "callback: " + callbackId + ", pluginId: " + plugin.getId() + ", className:" + plugin.getClass().getName() + ", methodName: " + methodName + ", methodData: " + methodData.toString());
-
-
-    } catch(Exception ex) {
-      Log.e("callPluginMethod", "error : " + ex);
-      call.errorCallback(ex.toString());
-    }
-  }
-
   void callPluginMethod(String callbackId, String pluginId, String methodName, JSONObject methodData) {
     PluginCall call = new PluginCall(this, callbackId, methodData);
 
     try {
-      Plugin plugin = this.avocado.getPlugin(pluginId);
+      KnownPlugin plugin = this.avocado.getPlugin(pluginId);
       if (plugin == null) {
         Log.e("callPluginMethod", "unable to find plugin : " + pluginId);
         call.errorCallback("unable to find plugin : " + pluginId);
@@ -82,10 +61,7 @@ public class MessageHandler {
 
       Log.d("callPluginMethod", "callback: " + callbackId + ", pluginId: " + plugin.getId() + ", className:" + plugin.getClass().getName() + ", methodName: " + methodName + ", methodData: " + methodData.toString());
 
-      Method method = plugin.getClass().getMethod(methodName, PluginCall.class);
-
-      method.invoke(plugin, call);
-
+      plugin.invoke(methodName, call);
     } catch (Exception ex) {
       Log.e("callPluginMethod", "error : " + ex);
       call.errorCallback(ex.toString());

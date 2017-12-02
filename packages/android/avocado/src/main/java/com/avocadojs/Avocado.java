@@ -16,16 +16,17 @@ public class Avocado {
   private Context context;
   private WebView webView;
   private MessageHandler msgHandler;
-  private Map<String, Plugin> plugins = new HashMap<String, Plugin>();
+
+  private Map<String, KnownPlugin> plugins = new HashMap<>();
 
 
   public Avocado(Context context, WebView webView) {
-    Log.d("AVOCADO", "constructor");
     this.context = context;
     this.webView = webView;
     this.msgHandler = new MessageHandler(this, webView);
 
 
+    // Start the local web server
     final WebViewLocalServer localServer = new WebViewLocalServer(context);
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets("www");
 
@@ -36,37 +37,38 @@ public class Avocado {
       }
     });
 
+    // Load the index.html file from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
     webView.loadUrl(url);
   }
 
-  public void addPlugin(Plugin plugin) {
+  /**
+   * Register a plugin class
+   * @param pluginClass a class inheriting from PluginBase
+   */
+  public void registerPlugin(Class<? extends PluginBase> pluginClass) {
+    Plugin pluginAnnotation = pluginClass.getAnnotation(Plugin.class);
+
+    if(pluginAnnotation == null) {
+      Log.e("Avocado:registerPlugin", "Plugin doesn't have the @Plugin annotation. Please add it");
+      return;
+    }
+
+    String pluginId = pluginAnnotation.id();
+
     try {
-      this.plugins.put(plugin.getId(), plugin);
-      this.indexMethods(plugin);
-    } catch (Exception ex) {
-      Log.e("addPlugin", "Exception : " + ex);
-      ex.printStackTrace();
+      this.plugins.put(pluginId, new KnownPlugin(pluginClass));
+    } catch(InvalidPluginException ex) {
+      Log.e("Avocado:registerPlugin", "Plugin " + pluginClass.getName() +
+          " is invalid. Ensure the @Plugin annotation exists on the plugin class and" +
+          " the class extends PluginBase");
     }
   }
 
-  private void indexMethods(Plugin plugin) {
-    Class<? extends Plugin> pluginClass = plugin.getClass();
-    Method[] methods = pluginClass.getDeclaredMethods();
-
-    for(Method pluginMethod: methods) {
-      PluginMethod method = pluginMethod.getAnnotation(PluginMethod.class);
-
-      if(method != null) {
-        Log.d("Found method on plugin", method.toString());
-        PluginMethodMetadata methodMeta = new PluginMethodMetadata(pluginMethod);
-      }
-    }
-  }
-
-  public Plugin getPlugin(String pluginId) {
+  public KnownPlugin getPlugin(String pluginId) {
     return this.plugins.get(pluginId);
   }
+
 
   public Context getContext() {
     return this.context;

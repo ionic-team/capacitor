@@ -1,21 +1,12 @@
 package com.avocadojs;
 
-import android.util.Log;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-
-public class Plugin {
-  private String pluginId;
-  public Avocado avocado;
-
-  public Plugin(Avocado avocado, String id) {
-    Log.d("PLUGIN", id);
-
-    this.avocado = avocado;
-    this.pluginId = id;
-  }
-
-  public String getId() {
-    return this.pluginId;
-  }
-
+/**
+ * Base annotation for all Plugins
+ */
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Plugin {
+  String id();
 }

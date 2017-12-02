@@ -3,11 +3,11 @@ package com.avocadojs.plugin;
 import android.util.Log;
 
 import com.avocadojs.Avocado;
-import com.avocadojs.Plugin;
+import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 
 
-public class Console extends Plugin {
+public class Console extends PluginBase {
 
   public Console(Avocado avocado) {
     super(avocado, "com.avocadojs.plugin.console");
