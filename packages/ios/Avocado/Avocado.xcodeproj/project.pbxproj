@@ -35,6 +35,8 @@
 		50B80BEA1FCDECE2000717DF /* Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE91FCDECE2000717DF /* Share.swift */; };
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
 		50E3D63F1FCE6EA500BBEB06 /* BridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */; };
+		50E3D67B1FCF8E6300BBEB06 /* CDVAppRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E3D67A1FCF8E6300BBEB06 /* CDVAppRate.m */; };
+		50E3D6B81FCF914C00BBEB06 /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E3D6B91FCF914C00BBEB06 /* Cordova.framework */; };
 		50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86EF1FCA66CB00E48884 /* DocLinks.swift */; };
 		50ED86F31FCB728D00E48884 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F21FCB728D00E48884 /* Network.swift */; };
 		50ED86F51FCB737300E48884 /* Modals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F41FCB737300E48884 /* Modals.swift */; };
@@ -85,6 +87,9 @@
 		50B80BE91FCDECE2000717DF /* Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Share.swift; sourceTree = "<group>"; };
 		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
 		50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeViewController.swift; sourceTree = "<group>"; };
+		50E3D67A1FCF8E6300BBEB06 /* CDVAppRate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDVAppRate.m; sourceTree = "<group>"; };
+		50E3D67C1FCF8E7200BBEB06 /* CDVAppRate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDVAppRate.h; sourceTree = "<group>"; };
+		50E3D6B91FCF914C00BBEB06 /* Cordova.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Cordova.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50ED86EF1FCA66CB00E48884 /* DocLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocLinks.swift; sourceTree = "<group>"; };
 		50ED86F21FCB728D00E48884 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		50ED86F41FCB737300E48884 /* Modals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modals.swift; sourceTree = "<group>"; };
@@ -98,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50E3D6B81FCF914C00BBEB06 /* Cordova.framework in Frameworks */,
 				501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,6 +122,7 @@
 		501CBAA51FC0A723009B0D4D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				50E3D6B91FCF914C00BBEB06 /* Cordova.framework */,
 				501CBAA61FC0A723009B0D4D /* WebKit.framework */,
 			);
 			name = Frameworks;
@@ -181,6 +188,7 @@
 		50503F1F1FC095EA003606DC /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				50E3D6791FCF8E5200BBEB06 /* Compat */,
 				504C7E351FCCE6AD0020DFD2 /* Network */,
 				5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */,
 				5053E90E1FC8D51100166FBE /* DefaultPlugins.m */,
@@ -202,6 +210,15 @@
 				50B80BE91FCDECE2000717DF /* Share.swift */,
 			);
 			path = Plugins;
+			sourceTree = "<group>";
+		};
+		50E3D6791FCF8E5200BBEB06 /* Compat */ = {
+			isa = PBXGroup;
+			children = (
+				50E3D67A1FCF8E6300BBEB06 /* CDVAppRate.m */,
+				50E3D67C1FCF8E7200BBEB06 /* CDVAppRate.h */,
+			);
+			path = Compat;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -322,6 +339,7 @@
 				50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */,
 				5053E90B1FC8D01200166FBE /* PluginBridge.m in Sources */,
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
+				50E3D67B1FCF8E6300BBEB06 /* CDVAppRate.m in Sources */,
 				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
 				50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */,

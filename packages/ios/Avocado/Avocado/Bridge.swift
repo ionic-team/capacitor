@@ -1,7 +1,7 @@
 import Foundation
 import Dispatch
 import WebKit
-
+import Cordova
 
 public class Bridge {
   public var viewController: UIViewController
@@ -15,6 +15,8 @@ public class Bridge {
   // List of known plugins by pluginId -> Plugin Type
   public var knownPlugins = [String:Plugin.Type]()
   
+  public var knownCordovaPlugins = [String:CDVPlugin]()
+  
   // Dispatch queue for our operations
   // TODO: Unique label?
   public var dispatchQueue = DispatchQueue(label: "bridge")
@@ -24,6 +26,7 @@ public class Bridge {
 
     //showDevMode()
     registerPlugins()
+    registerCordovaPlugins()
   }
   
   public func willAppear() {
@@ -43,10 +46,27 @@ public class Bridge {
       }
     }
   }
-  
+
   func registerPlugin(_ pluginType: Plugin.Type) {
     let bridgeType = pluginType as! AvocadoBridgePlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
+  }
+  
+  func registerCordovaPlugins() {
+    var numClasses = UInt32(0);
+    let classes = objc_copyClassList(&numClasses)
+    for i in 0..<Int(numClasses) {
+      let c = classes![i]
+      if class_getSuperclass(c) == CDVPlugin.self {
+        print("Found a cordova plugin:", c)
+        let pluginType = c as CDVPlugin.self
+        registerCordovaPlugin(pluginType)
+      }
+    }
+  }
+  
+  func registerCordovaPlugin(_ pluginType: CDVPlugin) {
+    
   }
   
   public func getOrLoadPlugin(pluginId: String) -> Plugin? {
