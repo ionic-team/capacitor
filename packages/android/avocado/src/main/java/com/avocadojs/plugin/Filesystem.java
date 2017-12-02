@@ -1,10 +1,10 @@
 package com.avocadojs.plugin;
 
 import com.avocadojs.Avocado;
-import com.avocadojs.Plugin;
+import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 
-public class Filesystem extends Plugin {
+public class Filesystem extends PluginBase {
   public Filesystem(Avocado avocado) {
     super(avocado, "com.avocadojs.plugin.filesystem");
   }

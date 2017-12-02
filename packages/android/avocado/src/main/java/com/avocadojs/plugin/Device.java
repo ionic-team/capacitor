@@ -3,13 +3,13 @@ package com.avocadojs.plugin;
 import android.provider.Settings;
 
 import com.avocadojs.Avocado;
-import com.avocadojs.Plugin;
+import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 import com.avocadojs.PluginResult;
 
 
-public class Device extends Plugin {
+public class Device extends PluginBase {
 
   public Device(Avocado avocado) {
     super(avocado, "com.avocadojs.plugin.device");
