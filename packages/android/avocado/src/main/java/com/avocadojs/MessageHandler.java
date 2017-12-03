@@ -70,7 +70,7 @@ public class MessageHandler {
         data.put("data", successResult);
       }
 
-      final String runScript = "bridge.fromNative(" + data.toString() + ")";
+      final String runScript = "avocado.fromNative(" + data.toString() + ")";
 
       final WebView webView = this.webView;
       webView.post(new Runnable() {
