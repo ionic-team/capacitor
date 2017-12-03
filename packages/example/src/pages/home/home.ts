@@ -289,6 +289,12 @@ export class HomePage {
     console.log('Appended');
   }
 
+  async fileDelete() {
+    let fs = new Filesystem()
+    await fs.deleteFile('secrets/text.txt', FilesystemDirectory.Documents);
+    console.log('Deleted');
+  }
+
   async mkdir() {
     let fs = new Filesystem()
     try {
