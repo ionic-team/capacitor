@@ -84,6 +84,7 @@ public class Filesystem extends PluginBase {
     String data = call.getString("data");
     String directory = call.getString("directory");
     String encoding = call.getString("encoding", "utf8");
+    boolean append = call.getBoolean("append", false).booleanValue();
 
     File androidDirectory = this.getDirectory(directory);
     Charset charset = this.getEncoding(encoding);
@@ -103,7 +104,7 @@ public class Filesystem extends PluginBase {
     try {
       BufferedWriter bw = new BufferedWriter(
           new OutputStreamWriter(
-              new FileOutputStream(fileObject),
+              new FileOutputStream(fileObject, append),
               charset
           )
       );
@@ -120,7 +121,11 @@ public class Filesystem extends PluginBase {
 
   @PluginMethod()
   public void appendFile(PluginCall call) {
+    try {
+      call.getData().putOpt("append", true);
+    } catch(JSONException ex) {}
 
+    this.writeFile(call);
   }
 
   @PluginMethod()
