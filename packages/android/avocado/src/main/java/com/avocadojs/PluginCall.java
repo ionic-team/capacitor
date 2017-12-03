@@ -33,6 +33,9 @@ public class PluginCall {
     PluginResult result = new PluginResult(data);
     this.msgHandler.responseMessage(this.callbackId, result, null);
   }
+  public void success() {
+    this.success(new JSONObject());
+  }
 
 
   public void errorCallback(String msg) {
@@ -50,7 +53,9 @@ public class PluginCall {
   public void error(String msg, Exception ex) {
     PluginResult errorResult = new PluginResult();
 
-    ex.printStackTrace();
+    if(ex != null) {
+      ex.printStackTrace();
+    }
 
     try {
       errorResult.put("message", msg);
@@ -59,6 +64,10 @@ public class PluginCall {
     }
 
     this.msgHandler.responseMessage(this.callbackId, null, errorResult);
+  }
+
+  public void error(String msg) {
+    this.error(msg, null);
   }
 
   public String getCallbackId() {
@@ -91,6 +100,19 @@ public class PluginCall {
 
     if(value instanceof Integer) {
       return (Integer) value;
+    }
+    return defaultValue;
+  }
+
+  public Boolean getBoolean(String name) {
+    return this.getBoolean(name, null);
+  }
+  public Boolean getBoolean(String name, Boolean defaultValue) {
+    Object value = this.data.opt(name);
+    if(value == null) { return defaultValue; }
+
+    if(value instanceof Boolean) {
+      return (Boolean) value;
     }
     return defaultValue;
   }
