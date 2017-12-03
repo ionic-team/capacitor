@@ -7,11 +7,11 @@ import { NativePlugin, Plugin } from '../plugin';
 })
 export class Clipboard extends Plugin {
 
-  set(options: ClipboardSet) {
+  set(options: ClipboardSet) : Promise<void> {
     return this.nativePromise('set', options);
   }
 
-  get(options: ClipboardGet) {
+  get(options: ClipboardGet) : Promise<ClipboardGetResult> {
     return this.nativePromise('get', options);
   }
 }
@@ -25,4 +25,8 @@ export interface ClipboardSet {
 
 export interface ClipboardGet {
   type: 'string' | 'url' | 'image';
+}
+
+export interface ClipboardGetResult {
+  value: string;
 }
