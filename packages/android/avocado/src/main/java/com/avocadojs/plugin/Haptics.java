@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
+import android.view.HapticFeedbackConstants;
 
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginBase;
@@ -18,12 +19,13 @@ import java.security.Permission;
 /**
  * Haptic engine plugin, also handles vibration.
  *
- * If you'd like to use this plugin, add the following permissions to
- * your AndroidManifest.xml:
+ * If you'd like to use this plugin for vibration,
+ * add the following permissions to * your AndroidManifest.xml:
  * <uses-permission android:name="android.permission.VIBRATE"/>
  */
 @Plugin(id="com.avocadojs.plugin.haptics")
 public class Haptics extends PluginBase {
+
   @PluginMethod()
   public void vibrate(PluginCall call) {
     Context c = this.getContext();
@@ -40,5 +42,30 @@ public class Haptics extends PluginBase {
       ((Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(duration);
     }
 
+    call.success();
+  }
+
+  @PluginMethod()
+  public void impact(PluginCall call) {
+    this.bridge.getWebView().performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+    call.success();
+  }
+
+  @PluginMethod()
+  public void selectionStart(PluginCall call) {
+    // Not yet implemented
+    call.success();
+  }
+
+  @PluginMethod()
+  public void selectionChanged(PluginCall call) {
+    // Not yet implemented
+    call.success();
+  }
+
+  @PluginMethod()
+  public void selectionEnd(PluginCall call) {
+    // Not yet implemented
+    call.success();
   }
 }

@@ -14,14 +14,13 @@ export class Clipboard extends Plugin {
   get(options: ClipboardGet) {
     return this.nativePromise('get', options);
   }
-
 }
-
 
 export interface ClipboardSet {
   string?: string;
   image?: string;
   url?: string;
+  label?: string; // Android only
 }
 
 export interface ClipboardGet {

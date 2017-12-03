@@ -20,4 +20,5 @@ public class MainActivity extends AppCompatActivity {
     Bridge bridge = new Bridge(this, webView);
   }
 
+
 }
