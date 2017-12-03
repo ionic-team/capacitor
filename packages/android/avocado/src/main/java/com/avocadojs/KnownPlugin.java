@@ -41,6 +41,10 @@ public class KnownPlugin {
     return this.pluginId;
   }
 
+  public PluginBase getInstance() {
+    return this.instance;
+  }
+
   public PluginBase load() throws PluginLoadException {
     if(this.instance != null) {
       return this.instance;

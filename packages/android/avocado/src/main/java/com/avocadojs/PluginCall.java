@@ -2,13 +2,16 @@ package com.avocadojs;
 
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-
+/**
+ * Wraps a call from the web layer to native
+ */
 public class PluginCall {
   private final MessageHandler msgHandler;
   private final String callbackId;
-  public final JSONObject data;
+  private final JSONObject data;
 
   public PluginCall(MessageHandler msgHandler, String callbackId, JSONObject data) {
     this.msgHandler = msgHandler;
@@ -17,19 +20,42 @@ public class PluginCall {
   }
 
   public void successCallback(PluginResult successResult) {
-    if (this.callbackId != "-1") {
-      // don't bother sending back response if the callbackId was "-1"
-      this.msgHandler.responseMessage(this.callbackId, successResult, null);
+    if(this.callbackId == "-1") {
+      // don't send back response if the callbackId was "-1"
+      return;
     }
+
+    this.msgHandler.responseMessage(this.callbackId, successResult, null);
   }
+
+
+  public void success(JSONObject data) {
+    PluginResult result = new PluginResult(data);
+    this.msgHandler.responseMessage(this.callbackId, result, null);
+  }
+
 
   public void errorCallback(String msg) {
     PluginResult errorResult = new PluginResult();
+
     try {
       errorResult.put("message", msg);
-
     } catch (Exception jsonEx) {
-      Log.e("errorCallback", jsonEx.toString());
+      Log.e(Bridge.TAG, jsonEx.toString());
+    }
+
+    this.msgHandler.responseMessage(this.callbackId, null, errorResult);
+  }
+
+  public void error(String msg, Exception ex) {
+    PluginResult errorResult = new PluginResult();
+
+    ex.printStackTrace();
+
+    try {
+      errorResult.put("message", msg);
+    } catch (Exception jsonEx) {
+      Log.e(Bridge.TAG, jsonEx.toString());
     }
 
     this.msgHandler.responseMessage(this.callbackId, null, errorResult);
@@ -41,6 +67,50 @@ public class PluginCall {
 
   public JSONObject getData() {
     return this.data;
+  }
+
+  public String getString(String name) {
+    return this.getString(name, null);
+  }
+  public String getString(String name, String defaultValue) {
+    Object value = this.data.opt(name);
+    if(value == null) { return defaultValue; }
+
+    if(value instanceof String) {
+      return (String) value;
+    }
+    return defaultValue;
+  }
+
+  public Integer getInt(String name) {
+    return this.getInt(name, null);
+  }
+  public Integer getInt(String name, Integer defaultValue) {
+    Object value = this.data.opt(name);
+    if(value == null) { return defaultValue; }
+
+    if(value instanceof Integer) {
+      return (Integer) value;
+    }
+    return defaultValue;
+  }
+
+  public JSONObject getObject(String name) {
+    return this.getObject(name, new JSONObject());
+  }
+
+  public JSONObject getObject(String name, JSONObject defaultValue) {
+    Object value = this.data.opt(name);
+    if(value == null) { return defaultValue; }
+
+    if(value instanceof JSONObject) {
+      return (JSONObject) value;
+    }
+    return defaultValue;
+  }
+
+  class PluginCallDataTypeException extends Exception {
+    PluginCallDataTypeException(String m) { super(m); }
   }
 }
 
