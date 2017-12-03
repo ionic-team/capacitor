@@ -1,5 +1,14 @@
 import { NativePlugin, Plugin } from '../plugin';
 
+export enum FilesystemDirectory {
+  Application = 'APPLICATION',
+  Documents = 'DOCUMENTS',
+  Data = 'DATA',
+  Cache = 'CACHE',
+  External = 'EXTERNAL', // Android only
+  ExternalStorage = 'EXTERNAL_STORAGE' // Android only
+}
+
 export interface FileReadResult {
   data: string;
 }
@@ -82,14 +91,4 @@ export class Filesystem extends Plugin {
     });
   }
 
-}
-
-
-export enum FilesystemDirectory {
-  Application = 'APPLICATION',
-  Documents = 'DOCUMENTS',
-  Data = 'DATA',
-  Cache = 'CACHE',
-  External = 'EXTERNAL', // Android only
-  ExternalStorage = 'EXTERNAL_STORAGE' // Android only
 }
