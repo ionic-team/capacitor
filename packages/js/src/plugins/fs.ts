@@ -34,7 +34,7 @@ export interface StatResult {
 
 @NativePlugin({
   name: 'Filesystem',
-  id: 'com.avocadojs.plugin.fs'
+  id: 'com.avocadojs.plugin.filesystem'
 })
 export class Filesystem extends Plugin {
 

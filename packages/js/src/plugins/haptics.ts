@@ -1,5 +1,8 @@
 import { NativePlugin, Plugin } from '../plugin';
 
+export interface VibrateOptions {
+  duration?: number;
+}
 
 @NativePlugin({
   name: 'Haptics',
@@ -11,8 +14,8 @@ export class Haptics extends Plugin {
     this.nativeCallback('impact', options);
   }
 
-  vibrate() {
-    this.nativeCallback('vibrate');
+  vibrate(options: VibrateOptions = {}) {
+    this.nativeCallback('vibrate', options);
   }
 
   selectionStart() {

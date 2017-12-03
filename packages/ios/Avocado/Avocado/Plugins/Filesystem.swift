@@ -133,6 +133,37 @@ public class Filesystem : Plugin {
     }
   }
   
+  /**
+   * Append to a file.
+   */
+  @objc func deleteFile(_ call: PluginCall) {
+    //let encoding = call.get("encoding") as? String ?? "utf8"
+    // TODO: Allow them to switch encoding
+    guard let file = call.get("file", String.self) else {
+      handleError(call, "File must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
+    let directory = getDirectory(directory: directoryOption)
+    
+    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
+      handleError(call, "Invalid device directory '\(directoryOption)'")
+      return
+    }
+    
+    let fileUrl = dir.appendingPathComponent(file)
+    
+    do {
+      
+      if FileManager.default.fileExists(atPath: fileUrl.path) {
+        try FileManager.default.removeItem(atPath: fileUrl.path)
+      }
+      call.success()
+    } catch let error as NSError {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
   
   /**
    * Make a new directory, optionally creating parent folders first.
