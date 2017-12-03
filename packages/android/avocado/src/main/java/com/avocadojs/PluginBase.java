@@ -1,21 +1,15 @@
 package com.avocadojs;
 
-import android.util.Log;
-
-
+/**
+ * Base class for all plugins
+ */
 public class PluginBase {
-  private String pluginId;
-  public Avocado avocado;
+  protected Bridge bridge;
 
-  public PluginBase(Avocado avocado, String id) {
-    Log.d("PLUGIN", id);
-
-    this.avocado = avocado;
-    this.pluginId = id;
+  public PluginBase() {
   }
 
-  public String getId() {
-    return this.pluginId;
+  public void setBridge(Bridge bridge) {
+    this.bridge = bridge;
   }
-
 }

@@ -2,17 +2,17 @@ package com.avocadojs.plugin;
 
 import android.util.Log;
 
-import com.avocadojs.Avocado;
+import com.avocadojs.Bridge;
+import com.avocadojs.Plugin;
 import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
+import com.avocadojs.PluginMethod;
 
 
+@Plugin(id="com.avocadojs.plugin.console")
 public class Console extends PluginBase {
 
-  public Console(Avocado avocado) {
-    super(avocado, "com.avocadojs.plugin.console");
-  }
-
+  @PluginMethod()
   public void log(PluginCall call) {
     String level = call.data.optString("level", "log").toLowerCase();
     String message = call.data.optString("message", "");

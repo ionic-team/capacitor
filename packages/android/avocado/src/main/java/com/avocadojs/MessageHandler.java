@@ -1,21 +1,24 @@
 package com.avocadojs;
 
+import android.content.Context;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 
-
+/**
+ * MessageHandler handles messages from the webview, dispatching them
+ * to plugins.
+ */
 public class MessageHandler {
-  private Avocado avocado;
+  private Bridge bridge;
   private WebView webView;
 
 
-  public MessageHandler(Avocado avocado, WebView webView) {
-    this.avocado = avocado;
+  public MessageHandler(Bridge avocado, WebView webView) {
+    this.bridge = avocado;
     this.webView = webView;
 
     webView.getSettings().setJavaScriptEnabled(true);
@@ -51,21 +54,7 @@ public class MessageHandler {
   void callPluginMethod(String callbackId, String pluginId, String methodName, JSONObject methodData) {
     PluginCall call = new PluginCall(this, callbackId, methodData);
 
-    try {
-      KnownPlugin plugin = this.avocado.getPlugin(pluginId);
-      if (plugin == null) {
-        Log.e("callPluginMethod", "unable to find plugin : " + pluginId);
-        call.errorCallback("unable to find plugin : " + pluginId);
-        return;
-      }
-
-      Log.d("callPluginMethod", "callback: " + callbackId + ", pluginId: " + plugin.getId() + ", className:" + plugin.getClass().getName() + ", methodName: " + methodName + ", methodData: " + methodData.toString());
-
-      plugin.invoke(methodName, call);
-    } catch (Exception ex) {
-      Log.e("callPluginMethod", "error : " + ex);
-      call.errorCallback(ex.toString());
-    }
+    bridge.callPluginMethod(pluginId, methodName, call);
   }
 
   public void responseMessage(String callbackId, PluginResult successResult, PluginResult errorResult) {
@@ -81,7 +70,7 @@ public class MessageHandler {
         data.put("data", successResult);
       }
 
-      final String runScript = "avocado.fromNative(" + data.toString() + ")";
+      final String runScript = "bridge.fromNative(" + data.toString() + ")";
 
       final WebView webView = this.webView;
       webView.post(new Runnable() {
