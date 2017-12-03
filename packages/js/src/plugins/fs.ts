@@ -12,6 +12,8 @@ export enum FilesystemDirectory {
 export interface FileReadResult {
   data: string;
 }
+export interface FileDeleteResult {
+}
 export interface FileWriteResult {
 }
 export interface FileAppendResult {
@@ -59,6 +61,13 @@ export class Filesystem extends Plugin {
       file,
       directory,
       encoding
+    });
+  }
+
+  deleteFile(file: string, directory: FilesystemDirectory) : Promise<FileDeleteResult> {
+    return this.nativePromise('deleteFile', {
+      file,
+      directory
     });
   }
 

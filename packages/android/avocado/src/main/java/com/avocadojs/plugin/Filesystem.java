@@ -2,7 +2,6 @@ package com.avocadojs.plugin;
 
 import android.content.Context;
 import android.os.Environment;
-import android.text.style.TabStopSpan;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
@@ -11,6 +10,7 @@ import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,7 +19,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -129,6 +128,27 @@ public class Filesystem extends PluginBase {
   }
 
   @PluginMethod()
+  public void deleteFile(PluginCall call) {
+    String file = call.getString("file");
+    String directory = call.getString("directory");
+
+    File androidDirectory = this.getDirectory(directory);
+    if(androidDirectory == null) {
+      call.error("Unable to find system directory \"" + directory + "\"");
+      return;
+    }
+
+    File fileObject = new File(androidDirectory, file);
+
+    boolean deleted = fileObject.delete();
+    if(deleted == false) {
+      call.error("Unable to delete file");
+    } else {
+      call.success();
+    }
+  }
+
+  @PluginMethod()
   public void mkdir(PluginCall call) {
     String path = call.getString("path");
     String directory = call.getString("directory");
@@ -144,36 +164,88 @@ public class Filesystem extends PluginBase {
 
     Log.d(Bridge.TAG, "Creating directory " + fileObject.getAbsolutePath());
 
-    try {
-      boolean created = false;
-      if (intermediate) {
-        created = fileObject.mkdirs();
-      } else {
-        created = fileObject.mkdir();
-      }
-      if(created == false) {
-        call.error("Unable to create directory, unknown reason");
-      } else {
-        call.success();
-      }
-    } catch(SecurityException ex) {
-      call.error("Unable to mkdir", ex);
+    boolean created = false;
+    if (intermediate) {
+      created = fileObject.mkdirs();
+    } else {
+      created = fileObject.mkdir();
+    }
+    if(created == false) {
+      call.error("Unable to create directory, unknown reason");
+    } else {
+      call.success();
     }
   }
 
   @PluginMethod()
   public void rmdir(PluginCall call) {
+    String path = call.getString("path");
+    String directory = call.getString("directory");
 
+    File androidDirectory = this.getDirectory(directory);
+    if(androidDirectory == null) {
+      call.error("Unable to find system directory \"" + directory + "\"");
+      return;
+    }
+
+    File fileObject = new File(androidDirectory, path);
+
+    boolean deleted = fileObject.delete();
+
+    if(deleted == false) {
+      call.error("Unable to delete directory, unknown reason");
+    } else {
+      call.success();
+    }
   }
 
   @PluginMethod()
   public void readdir(PluginCall call) {
+    String path = call.getString("path");
+    String directory = call.getString("directory");
 
+    File androidDirectory = this.getDirectory(directory);
+    if(androidDirectory == null) {
+      call.error("Unable to find system directory \"" + directory + "\"");
+      return;
+    }
+
+    File fileObject = new File(androidDirectory, path);
+
+    String[] files = fileObject.list();
+
+    JSONObject ret = new JSONObject();
+    try {
+      ret.put("files", new JSONArray(files));
+      call.success(ret);
+    } catch(JSONException ex) {
+      call.error("Unable to list directory", ex);
+    }
   }
 
   @PluginMethod()
   public void stat(PluginCall call) {
+    String path = call.getString("path");
+    String directory = call.getString("directory");
 
+    File androidDirectory = this.getDirectory(directory);
+    if(androidDirectory == null) {
+      call.error("Unable to find system directory \"" + directory + "\"");
+      return;
+    }
+
+    File fileObject = new File(androidDirectory, path);
+
+    try {
+      JSONObject data = new JSONObject();
+      data.put("type", fileObject.isDirectory() ? "directory" : "file");
+      data.put("size", fileObject.length());
+      data.put("ctime", null);
+      data.put("mtime", fileObject.lastModified());
+      call.success(data);
+    } catch(JSONException ex) {
+      call.error("Unable to stat file or directory", ex);
+    }
   }
 
   private Charset getEncoding(String encoding) {
