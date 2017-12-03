@@ -14,8 +14,8 @@ public class Console extends PluginBase {
 
   @PluginMethod()
   public void log(PluginCall call) {
-    String level = call.data.optString("level", "log").toLowerCase();
-    String message = call.data.optString("message", "");
+    String level = call.getString("level", "log").toLowerCase();
+    String message = call.getString("message", "");
 
     if (level == "error'") {
       Log.e("console", message);

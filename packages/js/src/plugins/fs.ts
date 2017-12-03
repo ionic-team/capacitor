@@ -1,5 +1,25 @@
 import { NativePlugin, Plugin } from '../plugin';
 
+export interface FileReadResult {
+  data: string;
+}
+export interface FileWriteResult {
+}
+export interface FileAppendResult {
+}
+export interface MkdirResult {
+}
+export interface RmdirResult {
+}
+export interface ReaddirResult {
+  files: string[];
+}
+export interface StatResult {
+  type: string;
+  size: number;
+  ctime: number;
+  mtime: number;
+}
 
 @NativePlugin({
   name: 'Filesystem',
@@ -7,7 +27,7 @@ import { NativePlugin, Plugin } from '../plugin';
 })
 export class Filesystem extends Plugin {
 
-  writeFile(file: string, data: string, directory: FilesystemDirectory, encoding: string = 'utf8') {
+  writeFile(file: string, data: string, directory: FilesystemDirectory, encoding: string = 'utf8') : Promise<FileWriteResult> {
     return this.nativePromise('writeFile', {
       file,
       data,
@@ -16,7 +36,7 @@ export class Filesystem extends Plugin {
     });
   }
 
-  appendFile(file: string, data: string, directory: FilesystemDirectory, encoding: string = 'utf8') {
+  appendFile(file: string, data: string, directory: FilesystemDirectory, encoding: string = 'utf8') : Promise<FileAppendResult> {
     return this.nativePromise('appendFile', {
       file,
       data,
@@ -25,7 +45,7 @@ export class Filesystem extends Plugin {
     });
   }
 
-  readFile(file: string, directory: FilesystemDirectory, encoding: string = 'utf8') {
+  readFile(file: string, directory: FilesystemDirectory, encoding: string = 'utf8') : Promise<FileReadResult> {
     return this.nativePromise('readFile', {
       file,
       directory,
@@ -33,7 +53,7 @@ export class Filesystem extends Plugin {
     });
   }
 
-  mkdir(path: string, directory: FilesystemDirectory, createIntermediateDirectories: boolean = false) {
+  mkdir(path: string, directory: FilesystemDirectory, createIntermediateDirectories: boolean = false) : Promise<MkdirResult> {
     return this.nativePromise('mkdir', {
       path,
       directory,
@@ -41,21 +61,21 @@ export class Filesystem extends Plugin {
     });
   }
 
-  rmdir(path: string, directory: FilesystemDirectory) {
+  rmdir(path: string, directory: FilesystemDirectory) : Promise<RmdirResult> {
     return this.nativePromise('rmdir', {
       path,
       directory
     });
   }
 
-  readdir(path: string, directory: FilesystemDirectory) {
+  readdir(path: string, directory: FilesystemDirectory) : Promise<ReaddirResult> {
     return this.nativePromise('readdir', {
       path,
       directory
     });
   }
 
-  stat(path: string, directory: FilesystemDirectory) {
+  stat(path: string, directory: FilesystemDirectory) : Promise<StatResult> {
     return this.nativePromise('stat', {
       path,
       directory

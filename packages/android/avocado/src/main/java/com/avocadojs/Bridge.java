@@ -99,7 +99,7 @@ public class Bridge {
       }
 
       Log.d(Bridge.TAG, "callback: " + call.getCallbackId() +
-          ", pluginId: " + plugin.getId() + ", className:" + plugin.getClass().getName() +
+          ", pluginId: " + plugin.getId() +
           ", methodName: " + methodName + ", methodData: " + call.getData().toString());
 
       Runnable currentThreadTask = new Runnable() {
