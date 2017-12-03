@@ -6,10 +6,9 @@ import org.json.JSONObject;
 
 
 public class PluginCall {
-  private MessageHandler msgHandler;
-  private String callbackId;
-  public JSONObject data;
-
+  private final MessageHandler msgHandler;
+  private final String callbackId;
+  public final JSONObject data;
 
   public PluginCall(MessageHandler msgHandler, String callbackId, JSONObject data) {
     this.msgHandler = msgHandler;
@@ -34,6 +33,14 @@ public class PluginCall {
     }
 
     this.msgHandler.responseMessage(this.callbackId, null, errorResult);
+  }
+
+  public String getCallbackId() {
+    return this.callbackId;
+  }
+
+  public JSONObject getData() {
+    return this.data;
   }
 }
 

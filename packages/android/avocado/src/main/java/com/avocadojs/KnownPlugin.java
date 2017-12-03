@@ -1,7 +1,10 @@
 package com.avocadojs;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +14,7 @@ import java.util.Map;
  * and indexed.
  */
 public class KnownPlugin {
+  private final Bridge bridge;
   private final Class<? extends PluginBase> pluginClass;
 
   private Map<String, PluginMethodMetadata> pluginMethods = new HashMap<>();
@@ -19,7 +23,8 @@ public class KnownPlugin {
 
   private PluginBase instance;
 
-  public KnownPlugin(Class<? extends PluginBase> pluginClass) throws InvalidPluginException {
+  public KnownPlugin(Bridge bridge, Class<? extends PluginBase> pluginClass) throws InvalidPluginException {
+    this.bridge = bridge;
     this.pluginClass = pluginClass;
 
     Plugin pluginAnnotation = pluginClass.getAnnotation(Plugin.class);
@@ -43,6 +48,7 @@ public class KnownPlugin {
 
     try {
       this.instance = this.pluginClass.newInstance();
+      this.instance.setBridge(this.bridge);
       return this.instance;
     } catch(InstantiationException | IllegalAccessException ex) {
       throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
@@ -55,7 +61,9 @@ public class KnownPlugin {
    * @param call the constructed PluginCall with parameters from the caller
    * @throws InvalidPluginMethodException if no method was found on that plugin
    */
-  public void invoke(String methodName, PluginCall call) throws PluginLoadException, InvalidPluginMethodException {
+  public void invoke(String methodName, PluginCall call) throws PluginLoadException,
+                                                                InvalidPluginMethodException,
+                                                                PluginInvocationException {
     if(this.instance == null) {
       // Can throw PluginLoadException
       this.load();
@@ -64,6 +72,13 @@ public class KnownPlugin {
     PluginMethodMetadata methodMeta = pluginMethods.get(methodName);
     if(methodMeta == null) {
       throw new InvalidPluginMethodException("No method " + methodName + " found for plugin " + pluginClass.getName());
+    }
+
+
+    try {
+      methodMeta.method.invoke(this.instance, call);
+    } catch(InvocationTargetException | IllegalAccessException ex) {
+      throw new PluginInvocationException("Unable to invoke method " + methodName + " on plugin " + pluginClass.getName(), ex);
     }
   }
 
@@ -83,6 +98,14 @@ public class KnownPlugin {
 
       PluginMethodMetadata methodMeta = new PluginMethodMetadata(methodReflect);
       pluginMethods.put(methodReflect.getName(), methodMeta);
+    }
+  }
+
+  private class PluginMethodInvocationHandler extends Handler {
+
+    @Override
+    public void dispatchMessage(Message msg) {
+
     }
   }
 }
