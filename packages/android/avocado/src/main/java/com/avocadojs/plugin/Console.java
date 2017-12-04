@@ -2,15 +2,14 @@ package com.avocadojs.plugin;
 
 import android.util.Log;
 
-import com.avocadojs.Bridge;
+import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
 
-@Plugin(id="com.avocadojs.plugin.console")
-public class Console extends PluginBase {
+@NativePlugin(id="com.avocadojs.plugin.console")
+public class Console extends Plugin {
 
   @PluginMethod()
   public void log(PluginCall call) {

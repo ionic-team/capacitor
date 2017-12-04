@@ -16,7 +16,6 @@ import com.avocadojs.plugin.Filesystem;
 import com.avocadojs.plugin.Modals;
 import com.avocadojs.plugin.StatusBar;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,13 +69,13 @@ public class Bridge {
 
   /**
    * Register a plugin class
-   * @param pluginClass a class inheriting from PluginBase
+   * @param pluginClass a class inheriting from Plugin
    */
-  public void registerPlugin(Class<? extends PluginBase> pluginClass) {
-    Plugin pluginAnnotation = pluginClass.getAnnotation(Plugin.class);
+  public void registerPlugin(Class<? extends Plugin> pluginClass) {
+    NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
 
     if(pluginAnnotation == null) {
-      Log.e(Bridge.TAG, "Plugin doesn't have the @Plugin annotation. Please add it");
+      Log.e(Bridge.TAG, "NativePlugin doesn't have the @NativePlugin annotation. Please add it");
       return;
     }
 
@@ -85,9 +84,9 @@ public class Bridge {
     try {
       this.plugins.put(pluginId, new KnownPlugin(this, pluginClass));
     } catch(InvalidPluginException ex) {
-      Log.e(Bridge.TAG, "Plugin " + pluginClass.getName() +
-          " is invalid. Ensure the @Plugin annotation exists on the plugin class and" +
-          " the class extends PluginBase");
+      Log.e(Bridge.TAG, "NativePlugin " + pluginClass.getName() +
+          " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
+          " the class extends Plugin");
     }
   }
 

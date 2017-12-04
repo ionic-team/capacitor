@@ -1,15 +1,14 @@
 package com.avocadojs.plugin;
 
-import android.app.ActionBar;
 import android.view.View;
 
+import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
-@Plugin(id="com.avocadojs.plugin.statusbar")
-public class StatusBar extends PluginBase {
+@NativePlugin(id="com.avocadojs.plugin.statusbar")
+public class StatusBar extends Plugin {
 
   @PluginMethod()
   public void setStyle(PluginCall call) {

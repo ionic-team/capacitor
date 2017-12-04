@@ -7,8 +7,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.HapticFeedbackConstants;
 
+import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
@@ -19,8 +19,8 @@ import com.avocadojs.PluginMethod;
  * add the following permissions to * your AndroidManifest.xml:
  * <uses-permission android:name="android.permission.VIBRATE"/>
  */
-@Plugin(id="com.avocadojs.plugin.haptics")
-public class Haptics extends PluginBase {
+@NativePlugin(id="com.avocadojs.plugin.haptics")
+public class Haptics extends Plugin {
 
   @PluginMethod()
   public void vibrate(PluginCall call) {
