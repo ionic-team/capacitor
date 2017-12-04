@@ -5,8 +5,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
+import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
@@ -25,8 +25,8 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-@Plugin(id="com.avocadojs.plugin.filesystem")
-public class Filesystem extends PluginBase {
+@NativePlugin(id="com.avocadojs.plugin.filesystem")
+public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void readFile(PluginCall call) {

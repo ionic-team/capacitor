@@ -2,15 +2,13 @@ package com.avocadojs.plugin;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.EditText;
 
+import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
-import com.avocadojs.android.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,8 +17,8 @@ import org.json.JSONObject;
 /**
  * Common popup modals
  */
-@Plugin(id="com.avocadojs.plugin.modals")
-public class Modals extends PluginBase {
+@NativePlugin(id="com.avocadojs.plugin.modals")
+public class Modals extends Plugin {
 
   @PluginMethod()
   public void alert(final PluginCall call) {

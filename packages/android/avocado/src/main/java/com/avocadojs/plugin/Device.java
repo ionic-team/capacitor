@@ -5,16 +5,15 @@ import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 
-import com.avocadojs.Bridge;
+import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 import com.avocadojs.PluginResult;
 
 
-@Plugin(id="com.avocadojs.plugin.device")
-public class Device extends PluginBase {
+@NativePlugin(id="com.avocadojs.plugin.device")
+public class Device extends Plugin {
 
   @PluginMethod()
   public void getInfo(PluginCall call) {

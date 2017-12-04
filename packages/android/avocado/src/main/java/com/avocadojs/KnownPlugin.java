@@ -2,7 +2,6 @@ package com.avocadojs;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,21 +14,21 @@ import java.util.Map;
  */
 public class KnownPlugin {
   private final Bridge bridge;
-  private final Class<? extends PluginBase> pluginClass;
+  private final Class<? extends Plugin> pluginClass;
 
   private Map<String, PluginMethodMetadata> pluginMethods = new HashMap<>();
 
   private final String pluginId;
 
-  private PluginBase instance;
+  private Plugin instance;
 
-  public KnownPlugin(Bridge bridge, Class<? extends PluginBase> pluginClass) throws InvalidPluginException {
+  public KnownPlugin(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException {
     this.bridge = bridge;
     this.pluginClass = pluginClass;
 
-    Plugin pluginAnnotation = pluginClass.getAnnotation(Plugin.class);
+    NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
     if(pluginAnnotation == null) {
-      throw new InvalidPluginException("No @Plugin annotation found for plugin " + pluginClass.getName());
+      throw new InvalidPluginException("No @NativePlugin annotation found for plugin " + pluginClass.getName());
     }
 
     this.pluginId = pluginAnnotation.id();
@@ -41,11 +40,11 @@ public class KnownPlugin {
     return this.pluginId;
   }
 
-  public PluginBase getInstance() {
+  public Plugin getInstance() {
     return this.instance;
   }
 
-  public PluginBase load() throws PluginLoadException {
+  public Plugin load() throws PluginLoadException {
     if(this.instance != null) {
       return this.instance;
     }
@@ -90,7 +89,7 @@ public class KnownPlugin {
    * Index all the known callable methods for a plugin for faster
    * invocation later
    */
-  private void indexMethods(Class<? extends PluginBase> plugin) {
+  private void indexMethods(Class<? extends Plugin> plugin) {
     Method[] methods = pluginClass.getDeclaredMethods();
 
     for(Method methodReflect: methods) {

@@ -7,16 +7,16 @@ import android.content.Context;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
+import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@Plugin(id="com.avocadojs.plugin.clipboard")
-public class Clipboard extends PluginBase {
+@NativePlugin(id="com.avocadojs.plugin.clipboard")
+public class Clipboard extends Plugin {
 
   @PluginMethod()
   public void set(PluginCall call) {
