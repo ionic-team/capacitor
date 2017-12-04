@@ -1,0 +1,64 @@
+<h1 id="using-stencil-built-web-components-with-angular">Using Stencil Built Web Components with Angular</h1>
+<p>Using a Stencil built web component collection within an Angular CLI project is a three step process. We need to:</p>
+<ol>
+<li>Include the CUSTOM_ELEMENTS_SCHEMA in the modules that use the components </li>
+<li>Include the load script in <code>index.html</code></li>
+<li>Copy the component collection during the build</li>
+</ol>
+<h2 id="including-the-custom-elements-schema">Including the Custom Elements Schema</h2>
+<p>Including the CUSTOM_ELEMENTS_SCHEMA in the nodule allows the use of the web components in the HTML markup without the compiler producing errors. Here is an example of adding it to <code>AppModule</code>:</p>
+<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { BrowserModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/platform-browser'</span>;
+<span class="hljs-keyword">import</span> { NgModule, CUSTOM_ELEMENTS_SCHEMA } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+
+<span class="hljs-keyword">import</span> { AppComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./app.component'</span>;
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppModule</span> { }</span>
+</code></pre>
+<h2 id="including-the-load-script">Including the Load Script</h2>
+<p>A component collection built with Stencil includes a main script that is used to load the components in the collection. That script needs to be loaded in your application as such:</p>
+<pre><code class="lang-html"><span class="hljs-meta">&lt;!doctype html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"en"</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"utf-8"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Test Component Usage<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">base</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width, initial-scale=1"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"icon"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"image/x-icon"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"favicon.ico"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">'test-components/testcomponents.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">app-root</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">app-root</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
+<h2 id="copying-the-components">Copying the Components</h2>
+<p>During the build, the components need to be copied to the build output directory. The easiest way to do this is to modify include the collection in the <code>assets</code> array of the <code>.angular-cli.json</code> file.</p>
+<pre><code>      <span class="hljs-string">"assets"</span>: [
+        <span class="hljs-string">"assets"</span>,
+        <span class="hljs-string">"favicon.ico"</span>,
+        { <span class="hljs-string">"glob"</span>: <span class="hljs-string">"**/*"</span>, <span class="hljs-string">"input"</span>: <span class="hljs-string">"../web-components/test-components"</span>, <span class="hljs-string">"output"</span>: <span class="hljs-string">"./test-components"</span> }
+      ],
+</code></pre><p><stencil-route-link url="/docs/distribution" router="#router" custom="true">
+  <button class='backButton'>
+    Back
+  </button>
+</stencil-route-link></p>
+<p><stencil-route-link url="/docs/routing" custom="true">
+  <button class='nextButton'>
+    Next
+  </button>
+</stencil-route-link></p>

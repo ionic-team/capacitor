@@ -1,0 +1,62 @@
+<h1 id="my-first-component">My First Component</h1>
+<p>Stencil components are created by adding a new file with a <code>.tsx</code> extension, such as <code>my-first-component.tsx</code>, and placing them in the <code>src/components</code> directory.
+The <code>.tsx</code> extension is required since Stencil components are built using <a href="https://facebook.github.io/react/docs/introducing-jsx.html">JSX</a> and TypeScript.</p>
+<p>Here is an example of what a Stencil component looks like:</p>
+<pre><code class="lang-jsx"><span class="hljs-keyword">import</span> { Component, Prop } from <span class="hljs-string">'@stencil/core'</span>;
+
+<span class="hljs-meta">@Component({
+  tag: <span class="hljs-meta-string">'my-first-component'</span>,
+  styleUrl: <span class="hljs-meta-string">'my-first-component.scss'</span>
+})</span>
+export <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyComponent</span> </span>{
+
+  <span class="hljs-comment">// Indicate that name should be a public property on the component</span>
+  <span class="hljs-meta">@Prop()</span> name: string;
+
+  render() {
+    <span class="hljs-keyword">return</span> (
+      &lt;p&gt;
+        My name <span class="hljs-keyword">is</span> {<span class="hljs-keyword">this</span>.name}
+      &lt;/p&gt;
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p>Don&#39;t fully understand what&#39;s going on? Don&#39;t worry, we&#39;ll explain each pieces in detail later on.</p>
+</blockquote>
+<p>Once compiled, this component can be used in HTML just like any other tag.</p>
+<pre><code class="lang-html">&lt;<span class="hljs-keyword">my</span>-<span class="hljs-keyword">first</span>-component <span class="hljs-built_in">name</span>=<span class="hljs-string">"Max"</span>&gt;&lt;/<span class="hljs-keyword">my</span>-<span class="hljs-keyword">first</span>-component&gt;
+</code></pre>
+<blockquote>
+<p>Note: Web Components must have a - in the tag. <code>firstComponent</code> would not be a valid tag name.</p>
+</blockquote>
+<p>When rendered, the browser will display <code>My name is Max</code>.</p>
+<h2 id="so-what-s-really-going-on-here-">So what&#39;s really going on here?</h2>
+<p>Let&#39;s dive in.</p>
+<p>The first piece we see is the <code>@Component</code> decorator.
+This decorator provides metadata about our component to the Stencil compiler.
+Information, such as the tag to use, and external styles, can be set here and picked up by the compiler.</p>
+<p>Below the <code>@Component()</code> decorator, we have a standard JavaScript class.
+This is where you&#39;ll write the bulk of your code to bring your Stencil component to life.
+Here is where you&#39;d write functions or provide business logic.</p>
+<p>In order for the component to render something to the screen, we must declare a render function that returns JSX.
+If you&#39;re not sure what JSX is, don&#39;t worry, we&#39;ll go over it in detail in the <stencil-route-link url="/docs/templating">Templating Docs</stencil-router-link>.</p>
+<p>The quick idea is that our render function needs to return a representation of the HTML we want to push to the DOM.</p>
+<p>The <code>name</code> property on the class also has a decorator applied to it, <code>@Prop()</code>.
+This decorator tells the compiler that the property is public to the component, and the user should be setting it.
+We set this property like so:</p>
+<pre><code class="lang-html">&lt;<span class="hljs-keyword">my</span>-<span class="hljs-keyword">first</span>-component <span class="hljs-built_in">name</span>=<span class="hljs-string">"Max"</span>&gt;&lt;/<span class="hljs-keyword">my</span>-<span class="hljs-keyword">first</span>-component&gt;
+</code></pre>
+<p>Any property decorated with <code>@Props()</code> is also automatically watched for changes.
+If a user of our component were to change the element&#39;s <code>name</code> property, our component would fire it&#39;s <code>render</code> function again, updating the displayed content.</p>
+<p><stencil-route-link url="/docs/getting-started" router="#router" custom="true">
+  <button class="backButton">
+    Back
+  </button>
+</stencil-route-link></p>
+<p><stencil-route-link url="/docs/templating" custom="true">
+  <button class="nextButton">
+    Next
+  </button>
+</stencil-route-link></p>

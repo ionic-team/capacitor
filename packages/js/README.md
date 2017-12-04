@@ -1,2 +1,0 @@
-# Avocado JS
-

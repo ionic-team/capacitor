@@ -1,0 +1,35 @@
+{
+  "name": "avocado-site",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Stencil Site",
+  "scripts": {
+    "docs": "gulp",
+    "build": "gulp && stencil build --prerender",
+    "dev": "gulp && sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
+    "serve": "stencil-dev-server",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "@stencil/core": "0.0.6",
+    "@stencil/router": "0.0.17"
+  },
+  "devDependencies": {
+    "@stencil/dev-server": "next",
+    "@stencil/utils": "latest",
+    "gh-pages": "^1.0.0",
+    "gulp": "^3.9.1",
+    "gulp-markdown": "^1.2.0",
+    "highlight.js": "^9.12.0"
+  },
+  "author": "Ionic Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionic-team/avocado-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ionic-team/avocado-site"
+  },
+  "homepage": "https://github.com/ionic-team/avocado-site"
+}

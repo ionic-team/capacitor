@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+      "strict": true,
+      "lib": ["es2016"],
+      "outDir": "./dist",        // path to output directory
+      "module": "commonjs",
+      "target": "es2017",            // specify ECMAScript target version
+      "moduleResolution": "node",
+      "types" : ["node", "jest"],
+      "pretty": true
+  },
+  "include": [
+      "./src/"
+  ]
+}
