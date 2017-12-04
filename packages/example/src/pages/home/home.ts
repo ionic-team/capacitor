@@ -157,19 +157,19 @@ export class HomePage {
 
   async showAlert() {
     let modals = new Modals()
-    let alertRet = await modals.alert('Stop', 'this is an error', 'Okay');
+    let alertRet = await modals.alert('Stop', 'this is an error');
     console.log('Alert ret', alertRet);
   }
 
   async showConfirm() {
     let modals = new Modals()
-    let confirmRet = await modals.confirm('Stop', 'this is an error', 'Okay');
+    let confirmRet = await modals.confirm('Confirm', 'Are you sure you\'d like to press the red button?');
     console.log('Confirm ret', confirmRet);
   }
 
   async showPrompt() {
     let modals = new Modals()
-    let promptRet = await modals.prompt('Stop', 'this is an error', 'Okay');
+    let promptRet = await modals.prompt('Hello', 'What\'s your name?');
     console.log('Prompt ret', promptRet);
   }
 

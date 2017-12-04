@@ -13,7 +13,6 @@ export class StatusBar extends Plugin {
 
 }
 
-
 export type StatusBarSetStyleCallback = (err: any, results: any) => void;
 
 export enum StatusBarStyle {
