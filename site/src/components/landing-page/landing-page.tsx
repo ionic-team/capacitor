@@ -28,15 +28,17 @@ export class LandingPage {
           <div class="row">
             <div class="col">
               <h1 id="action-call">A universal runtime<br/> for containerizing web applications.</h1>
-              <h3 id="action-more">
+              <div id="action-more">
                 Build cross-platform apps with JS, HTML, and CSS
                 <br />
+                <br />
                 <b>Sign up for updates and early access to the preview.</b>
-              </h3>
+              </div>
               <section id="buttons">
                 <form id="cta-form">
-                  <div>
+                  <div class="input-with-button">
                     <input type="email" placeholder="Email address" />
+                    <button>Notify me</button>
                   </div>
                 </form>
                 {/*
@@ -54,6 +56,7 @@ export class LandingPage {
                 */}
               </section>
             </div>
+            <div class="col" id="landing-cta-offset"></div>
             <div class="col" id="landing-cta-image"></div>
           </div>
         </main>

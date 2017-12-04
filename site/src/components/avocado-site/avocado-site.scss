@@ -15,6 +15,26 @@ avocado-site {
   flex: 1;
 }
 
+.input-with-button {
+  display: flex;
+  height: 50px;
+  input {
+    flex: 1;
+    height: 100%;
+  }
+  button {
+    flex-grow: 0;
+    flex-shrink: 1;
+    margin: 0;
+    border: 0;
+    border-radius: 0px 3px 3px 0;
+    height: 100%;
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
 .app {
   height: 100%;
   max-width: 1080px;
