@@ -156,16 +156,42 @@ landing-page {
   .point-card {
     flex: 1;
     position: relative;
+    padding: 0px 2em;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
 
     h2 {
-      margin-top: 72px;
+      margin-top: 1em;
+      font-size: 16px;
     }
 
     p {
+      margin-top: 0.2em;
       font-weight: 400;
-      font-size: 16px;
+      font-size: 14px;
       letter-spacing: -0.02em;
       line-height: 30px;
+    }
+
+    &:before {
+      content: '';
+      display: block;
+      background: url(assets/img/checkbox.png) no-repeat transparent;
+      width: 20px;
+      height: 20px;
+      background-size: 100%;
+      margin-bottom: 0.3em;
     }
   }
 
