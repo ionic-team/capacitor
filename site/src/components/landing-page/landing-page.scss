@@ -19,12 +19,17 @@ landing-page {
     height: 4em;
   }
 
+  #landing-cta-offset {
+    flex: 0;
+    min-width: 150px;
+  }
+
   #action-call {
-    font-size: 3em;
+    font-size: 2.6em;
     line-height: normal;
     margin-top: 1em;
-    font-weight: 500;
-    margin-bottom: 0.4em;
+    font-weight: 600;
+    margin-bottom: 0.9em;
   }
   #action-more {
     margin: 0.2em 0 1em;
@@ -42,15 +47,20 @@ landing-page {
   }
 
   #cta-form {
+    margin-top: 3em;
     input {
-      height: 40px;
       font-size: 14px;
       padding: 5px 10px;
       width: 200px;
-      color: #636766;
-      background-color: #1D211F;
+      color: #747A79;
+      background-color: #232926;
       border: none;
       border-radius: 3px;
+    }
+    button {
+      background-color: #2ACB39;
+      text-transform: uppercase;
+      color: white;
     }
   }
 
