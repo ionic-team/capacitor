@@ -7,7 +7,7 @@ import { NativePlugin, Plugin } from '../plugin';
 })
 export class Modals extends Plugin {
 
-  alert(title: string, message: string, buttonTitle: string) {
+  alert(title: string, message: string, buttonTitle?: string) {
     return this.nativePromise('alert', {
       title,
       message,
@@ -15,20 +15,38 @@ export class Modals extends Plugin {
     });
   }
 
-  prompt(title: string, message: string, buttonTitle: string) {
-    this.nativePromise('prompt', {
+  prompt(title: string,
+         message: string,
+         okButtonTitle?: string,
+         cancelButtonTitle?: string,
+         inputPlaceholder?: string) : Promise<PromptResult> {
+    return this.nativePromise('prompt', {
       title,
       message,
-      buttonTitle
+      okButtonTitle,
+      cancelButtonTitle,
+      inputPlaceholder
     });
   }
 
-  confirm(title: string, message: string, buttonTitle: string) {
-    this.nativePromise('confirm', {
+  confirm(title: string,
+          message: string,
+          okButtonTitle?: string,
+          cancelButtonTitle?: string) : Promise<ConfirmResult> {
+    return this.nativePromise('confirm', {
       title,
       message,
-      buttonTitle
+      okButtonTitle,
+      cancelButtonTitle
     });
   }
+}
 
+export interface PromptResult {
+  value: string;
+  cancelled: boolean;
+}
+
+export interface ConfirmResult {
+  value: boolean;
 }
