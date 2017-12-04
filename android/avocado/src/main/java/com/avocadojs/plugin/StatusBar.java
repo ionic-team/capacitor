@@ -21,7 +21,7 @@ public class StatusBar extends Plugin {
     View decorView = getActivity().getWindow().getDecorView();
 
 
-    decorView.setSystemUiVisibility(uiOptions | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
   }
 
