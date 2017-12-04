@@ -9,6 +9,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.avocadojs.plugin.Camera;
 import com.avocadojs.plugin.Clipboard;
 import com.avocadojs.plugin.Console;
 import com.avocadojs.plugin.Device;
@@ -59,6 +60,7 @@ public class Bridge {
   }
 
   public void registerCorePlugins() {
+    this.registerPlugin(Camera.class);
     this.registerPlugin(Console.class);
     this.registerPlugin(Clipboard.class);
     this.registerPlugin(Device.class);
