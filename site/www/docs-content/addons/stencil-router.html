@@ -1,0 +1,97 @@
+<h1 id="stencil-router">Stencil Router</h1>
+<p><code>@stencil/router</code> is a package on NPM that contains a router that can be used in Stencil apps.</p>
+<p>The developer experience of the router is designed to be similar to <a href="https://reacttraining.com/react-router/">React Router</a>, and it should make it easy to build apps of all size, from the very simple to the very complex.</p>
+<h2 id="installing">Installing</h2>
+<p>In your project directory, run <code>npm install @stencil/router</code>.</p>
+<h2 id="adding-to-stencil-config-collection">Adding to Stencil Config Collection</h2>
+<p>First thing, ensure that the <code>collections</code> entry in <code>stencil.config.js</code> has the <code>@stencil/router</code> package. If it does not, please add it.</p>
+<p>Open the project&#39;s <code>stencil.config.js</code> file, and look for the <code>config</code> export.</p>
+<p>From there, add an object with a name of <code>@stencil/router</code> to the <code>collections</code> array if it&#39;s not already there.</p>
+<pre><code>exports.config = {
+  publicPath: <span class="hljs-string">'/build'</span>,
+  bundles: [
+    { components: [<span class="hljs-string">'stencil-site'</span>, <span class="hljs-string">'site-header'</span>, <span class="hljs-string">'landing-page'</span>] },
+    { components: [<span class="hljs-string">'app-marked'</span>, <span class="hljs-string">'site-menu'</span>] },
+    { components: [<span class="hljs-string">'demos-page'</span>, <span class="hljs-string">'document-component'</span>] }
+  ],
+  collections: [{ name: <span class="hljs-string">'@stencil/router'</span> }]
+};
+</code></pre><h2 id="included-components">Included components</h2>
+<ul>
+<li><p><strong>stencil-router</strong></p>
+<p>You should have one single stencil-router component in your project.  This component controls all interactions with the browser history and it aggregates updates through an event system.</p>
+</li>
+<li><p><strong>stencil-route</strong></p>
+<p>This component renders based on whether the supplied url matches the current location.</p>
+<p><em>properties</em>:</p>
+<ul>
+<li><strong>url</strong> (<em>Array || string</em>): the pathnames to match on. Can also pass an array of paths so one stencil-route matches multiple paths. Accepts paths similar to expressjs so that you can define parameters in the url <code>/foo/:bar</code> where bar would be available in incoming props.</li>
+<li><strong>component</strong> (<em>string</em>): the component name that you would like the route to render.</li>
+<li><strong>componentProps</strong> (<em>key/value Object</em>): a key value object(<code>{ &#39;red&#39;: true, &#39;blue&#39;: &#39;white&#39;}</code>) containing props that should be passed to the defined component when rendered.</li>
+<li><strong>routeRender</strong> (<em>function</em>): function that accepts props as an argument. If this exists it will be used in place of the component defined.</li>
+<li><strong>exact</strong> (<em>boolean</em>): If true then only render this route when the url matches exactly to the location, if false it will render if the current url &#39;matches&#39; the url defined.</li>
+</ul>
+</li>
+<li><p><strong>stencil-route-link</strong></p>
+<p>This component is used to render links to defined routes.  It applys a specific style based on whether the link matches the current location.</p>
+<p><em>properties</em>:</p>
+<ul>
+<li><strong>url</strong> (<em>string</em>): the pathname to link to.</li>
+<li><strong>exact</strong> (<em>boolean</em>): If true then only apply the active class when the url matches exactly to the location.</li>
+<li><strong>activeClass</strong> (<em>string</em>): The class to apply if the link matches the current location. This defaults to &#39;link-active&#39;.</li>
+</ul>
+</li>
+<li><p><strong>stencil-route-redirect</strong></p>
+<p>This component redirects the current location.</p>
+<p><em>properties</em>:</p>
+<ul>
+<li><strong>url</strong> (<em>string</em>): the url to redirect to.</li>
+</ul>
+</li>
+</ul>
+<h2 id="configuring-the-router">Configuring the Router</h2>
+<p>Applications built with Stencil should have one <code>stencil-router</code> element for the entire application. Make sure to specify an <code>id</code> attribute on it.</p>
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-name">stencil-router</span>&gt;</span>
+...
+<span class="hljs-tag">&lt;/<span class="hljs-name">stencil-router</span>&gt;</span>
+</code></pre><p>Within the <code>stencil-router</code> element, we want to declare our set of <code>stencil-route</code>s. Each <code>stencil-route</code> needs to take a reference to the router, a url, and then an HTML element tag name.</p>
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-name">stencil-router</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">stencil-route</span> <span class="hljs-attr">url</span>=<span class="hljs-string">"/"</span> <span class="hljs-attr">component</span>=<span class="hljs-string">"landing-page"</span> <span class="hljs-attr">exact</span>=<span class="hljs-string">{true}/</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">stencil-route</span> <span class="hljs-attr">url</span>=<span class="hljs-string">"/demos"</span> <span class="hljs-attr">component</span>=<span class="hljs-string">"demos-page"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">stencil-route</span> <span class="hljs-attr">url</span>=<span class="hljs-string">"/demos/rendering"</span> <span class="hljs-attr">component</span>=<span class="hljs-string">"fiber-demo"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">stencil-route</span> <span class="hljs-attr">url</span>=<span class="hljs-string">"/docs"</span> <span class="hljs-attr">component</span>=<span class="hljs-string">"docs"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">stencil-route</span> <span class="hljs-attr">url</span>=<span class="hljs-string">"/docs/getting-started"</span> <span class="hljs-attr">component</span>=<span class="hljs-string">"getting-started"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">stencil-route</span> <span class="hljs-attr">url</span>=<span class="hljs-string">"/components"</span> <span class="hljs-attr">component</span>=<span class="hljs-string">"basics-components"</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">stencil-router</span>&gt;</span>
+</code></pre><p>When navigating to <code>/demos/rendering</code> based on the above configuration, the <code>demos-page</code> component will be loaded with a child component <code>fiber-demo</code>. They will both be loaded as children of their corresponding stencil-routes but they are not related other than both match the route. Nested routes/components just work.</p>
+<h2 id="navigating">Navigating</h2>
+<p>To navigate around an app, use the <code>stencil-route-link</code> component.</p>
+<pre><code>&lt;stencil-route-link <span class="hljs-attribute">url</span>=<span class="hljs-string">"/"</span>&gt;
+&lt;stencil-route-link <span class="hljs-attribute">url</span>=<span class="hljs-string">"/demos"</span>&gt;
+&lt;stencil-route-link <span class="hljs-attribute">url</span>=<span class="hljs-string">"/docs/getting-started"</span>&gt;
+</code></pre><p>If you would like to navigate programmatically you first need to pass the router history in as a Prop to your component. Below is an example of this:</p>
+<pre><code><span class="hljs-keyword">import</span> { RouterHistory } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/router'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">askPage</span> {</span>
+  @Prop() history: RouterHistory;
+}
+</code></pre><p>You can then use the the <code>push</code> method on the history object to navigate to a new page:</p>
+<pre><code><span class="hljs-selector-tag">this</span><span class="hljs-selector-class">.history</span><span class="hljs-selector-class">.push</span>(<span class="hljs-built_in">`/demos`</span>, {});
+</code></pre><h2 id="url-params">URL Params</h2>
+<p>You may be familiar with the concept of URL params from <a href="https://reacttraining.com/react-router/web/example/url-params">React Router</a>. URL params allow you to pass data to a component through the route. To set this up in the Stencil router we first need to set up our route to take a param. Here is an example:</p>
+<pre><code> &lt;stencil-route <span class="hljs-attribute">url</span>=<span class="hljs-string">'/show/:pageNum'</span> <span class="hljs-attribute">component</span>=<span class="hljs-string">'show-page'</span> /&gt;
+</code></pre><p>The key part in this route is the <code>:pageNum</code> syntax. This means that we can now pass data to that route and it will be accessible through the <code>pageNum</code> variable. Below is an example of how we would pass data to this route:</p>
+<pre><code>&lt;stencil-route-link <span class="hljs-built_in">url</span>={<span class="hljs-string">`/show/<span class="hljs-subst">${someData}</span>`</span>} /&gt;
+</code></pre><p>Now lets go over how to access this data from the <code>show-page</code> component we are routing too.</p>
+<p>First, we need to pass the <code>match</code> prop to our <code>show-page</code> component:</p>
+<pre><code><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ShowPage</span> {</span>
+  @Prop() match: any;
+}
+</code></pre><p>Then we can use that <code>match</code> prop to access our data:</p>
+<pre><code><span class="hljs-comment">// myData is now the data we passed in our stencil-route-link above</span>
+const myData = this<span class="hljs-selector-class">.match</span><span class="hljs-selector-class">.params</span><span class="hljs-selector-class">.pageNum</span>
+</code></pre><p><stencil-route-link url="/docs/angular-integration" router="#router" custom="true">
+  <button class="backButton">
+    Back
+  </button>
+</stencil-route-link></p>

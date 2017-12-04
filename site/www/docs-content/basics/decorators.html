@@ -1,0 +1,181 @@
+<h1 id="decorators">Decorators</h1>
+<p>Stencil makes it easy to build rich, interactive components. Let&#39;s start with the basics.</p>
+<h2 id="component-decorator">Component Decorator</h2>
+<p>Each Stencil Component must be decorated with an <code>@Component()</code> decorator from the <code>@stencil/core</code> package. In the simplest case, developer&#39;s must provide a HTML <code>tag</code> name for the component. Often times, a <code>styleUrl</code> is used as well, or even <code>styleUrls</code>, where multiple different style sheets can be provided for different application modes/themes.</p>
+<p>Use a relative url to the <code>.scss</code> file for the styleUrl(s).</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+@Component({
+  tag: <span class="hljs-string">'todo-list'</span>,
+  styleUrl: <span class="hljs-string">'todo-list.scss'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> {</span>
+  ...
+}
+</code></pre>
+<h2 id="prop-decorator">Prop Decorator</h2>
+<p>Props are custom attribute/properties exposed publicly on the element that developers can provide values for. Children components should not know about or reference parent components, so Props should be used to pass data down from the parent to the child. Components need to explicitly declare the Props it expects to receive using the <code>@Prop()</code> decorator. Props can be a <code>number</code>, <code>string</code>, <code>boolean</code>, or even an <code>Object</code> or <code>Array</code>. By default, when a member decorated with a <code>@Prop()</code> decorator is set, the component will efficiently re-render.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Prop } from <span class="hljs-string">'@stencil/core'</span>;
+...
+export <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> {</span>
+  <span class="hljs-meta">@Prop</span>() <span class="hljs-string">color:</span> string;
+  <span class="hljs-meta">@Prop</span>() <span class="hljs-string">favoriteNumber:</span> number;
+  <span class="hljs-meta">@Prop</span>() <span class="hljs-string">isSelected:</span> <span class="hljs-keyword">boolean</span>;
+  <span class="hljs-meta">@Prop</span>() <span class="hljs-string">myHttpService:</span> MyHttpService;
+}
+</code></pre>
+<p>Within the <code>TodoList</code> class, the Props are accessed via the <code>this</code> operator.</p>
+<pre><code class="lang-typescript"><span class="hljs-function"><span class="hljs-title">logColor</span><span class="hljs-params">()</span></span> {
+  console.log(this.<span class="hljs-attribute">color</span>)
+}
+</code></pre>
+<p>Externally, Props are set on the element.</p>
+<pre><code class="lang-typescript">&lt;todo-list <span class="hljs-attribute">color</span>=<span class="hljs-string">"blue"</span> <span class="hljs-attribute">favoriteNumber</span>=<span class="hljs-string">"24"</span> <span class="hljs-attribute">isSelected</span>=<span class="hljs-string">"true"</span>&gt;&lt;/todo-list&gt;
+</code></pre>
+<p>They can also be accessed via JS from the element.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> todoListElement = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'todo-list'</span>);
+<span class="hljs-built_in">console</span>.log(todoListElement.myHttpService); <span class="hljs-comment">// MyHttpService</span>
+<span class="hljs-built_in">console</span>.log(todoListElement.color); <span class="hljs-comment">// blue</span>
+</code></pre>
+<p>It&#39;s important to know, that <code>@Prop</code> is immutable from inside the component logic. Once a value is set by a user, the component cannot update it internally.</p>
+<h2 id="propwillchange-and-propdidchange-decorators">PropWillChange and PropDidChange Decorators</h2>
+<p>When a user updates a property, <code>PropDidChange</code> and <code>PropWillChange</code> will fire what ever method they&#39;re attached to.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Prop, PropDidChange, PropWillChange } from <span class="hljs-string">'@stencil/core'</span>;
+
+export <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LoadingIndicator</span> {</span>
+  <span class="hljs-meta">@Prop</span>() <span class="hljs-string">activated:</span> <span class="hljs-keyword">boolean</span>;
+
+  <span class="hljs-meta">@PropWillChange</span>(<span class="hljs-string">'activated'</span>)
+  willChangeHandler(<span class="hljs-string">newValue:</span> <span class="hljs-keyword">boolean</span>) {
+    console.log(<span class="hljs-string">'The new value of activated is: '</span>, newValue);
+  }
+
+  <span class="hljs-meta">@PropDidChange</span>(<span class="hljs-string">'activated'</span>)
+  didChangeHandler(<span class="hljs-string">newValue:</span> <span class="hljs-keyword">boolean</span>) {
+    <span class="hljs-comment">// do something now that `activated` has changed</span>
+  }
+}
+</code></pre>
+<h1 id="managing-component-state">Managing Component State</h1>
+<p>The <code>@State()</code> decorator can be used to manage internal data for a component. This means that a user cannot modify the property from outside the component, but the component can modify it how ever it sees fit. Any changes to a <code>@State()</code> property will cause the components render function to be called again.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { State } from <span class="hljs-string">'@stencil/core'</span>;
+
+...
+export <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> </span>{
+  <span class="hljs-meta">@State()</span> completedTodos: Todo[];
+
+  completeTodo(todo: Todo) {
+    <span class="hljs-comment">// This will cause our render function to be called again</span>
+    <span class="hljs-keyword">this</span>.completedTodos = [...<span class="hljs-keyword">this</span>.completedTodos, todo]; 
+  }
+
+  render() {
+    <span class="hljs-comment">//</span>
+  }
+}
+</code></pre>
+<h2 id="method-decorator">Method Decorator</h2>
+<p>The <code>@Method()</code> decorator is used to expose methods on the public API. Functions decorated with the <code>@Method()</code> decorator can be called directly from the element.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Method } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+...
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> TodoList {
+
+  @Method()
+  showPrompt() {
+    <span class="hljs-comment">// show a prompt</span>
+  }
+}
+</code></pre>
+<p>Call the method like this:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> todoListElement = <span class="hljs-built_in">document</span>.<span class="hljs-built_in">querySelector</span>(<span class="hljs-string">'todo-list'</span>);
+todoListElement.showPrompt();
+</code></pre>
+<h2 id="element-decorator">Element Decorator</h2>
+<p>The <code>@Element()</code> decorator is how to get access to the host element within the class instance. This returns an instance of an <code>HTMLElement</code>, so standard DOM methods/events can be used here.</p>
+<pre><code><span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+...
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> {</span>
+
+  @Element() todoListEl: HTMLElement;
+
+  addClass(){
+    <span class="hljs-keyword">this</span>.todoListEl.classList.add(<span class="hljs-string">'active'</span>);
+  }
+}
+</code></pre><h2 id="change-detection">Change Detection</h2>
+<p>Stencil does not actively perform change detection. In order to trigger an efficient re-render, use the <code>@State</code> decorator to update the local state and trigger a re-render.</p>
+<p>The example below WILL NOT trigger a re-render:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { State } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+...
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> {</span>
+  @State() completedTodos: Todo[];
+
+  completeTodo(todo: Todo) {
+    <span class="hljs-keyword">this</span>.completedTodos.push(todo);
+  }
+}
+</code></pre>
+<p>In the above example, we are changing the contents of the <code>completedTodos</code> array.
+A re-render is not performed because Stencil does not deeply watch items for change.</p>
+<p>In order to trigger a re-render, the value needs to be set to a new array:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { State } from <span class="hljs-string">'@stencil/core'</span>;
+
+...
+export <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> </span>{
+  <span class="hljs-meta">@State()</span> completedTodos: Todo[];
+
+  completeTodo(todo: Todo) {
+    <span class="hljs-keyword">this</span>.completedTodos = [...<span class="hljs-keyword">this</span>.completedTodos, todo];
+  }
+}
+</code></pre>
+<p>In the above example, we set <code>this.completedTodos</code> to a new array made up of the existing <code>completedTodos</code> and our new <code>todo</code>.</p>
+<p>This calls the <code>completedTodos</code> setter, which triggers the re-render.</p>
+<h2 id="embedding-or-nesting-components">Embedding or Nesting Components</h2>
+<p>Components can be composed easily by simply adding the HTML tag to the JSX code. Since the components are just HTML tags, nothing needs to be imported to use a Stencil component within another Stencil component.</p>
+<p>Here&#39;s an example of using a component within another component:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Component, Prop } from <span class="hljs-string">'@stencil/core'</span>;
+
+<span class="hljs-meta">@Component({
+  tag: <span class="hljs-meta-string">'my-embedded-component'</span>
+})</span>
+export <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyEmbeddedComponent</span> </span>{
+  <span class="hljs-meta">@Prop()</span> color: string = <span class="hljs-string">'blue'</span>;
+
+  render() {
+    <span class="hljs-keyword">return</span> (
+    &lt;div&gt;My favorite color <span class="hljs-keyword">is</span> {<span class="hljs-keyword">this</span>.color}&lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+@Component({
+  <span class="hljs-attr">tag</span>: <span class="hljs-string">'my-parent-component'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyParentComponent</span> </span>{
+
+  render() {
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">my-embedded-component</span> <span class="hljs-attr">color</span>=<span class="hljs-string">"red"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">my-embedded-component</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    );
+  }
+}</span>
+</code></pre>
+<p>The <code>my-parent-component</code> includes a reference to the <code>my-embedded-component</code> in the <code>render()</code> function.</p>
+<p><stencil-route-link url="/docs/templating" router="#router" custom="true">
+  <button class="backButton">
+    Back
+  </button>
+</stencil-route-link></p>
+<p><stencil-route-link url="/docs/events" custom="true">
+  <button class="nextButton">
+    Next
+  </button>
+</stencil-route-link></p>

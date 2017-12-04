@@ -1,0 +1,94 @@
+<h1 id="forms">Forms</h1>
+<h3 id="basic-forms">Basic forms</h3>
+<p>Here is an example of a component with a basic form: </p>
+<pre><code>@Component({
+  tag: <span class="hljs-string">'my-name'</span>,
+  styleUrl: <span class="hljs-string">'my-name.scss'</span>
+})
+export <span class="hljs-keyword">class</span> <span class="hljs-title">MyName</span> {
+
+  @State() <span class="hljs-keyword">value</span>: <span class="hljs-keyword">string</span>;
+
+  handleSubmit(e) {
+    e.preventDefault()
+    console.log(<span class="hljs-keyword">this</span>.<span class="hljs-keyword">value</span>);
+    <span class="hljs-comment">// send data to our backend</span>
+  }
+
+  handleChange(<span class="hljs-keyword">event</span>) {
+    <span class="hljs-keyword">this</span>.<span class="hljs-keyword">value</span> = <span class="hljs-keyword">event</span>.target.<span class="hljs-keyword">value</span>;
+  }
+
+  render() {
+    <span class="hljs-keyword">return</span> (
+      &lt;form onSubmit={(e) =&gt; <span class="hljs-keyword">this</span>.handleSubmit(e)}&gt;
+        &lt;label&gt;
+          Name:
+          &lt;input type=<span class="hljs-string">"text"</span> <span class="hljs-keyword">value</span>={<span class="hljs-keyword">this</span>.<span class="hljs-keyword">value</span>} onInput={() =&gt; <span class="hljs-keyword">this</span>.handleChange(<span class="hljs-keyword">event</span>)} /&gt;
+        &lt;/label&gt;
+        &lt;input type=<span class="hljs-string">"submit"</span> <span class="hljs-keyword">value</span>=<span class="hljs-string">"Submit"</span> /&gt;
+      &lt;/form&gt;
+    );
+  }
+}
+</code></pre><p>Lets go over what is happening here. First we bind the value of the input to a state variable, in this case <code>this.value</code>. We then set our state variable to the new value of the input with the <code>handleChange</code> method we have bound to <code>onInput</code>. <code>onInput</code> will fire every keystroke that the user types into the input.</p>
+<h3 id="advanced-forms">Advanced forms</h3>
+<p>Here is an example of a component with a more advanced form:</p>
+<pre><code>@Component({
+  tag: <span class="hljs-string">'my-name'</span>,
+  styleUrl: <span class="hljs-string">'my-name.scss'</span>
+})
+export <span class="hljs-keyword">class</span> <span class="hljs-title">MyName</span> {
+
+  @State() <span class="hljs-keyword">value</span>: <span class="hljs-keyword">string</span>;
+  @State() selectValue: <span class="hljs-keyword">string</span>;
+
+  handleSubmit() {
+    console.log(<span class="hljs-keyword">this</span>.<span class="hljs-keyword">value</span>);
+  }
+
+  handleChange(<span class="hljs-keyword">event</span>) {
+    <span class="hljs-keyword">this</span>.<span class="hljs-keyword">value</span> = <span class="hljs-keyword">event</span>.target.<span class="hljs-keyword">value</span>;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">event</span>.target.validity.typeMismatch) {
+      console.log(<span class="hljs-string">'this element is not valid'</span>)
+    }
+  }
+
+  handleSelect(<span class="hljs-keyword">event</span>) {
+    console.log(<span class="hljs-keyword">event</span>.target.<span class="hljs-keyword">value</span>);
+    <span class="hljs-keyword">this</span>.selectValue = <span class="hljs-keyword">event</span>.target.<span class="hljs-keyword">value</span>;
+  }
+
+  render() {
+    <span class="hljs-keyword">return</span> (
+      &lt;form onSubmit={(e) =&gt; <span class="hljs-keyword">this</span>.handleSubmit(e)}&gt;
+        &lt;label&gt;
+          Email:
+          &lt;input type=<span class="hljs-string">"email"</span> <span class="hljs-keyword">value</span>={<span class="hljs-keyword">this</span>.<span class="hljs-keyword">value</span>} onInput={(e) =&gt; <span class="hljs-keyword">this</span>.handleChange(e)} /&gt;
+        &lt;/label&gt;
+
+        &lt;<span class="hljs-keyword">select</span> <span class="hljs-keyword">value</span>={<span class="hljs-keyword">this</span>.selectValue} onInput={() =&gt; <span class="hljs-keyword">this</span>.handleSelect(<span class="hljs-keyword">event</span>)}&gt;
+          &lt;option <span class="hljs-keyword">value</span>=<span class="hljs-string">"volvo"</span>&gt;Volvo&lt;/option&gt;
+          &lt;option <span class="hljs-keyword">value</span>=<span class="hljs-string">"saab"</span>&gt;Saab&lt;/option&gt;
+          &lt;option <span class="hljs-keyword">value</span>=<span class="hljs-string">"mercedes"</span>&gt;Mercedes&lt;/option&gt;
+          &lt;option <span class="hljs-keyword">value</span>=<span class="hljs-string">"audi"</span>&gt;Audi&lt;/option&gt;
+        &lt;/<span class="hljs-keyword">select</span>&gt;
+
+        &lt;input type=<span class="hljs-string">"submit"</span> <span class="hljs-keyword">value</span>=<span class="hljs-string">"Submit"</span> /&gt;
+      &lt;/form&gt;
+    );
+  }
+}
+</code></pre><p>As you can see, this form is a little more advanced in that it has a select input along with an email input. We also do validity checking of our email input in the <code>handleChange</code> method. As you can see, we handle the <code>select</code> element exactly how we handle text inputs.</p>
+<p>For the validity checking, we are #usingtheplatform and are using the <a href="https://www.w3.org/TR/html5/forms.html#the-constraint-validation-api">constraint validation api</a> that is built right into the browser to check if the user is actually entering an email or not.</p>
+<p><stencil-route-link url="/docs/component-lifecycle" router="#router" custom="true">
+  <button class="backButton">
+    Back
+  </button>
+</stencil-route-link></p>
+<p><stencil-route-link url="/docs/handling-arrays" custom="true">
+  <button class="nextButton">
+    Next
+  </button>
+</stencil-route-link></p>

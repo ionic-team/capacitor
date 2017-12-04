@@ -1,0 +1,78 @@
+<h1 id="events">Events</h1>
+<p>Components can emit data and events using the Event Emitter decorator.</p>
+<p>To dispatch <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events">Custom DOM events</a> for other components to handle, use the <code>@Event()</code> decorator.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Event, EventEmitter } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+...
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> {</span>
+
+  @Event() todoCompleted: EventEmitter;
+
+  todoCompletedHandler(todo: Todo) {
+    <span class="hljs-keyword">this</span>.todoCompleted.emit(todo);
+  }
+}
+</code></pre>
+<p>The code above will dispatch a custom DOM event called <code>todoCompleted</code>.</p>
+<h2 id="listening-for-events">Listening for Events</h2>
+<p>The <code>Listen()</code> decorator is for handling events dispatched from <code>@Events</code>.</p>
+<p>In the example below, assume that a child component, <code>TodoList</code>, emits a <code>todoCompleted</code> event using the <code>EventEmitter</code>.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Listen } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+...
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoApp</span> {</span>
+
+  @Listen(<span class="hljs-string">'todoCompleted'</span>)
+  todoCompletedHandler(event: CustomEvent) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Received the custom todoCompleted event: '</span>, event.detail);
+  }
+}
+</code></pre>
+<p>Handlers can also be registered for an event on a specific element.
+This is useful for listening to application-wide events.
+In the example below, we&#39;re going to listen for the scroll event.</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Listen } <span class="hljs-keyword">from</span> <span class="hljs-string">'@stencil/core'</span>;
+
+...
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoList</span> {</span>
+
+  @Listen(<span class="hljs-string">'body:scroll'</span>)
+  handleScroll(ev) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'the body was scrolled'</span>, ev);
+  }
+}
+</code></pre>
+<p>For keyboard events, you can use the standard <code>keydown</code> event in <code>@Listen()</code> and then figure out the keycode, or some constants Stencil provides.</p>
+<pre><code class="lang-typescript"><span class="hljs-variable">@Listen</span>(<span class="hljs-string">'keydown'</span>)
+handleKeyDown(ev){
+  <span class="hljs-selector-tag">if</span>(ev.keyCode === <span class="hljs-number">40</span>){
+    <span class="hljs-selector-tag">console</span><span class="hljs-selector-class">.log</span>(<span class="hljs-string">'down arrow pressed'</span>)
+  }
+}
+
+@<span class="hljs-selector-tag">Listen</span>(<span class="hljs-string">'keydown.up'</span>)
+<span class="hljs-selector-tag">handleUpArrow</span>(ev){
+  <span class="hljs-selector-tag">console</span><span class="hljs-selector-class">.log</span>(<span class="hljs-string">'will fire when up arrow is pressed'</span>);
+}
+</code></pre>
+<p>Stencil provides constants for the following keys, accessible via <code>keydown.&lt;CONSTANT&gt;</code></p>
+<ul>
+<li>enter</li>
+<li>escape</li>
+<li>space</li>
+<li>tab</li>
+<li>left</li>
+<li>up</li>
+<li>right</li>
+<li>down</li>
+</ul>
+<p><stencil-route-link url="/docs/decorators" router="#router" custom="true">
+  <button class="backButton">
+    Back
+  </button>
+</stencil-route-link></p>
+<p><stencil-route-link url="/docs/component-lifecycle" custom="true">
+  <button class="nextButton">
+    Next
+  </button>
+</stencil-route-link></p>
