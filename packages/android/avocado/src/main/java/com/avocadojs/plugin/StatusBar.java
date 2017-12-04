@@ -14,6 +14,16 @@ public class StatusBar extends PluginBase {
   @PluginMethod()
   public void setStyle(PluginCall call) {
     String style = call.getString("style");
+    if(style == null) {
+      call.error("Style must be provided");
+      return;
+    }
+
+    View decorView = getActivity().getWindow().getDecorView();
+
+
+    decorView.setSystemUiVisibility(uiOptions | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+
   }
 
   @PluginMethod()
