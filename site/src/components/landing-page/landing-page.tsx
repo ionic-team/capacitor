@@ -63,30 +63,30 @@ export class LandingPage {
 
         <section id="three-points">
           <div class="point-card">
-            <h2>Cross-platform</h2>
+            <h2>Cross Platform</h2>
 
             <p>
               Build web apps that run equally well on iOS, Android,
               Electron, and as Progressive Web Apps
           </p>
         </div>
-
-        <div class="point-card performant">
-          <h2>Native</h2>
+        <div class="point-card">
+          <h2>Native Access</h2>
 
           <p>
-            Access the full native capabilities of your device for powerful, best-of-breed apps
+            Access the full Native SDK on each platform, and
+            easily deploy to App Stores (and the web!)
+          </p>
+        </div>
+        <div class="point-card">
+          <h2>Open Source</h2>
+
+          <p>
+            Avocado is completely open source (MIT) and maintained
+            by <a href="http://ionicframework.com/">Ionic</a> and its community.
           </p>
         </div>
 
-        <div class="point-card future-proof">
-          <h2>Future proof</h2>
-
-          <p>
-            Built on web standards that stand the test of time. Focus on the web,
-            deploy anywhere.
-          </p>
-        </div>
       </section>
 
     </div>

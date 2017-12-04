@@ -15,6 +15,11 @@ avocado-site {
   flex: 1;
 }
 
+.container {
+  max-width: 1080px;
+  margin: auto;
+}
+
 .input-with-button {
   display: flex;
   height: 50px;
@@ -285,10 +290,15 @@ footer {
   background: #f8f8fc;
   height: 8em;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex: 0 0 8em;
   margin-top: 32px;
+  flex: 0 0 8em;
+
+  .container {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   .svg-button {
     margin-left: 16px;
