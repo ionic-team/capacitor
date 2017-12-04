@@ -1,5 +1,6 @@
 package com.avocadojs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -12,6 +13,7 @@ import com.avocadojs.plugin.Clipboard;
 import com.avocadojs.plugin.Console;
 import com.avocadojs.plugin.Device;
 import com.avocadojs.plugin.Filesystem;
+import com.avocadojs.plugin.Modals;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -24,7 +26,7 @@ import java.util.Map;
 public class Bridge {
   public static final String TAG = "Avocado";
 
-  private final Context context;
+  private final Activity context;
   private final WebView webView;
   private final MessageHandler msgHandler;
 
@@ -33,7 +35,7 @@ public class Bridge {
   private Map<String, KnownPlugin> plugins = new HashMap<>();
 
 
-  public Bridge(Context context, WebView webView) {
+  public Bridge(Activity context, WebView webView) {
     this.context = context;
     this.webView = webView;
     this.msgHandler = new MessageHandler(this, webView);
@@ -61,6 +63,7 @@ public class Bridge {
     this.registerPlugin(Clipboard.class);
     this.registerPlugin(Device.class);
     this.registerPlugin(Filesystem.class);
+    this.registerPlugin(Modals.class);
   }
 
   /**
@@ -128,6 +131,8 @@ public class Bridge {
   public Context getContext() {
     return this.context;
   }
+
+  public Activity getActivity() { return this.context; }
 
   public WebView getWebView() {
     return this.webView;

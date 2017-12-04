@@ -155,19 +155,22 @@ export class HomePage {
     console.log('Got image', image);
   }
 
-  showAlert() {
+  async showAlert() {
     let modals = new Modals()
-    modals.alert('Stop', 'this is an error', 'Okay');
+    let alertRet = await modals.alert('Stop', 'this is an error', 'Okay');
+    console.log('Alert ret', alertRet);
   }
 
-  showConfirm() {
+  async showConfirm() {
     let modals = new Modals()
-    modals.confirm('Stop', 'this is an error', 'Okay');
+    let confirmRet = await modals.confirm('Stop', 'this is an error', 'Okay');
+    console.log('Confirm ret', confirmRet);
   }
 
-  showPrompt() {
+  async showPrompt() {
     let modals = new Modals()
-    modals.prompt('Stop', 'this is an error', 'Okay');
+    let promptRet = await modals.prompt('Stop', 'this is an error', 'Okay');
+    console.log('Prompt ret', promptRet);
   }
 
   takePicture() {

@@ -2,19 +2,15 @@ package com.avocadojs.plugin;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.v4.app.ActivityCompat;
 import android.view.HapticFeedbackConstants;
 
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginBase;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
-
-import java.security.Permission;
 
 /**
  * Haptic engine plugin, also handles vibration.
