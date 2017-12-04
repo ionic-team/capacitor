@@ -22,7 +22,7 @@ landing-page {
   #action-call {
     font-size: 3em;
     line-height: normal;
-    margin-top: 20px;
+    margin-top: 1em;
     font-weight: 500;
     margin-bottom: 0.4em;
   }
@@ -30,16 +30,27 @@ landing-page {
     margin: 0.2em 0 1em;
     color: #D0D5D3;
     font-weight: 400;
+
+    b {
+      color: #fff;
+    }
+  }
+  #landing-cta-image {
+    background: url(assets/img/right-img.png) no-repeat transparent;
+    background-size: contain;
+    height: 500px;
   }
 
   #cta-form {
     input {
       height: 40px;
       font-size: 14px;
+      padding: 5px 10px;
       width: 200px;
-      background-color: #333;
-      border: 1px solid #555;
-      border-radius: 4px;
+      color: #636766;
+      background-color: #1D211F;
+      border: none;
+      border-radius: 3px;
     }
   }
 

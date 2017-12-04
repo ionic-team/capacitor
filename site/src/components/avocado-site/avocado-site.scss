@@ -8,6 +8,13 @@ avocado-site {
   flex-flow: column;
 }
 
+.row {
+  display: flex;
+}
+.col {
+  flex: 1;
+}
+
 .app {
   height: 100%;
   max-width: 1080px;
@@ -59,6 +66,17 @@ html, body {
 
 h1, h2, h3, h4 {
   color: #16161d;
+  letter-spacing: -1px;
+  font-family: 'Roboto Mono', 
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Helvetica,
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol";
 }
 
 h1 {

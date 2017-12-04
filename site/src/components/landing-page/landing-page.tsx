@@ -25,29 +25,37 @@ export class LandingPage {
       <div>
 
         <main>
-          <h1 id="action-call">Avocado: Universal Runtime<br/> for Web Applications</h1>
-          <h3 id="action-more">Build cross-platform apps easily with HTML, CSS, and JavaScript</h3>
-          <section id="buttons">
-            Coming soon! Enter your email for updates
-            <form id="cta-form">
-              <div>
-                <input type="text" />
-              </div>
-            </form>
-            {/*
-            <stencil-route-link url="/docs/getting-started">
-              <button id="get-started">
-                Get Started
-              </button>
-            </stencil-route-link>
+          <div class="row">
+            <div class="col">
+              <h1 id="action-call">A universal runtime<br/> for containerizing web applications.</h1>
+              <h3 id="action-more">
+                Build cross-platform apps with JS, HTML, and CSS
+                <br />
+                <b>Sign up for updates and early access to the preview.</b>
+              </h3>
+              <section id="buttons">
+                <form id="cta-form">
+                  <div>
+                    <input type="email" placeholder="Email address" />
+                  </div>
+                </form>
+                {/*
+                <stencil-route-link url="/docs/getting-started">
+                  <button id="get-started">
+                    Get Started
+                  </button>
+                </stencil-route-link>
 
-            <stencil-route-link url="/docs/intro">
-              <button id="learn-more">
-                Learn More
-              </button>
-            </stencil-route-link>
-            */}
-          </section>
+                <stencil-route-link url="/docs/intro">
+                  <button id="learn-more">
+                    Learn More
+                  </button>
+                </stencil-route-link>
+                */}
+              </section>
+            </div>
+            <div class="col" id="landing-cta-image"></div>
+          </div>
         </main>
 
         <section id="three-points">
@@ -57,28 +65,28 @@ export class LandingPage {
             <p>
               Build web apps that run equally well on iOS, Android,
               Electron, and as Progressive Web Apps
-            </p>
-          </div>
+          </p>
+        </div>
 
-          <div class="point-card performant">
-            <h2>Native</h2>
+        <div class="point-card performant">
+          <h2>Native</h2>
 
-            <p>
-              Access the full native capabilities of your device for powerful, best-of-breed apps
-            </p>
-          </div>
+          <p>
+            Access the full native capabilities of your device for powerful, best-of-breed apps
+          </p>
+        </div>
 
-          <div class="point-card future-proof">
-            <h2>Future proof</h2>
+        <div class="point-card future-proof">
+          <h2>Future proof</h2>
 
-            <p>
-              Built on web standards that stand the test of time. Focus on the web,
-              deploy anywhere.
-            </p>
-          </div>
-        </section>
+          <p>
+            Built on web standards that stand the test of time. Focus on the web,
+            deploy anywhere.
+          </p>
+        </div>
+      </section>
 
-      </div>
+    </div>
     );
   }
 }
