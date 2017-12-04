@@ -230,6 +230,16 @@ export class HomePage {
     this.isStatusBarLight = !this.isStatusBarLight;
   }
 
+  hideStatusBar() {
+    let statusBar = new StatusBar();
+    statusBar.hide();
+  }
+
+  showStatusBar() {
+    let statusBar = new StatusBar();
+    statusBar.show();
+  }
+
   hapticsImpact(style = HapticsImpactStyle.Heavy) {
     let haptics = new Haptics()
     haptics.impact({
