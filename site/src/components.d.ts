@@ -66,6 +66,35 @@ declare global {
   }
 }
 
+import { BlogPage as BlogPage } from './components/blog-page/blog-page';
+
+interface HTMLBlogPageElement extends BlogPage, HTMLElement {
+}
+declare var HTMLBlogPageElement: {
+  prototype: HTMLBlogPageElement;
+  new (): HTMLBlogPageElement;
+};
+declare global {
+  interface HTMLElementTagNameMap {
+      "blog-page": HTMLBlogPageElement;
+  }
+  interface ElementTagNameMap {
+      "blog-page": HTMLBlogPageElement;
+  }
+  namespace JSX {
+      interface IntrinsicElements {
+          "blog-page": JSXElements.BlogPageAttributes;
+      }
+  }
+  namespace JSXElements {
+      export interface BlogPageAttributes extends HTMLAttributes {
+          mode?: string,
+          color?: string,
+        
+      }
+  }
+}
+
 import { DemosPage as DemosPage } from './components/demos-page/demos-page';
 
 interface HTMLDemosPageElement extends DemosPage, HTMLElement {

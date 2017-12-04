@@ -46,14 +46,15 @@ avocado-site {
   margin: auto;
 }
 
-#main-div {
-  flex-grow: 1;
-  flex-shrink: 0;
-
-  &.landing-page {
+.landing-page {
+  #main-div {
     background-color: #030A04;
     color: #fff;
   }
+}
+#main-div {
+  flex-grow: 1;
+  flex-shrink: 0;
 
   site-header {
     background: none;
@@ -283,6 +284,14 @@ code {
   text-decoration: underline;
 }
 
+.landing-page {
+  footer {
+    .ionic-oss-logo {
+      background-image: url(assets/img/ionic-os-logo.png);
+    }
+  }
+}
+
 footer {
   bottom: 0;
   left: 0;
@@ -292,6 +301,13 @@ footer {
   display: flex;
   margin-top: 32px;
   flex: 0 0 8em;
+
+  .ionic-oss-logo {
+    background: url(assets/img/ionic-os-dark-logo.png) no-repeat transparent;
+    width: 124px;
+    height: 16px;
+    background-size: 100%;
+  }
 
   .container {
     display: flex;
