@@ -37,19 +37,21 @@ public class Modals extends Plugin {
       public void run() {
         AlertDialog.Builder builder = new AlertDialog.Builder(c);
 
-        builder.setMessage(message).setTitle(title).setPositiveButton(buttonTitle,
-          new AlertDialog.OnClickListener() {
-            public void onClick(DialogInterface dialog, int buttonIndex) {
-              dialog.dismiss();
-              call.success();
-            }
-          })
-        .setOnCancelListener(new AlertDialog.OnCancelListener() {
-          public void onCancel(DialogInterface dialog) {
-            dialog.dismiss();
-            call.success();
-          }
-        });
+        builder
+            .setMessage(message)
+            .setTitle(title)
+            .setPositiveButton(buttonTitle, new AlertDialog.OnClickListener() {
+              public void onClick(DialogInterface dialog, int buttonIndex) {
+                dialog.dismiss();
+                call.success();
+              }
+            })
+            .setOnCancelListener(new AlertDialog.OnCancelListener() {
+              public void onCancel(DialogInterface dialog) {
+                dialog.dismiss();
+                call.success();
+              }
+            });
 
         AlertDialog dialog = builder.create();
 
@@ -76,7 +78,9 @@ public class Modals extends Plugin {
       public void run() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(c);
 
-        builder.setMessage(message).setTitle(title)
+        builder
+            .setMessage(message)
+            .setTitle(title)
             .setPositiveButton(okButtonTitle, new AlertDialog.OnClickListener() {
               public void onClick(DialogInterface dialog, int buttonIndex) {
                 dialog.dismiss();
@@ -138,7 +142,9 @@ public class Modals extends Plugin {
 
         input.setText(inputPlaceholder);
 
-        builder.setMessage(message).setTitle(title)
+        builder
+            .setMessage(message)
+            .setTitle(title)
             .setView(input)
             .setPositiveButton(okButtonTitle, new AlertDialog.OnClickListener() {
               public void onClick(DialogInterface dialog, int buttonIndex) {
@@ -165,7 +171,6 @@ public class Modals extends Plugin {
                 } catch(JSONException ex) {}
               }
             })
-
             .setOnCancelListener(new AlertDialog.OnCancelListener() {
               public void onCancel(DialogInterface dialog) {
                 dialog.dismiss();
