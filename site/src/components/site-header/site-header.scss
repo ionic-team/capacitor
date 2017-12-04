@@ -1,3 +1,8 @@
+.landing-page {
+  .logo {
+    background-image: url(assets/img/avocado-logo.png);
+  }
+}
 site-header {
   position: fixed;
   top: 0;
@@ -9,7 +14,10 @@ site-header {
   z-index: 99;
 
   .logo {
-    height: 48px;
+    background: url(assets/img/avocado-dark-logo.png);
+    width: 128px;
+    height: 38px;
+    background-size: 100%;
   }
 
   .logo-link a {

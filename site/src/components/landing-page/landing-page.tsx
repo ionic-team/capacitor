@@ -35,10 +35,10 @@ export class LandingPage {
                 <b>Sign up for updates and early access to the preview.</b>
               </div>
               <section id="buttons">
-                <form id="cta-form">
+                <form id="cta-form" action="https://codiqa.createsend.com/t/t/s/flhuhj/" method="post">
                   <div class="input-with-button">
-                    <input type="email" placeholder="Email address" />
-                    <button>Notify me</button>
+                    <input type="email" placeholder="Email address" id="fieldEmail" name="cm-flhuhj-flhuhj" required />
+                    <button type="submit">Notify me</button>
                   </div>
                 </form>
                 {/*
