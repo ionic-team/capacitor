@@ -25,3 +25,12 @@ npm run build && cp -R www/* ios/IonicRunner/www/
 ```
 
 Then open `packages/example/ios/IonicRunner/IonicRunner.xcodeproj` and run it
+
+### Running Android Example
+
+First, we need to build the Android runtime. Open `android` in Android Studio and do a build. Copy
+`android/avocado/build/outputs/aar/avocado-debug.aar` to `example/android/avocado-debug/`
+
+Open `examples/android` in Android Studio, run in emulator or on device.
+
+Enjoy.
