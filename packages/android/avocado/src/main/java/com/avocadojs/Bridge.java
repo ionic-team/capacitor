@@ -14,6 +14,7 @@ import com.avocadojs.plugin.Console;
 import com.avocadojs.plugin.Device;
 import com.avocadojs.plugin.Filesystem;
 import com.avocadojs.plugin.Modals;
+import com.avocadojs.plugin.StatusBar;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -64,6 +65,7 @@ public class Bridge {
     this.registerPlugin(Device.class);
     this.registerPlugin(Filesystem.class);
     this.registerPlugin(Modals.class);
+    this.registerPlugin(StatusBar.class);
   }
 
   /**
