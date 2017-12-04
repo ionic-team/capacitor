@@ -1,5 +1,11 @@
-demos-page {
+blog-page {
   a {
     text-decoration: none;
+  }
+  .post {
+    max-width: 600px;
+    p {
+      color: #111;
+    }
   }
 }
