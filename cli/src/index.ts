@@ -13,7 +13,7 @@ import { doctorCommand } from './commands/doctor';
 
 export const PROJECT_DIR = __dirname;
 
-export function run(process: any) {
+export function run(process: NodeJS.Process) {
 
   program
     .version(require('../package.json').version);

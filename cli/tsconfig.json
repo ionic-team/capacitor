@@ -2,14 +2,13 @@
   "compilerOptions": {
       "strict": true,
       "lib": ["es2016"],
-      "outDir": "./dist",        // path to output directory
+      "outDir": "dist",
       "module": "commonjs",
-      "target": "es2017",            // specify ECMAScript target version
+      "target": "es2016",
       "moduleResolution": "node",
-      "types" : ["node", "jest"],
       "pretty": true
   },
-  "include": [
-      "./src/"
+  "files": [
+      "src/index.ts"
   ]
 }
