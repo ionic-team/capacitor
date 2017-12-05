@@ -19,7 +19,7 @@ export async function updateIOS(needsUpdate: boolean) {
 
   if (plugins.length > 0) {
     logInfo('found', plugins.length, 'native modules\n',
-      plugins.map(p => p.id).join('\n'), '\n');
+      plugins.map(p => `          - ${p.id}\n`).join(''));
   } else {
     logInfo('no avocado plugin was found, that\'s ok, you can add more plugins later');
   }
@@ -79,13 +79,12 @@ export function generatePodFile(plugins: Plugin[]) {
   const pods = plugins
     .map((p) => `pod '${p.ios!.name}', :path => '${p.ios!.path}'`);
 
-  pods.push(IOS_RUNTIME_POD);
-
   return `
     platform :ios, '${IOS_MIN_VERSION}'
     use_frameworks!
 
     target 'AvocadoApp' do
+      ${IOS_RUNTIME_POD}
       ${pods.join('\n')}
     end`;
 }
