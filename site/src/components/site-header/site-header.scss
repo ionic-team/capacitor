@@ -2,6 +2,9 @@
   .logo {
     background-image: url(assets/img/avocado-logo.png);
   }
+  site-header {
+    position: static;
+  }
 }
 site-header {
   position: fixed;
