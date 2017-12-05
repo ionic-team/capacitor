@@ -2,6 +2,7 @@ package com.avocadojs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
@@ -58,6 +59,17 @@ public class Bridge {
     String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
     webView.loadUrl(url);
   }
+
+  public Context getContext() {
+    return this.context;
+  }
+
+  public Activity getActivity() { return this.context; }
+
+  public WebView getWebView() {
+    return this.webView;
+  }
+
 
   public void registerCorePlugins() {
     this.registerPlugin(Camera.class);
@@ -155,9 +167,10 @@ public class Bridge {
    * @param permissions the permissions requested
    * @param grantResults the set of granted/denied permissions
    */
+
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     KnownPlugin plugin = getPluginWithRequestCode(requestCode);
-    
+
     if(plugin == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
       return;
@@ -166,14 +179,14 @@ public class Bridge {
     plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 
-  public Context getContext() {
-    return this.context;
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    KnownPlugin plugin = getPluginWithRequestCode(requestCode);
+
+    if(plugin == null) {
+      Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
+      return;
+    }
+
+    plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
   }
-
-  public Activity getActivity() { return this.context; }
-
-  public WebView getWebView() {
-    return this.webView;
-  }
-
 }

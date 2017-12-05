@@ -1,5 +1,6 @@
 package com.avocadojs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,5 +31,14 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     this.bridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if(this.bridge == null) {
+      return;
+    }
+
+    this.bridge.onActivityResult(requestCode, resultCode, data);
   }
 }
