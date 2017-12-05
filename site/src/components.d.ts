@@ -272,6 +272,35 @@ declare global {
   }
 }
 
+import { SiteBar as SiteBar } from './components/site-bar/site-bar';
+
+interface HTMLSiteBarElement extends SiteBar, HTMLElement {
+}
+declare var HTMLSiteBarElement: {
+  prototype: HTMLSiteBarElement;
+  new (): HTMLSiteBarElement;
+};
+declare global {
+  interface HTMLElementTagNameMap {
+      "site-bar": HTMLSiteBarElement;
+  }
+  interface ElementTagNameMap {
+      "site-bar": HTMLSiteBarElement;
+  }
+  namespace JSX {
+      interface IntrinsicElements {
+          "site-bar": JSXElements.SiteBarAttributes;
+      }
+  }
+  namespace JSXElements {
+      export interface SiteBarAttributes extends HTMLAttributes {
+          mode?: string,
+          color?: string,
+        
+      }
+  }
+}
+
 import { SiteHeader as SiteHeader } from './components/site-header/site-header';
 
 interface HTMLSiteHeaderElement extends SiteHeader, HTMLElement {

@@ -20,6 +20,7 @@ export class App {
 
     return [
       <div id="main-div">
+        {this.isLandingPage && (<site-bar />)}
         <site-header />
         <div class="app">
           <stencil-router>

@@ -16,12 +16,14 @@ export class BlogPage {
           <h2>Announcing Avocado</h2>
           <div>By <a href="http://twitter.com/maxlynch">Max Lynch</a> on <time>December 12th, 2017</time></div>
           <p>
-            Today the Ionic team is excited excited to announce a new Private Preview open source project called Avocado that makes
+            Today the <a href="http://ionicframework.com/">Ionic</a> team is excited excited to announce a new Private Preview open source project called Avocado that makes
             it easier to build and deploy web apps on iOS, Android, Electron, and the web as a Progressive Web App,
             all while maximizing code reuse.
           </p>
           <p>
-            Over the last few years, we've seen web technology proliferate on mobile like never before. As a 
+            Over the last few years, we've seen web technology proliferate on mobile like never before. Increasingly,
+            teams are building apps using web technologies, and Progressive Web Apps are poised to bring the web
+            to mobile in a huge way. As a 
             company focused 100% on bringing the web to mobile, we're excited that teams are far more willing
             to build apps with web technology today than in years past.
           </p>
@@ -31,7 +33,11 @@ export class BlogPage {
             environment on iOS, Android, and Electron, <i>and</i> on the web as a Progressive Web App.
           </p>
           <p>
-            Avocado features a simple Plugin API for building native functionality that is exposed through
+            Avocado is our attempt at doing just that.
+          </p>
+          <p>
+            Avocado is a set of tools and a web-to-native bridge that makes it possible to build powerful mobile apps with seamless
+            native integration and Progressive Web App fallbacks. Avocado features a simple Plugin API for building native functionality that is exposed through
             JavaScript to a web layer, along with easily mixing Native UI controls with web content
             to get the best of both worlds.
           </p>
@@ -46,13 +52,24 @@ export class BlogPage {
             making it easy for the community to fill in the rest of the pieces.
           </p>
           <p>
-            We are hopefuly that Avocado will enable teams with only web developers to build great apps, <i>and</i> teams with a mix of native developers and web developers will be able to work together to build truly cross-platform apps.
+            We are hopeful that Avocado will enable teams with only web developers to build great apps, <i>and</i> teams with a mix of native developers and web developers will be able to work together to build truly cross-platform apps.
           </p>
           <p>
             Avocado is under active development and is currently in a Private Preview with a small set of users while
             we continue to build and improve the project. We expect to have a public preview early 2018.
           </p>
           <p>
+            Please enter your email to join the mailing list to stay updated on our progress.
+          </p>
+          <form id="cta-form" action="https://codiqa.createsend.com/t/t/s/flhuhj/" method="post">
+            <div>
+              <input type="email" placeholder="Email address" id="fieldEmail" name="cm-flhuhj-flhuhj" required style={{padding: '5px', width: '150px'}}/>
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+          <p>
+            Thanks,<br />
+            The <a href="http://ionicframework.com/">Ionic</a> Team
           </p>
         </div>
       </div>
