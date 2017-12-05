@@ -24,4 +24,8 @@ public class Plugin {
   public boolean hasPermission(String permission) {
     return ActivityCompat.checkSelfPermission(this.getContext(), permission) == PackageManager.PERMISSION_GRANTED;
   }
+
+  public void requestPermission(String permission) {
+    ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, 1);
+  }
 }
