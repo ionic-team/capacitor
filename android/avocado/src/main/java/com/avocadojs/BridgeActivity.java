@@ -8,6 +8,8 @@ import android.webkit.WebView;
 import com.avocadojs.android.R;
 
 public class BridgeActivity extends AppCompatActivity {
+  private Bridge bridge;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -18,6 +20,15 @@ public class BridgeActivity extends AppCompatActivity {
     Log.d(Bridge.TAG, "Starting Avocado Activity");
 
     WebView webView = findViewById(R.id.webview);
-    Bridge bridge = new Bridge(this, webView);
+    bridge = new Bridge(this, webView);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    if(this.bridge == null) {
+      return;
+    }
+
+    this.bridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 }

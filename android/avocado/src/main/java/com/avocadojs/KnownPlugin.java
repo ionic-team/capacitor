@@ -36,6 +36,10 @@ public class KnownPlugin {
     this.indexMethods(pluginClass);
   }
 
+  public Class<? extends Plugin> getPluginClass() {
+    return pluginClass;
+  }
+
   public String getId() {
     return this.pluginId;
   }
