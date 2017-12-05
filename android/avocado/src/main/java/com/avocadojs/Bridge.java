@@ -96,6 +96,23 @@ public class Bridge {
     return this.plugins.get(pluginId);
   }
 
+  public KnownPlugin getPluginWithRequestCode(int requestCode) {
+    for(KnownPlugin plugin : this.plugins.values()) {
+      NativePlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(NativePlugin.class);
+      if(pluginAnnotation == null) {
+        continue;
+      }
+
+      int[] requestCodes = pluginAnnotation.requestCodes();
+      for(int rc : requestCodes) {
+        if(rc == requestCode) {
+          return plugin;
+        }
+      }
+    }
+    return null;
+  }
+
   public void callPluginMethod(String pluginId, final String methodName, final PluginCall call) {
     try {
       final KnownPlugin plugin = this.getPlugin(pluginId);
@@ -129,6 +146,24 @@ public class Bridge {
       Log.e("callPluginMethod", "error : " + ex);
       call.errorCallback(ex.toString());
     }
+  }
+
+  /**
+   * Handle a request permission result by finding the that requested
+   * the permission and calling their permission handler
+   * @param requestCode the code that was requested
+   * @param permissions the permissions requested
+   * @param grantResults the set of granted/denied permissions
+   */
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    KnownPlugin plugin = getPluginWithRequestCode(requestCode);
+    
+    if(plugin == null) {
+      Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
+      return;
+    }
+
+    plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 
   public Context getContext() {
