@@ -46,7 +46,7 @@ export function run(process: NodeJS.Process) {
     .action(doctorCommand);
 
   program
-    .command('new-plugin')
+    .command('plugin:generate')
     .description('start a new avocado plugin')
     .action(newPluginCommand);
 

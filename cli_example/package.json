@@ -2,9 +2,6 @@
   "name": "demo",
   "private": true,
   "dependencies": {
-    "shelljs": "^0.7.8"
-  },
-  "devDependencies": {
-    "@types/inquirer": "0.0.35"
+    "plugin-hello": "0.0.1"
   }
 }

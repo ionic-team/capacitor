@@ -42,28 +42,33 @@ export function isIOSAvailable(): Promise<boolean> {
 
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
   const resolved = await Promise.all(allPlugins.map(resolvePlugin));
-  return resolved.filter(plugin => !!plugin.ios);
+  return resolved.filter(plugin => !!plugin) as Plugin[];
 }
 
-export async function resolvePlugin(plugin: Plugin): Promise<Plugin> {
-  if (plugin.ios) {
-    return plugin;
+export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
+  const iosManifest = plugin.manifest.ios;
+  if (!iosManifest) {
+    return null;
   }
-  const iosPath = join(plugin.rootPath, plugin.meta.ios || 'native/ios');
   try {
-    const files = await readdirAsync(iosPath);
+    if (!iosManifest.src) {
+      throw 'avocado.ios.path is missing';
+    }
+
+    const iosPath = join(plugin.rootPath, iosManifest.src);
     plugin.ios = {
-      name: 'Plugin',
+      name: plugin.name,
       type: PluginType.Code,
       path: iosPath
     };
+    const files = await readdirAsync(iosPath);
     const podSpec = files.find(file => file.endsWith('.podspec'));
     if (podSpec) {
       plugin.ios.type = PluginType.Cocoapods;
       plugin.ios.name = podSpec.split('.')[0];
     }
   } catch (e) {
-
+    return null;
   }
   return plugin;
 }

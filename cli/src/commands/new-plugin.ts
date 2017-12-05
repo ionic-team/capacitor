@@ -1,6 +1,7 @@
 import { getAssetsPath, logFatal, logInfo, runCommand, runTask, writeFileAsync } from '../common';
 import { cp, exit } from 'shelljs';
 import { join } from 'path';
+import { PACKAGE_JSON } from '../config';
 import { Answers, prompt } from 'inquirer';
 
 const PACKAGE = 'package.json';
@@ -22,7 +23,7 @@ export async function newPlugin() {
     {
       type: 'input',
       name: 'name',
-      message: 'plugin name (snake-plugin):'
+      message: 'plugin name (snake-case):'
     }, {
       type: 'input',
       name: 'description',
@@ -58,7 +59,7 @@ export async function newPlugin() {
       cp('-R', getAssetsPath('plugin-base'), pluginPath);
     });
     await runTask('Genering package.json', () => {
-      return writeFileAsync(join(pluginPath, 'package.json'), generatePackageJSON(answers));
+      return writeFileAsync(join(pluginPath, PACKAGE_JSON), generatePackageJSON(answers));
     });
     // await runTask('Configuring', () => {
     //   return writeFileAsync(join(pluginPath, 'package.json'), generatePackageJSON(answers));
@@ -79,33 +80,39 @@ function generatePackageJSON(answers: Answers) {
     name: answers.name,
     version: '0.0.1',
     description: answers.description,
+    main: 'dist/index.js',
+    types: 'dist/index.d.ts',
     scripts: {
-      'build': 'tsc',
-      'deploy': 'np',
+      'build': 'npm run clean && tsc',
+      'clean': 'rm -rf ./dist',
+      'watch': 'tsc --watch',
       'version': 'npm run build'
     },
     author: answers.author,
     license: answers.license,
+    dependencies: {
+      'avocado-js': 'latest'
+    },
     devDependencies: {
-      '@avocado/core': '^0.0.1',
-      'np': '^2.17.0',
       'typescript': '^2.6.2'
     },
     files: [
       'dist/',
       'native/'
     ],
+    keywords: [
+      'avocado',
+      'plugin',
+      'native'
+    ],
     avocado: {
       ios: {
-        src: 'native/ios',
-        doctor: [{
-          plist: 'NSCameraUsageDescription',
-          message: 'this plugin uses the camera, and apple requires to configure this property'
-        }]
+        src: 'ios',
       },
       android: {
-        src: 'native/android'
+        src: 'android'
       }
     }
   }, null, '  ');
 }
+
