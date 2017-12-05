@@ -1,5 +1,5 @@
 {
-  "name": "@avocado/cli",
+  "name": "@avocadojs/cli",
   "private": true,
   "version": "1.0.0",
   "description": "Avocado: The universal App container",
@@ -66,7 +66,7 @@
     "ts-jest": "^21.2.3",
     "tslint": "^5.8.0",
     "tslint-ionic-rules": "0.0.11",
-    "typescript": "^2.6.1"
+    "typescript": "^2.6.2"
   },
   "jest": {
     "testEnvironment": "node",

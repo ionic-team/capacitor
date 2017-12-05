@@ -1,6 +1,5 @@
-import { checkCocoaPods, checkIOSProject, findXcodePath } from './common';
-import { check, wait } from '../../common';
-import { exit } from 'shelljs';
+import { findXcodePath } from './common';
+import { wait } from '../../common';
 import opn = require('opn');
 
 

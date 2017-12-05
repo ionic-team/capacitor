@@ -1,11 +1,11 @@
 import { promisify } from 'util';
-import { readFile, readdir, writeFile } from 'fs';
+import { readFile, readdir, readdirSync, writeFile } from 'fs';
 import chalk from 'chalk';
-import { exec, exit, ls, which } from 'shelljs';
+import { exec, exit, which } from 'shelljs';
 import { prompt } from 'inquirer';
 import { exists } from 'fs';
 import { ANDROID_PATH, ASSETS_PATH, IOS_PATH, PLATFORMS } from './config';
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 import ora = require('ora');
 import { setTimeout } from 'timers';
 import { PROJECT_DIR } from './index';
@@ -59,18 +59,67 @@ export function getRootPath(mode: string) {
   throw 'unknown mode' + mode;
 }
 
-export async function askPlatform(platform: string | undefined): Promise<string> {
+export async function askPlatform(platform: string, promptMessage: string): Promise<string> {
   if (!platform) {
     const answer = await prompt({
       type: 'list',
       name: 'mode',
-      message: 'Choose an platform to update',
+      message: promptMessage,
       choices: PLATFORMS
     });
-    return answer.mode.toLowerCase();
-  } else {
-    return platform.toLowerCase();
+    return answer.mode.toLowerCase().trim();
   }
+
+  platform = platform.toLowerCase().trim();
+
+  if (!isValidPlatform(platform)) {
+    logFatal(`Invalid platform: ${platform}`);
+  }
+
+  return platform;
+}
+
+export function getPlatforms(platform?: string) {
+  const platforms: string[] = [];
+
+  const appDirs = readdirSync(PROJECT_DIR);
+
+  if (platform) {
+    platform = platform.toLowerCase().trim();
+
+    if (!isValidPlatform(platform)) {
+      logFatal(`Invalid platform: ${platform}`);
+
+    } else if (!appDirs.includes(platform)) {
+      platformNotCreatedError(platform);
+
+    } else {
+      platforms.push(platform);
+    }
+
+  } else {
+    appDirs.forEach(appDir => {
+      const dir = appDir.toLowerCase();
+      if (isValidPlatform(dir)) {
+        platforms.push(dir);
+      }
+    });
+  }
+
+  if (!platforms.length) {
+    logFatal(`No platforms found in: ${PROJECT_DIR}`);
+  }
+
+  return platforms;
+}
+
+function platformNotCreatedError(platform: string) {
+  logFatal(`"${platform}" platform has not been created. Please use "avocado create ${platform}" command to first create the platform.`);
+}
+
+export function isValidPlatform(platform: string) {
+  platform = platform.toLowerCase().trim();
+  return PLATFORMS.includes(platform);
 }
 
 export function wait(time: number) {

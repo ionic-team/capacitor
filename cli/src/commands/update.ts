@@ -1,26 +1,25 @@
+import { getPlatforms } from '../common';
+import { updateAndroid } from '../platforms/android/update';
 import { updateIOS } from '../platforms/ios/update';
-import { askPlatform, logFatal, runTask } from '../common';
-import { exit } from 'shelljs';
 
 
 export async function updateCommand(platform: string) {
-  platform = await askPlatform(platform);
+  const platforms = getPlatforms(platform);
 
-  try {
-    await update(platform, true);
-    exit(0);
-  } catch (e) {
-    logFatal(e);
-  }
-
+  return Promise.all(platforms.map(platform => {
+    return update(platform, true);
+  }));
 }
+
 
 export async function update(platform: string, needsUpdate: boolean) {
   if (platform === 'ios') {
     await updateIOS(needsUpdate);
+
   } else if (platform === 'android') {
-    // await updateAndroid();
+    await updateAndroid(needsUpdate);
+
   } else {
-    throw `Platform ${platform} is not valid. Try with iOS or android`;
+    throw `Platform ${platform} is not valid.`;
   }
 }

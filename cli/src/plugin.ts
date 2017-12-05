@@ -1,6 +1,6 @@
 import { join, resolve } from 'path';
-import { readJSON, writeFileAsync } from './common';
-import { LIST_FILE, PLUGIN_PREFIX } from './config';
+import { PLUGIN_PREFIX } from './config';
+import { readJSON } from './common';
 
 export const enum PluginType {
   Code,

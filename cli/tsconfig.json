@@ -6,7 +6,9 @@
       "module": "commonjs",
       "target": "es2016",
       "moduleResolution": "node",
-      "pretty": true
+      "pretty": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true
   },
   "files": [
       "src/index.ts"

@@ -1,8 +1,8 @@
 import { Plugin, PluginType } from '../../plugin';
-import { existsAsync, isInstalled, readdirAsync, runCommand, writeFileAsync } from '../../common';
+import { existsAsync, isInstalled, readdirAsync } from '../../common';
 import { join } from 'path';
 import { IOS_PATH } from '../../config';
-import { cp, ls } from 'shelljs';
+import { ls } from 'shelljs';
 
 export function findXcodePath(): string | null {
   for (let file of ls(IOS_PATH)) {
