@@ -1,0 +1,13 @@
+build.xml
+local.properties
+/gradlew
+/gradlew.bat
+/gradle
+ant-build
+ant-gen
+gen
+out
+.idea/
+.gradle
+/build
+/app/build
