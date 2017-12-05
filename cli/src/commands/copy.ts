@@ -1,23 +1,23 @@
-import { askPlatform, getRootPath, logFatal, runTask } from '../common';
-import { cp, exit, ls } from 'shelljs';
-import { join } from 'path';
-import { ANDROID_PATH, IOS_PATH } from '../config';
+import { getPlatforms } from '../common';
+import { copyAndroid } from '../platforms/android/copy';
+import { copyIOS } from '../platforms/ios/copy';
 
 
 export async function copyCommand(platform: string) {
-  platform = await askPlatform(platform);
-  try {
-    await copy(platform);
-    exit(0);
-  } catch (e) {
-    logFatal(e);
-  }
+  const platforms = getPlatforms(platform);
+
+  return Promise.all(platforms.map(copy));
 }
 
+
 export async function copy(platform: string) {
-  await runTask('Copying www -> ios/www', async () => {
-    const modeRoot = getRootPath(platform);
-    const dest = platform + '/';
-    cp('-R', 'www', dest);
-  });
+  if (platform === 'ios') {
+    await copyIOS();
+
+  } else if (platform === 'android') {
+    await copyAndroid();
+
+  } else {
+    throw `Platform ${platform} is not valid.`;
+  }
 }

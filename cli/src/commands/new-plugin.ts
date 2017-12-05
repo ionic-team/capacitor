@@ -1,7 +1,6 @@
-import { askPlatform, existsAsync, getAssetsPath, getRootPath, logFatal, logInfo, runCommand, runTask, writeFileAsync } from '../common';
-import { cp, exit, ls } from 'shelljs';
+import { getAssetsPath, logFatal, logInfo, runCommand, runTask, writeFileAsync } from '../common';
+import { cp, exit } from 'shelljs';
 import { join } from 'path';
-import { ANDROID_PATH, IOS_PATH } from '../config';
 import { Answers, prompt } from 'inquirer';
 
 const PACKAGE = 'package.json';
@@ -10,6 +9,7 @@ export async function newPluginCommand() {
   try {
     await newPlugin();
     exit(0);
+
   } catch (e) {
     logFatal(e);
   }
@@ -17,6 +17,7 @@ export async function newPluginCommand() {
 
 export async function newPlugin() {
   logInfo('avocado new-plugin is about to create a new avocado plugin.');
+
   const answers = await prompt([
     {
       type: 'input',
@@ -50,6 +51,7 @@ export async function newPlugin() {
     }
   ]);
   console.log('\n');
+
   if (answers.confirm) {
     const pluginPath = answers.name;
     await runTask('Adding plugin files', async () => {

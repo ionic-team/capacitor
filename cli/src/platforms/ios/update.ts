@@ -1,8 +1,8 @@
 import { Plugin, PluginType, getPlugins } from '../../plugin';
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { check, isInstalled, logInfo, runCommand, runTask, writeFileAsync } from '../../common';
+import { check, logInfo, runCommand, runTask, writeFileAsync } from '../../common';
 import { join } from 'path';
-import { IOS_MIN_VERSION, IOS_PATH, IOS_RUNTIME_POD, LIST_FILE } from '../../config';
+import { IOS_MIN_VERSION, IOS_PATH, IOS_RUNTIME_POD } from '../../config';
 
 
 export async function updateIOS(needsUpdate: boolean) {

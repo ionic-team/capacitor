@@ -1,7 +1,6 @@
 /** GENERAL */
 export const LIST_FILE = '.avocado_plugins.json';
-export const CONFIG_FILE = ['iOS', 'android'];
-export const PLATFORMS = ['iOS', 'android'];
+export const PLATFORMS = ['android', 'ios'];
 export const PLUGIN_PREFIX = 'avo-plugin-';
 export const ASSETS_PATH = '../assets';
 
@@ -12,3 +11,4 @@ export const IOS_PATH = 'ios';
 
 /** ANDROID */
 export const ANDROID_PATH = 'android';
+export const ANDROID_APP_BASE = 'git+https://git@github.com/ionic-team/stencil-app-starter.git';
