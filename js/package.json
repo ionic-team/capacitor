@@ -1,9 +1,9 @@
 {
-  "name": "avocado-js",
+  "name": "@avocadojs/core",
   "version": "1.0.0",
-  "description": "",
-  "homepage": "",
-  "author": "Ionic Team",
+  "description": "Avocado: The universal App container",
+  "homepage": "https://ionicframework.com",
+  "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "files": [
     "dist/"
@@ -32,6 +32,5 @@
   },
   "bugs": {
     "url": "https://github.com/ionic-team/avocado-js/issues"
-  },
-  "dependencies": {}
+  }
 }
