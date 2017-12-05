@@ -5,7 +5,6 @@ node_modules/
 cli/dist/commands/copy.js
 Pods/
 test_project/
-Podfile
 *.map
 .DS_Store
 example/www/
