@@ -3,10 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/avocado-debug/avocado-debug.iml" filepath="$PROJECT_DIR$/avocado-debug/avocado-debug.iml" />
       <module fileurl="file://$PROJECT_DIR$/avocado-debug/avocado-debug.iml" filepath="$PROJECT_DIR$/avocado-debug/avocado-debug.iml" />
     </modules>
   </component>
