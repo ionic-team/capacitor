@@ -252,16 +252,25 @@ let HomePage = class HomePage {
         });
     }
     showAlert() {
-        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
-        modals.alert('Stop', 'this is an error', 'Okay');
+        return __awaiter(this, void 0, void 0, function* () {
+            let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
+            let alertRet = yield modals.alert('Stop', 'this is an error');
+            console.log('Alert ret', alertRet);
+        });
     }
     showConfirm() {
-        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
-        modals.confirm('Stop', 'this is an error', 'Okay');
+        return __awaiter(this, void 0, void 0, function* () {
+            let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
+            let confirmRet = yield modals.confirm('Confirm', 'Are you sure you\'d like to press the red button?');
+            console.log('Confirm ret', confirmRet);
+        });
     }
     showPrompt() {
-        let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
-        modals.prompt('Stop', 'this is an error', 'Okay');
+        return __awaiter(this, void 0, void 0, function* () {
+            let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
+            let promptRet = yield modals.prompt('Hello', 'What\'s your name?');
+            console.log('Prompt ret', promptRet);
+        });
     }
     takePicture() {
         let camera = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["b" /* Camera */]();
@@ -319,6 +328,14 @@ let HomePage = class HomePage {
         }, () => { });
         this.isStatusBarLight = !this.isStatusBarLight;
     }
+    hideStatusBar() {
+        let statusBar = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["o" /* StatusBar */]();
+        statusBar.hide();
+    }
+    showStatusBar() {
+        let statusBar = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["o" /* StatusBar */]();
+        statusBar.show();
+    }
     hapticsImpact(style = __WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* HapticsImpactStyle */].Heavy) {
         let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
         haptics.impact({
@@ -373,6 +390,13 @@ let HomePage = class HomePage {
             let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
             yield fs.appendFile('secrets/text.txt', "MORE TESTS", __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
             console.log('Appended');
+        });
+    }
+    fileDelete() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+            yield fs.deleteFile('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+            console.log('Deleted');
         });
     }
     mkdir() {
@@ -463,7 +487,7 @@ let HomePage = class HomePage {
 };
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <ion-item>\n      <button (click)="showSplash()" ion-button color="primary">\n        Splash Show\n      </button>\n      <button (click)="showSplashAutoFade()" ion-button color="primary">\n        Splash Auto Fade\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="showAlert()" ion-button color="primary">\n        Alert\n      </button>\n      <button (click)="showConfirm()" ion-button color="primary">\n        Confirm\n      </button>\n      <button (click)="showPrompt()" ion-button color="primary">\n        Prompt\n      </button>\n    </ion-item>\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n    <!--\n    <ion-item>\n      Profile\n    </ion-item>\n    <ion-item>\n      <button (click)="startProfile()" ion-button color="primary" *ngIf="!profiling">\n        Start Profile\n      </button>\n      <button (click)="endProfile()" ion-button color="primary" *ngIf="profiling">\n        End Profile\n      </button>\n    </ion-item>\n    -->\n    <ion-item>\n      <button (click)="clipboardSetString()" ion-button color="primary">\n        Copy String\n      </button>\n      <button (click)="clipboardSetURL()" ion-button color="primary">\n        Copy URL\n      </button>\n      <button (click)="clipboardSetImage()" ion-button color="primary">\n        Copy Image\n      </button>\n      <div>\n      </div>\n      <button (click)="clipboardGetString()" ion-button color="primary">\n        Paste String\n      </button>\n      <button (click)="clipboardGetURL()" ion-button color="primary">\n        Paste URL\n      </button>\n      <button (click)="clipboardGetImage()" ion-button color="primary">\n        Paste Image\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="scheduleLocalNotification()" ion-button>\n        Schedule Local Notification\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n    </ion-item>\n    <ion-item>\n      Haptics\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsImpact()" ion-button color="primary">\n        Heavy\n      </button>\n      <button (click)="hapticsImpactMedium()" ion-button color="primary">\n        Medium\n      </button>\n      <button (click)="hapticsImpactLight()" ion-button color="primary">\n        Light \n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsVibrate()" ion-button color="primary">\n        Haptics Vibrate\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsSelectionStart()" ion-button color="primary">\n        Haptics Start\n      </button>\n      <button (click)="hapticsSelectionChanged()" ion-button color="primary">\n        Haptics Changed\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="browserOpen()" ion-button color="primary">\n        Browser Open\n      </button>\n    </ion-item>\n    <ion-item>FS</ion-item>\n    <ion-item>\n      <button (click)="mkdir()" ion-button>\n        mkdir\n      </button>\n      <button (click)="rmdir()" ion-button>\n        rmdir\n      </button>\n      <button (click)="readdir()" ion-button>\n        readdir\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="fileWrite()" ion-button>\n        File Write\n      </button>\n      <button (click)="fileRead()" ion-button>\n        File Read\n      </button>\n      <button (click)="fileAppend()" ion-button>\n        File Append\n      </button>\n      <button (click)="stat()" ion-button>\n        Stat\n      </button>\n    </ion-item>\n    <ion-item>\n      Motion\n    </ion-item>\n    <ion-item>\n      <button (click)="watchAccel()" ion-button>\n        Watch Accel\n      </button>\n      <div *ngIf="accel">\n        <b>x</b>: {{accel.x}} <b>y</b>: {{accel.y}} <b>z</b>: {{accel.z}}\n      </div>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/pages/home/home.html"*/
+        selector: 'page-home',template:/*ion-inline-start:"/Users/max/git/avocado/example/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-list>\n    <ion-item>FS</ion-item>\n    <ion-item>\n      <button (click)="mkdir()" ion-button>\n        mkdir\n      </button>\n      <button (click)="rmdir()" ion-button>\n        rmdir\n      </button>\n      <button (click)="readdir()" ion-button>\n        readdir\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="fileWrite()" ion-button>\n        Write\n      </button>\n      <button (click)="fileRead()" ion-button>\n        Read\n      </button>\n      <button (click)="fileAppend()" ion-button>\n        Append\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="fileDelete()" ion-button>\n        Delete\n      </button>\n      <button (click)="stat()" ion-button>\n        Stat\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="showSplash()" ion-button color="primary">\n        Splash Show\n      </button>\n      <button (click)="showSplashAutoFade()" ion-button color="primary">\n        Splash Auto Fade\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="showAlert()" ion-button color="primary">\n        Alert\n      </button>\n      <button (click)="showConfirm()" ion-button color="primary">\n        Confirm\n      </button>\n      <button (click)="showPrompt()" ion-button color="primary">\n        Prompt\n      </button>\n    </ion-item>\n    <ion-item>\n      <img [src]="image">\n      <button (click)="takePicture()" ion-button color="primary">\n        Take Picture</button>\n    </ion-item>\n    <!--\n    <ion-item>\n      Profile\n    </ion-item>\n    <ion-item>\n      <button (click)="startProfile()" ion-button color="primary" *ngIf="!profiling">\n        Start Profile\n      </button>\n      <button (click)="endProfile()" ion-button color="primary" *ngIf="profiling">\n        End Profile\n      </button>\n    </ion-item>\n    -->\n    <ion-item>\n      <button (click)="clipboardSetString()" ion-button color="primary">\n        Copy String\n      </button>\n      <button (click)="clipboardSetURL()" ion-button color="primary">\n        Copy URL\n      </button>\n      <button (click)="clipboardSetImage()" ion-button color="primary">\n        Copy Image\n      </button>\n      <div>\n      </div>\n      <button (click)="clipboardGetString()" ion-button color="primary">\n        Paste String\n      </button>\n      <button (click)="clipboardGetURL()" ion-button color="primary">\n        Paste URL\n      </button>\n      <button (click)="clipboardGetImage()" ion-button color="primary">\n        Paste Image\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="getCurrentPosition()" ion-button color="primary">\n        Geolocation.getCurrentPosition\n      </button>\n      <div>\n        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="watchPosition()" ion-button color="primary">\n        Geolocation.watchPosition\n      </button>\n      <div>\n        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="scheduleLocalNotification()" ion-button>\n        Schedule Local Notification\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="getDeviceInfo()" ion-button>\n        Device Info\n      </button>\n      <div *ngIf="deviceInfoJson">\n        <pre style="height: 200px; overflow: auto">\n{{deviceInfoJson}}\n        </pre>\n      </div>\n    </ion-item>\n    <ion-item>\n      <button (click)="changeStatusBar()" ion-button color="primary">\n        Change StatusBar Style\n      </button>\n      <button (click)="showStatusBar()" ion-button color="primary">\n        Show\n      </button>\n      <button (click)="hideStatusBar()" ion-button color="primary">\n        Hide\n      </button>\n    </ion-item>\n    <ion-item>\n      Haptics\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsImpact()" ion-button color="primary">\n        Heavy\n      </button>\n      <button (click)="hapticsImpactMedium()" ion-button color="primary">\n        Medium\n      </button>\n      <button (click)="hapticsImpactLight()" ion-button color="primary">\n        Light \n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsVibrate()" ion-button color="primary">\n        Haptics Vibrate\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="hapticsSelectionStart()" ion-button color="primary">\n        Haptics Start\n      </button>\n      <button (click)="hapticsSelectionChanged()" ion-button color="primary">\n        Haptics Changed\n      </button>\n    </ion-item>\n    <ion-item>\n      <button (click)="browserOpen()" ion-button color="primary">\n        Browser Open\n      </button>\n    </ion-item>\n    <ion-item>\n      Motion\n    </ion-item>\n    <ion-item>\n      <button (click)="watchAccel()" ion-button>\n        Watch Accel\n      </button>\n      <div *ngIf="accel">\n        <b>x</b>: {{accel.x}} <b>y</b>: {{accel.y}} <b>z</b>: {{accel.z}}\n      </div>\n    </ion-item>\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/Users/max/git/avocado/example/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* NavController */], __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* NgZone */]])
 ], HomePage);
@@ -568,7 +592,7 @@ let MyApp = class MyApp {
     }
 };
 MyApp = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/max/git/avocado/packages/example/src/app/app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"/Users/max/git/avocado/packages/example/src/app/app.html"*/
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/max/git/avocado/example/src/app/app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"/Users/max/git/avocado/example/src/app/app.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Platform */]])
 ], MyApp);
@@ -1014,8 +1038,8 @@ var Device = /** @class */ (function (_super) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Filesystem; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return FilesystemDirectory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Filesystem; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__plugin__ = __webpack_require__(11);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -1034,6 +1058,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 
+var FilesystemDirectory;
+(function (FilesystemDirectory) {
+    FilesystemDirectory["Application"] = "APPLICATION";
+    FilesystemDirectory["Documents"] = "DOCUMENTS";
+    FilesystemDirectory["Data"] = "DATA";
+    FilesystemDirectory["Cache"] = "CACHE";
+    FilesystemDirectory["External"] = "EXTERNAL";
+    FilesystemDirectory["ExternalStorage"] = "EXTERNAL_STORAGE"; // Android only
+})(FilesystemDirectory || (FilesystemDirectory = {}));
 var Filesystem = /** @class */ (function (_super) {
     __extends(Filesystem, _super);
     function Filesystem() {
@@ -1065,6 +1098,12 @@ var Filesystem = /** @class */ (function (_super) {
             encoding: encoding
         });
     };
+    Filesystem.prototype.deleteFile = function (file, directory) {
+        return this.nativePromise('deleteFile', {
+            file: file,
+            directory: directory
+        });
+    };
     Filesystem.prototype.mkdir = function (path, directory, createIntermediateDirectories) {
         if (createIntermediateDirectories === void 0) { createIntermediateDirectories = false; }
         return this.nativePromise('mkdir', {
@@ -1094,21 +1133,12 @@ var Filesystem = /** @class */ (function (_super) {
     Filesystem = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__plugin__["a" /* NativePlugin */])({
             name: 'Filesystem',
-            id: 'com.avocadojs.plugin.fs'
+            id: 'com.avocadojs.plugin.filesystem'
         })
     ], Filesystem);
     return Filesystem;
 }(__WEBPACK_IMPORTED_MODULE_0__plugin__["b" /* Plugin */]));
 
-var FilesystemDirectory;
-(function (FilesystemDirectory) {
-    FilesystemDirectory["Application"] = "APPLICATION";
-    FilesystemDirectory["Documents"] = "DOCUMENTS";
-    FilesystemDirectory["Data"] = "DATA";
-    FilesystemDirectory["Cache"] = "CACHE";
-    FilesystemDirectory["External"] = "EXTERNAL";
-    FilesystemDirectory["ExternalStorage"] = "EXTERNAL_STORAGE"; // Android only
-})(FilesystemDirectory || (FilesystemDirectory = {}));
 //# sourceMappingURL=fs.js.map
 
 /***/ }),
@@ -1218,8 +1248,9 @@ var Haptics = /** @class */ (function (_super) {
     Haptics.prototype.impact = function (options) {
         this.nativeCallback('impact', options);
     };
-    Haptics.prototype.vibrate = function () {
-        this.nativeCallback('vibrate');
+    Haptics.prototype.vibrate = function (options) {
+        if (options === void 0) { options = {}; }
+        this.nativeCallback('vibrate', options);
     };
     Haptics.prototype.selectionStart = function () {
         this.nativeCallback('selectionStart');
@@ -1328,18 +1359,21 @@ var Modals = /** @class */ (function (_super) {
             buttonTitle: buttonTitle
         });
     };
-    Modals.prototype.prompt = function (title, message, buttonTitle) {
-        this.nativePromise('prompt', {
+    Modals.prototype.prompt = function (title, message, okButtonTitle, cancelButtonTitle, inputPlaceholder) {
+        return this.nativePromise('prompt', {
             title: title,
             message: message,
-            buttonTitle: buttonTitle
+            okButtonTitle: okButtonTitle,
+            cancelButtonTitle: cancelButtonTitle,
+            inputPlaceholder: inputPlaceholder
         });
     };
-    Modals.prototype.confirm = function (title, message, buttonTitle) {
-        this.nativePromise('confirm', {
+    Modals.prototype.confirm = function (title, message, okButtonTitle, cancelButtonTitle) {
+        return this.nativePromise('confirm', {
             title: title,
             message: message,
-            buttonTitle: buttonTitle
+            okButtonTitle: okButtonTitle,
+            cancelButtonTitle: cancelButtonTitle
         });
     };
     Modals = __decorate([
@@ -1520,7 +1554,13 @@ var StatusBar = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     StatusBar.prototype.setStyle = function (options, callback) {
-        this.nativeCallback('setStyle', options, callback);
+        return this.nativeCallback('setStyle', options, callback);
+    };
+    StatusBar.prototype.show = function () {
+        return this.nativePromise('show');
+    };
+    StatusBar.prototype.hide = function () {
+        return this.nativePromise('hide');
     };
     StatusBar = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__plugin__["a" /* NativePlugin */])({
