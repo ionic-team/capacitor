@@ -1,5 +1,15 @@
 #!/usr/bin/env node
 'use strict';
 
+var semver = require('semver');
+var packageJson = require('../package.json');
+var currentNodeVersion = process.version.replace('v', '');
+var requiresNodeVersion = packageJson.engines.node;
+
+if (!semver.satisfies(currentNodeVersion, requiresNodeVersion)) {
+  console.error('ERROR: avocado cli requires node ' + requiresNodeVersion);
+  process.exit(1);
+}
+
 var cli = require('../dist/index');
 cli.run(process);
