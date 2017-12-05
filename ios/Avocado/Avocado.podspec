@@ -7,5 +7,5 @@ Pod::Spec.new do |s|
   s.ios.deployment_target  = '10.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/avocado.git', :tag => s.version }
-  s.source_files = 'Avocado/*.{swift,h}', 'Avocado/Plugins/*.swift'
+  s.source_files = 'Avocado/*.{swift,h,m}', 'Avocado/Plugins/*.{swift,h,m}', 'Avocado/Plugins/**/*.{swift,h,m}'
 end
