@@ -3,6 +3,10 @@
 The AvocadoJS Core package contains ES modules which can be imported by webapps. By default the core package already includes many ready to use plugins.
 
 ```
+npm install @avocado/core
+```
+
+```
 import { Modals } from '@avocadojs/core';
 
 const modals = new Modals();

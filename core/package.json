@@ -32,5 +32,8 @@
   },
   "bugs": {
     "url": "https://github.com/ionic-team/avocado-js/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

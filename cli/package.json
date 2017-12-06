@@ -1,6 +1,5 @@
 {
   "name": "@avocadojs/cli",
-  "private": true,
   "version": "0.0.1",
   "description": "Avocado: The universal App container",
   "homepage": "http://avocadojs.com/",
@@ -67,6 +66,9 @@
     "tslint": "^5.8.0",
     "tslint-ionic-rules": "0.0.11",
     "typescript": "^2.6.2"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "jest": {
     "testEnvironment": "node",
