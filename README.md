@@ -1,30 +1,32 @@
-# Avocado
+# AvocadoJS
 
-Monorepo for Avocado core libraries.
+Monorepo for Avocado libraries.
 
 ### Directory Structure
 
-* `packages/cli`: Avocado CLI
-* `packages/ios`: Avocado iOS Runtime
-* `packages/android`: Avocado Android Runtime
-* `packages/js`: Avocado JS library
-* `packages/example`: iOS Example for development
+* `cli`: Avocado CLI
+* `core`: Avocado Core JS library
+* `ios`: Avocado iOS Runtime
+* `ios-template`: Default iOS App installed by the CLI
+* `android`: Avocado Android Runtime
+* `android-template`: Default Android App installed by the CLI
+* `example`: iOS Example for development
 
 ### Running iOS Example
 
 ```
-cd packages/js/
+cd core
 npm run build
 sudo npm link
 ```
 
 ```
-cd packages/example
-npm link avocado-js
+cd example
+npm link @avocadojs/core
 npm run build && cp -R www/* ios/IonicRunner/www/
 ```
 
-Then open `packages/example/ios/IonicRunner/IonicRunner.xcodeproj` and run it
+Then open `example/ios/IonicRunner/IonicRunner.xcodeproj` and run it
 
 ### Running Android Example
 
