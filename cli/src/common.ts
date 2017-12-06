@@ -4,6 +4,7 @@ import { exec, exit, which } from 'shelljs';
 import { exists, readFile, readdir, writeFile  } from 'fs';
 import { promisify } from 'util';
 import { setTimeout } from 'timers';
+import { join } from 'path';
 
 
 export const copyAsync = promisify(copy);
@@ -22,6 +23,20 @@ export async function check(config: Config, checks: CheckFunction[]): Promise<vo
   if (errors.length > 0) {
     throw errors.join('\n');
   }
+}
+
+export async function checkWebDir(config: Config): Promise<string | null> {
+  if (!await existsAsync(config.app.webDir)) {
+    return `Avocado could not find the directory with the web assets in "${config.app.webDir}".
+    Please create it, also remember that it must include a index.html.
+    More info: https://avocadojs.com/docs/webDir`;
+  }
+
+  if (!await existsAsync(join(config.app.webDir, 'index.html'))) {
+    return `The web directory (${config.app.webDir}) must contain a "index.html".
+    It will be the entry point for the avocado hybrid app.`;
+  }
+  return null;
 }
 
 export async function checkPackage(config: Config): Promise<string | null> {
@@ -78,7 +93,7 @@ export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T
     return value;
 
   } catch (e) {
-    spinner.fail(e);
+    spinner.stop();
     throw e;
   }
 }

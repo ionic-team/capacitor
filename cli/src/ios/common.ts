@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { existsAsync, isInstalled, readdirAsync } from '../common';
+import { isInstalled, readdirAsync } from '../common';
 import { join } from 'path';
 import { ls } from 'shelljs';
 import { Plugin, PluginType } from '../plugin';
@@ -22,24 +22,12 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkIOSProject(config: Config): Promise <string | null> {
-  const exists = await isIOSAvailable(config);
-  if (!exists) {
-    return 'iOS was not created yet. Run `avocado start ios`.';
+export async function checkIOSProject(config: Config): Promise<string | null> {
+  const exists = config.platformDirExists('ios');
+  if (exists === null) {
+    return 'iOS was not created yet. Run `avocado create ios`.';
   }
   return null;
-}
-
-export async function checkNoIOSProject(config: Config): Promise <string | null> {
-  const exists = await isIOSAvailable(config);
-  if (exists) {
-    return 'An iOS project already exist';
-  }
-  return null;
-}
-
-export function isIOSAvailable(config: Config): Promise<boolean> {
-  return existsAsync(config.ios.name);
 }
 
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {

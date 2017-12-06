@@ -1,24 +1,23 @@
 import { Config } from '../config';
 import { copyAndroid } from '../android/copy';
 import { copyIOS } from '../ios/copy';
-import { existsAsync } from '../common';
+import { check, checkWebDir, logFatal } from '../common';
 
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
   const platforms = config.selectPlatforms(selectedPlatformName);
 
-  return Promise.all(platforms.map(platformName => {
-    return copy(config, platformName);
-  }));
+  try {
+    await check(config, [checkWebDir]);
+    await Promise.all(platforms.map(platformName => {
+      return copy(config, platformName);
+    }));
+  } catch (e) {
+    logFatal(e);
+  }
 }
 
-
 export async function copy(config: Config, platformName: string) {
-  const wwwExists = await existsAsync(config.app.webDir);
-  if (!wwwExists) {
-    return Promise.resolve();
-  }
-
   if (platformName === config.ios.name) {
     await copyIOS(config);
 
