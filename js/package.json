@@ -1,8 +1,8 @@
 {
   "name": "@avocadojs/core",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Avocado: The universal App container",
-  "homepage": "https://ionicframework.com",
+  "homepage": "http://avocadojs.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "files": [
