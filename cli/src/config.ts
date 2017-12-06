@@ -20,7 +20,7 @@ export class Config {
     name: 'ios',
     minVersion: '10.0',
     platformDir: '',
-    webDir: '',
+    webDir: 'www',
     avocadoRuntimePod: `pod 'Avocado'`,
     assets: {
       templateName: 'ios-template',
@@ -149,7 +149,11 @@ export class Config {
 
     // wasn't given a platform name, so let's
     // get the platforms that have already been created
-    return this.getExistingPlatforms();
+    const existingPlatforms = this.getExistingPlatforms();
+    if (existingPlatforms.length === 0) {
+      logFatal(`There are not platforms yet. Create a new one with "avocado create"`);
+    }
+    return existingPlatforms;
   }
 
 

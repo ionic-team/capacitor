@@ -1,16 +1,14 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { check, checkPackage, logInfo, runCommand, runTask, writeFileAsync } from '../common';
+import { CheckFunction, logInfo, runCommand, runTask, writeFileAsync } from '../common';
 import { Config } from '../config';
 import { join } from 'path';
 import { Plugin, PluginType, getPlugins } from '../plugin';
 
 
-export async function updateIOS(config: Config, needsUpdate: boolean) {
-  await runTask('Checking environment', () => (check(
-    config,
-    [checkCocoaPods, checkPackage, checkIOSProject]
-  )));
+export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
 
+
+export async function updateIOS(config: Config, needsUpdate: boolean) {
   const plugins = await runTask('Fetching plugins', async () => {
     const allplugins = await getPlugins();
     const iosPlugins = await getIOSPlugins(allplugins);
