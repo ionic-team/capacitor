@@ -23,7 +23,7 @@ public class Toast extends Plugin {
       duration = android.widget.Toast.LENGTH_LONG;
     }
 
-    android.widget.Toast toast = android.widget.Toast.makeText(context, text, duration);
+    android.widget.Toast toast = android.widget.Toast.makeText(getContext(), text, duration);
     toast.show();
     call.success();
   }
