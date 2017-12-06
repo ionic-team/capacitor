@@ -149,11 +149,7 @@ export class Config {
 
     // wasn't given a platform name, so let's
     // get the platforms that have already been created
-    const existingPlatforms = this.getExistingPlatforms();
-    if (existingPlatforms.length === 0) {
-      logFatal(`There are not platforms yet. Create a new one with "avocado create"`);
-    }
-    return existingPlatforms;
+    return this.getExistingPlatforms();
   }
 
 

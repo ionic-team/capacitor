@@ -1,8 +1,8 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { CheckFunction, logInfo, runCommand, runTask, writeFileAsync } from '../common';
+import { CheckFunction, runCommand, runTask, writeFileAsync } from '../common';
 import { Config } from '../config';
 import { join } from 'path';
-import { Plugin, PluginType, getPlugins } from '../plugin';
+import { Plugin, PluginType, getPlugins, printPlugins } from '../plugin';
 
 
 export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
@@ -15,13 +15,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     return iosPlugins;
   });
 
-  if (plugins.length > 0) {
-    logInfo('found', plugins.length, 'native modules\n',
-      plugins.map(p => `          - ${p.id}\n`).join(''));
-  } else {
-    logInfo('no avocado plugin was found, that\'s ok, you can add more plugins later');
-  }
-
+  printPlugins(plugins);
   await autoGeneratePods(plugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
 }

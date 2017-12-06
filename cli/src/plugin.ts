@@ -1,5 +1,5 @@
 import { join, resolve } from 'path';
-import { readJSON } from './common';
+import { logInfo, readJSON } from './common';
 
 
 export const enum PluginType {
@@ -72,4 +72,25 @@ export function fixName(name: string): string {
     .replace(/_\w/g, (m) => m[1].toUpperCase());
 
   return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+
+const CORE_PLUGINS = [
+  'Camera', 'Network', 'Browser', 'Clipboard', 'Console', 'Device', 'Filesystem',
+  'Geolocation', 'Haptics', 'LocalNotifications', 'Modals', 'Motion', 'PushNotifications',
+  'Share', 'SplashScreen', 'StatusBar', 'Storage', 'Toast'
+].sort();
+
+export function printPlugins(plugins: Plugin[]) {
+  const chalk = require('chalk');
+  const pluginNames = plugins.map(p => p.id).sort();
+  const builtinPlugins = CORE_PLUGINS.map(p => `${chalk.dim('[core]')} ${p}`);
+  pluginNames.push(...builtinPlugins);
+  if (pluginNames.length > 0) {
+    logInfo(`found ${pluginNames.length} native modules
+${pluginNames.map(p => `     ${p}`).join('\n')}
+`);
+  } else {
+    logInfo('no avocado plugin was found, that\'s ok, you can add more plugins later');
+  }
 }
