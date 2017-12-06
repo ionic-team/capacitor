@@ -17,6 +17,7 @@ export class Camera extends Plugin {
 export interface CameraOptions {
   quality?: number;
   allowEditing?: boolean;
+  resultType: 'base64' | 'uri';
 }
 
 export interface CameraPhoto {

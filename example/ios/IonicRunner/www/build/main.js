@@ -111,7 +111,7 @@ webpackEmptyAsyncContext.id = 151;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(56);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_avocado_js__ = __webpack_require__(262);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__ = __webpack_require__(262);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -150,13 +150,13 @@ let HomePage = class HomePage {
         this.profileTimeout = null;
         this.profileNumCallsTimeout = null;
         this.profileSamples = null;
-        let splash = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["n" /* SplashScreen */]();
+        let splash = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["n" /* SplashScreen */]();
         splash.hide();
-        let network = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["m" /* Network */]();
+        let network = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["m" /* Network */]();
         network.onStatusChange((err, status) => {
             console.log("Network status changed", status);
         });
-        let t = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["q" /* Test */]();
+        let t = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["q" /* Test */]();
         t.test();
         this.doStuff();
     }
@@ -176,7 +176,7 @@ let HomePage = class HomePage {
         });
     }
     showSplash() {
-        let s = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["n" /* SplashScreen */]();
+        let s = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["n" /* SplashScreen */]();
         s.show({
             autoHide: false
         });
@@ -185,14 +185,14 @@ let HomePage = class HomePage {
         }, 6000);
     }
     showSplashAutoFade() {
-        let s = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["n" /* SplashScreen */]();
+        let s = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["n" /* SplashScreen */]();
         s.show({
             showDuration: 2000,
             autoHide: true
         });
     }
     scheduleLocalNotification() {
-        let ln = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["j" /* LocalNotifications */]();
+        let ln = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["j" /* LocalNotifications */]();
         ln.schedule({
             title: 'Get 20% off!',
             body: 'Swipe to learn more',
@@ -206,14 +206,14 @@ let HomePage = class HomePage {
         });
     }
     clipboardSetString() {
-        let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+        let c = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["c" /* Clipboard */]();
         c.set({
             string: "Hello, Moto"
         });
     }
     clipboardGetString() {
         return __awaiter(this, void 0, void 0, function* () {
-            let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+            let c = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["c" /* Clipboard */]();
             let str = yield c.get({
                 type: "string"
             });
@@ -221,14 +221,14 @@ let HomePage = class HomePage {
         });
     }
     clipboardSetURL() {
-        let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+        let c = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["c" /* Clipboard */]();
         c.set({
             url: "http://google.com/"
         });
     }
     clipboardGetURL() {
         return __awaiter(this, void 0, void 0, function* () {
-            let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+            let c = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["c" /* Clipboard */]();
             let url = c.get({
                 type: "url"
             });
@@ -236,7 +236,7 @@ let HomePage = class HomePage {
         });
     }
     clipboardSetImage() {
-        let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+        let c = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["c" /* Clipboard */]();
         console.log('Setting image', this.base64Image);
         c.set({
             image: this.base64Image
@@ -244,7 +244,7 @@ let HomePage = class HomePage {
     }
     clipboardGetImage() {
         return __awaiter(this, void 0, void 0, function* () {
-            let c = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["c" /* Clipboard */]();
+            let c = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["c" /* Clipboard */]();
             const image = yield c.get({
                 type: "image"
             });
@@ -253,37 +253,38 @@ let HomePage = class HomePage {
     }
     showAlert() {
         return __awaiter(this, void 0, void 0, function* () {
-            let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
+            let modals = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["k" /* Modals */]();
             let alertRet = yield modals.alert('Stop', 'this is an error');
             console.log('Alert ret', alertRet);
         });
     }
     showConfirm() {
         return __awaiter(this, void 0, void 0, function* () {
-            let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
+            let modals = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["k" /* Modals */]();
             let confirmRet = yield modals.confirm('Confirm', 'Are you sure you\'d like to press the red button?');
             console.log('Confirm ret', confirmRet);
         });
     }
     showPrompt() {
         return __awaiter(this, void 0, void 0, function* () {
-            let modals = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["k" /* Modals */]();
+            let modals = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["k" /* Modals */]();
             let promptRet = yield modals.prompt('Hello', 'What\'s your name?');
             console.log('Prompt ret', promptRet);
         });
     }
     takePicture() {
-        let camera = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["b" /* Camera */]();
+        let camera = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["b" /* Camera */]();
         camera.getPhoto({
             quality: 90,
-            allowEditing: true
+            allowEditing: true,
+            resultType: 'base64'
         }).then((image) => {
             this.image = image && ('data:image/jpeg;base64,' + image.base64_data);
         });
     }
     getCurrentPosition() {
         return __awaiter(this, void 0, void 0, function* () {
-            let geo = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Geolocation */]();
+            let geo = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["g" /* Geolocation */]();
             try {
                 const coordinates = yield geo.getCurrentPosition();
                 console.log('Current', coordinates);
@@ -298,7 +299,7 @@ let HomePage = class HomePage {
         });
     }
     watchPosition() {
-        let geo = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["g" /* Geolocation */]();
+        let geo = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["g" /* Geolocation */]();
         try {
             const wait = geo.watchPosition((err, position) => {
                 console.log('Watch', position);
@@ -314,7 +315,7 @@ let HomePage = class HomePage {
     }
     getDeviceInfo() {
         return __awaiter(this, void 0, void 0, function* () {
-            let device = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["d" /* Device */]();
+            let device = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["d" /* Device */]();
             const info = yield device.getInfo();
             this.zone.run(() => {
                 this.deviceInfoJson = JSON.stringify(info, null, 2);
@@ -322,56 +323,56 @@ let HomePage = class HomePage {
         });
     }
     changeStatusBar() {
-        let statusBar = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["o" /* StatusBar */]();
+        let statusBar = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["o" /* StatusBar */]();
         statusBar.setStyle({
-            style: this.isStatusBarLight ? __WEBPACK_IMPORTED_MODULE_2_avocado_js__["p" /* StatusBarStyle */].Dark : __WEBPACK_IMPORTED_MODULE_2_avocado_js__["p" /* StatusBarStyle */].Light
+            style: this.isStatusBarLight ? __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["p" /* StatusBarStyle */].Dark : __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["p" /* StatusBarStyle */].Light
         }, () => { });
         this.isStatusBarLight = !this.isStatusBarLight;
     }
     hideStatusBar() {
-        let statusBar = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["o" /* StatusBar */]();
+        let statusBar = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["o" /* StatusBar */]();
         statusBar.hide();
     }
     showStatusBar() {
-        let statusBar = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["o" /* StatusBar */]();
+        let statusBar = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["o" /* StatusBar */]();
         statusBar.show();
     }
-    hapticsImpact(style = __WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* HapticsImpactStyle */].Heavy) {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
+    hapticsImpact(style = __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["i" /* HapticsImpactStyle */].Heavy) {
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["h" /* Haptics */]();
         haptics.impact({
             style: style
         });
     }
     hapticsImpactMedium(style) {
-        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* HapticsImpactStyle */].Medium);
+        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["i" /* HapticsImpactStyle */].Medium);
     }
     hapticsImpactLight(style) {
-        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2_avocado_js__["i" /* HapticsImpactStyle */].Light);
+        this.hapticsImpact(__WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["i" /* HapticsImpactStyle */].Light);
     }
     hapticsVibrate() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["h" /* Haptics */]();
         haptics.vibrate();
     }
     hapticsSelectionStart() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["h" /* Haptics */]();
         haptics.selectionStart();
     }
     hapticsSelectionChanged() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["h" /* Haptics */]();
         haptics.selectionChanged();
     }
     hapticsSelectionEnd() {
-        let haptics = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["h" /* Haptics */]();
+        let haptics = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["h" /* Haptics */]();
         haptics.selectionEnd();
     }
     browserOpen() {
-        let browser = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["a" /* Browser */]();
+        let browser = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["a" /* Browser */]();
         browser.open('http://ionicframework.com');
     }
     fileWrite() {
-        let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+        let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
         try {
-            fs.writeFile('secrets/text.txt', "This is a test", __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+            fs.writeFile('secrets/text.txt', "This is a test", __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
         }
         catch (e) {
             console.error('Unable to write file (press mkdir first, silly)', e);
@@ -380,30 +381,30 @@ let HomePage = class HomePage {
     }
     fileRead() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
-            let contents = yield fs.readFile('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+            let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
+            let contents = yield fs.readFile('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
             console.log(contents);
         });
     }
     fileAppend() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
-            yield fs.appendFile('secrets/text.txt', "MORE TESTS", __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+            let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
+            yield fs.appendFile('secrets/text.txt', "MORE TESTS", __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
             console.log('Appended');
         });
     }
     fileDelete() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
-            yield fs.deleteFile('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+            let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
+            yield fs.deleteFile('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
             console.log('Deleted');
         });
     }
     mkdir() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.mkdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.mkdir('secrets', __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
                 console.log('Made dir', ret);
             }
             catch (e) {
@@ -413,9 +414,9 @@ let HomePage = class HomePage {
     }
     rmdir() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.rmdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.rmdir('secrets', __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
                 console.log('Removed dir', ret);
             }
             catch (e) {
@@ -425,9 +426,9 @@ let HomePage = class HomePage {
     }
     readdir() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.readdir('secrets', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.readdir('secrets', __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
                 console.log('Read dir', ret);
             }
             catch (e) {
@@ -437,9 +438,9 @@ let HomePage = class HomePage {
     }
     stat() {
         return __awaiter(this, void 0, void 0, function* () {
-            let fs = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["e" /* Filesystem */]();
+            let fs = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["e" /* Filesystem */]();
             try {
-                let ret = yield fs.stat('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2_avocado_js__["f" /* FilesystemDirectory */].Documents);
+                let ret = yield fs.stat('secrets/text.txt', __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["f" /* FilesystemDirectory */].Documents);
                 console.log('STAT', ret);
             }
             catch (e) {
@@ -448,7 +449,7 @@ let HomePage = class HomePage {
         });
     }
     watchAccel() {
-        let m = new __WEBPACK_IMPORTED_MODULE_2_avocado_js__["l" /* Motion */]();
+        let m = new __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["l" /* Motion */]();
         m.watchAccel((err, values) => {
             this.zone.run(() => {
                 const v = {
@@ -643,8 +644,6 @@ MyApp = __decorate([
     if (win.avocado) {
         return;
     }
-    // incase "win" is actually "global" and the plugins are looking for "window"
-    win.window = win;
     // keep a collection of callbacks for native response data
     var calls = {};
     // keep a counter of callback ids
