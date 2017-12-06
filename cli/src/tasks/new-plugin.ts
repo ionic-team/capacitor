@@ -61,7 +61,7 @@ export async function newPlugin(config: Config) {
     });
 
     await runTask('Genering package.json', () => {
-      return writeFileAsync(join(pluginPath, 'PACKAGE_JSON'), generatePackageJSON(answers));
+      return writeFileAsync(join(pluginPath, 'package.json'), generatePackageJSON(answers));
     });
 
     // await runTask('Configuring', () => {

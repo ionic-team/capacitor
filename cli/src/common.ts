@@ -16,7 +16,7 @@ export const readdirAsync = promisify(readdir);
 export type CheckFunction = (config: Config) => Promise<string | null>;
 
 
-export async function check(config: Config, ...checks: CheckFunction[]): Promise<void> {
+export async function check(config: Config, checks: CheckFunction[]): Promise<void> {
   const results = await Promise.all(checks.map(f => f(config)));
   const errors = results.filter(r => r !== null) as string[];
   if (errors.length > 0) {
@@ -24,6 +24,15 @@ export async function check(config: Config, ...checks: CheckFunction[]): Promise
   }
 }
 
+export async function checkPackage(config: Config): Promise<string | null> {
+  config;
+  if (!await existsAsync('package.json')) {
+    return `Avocado needs to run at the root of a NPM package.
+    Make sure you have a "package.json" in the working directory you run avocado.
+    More info: https://docs.npmjs.com/cli/init`;
+  }
+  return null;
+}
 
 export async function readJSON(path: string): Promise<any> {
   const data = await readFileAsync(path, 'utf8');

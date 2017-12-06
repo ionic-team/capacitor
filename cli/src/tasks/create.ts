@@ -3,6 +3,7 @@ import { createAndroid } from '../android/create';
 import { createIOS } from '../ios/create';
 import { logError, logFatal } from '../common';
 import { sync } from './sync';
+import { open } from './open';
 
 
 export async function createCommand(config: Config, selectedPlatformName: string) {
@@ -14,6 +15,7 @@ export async function createCommand(config: Config, selectedPlatformName: string
   try {
     await create(config, platformName);
     await sync(config, platformName);
+    await open(config, platformName);
 
   } catch (e) {
     logFatal(e);
@@ -24,7 +26,9 @@ export async function createCommand(config: Config, selectedPlatformName: string
 export async function create(config: Config, platformName: string) {
   const existingPlatformDir = config.platformDirExists(platformName);
   if (existingPlatformDir) {
-    logError(`"${platformName}" platform already exists. To create a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.`);
+    logError(`"${platformName}" platform already exists.
+    To create a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.
+    WARNING! your xcode setup will be completely removed.`);
     process.exit(0);
   }
 

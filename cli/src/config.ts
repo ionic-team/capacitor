@@ -21,7 +21,7 @@ export class Config {
     minVersion: '10.0',
     platformDir: '',
     webDir: '',
-    runtimePod: '',
+    avocadoRuntimePod: `pod 'Avocado'`,
     assets: {
       templateName: 'ios-template',
       templateDir: ''
@@ -56,6 +56,11 @@ export class Config {
       this.initIosConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
+
+      // TODO: remove this code
+      // Once Avocado library is released as a cocoapods package, this code is not needed
+      const avocadoRuntimePath = join(this.cli.assetsDir, 'Avocado');
+      this.ios.avocadoRuntimePod = `pod 'Avocado', :path => '${avocadoRuntimePath}'`;
 
     } catch (e) {
       logFatal(`Unable to load config`, e);

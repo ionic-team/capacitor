@@ -40,7 +40,7 @@ export async function getPlugins(): Promise<Plugin[]> {
 export async function resolvePlugin(name: string): Promise<Plugin | null> {
   try {
     const rootPath = resolve('node_modules', name);
-    const packagePath = join(rootPath, 'PACKAGE_JSON');
+    const packagePath = join(rootPath, 'package.json');
     const meta = await readJSON(packagePath);
     if (!meta || !meta.avocado) {
       return null;
@@ -56,7 +56,7 @@ export async function resolvePlugin(name: string): Promise<Plugin | null> {
 }
 
 export async function getDependencies(): Promise<string[]> {
-  const json = await readJSON('PACKAGE_JSON');
+  const json = await readJSON('package.json');
   const { dependencies } = json;
   if (!dependencies) {
     return [];
