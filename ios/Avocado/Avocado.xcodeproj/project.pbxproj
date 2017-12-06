@@ -31,6 +31,7 @@
 		5053E90D1FC8D24000166FBE /* DefaultPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5053E90F1FC8D51100166FBE /* DefaultPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90E1FC8D51100166FBE /* DefaultPlugins.m */; };
 		5053E9101FC8FEEC00166FBE /* PluginBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E9091FC8CD1000166FBE /* PluginBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		50584D0D1FD8337500E3227C /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50584D0C1FD8337500E3227C /* Toast.swift */; };
 		50B80BE81FCDE1E8000717DF /* Clipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE71FCDE1E8000717DF /* Clipboard.swift */; };
 		50B80BEA1FCDECE2000717DF /* Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE91FCDECE2000717DF /* Share.swift */; };
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
@@ -81,6 +82,7 @@
 		5053E90A1FC8D01200166FBE /* PluginBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginBridge.m; sourceTree = "<group>"; };
 		5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultPlugins.h; sourceTree = "<group>"; };
 		5053E90E1FC8D51100166FBE /* DefaultPlugins.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DefaultPlugins.m; sourceTree = "<group>"; };
+		50584D0C1FD8337500E3227C /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		50B80BE71FCDE1E8000717DF /* Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clipboard.swift; sourceTree = "<group>"; };
 		50B80BE91FCDECE2000717DF /* Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Share.swift; sourceTree = "<group>"; };
 		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				501CBAB81FC26770009B0D4D /* StatusBar.swift */,
 				50474F0A1FC527CA00AA0184 /* Storage.swift */,
 				50B80BE91FCDECE2000717DF /* Share.swift */,
+				50584D0C1FD8337500E3227C /* Toast.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 				50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */,
 				5053E90B1FC8D01200166FBE /* PluginBridge.m in Sources */,
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
+				50584D0D1FD8337500E3227C /* Toast.swift in Sources */,
 				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
 				50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */,
