@@ -68,7 +68,7 @@ public class Camera extends Plugin {
 
     String resultType = getResultType(call.getString("resultType"));
 
-    if(resultType != null || Arrays.asList(VALID_RESULT_TYPES).indexOf(resultType) < 0) {
+    if(resultType == null || Arrays.asList(VALID_RESULT_TYPES).indexOf(resultType) < 0) {
       call.error(INVALID_RESULT_TYPE_ERROR);
       return;
     }
