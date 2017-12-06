@@ -1,13 +1,16 @@
 import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
-import { CheckFunction, check, checkPackage, logFatal } from '../common';
+import { CheckFunction, check, checkPackage, logFatal, logInfo } from '../common';
 import { exit } from 'shelljs';
 
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
   const platforms = config.selectPlatforms(selectedPlatformName);
-
+  if (platforms.length === 0) {
+    logInfo(`There are not platforms to update yet. Create one with "avocado create".`);
+    return;
+  }
   try {
     await check(
       config,

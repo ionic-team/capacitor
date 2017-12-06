@@ -1,12 +1,15 @@
 import { Config } from '../config';
 import { copy } from './copy';
 import { update, updateChecks } from './update';
-import { check, checkPackage, checkWebDir, logFatal } from '../common';
+import { check, checkPackage, checkWebDir, logFatal, logInfo } from '../common';
 
 
 export async function syncCommand(config: Config, selectedPlatform: string) {
   const platforms = config.selectPlatforms(selectedPlatform);
-
+  if (platforms.length === 0) {
+    logInfo(`There are not platforms to sync yet. Create one with "avocado create".`);
+    return;
+  }
   try {
     await check(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
     await Promise.all(platforms.map(platformName => {

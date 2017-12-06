@@ -1,12 +1,15 @@
 import { Config } from '../config';
 import { copyAndroid } from '../android/copy';
 import { copyIOS } from '../ios/copy';
-import { check, checkWebDir, logFatal } from '../common';
+import { check, checkWebDir, logFatal, logInfo } from '../common';
 
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
   const platforms = config.selectPlatforms(selectedPlatformName);
-
+  if (platforms.length === 0) {
+    logInfo(`There are not platforms to copy yet. Create one with "avocado create".`);
+    return;
+  }
   try {
     await check(config, [checkWebDir]);
     await Promise.all(platforms.map(platformName => {
