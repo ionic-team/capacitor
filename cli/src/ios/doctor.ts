@@ -19,7 +19,6 @@ export async function doctorIOS(config: Config) {
   // check if www folder is empty (index.html does not exist)
   await check(
     config,
-    checkCocoaPods,
-    checkIOSProject,
+    [checkCocoaPods, checkIOSProject]
   );
 }

@@ -13,14 +13,14 @@
   },
   "main": "./dist/index.js",
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && npm run assets && tsc",
     "clean": "rm -rf ./dist",
     "deploy": "np",
     "lint": "tslint --project tsconfig.json",
-    "prepublishOnly": "node scripts/prepublish.js",
+    "assets": "node scripts/copy-assets.js",
+    "prepublishOnly": "npm run build",
     "test": "jest",
-    "version": "npm run lint && npm run build",
-    "watch": "tsc -w"
+    "watch": "npm run assets && tsc -w"
   },
   "files": [
     "assets/",
