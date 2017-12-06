@@ -11,10 +11,10 @@ the corresponding native or pure-web code to handle the operation.</p>
 <h2 id="javascript-implementation">JavaScript Implementation</h2>
 <p>The JavaScript Implementation using TypeScript will guide the rest of your development. We strongly recommend
 utilizing TypeScript types to make your plugin self-documenting, enable users to have rich typing information
-when developing, and to use as a reference for expected parameters and return values when developing 
+when developing, and to use as a reference for expected parameters and return values when developing
 the iOS, Android, and Web implementations of your plugin.</p>
 <p>Edit <code>src/plugin.ts</code> and add the following:</p>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { NativePlugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'avocado-js'</span>;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { NativePlugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> Todo {
   text: <span class="hljs-built_in">string</span>;
@@ -123,7 +123,7 @@ public <span class="hljs-class"><span class="hljs-keyword">class</span> <span cl
 <p>Note: the text below is out of date.</p>
 <p>The Web Plugin implements Todo CRUD operations in a pure browser environment, such as a Progressive Web App, that may only have access to standard Web APIs.</p>
 <p>Generally, the Web API and the JavaScript API site side-by-side to enforce the importance of web support or sane web fallbacks for plugin operations.</p>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugin, App } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocado/plugin'</span>;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugin, App } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/plugin'</span>;
 
 <span class="hljs-keyword">import</span> { Todo } <span class="hljs-keyword">from</span> <span class="hljs-string">'./definitions'</span>;
 

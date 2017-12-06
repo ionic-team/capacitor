@@ -96,7 +96,7 @@ function generatePackageJSON(answers: any) {
     author: answers.author,
     license: answers.license,
     dependencies: {
-      'avocado-js': 'latest'
+      '@avocadojs/core': 'latest'
     },
     devDependencies: {
       'typescript': '^2.6.2'

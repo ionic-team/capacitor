@@ -22,13 +22,13 @@ The plugin's structure will look similar to this:
 
 The JavaScript Implementation using TypeScript will guide the rest of your development. We strongly recommend
 utilizing TypeScript types to make your plugin self-documenting, enable users to have rich typing information
-when developing, and to use as a reference for expected parameters and return values when developing 
+when developing, and to use as a reference for expected parameters and return values when developing
 the iOS, Android, and Web implementations of your plugin.
 
 Edit `src/plugin.ts` and add the following:
 
 ```typescript
-import { NativePlugin } from 'avocado-js';
+import { NativePlugin } from '@avocadojs/core';
 
 export interface Todo {
   text: string;
@@ -149,7 +149,7 @@ The Web Plugin implements Todo CRUD operations in a pure browser environment, su
 Generally, the Web API and the JavaScript API site side-by-side to enforce the importance of web support or sane web fallbacks for plugin operations.
 
 ```typescript
-import { Plugin, App } from '@avocado/plugin';
+import { Plugin, App } from '@avocadojs/plugin';
 
 import { Todo } from './definitions';
 

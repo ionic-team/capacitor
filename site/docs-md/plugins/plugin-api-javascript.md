@@ -6,7 +6,7 @@ We recommend building plugins in TypeScript, which makes it easy to use Avocado'
 during development of the JS side of your plugin.
 
 ```typescript
-import { Plugin } from '@avocado/plugin';
+import { Plugin } from '@avocadojs/plugin';
 
 import { Contact, Person } from './definitions';
 
