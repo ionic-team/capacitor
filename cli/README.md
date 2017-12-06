@@ -15,9 +15,13 @@ Below is an example of running Avocado commands from a webapp's npm scripts with
 package.json scripts
 
   scripts: {
-    "avocado.create": "avocado create",
-    "avocado.sync": "avocado sync",
-    "build": "tsc && npm run avocado.sync"
+    "build": "tsc && npm run sync",
+    "create.android": "avocado create android",
+    "create.ios": "avocado create ios",
+    "doctor": "avocado doctor"
+    "open.android": "avocado open android",
+    "open.ios": "avocado open ios",
+    "sync": "avocado sync"
   }
 ```
 
