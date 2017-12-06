@@ -20,7 +20,7 @@ import {
   StatusBar,
   StatusBarStyle,
   Test
-} from 'avocado-js';
+} from '@avocadojs/core';
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 
 @Component({
@@ -49,7 +49,7 @@ export class HomePage {
   constructor(public navCtrl: NavController, public zone: NgZone) {
     let splash = new SplashScreen();
     splash.hide();
-    
+
     let network = new Network();
     network.onStatusChange((err, status) => {
       console.log("Network status changed", status);

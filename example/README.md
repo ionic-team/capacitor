@@ -1,10 +1,10 @@
 Build Example
 =====================
 
-## Build Avocado JS Module
+## Build AvocadoJS Core Module
 
 ```
-cd to packages/js
+cd to core
 
 npm run build
 npm link
@@ -16,9 +16,9 @@ npm link
 This will npm link to the AvocadoJS package, build the app, and copy the build files to the correct `www` directories for both the iOS and Android example apps.
 
 ```
-cd to packages/example
+cd to example
 
-npm link avocado-js
+npm link @avocadojs/core
 npm run build
 npm run copy
 ```

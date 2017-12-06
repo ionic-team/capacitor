@@ -3,7 +3,7 @@
 The AvocadoJS command-line interface should be installed locally and executed through `npm` scripts.
 
 ```
-npm install @avocado/cli --save-dev
+npm install @avocadojs/cli --save-dev
 ```
 
 
@@ -44,4 +44,4 @@ plugin:generate    start a new avocado plugin
 
 ### License
 
-* [MIT](https://github.com/ionic-team/avocado-js/blob/master/LICENSE)
+* [MIT](https://github.com/ionic-team/avocado/blob/master/LICENSE)

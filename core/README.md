@@ -3,7 +3,7 @@
 The AvocadoJS Core package contains ES modules which can be imported by webapps. By default the core package already includes many ready to use plugins.
 
 ```
-npm install @avocado/core
+npm install @avocadojs/core
 ```
 
 ```
@@ -38,4 +38,4 @@ modals.alert('Hello World!');
 
 ### License
 
-* [MIT](https://github.com/ionic-team/avocado-js/blob/master/LICENSE)
+* [MIT](https://github.com/ionic-team/avocado/blob/master/LICENSE)
