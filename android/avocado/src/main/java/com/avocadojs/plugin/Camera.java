@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.util.Base64;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
@@ -17,10 +19,16 @@ import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Camera plugin that opens the stock Camera app.
@@ -31,14 +39,24 @@ import java.util.Date;
     requestCodes={Camera.REQUEST_IMAGE_CAPTURE}
 )
 public class Camera extends Plugin {
+  // Request codes
   static final int REQUEST_IMAGE_CAPTURE = 9001;
 
+  // Message constants
+  private static final String INVALID_RESULT_TYPE_ERROR = "Invalid resultType option";
   private static final String PERMISSION_DENIED_ERROR = "Unable to access camera, user denied permission request";
   private static final String NO_CAMERA_ERROR = "Device doesn't have a camera available";
   private static final String NO_CAMERA_ACTIVITY_ERROR = "Unable to resolve camera activity";
   private static final String IMAGE_FILE_SAVE_ERROR = "Unable to create photo on disk";
+  private static final String IMAGE_PROCESS_NO_FILE_ERROR = "Unable to process image, file not found on disk";
 
+  // Default values
   private static final boolean DEFAULT_SAVE_IMAGE_TO_GALLERY = true;
+
+  // Valid result types
+  private static final String RESULT_BASE64 = "base64";
+  private static final String RESULT_URI = "uri";
+  private static final String[] VALID_RESULT_TYPES = { RESULT_BASE64, RESULT_URI };
 
   private PluginCall lastCall;
 
@@ -47,6 +65,13 @@ public class Camera extends Plugin {
   @PluginMethod()
   public void getPhoto(PluginCall call) {
     lastCall = call;
+
+    String resultType = getResultType(call.getString("resultType"));
+
+    if(resultType != null || Arrays.asList(VALID_RESULT_TYPES).indexOf(resultType) < 0) {
+      call.error(INVALID_RESULT_TYPE_ERROR);
+      return;
+    }
 
     if(!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
       call.error(NO_CAMERA_ERROR);
@@ -61,6 +86,11 @@ public class Camera extends Plugin {
     }
 
     openCamera(call);
+  }
+
+  private String getResultType(String resultType) {
+    if(resultType == null) { return null; }
+    return resultType.toLowerCase();
   }
 
   @Override
@@ -120,12 +150,17 @@ public class Camera extends Plugin {
   }
 
   public void processImage(PluginCall call, Intent data) {
-    int quality = call.getInt("quality", 100);
     boolean allowEditing = call.getBoolean("allowEditing", false);
     boolean saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
+    String resultType = getResultType(call.getString("resultType"));
+
+    if(imageFileSavePath == null) {
+      call.error(IMAGE_PROCESS_NO_FILE_ERROR);
+      return;
+    }
 
     log("Processing image");
-    if(saveToGallery && imageFileSavePath != null) {
+    if(saveToGallery) {
       log("Saving image to gallery");
       Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
       File f = new File(imageFileSavePath);
@@ -134,11 +169,36 @@ public class Camera extends Plugin {
       getActivity().sendBroadcast(mediaScanIntent);
     }
 
+    if(resultType.equals(RESULT_BASE64)) {
+      File f = new File(imageFileSavePath);
+      BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+      Uri contentUri = Uri.fromFile(f);
+      Bitmap bitmap = BitmapFactory.decodeFile(imageFileSavePath, bmOptions);
+      
+      returnBase64(call, bitmap);
+    }
+
     /*
     Thumbnail
     Bundle extras = data.getExtras();
     Bitmap imageBitmap = (Bitmap) extras.get("data");
     */
+  }
+
+  private void returnBase64(PluginCall call, Bitmap bitmap) {
+    int quality = call.getInt("quality", 100);
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+    byte[] byteArray = byteArrayOutputStream .toByteArray();
+    String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+    JSONObject data = new JSONObject();
+    try {
+      data.put("base64_data", encoded);
+      call.success(data);
+    } catch(JSONException ex) {
+      call.error("Error returning image data back", ex);
+    }
   }
 
   private File createImageFile(boolean saveToGallery) throws IOException {
