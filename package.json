@@ -1,4 +1,7 @@
 {
+	"scripts": {
+		"deploy": "lerna publish"
+	},
 	"devDependencies": {
 		"lerna": "^2.4.0"
 	}
