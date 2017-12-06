@@ -1,7 +1,0 @@
-{
-  "name": "demo",
-  "private": true,
-  "dependencies": {
-    "plugin-hello": "0.0.1"
-  }
-}
