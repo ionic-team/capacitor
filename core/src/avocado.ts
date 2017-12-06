@@ -13,9 +13,6 @@ declare var global: any;
     return;
   }
 
-  // incase "win" is actually "global" and the plugins are looking for "window"
-  win.window = win;
-
   // keep a collection of callbacks for native response data
   const calls: StoredCallbacks = {};
 
