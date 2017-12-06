@@ -27,3 +27,15 @@ modals.alert('Hello World!');
 * Network
 * SplashScreen
 * StatusBar
+
+
+## Related Projects
+
+* [AvocadoJS Core](https://www.npmjs.com/package/@avocadojs/core) - Core Javascript Runtime
+* [Ionic](https://www.npmjs.com/package/@ionic/core) - UI Library
+* [StencilJS](https://www.npmjs.com/package/@stencil/core) - Web Component Generator
+
+
+### License
+
+* [MIT](https://github.com/ionic-team/avocado-js/blob/master/LICENSE)
