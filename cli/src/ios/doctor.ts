@@ -1,8 +1,9 @@
 import { checkCocoaPods, checkIOSProject } from './common';
-import { check } from '../../common';
+import { check } from '../common';
+import { Config } from '../config';
 
 
-export async function doctorIOS() {
+export async function doctorIOS(config: Config) {
   // DOCTOR ideas for iOS:
   // plugin specific warnings
   // check cocoapods installed
@@ -17,6 +18,7 @@ export async function doctorIOS() {
   // check online datebase of common errors
   // check if www folder is empty (index.html does not exist)
   await check(
+    config,
     checkCocoaPods,
     checkIOSProject,
   );

@@ -1,14 +1,238 @@
-/** GENERAL */
-export const PACKAGE_JSON = 'package.json';
-export const PLATFORMS = ['android', 'ios'];
-export const PLUGIN_PREFIX = 'avo-plugin-';
-export const ASSETS_PATH = '../assets';
+import { accessSync, readFileSync } from 'fs';
+import { isAbsolute, join } from 'path';
+import { logFatal } from './common';
 
-/** IOS */
-export const IOS_MIN_VERSION = '10.0';
-export const IOS_RUNTIME_POD = `pod 'Avocado', :path => '/Users/manuelmartinez-almeida/repos/ionic/avocado/ios/Avocado'`;
-export const IOS_PATH = 'ios';
 
-/** ANDROID */
-export const ANDROID_PATH = 'android';
-export const ANDROID_APP_BASE = 'git+https://git@github.com/ionic-team/stencil-app-starter.git';
+export class Config {
+
+  android = {
+    name: 'android',
+    minVersion: '21',
+    platformDir: '',
+    webDir: 'app/src/main/assets/www',
+    assets: {
+      templateName: 'android-template',
+      templateDir: ''
+    }
+  };
+
+  ios = {
+    name: 'ios',
+    minVersion: '10.0',
+    platformDir: '',
+    webDir: '',
+    runtimePod: '',
+    assets: {
+      templateName: 'ios-template',
+      templateDir: ''
+    }
+  };
+
+  cli = {
+    binDir: '',
+    rootDir: '',
+    assetsName: 'assets',
+    assetsDir: '',
+    package: Package
+  };
+
+  app = {
+    rootDir: '',
+    webDir: 'www',
+    package: Package,
+    extConfigName: 'avocado.config.json',
+    extConfigFilePath: '',
+    extConfig: ExtConfig
+  };
+
+  platforms: string[] = [];
+
+
+  constructor(currentWorkingDir: string, cliBinDir: string) {
+    try {
+      this.initCliConfig(cliBinDir);
+      this.initAppConfig(currentWorkingDir);
+      this.initAndroidConfig();
+      this.initIosConfig();
+      this.loadExternalConfig();
+      this.mergeConfigData();
+
+    } catch (e) {
+      logFatal(`Unable to load config`, e);
+    }
+  }
+
+
+  private initCliConfig(cliBinDir: string) {
+    this.cli.binDir = cliBinDir;
+    this.cli.rootDir = join(cliBinDir, '../');
+    this.cli.assetsDir = join(this.cli.rootDir, this.cli.assetsName);
+    this.cli.package = loadPackageJson(this.cli.rootDir);
+  }
+
+
+  private initAppConfig(currentWorkingDir: string) {
+    this.app.rootDir = currentWorkingDir,
+    this.app.package = loadPackageJson(currentWorkingDir);
+  }
+
+
+  private initAndroidConfig() {
+    this.platforms.push(this.android.name);
+    this.android.platformDir = join(this.app.rootDir, this.android.name);
+    this.android.assets.templateDir = join(this.cli.assetsDir, this.android.assets.templateName);
+    this.android.webDir = join(this.android.platformDir, this.android.webDir);
+  }
+
+
+  private initIosConfig() {
+    this.platforms.push(this.ios.name);
+    this.ios.platformDir = join(this.app.rootDir, this.ios.name);
+    this.ios.assets.templateDir = join(this.cli.assetsDir, this.ios.assets.templateName);
+    this.ios.webDir = join(this.ios.platformDir, this.ios.webDir);
+  }
+
+
+  private loadExternalConfig() {
+    this.app.extConfigFilePath = join(this.app.rootDir, this.app.extConfigName);
+
+    try {
+      const extConfigStr = readFileSync(this.app.extConfigFilePath, 'utf-8');
+
+      try {
+        // we've got an avocado.json file, let's parse it
+        this.app.extConfig = JSON.parse(extConfigStr);
+
+        this.app.webDir = this.app.extConfig.webDir;
+
+      } catch (e) {
+        logFatal(`error parsing: ${this.app.extConfigFilePath}`);
+      }
+
+    } catch (e) {
+      // it's ok if there's no avocado.json file
+    }
+  }
+
+
+  private mergeConfigData() {
+    const extConfig: ExternalConfig = this.app.extConfig || {};
+
+    Object.assign(this.app, extConfig);
+
+    if (!isAbsolute(this.app.webDir)) {
+      this.app.webDir = join(this.app.rootDir, this.app.webDir);
+    }
+  }
+
+
+  selectPlatforms(selectedPlatformName?: string) {
+    if (selectedPlatformName) {
+      // already passed in a platform name
+      const platformName = selectedPlatformName.toLowerCase().trim();
+
+      if (!this.isValidPlatform(platformName)) {
+        logFatal(`Invalid platform: ${platformName}`);
+
+      } else if (!this.platformDirExists(platformName)) {
+        platformNotCreatedError(platformName);
+      }
+
+      // return the platform in an string array
+      return [platformName];
+    }
+
+    // wasn't given a platform name, so let's
+    // get the platforms that have already been created
+    return this.getExistingPlatforms();
+  }
+
+
+  async askPlatform(selectedPlatformName: string, promptMessage: string): Promise<string> {
+    if (!selectedPlatformName) {
+      const inquirer = require('inquirer');
+
+      const answer = await inquirer.prompt({
+        type: 'list',
+        name: 'mode',
+        message: promptMessage,
+        choices: this.platforms
+      });
+
+      return answer.mode.toLowerCase().trim();
+    }
+
+    const platformName = selectedPlatformName.toLowerCase().trim();
+
+    if (!this.isValidPlatform(platformName)) {
+      logFatal(`Invalid platform: "${platformName}". Valid platforms include: ${this.platforms.join(', ')}`);
+    }
+
+    return platformName;
+  }
+
+
+  getExistingPlatforms() {
+    const platforms: string[] = [];
+
+    if (this.platformDirExists(this.android.name)) {
+      platforms.push(this.android.name);
+    }
+
+    if (this.platformDirExists(this.ios.name)) {
+      platforms.push(this.ios.name);
+    }
+
+    return platforms;
+  }
+
+
+  platformDirExists(platformName: any): string {
+    let platformDir: any = null;
+
+    try {
+      let testDir = join(this.app.rootDir, platformName);
+      accessSync(testDir);
+      platformDir = testDir;
+    } catch (e) {}
+
+    return platformDir;
+  }
+
+
+  isValidPlatform(platform: any) {
+    return this.platforms.includes(platform);
+  }
+
+}
+
+
+function platformNotCreatedError(platformName: string) {
+  logFatal(`"${platformName}" platform has not been created. Please use "avocado create ${platformName}" command to first create the platform.`);
+}
+
+
+function loadPackageJson(dir: string): PackageJson {
+  let p: any = null;
+
+  try {
+    p = require(join(dir, 'package.json'));
+  } catch (e) {}
+
+  return p;
+}
+
+
+export interface PackageJson {
+  name: string;
+  version: string;
+}
+
+
+export interface ExternalConfig {
+  webDir: string;
+  startPage: string;
+}
+
+let Package: PackageJson;
+let ExtConfig: ExternalConfig;

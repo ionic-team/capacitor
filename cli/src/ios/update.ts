@@ -1,12 +1,13 @@
-import { Plugin, PluginType, getPlugins } from '../../plugin';
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { check, logInfo, runCommand, runTask, writeFileAsync } from '../../common';
+import { check, logInfo, runCommand, runTask, writeFileAsync } from '../common';
+import { Config } from '../config';
 import { join } from 'path';
-import { IOS_MIN_VERSION, IOS_PATH, IOS_RUNTIME_POD } from '../../config';
+import { Plugin, PluginType, getPlugins } from '../plugin';
 
 
-export async function updateIOS(needsUpdate: boolean) {
+export async function updateIOS(config: Config, needsUpdate: boolean) {
   await runTask('Checking environment', () => (check(
+    config,
     checkCocoaPods,
     checkIOSProject
   )));
@@ -25,8 +26,9 @@ export async function updateIOS(needsUpdate: boolean) {
   }
 
   await autoGeneratePods(plugins);
-  await installCocoaPodsPlugins(plugins, needsUpdate);
+  await installCocoaPodsPlugins(config, plugins, needsUpdate);
 }
+
 
 export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
   return Promise.all(plugins
@@ -40,6 +42,7 @@ export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
       return writeFileAsync(path, content);
     }));
 }
+
 
 export function generatePodspec(name: string) {
   return `
@@ -55,36 +58,41 @@ export function generatePodspec(name: string) {
   end`;
 }
 
-export async function installCocoaPodsPlugins(plugins: Plugin[], needsUpdate: boolean) {
+
+export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], needsUpdate: boolean) {
   const pods = plugins
     .filter(p => p.ios!.type === PluginType.Cocoapods);
 
   await runTask('Updating iOS native dependencies', () => {
-    return updatePodfile(pods, needsUpdate);
+    return updatePodfile(config, pods, needsUpdate);
   });
 }
 
-export async function updatePodfile(plugins: Plugin[], needsUpdate: boolean) {
-  const content = generatePodFile(plugins);
-  const podfilePath = join(IOS_PATH, 'Podfile');
+
+export async function updatePodfile(config: Config, plugins: Plugin[], needsUpdate: boolean) {
+  const content = generatePodFile(config, plugins);
+  const podfilePath = join(config.ios.name, 'Podfile');
+
   await writeFileAsync(podfilePath, content, 'utf8');
+
   if (needsUpdate) {
-    await runCommand(`cd ${IOS_PATH} && pod update`);
+    await runCommand(`cd ${config.ios.name} && pod update`);
   } else {
-    await runCommand(`cd ${IOS_PATH} && pod install`);
+    await runCommand(`cd ${config.ios.name} && pod install`);
   }
 }
 
-export function generatePodFile(plugins: Plugin[]) {
+
+export function generatePodFile(config: Config, plugins: Plugin[]) {
   const pods = plugins
     .map((p) => `pod '${p.ios!.name}', :path => '${p.ios!.path}'`);
 
   return `
-    platform :ios, '${IOS_MIN_VERSION}'
+    platform :ios, '${config.ios.minVersion}'
     use_frameworks!
 
     target 'AvocadoApp' do
-      ${IOS_RUNTIME_POD}
+      ${config.ios.runtimePod}
       ${pods.join('\n')}
     end`;
 }

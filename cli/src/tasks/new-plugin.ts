@@ -1,25 +1,25 @@
-import { getAssetsPath, logFatal, logInfo, runCommand, runTask, writeFileAsync } from '../common';
-import { cp, exit } from 'shelljs';
+import { Config } from '../config';
 import { join } from 'path';
-import { PACKAGE_JSON } from '../config';
-import { Answers, prompt } from 'inquirer';
+import { logFatal, logInfo, runCommand, runTask, writeFileAsync } from '../common';
 
-const PACKAGE = 'package.json';
 
-export async function newPluginCommand() {
+export async function newPluginCommand(config: Config) {
   try {
-    await newPlugin();
-    exit(0);
+    await newPlugin(config);
 
   } catch (e) {
     logFatal(e);
   }
 }
 
-export async function newPlugin() {
+
+export async function newPlugin(config: Config) {
   logInfo('avocado new-plugin is about to create a new avocado plugin.');
 
-  const answers = await prompt([
+  config;
+
+  const inquirer = require('inquirer');
+  const answers = await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
@@ -48,25 +48,30 @@ export async function newPlugin() {
     {
       type: 'confirm',
       name: 'confirm',
-      message: `${PACKAGE} will be created, do you want to continue?`
+      message: `package.json will be created, do you want to continue?`
     }
   ]);
+
   console.log('\n');
 
   if (answers.confirm) {
     const pluginPath = answers.name;
     await runTask('Adding plugin files', async () => {
-      cp('-R', getAssetsPath('plugin-base'), pluginPath);
+      // cp('-R', getAssetsPath('plugin-base'), pluginPath);
     });
+
     await runTask('Genering package.json', () => {
-      return writeFileAsync(join(pluginPath, PACKAGE_JSON), generatePackageJSON(answers));
+      return writeFileAsync(join(pluginPath, 'PACKAGE_JSON'), generatePackageJSON(answers));
     });
+
     // await runTask('Configuring', () => {
     //   return writeFileAsync(join(pluginPath, 'package.json'), generatePackageJSON(answers));
     // });
+
     await runTask('Installing NPM dependencies', () => {
       return runCommand('npm install');
     });
+
     logInfo('DONE! avocado plugin was created.');
     logInfo(`Get into the plugin: cd ./${pluginPath}`);
 
@@ -75,7 +80,7 @@ export async function newPlugin() {
   }
 }
 
-function generatePackageJSON(answers: Answers) {
+function generatePackageJSON(answers: any) {
   return JSON.stringify({
     name: answers.name,
     version: '0.0.1',
