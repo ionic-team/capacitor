@@ -78,10 +78,14 @@ public class Camera extends Plugin {
       return;
     }
 
+    if(!hasPermission(Manifest.permission.CAMERA) || !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+      log("Missing permissions");
+      requestPermissions(new String[]{
+          Manifest.permission.CAMERA,
+          Manifest.permission.WRITE_EXTERNAL_STORAGE,
+          Manifest.permission.READ_EXTERNAL_STORAGE
+      }, REQUEST_IMAGE_CAPTURE);
 
-    if(!hasPermission(Manifest.permission.CAMERA)) {
-      log("Missing camera permission");
-      requestPermission(Manifest.permission.CAMERA, REQUEST_IMAGE_CAPTURE);
       return;
     }
 
@@ -208,6 +212,7 @@ public class Camera extends Plugin {
     String imageFileName = "JPEG_" + timeStamp + "_";
     File storageDir;
     if(saveToGallery) {
+      log("Trying to save image to public external directory");
       storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
     }  else {
       storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);

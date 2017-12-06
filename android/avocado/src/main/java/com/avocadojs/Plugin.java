@@ -33,6 +33,10 @@ public class Plugin {
     return ActivityCompat.checkSelfPermission(this.getContext(), permission) == PackageManager.PERMISSION_GRANTED;
   }
 
+  public void requestPermissions(String[] permissions, int requestCode) {
+    ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
+  }
+
   public void requestPermission(String permission, int requestCode) {
     ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
   }
