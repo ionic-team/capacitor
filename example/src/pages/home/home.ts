@@ -21,6 +21,7 @@ import {
   StatusBarStyle,
   Test
 } from '@avocadojs/core';
+
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 
 @Component({
@@ -177,7 +178,8 @@ export class HomePage {
     let camera = new Camera();
     camera.getPhoto({
       quality: 90,
-      allowEditing: true
+      allowEditing: true,
+      resultType: 'base64'
     }).then((image) => {
       this.image = image && ('data:image/jpeg;base64,' + image.base64_data);
     });

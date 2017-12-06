@@ -170,6 +170,7 @@ public class Camera extends Plugin {
     }
 
     if(resultType.equals(RESULT_BASE64)) {
+      log("Returning base64 value");
       File f = new File(imageFileSavePath);
       BitmapFactory.Options bmOptions = new BitmapFactory.Options();
       Uri contentUri = Uri.fromFile(f);
