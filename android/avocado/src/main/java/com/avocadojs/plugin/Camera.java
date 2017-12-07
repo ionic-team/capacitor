@@ -67,6 +67,7 @@ public class Camera extends Plugin {
     lastCall = call;
 
     String resultType = getResultType(call.getString("resultType"));
+    boolean saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
 
     if(resultType == null || Arrays.asList(VALID_RESULT_TYPES).indexOf(resultType) < 0) {
       call.error(INVALID_RESULT_TYPE_ERROR);
@@ -78,18 +79,23 @@ public class Camera extends Plugin {
       return;
     }
 
-    if(!hasPermission(Manifest.permission.CAMERA) || !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-      log("Missing permissions");
+    // If we want to save to the gallery, we need two permissions
+    if(saveToGallery && !(hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
       requestPermissions(new String[]{
           Manifest.permission.CAMERA,
           Manifest.permission.WRITE_EXTERNAL_STORAGE,
           Manifest.permission.READ_EXTERNAL_STORAGE
       }, REQUEST_IMAGE_CAPTURE);
-
-      return;
+    }
+    // If we don't need to save to the gallery, we can just ask for camera permissions
+    else if(!hasPermission(Manifest.permission.CAMERA)) {
+      requestPermission(Manifest.permission.CAMERA, REQUEST_IMAGE_CAPTURE);
     }
 
-    openCamera(call);
+    // We have all necessary permissions, open the camera
+    else {
+      openCamera(call);
+    }
   }
 
   private String getResultType(String resultType) {
@@ -142,7 +148,7 @@ public class Camera extends Plugin {
         // TODO: Verify provider config exists
         Uri photoURI = FileProvider.getUriForFile(getActivity(), appId + ".fileprovider", photoFile);
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-      } catch (IOException ex) {
+      } catch (Exception ex) {
         call.error(IMAGE_FILE_SAVE_ERROR, ex);
         return;
       }
