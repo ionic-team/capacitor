@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -131,6 +132,20 @@ public class PluginCall {
 
     if(value instanceof JSONObject) {
       return (JSONObject) value;
+    }
+    return defaultValue;
+  }
+
+  public JSONArray getArray(String name) {
+    return this.getArray(name, new JSONArray());
+  }
+
+  public JSONArray getArray(String name, JSONArray defaultValue) {
+    Object value = this.data.opt(name);
+    if(value == null) { return defaultValue; }
+
+    if(value instanceof JSONArray) {
+      return (JSONArray) value;
     }
     return defaultValue;
   }
