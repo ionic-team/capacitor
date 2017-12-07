@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { join } from 'path';
-import { logFatal, logInfo, runCommand, runTask, writeFileAsync } from '../common';
+import { logFatal, logInfo, runCommand, runTask, writeJSON } from '../common';
 
 
 export async function newPluginCommand(config: Config) {
@@ -61,7 +61,7 @@ export async function newPlugin(config: Config) {
     });
 
     await runTask('Genering package.json', () => {
-      return writeFileAsync(join(pluginPath, 'package.json'), generatePackageJSON(answers));
+      return writeJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers));
     });
 
     // await runTask('Configuring', () => {
@@ -81,7 +81,7 @@ export async function newPlugin(config: Config) {
 }
 
 function generatePackageJSON(answers: any) {
-  return JSON.stringify({
+  return {
     name: answers.name,
     version: '0.0.1',
     description: answers.description,
@@ -118,6 +118,6 @@ function generatePackageJSON(answers: any) {
         src: 'android'
       }
     }
-  }, null, '  ');
+  };
 }
 
