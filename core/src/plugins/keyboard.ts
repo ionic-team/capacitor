@@ -4,9 +4,18 @@ import { NativePlugin, Plugin } from '../plugin';
   name: 'Keyboard',
   id: 'com.avocadojs.plugin.keyboard'
 })
-export class Keyboard extends Plugin {
-  init() {
-    return this.nativePromise('init');
+export class KeyboardPlugin extends Plugin {
+  constructor() {
+    super();
+    this._init();
+  }
+
+  _onChange(_err: any, d: any) {
+    console.log('Keyboard change', d);
+  }
+
+  _init() {
+    return this.nativeCallback('subscribe', this._onChange.bind(this));
   }
 
   show() {
@@ -17,3 +26,6 @@ export class Keyboard extends Plugin {
     return this.nativePromise('hide');
   }
 }
+
+const Keyboard = new KeyboardPlugin();
+export { Keyboard };

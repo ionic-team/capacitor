@@ -15,6 +15,8 @@ public class PluginMethodMetadata {
 
     this.name = method.getName();
 
+    /*
+
     String methodToString = method.toString();
     Log.d("METHOD", methodToString);
 
@@ -24,6 +26,7 @@ public class PluginMethodMetadata {
       Log.d("ParameterType ", pType[i].toString());
       Log.d("GenericParameterType ", gpType[i].toString());
     }
+    */
   }
 
 }

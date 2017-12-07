@@ -25,12 +25,10 @@ export class KeyboardPage {
   }
 
   show() {
-    let k = new Keyboard();
-    k.show();
+    Keyboard.show();
   }
   hide() {
-    let k = new Keyboard();
-    k.hide();
+    Keyboard.hide();
   }
 
 }
