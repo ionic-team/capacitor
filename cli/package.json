@@ -1,6 +1,6 @@
 {
   "name": "@avocadojs/cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Avocado: The universal App container",
   "homepage": "http://avocadojs.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -44,6 +44,7 @@
   "dependencies": {
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
+    "compare-versions": "^3.1.0",
     "fs-extra": "^4.0.3",
     "inquirer": "^4.0.1",
     "opn": "^5.1.0",
