@@ -8,11 +8,9 @@ import { Plugin, PluginType } from '../plugin';
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
     const files = await readdirAsync(config.ios.platformDir);
-
-    for (let file of files) {
-      if (file.endsWith('.xcworkspace')) {
-        return join(config.ios.platformDir, file);
-      }
+    const xcodeProject = files.find(file => file.endsWith('.xcworkspace'));
+    if (xcodeProject) {
+      return join(config.ios.platformDir, xcodeProject);
     }
     return null;
   } catch {
