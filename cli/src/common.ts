@@ -18,7 +18,7 @@ export type CheckFunction = (config: Config) => Promise<string | null>;
 
 export async function check(config: Config, checks: CheckFunction[]): Promise<void> {
   const results = await Promise.all(checks.map(f => f(config)));
-  const errors = results.filter(r => r !== null) as string[];
+  const errors = results.filter(r => r != null) as string[];
   if (errors.length > 0) {
     throw errors.join('\n');
   }
@@ -55,6 +55,11 @@ export async function readJSON(path: string): Promise<any> {
 
 export function writeJSON(path: string, data: any) {
   return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
+}
+
+export function logSuccess(...args: any[]) {
+  const chalk = require('chalk');
+  console.log(chalk.green('[success]'), ...args);
 }
 
 export function logInfo(...args: any[]) {
