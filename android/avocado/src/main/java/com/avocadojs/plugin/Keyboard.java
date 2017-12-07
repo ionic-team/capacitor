@@ -43,8 +43,6 @@ public class Keyboard extends Plugin {
           int previousHeightDiff = 0;
           @Override
           public void onGlobalLayout() {
-            log("ON GLOBAL LAYOUT");
-
             Rect r = new Rect();
             //r will be populated with the coordinates of your view that area still visible.
             rootView.getWindowVisibleDisplayFrame(r);
@@ -70,11 +68,11 @@ public class Keyboard extends Plugin {
 
             int pixelHeightDiff = (int)(heightDiff / density);
             if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
-              String msg = "S" + Integer.toString(pixelHeightDiff);
+              String msg = Integer.toString(pixelHeightDiff);
 
               JSONObject ret = new JSONObject();
               try {
-                ret.put("S", msg);
+                ret.put("show", msg);
                 call.success(ret);
               } catch(JSONException ex) {
                 call.error("Error sending data back");
@@ -86,10 +84,9 @@ public class Keyboard extends Plugin {
               */
             }
             else if ( pixelHeightDiff != previousHeightDiff && ( previousHeightDiff - pixelHeightDiff ) > 100 ){
-              String msg = "H";
               JSONObject ret = new JSONObject();
               try {
-                ret.put("H", msg);
+                ret.put("hide", true);
                 call.success(ret);
               } catch(JSONException ex) {
                 call.error("Error sending data back");
