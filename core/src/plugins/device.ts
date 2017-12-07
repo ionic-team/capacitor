@@ -1,6 +1,9 @@
 import { NativePlugin, Plugin } from '../plugin';
 
 
+/**
+ * The Device API returns data about the underlying device.
+ */
 @NativePlugin({
   name: 'Device',
   id: 'com.avocadojs.plugin.device'

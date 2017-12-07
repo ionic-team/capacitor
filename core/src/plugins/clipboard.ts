@@ -7,10 +7,19 @@ import { NativePlugin, Plugin } from '../plugin';
 })
 export class Clipboard extends Plugin {
 
+  /**
+   * Set data on the clipboard. Note: Android doesn't yet support 
+   * setting an image.
+   * @param options 
+   */
   set(options: ClipboardSet) : Promise<void> {
     return this.nativePromise('set', options);
   }
 
+  /**
+   * Get data from the clipboard.
+   * @param options
+   */
   get(options: ClipboardGet) : Promise<ClipboardGetResult> {
     return this.nativePromise('get', options);
   }
