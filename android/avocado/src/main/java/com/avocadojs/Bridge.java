@@ -182,7 +182,7 @@ public class Bridge {
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     KnownPlugin plugin = getPluginWithRequestCode(requestCode);
 
-    if(plugin == null) {
+    if(plugin == null || plugin.getInstance() == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
       return;
     }

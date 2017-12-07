@@ -65,6 +65,7 @@ public class MessageHandler {
       if (errorResult != null) {
         data.put("success", false);
         data.put("error", errorResult);
+        Log.d(Bridge.TAG, "Sending plugin error: " + data.toString());
       } else {
         data.put("success", true);
         data.put("data", successResult);
