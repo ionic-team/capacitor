@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject } from './common';
-import { check, checkWebDir, runCommand, logFatal, logSuccess, runTask, isInstalled } from '../common';
+import { check, checkWebDir, isInstalled, logFatal, logSuccess, runCommand, runTask } from '../common';
 import { Config } from '../config';
 import { getPlugins, printPlugins } from '../plugin';
 
