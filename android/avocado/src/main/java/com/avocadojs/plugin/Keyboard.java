@@ -27,7 +27,7 @@ public class Keyboard extends Plugin {
   private View rootView;
 
   @PluginMethod()
-  public void init(final PluginCall call) {
+  public void subscribe(final PluginCall call) {
     execute(new Runnable() {
       @Override
       public void run() {
@@ -43,6 +43,8 @@ public class Keyboard extends Plugin {
           int previousHeightDiff = 0;
           @Override
           public void onGlobalLayout() {
+            log("ON GLOBAL LAYOUT");
+
             Rect r = new Rect();
             //r will be populated with the coordinates of your view that area still visible.
             rootView.getWindowVisibleDisplayFrame(r);
@@ -116,7 +118,7 @@ public class Keyboard extends Plugin {
   }
 
   @PluginMethod()
-  public void close(final PluginCall call) {
+  public void hide(final PluginCall call) {
     execute(new Runnable() {
       @Override
       public void run() {

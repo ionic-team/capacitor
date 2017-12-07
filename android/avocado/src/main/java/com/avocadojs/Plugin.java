@@ -48,6 +48,7 @@ public class Plugin {
     bridge.execute(runnable);
   }
 
+
   protected void log(String... args) {
     StringBuffer b = new StringBuffer();
     int i = 0;
