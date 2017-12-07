@@ -22,7 +22,7 @@ import {
   Test
 } from '@avocadojs/core';
 
-import { toBase64String } from '@angular/compiler/src/output/source_map';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'page-home',
@@ -30,7 +30,7 @@ import { toBase64String } from '@angular/compiler/src/output/source_map';
 })
 export class HomePage {
   base64Image: string;
-  image: string;
+  image: SafeResourceUrl;
   singleCoords = {
     latitude: 0,
     longitude: 0
@@ -47,7 +47,7 @@ export class HomePage {
   profileNumCallsTimeout = null;
   profileSamples = null;
 
-  constructor(public navCtrl: NavController, public zone: NgZone) {
+  constructor(public navCtrl: NavController, public zone: NgZone, public sanitizer: DomSanitizer) {
     let splash = new SplashScreen();
     splash.hide();
 
@@ -181,7 +181,8 @@ export class HomePage {
       allowEditing: true,
       resultType: 'base64'
     }).then((image) => {
-      this.image = image && ('data:image/jpeg;base64,' + image.base64_data);
+      const b64 = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
+      this.image = b64;
     });
   }
 
