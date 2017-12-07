@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { Platform, NavController, Nav } from 'ionic-angular';
 
 import { HomePage } from '../pages/home/home';
 
@@ -7,8 +7,31 @@ import { HomePage } from '../pages/home/home';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage = HomePage;
+  @ViewChild(Nav) nav: Nav;
+
+  rootPage = 'BrowserPage';
+
+  PLUGINS = [
+    { name: 'Browser', page: 'BrowserPage' },
+    { name: 'Camera', page: 'CameraPage' },
+    { name: 'Clipboard', page: 'ClipboardPage' },
+    { name: 'Device', page: 'DevicePage' },
+    { name: 'Filesystem', page: 'FilesystemPage' },
+    { name: 'Geolocation', page: 'GeolocationPage' },
+    { name: 'Haptics', page: 'HapticsPage' },
+    { name: 'Keyboard', page: 'KeyboardPage' },
+    { name: 'LocalNotifications', page: 'LocalNotificationsPage' },
+    { name: 'Modals', page: 'ModalsPage' },
+    { name: 'Motion', page: 'MotionPage' },
+    { name: 'Network', page: 'NetworkPage' },
+    { name: 'SplashScreen', page: 'SplashScreenPage' },
+    { name: 'StatusBar', page: 'StatusBarPage' }
+  ]
 
   constructor(platform: Platform) {
+  }
+
+  openPlugin(plugin: any) {
+    this.nav.setRoot(plugin.page);
   }
 }

@@ -15,9 +15,11 @@ import com.avocadojs.plugin.Clipboard;
 import com.avocadojs.plugin.Console;
 import com.avocadojs.plugin.Device;
 import com.avocadojs.plugin.Filesystem;
+import com.avocadojs.plugin.Keyboard;
 import com.avocadojs.plugin.Modals;
 import com.avocadojs.plugin.StatusBar;
 
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +79,7 @@ public class Bridge {
     this.registerPlugin(Clipboard.class);
     this.registerPlugin(Device.class);
     this.registerPlugin(Filesystem.class);
+    this.registerPlugin(Keyboard.class);
     this.registerPlugin(Modals.class);
     this.registerPlugin(StatusBar.class);
   }
@@ -158,6 +161,10 @@ public class Bridge {
       Log.e("callPluginMethod", "error : " + ex);
       call.errorCallback(ex.toString());
     }
+  }
+
+  public void execute(Runnable runnable) {
+    taskHandler.post(runnable);
   }
 
   /**

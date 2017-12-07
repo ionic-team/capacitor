@@ -6,6 +6,7 @@ export { Device } from './device';
 export { Filesystem, FilesystemDirectory } from './fs';
 export { Geolocation } from './geolocation';
 export { Haptics, HapticsImpactStyle } from './haptics';
+export { Keyboard } from './keyboard';
 export { LocalNotifications, LocalNotification, NotificationScheduleAt } from './local-notifications';
 export { Modals } from './modals';
 export { Motion } from './motion';
