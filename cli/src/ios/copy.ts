@@ -1,5 +1,6 @@
 import { Config } from '../config';
-import { copyAsync, emptyDirAsync, runTask } from '../common';
+import { copy } from 'fs-extra';
+import { emptyDirAsync, runTask } from '../common';
 import { relative } from 'path';
 
 
@@ -12,6 +13,6 @@ export async function copyIOS(config: Config) {
 
   await runTask(`Copying ${webRelDir} -> ${nativeRelDir}`, async () => {
     await emptyDirAsync(nativeAbsDir);
-    await copyAsync(webAbsDir, nativeAbsDir);
+    await copy(webAbsDir, nativeAbsDir);
   });
 }

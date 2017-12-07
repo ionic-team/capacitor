@@ -1,22 +1,28 @@
 import { Config } from '../config';
 import { isInstalled, readdirAsync } from '../common';
 import { join } from 'path';
-import { ls } from 'shelljs';
+
 import { Plugin, PluginType } from '../plugin';
 
 
-export function findXcodePath(config: Config): string | null {
-  for (let file of ls(config.ios.platformDir)) {
-    if (file.endsWith('.xcworkspace')) {
-      return join(config.ios.platformDir, file);
+export async function findXcodePath(config: Config): Promise<string | null> {
+  try {
+    const files = await readdirAsync(config.ios.platformDir);
+
+    for (let file of files) {
+      if (file.endsWith('.xcworkspace')) {
+        return join(config.ios.platformDir, file);
+      }
     }
+    return null;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
   config;
-  if (!isInstalled('pod')) {
+  if (!await isInstalled('pod')) {
     return 'cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation';
   }
   return null;
