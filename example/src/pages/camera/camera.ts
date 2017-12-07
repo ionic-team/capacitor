@@ -1,4 +1,5 @@
 import { Component, NgZone } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Camera
@@ -17,9 +18,9 @@ import {
   templateUrl: 'camera.html',
 })
 export class CameraPage {
-  image: string;
+  image: SafeResourceUrl;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private zone: NgZone) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private zone: NgZone, private sanitizer: DomSanitizer) {
   }
 
   ionViewDidLoad() {
@@ -34,7 +35,7 @@ export class CameraPage {
       allowEditing: true,
       resultType: 'base64'
     }).then((image) => {
-      this.image = image && ('data:image/jpeg;base64,' + image.base64_data);
+      this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
     });
   }
 
