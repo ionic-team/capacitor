@@ -2,7 +2,7 @@ import { NativePlugin, Plugin } from '../plugin';
 
 @NativePlugin({
   name: 'Keyboard',
-  id: 'com.avocadojs.plugin.localnotifications'
+  id: 'com.avocadojs.plugin.keyboard'
 })
 export class Keyboard extends Plugin {
   init() {
