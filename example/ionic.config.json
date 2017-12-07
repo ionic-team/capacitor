@@ -1,5 +1,6 @@
 {
   "name": "avocado",
   "app_id": "",
-  "projectTypeId": "ionic-angular"
+  "integrations": {},
+  "type": "ionic-angular"
 }

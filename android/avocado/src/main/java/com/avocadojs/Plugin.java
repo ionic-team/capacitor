@@ -44,6 +44,10 @@ public class Plugin {
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {}
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {}
 
+  public void execute(Runnable runnable) {
+    bridge.execute(runnable);
+  }
+
   protected void log(String... args) {
     StringBuffer b = new StringBuffer();
     int i = 0;
