@@ -4,7 +4,7 @@ import { wait } from '../common';
 
 
 export async function openIOS(config: Config) {
-  const xcodeProject = findXcodePath(config);
+  const xcodeProject = await findXcodePath(config);
 
   if (xcodeProject) {
     const opn = require('opn');

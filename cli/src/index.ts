@@ -8,11 +8,9 @@ import { Config } from './config';
 import { createCommand } from './tasks/create';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
-import { config as shellConfig } from 'shelljs';
 
 
 export function run(process: NodeJS.Process, cliBinDir: string) {
-  shellConfig.silent = true;
   const config = new Config(process.cwd(), cliBinDir);
 
   program

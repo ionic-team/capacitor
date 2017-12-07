@@ -2,7 +2,6 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { CheckFunction, check, checkPackage, logFatal, logInfo } from '../common';
-import { exit } from 'shelljs';
 
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
@@ -19,7 +18,7 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     await Promise.all(platforms.map(platformName => {
       return update(config, platformName, true);
     }));
-    exit(0);
+    process.exit(0);
   } catch (e) {
     logFatal(e);
   }

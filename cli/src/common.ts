@@ -1,13 +1,12 @@
 import { Config } from './config';
-import { copy, emptyDir } from 'fs-extra';
-import { exec, exit, which } from 'shelljs';
+import { emptyDir } from 'fs-extra';
+import { exec } from 'child_process';
 import { exists, readFile, readdir, writeFile  } from 'fs';
 import { promisify } from 'util';
 import { setTimeout } from 'timers';
 import { join } from 'path';
 
 
-export const copyAsync = promisify(copy);
 export const emptyDirAsync = promisify(emptyDir);
 export const readFileAsync = promisify(readFile);
 export const writeFileAsync = promisify(writeFile);
@@ -69,12 +68,21 @@ export function logError(...args: any[]) {
 
 export function logFatal(...args: any[]) {
   logError(...args);
-  exit(-1);
+  process.exit(1);
 }
 
 
-export function isInstalled(command: string): boolean {
-  return !!which(command);
+export async function isInstalled(command: string): Promise<boolean> {
+  const which = await import('which');
+  return new Promise<boolean>((resolve) => {
+    which(command, (err) => {
+      if (err) {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
 }
 
 
@@ -101,11 +109,11 @@ export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T
 
 export function runCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    exec(command, { async: true, silent: true }, (code, stdout, stderr) => {
-      if (code === 0) {
-        resolve(stdout);
-      } else {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
         reject(stdout + stderr);
+      } else {
+        resolve(stdout);
       }
     });
   });
