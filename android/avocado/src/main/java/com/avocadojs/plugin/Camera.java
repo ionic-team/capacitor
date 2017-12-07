@@ -6,14 +6,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
-import android.util.Log;
 
-import com.avocadojs.Bridge;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
@@ -28,11 +25,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Camera plugin that opens the stock Camera app.
- * https://developer.android.com/training/camera/photobasics.html
+ * Adapted from https://developer.android.com/training/camera/photobasics.html
  */
 @NativePlugin(
     id="com.avocadojs.plugin.camera",
@@ -188,12 +184,6 @@ public class Camera extends Plugin {
       
       returnBase64(call, bitmap);
     }
-
-    /*
-    Thumbnail
-    Bundle extras = data.getExtras();
-    Bitmap imageBitmap = (Bitmap) extras.get("data");
-    */
   }
 
   private void returnBase64(PluginCall call, Bitmap bitmap) {
