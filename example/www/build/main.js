@@ -1,4 +1,4 @@
-webpackJsonp([13],{
+webpackJsonp([14],{
 
 /***/ 109:
 /***/ (function(module, exports) {
@@ -23,30 +23,34 @@ webpackEmptyAsyncContext.id = 109;
 var map = {
 	"../pages/browser/browser.module": [
 		271,
-		12
+		13
 	],
 	"../pages/camera/camera.module": [
 		272,
-		11
+		12
 	],
 	"../pages/clipboard/clipboard.module": [
 		273,
-		10
+		11
 	],
 	"../pages/device/device.module": [
 		274,
-		9
+		10
 	],
 	"../pages/filesystem/filesystem.module": [
 		275,
-		8
+		9
 	],
 	"../pages/geolocation/geolocation.module": [
 		276,
-		7
+		8
 	],
 	"../pages/haptics/haptics.module": [
 		277,
+		7
+	],
+	"../pages/keyboard/keyboard.module": [
+		281,
 		6
 	],
 	"../pages/local-notifications/local-notifications.module": [
@@ -62,15 +66,15 @@ var map = {
 		3
 	],
 	"../pages/network/network.module": [
-		281,
+		282,
 		2
 	],
 	"../pages/splash-screen/splash-screen.module": [
-		282,
+		283,
 		1
 	],
 	"../pages/status-bar/status-bar.module": [
-		283,
+		284,
 		0
 	]
 };
@@ -153,6 +157,7 @@ AppModule = __decorate([
                     { loadChildren: '../pages/local-notifications/local-notifications.module#LocalNotificationsPageModule', name: 'LocalNotificationsPage', segment: 'local-notifications', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/modals/modals.module#ModalsPageModule', name: 'ModalsPage', segment: 'modals', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/motion/motion.module#MotionPageModule', name: 'MotionPage', segment: 'motion', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/keyboard/keyboard.module#KeyboardPageModule', name: 'KeyboardPage', segment: 'keyboard', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/network/network.module#NetworkPageModule', name: 'NetworkPage', segment: 'network', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/splash-screen/splash-screen.module#SplashScreenPageModule', name: 'SplashScreenPage', segment: 'splash-screen', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/status-bar/status-bar.module#StatusBarPageModule', name: 'StatusBarPage', segment: 'status-bar', priority: 'low', defaultHistory: [] }
