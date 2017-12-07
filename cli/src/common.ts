@@ -53,24 +53,24 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
+export function writeJSON(path: string, data: any) {
+  return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
+}
 
 export function logInfo(...args: any[]) {
   const chalk = require('chalk');
   console.log(chalk.yellow('  [info]'), ...args);
 }
 
-
 export function logError(...args: any[]) {
   const chalk = require('chalk');
   console.log(chalk.red('[error]'), ...args);
 }
 
-
 export function logFatal(...args: any[]) {
   logError(...args);
   process.exit(1);
 }
-
 
 export async function isInstalled(command: string): Promise<boolean> {
   const which = await import('which');
@@ -85,11 +85,9 @@ export async function isInstalled(command: string): Promise<boolean> {
   });
 }
 
-
 export function wait(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
-
 
 export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T> {
   const ora = require('ora');
@@ -105,7 +103,6 @@ export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T
     throw e;
   }
 }
-
 
 export function runCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {

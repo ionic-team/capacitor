@@ -1,14 +1,20 @@
 import { Config } from '../config';
-import { logFatal, runTask } from '../common';
+import { logFatal, logInfo, runTask } from '../common';
 import { openAndroid } from '../android/open';
 import { openIOS } from '../ios/open';
 
 
 export async function openCommand(config: Config, selectedPlatform: string) {
-  const platformName = await config.askPlatform(
-    selectedPlatform,
-    `Please choose a platform to open:`
-  );
+  const platforms = config.selectPlatforms(selectedPlatform);
+  let platformName: string;
+  if (platforms.length === 0) {
+    logInfo(`There are not platforms to open yet. Create one with "avocado create".`);
+    return;
+  } else if (platforms.length === 1) {
+    platformName = platforms[0];
+  } else {
+    platformName = await config.askPlatform('', `Please choose a platform to open:`);
+  }
 
   try {
     await open(config, platformName);

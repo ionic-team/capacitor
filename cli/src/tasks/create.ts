@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { createAndroid } from '../android/create';
 import { createIOS, createIOSChecks } from '../ios/create';
-import { check, checkPackage, checkWebDir, logFatal } from '../common';
+import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writeJSON } from '../common';
 import { sync } from './sync';
 import { open } from './open';
 
@@ -22,8 +22,10 @@ export async function createCommand(config: Config, selectedPlatformName: string
   try {
     await check(
       config,
-      [checkPackage, checkWebDir, ...createChecks(config, platformName)]
+      [checkPackage, ...createChecks(config, platformName)]
     );
+    await generateAvocadoConfig(config);
+    await check(config, [checkWebDir]);
     await create(config, platformName);
     await sync(config, platformName);
     await open(config, platformName);
@@ -31,6 +33,28 @@ export async function createCommand(config: Config, selectedPlatformName: string
   } catch (e) {
     logFatal(e);
   }
+}
+
+export async function generateAvocadoConfig(config: Config) {
+  if (config.foundExternalConfig) {
+    return;
+  }
+
+  logInfo(`Remember you can change the web directory anytime by modifing ${config.app.extConfigName}`);
+  const inquirer = require('inquirer');
+  const answers = await inquirer.prompt([{
+    type: 'input',
+    name: 'webDir',
+    message: 'web directory:',
+    default: 'www'
+  }]);
+  const webDir = answers.webDir;
+  await runTask(`Creating ${config.app.extConfigName}`, () => {
+    return writeJSON(config.app.extConfigFilePath, {
+      webDir: webDir
+    });
+  });
+  config.app.webDir = webDir;
 }
 
 export function createChecks(config: Config, platformName: string) {
@@ -50,4 +74,3 @@ export async function create(config: Config, platformName: string) {
     await createAndroid(config);
   }
 }
-

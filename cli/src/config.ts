@@ -44,7 +44,7 @@ export class Config {
     extConfigFilePath: '',
     extConfig: ExtConfig
   };
-
+  foundExternalConfig = false;
   platforms: string[] = [];
 
 
@@ -109,12 +109,12 @@ export class Config {
         this.app.extConfig = JSON.parse(extConfigStr);
 
         this.app.webDir = this.app.extConfig.webDir;
-
+        this.foundExternalConfig = true;
       } catch (e) {
         logFatal(`error parsing: ${this.app.extConfigFilePath}`);
       }
 
-    } catch (e) {
+    } catch {
       // it's ok if there's no avocado.json file
     }
   }
