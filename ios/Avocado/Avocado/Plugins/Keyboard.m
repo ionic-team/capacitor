@@ -80,7 +80,7 @@ typedef enum : NSUInteger {
 {
   [self setKeyboardHeight:0 delay:0.01];
   [self resetScrollView];
-  [self.commandDelegate evalJs:@"Keyboard.fireOnHiding();"];
+  //[self.commandDelegate evalJs:@"Keyboard.fireOnHiding();"];
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)note
@@ -93,7 +93,7 @@ typedef enum : NSUInteger {
   [self resetScrollView];
   
   NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnShowing(%d);", (int)height];
-  [self.commandDelegate evalJs:js];
+  //[self.commandDelegate evalJs:js];
 }
 
 - (void)onKeyboardDidShow:(NSNotification *)note
@@ -104,12 +104,12 @@ typedef enum : NSUInteger {
   [self resetScrollView];
   
   NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnShow(%d);", (int)height];
-  [self.commandDelegate evalJs:js];
+  //[self.commandDelegate evalJs:js];
 }
 
 - (void)onKeyboardDidHide:(NSNotification *)sender
 {
-  [self.commandDelegate evalJs:@"Keyboard.fireOnHide();"];
+  //[self.commandDelegate evalJs:@"Keyboard.fireOnHide();"];
   [self resetScrollView];
 }
 
@@ -209,6 +209,7 @@ static IMP WKOriginalImp;
 
 - (void)hideFormAccessoryBar:(AVCPluginCall *)command
 {
+  /*
   if (command.arguments.count > 0) {
     id value = [command.arguments objectAtIndex:0];
     if (!([value isKindOfClass:[NSNumber class]])) {
@@ -220,6 +221,7 @@ static IMP WKOriginalImp;
   
   [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:self.hideFormAccessoryBar]
                               callbackId:command.callbackId];
+   */
 }
 
 - (void)hide:(AVCPluginCall *)command
