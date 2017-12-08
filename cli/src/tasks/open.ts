@@ -32,9 +32,7 @@ export async function open(config: Config, platformName: string) {
     });
 
   } else if (platformName === config.android.name) {
-    await runTask('Opening the Android project...', () => {
-      return openAndroid(config);
-    });
+    return openAndroid(config);
 
   } else {
     throw `Platform ${platformName} is not valid.`;
