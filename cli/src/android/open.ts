@@ -3,5 +3,5 @@ import { logInfo } from '../common';
 
 
 export async function openAndroid(config: Config) {
-  return logInfo(`Android project found in: ${config.android.platformDir}`);
+  return logInfo(`Android project location: ${config.android.platformDir}`);
 }
