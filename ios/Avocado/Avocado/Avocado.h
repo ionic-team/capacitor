@@ -8,8 +8,11 @@ FOUNDATION_EXPORT const unsigned char AvocadoVersionString[];
 
 extern NSArray<Class> *AvocadoGetPluginClasses(void);
 
+#import "AVCBridge.h"
+#import "AVCPlugin.h"
 #import "PluginBridge.h"
 #import "DefaultPlugins.h"
+
 
 // In this header, you should import all the public headers of your framework using statements like #import <Avocado/PublicHeader.h>
 
