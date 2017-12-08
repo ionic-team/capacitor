@@ -2,10 +2,7 @@ import Foundation
 import Dispatch
 import WebKit
 
-
-public class Bridge {
-  public var viewController: UIViewController
-  
+@objc public class Bridge : AVCBridge {
   public var webView: WKWebView?
   
   public var lastPlugin: Plugin?
@@ -20,10 +17,9 @@ public class Bridge {
   public var dispatchQueue = DispatchQueue(label: "bridge")
   
   public init(_ vc: UIViewController, _ pluginIds: [String]) {
+    super.init()
     self.viewController = vc
-
-    //showDevMode()
-    registerPlugins()
+    self.registerPlugins()
   }
   
   public func willAppear() {

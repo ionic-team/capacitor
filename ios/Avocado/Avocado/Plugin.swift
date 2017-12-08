@@ -13,15 +13,11 @@ public typealias PluginEventListener = PluginCall
  *
  * Extends NSObject to allow for calling methods with selectors
  */
-open class Plugin: NSObject {
-  public var pluginId: String
-  var bridge: Bridge
-  
+@objc open class Plugin: AVCPlugin {
   var eventListeners = [String:[PluginEventListener]]()
   
   public required init(_ bridge: Bridge, id: String) {
-    self.pluginId = id
-    self.bridge = bridge
+    super.init(bridge: bridge, pluginId: id)
   }
   
   public func getId() -> String {
