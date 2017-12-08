@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { createAndroid } from '../android/create';
 import { createIOS, createIOSChecks } from '../ios/create';
-import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writeJSON } from '../common';
+import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 import { open } from './open';
 
@@ -36,7 +36,7 @@ export async function createCommand(config: Config, selectedPlatformName: string
 }
 
 export async function generateAvocadoConfig(config: Config) {
-  if (config.foundExternalConfig) {
+  if (config.foundExternalConfig()) {
     return;
   }
 
@@ -50,7 +50,7 @@ export async function generateAvocadoConfig(config: Config) {
   }]);
   const webDir = answers.webDir;
   await runTask(`Creating ${config.app.extConfigName}`, () => {
-    return writeJSON(config.app.extConfigFilePath, {
+    return writePrettyJSON(config.app.extConfigFilePath, {
       webDir: webDir
     });
   });

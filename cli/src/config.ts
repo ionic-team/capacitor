@@ -39,12 +39,12 @@ export class Config {
   app = {
     rootDir: '',
     webDir: 'www',
+    symlinkWebDir: false,
     package: Package,
     extConfigName: 'avocado.config.json',
     extConfigFilePath: '',
     extConfig: ExtConfig
   };
-  foundExternalConfig = false;
   platforms: string[] = [];
 
 
@@ -107,9 +107,6 @@ export class Config {
       try {
         // we've got an avocado.json file, let's parse it
         this.app.extConfig = JSON.parse(extConfigStr);
-
-        this.app.webDir = this.app.extConfig.webDir;
-        this.foundExternalConfig = true;
       } catch (e) {
         logFatal(`error parsing: ${this.app.extConfigFilePath}`);
       }
@@ -130,6 +127,9 @@ export class Config {
     }
   }
 
+  foundExternalConfig(): boolean {
+    return !!this.app.extConfig;
+  }
 
   selectPlatforms(selectedPlatformName?: string) {
     if (selectedPlatformName) {
