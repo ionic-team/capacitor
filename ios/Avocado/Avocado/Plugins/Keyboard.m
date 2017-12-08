@@ -16,6 +16,7 @@
  */
 
 #import "Keyboard.h"
+#import "PluginBridge.h"
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 
@@ -36,6 +37,8 @@ typedef enum : NSUInteger {
 @end
 
 @implementation AVCKeyboard
+
+AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
 
 - (void)load
 {
@@ -238,3 +241,5 @@ static IMP WKOriginalImp;
 }
 
 @end
+
+

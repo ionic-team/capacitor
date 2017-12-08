@@ -1,7 +1,8 @@
 #import <UIKit/UIKit.h>
 #import "AVCPlugin.h"
+#import "PluginBridge.h"
 
-@interface AVCKeyboard : AVCPlugin
+@interface AVCKeyboard : AVCPlugin <AvocadoBridgePlugin>
 
 @property (readwrite, assign, nonatomic) BOOL shrinkView;
 @property (readwrite, assign, nonatomic) BOOL disableScrollingInShrinkView;
