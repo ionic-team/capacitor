@@ -57,6 +57,26 @@ export function writeJSON(path: string, data: any) {
   return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
 }
 
+export function readXML(path: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    readFile(path, 'utf-8', async (err, xmlStr) => {
+      if (err) {
+        reject(`Unable to read: ${path}`);
+
+      } else {
+        const xml2js = await import('xml2js');
+        xml2js.parseString(xmlStr, (err, result) => {
+          if (err) {
+            reject(`Error parsing: ${path}, ${err}`);
+          } else {
+            resolve(result);
+          }
+        });
+      }
+    });
+  });
+}
+
 export function logSuccess(...args: any[]) {
   const chalk = require('chalk');
   console.log(chalk.green('[success]'), ...args);
