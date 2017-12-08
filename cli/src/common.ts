@@ -1,13 +1,12 @@
 import { Config } from './config';
-import { emptyDir } from 'fs-extra';
 import { exec } from 'child_process';
-import { exists, readFile, readdir, writeFile  } from 'fs';
+import { exists, readFile, readdir, symlink, writeFile } from 'fs';
 import { promisify } from 'util';
 import { setTimeout } from 'timers';
 import { join } from 'path';
 
 
-export const emptyDirAsync = promisify(emptyDir);
+export const symlinkAsync = promisify(symlink);
 export const readFileAsync = promisify(readFile);
 export const writeFileAsync = promisify(writeFile);
 export const existsAsync = promisify(exists);
@@ -53,7 +52,7 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
-export function writeJSON(path: string, data: any) {
+export function writePrettyJSON(path: string, data: any) {
   return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
 }
 

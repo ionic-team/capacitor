@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { join } from 'path';
-import { logFatal, logInfo, runCommand, runTask, writeJSON } from '../common';
+import { logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
 
 
 export async function newPluginCommand(config: Config) {
@@ -61,7 +61,7 @@ export async function newPlugin(config: Config) {
     });
 
     await runTask('Genering package.json', () => {
-      return writeJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers));
+      return writePrettyJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers));
     });
 
     // await runTask('Configuring', () => {
