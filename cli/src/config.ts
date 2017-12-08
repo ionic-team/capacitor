@@ -155,7 +155,7 @@ export class Config {
 
   async askPlatform(selectedPlatformName: string, promptMessage: string): Promise<string> {
     if (!selectedPlatformName) {
-      const inquirer = require('inquirer');
+      const inquirer = await import('inquirer');
 
       const answer = await inquirer.prompt({
         type: 'list',

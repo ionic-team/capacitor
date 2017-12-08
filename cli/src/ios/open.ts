@@ -7,7 +7,7 @@ export async function openIOS(config: Config) {
   const xcodeProject = await findXcodePath(config);
 
   if (xcodeProject) {
-    const opn = require('opn');
+    const opn = await import('opn');
     await opn(xcodeProject, { wait: false });
     await wait(3000);
 

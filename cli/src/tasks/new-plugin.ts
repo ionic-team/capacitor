@@ -18,7 +18,7 @@ export async function newPlugin(config: Config) {
 
   config;
 
-  const inquirer = require('inquirer');
+  const inquirer = await import('inquirer');
   const answers = await inquirer.prompt([
     {
       type: 'input',
