@@ -41,7 +41,7 @@ export async function generateAvocadoConfig(config: Config) {
   }
 
   logInfo(`Remember you can change the web directory anytime by modifing ${config.app.extConfigName}`);
-  const inquirer = require('inquirer');
+  const inquirer = await import('inquirer');
   const answers = await inquirer.prompt([{
     type: 'input',
     name: 'webDir',
