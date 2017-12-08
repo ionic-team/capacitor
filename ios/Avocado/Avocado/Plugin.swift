@@ -13,25 +13,12 @@ public typealias PluginEventListener = PluginCall
  *
  * Extends NSObject to allow for calling methods with selectors
  */
-open class Plugin: NSObject {
-  public var pluginId: String
-  var bridge: Bridge
-  
+@objc open class Plugin: AVCPlugin {
   var eventListeners = [String:[PluginEventListener]]()
   
-  public required init(_ bridge: Bridge, id: String) {
-    self.pluginId = id
-    self.bridge = bridge
+  public override required init(bridge: Bridge, pluginId: String) {
+    super.init(bridge: bridge, pluginId: pluginId)
   }
-  
-  public func getId() -> String {
-    return self.pluginId
-  }
-  
-  // Called after init if the plugin wants to do
-  // some loading so the plugin author doesn't
-  // need to override init()
-  public func load() {}
   
   public func addEventListener(_ eventName: String, _ listener: PluginEventListener) {
     if var listenersForEvent = eventListeners[eventName] {
