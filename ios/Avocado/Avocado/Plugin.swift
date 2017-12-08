@@ -16,18 +16,9 @@ public typealias PluginEventListener = PluginCall
 @objc open class Plugin: AVCPlugin {
   var eventListeners = [String:[PluginEventListener]]()
   
-  public required init(_ bridge: Bridge, id: String) {
-    super.init(bridge: bridge, pluginId: id)
+  public override required init(bridge: Bridge, pluginId: String) {
+    super.init(bridge: bridge, pluginId: pluginId)
   }
-  
-  public func getId() -> String {
-    return self.pluginId
-  }
-  
-  // Called after init if the plugin wants to do
-  // some loading so the plugin author doesn't
-  // need to override init()
-  public func load() {}
   
   public func addEventListener(_ eventName: String, _ listener: PluginEventListener) {
     if var listenersForEvent = eventListeners[eventName] {

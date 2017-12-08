@@ -10,6 +10,12 @@
   return self;
 }
 
+-(NSString *) getId {
+  return self.pluginId;
+}
+
+-(void)load {}
+
 @end
 
 @implementation AVCPluginCall

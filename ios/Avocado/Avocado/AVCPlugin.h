@@ -12,6 +12,12 @@
 
 -(instancetype) initWithBridge:(Bridge*) bridge pluginId:(NSString*) pluginId;
 
+// Called after init if the plugin wants to do
+// some loading so the plugin author doesn't
+// need to override init()
+-(void) load;
+-(NSString *)getId;
+
 @end
 
 @interface AVCPluginCall : NSObject
