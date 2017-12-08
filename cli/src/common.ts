@@ -113,21 +113,6 @@ export function wait(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T> {
-  const ora = require('ora');
-  const spinner = ora(title).start();
-
-  try {
-    const value = await fn();
-    spinner.succeed();
-    return value;
-
-  } catch (e) {
-    spinner.stop();
-    throw e;
-  }
-}
-
 export function runCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -138,4 +123,34 @@ export function runCommand(command: string): Promise<string> {
       }
     });
   });
+}
+
+export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T> {
+  const ora = require('ora');
+  const spinner = ora(title).start();
+
+  try {
+    const start = process.hrtime();
+    const value = await fn();
+    const elapsed = process.hrtime(start);
+    const chalk = require('chalk');
+    spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
+    return value;
+
+  } catch (e) {
+    spinner.stop();
+    throw e;
+  }
+}
+
+const TIME_UNITS = ['s', 'ms', 'μp'];
+export function formatHrTime(hrtime: any) {
+  let time = (hrtime[0] + (hrtime[1] / 1e9)) as number;
+  let index = 0;
+  for (; index < TIME_UNITS.length - 1; index++ , time *= 1000) {
+    if (time >= 1) {
+      break;
+    }
+  }
+  return time.toFixed(2) + TIME_UNITS[index];
 }
