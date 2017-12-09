@@ -16,6 +16,7 @@ import { Keyboard } from '@avocadojs/core';
   templateUrl: 'keyboard.html',
 })
 export class KeyboardPage {
+  isBarShowing = true;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
@@ -31,4 +32,11 @@ export class KeyboardPage {
     Keyboard.hide();
   }
 
+  toggleAccessoryBar() {
+    if(this.isBarShowing) {
+      Keyboard.hideAccessoryBar();
+    } else {
+      Keyboard.showAccessoryBar();
+    }
+  }
 }
