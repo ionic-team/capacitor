@@ -38,5 +38,6 @@ export class KeyboardPage {
     } else {
       Keyboard.showAccessoryBar();
     }
+    this.isBarShowing = !this.isBarShowing;
   }
 }

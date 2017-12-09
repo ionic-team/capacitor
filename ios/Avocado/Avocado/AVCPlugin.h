@@ -2,6 +2,7 @@
 #import <WebKit/WebKit.h>
 
 @class Bridge;
+@class PluginCall;
 
 @interface AVCPlugin : NSObject
 
@@ -16,5 +17,6 @@
 // need to override init()
 -(void) load;
 -(NSString *)getId;
+-(BOOL)getBool:(PluginCall*) call field:(NSString *)field defaultValue:(BOOL)defaultValue;
 
 @end
