@@ -2,6 +2,8 @@
 #import "AVCPlugin.h"
 #import "PluginBridge.h"
 
+@class PluginCall;
+
 @interface AVCKeyboard : AVCPlugin <AvocadoBridgePlugin>
 
 @property (readwrite, assign, nonatomic) BOOL shrinkView;
@@ -9,7 +11,7 @@
 @property (readwrite, assign, nonatomic) BOOL hideFormAccessoryBar;
 @property (readonly, assign, nonatomic) BOOL keyboardIsVisible;
 
-- (void)hideFormAccessoryBar:(AVCPluginCall*)command;
-- (void)hide:(AVCPluginCall*)command;
+- (void)setAccessoryBarVisible:(PluginCall*)command;
+- (void)hide:(PluginCall*)command;
 
 @end

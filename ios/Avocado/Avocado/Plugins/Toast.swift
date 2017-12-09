@@ -60,7 +60,7 @@ public class Toast : Plugin {
     toastLabel.layer.cornerRadius = 20;
     toastLabel.clipsToBounds = true;
     
-    let vc = self.bridge.viewController!
+    let vc = self.bridge.viewController
     
     vc.view.addSubview(toastLabel);
     

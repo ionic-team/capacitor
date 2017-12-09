@@ -1,4 +1,5 @@
 #import "AVCPlugin.h"
+#import <Avocado/Avocado-Swift.h>
 
 #import <Foundation/Foundation.h>
 
@@ -18,5 +19,3 @@
 
 @end
 
-@implementation AVCPluginCall
-@end

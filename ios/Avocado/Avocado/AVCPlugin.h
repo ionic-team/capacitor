@@ -19,6 +19,3 @@
 -(NSString *)getId;
 
 @end
-
-@interface AVCPluginCall : NSObject
-@end
