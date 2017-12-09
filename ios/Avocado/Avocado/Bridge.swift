@@ -35,9 +35,7 @@ import WebKit
     let classes = objc_copyClassList(&numClasses)
     for i in 0..<Int(numClasses) {
       let c = classes![i]
-      if class_getSuperclass(c) == AVCPlugin.self {
-        print("FOUND OBJ-C TYPE CLASS", c)
-      } else if class_conformsToProtocol(c, AvocadoBridgePlugin.self) {
+      if class_conformsToProtocol(c, AvocadoBridgePlugin.self) {
         let moduleType = c as! AVCPlugin.Type
         registerPlugin(moduleType)
       }
