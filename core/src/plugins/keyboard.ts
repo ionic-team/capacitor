@@ -25,6 +25,18 @@ export class KeyboardPlugin extends Plugin {
   hide() {
     return this.nativePromise('hide');
   }
+
+  hideAccessoryBar() {
+    return this.nativePromise('setAccessoryBarVisible', {
+      visible: false
+    });
+  }
+
+  showAccessoryBar() {
+    return this.nativePromise('setAccessoryBarVisible', {
+      visible: true
+    });
+  }
 }
 
 const Keyboard = new KeyboardPlugin();

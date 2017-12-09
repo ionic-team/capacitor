@@ -1,4 +1,5 @@
 import Foundation
+import WebKit
 
 public typealias PluginCallErrorData = [String:Any]
 // Types for success and error callbacks to plugins
@@ -13,12 +14,24 @@ public typealias PluginEventListener = PluginCall
  *
  * Extends NSObject to allow for calling methods with selectors
  */
-@objc open class Plugin: AVCPlugin {
+@objc open class Plugin : NSObject {
   var eventListeners = [String:[PluginEventListener]]()
+  var bridge: Bridge;
+  var pluginId: String;
+  var webView: WKWebView;
   
-  public override required init(bridge: Bridge, pluginId: String) {
-    super.init(bridge: bridge, pluginId: pluginId)
+  public required init(bridge: Bridge, pluginId: String) {
+    self.bridge = bridge
+    self.pluginId = pluginId
+    self.webView = bridge.webView!
+    //super.init(bridge: bridge, pluginId: pluginId)
   }
+  
+  public func getId() -> String {
+    return self.pluginId
+  }
+  
+  public func load() {}
   
   public func addEventListener(_ eventName: String, _ listener: PluginEventListener) {
     if var listenersForEvent = eventListeners[eventName] {
@@ -65,7 +78,15 @@ public typealias PluginEventListener = PluginCall
     return self.options[key] as? T ?? defaultValue
   }
   
-  public func success(_ data: PluginResultData = [:]) {
+  @objc public func getBool(_ key: String, defaultValue: NSNumber?) -> NSNumber? {
+    return self.options[key] as? NSNumber ?? defaultValue
+  }
+  
+  @objc public func success() {
+    successCallback(PluginResult())
+  }
+  
+  @objc public func success(_ data: PluginResultData = [:]) {
     successCallback(PluginResult(data))
   }
   

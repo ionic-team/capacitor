@@ -5,6 +5,7 @@
 @property (strong, nonatomic) UIViewController* viewController;
 
 - (id) init;
+- (void) evaluateJS:(NSString *)js;
 
 @end
 

@@ -19,6 +19,7 @@
 #import "PluginBridge.h"
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
+#import <Avocado/Avocado-Swift.h>
 
 typedef enum : NSUInteger {
   ResizeNone,
@@ -38,7 +39,9 @@ typedef enum : NSUInteger {
 
 @implementation AVCKeyboard
 
+// Define the plugin
 AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
+
 
 - (void)load
 {
@@ -46,7 +49,7 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
   BOOL doesResize = YES;
   if (!doesResize) {
     self.keyboardResizes = ResizeNone;
-    NSLog(@"CDVIonicKeyboard: no resize");
+    NSLog(@"AVCIonicKeyboard: no resize");
     
   } else {
     NSString *resizeMode = @"ionic";
@@ -57,7 +60,7 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
         self.keyboardResizes = ResizeBody;
       }
     }
-    NSLog(@"CDVIonicKeyboard: resize mode %d", self.keyboardResizes);
+    NSLog(@"AVCIonicKeyboard: resize mode %d", self.keyboardResizes);
   }
   self.hideFormAccessoryBar = YES;
   
@@ -83,7 +86,7 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
 {
   [self setKeyboardHeight:0 delay:0.01];
   [self resetScrollView];
-  //[self.commandDelegate evalJs:@"Keyboard.fireOnHiding();"];
+  [self.bridge sendJS:@"Keyboard.fireOnHiding();"];
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)note
@@ -96,7 +99,7 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
   [self resetScrollView];
   
   NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnShowing(%d);", (int)height];
-  //[self.commandDelegate evalJs:js];
+  [self.bridge sendJS:js];
 }
 
 - (void)onKeyboardDidShow:(NSNotification *)note
@@ -107,12 +110,12 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
   [self resetScrollView];
   
   NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnShow(%d);", (int)height];
-  //[self.commandDelegate evalJs:js];
+  [self.bridge sendJS:js];
 }
 
 - (void)onKeyboardDidHide:(NSNotification *)sender
 {
-  //[self.commandDelegate evalJs:@"Keyboard.fireOnHide();"];
+  [self.bridge sendJS:@"Keyboard.fireOnHide();"];
   [self resetScrollView];
 }
 
@@ -150,14 +153,14 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
     {
       NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnResize(%d, %d, document.body);",
                       (int)self.paddingBottom, (int)f.size.height];
-      //[self.commandDelegate evalJs:js];
+      [self.bridge sendJS:js];
       break;
     }
     case ResizeIonic:
     {
       NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnResize(%d, %d, document.querySelector('ion-app'));",
                       (int)self.paddingBottom, (int)f.size.height];
-      //[self.commandDelegate evalJs:js];
+      [self.bridge sendJS:js];
       break;
     }
     case ResizeNative:
@@ -210,24 +213,14 @@ static IMP WKOriginalImp;
 
 #pragma mark Plugin interface
 
-- (void)hideFormAccessoryBar:(AVCPluginCall *)command
+- (void)setAccessoryBarVisible:(PluginCall *)call
 {
-  /*
-  if (command.arguments.count > 0) {
-    id value = [command.arguments objectAtIndex:0];
-    if (!([value isKindOfClass:[NSNumber class]])) {
-      value = [NSNumber numberWithBool:NO];
-    }
-    
-    self.hideFormAccessoryBar = [value boolValue];
-  }
-  
-  [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:self.hideFormAccessoryBar]
-                              callbackId:command.callbackId];
-   */
+  BOOL value = [call getBool:@"visible" defaultValue:nil];
+  self.hideFormAccessoryBar = value;
+  [call success];
 }
 
-- (void)hide:(AVCPluginCall *)command
+- (void)hide:(PluginCall *)command
 {
   [self.webView endEditing:YES];
 }
