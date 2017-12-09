@@ -1,6 +1,5 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
-#import "AVCBridge.h"
 
 @class Bridge;
 

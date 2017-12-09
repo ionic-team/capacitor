@@ -6,12 +6,12 @@ import WebKit
   public var webView: WKWebView?
   public var viewController: UIViewController
   
-  public var lastPlugin: Plugin?
+  public var lastPlugin: AVCPlugin?
   
   // Map of all loaded and instantiated plugins by pluginId -> instance
-  public var plugins =  [String:Plugin]()
+  public var plugins =  [String:AVCPlugin]()
   // List of known plugins by pluginId -> Plugin Type
-  public var knownPlugins = [String:Plugin.Type]()
+  public var knownPlugins = [String:AVCPlugin.Type]()
   
   // Dispatch queue for our operations
   // TODO: Unique label?
@@ -36,31 +36,31 @@ import WebKit
     for i in 0..<Int(numClasses) {
       let c = classes![i]
       if class_getSuperclass(c) == AVCPlugin.self {
-        print("FOUND OBJ-C TYPE CLASS")
+        print("FOUND OBJ-C TYPE CLASS", c)
       } else if class_conformsToProtocol(c, AvocadoBridgePlugin.self) {
-        let moduleType = c as! Plugin.Type
+        let moduleType = c as! AVCPlugin.Type
         registerPlugin(moduleType)
       }
     }
   }
   
-  func registerPlugin(_ pluginType: Plugin.Type) {
+  func registerPlugin(_ pluginType: AVCPlugin.Type) {
     let bridgeType = pluginType as! AvocadoBridgePlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
   }
   
-  public func getOrLoadPlugin(pluginId: String) -> Plugin? {
+  public func getOrLoadPlugin(pluginId: String) -> AVCPlugin? {
     guard let plugin = self.getPlugin(pluginId: pluginId) ?? self.loadPlugin(pluginId: pluginId) else {
       return nil
     }
     return plugin
   }
   
-  public func getPlugin(pluginId: String) -> Plugin? {
+  public func getPlugin(pluginId: String) -> AVCPlugin? {
     return self.plugins[pluginId]
   }
   
-  public func loadPlugin(pluginId: String) -> Plugin? {
+  public func loadPlugin(pluginId: String) -> AVCPlugin? {
     guard let pluginType = knownPlugins[pluginId] else {
       print("Unable to load plugin \(pluginId). No such module found.")
       return nil
@@ -68,7 +68,7 @@ import WebKit
     
     let bridgeType = pluginType as! AvocadoBridgePlugin.Type
     let p = pluginType.init(bridge: self, pluginId: bridgeType.pluginId())
-    p.load()
+    p!.load()
     self.plugins[bridgeType.pluginId()] = p
     return p
   }
