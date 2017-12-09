@@ -15,6 +15,17 @@
   return self.pluginId;
 }
 
+-(BOOL) getBool:(PluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {
+  NSNumber *value = [call getBool:field defaultValue:nil];
+  if(value == nil) {
+    return defaultValue;
+  }
+  if(value.integerValue == 0) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
 -(void)load {}
 
 @end
