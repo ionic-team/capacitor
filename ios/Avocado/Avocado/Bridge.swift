@@ -173,8 +173,14 @@ import WebKit
     }
   }
   
-  @objc public func sendJS(_ js: String) {
-    self.webView?.evaluateJavaScript(js, completionHandler: { (result, error) in
+  @objc public func evalWithPlugin(_ plugin: AVCPlugin, js: String) {
+    let wrappedJs = """
+    avocado.withPlugin('\(plugin.getId())', function(plugin) {
+      if(!plugin) { console.error('Unable to execute JS in plugin, no such plugin found for id \(plugin.getId())'); }
+      \(js)
+    });
+    """
+    self.webView?.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
       if error != nil {
         print("JS Eval error", error?.localizedDescription)
       }

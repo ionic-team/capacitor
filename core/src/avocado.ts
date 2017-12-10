@@ -163,4 +163,7 @@ declare var global: any;
     delete result.error;
   };
 
+  avocado.withPlugin = function withPlugin(_pluginId: string, _fn: Function) {
+  };
+
 })((typeof window !== 'undefined' ? window : global) as any);

@@ -86,7 +86,7 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
 {
   [self setKeyboardHeight:0 delay:0.01];
   [self resetScrollView];
-  [self.bridge sendJS:@"Keyboard.fireOnHiding();"];
+  [self.bridge evalWithPlugin:self js:@"plugin.fireOnHiding();"];
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)note
@@ -98,8 +98,8 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
   [self setKeyboardHeight:height delay:duration/2.0];
   [self resetScrollView];
   
-  NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnShowing(%d);", (int)height];
-  [self.bridge sendJS:js];
+  NSString *js = [NSString stringWithFormat:@"plugin.fireOnShowing(%d);", (int)height];
+  [self.bridge evalWithPlugin:self js:js];
 }
 
 - (void)onKeyboardDidShow:(NSNotification *)note
@@ -109,13 +109,13 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
   
   [self resetScrollView];
   
-  NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnShow(%d);", (int)height];
-  [self.bridge sendJS:js];
+  NSString *js = [NSString stringWithFormat:@"plugin.fireOnShow(%d);", (int)height];
+  [self.bridge evalWithPlugin:self js:js];
 }
 
 - (void)onKeyboardDidHide:(NSNotification *)sender
 {
-  [self.bridge sendJS:@"Keyboard.fireOnHide();"];
+  [self.bridge evalWithPlugin:self js:@"plugin.fireOnHide();"];
   [self resetScrollView];
 }
 
@@ -151,16 +151,16 @@ AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
   switch (self.keyboardResizes) {
     case ResizeBody:
     {
-      NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnResize(%d, %d, document.body);",
+      NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.body);",
                       (int)self.paddingBottom, (int)f.size.height];
-      [self.bridge sendJS:js];
+      [self.bridge evalWithPlugin:self js:js];
       break;
     }
     case ResizeIonic:
     {
-      NSString *js = [NSString stringWithFormat:@"Keyboard.fireOnResize(%d, %d, document.querySelector('ion-app'));",
+      NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.querySelector('ion-app'));",
                       (int)self.paddingBottom, (int)f.size.height];
-      [self.bridge sendJS:js];
+      [self.bridge evalWithPlugin:self js:js];
       break;
     }
     case ResizeNative:
