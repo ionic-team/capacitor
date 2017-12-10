@@ -1,17 +1,14 @@
-import { NativePlugin, Plugin } from '../plugin';
+import { Plugin } from '../plugin';
 
-@NativePlugin({
-  name: 'Keyboard',
-  id: 'com.avocadojs.plugin.keyboard'
-})
 export class KeyboardPlugin extends Plugin {
+  static ID = 'com.avocadojs.plugin.keyboard';
+
   constructor() {
     super();
     this._init();
   }
 
-  _onChange(_err: any, d: any) {
-    console.log('Keyboard change', d);
+  _onChange(_err: any, d: any) { console.log('Keyboard change', d);
   }
 
   _init() {

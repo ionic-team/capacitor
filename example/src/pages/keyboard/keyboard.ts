@@ -32,6 +32,7 @@ export class KeyboardPage {
     Keyboard.hide();
   }
 
+
   toggleAccessoryBar() {
     if(this.isBarShowing) {
       Keyboard.hideAccessoryBar();

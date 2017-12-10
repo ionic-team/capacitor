@@ -2,7 +2,6 @@ import { PluginConfig, PluginCallback, WindowAvocado } from './definitions';
 
 declare const window: WindowAvocado;
 
-
 /**
  * Base class for all 3rd party plugins.
  */
