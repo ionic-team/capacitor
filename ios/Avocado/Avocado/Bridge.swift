@@ -18,7 +18,6 @@ import WebKit
   public var dispatchQueue = DispatchQueue(label: "bridge")
   
   public init(_ vc: UIViewController, _ pluginIds: [String]) {
-    
     self.viewController = vc
     super.init()
     registerPlugins()
@@ -45,6 +44,7 @@ import WebKit
   func registerPlugin(_ pluginType: AVCPlugin.Type) {
     let bridgeType = pluginType as! AvocadoBridgePlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
+    defineJS(pluginType)
   }
   
   public func getOrLoadPlugin(pluginId: String) -> AVCPlugin? {
@@ -69,6 +69,22 @@ import WebKit
     p!.load()
     self.plugins[bridgeType.pluginId()] = p
     return p
+  }
+  
+  public func defineJS(_ pluginType: AVCPlugin.Type) {
+    var mc: CUnsignedInt = 0
+    var mlist = class_copyMethodList(pluginType, &mc)
+    let olist = mlist
+    print("\(mc) methods")
+    
+    for i in (0..<mc) {
+      
+      var sel = sel_getName(method_getName(mlist!.pointee))
+      print("Method #\(i): \(method_getName(mlist!.pointee))")
+      print(String(cString: sel))
+      mlist = mlist!.successor()
+    }
+    free(olist)
   }
   
   public func isSimulator() -> Bool {

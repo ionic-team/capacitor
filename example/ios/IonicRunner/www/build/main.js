@@ -22,31 +22,31 @@ webpackEmptyAsyncContext.id = 109;
 
 var map = {
 	"../pages/browser/browser.module": [
-		273,
+		271,
 		13
 	],
 	"../pages/camera/camera.module": [
-		271,
+		273,
 		12
 	],
 	"../pages/clipboard/clipboard.module": [
-		274,
+		272,
 		11
 	],
 	"../pages/device/device.module": [
-		272,
+		278,
 		10
 	],
 	"../pages/filesystem/filesystem.module": [
-		275,
+		274,
 		9
 	],
 	"../pages/geolocation/geolocation.module": [
-		276,
+		275,
 		8
 	],
 	"../pages/haptics/haptics.module": [
-		278,
+		276,
 		7
 	],
 	"../pages/keyboard/keyboard.module": [
@@ -58,19 +58,19 @@ var map = {
 		5
 	],
 	"../pages/modals/modals.module": [
-		283,
+		280,
 		4
 	],
 	"../pages/motion/motion.module": [
-		281,
+		282,
 		3
 	],
 	"../pages/network/network.module": [
-		280,
+		281,
 		2
 	],
 	"../pages/splash-screen/splash-screen.module": [
-		282,
+		283,
 		1
 	],
 	"../pages/status-bar/status-bar.module": [
@@ -147,19 +147,19 @@ AppModule = __decorate([
                 preloadModules: true
             }, {
                 links: [
-                    { loadChildren: '../pages/camera/camera.module#CameraPageModule', name: 'CameraPage', segment: 'camera', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/device/device.module#DevicePageModule', name: 'DevicePage', segment: 'device', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/browser/browser.module#BrowserPageModule', name: 'BrowserPage', segment: 'browser', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/clipboard/clipboard.module#ClipboardPageModule', name: 'ClipboardPage', segment: 'clipboard', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/camera/camera.module#CameraPageModule', name: 'CameraPage', segment: 'camera', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/filesystem/filesystem.module#FilesystemPageModule', name: 'FilesystemPage', segment: 'filesystem', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/geolocation/geolocation.module#GeolocationPageModule', name: 'GeolocationPage', segment: 'geolocation', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/keyboard/keyboard.module#KeyboardPageModule', name: 'KeyboardPage', segment: 'keyboard', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/haptics/haptics.module#HapticsPageModule', name: 'HapticsPage', segment: 'haptics', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/keyboard/keyboard.module#KeyboardPageModule', name: 'KeyboardPage', segment: 'keyboard', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/device/device.module#DevicePageModule', name: 'DevicePage', segment: 'device', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/local-notifications/local-notifications.module#LocalNotificationsPageModule', name: 'LocalNotificationsPage', segment: 'local-notifications', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/modals/modals.module#ModalsPageModule', name: 'ModalsPage', segment: 'modals', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/network/network.module#NetworkPageModule', name: 'NetworkPage', segment: 'network', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/motion/motion.module#MotionPageModule', name: 'MotionPage', segment: 'motion', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/splash-screen/splash-screen.module#SplashScreenPageModule', name: 'SplashScreenPage', segment: 'splash-screen', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/modals/modals.module#ModalsPageModule', name: 'ModalsPage', segment: 'modals', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/status-bar/status-bar.module#StatusBarPageModule', name: 'StatusBarPage', segment: 'status-bar', priority: 'low', defaultHistory: [] }
                 ]
             })
