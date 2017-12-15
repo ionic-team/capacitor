@@ -55,6 +55,10 @@ AVC_PLUGIN(Haptics,
   AVC_PLUGIN_METHOD(vibrate, "", AVCPluginReturnPromise);
 )
 
+AVC_PLUGIN(AVCKeyboard,
+           AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
+)
+
 AVC_PLUGIN(LocalNotifications,
   AVC_PLUGIN_METHOD(schedule, "", AVCPluginReturnPromise);
 )

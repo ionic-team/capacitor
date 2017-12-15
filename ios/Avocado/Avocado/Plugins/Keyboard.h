@@ -1,9 +1,9 @@
 #import <UIKit/UIKit.h>
 #import "AVCPlugin.h"
-#import "PluginBridge.h"
+#import "AVCBridgedPlugin.h"
 
-/*
-@class PluginCall;
+
+@class AVCPluginCall;
 
 @interface AVCKeyboard : AVCPlugin <AVCBridgedPlugin>
 
@@ -12,8 +12,8 @@
 @property (readwrite, assign, nonatomic) BOOL hideFormAccessoryBar;
 @property (readonly, assign, nonatomic) BOOL keyboardIsVisible;
 
-- (void)setAccessoryBarVisible:(PluginCall*)command;
-- (void)hide:(PluginCall*)command;
+- (void)setAccessoryBarVisible:(AVCPluginCall*)command;
+- (void)hide:(AVCPluginCall*)command;
 
 @end
-*/
+
