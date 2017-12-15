@@ -14,9 +14,9 @@
  specific language governing permissions and limitations
  under the License.
  */
-/*
+
 #import "Keyboard.h"
-#import "PluginBridge.h"
+#import "AVCBridgedPlugin.h"
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <Avocado/Avocado-Swift.h>
@@ -214,17 +214,17 @@ static IMP WKOriginalImp;
 
 #pragma mark Plugin interface
 
-- (void)setAccessoryBarVisible:(PluginCall *)call
+- (void)setAccessoryBarVisible:(AVCPluginCall *)call
 {
   BOOL value = [self getBool:call field:@"visible" defaultValue:FALSE];
 
   //NSNumber* value = [call getBool:@"visible" defaultValue:nil];
   NSLog(@"Accessory bar visible change %d", value);
   self.hideFormAccessoryBar = !value;
-  [call success];
+  [call successHandler];
 }
 
-- (void)hide:(PluginCall *)command
+- (void)hide:(AVCPluginCall *)command
 {
   [self.webView endEditing:YES];
 }
@@ -238,5 +238,5 @@ static IMP WKOriginalImp;
 }
 
 @end
-*/
+
 
