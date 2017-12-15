@@ -1,3 +1,4 @@
+/*
 import Foundation
 
 @IBDesignable class UIPaddingLabel: UILabel {
@@ -40,7 +41,7 @@ import Foundation
 
 @objc(Toast)
 public class Toast : Plugin {
-  @objc func show(_ call: PluginCall) {
+  @objc func show(_ call: AVCPluginCall) {
     guard let text = call.get("text", String.self) else {
       call.error("text must be provided and must be a string.")
       return
@@ -79,5 +80,6 @@ public class Toast : Plugin {
     }
   }
 }
+ */
 
 

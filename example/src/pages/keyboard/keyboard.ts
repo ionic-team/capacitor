@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { Keyboard } from '@avocadojs/core';
+import { Plugins } from '@avocadojs/core';
 
 /**
  * Generated class for the KeyboardPage page.
@@ -26,18 +26,18 @@ export class KeyboardPage {
   }
 
   show() {
-    Keyboard.show();
+    Plugins.Keyboard.show();
   }
   hide() {
-    Keyboard.hide();
+    Plugins.Keyboard.hide();
   }
 
 
   toggleAccessoryBar() {
     if(this.isBarShowing) {
-      Keyboard.hideAccessoryBar();
+      Plugins.Keyboard.setAccessoryBarVisible(false);
     } else {
-      Keyboard.showAccessoryBar();
+      Plugins.Keyboard.setAccessoryBarVisible(true);
     }
     this.isBarShowing = !this.isBarShowing;
   }

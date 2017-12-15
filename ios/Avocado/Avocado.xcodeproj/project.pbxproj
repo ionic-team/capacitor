@@ -12,6 +12,11 @@
 		501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBABA1FC28768009B0D4D /* Haptics.swift */; };
 		501CBABD1FC29EDE009B0D4D /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */; };
 		501CBABF1FC2A22A009B0D4D /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBABE1FC2A22A009B0D4D /* Browser.swift */; };
+		502D89CA1FE0AC950074F94E /* AVCPluginCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 502D89C91FE0AC950074F94E /* AVCPluginCall.m */; };
+		502D89CC1FE0AEA60074F94E /* AVCPluginCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 502D89CB1FE0ACA70074F94E /* AVCPluginCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		502D89CE1FE0C12E0074F94E /* AVCPluginMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 502D89CD1FE0C12A0074F94E /* AVCPluginMethod.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		502D89D41FE0C1610074F94E /* AVCPluginMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 502D89D31FE0C1610074F94E /* AVCPluginMethod.m */; };
+		503ACBBD1FE440B600C5E136 /* avc.js in Resources */ = {isa = PBXBuildFile; fileRef = 503ACBBC1FE440B600C5E136 /* avc.js */; };
 		50474F051FC36E5700AA0184 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F041FC36E5700AA0184 /* Console.swift */; };
 		50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F061FC3B54800AA0184 /* Filesystem.swift */; };
 		50474F0B1FC527CA00AA0184 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F0A1FC527CA00AA0184 /* Storage.swift */; };
@@ -22,15 +27,14 @@
 		50503EF01FC08595003606DC /* Avocado.h in Headers */ = {isa = PBXBuildFile; fileRef = 50503EE21FC08594003606DC /* Avocado.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50503EFF1FC08662003606DC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EFD1FC08662003606DC /* Device.swift */; };
 		50503F001FC08662003606DC /* Geolocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EFE1FC08662003606DC /* Geolocation.swift */; };
-		50503F211FC0962F003606DC /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F201FC0962F003606DC /* JS.swift */; };
 		50503F231FC0968E003606DC /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F221FC0968E003606DC /* Bridge.swift */; };
-		50503F251FC098A3003606DC /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F241FC098A3003606DC /* Plugin.swift */; };
+		50503F251FC098A3003606DC /* AVCPluginCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F241FC098A3003606DC /* AVCPluginCall.swift */; };
 		5053E8FD1FC874DE00166FBE /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FC1FC874DE00166FBE /* Loader.swift */; };
 		5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FE1FC8755F00166FBE /* Diagnostics.swift */; };
-		5053E90B1FC8D01200166FBE /* PluginBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90A1FC8D01200166FBE /* PluginBridge.m */; };
+		5053E90B1FC8D01200166FBE /* AVCBridgedPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90A1FC8D01200166FBE /* AVCBridgedPlugin.m */; };
 		5053E90D1FC8D24000166FBE /* DefaultPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5053E90F1FC8D51100166FBE /* DefaultPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053E90E1FC8D51100166FBE /* DefaultPlugins.m */; };
-		5053E9101FC8FEEC00166FBE /* PluginBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E9091FC8CD1000166FBE /* PluginBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5053E9101FC8FEEC00166FBE /* AVCBridgedPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 5053E9091FC8CD1000166FBE /* AVCBridgedPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50584D0D1FD8337500E3227C /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50584D0C1FD8337500E3227C /* Toast.swift */; };
 		50584D131FDA15A300E3227C /* Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 50584D121FDA15A300E3227C /* Keyboard.m */; };
 		50584D161FDA163B00E3227C /* AVCPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 50584D151FDA163B00E3227C /* AVCPlugin.m */; };
@@ -38,6 +42,8 @@
 		50B80BE81FCDE1E8000717DF /* Clipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE71FCDE1E8000717DF /* Clipboard.swift */; };
 		50B80BEA1FCDECE2000717DF /* Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE91FCDECE2000717DF /* Share.swift */; };
 		50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFB9071FC4E82C00C19F8B /* Motion.swift */; };
+		50D503901FDDF6B10050E5CE /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D5038F1FDDF6B10050E5CE /* JS.swift */; };
+		50D503921FE03B330050E5CE /* JSExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D503911FE03B330050E5CE /* JSExport.swift */; };
 		50E3D63F1FCE6EA500BBEB06 /* BridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */; };
 		50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86EF1FCA66CB00E48884 /* DocLinks.swift */; };
 		50ED86F31FCB728D00E48884 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F21FCB728D00E48884 /* Network.swift */; };
@@ -63,6 +69,11 @@
 		501CBABA1FC28768009B0D4D /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		501CBABE1FC2A22A009B0D4D /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
+		502D89C91FE0AC950074F94E /* AVCPluginCall.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVCPluginCall.m; sourceTree = "<group>"; };
+		502D89CB1FE0ACA70074F94E /* AVCPluginCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVCPluginCall.h; sourceTree = "<group>"; };
+		502D89CD1FE0C12A0074F94E /* AVCPluginMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVCPluginMethod.h; sourceTree = "<group>"; };
+		502D89D31FE0C1610074F94E /* AVCPluginMethod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVCPluginMethod.m; sourceTree = "<group>"; };
+		503ACBBC1FE440B600C5E136 /* avc.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = avc.js; sourceTree = "<group>"; };
 		50474F041FC36E5700AA0184 /* Console.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
 		50474F061FC3B54800AA0184 /* Filesystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filesystem.swift; sourceTree = "<group>"; };
 		50474F0A1FC527CA00AA0184 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
@@ -76,13 +87,12 @@
 		50503EEF1FC08595003606DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50503EFD1FC08662003606DC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		50503EFE1FC08662003606DC /* Geolocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geolocation.swift; sourceTree = "<group>"; };
-		50503F201FC0962F003606DC /* JS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		50503F221FC0968E003606DC /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
-		50503F241FC098A3003606DC /* Plugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plugin.swift; sourceTree = "<group>"; };
+		50503F241FC098A3003606DC /* AVCPluginCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCPluginCall.swift; sourceTree = "<group>"; };
 		5053E8FC1FC874DE00166FBE /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
 		5053E8FE1FC8755F00166FBE /* Diagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
-		5053E9091FC8CD1000166FBE /* PluginBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginBridge.h; sourceTree = "<group>"; };
-		5053E90A1FC8D01200166FBE /* PluginBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginBridge.m; sourceTree = "<group>"; };
+		5053E9091FC8CD1000166FBE /* AVCBridgedPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVCBridgedPlugin.h; sourceTree = "<group>"; };
+		5053E90A1FC8D01200166FBE /* AVCBridgedPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVCBridgedPlugin.m; sourceTree = "<group>"; };
 		5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultPlugins.h; sourceTree = "<group>"; };
 		5053E90E1FC8D51100166FBE /* DefaultPlugins.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DefaultPlugins.m; sourceTree = "<group>"; };
 		50584D0C1FD8337500E3227C /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
@@ -93,6 +103,8 @@
 		50B80BE71FCDE1E8000717DF /* Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clipboard.swift; sourceTree = "<group>"; };
 		50B80BE91FCDECE2000717DF /* Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Share.swift; sourceTree = "<group>"; };
 		50BFB9071FC4E82C00C19F8B /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
+		50D5038F1FDDF6B10050E5CE /* JS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
+		50D503911FE03B330050E5CE /* JSExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
 		50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeViewController.swift; sourceTree = "<group>"; };
 		50ED86EF1FCA66CB00E48884 /* DocLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocLinks.swift; sourceTree = "<group>"; };
 		50ED86F21FCB728D00E48884 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
@@ -130,6 +142,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		503ACBBB1FE440AA00C5E136 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				503ACBBC1FE440B600C5E136 /* avc.js */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
 		504C7E351FCCE6AD0020DFD2 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -161,21 +181,27 @@
 		50503EE11FC08594003606DC /* Avocado */ = {
 			isa = PBXGroup;
 			children = (
+				503ACBBB1FE440AA00C5E136 /* Scripts */,
 				50503F1F1FC095EA003606DC /* Plugins */,
 				50503EE21FC08594003606DC /* Avocado.h */,
 				50503EE31FC08594003606DC /* Info.plist */,
-				50503F201FC0962F003606DC /* JS.swift */,
+				50503F241FC098A3003606DC /* AVCPluginCall.swift */,
 				50503F221FC0968E003606DC /* Bridge.swift */,
-				50503F241FC098A3003606DC /* Plugin.swift */,
-				5053E8FC1FC874DE00166FBE /* Loader.swift */,
-				5053E8FE1FC8755F00166FBE /* Diagnostics.swift */,
-				5053E9091FC8CD1000166FBE /* PluginBridge.h */,
-				5053E90A1FC8D01200166FBE /* PluginBridge.m */,
-				50ED86EF1FCA66CB00E48884 /* DocLinks.swift */,
-				50ED86F61FCB759B00E48884 /* DevMode.swift */,
 				50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */,
+				50ED86F61FCB759B00E48884 /* DevMode.swift */,
+				5053E8FE1FC8755F00166FBE /* Diagnostics.swift */,
+				50ED86EF1FCA66CB00E48884 /* DocLinks.swift */,
+				50D503911FE03B330050E5CE /* JSExport.swift */,
+				50D5038F1FDDF6B10050E5CE /* JS.swift */,
+				5053E8FC1FC874DE00166FBE /* Loader.swift */,
+				5053E9091FC8CD1000166FBE /* AVCBridgedPlugin.h */,
+				5053E90A1FC8D01200166FBE /* AVCBridgedPlugin.m */,
 				50584D151FDA163B00E3227C /* AVCPlugin.m */,
 				50584D171FDA164A00E3227C /* AVCPlugin.h */,
+				502D89C91FE0AC950074F94E /* AVCPluginCall.m */,
+				502D89CB1FE0ACA70074F94E /* AVCPluginCall.h */,
+				502D89CD1FE0C12A0074F94E /* AVCPluginMethod.h */,
+				502D89D31FE0C1610074F94E /* AVCPluginMethod.m */,
 			);
 			path = Avocado;
 			sourceTree = "<group>";
@@ -225,7 +251,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5053E9101FC8FEEC00166FBE /* PluginBridge.h in Headers */,
+				5053E9101FC8FEEC00166FBE /* AVCBridgedPlugin.h in Headers */,
+				502D89CE1FE0C12E0074F94E /* AVCPluginMethod.h in Headers */,
+				502D89CC1FE0AEA60074F94E /* AVCPluginCall.h in Headers */,
 				5053E90D1FC8D24000166FBE /* DefaultPlugins.h in Headers */,
 				50584D3D1FDAE62C00E3227C /* AVCPlugin.h in Headers */,
 				50503EF01FC08595003606DC /* Avocado.h in Headers */,
@@ -315,6 +343,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503ACBBD1FE440B600C5E136 /* avc.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,10 +361,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50D503901FDDF6B10050E5CE /* JS.swift in Sources */,
 				501CBABD1FC29EDE009B0D4D /* SplashScreen.swift in Sources */,
+				502D89D41FE0C1610074F94E /* AVCPluginMethod.m in Sources */,
 				50BFB9081FC4E82C00C19F8B /* Motion.swift in Sources */,
 				50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */,
-				5053E90B1FC8D01200166FBE /* PluginBridge.m in Sources */,
+				5053E90B1FC8D01200166FBE /* AVCBridgedPlugin.m in Sources */,
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
 				50584D0D1FD8337500E3227C /* Toast.swift in Sources */,
 				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
@@ -343,7 +374,6 @@
 				50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */,
 				501CBABF1FC2A22A009B0D4D /* Browser.swift in Sources */,
 				50E3D63F1FCE6EA500BBEB06 /* BridgeViewController.swift in Sources */,
-				50503F211FC0962F003606DC /* JS.swift in Sources */,
 				50503F231FC0968E003606DC /* Bridge.swift in Sources */,
 				504C7E371FCCE6BC0020DFD2 /* Reachability.swift in Sources */,
 				50584D131FDA15A300E3227C /* Keyboard.m in Sources */,
@@ -351,7 +381,8 @@
 				50503F001FC08662003606DC /* Geolocation.swift in Sources */,
 				5053E90F1FC8D51100166FBE /* DefaultPlugins.m in Sources */,
 				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
-				50503F251FC098A3003606DC /* Plugin.swift in Sources */,
+				50503F251FC098A3003606DC /* AVCPluginCall.swift in Sources */,
+				502D89CA1FE0AC950074F94E /* AVCPluginCall.m in Sources */,
 				50ED86FB1FCC9D6600E48884 /* PushNotifications.swift in Sources */,
 				5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */,
 				50ED86F31FCB728D00E48884 /* Network.swift in Sources */,
@@ -362,6 +393,7 @@
 				50B80BE81FCDE1E8000717DF /* Clipboard.swift in Sources */,
 				50584D161FDA163B00E3227C /* AVCPlugin.m in Sources */,
 				5053E8FD1FC874DE00166FBE /* Loader.swift in Sources */,
+				50D503921FE03B330050E5CE /* JSExport.swift in Sources */,
 				50474F0B1FC527CA00AA0184 /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

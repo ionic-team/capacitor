@@ -1,12 +1,12 @@
 import Foundation
 import CoreMotion
-
+/*
 @objc(Motion)
 public class Motion : Plugin {
   var motion: CMMotionManager?
   var timer: Timer?
   
-  @objc func watchAccel(_ call: PluginCall) {
+  @objc func watchAccel(_ call: AVCPluginCall) {
     self.motion = CMMotionManager()
     
     if self.motion!.isAccelerometerAvailable {
@@ -35,4 +35,4 @@ public class Motion : Plugin {
       call.error("Accelerometer isn't available.", nil)
     }
   }
-}
+}*/

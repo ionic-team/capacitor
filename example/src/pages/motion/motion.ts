@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Motion
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -27,8 +27,7 @@ export class MotionPage {
   }
 
   watchAccel() {
-    let m = new Motion();
-    m.watchAccel((err, values) => {
+    Plugins.Motion.watchAccel((err, values) => {
       this.zone.run(() => {
         const v = {
           x: values.x.toFixed(4),

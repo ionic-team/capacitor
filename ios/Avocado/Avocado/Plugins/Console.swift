@@ -1,13 +1,12 @@
 import Foundation
 
 @objc(Console)
-public class Console : Plugin {
+public class Console : AVCPlugin {
 
-  @objc public func log(_ call: PluginCall) {
-    let data = call.options
-    let message = data["message"] ?? ""
-    let level = data["level"] ?? "LOG"
-    print("[\(level)] \(self.pluginId) - \(message)")
+  @objc public func log(_ call: AVCPluginCall) {
+    let message = call.getString("message") ?? ""
+    let level = call.getString("level") ?? "LOG"
+    print("🥑  [\(level)] - \(message)")
   }
 }
 

@@ -9,7 +9,9 @@ FOUNDATION_EXPORT const unsigned char AvocadoVersionString[];
 extern NSArray<Class> *AvocadoGetPluginClasses(void);
 
 #import "AVCPlugin.h"
-#import "PluginBridge.h"
+#import "AVCPluginCall.h"
+#import "AVCBridgedPlugin.h"
+#import "AVCPluginMethod.h"
 #import "DefaultPlugins.h"
 
 

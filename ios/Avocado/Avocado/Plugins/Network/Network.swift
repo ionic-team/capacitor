@@ -1,10 +1,11 @@
 import Foundation
 
 @objc(Network)
-public class Network : Plugin {
+public class Network : AVCPlugin {
   let reachability = Reachability()!
   
   public override func load() {
+    print("Loading network plugin")
     reachability.whenReachable = { reachability in
       if reachability.connection == .wifi {
         print("Reachable via WiFi")
@@ -26,6 +27,24 @@ public class Network : Plugin {
     }
   }
   
+  @objc func getStatus(_ call: AVCPluginCall) {
+    var connected = false
+    var type = ""
+    if reachability.connection == .wifi {
+      connected = true
+      type = "wifi"
+    }
+    if reachability.connection == .cellular {
+      connected = true
+      type = "cellular"
+    }
+    
+    call.success([
+      "connected": connected,
+      "connectionType": type
+    ])
+  }
+  
   func notifyStatusChangeListeners(connected: Bool, type: String) {
     notifyListeners("networkStatusChanged", data: [
       "connected": connected,
@@ -33,9 +52,7 @@ public class Network : Plugin {
     ])
   }
   
-  @objc func onStatusChange(_ call: PluginCall) {
-    addEventListener("networkStatusChanged", call)
+  @objc func onStatusChange(_ call: AVCPluginCall) {
+    addEventListener("networkStatusChanged", listener: call)
   }
 }
-
-

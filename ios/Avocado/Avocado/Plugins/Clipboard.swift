@@ -2,18 +2,23 @@ import Foundation
 import CoreMotion
 
 @objc(Clipboard)
-public class Clipboard : Plugin {
-  @objc func set(_ call: PluginCall) {
-    if let string = call.get("string", String.self) {
+public class Clipboard : AVCPlugin {
+  @objc func set(_ call: AVCPluginCall) {
+    guard let options = call.getObject("options") else {
+      call.error("No options provided")
+      return
+    }
+    
+    if let string = options["string"] as? String {
       UIPasteboard.general.string = string
       return
     }
-    if let urlString = call.get("url", String.self) {
+    if let urlString = options["url"] as? String {
       if let url = URL(string: urlString) {
         UIPasteboard.general.url = url
       }
     }
-    if let imageBase64 = call.get("image", String.self) {
+    if let imageBase64 = options["image"] as? String {
       print(imageBase64)
       if let data = Data(base64Encoded: imageBase64) {
         let image = UIImage(data: data)
@@ -27,8 +32,13 @@ public class Clipboard : Plugin {
     call.success()
   }
   
-  @objc func get(_ call: PluginCall) {
-    let type = call.get("type", String.self, "string")!
+  @objc func get(_ call: AVCPluginCall) {
+    guard let options = call.getObject("options") else {
+      call.error("No options provided")
+      return
+    }
+    
+    let type = options["type"] as? String ?? "string"
     
     if type == "string" && UIPasteboard.general.hasStrings {
       call.success([

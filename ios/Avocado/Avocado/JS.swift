@@ -38,13 +38,13 @@ public class JSResult {
         let theJSONData = try JSONSerialization.data(withJSONObject: result, options: [])
         
         return String(data: theJSONData,
-                                encoding: .utf8)!
+                      encoding: .utf8)!
       } else {
         print("[Avocado Module Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
-              "Ensure that all data passed to success callback from module method is JSON serializable!")
+          "Ensure that all data passed to success callback from module method is JSON serializable!")
         
       }
-    } catch let error as Error {
+    } catch {
       print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
     }
     
@@ -77,7 +77,7 @@ public class JSResultError {
   
   public func toJson() -> String {
     var jsonResponse = "{}"
-
+    
     print("TO JSON MESSAGE", self.message)
     error["message"] = self.message
     error["_exlink"] = getLinkableError(self.message)

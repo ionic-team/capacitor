@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  StatusBar,
+  Plugins,
   StatusBarStyle,
 } from '@avocadojs/core';
 
@@ -28,21 +28,18 @@ export class StatusBarPage {
   }
 
   changeStatusBar() {
-    let statusBar = new StatusBar();
-    statusBar.setStyle({
+    Plugins.StatusBar.setStyle({
       style: this.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
     }, () => {});
     this.isStatusBarLight = !this.isStatusBarLight;
   }
 
   hideStatusBar() {
-    let statusBar = new StatusBar();
-    statusBar.hide();
+    Plugins.StatusBar.hide();
   }
 
   showStatusBar() {
-    let statusBar = new StatusBar();
-    statusBar.show();
+    Plugins.StatusBar.show();
   }
 
 }

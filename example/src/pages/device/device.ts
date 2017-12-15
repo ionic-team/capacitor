@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Device
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -27,8 +27,8 @@ export class DevicePage {
   }
 
   async getDeviceInfo() {
-    let device = new Device();
-    const info = await device.getInfo()
+    const info = await Plugins.Device.getInfo()
+    console.log('Got device info', info);
     this.zone.run(() => {
       this.deviceInfoJson = JSON.stringify(info, null, 2);
     });

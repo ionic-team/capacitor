@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  SplashScreen
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -26,18 +26,16 @@ export class SplashScreenPage {
   }
 
   showSplash() {
-    let s = new SplashScreen();
-    s.show({
+    Plugins.SplashScreen.show({
       autoHide: false
     });
     setTimeout(() => {
-      s.hide();
+      Plugins.SplashScreen.hide();
     }, 6000);
   }
 
   showSplashAutoFade() {
-    let s = new SplashScreen();
-    s.show({
+    Plugins.SplashScreen.show({
       showDuration: 2000,
       autoHide: true
     });

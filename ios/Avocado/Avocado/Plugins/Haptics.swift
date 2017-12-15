@@ -2,10 +2,10 @@ import Foundation
 import AudioToolbox
 
 @objc(Haptics)
-public class Haptics: Plugin {
+public class Haptics: AVCPlugin {
   var selectionFeedbackGenerator: UISelectionFeedbackGenerator?
   
-  @objc public func impact(_ call: PluginCall) {
+  @objc public func impact(_ call: AVCPluginCall) {
     if let style = call.options["style"] as? String {
       var impactStyle = UIImpactFeedbackStyle.heavy
       if style == "MEDIUM" {
@@ -21,23 +21,23 @@ public class Haptics: Plugin {
     }
   }
   
-  @objc public func selectionStart(_ call: PluginCall) {
+  @objc public func selectionStart(_ call: AVCPluginCall) {
     selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     selectionFeedbackGenerator?.prepare()
   }
   
-  @objc public func selectionChanged(_ call: PluginCall) {
+  @objc public func selectionChanged(_ call: AVCPluginCall) {
     if let generator = selectionFeedbackGenerator {
       generator.selectionChanged()
       generator.prepare()
     }
   }
   
-  @objc public func selectionEnd(_ call: PluginCall) {
+  @objc public func selectionEnd(_ call: AVCPluginCall) {
     selectionFeedbackGenerator = nil
   }
   
-  @objc public func vibrate(_ call: PluginCall) {
+  @objc public func vibrate(_ call: AVCPluginCall) {
     AudioServicesPlayAlertSound(kSystemSoundID_Vibrate)
   }
 }

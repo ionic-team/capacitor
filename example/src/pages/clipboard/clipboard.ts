@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Clipboard
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -42,46 +42,40 @@ export class ClipboardPage {
   }
 
   clipboardSetString() {
-    let c = new Clipboard();
-    c.set({
+    Plugins.Clipboard.set({
       string: "Hello, Moto"
     });
   }
 
   async clipboardGetString() {
-    let c = new Clipboard();
-    let str = await c.get({
+    let str = await Plugins.Clipboard.get({
       type: "string"
     });
     console.log('Got string from clipboard:', str);
   }
 
   clipboardSetURL() {
-    let c = new Clipboard();
-    c.set({
+    Plugins.Clipboard.set({
       url: "http://google.com/"
     });
   }
 
   async clipboardGetURL() {
-    let c = new Clipboard();
-    let url = c.get({
+    let url = Plugins.Clipboard.get({
       type: "url"
     });
     console.log("Get URL from clipboard", url);
   }
 
   clipboardSetImage () {
-    let c = new Clipboard();
     console.log('Setting image', this.base64Image);
-    c.set({
+    Plugins.Clipboard.set({
       image: this.base64Image
     });
   }
 
   async clipboardGetImage() {
-    let c = new Clipboard();
-    const image = await c.get({
+    const image = await Plugins.Clipboard.get({
       type: "image"
     });
     console.log('Got image', image);
