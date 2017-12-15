@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Haptics,
+  Plugins,
   HapticsImpactStyle
 } from '@avocadojs/core';
 
@@ -27,8 +27,7 @@ export class HapticsPage {
   }
 
   hapticsImpact(style = HapticsImpactStyle.Heavy) {
-    let haptics = new Haptics()
-    haptics.impact({
+    Plugins.Haptics.impact({
       style: style
     });
   }
@@ -42,23 +41,19 @@ export class HapticsPage {
   }
 
   hapticsVibrate() {
-    let haptics = new Haptics()
-    haptics.vibrate();
+    Plugins.Haptics.vibrate();
   }
 
   hapticsSelectionStart() {
-    let haptics = new Haptics()
-    haptics.selectionStart();
+    Plugins.Haptics.selectionStart();
   }
 
   hapticsSelectionChanged() {
-    let haptics = new Haptics()
-    haptics.selectionChanged();
+    Plugins.Haptics.selectionChanged();
   }
 
   hapticsSelectionEnd() {
-    let haptics = new Haptics()
-    haptics.selectionEnd();
+    Plugins.Haptics.selectionEnd();
   }
 
 }

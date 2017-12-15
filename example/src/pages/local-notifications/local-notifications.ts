@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  LocalNotifications,
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -26,8 +26,7 @@ export class LocalNotificationsPage {
   }
 
   scheduleLocalNotification() {
-    let ln = new LocalNotifications();
-    ln.schedule({
+    Plugins.LocalNotifications.schedule({
       title: 'Get 20% off!',
       body: 'Swipe to learn more',
       identifier: 'special-deal',

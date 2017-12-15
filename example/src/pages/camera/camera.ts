@@ -2,7 +2,7 @@ import { Component, NgZone } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Camera
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -29,8 +29,7 @@ export class CameraPage {
 
 
   takePicture() {
-    let camera = new Camera();
-    camera.getPhoto({
+    Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
       resultType: 'base64'

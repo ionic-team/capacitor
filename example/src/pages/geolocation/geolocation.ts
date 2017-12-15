@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Geolocation
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -35,10 +35,8 @@ export class GeolocationPage {
 
 
   async getCurrentPosition() {
-    let geo = new Geolocation();
-
     try {
-      const coordinates = await geo.getCurrentPosition()
+      const coordinates = await Plugins.Geolocation.getCurrentPosition()
       console.log('Current', coordinates);
       this.zone.run(() => {
         this.singleCoords = coordinates.coords;
@@ -50,10 +48,8 @@ export class GeolocationPage {
   }
 
   watchPosition() {
-    let geo = new Geolocation();
-
     try {
-      const wait = geo.watchPosition((err, position) => {
+      const wait = Plugins.Geolocation.watchPosition({}, (err, position) => {
         console.log('Watch', position);
         this.zone.run(() => {
           this.watchCoords = position.coords;

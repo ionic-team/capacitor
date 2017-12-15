@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import {
-  Network
+  Plugins
 } from '@avocadojs/core';
 /**
  * Generated class for the NetworkPage page.
@@ -19,10 +19,16 @@ import {
 export class NetworkPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    let network = new Network();
-    network.onStatusChange((err, status) => {
+    Plugins.Network.onStatusChange((err, status) => {
       console.log("Network status changed", status);
     });
+
+    this.getStatus();
+  }
+
+  async getStatus() {
+    let status = await Plugins.Network.getStatus();
+    console.log('NETWORK STATUS', status);
   }
 
   ionViewDidLoad() {

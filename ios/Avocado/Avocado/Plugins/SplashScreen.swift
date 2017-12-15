@@ -2,10 +2,10 @@ import Foundation
 import AudioToolbox
 
 @objc(SplashScreen)
-public class SplashScreen : Plugin {
+public class SplashScreen : AVCPlugin {
   var imageView = UIImageView()
   var image: UIImage?
-  var call: PluginCall?
+  var call: AVCPluginCall?
   var hideTask: Any?
   var isVisible: Bool = false
   
@@ -21,7 +21,7 @@ public class SplashScreen : Plugin {
   }
   
   // Show the splash screen
-  @objc public func show(_ call: PluginCall) {
+  @objc public func show(_ call: AVCPluginCall) {
     self.call = call
     
     let showDuration = call.get("showDuration", Int.self, defaultShowDuration)!
@@ -35,7 +35,7 @@ public class SplashScreen : Plugin {
   }
   
   // Hide the splash screen
-  @objc public func hide(_ call: PluginCall) {
+  @objc public func hide(_ call: AVCPluginCall) {
     self.call = call
     let fadeDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
     hideSplash(fadeOutDuration: fadeDuration)

@@ -1,13 +1,14 @@
 import Foundation
 import CoreMotion
 
+
 @objc(Camera)
-public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
+public class Camera : AVCPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
   var imagePicker: UIImagePickerController?
-  var call: PluginCall?
+  var call: AVCPluginCall?
   var quality: Float = 1.0
   
-  @objc func getPhoto(_ call: PluginCall) {
+  @objc func getPhoto(_ call: AVCPluginCall) {
     self.call = call
     self.quality = call.get("quality", Float.self, 100)!
     let allowEditing = call.get("allowEditing", Bool.self, false)!
@@ -48,6 +49,12 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
 
       self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
     }))
+    
+    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
+      call.error("User closed action sheet")
+      alert.dismiss(animated: true, completion: nil)
+    }))
+    
     setPopover(alert)
     self.bridge.viewController.present(alert, animated: true, completion: nil)
   }
@@ -121,6 +128,3 @@ public class Camera : Plugin, UIImagePickerControllerDelegate, UINavigationContr
     vc.popoverPresentationController?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
   }
 }
-
-
-

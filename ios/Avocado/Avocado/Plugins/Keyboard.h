@@ -2,9 +2,10 @@
 #import "AVCPlugin.h"
 #import "PluginBridge.h"
 
+/*
 @class PluginCall;
 
-@interface AVCKeyboard : AVCPlugin <AvocadoBridgePlugin>
+@interface AVCKeyboard : AVCPlugin <AVCBridgedPlugin>
 
 @property (readwrite, assign, nonatomic) BOOL shrinkView;
 @property (readwrite, assign, nonatomic) BOOL disableScrollingInShrinkView;
@@ -15,3 +16,4 @@
 - (void)hide:(PluginCall*)command;
 
 @end
+*/

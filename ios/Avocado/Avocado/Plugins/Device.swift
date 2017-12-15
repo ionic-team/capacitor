@@ -3,10 +3,10 @@ import Foundation
 public typealias DeviceInfo = [String:Any]
 
 @objc(Device)
-public class Device: Plugin {
+public class Device: AVCPlugin {
   let diagnostics: Diagnostics = Diagnostics()
   
-  @objc func getInfo(_ call: PluginCall) {
+  @objc func getInfo(_ call: AVCPluginCall) {
     print("Getting info")
     var isSimulator = false
     #if arch(i386) || arch(x86_64)
@@ -31,7 +31,8 @@ public class Device: Plugin {
     ])
   }
   
-  @objc func getMemoryUsage(_ call: PluginCall) {
+  @objc func getMemoryUsage(_ call: AVCPluginCall) {
   }
 
 }
+
