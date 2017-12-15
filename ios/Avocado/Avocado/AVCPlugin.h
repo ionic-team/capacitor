@@ -21,6 +21,6 @@
 // need to override init()
 -(void) load;
 -(NSString *)getId;
--(BOOL)getBool:(PluginCall*) call field:(NSString *)field defaultValue:(BOOL)defaultValue;
+-(BOOL)getBool:(AVCPluginCall*) call field:(NSString *)field defaultValue:(BOOL)defaultValue;
 
 @end

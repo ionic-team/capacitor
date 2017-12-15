@@ -15,7 +15,8 @@
   return self.pluginId;
 }
 
--(BOOL) getBool:(PluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {
+/*
+-(BOOL) getBool:(AVCPluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {
   NSNumber *value = [call getBool:field defaultValue:nil];
   if(value == nil) {
     return defaultValue;
@@ -24,7 +25,7 @@
     return FALSE;
   }
   return TRUE;
-}
+}*/
 
 -(void)load {}
 
