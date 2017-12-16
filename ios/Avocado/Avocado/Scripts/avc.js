@@ -9,6 +9,7 @@
 
   var avocado = Avocado;
 
+  var lastError = null;
   var errorModal = null;
 
   // create the postToNative() fn if needed
@@ -216,18 +217,24 @@
       left: 0;
       z-index: 9999;
     }
+    ._avc-modal-wrap {
+      position: relative;
+    }
     ._avc-modal-header {
       padding: 32px 15px;
       font-size: 16px;
       position: relative;
       -webkit-backdrop-filter: blur(10px);
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.5);
     }
     ._avc-modal-content {
       width: 100%;
       height: 100%;
+      padding: 15px;
       -webkit-backdrop-filter: blur(10px);
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.5);
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
     ._avc-modal-header-button {
       float: right;
@@ -241,6 +248,31 @@
       margin-left: -50px;
       font-weight: 600;
     }
+    ._avc-error-content {
+      font-size: 14px;
+      margin-bottom: 50px;
+    }
+    ._avc-error-message {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    ._avc-button {
+      padding: 15px;
+      font-size: 14px;
+      border-radius: 3px;
+      background-color: #222;
+    }
+    #_avc-copy-error {
+      position: absolute;
+      bottom: 0;
+      left: 15px;
+      right: 15px;
+      background-color: #e83d3d;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 15px;
+    }
     `
     var style = document.createElement('style');
     style.innerHTML = css;
@@ -250,16 +282,35 @@
   function makeModal() {
     injectCSS();
     var html = `
-      <div class="_avc-modal-header">
-        <div class="_avc-modal-title">Error</div>
-        <button type="button" class="_avc-modal-header-button">Close</button>
-      </div>
-      <div class="_avc-modal-content">
+      <div class="_avc-modal-wrap">
+        <div class="_avc-modal-header">
+          <div class="_avc-modal-title">Error</div>
+          <button type="button" id="_avc-modal-close" class="_avc-modal-header-button">Close</button>
+        </div>
+        <div class="_avc-modal-content">
+          <div class="_avc-error-output"></div>
+        </div>
+        <button type="button" class="_avc-button" id="_avc-copy-error">Copy Error</button>
       </div>
     `
     var el = document.createElement('div');
     el.innerHTML = html;
     el.className ="_avc-modal";
+
+    var closeButton = el.querySelector('#_avc-modal-close');
+    closeButton.addEventListener('click', function(e) {
+      el.style.display = 'none';
+    })
+
+    var copyButton = el.querySelector('#_avc-copy-error');
+    copyButton.addEventListener('click', function(e) {
+      if(lastError) {
+        Avocado.Plugins.Clipboard.set({
+          string: lastError.stack
+        });
+      }
+    });
+
     return el;
   }
 
@@ -274,12 +325,14 @@
   function updateErrorModal(error) {
     if(!errorModal) { return; }
 
+    lastError = error;
+
     var message = error.message;
     var stack = error.stack;
-    var stackLines = stack.split('\n');
+    var stackLines = cleanStack(stack);
     var stackHTML = stackLines.join('<br />');
 
-    var content = errorModal.querySelector('._avc-modal-content');
+    var content = errorModal.querySelector('._avc-error-output');
     content.innerHTML = `
     <div class="_avc-error-content">
       <div class="_avc-error-message"></div>
@@ -290,5 +343,20 @@
     var stackEl = content.querySelector('._avc-error-stack');
     messageEl.innerHTML = message;
     stackEl.innerHTML = stackHTML;
+  }
+
+  function cleanStack(stack) {
+    var lines = stack.split('\n');
+    return lines.map((line) => {
+      var atIndex = line.indexOf('@');
+      var appIndex = line.indexOf('.app');
+
+      // Remove the big long iOS path
+      if(atIndex >= 0 && appIndex >= 0) {
+        //var badSubstr = line.substring(atIndex, appIndex + 5);
+        line = '<b>' + line.substring(0, atIndex) + '</b>' + '@' + line.substring(appIndex + 5);
+      }
+      return line;
+    });
   }
 })(window);
