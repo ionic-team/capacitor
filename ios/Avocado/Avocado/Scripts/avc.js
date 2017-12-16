@@ -219,6 +219,8 @@
     }
     ._avc-modal-wrap {
       position: relative;
+      width: 100%;
+      height: 100%;
     }
     ._avc-modal-header {
       padding: 32px 15px;
@@ -306,7 +308,7 @@
     copyButton.addEventListener('click', function(e) {
       if(lastError) {
         Avocado.Plugins.Clipboard.set({
-          string: lastError.stack
+          string: lastError.message + '\n' + lastError.stack
         });
       }
     });

@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		501CBAB41FC0E2B5009B0D4D /* ReferenceProxy in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; };
-		501CBAB51FC0E2B5009B0D4D /* ReferenceProxy in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		501CBAB41FC0E2B5009B0D4D /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; };
+		501CBAB51FC0E2B5009B0D4D /* Avocado.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3394176F7AE51239517122DA /* Pods_IonicRunner.framework */; };
 		A3729E091E83246400B7334A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E081E83246400B7334A /* AppDelegate.swift */; };
 		A3729E0E1E83246400B7334A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3729E0C1E83246400B7334A /* Main.storyboard */; };
@@ -55,7 +55,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				501CBAB51FC0E2B5009B0D4D /* ReferenceProxy in Embed Frameworks */,
+				501CBAB51FC0E2B5009B0D4D /* Avocado.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				501CBAB41FC0E2B5009B0D4D /* ReferenceProxy in Frameworks */,
+				501CBAB41FC0E2B5009B0D4D /* Avocado.framework in Frameworks */,
 				6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -194,6 +194,7 @@
 				TargetAttributes = {
 					A3729E041E83246400B7334A = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 9YN2HU59K8;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -456,7 +457,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9YN2HU59K8;
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(SRCROOT)";
 				INFOPLIST_FILE = IonicRunner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -474,7 +475,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9YN2HU59K8;
 				INFOPLIST_FILE = IonicRunner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
