@@ -9,9 +9,10 @@ import { HomePage } from '../pages/home/home';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage = 'BrowserPage';
+  rootPage = 'AdminPage';
 
   PLUGINS = [
+    { name: 'Admin', page: 'AdminPage' },
     { name: 'Browser', page: 'BrowserPage' },
     { name: 'Camera', page: 'CameraPage' },
     { name: 'Clipboard', page: 'ClipboardPage' },
