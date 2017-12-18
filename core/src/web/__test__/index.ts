@@ -79,7 +79,7 @@ describe('Web Plugin', () => {
 
     console.log(windowListener);
 
-    const windowHandler = jest.spyOn(windowListener.handler);
+    const windowHandler = jest.spyOn(windowListener, 'handler');
     var event = new CustomEvent('fake', {});
     window.dispatchEvent(event);
     expect(windowHandler).toHaveBeenCalled();
