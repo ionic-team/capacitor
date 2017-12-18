@@ -53,6 +53,6 @@ public class Network : AVCPlugin {
   }
   
   @objc func onStatusChange(_ call: AVCPluginCall) {
-    addEventListener("networkStatusChanged", listener: call)
+    addListener("networkStatusChanged", listener: call)
   }
 }

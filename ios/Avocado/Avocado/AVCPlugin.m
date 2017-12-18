@@ -35,7 +35,7 @@
 
 -(void)load {}
 
-- (void)addEventListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
+- (void)addListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
   NSMutableArray *listenersForEvent = [self.eventListeners objectForKey:eventName];
   if(!listenersForEvent) {
     listenersForEvent = [[NSMutableArray alloc] initWithObjects:listener, nil];
@@ -45,7 +45,7 @@
   }
 }
 
-- (void)removeEventListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
+- (void)removeListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
   NSMutableArray *listenersForEvent = [self.eventListeners objectForKey:eventName];
   if(!listenersForEvent) { return; }
   NSUInteger listenerIndex = [listenersForEvent indexOfObject:listener];

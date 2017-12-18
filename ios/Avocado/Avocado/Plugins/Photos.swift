@@ -1,9 +1,12 @@
-//
-//  Photos.swift
-//  Avocado
-//
-//  Created by Max Lynch on 12/18/17.
-//  Copyright © 2017 Drifty Co. All rights reserved.
-//
-
 import Foundation
+import SafariServices
+
+@objc(Photos)
+public class Photos : AVCPlugin {
+
+  @objc func getPhotos(_ call: AVCPluginCall) {
+  }
+
+}
+
+

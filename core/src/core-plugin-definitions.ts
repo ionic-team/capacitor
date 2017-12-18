@@ -1,4 +1,4 @@
-import { PluginCallback } from './definitions';
+import { Plugin, PluginCallback, PluginListenerHandle } from './definitions';
 
 declare global {
   interface PluginRegistry {
@@ -19,7 +19,6 @@ declare global {
     StatusBar: StatusBarPlugin;
   }
 }
-
 //
 
 export interface AccessibilityPlugin {
@@ -34,26 +33,26 @@ export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnab
 
 //
 
-export interface ActionSheetPlugin {
+export interface ActionSheetPlugin extends Plugin {
   show(): Promise<void>;
   hide(): Promise<void>;
 }
 
 //
 
-export interface BatteryPlugin {
+export interface BatteryPlugin extends Plugin {
 }
 
 //
 
-export interface BrowserPlugin {
+export interface BrowserPlugin extends Plugin {
   open(url: string): Promise<any>;
   close(options: any): Promise<any>;
 }
 
 //
 
-export interface CameraPlugin {
+export interface CameraPlugin extends Plugin {
   getPhoto(options: CameraOptions): Promise<CameraPhoto>;
 }
 
@@ -71,7 +70,7 @@ export interface CameraPhoto {
 
 //
 
-export interface ClipboardPlugin {
+export interface ClipboardPlugin extends Plugin {
   set(options: ClipboardSet): Promise<void>;
   get(options: ClipboardGet): Promise<ClipboardGetResult>;
 }
@@ -93,7 +92,7 @@ export interface ClipboardGetResult {
 
 //
 
-export interface DevicePlugin {
+export interface DevicePlugin extends Plugin {
   getInfo(): Promise<DeviceInfo>;
 }
 
@@ -109,7 +108,7 @@ export interface DeviceInfo {
 
 //
 
-export interface FilesystemPlugin {
+export interface FilesystemPlugin extends Plugin {
 
   /**
    * Write a file to disk in the specified location on device
@@ -208,7 +207,7 @@ export interface StatResult {
 
 //
 
-export interface GeolocationPlugin {
+export interface GeolocationPlugin extends Plugin {
   getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPositon>;
   watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback) : void;
 }
@@ -226,7 +225,7 @@ export type GeolocationWatchCallback = (err: any, position: GeolocationPositon) 
 
 //
 
-export interface HapticsPlugin {
+export interface HapticsPlugin extends Plugin {
   impact(options: HapticsImpactOptions) : void;
   vibrate() : void;
   selectionStart() : void;
@@ -250,7 +249,7 @@ export interface VibrateOptions {
 
 //
 
-export interface KeyboardPlugin {
+export interface KeyboardPlugin extends Plugin {
   show(): Promise<void>;
   hide(): Promise<void>;
   setAccessoryBarVisible(isVisible: boolean): Promise<void>;
@@ -258,7 +257,7 @@ export interface KeyboardPlugin {
 
 //
 
-export interface LocalNotificationsPlugin {
+export interface LocalNotificationsPlugin extends Plugin {
   schedule(notification: LocalNotification) : Promise<void>;
 }
 export interface NotificationScheduleAt {
@@ -279,7 +278,7 @@ export interface LocalNotification {
 
 //
 
-export interface ModalsPlugin {
+export interface ModalsPlugin extends Plugin {
   alert(options: {
           title: string,
           message: string,
@@ -313,9 +312,9 @@ export interface ConfirmResult {
 
 //
 
-export interface MotionPlugin {
-  watchAccel(callback: MotionWatchAccelCallback) : void;
-  watchOrientation(callback: MotionWatchOrientationCallback): void;
+export interface MotionPlugin extends Plugin {
+  addListener(eventName: 'accel', listenerFunc: (event: MotionEventResult) => void): PluginListenerHandle;
+  addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
 }
 
 export type MotionWatchOrientationCallback = (err: any, accel: MotionOrientationEventResult) => void;
@@ -349,7 +348,7 @@ export interface MotionEventResult {
 
 //
 
-export interface NetworkPlugin {
+export interface NetworkPlugin extends Plugin {
   getStatus(): Promise<NetworkStatus>;
   onStatusChange(callback: NetworkStatusChangeCallback): void;
 }
@@ -363,7 +362,7 @@ export type NetworkStatusChangeCallback = (err: any, status: NetworkStatus) => v
 
 //
 
-export interface SplashScreenPlugin {
+export interface SplashScreenPlugin extends Plugin {
   show(options?: SplashScreenShowOptions, callback?: Function) : void;
   hide(options?: SplashScreenHideOptions, callback?: Function) : void;
 }
@@ -381,7 +380,7 @@ export interface SplashScreenHideOptions {
 
 //
 
-export interface StatusBarPlugin {
+export interface StatusBarPlugin extends Plugin {
   
   setStyle(options: { style: StatusBarStyle }, callback: PluginCallback) : void;
 

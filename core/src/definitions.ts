@@ -1,6 +1,16 @@
 declare global {
   export interface PluginRegistry {}
 }
+
+export interface Plugin {
+  addListener?: (eventName: string, listenerFunc: Function) => PluginListenerHandle;
+  removeListener?: (eventName: string, listenerFunc: Function) => void;
+}
+
+export interface PluginListenerHandle {
+  remove: () => void;
+}
+
 //const Plugins: PluginRegistry = {};
 //export { Plugins };
 
