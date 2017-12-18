@@ -51,6 +51,8 @@
 		50ED86F71FCB759B00E48884 /* DevMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F61FCB759B00E48884 /* DevMode.swift */; };
 		50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F81FCC69C200E48884 /* LocalNotifications.swift */; };
 		50ED86FB1FCC9D6600E48884 /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */; };
+		6952F21F537AF0F2A33C8564 /* Pods_Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F3211837DDFCAB1994B957 /* Pods_Avocado.framework */; };
+		AC6C051A09208B5C391BDBD1 /* Pods_AvocadoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09D41E84F3BEAFBA84EB3033 /* Pods_AvocadoTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		09D41E84F3BEAFBA84EB3033 /* Pods_AvocadoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AvocadoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		25BF8F4C6732C31FCD4FDF2C /* Pods-AvocadoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AvocadoTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AvocadoTests/Pods-AvocadoTests.release.xcconfig"; sourceTree = "<group>"; };
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		501CBAB81FC26770009B0D4D /* StatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBar.swift; sourceTree = "<group>"; };
 		501CBABA1FC28768009B0D4D /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
@@ -112,6 +116,10 @@
 		50ED86F61FCB759B00E48884 /* DevMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevMode.swift; sourceTree = "<group>"; };
 		50ED86F81FCC69C200E48884 /* LocalNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotifications.swift; sourceTree = "<group>"; };
 		50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotifications.swift; sourceTree = "<group>"; };
+		67F3211837DDFCAB1994B957 /* Pods_Avocado.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Avocado.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		69842151D377B78E14E05A82 /* Pods-Avocado.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Avocado.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Avocado/Pods-Avocado.debug.xcconfig"; sourceTree = "<group>"; };
+		74657813023CA1FB18BB6C3A /* Pods-Avocado.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Avocado.release.xcconfig"; path = "Pods/Target Support Files/Pods-Avocado/Pods-Avocado.release.xcconfig"; sourceTree = "<group>"; };
+		CCB7AA9900D19C166ABBD458 /* Pods-AvocadoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AvocadoTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AvocadoTests/Pods-AvocadoTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +128,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */,
+				6952F21F537AF0F2A33C8564 /* Pods_Avocado.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +137,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EE91FC08595003606DC /* Avocado.framework in Frameworks */,
+				AC6C051A09208B5C391BDBD1 /* Pods_AvocadoTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +148,8 @@
 			isa = PBXGroup;
 			children = (
 				501CBAA61FC0A723009B0D4D /* WebKit.framework */,
+				67F3211837DDFCAB1994B957 /* Pods_Avocado.framework */,
+				09D41E84F3BEAFBA84EB3033 /* Pods_AvocadoTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -166,6 +178,7 @@
 				50503EEC1FC08595003606DC /* AvocadoTests */,
 				50503EE01FC08594003606DC /* Products */,
 				501CBAA51FC0A723009B0D4D /* Frameworks */,
+				AC023A1703177A7F10A78646 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -244,6 +257,17 @@
 			path = Plugins;
 			sourceTree = "<group>";
 		};
+		AC023A1703177A7F10A78646 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				69842151D377B78E14E05A82 /* Pods-Avocado.debug.xcconfig */,
+				74657813023CA1FB18BB6C3A /* Pods-Avocado.release.xcconfig */,
+				CCB7AA9900D19C166ABBD458 /* Pods-AvocadoTests.debug.xcconfig */,
+				25BF8F4C6732C31FCD4FDF2C /* Pods-AvocadoTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -267,10 +291,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 50503EF31FC08595003606DC /* Build configuration list for PBXNativeTarget "Avocado" */;
 			buildPhases = (
+				329089038B180034AC8FEFA6 /* [CP] Check Pods Manifest.lock */,
 				50503EDA1FC08594003606DC /* Sources */,
 				50503EDB1FC08594003606DC /* Frameworks */,
 				50503EDC1FC08594003606DC /* Headers */,
 				50503EDD1FC08594003606DC /* Resources */,
+				5E78DA525B5AD8F421A1E592 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -285,9 +311,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 50503EF61FC08595003606DC /* Build configuration list for PBXNativeTarget "AvocadoTests" */;
 			buildPhases = (
+				B5DA81D8759E4C313C2925C8 /* [CP] Check Pods Manifest.lock */,
 				50503EE41FC08595003606DC /* Sources */,
 				50503EE51FC08595003606DC /* Frameworks */,
 				50503EE61FC08595003606DC /* Resources */,
+				65A6E52768EB93F84DD2B699 /* [CP] Embed Pods Frameworks */,
+				C8832B889EF264199DC2F6CD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -355,6 +384,84 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		329089038B180034AC8FEFA6 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5E78DA525B5AD8F421A1E592 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Avocado/Pods-Avocado-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		65A6E52768EB93F84DD2B699 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AvocadoTests/Pods-AvocadoTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B5DA81D8759E4C313C2925C8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		C8832B889EF264199DC2F6CD /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AvocadoTests/Pods-AvocadoTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		50503EDA1FC08594003606DC /* Sources */ = {
@@ -532,6 +639,7 @@
 		};
 		50503EF41FC08595003606DC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 69842151D377B78E14E05A82 /* Pods-Avocado.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -556,6 +664,7 @@
 		};
 		50503EF51FC08595003606DC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 74657813023CA1FB18BB6C3A /* Pods-Avocado.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -579,6 +688,7 @@
 		};
 		50503EF71FC08595003606DC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CCB7AA9900D19C166ABBD458 /* Pods-AvocadoTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -594,6 +704,7 @@
 		};
 		50503EF81FC08595003606DC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 25BF8F4C6732C31FCD4FDF2C /* Pods-AvocadoTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
