@@ -18,6 +18,7 @@ import {
 })
 export class MotionPage {
   accel = null
+  ori = null
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private zone: NgZone) {
   }
@@ -30,11 +31,25 @@ export class MotionPage {
     Plugins.Motion.watchAccel((err, values) => {
       this.zone.run(() => {
         const v = {
-          x: values.x.toFixed(4),
-          y: values.y.toFixed(4),
-          z: values.z.toFixed(4)
+          x: values.acceleration.x.toFixed(4),
+          y: values.acceleration.y.toFixed(4),
+          z: values.acceleration.z.toFixed(4)
         }
         this.accel = v;
+      });
+    });
+  }
+
+  watchOrientation() {
+    Plugins.Motion.watchOrientation((err, values) => {
+      console.log('ORIENTATION', values);
+      this.zone.run(() => {
+        const v = {
+          alpha: values.alpha.toFixed(4),
+          beta: values.beta.toFixed(4),
+          gamma: values.gamma.toFixed(4)
+        }
+        this.ori = v;
       });
     });
   }

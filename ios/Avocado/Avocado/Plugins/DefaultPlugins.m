@@ -2,12 +2,11 @@
 
 #import "AVCBridgedPlugin.h"
 
-/*JS_PLUGIN("com.avocadojs.plugin.browser", Browser) {
-JS_METHOD("open", "url:string", JS_PROMISE)
-}*/
-               
-//@interface AVOCADO_PLUGIN_DEFINE("com.avocadojs.plugin.browser", Browser)
-//@end
+AVC_PLUGIN(Accessibility,
+  AVC_PLUGIN_METHOD(isScreenReaderEnabled, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(speak, "value:string", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(onScreenReaderStateChange, "", AVCPluginReturnCallback);
+)
 
 AVC_PLUGIN(Browser,
   AVC_PLUGIN_METHOD(open, "url:string", AVCPluginReturnPromise);
@@ -56,7 +55,7 @@ AVC_PLUGIN(Haptics,
 )
 
 AVC_PLUGIN(AVCKeyboard,
-           AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
 )
 
 AVC_PLUGIN(LocalNotifications,
@@ -75,11 +74,13 @@ AVC_PLUGIN(Network,
 )
 
 AVC_PLUGIN(SplashScreen,
-           AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
-           AVC_PLUGIN_METHOD(hide, "", AVCPluginReturnPromise);)
+  AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(hide, "", AVCPluginReturnPromise);
+)
 
 AVC_PLUGIN(StatusBar,
-           AVC_PLUGIN_METHOD(setStyle, "", AVCPluginReturnPromise);
-           AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
-           AVC_PLUGIN_METHOD(hide, "", AVCPluginReturnPromise);)
+  AVC_PLUGIN_METHOD(setStyle, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(hide, "", AVCPluginReturnPromise);
+)
 

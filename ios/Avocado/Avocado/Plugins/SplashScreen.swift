@@ -95,7 +95,7 @@ public class SplashScreen : AVCPlugin {
     
     bridge.viewController.view.isUserInteractionEnabled = false
  
-    // TODO: Fade in
+    
     UIView.transition(with: imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
       self.imageView.alpha = 1
     }) { (finished: Bool) in

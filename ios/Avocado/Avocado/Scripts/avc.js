@@ -197,7 +197,7 @@
           errorObject: JSON.stringify(error)
         }
       };
-      window.Avocado.handleError(errObj);
+      window.Avocado.handleError(error);
       window.webkit.messageHandlers.avocado.postMessage(errObj);
     }
 

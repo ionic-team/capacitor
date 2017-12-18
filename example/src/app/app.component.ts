@@ -13,6 +13,7 @@ export class MyApp {
 
   PLUGINS = [
     { name: 'Admin', page: 'AdminPage' },
+    { name: 'Accessibility', page: 'AccessibilityPage' },
     { name: 'Browser', page: 'BrowserPage' },
     { name: 'Camera', page: 'CameraPage' },
     { name: 'Clipboard', page: 'ClipboardPage' },

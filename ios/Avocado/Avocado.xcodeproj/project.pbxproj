@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5005D42F1FE80B7600E931C4 /* Accessibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5005D42E1FE80B7600E931C4 /* Accessibility.swift */; };
+		5005D4311FE80C0E00E931C4 /* Photos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5005D4301FE80C0E00E931C4 /* Photos.swift */; };
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
 		501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBAB81FC26770009B0D4D /* StatusBar.swift */; };
 		501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501CBABA1FC28768009B0D4D /* Haptics.swift */; };
@@ -64,6 +66,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5005D42E1FE80B7600E931C4 /* Accessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessibility.swift; sourceTree = "<group>"; };
+		5005D4301FE80C0E00E931C4 /* Photos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photos.swift; sourceTree = "<group>"; };
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		501CBAB81FC26770009B0D4D /* StatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBar.swift; sourceTree = "<group>"; };
 		501CBABA1FC28768009B0D4D /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
@@ -221,6 +225,7 @@
 				504C7E351FCCE6AD0020DFD2 /* Network */,
 				5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */,
 				5053E90E1FC8D51100166FBE /* DefaultPlugins.m */,
+				5005D42E1FE80B7600E931C4 /* Accessibility.swift */,
 				501CBABE1FC2A22A009B0D4D /* Browser.swift */,
 				50474F0C1FC5284D00AA0184 /* Camera.swift */,
 				50B80BE71FCDE1E8000717DF /* Clipboard.swift */,
@@ -232,6 +237,7 @@
 				50ED86F81FCC69C200E48884 /* LocalNotifications.swift */,
 				50ED86F41FCB737300E48884 /* Modals.swift */,
 				50BFB9071FC4E82C00C19F8B /* Motion.swift */,
+				5005D4301FE80C0E00E931C4 /* Photos.swift */,
 				50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */,
 				501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */,
 				501CBAB81FC26770009B0D4D /* StatusBar.swift */,
@@ -361,6 +367,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5005D4311FE80C0E00E931C4 /* Photos.swift in Sources */,
 				50D503901FDDF6B10050E5CE /* JS.swift in Sources */,
 				501CBABD1FC29EDE009B0D4D /* SplashScreen.swift in Sources */,
 				502D89D41FE0C1610074F94E /* AVCPluginMethod.m in Sources */,
@@ -383,6 +390,7 @@
 				501CBAB91FC26770009B0D4D /* StatusBar.swift in Sources */,
 				50503F251FC098A3003606DC /* AVCPluginCall.swift in Sources */,
 				502D89CA1FE0AC950074F94E /* AVCPluginCall.m in Sources */,
+				5005D42F1FE80B7600E931C4 /* Accessibility.swift in Sources */,
 				50ED86FB1FCC9D6600E48884 /* PushNotifications.swift in Sources */,
 				5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */,
 				50ED86F31FCB728D00E48884 /* Network.swift in Sources */,
