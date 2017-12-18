@@ -47,6 +47,8 @@ export interface WindowListenerHandle {
 }
 
 export class WebPlugin {
+  loaded: boolean = false;
+
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
@@ -128,7 +130,9 @@ export class WebPlugin {
     };
   }
 
-  load(): void {}
+  load(): void {
+    this.loaded = true;
+  }
 }
 
 /**
