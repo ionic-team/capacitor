@@ -1,6 +1,7 @@
 import Foundation
 import Dispatch
 import WebKit
+import Cordova
 
 enum BridgeError: Error {
   case errorExportingCoreJS
@@ -209,6 +210,39 @@ enum BridgeError: Error {
       
       //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
       //print("Native call took", timeElapsed)
+    }
+  }
+
+  /**
+   * Handle a Cordova call from JavaScript. First, find the corresponding plugin,
+   * construct a selector, and perform that selector on the plugin instance.
+   */
+  public func handleCordovaJSCall(call: JSCall) {
+    // Create a selector to send to the plugin
+    let selector = NSSelectorFromString("\(call.method):")
+    var className = call.pluginId
+    var vcClass = NSClassFromString(call.pluginId) as? CDVPlugin.Type
+    if vcClass == nil {
+      className = "CDV\(call.pluginId)"
+      vcClass = NSClassFromString(className) as? CDVPlugin.Type
+    }
+
+    // Init the plugin and configure it
+    let plugin = vcClass!.init()
+    plugin.viewController = self.viewController
+    plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.webView)
+    plugin.webView = self.webView as! UIView
+
+    if !plugin.responds(to: selector) {
+      print("Error: Plugin \(call.pluginId) does not respond to method call \(selector).")
+      print("Ensure plugin method exists and uses @objc in its declaration")
+      return
+    }
+
+    dispatchQueue.sync {
+      let arguments = call.options["options"] as! [Any]
+      let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: className, methodName: call.method)
+      plugin.perform(selector, with: pluginCall)
     }
   }
   

@@ -1,0 +1,11 @@
+target 'Avocado' do
+  use_frameworks!
+
+  pod 'AvocadoCordova', :path => '../cordova-avocado'
+
+  target 'AvocadoTests' do
+    inherit! :search_paths
+    
+  end
+
+end
