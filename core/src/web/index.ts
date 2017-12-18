@@ -50,8 +50,12 @@ export class WebPlugin {
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
-  constructor(public name: string) {
-    WebPlugins.addPlugin(this);
+  constructor(public name: string, pluginRegistry?: WebPluginRegistry) {
+    if(!pluginRegistry) {
+      WebPlugins.addPlugin(this);
+    } else {
+      pluginRegistry.addPlugin(this);
+    }
   }
 
   private addWindowListener(handle: WindowListenerHandle): void {
@@ -118,7 +122,7 @@ export class WebPlugin {
       registered: false,
       windowEventName,
       pluginEventName,
-      handler: (_event) => {
+      handler: (event) => {
         this.notifyListeners(pluginEventName, event);
       }
     };

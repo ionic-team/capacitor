@@ -1,8 +1,14 @@
-import { WebPlugin } from '../index';
+import { WebPlugin, WebPluginRegistry } from '../index';
+
+class MockPluginRegistry extends WebPluginRegistry {
+  constructor() {
+    super();
+  }
+}
 
 class MockPlugin extends WebPlugin {
   constructor() {
-    super("Mock");
+    super("Mock", new MockPluginRegistry());
   }
   trigger() {
     this.notifyListeners('test', {
@@ -65,26 +71,45 @@ describe('Web Plugin', () => {
     expect(lf.mock.calls[0][0]).toEqual({ value: 'Avocados on top of toast!' })
   });
 
-  it('Should register window listeners', () => {
+  it('Should register and remove window listeners', () => {
     let pluginAddWindowListener = jest.spyOn(plugin, 'addWindowListener');
-
     plugin.registerWindowListener('fake', 'test');
+
     let lf = jest.fn();
     let handle = plugin.addListener('test', lf);
 
-    const windowListener = plugin.windowListeners['test'];
+    // Make sure the window listener was added
+    let windowListener = plugin.windowListeners['test'];
     expect(windowListener.registered).toEqual(true);
-    expect(windowListener).not.toBe(undefined);
     expect(pluginAddWindowListener.mock.calls.length).toEqual(1);
 
-    console.log(windowListener);
-
-    const windowHandler = jest.spyOn(windowListener, 'handler');
-    var event = new CustomEvent('fake', {});
+    // Trigger a custom window event
+    var event = new CustomEvent('fake', { detail: { value: 'Avocados on top of toast!' }});
     window.dispatchEvent(event);
-    expect(windowHandler).toHaveBeenCalled();
 
     expect(lf.mock.calls.length).toEqual(1);
-    expect(lf.mock.calls[0][0]).toEqual({ value: 'Avocados on top of toast!' })
+
+    const eventArg = lf.mock.calls[0][0];
+    expect(eventArg.detail.value).toEqual('Avocados on top of toast!');
+
+    handle.remove();
+    windowListener = plugin.windowListeners['test'];
+    expect(windowListener.registered).toEqual(false);
+  })
+
+  it('Should only call window event if listeners bound', () => {
+    plugin.registerWindowListener('fake', 'test');
+
+    // Make sure the window listener was added
+    const windowListener = plugin.windowListeners['test'];
+
+    expect(windowListener.registered).toEqual(false);
+
+    let handlerFunction = jest.spyOn(windowListener, 'handler');
+    // Trigger a custom window event
+    var event = new CustomEvent('fake', { detail: { value: 'Avocados on top of toast!' }});
+    window.dispatchEvent(event);
+
+    expect(handlerFunction).not.toHaveBeenCalled();
   })
 });
