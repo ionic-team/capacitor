@@ -2,6 +2,7 @@ import { PluginCallback } from './definitions';
 
 declare global {
   interface PluginRegistry {
+    Accessibility: AccessibilityPlugin;
     Browser: BrowserPlugin;
     Camera: CameraPlugin;
     Clipboard: ClipboardPlugin;
@@ -18,6 +19,31 @@ declare global {
     StatusBar: StatusBarPlugin;
   }
 }
+
+//
+
+export interface AccessibilityPlugin {
+  isScreenReaderEnabled(): Promise<ScreenReaderEnabledResult>;
+  speak(value: string): Promise<void>;
+  onScreenReaderStateChange(cb: ScreenReaderStateChangeCallback): void;
+}
+export interface ScreenReaderEnabledResult {
+  value: boolean;
+}
+export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnabledResult) => void;
+
+//
+
+export interface ActionSheetPlugin {
+  show(): Promise<void>;
+  hide(): Promise<void>;
+}
+
+//
+
+export interface BatteryPlugin {
+}
+
 //
 
 export interface BrowserPlugin {
@@ -289,15 +315,37 @@ export interface ConfirmResult {
 
 export interface MotionPlugin {
   watchAccel(callback: MotionWatchAccelCallback) : void;
+  watchOrientation(callback: MotionWatchOrientationCallback): void;
 }
 
-export interface MotionAccel {
-  x: number;
-  y: number;
-  z: number;
+export type MotionWatchOrientationCallback = (err: any, accel: MotionOrientationEventResult) => void;
+export type MotionWatchAccelCallback = (err: any, accel: MotionEventResult) => void;
+
+export interface MotionOrientationEventResult {
+  alpha: number;
+  beta: number;
+  gamma: number;
 }
 
-export type MotionWatchAccelCallback = (err: any, accel: MotionAccel) => void;
+export interface MotionEventResult {
+  acceleration: {
+    x: number;
+    y: number;
+    z: number;
+  },
+  accelerationIncludingGravity: {
+    x: number;
+    y: number;
+    z: number;
+  },
+  rotationRate: {
+    alpha: number;
+    beta: number;
+    gamma: number;
+  },
+  interval: number;
+}
+
 
 //
 

@@ -14,15 +14,16 @@
 
 
 <ion-content padding>
-
-  <ion-list>
-    <ion-item>
-      <button (click)="watchAccel()" ion-button>
-        Watch Accel
-      </button>
-      <div *ngIf="accel">
-        <b>x</b>: {{accel.x}} <b>y</b>: {{accel.y}} <b>z</b>: {{accel.z}}
-      </div>
-    </ion-item>
-  </ion-list>
+  <button (click)="watchAccel()" ion-button>
+    Watch Accel
+  </button>
+  <div *ngIf="accel">
+    <b>x</b>: {{accel.x}} <b>y</b>: {{accel.y}} <b>z</b>: {{accel.z}}
+  </div>
+  <button (click)="watchOrientation()" ion-button>
+    Watch Orientation
+  </button>
+  <div *ngIf="ori">
+    <b>alpha</b>: {{ori.alpha}} <b>beta</b>: {{ori.beta}} <b>gamma</b>: {{ori.gamma}}
+  </div>
 </ion-content>

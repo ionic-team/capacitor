@@ -9,11 +9,23 @@
 import XCTest
 @testable import Avocado
 
+class MockWebView: WKWebView {
+}
+
+class MockBridgeViewController : BridgeViewController {
+}
+
+class MockBridge : Bridge {
+  public override func registerPlugins() {
+    print("REGISER PLUITTTINS")
+  }
+}
 class AvocadoTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+      var bridge = MockBridge(MockBridgeViewController(), MockWebView())
     }
     
     override func tearDown() {
