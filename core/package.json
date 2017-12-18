@@ -15,13 +15,17 @@
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
-    "transpile-no-helpers": "tsc --module ES2015 --target ES5 --noEmitHelpers true --outDir dist/esm"
+    "transpile-no-helpers": "tsc --module ES2015 --target ES5 --noEmitHelpers true --outDir dist/esm",
+    "test": "jest"
   },
   "main": "dist/esm/index.js",
   "typings": "dist/esm/index.d.ts",
   "devDependencies": {
+    "@types/jest": "^21.1.8",
+    "jest": "^22.0.0",
     "rimraf": "^2.6.1",
     "rollup": "^0.52.0",
+    "ts-jest": "^21.2.4",
     "tslint": "^5.6.0",
     "tslint-ionic-rules": "0.0.8",
     "typescript": "^2.6.2",
@@ -36,5 +40,18 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testMatch": [
+      "**/__test__/*.(ts|tsx|js)"
+    ]
   }
 }

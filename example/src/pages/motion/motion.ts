@@ -28,7 +28,7 @@ export class MotionPage {
   }
 
   watchAccel() {
-    Plugins.Motion.watchAccel((err, values) => {
+    const watchListener = Plugins.Motion.addListener('accel', (values) => {
       this.zone.run(() => {
         const v = {
           x: values.acceleration.x.toFixed(4),
@@ -38,10 +38,14 @@ export class MotionPage {
         this.accel = v;
       });
     });
+
+    setTimeout(() => {
+      watchListener.remove();
+    }, 5000);
   }
 
   watchOrientation() {
-    Plugins.Motion.watchOrientation((err, values) => {
+    const watchListener = Plugins.Motion.addListener('orientation', (values) => {
       this.zone.run(() => {
         const v = {
           alpha: values.alpha.toFixed(4),
@@ -51,6 +55,9 @@ export class MotionPage {
         this.ori = v;
       });
     });
+    setTimeout(() => {
+      watchListener.remove();
+    }, 5000);
   }
 
 }

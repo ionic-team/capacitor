@@ -37,7 +37,7 @@ public class Accessibility : AVCPlugin {
   }
   
   @objc func onScreenReaderStateChange(_ call: AVCPluginCall) {
-    addEventListener(Accessibility.SCREEN_READER_STATE_CHANGE_EVENT, listener: call)
+    addListener(Accessibility.SCREEN_READER_STATE_CHANGE_EVENT, listener: call)
   }
 }
 

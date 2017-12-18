@@ -2,41 +2,25 @@ import { WebPlugin } from './index';
 
 import {
   MotionPlugin,
+  /*
   MotionEventResult,
   MotionWatchAccelCallback,
   MotionWatchOrientationCallback, 
   MotionOrientationEventResult
+  */
 } from '../core-plugin-definitions';
 
-export class MotionPluginWeb implements MotionPlugin {
-  watchOrientation(cb: MotionWatchOrientationCallback) {
-    let watch = (event: MotionOrientationEventResult) => {
-      cb(null, event);
-    }
-
-    window.addEventListener('deviceorientation', watch);
-
-    return () => {
-      window.removeEventListener('deviceorientation', watch);
-    }
+export class MotionPluginWeb extends WebPlugin implements MotionPlugin {
+  constructor() {
+    super("Motion");
   }
 
-  watchAccel(cb: MotionWatchAccelCallback) {
-    let watch = (event: MotionEventResult) => {
-      cb(null, event);
-    }
-
-    window.addEventListener('devicemotion', watch);
-
-    return () => {
-      window.removeEventListener('devicemotion', watch);
-    }
+  load() {
+    this.registerWindowListener('devicemotion', 'accel');
+    this.registerWindowListener('deviceorientation', 'orientation');
   }
 }
 
-const Motion = new WebPlugin(
-  "Motion",
-  MotionPluginWeb
-)
+const Motion = new MotionPluginWeb();
 
 export { Motion };
