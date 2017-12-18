@@ -129,12 +129,21 @@ var Plugins = Avocado.Plugins;
 var WebPluginRegistry = /** @class */ (function () {
     function WebPluginRegistry() {
         this.plugins = {};
+        this.loadedPlugins = {};
     }
     WebPluginRegistry.prototype.addPlugin = function (plugin) {
         this.plugins[plugin.name] = plugin;
     };
     WebPluginRegistry.prototype.getPlugin = function (name) {
         return this.plugins[name];
+    };
+    WebPluginRegistry.prototype.loadPlugin = function (name) {
+        var plugin = this.getPlugin(name);
+        if (!plugin) {
+            console.error("Unable to load web plugin " + name + ", no such plugin found.");
+            return;
+        }
+        plugin.load();
     };
     WebPluginRegistry.prototype.getPlugins = function () {
         var p = [];
@@ -149,18 +158,79 @@ var WebPluginRegistry = /** @class */ (function () {
 var WebPlugins = new WebPluginRegistry();
 
 var WebPlugin = /** @class */ (function () {
-    function WebPlugin(name, pluginClass) {
+    function WebPlugin(name, pluginRegistry) {
         this.name = name;
-        this.pluginClass = pluginClass;
-        WebPlugins.addPlugin(this);
-        this._instance = new this.pluginClass();
+        this.listeners = {};
+        this.windowListeners = {};
+        if (!pluginRegistry) {
+            WebPlugins.addPlugin(this);
+        }
+        else {
+            pluginRegistry.addPlugin(this);
+        }
     }
-    WebPlugin.prototype.load = function () {
-        this._instance.load && this._instance.load();
+    WebPlugin.prototype.addWindowListener = function (handle) {
+        window.addEventListener(handle.windowEventName, handle.handler);
+        handle.registered = true;
     };
-    WebPlugin.prototype.getInstance = function () {
-        return this._instance;
+    WebPlugin.prototype.removeWindowListener = function (handle) {
+        if (!handle) {
+            return;
+        }
+        window.removeEventListener(handle.windowEventName, handle.handler);
+        handle.registered = false;
     };
+    WebPlugin.prototype.addListener = function (eventName, listenerFunc) {
+        var _this = this;
+        var listeners = this.listeners[eventName];
+        if (!listeners) {
+            this.listeners[eventName] = [];
+        }
+        this.listeners[eventName].push(listenerFunc);
+        // If we haven't added a window listener for this event and it requires one,
+        // go ahead and add it
+        var windowListener = this.windowListeners[eventName];
+        if (windowListener && !windowListener.registered) {
+            this.addWindowListener(windowListener);
+        }
+        return {
+            remove: function () {
+                _this.removeListener(eventName, listenerFunc);
+            }
+        };
+    };
+    WebPlugin.prototype.removeListener = function (eventName, listenerFunc) {
+        var listeners = this.listeners[eventName];
+        if (!listeners) {
+            return;
+        }
+        var index = listeners.indexOf(listenerFunc);
+        this.listeners[eventName].splice(index, 1);
+        // If there are no more listeners for this type of event,
+        // remove the window listener
+        if (!this.listeners[eventName].length) {
+            this.removeWindowListener(this.windowListeners[eventName]);
+        }
+    };
+    WebPlugin.prototype.notifyListeners = function (eventName, data) {
+        var listeners = this.listeners[eventName];
+        listeners.forEach(function (listener) { return listener(data); });
+    };
+    WebPlugin.prototype.hasListeners = function (eventName) {
+        return !!this.listeners[eventName].length;
+    };
+    WebPlugin.prototype.registerWindowListener = function (windowEventName, pluginEventName) {
+        var _this = this;
+        this.windowListeners[pluginEventName] = {
+            registered: false,
+            windowEventName: windowEventName,
+            pluginEventName: pluginEventName,
+            handler: function (event) {
+                _this.notifyListeners(pluginEventName, event);
+            }
+        };
+    };
+    WebPlugin.prototype.load = function () { };
     return WebPlugin;
 }());
 
@@ -177,7 +247,7 @@ var mergeWebPlugins = function (knownPlugins) {
         if (knownPlugins.hasOwnProperty(plugin.name)) {
             continue;
         }
-        knownPlugins[plugin.name] = plugin.getInstance();
+        knownPlugins[plugin.name] = plugin;
     }
 };
 //# sourceMappingURL=index.js.map
@@ -375,32 +445,30 @@ Object(__WEBPACK_IMPORTED_MODULE_1__web_index__["b" /* mergeWebPlugins */])(__WE
 /* unused harmony export MotionPluginWeb */
 /* unused harmony export Motion */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(152);
-
-var MotionPluginWeb = /** @class */ (function () {
-    function MotionPluginWeb() {
-    }
-    MotionPluginWeb.prototype.watchOrientation = function (cb) {
-        var watch = function (event) {
-            cb(null, event);
-        };
-        window.addEventListener('deviceorientation', watch);
-        return function () {
-            window.removeEventListener('deviceorientation', watch);
-        };
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    MotionPluginWeb.prototype.watchAccel = function (cb) {
-        var watch = function (event) {
-            cb(null, event);
-        };
-        window.addEventListener('devicemotion', watch);
-        return function () {
-            window.removeEventListener('devicemotion', watch);
-        };
+})();
+
+var MotionPluginWeb = /** @class */ (function (_super) {
+    __extends(MotionPluginWeb, _super);
+    function MotionPluginWeb() {
+        return _super.call(this, "Motion") || this;
+    }
+    MotionPluginWeb.prototype.load = function () {
+        this.registerWindowListener('devicemotion', 'accel');
+        this.registerWindowListener('deviceorientation', 'orientation');
     };
     return MotionPluginWeb;
-}());
+}(__WEBPACK_IMPORTED_MODULE_0__index__["a" /* WebPlugin */]));
 
-var Motion = new __WEBPACK_IMPORTED_MODULE_0__index__["a" /* WebPlugin */]("Motion", MotionPluginWeb);
+var Motion = new MotionPluginWeb();
 
 //# sourceMappingURL=motion.js.map
 
