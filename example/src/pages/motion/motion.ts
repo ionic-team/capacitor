@@ -28,9 +28,7 @@ export class MotionPage {
   }
 
   watchAccel() {
-    console.log('Watching motion');
     const watchListener = Plugins.Motion.addListener('accel', (values) => {
-      console.log('Accel', values);
       this.zone.run(() => {
         const v = {
           x: values.acceleration.x.toFixed(4),
@@ -47,9 +45,7 @@ export class MotionPage {
   }
 
   watchOrientation() {
-    console.log('Watching orientation');
     const watchListener = Plugins.Motion.addListener('orientation', (values) => {
-      console.log('Orientation', values);
       this.zone.run(() => {
         const v = {
           alpha: values.alpha.toFixed(4),
