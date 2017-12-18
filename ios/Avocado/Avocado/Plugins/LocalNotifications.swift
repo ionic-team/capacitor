@@ -6,6 +6,15 @@ import UserNotifications
  */
 @objc(LocalNotifications)
 public class LocalNotifications : AVCPlugin {
+  func requestPermissions() {
+    // Override point for customization after application launch.
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+      // Enable or disable features based on authorization.
+    }
+    UIApplication.shared.registerForRemoteNotifications()
+  }
+  
   @objc public func schedule(_ call: AVCPluginCall) {
     guard let title = call.get("title", String.self) else {
       call.error("Must provide a title")
@@ -19,6 +28,8 @@ public class LocalNotifications : AVCPlugin {
       call.error("Must provide a unique identifier for the notification")
       return
     }
+    
+    requestPermissions()
     
     let content = UNMutableNotificationContent()
     content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
