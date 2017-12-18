@@ -56,12 +56,14 @@ export class WebPlugin {
 
   private addWindowListener(handle: WindowListenerHandle): void {
     window.addEventListener(handle.windowEventName, handle.handler);
+    handle.registered = true;
   }
 
   private removeWindowListener(handle: WindowListenerHandle): void {
     if(!handle) { return; }
 
     window.removeEventListener(handle.windowEventName, handle.handler);
+    handle.registered = false;
   }
 
   addListener(eventName: string, listenerFunc: ListenerCallback): PluginListenerHandle {
