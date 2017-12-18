@@ -171,6 +171,25 @@
     });
   };
 
+
+  avocado.addListener = function(pluginId, eventName, callback) {
+    avocado.nativeCallback(pluginId, 'addListener', {
+      eventName
+    }, callback);
+    return {
+      remove: function() {
+        console.log('Removing listener', pluginId, eventName);
+        avocado.removeListener(pluginId, eventName, callback);
+      }
+    }
+  };
+
+  avocado.removeListener = function(pluginId, eventName, callback) {
+    avocado.nativeCallback(pluginId, 'removeListener', {
+      eventName
+    }, callback);
+  }
+
   avocado.handleError = function(error) {
     if(!errorModal) {
       errorModal = makeErrorModal(error);

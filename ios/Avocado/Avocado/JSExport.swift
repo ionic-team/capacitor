@@ -36,7 +36,13 @@ public class JSExport {
       w.Avocado = w.Avocado || {};
       w.Avocado.Plugins = w.Avocado.Plugins || {};
       var a = w.Avocado; var p = a.Plugins;
-      p['\(pluginClassName)'] = {}
+      var t = p['\(pluginClassName)'] = {};
+      t.addListener = function(eventName, callback) {
+        return w.Avocado.addListener('\(pluginClassName)', eventName, callback);
+      }
+      t.removeListener = function(eventName, callback) {
+        return w.Avocado.removeListener('\(pluginClassName)', eventName, callback);
+      }
       """)
     let bridgeType = pluginType as! AVCBridgedPlugin.Type
     let methods = bridgeType.pluginMethods() as! [AVCPluginMethod]
@@ -87,24 +93,24 @@ public class JSExport {
     var lines = [String]()
     
     // Create the function declaration
-    lines.append("p['\(pluginClassName)']['\(method.name!)'] = function(\(paramString)) {")
+    lines.append("t['\(method.name!)'] = function(\(paramString)) {")
     
     // Create the call to Avocado...
     if returnType == AVCPluginReturnNone {
       // ...using none
       lines.append("""
-        return window.Avocado.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString));
+        return w.Avocado.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString));
         """)
     } else if returnType == AVCPluginReturnPromise {
       
       // ...using a promise
       lines.append("""
-        return window.Avocado.nativePromise('\(pluginClassName)', '\(methodName)', \(argObjectString));
+        return w.Avocado.nativePromise('\(pluginClassName)', '\(methodName)', \(argObjectString));
       """)
     } else if returnType == AVCPluginReturnCallback {
       // ...using a callback
       lines.append("""
-        return window.Avocado.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(CALLBACK_PARAM));
+        return w.Avocado.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(CALLBACK_PARAM));
         """)
     } else {
       print("Error: plugin method return type \(returnType) is not supported!")

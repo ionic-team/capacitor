@@ -12,9 +12,12 @@
 @property (nonatomic, strong) NSDictionary<NSString *, NSMutableArray<AVCPluginCall *>*> *eventListeners;
 
 - (instancetype) initWithBridge:(Bridge*) bridge pluginId:(NSString*) pluginId;
-- (void)addListener:(NSString *) eventName listener:(AVCPluginCall *)listener;
-- (void)removeListener:(NSString *) eventName listener:(AVCPluginCall *)listener;
+- (void)addEventListener:(NSString *) eventName listener:(AVCPluginCall *)listener;
+- (void)removeEventListener:(NSString *) eventName listener:(AVCPluginCall *)listener;
 - (void)notifyListeners:(NSString *) eventName data:(NSDictionary<NSString *, id>*)data;
+
+- (void)addListener:(AVCPluginCall *)call;
+- (void)removeListener:(AVCPluginCall *)call;
 
 // Called after init if the plugin wants to do
 // some loading so the plugin author doesn't

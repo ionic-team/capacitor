@@ -35,7 +35,7 @@
 
 -(void)load {}
 
-- (void)addListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
+- (void)addEventListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
   NSMutableArray *listenersForEvent = [self.eventListeners objectForKey:eventName];
   if(!listenersForEvent) {
     listenersForEvent = [[NSMutableArray alloc] initWithObjects:listener, nil];
@@ -45,7 +45,7 @@
   }
 }
 
-- (void)removeListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
+- (void)removeEventListener:(NSString *)eventName listener:(AVCPluginCall *)listener {
   NSMutableArray *listenersForEvent = [self.eventListeners objectForKey:eventName];
   if(!listenersForEvent) { return; }
   NSUInteger listenerIndex = [listenersForEvent indexOfObject:listener];
@@ -67,6 +67,16 @@
   }
 }
 
+
+- (void)addListener:(AVCPluginCall *)call {
+  NSString *eventName = [call.options objectForKey:@"eventName"];
+  [self addEventListener:eventName listener:call];
+}
+
+- (void)removeListener:(AVCPluginCall *)call {
+  NSString *eventName = [call.options objectForKey:@"eventName"];
+  [self removeEventListener:eventName listener:call];
+}
 /*
  -(BOOL) getBool:(AVCPluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {
  NSNumber *value = [call getBool:field defaultValue:nil];

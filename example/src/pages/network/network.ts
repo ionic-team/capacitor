@@ -17,13 +17,20 @@ import {
   templateUrl: 'network.html',
 })
 export class NetworkPage {
+  handler = null;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    Plugins.Network.onStatusChange((err, status) => {
+    this.getStatus();
+  }
+
+  startListen() {
+    this.handler = Plugins.Network.addListener('networkStatusChanged', (err, status) => {
       console.log("Network status changed", status);
     });
+  }
 
-    this.getStatus();
+  endListen() {
+    this.handler && this.handler.remove();
   }
 
   async getStatus() {

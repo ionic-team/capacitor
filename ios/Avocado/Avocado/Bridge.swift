@@ -173,16 +173,22 @@ enum BridgeError: Error {
     guard let pluginType = knownPlugins[plugin.getId()] else {
       return
     }
-    let bridgeType = pluginType as! AVCBridgedPlugin.Type
-    guard let method = bridgeType.getMethod(call.method) else {
-      print("🥑  Error calling method \(call.method) on plugin \(call.pluginId): No method found.")
-      print("🥑  Ensure plugin method exists and uses @objc in its declaration, and has been defined")
-      return
+    
+    var selector: Selector? = nil
+    if call.method == "addListener" || call.method == "removeListener" {
+      selector = NSSelectorFromString(call.method + ":")
+    } else {
+      let bridgeType = pluginType as! AVCBridgedPlugin.Type
+      guard let method = bridgeType.getMethod(call.method) else {
+        print("🥑  Error calling method \(call.method) on plugin \(call.pluginId): No method found.")
+        print("🥑  Ensure plugin method exists and uses @objc in its declaration, and has been defined")
+        return
+      }
+      
+      //print("\n🥑  Calling method \"\(call.method)\" on plugin \"\(plugin.getId()!)\"")
+      
+      selector = method.getSelector()
     }
-    
-    //print("\n🥑  Calling method \"\(call.method)\" on plugin \"\(plugin.getId()!)\"")
-    
-    let selector = method.getSelector()
     
     if !plugin.responds(to: selector) {
       print("🥑  Error: Plugin \(plugin.getId()!) does not respond to method call \"\(call.method)\" using selector \"\(selector!)\".")

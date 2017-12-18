@@ -69,7 +69,6 @@ AVC_PLUGIN(Modals,
 )
 
 AVC_PLUGIN(Network,
-  AVC_PLUGIN_METHOD(onStatusChange, "", AVCPluginReturnCallback);
   AVC_PLUGIN_METHOD(getStatus, "", AVCPluginReturnPromise);
 )
 
