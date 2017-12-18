@@ -12,6 +12,7 @@ public class Accessibility : AVCPlugin {
   }
   
   @objc func onScreenReaderStateChanged(notification: NSNotification) {
+    print("NATIVE SCREEN READER CHANGE", UIAccessibilityIsVoiceOverRunning())
     notifyListeners(Accessibility.SCREEN_READER_STATE_CHANGE_EVENT, data: [
       "value": UIAccessibilityIsVoiceOverRunning()
     ])

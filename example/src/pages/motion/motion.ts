@@ -42,7 +42,6 @@ export class MotionPage {
 
   watchOrientation() {
     Plugins.Motion.watchOrientation((err, values) => {
-      console.log('ORIENTATION', values);
       this.zone.run(() => {
         const v = {
           alpha: values.alpha.toFixed(4),
