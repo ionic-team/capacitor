@@ -8,12 +8,34 @@
 
 /* Begin PBXBuildFile section */
 		2F5C86E11FE94845004B09C7 /* AvocadoCordova.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C86DF1FE94845004B09C7 /* AvocadoCordova.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F5C871D1FE98418004B09C7 /* CDVPluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C87121FE98417004B09C7 /* CDVPluginResult.m */; };
+		2F5C871E1FE98418004B09C7 /* CDV.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C87131FE98417004B09C7 /* CDV.h */; };
+		2F5C871F1FE98418004B09C7 /* CDVCommandDelegateImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C87141FE98417004B09C7 /* CDVCommandDelegateImpl.m */; };
+		2F5C87201FE98418004B09C7 /* CDVInvokedUrlCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C87151FE98417004B09C7 /* CDVInvokedUrlCommand.m */; };
+		2F5C87211FE98418004B09C7 /* CDVPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C87161FE98417004B09C7 /* CDVPlugin.m */; };
+		2F5C87221FE98418004B09C7 /* CDVCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C87171FE98417004B09C7 /* CDVCommandDelegate.h */; };
+		2F5C87231FE98418004B09C7 /* CDVCommandDelegateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C87181FE98417004B09C7 /* CDVCommandDelegateImpl.h */; };
+		2F5C87241FE98418004B09C7 /* CDVInvokedUrlCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C87191FE98418004B09C7 /* CDVInvokedUrlCommand.h */; };
+		2F5C87251FE98418004B09C7 /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C871A1FE98418004B09C7 /* CDVAvailability.h */; };
+		2F5C87261FE98418004B09C7 /* CDVPluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C871B1FE98418004B09C7 /* CDVPluginResult.h */; };
+		2F5C87271FE98418004B09C7 /* CDVPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C871C1FE98418004B09C7 /* CDVPlugin.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2F5C86DC1FE94845004B09C7 /* AvocadoCordova.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AvocadoCordova.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F5C86DF1FE94845004B09C7 /* AvocadoCordova.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AvocadoCordova.h; sourceTree = "<group>"; };
 		2F5C86E01FE94845004B09C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2F5C87121FE98417004B09C7 /* CDVPluginResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVPluginResult.m; sourceTree = "<group>"; };
+		2F5C87131FE98417004B09C7 /* CDV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDV.h; sourceTree = "<group>"; };
+		2F5C87141FE98417004B09C7 /* CDVCommandDelegateImpl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVCommandDelegateImpl.m; sourceTree = "<group>"; };
+		2F5C87151FE98417004B09C7 /* CDVInvokedUrlCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVInvokedUrlCommand.m; sourceTree = "<group>"; };
+		2F5C87161FE98417004B09C7 /* CDVPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVPlugin.m; sourceTree = "<group>"; };
+		2F5C87171FE98417004B09C7 /* CDVCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVCommandDelegate.h; sourceTree = "<group>"; };
+		2F5C87181FE98417004B09C7 /* CDVCommandDelegateImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVCommandDelegateImpl.h; sourceTree = "<group>"; };
+		2F5C87191FE98418004B09C7 /* CDVInvokedUrlCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVInvokedUrlCommand.h; sourceTree = "<group>"; };
+		2F5C871A1FE98418004B09C7 /* CDVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVAvailability.h; sourceTree = "<group>"; };
+		2F5C871B1FE98418004B09C7 /* CDVPluginResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVPluginResult.h; sourceTree = "<group>"; };
+		2F5C871C1FE98418004B09C7 /* CDVPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVPlugin.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +86,17 @@
 		2F5C86E81FE94861004B09C7 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				2F5C87131FE98417004B09C7 /* CDV.h */,
+				2F5C871A1FE98418004B09C7 /* CDVAvailability.h */,
+				2F5C87171FE98417004B09C7 /* CDVCommandDelegate.h */,
+				2F5C87181FE98417004B09C7 /* CDVCommandDelegateImpl.h */,
+				2F5C87141FE98417004B09C7 /* CDVCommandDelegateImpl.m */,
+				2F5C87191FE98418004B09C7 /* CDVInvokedUrlCommand.h */,
+				2F5C87151FE98417004B09C7 /* CDVInvokedUrlCommand.m */,
+				2F5C871C1FE98418004B09C7 /* CDVPlugin.h */,
+				2F5C87161FE98417004B09C7 /* CDVPlugin.m */,
+				2F5C871B1FE98418004B09C7 /* CDVPluginResult.h */,
+				2F5C87121FE98417004B09C7 /* CDVPluginResult.m */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -75,7 +108,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F5C87261FE98418004B09C7 /* CDVPluginResult.h in Headers */,
+				2F5C87221FE98418004B09C7 /* CDVCommandDelegate.h in Headers */,
+				2F5C871E1FE98418004B09C7 /* CDV.h in Headers */,
 				2F5C86E11FE94845004B09C7 /* AvocadoCordova.h in Headers */,
+				2F5C87251FE98418004B09C7 /* CDVAvailability.h in Headers */,
+				2F5C87271FE98418004B09C7 /* CDVPlugin.h in Headers */,
+				2F5C87231FE98418004B09C7 /* CDVCommandDelegateImpl.h in Headers */,
+				2F5C87241FE98418004B09C7 /* CDVInvokedUrlCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +187,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F5C871F1FE98418004B09C7 /* CDVCommandDelegateImpl.m in Sources */,
+				2F5C871D1FE98418004B09C7 /* CDVPluginResult.m in Sources */,
+				2F5C87211FE98418004B09C7 /* CDVPlugin.m in Sources */,
+				2F5C87201FE98418004B09C7 /* CDVInvokedUrlCommand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
