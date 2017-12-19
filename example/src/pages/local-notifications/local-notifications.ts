@@ -30,31 +30,46 @@ export class LocalNotificationsPage {
   async scheduleOnce() {
     var now = new Date();
     this.notif = await Plugins.LocalNotifications.schedule({
-      title: 'Get 20% off!',
-      body: 'Swipe to learn more',
-      identifier: 'special-deal',
-      scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
-      actions: [
-        { id: 'clear', title: 'Clear' },
-        { id: 'snooze', title: 'Snooze' }
-      ]
+      notifications: [{
+        title: 'Get 20% off!',
+        body: 'Swipe to learn more',
+        identifier: 'special-deal',
+        scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
+        actions: [
+          { id: 'clear', title: 'Clear' },
+          { id: 'snooze', title: 'Snooze' }
+        ]
+      }]
     });
   }
 
   async scheduleRepeating() {
     var now = new Date();
     this.notif = await Plugins.LocalNotifications.schedule({
-      title: 'Get 20% off!',
-      body: 'Swipe to learn more',
-      identifier: 'special-deal',
-      scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
-      repeat: {
-        every: 'minute'
-      },
-      actions: [
-        { id: 'clear', title: 'Clear' },
-        { id: 'snooze', title: 'Snooze' }
-      ]
+      notifications: [{
+        title: 'Get 20% off!',
+        body: 'Swipe to learn more',
+        identifier: 'special-deal',
+        scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
+        repeat: {
+          every: 'minute'
+        },
+        actions: [
+          { id: 'clear', title: 'Clear' },
+          { id: 'snooze', title: 'Snooze' }
+        ]
+      }, {
+        title: 'Get 20% off!',
+        body: 'Swipe to learn more',
+        identifier: 'special-deal',
+        repeat: {
+          every: 'minute'
+        },
+        actions: [
+          { id: 'clear', title: 'Clear' },
+          { id: 'snooze', title: 'Snooze' }
+        ]
+      }]
     });
   }
   cancelNotification() {

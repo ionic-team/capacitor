@@ -19,57 +19,71 @@ public class LocalNotifications : AVCPlugin {
   }
   
   @objc public func schedule(_ call: AVCPluginCall) {
-    guard let title = call.get("title", String.self) else {
-      call.error("Must provide a title")
-      return
-    }
-    guard let body = call.get("body", String.self) else {
-      call.error("Must provide a body")
-      return
-    }
-    guard let identifier = call.get("identifier", String.self) else {
-      call.error("Must provide a unique identifier for the notification")
+    guard let notifications = call.getArray("notifications", [String:Any].self) else {
+      call.error("Must provide notifications array as notifications option")
       return
     }
     
-    requestPermissions()
+    var ids = [String]()
     
-    // Build content of notification
-    let content = UNMutableNotificationContent()
-    content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
-    content.body = NSString.localizedUserNotificationString(forKey: body,
-                                                            arguments: nil)
-    
-    let repeatAt = call.get("repeat", [String:Any].self)
-    
-    var trigger: UNNotificationTrigger?
-    if let scheduleAt = call.getDate("scheduleAt") {
-      let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: scheduleAt)
-      let repeats = call.get("repeats", Bool.self, false)!
-      var dateInterval = DateInterval(start: Date(), end: dateInfo.date!)
-      // If we have a scheduled time and a repeat setting, create a time interval for it
-      if repeatAt != nil {
-        dateInterval = getRepeatDateInterval(repeatAt!, dateInfo)
-        print("Repeating at", interval)
+    for notification in notifications {
+      guard let title = notification["title"] as? String else {
+        call.error("Must provide a title")
+        return
       }
-      trigger = UNTimeIntervalNotificationTrigger(timeInterval: dateInterval.duration, repeats: repeats)
-    }
-    
-    // Create the request object.
-    let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-    
-    // Schedule the request.
-    let center = UNUserNotificationCenter.current()
-    center.add(request) { (error : Error?) in
-      if let theError = error {
-        print(theError.localizedDescription)
-        call.error(theError.localizedDescription)
+      guard let body = notification["body"] as? String else {
+        call.error("Must provide a body")
+        return
+      }
+      guard let identifier = notification["identifier"] as? String else {
+        call.error("Must provide a unique identifier for the notification")
+        return
+      }
+      
+      requestPermissions()
+      
+      // Build content of notification
+      let content = UNMutableNotificationContent()
+      content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
+      content.body = NSString.localizedUserNotificationString(forKey: body,
+                                                              arguments: nil)
+      
+      let repeatAt = call.get("repeat", [String:Any].self)
+
+      if let scheduleAt = call.getDate("scheduleAt") {
+        let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: scheduleAt)
+        let repeats = call.get("repeats", Bool.self, false)!
+        
+        if dateInfo.date! < Date() {
+          call.error("Scheduled time must be *after* current time")
+          return
+        }
+        
+        var dateInterval = DateInterval(start: Date(), end: dateInfo.date!)
+      
+        // If we have a scheduled time and a repeat setting, create a time interval for it
+        if repeatAt != nil {
+          if let repeatDateInterval = getRepeatDateInterval(repeatAt!, dateInfo) {
+            dateInterval = repeatDateInterval
+            print("Repeating at", dateInterval)
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: repeatDateInterval.duration, repeats: true)
+            let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+            _schedule(request, forCall: call)
+            ids.append(request.identifier)
+          }
+        } else {
+          // Enqueue a notification for now
+          var trigger = UNTimeIntervalNotificationTrigger(timeInterval: dateInterval.duration, repeats: repeats)
+          let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+          _schedule(request, forCall: call)
+          
+          ids.append(request.identifier)
+        }
       }
     }
-    
-    // Call success immediately
+
     call.success([
-      "id": request.identifier
+      "ids": ids
     ])
   }
   
@@ -80,6 +94,17 @@ public class LocalNotifications : AVCPlugin {
     }
     
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+  }
+  
+  func _schedule(_ request: UNNotificationRequest, forCall call: AVCPluginCall) {
+    // Schedule the request.
+    let center = UNUserNotificationCenter.current()
+    center.add(request) { (error : Error?) in
+      if let theError = error {
+        print(theError.localizedDescription)
+        call.error(theError.localizedDescription)
+      }
+    }
   }
   
   /*

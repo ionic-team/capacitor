@@ -263,7 +263,7 @@ export interface LocalNotificationScheduled {
 }
 
 export interface LocalNotificationsPlugin extends Plugin {
-  schedule(notification: LocalNotification): Promise<LocalNotificationScheduled>;
+  schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduled>;
   cancel(ids: string[]): Promise<void>;
 }
 
