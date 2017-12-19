@@ -213,7 +213,7 @@ enum BridgeError: Error {
     }
     
     // Create a plugin call object and handle the success/error callbacks
-    dispatchQueue.sync {
+    dispatchQueue.async {
       //let startTime = CFAbsoluteTimeGetCurrent()
       
       let pluginCall = AVCPluginCall(callbackId: call.callbackId, options: call.options, success: {(result: AVCPluginCallResult?) -> Void in
@@ -229,7 +229,7 @@ enum BridgeError: Error {
       plugin.perform(selector, with: pluginCall)
       
       if pluginCall.save {
-        savePluginCall(pluginCall)
+        self.savePluginCall(pluginCall)
       }
       
       //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
