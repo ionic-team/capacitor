@@ -16,7 +16,7 @@ public class JSExport {
       let data = try String(contentsOf: jsUrl, encoding: .utf8)
       webView.evaluateJavaScript(data) { (result, error) in
         if error != nil {
-          Bridge.fatalError(BridgeError.errorExportingCoreJS, error!)
+          AVCBridge.fatalError(BridgeError.errorExportingCoreJS, error!)
         }
       }
     } catch {

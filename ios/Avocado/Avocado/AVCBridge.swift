@@ -6,7 +6,7 @@ enum BridgeError: Error {
   case errorExportingCoreJS
 }
 
-@objc public class Bridge : NSObject {
+@objc public class AVCBridge : NSObject {
   public var AVC_SITE = "https://avocado.ionicframework.com"
   
   public var webView: WKWebView
@@ -60,7 +60,7 @@ enum BridgeError: Error {
     do {
       try JSExport.exportAvocadoJS(webView: self.webView)
     } catch {
-      Bridge.fatalError(error, error)
+      AVCBridge.fatalError(error, error)
     }
   }
   
