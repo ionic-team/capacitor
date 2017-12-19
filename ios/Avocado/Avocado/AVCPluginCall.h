@@ -22,11 +22,13 @@ typedef void(^AVCPluginCallErrorHandler)(AVCPluginCallError *error);
 
 @interface AVCPluginCall : NSObject
 
+@property (nonatomic, assign) BOOL save;
+@property (nonatomic, strong) NSString *callbackId;
 @property (nonatomic, strong) NSDictionary *options;
 @property (nonatomic, copy) AVCPluginCallSuccessHandler successHandler;
 @property (nonatomic, copy) AVCPluginCallErrorHandler errorHandler;
 
-- (instancetype)initWithOptions:(NSDictionary *)options success:(AVCPluginCallSuccessHandler)success error:(AVCPluginCallErrorHandler)error;
+- (instancetype)initWithCallbackId:(NSString *)callbackId options:(NSDictionary *)options success:(AVCPluginCallSuccessHandler)success error:(AVCPluginCallErrorHandler)error;
 
 @end
 

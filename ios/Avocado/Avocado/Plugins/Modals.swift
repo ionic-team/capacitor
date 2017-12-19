@@ -63,7 +63,7 @@ public class Modals : AVCPlugin {
     alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
       let textField = alert.textFields![0] as UITextField
       call.success([
-        "value": textField.text,
+        "value": textField.text ?? "",
         "cancelled": false
       ])
     }))
