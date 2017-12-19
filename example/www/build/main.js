@@ -1,4 +1,4 @@
-webpackJsonp([16],{
+webpackJsonp([17],{
 
 /***/ 109:
 /***/ (function(module, exports) {
@@ -23,66 +23,70 @@ webpackEmptyAsyncContext.id = 109;
 var map = {
 	"../pages/accessibility/accessibility.module": [
 		277,
-		15
+		16
 	],
 	"../pages/admin/admin.module": [
 		278,
-		14
+		15
 	],
 	"../pages/browser/browser.module": [
-		281,
-		13
+		279,
+		14
 	],
 	"../pages/camera/camera.module": [
-		279,
-		12
+		280,
+		13
 	],
 	"../pages/clipboard/clipboard.module": [
-		280,
-		11
+		281,
+		12
 	],
 	"../pages/device/device.module": [
 		282,
-		10
+		11
 	],
 	"../pages/filesystem/filesystem.module": [
 		283,
-		9
+		10
 	],
 	"../pages/geolocation/geolocation.module": [
 		284,
-		8
+		9
 	],
 	"../pages/haptics/haptics.module": [
 		285,
-		7
+		8
 	],
 	"../pages/keyboard/keyboard.module": [
+		286,
+		7
+	],
+	"../pages/local-notifications/local-notifications.module": [
 		287,
 		6
 	],
-	"../pages/local-notifications/local-notifications.module": [
-		286,
-		5
-	],
 	"../pages/modals/modals.module": [
 		288,
-		4
+		5
 	],
 	"../pages/motion/motion.module": [
 		289,
-		3
+		4
 	],
 	"../pages/network/network.module": [
-		292,
+		290,
+		3
+	],
+	"../pages/photos/photos.module": [
+		291,
 		2
 	],
 	"../pages/splash-screen/splash-screen.module": [
-		291,
+		292,
 		1
 	],
 	"../pages/status-bar/status-bar.module": [
-		290,
+		293,
 		0
 	]
 };
@@ -360,20 +364,21 @@ AppModule = __decorate([
                 links: [
                     { loadChildren: '../pages/accessibility/accessibility.module#AccessibilityPageModule', name: 'AccessibilityPage', segment: 'accessibility', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/admin/admin.module#AdminPageModule', name: 'AdminPage', segment: 'admin', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/browser/browser.module#BrowserPageModule', name: 'BrowserPage', segment: 'browser', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/camera/camera.module#CameraPageModule', name: 'CameraPage', segment: 'camera', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/clipboard/clipboard.module#ClipboardPageModule', name: 'ClipboardPage', segment: 'clipboard', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/browser/browser.module#BrowserPageModule', name: 'BrowserPage', segment: 'browser', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/device/device.module#DevicePageModule', name: 'DevicePage', segment: 'device', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/filesystem/filesystem.module#FilesystemPageModule', name: 'FilesystemPage', segment: 'filesystem', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/geolocation/geolocation.module#GeolocationPageModule', name: 'GeolocationPage', segment: 'geolocation', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/haptics/haptics.module#HapticsPageModule', name: 'HapticsPage', segment: 'haptics', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/local-notifications/local-notifications.module#LocalNotificationsPageModule', name: 'LocalNotificationsPage', segment: 'local-notifications', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/keyboard/keyboard.module#KeyboardPageModule', name: 'KeyboardPage', segment: 'keyboard', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/local-notifications/local-notifications.module#LocalNotificationsPageModule', name: 'LocalNotificationsPage', segment: 'local-notifications', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/modals/modals.module#ModalsPageModule', name: 'ModalsPage', segment: 'modals', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/motion/motion.module#MotionPageModule', name: 'MotionPage', segment: 'motion', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/status-bar/status-bar.module#StatusBarPageModule', name: 'StatusBarPage', segment: 'status-bar', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/network/network.module#NetworkPageModule', name: 'NetworkPage', segment: 'network', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/photos/photos.module#PhotosPageModule', name: 'PhotosPage', segment: 'photos', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/splash-screen/splash-screen.module#SplashScreenPageModule', name: 'SplashScreenPage', segment: 'splash-screen', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/network/network.module#NetworkPageModule', name: 'NetworkPage', segment: 'network', priority: 'low', defaultHistory: [] }
+                    { loadChildren: '../pages/status-bar/status-bar.module#StatusBarPageModule', name: 'StatusBarPage', segment: 'status-bar', priority: 'low', defaultHistory: [] }
                 ]
             })
         ],
@@ -512,6 +517,7 @@ let MyApp = class MyApp {
             { name: 'Modals', page: 'ModalsPage' },
             { name: 'Motion', page: 'MotionPage' },
             { name: 'Network', page: 'NetworkPage' },
+            { name: 'Photos', page: 'PhotosPage' },
             { name: 'SplashScreen', page: 'SplashScreenPage' },
             { name: 'StatusBar', page: 'StatusBarPage' }
         ];

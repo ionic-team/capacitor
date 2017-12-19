@@ -15,7 +15,10 @@ public class Modals : AVCPlugin {
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
     alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: nil))
-    self.bridge.viewController.present(alert, animated: true, completion: nil)
+    
+    DispatchQueue.main.async {
+      self.bridge.viewController.present(alert, animated: true, completion: nil)
+    }
     
     // Call success immediately
     call.success()

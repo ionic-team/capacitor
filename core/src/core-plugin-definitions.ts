@@ -15,6 +15,7 @@ declare global {
     Modals: ModalsPlugin;
     Motion: MotionPlugin;
     Network: NetworkPlugin;
+    Photos: PhotosPlugin;
     SplashScreen: SplashScreenPlugin;
     StatusBar: StatusBarPlugin;
   }
@@ -359,6 +360,19 @@ export interface NetworkStatus {
 }
 
 export type NetworkStatusChangeCallback = (err: any, status: NetworkStatus) => void;
+
+//
+
+export interface PhotosPlugin extends Plugin {
+  getPhotos(): Promise<PhotosResult>;
+  saveToPhotos(path: string): Promise<PhotosSaveResult>;
+}
+
+export interface PhotosResult {
+}
+export interface PhotosSaveResult {
+  success: boolean;
+}
 
 //
 
