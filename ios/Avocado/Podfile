@@ -1,7 +1,7 @@
 target 'Avocado' do
   use_frameworks!
 
-  pod 'AvocadoCordova', :path => '../cordova-avocado'
+  pod 'AvocadoCordova', :path => '../AvocadoCordova'
 
   target 'AvocadoTests' do
     inherit! :search_paths
