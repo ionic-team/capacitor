@@ -60,6 +60,7 @@ AVC_PLUGIN(AVCKeyboard,
 
 AVC_PLUGIN(LocalNotifications,
   AVC_PLUGIN_METHOD(schedule, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(cancel, "", AVCPluginReturnPromise);
 )
 
 AVC_PLUGIN(Modals,

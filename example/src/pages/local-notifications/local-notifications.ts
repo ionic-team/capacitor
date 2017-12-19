@@ -28,6 +28,7 @@ export class LocalNotificationsPage {
   }
 
   async scheduleLocalNotification() {
+    var now = new Date();
     this.notif = await Plugins.LocalNotifications.schedule({
       title: 'Get 20% off!',
       body: 'Swipe to learn more',
@@ -45,8 +46,6 @@ export class LocalNotificationsPage {
         { id: 'clear', title: 'Clear' },
         { id: 'snooze', title: 'Snooze' }
       ]
-    }).then((r) => {
-      console.log('Scheduled notification', r);
     });
   }
 
