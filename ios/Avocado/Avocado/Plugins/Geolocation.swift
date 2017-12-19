@@ -64,15 +64,19 @@ public class Geolocation : AVCPlugin {
   var watchLocationHandler: CLLocationManagerDelegate?
   
   @objc public func getCurrentPosition(_ call: AVCPluginCall) {
-    self.locationHandler = GetLocationHandler(call: call, options:[
-      "watch": false
-    ])
+    DispatchQueue.main.async {
+      self.locationHandler = GetLocationHandler(call: call, options:[
+        "watch": false
+      ])
+    }
   }
   
   @objc public func watchPosition(_ call: AVCPluginCall) {
-    self.watchLocationHandler = GetLocationHandler(call: call, options:[
-      "watch": true
-    ]);
+    DispatchQueue.main.async {
+      self.watchLocationHandler = GetLocationHandler(call: call, options:[
+        "watch": true
+      ]);
+    }
   }
   
 }
