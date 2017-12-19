@@ -1,16 +1,3 @@
-PODS:
-  - AvocadoCordova (1.0.0)
-
-DEPENDENCIES:
-  - AvocadoCordova (from `../AvocadoCordova`)
-
-EXTERNAL SOURCES:
-  AvocadoCordova:
-    :path: ../AvocadoCordova
-
-SPEC CHECKSUMS:
-  AvocadoCordova: c1608e4b7d1fda35bafefcece9d8d7e9d746161b
-
-PODFILE CHECKSUM: a1732366aeebb6fba5e5cc7767777f2ce70d583b
+PODFILE CHECKSUM: a76fe76529566b8eccb439a4f5406894303092bb
 
 COCOAPODS: 1.3.1
