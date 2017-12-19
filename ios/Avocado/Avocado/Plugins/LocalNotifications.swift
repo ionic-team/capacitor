@@ -46,17 +46,13 @@ public class LocalNotifications : AVCPlugin {
     if let scheduleAt = call.getDate("scheduleAt") {
       let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: scheduleAt)
       let repeats = call.get("repeats", Bool.self, false)!
-      
+      var dateInterval = DateInterval(start: Date(), end: dateInfo.date!)
       // If we have a scheduled time and a repeat setting, create a time interval for it
       if repeatAt != nil {
-        let interval = getRepeatDateInterval(repeatAt!, dateInfo)
+        dateInterval = getRepeatDateInterval(repeatAt!, dateInfo)
         print("Repeating at", interval)
-        if interval != nil {
-          trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval!.duration, repeats: repeats)
-        }
-      } else {
-        trigger = UNCalendarNotificationTrigger(dateMatching: dateInfo, repeats: repeats)
       }
+      trigger = UNTimeIntervalNotificationTrigger(timeInterval: dateInterval.duration, repeats: repeats)
     }
     
     // Create the request object.
