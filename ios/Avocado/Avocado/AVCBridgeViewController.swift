@@ -9,12 +9,12 @@
 import UIKit
 import WebKit
 
-class BridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
+class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
   
   // Construct the avocado runtime
-  public var bridge: Bridge?
+  public var bridge: AVCBridge?
   
   override func loadView() {
     let webViewConfiguration = WKWebViewConfiguration()
@@ -35,7 +35,7 @@ class BridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelega
     view = webView
     
     // Create the bridge with our ViewController and WebView
-    bridge = Bridge(self, webView!)
+    bridge = AVCBridge(self, webView!)
   }
   
   override func viewDidLoad() {

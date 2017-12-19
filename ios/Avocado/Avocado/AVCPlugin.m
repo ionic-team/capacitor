@@ -5,7 +5,7 @@
 
 @implementation AVCPlugin
 
--(instancetype) initWithBridge:(Bridge *)bridge pluginId:(NSString *)pluginId {
+-(instancetype) initWithBridge:(AVCBridge *)bridge pluginId:(NSString *)pluginId {
   self.bridge = bridge;
   self.pluginId = pluginId;
   self.eventListeners = [[NSMutableDictionary alloc] init];

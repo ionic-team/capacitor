@@ -29,7 +29,7 @@
 		50503EF01FC08595003606DC /* Avocado.h in Headers */ = {isa = PBXBuildFile; fileRef = 50503EE21FC08594003606DC /* Avocado.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50503EFF1FC08662003606DC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EFD1FC08662003606DC /* Device.swift */; };
 		50503F001FC08662003606DC /* Geolocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EFE1FC08662003606DC /* Geolocation.swift */; };
-		50503F231FC0968E003606DC /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F221FC0968E003606DC /* Bridge.swift */; };
+		50503F231FC0968E003606DC /* AVCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F221FC0968E003606DC /* AVCBridge.swift */; };
 		50503F251FC098A3003606DC /* AVCPluginCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503F241FC098A3003606DC /* AVCPluginCall.swift */; };
 		5053E8FD1FC874DE00166FBE /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FC1FC874DE00166FBE /* Loader.swift */; };
 		5053E8FF1FC8755F00166FBE /* Diagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5053E8FE1FC8755F00166FBE /* Diagnostics.swift */; };
@@ -46,7 +46,7 @@
 		50C99F6F1FE84F9400175E64 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C99F6E1FE84F9400175E64 /* App.swift */; };
 		50D503901FDDF6B10050E5CE /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D5038F1FDDF6B10050E5CE /* JS.swift */; };
 		50D503921FE03B330050E5CE /* JSExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D503911FE03B330050E5CE /* JSExport.swift */; };
-		50E3D63F1FCE6EA500BBEB06 /* BridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */; };
+		50E3D63F1FCE6EA500BBEB06 /* AVCBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E3D63E1FCE6EA500BBEB06 /* AVCBridgeViewController.swift */; };
 		50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86EF1FCA66CB00E48884 /* DocLinks.swift */; };
 		50ED86F31FCB728D00E48884 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F21FCB728D00E48884 /* Network.swift */; };
 		50ED86F51FCB737300E48884 /* Modals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F41FCB737300E48884 /* Modals.swift */; };
@@ -91,7 +91,7 @@
 		50503EEF1FC08595003606DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50503EFD1FC08662003606DC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		50503EFE1FC08662003606DC /* Geolocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geolocation.swift; sourceTree = "<group>"; };
-		50503F221FC0968E003606DC /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
+		50503F221FC0968E003606DC /* AVCBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCBridge.swift; sourceTree = "<group>"; };
 		50503F241FC098A3003606DC /* AVCPluginCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCPluginCall.swift; sourceTree = "<group>"; };
 		5053E8FC1FC874DE00166FBE /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
 		5053E8FE1FC8755F00166FBE /* Diagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
@@ -109,7 +109,7 @@
 		50C99F6E1FE84F9400175E64 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		50D5038F1FDDF6B10050E5CE /* JS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		50D503911FE03B330050E5CE /* JSExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
-		50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeViewController.swift; sourceTree = "<group>"; };
+		50E3D63E1FCE6EA500BBEB06 /* AVCBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCBridgeViewController.swift; sourceTree = "<group>"; };
 		50ED86EF1FCA66CB00E48884 /* DocLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocLinks.swift; sourceTree = "<group>"; };
 		50ED86F21FCB728D00E48884 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		50ED86F41FCB737300E48884 /* Modals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modals.swift; sourceTree = "<group>"; };
@@ -190,8 +190,8 @@
 				50503EE21FC08594003606DC /* Avocado.h */,
 				50503EE31FC08594003606DC /* Info.plist */,
 				50503F241FC098A3003606DC /* AVCPluginCall.swift */,
-				50503F221FC0968E003606DC /* Bridge.swift */,
-				50E3D63E1FCE6EA500BBEB06 /* BridgeViewController.swift */,
+				50503F221FC0968E003606DC /* AVCBridge.swift */,
+				50E3D63E1FCE6EA500BBEB06 /* AVCBridgeViewController.swift */,
 				50ED86F61FCB759B00E48884 /* DevMode.swift */,
 				5053E8FE1FC8755F00166FBE /* Diagnostics.swift */,
 				50ED86EF1FCA66CB00E48884 /* DocLinks.swift */,
@@ -380,8 +380,8 @@
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
 				50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */,
 				501CBABF1FC2A22A009B0D4D /* Browser.swift in Sources */,
-				50E3D63F1FCE6EA500BBEB06 /* BridgeViewController.swift in Sources */,
-				50503F231FC0968E003606DC /* Bridge.swift in Sources */,
+				50E3D63F1FCE6EA500BBEB06 /* AVCBridgeViewController.swift in Sources */,
+				50503F231FC0968E003606DC /* AVCBridge.swift in Sources */,
 				504C7E371FCCE6BC0020DFD2 /* Reachability.swift in Sources */,
 				50584D131FDA15A300E3227C /* Keyboard.m in Sources */,
 				50ED86F71FCB759B00E48884 /* DevMode.swift in Sources */,

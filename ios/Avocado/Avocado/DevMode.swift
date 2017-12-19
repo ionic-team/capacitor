@@ -1,8 +1,8 @@
 import Foundation
 
 class DevMode {
-  var bridge: Bridge
-  init(_ bridge: Bridge) {
+  var bridge: AVCBridge
+  init(_ bridge: AVCBridge) {
     self.bridge = bridge
   }
   
