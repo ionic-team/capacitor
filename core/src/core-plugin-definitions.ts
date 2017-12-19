@@ -227,11 +227,11 @@ export type GeolocationWatchCallback = (err: any, position: GeolocationPositon) 
 //
 
 export interface HapticsPlugin extends Plugin {
-  impact(options: HapticsImpactOptions) : void;
-  vibrate() : void;
-  selectionStart() : void;
-  selectionChanged() : void;
-  selectionEnd() : void;
+  impact(options: HapticsImpactOptions): void;
+  vibrate(): void;
+  selectionStart(): void;
+  selectionChanged(): void;
+  selectionEnd(): void;
 }
 
 export interface HapticsImpactOptions {
@@ -259,8 +259,19 @@ export interface KeyboardPlugin extends Plugin {
 //
 
 export interface LocalNotificationsPlugin extends Plugin {
-  schedule(notification: LocalNotification) : Promise<void>;
+  schedule(notification: LocalNotification): Promise<LocalNotificationScheduled>;
+  cancel(id: string): Promise<void>;
 }
+
+export interface LocalNotification {
+  title: string;
+  body: string;
+  identifier: string;
+  scheduleAt?: NotificationScheduleAt;
+  repeat: NotificationRepeat;
+  actions?: [NotificationAction];
+}
+
 export interface NotificationScheduleAt {
   month?: number;
   day?: number;
@@ -270,11 +281,18 @@ export interface NotificationScheduleAt {
   second?: number;
 }
 
-export interface LocalNotification {
+export interface NotificationRepeat {
+  every: 'day'|'month'|'year'|'week'|'two-weeks';
+  times: number;
+}
+
+export interface NotificationAction {
+  id: string;
   title: string;
-  body: string;
-  identifier: string;
-  scheduleAt?: NotificationScheduleAt;
+}
+
+export interface LocalNotificationScheduled {
+  id: string;
 }
 
 //

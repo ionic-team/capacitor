@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Plugins
+  Plugins,
+  LocalNotificationScheduled
 } from '@avocadojs/core';
 
 /**
@@ -17,6 +18,7 @@ import {
   templateUrl: 'local-notifications.html',
 })
 export class LocalNotificationsPage {
+  notif: LocalNotificationScheduled;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
@@ -25,9 +27,8 @@ export class LocalNotificationsPage {
     console.log('ionViewDidLoad LocalNotificationsPage');
   }
 
-  scheduleLocalNotification() {
-    var now = new Date();
-    Plugins.LocalNotifications.schedule({
+  async scheduleLocalNotification() {
+    this.notif = await Plugins.LocalNotifications.schedule({
       title: 'Get 20% off!',
       body: 'Swipe to learn more',
       identifier: 'special-deal',
@@ -35,10 +36,22 @@ export class LocalNotificationsPage {
         hour: now.getHours(),
         minute: now.getMinutes(),
         second: now.getSeconds() + 10
-      }
+      },
+      repeat: {
+        every: 'day',
+        times: 5
+      },
+      actions: [
+        { id: 'clear', title: 'Clear' },
+        { id: 'snooze', title: 'Snooze' }
+      ]
     }).then((r) => {
       console.log('Scheduled notification', r);
     });
+  }
+
+  cancelNotification() {
+    this.notif && Plugins.LocalNotifications.cancel(this.notif.id);
   }
 
 }

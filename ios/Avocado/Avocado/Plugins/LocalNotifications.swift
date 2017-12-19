@@ -34,6 +34,7 @@ public class LocalNotifications : AVCPlugin {
     
     requestPermissions()
     
+    // Build content of notification
     let content = UNMutableNotificationContent()
     content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
     content.body = NSString.localizedUserNotificationString(forKey: body,
@@ -41,27 +42,7 @@ public class LocalNotifications : AVCPlugin {
     
     var trigger: UNCalendarNotificationTrigger?
     if let scheduleAt = call.get("scheduleAt", [String:Int].self) {
-      // Configure the trigger for a 7am wakeup.
-      var dateInfo = DateComponents()
-      if let year = scheduleAt["year"] {
-        dateInfo.year = year
-      }
-      if let month = scheduleAt["month"] {
-        dateInfo.month = month
-      }
-      if let day = scheduleAt["day"] {
-        dateInfo.day = day
-      }
-      if let hour = scheduleAt["hour"] {
-        dateInfo.hour = hour
-      }
-      if let minute = scheduleAt["minute"] {
-        dateInfo.minute = minute
-      }
-      if let second = scheduleAt["second"] {
-        dateInfo.second = second
-      }
-      print("Schedling notification", dateInfo)
+      let dateInfo = getDateInfo(scheduleAt)
       let repeats = call.get("repeats", Bool.self, false)!
       trigger = UNCalendarNotificationTrigger(dateMatching: dateInfo, repeats: repeats)
     }
@@ -82,6 +63,29 @@ public class LocalNotifications : AVCPlugin {
     call.success([
       "id": request.identifier
     ])
+  }
+  
+  func getDateInfo(_ at: [String:Int]) -> DateComponents {
+    var dateInfo = DateComponents()
+    if let year = at["year"] {
+      dateInfo.year = year
+    }
+    if let month = at["month"] {
+      dateInfo.month = month
+    }
+    if let day = at["day"] {
+      dateInfo.day = day
+    }
+    if let hour = at["hour"] {
+      dateInfo.hour = hour
+    }
+    if let minute = at["minute"] {
+      dateInfo.minute = minute
+    }
+    if let second = at["second"] {
+      dateInfo.second = second
+    }
+    return dateInfo
   }
 }
 
