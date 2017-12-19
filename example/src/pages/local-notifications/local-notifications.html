@@ -14,11 +14,10 @@
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <button (click)="scheduleLocalNotification()" ion-button>
-        Schedule Local Notification
-      </button>
-    </ion-item>
-  </ion-list>
+  <button (click)="scheduleLocalNotification()" ion-button>
+    Schedule Local Notification
+  </button>
+  <button (click)="cancelNotification()" ion-button>
+    Cancel Local Notification
+  </button>
 </ion-content>

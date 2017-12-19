@@ -258,6 +258,10 @@ export interface KeyboardPlugin extends Plugin {
 
 //
 
+export interface LocalNotificationScheduled {
+  id: string;
+}
+
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(notification: LocalNotification): Promise<LocalNotificationScheduled>;
   cancel(id: string): Promise<void>;
@@ -289,10 +293,6 @@ export interface NotificationRepeat {
 export interface NotificationAction {
   id: string;
   title: string;
-}
-
-export interface LocalNotificationScheduled {
-  id: string;
 }
 
 //
