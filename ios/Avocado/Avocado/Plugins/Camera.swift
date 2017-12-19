@@ -1,6 +1,5 @@
 import Foundation
-import CoreMotion
-
+import Photos
 
 @objc(Camera)
 public class Camera : AVCPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
@@ -31,6 +30,12 @@ public class Camera : AVCPlugin, UIImagePickerControllerDelegate, UINavigationCo
     // Build the action sheet
     let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
     alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
+      let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
+      if photoAuthorizationStatus == .restricted || photoAuthorizationStatus == .denied {
+        call.error("User denied access to photos")
+        return
+      }
+      
       self.imagePicker!.sourceType = .photoLibrary
       self.imagePicker!.allowsEditing = allowEditing
 
@@ -51,7 +56,6 @@ public class Camera : AVCPlugin, UIImagePickerControllerDelegate, UINavigationCo
     }))
     
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
-      call.error("User closed action sheet")
       alert.dismiss(animated: true, completion: nil)
     }))
     
@@ -87,7 +91,7 @@ public class Camera : AVCPlugin, UIImagePickerControllerDelegate, UINavigationCo
       "format": "jpeg"
     ])
     
-    picker.dismiss(animated: true)
+    picker.dismiss(animated: true, completion: nil)
   }
   
   /**
@@ -118,7 +122,7 @@ public class Camera : AVCPlugin, UIImagePickerControllerDelegate, UINavigationCo
     
     return nil
   }
-
+  
   /**
    * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered
    */

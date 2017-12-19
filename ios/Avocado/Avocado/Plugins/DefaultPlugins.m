@@ -32,8 +32,8 @@ AVC_PLUGIN(Device,
 
 AVC_PLUGIN(Filesystem,
   AVC_PLUGIN_METHOD(readFile, "file:string,directory:string,encoding:string", AVCPluginReturnPromise);
-  AVC_PLUGIN_METHOD(writeFile, "file:string,directory:string,data:string, encoding:string", AVCPluginReturnPromise);
-  AVC_PLUGIN_METHOD(appendFile, "file:string,directory:string,data:string,encoding:string", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(writeFile, "file:string,data:string,directory:string,encoding:string", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(appendFile, "file:string,data:string,directory:string,encoding:string", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(deleteFile, "file:string,directory:string", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(mkdir, "path:string,directory:string,createIntermediateDirectories:boolean", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(rmdir, "path:string,directory:string", AVCPluginReturnPromise);
