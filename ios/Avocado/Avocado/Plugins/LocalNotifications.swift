@@ -66,12 +66,12 @@ public class LocalNotifications : AVCPlugin {
   }
   
   @objc public func cancel(_ call: AVCPluginCall) {
-    guard let id = call.getString("id") else {
-      call.error("Must supply id for notification")
+    guard let ids = call.getArray("ids", String.self, []) else {
+      call.error("Must supply ids for notification")
       return
     }
     
-    print("Cancelling notification", id)
+    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
   }
     
   func getDateInfo(_ at: [String:Int]) -> DateComponents {

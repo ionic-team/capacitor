@@ -11,6 +11,10 @@ public extension AVCPluginCall {
     return self.options[key] as? T ?? defaultValue
   }
   
+  public func getArray<T>(_ key: String, _ ofType: T.Type, _ defaultValue: [T]? = nil) -> [T]? {
+    return self.options[key] as? [T] ?? defaultValue
+  }
+  
   public func getBool(_ key: String, defaultValue: NSNumber?) -> NSNumber? {
     return self.options[key] as? NSNumber ?? defaultValue
   }
@@ -26,7 +30,7 @@ public extension AVCPluginCall {
   public func getObject(_ key: String, defaultValue: [String:Any]? = nil) -> [String:Any]? {
     return self.options[key] as? [String:Any] ?? defaultValue
   }
-  
+
   public func success() {
     successHandler(AVCPluginCallResult())
   }

@@ -50,7 +50,7 @@ export class LocalNotificationsPage {
   }
 
   cancelNotification() {
-    this.notif && Plugins.LocalNotifications.cancel(this.notif.id);
+    this.notif && Plugins.LocalNotifications.cancel([this.notif.id]);
   }
 
 }
