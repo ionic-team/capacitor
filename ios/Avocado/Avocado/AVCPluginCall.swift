@@ -15,6 +15,10 @@ public extension AVCPluginCall {
     return self.options[key] as? NSNumber ?? defaultValue
   }
   
+  public func getInt(_ key: String, defaultValue: Int?) -> Int? {
+    return self.options[key] as? Int ?? defaultValue
+  }
+  
   public func getString(_ key: String, defaultValue: String? = nil) -> String? {
     return self.options[key] as? String ?? defaultValue
   }

@@ -72,6 +72,11 @@ AVC_PLUGIN(Network,
   AVC_PLUGIN_METHOD(getStatus, "", AVCPluginReturnPromise);
 )
 
+AVC_PLUGIN(Photos,
+  AVC_PLUGIN_METHOD(getPhotos, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(saveToPhotos, "path:string", AVCPluginReturnPromise);
+)
+
 AVC_PLUGIN(SplashScreen,
   AVC_PLUGIN_METHOD(show, "", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(hide, "", AVCPluginReturnPromise);
