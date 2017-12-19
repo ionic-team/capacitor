@@ -14,8 +14,11 @@
 
 
 <ion-content padding>
-  <button (click)="scheduleLocalNotification()" ion-button>
-    Schedule Local Notification
+  <button (click)="scheduleOnce()" ion-button>
+    Schedule Once
+  </button>
+  <button (click)="scheduleRepeating()" ion-button>
+    Schedule Repeating
   </button>
   <button (click)="cancelNotification()" ion-button>
     Cancel Local Notification

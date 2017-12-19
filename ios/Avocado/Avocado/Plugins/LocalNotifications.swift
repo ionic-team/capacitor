@@ -40,11 +40,23 @@ public class LocalNotifications : AVCPlugin {
     content.body = NSString.localizedUserNotificationString(forKey: body,
                                                             arguments: nil)
     
-    var trigger: UNCalendarNotificationTrigger?
-    if let scheduleAt = call.get("scheduleAt", [String:Int].self) {
-      let dateInfo = getDateInfo(scheduleAt)
+    let repeatAt = call.get("repeat", [String:Any].self)
+    
+    var trigger: UNNotificationTrigger?
+    if let scheduleAt = call.getDate("scheduleAt") {
+      let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: scheduleAt)
       let repeats = call.get("repeats", Bool.self, false)!
-      trigger = UNCalendarNotificationTrigger(dateMatching: dateInfo, repeats: repeats)
+      
+      // If we have a scheduled time and a repeat setting, create a time interval for it
+      if repeatAt != nil {
+        let interval = getRepeatDateInterval(repeatAt!, dateInfo)
+        print("Repeating at", interval)
+        if interval != nil {
+          trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval!.duration, repeats: repeats)
+        }
+      } else {
+        trigger = UNCalendarNotificationTrigger(dateMatching: dateInfo, repeats: repeats)
+      }
     }
     
     // Create the request object.
@@ -67,15 +79,18 @@ public class LocalNotifications : AVCPlugin {
   
   @objc public func cancel(_ call: AVCPluginCall) {
     guard let ids = call.getArray("ids", String.self, []) else {
-      call.error("Must supply ids for notification")
+      call.error("Must supply ids for notifications")
       return
     }
     
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
   }
+  
+  /*
+  func getDateInfo(_ at: Date) -> DateComponents {
+    var dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: Date())
+    dateInfo.calendar = Calendar.current
     
-  func getDateInfo(_ at: [String:Int]) -> DateComponents {
-    var dateInfo = DateComponents()
     if let year = at["year"] {
       dateInfo.year = year
     }
@@ -95,6 +110,45 @@ public class LocalNotifications : AVCPlugin {
       dateInfo.second = second
     }
     return dateInfo
+  }*/
+  
+  func getRepeatDateInterval(_ repeats: [String:Any], _ dateInfo: DateComponents) -> DateInterval? {
+    guard let every = repeats["every"] as? String else {
+      return nil
+    }
+    let cal = Calendar.current
+    
+    switch every {
+    case "year":
+      let newDate = cal.date(byAdding: .year, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "month":
+      let newDate = cal.date(byAdding: .month, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "two-weeks":
+      let newDate = cal.date(byAdding: .weekOfYear, value: 2, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "week":
+      let newDate = cal.date(byAdding: .weekOfYear, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "day":
+      let newDate = cal.date(byAdding: .day, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "day":
+      let newDate = cal.date(byAdding: .day, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "hour":
+      let newDate = cal.date(byAdding: .hour, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "minute":
+      let newDate = cal.date(byAdding: .minute, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    case "second":
+      let newDate = cal.date(byAdding: .second, value: 1, to: dateInfo.date!)!
+      return DateInterval(start: dateInfo.date!, end: newDate)
+    default:
+      return nil
+    }
   }
 }
 
