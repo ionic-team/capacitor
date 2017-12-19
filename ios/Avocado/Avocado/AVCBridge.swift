@@ -278,9 +278,9 @@ enum BridgeError: Error {
    */
   public func toJs(result: JSResult) {
     let resultJson = result.toJson()
-    print("🥑  TO JS", result.toJson())
+    print("🥑  TO JS", resultJson.prefix(256))
     
-    DispatchQueue.main.sync {
+    DispatchQueue.main.async {
       self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
         if error != nil && result != nil {
           print(result!)
@@ -293,7 +293,7 @@ enum BridgeError: Error {
    * Send an error result to the JavaScript layer.
    */
   public func toJsError(error: JSResultError) {
-    DispatchQueue.main.sync {
+    DispatchQueue.main.async {
       self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
         if error != nil && result != nil {
           print(result!)
@@ -313,7 +313,7 @@ enum BridgeError: Error {
     });
     """
     
-    DispatchQueue.main.sync {
+    DispatchQueue.main.async {
       self.webView.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
         if error != nil {
           print("🥑  JS Eval error", error!.localizedDescription)
