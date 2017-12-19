@@ -27,6 +27,17 @@ public extension AVCPluginCall {
     return self.options[key] as? String ?? defaultValue
   }
   
+  public func getDate(_ key: String, defaultValue: Date? = nil) -> Date? {
+    guard let isoString = self.options[key] as? String else {
+      return defaultValue
+    }
+    let dateFormatter = DateFormatter()
+    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+    dateFormatter.timeZone = TimeZone.autoupdatingCurrent
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    return dateFormatter.date(from: isoString)
+  }
+  
   public func getObject(_ key: String, defaultValue: [String:Any]? = nil) -> [String:Any]? {
     return self.options[key] as? [String:Any] ?? defaultValue
   }

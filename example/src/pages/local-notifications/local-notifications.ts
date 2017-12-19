@@ -27,21 +27,13 @@ export class LocalNotificationsPage {
     console.log('ionViewDidLoad LocalNotificationsPage');
   }
 
-  async scheduleLocalNotification() {
+  async scheduleOnce() {
     var now = new Date();
     this.notif = await Plugins.LocalNotifications.schedule({
       title: 'Get 20% off!',
       body: 'Swipe to learn more',
       identifier: 'special-deal',
-      scheduleAt: {
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-        second: now.getSeconds() + 10
-      },
-      repeat: {
-        every: 'day',
-        times: 5
-      },
+      scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
       actions: [
         { id: 'clear', title: 'Clear' },
         { id: 'snooze', title: 'Snooze' }
@@ -49,6 +41,22 @@ export class LocalNotificationsPage {
     });
   }
 
+  async scheduleRepeating() {
+    var now = new Date();
+    this.notif = await Plugins.LocalNotifications.schedule({
+      title: 'Get 20% off!',
+      body: 'Swipe to learn more',
+      identifier: 'special-deal',
+      scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
+      repeat: {
+        every: 'minute'
+      },
+      actions: [
+        { id: 'clear', title: 'Clear' },
+        { id: 'snooze', title: 'Snooze' }
+      ]
+    });
+  }
   cancelNotification() {
     this.notif && Plugins.LocalNotifications.cancel([this.notif.id]);
   }

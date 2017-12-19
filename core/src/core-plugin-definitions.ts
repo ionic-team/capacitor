@@ -271,23 +271,14 @@ export interface LocalNotification {
   title: string;
   body: string;
   identifier: string;
-  scheduleAt?: NotificationScheduleAt;
-  repeat: NotificationRepeat;
+  scheduleAt?: string;
+  repeat?: NotificationRepeat;
   actions?: [NotificationAction];
 }
 
-export interface NotificationScheduleAt {
-  month?: number;
-  day?: number;
-  year?: number;
-  hour?: number;
-  minute?: number;
-  second?: number;
-}
-
 export interface NotificationRepeat {
-  every: 'day'|'month'|'year'|'week'|'two-weeks';
-  times: number;
+  every: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
+  times?: number; // Currently not used
 }
 
 export interface NotificationAction {
