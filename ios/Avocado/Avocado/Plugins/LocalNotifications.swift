@@ -12,7 +12,10 @@ public class LocalNotifications : AVCPlugin {
     center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
       // Enable or disable features based on authorization.
     }
-    UIApplication.shared.registerForRemoteNotifications()
+    
+    DispatchQueue.main.async {
+      UIApplication.shared.registerForRemoteNotifications()
+    }
   }
   
   @objc public func schedule(_ call: AVCPluginCall) {
@@ -58,6 +61,7 @@ public class LocalNotifications : AVCPlugin {
       if let second = scheduleAt["second"] {
         dateInfo.second = second
       }
+      print("Schedling notification", dateInfo)
       let repeats = call.get("repeats", Bool.self, false)!
       trigger = UNCalendarNotificationTrigger(dateMatching: dateInfo, repeats: repeats)
     }

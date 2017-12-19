@@ -26,13 +26,15 @@ export class LocalNotificationsPage {
   }
 
   scheduleLocalNotification() {
+    var now = new Date();
     Plugins.LocalNotifications.schedule({
       title: 'Get 20% off!',
       body: 'Swipe to learn more',
       identifier: 'special-deal',
       scheduleAt: {
-        hour: 23,
-        minute: 26
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds() + 10
       }
     }).then((r) => {
       console.log('Scheduled notification', r);
