@@ -71,11 +71,15 @@
 - (void)addListener:(AVCPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
   [self addEventListener:eventName listener:call];
+  [call setSave:TRUE];
 }
 
 - (void)removeListener:(AVCPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
-  [self removeEventListener:eventName listener:call];
+  NSString *callbackId = [call.options objectForKey:@"callbackId"];
+  AVCPluginCall *storedCall = [self.bridge getSavedCallWithCallbackId:callbackId];
+  [self removeEventListener:eventName listener:storedCall];
+  [self.bridge removeSavedCallWithCallbackId:callbackId];
 }
 /*
  -(BOOL) getBool:(AVCPluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {

@@ -93,6 +93,8 @@
           options: options || {}
         });
 
+        return callbackId;
+
       } else {
         orgConsole.warn.call(win.console, `browser implementation unavailable for: ${pluginId}`);
       }
@@ -100,6 +102,8 @@
     } catch (e) {
       orgConsole.error.call(win.console, e);
     }
+
+    return null;
   };
 
   /**
@@ -157,7 +161,7 @@
       callback = options;
       options = null;
     }
-    avocado.toNative(pluginId, methodName, options, {
+    return avocado.toNative(pluginId, methodName, options, {
       callback
     });
   };
@@ -173,19 +177,20 @@
 
 
   avocado.addListener = function(pluginId, eventName, callback) {
-    avocado.nativeCallback(pluginId, 'addListener', {
+    var callbackId = avocado.nativeCallback(pluginId, 'addListener', {
       eventName
     }, callback);
     return {
       remove: function() {
         console.log('Removing listener', pluginId, eventName);
-        avocado.removeListener(pluginId, eventName, callback);
+        avocado.removeListener(pluginId, callbackId, eventName, callback);
       }
     }
   };
 
-  avocado.removeListener = function(pluginId, eventName, callback) {
+  avocado.removeListener = function(pluginId, callbackId, eventName, callback) {
     avocado.nativeCallback(pluginId, 'removeListener', {
+      callbackId,
       eventName
     }, callback);
   }

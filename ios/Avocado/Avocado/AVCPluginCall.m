@@ -22,7 +22,8 @@
 
 @implementation AVCPluginCall
 
--(instancetype)initWithOptions:(NSDictionary *)options success:(AVCPluginCallSuccessHandler) success error:(AVCPluginCallErrorHandler) error {
+- (instancetype)initWithCallbackId:(NSString *)callbackId options:(NSDictionary *)options success:(AVCPluginCallSuccessHandler) success error:(AVCPluginCallErrorHandler) error {
+  self.callbackId = callbackId;
   self.options = options;
   self.successHandler = success;
   self.errorHandler = error;

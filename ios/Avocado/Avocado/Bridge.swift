@@ -19,6 +19,8 @@ enum BridgeError: Error {
   // List of known plugins by pluginId -> Plugin Type
   public var knownPlugins = [String:AVCPlugin.Type]()
   
+  public var storedCalls = [String:AVCPluginCall]()
+  
   // Dispatch queue for our operations
   // TODO: Unique label?
   public var dispatchQueue = DispatchQueue(label: "bridge")
@@ -113,12 +115,25 @@ enum BridgeError: Error {
     
     for i in (0..<mc) {
       
-      var sel = sel_getName(method_getName(mlist!.pointee))
+      let sel = sel_getName(method_getName(mlist!.pointee))
       print("Method #\(i): \(method_getName(mlist!.pointee))")
       print(String(cString: sel))
       mlist = mlist!.successor()
     }
     free(olist)
+  }
+  
+  
+  func savePluginCall(_ call: AVCPluginCall) {
+    storedCalls[call.callbackId] = call
+  }
+  
+  @objc public func getSavedCall(callbackId: String) -> AVCPluginCall? {
+    return storedCalls[callbackId]
+  }
+  
+  @objc public func removeSavedCall(callbackId: String) {
+    storedCalls.removeValue(forKey: callbackId)
   }
   
   public func isSimulator() -> Bool {
@@ -201,7 +216,7 @@ enum BridgeError: Error {
     dispatchQueue.sync {
       //let startTime = CFAbsoluteTimeGetCurrent()
       
-      let pluginCall = AVCPluginCall(options: call.options, success: {(result: AVCPluginCallResult?) -> Void in
+      let pluginCall = AVCPluginCall(callbackId: call.callbackId, options: call.options, success: {(result: AVCPluginCallResult?) -> Void in
         if result != nil {
           self.toJs(result: JSResult(call: call, result: result!.data ?? [:]))
         } else {
@@ -212,6 +227,10 @@ enum BridgeError: Error {
       })!
       
       plugin.perform(selector, with: pluginCall)
+      
+      if pluginCall.save {
+        savePluginCall(pluginCall)
+      }
       
       //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
       //print("Native call took", timeElapsed)
@@ -254,7 +273,7 @@ enum BridgeError: Error {
     """
     self.webView.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
       if error != nil {
-        print("🥑  JS Eval error", error?.localizedDescription)
+        print("🥑  JS Eval error", error!.localizedDescription)
       }
     })
   }
