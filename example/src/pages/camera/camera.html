@@ -14,11 +14,6 @@
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <img [src]="image">
-      <button (click)="takePicture()" ion-button color="primary">
-        Take Picture</button>
-    </ion-item>
-  </ion-list>
+  <img [src]="image" />
+  <button (click)="takePicture()" ion-button color="primary">Take Picture</button>
 </ion-content>
