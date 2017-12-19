@@ -26,6 +26,7 @@ export class MyApp {
     { name: 'Modals', page: 'ModalsPage' },
     { name: 'Motion', page: 'MotionPage' },
     { name: 'Network', page: 'NetworkPage' },
+    { name: 'Photos', page: 'PhotosPage' },
     { name: 'SplashScreen', page: 'SplashScreenPage' },
     { name: 'StatusBar', page: 'StatusBarPage' }
   ]

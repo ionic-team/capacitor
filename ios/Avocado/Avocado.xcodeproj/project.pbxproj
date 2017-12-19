@@ -158,6 +158,14 @@
 			path = Scripts;
 			sourceTree = "<group>";
 		};
+		503ACC051FE98DA600C5E136 /* Photos */ = {
+			isa = PBXGroup;
+			children = (
+				5005D4301FE80C0E00E931C4 /* Photos.swift */,
+			);
+			path = Photos;
+			sourceTree = "<group>";
+		};
 		504C7E351FCCE6AD0020DFD2 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -227,6 +235,7 @@
 		50503F1F1FC095EA003606DC /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				503ACC051FE98DA600C5E136 /* Photos */,
 				504C7E351FCCE6AD0020DFD2 /* Network */,
 				5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */,
 				5053E90E1FC8D51100166FBE /* DefaultPlugins.m */,
@@ -242,7 +251,6 @@
 				501CBABA1FC28768009B0D4D /* Haptics.swift */,
 				50ED86F81FCC69C200E48884 /* LocalNotifications.swift */,
 				50ED86F41FCB737300E48884 /* Modals.swift */,
-				5005D4301FE80C0E00E931C4 /* Photos.swift */,
 				50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */,
 				501CBABC1FC29EDE009B0D4D /* SplashScreen.swift */,
 				501CBAB81FC26770009B0D4D /* StatusBar.swift */,

@@ -279,9 +279,12 @@ enum BridgeError: Error {
   public func toJs(result: JSResult) {
     let resultJson = result.toJson()
     print("🥑  TO JS", result.toJson())
-    self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
-      if error != nil && result != nil {
-        print(result!)
+    
+    DispatchQueue.main.sync {
+      self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
+        if error != nil && result != nil {
+          print(result!)
+        }
       }
     }
   }
@@ -290,9 +293,11 @@ enum BridgeError: Error {
    * Send an error result to the JavaScript layer.
    */
   public func toJsError(error: JSResultError) {
-    self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
-      if error != nil && result != nil {
-        print(result!)
+    DispatchQueue.main.sync {
+      self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
+        if error != nil && result != nil {
+          print(result!)
+        }
       }
     }
   }
@@ -307,11 +312,14 @@ enum BridgeError: Error {
       \(js)
     });
     """
-    self.webView.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
-      if error != nil {
-        print("🥑  JS Eval error", error!.localizedDescription)
-      }
-    })
+    
+    DispatchQueue.main.sync {
+      self.webView.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
+        if error != nil {
+          print("🥑  JS Eval error", error!.localizedDescription)
+        }
+      })
+    }
   }
 }
 
