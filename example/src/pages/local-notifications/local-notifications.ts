@@ -37,7 +37,8 @@ export class LocalNotificationsPage {
         id: 'special-deal',
         schedule: {
           //at: new Date(now.getTime() + (10 * 1000)).toISOString()
-          at: new Date(now.getTime() + (10 * 1000))
+          at: new Date(now.getTime() + (10 * 1000)),
+          repeats: true
         },
         actions: [
           { id: 'clear', title: 'Clear' },
@@ -64,9 +65,9 @@ export class LocalNotificationsPage {
           { id: 'snooze', title: 'Snooze' }
         ]
       }, {
-        title: 'Get 20% off!',
+        title: 'Happy Holidays',
         body: 'Swipe to learn more',
-        id: 'special-deal',
+        id: 'holidays',
         schedule: {
           every: 'minute'
         },

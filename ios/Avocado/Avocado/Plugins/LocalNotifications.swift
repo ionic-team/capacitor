@@ -39,9 +39,6 @@ public class LocalNotifications : AVCPlugin {
         call.error("Must provide a body for notification \(identifier)")
         return
       }
-      
-      let repeats = notification["repeats"] as? Bool ?? false
-
       requestPermissions()
       
       // Build content of notification
@@ -52,7 +49,7 @@ public class LocalNotifications : AVCPlugin {
       
       var trigger: UNNotificationTrigger?
       if let schedule = notification["schedule"] as? [String:Any] {
-        trigger = handleScheduledNotification(call, schedule, repeats)
+        trigger = handleScheduledNotification(call, schedule)
       }
       
       // Schedule the request.
@@ -96,16 +93,16 @@ public class LocalNotifications : AVCPlugin {
     })
   }
   
-  func handleScheduledNotification(_ call: AVCPluginCall, _ schedule: [String:Any], _ repeats: Bool) -> UNNotificationTrigger? {
+  func handleScheduledNotification(_ call: AVCPluginCall, _ schedule: [String:Any]) -> UNNotificationTrigger? {
     let at = schedule["at"] as? Date
     let every = schedule["every"] as? String
     let on = schedule["on"] as? [String:Int]
-    
+    let repeats = schedule["repeats"] as? Bool ?? false
+
     // If there's a specific date for this notificiation
     if at != nil {
       let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: at!)
-      let repeats = call.get("repeats", Bool.self, false)!
-    
+
       if dateInfo.date! < Date() {
         call.error("Scheduled time must be *after* current time")
         return nil
@@ -119,13 +116,13 @@ public class LocalNotifications : AVCPlugin {
     // matching set of date components
     if on != nil {
       let dateComponents = getDateComponents(on!)
-      return UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: repeats)
+      return UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
     }
     
     if every != nil {
       if let repeatDateInterval = getRepeatDateInterval(every!) {
         print("Repeating at", repeatDateInterval)
-        return UNTimeIntervalNotificationTrigger(timeInterval: repeatDateInterval.duration, repeats: repeats)
+        return UNTimeIntervalNotificationTrigger(timeInterval: repeatDateInterval.duration, repeats: true)
       }
     }
     
