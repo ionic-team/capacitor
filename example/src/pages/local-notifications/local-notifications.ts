@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins,
-  LocalNotificationScheduled
+  LocalNotificationScheduleResult
 } from '@avocadojs/core';
 
 /**
@@ -18,7 +18,7 @@ import {
   templateUrl: 'local-notifications.html',
 })
 export class LocalNotificationsPage {
-  notif: LocalNotificationScheduled;
+  notifs: LocalNotificationScheduleResult;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
@@ -29,12 +29,15 @@ export class LocalNotificationsPage {
 
   async scheduleOnce() {
     var now = new Date();
-    this.notif = await Plugins.LocalNotifications.schedule({
+    this.notifs = await Plugins.LocalNotifications.schedule({
       notifications: [{
         title: 'Get 20% off!',
         body: 'Swipe to learn more',
-        identifier: 'special-deal',
-        scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
+        id: 'special-deal',
+        schedule: {
+          //at: new Date(now.getTime() + (10 * 1000)).toISOString()
+          at: new Date(now.getTime() + (10 * 1000))
+        },
         actions: [
           { id: 'clear', title: 'Clear' },
           { id: 'snooze', title: 'Snooze' }
@@ -45,15 +48,16 @@ export class LocalNotificationsPage {
 
   async scheduleRepeating() {
     var now = new Date();
-    this.notif = await Plugins.LocalNotifications.schedule({
+    this.notifs = await Plugins.LocalNotifications.schedule({
       notifications: [{
         title: 'Get 20% off!',
         body: 'Swipe to learn more',
-        identifier: 'special-deal',
-        scheduleAt: new Date(now.getTime() + (10 * 1000)).toISOString(),
-        repeat: {
-          every: 'minute'
-        },
+        id: 'special-deal',
+        schedule: {
+          on: {
+            day: 1
+          }
+        },//.toISOString(),
         actions: [
           { id: 'clear', title: 'Clear' },
           { id: 'snooze', title: 'Snooze' }
@@ -61,8 +65,8 @@ export class LocalNotificationsPage {
       }, {
         title: 'Get 20% off!',
         body: 'Swipe to learn more',
-        identifier: 'special-deal',
-        repeat: {
+        id: 'special-deal',
+        schedule: {
           every: 'minute'
         },
         actions: [
@@ -72,8 +76,14 @@ export class LocalNotificationsPage {
       }]
     });
   }
+
   cancelNotification() {
-    this.notif && Plugins.LocalNotifications.cancel([this.notif.id]);
+    this.notifs && Plugins.LocalNotifications.cancel(this.notifs);
+  }
+
+  async getPending() {
+    const pending = await Plugins.LocalNotifications.getPending();
+    console.log('PENDING', pending);
   }
 
 }
