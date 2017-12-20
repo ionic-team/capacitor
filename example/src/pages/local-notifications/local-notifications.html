@@ -26,4 +26,9 @@
   <button (click)="getPending()" ion-button>
     Get Pending
   </button>
+  <div *ngIf="pendingNotifs">
+    <div *ngFor="let notif of pendingNotifs.notifications">
+      {{toJson(notif)}}
+    </div>
+  </div>
 </ion-content>

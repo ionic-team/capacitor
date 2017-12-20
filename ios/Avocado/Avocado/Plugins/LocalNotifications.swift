@@ -86,8 +86,14 @@ public class LocalNotifications : AVCPlugin {
     UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (notifications) in
       print("num of pending notifications \(notifications.count)")
       print(notifications)
+      
+      let ret = notifications.map({ (notification) -> [String:Any] in
+        return self.notificationRequestToDict(notification)
+      })
+      call.success([
+        "notifications": ret
+      ])
     })
-    call.success()
   }
   
   func handleScheduledNotification(_ call: AVCPluginCall, _ schedule: [String:Any], _ repeats: Bool) -> UNNotificationTrigger? {
@@ -185,6 +191,12 @@ public class LocalNotifications : AVCPlugin {
     default:
       return nil
     }
+  }
+  
+  func notificationRequestToDict(_ request: UNNotificationRequest) -> [String:Any] {
+    return [
+      "id": request.identifier
+    ]
   }
 }
 

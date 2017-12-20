@@ -19,6 +19,7 @@ import {
 })
 export class LocalNotificationsPage {
   notifs: LocalNotificationScheduleResult;
+  pendingNotifs: LocalNotificationScheduleResult;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
@@ -82,8 +83,11 @@ export class LocalNotificationsPage {
   }
 
   async getPending() {
-    const pending = await Plugins.LocalNotifications.getPending();
-    console.log('PENDING', pending);
+    this.pendingNotifs = await Plugins.LocalNotifications.getPending();
+    console.log('PENDING', this.pendingNotifs);
   }
 
+  toJson(o: any) {
+    return JSON.stringify(o, null, 2);
+  }
 }
