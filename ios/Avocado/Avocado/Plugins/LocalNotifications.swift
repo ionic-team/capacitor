@@ -1,6 +1,11 @@
 import Foundation
 import UserNotifications
 
+enum LocalNotificationScheduleError: Error {
+  case triggerConstructionFailed
+  case triggerRepeatIntervalTooShort
+}
+
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
@@ -39,6 +44,8 @@ public class LocalNotifications : AVCPlugin {
         call.error("Must provide a body for notification \(identifier)")
         return
       }
+      let actionType = notification["actionType"] as? String
+      
       requestPermissions()
       
       // Build content of notification
@@ -47,9 +54,19 @@ public class LocalNotifications : AVCPlugin {
       content.body = NSString.localizedUserNotificationString(forKey: body,
                                                               arguments: nil)
       
+      if actionType != nil {
+        content.categoryIdentifier = actionType!
+      }
+      
       var trigger: UNNotificationTrigger?
-      if let schedule = notification["schedule"] as? [String:Any] {
-        trigger = handleScheduledNotification(call, schedule)
+      
+      do {
+        if let schedule = notification["schedule"] as? [String:Any] {
+          try trigger = handleScheduledNotification(call, schedule)
+        }
+      } catch {
+        call.error("Unable to create notification, trigger failed", error)
+        return
       }
       
       // Schedule the request.
@@ -71,10 +88,12 @@ public class LocalNotifications : AVCPlugin {
   }
   
   @objc func cancel(_ call: AVCPluginCall) {
-    guard let ids = call.getArray("ids", String.self, []) else {
-      call.error("Must supply notification ids to cancel")
+    guard let notifications = call.getArray("notifications", JSObject.self, []) else {
+      call.error("Must supply notifications to cancel")
       return
     }
+    
+    let ids = notifications.map { $0["id"] as? String ?? "" }
     
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
   }
@@ -93,7 +112,17 @@ public class LocalNotifications : AVCPlugin {
     })
   }
   
-  func handleScheduledNotification(_ call: AVCPluginCall, _ schedule: [String:Any]) -> UNNotificationTrigger? {
+  @objc func registerActionTypes(_ call: AVCPluginCall) {
+    guard let types = call.getArray("types", Any.self) as? JSArray else {
+      return
+    }
+    
+    makeActionTypes(types)
+    
+    call.success()
+  }
+  
+  func handleScheduledNotification(_ call: AVCPluginCall, _ schedule: [String:Any]) throws -> UNNotificationTrigger? {
     let at = schedule["at"] as? Date
     let every = schedule["every"] as? String
     let on = schedule["on"] as? [String:Int]
@@ -109,6 +138,12 @@ public class LocalNotifications : AVCPlugin {
       }
     
       var dateInterval = DateInterval(start: Date(), end: dateInfo.date!)
+      
+      // Notifications that repeat have to be at least a minute between each other
+      if repeats && dateInterval.duration < 60 {
+        throw LocalNotificationScheduleError.triggerRepeatIntervalTooShort
+      }
+      
       return UNTimeIntervalNotificationTrigger(timeInterval: dateInterval.duration, repeats: repeats)
     }
     
@@ -194,6 +229,119 @@ public class LocalNotifications : AVCPlugin {
     return [
       "id": request.identifier
     ]
+  }
+
+  func makeActions(_ actions: JSArray) -> [UNNotificationAction] {
+    var createdActions = [UNNotificationAction]()
+    
+    for action in actions {
+      guard let id = action["id"] as? String else {
+        bridge.modulePrint(self, "Action must have an id field")
+        continue
+      }
+    // Create the custom actions for the TIMER_EXPIRED category.
+      let newAction = UNNotificationAction(identifier: id,
+                                            title: action["title"] as? String ?? "",
+                                            options: makeActionOptions(action))
+      createdActions.append(newAction)
+    }
+    
+    return createdActions
+  }
+  
+  /**
+   * Make required UNNotificationCategory entries for action types
+   */
+  func makeActionTypes(_ actionTypes: JSArray) {
+    var createdCategories = [UNNotificationCategory]()
+    
+    let generalCategory = UNNotificationCategory(identifier: "GENERAL",
+                                                 actions: [],
+                                                 intentIdentifiers: [],
+                                                 options: .customDismissAction)
+    
+    createdCategories.append(generalCategory)
+    for type in actionTypes {
+      guard let id = type["id"] as? String else {
+        bridge.modulePrint(self, "Action type must have an id field")
+        continue
+      }
+      let hiddenBodyPlaceholder = type["iosHiddenPreviewsBodyPlaceholder"] as? String ?? ""
+      let actions = type["actions"] as? JSArray ?? []
+      
+      let newActions = makeActions(actions)
+      
+      // Create the custom actions for the TIMER_EXPIRED category.
+      var newCategory: UNNotificationCategory?
+      
+      if #available(iOS 11.0, *) {
+        newCategory = UNNotificationCategory(identifier: id,
+                                               actions: newActions,
+                                               intentIdentifiers: [],
+                                               hiddenPreviewsBodyPlaceholder: hiddenBodyPlaceholder,
+                                               options: makeCategoryOptions(type))
+      } else {
+        newCategory = UNNotificationCategory(identifier: id,
+                                             actions: newActions,
+                                             intentIdentifiers: [],
+                                             options: makeCategoryOptions(type))
+      }
+      
+      createdCategories.append(newCategory!)
+    }
+    
+    let center = UNUserNotificationCenter.current()
+    center.setNotificationCategories(Set(createdCategories))
+  }
+
+  /**
+   * Make options for UNNotificationActions
+   */
+  func makeActionOptions(_ action: [String:Any]) -> UNNotificationActionOptions {
+    let foreground = action["foreground"] as? Bool ?? false
+    let destructive = action["destructive"] as? Bool ?? false
+    let requiresAuthentication = action["requiresAuthentication"] as? Bool ?? false
+    
+    if foreground {
+      return .foreground
+    }
+    if destructive {
+      return .destructive
+    }
+    if requiresAuthentication {
+      return .authenticationRequired
+    }
+    return UNNotificationActionOptions(rawValue: 0)
+  }
+  
+  /**
+   * Make options for UNNotificationCategoryActions
+   */
+  func makeCategoryOptions(_ type: JSObject) -> UNNotificationCategoryOptions {
+    let customDismiss = type["iosCustomDismissAction"] as? Bool ?? false
+    let carPlay = type["iosAllowInCarPlay"] as? Bool ?? false
+    let hiddenPreviewsShowTitle = type["iosHiddenPreviewsShowTitle"] as? Bool ?? false
+    let hiddenPreviewsShowSubtitle = type["iosHiddenPreviewsShowSubtitle"] as? Bool ?? false
+    
+    if customDismiss {
+      return .customDismissAction
+    }
+    if carPlay {
+      return .allowInCarPlay
+    }
+    
+    // New iOS 11 features
+    if #available(iOS 11.0, *) {
+      // Running iOS 11 OR NEWER
+      if hiddenPreviewsShowTitle {
+        return .hiddenPreviewsShowTitle
+      }
+      if hiddenPreviewsShowSubtitle {
+        return .hiddenPreviewsShowSubtitle
+      }
+    }
+    
+    return UNNotificationCategoryOptions(rawValue: 0)
   }
 }
 

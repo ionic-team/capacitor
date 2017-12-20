@@ -266,27 +266,31 @@ export interface LocalNotificationPending {
 }
 
 export interface LocalNotificationPendingList {
-  notiifcations: LocalNotificationPending[];
+  notifications: LocalNotificationPending[];
 }
 
 export interface LocalNotificationScheduleResult extends LocalNotificationPendingList {
 }
 
-export interface LocalNotificationsPlugin extends Plugin {
-  schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
-  getPending(): Promise<LocalNotificationPendingList>;
-  cancel(pending: LocalNotificationPendingList): Promise<void>;
+export interface LocalNotificationActionType {
+  id: string;
+  actions?: LocalNotificationAction[];
+  iosHiddenPreviewsBodyPlaceholder?: string; // >= iOS 11 only
+  iosCustomDismissAction?: boolean;
+  iosAllowInCarPlay?: boolean;
+  iosHiddenPreviewsShowTitle?: boolean; // >= iOS 11 only
+  iosHiddenPreviewsShowSubtitle?: boolean; // >= iOS 11 only
 }
 
 export interface LocalNotification {
   title: string;
   body: string;
   id: string;
-  schedule?: NotificationSchedule;
-  actions?: [NotificationAction];
+  schedule?: LocalNotificationSchedule;
+  actionType?: LocalNotificationActionType;
 }
 
-export interface NotificationSchedule {
+export interface LocalNotificationSchedule {
   at?: Date;
   repeats?: boolean;
   every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
@@ -299,10 +303,21 @@ export interface NotificationSchedule {
   }
 }
 
-export interface NotificationAction {
+export interface LocalNotificationAction {
   id: string;
   title: string;
+  requiresAuthentication?: boolean;
+  foreground?: boolean;
+  destructive?: boolean;
 }
+
+export interface LocalNotificationsPlugin extends Plugin {
+  schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
+  getPending(): Promise<LocalNotificationPendingList>;
+  registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
+  cancel(pending: LocalNotificationPendingList): Promise<void>;
+}
+
 
 //
 
