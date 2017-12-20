@@ -287,6 +287,7 @@ export interface LocalNotification {
   body: string;
   id: string;
   schedule?: LocalNotificationSchedule;
+  sound?: string;
   actionTypeId?: string;
 }
 

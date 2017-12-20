@@ -50,6 +50,7 @@ export class LocalNotificationsPage {
         title: 'Get 20% off!',
         body: 'Swipe to learn more',
         id: 'special-deal',
+        sound: 'beep.aiff',
         schedule: {
           at: new Date(now.getTime() + (10 * 1000))
         },
