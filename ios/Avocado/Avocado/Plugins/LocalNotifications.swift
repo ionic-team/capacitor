@@ -121,7 +121,6 @@ public class LocalNotifications : AVCPlugin {
     
     if every != nil {
       if let repeatDateInterval = getRepeatDateInterval(every!) {
-        print("Repeating at", repeatDateInterval)
         return UNTimeIntervalNotificationTrigger(timeInterval: repeatDateInterval.duration, repeats: true)
       }
     }
@@ -130,8 +129,9 @@ public class LocalNotifications : AVCPlugin {
   }
   
   func getDateComponents(_ at: [String:Int]) -> DateComponents {
-    var dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: Date())
-    dateInfo.calendar = Calendar.current
+    //var dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: Date())
+    //dateInfo.calendar = Calendar.current
+    var dateInfo = DateComponents()
     
     if let year = at["year"] {
       dateInfo.year = year
