@@ -261,14 +261,21 @@ export interface KeyboardPlugin extends Plugin {
 
 //
 
-export interface LocalNotificationScheduleResult {
-  ids: string[];
+export interface LocalNotificationPending {
+  id: string;
+}
+
+export interface LocalNotificationPendingList {
+  notiifcations: LocalNotificationPending[];
+}
+
+export interface LocalNotificationScheduleResult extends LocalNotificationPendingList {
 }
 
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
-  getPending(): Promise<LocalNotificationScheduleResult>;
-  cancel(scheduled: LocalNotificationScheduleResult): Promise<void>;
+  getPending(): Promise<LocalNotificationPendingList>;
+  cancel(pending: LocalNotificationPendingList): Promise<void>;
 }
 
 export interface LocalNotification {
