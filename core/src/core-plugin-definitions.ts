@@ -287,7 +287,7 @@ export interface LocalNotification {
   body: string;
   id: string;
   schedule?: LocalNotificationSchedule;
-  actionType?: LocalNotificationActionType;
+  actionTypeId?: string;
 }
 
 export interface LocalNotificationSchedule {

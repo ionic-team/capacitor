@@ -44,7 +44,7 @@ public class LocalNotifications : AVCPlugin {
         call.error("Must provide a body for notification \(identifier)")
         return
       }
-      let actionType = notification["actionType"] as? String
+      let actionTypeId = notification["actionTypeId"] as? String
       
       requestPermissions()
       
@@ -54,8 +54,8 @@ public class LocalNotifications : AVCPlugin {
       content.body = NSString.localizedUserNotificationString(forKey: body,
                                                               arguments: nil)
       
-      if actionType != nil {
-        content.categoryIdentifier = actionType!
+      if actionTypeId != nil {
+        content.categoryIdentifier = actionTypeId!
       }
       
       var trigger: UNNotificationTrigger?
