@@ -288,6 +288,7 @@ export interface LocalNotification {
 
 export interface NotificationSchedule {
   at?: Date;
+  repeats?: boolean;
   every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
   on?: {
     year?: number;
