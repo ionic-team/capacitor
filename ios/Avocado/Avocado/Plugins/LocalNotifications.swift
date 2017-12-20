@@ -2,6 +2,9 @@ import Foundation
 import UserNotifications
 
 enum LocalNotificationScheduleError: Error {
+  case contentNoId
+  case contentNoTitle
+  case contentNoBody
   case triggerConstructionFailed
   case triggerRepeatIntervalTooShort
 }
@@ -29,33 +32,22 @@ public class LocalNotifications : AVCPlugin {
       return
     }
     
+    requestPermissions()
+    
     var ids = [String]()
     
     for notification in notifications {
       guard let identifier = notification["id"] as? String else {
-        call.error("Must provide a unique identifier for notification")
+        call.error("Notification missing identifier")
         return
       }
-      guard let title = notification["title"] as? String else {
-        call.error("Must provide a title for notification \(identifier)")
+      
+      var content: UNNotificationContent
+      do {
+        content = try makeNotificationContent(notification)
+      } catch {
+        call.error("Unable to make notification", error)
         return
-      }
-      guard let body = notification["body"] as? String else {
-        call.error("Must provide a body for notification \(identifier)")
-        return
-      }
-      let actionTypeId = notification["actionTypeId"] as? String
-      
-      requestPermissions()
-      
-      // Build content of notification
-      let content = UNMutableNotificationContent()
-      content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
-      content.body = NSString.localizedUserNotificationString(forKey: body,
-                                                              arguments: nil)
-      
-      if actionTypeId != nil {
-        content.categoryIdentifier = actionTypeId!
       }
       
       var trigger: UNNotificationTrigger?
@@ -120,6 +112,33 @@ public class LocalNotifications : AVCPlugin {
     makeActionTypes(types)
     
     call.success()
+  }
+  
+  func makeNotificationContent(_ notification: JSObject) throws -> UNNotificationContent {
+    guard let title = notification["title"] as? String else {
+      throw LocalNotificationScheduleError.contentNoTitle
+    }
+    guard let body = notification["body"] as? String else {
+      throw LocalNotificationScheduleError.contentNoBody
+    }
+    
+    let actionTypeId = notification["actionTypeId"] as? String
+    let sound = notification["sound"] as? String
+    
+    let content = UNMutableNotificationContent()
+    content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
+    content.body = NSString.localizedUserNotificationString(forKey: body,
+                                                            arguments: nil)
+    
+    if actionTypeId != nil {
+      content.categoryIdentifier = actionTypeId!
+    }
+    
+    if sound != nil {
+      content.sound = UNNotificationSound(named: sound!)
+    }
+    
+    return content
   }
   
   func handleScheduledNotification(_ call: AVCPluginCall, _ schedule: [String:Any]) throws -> UNNotificationTrigger? {
