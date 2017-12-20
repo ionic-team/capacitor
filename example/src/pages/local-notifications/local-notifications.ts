@@ -53,7 +53,7 @@ export class LocalNotificationsPage {
         schedule: {
           at: new Date(now.getTime() + (10 * 1000))
         },
-        actionType: { id: 'OPEN_PRODUCT' }
+        actionTypeId: 'OPEN_PRODUCT'
       }]
     });
   }
