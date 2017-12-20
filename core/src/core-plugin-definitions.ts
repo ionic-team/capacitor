@@ -20,6 +20,9 @@ declare global {
     StatusBar: StatusBarPlugin;
   }
 }
+
+export type ISODateString = string;
+
 //
 
 export interface AccessibilityPlugin {
@@ -258,27 +261,34 @@ export interface KeyboardPlugin extends Plugin {
 
 //
 
-export interface LocalNotificationScheduled {
-  id: string;
+export interface LocalNotificationScheduleResult {
+  ids: string[];
 }
 
 export interface LocalNotificationsPlugin extends Plugin {
-  schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduled>;
-  cancel(ids: string[]): Promise<void>;
+  schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
+  getPending(): Promise<LocalNotificationScheduleResult>;
+  cancel(scheduled: LocalNotificationScheduleResult): Promise<void>;
 }
 
 export interface LocalNotification {
   title: string;
   body: string;
-  identifier: string;
-  scheduleAt?: string;
-  repeat?: NotificationRepeat;
+  id: string;
+  schedule?: NotificationSchedule;
   actions?: [NotificationAction];
 }
 
-export interface NotificationRepeat {
-  every: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
-  times?: number; // Currently not used
+export interface NotificationSchedule {
+  at?: Date;
+  every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
+  on?: {
+    year?: number;
+    month?: number;
+    day?: number;
+    hour?: number;
+    minute?: number;
+  }
 }
 
 export interface NotificationAction {
