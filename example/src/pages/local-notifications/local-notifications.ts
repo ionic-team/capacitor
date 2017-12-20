@@ -22,6 +22,21 @@ export class LocalNotificationsPage {
   pendingNotifs: LocalNotificationScheduleResult;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+    Plugins.LocalNotifications.registerActionTypes({
+      types: [
+        {
+          id: 'OPEN_PRODUCT',
+          actions: [
+            {
+              id: 'view',
+              title: 'Product'
+            }, {
+              id: 'remove', title: 'Remove', destructive: true
+            }
+          ]
+        }
+      ]
+    })
   }
 
   ionViewDidLoad() {
@@ -36,14 +51,9 @@ export class LocalNotificationsPage {
         body: 'Swipe to learn more',
         id: 'special-deal',
         schedule: {
-          //at: new Date(now.getTime() + (10 * 1000)).toISOString()
-          at: new Date(now.getTime() + (10 * 1000)),
-          repeats: true
+          at: new Date(now.getTime() + (10 * 1000))
         },
-        actions: [
-          { id: 'clear', title: 'Clear' },
-          { id: 'snooze', title: 'Snooze' }
-        ]
+        actionType: { id: 'OPEN_PRODUCT' }
       }]
     });
   }
@@ -59,28 +69,20 @@ export class LocalNotificationsPage {
           on: {
             day: 1
           }
-        },//.toISOString(),
-        actions: [
-          { id: 'clear', title: 'Clear' },
-          { id: 'snooze', title: 'Snooze' }
-        ]
+        }//.toISOString(),
       }, {
         title: 'Happy Holidays',
         body: 'Swipe to learn more',
         id: 'holidays',
         schedule: {
           every: 'minute'
-        },
-        actions: [
-          { id: 'clear', title: 'Clear' },
-          { id: 'snooze', title: 'Snooze' }
-        ]
+        }
       }]
     });
   }
 
   cancelNotification() {
-    this.notifs && Plugins.LocalNotifications.cancel(this.notifs);
+    this.pendingNotifs && Plugins.LocalNotifications.cancel(this.pendingNotifs);
   }
 
   async getPending() {

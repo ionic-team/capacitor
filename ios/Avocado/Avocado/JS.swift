@@ -1,5 +1,8 @@
 import Foundation
 
+typealias JSObject = [String:Any]
+typealias JSArray = [JSObject]
+
 /**
  * A call originating from JavaScript land
  */

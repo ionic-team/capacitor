@@ -62,6 +62,7 @@ AVC_PLUGIN(LocalNotifications,
   AVC_PLUGIN_METHOD(schedule, "", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(cancel, "", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(getPending, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(registerActionTypes, "", AVCPluginReturnPromise);
 )
 
 AVC_PLUGIN(Modals,
