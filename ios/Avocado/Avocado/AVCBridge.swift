@@ -246,7 +246,8 @@ enum BridgeError: Error {
           self.toJs(result: JSResult(call: call, result: [:]))
         }
       }, error: {(error: AVCPluginCallError?) -> Void in
-        self.toJsError(error: JSResultError(call: call, message: error!.message, errorMessage: error!.error.localizedDescription, error: error!.data))
+        let description = error?.error?.localizedDescription ?? ""
+        self.toJsError(error: JSResultError(call: call, message: error!.message, errorMessage: description, error: error!.data))
       })!
       
       plugin.perform(selector, with: pluginCall)
