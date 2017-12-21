@@ -8,15 +8,15 @@ public class AVCFile {
 
 @objc public class AVCFileManager: NSObject {
   static func get(path: String) -> AVCFile? {
-    let handlers = [
+    let handlers: [String:AVCFileResolver.Type] = [
       "file:///": AVCFileResolverFile.self,
-      "res:": AVCFileResolverFile.self,
+      "res://": AVCFileResolverResource.self,
       "file://": AVCFileResolverFile.self,
       "base64:": AVCFileResolverFile.self
     ]
 
     for (handlerPrefix, handler) in handlers {
-      if handlerPrefix == path {
+      if path.hasPrefix(handlerPrefix) {
         return handler.resolve(path: path)
       }
     }
@@ -29,7 +29,7 @@ private protocol AVCFileResolver {
   static func resolve(path: String) -> AVCFile?
 }
 
-private class AVCFileResolverFile : AVCFileResolver {
+private class AVCFileResolverFile: AVCFileResolver {
   public static func resolve(path: String) -> AVCFile? {
     let manager = FileManager.default
     let absPath = path.replacingOccurrences(of: "file:///", with: "")
@@ -39,4 +39,19 @@ private class AVCFileResolverFile : AVCFileResolver {
     return AVCFile(url: URL(fileURLWithPath: absPath))
   }
   
+}
+
+private class AVCFileResolverResource: AVCFileResolver {
+  public static func resolve(path: String) -> AVCFile? {
+    let manager = FileManager.default
+    let bundle = Bundle.main
+    let resourcePath = bundle.resourcePath
+    
+    var absPath = path.replacingOccurrences(of: "res://", with: "")
+    absPath = resourcePath! + "/" + absPath
+    if !manager.fileExists(atPath: absPath) {
+      return nil
+    }
+    return AVCFile(url: URL(fileURLWithPath: absPath))
+  }
 }
