@@ -342,7 +342,7 @@ export interface LocalNotificationSchedule {
 export interface LocalNotificationActionPerformed {
   actionId: string;
   inputValue?: string;
-  originalNotification: LocalNotification;
+  notificationRequest: any;
 }
 
 export interface LocalNotificationsPlugin extends Plugin {
