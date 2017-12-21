@@ -59,10 +59,12 @@ public class JSResultError {
   var call: JSCall
   var error: JSResultBody
   var message: String
+  var errorMessage: String
   
-  public init(call: JSCall, message: String, error: JSResultBody) {
+  public init(call: JSCall, message: String, errorMessage: String, error: JSResultBody) {
     self.call = call
     self.message = message
+    self.errorMessage = errorMessage
     self.error = error
   }
   
@@ -81,13 +83,14 @@ public class JSResultError {
   public func toJson() -> String {
     var jsonResponse = "{}"
     
-    print("TO JSON MESSAGE", self.message)
     error["message"] = self.message
-    error["_exlink"] = getLinkableError(self.message)
+    error["errorMessage"] = self.errorMessage
+    //error["_exlink"] = getLinkableError(self.message)
     
     if let theJSONData = try? JSONSerialization.data(withJSONObject: error, options: []) {
       jsonResponse = String(data: theJSONData,
                             encoding: .utf8)!
+      print("ERROR MESSAGE: ", jsonResponse.prefix(512))
     }
     
     return jsonResponse

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		501CBAB41FC0E2B5009B0D4D /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; };
 		501CBAB51FC0E2B5009B0D4D /* Avocado.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		504EC2F81FEB2CBA0016851F /* face.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 504EC2F71FEB2CB90016851F /* face.jpg */; };
 		6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3394176F7AE51239517122DA /* Pods_IonicRunner.framework */; };
 		A3729E091E83246400B7334A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E081E83246400B7334A /* AppDelegate.swift */; };
 		A3729E0E1E83246400B7334A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3729E0C1E83246400B7334A /* Main.storyboard */; };
@@ -67,6 +68,7 @@
 		39D67306E24BC63D39C111B8 /* Pods-IonicRunner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicRunner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner.debug.xcconfig"; sourceTree = "<group>"; };
 		501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Avocado.xcodeproj; path = ../../../ios/Avocado/Avocado.xcodeproj; sourceTree = "<group>"; };
 		503ACBFD1FE98C0C00C5E136 /* Avocado.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Avocado.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/IonicRunner-dtawthqbknkuwzeomrletvvwmolw/Build/Products/Debug-iphonesimulator/Avocado.framework"; sourceTree = "<group>"; };
+		504EC2F71FEB2CB90016851F /* face.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = face.jpg; sourceTree = "<group>"; };
 		9CC588CF2A94FA052A66DC48 /* Pods-IonicRunner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicRunner.release.xcconfig"; path = "Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner.release.xcconfig"; sourceTree = "<group>"; };
 		A3729E051E83246400B7334A /* IonicRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IonicRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3729E081E83246400B7334A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 		A3729E071E83246400B7334A /* IonicRunner */ = {
 			isa = PBXGroup;
 			children = (
+				504EC2F71FEB2CB90016851F /* face.jpg */,
 				A3729E081E83246400B7334A /* AppDelegate.swift */,
 				A3729E0C1E83246400B7334A /* Main.storyboard */,
 				A3729E0F1E83246400B7334A /* Assets.xcassets */,
@@ -259,6 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3729E1B1E83331B00B7334A /* www in Resources */,
+				504EC2F81FEB2CBA0016851F /* face.jpg in Resources */,
 				A3729E131E83246400B7334A /* LaunchScreen.storyboard in Resources */,
 				A3729E101E83246400B7334A /* Assets.xcassets in Resources */,
 				A3729E0E1E83246400B7334A /* Main.storyboard in Resources */,

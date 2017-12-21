@@ -282,12 +282,26 @@ export interface LocalNotificationActionType {
   iosHiddenPreviewsShowSubtitle?: boolean; // >= iOS 11 only
 }
 
+export interface LocalNotificationAttachment {
+  id: string;
+  url: string;
+  options?: LocalNotificationAttachmentOptions;
+}
+
+export interface LocalNotificationAttachmentOptions {
+  iosUNNotificationAttachmentOptionsTypeHintKey?: string;
+  iosUNNotificationAttachmentOptionsThumbnailHiddenKey?: string; 
+  iosUNNotificationAttachmentOptionsThumbnailClippingRectKey?: string;
+  iosUNNotificationAttachmentOptionsThumbnailTimeKey?: string;
+}
+
 export interface LocalNotification {
   title: string;
   body: string;
   id: string;
   schedule?: LocalNotificationSchedule;
   sound?: string;
+  attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
 }
 
