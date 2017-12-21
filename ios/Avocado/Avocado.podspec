@@ -9,4 +9,5 @@ Pod::Spec.new do |s|
   s.source = { :git => 'https://github.com/ionic-team/avocado.git', :tag => s.version }
   s.source_files = 'Avocado/*.{swift,h,m}', 'Avocado/Plugins/*.{swift,h,m}', 'Avocado/Plugins/**/*.{swift,h,m}'
   s.dependency 'AvocadoCordova', '1.0.0'
+  s.resources = "Avocado/Scripts/*"
 end
