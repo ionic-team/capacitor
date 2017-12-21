@@ -215,7 +215,7 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
       data["inputValue"] = inputType.userText
     }
     
-    data["originalNotification"] = makeNotificationRequestJSObject(originalNotificationRequest)
+    data["notificationRequest"] = makeNotificationRequestJSObject(originalNotificationRequest)
     
     notifyListeners("localNotificationActionPerformed", data: data)
   }
@@ -379,7 +379,7 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     
     return [
       "id": request.identifier,
-      "originalNotification": notificationRequest
+      "extra": notificationRequest["extra"] ?? [:]
     ]
   }
 
