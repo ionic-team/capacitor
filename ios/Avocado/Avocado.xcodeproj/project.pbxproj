@@ -44,7 +44,7 @@
 		50584D3D1FDAE62C00E3227C /* AVCPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 50584D171FDA164A00E3227C /* AVCPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50B80BE81FCDE1E8000717DF /* Clipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE71FCDE1E8000717DF /* Clipboard.swift */; };
 		50B80BEA1FCDECE2000717DF /* Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BE91FCDECE2000717DF /* Share.swift */; };
-		50C99F6F1FE84F9400175E64 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C99F6E1FE84F9400175E64 /* App.swift */; };
+		50C99F6F1FE84F9400175E64 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C99F6E1FE84F9400175E64 /* AppState.swift */; };
 		50D503901FDDF6B10050E5CE /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D5038F1FDDF6B10050E5CE /* JS.swift */; };
 		50D503921FE03B330050E5CE /* JSExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D503911FE03B330050E5CE /* JSExport.swift */; };
 		50E3D63F1FCE6EA500BBEB06 /* AVCBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E3D63E1FCE6EA500BBEB06 /* AVCBridgeViewController.swift */; };
@@ -109,7 +109,7 @@
 		50584D171FDA164A00E3227C /* AVCPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVCPlugin.h; sourceTree = "<group>"; };
 		50B80BE71FCDE1E8000717DF /* Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clipboard.swift; sourceTree = "<group>"; };
 		50B80BE91FCDECE2000717DF /* Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Share.swift; sourceTree = "<group>"; };
-		50C99F6E1FE84F9400175E64 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		50C99F6E1FE84F9400175E64 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		50D5038F1FDDF6B10050E5CE /* JS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		50D503911FE03B330050E5CE /* JSExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
 		50E3D63E1FCE6EA500BBEB06 /* AVCBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCBridgeViewController.swift; sourceTree = "<group>"; };
@@ -243,7 +243,7 @@
 				5053E90C1FC8D1D800166FBE /* DefaultPlugins.h */,
 				5053E90E1FC8D51100166FBE /* DefaultPlugins.m */,
 				5005D42E1FE80B7600E931C4 /* Accessibility.swift */,
-				50C99F6E1FE84F9400175E64 /* App.swift */,
+				50C99F6E1FE84F9400175E64 /* AppState.swift */,
 				501CBABE1FC2A22A009B0D4D /* Browser.swift */,
 				50474F0C1FC5284D00AA0184 /* Camera.swift */,
 				50B80BE71FCDE1E8000717DF /* Clipboard.swift */,
@@ -425,7 +425,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		641F43B9AF146A018706FDEB /* [CP] Copy Pods Resources */ = {
@@ -458,7 +458,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E163225B0E98190034E8EB69 /* [CP] Embed Pods Frameworks */ = {
@@ -495,7 +495,7 @@
 				50474F051FC36E5700AA0184 /* Console.swift in Sources */,
 				50584D0D1FD8337500E3227C /* Toast.swift in Sources */,
 				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
-				50C99F6F1FE84F9400175E64 /* App.swift in Sources */,
+				50C99F6F1FE84F9400175E64 /* AppState.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
 				504EC2F61FEB28A40016851F /* AVCFile.swift in Sources */,
 				50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */,

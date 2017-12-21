@@ -22,6 +22,8 @@ enum BridgeError: Error {
   
   public var storedCalls = [String:AVCPluginCall]()
   
+  public var isAppActive = true
+  
   // Dispatch queue for our operations
   // TODO: Unique label?
   public var dispatchQueue = DispatchQueue(label: "bridge")
@@ -32,6 +34,7 @@ enum BridgeError: Error {
     super.init()
     exportCoreJS()
     registerPlugins()
+    bindObservers()
   }
   
   public func willAppear() {
@@ -56,6 +59,22 @@ enum BridgeError: Error {
     
     print("🥑 ❌  Please verify your installation or file an issue")
   }
+  
+  func bindObservers() {
+    let appStatePlugin = getOrLoadPlugin(pluginId: "AppState") as? AppState
+    
+    NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { (notification) in
+      print("APP ACTIVE")
+      self.isAppActive = true
+      appStatePlugin?.fireChange(isActive: self.isAppActive)
+    }
+    NotificationCenter.default.addObserver(forName: .UIApplicationDidEnterBackground, object: nil, queue: OperationQueue.main) { (notification) in
+      print("APP INACTIVE")
+      self.isAppActive = false
+      appStatePlugin?.fireChange(isActive: self.isAppActive)
+    }
+  }
+  
   
   func exportCoreJS() {
     do {

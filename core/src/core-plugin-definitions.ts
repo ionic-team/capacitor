@@ -3,6 +3,7 @@ import { Plugin, PluginCallback, PluginListenerHandle } from './definitions';
 declare global {
   interface PluginRegistry {
     Accessibility: AccessibilityPlugin;
+    AppState: AppStatePlugin;
     Browser: BrowserPlugin;
     Camera: CameraPlugin;
     Clipboard: ClipboardPlugin;
@@ -40,6 +41,12 @@ export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnab
 export interface ActionSheetPlugin extends Plugin {
   show(): Promise<void>;
   hide(): Promise<void>;
+}
+
+//
+
+export interface AppStatePlugin extends Plugin {
+  addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: { isActive: boolean }) => void): PluginListenerHandle;
 }
 
 //
@@ -331,6 +338,7 @@ export interface LocalNotificationsPlugin extends Plugin {
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
+  addListener(eventName: 'localNotificationReceived', listenerFunc: (err: any, notification: LocalNotificationPending) => void): PluginListenerHandle;
 }
 
 
@@ -389,17 +397,17 @@ export interface MotionEventResult {
     x: number;
     y: number;
     z: number;
-  },
+  };
   accelerationIncludingGravity: {
     x: number;
     y: number;
     z: number;
-  },
+  };
   rotationRate: {
     alpha: number;
     beta: number;
     gamma: number;
-  },
+  };
   interval: number;
 }
 

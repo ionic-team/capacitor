@@ -37,6 +37,11 @@ export class LocalNotificationsPage {
         }
       ]
     })
+
+    Plugins.LocalNotifications.addListener('localNotificationReceived', (err, notification) => {
+      alert('Received notification!');
+      console.log('Notification: ', notification);
+    })
   }
 
   ionViewDidLoad() {

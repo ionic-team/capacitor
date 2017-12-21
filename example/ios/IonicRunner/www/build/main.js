@@ -1,6 +1,6 @@
 webpackJsonp([17],{
 
-/***/ 109:
+/***/ 110:
 /***/ (function(module, exports) {
 
 function webpackEmptyAsyncContext(req) {
@@ -13,11 +13,11 @@ function webpackEmptyAsyncContext(req) {
 webpackEmptyAsyncContext.keys = function() { return []; };
 webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
 module.exports = webpackEmptyAsyncContext;
-webpackEmptyAsyncContext.id = 109;
+webpackEmptyAsyncContext.id = 110;
 
 /***/ }),
 
-/***/ 150:
+/***/ 151:
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -30,11 +30,11 @@ var map = {
 		15
 	],
 	"../pages/browser/browser.module": [
-		279,
+		280,
 		14
 	],
 	"../pages/camera/camera.module": [
-		280,
+		279,
 		13
 	],
 	"../pages/clipboard/clipboard.module": [
@@ -50,27 +50,27 @@ var map = {
 		10
 	],
 	"../pages/geolocation/geolocation.module": [
-		285,
+		284,
 		9
 	],
 	"../pages/haptics/haptics.module": [
-		284,
+		285,
 		8
 	],
 	"../pages/keyboard/keyboard.module": [
-		287,
+		286,
 		7
 	],
 	"../pages/local-notifications/local-notifications.module": [
-		286,
+		287,
 		6
 	],
 	"../pages/modals/modals.module": [
-		288,
+		289,
 		5
 	],
 	"../pages/motion/motion.module": [
-		289,
+		288,
 		4
 	],
 	"../pages/network/network.module": [
@@ -78,11 +78,11 @@ var map = {
 		3
 	],
 	"../pages/photos/photos.module": [
-		291,
+		292,
 		2
 	],
 	"../pages/splash-screen/splash-screen.module": [
-		292,
+		291,
 		1
 	],
 	"../pages/status-bar/status-bar.module": [
@@ -101,12 +101,12 @@ function webpackAsyncContext(req) {
 webpackAsyncContext.keys = function webpackAsyncContextKeys() {
 	return Object.keys(map);
 };
-webpackAsyncContext.id = 150;
+webpackAsyncContext.id = 151;
 module.exports = webpackAsyncContext;
 
 /***/ }),
 
-/***/ 151:
+/***/ 152:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -122,7 +122,7 @@ var Plugins = Avocado.Plugins;
 
 /***/ }),
 
-/***/ 152:
+/***/ 153:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -261,26 +261,6 @@ var mergeWebPlugins = function (knownPlugins) {
 
 /***/ }),
 
-/***/ 194:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__ = __webpack_require__(246);
-/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__["a"]; });
-/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__["b"]; });
-/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__["c"]; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__global__ = __webpack_require__(151);
-/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_1__global__["a"]; });
-/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __WEBPACK_IMPORTED_MODULE_1__global__["b"]; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__web_plugins__ = __webpack_require__(247);
-/* unused harmony namespace reexport */
-
-
-
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
 /***/ 195:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -308,7 +288,7 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__(266);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_status_bar__ = __webpack_require__(267);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_splash_screen__ = __webpack_require__(276);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__avocadojs_core__ = __webpack_require__(194);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__avocadojs_core__ = __webpack_require__(99);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -364,20 +344,20 @@ AppModule = __decorate([
                 links: [
                     { loadChildren: '../pages/accessibility/accessibility.module#AccessibilityPageModule', name: 'AccessibilityPage', segment: 'accessibility', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/admin/admin.module#AdminPageModule', name: 'AdminPage', segment: 'admin', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/browser/browser.module#BrowserPageModule', name: 'BrowserPage', segment: 'browser', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/camera/camera.module#CameraPageModule', name: 'CameraPage', segment: 'camera', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/browser/browser.module#BrowserPageModule', name: 'BrowserPage', segment: 'browser', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/clipboard/clipboard.module#ClipboardPageModule', name: 'ClipboardPage', segment: 'clipboard', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/filesystem/filesystem.module#FilesystemPageModule', name: 'FilesystemPage', segment: 'filesystem', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/device/device.module#DevicePageModule', name: 'DevicePage', segment: 'device', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/haptics/haptics.module#HapticsPageModule', name: 'HapticsPage', segment: 'haptics', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/geolocation/geolocation.module#GeolocationPageModule', name: 'GeolocationPage', segment: 'geolocation', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/local-notifications/local-notifications.module#LocalNotificationsPageModule', name: 'LocalNotificationsPage', segment: 'local-notifications', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/haptics/haptics.module#HapticsPageModule', name: 'HapticsPage', segment: 'haptics', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/keyboard/keyboard.module#KeyboardPageModule', name: 'KeyboardPage', segment: 'keyboard', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/modals/modals.module#ModalsPageModule', name: 'ModalsPage', segment: 'modals', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/local-notifications/local-notifications.module#LocalNotificationsPageModule', name: 'LocalNotificationsPage', segment: 'local-notifications', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/motion/motion.module#MotionPageModule', name: 'MotionPage', segment: 'motion', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/modals/modals.module#ModalsPageModule', name: 'ModalsPage', segment: 'modals', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/network/network.module#NetworkPageModule', name: 'NetworkPage', segment: 'network', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/photos/photos.module#PhotosPageModule', name: 'PhotosPage', segment: 'photos', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/splash-screen/splash-screen.module#SplashScreenPageModule', name: 'SplashScreenPage', segment: 'splash-screen', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/photos/photos.module#PhotosPageModule', name: 'PhotosPage', segment: 'photos', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/status-bar/status-bar.module#StatusBarPageModule', name: 'StatusBarPage', segment: 'status-bar', priority: 'low', defaultHistory: [] }
                 ]
             })
@@ -433,8 +413,8 @@ var StatusBarStyle;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__global__ = __webpack_require__(151);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__web_index__ = __webpack_require__(152);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__global__ = __webpack_require__(152);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__web_index__ = __webpack_require__(153);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__web_motion__ = __webpack_require__(248);
 /* unused harmony namespace reexport */
 
@@ -452,7 +432,7 @@ Object(__WEBPACK_IMPORTED_MODULE_1__web_index__["b" /* mergeWebPlugins */])(__WE
 "use strict";
 /* unused harmony export MotionPluginWeb */
 /* unused harmony export Motion */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(152);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(153);
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -488,6 +468,7 @@ var Motion = new MotionPluginWeb();
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(98);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__ = __webpack_require__(99);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -497,6 +478,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 let MyApp = class MyApp {
@@ -521,6 +503,9 @@ let MyApp = class MyApp {
             { name: 'SplashScreen', page: 'SplashScreenPage' },
             { name: 'StatusBar', page: 'StatusBarPage' }
         ];
+        __WEBPACK_IMPORTED_MODULE_2__avocadojs_core__["d" /* Plugins */].AppState.addListener('appStateChanged', (err, state) => {
+            console.log('App state changed', state);
+        });
     }
     openPlugin(plugin) {
         this.nav.setRoot(plugin.page);
@@ -537,6 +522,26 @@ MyApp = __decorate([
 ], MyApp);
 
 //# sourceMappingURL=app.component.js.map
+
+/***/ }),
+
+/***/ 99:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__ = __webpack_require__(246);
+/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__["a"]; });
+/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "c", function() { return __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__["b"]; });
+/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "e", function() { return __WEBPACK_IMPORTED_MODULE_0__core_plugin_definitions__["c"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__global__ = __webpack_require__(152);
+/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_1__global__["a"]; });
+/* harmony namespace reexport (by used) */ __webpack_require__.d(__webpack_exports__, "d", function() { return __WEBPACK_IMPORTED_MODULE_1__global__["b"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__web_plugins__ = __webpack_require__(247);
+/* unused harmony namespace reexport */
+
+
+
+//# sourceMappingURL=index.js.map
 
 /***/ })
 

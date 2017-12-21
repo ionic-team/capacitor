@@ -3,6 +3,8 @@ import { Platform, NavController, Nav } from 'ionic-angular';
 
 import { HomePage } from '../pages/home/home';
 
+import { Plugins } from '@avocadojs/core';
+
 @Component({
   templateUrl: 'app.html'
 })
@@ -32,6 +34,9 @@ export class MyApp {
   ]
 
   constructor(platform: Platform) {
+    Plugins.AppState.addListener('appStateChanged', (err: any, state: any) => {
+      console.log('App state changed', state);
+    });
   }
 
   openPlugin(plugin: any) {
