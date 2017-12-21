@@ -34,6 +34,10 @@ export class MyApp {
   ]
 
   constructor(platform: Platform) {
+    Plugins.AppState.addListener('pluginError', (err: any, info: any) => {
+      console.error('There was a serious error with a plugin', err, info);
+    });
+
     Plugins.AppState.addListener('appStateChanged', (err: any, state: any) => {
       console.log('App state changed', state);
     });
