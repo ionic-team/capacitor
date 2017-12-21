@@ -30,25 +30,16 @@ enum LocalNotificationError: LocalizedError {
 public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
   // Local list of notification id -> JSObject for storing options
   // between notification requets
-  var notificationRequestOptions = [String:JSObject]()
-  
-  func requestPermissions() {
-    // Override point for customization after application launch.
-    let center = UNUserNotificationCenter.current()
-    center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
-      // Enable or disable features based on authorization.
-    }
-    
-    DispatchQueue.main.async {
-      UIApplication.shared.registerForRemoteNotifications()
-    }
-  }
+  var notificationRequestLookup = [String:JSObject]()
   
   public override func load() {
     let center = UNUserNotificationCenter.current()
     center.delegate = self
   }
   
+  /**
+   * Schedule a notification.
+   */
   @objc func schedule(_ call: AVCPluginCall) {
     guard let notifications = call.getArray("notifications", [String:Any].self) else {
       call.error("Must provide notifications array as notifications option")
@@ -65,7 +56,7 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
         return
       }
       
-      let options = notification["options"] as? JSObject ?? [:]
+      let extra = notification["options"] as? JSObject ?? [:]
       
       var content: UNNotificationContent
       do {
@@ -89,7 +80,8 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
       
       // Schedule the request.
       let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-      notificationRequestOptions[request.identifier] = options
+      
+      notificationRequestLookup[request.identifier] = notification
       
       let center = UNUserNotificationCenter.current()
       center.add(request) { (error : Error?) in
@@ -107,6 +99,9 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     ])
   }
   
+  /**
+   * Cancel notifications by id
+   */
   @objc func cancel(_ call: AVCPluginCall) {
     guard let notifications = call.getArray("notifications", JSObject.self, []) else {
       call.error("Must supply notifications to cancel")
@@ -118,13 +113,16 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
   }
   
+  /**
+   * Get all pending notifications.
+   */
   @objc func getPending(_ call: AVCPluginCall) {
     UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (notifications) in
       print("num of pending notifications \(notifications.count)")
       print(notifications)
       
       let ret = notifications.map({ (notification) -> [String:Any] in
-        return self.notificationRequestToDict(notification)
+        return self.makeNotificationRequestJSObject(notification)
       })
       call.success([
         "notifications": ret
@@ -132,6 +130,9 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     })
   }
   
+  /**
+   * Register allowed action types that a notification may present.
+   */
   @objc func registerActionTypes(_ call: AVCPluginCall) {
     guard let types = call.getArray("types", Any.self) as? JSArray else {
       return
@@ -142,14 +143,34 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     call.success()
   }
   
+  /**
+   * Request permissions to send notifications
+   */
+  func requestPermissions() {
+    // Override point for customization after application launch.
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+      // Enable or disable features based on authorization.
+    }
+    
+    DispatchQueue.main.async {
+      UIApplication.shared.registerForRemoteNotifications()
+    }
+  }
+  
+  /**
+   * Handle delegate willPresent action when the app is in the foreground.
+   * This controls how a notification is presented when the app is running, such as
+   * whether it should stay silent, display a badge, play a sound, or show an alert.
+   */
   public func userNotificationCenter(_ center: UNUserNotificationCenter,
                               willPresent notification: UNNotification,
                               withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
     let request = notification.request
     
-    notifyListeners("localNotificationReceived", data: notificationRequestToDict(request))
+    notifyListeners("localNotificationReceived", data: makeNotificationRequestJSObject(request))
     
-    if let options = notificationRequestOptions[request.identifier] {
+    if let options = notificationRequestLookup[request.identifier] {
       let silent = options["silent"] as? Bool ?? false
       if silent {
         completionHandler(.init(rawValue:0))
@@ -164,12 +185,44 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     }
   }
   
+  /**
+   * Handle didReceive action, called when a notification opens or activates
+   * the app based on an action.
+   */
   public func userNotificationCenter(_ center: UNUserNotificationCenter,
                               didReceive response: UNNotificationResponse,
                               withCompletionHandler completionHandler: @escaping () -> Void) {
+    completionHandler()
     
+    var data = JSObject()
+    
+    // Get the info for the original notification request
+    let originalNotificationRequest = response.notification.request
+
+    let actionId = response.actionIdentifier
+
+    // We turn the two default actions (open/dismiss) into generic strings
+    if actionId == UNNotificationDefaultActionIdentifier {
+      data["actionId"] = "tap"
+    } else if actionId == UNNotificationDismissActionIdentifier {
+      data["actionId"] = "dismiss"
+    } else {
+      data["actionId"] = actionId
+    }
+    
+    // If the type of action was for an input type, get the value
+    if let inputType = response as? UNTextInputNotificationResponse {
+      data["inputValue"] = inputType.userText
+    }
+    
+    data["originalNotification"] = makeNotificationRequestJSObject(originalNotificationRequest)
+    
+    notifyListeners("localNotificationActionPerformed", data: data)
   }
   
+  /**
+   * Build the content for a notification.
+   */
   func makeNotificationContent(_ notification: JSObject) throws -> UNNotificationContent {
     guard let title = notification["title"] as? String else {
       throw LocalNotificationError.contentNoTitle
@@ -202,6 +255,10 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     return content
   }
   
+  /**
+   * Build a notification trigger, such as triggering each N seconds, or
+   * on a certain date "shape" (such as every first of the month)
+   */
   func handleScheduledNotification(_ call: AVCPluginCall, _ schedule: [String:Any]) throws -> UNNotificationTrigger? {
     let at = schedule["at"] as? Date
     let every = schedule["every"] as? String
@@ -243,6 +300,10 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     return nil
   }
   
+  /**
+   * Given our schedule format, return a DateComponents object
+   * that only contains the components passed in.
+   */
   func getDateComponents(_ at: [String:Int]) -> DateComponents {
     //var dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: Date())
     //dateInfo.calendar = Calendar.current
@@ -269,6 +330,11 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     return dateInfo
   }
   
+  /**
+   * Compute the difference between the string representation of a date
+   * interval and today. For example, if every is "month", then we
+   * return the interval between today and a month from today.
+   */
   func getRepeatDateInterval(_ every: String) -> DateInterval? {
     let cal = Calendar.current
     let now = Date()
@@ -305,30 +371,18 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     }
   }
   
-  func notificationRequestToDict(_ request: UNNotificationRequest) -> [String:Any] {
+  /**
+   * Turn a UNNotificationRequest into a JSObject to return back to the client.
+   */
+  func makeNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
+    let notificationRequest = notificationRequestLookup[request.identifier] ?? [:]
+    
     return [
-      "id": request.identifier
+      "id": request.identifier,
+      "originalNotification": notificationRequest
     ]
   }
 
-  func makeActions(_ actions: JSArray) -> [UNNotificationAction] {
-    var createdActions = [UNNotificationAction]()
-    
-    for action in actions {
-      guard let id = action["id"] as? String else {
-        bridge.modulePrint(self, "Action must have an id field")
-        continue
-      }
-    // Create the custom actions for the TIMER_EXPIRED category.
-      let newAction = UNNotificationAction(identifier: id,
-                                            title: action["title"] as? String ?? "",
-                                            options: makeActionOptions(action))
-      createdActions.append(newAction)
-    }
-    
-    return createdActions
-  }
-  
   /**
    * Make required UNNotificationCategory entries for action types
    */
@@ -372,6 +426,47 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     
     let center = UNUserNotificationCenter.current()
     center.setNotificationCategories(Set(createdCategories))
+  }
+  
+  
+  /**
+   * Build the required UNNotificationAction objects for each action type registered.
+   */
+  func makeActions(_ actions: JSArray) -> [UNNotificationAction] {
+    var createdActions = [UNNotificationAction]()
+    
+    for action in actions {
+      guard let id = action["id"] as? String else {
+        bridge.modulePrint(self, "Action must have an id field")
+        continue
+      }
+      let title = action["title"] as? String ?? ""
+      let input = action["input"] as? Bool ?? false
+      
+      var newAction: UNNotificationAction
+      if input {
+        let inputButtonTitle = action["inputButtonTitle"] as? String
+        let inputPlaceholder = action["inputPlaceholder"] as? String ?? ""
+        
+        if inputButtonTitle != nil {
+          newAction = UNTextInputNotificationAction(identifier: id,
+                                                    title: title,
+                                                    options: makeActionOptions(action),
+                                                    textInputButtonTitle: inputButtonTitle!,
+                                                    textInputPlaceholder: inputPlaceholder)
+        } else {
+          newAction = UNTextInputNotificationAction(identifier: id, title: title, options: makeActionOptions(action))
+        }
+      } else {
+      // Create the custom actions for the TIMER_EXPIRED category.
+        newAction = UNNotificationAction(identifier: id,
+                                           title: title,
+                                           options: makeActionOptions(action))
+      }
+      createdActions.append(newAction)
+    }
+    
+    return createdActions
   }
 
   /**
@@ -424,6 +519,9 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     return UNNotificationCategoryOptions(rawValue: 0)
   }
   
+  /**
+   * Build the UNNotificationAttachment object for each attachment supplied.
+   */
   func makeAttachments(_ attachments: JSArray) throws -> [UNNotificationAttachment] {
     var createdAttachments = [UNNotificationAttachment]()
     
@@ -451,11 +549,18 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
     return createdAttachments
   }
   
+  /**
+   * Get the internal URL for the attachment URL
+   */
   func makeAttachmentUrl(_ path: String) -> URL? {
     let file = AVCFileManager.get(path: path)
     return file?.url
   }
   
+  /**
+   * Build the options for the attachment, if any. (For example: the clipping rectangle to use
+   * for image attachments)
+   */
   func makeAttachmentOptions(_ options: JSObject) -> [AnyHashable:Any] {
     var opts = [AnyHashable:Any]()
     

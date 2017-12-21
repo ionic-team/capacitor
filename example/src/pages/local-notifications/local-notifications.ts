@@ -32,6 +32,11 @@ export class LocalNotificationsPage {
               title: 'Product'
             }, {
               id: 'remove', title: 'Remove', destructive: true
+            },
+            {
+              id: 'response',
+              title: 'Response',
+              input: true
             }
           ]
         }
@@ -39,9 +44,12 @@ export class LocalNotificationsPage {
     })
 
     Plugins.LocalNotifications.addListener('localNotificationReceived', (err, notification) => {
-      alert('Received notification!');
       console.log('Notification: ', notification);
     })
+
+    Plugins.LocalNotifications.addListener('localNotificationActionPerformed', (err, notification) => {
+      console.log('Notification action performed', notification);
+    });
   }
 
   ionViewDidLoad() {
@@ -62,7 +70,10 @@ export class LocalNotificationsPage {
         schedule: {
           at: new Date(now.getTime() + (10 * 1000))
         },
-        actionTypeId: 'OPEN_PRODUCT'
+        actionTypeId: 'OPEN_PRODUCT',
+        extra: {
+          productId: 'PRODUCT-1'
+        }
       }]
     });
   }

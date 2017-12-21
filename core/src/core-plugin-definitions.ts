@@ -46,6 +46,7 @@ export interface ActionSheetPlugin extends Plugin {
 //
 
 export interface AppStatePlugin extends Plugin {
+  addListener(eventName: 'pluginError', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
   addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: { isActive: boolean }) => void): PluginListenerHandle;
 }
 
@@ -268,12 +269,13 @@ export interface KeyboardPlugin extends Plugin {
 
 //
 
-export interface LocalNotificationPending {
+export interface LocalNotificationRequest {
   id: string;
+  options: any;
 }
 
 export interface LocalNotificationPendingList {
-  notifications: LocalNotificationPending[];
+  notifications: LocalNotificationRequest[];
 }
 
 export interface LocalNotificationScheduleResult extends LocalNotificationPendingList {
@@ -287,6 +289,17 @@ export interface LocalNotificationActionType {
   iosAllowInCarPlay?: boolean;
   iosHiddenPreviewsShowTitle?: boolean; // >= iOS 11 only
   iosHiddenPreviewsShowSubtitle?: boolean; // >= iOS 11 only
+}
+
+export interface LocalNotificationAction {
+  id: string;
+  title: string;
+  requiresAuthentication?: boolean;
+  foreground?: boolean;
+  destructive?: boolean;
+  input?: boolean;
+  inputButtonTitle?: string;
+  inputPlaceholder?: string;
 }
 
 export interface LocalNotificationAttachment {
@@ -310,6 +323,7 @@ export interface LocalNotification {
   sound?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
+  extra?: any;
 }
 
 export interface LocalNotificationSchedule {
@@ -325,12 +339,10 @@ export interface LocalNotificationSchedule {
   }
 }
 
-export interface LocalNotificationAction {
-  id: string;
-  title: string;
-  requiresAuthentication?: boolean;
-  foreground?: boolean;
-  destructive?: boolean;
+export interface LocalNotificationActionPerformed {
+  actionId: string;
+  inputValue?: string;
+  originalNotification: LocalNotification;
 }
 
 export interface LocalNotificationsPlugin extends Plugin {
@@ -338,7 +350,8 @@ export interface LocalNotificationsPlugin extends Plugin {
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
-  addListener(eventName: 'localNotificationReceived', listenerFunc: (err: any, notification: LocalNotificationPending) => void): PluginListenerHandle;
+  addListener(eventName: 'localNotificationReceived', listenerFunc: (err: any, notification: LocalNotification) => void): PluginListenerHandle;
+  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (err: any, notification: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 }
 
 

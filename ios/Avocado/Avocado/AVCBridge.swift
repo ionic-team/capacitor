@@ -299,16 +299,25 @@ enum BridgeError: Error {
    * Send a successful result to the JavaScript layer.
    */
   public func toJs(result: JSResult) {
-    let resultJson = result.toJson()
-    print("🥑  TO JS", resultJson.prefix(256))
-    
-    DispatchQueue.main.async {
-      self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
-        if error != nil && result != nil {
-          print(result!)
+    do {
+      let resultJson = try result.toJson()
+      print("🥑  TO JS", resultJson.prefix(256))
+      
+      DispatchQueue.main.async {
+        self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
+          if error != nil && result != nil {
+            print(result!)
+          }
         }
       }
+    } catch {
+      if let jsError = error as? JSProcessingError {
+        let appState = getOrLoadPlugin(pluginId: "AppState") as! AppState
+        
+        appState.firePluginError(jsError)
+      }
     }
+
   }
   
   /**
