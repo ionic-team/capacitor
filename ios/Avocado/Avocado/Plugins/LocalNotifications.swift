@@ -1,14 +1,27 @@
 import Foundation
 import UserNotifications
 
-enum LocalNotificationScheduleError: Error {
+enum LocalNotificationError: LocalizedError {
   case contentNoId
   case contentNoTitle
   case contentNoBody
   case triggerConstructionFailed
   case triggerRepeatIntervalTooShort
-}
+  case attachmentNoId
+  case attachmentNoUrl
+  case attachmentFileNotFound(path: String)
+  case attachmentUnableToCreate(String)
 
+  var errorDescription: String? {
+    switch self {
+    case .attachmentFileNotFound(path: let path):
+      return "Unable to find file \(path) for attachment"
+    default:
+      return ""
+    }
+  }
+}
+  
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
@@ -46,6 +59,7 @@ public class LocalNotifications : AVCPlugin {
       do {
         content = try makeNotificationContent(notification)
       } catch {
+        print(error.localizedDescription)
         call.error("Unable to make notification", error)
         return
       }
@@ -116,14 +130,15 @@ public class LocalNotifications : AVCPlugin {
   
   func makeNotificationContent(_ notification: JSObject) throws -> UNNotificationContent {
     guard let title = notification["title"] as? String else {
-      throw LocalNotificationScheduleError.contentNoTitle
+      throw LocalNotificationError.contentNoTitle
     }
     guard let body = notification["body"] as? String else {
-      throw LocalNotificationScheduleError.contentNoBody
+      throw LocalNotificationError.contentNoBody
     }
     
     let actionTypeId = notification["actionTypeId"] as? String
     let sound = notification["sound"] as? String
+    let attachments = notification["attachments"] as? JSArray
     
     let content = UNMutableNotificationContent()
     content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
@@ -136,6 +151,10 @@ public class LocalNotifications : AVCPlugin {
     
     if sound != nil {
       content.sound = UNNotificationSound(named: sound!)
+    }
+    
+    if attachments != nil {
+      content.attachments = try makeAttachments(attachments!)
     }
     
     return content
@@ -160,7 +179,7 @@ public class LocalNotifications : AVCPlugin {
       
       // Notifications that repeat have to be at least a minute between each other
       if repeats && dateInterval.duration < 60 {
-        throw LocalNotificationScheduleError.triggerRepeatIntervalTooShort
+        throw LocalNotificationError.triggerRepeatIntervalTooShort
       }
       
       return UNTimeIntervalNotificationTrigger(timeInterval: dateInterval.duration, repeats: repeats)
@@ -361,6 +380,57 @@ public class LocalNotifications : AVCPlugin {
     }
     
     return UNNotificationCategoryOptions(rawValue: 0)
+  }
+  
+  func makeAttachments(_ attachments: JSArray) throws -> [UNNotificationAttachment] {
+    var createdAttachments = [UNNotificationAttachment]()
+    
+    for a in attachments {
+      guard let id = a["id"] as? String else {
+        throw LocalNotificationError.attachmentNoId
+      }
+      guard let url = a["url"] as? String else {
+        throw LocalNotificationError.attachmentNoUrl
+      }
+      guard let urlObject = makeAttachmentUrl(url) else {
+        throw LocalNotificationError.attachmentFileNotFound(path: url)
+      }
+      
+      let options = a["options"] as? JSObject ?? [:]
+      
+      do {
+        let newAttachment = try UNNotificationAttachment(identifier: id, url: urlObject, options: makeAttachmentOptions(options))
+        createdAttachments.append(newAttachment)
+      } catch {
+        throw LocalNotificationError.attachmentUnableToCreate(error.localizedDescription)
+      }
+    }
+    
+    return createdAttachments
+  }
+  
+  func makeAttachmentUrl(_ path: String) -> URL? {
+    let file = AVCFileManager.get(path: path)
+    print("Got file for path: ", path, file)
+    return file?.url
+  }
+  
+  func makeAttachmentOptions(_ options: JSObject) -> [AnyHashable:Any] {
+    var opts = [AnyHashable:Any]()
+    
+    if let iosUNNotificationAttachmentOptionsTypeHintKey = options["iosUNNotificationAttachmentOptionsTypeHintKey"] as? String {
+      opts[UNNotificationAttachmentOptionsTypeHintKey] = iosUNNotificationAttachmentOptionsTypeHintKey
+    }
+    if let iosUNNotificationAttachmentOptionsThumbnailHiddenKey = options["iosUNNotificationAttachmentOptionsThumbnailHiddenKey"] as? String {
+      opts[UNNotificationAttachmentOptionsThumbnailHiddenKey] = iosUNNotificationAttachmentOptionsThumbnailHiddenKey
+    }
+    if let iosUNNotificationAttachmentOptionsThumbnailClippingRectKey = options["iosUNNotificationAttachmentOptionsThumbnailClippingRectKey"] as? String {
+      opts[UNNotificationAttachmentOptionsThumbnailClippingRectKey] = iosUNNotificationAttachmentOptionsThumbnailClippingRectKey
+    }
+    if let iosUNNotificationAttachmentOptionsThumbnailTimeKey = options["iosUNNotificationAttachmentOptionsThumbnailTimeKey"] as? String {
+      opts[UNNotificationAttachmentOptionsThumbnailTimeKey] = iosUNNotificationAttachmentOptionsThumbnailTimeKey
+    }
+    return opts
   }
 }
 

@@ -51,6 +51,9 @@ export class LocalNotificationsPage {
         body: 'Swipe to learn more',
         id: 'special-deal',
         sound: 'beep.aiff',
+        attachments: [
+          { id: 'face', url: 'face.jpg' }
+        ],
         schedule: {
           at: new Date(now.getTime() + (10 * 1000))
         },

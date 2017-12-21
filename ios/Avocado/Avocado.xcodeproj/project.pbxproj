@@ -24,6 +24,7 @@
 		50474F0B1FC527CA00AA0184 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F0A1FC527CA00AA0184 /* Storage.swift */; };
 		50474F0D1FC5284D00AA0184 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F0C1FC5284D00AA0184 /* Camera.swift */; };
 		504C7E371FCCE6BC0020DFD2 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504C7E361FCCE6BC0020DFD2 /* Reachability.swift */; };
+		504EC2F61FEB28A40016851F /* AVCFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC2F51FEB28A40016851F /* AVCFile.swift */; };
 		50503EE91FC08595003606DC /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Avocado.framework */; };
 		50503EEE1FC08595003606DC /* AvocadoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* AvocadoTests.swift */; };
 		50503EF01FC08595003606DC /* Avocado.h in Headers */ = {isa = PBXBuildFile; fileRef = 50503EE21FC08594003606DC /* Avocado.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -84,6 +85,7 @@
 		50474F0A1FC527CA00AA0184 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		50474F0C1FC5284D00AA0184 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		504C7E361FCCE6BC0020DFD2 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		504EC2F51FEB28A40016851F /* AVCFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCFile.swift; sourceTree = "<group>"; };
 		50503EDF1FC08594003606DC /* Avocado.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Avocado.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE21FC08594003606DC /* Avocado.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Avocado.h; sourceTree = "<group>"; };
 		50503EE31FC08594003606DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				50503F241FC098A3003606DC /* AVCPluginCall.swift */,
 				50503F221FC0968E003606DC /* AVCBridge.swift */,
 				50E3D63E1FCE6EA500BBEB06 /* AVCBridgeViewController.swift */,
+				504EC2F51FEB28A40016851F /* AVCFile.swift */,
 				50ED86F61FCB759B00E48884 /* DevMode.swift */,
 				5053E8FE1FC8755F00166FBE /* Diagnostics.swift */,
 				50ED86EF1FCA66CB00E48884 /* DocLinks.swift */,
@@ -494,6 +497,7 @@
 				50ED86F51FCB737300E48884 /* Modals.swift in Sources */,
 				50C99F6F1FE84F9400175E64 /* App.swift in Sources */,
 				501CBABB1FC28768009B0D4D /* Haptics.swift in Sources */,
+				504EC2F61FEB28A40016851F /* AVCFile.swift in Sources */,
 				50ED86F01FCA66CB00E48884 /* DocLinks.swift in Sources */,
 				501CBABF1FC2A22A009B0D4D /* Browser.swift in Sources */,
 				50E3D63F1FCE6EA500BBEB06 /* AVCBridgeViewController.swift in Sources */,
