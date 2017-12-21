@@ -21,12 +21,17 @@ enum LocalNotificationError: LocalizedError {
     }
   }
 }
-  
+
+
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
 @objc(LocalNotifications)
-public class LocalNotifications : AVCPlugin {
+public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
+  // Local list of notification id -> JSObject for storing options
+  // between notification requets
+  var notificationRequestOptions = [String:JSObject]()
+  
   func requestPermissions() {
     // Override point for customization after application launch.
     let center = UNUserNotificationCenter.current()
@@ -37,6 +42,11 @@ public class LocalNotifications : AVCPlugin {
     DispatchQueue.main.async {
       UIApplication.shared.registerForRemoteNotifications()
     }
+  }
+  
+  public override func load() {
+    let center = UNUserNotificationCenter.current()
+    center.delegate = self
   }
   
   @objc func schedule(_ call: AVCPluginCall) {
@@ -54,6 +64,8 @@ public class LocalNotifications : AVCPlugin {
         call.error("Notification missing identifier")
         return
       }
+      
+      let options = notification["options"] as? JSObject ?? [:]
       
       var content: UNNotificationContent
       do {
@@ -77,6 +89,8 @@ public class LocalNotifications : AVCPlugin {
       
       // Schedule the request.
       let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+      notificationRequestOptions[request.identifier] = options
+      
       let center = UNUserNotificationCenter.current()
       center.add(request) { (error : Error?) in
         if let theError = error {
@@ -126,6 +140,31 @@ public class LocalNotifications : AVCPlugin {
     makeActionTypes(types)
     
     call.success()
+  }
+  
+  public func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              willPresent notification: UNNotification,
+                              withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    let request = notification.request
+    
+    notifyListeners("localNotificationReceived", data: notificationRequestToDict(request))
+    
+    if let options = notificationRequestOptions[request.identifier] {
+      let silent = options["silent"] as? Bool ?? false
+      if silent {
+        completionHandler(.init(rawValue:0))
+        return
+      }
+    }
+    
+
+    completionHandler([.badge, .sound])
+  }
+  
+  public func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              didReceive response: UNNotificationResponse,
+                              withCompletionHandler completionHandler: @escaping () -> Void) {
+    
   }
   
   func makeNotificationContent(_ notification: JSObject) throws -> UNNotificationContent {
@@ -411,7 +450,6 @@ public class LocalNotifications : AVCPlugin {
   
   func makeAttachmentUrl(_ path: String) -> URL? {
     let file = AVCFileManager.get(path: path)
-    print("Got file for path: ", path, file)
     return file?.url
   }
   

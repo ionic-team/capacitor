@@ -8,6 +8,8 @@ AVC_PLUGIN(Accessibility,
   AVC_PLUGIN_METHOD(onScreenReaderStateChange, "", AVCPluginReturnCallback);
 )
 
+AVC_PLUGIN(AppState,)
+
 AVC_PLUGIN(Browser,
   AVC_PLUGIN_METHOD(open, "url:string", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(close, "options:any", AVCPluginReturnPromise);
