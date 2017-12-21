@@ -22,7 +22,7 @@ enum BridgeError: Error {
   
   public var storedCalls = [String:AVCPluginCall]()
   
-  public var isAppActive = true
+  private var isActive = true
   
   // Dispatch queue for our operations
   // TODO: Unique label?
@@ -65,16 +65,19 @@ enum BridgeError: Error {
     
     NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { (notification) in
       print("APP ACTIVE")
-      self.isAppActive = true
-      appStatePlugin?.fireChange(isActive: self.isAppActive)
+      self.isActive = true
+      appStatePlugin?.fireChange(isActive: self.isActive)
     }
     NotificationCenter.default.addObserver(forName: .UIApplicationDidEnterBackground, object: nil, queue: OperationQueue.main) { (notification) in
       print("APP INACTIVE")
-      self.isAppActive = false
-      appStatePlugin?.fireChange(isActive: self.isAppActive)
+      self.isActive = false
+      appStatePlugin?.fireChange(isActive: self.isActive)
     }
   }
   
+  func isAppActive() -> Bool {
+    return isActive
+  }
   
   func exportCoreJS() {
     do {
