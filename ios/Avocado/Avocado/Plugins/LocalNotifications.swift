@@ -156,9 +156,12 @@ public class LocalNotifications : AVCPlugin, UNUserNotificationCenterDelegate {
         return
       }
     }
-    
 
-    completionHandler([.badge, .sound])
+    if bridge.isAppActive() {
+      completionHandler([.badge, .sound, .alert])
+    } else {
+      completionHandler([.badge, .sound])
+    }
   }
   
   public func userNotificationCenter(_ center: UNUserNotificationCenter,
