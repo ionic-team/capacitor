@@ -52,7 +52,7 @@ export class LocalNotificationsPage {
         id: 'special-deal',
         sound: 'beep.aiff',
         attachments: [
-          { id: 'face', url: 'face.jpg' }
+          { id: 'face', url: 'res://face.jpg' }
         ],
         schedule: {
           at: new Date(now.getTime() + (10 * 1000))
