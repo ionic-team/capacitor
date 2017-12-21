@@ -6,14 +6,22 @@ public class Photos : AVCPlugin {
   static let DEFAULT_QUANTITY = 25
   static let DEFAULT_TYPES = "photos"
   
-  func fetchResultAssetsToJs(_ result: PHFetchResult<PHAsset>) -> [String:Any] {
-    var ret = [String:Any]()
+  func fetchResultAssetsToJs(_ result: PHFetchResult<PHAsset>) -> [JSObject] {
+    var assets: [JSObject] = []
     
     result.enumerateObjects { (asset, count: Int, stop: UnsafeMutablePointer<ObjCBool>) in
       print("Got asset item", asset, count)
+      var a = JSObject()
+      a["createdAt"] = asset.creationDate
+      a["location"] = JSObject()
+      var loc = a["location"] as! JSObject
+      loc["latitude"] = asset.location?.coordinate.latitude
+      loc["longitude"] = asset.location?.coordinate.longitude
+      // TODO: Expose more fields
+      assets.append(a)
     }
     
-    return ret
+    return assets
   }
   
   
