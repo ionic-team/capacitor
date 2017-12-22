@@ -7,7 +7,7 @@ import { add, checkPackage, checkWebDir, logFatal, logInfo } from '../common';
 export async function syncCommand(config: Config, selectedPlatform: string) {
   const platforms = config.selectPlatforms(selectedPlatform);
   if (platforms.length === 0) {
-    logInfo(`There are not platforms to sync yet. Create one with "avocado create".`);
+    logInfo(`There are no platforms to sync yet. Create one with "avocado create".`);
     return;
   }
   try {

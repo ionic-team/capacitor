@@ -7,7 +7,7 @@ import { copy as fsCopy, remove } from 'fs-extra';
 export async function copyCommand(config: Config, selectedPlatformName: string) {
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
-    logInfo(`There are not platforms to copy yet. Create one with "avocado create".`);
+    logInfo(`There are no platforms to copy yet. Create one with "avocado create".`);
     return;
   }
   try {

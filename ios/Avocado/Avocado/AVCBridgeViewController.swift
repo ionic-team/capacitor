@@ -42,26 +42,28 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     super.viewDidLoad()
     self.becomeFirstResponder()
     
-    /*
-     if let url = URL(string: "https://google.com") {
-     let req = URLRequest(url: url)
-     webView?.load(req)
-     }
-     */
+    loadWebView()
+  }
+  
+  public override func viewWillAppear(_ animated: Bool) {
+    bridge!.willAppear()
+  }
+  
+  func loadWebView() {
+    guard let index = Bundle.main.path(forResource: "public/index", ofType: "html") else {
+      print("🥑  FATAL ERROR: Unable to load public/index.html")
+      print("🥑  This file is the root of your web app and must exist before")
+      print("🥑  Avocado can run. Ensure you've run avocado sync at least once")
+      exit(1)
+    }
     
-    let index = Bundle.main.path(forResource: "www/index", ofType: "html");
-    
-    let indexPath = "file://" + index!;
+    let indexPath = "file://" + index;
     let indexUrl = URL(fileURLWithPath: indexPath);
     let indexDir = "file://" + indexUrl.deletingLastPathComponent().path;
     
     if let url = URL(string: indexPath) {
       _ = webView?.loadFileURL(url, allowingReadAccessTo: URL(string: indexDir)!)
     }
-  }
-  
-  public override func viewWillAppear(_ animated: Bool) {
-    bridge!.willAppear()
   }
   
   public func configureWebView(configuration: WKWebViewConfiguration) {
