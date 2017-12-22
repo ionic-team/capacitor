@@ -8,7 +8,7 @@ export async function openCommand(config: Config, selectedPlatform: string) {
   const platforms = config.selectPlatforms(selectedPlatform);
   let platformName: string;
   if (platforms.length === 0) {
-    logInfo(`There are no platforms to open yet. Create one with "avocado create".`);
+    logInfo(`There are no platforms to open yet. Create one with "avocado add".`);
     return;
   } else if (platforms.length === 1) {
     platformName = platforms[0];
@@ -27,7 +27,7 @@ export async function openCommand(config: Config, selectedPlatform: string) {
 
 export async function open(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
-    await runTask('Opening the xcode workspace...', () => {
+    await runTask('Opening the Xcode workspace...', () => {
       return openIOS(config);
     });
 
