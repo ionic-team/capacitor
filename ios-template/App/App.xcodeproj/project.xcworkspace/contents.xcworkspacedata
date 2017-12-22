@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:AvocadoApp.xcodeproj">
+      location = "self:App.xcodeproj">
    </FileRef>
 </Workspace>
