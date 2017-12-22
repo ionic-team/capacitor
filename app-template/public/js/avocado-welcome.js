@@ -58,11 +58,10 @@ window.customElements.define('avocado-welcome', class extends HTMLElement {
         </p>
         <h2>Getting Started</h2>
         <p>
-          Avocado doesn't come with any UI controls out of the box. Instead, you should use a project like Ionic
-          which will give you a rich set of mobile and web-enabled UI controls and additional tools for building
-          and deploying apps.
+          You'll probably need a UI framework to build a full-featured app. We recommend
+          Ionic:
         </p>
-        <h3>1. With Ionic</h3>
+        <h3>1. Using Ionic</h3>
         <code><pre>
           npm install -g ionic
           ionic avocado init
@@ -96,6 +95,7 @@ window.customElements.define('avocado-welcome-titlebar', class extends HTMLEleme
         background-color: #5ec166;
       }
       ::slotted(h1) {
+        margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         font-size: 0.9em;
         font-weight: 600;
