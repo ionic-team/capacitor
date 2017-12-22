@@ -26,6 +26,7 @@ export class Config implements CliConfig {
     platformDir: '',
     webDir: 'public',
     avocadoRuntimePod: `pod 'Avocado'`,
+    nativeProjectName: 'App',
     assets: {
       templateName: 'ios-template',
       templateDir: ''
@@ -107,7 +108,7 @@ export class Config implements CliConfig {
     this.platforms.push(this.ios.name);
     this.ios.platformDir = join(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = join(this.cli.assetsDir, this.ios.assets.templateName);
-    this.ios.webDir = join(this.ios.platformDir, this.ios.webDir);
+    this.ios.webDir = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
   }
 
 

@@ -22,6 +22,11 @@ export interface CliConfigPlatform {
   assets: CliConfigPlatformAssets;
 }
 
+export interface CliConfigPlatformIOS extends CliConfigPlatform {
+  // The directory inside of app/ios/ that has the full xcode project files
+  nativeProjectDir: string;
+}
+
 export interface CliConfigCli {
   binDir: string;
   rootDir: string;
