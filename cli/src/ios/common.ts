@@ -1,20 +1,40 @@
 import { Config } from '../config';
-import { isInstalled, readdirAsync } from '../common';
+import { isInstalled, } from '../common';
 import { join } from 'path';
+import { readdirAsync, lstatAsync } from '../util/fs';
 
 import { Plugin, PluginType } from '../plugin';
 
 
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
-    const files = await readdirAsync(config.ios.platformDir);
-    const xcodeProject = files.find(file => file.endsWith('.xcworkspace'));
-    if (xcodeProject) {
-      return join(config.ios.platformDir, xcodeProject);
+    const iosFiles = await readdirAsync(config.ios.platformDir);
+
+    const subFileSearches = iosFiles.map(async (file:any) => {
+      let path = join(config.ios.platformDir, file);
+      let stat = await lstatAsync(path);
+      if(stat.isDirectory()) {
+        let files = await readdirAsync(path);
+        return {
+          path: file,
+          files: files
+        }
+      }
+      return null;
+    });
+    const results = await Promise.all(subFileSearches);
+
+    for(let directoryFiles of results) {
+      if(!directoryFiles) { continue; }
+      const xcodeProject = directoryFiles.files.find((file: string) => file.endsWith('.xcworkspace'));
+      if (xcodeProject) {
+        return join(config.ios.platformDir, directoryFiles.path, xcodeProject);
+      }
     }
     return null;
-  } catch {
-    return null;
+  } catch(e) {
+    throw e;
+    //return null;
   }
 }
 

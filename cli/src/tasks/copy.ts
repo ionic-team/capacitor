@@ -1,5 +1,6 @@
 import { Config } from '../config';
-import { add, checkWebDir, logFatal, logInfo, runTask, symlinkAsync } from '../common';
+import { add, checkWebDir, logFatal, logInfo, runTask } from '../common';
+import { symlinkAsync } from '../util/fs';
 import { relative } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
 

@@ -1,16 +1,9 @@
 import { Config } from './config';
 import { exec } from 'child_process';
-import { exists, readFile, readdir, symlink, writeFile } from 'fs';
-import { promisify } from 'util';
 import { setTimeout } from 'timers';
 import { join } from 'path';
-
-
-export const symlinkAsync = promisify(symlink);
-export const readFileAsync = promisify(readFile);
-export const writeFileAsync = promisify(writeFile);
-export const existsAsync = promisify(exists);
-export const readdirAsync = promisify(readdir);
+import { existsAsync, readFileAsync, writeFileAsync } from './util/fs';
+import { readFile } from 'fs';
 
 export type CheckFunction = (config: Config) => Promise<string | null>;
 
