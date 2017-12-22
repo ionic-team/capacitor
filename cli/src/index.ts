@@ -18,10 +18,10 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .version(config.cli.package.version);
 
   program
-    .command('create [name] [identifier]')
-    .description('Creates a new avocado project with the given name and app/bundle identifier')
-    .action((name, identifier) => {
-      return createCommand(config, name, identifier);
+    .command('create [directory] [name] [identifier]')
+    .description('Creates a new avocado project in the given directory')
+    .action((directory, name, identifier) => {
+      return createCommand(config, directory, name, identifier);
     });
 
   program
