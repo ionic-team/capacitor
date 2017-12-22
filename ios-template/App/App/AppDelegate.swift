@@ -1,9 +1,8 @@
 //
 //  AppDelegate.swift
-//  IonicRunner
+//  App
 //
-//  Created by Max Lynch on 3/22/17.
-//  Copyright © 2017 Max Lynch. All rights reserved.
+//  Created by Max Lynch on 12/22/17.
 //
 
 import UIKit

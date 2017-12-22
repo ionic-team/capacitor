@@ -7,27 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A91597C71FC4BB890004548F /* www in Resources */ = {isa = PBXBuildFile; fileRef = A91597C61FC4BB890004548F /* www */; };
-		A9616FAA1FC4603A0094F07A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9616FA91FC4603A0094F07A /* AppDelegate.swift */; };
-		A9616FAC1FC4603A0094F07A /* AvocadoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9616FAB1FC4603A0094F07A /* AvocadoViewController.swift */; };
-		A9616FAF1FC4603A0094F07A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9616FAD1FC4603A0094F07A /* Main.storyboard */; };
-		A9616FB11FC4603A0094F07A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9616FB01FC4603A0094F07A /* Assets.xcassets */; };
-		A9616FB41FC4603A0094F07A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9616FB21FC4603A0094F07A /* LaunchScreen.storyboard */; };
+		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
+		504EC30A1FED79650016851F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3091FED79650016851F /* ViewController.swift */; };
+		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
+		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
+		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A91597C61FC4BB890004548F /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = SOURCE_ROOT; };
-		A9616FA61FC4603A0094F07A /* AvocadoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AvocadoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A9616FA91FC4603A0094F07A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A9616FAB1FC4603A0094F07A /* AvocadoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvocadoViewController.swift; sourceTree = "<group>"; };
-		A9616FAE1FC4603A0094F07A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		A9616FB01FC4603A0094F07A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A9616FB31FC4603A0094F07A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A9616FB51FC4603A0094F07A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		504EC3091FED79650016851F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		504EC30C1FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		504EC30E1FED79650016851F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A9616FA31FC4603A0094F07A /* Frameworks */ = {
+		504EC3011FED79650016851F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -37,73 +35,71 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A9616F9D1FC4603A0094F07A = {
+		504EC2FB1FED79650016851F = {
 			isa = PBXGroup;
 			children = (
-				A9616FA81FC4603A0094F07A /* AvocadoApp */,
-				A9616FA71FC4603A0094F07A /* Products */,
+				504EC3061FED79650016851F /* App */,
+				504EC3051FED79650016851F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A9616FA71FC4603A0094F07A /* Products */ = {
+		504EC3051FED79650016851F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A9616FA61FC4603A0094F07A /* AvocadoApp.app */,
+				504EC3041FED79650016851F /* App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A9616FA81FC4603A0094F07A /* AvocadoApp */ = {
+		504EC3061FED79650016851F /* App */ = {
 			isa = PBXGroup;
 			children = (
-				A9616FA91FC4603A0094F07A /* AppDelegate.swift */,
-				A9616FAB1FC4603A0094F07A /* AvocadoViewController.swift */,
-				A9616FAD1FC4603A0094F07A /* Main.storyboard */,
-				A91597C61FC4BB890004548F /* www */,
-				A9616FB01FC4603A0094F07A /* Assets.xcassets */,
-				A9616FB21FC4603A0094F07A /* LaunchScreen.storyboard */,
-				A9616FB51FC4603A0094F07A /* Info.plist */,
+				504EC3071FED79650016851F /* AppDelegate.swift */,
+				504EC3091FED79650016851F /* ViewController.swift */,
+				504EC30B1FED79650016851F /* Main.storyboard */,
+				504EC30E1FED79650016851F /* Assets.xcassets */,
+				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
+				504EC3131FED79650016851F /* Info.plist */,
 			);
-			path = AvocadoApp;
+			path = App;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A9616FA51FC4603A0094F07A /* AvocadoApp */ = {
+		504EC3031FED79650016851F /* App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A9616FB81FC4603A0094F07A /* Build configuration list for PBXNativeTarget "AvocadoApp" */;
+			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
 			buildPhases = (
-				A9616FA21FC4603A0094F07A /* Sources */,
-				A9616FA31FC4603A0094F07A /* Frameworks */,
-				A9616FA41FC4603A0094F07A /* Resources */,
+				504EC3001FED79650016851F /* Sources */,
+				504EC3011FED79650016851F /* Frameworks */,
+				504EC3021FED79650016851F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = AvocadoApp;
-			productName = AvocadoApp;
-			productReference = A9616FA61FC4603A0094F07A /* AvocadoApp.app */;
+			name = App;
+			productName = App;
+			productReference = 504EC3041FED79650016851F /* App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A9616F9E1FC4603A0094F07A /* Project object */ = {
+		504EC2FC1FED79650016851F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0910;
-				LastUpgradeCheck = 0910;
-				ORGANIZATIONNAME = Avocado;
+				LastSwiftUpdateCheck = 0920;
+				LastUpgradeCheck = 0920;
 				TargetAttributes = {
-					A9616FA51FC4603A0094F07A = {
-						CreatedOnToolsVersion = 9.1;
+					504EC3031FED79650016851F = {
+						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = A9616FA11FC4603A0094F07A /* Build configuration list for PBXProject "AvocadoApp" */;
+			buildConfigurationList = 504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -111,55 +107,54 @@
 				en,
 				Base,
 			);
-			mainGroup = A9616F9D1FC4603A0094F07A;
-			productRefGroup = A9616FA71FC4603A0094F07A /* Products */;
+			mainGroup = 504EC2FB1FED79650016851F;
+			productRefGroup = 504EC3051FED79650016851F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A9616FA51FC4603A0094F07A /* AvocadoApp */,
+				504EC3031FED79650016851F /* App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A9616FA41FC4603A0094F07A /* Resources */ = {
+		504EC3021FED79650016851F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A91597C71FC4BB890004548F /* www in Resources */,
-				A9616FB41FC4603A0094F07A /* LaunchScreen.storyboard in Resources */,
-				A9616FB11FC4603A0094F07A /* Assets.xcassets in Resources */,
-				A9616FAF1FC4603A0094F07A /* Main.storyboard in Resources */,
+				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
+				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
+				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A9616FA21FC4603A0094F07A /* Sources */ = {
+		504EC3001FED79650016851F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9616FAC1FC4603A0094F07A /* AvocadoViewController.swift in Sources */,
-				A9616FAA1FC4603A0094F07A /* AppDelegate.swift in Sources */,
+				504EC30A1FED79650016851F /* ViewController.swift in Sources */,
+				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		A9616FAD1FC4603A0094F07A /* Main.storyboard */ = {
+		504EC30B1FED79650016851F /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A9616FAE1FC4603A0094F07A /* Base */,
+				504EC30C1FED79650016851F /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		A9616FB21FC4603A0094F07A /* LaunchScreen.storyboard */ = {
+		504EC3101FED79650016851F /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A9616FB31FC4603A0094F07A /* Base */,
+				504EC3111FED79650016851F /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -167,7 +162,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		A9616FB61FC4603A0094F07A /* Debug */ = {
+		504EC3141FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -215,7 +210,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -224,7 +219,7 @@
 			};
 			name = Debug;
 		};
-		A9616FB71FC4603A0094F07A /* Release */ = {
+		504EC3151FED79650016851F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -266,7 +261,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -274,28 +269,28 @@
 			};
 			name = Release;
 		};
-		A9616FB91FC4603A0094F07A /* Debug */ = {
+		504EC3171FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = AvocadoApp/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.avocado.AvocadoApp;
+				PRODUCT_BUNDLE_IDENTIFIER = avocado.App;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		A9616FBA1FC4603A0094F07A /* Release */ = {
+		504EC3181FED79650016851F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = AvocadoApp/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.avocado.AvocadoApp;
+				PRODUCT_BUNDLE_IDENTIFIER = avocado.App;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -305,25 +300,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A9616FA11FC4603A0094F07A /* Build configuration list for PBXProject "AvocadoApp" */ = {
+		504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A9616FB61FC4603A0094F07A /* Debug */,
-				A9616FB71FC4603A0094F07A /* Release */,
+				504EC3141FED79650016851F /* Debug */,
+				504EC3151FED79650016851F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A9616FB81FC4603A0094F07A /* Build configuration list for PBXNativeTarget "AvocadoApp" */ = {
+		504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A9616FB91FC4603A0094F07A /* Debug */,
-				A9616FBA1FC4603A0094F07A /* Release */,
+				504EC3171FED79650016851F /* Debug */,
+				504EC3181FED79650016851F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = A9616F9E1FC4603A0094F07A /* Project object */;
+	rootObject = 504EC2FC1FED79650016851F /* Project object */;
 }
