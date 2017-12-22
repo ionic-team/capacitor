@@ -22,11 +22,11 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   try {
     await add(
       config,
-      [checkPackage, ...createChecks(config, platformName)]
+      [checkPackage, ...addChecks(config, platformName)]
     );
     await generateAvocadoConfig(config);
     await add(config, [checkWebDir]);
-    await create(config, platformName);
+    await doAdd(config, platformName);
     await sync(config, platformName);
     await open(config, platformName);
 
@@ -57,7 +57,7 @@ export async function generateAvocadoConfig(config: Config) {
   config.app.webDir = webDir;
 }
 
-export function createChecks(config: Config, platformName: string) {
+export function addChecks(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     return addIOSChecks;
   } else if (platformName === config.android.name) {
@@ -67,7 +67,7 @@ export function createChecks(config: Config, platformName: string) {
   }
 }
 
-export async function create(config: Config, platformName: string) {
+export async function doAdd(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     await addIOS(config);
   } else if (platformName === config.android.name) {
