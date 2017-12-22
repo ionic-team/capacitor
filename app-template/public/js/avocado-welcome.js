@@ -28,6 +28,7 @@ window.customElements.define('avocado-welcome', class extends HTMLElement {
       main {
         padding: 15px;
       }
+      main hr { height: 1px; background-color: #eee; border: 0; }
       main h1 {
         font-size: 1.4em;
         text-transform: uppercase;
@@ -69,7 +70,7 @@ window.customElements.define('avocado-welcome', class extends HTMLElement {
         <a href="https://ionicframework.com/" target="_blank" class="button">Read more</a>
         <h3>2. No UI or with another UI library</h3>
         Continue to use the avocado CLI directly and/or follow your library's instructions.
-        <h2>Documentation and Resources</h2>
+        <h2>Have fun!</h2>
         <p>
           Visit <a href="http://ionic-team.github.io/avocado">ionic-team.github.io/avocado</a> for information
           on using native features, building plugins, and more.
