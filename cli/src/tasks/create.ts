@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { logFatal } from '../common';
-import { existsSync, mkdir } from '../util/fs';
+import { existsSync, mkdir, cp } from '../util/fs';
 const chalk = require('chalk');
 
 export async function createCommand (config: Config, directory: string, name: string, identifier: string) {
@@ -30,5 +30,9 @@ export async function createCommand (config: Config, directory: string, name: st
 
 async function doCreate(config: Config, directory: string, name: string, identifier: string) {
   await mkdir(directory);
+
+  const templateDir = config.app.assets.templateDir;
+
+  await cp(templateDir, directory);
 }
 
