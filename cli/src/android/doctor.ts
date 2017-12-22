@@ -1,5 +1,5 @@
 import { accessSync } from 'fs';
-import { check, existsAsync, isInstalled, logFatal, logSuccess, readFileAsync, readXML, runTask } from '../common';
+import { add, existsAsync, isInstalled, logFatal, logSuccess, readFileAsync, readXML, runTask } from '../common';
 import { Config } from '../config';
 import { join } from 'path';
 
@@ -7,7 +7,7 @@ import { join } from 'path';
 export async function doctorAndroid(config: Config) {
   try {
     await runTask('Checking Android Environment', () => {
-      return check(
+      return add(
         config,
         [
           checkAndroidInstalled,

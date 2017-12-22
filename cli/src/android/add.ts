@@ -3,9 +3,9 @@ import { Config } from '../config';
 import { runTask } from '../common';
 
 
-export async function createAndroid(config: Config) {
+export async function addAndroid(config: Config) {
 
-  await runTask(`Creating native android project in: ${config.android.platformDir}`, () => {
+  await runTask(`Adding native android project in: ${config.android.platformDir}`, () => {
     return copy(config.android.assets.templateDir, config.android.platformDir);
   });
 

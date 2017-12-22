@@ -1,31 +1,31 @@
 import { Config } from '../config';
-import { createAndroid } from '../android/create';
-import { createIOS, createIOSChecks } from '../ios/create';
-import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
+import { addAndroid } from '../android/add';
+import { addIOS, addIOSChecks } from '../ios/add';
+import { add, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 import { open } from './open';
 
 
-export async function createCommand(config: Config, selectedPlatformName: string) {
+export async function addCommand(config: Config, selectedPlatformName: string) {
   const platformName = await config.askPlatform(
     selectedPlatformName,
-    `Please choose a platform to create:`
+    `Please choose a platform to add:`
   );
 
   const existingPlatformDir = config.platformDirExists(platformName);
   if (existingPlatformDir) {
     logFatal(`"${platformName}" platform already exists.
-    To create a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.
+    To add a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.
     WARNING! your xcode setup will be completely removed.`);
   }
 
   try {
-    await check(
+    await add(
       config,
       [checkPackage, ...createChecks(config, platformName)]
     );
     await generateAvocadoConfig(config);
-    await check(config, [checkWebDir]);
+    await add(config, [checkWebDir]);
     await create(config, platformName);
     await sync(config, platformName);
     await open(config, platformName);
@@ -59,7 +59,7 @@ export async function generateAvocadoConfig(config: Config) {
 
 export function createChecks(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
-    return createIOSChecks;
+    return addIOSChecks;
   } else if (platformName === config.android.name) {
     return [];
   } else {
@@ -69,8 +69,8 @@ export function createChecks(config: Config, platformName: string) {
 
 export async function create(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
-    await createIOS(config);
+    await addIOS(config);
   } else if (platformName === config.android.name) {
-    await createAndroid(config);
+    await addAndroid(config);
   }
 }

@@ -5,7 +5,7 @@ import { updateCommand } from './tasks/update';
 import { openCommand } from './tasks/open';
 import { syncCommand } from './tasks/sync';
 import { Config } from './config';
-import { createCommand } from './tasks/create';
+import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
 
@@ -45,10 +45,10 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-    .command('create [platform]')
-    .description('create a native project')
+    .command('add [platform]')
+    .description('add a native platform project')
     .action(platform => {
-      return createCommand(config, platform);
+      return addCommand(config, platform);
     });
 
   program
