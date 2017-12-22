@@ -6,13 +6,16 @@ public class AVCFile {
   }
 }
 
+/**
+ * AVCFileManager helps map file schemes to physical files, whether they are on
+ * disk, in a bundle, or in another location.
+ */
 @objc public class AVCFileManager: NSObject {
   static func get(path: String) -> AVCFile? {
     let handlers: [String:AVCFileResolver.Type] = [
-      "file:///": AVCFileResolverFile.self,
       "res://": AVCFileResolverResource.self,
       "file://": AVCFileResolverFile.self,
-      "base64:": AVCFileResolverFile.self
+      "base64:": AVCFileResolverNotImplemented.self
     ]
 
     for (handlerPrefix, handler) in handlers {
@@ -53,5 +56,11 @@ private class AVCFileResolverResource: AVCFileResolver {
       return nil
     }
     return AVCFile(url: URL(fileURLWithPath: absPath))
+  }
+}
+
+private class AVCFileResolverNotImplemented: AVCFileResolver {
+  public static func resolve(path: String) -> AVCFile? {
+    return nil
   }
 }
