@@ -1,15 +1,18 @@
 import { accessSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { logFatal } from './common';
+import { CliConfig, PackageJson, ExternalConfig } from './definitions';
 
+let Package: PackageJson;
+let ExtConfig: ExternalConfig;
 
-export class Config {
+export class Config implements CliConfig {
 
   android = {
     name: 'android',
     minVersion: '21',
     platformDir: '',
-    webDir: 'app/src/main/assets/www',
+    webDir: 'app/src/main/assets/public',
     assets: {
       templateName: 'android-template',
       templateDir: ''
@@ -20,7 +23,7 @@ export class Config {
     name: 'ios',
     minVersion: '10.0',
     platformDir: '',
-    webDir: 'www',
+    webDir: 'public',
     avocadoRuntimePod: `pod 'Avocado'`,
     assets: {
       templateName: 'ios-template',
@@ -38,13 +41,18 @@ export class Config {
 
   app = {
     rootDir: '',
-    webDir: 'www',
+    webDir: 'public',
     symlinkWebDir: false,
     package: Package,
     extConfigName: 'avocado.config.json',
     extConfigFilePath: '',
-    extConfig: ExtConfig
+    extConfig: ExtConfig,
+    assets: {
+      templateName: 'app-template',
+      templateDir: ''
+    }
   };
+
   platforms: string[] = [];
 
 
@@ -79,6 +87,7 @@ export class Config {
   private initAppConfig(currentWorkingDir: string) {
     this.app.rootDir = currentWorkingDir,
     this.app.package = loadPackageJson(currentWorkingDir);
+    this.app.assets.templateDir = join(this.cli.assetsDir, this.app.assets.templateName);
   }
 
 
@@ -226,18 +235,3 @@ function loadPackageJson(dir: string): PackageJson {
 
   return p;
 }
-
-
-export interface PackageJson {
-  name: string;
-  version: string;
-}
-
-
-export interface ExternalConfig {
-  webDir: string;
-  startPage: string;
-}
-
-let Package: PackageJson;
-let ExtConfig: ExternalConfig;
