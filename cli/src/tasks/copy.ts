@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { check, checkWebDir, logFatal, logInfo, runTask, symlinkAsync } from '../common';
+import { add, checkWebDir, logFatal, logInfo, runTask, symlinkAsync } from '../common';
 import { relative } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
 
@@ -11,7 +11,7 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
     return;
   }
   try {
-    await check(config, [checkWebDir]);
+    await add(config, [checkWebDir]);
     await Promise.all(platforms.map(platformName => {
       return copy(config, platformName);
     }));

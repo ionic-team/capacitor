@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
-import { CheckFunction, check, checkPackage, logFatal, logInfo } from '../common';
+import { CheckFunction, add, checkPackage, logFatal, logInfo } from '../common';
 
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
@@ -11,7 +11,7 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     return;
   }
   try {
-    await check(
+    await add(
       config,
       [checkPackage, ...updateChecks(config, platforms)]
     );

@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { copy } from './copy';
 import { update, updateChecks } from './update';
-import { check, checkPackage, checkWebDir, logFatal, logInfo } from '../common';
+import { add, checkPackage, checkWebDir, logFatal, logInfo } from '../common';
 
 
 export async function syncCommand(config: Config, selectedPlatform: string) {
@@ -11,7 +11,7 @@ export async function syncCommand(config: Config, selectedPlatform: string) {
     return;
   }
   try {
-    await check(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
+    await add(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
     await Promise.all(platforms.map(platformName => {
       return sync(config, platformName);
     }));
