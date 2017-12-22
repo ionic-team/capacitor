@@ -1,10 +1,10 @@
 import { Config } from '../config';
-import { logFatal } from '../common';
+import { logFatal, runTask } from '../common';
+import { addIOS } from '../ios/add';
 import { existsSync, mkdir, cp } from '../util/fs';
 const chalk = require('chalk');
 
 export async function createCommand (config: Config, directory: string, name: string, identifier: string) {
-  console.log(chalk`Creating app {bold ${name}} in {bold ${directory}} with id {bold ${identifier}}`);
 
   const existingApp = existsSync(directory);
 
@@ -14,7 +14,9 @@ export async function createCommand (config: Config, directory: string, name: st
   }
 
   try {
-    await doCreate(config, directory, name, identifier);
+    await createApp(config, directory, name, identifier);
+    config.setCurrentWorkingDir(directory);
+    await addIOS(config);
     /*
     await generateAvocadoConfig(config);
     await add(config, [checkWebDir]);
@@ -28,11 +30,13 @@ export async function createCommand (config: Config, directory: string, name: st
   }
 }
 
-async function doCreate(config: Config, directory: string, name: string, identifier: string) {
+export async function createApp(config: Config, directory: string, name: string, identifier: string) {
   await mkdir(directory);
 
   const templateDir = config.app.assets.templateDir;
 
-  await cp(templateDir, directory);
+  await runTask(chalk`Creating app {bold ${name}} in {bold ${directory}} with id {bold ${identifier}}`, () => {
+    return cp(templateDir, directory);
+  });
 }
 

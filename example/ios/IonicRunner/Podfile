@@ -6,5 +6,5 @@ target 'IonicRunner' do
   use_frameworks!
 
   # Pods for IonicRunner
-
+  pod 'Avocado', :path => '../../../ios/Avocado'
 end

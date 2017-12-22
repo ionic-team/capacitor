@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16582F478FA3C2A551BF4F58 /* Pods_IonicRunner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAADC63CD0F5CD6B622C77C0 /* Pods_IonicRunner.framework */; };
 		501CBAB41FC0E2B5009B0D4D /* Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; };
 		501CBAB51FC0E2B5009B0D4D /* Avocado.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAB11FC0E268009B0D4D /* Avocado.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		504EC2F81FEB2CBA0016851F /* face.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 504EC2F71FEB2CB90016851F /* face.jpg */; };
-		6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3394176F7AE51239517122DA /* Pods_IonicRunner.framework */; };
 		A3729E091E83246400B7334A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E081E83246400B7334A /* AppDelegate.swift */; };
 		A3729E0E1E83246400B7334A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3729E0C1E83246400B7334A /* Main.storyboard */; };
 		A3729E101E83246400B7334A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3729E0F1E83246400B7334A /* Assets.xcassets */; };
@@ -40,6 +40,13 @@
 			remoteGlobalIDString = 50503EDE1FC08594003606DC;
 			remoteInfo = Avocado;
 		};
+		50B271C11FED987800F3C39B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC3A2650D96E24360D29CCE747F0C131;
+			remoteInfo = Avocado;
+		};
 		C2BF9B2B1E874A960050F782 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
@@ -64,7 +71,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3394176F7AE51239517122DA /* Pods_IonicRunner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IonicRunner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		39D67306E24BC63D39C111B8 /* Pods-IonicRunner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicRunner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner.debug.xcconfig"; sourceTree = "<group>"; };
 		501CBAAB1FC0E268009B0D4D /* Avocado.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Avocado.xcodeproj; path = ../../../ios/Avocado/Avocado.xcodeproj; sourceTree = "<group>"; };
 		503ACBFD1FE98C0C00C5E136 /* Avocado.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Avocado.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/IonicRunner-dtawthqbknkuwzeomrletvvwmolw/Build/Products/Debug-iphonesimulator/Avocado.framework"; sourceTree = "<group>"; };
@@ -78,6 +84,7 @@
 		A3729E141E83246400B7334A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A3729E1A1E83331B00B7334A /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
 		C2BF9B261E874A960050F782 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
+		DAADC63CD0F5CD6B622C77C0 /* Pods_IonicRunner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IonicRunner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +93,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				501CBAB41FC0E2B5009B0D4D /* Avocado.framework in Frameworks */,
-				6551F63BCDDD08B7F404A5BE /* Pods_IonicRunner.framework in Frameworks */,
+				16582F478FA3C2A551BF4F58 /* Pods_IonicRunner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,7 +114,7 @@
 			children = (
 				503ACBFD1FE98C0C00C5E136 /* Avocado.framework */,
 				C2BF9B261E874A960050F782 /* Pods.xcodeproj */,
-				3394176F7AE51239517122DA /* Pods_IonicRunner.framework */,
+				DAADC63CD0F5CD6B622C77C0 /* Pods_IonicRunner.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -157,6 +164,7 @@
 		C2BF9B271E874A960050F782 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				50B271C21FED987800F3C39B /* Avocado.framework */,
 				C2BF9B2C1E874A960050F782 /* Pods_IonicRunner.framework */,
 			);
 			name = Products;
@@ -247,6 +255,13 @@
 			remoteRef = 501CBAB21FC0E268009B0D4D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		50B271C21FED987800F3C39B /* Avocado.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Avocado.framework;
+			remoteRef = 50B271C11FED987800F3C39B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		C2BF9B2C1E874A960050F782 /* Pods_IonicRunner.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -287,7 +302,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		65E80EC6DDB5539FF1CEBE63 /* [CP] Embed Pods Frameworks */ = {
@@ -460,7 +475,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 39D67306E24BC63D39C111B8 /* Pods-IonicRunner.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				DEVELOPMENT_TEAM = 9YN2HU59K8;
@@ -478,7 +492,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9CC588CF2A94FA052A66DC48 /* Pods-IonicRunner.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				DEVELOPMENT_TEAM = 9YN2HU59K8;

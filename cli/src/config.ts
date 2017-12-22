@@ -2,6 +2,7 @@ import { accessSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { logFatal } from './common';
 import { CliConfig, PackageJson, ExternalConfig } from './definitions';
+import { currentId } from 'async_hooks';
 
 let Package: PackageJson;
 let ExtConfig: ExternalConfig;
@@ -57,8 +58,12 @@ export class Config implements CliConfig {
 
 
   constructor(currentWorkingDir: string, cliBinDir: string) {
+    this.initCliConfig(cliBinDir);
+    this.setCurrentWorkingDir(currentWorkingDir);
+  }
+
+  setCurrentWorkingDir(currentWorkingDir: string) {
     try {
-      this.initCliConfig(cliBinDir);
       this.initAppConfig(currentWorkingDir);
       this.initAndroidConfig();
       this.initIosConfig();
@@ -74,7 +79,6 @@ export class Config implements CliConfig {
       logFatal(`Unable to load config`, e);
     }
   }
-
 
   private initCliConfig(cliBinDir: string) {
     this.cli.binDir = cliBinDir;

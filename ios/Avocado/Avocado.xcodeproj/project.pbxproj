@@ -54,6 +54,8 @@
 		50ED86F71FCB759B00E48884 /* DevMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F61FCB759B00E48884 /* DevMode.swift */; };
 		50ED86F91FCC69C200E48884 /* LocalNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86F81FCC69C200E48884 /* LocalNotifications.swift */; };
 		50ED86FB1FCC9D6600E48884 /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ED86FA1FCC9D6600E48884 /* PushNotifications.swift */; };
+		A6FDD4A3680F1C67E585929C /* Pods_Avocado.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40367A7722BCB186FA84278A /* Pods_Avocado.framework */; };
+		F94B7D73956102C5FB02F5F2 /* Pods_AvocadoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1139EB954BCD7D1FE04679EA /* Pods_AvocadoTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1139EB954BCD7D1FE04679EA /* Pods_AvocadoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AvocadoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		40367A7722BCB186FA84278A /* Pods_Avocado.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Avocado.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		451BCB03DDD54A8F94065E22 /* Pods-AvocadoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AvocadoTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AvocadoTests/Pods-AvocadoTests.release.xcconfig"; sourceTree = "<group>"; };
 		5005D42E1FE80B7600E931C4 /* Accessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessibility.swift; sourceTree = "<group>"; };
 		5005D4301FE80C0E00E931C4 /* Photos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photos.swift; sourceTree = "<group>"; };
@@ -130,6 +134,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */,
+				A6FDD4A3680F1C67E585929C /* Pods_Avocado.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +143,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EE91FC08595003606DC /* Avocado.framework in Frameworks */,
+				F94B7D73956102C5FB02F5F2 /* Pods_AvocadoTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +154,8 @@
 			isa = PBXGroup;
 			children = (
 				501CBAA61FC0A723009B0D4D /* WebKit.framework */,
+				40367A7722BCB186FA84278A /* Pods_Avocado.framework */,
+				1139EB954BCD7D1FE04679EA /* Pods_AvocadoTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -425,7 +433,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		641F43B9AF146A018706FDEB /* [CP] Copy Pods Resources */ = {
@@ -458,7 +466,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		E163225B0E98190034E8EB69 /* [CP] Embed Pods Frameworks */ = {

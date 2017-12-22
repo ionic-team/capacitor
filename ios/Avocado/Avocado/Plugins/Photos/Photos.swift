@@ -9,7 +9,7 @@ public class Photos : AVCPlugin {
   func fetchResultAssetsToJs(_ result: PHFetchResult<PHAsset>) -> [JSObject] {
     var assets: [JSObject] = []
     
-    result.enumerateObjects { (asset, count: Int, stop: UnsafeMutablePointer<ObjCBool>) in
+    result.enumerateObjects({ (asset, count: Int, stop: UnsafeMutablePointer<ObjCBool>) in
       print("Got asset item", asset, count)
       var a = JSObject()
       a["createdAt"] = asset.creationDate
@@ -19,7 +19,7 @@ public class Photos : AVCPlugin {
       loc["longitude"] = asset.location?.coordinate.longitude
       // TODO: Expose more fields
       assets.append(a)
-    }
+    })
     
     return assets
   }

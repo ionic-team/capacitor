@@ -7,7 +7,7 @@ import { CheckFunction, add, checkPackage, logFatal, logInfo } from '../common';
 export async function updateCommand(config: Config, selectedPlatformName: string) {
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
-    logInfo(`There are not platforms to update yet. Create one with "avocado create".`);
+    logInfo(`There are no platforms to update yet. Create one with "avocado create".`);
     return;
   }
   try {

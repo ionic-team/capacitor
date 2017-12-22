@@ -8,7 +8,7 @@ export async function openCommand(config: Config, selectedPlatform: string) {
   const platforms = config.selectPlatforms(selectedPlatform);
   let platformName: string;
   if (platforms.length === 0) {
-    logInfo(`There are not platforms to open yet. Create one with "avocado create".`);
+    logInfo(`There are no platforms to open yet. Create one with "avocado create".`);
     return;
   } else if (platforms.length === 1) {
     platformName = platforms[0];
