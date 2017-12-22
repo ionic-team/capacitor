@@ -1,6 +1,7 @@
 import * as program from 'commander';
 
 import { copyCommand } from './tasks/copy';
+import { createCommand } from './tasks/create';
 import { updateCommand } from './tasks/update';
 import { openCommand } from './tasks/open';
 import { syncCommand } from './tasks/sync';
@@ -15,6 +16,13 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .version(config.cli.package.version);
+
+  program
+    .command('create [name] [identifier]')
+    .description('Creates a new avocado project with the given name and app/bundle identifier')
+    .action((name, identifier) => {
+      return createCommand(config, name, identifier);
+    });
 
   program
     .command('sync [platform]')
