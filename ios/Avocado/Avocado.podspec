@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = 'Avocado'
   s.version = '0.0.1'
-  s.summary = 'Avocado Universal Runtime'
+  s.summary = 'Avocado iOS Runtime'
   s.license = 'MIT'
   s.homepage = 'https://ionicframework.com'
   s.ios.deployment_target  = '10.0'
