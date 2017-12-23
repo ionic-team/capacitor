@@ -76,6 +76,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program.parse(process.argv);
 
   if (!program.args.length) {
+    console.log('\n  🥑');
     program.help();
   }
 }
