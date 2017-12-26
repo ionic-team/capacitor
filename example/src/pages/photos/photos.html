@@ -17,7 +17,7 @@
   <button ion-button (click)="loadPhotos()">Load</button>
   <div>
     <div *ngFor="let photo of photos">
-      Photo
+      <img [src]="photo.safeUrl">
     </div>
   </div>
 </ion-content>
