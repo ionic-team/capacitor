@@ -59,24 +59,28 @@ public class Modals : AVCPlugin {
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
     
-    alert.addTextField { (textField) in
-      textField.text = inputPlaceholder
+    DispatchQueue.main.async {
+      
+      alert.addTextField { (textField) in
+        textField.text = inputPlaceholder
+      }
+      
+      alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+        let textField = alert.textFields![0] as UITextField
+        call.success([
+          "value": textField.text ?? "",
+          "cancelled": false
+        ])
+      }))
+      alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+        call.success([
+          "value": "",
+          "cancelled": true
+        ])
+      }))
+      
+      self.bridge.viewController.present(alert, animated: true, completion: nil)
+      
     }
-    
-    alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
-      let textField = alert.textFields![0] as UITextField
-      call.success([
-        "value": textField.text ?? "",
-        "cancelled": false
-      ])
-    }))
-    alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
-      call.success([
-        "value": "",
-        "cancelled": true
-      ])
-    }))
-    
-    self.bridge.viewController.present(alert, animated: true, completion: nil)
   }
 }
