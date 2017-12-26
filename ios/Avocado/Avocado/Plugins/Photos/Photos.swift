@@ -10,8 +10,32 @@ public class Photos : AVCPlugin {
   
   var imageManager = PHCachingImageManager()
   
-  func fetchResultAssetsToJs(_ call: AVCPluginCall, result: PHFetchResult<PHAsset>) {
+  func fetchAlbumsToJs(_ call: AVCPluginCall) {
+    var albums = [JSObject]()
+    
+    let fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
+    fetchResult.enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
+      var o = JSObject()
+      o["name"] = collection.localizedTitle
+      o["identifier"] = collection.localIdentifier
+      albums.append(o)
+    }
+    
+    call.success([
+      "albums": albums
+    ])
+  }
+  
+  func fetchResultAssetsToJs(_ call: AVCPluginCall) {
     var assets: [JSObject] = []
+    
+    let quantity = call.getInt("quantity", defaultValue: Photos.DEFAULT_QUANTITY)!
+    
+    let options = PHFetchOptions()
+    options.fetchLimit = quantity
+    options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+    let fetchResult = PHAsset.fetchAssets(with: options)
+    
     
     //let after = call.getString("after")
     let types = call.getString("types") ?? Photos.DEFAULT_TYPES
@@ -26,7 +50,7 @@ public class Photos : AVCPlugin {
     requestOptions.deliveryMode = .opportunistic
     requestOptions.isSynchronous = true
     
-    result.enumerateObjects({ (asset, count: Int, stop: UnsafeMutablePointer<ObjCBool>) in
+    fetchResult.enumerateObjects({ (asset, count: Int, stop: UnsafeMutablePointer<ObjCBool>) in
       
       if asset.mediaType == .image && types == "videos" {
         return
@@ -49,7 +73,7 @@ public class Photos : AVCPlugin {
         a["data"] = UIImageJPEGRepresentation(image, CGFloat(thumbnailQuality) / 100.0)?.base64EncodedString()
         
         if asset.creationDate != nil {
-          a["createdAt"] = JSDate.toString(asset.creationDate!)
+          a["creationDate"] = JSDate.toString(asset.creationDate!)
         }
         a["fullWidth"] = asset.pixelWidth
         a["fullHeight"] = asset.pixelHeight
@@ -65,35 +89,21 @@ public class Photos : AVCPlugin {
       "photos": assets
     ])
   }
-
-  @objc func getFullsizeUrls(_ call: AVCPluginCall) {
-    /*
-    guard let identifiers = call.getArray("identifiers") else {
-      call.error("Must provide identifiers array")
-      return
-    }
-    
-    let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: identifiers, options: <#T##PHFetchOptions?#>)
-    asset.requestContentEditingInput(with: PHContentEditingInputRequestOptions(), completionHandler: { (contentEditingInput, _) in
-      a["url"] = contentEditingInput?.fullSizeImageURL ?? ""
-    */
-  }
   
-  @objc func getPhotos(_ call: AVCPluginCall) {
-    let quantity = call.getInt("quantity", defaultValue: Photos.DEFAULT_QUANTITY)!
+  @objc func getAlbums(_ call: AVCPluginCall) {
     checkAuthorization(allowed: {
-      var fetchResult: PHFetchResult<PHAsset>!
-      let options = PHFetchOptions()
-      options.fetchLimit = quantity
-      options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-      fetchResult = PHAsset.fetchAssets(with: options)
-      
-      self.fetchResultAssetsToJs(call,
-                                 result: fetchResult)
+      self.fetchAlbumsToJs(call)
     }, notAllowed: {
       call.error("Access to photos not allowed by user")
     })
-
+  }
+  
+  @objc func getPhotos(_ call: AVCPluginCall) {
+    checkAuthorization(allowed: {
+      self.fetchResultAssetsToJs(call)
+    }, notAllowed: {
+      call.error("Access to photos not allowed by user")
+    })
   }
   
   @objc func saveToPhotos(_ call: AVCPluginCall) {
