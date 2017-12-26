@@ -444,7 +444,7 @@ export type NetworkStatusChangeCallback = (err: any, status: NetworkStatus) => v
 export interface PhotosPlugin extends Plugin {
   getPhotos(options?: PhotosFetchOptions): Promise<PhotosResult>;
   getAlbums(options?: PhotosAlbumsFetchOptions): Promise<PhotosAlbumsResult>;
-  saveToPhotos(path: string): Promise<PhotosSaveResult>;
+  savePhoto(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
   createAlbum(options: PhotosCreateAlbumOptions): Promise<void>;
 }
 
@@ -480,6 +480,12 @@ export interface PhotoLocation {
 export interface PhotosResult {
   photos: PhotoAsset[];
 }
+
+export interface PhotosSaveOptions {
+  data: string;
+  albumIdentifier?: string;
+}
+
 export interface PhotosSaveResult {
   success: boolean;
 }

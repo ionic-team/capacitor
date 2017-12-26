@@ -43,11 +43,48 @@ public class Photos : AVCPlugin {
     })
   }
   
-  @objc func saveToPhotos(_ call: AVCPluginCall) {
-    guard let path = call.getString("path") else {
-      call.error("Must provide a path")
+  @objc func savePhoto(_ call: AVCPluginCall) {
+    guard let data = call.getString("data") else {
+      call.error("Must provide data as base64 encoded string")
       return
     }
+    
+    let albumId = call.getString("albumIdentifier")
+    
+    let dataDecoded : Data = Data(base64Encoded: data, options: .ignoreUnknownCharacters)!
+    guard let image = UIImage(data: dataDecoded) else {
+      call.error("Unable to load image from base64 data")
+      return
+    }
+
+    var targetCollection: PHAssetCollection?
+
+    if albumId != nil {
+      let albumFetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [albumId!], options: nil)
+      albumFetchResult.enumerateObjects({ (collection, count, _) in
+        targetCollection = collection
+      })
+      if targetCollection == nil {
+        call.error("Unable to find that album")
+        return
+      }
+    }
+    
+    // Add it to the photo library.
+    PHPhotoLibrary.shared().performChanges({
+      let creationRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+      
+      if let collection = targetCollection {
+        let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
+        addAssetRequest?.addAssets([creationRequest.placeholderForCreatedAsset!] as NSArray)
+      }
+    }, completionHandler: {success, error in
+      if !success {
+        call.error("Unable to save image to album", error)
+      } else {
+        call.success()
+      }
+    })
   }
 
   func checkAuthorization(allowed: @escaping () -> Void, notAllowed: @escaping () -> Void) {

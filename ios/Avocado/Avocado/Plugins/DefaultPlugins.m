@@ -81,7 +81,7 @@ AVC_PLUGIN(Photos,
   AVC_PLUGIN_METHOD(getPhotos, "", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(getAlbums, "", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(createAlbum, "", AVCPluginReturnPromise);
-  AVC_PLUGIN_METHOD(saveToPhotos, "path:string", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(savePhoto, "", AVCPluginReturnPromise);
 )
 
 AVC_PLUGIN(SplashScreen,
