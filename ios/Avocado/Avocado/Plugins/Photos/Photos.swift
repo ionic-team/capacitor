@@ -13,11 +13,22 @@ public class Photos : AVCPlugin {
   func fetchAlbumsToJs(_ call: AVCPluginCall) {
     var albums = [JSObject]()
     
+    // Load our smart albums
     let fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
     fetchResult.enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
       var o = JSObject()
       o["name"] = collection.localizedTitle
       o["identifier"] = collection.localIdentifier
+      o["isSmart"] = true
+      albums.append(o)
+    }
+    
+    // Load our user albums
+    PHCollectionList.fetchTopLevelUserCollections(with: nil).enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
+      var o = JSObject()
+      o["name"] = collection.localizedTitle
+      o["identifier"] = collection.localIdentifier
+      o["isSmart"] = false
       albums.append(o)
     }
     
