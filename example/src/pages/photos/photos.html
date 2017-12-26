@@ -23,6 +23,7 @@
   <button ion-button (click)="createAlbum()">Create Album</button>
   <button ion-button (click)="loadPhotos()">Load All</button>
   <button ion-button (click)="loadInFavorites()">Load In Favorites</button>
+  <button ion-button (click)="savePhoto()">Save Photo</button>
   <div>
     <div *ngFor="let photo of photos">
       <img [src]="photo.safeUrl">
