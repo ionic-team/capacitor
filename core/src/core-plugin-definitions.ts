@@ -47,7 +47,11 @@ export interface ActionSheetPlugin extends Plugin {
 
 export interface AppStatePlugin extends Plugin {
   addListener(eventName: 'pluginError', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
-  addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: { isActive: boolean }) => void): PluginListenerHandle;
+  addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: AppStateState) => void): PluginListenerHandle;
+}
+
+export interface AppStateState {
+  isActive: boolean;
 }
 
 //
