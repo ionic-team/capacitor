@@ -79,6 +79,7 @@ AVC_PLUGIN(Network,
 
 AVC_PLUGIN(Photos,
   AVC_PLUGIN_METHOD(getPhotos, "", AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(getAlbums, "", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(saveToPhotos, "path:string", AVCPluginReturnPromise);
 )
 

@@ -26,6 +26,11 @@ export class PhotosPage {
     console.log('ionViewDidLoad PhotosPage');
   }
 
+  async loadAlbums() {
+    var albums = await Plugins.Photos.getAlbums();
+    console.log('ALBUMS', albums);
+  }
+
   async loadPhotos() {
     var photos = await Plugins.Photos.getPhotos();
     this.printPhotos(photos);
