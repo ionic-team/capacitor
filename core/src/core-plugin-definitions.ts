@@ -442,11 +442,39 @@ export type NetworkStatusChangeCallback = (err: any, status: NetworkStatus) => v
 //
 
 export interface PhotosPlugin extends Plugin {
-  getPhotos(): Promise<PhotosResult>;
+  getPhotos(options?: PhotosFetchOptions): Promise<PhotosResult>;
   saveToPhotos(path: string): Promise<PhotosSaveResult>;
 }
 
+export interface PhotosFetchOptions {
+  quantity?: number;
+  thumbnailWidth?: number;
+  thumbnailHeight?: number;
+  thumbnailQuality?: number;
+  types?: string;
+}
+
+export interface PhotoAsset {
+  // Platform-specific identifier
+  identifier: string;
+  data: string;
+  fullWidth: number;
+  fullHeight: number;
+  thumbnailWidth: number;
+  thumbnailHeight: number;
+  location: PhotoLocation;
+}
+
+export interface PhotoLocation {
+  latitude: number;
+  longitude: number;
+  heading: number;
+  altitude: number;
+  speed: number;
+}
+
 export interface PhotosResult {
+  photos: PhotoAsset[];
 }
 export interface PhotosSaveResult {
   success: boolean;

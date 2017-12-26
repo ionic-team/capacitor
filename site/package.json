@@ -7,6 +7,7 @@
     "docs": "gulp",
     "build": "gulp && stencil build --prerender",
     "dev": "gulp && sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
+    "deploy": "bash scripts/deploy.sh",
     "serve": "stencil-dev-server",
     "start": "npm run dev"
   },

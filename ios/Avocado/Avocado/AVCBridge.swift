@@ -159,6 +159,10 @@ enum BridgeError: Error {
     storedCalls.removeValue(forKey: callbackId)
   }
   
+  public func getDispatchQueue() -> DispatchQueue {
+    return self.dispatchQueue
+  }
+  
   public func isSimulator() -> Bool {
     var isSimulator = false
     #if arch(i386) || arch(x86_64)
