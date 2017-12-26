@@ -27,7 +27,9 @@ export class PhotosPage {
   }
 
   async loadAlbums() {
-    var albums = await Plugins.Photos.getAlbums();
+    var albums = await Plugins.Photos.getAlbums({
+      loadShared: true
+    });
     console.log('ALBUMS', albums);
   }
 

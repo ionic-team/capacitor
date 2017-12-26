@@ -483,6 +483,8 @@ export interface PhotosSaveResult {
 }
 
 export interface PhotosAlbumsFetchOptions {
+  // Whether to load cloud shared albums
+  loadShared: boolean;
 }
 export interface PhotosAlbumsResult {
   albums: PhotosAlbum[];
@@ -490,7 +492,8 @@ export interface PhotosAlbumsResult {
 export interface PhotosAlbum {
   identifier: string;
   title: string;
-  isSmart: boolean;
+  count: number;
+  type: string;
 }
 
 //
