@@ -194,7 +194,9 @@ var SiteHeader = /** @class */ (function () {
         return (h("div", { class: "site-header" },
             h("stencil-route-link", { url: "/", class: "logo-link" },
                 h("div", { class: "logo" })),
-            h("div", { class: "pull-right" })));
+            h("div", { class: "pull-right" },
+                h("stencil-route-link", { urlMatch: "/docs", url: "/docs/intro/" }, "Docs"),
+                h("a", { href: "https://github.com/ionic-team/avocado" }, "GitHub"))));
     };
     return SiteHeader;
 }());
