@@ -296,12 +296,27 @@ var SiteMenu = /** @class */ (function () {
             {
                 title: 'APIs',
                 items: [
-                    { title: 'Device', url: '/docs/apis/device' },
-                    { title: 'Console', url: '/docs/apis/console' },
-                    { title: 'Contacts', url: '/docs/apis/contacts' },
+                    { title: 'Accessibility', url: '/docs/apis/accessibility' },
+                    { title: 'App State', url: '/docs/apis/app-state' },
                     { title: 'Camera', url: '/docs/apis/camera' },
-                    { title: 'Offline', url: '/docs/apis/offline' },
-                    { title: 'File', url: '/docs/apis/file' }
+                    { title: 'Clipboard', url: '/docs/apis/clipboard' },
+                    { title: 'Console', url: '/docs/apis/console' },
+                    { title: 'Device', url: '/docs/apis/device' },
+                    { title: 'Filesystem', url: '/docs/apis/filesystem' },
+                    { title: 'Geolocation', url: '/docs/apis/geolocation' },
+                    { title: 'Haptics', url: '/docs/apis/haptics' },
+                    { title: 'Keyboard', url: '/docs/apis/keyboard' },
+                    { title: 'Local Notifications', url: '/docs/apis/local-notifications' },
+                    { title: 'Modals', url: '/docs/apis/modals' },
+                    { title: 'Motion', url: '/docs/apis/motion' },
+                    { title: 'Network', url: '/docs/apis/network' },
+                    { title: 'Photos', url: '/docs/apis/photos' },
+                    { title: 'Push Notifications', url: '/docs/apis/push-notifications' },
+                    { title: 'Share', url: '/docs/apis/share' },
+                    { title: 'Splash Screen', url: '/docs/apis/splash-screen' },
+                    { title: 'Status Bar', url: '/docs/apis/status-bar' },
+                    { title: 'Storage', url: '/docs/apis/storage' },
+                    { title: 'Toast', url: '/docs/apis/toast' },
                 ]
             }
         ];
