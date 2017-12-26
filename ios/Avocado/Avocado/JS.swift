@@ -15,6 +15,13 @@ enum JSProcessingError: LocalizedError {
 typealias JSObject = [String:Any]
 typealias JSArray = [JSObject]
 
+public class JSDate {
+  static func toString(_ date: Date) -> String {
+    let formatter = ISO8601DateFormatter()
+    return formatter.string(from: date)
+  }
+}
+
 /**
  * A call originating from JavaScript land
  */

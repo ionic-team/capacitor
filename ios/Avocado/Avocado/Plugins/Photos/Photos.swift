@@ -12,7 +12,9 @@ public class Photos : AVCPlugin {
     result.enumerateObjects({ (asset, count: Int, stop: UnsafeMutablePointer<ObjCBool>) in
       print("Got asset item", asset, count)
       var a = JSObject()
-      a["createdAt"] = asset.creationDate
+      if asset.creationDate != nil {
+        a["createdAt"] = JSDate.toString(asset.creationDate!)
+      }
       a["location"] = JSObject()
       var loc = a["location"] as! JSObject
       loc["latitude"] = asset.location?.coordinate.latitude
