@@ -20,7 +20,8 @@
       {{album.name}}
     </div>
   </div>
-  <button ion-button (click)="loadPhotos()">Load</button>
+  <button ion-button (click)="loadPhotos()">Load All</button>
+  <button ion-button (click)="loadInFavorites()">Load In Favorites</button>
   <div>
     <div *ngFor="let photo of photos">
       <img [src]="photo.safeUrl">

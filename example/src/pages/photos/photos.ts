@@ -33,6 +33,23 @@ export class PhotosPage {
     console.log('ALBUMS', albums);
   }
 
+  async loadInFavorites() {
+    var result = await Plugins.Photos.getAlbums();
+    var favorites = result.albums.filter(album => album.name.toLowerCase() == 'favorites')[0];
+    console.log('Found favs', favorites);
+    if(!favorites) { return; }
+    var photos = await Plugins.Photos.getPhotos({
+      albumIdentifier: favorites.identifier
+    });
+    this.printPhotos(photos);
+    this.photos = photos.photos.map(photo => {
+      return {
+        ...photo,
+        safeUrl: this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64,' + photo.data)
+      }
+    })
+  }
+
   async loadPhotos() {
     var photos = await Plugins.Photos.getPhotos();
     this.printPhotos(photos);

@@ -53,13 +53,28 @@ public class Photos : AVCPlugin {
   func fetchResultAssetsToJs(_ call: AVCPluginCall) {
     var assets: [JSObject] = []
     
+    let albumId = call.getString("albumIdentifier")
     let quantity = call.getInt("quantity", defaultValue: Photos.DEFAULT_QUANTITY)!
+    
+    var targetCollection: PHAssetCollection?
     
     let options = PHFetchOptions()
     options.fetchLimit = quantity
     options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-    let fetchResult = PHAsset.fetchAssets(with: options)
     
+    if albumId != nil {
+      let albumFetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [albumId!], options: nil)
+      albumFetchResult.enumerateObjects({ (collection, count, _) in
+        targetCollection = collection
+      })
+    }
+    
+    var fetchResult: PHFetchResult<PHAsset>;
+    if targetCollection != nil {
+      fetchResult = PHAsset.fetchAssets(in: targetCollection!, options: options)
+    } else {
+      fetchResult = PHAsset.fetchAssets(with: options)
+    }
     
     //let after = call.getString("after")
     let types = call.getString("types") ?? Photos.DEFAULT_TYPES
