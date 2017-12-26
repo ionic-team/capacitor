@@ -8,7 +8,7 @@ test_project/
 *.map
 .DS_Store
 example/www/
-example/android/app/src/main/assets/www/*
-!example/android/app/src/main/assets/www/.gitkeep
-example/ios/IonicRunner/www/*
-!example/ios/IonicRunner/www/.gitkeep
+example/android/app/src/main/assets/public/*
+!example/android/app/src/main/assets/public/.gitkeep
+example/ios/IonicRunner/public/*
+!example/ios/IonicRunner/public/.gitkeep
