@@ -68,6 +68,10 @@ public class Photos : AVCPlugin {
         call.error("Unable to find that album")
         return
       }
+      if !targetCollection!.canPerform(.addContent) {
+        call.error("Album doesn't support adding content (is this a smart album?)")
+        return
+      }
     }
     
     // Add it to the photo library.
