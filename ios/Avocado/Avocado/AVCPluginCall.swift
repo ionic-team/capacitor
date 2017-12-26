@@ -15,8 +15,8 @@ public extension AVCPluginCall {
     return self.options[key] as? [T] ?? defaultValue
   }
   
-  public func getBool(_ key: String, defaultValue: NSNumber?) -> NSNumber? {
-    return self.options[key] as? NSNumber ?? defaultValue
+  public func getBool(_ key: String, defaultValue: Bool?) -> Bool? {
+    return self.options[key] as? Bool ?? defaultValue
   }
   
   public func getInt(_ key: String, defaultValue: Int?) -> Int? {

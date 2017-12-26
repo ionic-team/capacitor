@@ -13,14 +13,27 @@ public class Photos : AVCPlugin {
   func fetchAlbumsToJs(_ call: AVCPluginCall) {
     var albums = [JSObject]()
     
+    let loadSharedAlbums = call.getBool("loadShared", defaultValue: false)!
+    
     // Load our smart albums
-    let fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
+    var fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
     fetchResult.enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
       var o = JSObject()
       o["name"] = collection.localizedTitle
       o["identifier"] = collection.localIdentifier
-      o["isSmart"] = true
+      o["type"] = "smart"
       albums.append(o)
+    }
+    
+    if loadSharedAlbums {
+      fetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumCloudShared, options: nil)
+      fetchResult.enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
+        var o = JSObject()
+        o["name"] = collection.localizedTitle
+        o["identifier"] = collection.localIdentifier
+        o["type"] = "shared"
+        albums.append(o)
+      }
     }
     
     // Load our user albums
@@ -28,7 +41,7 @@ public class Photos : AVCPlugin {
       var o = JSObject()
       o["name"] = collection.localizedTitle
       o["identifier"] = collection.localIdentifier
-      o["isSmart"] = false
+      o["type"] = "user"
       albums.append(o)
     }
     
