@@ -32,14 +32,18 @@ public class Photos : AVCPlugin {
       return
     }
     
-    PHPhotoLibrary.shared().performChanges({
-      PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
-    }, completionHandler: { success, error in
-      if !success {
-        call.error("Unable to create album", error)
-        return
-      }
-      call.success()
+    checkAuthorization(allowed: {
+      PHPhotoLibrary.shared().performChanges({
+        PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
+      }, completionHandler: { success, error in
+        if !success {
+          call.error("Unable to create album", error)
+          return
+        }
+        call.success()
+      })
+    }, notAllowed: {
+      call.error("Access to photos not allowed by user")
     })
   }
   
@@ -74,20 +78,24 @@ public class Photos : AVCPlugin {
       }
     }
     
-    // Add it to the photo library.
-    PHPhotoLibrary.shared().performChanges({
-      let creationRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
-      
-      if let collection = targetCollection {
-        let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
-        addAssetRequest?.addAssets([creationRequest.placeholderForCreatedAsset!] as NSArray)
-      }
-    }, completionHandler: {success, error in
-      if !success {
-        call.error("Unable to save image to album", error)
-      } else {
-        call.success()
-      }
+    checkAuthorization(allowed: {
+      // Add it to the photo library.
+      PHPhotoLibrary.shared().performChanges({
+        let creationRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+        
+        if let collection = targetCollection {
+          let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
+          addAssetRequest?.addAssets([creationRequest.placeholderForCreatedAsset!] as NSArray)
+        }
+      }, completionHandler: {success, error in
+        if !success {
+          call.error("Unable to save image to album", error)
+        } else {
+          call.success()
+        }
+      })
+    }, notAllowed: {
+      call.error("Access to photos not allowed by user")
     })
   }
 
