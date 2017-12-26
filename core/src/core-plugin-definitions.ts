@@ -453,6 +453,7 @@ export interface PhotosFetchOptions {
   thumbnailHeight?: number;
   thumbnailQuality?: number;
   types?: string;
+  albumIdentifier?: string;
 }
 
 export interface PhotoAsset {
@@ -491,7 +492,7 @@ export interface PhotosAlbumsResult {
 }
 export interface PhotosAlbum {
   identifier: string;
-  title: string;
+  name: string;
   count: number;
   type: string;
 }
