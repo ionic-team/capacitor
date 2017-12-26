@@ -445,6 +445,7 @@ export interface PhotosPlugin extends Plugin {
   getPhotos(options?: PhotosFetchOptions): Promise<PhotosResult>;
   getAlbums(options?: PhotosAlbumsFetchOptions): Promise<PhotosAlbumsResult>;
   saveToPhotos(path: string): Promise<PhotosSaveResult>;
+  createAlbum(options: PhotosCreateAlbumOptions): Promise<void>;
 }
 
 export interface PhotosFetchOptions {
@@ -495,6 +496,10 @@ export interface PhotosAlbum {
   name: string;
   count: number;
   type: string;
+}
+
+export interface PhotosCreateAlbumOptions {
+  name: string;
 }
 
 //

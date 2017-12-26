@@ -18,6 +18,7 @@ import { Plugins, PhotosResult } from '@avocadojs/core';
 })
 export class PhotosPage {
   photos = [];
+  albums = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public sanitizer: DomSanitizer) {
   }
@@ -26,10 +27,22 @@ export class PhotosPage {
     console.log('ionViewDidLoad PhotosPage');
   }
 
+  async createAlbum() {
+    var name = await Plugins.Modals.prompt({
+      title: 'Album Name',
+      message: ''
+    });
+    let ret = await Plugins.Photos.createAlbum({
+      name: name.value
+    });
+    console.log('Album created');
+  }
+
   async loadAlbums() {
     var albums = await Plugins.Photos.getAlbums({
       loadShared: true
     });
+    this.albums = albums.albums;
     console.log('ALBUMS', albums);
   }
 

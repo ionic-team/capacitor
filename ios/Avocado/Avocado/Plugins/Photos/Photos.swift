@@ -10,6 +10,61 @@ public class Photos : AVCPlugin {
   
   var imageManager = PHCachingImageManager()
   
+  @objc func getAlbums(_ call: AVCPluginCall) {
+    checkAuthorization(allowed: {
+      self.fetchAlbumsToJs(call)
+    }, notAllowed: {
+      call.error("Access to photos not allowed by user")
+    })
+  }
+  
+  @objc func getPhotos(_ call: AVCPluginCall) {
+    checkAuthorization(allowed: {
+      self.fetchResultAssetsToJs(call)
+    }, notAllowed: {
+      call.error("Access to photos not allowed by user")
+    })
+  }
+  
+  @objc func createAlbum(_ call: AVCPluginCall) {
+    guard let name = call.getString("name") else {
+      call.error("Must provide a name")
+      return
+    }
+    
+    PHPhotoLibrary.shared().performChanges({
+      PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
+    }, completionHandler: { success, error in
+      if !success {
+        call.error("Unable to create album", error)
+        return
+      }
+      call.success()
+    })
+  }
+  
+  @objc func saveToPhotos(_ call: AVCPluginCall) {
+    guard let path = call.getString("path") else {
+      call.error("Must provide a path")
+      return
+    }
+  }
+
+  func checkAuthorization(allowed: @escaping () -> Void, notAllowed: @escaping () -> Void) {
+    let status = PHPhotoLibrary.authorizationStatus()
+    if status == PHAuthorizationStatus.authorized {
+      allowed()
+    } else {
+      PHPhotoLibrary.requestAuthorization({ (newStatus) in
+        if newStatus == PHAuthorizationStatus.authorized {
+          allowed()
+        } else {
+          notAllowed()
+        }
+      })
+    }
+  }
+  
   func fetchAlbumsToJs(_ call: AVCPluginCall) {
     var albums = [JSObject]()
     
@@ -47,7 +102,7 @@ public class Photos : AVCPlugin {
     
     call.success([
       "albums": albums
-    ])
+      ])
   }
   
   func fetchResultAssetsToJs(_ call: AVCPluginCall) {
@@ -100,7 +155,7 @@ public class Photos : AVCPlugin {
       
       print("Got asset item", asset, count)
       var a = JSObject()
-
+      
       self.imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: requestOptions, resultHandler: { (fetchedImage, _) in
         guard let image = fetchedImage else {
           return
@@ -119,53 +174,16 @@ public class Photos : AVCPlugin {
         a["thumbnailWidth"] = image.size.width
         a["thumbnailHeight"] = image.size.height
         a["location"] = self.makeLocation(asset)
-
+        
         assets.append(a)
       })
     })
     
     call.success([
       "photos": assets
-    ])
+      ])
   }
   
-  @objc func getAlbums(_ call: AVCPluginCall) {
-    checkAuthorization(allowed: {
-      self.fetchAlbumsToJs(call)
-    }, notAllowed: {
-      call.error("Access to photos not allowed by user")
-    })
-  }
-  
-  @objc func getPhotos(_ call: AVCPluginCall) {
-    checkAuthorization(allowed: {
-      self.fetchResultAssetsToJs(call)
-    }, notAllowed: {
-      call.error("Access to photos not allowed by user")
-    })
-  }
-  
-  @objc func saveToPhotos(_ call: AVCPluginCall) {
-    guard let path = call.getString("path") else {
-      call.error("Must provide a path")
-      return
-    }
-  }
-
-  func checkAuthorization(allowed: @escaping () -> Void, notAllowed: @escaping () -> Void) {
-    let status = PHPhotoLibrary.authorizationStatus()
-    if status == PHAuthorizationStatus.authorized {
-      allowed()
-    } else {
-      PHPhotoLibrary.requestAuthorization({ (newStatus) in
-        if newStatus == PHAuthorizationStatus.authorized {
-          allowed()
-        } else {
-          notAllowed()
-        }
-      })
-    }
-  }
   
   func makeLocation(_ asset: PHAsset) -> JSObject {
     var loc = JSObject()
