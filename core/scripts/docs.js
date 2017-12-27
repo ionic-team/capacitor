@@ -19,8 +19,20 @@ const generateDocumentationForPlugin = (plugin) => {
     return a.name - b.name;
   });
   */
-  console.log(methodChildren);
-  console.log(listenerChildren);
+
+  methodChildren.forEach(method => generateMethod(method));
+  //console.log(methodChildren);
+  //console.log(listenerChildren);
 };
+
+const generateMethod = (method) => {
+  console.log(method.name);
+  const s = method.signatures[0];
+  const params = s.parameters;
+  params && params.forEach(param => {
+    console.log(param);
+
+  })
+}
 
 plugins.forEach(plugin => generateDocumentationForPlugin(plugin));
