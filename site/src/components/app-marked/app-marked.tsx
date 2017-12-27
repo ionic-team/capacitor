@@ -17,7 +17,7 @@ export class AppMarked {
 
   @PropDidChange('doc')
   fetchNewContent() {
-    return fetch(`/docs-content/${this.doc}`)
+    return fetch(`/avocado/docs-content/${this.doc}`)
       .then(response => response.text())
       .then(data => {
         this.content = data;
