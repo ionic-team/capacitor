@@ -12,17 +12,7 @@ const generateDocumentationForPlugin = (plugin) => {
   console.log(`\n\nPlugin: ${plugin.name}`);
   let methodChildren = plugin.children.filter(m => m.name != 'addListener' && m.name != 'removeListener');
   let listenerChildren = plugin.children.filter(m => m.name == 'addListener' || m.name == 'removeListener');
-  /*
-  sort((a, b) => {
-    if(a.name == 'addListener') { return 1; }
-    if(a.name == 'removeListener') { return 2; }
-    return a.name - b.name;
-  });
-  */
-
   methodChildren.forEach(method => generateMethod(method));
-  //console.log(methodChildren);
-  //console.log(listenerChildren);
 };
 
 const generateMethod = (method) => {
@@ -65,4 +55,5 @@ const getReturnTypeName = (returnType) => {
   return type;
 };
 
+// Generate documentation for each plugin
 plugins.forEach(plugin => generateDocumentationForPlugin(plugin));
