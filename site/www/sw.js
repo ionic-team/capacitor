@@ -96,27 +96,27 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "62bb5829f776bba6c45210e9402e4b72"
+    "revision": "60abd408f464e8b9173bd6aa3b59c496"
   },
   {
     "url": "build/app/5o20v596.js",
     "revision": "386f6e0be17c826daca2ec7622d14920"
   },
   {
-    "url": "build/app/app.global.js",
-    "revision": "905896db4c96c2ffe4285cd63c098ca5"
+    "url": "build/app/app.fzkgfmxa.pf.js",
+    "revision": "8bc4c5b346d1ba35ebb73163da4921e0"
   },
   {
-    "url": "build/app/app.ldpuklsb.js",
-    "revision": "bff82b3d901d61e7a4f524958035cf96"
+    "url": "build/app/app.global.js",
+    "revision": "2a614f135b7606cb918369d08110ce13"
+  },
+  {
+    "url": "build/app/app.mjyk6kve.js",
+    "revision": "519e6e53bc36d7626bb49ddfb9974934"
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "b6ea2e1d0d2b4dc1197d6e3fa30758e1"
-  },
-  {
-    "url": "build/app/app.ubbz8hou.pf.js",
-    "revision": "80117c142792518b79372ae6c775111d"
+    "revision": "61d534189c9ce3be0d80de4837b1c9d5"
   },
   {
     "url": "build/app/d7yzhjya.js",
@@ -376,11 +376,11 @@ const fileManifest = [
   },
   {
     "url": "docs/intro/index.html",
-    "revision": "04bca051813498d3207e61f304b8f994"
+    "revision": "8dd43372f67e1fe158a54bab09f27266"
   },
   {
     "url": "index.html",
-    "revision": "1c4539c793716698ec6bf379bbc775e3"
+    "revision": "a78442c466d48f704d879d85a99905d2"
   },
   {
     "url": "manifest.json",
