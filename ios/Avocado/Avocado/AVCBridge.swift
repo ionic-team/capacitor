@@ -1,7 +1,7 @@
 import Foundation
 import Dispatch
 import WebKit
-//import Cordova
+import Cordova
 
 enum BridgeError: Error {
   case errorExportingCoreJS
@@ -269,7 +269,6 @@ enum BridgeError: Error {
    * Handle a Cordova call from JavaScript. First, find the corresponding plugin,
    * construct a selector, and perform that selector on the plugin instance.
    */
-  /*
   public func handleCordovaJSCall(call: JSCall) {
     // Create a selector to send to the plugin
     let selector = NSSelectorFromString("\(call.method):")
@@ -298,7 +297,6 @@ enum BridgeError: Error {
       plugin.perform(selector, with: pluginCall)
     }
   }
-  */
   
   /**
    * Send a successful result to the JavaScript layer.
