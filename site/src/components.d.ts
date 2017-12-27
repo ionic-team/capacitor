@@ -6,356 +6,364 @@
 
 import '@stencil/router';
 
-import { AppMarked as AppMarked } from './components/app-marked/app-marked';
 
-interface HTMLAppMarkedElement extends AppMarked, HTMLElement {
-}
-declare var HTMLAppMarkedElement: {
-  prototype: HTMLAppMarkedElement;
-  new (): HTMLAppMarkedElement;
-};
+import {
+  AppMarked as AppMarked
+} from './components/app-marked/app-marked';
+
 declare global {
+  interface HTMLAppMarkedElement extends AppMarked, HTMLElement {
+  }
+  var HTMLAppMarkedElement: {
+    prototype: HTMLAppMarkedElement;
+    new (): HTMLAppMarkedElement;
+  };
   interface HTMLElementTagNameMap {
-      "app-marked": HTMLAppMarkedElement;
+    "app-marked": HTMLAppMarkedElement;
   }
   interface ElementTagNameMap {
-      "app-marked": HTMLAppMarkedElement;
+    "app-marked": HTMLAppMarkedElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "app-marked": JSXElements.AppMarkedAttributes;
-      }
+    interface IntrinsicElements {
+      "app-marked": JSXElements.AppMarkedAttributes;
+    }
   }
   namespace JSXElements {
-      export interface AppMarkedAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-          doc?: string
-      }
+    export interface AppMarkedAttributes extends HTMLAttributes {
+      doc?: string;
+    }
   }
 }
 
-import { App as AvocadoSite } from './components/avocado-site/avocado-site';
 
-interface HTMLAvocadoSiteElement extends AvocadoSite, HTMLElement {
-}
-declare var HTMLAvocadoSiteElement: {
-  prototype: HTMLAvocadoSiteElement;
-  new (): HTMLAvocadoSiteElement;
-};
+import {
+  App as AvocadoSite
+} from './components/avocado-site/avocado-site';
+
 declare global {
+  interface HTMLAvocadoSiteElement extends AvocadoSite, HTMLElement {
+  }
+  var HTMLAvocadoSiteElement: {
+    prototype: HTMLAvocadoSiteElement;
+    new (): HTMLAvocadoSiteElement;
+  };
   interface HTMLElementTagNameMap {
-      "avocado-site": HTMLAvocadoSiteElement;
+    "avocado-site": HTMLAvocadoSiteElement;
   }
   interface ElementTagNameMap {
-      "avocado-site": HTMLAvocadoSiteElement;
+    "avocado-site": HTMLAvocadoSiteElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "avocado-site": JSXElements.AvocadoSiteAttributes;
-      }
+    interface IntrinsicElements {
+      "avocado-site": JSXElements.AvocadoSiteAttributes;
+    }
   }
   namespace JSXElements {
-      export interface AvocadoSiteAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-          isLandingPage?: boolean
-      }
+    export interface AvocadoSiteAttributes extends HTMLAttributes {
+      isLandingPage?: boolean;
+    }
   }
 }
 
-import { BlogPage as BlogPage } from './components/blog-page/blog-page';
 
-interface HTMLBlogPageElement extends BlogPage, HTMLElement {
-}
-declare var HTMLBlogPageElement: {
-  prototype: HTMLBlogPageElement;
-  new (): HTMLBlogPageElement;
-};
+import {
+  BlogPage as BlogPage
+} from './components/blog-page/blog-page';
+
 declare global {
+  interface HTMLBlogPageElement extends BlogPage, HTMLElement {
+  }
+  var HTMLBlogPageElement: {
+    prototype: HTMLBlogPageElement;
+    new (): HTMLBlogPageElement;
+  };
   interface HTMLElementTagNameMap {
-      "blog-page": HTMLBlogPageElement;
+    "blog-page": HTMLBlogPageElement;
   }
   interface ElementTagNameMap {
-      "blog-page": HTMLBlogPageElement;
+    "blog-page": HTMLBlogPageElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "blog-page": JSXElements.BlogPageAttributes;
-      }
+    interface IntrinsicElements {
+      "blog-page": JSXElements.BlogPageAttributes;
+    }
   }
   namespace JSXElements {
-      export interface BlogPageAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface BlogPageAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 
-import { DemosPage as DemosPage } from './components/demos-page/demos-page';
 
-interface HTMLDemosPageElement extends DemosPage, HTMLElement {
-}
-declare var HTMLDemosPageElement: {
-  prototype: HTMLDemosPageElement;
-  new (): HTMLDemosPageElement;
-};
+import {
+  DemosPage as DemosPage
+} from './components/demos-page/demos-page';
+
 declare global {
+  interface HTMLDemosPageElement extends DemosPage, HTMLElement {
+  }
+  var HTMLDemosPageElement: {
+    prototype: HTMLDemosPageElement;
+    new (): HTMLDemosPageElement;
+  };
   interface HTMLElementTagNameMap {
-      "demos-page": HTMLDemosPageElement;
+    "demos-page": HTMLDemosPageElement;
   }
   interface ElementTagNameMap {
-      "demos-page": HTMLDemosPageElement;
+    "demos-page": HTMLDemosPageElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "demos-page": JSXElements.DemosPageAttributes;
-      }
+    interface IntrinsicElements {
+      "demos-page": JSXElements.DemosPageAttributes;
+    }
   }
   namespace JSXElements {
-      export interface DemosPageAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface DemosPageAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 
-import { DocumentComponent as DocumentComponent } from './components/document-component/document-component';
 
-interface HTMLDocumentComponentElement extends DocumentComponent, HTMLElement {
-}
-declare var HTMLDocumentComponentElement: {
-  prototype: HTMLDocumentComponentElement;
-  new (): HTMLDocumentComponentElement;
-};
+import {
+  DocumentComponent as DocumentComponent
+} from './components/document-component/document-component';
+
 declare global {
+  interface HTMLDocumentComponentElement extends DocumentComponent, HTMLElement {
+  }
+  var HTMLDocumentComponentElement: {
+    prototype: HTMLDocumentComponentElement;
+    new (): HTMLDocumentComponentElement;
+  };
   interface HTMLElementTagNameMap {
-      "document-component": HTMLDocumentComponentElement;
+    "document-component": HTMLDocumentComponentElement;
   }
   interface ElementTagNameMap {
-      "document-component": HTMLDocumentComponentElement;
+    "document-component": HTMLDocumentComponentElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "document-component": JSXElements.DocumentComponentAttributes;
-      }
+    interface IntrinsicElements {
+      "document-component": JSXElements.DocumentComponentAttributes;
+    }
   }
   namespace JSXElements {
-      export interface DocumentComponentAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-          pages?: any
-      }
+    export interface DocumentComponentAttributes extends HTMLAttributes {
+      pages?: string[];
+    }
   }
 }
 
-import { LandingPage as LandingPage } from './components/landing-page/landing-page';
 
-interface HTMLLandingPageElement extends LandingPage, HTMLElement {
-}
-declare var HTMLLandingPageElement: {
-  prototype: HTMLLandingPageElement;
-  new (): HTMLLandingPageElement;
-};
+import {
+  LandingPage as LandingPage
+} from './components/landing-page/landing-page';
+
 declare global {
+  interface HTMLLandingPageElement extends LandingPage, HTMLElement {
+  }
+  var HTMLLandingPageElement: {
+    prototype: HTMLLandingPageElement;
+    new (): HTMLLandingPageElement;
+  };
   interface HTMLElementTagNameMap {
-      "landing-page": HTMLLandingPageElement;
+    "landing-page": HTMLLandingPageElement;
   }
   interface ElementTagNameMap {
-      "landing-page": HTMLLandingPageElement;
+    "landing-page": HTMLLandingPageElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "landing-page": JSXElements.LandingPageAttributes;
-      }
+    interface IntrinsicElements {
+      "landing-page": JSXElements.LandingPageAttributes;
+    }
   }
   namespace JSXElements {
-      export interface LandingPageAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface LandingPageAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 
-import { LazyIframe as LazyIframe } from './components/lazy-iframe/lazy-iframe';
 
-interface HTMLLazyIframeElement extends LazyIframe, HTMLElement {
-}
-declare var HTMLLazyIframeElement: {
-  prototype: HTMLLazyIframeElement;
-  new (): HTMLLazyIframeElement;
-};
+import {
+  LazyIframe as LazyIframe
+} from './components/lazy-iframe/lazy-iframe';
+
 declare global {
+  interface HTMLLazyIframeElement extends LazyIframe, HTMLElement {
+  }
+  var HTMLLazyIframeElement: {
+    prototype: HTMLLazyIframeElement;
+    new (): HTMLLazyIframeElement;
+  };
   interface HTMLElementTagNameMap {
-      "lazy-iframe": HTMLLazyIframeElement;
+    "lazy-iframe": HTMLLazyIframeElement;
   }
   interface ElementTagNameMap {
-      "lazy-iframe": HTMLLazyIframeElement;
+    "lazy-iframe": HTMLLazyIframeElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "lazy-iframe": JSXElements.LazyIframeAttributes;
-      }
+    interface IntrinsicElements {
+      "lazy-iframe": JSXElements.LazyIframeAttributes;
+    }
   }
   namespace JSXElements {
-      export interface LazyIframeAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-          src?: string,
-          title?: string
-      }
+    export interface LazyIframeAttributes extends HTMLAttributes {
+      src?: string;
+      title?: string;
+    }
   }
 }
 
-import { pwasPage as PwasPage } from './components/pwas-page/pwas-page';
 
-interface HTMLPwasPageElement extends PwasPage, HTMLElement {
-}
-declare var HTMLPwasPageElement: {
-  prototype: HTMLPwasPageElement;
-  new (): HTMLPwasPageElement;
-};
+import {
+  pwasPage as PwasPage
+} from './components/pwas-page/pwas-page';
+
 declare global {
+  interface HTMLPwasPageElement extends PwasPage, HTMLElement {
+  }
+  var HTMLPwasPageElement: {
+    prototype: HTMLPwasPageElement;
+    new (): HTMLPwasPageElement;
+  };
   interface HTMLElementTagNameMap {
-      "pwas-page": HTMLPwasPageElement;
+    "pwas-page": HTMLPwasPageElement;
   }
   interface ElementTagNameMap {
-      "pwas-page": HTMLPwasPageElement;
+    "pwas-page": HTMLPwasPageElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "pwas-page": JSXElements.PwasPageAttributes;
-      }
+    interface IntrinsicElements {
+      "pwas-page": JSXElements.PwasPageAttributes;
+    }
   }
   namespace JSXElements {
-      export interface PwasPageAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface PwasPageAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 
-import { ResourcesPage as ResourcesPage } from './components/resources-page/resources-page';
 
-interface HTMLResourcesPageElement extends ResourcesPage, HTMLElement {
-}
-declare var HTMLResourcesPageElement: {
-  prototype: HTMLResourcesPageElement;
-  new (): HTMLResourcesPageElement;
-};
+import {
+  ResourcesPage as ResourcesPage
+} from './components/resources-page/resources-page';
+
 declare global {
+  interface HTMLResourcesPageElement extends ResourcesPage, HTMLElement {
+  }
+  var HTMLResourcesPageElement: {
+    prototype: HTMLResourcesPageElement;
+    new (): HTMLResourcesPageElement;
+  };
   interface HTMLElementTagNameMap {
-      "resources-page": HTMLResourcesPageElement;
+    "resources-page": HTMLResourcesPageElement;
   }
   interface ElementTagNameMap {
-      "resources-page": HTMLResourcesPageElement;
+    "resources-page": HTMLResourcesPageElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "resources-page": JSXElements.ResourcesPageAttributes;
-      }
+    interface IntrinsicElements {
+      "resources-page": JSXElements.ResourcesPageAttributes;
+    }
   }
   namespace JSXElements {
-      export interface ResourcesPageAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface ResourcesPageAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 
-import { SiteBar as SiteBar } from './components/site-bar/site-bar';
 
-interface HTMLSiteBarElement extends SiteBar, HTMLElement {
-}
-declare var HTMLSiteBarElement: {
-  prototype: HTMLSiteBarElement;
-  new (): HTMLSiteBarElement;
-};
+import {
+  SiteBar as SiteBar
+} from './components/site-bar/site-bar';
+
 declare global {
+  interface HTMLSiteBarElement extends SiteBar, HTMLElement {
+  }
+  var HTMLSiteBarElement: {
+    prototype: HTMLSiteBarElement;
+    new (): HTMLSiteBarElement;
+  };
   interface HTMLElementTagNameMap {
-      "site-bar": HTMLSiteBarElement;
+    "site-bar": HTMLSiteBarElement;
   }
   interface ElementTagNameMap {
-      "site-bar": HTMLSiteBarElement;
+    "site-bar": HTMLSiteBarElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "site-bar": JSXElements.SiteBarAttributes;
-      }
+    interface IntrinsicElements {
+      "site-bar": JSXElements.SiteBarAttributes;
+    }
   }
   namespace JSXElements {
-      export interface SiteBarAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface SiteBarAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 
-import { SiteHeader as SiteHeader } from './components/site-header/site-header';
 
-interface HTMLSiteHeaderElement extends SiteHeader, HTMLElement {
-}
-declare var HTMLSiteHeaderElement: {
-  prototype: HTMLSiteHeaderElement;
-  new (): HTMLSiteHeaderElement;
-};
+import {
+  SiteHeader as SiteHeader
+} from './components/site-header/site-header';
+
 declare global {
+  interface HTMLSiteHeaderElement extends SiteHeader, HTMLElement {
+  }
+  var HTMLSiteHeaderElement: {
+    prototype: HTMLSiteHeaderElement;
+    new (): HTMLSiteHeaderElement;
+  };
   interface HTMLElementTagNameMap {
-      "site-header": HTMLSiteHeaderElement;
+    "site-header": HTMLSiteHeaderElement;
   }
   interface ElementTagNameMap {
-      "site-header": HTMLSiteHeaderElement;
+    "site-header": HTMLSiteHeaderElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "site-header": JSXElements.SiteHeaderAttributes;
-      }
+    interface IntrinsicElements {
+      "site-header": JSXElements.SiteHeaderAttributes;
+    }
   }
   namespace JSXElements {
-      export interface SiteHeaderAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface SiteHeaderAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 
-import { SiteMenu as SiteMenu } from './components/site-menu/site-menu';
 
-interface HTMLSiteMenuElement extends SiteMenu, HTMLElement {
-}
-declare var HTMLSiteMenuElement: {
-  prototype: HTMLSiteMenuElement;
-  new (): HTMLSiteMenuElement;
-};
+import {
+  SiteMenu as SiteMenu
+} from './components/site-menu/site-menu';
+
 declare global {
+  interface HTMLSiteMenuElement extends SiteMenu, HTMLElement {
+  }
+  var HTMLSiteMenuElement: {
+    prototype: HTMLSiteMenuElement;
+    new (): HTMLSiteMenuElement;
+  };
   interface HTMLElementTagNameMap {
-      "site-menu": HTMLSiteMenuElement;
+    "site-menu": HTMLSiteMenuElement;
   }
   interface ElementTagNameMap {
-      "site-menu": HTMLSiteMenuElement;
+    "site-menu": HTMLSiteMenuElement;
   }
   namespace JSX {
-      interface IntrinsicElements {
-          "site-menu": JSXElements.SiteMenuAttributes;
-      }
+    interface IntrinsicElements {
+      "site-menu": JSXElements.SiteMenuAttributes;
+    }
   }
   namespace JSXElements {
-      export interface SiteMenuAttributes extends HTMLAttributes {
-          mode?: string,
-          color?: string,
-        
-      }
+    export interface SiteMenuAttributes extends HTMLAttributes {
+      
+    }
   }
 }
 

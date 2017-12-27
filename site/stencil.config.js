@@ -1,4 +1,5 @@
 exports.config = {
+  publicPath: 'build',
   bundles: [
     { components: ['avocado-site', 'site-header', 'landing-page', 'lazy-iframe', 'site-menu'] },
     { components: ['app-marked', 'document-component'] },
