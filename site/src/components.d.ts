@@ -8,30 +8,30 @@ import '@stencil/router';
 
 
 import {
-  AppMarked as AppMarked
-} from './components/app-marked/app-marked';
+  SiteHeader as SiteHeader
+} from './components/site-header/site-header';
 
 declare global {
-  interface HTMLAppMarkedElement extends AppMarked, HTMLElement {
+  interface HTMLSiteHeaderElement extends SiteHeader, HTMLElement {
   }
-  var HTMLAppMarkedElement: {
-    prototype: HTMLAppMarkedElement;
-    new (): HTMLAppMarkedElement;
+  var HTMLSiteHeaderElement: {
+    prototype: HTMLSiteHeaderElement;
+    new (): HTMLSiteHeaderElement;
   };
   interface HTMLElementTagNameMap {
-    "app-marked": HTMLAppMarkedElement;
+    "site-header": HTMLSiteHeaderElement;
   }
   interface ElementTagNameMap {
-    "app-marked": HTMLAppMarkedElement;
+    "site-header": HTMLSiteHeaderElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "app-marked": JSXElements.AppMarkedAttributes;
+      "site-header": JSXElements.SiteHeaderAttributes;
     }
   }
   namespace JSXElements {
-    export interface AppMarkedAttributes extends HTMLAttributes {
-      doc?: string;
+    export interface SiteHeaderAttributes extends HTMLAttributes {
+      
     }
   }
 }
