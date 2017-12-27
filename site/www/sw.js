@@ -96,7 +96,7 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "53c220822c4741b318ee39108e0d5a94"
+    "revision": "62bb5829f776bba6c45210e9402e4b72"
   },
   {
     "url": "build/app/5o20v596.js",
@@ -112,7 +112,7 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "675659ba427fa3ad1aaed3c010757e79"
+    "revision": "b6ea2e1d0d2b4dc1197d6e3fa30758e1"
   },
   {
     "url": "build/app/app.ubbz8hou.pf.js",
@@ -131,16 +131,16 @@ const fileManifest = [
     "revision": "ec4080398ed11039b20cf0c94de4187a"
   },
   {
-    "url": "build/app/omua4v1r.js",
-    "revision": "2785e9d32891e22c9a5d83a2f1083217"
-  },
-  {
-    "url": "build/app/s9astsas.js",
-    "revision": "0f63dbde33797a350e4aca9c73b21718"
+    "url": "build/app/swk0mqkx.js",
+    "revision": "7c47930552dd7d0a0f6d1ee76782ac51"
   },
   {
     "url": "build/app/tj1ak5jr.js",
     "revision": "4bbf0302614120a70963f023d6ebab0e"
+  },
+  {
+    "url": "build/app/vcswuqck.js",
+    "revision": "9c7adcc9af79517f78cc17277d48c526"
   },
   {
     "url": "build/app/vo1ht5li.js",
@@ -185,6 +185,90 @@ const fileManifest = [
   {
     "url": "docs-content/android/managing-dependencies.html",
     "revision": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  {
+    "url": "docs-content/apis/accessibility/index.html",
+    "revision": "c7a1ad48f7bfb5cf38558b6fb7cba932"
+  },
+  {
+    "url": "docs-content/apis/app-state/index.html",
+    "revision": "999facfb22e542e738f0a8bad2e74284"
+  },
+  {
+    "url": "docs-content/apis/browser/index.html",
+    "revision": "da02b104ee74dcf071a39358c4d1b128"
+  },
+  {
+    "url": "docs-content/apis/camera/index.html",
+    "revision": "425a74a3b2cb775baa156c23cf03ccf3"
+  },
+  {
+    "url": "docs-content/apis/clipboard/index.html",
+    "revision": "1e1bf66b8cbb696ab92ce2dd274a0470"
+  },
+  {
+    "url": "docs-content/apis/console/index.html",
+    "revision": "3355094401ed4e2dd74b3c1b1a0b165a"
+  },
+  {
+    "url": "docs-content/apis/device/index.html",
+    "revision": "ede3c0be012bb689b9e534f20925d58a"
+  },
+  {
+    "url": "docs-content/apis/filesystem/index.html",
+    "revision": "080ae8008b9e1e179b807d6f88699c87"
+  },
+  {
+    "url": "docs-content/apis/geolocation/index.html",
+    "revision": "fe22d572e98e29c502dcbfb17c94a32e"
+  },
+  {
+    "url": "docs-content/apis/haptics/index.html",
+    "revision": "12fcb8a4f1ff57a02e8496adb7e4cf6d"
+  },
+  {
+    "url": "docs-content/apis/keyboard/index.html",
+    "revision": "9c3d351f3e5c6f4a27f6ca5598832df8"
+  },
+  {
+    "url": "docs-content/apis/local-notifications/index.html",
+    "revision": "ddd1ef0f281afd368b26b8ff9ffed359"
+  },
+  {
+    "url": "docs-content/apis/modals/index.html",
+    "revision": "d9035bd70f2aaea317f694211ce39b6c"
+  },
+  {
+    "url": "docs-content/apis/network/index.html",
+    "revision": "16138ec27d0fc0cad9a899160c27db92"
+  },
+  {
+    "url": "docs-content/apis/photos/index.html",
+    "revision": "717e033ab8c2253df05edd29b03988b7"
+  },
+  {
+    "url": "docs-content/apis/push-notifications/index.html",
+    "revision": "b6d305b8bbd5a93ea2c8670307ab8438"
+  },
+  {
+    "url": "docs-content/apis/share/index.html",
+    "revision": "6251446ae6fc08cbd8fbacbeb38d31de"
+  },
+  {
+    "url": "docs-content/apis/splash-screen/index.html",
+    "revision": "3d347bc76abd2bec98a56394d863e9a3"
+  },
+  {
+    "url": "docs-content/apis/status-bar/index.html",
+    "revision": "e694758194b36782bb5e9577c9927c3a"
+  },
+  {
+    "url": "docs-content/apis/storage/index.html",
+    "revision": "49487527b73987458ca2a59815f3e68c"
+  },
+  {
+    "url": "docs-content/apis/toast/index.html",
+    "revision": "4a1f343616e45b363717beb971e835ea"
   },
   {
     "url": "docs-content/basics/app-project-structure.html",
@@ -256,15 +340,15 @@ const fileManifest = [
   },
   {
     "url": "docs-content/intro/getting-started.html",
-    "revision": "d41d8cd98f00b204e9800998ecf8427e"
+    "revision": "59945f36fb42bbacb1eb57e714d3cd1b"
   },
   {
     "url": "docs-content/intro/index.html",
-    "revision": "4ff82d957e1fe70efd79193286adec94"
+    "revision": "01c0c5b5af09fc640efb14aaeec7914f"
   },
   {
     "url": "docs-content/intro/migrating-from-phonegap-cordova.html",
-    "revision": "73d9920c97e347bedf88f4bd5eb809b3"
+    "revision": "97c374c14c7abd1c7cf8edeb2dee9f71"
   },
   {
     "url": "docs-content/ios/configuration.html",
@@ -291,8 +375,12 @@ const fileManifest = [
     "revision": "2aabcb99454b00e03c9ec799255c63a0"
   },
   {
+    "url": "docs/intro/index.html",
+    "revision": "04bca051813498d3207e61f304b8f994"
+  },
+  {
     "url": "index.html",
-    "revision": "6b879f9efd5412e90a9dc5a88a3234bc"
+    "revision": "1c4539c793716698ec6bf379bbc775e3"
   },
   {
     "url": "manifest.json",

@@ -3,7 +3,7 @@
   "components": [
     [
       "app-marked",
-      "app-marked",
+      "tj1ak5jr",
       1,
       [
         [
@@ -27,7 +27,7 @@
     ],
     [
       "avocado-site",
-      "avocado-site",
+      "swk0mqkx",
       1,
       [
         [
@@ -40,17 +40,17 @@
     ],
     [
       "blog-page",
-      "blog-page",
+      "flkavucn",
       1
     ],
     [
       "demos-page",
-      "demos-page",
+      "vo1ht5li",
       1
     ],
     [
       "document-component",
-      "app-marked",
+      "tj1ak5jr",
       1,
       [
         [
@@ -61,7 +61,7 @@
     ],
     [
       "landing-page",
-      "avocado-site",
+      "swk0mqkx",
       1,
       [
         [
@@ -72,7 +72,7 @@
     ],
     [
       "lazy-iframe",
-      "avocado-site",
+      "swk0mqkx",
       1,
       [
         [
@@ -99,32 +99,32 @@
     ],
     [
       "pwas-page",
-      "pwas-page",
+      "5o20v596",
       1
     ],
     [
       "resources-page",
-      "resources-page",
+      "d7yzhjya",
       1
     ],
     [
       "site-bar",
-      "site-bar",
+      "vcswuqck",
       1
     ],
     [
       "site-header",
-      "avocado-site",
+      "swk0mqkx",
       1
     ],
     [
       "site-menu",
-      "avocado-site",
+      "swk0mqkx",
       1
     ],
     [
       "stencil-async-content",
-      "stencil-async-content",
+      "wawblzzc",
       0,
       [
         [
@@ -141,7 +141,7 @@
     ],
     [
       "stencil-route",
-      "stencil-async-content",
+      "wawblzzc",
       0,
       [
         [
@@ -202,7 +202,7 @@
     ],
     [
       "stencil-route-link",
-      "stencil-async-content",
+      "wawblzzc",
       0,
       [
         [
@@ -259,7 +259,7 @@
     ],
     [
       "stencil-route-title",
-      "stencil-async-content",
+      "wawblzzc",
       0,
       [
         [
@@ -279,7 +279,7 @@
     ],
     [
       "stencil-router",
-      "stencil-async-content",
+      "wawblzzc",
       0,
       [
         [
@@ -311,7 +311,7 @@
     ],
     [
       "stencil-router-redirect",
-      "stencil-async-content",
+      "wawblzzc",
       0,
       [
         [
@@ -331,11 +331,11 @@
     ],
     [
       "test-app",
-      "test-app"
+      "n4gut1z5"
     ],
     [
       "test-demo-four",
-      "test-app",
+      "n4gut1z5",
       0,
       [
         [
@@ -360,7 +360,7 @@
     ],
     [
       "test-demo-six",
-      "test-app",
+      "n4gut1z5",
       0,
       [
         [
@@ -385,7 +385,7 @@
     ],
     [
       "test-demo-three",
-      "test-app",
+      "n4gut1z5",
       0,
       [
         [
@@ -411,6 +411,6 @@
   ],
   "loader": "../app.js",
   "global": "app.global.js",
-  "core": "app.core.js",
-  "corePolyfilled": "app.core.pf.js"
+  "core": "app.ldpuklsb.js",
+  "corePolyfilled": "app.ubbz8hou.pf.js"
 }
