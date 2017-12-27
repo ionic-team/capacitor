@@ -1,3 +1,8 @@
+/**
+ * Generate HTML documentation for each plugin, complete with
+ * documentation on each interface/type used, and inline
+ * comments with any code snippets or examples.
+ */
 var fs = require('fs');
 
 const buildTypeLookup = (nodes) => {
@@ -16,6 +21,8 @@ const generateDocumentationForPlugin = (plugin) => {
   methodChildren.forEach(method => {
     generateMethod(method);
     const interfaces = getInterfacesUsedByMethod(method);
+
+    // Dedupe the interfaces found in each method
     interfacesUsed.push(...interfaces.filter(i => {
       if(interfacesUsedMap.hasOwnProperty(i.id)) {
         return false;
