@@ -8,13 +8,21 @@ const buildTypeLookup = (nodes) => {
 
 const generateDocumentationForPlugin = (plugin) => {
   console.log(`\n\nPlugin: ${plugin.name}`);
+
+  const interfacesUsedMap = {};
   const interfacesUsed = [];
   let methodChildren = plugin.children.filter(m => m.name != 'addListener' && m.name != 'removeListener');
   let listenerChildren = plugin.children.filter(m => m.name == 'addListener' || m.name == 'removeListener');
   methodChildren.forEach(method => {
     generateMethod(method);
     const interfaces = getInterfacesUsedByMethod(method);
-    interfacesUsed.push(...interfaces);
+    interfacesUsed.push(...interfaces.filter(i => {
+      if(interfacesUsedMap.hasOwnProperty(i.id)) {
+        return false;
+      }
+      interfacesUsedMap[i.id] = i;
+      return true;
+    }));
   });
 
   console.log('Interfaces used:');
@@ -23,8 +31,21 @@ const generateDocumentationForPlugin = (plugin) => {
     if(!interfaceDecl) {
       return;
     }
-    
+    console.log(getInterfaceDeclString(interfaceDecl));
   })
+};
+
+const getInterfaceDeclString = (interface) => {
+  const l = [];
+  l.push(`interface ${interface.name} {`);
+
+  if(interface.children) {
+    l.push(...interface.children.map(c => {
+      return `  ${c.name}${c.flags && c.flags.isOptional ? '?' : ''}: ${c.type && c.type.name}`;
+    }));
+  }
+  l.push('}');
+  return l.join('\n');
 };
 
 const getInterfacesUsedByMethod = (method) => {
