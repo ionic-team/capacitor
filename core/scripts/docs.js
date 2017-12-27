@@ -16,11 +16,23 @@ const generateDocumentationForPlugin = (plugin) => {
 };
 
 const generateMethod = (method) => {
+  const signature = generateMethodSignature(method);
+  console.log(signature);
+};
+
+const generateMethodSignature = (method) => {
   const parts = [method.name, '('];
   const signature = method.signatures[0];
+
+  // Build the params portion of the method
   const params = signature.parameters;
   params && params.forEach((param, i) => {
     parts.push(param.name)
+
+    if(param.flags && param.flags.isOptional) {
+      parts.push('?');
+    }
+
     parts.push(': ');
     parts.push(getParamTypeName(param));
     if(i < params.length-1) {
@@ -30,9 +42,11 @@ const generateMethod = (method) => {
   parts.push('): ');
 
   const returnType = signature.type;
+
+  // Add the return type of the method
   parts.push(getReturnTypeName(returnType));
-  const signatureLine = parts.join('');
-  console.log(signatureLine);
+
+  return parts.join('');
 }
 
 const getParamTypeName = (param) => {
