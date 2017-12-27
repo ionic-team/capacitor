@@ -254,6 +254,8 @@ landing-page {
     #three-points {
       flex-direction: column;
       text-align: left;
+      display: block;
+      max-width: 90%;
 
       .point-card {
         margin: 1em 2.4em;
