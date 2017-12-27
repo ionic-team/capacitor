@@ -1,18 +1,48 @@
 var fs = require('fs');
 
-let json = JSON.parse(fs.readFileSync('dist/docs.json'));
-
-// Get the core-plugin-definitions.ts child and all of its children
-var moduleChildren = json.children[0].children;
-
-// Plugins are defined as BlahPlugin
-let plugins = moduleChildren.filter(c => c.name.endsWith('Plugin'));
+const buildTypeLookup = (nodes) => {
+  let d = {};
+  nodes.forEach(n => d[n.id] = n);
+  return d;
+};
 
 const generateDocumentationForPlugin = (plugin) => {
   console.log(`\n\nPlugin: ${plugin.name}`);
+  const interfacesUsed = [];
   let methodChildren = plugin.children.filter(m => m.name != 'addListener' && m.name != 'removeListener');
   let listenerChildren = plugin.children.filter(m => m.name == 'addListener' || m.name == 'removeListener');
-  methodChildren.forEach(method => generateMethod(method));
+  methodChildren.forEach(method => {
+    generateMethod(method);
+    const interfaces = getInterfacesUsedByMethod(method);
+    interfacesUsed.push(...interfaces);
+  });
+
+  console.log('Interfaces used:');
+  interfacesUsed.forEach(interface => {
+    const interfaceDecl = typeLookup[interface.id];
+    if(!interfaceDecl) {
+      return;
+    }
+    
+  })
+};
+
+const getInterfacesUsedByMethod = (method) => {
+  const interfaceTypes = [];
+
+  const signature = method.signatures[0];
+
+  // Build the params portion of the method
+  const params = signature.parameters;
+
+  if(!params) { return []; }
+
+  return params.map(param => {
+    const t = param.type.type;
+    if(t == 'reference') {
+      return param.type;
+    }
+  }).filter(n => n);
 };
 
 const generateMethod = (method) => {
@@ -69,5 +99,20 @@ const getReturnTypeName = (returnType) => {
   return type;
 };
 
+// int main(int argc, char **argv) {
+
+let json = JSON.parse(fs.readFileSync('dist/docs.json'));
+
+// Get the core-plugin-definitions.ts child and all of its children
+var moduleChildren = json.children[0].children;
+
+let typeLookup = buildTypeLookup(moduleChildren);
+
 // Generate documentation for each plugin
+
+// Plugins are defined as BlahPlugin
+let plugins = moduleChildren.filter(c => c.name.endsWith('Plugin'));
+
 plugins.forEach(plugin => generateDocumentationForPlugin(plugin));
+
+// }
