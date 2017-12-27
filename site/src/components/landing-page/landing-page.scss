@@ -16,7 +16,7 @@ landing-page {
   main {
     display: flex;
     flex-direction: column;
-    margin-top: 10em;
+    margin-top: 3em;
   }
 
   #logo {
@@ -26,11 +26,11 @@ landing-page {
 
   #landing-cta-offset {
     flex: 0;
-    min-width: 150px;
+    min-width: 50px;
   }
 
   #action-call {
-    font-size: 2.6em;
+    font-size: 2.1em;
     line-height: normal;
     margin-top: 1em;
     font-weight: 600;
@@ -48,7 +48,8 @@ landing-page {
   #landing-cta-image {
     background: url(assets/img/right-img.png) no-repeat transparent;
     background-size: contain;
-    height: 500px;
+    height: 400px;
+    background-position-x: 100%;
   }
 
   #cta-form {

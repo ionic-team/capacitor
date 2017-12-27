@@ -20,7 +20,7 @@ export class App {
 
     return [
       <div id="main-div">
-        {this.isLandingPage && (<site-bar />)}
+        {/*this.isLandingPage && (<site-bar />)*/}
         <site-header />
         <div class="app">
           <stencil-router>
@@ -108,6 +108,25 @@ export class App {
                 };
                 return (
                   <document-component pages={[map[props.match.params.pageName]]} />
+                );
+              }}
+            />
+
+            <stencil-route
+              url="/docs/apis/:pageName"
+              routeRender={(props: { [key: string]: any }) => {
+                const map = {
+                  undefined: 'apis/index.html',
+                  'accessibility': 'plugins/creating-plugins.html',
+                  '': 'plugins/plugin-api-javascript.html'
+                };
+                let page = 'apis/index.html';
+                const pageName = props.match.params.pageName;
+                if(pageName) {
+                  page = `apis/${pageName}/index.html`
+                }
+                return (
+                  <document-component pages={[page]} />
                 );
               }}
             />
