@@ -29,7 +29,7 @@ export class LandingPage {
             <div class="col">
               <h1 id="action-call">Native bridge for building powerful mobile web apps</h1>
               <div id="action-more">
-                Build cross-platform Progressive Web Apps with JS, HTML, and CSS
+                Native Progressive Web Apps with HTML, CSS, and JavaScript
                 <br />
                 <br />
                 <b>Coming early 2018. Sign up below for updates</b>
