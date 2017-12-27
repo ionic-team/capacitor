@@ -9,6 +9,7 @@
     "dist/"
   ],
   "scripts": {
+    "docs": "./node_modules/.bin/typedoc --exclude **/__test__/*.ts --json dist/docs.json --mode modules src/core-plugin-definitions.ts && node scripts/docs.js",
     "build": "npm run clean && npm run transpile-no-helpers && npm run rollup && npm run minify && npm run transpile",
     "clean": "rimraf dist",
     "minify": "uglifyjs --mangle --compress --source-map \"content='dist/avocado.js.map',url='avocado.js.map'\" --comments '/^/*!/' --output dist/avocado.js dist/avocado.js",
@@ -28,6 +29,7 @@
     "ts-jest": "^21.2.4",
     "tslint": "^5.6.0",
     "tslint-ionic-rules": "0.0.8",
+    "typedoc": "^0.9.0",
     "typescript": "^2.6.2",
     "uglify-js": "^3.2.0"
   },
