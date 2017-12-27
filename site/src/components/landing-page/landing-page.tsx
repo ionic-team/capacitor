@@ -27,12 +27,12 @@ export class LandingPage {
         <main>
           <div class="row">
             <div class="col">
-              <h1 id="action-call">A universal runtime<br/> for containerizing web applications.</h1>
+              <h1 id="action-call">Native bridge for building powerful mobile web apps</h1>
               <div id="action-more">
-                Build cross-platform apps with JS, HTML, and CSS
+                Build cross-platform Progressive Web Apps with JS, HTML, and CSS
                 <br />
                 <br />
-                <b>Sign up for updates and early access to the preview.</b>
+                <b>Coming early 2018. Sign up below for updates</b>
               </div>
               <section id="buttons">
                 <form id="cta-form" action="https://codiqa.createsend.com/t/t/s/flhuhj/" method="post">
