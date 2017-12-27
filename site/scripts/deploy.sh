@@ -4,7 +4,7 @@ LAST_COMMIT_MESSAGE=`git log -1 --pretty=format:"%s" -- .`
 echo $MONOREPO_DIR
 echo "Deploying avocado-site to gh-pages branch"
 echo "Last commit in site/ was: $LAST_COMMIT_MESSAGE"
-#npm run build
+npm run build
 
 echo "Making temporary directory..."
 WORK_DIR=`mktemp -d`
@@ -26,7 +26,7 @@ git commit -m "$LAST_COMMIT_MESSAGE"
 git push origin gh-pages
 
 function cleanup {
-  #rm -rf "$WORK_DIR"
+  rm -rf "$WORK_DIR"
   echo "Deleted temp deploy directory"
 }
 

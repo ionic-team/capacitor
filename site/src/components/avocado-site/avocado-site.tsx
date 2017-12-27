@@ -23,7 +23,7 @@ export class App {
         {/*this.isLandingPage && (<site-bar />)*/}
         <site-header />
         <div class="app">
-          <stencil-router>
+          <stencil-router root="/avocado/">
 
             <stencil-route
               url="/"
