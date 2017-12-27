@@ -231,6 +231,13 @@ landing-page {
     #action-call {
       width: auto;
     }
+    main {
+      max-width: 90%;
+      margin: auto;
+    }
+    #landing-cta-image {
+      display: none;
+    }
 
     #launch-video {
       display: none;
@@ -254,6 +261,31 @@ landing-page {
       
       .point-card::before {
         left: 0;
+      }
+      .point-card {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0;
+      }
+    }
+  }
+  @media screen and (max-width: 500px) {
+    main {
+      max-width: 90%;
+      margin: auto;
+    }
+    #landing-cta-image {
+      display: none;
+    }
+    #three-points {
+      display: block;
+      max-width: 90%;
+      margin: auto;
+
+      .point-card {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0;
       }
     }
   }
