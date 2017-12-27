@@ -327,7 +327,7 @@ var SiteMenu = /** @class */ (function () {
     }
     SiteMenu.prototype.render = function () {
         return (h("div", null,
-            h("iframe", { class: "star-button", src: "https://ghbtns.com/github-btn.html?user=ionic-team&repo=stencil&type=star&count=true", frameBorder: "0", scrolling: "0", width: "170px", height: "20px" }),
+            h("iframe", { class: "star-button", src: "https://ghbtns.com/github-btn.html?user=ionic-team&repo=avocado&type=star&count=true", frameBorder: "0", scrolling: "0", width: "170px", height: "20px" }),
             h("ul", { id: "menu-list" }, this.MENU.map(function (s) {
                 return (h("li", null,
                     h("h4", null, s.title),
