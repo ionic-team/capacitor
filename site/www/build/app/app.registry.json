@@ -3,7 +3,7 @@
   "components": [
     [
       "app-marked",
-      "tj1ak5jr",
+      "app-marked",
       1,
       [
         [
@@ -27,7 +27,7 @@
     ],
     [
       "avocado-site",
-      "swk0mqkx",
+      "avocado-site",
       1,
       [
         [
@@ -40,17 +40,17 @@
     ],
     [
       "blog-page",
-      "flkavucn",
+      "blog-page",
       1
     ],
     [
       "demos-page",
-      "vo1ht5li",
+      "demos-page",
       1
     ],
     [
       "document-component",
-      "tj1ak5jr",
+      "app-marked",
       1,
       [
         [
@@ -61,7 +61,7 @@
     ],
     [
       "landing-page",
-      "swk0mqkx",
+      "avocado-site",
       1,
       [
         [
@@ -72,7 +72,7 @@
     ],
     [
       "lazy-iframe",
-      "swk0mqkx",
+      "avocado-site",
       1,
       [
         [
@@ -99,32 +99,32 @@
     ],
     [
       "pwas-page",
-      "5o20v596",
+      "pwas-page",
       1
     ],
     [
       "resources-page",
-      "d7yzhjya",
+      "resources-page",
       1
     ],
     [
       "site-bar",
-      "vcswuqck",
+      "site-bar",
       1
     ],
     [
       "site-header",
-      "swk0mqkx",
+      "avocado-site",
       1
     ],
     [
       "site-menu",
-      "swk0mqkx",
+      "avocado-site",
       1
     ],
     [
       "stencil-async-content",
-      "wawblzzc",
+      "stencil-async-content",
       0,
       [
         [
@@ -141,7 +141,7 @@
     ],
     [
       "stencil-route",
-      "wawblzzc",
+      "stencil-async-content",
       0,
       [
         [
@@ -202,7 +202,7 @@
     ],
     [
       "stencil-route-link",
-      "wawblzzc",
+      "stencil-async-content",
       0,
       [
         [
@@ -259,7 +259,7 @@
     ],
     [
       "stencil-route-title",
-      "wawblzzc",
+      "stencil-async-content",
       0,
       [
         [
@@ -279,7 +279,7 @@
     ],
     [
       "stencil-router",
-      "wawblzzc",
+      "stencil-async-content",
       0,
       [
         [
@@ -311,7 +311,7 @@
     ],
     [
       "stencil-router-redirect",
-      "wawblzzc",
+      "stencil-async-content",
       0,
       [
         [
@@ -331,11 +331,11 @@
     ],
     [
       "test-app",
-      "n4gut1z5"
+      "test-app"
     ],
     [
       "test-demo-four",
-      "n4gut1z5",
+      "test-app",
       0,
       [
         [
@@ -360,7 +360,7 @@
     ],
     [
       "test-demo-six",
-      "n4gut1z5",
+      "test-app",
       0,
       [
         [
@@ -385,7 +385,7 @@
     ],
     [
       "test-demo-three",
-      "n4gut1z5",
+      "test-app",
       0,
       [
         [
@@ -411,6 +411,6 @@
   ],
   "loader": "../app.js",
   "global": "app.global.js",
-  "core": "app.ldpuklsb.js",
-  "corePolyfilled": "app.ubbz8hou.pf.js"
+  "core": "app.core.js",
+  "corePolyfilled": "app.core.pf.js"
 }
