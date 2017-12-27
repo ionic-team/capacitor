@@ -416,7 +416,7 @@ const fileManifest = [
   },
   {
     "url": "docs/intro/index.html",
-    "revision": "a60701d3ab5a7f1363bc1b5f8a04ce32"
+    "revision": "185a8748530cf3d1732045c6b82b9454"
   },
   {
     "url": "host.config.json",
@@ -424,7 +424,7 @@ const fileManifest = [
   },
   {
     "url": "index.html",
-    "revision": "ef9c1461edfc5de5667d49ccc0031e40"
+    "revision": "264cc50852f04e82b75ba77e6ee262cf"
   },
   {
     "url": "manifest.json",
