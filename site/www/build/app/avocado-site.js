@@ -123,7 +123,7 @@ var LandingPage = /** @class */ (function () {
                     h("div", { class: "col" },
                         h("h1", { id: "action-call" }, "Native bridge for building powerful mobile web apps"),
                         h("div", { id: "action-more" },
-                            "Build cross-platform Progressive Web Apps with JS, HTML, and CSS",
+                            "Native Progressive Web Apps with HTML, CSS, and JavaScript",
                             h("br", null),
                             h("br", null),
                             h("b", null, "Coming early 2018. Sign up below for updates")),
