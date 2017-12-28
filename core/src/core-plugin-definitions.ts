@@ -27,8 +27,16 @@ export type ISODateString = string;
 //
 
 export interface AccessibilityPlugin {
+  /**
+   * Check if a screen reader is enabled on the device
+   */
   isScreenReaderEnabled(): Promise<ScreenReaderEnabledResult>;
+
+  /**
+   * Speak a string with a connected screen reader.
+   */
   speak(value: string): Promise<void>;
+
   onScreenReaderStateChange(cb: ScreenReaderStateChangeCallback): void;
 }
 export interface ScreenReaderEnabledResult {
