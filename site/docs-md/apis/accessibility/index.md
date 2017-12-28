@@ -25,3 +25,4 @@ async speak() {
 }
 ```
 
+<plugin-api name="accessibility"></plugin-api>

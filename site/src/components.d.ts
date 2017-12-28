@@ -38,6 +38,36 @@ declare global {
 
 
 import {
+  AvcCodeType as AvcCodeType
+} from './components/avc-code-type/avc-code-type';
+
+declare global {
+  interface HTMLAvcCodeTypeElement extends AvcCodeType, HTMLElement {
+  }
+  var HTMLAvcCodeTypeElement: {
+    prototype: HTMLAvcCodeTypeElement;
+    new (): HTMLAvcCodeTypeElement;
+  };
+  interface HTMLElementTagNameMap {
+    "avc-code-type": HTMLAvcCodeTypeElement;
+  }
+  interface ElementTagNameMap {
+    "avc-code-type": HTMLAvcCodeTypeElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "avc-code-type": JSXElements.AvcCodeTypeAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AvcCodeTypeAttributes extends HTMLAttributes {
+      typeId?: string;
+    }
+  }
+}
+
+
+import {
   App as AvocadoSite
 } from './components/avocado-site/avocado-site';
 
@@ -213,6 +243,36 @@ declare global {
     export interface LazyIframeAttributes extends HTMLAttributes {
       src?: string;
       title?: string;
+    }
+  }
+}
+
+
+import {
+  PluginApi as PluginApi
+} from './components/plugin-api/plugin-api';
+
+declare global {
+  interface HTMLPluginApiElement extends PluginApi, HTMLElement {
+  }
+  var HTMLPluginApiElement: {
+    prototype: HTMLPluginApiElement;
+    new (): HTMLPluginApiElement;
+  };
+  interface HTMLElementTagNameMap {
+    "plugin-api": HTMLPluginApiElement;
+  }
+  interface ElementTagNameMap {
+    "plugin-api": HTMLPluginApiElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "plugin-api": JSXElements.PluginApiAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface PluginApiAttributes extends HTMLAttributes {
+      name?: string;
     }
   }
 }
