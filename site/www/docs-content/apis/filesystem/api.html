@@ -2,7 +2,7 @@
       <div class="avc-code-plugin-name">FilesystemPlugin</div>
     
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">appendFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">data</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="325">FileAppendResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">appendFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">data</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="325">FileAppendResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Append to a file on disk in the specified location on device</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
@@ -32,7 +32,7 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">deleteFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="323">FileDeleteResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">deleteFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="323">FileDeleteResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Delete a file from disk</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
@@ -50,7 +50,7 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">mkdir</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">createIntermediateDirectories</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="326">MkdirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">mkdir</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">createIntermediateDirectories</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="326">MkdirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Create a directory.</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
@@ -74,7 +74,7 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">readFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="321">FileReadResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">readFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="321">FileReadResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Read a file from disk</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
@@ -98,7 +98,7 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">readdir</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="328">ReaddirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">readdir</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="328">ReaddirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Return a list of files from the directory (not recursive)</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
@@ -116,7 +116,7 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">rmdir</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="327">RmdirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">rmdir</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="327">RmdirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Remove a directory</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
@@ -134,7 +134,7 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">stat</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="330">StatResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">stat</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="330">StatResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Return data about a file</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
@@ -152,7 +152,7 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">writeFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">data</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="324">FileWriteResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <span class="avc-code-method-name">writeFile</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">data</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="undefined">Promise</avc-code-type><span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="324">FileWriteResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     <div class="avc-code-method-comment">Write a file to disk in the specified location on device</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
