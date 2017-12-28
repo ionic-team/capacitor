@@ -1,5 +1,7 @@
 PODS:
-  - Avocado (0.0.1)
+  - Avocado (0.0.1):
+    - AvocadoCordova (= 0.0.1)
+  - AvocadoCordova (0.0.1)
 
 DEPENDENCIES:
   - Avocado (from `../../../ios/Avocado`)
@@ -9,8 +11,9 @@ EXTERNAL SOURCES:
     :path: ../../../ios/Avocado
 
 SPEC CHECKSUMS:
-  Avocado: 632286d979ee16971350903d9419d723deb348d6
+  Avocado: ac0b9c5e2a23c1d17eb21b77d087334090607f46
+  AvocadoCordova: 14ef5ae409ce34a09e9893008755ef87aabf2148
 
-PODFILE CHECKSUM: ceaaae3eb3a75ce40d47c706b1f040787df09126
+PODFILE CHECKSUM: 27766402febf7fb461318cd7e734d63ebe5c94e5
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.3.1
