@@ -101,8 +101,40 @@ const getInterfacesUsedByMethod = (method) => {
 
 const generateMethod = (method) => {
   const signature = generateMethodSignature(method);
-  return signature;
+  const params = generateMethodParamDocs(method);
+  return signature + params;
 };
+
+const generateMethodParamDocs = (method) => {
+  const signature = method.signatures[0];
+
+  const html = ['<div class="avc-code-method-params">']
+
+  // Build the params portion of the method
+  const params = signature.parameters;
+  params && params.forEach((param, i) => {
+    html.push(`<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">${param.name}</span>
+                `)
+    if (param.type.type == 'reference') {
+      if(param.type.id) {
+        html.push(`<avc-code-type type-id="${param.type.id}">${param.type.name}</avc-code-type>`);
+      } else {
+        html.push(`<avc-code-type>${param.type.name}</avc-code-type>`);
+      }
+    } else {
+      html.push(`<span class="avc-code-type-name">${param.type.name}</span>`);
+    }
+
+    if (param.comment) {
+      html.push(`<div class="avc-code-method-param-comment">${param.comment.text}</div>`);
+    }
+    html.push('</div>');
+  });
+
+  html.push('</div>');
+  return html.join('\n');
+}
 
 const generateMethodSignature = (method) => {
   const parts = [`<div class="avc-code-method">
@@ -131,7 +163,9 @@ const generateMethodSignature = (method) => {
   // Add the return type of the method
   parts.push(getReturnTypeName(returnType));
 
-  parts.push('</div></div>');
+  parts.push(`</div>
+    ${signature.comment && `<div class="avc-code-method-comment">${signature.comment.shortText}</div>`}
+  </div>`);
 
   return parts.join('');
 }
