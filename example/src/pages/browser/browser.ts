@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Avocado
+  Plugins
 } from '@avocadojs/core';
 
 /**
@@ -19,6 +19,12 @@ import {
 export class BrowserPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+    Plugins.Browser.addListener('browserFinished', (err: any, info: any) => {
+      console.log('Browser all done!');
+    });
+    Plugins.Browser.addListener('browserPageLoaded', (err: any, info: any) => {
+      console.log('Browser page loaded!');
+    });
   }
 
   ionViewDidLoad() {
@@ -28,10 +34,12 @@ export class BrowserPage {
   browserOpen() {
     console.log('OBJECTS');
     console.log((<any>window).Avocado);
-    Avocado.Plugins.Browser.open('http://ionicframework.com');
-    Avocado.Plugins.Browser.close({
-      "type": "HELLO"
-    });
+
+    Plugins.Browser.open('http://ionicframework.com');
+
+    setTimeout(() => {
+      Plugins.Browser.close();
+    }, 5000);
   }
 
 }

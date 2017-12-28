@@ -23,12 +23,21 @@ public class Browser : AVCPlugin, SFSafariViewControllerDelegate {
     }
   }
   
+  @objc func close(_ call: AVCPluginCall) {
+    if vc == nil {
+      call.success()
+    }
+    self.bridge.viewController.dismiss(animated: true) {
+      call.success()
+    }
+  }
+  
   public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
     self.notifyListeners("browserFinished", data: [:])
   }
   
   public func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-    self.notifyListeners("browserLoadedPage", data: [:])
+    self.notifyListeners("browserPageLoaded", data: [:])
   }
 }
 

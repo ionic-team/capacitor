@@ -85,6 +85,9 @@ export interface BrowserPlugin extends Plugin {
    * Close an open browser
    */
   close(): Promise<void>;
+
+  addListener(eventName: 'browserFinished', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
+  addListener(eventName: 'browserPageLoaded', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
 }
 
 //
