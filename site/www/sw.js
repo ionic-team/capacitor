@@ -96,7 +96,7 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "72963f7b2d71540d3a34f811f8179230"
+    "revision": "e053b3a0752d572ad45c53aeb603c7aa"
   },
   {
     "url": "build/app/9vp1kpca.js",
@@ -124,7 +124,11 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "5ad92ecd5a153961c2e8a6fd82bdbeca"
+    "revision": "7e1206d49887182b5d60a754ecb6d246"
+  },
+  {
+    "url": "build/app/b7mowk9t.js",
+    "revision": "3c9adb82724900595b7bb50152c94da4"
   },
   {
     "url": "build/app/bua0xdue.js",
@@ -163,10 +167,6 @@ const fileManifest = [
     "revision": "bceea4fa858c798bb6fa201033865b51"
   },
   {
-    "url": "build/app/pfzistl5.js",
-    "revision": "b883b683fc32019674d684eb3a724212"
-  },
-  {
     "url": "build/app/pxqetkvb.js",
     "revision": "b265badb0f3b157462d6173e37e36a30"
   },
@@ -183,12 +183,12 @@ const fileManifest = [
     "revision": "48c55f83fea984765543325f8a71dd02"
   },
   {
-    "url": "build/app/xyfissap.js",
-    "revision": "25d03519f99399851b14fdc57d211da6"
+    "url": "build/app/rn3mtayu.js",
+    "revision": "e8700405747f76057c6c1d89a8b4392d"
   },
   {
-    "url": "build/app/z5t8xm3b.js",
-    "revision": "4664e57cd8129be4b8d8876b394bfc46"
+    "url": "build/app/xyfissap.js",
+    "revision": "25d03519f99399851b14fdc57d211da6"
   },
   {
     "url": "docs-content/addons/stencil-router.html",
@@ -420,11 +420,11 @@ const fileManifest = [
   },
   {
     "url": "host.config.json",
-    "revision": "665447b6d2460bd878c4454f0f589a55"
+    "revision": "ec2da7a8e895961e6fd75c02b4e92cd8"
   },
   {
     "url": "index.html",
-    "revision": "101687e20e8f89abdec0cd808449f603"
+    "revision": "777bd0a2ae4fe2b51d8817614c29cdf5"
   },
   {
     "url": "manifest.json",
