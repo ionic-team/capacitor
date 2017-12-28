@@ -4,8 +4,8 @@
     [
       "app-marked",
       [
-        "qiy3cz0d",
-        "bua0xdue"
+        "app-marked",
+        null
       ],
       1,
       [
@@ -29,10 +29,28 @@
       ]
     ],
     [
+      "avc-code-type",
+      [
+        "app-marked",
+        null
+      ],
+      0,
+      [
+        [
+          "typeId",
+          1,
+          1,
+          2
+        ]
+      ],
+      0,
+      1
+    ],
+    [
       "avocado-site",
       [
-        "rn3mtayu",
-        "b7mowk9t"
+        "avocado-site",
+        null
       ],
       1,
       [
@@ -47,24 +65,24 @@
     [
       "blog-page",
       [
-        "lppew0yu",
-        "a9pov8p9"
+        "blog-page",
+        null
       ],
       1
     ],
     [
       "demos-page",
       [
-        "nvgxmkhh",
-        "rhlmfaus"
+        "demos-page",
+        null
       ],
       1
     ],
     [
       "document-component",
       [
-        "qiy3cz0d",
-        "bua0xdue"
+        "app-marked",
+        null
       ],
       1,
       [
@@ -79,8 +97,8 @@
     [
       "landing-page",
       [
-        "rn3mtayu",
-        "b7mowk9t"
+        "avocado-site",
+        null
       ],
       1,
       [
@@ -93,8 +111,8 @@
     [
       "lazy-iframe",
       [
-        "rn3mtayu",
-        "b7mowk9t"
+        "avocado-site",
+        null
       ],
       1,
       [
@@ -121,50 +139,70 @@
       ]
     ],
     [
+      "plugin-api",
+      [
+        "app-marked",
+        null
+      ],
+      1,
+      [
+        [
+          "content",
+          5
+        ],
+        [
+          "name",
+          1,
+          1,
+          2
+        ]
+      ]
+    ],
+    [
       "pwas-page",
       [
-        "krirex7d",
-        "9vp1kpca"
+        "pwas-page",
+        null
       ],
       1
     ],
     [
       "resources-page",
       [
-        "n56a2jzp",
-        "lljbbqab"
+        "resources-page",
+        null
       ],
       1
     ],
     [
       "site-bar",
       [
-        "pxqetkvb",
-        "rjkvhcbv"
+        "site-bar",
+        null
       ],
       1
     ],
     [
       "site-header",
       [
-        "rn3mtayu",
-        "b7mowk9t"
+        "avocado-site",
+        null
       ],
       1
     ],
     [
       "site-menu",
       [
-        "rn3mtayu",
-        "b7mowk9t"
+        "avocado-site",
+        null
       ],
       1
     ],
     [
       "stencil-async-content",
       [
-        "xyfissap",
-        "pbssls7g"
+        "stencil-async-content",
+        null
       ],
       0,
       [
@@ -183,8 +221,8 @@
     [
       "stencil-route",
       [
-        "xyfissap",
-        "pbssls7g"
+        "stencil-async-content",
+        null
       ],
       0,
       [
@@ -247,8 +285,8 @@
     [
       "stencil-route-link",
       [
-        "xyfissap",
-        "pbssls7g"
+        "stencil-async-content",
+        null
       ],
       0,
       [
@@ -307,8 +345,8 @@
     [
       "stencil-route-title",
       [
-        "xyfissap",
-        "pbssls7g"
+        "stencil-async-content",
+        null
       ],
       0,
       [
@@ -330,8 +368,8 @@
     [
       "stencil-router",
       [
-        "xyfissap",
-        "pbssls7g"
+        "stencil-async-content",
+        null
       ],
       0,
       [
@@ -365,8 +403,8 @@
     [
       "stencil-router-redirect",
       [
-        "xyfissap",
-        "pbssls7g"
+        "stencil-async-content",
+        null
       ],
       0,
       [
@@ -388,15 +426,15 @@
     [
       "test-app",
       [
-        "cv7cbtbi",
-        "orsdhirh"
+        "test-app",
+        null
       ]
     ],
     [
       "test-demo-four",
       [
-        "cv7cbtbi",
-        "orsdhirh"
+        "test-app",
+        null
       ],
       0,
       [
@@ -423,8 +461,8 @@
     [
       "test-demo-six",
       [
-        "cv7cbtbi",
-        "orsdhirh"
+        "test-app",
+        null
       ],
       0,
       [
@@ -451,8 +489,8 @@
     [
       "test-demo-three",
       [
-        "cv7cbtbi",
-        "orsdhirh"
+        "test-app",
+        null
       ],
       0,
       [
@@ -478,7 +516,7 @@
     ]
   ],
   "global": "app.global.js",
-  "core": "app.qnefnhxv.js",
-  "coreSsr": "app.gzgsz0co.js",
-  "corePolyfilled": "app.m3eyznes.js"
+  "core": "app.core.js",
+  "coreSsr": "app.core.ssr.js",
+  "corePolyfilled": "es5-build-disabled.js"
 }
