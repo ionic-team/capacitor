@@ -12,14 +12,20 @@ const buildTypeLookup = (nodes) => {
 };
 
 const generateDocumentationForPlugin = (plugin) => {
-  console.log(`\n\nPlugin: ${plugin.name}`);
+  //console.log(`\n\nPlugin: ${plugin.name}`);
+  var html = [
+    `<div class="avc-code-plugin">
+      <div class="avc-code-plugin-name">${plugin.name}</div>
+    `
+  ];
 
   const interfacesUsedMap = {};
   const interfacesUsed = [];
   let methodChildren = plugin.children.filter(m => m.name != 'addListener' && m.name != 'removeListener');
   let listenerChildren = plugin.children.filter(m => m.name == 'addListener' || m.name == 'removeListener');
+
   methodChildren.forEach(method => {
-    generateMethod(method);
+    html = html.concat(generateMethod(method));
     const interfaces = getInterfacesUsedByMethod(method);
 
     // Dedupe the interfaces found in each method
@@ -40,6 +46,8 @@ const generateDocumentationForPlugin = (plugin) => {
     }
     console.log(getInterfaceDeclString(interfaceDecl));
   })
+
+  console.log(html);
 };
 
 const getInterfaceDeclString = (interface) => {
@@ -63,6 +71,12 @@ const getInterfacesUsedByMethod = (method) => {
   // Build the params portion of the method
   const params = signature.parameters;
 
+  const returnTypes = [];
+  returnTypes.push(signature.type);
+  signature.type.typeArguments && signature.type.typeArguments.forEach(arg => {
+    returnTypes.push(arg);
+  })
+
   if(!params) { return []; }
 
   return params.map(param => {
@@ -70,7 +84,12 @@ const getInterfacesUsedByMethod = (method) => {
     if(t == 'reference') {
       return param.type;
     }
-  }).filter(n => n);
+  }).filter(n => n).concat(returnTypes.map(type => {
+    const t = type.type;
+    if(t == 'reference') {
+      return type;
+    }
+  }).filter(n => n));
 };
 
 const generateMethod = (method) => {
@@ -79,19 +98,19 @@ const generateMethod = (method) => {
 };
 
 const generateMethodSignature = (method) => {
-  const parts = [method.name, '('];
+  const parts = [`<div class="avc-code-method-name">${method.name}</div>`, '<span class="avc-code-parent">(</span>'];
   const signature = method.signatures[0];
 
   // Build the params portion of the method
   const params = signature.parameters;
   params && params.forEach((param, i) => {
-    parts.push(param.name)
+    parts.push(`<span class="avc-code-param-name">${param.name}</span>`)
 
     if(param.flags && param.flags.isOptional) {
-      parts.push('?');
+      parts.push('<span class="avc-code-param-optional">?</span>');
     }
 
-    parts.push(': ');
+    parts.push('<span class="avc-code-param-colon">:</span> ');
     parts.push(getParamTypeName(param));
     if(i < params.length-1) {
       parts.push(', ');
@@ -104,27 +123,41 @@ const generateMethodSignature = (method) => {
   // Add the return type of the method
   parts.push(getReturnTypeName(returnType));
 
+  parts.push('</div>');
+
   return parts.join('');
 }
 
 const getParamTypeName = (param) => {
   const t = param.type.type;
   if(t == 'reference') {
-    return param.type.name;
+    if(param.type.id) {
+      return `<avc-code-type type-id="${param.type.id}">${param.type.name}</avc-code-type>`;
+    }
+    return `<avc-code-type>${param.type.name}</avc-code-type>`;
   }
   return 'any';
 };
 
 const getReturnTypeName = (returnType) => {
   const r = returnType;
-  const type = `${r.name}`;
 
-  if(r.typeArguments) {
-    const typeArgParts = r.typeArguments.map(a => a.name);
-    return type + `<${typeArgParts.join(',')}>`;
+  const html = []
+  if(r.type.type == 'reference') {
+    html.push(`<avc-code-type type-id="${r.type.id}">${r.type.name}</avc-code-type>`);
   }
 
-  return type;
+  if(r.typeArguments) {
+    html.push('<span class="avc-code-typearg-bracket">&lt;</span>');
+    r.typeArguments.forEach(a => {
+      if(a.type.id) {
+        html.push(`<avc-code-type type-id="${a.type.id}">${a.type.name}</avc-code-type>`);
+      }
+    })
+    html.push('<span class="avc-code-typearg-bracket">&gt;</span>');
+  }
+
+  return html;
 };
 
 // int main(int argc, char **argv) {
