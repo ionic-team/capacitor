@@ -201,8 +201,10 @@ const getReturnTypeName = (returnType) => {
   const r = returnType;
 
   const html = []
-  if(r.type.type == 'reference') {
-    html.push(`<avc-code-type type-id="${r.type.id}">${r.type.name}</avc-code-type>`);
+  if(r.type == 'reference') {
+    html.push(`<avc-code-type type-id="${r.id}">${r.name}</avc-code-type>`);
+  } else {
+    html.push(`${r.name}`);
   }
 
   if(r.typeArguments) {
@@ -210,6 +212,8 @@ const getReturnTypeName = (returnType) => {
     r.typeArguments.forEach(a => {
       if(a.id) {
         html.push(`<avc-code-type type-id="${a.id}">${a.name}</avc-code-type>`);
+      } else {
+        html.push(a.name);
       }
     })
     html.push('<span class="avc-code-typearg-bracket">&gt;</span>');
