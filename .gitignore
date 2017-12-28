@@ -12,3 +12,5 @@ example/android/app/src/main/assets/public/*
 !example/android/app/src/main/assets/public/.gitkeep
 example/ios/IonicRunner/public/*
 !example/ios/IonicRunner/public/.gitkeep
+Build/
+Index/
