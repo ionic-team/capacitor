@@ -32,9 +32,6 @@ export class BrowserPage {
   }
 
   browserOpen() {
-    console.log('OBJECTS');
-    console.log((<any>window).Avocado);
-
     Plugins.Browser.open('http://ionicframework.com');
 
     setTimeout(() => {
