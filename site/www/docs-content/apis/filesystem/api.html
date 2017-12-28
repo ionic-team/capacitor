@@ -1,0 +1,304 @@
+<div class="avc-code-plugin">
+      <div class="avc-code-plugin-name">FilesystemPlugin</div>
+    
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">appendFile</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">data</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="325">FileAppendResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Append to a file on disk in the specified location on device</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">file</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the filename to write</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">data</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the data to write</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory to store the file in</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">encoding</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the encoding to write the file in (defaults to utf8)
+</div>
+</div>
+</div>
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">deleteFile</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="323">FileDeleteResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Delete a file from disk</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">file</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the filename to write</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory to store the file in
+</div>
+</div>
+</div>
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">mkdir</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">createIntermediateDirectories</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="326">MkdirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Create a directory.</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">path</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the path of the directory to create</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory where the new directory will live under</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">createIntermediateDirectories</span>
+                
+<span class="avc-code-type-name">boolean</span>
+<div class="avc-code-method-param-comment">whether to create missing parent directories
+</div>
+</div>
+</div>
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">readFile</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="321">FileReadResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Read a file from disk</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">file</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the filename to write</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory to store the file in</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">encoding</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the encoding to write the file in (defaults to utf8)
+</div>
+</div>
+</div>
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">readdir</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="328">ReaddirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Return a list of files from the directory (not recursive)</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">path</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the directory path to read</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory to read the directory under
+</div>
+</div>
+</div>
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">rmdir</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="327">RmdirResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Remove a directory</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">path</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the path of directory to remove</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory to remove the directory under
+</div>
+</div>
+</div>
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">stat</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">path</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="330">StatResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Return data about a file</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">path</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the path of the file</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory where the file lives
+</div>
+</div>
+</div>
+<div class="avc-code-method">
+                    <div class="avc-code-method-name">writeFile</div><span class="avc-code-paren">(</span><span class="avc-code-param-name">file</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">data</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">directory</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="314">FilesystemDirectory</avc-code-type>, <span class="avc-code-param-name">encoding</span><span class="avc-code-param-colon">:</span> any<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="324">FileWriteResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span></div>
+    <div class="avc-code-method-comment">Write a file to disk in the specified location on device</div>
+  </div><div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">file</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the filename to write</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">data</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the data to write</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">directory</span>
+                
+<avc-code-type type-id="314">FilesystemDirectory</avc-code-type>
+<div class="avc-code-method-param-comment">the FilesystemDirectory to store the file in</div>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">encoding</span>
+                
+<span class="avc-code-type-name">string</span>
+<div class="avc-code-method-param-comment">the encoding to write the file in (defaults to utf8)
+</div>
+</div>
+</div>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">FilesystemDirectory</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-line"><span class="avc-code-param-name">Application</span>
+            
+            : </div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">Cache</span>
+            
+            : </div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">Data</span>
+            
+            : </div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">Documents</span>
+            
+            : </div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">External</span>
+            
+            : </div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">ExternalStorage</span>
+            
+            : </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">FileAppendResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">FileDeleteResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">MkdirResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">FileReadResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-line"><span class="avc-code-param-name">data</span>
+            
+            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">ReaddirResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-line"><span class="avc-code-param-name">files</span>
+            
+            : <avc-code-type type-id="undefined">undefined</avc-code-type></div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">RmdirResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">StatResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-line"><span class="avc-code-param-name">ctime</span>
+            
+            : <avc-code-type type-id="undefined">number</avc-code-type></div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">mtime</span>
+            
+            : <avc-code-type type-id="undefined">number</avc-code-type></div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">size</span>
+            
+            : <avc-code-type type-id="undefined">number</avc-code-type></div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">type</span>
+            
+            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">FileWriteResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+</div>
