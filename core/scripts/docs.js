@@ -38,27 +38,35 @@ const generateDocumentationForPlugin = (plugin) => {
     }));
   });
 
-  console.log('Interfaces used:');
   interfacesUsed.forEach(interface => {
+    html.push(`
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">${interface.name}</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    `);
+
     const interfaceDecl = typeLookup[interface.id];
     if(!interfaceDecl) {
       return;
     }
-    console.log(getInterfaceDeclString(interfaceDecl));
-  })
 
-  console.log(html);
+    if(interfaceDecl.children) {
+      html.push(...interfaceDecl.children.map(c => {
+        return `  <span class="avc-code-param-name">${c.name}</span>${c.flags && c.flags.isOptional ?
+          '<span class="avc-code-param-optional">?</span>' : ''}: ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>`}`;
+      }));
+    }
+  });
+
+  html.push(`'</div>`);
+
+  console.log(html.join('\n'));
 };
 
 const getInterfaceDeclString = (interface) => {
   const l = [];
-  l.push(`interface ${interface.name} {`);
-
-  if(interface.children) {
-    l.push(...interface.children.map(c => {
-      return `  ${c.name}${c.flags && c.flags.isOptional ? '?' : ''}: ${c.type && c.type.name}`;
-    }));
-  }
   l.push('}');
   return l.join('\n');
 };
@@ -94,11 +102,11 @@ const getInterfacesUsedByMethod = (method) => {
 
 const generateMethod = (method) => {
   const signature = generateMethodSignature(method);
-  console.log(signature);
 };
 
 const generateMethodSignature = (method) => {
-  const parts = [`<div class="avc-code-method-name">${method.name}</div>`, '<span class="avc-code-parent">(</span>'];
+  const parts = [`<div class="avc-code-method">
+                    <div class="avc-code-method-name">${method.name}</div>`, '<span class="avc-code-paren">(</span>'];
   const signature = method.signatures[0];
 
   // Build the params portion of the method
@@ -116,14 +124,14 @@ const generateMethodSignature = (method) => {
       parts.push(', ');
     }
   });
-  parts.push('): ');
+  parts.push('<span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> ');
 
   const returnType = signature.type;
 
   // Add the return type of the method
   parts.push(getReturnTypeName(returnType));
 
-  parts.push('</div>');
+  parts.push('</div></div>');
 
   return parts.join('');
 }
@@ -150,8 +158,8 @@ const getReturnTypeName = (returnType) => {
   if(r.typeArguments) {
     html.push('<span class="avc-code-typearg-bracket">&lt;</span>');
     r.typeArguments.forEach(a => {
-      if(a.type.id) {
-        html.push(`<avc-code-type type-id="${a.type.id}">${a.type.name}</avc-code-type>`);
+      if(a.id) {
+        html.push(`<avc-code-type type-id="${a.id}">${a.name}</avc-code-type>`);
       }
     })
     html.push('<span class="avc-code-typearg-bracket">&gt;</span>');
