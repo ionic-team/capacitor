@@ -39,6 +39,7 @@ const generateDocumentationForPlugin = (plugin) => {
   });
 
   interfacesUsed.forEach(interface => {
+    if(interface.name == 'Promise') { return; }
     html.push(`
     <div class="avc-code-interface">
       <div class="avc-code-line">
@@ -49,26 +50,24 @@ const generateDocumentationForPlugin = (plugin) => {
 
     const interfaceDecl = typeLookup[interface.id];
     if(!interfaceDecl) {
+      html.push(`<span class="avc-code-line"><span class="avc-code-brace">}</span></span>`);
       return;
     }
 
     if(interfaceDecl.children) {
       html.push(...interfaceDecl.children.map(c => {
-        return `  <span class="avc-code-param-name">${c.name}</span>${c.flags && c.flags.isOptional ?
-          '<span class="avc-code-param-optional">?</span>' : ''}: ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>`}`;
+        return `
+          <div class="avc-code-line"><span class="avc-code-param-name">${c.name}</span>
+            ${c.flags && c.flags.isOptional ? '<span class="avc-code-param-optional">?</span>' : ''}
+            : ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>` || ''}</div>`;
       }));
     }
+    html.push(`<span class="avc-code-line"><span class="avc-code-brace">}</span></span>`);
   });
 
-  html.push(`'</div>`);
+  html.push(`</div>`);
 
   console.log(html.join('\n'));
-};
-
-const getInterfaceDeclString = (interface) => {
-  const l = [];
-  l.push('}');
-  return l.join('\n');
 };
 
 const getInterfacesUsedByMethod = (method) => {
@@ -102,6 +101,7 @@ const getInterfacesUsedByMethod = (method) => {
 
 const generateMethod = (method) => {
   const signature = generateMethodSignature(method);
+  return signature;
 };
 
 const generateMethodSignature = (method) => {
@@ -165,7 +165,7 @@ const getReturnTypeName = (returnType) => {
     html.push('<span class="avc-code-typearg-bracket">&gt;</span>');
   }
 
-  return html;
+  return html.join('');
 };
 
 // int main(int argc, char **argv) {
