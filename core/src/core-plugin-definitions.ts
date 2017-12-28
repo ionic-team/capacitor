@@ -37,7 +37,10 @@ export interface AccessibilityPlugin {
    */
   speak(value: string): Promise<void>;
 
-  onScreenReaderStateChange(cb: ScreenReaderStateChangeCallback): void;
+  /**
+   * Listen for screen reader state change (on/off)
+   */
+  addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): PluginListenerHandle;
 }
 export interface ScreenReaderEnabledResult {
   value: boolean;
@@ -54,7 +57,15 @@ export interface ActionSheetPlugin extends Plugin {
 //
 
 export interface AppStatePlugin extends Plugin {
+  /**
+   * Listen for internal plugin errors if you'd like to have more diagnostics on
+   * serious plugin runtime errors.
+   */
   addListener(eventName: 'pluginError', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
+
+  /**
+   * Listen for changes in the App's active state (whether the app is in the foreground or background)
+   */
   addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: AppStateState) => void): PluginListenerHandle;
 }
 
@@ -64,27 +75,37 @@ export interface AppStateState {
 
 //
 
-export interface BatteryPlugin extends Plugin {
-}
-
-//
-
 export interface BrowserPlugin extends Plugin {
-  open(url: string): Promise<any>;
-  close(options: any): Promise<any>;
+  /**
+   * Open a page with the given URL
+   */
+  open(url: string): Promise<void>;
+
+  /**
+   * Close an open browser
+   */
+  close(): Promise<void>;
 }
 
 //
 
 export interface CameraPlugin extends Plugin {
+  /**
+   * Prompt the user to pick a photo from an album, or take a new photo
+   * with the camera.
+   */
   getPhoto(options: CameraOptions): Promise<CameraPhoto>;
 }
 
 export interface CameraOptions {
-  quality?: number; // default: 100
-  allowEditing?: boolean; // default: false
-  resultType: 'base64' | 'uri';
-  saveToGallery?: boolean; // default: true
+  // The quality of image to return as JPEG, from 0-100
+  quality?: number;
+  // Whether to allow the user to crop or make small edits (platform specific)
+  allowEditing?: boolean;
+  // How the data should be returned. Currently, only base64 is supported
+  resultType: 'base64'
+  // Whether to save the photo to the gallery/photostream
+  saveToGallery?: boolean;
 }
 
 export interface CameraPhoto {
@@ -95,7 +116,13 @@ export interface CameraPhoto {
 //
 
 export interface ClipboardPlugin extends Plugin {
+  /**
+   * Set a value on the clipboard (the "copy" action)
+   */
   set(options: ClipboardSet): Promise<void>;
+  /**
+   * Get a value from the clipboard (the "paste" action)
+   */
   get(options: ClipboardGet): Promise<ClipboardGetResult>;
 }
 
@@ -117,6 +144,9 @@ export interface ClipboardGetResult {
 //
 
 export interface DevicePlugin extends Plugin {
+  /**
+   * Return information about the underlying device/os/platform
+   */
   getInfo(): Promise<DeviceInfo>;
 }
 
@@ -232,7 +262,13 @@ export interface StatResult {
 //
 
 export interface GeolocationPlugin extends Plugin {
+  /**
+   * Get the current GPS location of the device
+   */
   getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPositon>;
+  /**
+   * Set up a watch for location changes.
+   */
   watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback) : void;
 }
 export interface GeolocationPositon {
@@ -250,10 +286,28 @@ export type GeolocationWatchCallback = (err: any, position: GeolocationPositon) 
 //
 
 export interface HapticsPlugin extends Plugin {
+  /**
+   * Trigger a haptics "impact" feedback
+   */
   impact(options: HapticsImpactOptions): void;
+  /**
+   * Vibrate the device
+   */
   vibrate(): void;
+  /**
+   * Trigger a selection started haptic hint
+   */
   selectionStart(): void;
+  /**
+   * Trigger a selection changed haptic hint. If a selection was
+   * started already, this will cause the device to provide haptic
+   * feedback (on iOS at least)
+   */
   selectionChanged(): void;
+  /**
+   * If selectionStart() was called, selectionEnd() ends the selection.
+   * For example, call this when a user has lifted their finger from a control
+   */
   selectionEnd(): void;
 }
 
@@ -274,8 +328,18 @@ export interface VibrateOptions {
 //
 
 export interface KeyboardPlugin extends Plugin {
+  /**
+   * Show the keyboard. This method is alpha and may have issues
+   */
   show(): Promise<void>;
+  /**
+   * Hide the keyboard.
+   */
   hide(): Promise<void>;
+  /**
+   * Set whether the accessory bar should be visible on the keyboard. We recommend disabling
+   * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
+   */
   setAccessoryBarVisible(isVisible: boolean): Promise<void>;
 }
 

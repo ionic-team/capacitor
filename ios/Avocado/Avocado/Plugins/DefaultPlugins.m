@@ -5,7 +5,6 @@
 AVC_PLUGIN(Accessibility,
   AVC_PLUGIN_METHOD(isScreenReaderEnabled, "", AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(speak, "value:string", AVCPluginReturnPromise);
-  AVC_PLUGIN_METHOD(onScreenReaderStateChange, "", AVCPluginReturnCallback);
 )
 
 AVC_PLUGIN(AppState,)

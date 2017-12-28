@@ -6,11 +6,18 @@ public class Browser : AVCPlugin, SFSafariViewControllerDelegate {
   var vc: SFSafariViewController?
   
   @objc func open(_ call: AVCPluginCall) {
-    if let urlString = call.options["url"] as? String {
-      let url = URL(string: urlString)
-      vc = SFSafariViewController.init(url: url!)
-      vc!.delegate = self
-      bridge.viewController.present(vc!, animated: true, completion: {
+    guard let urlString = call.getString("url") else {
+      call.error("Must provide a URL to open")
+      return
+    }
+    
+    let url = URL(string: urlString)
+    
+    DispatchQueue.main.async {
+      self.vc = SFSafariViewController.init(url: url!)
+      self.vc!.delegate = self
+      self.vc!.modalPresentationStyle = .popover
+      self.bridge.viewController.present(self.vc!, animated: true, completion: {
         call.success()
       })
     }
