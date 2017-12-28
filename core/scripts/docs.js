@@ -4,11 +4,27 @@
  * comments with any code snippets or examples.
  */
 var fs = require('fs');
+var os = require('os');
+var path = require('path');
+
+var SITE_DIR = path.join(process.cwd(), '../site');
 
 const buildTypeLookup = (nodes) => {
   let d = {};
   nodes.forEach(n => d[n.id] = n);
   return d;
+};
+
+const writeDocumentationHtmlOutput = (plugin, string) => {
+  const pluginNameSplitCapitalized = plugin.name.match(/[A-Z][a-z]+/g);
+  const targetDirName = pluginNameSplitCapitalized.slice(0, pluginNameSplitCapitalized.length-1).join('-').toLowerCase();
+  const p = path.join(SITE_DIR, 'www/docs-content/apis', targetDirName, 'api.html');
+  console.log('WRITING', p);
+  try {
+    fs.writeFileSync(p, string, { encoding: 'utf8' });
+  } catch(e) {
+    console.error('Unable to write docs for plugin ', targetDirName);
+  }
 };
 
 const generateDocumentationForPlugin = (plugin) => {
@@ -67,7 +83,7 @@ const generateDocumentationForPlugin = (plugin) => {
 
   html.push(`</div>`);
 
-  console.log(html.join('\n'));
+  return html.join('\n');
 };
 
 const getInterfacesUsedByMethod = (method) => {
@@ -138,7 +154,7 @@ const generateMethodParamDocs = (method) => {
 
 const generateMethodSignature = (method) => {
   const parts = [`<div class="avc-code-method">
-                    <div class="avc-code-method-name">${method.name}</div>`, '<span class="avc-code-paren">(</span>'];
+                    <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
   const signature = method.signatures[0];
 
   // Build the params portion of the method
@@ -163,8 +179,8 @@ const generateMethodSignature = (method) => {
   // Add the return type of the method
   parts.push(getReturnTypeName(returnType));
 
-  parts.push(`</div>
-    ${signature.comment && `<div class="avc-code-method-comment">${signature.comment.shortText}</div>`}
+  parts.push(`
+    ${signature.comment && `<div class="avc-code-method-comment">${signature.comment.shortText}</div>` || ''}
   </div>`);
 
   return parts.join('');
@@ -216,6 +232,6 @@ let typeLookup = buildTypeLookup(moduleChildren);
 // Plugins are defined as BlahPlugin
 let plugins = moduleChildren.filter(c => c.name.endsWith('Plugin'));
 
-plugins.forEach(plugin => generateDocumentationForPlugin(plugin));
+plugins.forEach(plugin => writeDocumentationHtmlOutput(plugin, generateDocumentationForPlugin(plugin)));
 
 // }

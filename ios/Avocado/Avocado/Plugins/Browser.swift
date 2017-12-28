@@ -15,5 +15,13 @@ public class Browser : AVCPlugin, SFSafariViewControllerDelegate {
       })
     }
   }
+  
+  public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+    self.notifyListeners("browserFinished", data: [:])
+  }
+  
+  public func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
+    self.notifyListeners("browserLoadedPage", data: [:])
+  }
 }
 
