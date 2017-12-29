@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Plugins
+  Plugins,
+  ActionSheetOptionStyle
 } from '@avocadojs/core';
 
 /**
@@ -48,4 +49,30 @@ export class ModalsPage {
     console.log('Prompt ret', promptRet);
   }
 
+  async showActions() {
+    let promptRet = await Plugins.Modals.showActions({
+      title: 'Photo Options',
+      message: 'Select an option to perform',
+      options: [
+        {
+          title: 'Upload'
+        },
+        {
+          title: 'Share'
+        },
+        {
+          title: 'Remove',
+          style: ActionSheetOptionStyle.Destructive
+        }
+      ]
+    })
+    console.log('You selected', promptRet);
+  }
+
+  async showSharing() {
+    let shareRet = await Plugins.Modals.showSharing({
+      message: 'Really awesome thing you need to see right meow',
+      url: 'http://ionicframework.com/shared'
+    });
+  }
 }

@@ -1,1 +1,42 @@
 <h1 id="haptics">Haptics</h1>
+<p>The Haptics API provides physical feedback to the user through touch or vibration.</p>
+<h2 id="example">Example</h2>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> {
+  Plugins,
+  HapticsImpactStyle
+} from <span class="hljs-string">'@avocadojs/core'</span>;
+
+export class HapticsExample {
+  hapticsImpact(style = HapticsImpactStyle.Heavy) {
+    Plugins.Haptics.impact({
+      style: style
+    });
+  }
+
+  hapticsImpactMedium(style) {
+    this.hapticsImpact(HapticsImpactStyle.Medium);
+  }
+
+  hapticsImpactLight(style) {
+    this.hapticsImpact(HapticsImpactStyle.Light);
+  }
+
+  hapticsVibrate() {
+    Plugins.Haptics.vibrate();
+  }
+
+  hapticsSelectionStart() {
+    Plugins.Haptics.selectionStart();
+  }
+
+  hapticsSelectionChanged() {
+    Plugins.Haptics.selectionChanged();
+  }
+
+  hapticsSelectionEnd() {
+    Plugins.Haptics.selectionEnd();
+  }
+}
+</code></pre>
+<h2 id="api">API</h2>
+<p><plugin-api name="haptics"></plugin-api></p>

@@ -3,7 +3,7 @@
 The Clipboard API enables copy and pasting to/from the clipboard. On iOS this API also allows 
 copying images and URLs.
 
-### Example
+## Example
 
 ```typescript
 Plugins.Clipboard.set({
@@ -16,6 +16,6 @@ let str = await Plugins.Clipboard.get({
 console.log('Got string from clipboard:', str);
 ```
 
-### API
+## API
 
 <plugin-api name="clipboard"></plugin-api>

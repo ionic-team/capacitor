@@ -1,9 +1,9 @@
-## Camera
+# Camera
 
 The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses `UIImagePickerController`, and on Android this
 API sends an intent which will be handled by the core Camera app by default.
 
-### Example
+## Example
 
 ```typescript
 import { Plugins } from '@avocadojs/core';
@@ -20,7 +20,7 @@ Plugins.Camera.getPhoto({
 });
 ```
 
-### Angular note
+## Angular note
 
 By default, Angular (>= 2.x) won't trust dynamic image urls. To trust the URL, inject `DomSanitizer` and make sure to allow the 
 image URL to be trusted:
@@ -63,6 +63,6 @@ Component template:
   <button (click)="takePicture()" ion-button color="primary">Take Picture</button>
 ```
 
-### API
+## API
 
 <plugin-api name="camera"></plugin-api>
