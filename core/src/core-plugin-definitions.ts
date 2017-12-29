@@ -1,4 +1,4 @@
-import { Plugin, PluginCallback, PluginListenerHandle } from './definitions';
+import { Plugin, PluginListenerHandle } from './definitions';
 
 declare global {
   interface PluginRegistry {
@@ -49,13 +49,6 @@ export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnab
 
 //
 
-export interface ActionSheetPlugin extends Plugin {
-  show(): Promise<void>;
-  hide(): Promise<void>;
-}
-
-//
-
 export interface AppStatePlugin extends Plugin {
   /**
    * Listen for internal plugin errors if you'd like to have more diagnostics on
@@ -101,13 +94,21 @@ export interface CameraPlugin extends Plugin {
 }
 
 export interface CameraOptions {
-  // The quality of image to return as JPEG, from 0-100
+  /**
+   * The quality of image to return as JPEG, from 0-100
+   */
   quality?: number;
-  // Whether to allow the user to crop or make small edits (platform specific)
+  /**
+   * Whether to allow the user to crop or make small edits (platform specific)
+   */
   allowEditing?: boolean;
-  // How the data should be returned. Currently, only base64 is supported
+  /**
+   * How the data should be returned. Currently, only base64 is supported
+   */
   resultType: 'base64'
-  // Whether to save the photo to the gallery/photostream
+  /**
+   * Whether to save the photo to the gallery/photostream
+   */
   saveToGallery?: boolean;
 }
 
@@ -437,37 +438,50 @@ export interface LocalNotificationsPlugin extends Plugin {
 //
 
 export interface ModalsPlugin extends Plugin {
-  alert(options: {
-          title: string,
-          message: string,
-          buttonTitle?: string
-        }): Promise<void>;
-
-  prompt(options: {
-          title: string,
-          message: string,
-          okButtonTitle?: string,
-          cancelButtonTitle?: string,
-          inputPlaceholder?: string
-        }): Promise<PromptResult>;
-
-  confirm(options: {
-            title: string,
-            message: string,
-            okButtonTitle?: string,
-            cancelButtonTitle?: string
-          }): Promise<ConfirmResult>;
+  /**
+   * Show an alert modal
+   */
+  alert(options: AlertOptions): Promise<void>;
+  /**
+   * Show a prompt modal
+   */
+  prompt(options: PromptOptions): Promise<PromptResult>;
+  /**
+   * Show a confirmation modal
+   */
+  confirm(options: ConfirmOptions): Promise<ConfirmResult>;
 
   /**
    * Show an Action Sheet style modal with various options for the user
    * to select.
    */
   showActions(options: ActionSheetOptions): Promise<ActionSheetResult>;
-
+   
   /**
    * Show a Share modal for sharing content in your app with other apps
    */
   showSharing(options: any): Promise<any>;
+}
+
+export interface AlertOptions {
+  title: string,
+  message: string,
+  buttonTitle?: string
+}
+
+export interface PromptOptions {
+  title: string,
+  message: string,
+  okButtonTitle?: string,
+  cancelButtonTitle?: string,
+  inputPlaceholder?: string
+}
+
+export interface ConfirmOptions {
+  title: string,
+  message: string,
+  okButtonTitle?: string,
+  cancelButtonTitle?: string
 }
 
 export interface PromptResult {
@@ -589,85 +603,143 @@ export interface PhotosPlugin extends Plugin {
 }
 
 export interface PhotosFetchOptions {
-  // The number of photos to fetch, sorted by last created date descending
+  /**
+   * The number of photos to fetch, sorted by last created date descending
+   */
   quantity?: number;
-  // The width of thumbnail to return
+  /**
+   * The width of thumbnail to return
+   */
   thumbnailWidth?: number;
-  // The height of thumbnail to return
+  /**
+   * The height of thumbnail to return
+   */
   thumbnailHeight?: number;
-  // The quality of thumbnail to return as JPEG (0-100)
+  /**
+   * The quality of thumbnail to return as JPEG (0-100)
+   */
   thumbnailQuality?: number;
-  // Which types of assets to return (currently only supports "photos")
+  /**
+   * Which types of assets to return (currently only supports "photos")
+   */
   types?: string;
-  // Which album identifier to query in (get identifier with getAlbums())
+  /**
+   * Which album identifier to query in (get identifier with getAlbums())
+   */
   albumIdentifier?: string;
 }
 
 export interface PhotoAsset {
-  // Platform-specific identifier
+  /**
+   * Platform-specific identifier
+   */
   identifier: string;
-  // Data for a photo asset as a base64 encoded string (JPEG only supported)
+  /**
+   * Data for a photo asset as a base64 encoded string (JPEG only supported)
+   */
   data: string;
-  // ISO date string for creation date of asset
+  /**
+   * ISO date string for creation date of asset
+   */
   creationDate: string;
-  // Full width of original asset
+  /**
+   * Full width of original asset
+   */
   fullWidth: number;
-  // Full height of original asset
+  /**
+   * Full height of original asset
+   */
   fullHeight: number;
-  // Width of thumbnail preview
+  /**
+   * Width of thumbnail preview
+   */
   thumbnailWidth: number;
-  // Height of thumbnail preview
+  /**
+   * Height of thumbnail preview
+   */
   thumbnailHeight: number;
-  // Location metadata for the asset
+  /**
+   * Location metadata for the asset
+   */
   location: PhotoLocation;
 }
 
 export interface PhotoLocation {
-  // GPS latitude image was taken at
+  /**
+   * GPS latitude image was taken at
+   */
   latitude: number;
-  // GPS longitude image was taken at
+  /**
+   * GPS longitude image was taken at
+   */
   longitude: number;
-  // Heading of user at time image was taken
+  /**
+   * Heading of user at time image was taken
+   */
   heading: number;
-  // Altitude of user at time image was taken
+  /**
+   * Altitude of user at time image was taken
+   */
   altitude: number;
-  // Speed of user at time image was taken
+  /**
+   * Speed of user at time image was taken
+   */
   speed: number;
 }
 
 export interface PhotosResult {
-  // The list of photos returned from the library
+  /**
+   * The list of photos returned from the library
+   */
   photos: PhotoAsset[];
 }
 
 export interface PhotosSaveOptions {
-  // The base64-encoded JPEG data for a photo (note: do not add HTML data-uri type prefix)
+  /**
+   * The base64-encoded JPEG data for a photo (note: do not add HTML data-uri type prefix)
+   */
   data: string;
-  // The optional album identifier to save this photo in
+  /**
+   * The optional album identifier to save this photo in
+   */
   albumIdentifier?: string;
 }
 
 export interface PhotosSaveResult {
-  // Whether the photo was created
+  /**
+   * Whether the photo was created
+   */
   success: boolean;
 }
 
 export interface PhotosAlbumsFetchOptions {
-  // Whether to load cloud shared albums
+  /**
+   * Whether to load cloud shared albums
+   */
   loadShared: boolean;
 }
 export interface PhotosAlbumsResult {
-  // The list of albums returned from the query
+  /**
+   * The list of albums returned from the query
+   */
   albums: PhotosAlbum[];
 }
 export interface PhotosAlbum {
-  // Local identifier for the album
+  /**
+   * Local identifier for the album
+   */
   identifier: string;
-  // Name of the album
+  /**
+   * Name of the album
+   */
   name: string;
-  // Number of items in the album
+  /** 
+   * Number of items in the album
+   */
   count: number;
-  // The type of album
+  /**
+   * The type of album
+   */
   type: PhotosAlbumType;
 }
 
@@ -676,41 +748,79 @@ export interface PhotosCreateAlbumOptions {
 }
 
 export enum PhotosAlbumType {
-  // Album is a "smart" album (such as Favorites or Recently Added)
+  /**
+   * Album is a "smart" album (such as Favorites or Recently Added)
+   */
   Smart = 'smart',
-  // Album is a cloud-shared album
+  /**
+   * Album is a cloud-shared album
+   */
   Shared = 'shared',
-  // Album is a user-created album
+  /**
+   * Album is a user-created album
+   */
   User = 'user'
 }
 
 //
 
 export interface SplashScreenPlugin extends Plugin {
+  /**
+   * Show the splash screen
+   */
   show(options?: SplashScreenShowOptions, callback?: Function) : void;
+  /**
+   * Hide the splash screen
+   */
   hide(options?: SplashScreenHideOptions, callback?: Function) : void;
 }
 
 export interface SplashScreenShowOptions {
+  /**
+   * Whether to auto hide the splash after showDuration
+   */
   autoHide?: boolean;
+  /**
+   * How long (in ms) to fade in. Default is 200ms
+   */
   fadeInDuration?: number;
+  /**
+   * How long (in ms) to fade out. Default is 200ms
+   */
   fadeOutDuration?: number;
+  /**
+  * How long to show the splash screen when authHide is enabled (in ms)
+  * Default is 3000ms
+  */
   showDuration?: number;
 }
 
 export interface SplashScreenHideOptions {
+  /**
+   * How long (in ms) to fade out. Default is 200ms
+   */
   fadeOutDuration?: number;
 }
 
 //
 
 export interface StatusBarPlugin extends Plugin {
-  
-  setStyle(options: { style: StatusBarStyle }, callback: PluginCallback) : void;
-
+  /**
+   *  Set the current style of the status bar
+   */
+  setStyle(options: StatusBarStyleOptions): Promise<void>;
+  /**
+   * Show the status bar
+   */
   show() : Promise<void>;
-
+  /**
+   *  Hide the status bar
+   */
   hide() : Promise<void>;
+}
+
+export interface StatusBarStyleOptions {
+  style: StatusBarStyle;
 }
 
 export enum StatusBarStyle {
