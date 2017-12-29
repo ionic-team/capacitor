@@ -10,10 +10,12 @@ public class StatusBar: AVCPlugin {
     let options = call.options!
 
     if let style = options["style"] as? String {
-      if style == "DARK" {
-        UIApplication.shared.statusBarStyle = .lightContent
-      } else if style == "LIGHT" {
-        UIApplication.shared.statusBarStyle = .default
+      DispatchQueue.main.async {
+        if style == "DARK" {
+          UIApplication.shared.statusBarStyle = .lightContent
+        } else if style == "LIGHT" {
+          UIApplication.shared.statusBarStyle = .default
+        }
       }
     }
     
