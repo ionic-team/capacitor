@@ -40,7 +40,11 @@ const generateDocumentationForPlugin = (plugin) => {
   let methodChildren = plugin.children.filter(m => m.name != 'addListener' && m.name != 'removeListener');
   let listenerChildren = plugin.children.filter(m => m.name == 'addListener' || m.name == 'removeListener');
 
-  methodChildren.forEach(method => {
+  const methodBuild = (method) => {
+    // Only support methods with signatures, meaning they are our subclasses
+    // implementation of it not our superclass' (I think...)
+    if(!method.signatures) { return; }
+
     html = html.concat(generateMethod(method));
     const interfaces = getInterfacesUsedByMethod(method);
 
@@ -52,7 +56,10 @@ const generateDocumentationForPlugin = (plugin) => {
       interfacesUsedMap[i.id] = i;
       return true;
     }));
-  });
+  }
+
+  methodChildren.forEach(method => methodBuild(method));
+  listenerChildren.forEach(method => methodBuild(method));
 
   interfacesUsed.forEach(interface => {
     if(interface.name == 'Promise') { return; }
