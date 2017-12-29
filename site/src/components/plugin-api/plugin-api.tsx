@@ -19,6 +19,10 @@ export class PluginApi {
   }
 
   render() {
-    return (<div innerHTML={this.content}></div>);
+    return (
+    <div>
+      <div innerHTML={this.content}></div>
+    </div>
+    );
   }
 }

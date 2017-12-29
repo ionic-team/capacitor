@@ -1,6 +1,7 @@
 <h2 id="appstate">AppState</h2>
 <p>The AppState API emits events when the app enters and leaves, among other 
 high level operations.</p>
+<h3 id="example">Example</h3>
 <pre><code class="lang-typescript">import { Plugins, AppStateState } <span class="hljs-keyword">from</span> '@avocadojs/core';
 
 Plugins.AppState.addListener('appStateChanged', (err: <span class="hljs-literal">any</span>, <span class="hljs-keyword">state</span>: AppStateState) =&gt; {
@@ -13,3 +14,5 @@ Plugins.AppState.addListener('pluginError', (err: <span class="hljs-literal">any
   console.error('There was a serious error with a plugin', err, info);
 });
 </code></pre>
+<h3 id="api">API</h3>
+<p><plugin-api name="app-state"></plugin-api></p>

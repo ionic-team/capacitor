@@ -3,6 +3,8 @@
 The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses `UIImagePickerController`, and on Android this
 API sends an intent which will be handled by the core Camera app by default.
 
+### Example
+
 ```typescript
 import { Plugins } from '@avocadojs/core';
 
@@ -60,3 +62,7 @@ Component template:
   <img [src]="image" />
   <button (click)="takePicture()" ion-button color="primary">Take Picture</button>
 ```
+
+### API
+
+<plugin-api name="camera"></plugin-api>
