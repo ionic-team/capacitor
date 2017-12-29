@@ -147,7 +147,6 @@ public class Modals : AVCPlugin {
       }
       
       actionController.completionWithItemsHandler = { (activityType, completed, _ returnedItems, activityError) in
-        print("COMPLETEION", activityType, completed, returnedItems, activityError)
         if activityError != nil {
           call.error("Error sharing item", activityError)
           return
@@ -157,7 +156,7 @@ public class Modals : AVCPlugin {
         
         call.success([
           "completed": completed,
-          "activityType": activityType?.rawValue
+          "activityType": activityType?.rawValue ?? ""
         ])
       }
       
