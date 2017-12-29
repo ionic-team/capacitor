@@ -91,32 +91,36 @@ public class SplashScreen : AVCPlugin {
   }
   
   func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, completion: @escaping () -> Void) {
-    bridge.viewController.view.addSubview(imageView)
     
-    bridge.viewController.view.isUserInteractionEnabled = false
- 
-    
-    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
-      self.imageView.alpha = 1
-    }) { (finished: Bool) in
-      self.isVisible = true
+    DispatchQueue.main.async {
       
-      if autoHide {
-        self.hideTask = DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (Double(showDuration) / 1000), execute: {
-          self.hideSplash(fadeOutDuration: fadeOutDuration)
-          completion()
-        })
+      self.bridge.viewController.view.addSubview(self.imageView)
+
+      self.bridge.viewController.view.isUserInteractionEnabled = false
+
+      UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
+        self.imageView.alpha = 1
+      }) { (finished: Bool) in
+        self.isVisible = true
+
+        if autoHide {
+          self.hideTask = DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (Double(showDuration) / 1000), execute: {
+            self.hideSplash(fadeOutDuration: fadeOutDuration)
+            completion()
+          })
+        }
       }
     }
   }
   
   func hideSplash(fadeOutDuration: Int) {
     if !isVisible { return }
-    
-    UIView.transition(with: imageView, duration: TimeInterval(Double(fadeOutDuration) / 1000), options: .curveLinear, animations: {
-      self.imageView.alpha = 0
-    }) { (finished: Bool) in
-      self.tearDown()
+    DispatchQueue.main.async {
+      UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeOutDuration) / 1000), options: .curveLinear, animations: {
+        self.imageView.alpha = 0
+      }) { (finished: Bool) in
+        self.tearDown()
+      }
     }
   }
 }
