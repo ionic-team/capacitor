@@ -151,7 +151,7 @@ public class Photos : AVCPlugin {
     
     call.success([
       "albums": albums
-      ])
+    ])
   }
   
   func fetchResultAssetsToJs(_ call: AVCPluginCall) {
@@ -202,7 +202,6 @@ public class Photos : AVCPlugin {
         return
       }
       
-      print("Got asset item", asset, count)
       var a = JSObject()
       
       self.imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: requestOptions, resultHandler: { (fetchedImage, _) in
@@ -230,7 +229,7 @@ public class Photos : AVCPlugin {
     
     call.success([
       "photos": assets
-      ])
+    ])
   }
   
   
