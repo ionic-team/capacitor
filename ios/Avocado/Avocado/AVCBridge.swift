@@ -278,6 +278,10 @@ enum BridgeError: Error {
       className = "CDV\(call.pluginId)"
       vcClass = NSClassFromString(className) as? CDVPlugin.Type
     }
+    if vcClass == nil {
+      print("Error: Plugin class not found")
+      return
+    }
 
     // Init the plugin and configure it
     let plugin = vcClass!.init()
