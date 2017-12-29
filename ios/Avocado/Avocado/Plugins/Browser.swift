@@ -17,6 +17,7 @@ public class Browser : AVCPlugin, SFSafariViewControllerDelegate {
       self.vc = SFSafariViewController.init(url: url!)
       self.vc!.delegate = self
       self.vc!.modalPresentationStyle = .popover
+      self.setCenteredPopover(self.vc)
       self.bridge.viewController.present(self.vc!, animated: true, completion: {
         call.success()
       })

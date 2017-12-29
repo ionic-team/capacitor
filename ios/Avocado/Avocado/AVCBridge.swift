@@ -11,7 +11,7 @@ enum BridgeError: Error {
   public var AVC_SITE = "https://avocado.ionicframework.com"
   
   public var webView: WKWebView
-  public var viewController: UIViewController
+  @objc public var viewController: UIViewController
   
   public var lastPlugin: AVCPlugin?
   

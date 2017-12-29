@@ -93,6 +93,14 @@
  return TRUE;
  }*/
 
+/**
+ * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered
+ */
+-(void)setCenteredPopover:(UIViewController *) vc {
+  vc.popoverPresentationController.sourceRect = CGRectMake(self.bridge.viewController.view.center.x, self.bridge.viewController.view.center.y, 0, 0);
+  vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
+  vc.popoverPresentationController.permittedArrowDirections = 0;
+}
 
 @end
 
