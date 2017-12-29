@@ -3,35 +3,34 @@
     
 <div class="avc-code-method">
                     <span class="avc-code-method-name">hide</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
-    
+    <div class="avc-code-method-comment"> Hide the status bar</div>
   </div><div class="avc-code-method-params">
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">setStyle</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> any, <span class="avc-code-param-name">callback</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="113">PluginCallback</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
-    
+                    <span class="avc-code-method-name">setStyle</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="716">StatusBarStyleOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+    <div class="avc-code-method-comment"> Set the current style of the status bar</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<span class="avc-code-type-name">undefined</span>
-</div>
-<div class="avc-code-method-param-info">
-                <span class="avc-code-method-param-info-name">callback</span>
-                
-<avc-code-type type-id="113">PluginCallback</avc-code-type>
+<avc-code-type type-id="716">StatusBarStyleOptions</avc-code-type>
 </div>
 </div>
 <div class="avc-code-method">
                     <span class="avc-code-method-name">show</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
-    
+    <div class="avc-code-method-comment">Show the status bar</div>
   </div><div class="avc-code-method-params">
 </div>
 
     <div class="avc-code-interface">
       <div class="avc-code-line">
-        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">PluginCallback</span>
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">StatusBarStyleOptions</span>
         <span class="avc-code-brace">{</span>
       </div>
     
+
+          <div class="avc-code-line"><span class="avc-code-param-name">style</span>
+            
+            : <avc-code-type type-id="718">StatusBarStyle</avc-code-type></div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 </div>
