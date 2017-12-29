@@ -489,6 +489,13 @@ export interface ActionSheetOption {
 export interface ActionSheetResult {
   option: ActionSheetOption;
 }
+
+export interface ShareSheetOptions {
+  message?: string;
+  url?: string;
+  subject?: string;
+}
+
 //
 
 export interface MotionPlugin extends Plugin {

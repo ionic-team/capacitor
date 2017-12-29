@@ -72,7 +72,9 @@ export class ModalsPage {
   async showSharing() {
     let shareRet = await Plugins.Modals.showSharing({
       message: 'Really awesome thing you need to see right meow',
-      url: 'http://ionicframework.com/shared'
+      url: 'http://ionicframework.com/',
+      subject: 'See cool stuff'
     });
+    console.log('Share return', shareRet);
   }
 }

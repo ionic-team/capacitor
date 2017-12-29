@@ -131,6 +131,8 @@ public class Modals : AVCPlugin {
       items.append(urlObj!)
     }
     
+    let subject = call.getString("subject")
+    
     if items.count == 0 {
       call.error("Must provide at least url or message")
       return
@@ -138,6 +140,27 @@ public class Modals : AVCPlugin {
     
     DispatchQueue.main.async {
       let actionController = UIActivityViewController(activityItems: items, applicationActivities: nil)
+      
+      if subject != nil {
+        // https://stackoverflow.com/questions/17020288/how-to-set-a-mail-subject-in-uiactivityviewcontroller
+        actionController.setValue(subject, forKey: "subject")
+      }
+      
+      actionController.completionWithItemsHandler = { (activityType, completed, _ returnedItems, activityError) in
+        print("COMPLETEION", activityType, completed, returnedItems, activityError)
+        if activityError != nil {
+          call.error("Error sharing item", activityError)
+          return
+        }
+        
+        // TODO: Support returnedItems
+        
+        call.success([
+          "completed": completed,
+          "activityType": activityType?.rawValue
+        ])
+      }
+      
       self.bridge.viewController.present(actionController, animated: true, completion: nil)
     }
   }
