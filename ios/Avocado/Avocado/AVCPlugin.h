@@ -25,5 +25,6 @@
 -(void) load;
 -(NSString *)getId;
 -(BOOL)getBool:(AVCPluginCall*) call field:(NSString *)field defaultValue:(BOOL)defaultValue;
+-(void)setCenteredPopover:(UIViewController *) vc;
 
 @end
