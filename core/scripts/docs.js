@@ -96,41 +96,43 @@ const generateDocumentationForPlugin = (plugin) => {
 const getInterfacesUsedByMethod = (method) => {
   const interfaceTypes = [];
 
-  const signature = method.signatures[0];
+  const interfaces = [...method.signatures.map(signature => {
+    // Build the params portion of the method
+    const params = signature.parameters;
 
-  // Build the params portion of the method
-  const params = signature.parameters;
+    const returnTypes = [];
+    returnTypes.push(signature.type);
+    signature.type.typeArguments && signature.type.typeArguments.forEach(arg => {
+      returnTypes.push(arg);
+    })
 
-  const returnTypes = [];
-  returnTypes.push(signature.type);
-  signature.type.typeArguments && signature.type.typeArguments.forEach(arg => {
-    returnTypes.push(arg);
-  })
+    if(!params) { return []; }
 
-  if(!params) { return []; }
+    return params.map(param => {
+      const t = param.type.type;
+      if(t == 'reference') {
+        return param.type;
+      }
+    }).filter(n => n).concat(returnTypes.map(type => {
+      const t = type.type;
+      if(t == 'reference') {
+        return type;
+      }
+    }).filter(n => n));
+  })];
 
-  return params.map(param => {
-    const t = param.type.type;
-    if(t == 'reference') {
-      return param.type;
-    }
-  }).filter(n => n).concat(returnTypes.map(type => {
-    const t = type.type;
-    if(t == 'reference') {
-      return type;
-    }
-  }).filter(n => n));
+  return interfaces;
 };
 
 const generateMethod = (method) => {
-  const signature = generateMethodSignature(method);
-  const params = generateMethodParamDocs(method);
-  return signature + params;
+  return method.signatures.map(signature => {
+    const signatureString = generateMethodSignature(method, signature);
+    const params = generateMethodParamDocs(signature);
+    return signatureString + params;
+  });
 };
 
-const generateMethodParamDocs = (method) => {
-  const signature = method.signatures[0];
-
+const generateMethodParamDocs = (signature) => {
   const html = ['<div class="avc-code-method-params">']
 
   // Build the params portion of the method
@@ -145,6 +147,8 @@ const generateMethodParamDocs = (method) => {
       } else {
         html.push(`<avc-code-type>${param.type.name}</avc-code-type>`);
       }
+    } else if (param.type.type == 'stringLiteral') {
+      html.push(`<span class="avc-code-type-name">${param.type.value}</span>`);
     } else {
       html.push(`<span class="avc-code-type-name">${param.type.name}</span>`);
     }
@@ -159,10 +163,9 @@ const generateMethodParamDocs = (method) => {
   return html.join('\n');
 }
 
-const generateMethodSignature = (method) => {
+const generateMethodSignature = (method, signature) => {
   const parts = [`<div class="avc-code-method">
                     <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
-  const signature = method.signatures[0];
 
   // Build the params portion of the method
   const params = signature.parameters;
@@ -200,7 +203,13 @@ const getParamTypeName = (param) => {
       return `<avc-code-type type-id="${param.type.id}">${param.type.name}</avc-code-type>`;
     }
     return `<avc-code-type>${param.type.name}</avc-code-type>`;
+
+  } else if (param.type.type == 'stringLiteral') {
+    // These are the addListener(eventName: 'specificName') eventName params
+    return `"${param.type.value}"`;
   } else if(t == 'intrinsic') {
+    return param.type.name;
+  } else if(param.type.name) {
     return param.type.name;
   }
   return 'any';
