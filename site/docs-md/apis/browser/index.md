@@ -11,3 +11,6 @@ import { Plugins } from '@avocadojs/core';
 Plugins.Browser.open('http://ionic-team.github.io/avocado');
 ```
 
+### API
+
+<plugin-api name="browser"></plugin-api>

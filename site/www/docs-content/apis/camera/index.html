@@ -1,6 +1,7 @@
 <h2 id="camera">Camera</h2>
 <p>The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses <code>UIImagePickerController</code>, and on Android this
 API sends an intent which will be handled by the core Camera app by default.</p>
+<h3 id="example">Example</h3>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
 Plugins.Camera.getPhoto({
@@ -50,3 +51,5 @@ image URL to be trusted:</p>
 <pre><code class="lang-html">  &lt;<span class="hljs-selector-tag">img</span> [src]=<span class="hljs-string">"image"</span> /&gt;
   &lt;<span class="hljs-selector-tag">button</span> (click)=<span class="hljs-string">"takePicture()"</span> ion-<span class="hljs-selector-tag">button</span> <span class="hljs-attribute">color</span>=<span class="hljs-string">"primary"</span>&gt;Take Picture&lt;/button&gt;
 </code></pre>
+<h3 id="api">API</h3>
+<p><plugin-api name="camera"></plugin-api></p>

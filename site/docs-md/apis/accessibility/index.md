@@ -3,12 +3,14 @@
 The Accessibility API makes it easy to know when a user has a screen reader enabled, as well as programatically speaking
 labels through the connected screen reader.
 
+### Example
+
 ```typescript
 import { Plugins } from '@avocadojs/core';
 
-Plugins.Accessibility.onScreenReaderStateChange((err, state) => {
+Plugins.Accessibility.addListener('accessibilityScreenReaderStateChange', (err, state) => {
   console.log(state.value);
-})
+});
 
 async isVoiceOverEnabled() {
   var vo = await Plugins.Accessibility.isScreenReaderEnabled();
@@ -24,5 +26,7 @@ async speak() {
   Plugins.Accessibility.speak(value.value);
 }
 ```
+
+### API
 
 <plugin-api name="accessibility"></plugin-api>

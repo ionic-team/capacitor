@@ -193,6 +193,8 @@ const getParamTypeName = (param) => {
       return `<avc-code-type type-id="${param.type.id}">${param.type.name}</avc-code-type>`;
     }
     return `<avc-code-type>${param.type.name}</avc-code-type>`;
+  } else if(t == 'intrinsic') {
+    return param.type.name;
   }
   return 'any';
 };
@@ -201,7 +203,7 @@ const getReturnTypeName = (returnType) => {
   const r = returnType;
 
   const html = []
-  if(r.type == 'reference') {
+  if(r.type == 'reference' && r.id) {
     html.push(`<avc-code-type type-id="${r.id}">${r.name}</avc-code-type>`);
   } else {
     html.push(`${r.name}`);

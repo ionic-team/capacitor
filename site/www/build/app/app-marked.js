@@ -21,7 +21,7 @@ class AppMarked {
             const el = document.createElement('div');
             el.innerHTML = data;
             const headerEl = el.querySelector('h1');
-            document.title = (headerEl && headerEl.textContent + ' - Stencil') || 'Stencil';
+            document.title = (headerEl && headerEl.textContent + ' - Avocado') || 'Avocado';
             // requestAnimationFrame is not available for preRendering
             // or SSR, so only run this in the browser
             if (!this.isServer) {
@@ -70,7 +70,8 @@ class PluginApi {
         });
     }
     render() {
-        return (h("div", { innerHTML: this.content }));
+        return (h("div", null,
+            h("div", { innerHTML: this.content })));
     }
 }
 

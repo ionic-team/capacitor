@@ -26,7 +26,7 @@ export class AppMarked {
         el.innerHTML = data;
 
         const headerEl = el.querySelector('h1');
-        document.title = (headerEl && headerEl.textContent + ' - Stencil') || 'Stencil';
+        document.title = (headerEl && headerEl.textContent + ' - Avocado') || 'Avocado';
         
         // requestAnimationFrame is not available for preRendering
         // or SSR, so only run this in the browser

@@ -2,33 +2,36 @@
       <div class="avc-code-plugin-name">HapticsPlugin</div>
     
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">impact</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="381">HapticsImpactOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
-    
+                    <span class="avc-code-method-name">impact</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="380">HapticsImpactOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+    <div class="avc-code-method-comment">Trigger a haptics "impact" feedback</div>
   </div><div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="381">HapticsImpactOptions</avc-code-type>
+<avc-code-type type-id="380">HapticsImpactOptions</avc-code-type>
 </div>
 </div>
 <div class="avc-code-method">
                     <span class="avc-code-method-name">selectionChanged</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
-    
+    <div class="avc-code-method-comment">Trigger a selection changed haptic hint. If a selection was
+started already, this will cause the device to provide haptic
+feedback (on iOS at least)</div>
   </div><div class="avc-code-method-params">
 </div>
 <div class="avc-code-method">
                     <span class="avc-code-method-name">selectionEnd</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
-    
+    <div class="avc-code-method-comment">If selectionStart() was called, selectionEnd() ends the selection.
+For example, call this when a user has lifted their finger from a control</div>
   </div><div class="avc-code-method-params">
 </div>
 <div class="avc-code-method">
                     <span class="avc-code-method-name">selectionStart</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
-    
+    <div class="avc-code-method-comment">Trigger a selection started haptic hint</div>
   </div><div class="avc-code-method-params">
 </div>
 <div class="avc-code-method">
                     <span class="avc-code-method-name">vibrate</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
-    
+    <div class="avc-code-method-comment">Vibrate the device</div>
   </div><div class="avc-code-method-params">
 </div>
 
@@ -41,6 +44,6 @@
 
           <div class="avc-code-line"><span class="avc-code-param-name">style</span>
             
-            : <avc-code-type type-id="383">HapticsImpactStyle</avc-code-type></div>
+            : <avc-code-type type-id="382">HapticsImpactStyle</avc-code-type></div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 </div>
