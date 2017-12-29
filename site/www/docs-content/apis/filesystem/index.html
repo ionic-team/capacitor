@@ -1,9 +1,7 @@
 <h1 id="filesystem">Filesystem</h1>
 <p>The Filsystem API provides a NodeJS-like API for working with files on the device.</p>
 <p>Current mobile OS&#39;s have additional layers of separation between files, such as special directories that are backed up to the Cloud, or ones for storing Documents. The Filesystem API offers a simple way to scope each operation to a specific special directory on the device.</p>
-<h3 id="api">API</h3>
-<p><plugin-api name="filesystem"></plugin-api></p>
-<h3 id="example">Example</h3>
+<h2 id="example">Example</h2>
 <pre><code class="lang-typescript">fileWrite() {
   <span class="hljs-keyword">try</span> {
     Plugins.Filesystem.writeFile(<span class="hljs-string">'secrets/text.txt'</span>, <span class="hljs-string">"This is a test"</span>, FilesystemDirectory.Documents, <span class="hljs-string">'utf8'</span>)
@@ -57,3 +55,5 @@
   }
 }
 </code></pre>
+<h2 id="api">API</h2>
+<p><plugin-api name="filesystem"></plugin-api></p>

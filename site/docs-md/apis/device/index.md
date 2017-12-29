@@ -2,7 +2,7 @@
 
 The Device API exposes internal information about the device
 
-### Example
+## Example
 
 
 ```typescript
@@ -24,6 +24,6 @@ console.log(info);
 }
 ```
 
-### API
+## API
 
 <plugin-api name="device"></plugin-api>

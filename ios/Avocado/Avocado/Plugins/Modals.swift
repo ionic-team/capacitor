@@ -80,7 +80,65 @@ public class Modals : AVCPlugin {
       }))
       
       self.bridge.viewController.present(alert, animated: true, completion: nil)
+    }
+  }
+  
+  @objc func showActions(_ call: AVCPluginCall) {
+    guard let title = call.options["title"] as? String else {
+      call.error("title must be provided")
+      return
+    }
+    let message = call.options["message"] as? String ?? ""
+
+    let options = call.getArray("options", JSObject.self) ?? []
+    
+    DispatchQueue.main.async {
+      let alertController = self.buildActionSheet(call, title: title, message: message, options: options)
+
+      self.bridge.viewController.present(alertController, animated: true, completion: nil)
+    }
+  }
+  
+ 
+  func buildActionSheet(_ call: AVCPluginCall, title: String, message: String, options: JSArray) -> UIAlertController {
+    let controller = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+    
+    for (index, option) in options.enumerated() {
+      let style = option["style"] as? String ?? "DEFAULT"
+      let title = option["title"] as? String ?? ""
       
+      let action = UIAlertAction(title: title, style: style == "DESTRUCTIVE" ? .destructive : .default, handler: { (action) -> Void in
+        call.success([
+          "index": index
+        ])
+      })
+      
+      controller.addAction(action)
+    }
+    
+    return controller
+  }
+  
+  @objc func showSharing(_ call: AVCPluginCall) {
+    var items = [Any]()
+    
+    if let message = call.options["message"] as? String {
+      items.append(message)
+    }
+    
+    if let url = call.options["url"] as? String {
+      let urlObj = URL(string: url)
+      items.append(urlObj!)
+    }
+    
+    if items.count == 0 {
+      call.error("Must provide at least url or message")
+      return
+    }
+    
+    DispatchQueue.main.async {
+      let actionController = UIActivityViewController(activityItems: items, applicationActivities: nil)
+      self.bridge.viewController.present(actionController, animated: true, completion: nil)
     }
   }
 }

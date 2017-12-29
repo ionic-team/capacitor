@@ -1,9 +1,9 @@
-## Accessibility
+# Accessibility
 
 The Accessibility API makes it easy to know when a user has a screen reader enabled, as well as programatically speaking
 labels through the connected screen reader.
 
-### Example
+## Example
 
 ```typescript
 import { Plugins } from '@avocadojs/core';
@@ -27,6 +27,6 @@ async speak() {
 }
 ```
 
-### API
+## API
 
 <plugin-api name="accessibility"></plugin-api>

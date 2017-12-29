@@ -14,17 +14,19 @@
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <button (click)="showAlert()" ion-button color="primary">
-        Alert
-      </button>
-      <button (click)="showConfirm()" ion-button color="primary">
-        Confirm
-      </button>
-      <button (click)="showPrompt()" ion-button color="primary">
-        Prompt
-      </button>
-    </ion-item>
-  </ion-list>
+  <button (click)="showAlert()" ion-button color="primary">
+    Alert
+  </button>
+  <button (click)="showConfirm()" ion-button color="primary">
+    Confirm
+  </button>
+  <button (click)="showPrompt()" ion-button color="primary">
+    Prompt
+  </button>
+  <button (click)="showActions()" ion-button>
+    Show Actions
+  </button>
+  <button (click)="showSharing()" ion-button>
+    Show Sharing
+  </button>
 </ion-content>

@@ -1,4 +1,4 @@
-## Browser
+# Browser
 
 The Browser API makes it easy to open an in-app browser session to show external web content,
 handle authentication flows, and more.
@@ -11,6 +11,6 @@ import { Plugins } from '@avocadojs/core';
 Plugins.Browser.open('http://ionic-team.github.io/avocado');
 ```
 
-### API
+## API
 
 <plugin-api name="browser"></plugin-api>

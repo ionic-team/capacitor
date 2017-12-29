@@ -457,6 +457,9 @@ export interface ModalsPlugin extends Plugin {
             okButtonTitle?: string,
             cancelButtonTitle?: string
           }): Promise<ConfirmResult>;
+
+  showActions(options: ActionSheetOptions): Promise<ActionSheetResult>;
+  showSharing(options: any): Promise<any>;
 }
 
 export interface PromptResult {
@@ -468,6 +471,24 @@ export interface ConfirmResult {
   value: boolean;
 }
 
+export interface ActionSheetOptions {
+  title: string;
+  message?: string;
+  options: ActionSheetOption[];
+}
+
+export enum ActionSheetOptionStyle {
+  Default = 'DEFAULT',
+  Destructive = 'DESTRUCTIVE'
+};
+export interface ActionSheetOption {
+  title: string;
+  style?: ActionSheetOptionStyle
+}
+
+export interface ActionSheetResult {
+  option: ActionSheetOption;
+}
 //
 
 export interface MotionPlugin extends Plugin {

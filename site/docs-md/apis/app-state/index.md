@@ -1,9 +1,9 @@
-## AppState
+# AppState
 
 The AppState API emits events when the app enters and leaves, among other 
 high level operations.
 
-### Example
+## Example
 
 ```typescript
 import { Plugins, AppStateState } from '@avocadojs/core';
@@ -20,6 +20,6 @@ Plugins.AppState.addListener('pluginError', (err: any, info: any) => {
 ```
 
 
-### API
+## API
 
 <plugin-api name="app-state"></plugin-api>

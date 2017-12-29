@@ -5,7 +5,7 @@ The Console API automatically sends `console.log` calls to the native log system
 
 To disable the Console API, call `Plugins.Console.disable()` or set `"console": false` in `avocado.config.js`
 
-### Example
+## Example
 
 ```typescript
 console.log('I really enjoy Avoacdo Toast, and I\'m not ashamed to admit it');

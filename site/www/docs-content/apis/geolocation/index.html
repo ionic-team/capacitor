@@ -1,1 +1,17 @@
 <h1 id="geolocation">Geolocation</h1>
+<p>The Geolocation API provides simple methods for getting and tracking the current position of the device using GPS.</p>
+<h2 id="example">Example</h2>
+<pre><code class="lang-typescript"><span class="hljs-keyword">class</span> GeolocationExample {
+  <span class="hljs-keyword">async</span> getCurrentPosition() {
+    <span class="hljs-keyword">const</span> coordinates = <span class="hljs-keyword">await</span> Plugins.Geolocation.getCurrentPosition()
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Current'</span>, coordinates);
+  }
+
+  watchPosition() {
+    <span class="hljs-keyword">const</span> wait = Plugins.Geolocation.watchPosition({}, <span class="hljs-function">(<span class="hljs-params">err, position</span>) =&gt;</span> {
+    })
+  }
+}
+</code></pre>
+<h2 id="api">API</h2>
+<p><plugin-api name="geolocation"></plugin-api></p>
