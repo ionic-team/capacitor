@@ -8,6 +8,9 @@ export class AppMarked {
 
   handleClick(e: MouseEvent) {
     document.location.hash = this.to;
+    let scrollTop = document.querySelector('html').scrollTop;
+    // Update scroll top to clear the header bar
+    window.scrollTo(0, scrollTop - 60);
   }
 
   render() {

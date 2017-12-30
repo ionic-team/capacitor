@@ -52,7 +52,7 @@ const generateIndexForPlugin = (plugin) => {
       return;
     }
     method.signatures.forEach((signature, index) => {
-      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}</anchor-link></div>`);
+      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}()</anchor-link></div>`);
     })
   })
   listenerChildren.forEach(method => {
@@ -60,7 +60,7 @@ const generateIndexForPlugin = (plugin) => {
       return;
     }
     method.signatures.forEach((signature, index) => {
-      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}</anchor-link></div>`);
+      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}()</anchor-link></div>`);
     })
   });
 
@@ -209,7 +209,8 @@ const generateMethodParamDocs = (signature) => {
 
 const generateMethodSignature = (method, signature, signatureIndex) => {
   const parts = [`<div class="avc-code-method">
-                    <h3 class="avc-code-method-header" id="method-${method.name}-${signatureIndex}">${method.name}</h3>
+                    <div class="avc-code-method-anchor-point" id="method-${method.name}-${signatureIndex}"></div>
+                    <h3 class="avc-code-method-header">${method.name}</h3>
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
 
