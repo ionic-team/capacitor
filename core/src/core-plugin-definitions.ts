@@ -240,12 +240,30 @@ export interface FilesystemPlugin extends Plugin {
 }
 
 export enum FilesystemDirectory {
+  /**
+   * The Application directory
+   */
   Application = 'APPLICATION',
+  /**
+   * The Documents directory
+   */
   Documents = 'DOCUMENTS',
+  /**
+   * The Data directory
+   */
   Data = 'DATA',
+  /**
+   * The Cache directory
+   */
   Cache = 'CACHE',
-  External = 'EXTERNAL', // Android only
-  ExternalStorage = 'EXTERNAL_STORAGE' // Android only
+  /**
+   * The external directory (Android only)
+   */
+  External = 'EXTERNAL',
+  /**
+   * The external storage directory (Android only)
+   */
+  ExternalStorage = 'EXTERNAL_STORAGE'
 }
 
 export interface FileReadResult {
