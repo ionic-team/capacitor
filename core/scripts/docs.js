@@ -101,20 +101,25 @@ const generateDocumentationForPlugin = (plugin) => {
   listenerChildren.forEach(method => methodBuild(method));
 
   interfacesUsed.forEach(interface => {
-    if(interface.name == 'Promise') { return; }
+    const interfaceDecl = typeLookup[interface.id];
+    if(!interfaceDecl) {
+      return;
+    }
+
+    let kindString = interfaceDecl.kindString;
+    if(!kindString) {
+      kindString = 'Interface';
+    } else if(kindString == 'Enumeration') {
+      kindString = 'Enum';
+    }
+
     html.push(`
     <div class="avc-code-interface">
       <div class="avc-code-line">
-        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">${interface.name}</span>
+        <span class="avc-code-keyword">${kindString.toLowerCase()}</span> <span class="avc-code-type-name">${interface.name}</span>
         <span class="avc-code-brace">{</span>
       </div>
     `);
-
-    const interfaceDecl = typeLookup[interface.id];
-    if(!interfaceDecl) {
-      html.push(`<span class="avc-code-line"><span class="avc-code-brace">}</span></span>`);
-      return;
-    }
 
     if(interfaceDecl.children) {
       html.push(...interfaceDecl.children.map(c => {
@@ -122,8 +127,8 @@ const generateDocumentationForPlugin = (plugin) => {
           <div class="avc-code-interface-param">
             <div class="avc-code-param-comment">${c.comment && `// ${c.comment.shortText}` || ''}</div>
             <div class="avc-code-line"><span class="avc-code-param-name">${c.name}</span>
-              ${c.flags && c.flags.isOptional ? '<span class="avc-code-param-optional">?</span>' : ''}:
-              ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>` || ''}
+              ${c.flags && c.flags.isOptional ? '<span class="avc-code-param-optional">?</span>' : ''}${kindString !== 'Enum' && `:
+              ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>` || ''}` || ''}
             </div>
           </div>`;
       }));
