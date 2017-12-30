@@ -2,9 +2,13 @@
       <div class="avc-code-plugin-name">GeolocationPlugin</div>
     
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">getCurrentPosition</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-optional">?</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="342">GeolocationOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="337">GeolocationPositon</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <h3 class="avc-code-method-header">getCurrentPosition</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">getCurrentPosition</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-optional">?</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="342">GeolocationOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="337">GeolocationPositon</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
     <div class="avc-code-method-comment">Get the current GPS location of the device</div>
-  </div><div class="avc-code-method-params">
+  </div>
+  <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
@@ -12,9 +16,13 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">watchPosition</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="342">GeolocationOptions</avc-code-type>, <span class="avc-code-param-name">callback</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="746">GeolocationWatchCallback</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+                    <h3 class="avc-code-method-header">watchPosition</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">watchPosition</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="342">GeolocationOptions</avc-code-type>, <span class="avc-code-param-name">callback</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="746">GeolocationWatchCallback</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+    </div>
     <div class="avc-code-method-comment">Set up a watch for location changes.</div>
-  </div><div class="avc-code-method-params">
+  </div>
+  <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
@@ -29,7 +37,27 @@
 
     <div class="avc-code-interface">
       <div class="avc-code-line">
-        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">undefined</span>
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">GeolocationOptions</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">GeolocationPositon</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-line"><span class="avc-code-param-name">coords</span>
+            
+            : <avc-code-type type-id="undefined">undefined</avc-code-type></div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">GeolocationWatchCallback</span>
         <span class="avc-code-brace">{</span>
       </div>
     

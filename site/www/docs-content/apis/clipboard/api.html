@@ -2,9 +2,13 @@
       <div class="avc-code-plugin-name">ClipboardPlugin</div>
     
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">get</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="224">ClipboardGet</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="226">ClipboardGetResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                    <h3 class="avc-code-method-header">get</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">get</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="224">ClipboardGet</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="226">ClipboardGetResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
     <div class="avc-code-method-comment">Get a value from the clipboard (the "paste" action)</div>
-  </div><div class="avc-code-method-params">
+  </div>
+  <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
@@ -12,9 +16,13 @@
 </div>
 </div>
 <div class="avc-code-method">
-                    <span class="avc-code-method-name">set</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="219">ClipboardSet</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+                    <h3 class="avc-code-method-header">set</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">set</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="219">ClipboardSet</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
     <div class="avc-code-method-comment">Set a value on the clipboard (the "copy" action)</div>
-  </div><div class="avc-code-method-params">
+  </div>
+  <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
@@ -24,9 +32,49 @@
 
     <div class="avc-code-interface">
       <div class="avc-code-line">
-        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">undefined</span>
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">ClipboardGet</span>
         <span class="avc-code-brace">{</span>
       </div>
     
+
+          <div class="avc-code-line"><span class="avc-code-param-name">type</span>
+            
+            : <avc-code-type type-id="undefined">undefined</avc-code-type></div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">ClipboardGetResult</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-line"><span class="avc-code-param-name">value</span>
+            
+            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">ClipboardSet</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-line"><span class="avc-code-param-name">image</span>
+            <span class="avc-code-param-optional">?</span>
+            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">label</span>
+            <span class="avc-code-param-optional">?</span>
+            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">string</span>
+            <span class="avc-code-param-optional">?</span>
+            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+
+          <div class="avc-code-line"><span class="avc-code-param-name">url</span>
+            <span class="avc-code-param-optional">?</span>
+            : <avc-code-type type-id="undefined">string</avc-code-type></div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 </div>
