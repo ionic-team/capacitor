@@ -207,6 +207,13 @@ const generateMethodParamDocs = (signature) => {
     html.push('</div>');
   });
 
+  html.push(`
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> ${getReturnTypeName(signature.type)}${signature.comment && signature.comment.returns ?
+      ` - ${signature.comment.returns}` : ''}
+  </div>
+  `)
+
   html.push('</div>');
   return html.join('\n');
 }

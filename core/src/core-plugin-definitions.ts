@@ -175,6 +175,7 @@ export interface FilesystemPlugin extends Plugin {
    * @param data the data to write
    * @param directory the FilesystemDirectory to store the file in
    * @param encoding the encoding to write the file in (defaults to utf8)
+   * @return a promise that resolves with the file write result
    */
   writeFile(file: string, data: string, directory: FilesystemDirectory, encoding: string) : Promise<FileWriteResult>;
 
@@ -184,6 +185,7 @@ export interface FilesystemPlugin extends Plugin {
    * @param data the data to write
    * @param directory the FilesystemDirectory to store the file in
    * @param encoding the encoding to write the file in (defaults to utf8)
+   * @return a promise that resolves with the file write result
    */
   appendFile(file: string, data: string, directory: FilesystemDirectory, encoding: string) : Promise<FileAppendResult>;
 
@@ -192,6 +194,7 @@ export interface FilesystemPlugin extends Plugin {
    * @param file the filename to write
    * @param directory the FilesystemDirectory to store the file in
    * @param encoding the encoding to write the file in (defaults to utf8)
+   * @return a promise that resolves with the read file data result
    */
   readFile(file: string, directory: FilesystemDirectory, encoding: string) : Promise<FileReadResult>;
 
@@ -199,6 +202,7 @@ export interface FilesystemPlugin extends Plugin {
    * Delete a file from disk
    * @param file the filename to write
    * @param directory the FilesystemDirectory to store the file in
+   * @return a promise that resolves with the deleted file data result
    */
   deleteFile(file: string, directory: FilesystemDirectory) : Promise<FileDeleteResult>;
 
@@ -207,6 +211,7 @@ export interface FilesystemPlugin extends Plugin {
    * @param path the path of the directory to create
    * @param directory the FilesystemDirectory where the new directory will live under
    * @param createIntermediateDirectories whether to create missing parent directories
+   * @return a promise that resolves with the mkdir result
    */
   mkdir(path: string, directory: FilesystemDirectory, createIntermediateDirectories: boolean) : Promise<MkdirResult>;
 
@@ -221,6 +226,7 @@ export interface FilesystemPlugin extends Plugin {
    * Return a list of files from the directory (not recursive)
    * @param path the directory path to read
    * @param directory the FilesystemDirectory to read the directory under
+   * @return a promise that resolves with the readdir directory listing result
    */
   readdir(path: string, directory: FilesystemDirectory) : Promise<ReaddirResult>;
 
@@ -228,6 +234,7 @@ export interface FilesystemPlugin extends Plugin {
    * Return data about a file
    * @param path the path of the file
    * @param directory the FilesystemDirectory where the file lives
+   * @return a promise that resolves with the file stat result
    */
   stat(path: string, directory: FilesystemDirectory) : Promise<StatResult>;
 }

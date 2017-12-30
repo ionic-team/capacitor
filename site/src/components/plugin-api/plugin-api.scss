@@ -29,18 +29,26 @@ plugin-api{
     border-radius: 3px;
   }
 
-  .avc-code-method-param-info {
-    .avc-code-method-param-info-name {
-      font-size: 14px;
+  .avc-code-method-params {
+    .avc-code-method-param-info {
+      .avc-code-method-param-info-name {
+        font-size: 14px;
+        font-weight: bold;
+      }
+      .avc-code-type-name {
+        margin-left: 5px;
+        margin-right: 5px;
+        font-style: italic;
+      }
+      .avc-code-method-param-comment {
+        display: inline-block;
+      }
+    }
+
+    .avc-code-method-returns-label {
       font-weight: bold;
-    }
-    .avc-code-type-name {
-      margin-left: 5px;
-      margin-right: 5px;
-      font-style: italic;
-    }
-    .avc-code-method-param-comment {
-      display: inline-block;
+      font-size: 14px;
+      text-transform: lowercase;
     }
   }
 
