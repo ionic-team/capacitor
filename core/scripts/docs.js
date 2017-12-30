@@ -119,9 +119,13 @@ const generateDocumentationForPlugin = (plugin) => {
     if(interfaceDecl.children) {
       html.push(...interfaceDecl.children.map(c => {
         return `
-          <div class="avc-code-line"><span class="avc-code-param-name">${c.name}</span>
-            ${c.flags && c.flags.isOptional ? '<span class="avc-code-param-optional">?</span>' : ''}
-            : ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>` || ''}</div>`;
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">${c.comment && `// ${c.comment.shortText}` || ''}</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">${c.name}</span>
+              ${c.flags && c.flags.isOptional ? '<span class="avc-code-param-optional">?</span>' : ''}:
+              ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>` || ''}
+            </div>
+          </div>`;
       }));
     }
     html.push(`<span class="avc-code-line"><span class="avc-code-brace">}</span></span>`);
