@@ -4,6 +4,8 @@ The Filsystem API provides a NodeJS-like API for working with files on the devic
 
 Current mobile OS's have additional layers of separation between files, such as special directories that are backed up to the Cloud, or ones for storing Documents. The Filesystem API offers a simple way to scope each operation to a specific special directory on the device.
 
+<plugin-api index="true" name="filesystem"></plugin-api>
+
 ## Example
 
 ```typescript
