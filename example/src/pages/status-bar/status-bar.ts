@@ -30,7 +30,7 @@ export class StatusBarPage {
   changeStatusBar() {
     Plugins.StatusBar.setStyle({
       style: this.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
-    }, () => {});
+    });
     this.isStatusBarLight = !this.isStatusBarLight;
   }
 
