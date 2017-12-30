@@ -1,9 +1,25 @@
 $link-color: #69D353;
 
 plugin-api{
+  .avc-code-plugin-index {
+    anchor-link {
+      color: $link-color;
+      cursor: pointer;
+    }
+  }
   .avc-code-plugin-name { display: none; }
+
+  .avc-code-method-anchor-point {
+    height: 20px;
+  }
+
   .avc-code-method {
-    margin-top: 25px;
+    .avc-code-method-header {
+      margin-top: 15px;
+    }
+    .avc-code-method-comment {
+      margin: 20px 0;
+    }
   }
 
   .avc-code-method-signature {
@@ -17,6 +33,14 @@ plugin-api{
     .avc-code-method-param-info-name {
       font-size: 14px;
       font-weight: bold;
+    }
+    .avc-code-type-name {
+      margin-left: 5px;
+      margin-right: 5px;
+      font-style: italic;
+    }
+    .avc-code-method-param-comment {
+      display: inline-block;
     }
   }
 
