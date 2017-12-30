@@ -34,6 +34,7 @@ export interface AccessibilityPlugin {
 
   /**
    * Speak a string with a connected screen reader.
+   * @param value the string to speak
    */
   speak(value: string): Promise<void>;
 

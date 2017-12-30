@@ -47,15 +47,14 @@ const generateDocumentationForPlugin = (plugin) => {
 
     html = html.concat(generateMethod(method));
     const interfaces = getInterfacesUsedByMethod(method);
-
     // Dedupe the interfaces found in each method
-    interfacesUsed.push(...interfaces.filter(i => {
+    interfaces.filter(i => {
       if(interfacesUsedMap.hasOwnProperty(i.id)) {
         return false;
       }
       interfacesUsedMap[i.id] = i;
       return true;
-    }));
+    }).forEach(interface => interfacesUsed.push(interface));
   }
 
   methodChildren.forEach(method => methodBuild(method));
@@ -96,7 +95,7 @@ const generateDocumentationForPlugin = (plugin) => {
 const getInterfacesUsedByMethod = (method) => {
   const interfaceTypes = [];
 
-  const interfaces = [...method.signatures.map(signature => {
+  const interfaces = method.signatures.map(signature => {
     // Build the params portion of the method
     const params = signature.parameters;
 
@@ -119,9 +118,14 @@ const getInterfacesUsedByMethod = (method) => {
         return type;
       }
     }).filter(n => n));
-  })];
+  });
+  
+  const ret = [];
+  interfaces.forEach(iset => {
+    iset.forEach(i => ret.push(i));
+  });
 
-  return interfaces;
+  return ret;
 };
 
 const generateMethod = (method) => {
@@ -165,7 +169,9 @@ const generateMethodParamDocs = (signature) => {
 
 const generateMethodSignature = (method, signature) => {
   const parts = [`<div class="avc-code-method">
-                    <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
+                    <h3 class="avc-code-method-header">${method.name}</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
 
   // Build the params portion of the method
   const params = signature.parameters;
@@ -190,8 +196,10 @@ const generateMethodSignature = (method, signature) => {
   parts.push(getReturnTypeName(returnType));
 
   parts.push(`
+    </div>
     ${signature.comment && `<div class="avc-code-method-comment">${signature.comment.shortText}</div>` || ''}
-  </div>`);
+  </div>
+  `);
 
   return parts.join('');
 }
@@ -206,13 +214,13 @@ const getParamTypeName = (param) => {
 
   } else if (param.type.type == 'stringLiteral') {
     // These are the addListener(eventName: 'specificName') eventName params
-    return `"${param.type.value}"`;
+    return `<span class="avc-code-string">"${param.type.value}"</span>`;
   } else if(t == 'intrinsic') {
-    return param.type.name;
+    return `<avc-code-type>${param.type.name}</avc-code-type>`;
   } else if(param.type.name) {
-    return param.type.name;
+    return `<avc-code-type>${param.type.name}</avc-code-type>`;
   }
-  return 'any';
+  return '<avc-code-type>any</avc-code-type>';
 };
 
 const getReturnTypeName = (returnType) => {

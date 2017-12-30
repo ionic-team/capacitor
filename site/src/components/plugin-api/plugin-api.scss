@@ -4,7 +4,13 @@ plugin-api{
   .avc-code-plugin-name { display: none; }
   .avc-code-method {
     margin-top: 25px;
+  }
+
+  .avc-code-method-signature {
     font-family: monospace;
+    padding: 8px;
+    background-color: #eee;
+    border-radius: 3px;
   }
 
   .avc-code-method-param-info {
@@ -16,6 +22,11 @@ plugin-api{
 
   avc-code-type {
     display: inline-block;
+    color: #4b904b;
+  }
+
+  .avc-code-string {
+    color: #4b904b;
   }
   
 }
