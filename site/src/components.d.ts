@@ -8,60 +8,30 @@ import '@stencil/router';
 
 
 import {
-  AppMarked as AppMarked
-} from './components/app-marked/app-marked';
+  AppMarked as AnchorLink
+} from './components/anchor-link/anchor-link';
 
 declare global {
-  interface HTMLAppMarkedElement extends AppMarked, HTMLElement {
+  interface HTMLAnchorLinkElement extends AnchorLink, HTMLElement {
   }
-  var HTMLAppMarkedElement: {
-    prototype: HTMLAppMarkedElement;
-    new (): HTMLAppMarkedElement;
+  var HTMLAnchorLinkElement: {
+    prototype: HTMLAnchorLinkElement;
+    new (): HTMLAnchorLinkElement;
   };
   interface HTMLElementTagNameMap {
-    "app-marked": HTMLAppMarkedElement;
+    "anchor-link": HTMLAnchorLinkElement;
   }
   interface ElementTagNameMap {
-    "app-marked": HTMLAppMarkedElement;
+    "anchor-link": HTMLAnchorLinkElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "app-marked": JSXElements.AppMarkedAttributes;
+      "anchor-link": JSXElements.AnchorLinkAttributes;
     }
   }
   namespace JSXElements {
-    export interface AppMarkedAttributes extends HTMLAttributes {
-      doc?: string;
-    }
-  }
-}
-
-
-import {
-  PluginApi as PluginApi
-} from './components/plugin-api/plugin-api';
-
-declare global {
-  interface HTMLPluginApiElement extends PluginApi, HTMLElement {
-  }
-  var HTMLPluginApiElement: {
-    prototype: HTMLPluginApiElement;
-    new (): HTMLPluginApiElement;
-  };
-  interface HTMLElementTagNameMap {
-    "plugin-api": HTMLPluginApiElement;
-  }
-  interface ElementTagNameMap {
-    "plugin-api": HTMLPluginApiElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "plugin-api": JSXElements.PluginApiAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface PluginApiAttributes extends HTMLAttributes {
-      name?: string;
+    export interface AnchorLinkAttributes extends HTMLAttributes {
+      to?: string;
     }
   }
 }

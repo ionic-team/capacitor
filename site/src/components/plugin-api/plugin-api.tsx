@@ -5,10 +5,12 @@ import { Component, Prop, State } from '@stencil/core';
 })
 export class PluginApi {
   @Prop() name: string;
+  @Prop() index: boolean;
   @State() content: string;
 
   componentDidLoad() {
-    return fetch(`/avocado/docs-content/apis/${this.name}/api.html`)
+    const url = `api${this.index ? '-index' : ''}.html`;
+    return fetch(`/avocado/docs-content/apis/${this.name}/${url}`)
       .then(response => response.text())
       .then(data => {
         this.content = data;
