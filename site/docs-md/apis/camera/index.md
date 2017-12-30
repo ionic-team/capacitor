@@ -3,24 +3,27 @@
 The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses `UIImagePickerController`, and on Android this
 API sends an intent which will be handled by the core Camera app by default.
 
+<plugin-api index="true" name="camera"></plugin-api>
+
 ## Example
 
 ```typescript
 import { Plugins } from '@avocadojs/core';
 
-Plugins.Camera.getPhoto({
-  quality: 90,
-  allowEditing: true,
-  resultType: 'base64'
-}).then((image) => {
+async takePicture() {
+  const image = await Plugins.Camera.getPhoto({
+    quality: 90,
+    allowEditing: true,
+    resultType: 'base64'
+  });
   // image.base64_data will contain the base64 encoded result as a JPEG. Make sure to
   // add the proper base64 image prefix:
   var imageUrl = 'data:image/jpeg;base64,' + image.base64_data;
   // can be set to the src of an image now
-});
+}
 ```
 
-## Angular note
+## Angular example
 
 By default, Angular (>= 2.x) won't trust dynamic image urls. To trust the URL, inject `DomSanitizer` and make sure to allow the 
 image URL to be trusted:
@@ -44,14 +47,13 @@ export class CameraPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, private zone: NgZone, private sanitizer: DomSanitizer) {
   }
 
-  getPhoto() {
-    Plugins.Camera.getPhoto({
+  async takePicture() {
+    const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
       resultType: 'base64'
-    }).then((image) => {
-      this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
-    });
+    })
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
   }
 }
 ```

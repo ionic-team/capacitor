@@ -28,14 +28,12 @@ export class CameraPage {
   }
 
 
-  takePicture() {
-    Plugins.Camera.getPhoto({
+  async takePicture() {
+    const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
       resultType: 'base64'
-    }).then((image) => {
-      this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
-    });
+    })
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
   }
-
 }

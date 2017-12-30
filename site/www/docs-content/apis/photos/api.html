@@ -69,9 +69,13 @@
       </div>
     
 
-          <div class="avc-code-line"><span class="avc-code-param-name">name</span>
-            
-            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">name</span>
+              :
+              <avc-code-type type-id="undefined">string</avc-code-type>
+            </div>
+          </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
     <div class="avc-code-interface">
@@ -81,9 +85,13 @@
       </div>
     
 
-          <div class="avc-code-line"><span class="avc-code-param-name">loadShared</span>
-            
-            : <avc-code-type type-id="undefined">boolean</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// Whether to load cloud shared albums</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">loadShared</span>
+              :
+              <avc-code-type type-id="undefined">boolean</avc-code-type>
+            </div>
+          </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
     <div class="avc-code-interface">
@@ -93,9 +101,13 @@
       </div>
     
 
-          <div class="avc-code-line"><span class="avc-code-param-name">albums</span>
-            
-            : <avc-code-type type-id="undefined">undefined</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The list of albums returned from the query</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">albums</span>
+              :
+              <avc-code-type type-id="undefined">undefined</avc-code-type>
+            </div>
+          </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
     <div class="avc-code-interface">
@@ -105,29 +117,53 @@
       </div>
     
 
-          <div class="avc-code-line"><span class="avc-code-param-name">albumIdentifier</span>
-            <span class="avc-code-param-optional">?</span>
-            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// Which album identifier to query in (get identifier with getAlbums())</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">albumIdentifier</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">string</avc-code-type>
+            </div>
+          </div>
 
-          <div class="avc-code-line"><span class="avc-code-param-name">quantity</span>
-            <span class="avc-code-param-optional">?</span>
-            : <avc-code-type type-id="undefined">number</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The number of photos to fetch, sorted by last created date descending</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">quantity</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">number</avc-code-type>
+            </div>
+          </div>
 
-          <div class="avc-code-line"><span class="avc-code-param-name">thumbnailHeight</span>
-            <span class="avc-code-param-optional">?</span>
-            : <avc-code-type type-id="undefined">number</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The height of thumbnail to return</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">thumbnailHeight</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">number</avc-code-type>
+            </div>
+          </div>
 
-          <div class="avc-code-line"><span class="avc-code-param-name">thumbnailQuality</span>
-            <span class="avc-code-param-optional">?</span>
-            : <avc-code-type type-id="undefined">number</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The quality of thumbnail to return as JPEG (0-100)</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">thumbnailQuality</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">number</avc-code-type>
+            </div>
+          </div>
 
-          <div class="avc-code-line"><span class="avc-code-param-name">thumbnailWidth</span>
-            <span class="avc-code-param-optional">?</span>
-            : <avc-code-type type-id="undefined">number</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The width of thumbnail to return</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">thumbnailWidth</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">number</avc-code-type>
+            </div>
+          </div>
 
-          <div class="avc-code-line"><span class="avc-code-param-name">types</span>
-            <span class="avc-code-param-optional">?</span>
-            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// Which types of assets to return (currently only supports "photos")</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">types</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">string</avc-code-type>
+            </div>
+          </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
     <div class="avc-code-interface">
@@ -137,9 +173,13 @@
       </div>
     
 
-          <div class="avc-code-line"><span class="avc-code-param-name">photos</span>
-            
-            : <avc-code-type type-id="undefined">undefined</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The list of photos returned from the library</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">photos</span>
+              :
+              <avc-code-type type-id="undefined">undefined</avc-code-type>
+            </div>
+          </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
     <div class="avc-code-interface">
@@ -149,13 +189,21 @@
       </div>
     
 
-          <div class="avc-code-line"><span class="avc-code-param-name">albumIdentifier</span>
-            <span class="avc-code-param-optional">?</span>
-            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The optional album identifier to save this photo in</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">albumIdentifier</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">string</avc-code-type>
+            </div>
+          </div>
 
-          <div class="avc-code-line"><span class="avc-code-param-name">data</span>
-            
-            : <avc-code-type type-id="undefined">string</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The base64-encoded JPEG data for a photo (note: do not add HTML data-uri type prefix)</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">data</span>
+              :
+              <avc-code-type type-id="undefined">string</avc-code-type>
+            </div>
+          </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
     <div class="avc-code-interface">
@@ -165,8 +213,12 @@
       </div>
     
 
-          <div class="avc-code-line"><span class="avc-code-param-name">success</span>
-            
-            : <avc-code-type type-id="undefined">boolean</avc-code-type></div>
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// Whether the photo was created</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">success</span>
+              :
+              <avc-code-type type-id="undefined">boolean</avc-code-type>
+            </div>
+          </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 </div>

@@ -1,21 +1,23 @@
 <h1 id="camera">Camera</h1>
 <p>The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses <code>UIImagePickerController</code>, and on Android this
 API sends an intent which will be handled by the core Camera app by default.</p>
+<p><plugin-api index="true" name="camera"></plugin-api></p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
+<pre><code class="lang-typescript">import { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
-Plugins.Camera.getPhoto({
-  <span class="hljs-attr">quality</span>: <span class="hljs-number">90</span>,
-  <span class="hljs-attr">allowEditing</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">resultType</span>: <span class="hljs-string">'base64'</span>
-}).then(<span class="hljs-function">(<span class="hljs-params">image</span>) =&gt;</span> {
+<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">takePicture</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Plugins.Camera.getPhoto({
+    quality: <span class="hljs-number">90</span>,
+    allowEditing: <span class="hljs-literal">true</span>,
+    resultType: <span class="hljs-string">'base64'</span>
+  });
   <span class="hljs-comment">// image.base64_data will contain the base64 encoded result as a JPEG. Make sure to</span>
   <span class="hljs-comment">// add the proper base64 image prefix:</span>
   <span class="hljs-keyword">var</span> imageUrl = <span class="hljs-string">'data:image/jpeg;base64,'</span> + image.base64_data;
   <span class="hljs-comment">// can be set to the src of an image now</span>
-});
+}
 </code></pre>
-<h2 id="angular-note">Angular note</h2>
+<h2 id="angular-example">Angular example</h2>
 <p>By default, Angular (&gt;= 2.x) won&#39;t trust dynamic image urls. To trust the URL, inject <code>DomSanitizer</code> and make sure to allow the 
 image URL to be trusted:</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
@@ -36,14 +38,13 @@ image URL to be trusted:</p>
   <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">public</span> navCtrl: NavController, <span class="hljs-keyword">public</span> navParams: NavParams, <span class="hljs-keyword">private</span> zone: NgZone, <span class="hljs-keyword">private</span> sanitizer: DomSanitizer</span>) {
   }
 
-  getPhoto() {
-    Plugins.Camera.getPhoto({
+  <span class="hljs-keyword">async</span> takePicture() {
+    <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Plugins.Camera.getPhoto({
       quality: <span class="hljs-number">90</span>,
       allowEditing: <span class="hljs-literal">true</span>,
       resultType: <span class="hljs-string">'base64'</span>
-    }).then(<span class="hljs-function">(<span class="hljs-params">image</span>) =&gt;</span> {
-      <span class="hljs-keyword">this</span>.image = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (<span class="hljs-string">'data:image/jpeg;base64,'</span> + image.base64_data));
-    });
+    })
+    <span class="hljs-keyword">this</span>.image = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (<span class="hljs-string">'data:image/jpeg;base64,'</span> + image.base64_data));
   }
 }
 </code></pre>
