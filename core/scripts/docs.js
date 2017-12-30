@@ -2,6 +2,8 @@
  * Generate HTML documentation for each plugin, complete with
  * documentation on each interface/type used, and inline
  * comments with any code snippets or examples.
+ * 
+ * This got a little out of hand, I fully admit
  */
 var fs = require('fs');
 var os = require('os');
@@ -15,6 +17,17 @@ const buildTypeLookup = (nodes) => {
   return d;
 };
 
+const writeIndexHtmlOutput = (plugin, string) => {
+  const pluginNameSplitCapitalized = plugin.name.match(/[A-Z][a-z]+/g);
+  const targetDirName = pluginNameSplitCapitalized.slice(0, pluginNameSplitCapitalized.length-1).join('-').toLowerCase();
+  const p = path.join(SITE_DIR, 'www/docs-content/apis', targetDirName, 'api-index.html');
+  try {
+    fs.writeFileSync(p, string, { encoding: 'utf8' });
+  } catch(e) {
+    console.error('Unable to write docs for plugin ', targetDirName);
+  }
+};
+
 const writeDocumentationHtmlOutput = (plugin, string) => {
   const pluginNameSplitCapitalized = plugin.name.match(/[A-Z][a-z]+/g);
   const targetDirName = pluginNameSplitCapitalized.slice(0, pluginNameSplitCapitalized.length-1).join('-').toLowerCase();
@@ -26,6 +39,33 @@ const writeDocumentationHtmlOutput = (plugin, string) => {
     console.error('Unable to write docs for plugin ', targetDirName);
   }
 };
+
+const generateIndexForPlugin = (plugin) => {
+  let methodChildren = plugin.children.filter(m => m.name != 'addListener' && m.name != 'removeListener');
+  let listenerChildren = plugin.children.filter(m => m.name == 'addListener' || m.name == 'removeListener');
+  var html = [
+    '<div class="avc-code-plugin-index">'
+  ]
+
+  methodChildren.forEach(method => {
+    if(!method.signatures) {
+      return;
+    }
+    method.signatures.forEach((signature, index) => {
+      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}</anchor-link></div>`);
+    })
+  })
+  listenerChildren.forEach(method => {
+    if(!method.signatures) {
+      return;
+    }
+    method.signatures.forEach((signature, index) => {
+      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}</anchor-link></div>`);
+    })
+  });
+
+  return html.join('\n');
+}
 
 const generateDocumentationForPlugin = (plugin) => {
   //console.log(`\n\nPlugin: ${plugin.name}`);
@@ -129,8 +169,8 @@ const getInterfacesUsedByMethod = (method) => {
 };
 
 const generateMethod = (method) => {
-  return method.signatures.map(signature => {
-    const signatureString = generateMethodSignature(method, signature);
+  return method.signatures.map((signature, index) => {
+    const signatureString = generateMethodSignature(method, signature, index);
     const params = generateMethodParamDocs(signature);
     return signatureString + params;
   });
@@ -167,9 +207,9 @@ const generateMethodParamDocs = (signature) => {
   return html.join('\n');
 }
 
-const generateMethodSignature = (method, signature) => {
+const generateMethodSignature = (method, signature, signatureIndex) => {
   const parts = [`<div class="avc-code-method">
-                    <h3 class="avc-code-method-header">${method.name}</h3>
+                    <h3 class="avc-code-method-header" id="method-${method.name}-${signatureIndex}">${method.name}</h3>
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
 
@@ -263,5 +303,6 @@ let typeLookup = buildTypeLookup(moduleChildren);
 let plugins = moduleChildren.filter(c => c.name.endsWith('Plugin'));
 
 plugins.forEach(plugin => writeDocumentationHtmlOutput(plugin, generateDocumentationForPlugin(plugin)));
+plugins.forEach(plugin => writeIndexHtmlOutput(plugin, generateIndexForPlugin(plugin)));
 
 // }

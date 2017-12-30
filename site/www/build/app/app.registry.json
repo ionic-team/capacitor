@@ -2,9 +2,27 @@
   "namespace": "App",
   "components": [
     [
+      "anchor-link",
+      [
+        "anchor-link",
+        null
+      ],
+      0,
+      [
+        [
+          "to",
+          1,
+          1,
+          2
+        ]
+      ],
+      0,
+      1
+    ],
+    [
       "app-marked",
       [
-        "app-marked",
+        "anchor-link",
         null
       ],
       1,
@@ -31,7 +49,7 @@
     [
       "avc-code-type",
       [
-        "app-marked",
+        "anchor-link",
         null
       ],
       0,
@@ -81,7 +99,7 @@
     [
       "document-component",
       [
-        "app-marked",
+        "anchor-link",
         null
       ],
       1,
@@ -141,7 +159,7 @@
     [
       "plugin-api",
       [
-        "app-marked",
+        "anchor-link",
         null
       ],
       1,
@@ -149,6 +167,12 @@
         [
           "content",
           5
+        ],
+        [
+          "index",
+          1,
+          1,
+          3
         ],
         [
           "name",
