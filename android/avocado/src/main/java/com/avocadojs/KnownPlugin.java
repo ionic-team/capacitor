@@ -31,7 +31,7 @@ public class KnownPlugin {
       throw new InvalidPluginException("No @NativePlugin annotation found for plugin " + pluginClass.getName());
     }
 
-    this.pluginId = pluginAnnotation.id();
+    this.pluginId = pluginClass.getName();
 
     this.indexMethods(pluginClass);
   }

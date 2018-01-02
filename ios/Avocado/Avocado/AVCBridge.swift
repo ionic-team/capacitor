@@ -130,23 +130,6 @@ enum BridgeError: Error {
     return p
   }
   
-  public func defineJS(_ pluginType: AVCPlugin.Type) {
-    var mc: CUnsignedInt = 0
-    var mlist = class_copyMethodList(pluginType, &mc)
-    let olist = mlist
-    print("\(mc) methods")
-    
-    for i in (0..<mc) {
-      
-      let sel = sel_getName(method_getName(mlist!.pointee))
-      print("Method #\(i): \(method_getName(mlist!.pointee))")
-      print(String(cString: sel))
-      mlist = mlist!.successor()
-    }
-    free(olist)
-  }
-  
-  
   func savePluginCall(_ call: AVCPluginCall) {
     storedCalls[call.callbackId] = call
   }

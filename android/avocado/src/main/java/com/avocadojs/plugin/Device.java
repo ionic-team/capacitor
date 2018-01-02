@@ -12,7 +12,7 @@ import com.avocadojs.PluginMethod;
 import com.avocadojs.PluginResult;
 
 
-@NativePlugin(id="com.avocadojs.plugin.device")
+@NativePlugin()
 public class Device extends Plugin {
 
   @PluginMethod()

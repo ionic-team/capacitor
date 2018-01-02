@@ -8,7 +8,7 @@ import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
 
-@NativePlugin(id="com.avocadojs.plugin.console")
+@NativePlugin()
 public class Console extends Plugin {
 
   @PluginMethod()

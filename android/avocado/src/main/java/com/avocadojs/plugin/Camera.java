@@ -31,7 +31,6 @@ import java.util.Date;
  * Adapted from https://developer.android.com/training/camera/photobasics.html
  */
 @NativePlugin(
-    id="com.avocadojs.plugin.camera",
     requestCodes={Camera.REQUEST_IMAGE_CAPTURE}
 )
 public class Camera extends Plugin {

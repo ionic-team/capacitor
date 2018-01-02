@@ -19,7 +19,7 @@ import com.avocadojs.PluginMethod;
  * add the following permissions to * your AndroidManifest.xml:
  * <uses-permission android:name="android.permission.VIBRATE"/>
  */
-@NativePlugin(id="com.avocadojs.plugin.haptics")
+@NativePlugin()
 public class Haptics extends Plugin {
 
   @PluginMethod()

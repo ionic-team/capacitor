@@ -69,6 +69,7 @@ public class WebViewLocalServer {
   private final UriMatcher uriMatcher;
   private final AndroidProtocolHandler protocolHandler;
   private final String authority;
+  private final JSInjector jsInjector;
 
   /**
    * A handler that produces responses for paths on the virtual asset server.
@@ -168,10 +169,11 @@ public class WebViewLocalServer {
     }
   }
 
-  /*package*/ WebViewLocalServer(AndroidProtocolHandler protocolHandler) {
+  /*package*/ WebViewLocalServer(Context context, JSInjector jsInjector) {
     uriMatcher = new UriMatcher(null);
-    this.protocolHandler = protocolHandler;
+    this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
     authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
+    this.jsInjector = jsInjector;
   }
 
   /**
@@ -179,11 +181,13 @@ public class WebViewLocalServer {
    *
    * @param context context used to resolve resources/assets/
    */
+  /*
   public WebViewLocalServer(Context context) {
     // We only need the context to resolve assets and resources so the ApplicationContext is
     // sufficient while holding on to an Activity context could cause leaks.
     this(new AndroidProtocolHandler(context.getApplicationContext()));
   }
+  */
 
   private static Uri parseAndVerifyUrl(String url) {
     if (url == null) {

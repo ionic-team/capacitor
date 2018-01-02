@@ -25,7 +25,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-@NativePlugin(id="com.avocadojs.plugin.filesystem")
+@NativePlugin()
 public class Filesystem extends Plugin {
 
   @PluginMethod()

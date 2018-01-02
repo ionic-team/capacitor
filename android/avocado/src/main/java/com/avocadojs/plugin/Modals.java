@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * Common popup modals
  */
-@NativePlugin(id="com.avocadojs.plugin.modals")
+@NativePlugin()
 public class Modals extends Plugin {
 
   @PluginMethod()

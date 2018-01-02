@@ -21,7 +21,7 @@ import org.json.JSONObject;
 /**
  * Ported from https://github.com/ionic-team/cordova-plugin-ionic-keyboard/blob/master/src/android/IonicKeyboard.java
  */
-@NativePlugin(id="com.avocadojs.plugin.keyboard")
+@NativePlugin()
 public class Keyboard extends Plugin {
   private ViewTreeObserver.OnGlobalLayoutListener list;
   private View rootView;
