@@ -1,8 +1,7 @@
-source 'https://github.com/ionic-team/Specs'
 
 target 'Avocado' do
   use_frameworks!
-  pod 'AvocadoCordova', '0.0.1'
+  pod 'AvocadoCordova', :path => '../AvocadoCordova'
   target 'AvocadoTests' do
     inherit! :search_paths
     
