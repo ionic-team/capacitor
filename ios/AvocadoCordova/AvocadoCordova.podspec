@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "AvocadoCordova"
   s.module_name = 'Cordova'
-  s.version      = "1.0.0"
+  s.version      = "0.0.1"
   s.summary      = "Avocado Cordova Compatibility Bridge"
   s.homepage     = "https://ionicframework.com"
   s.license      = 'MIT'
