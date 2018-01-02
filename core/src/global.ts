@@ -1,7 +1,7 @@
 import { Avocado as _Avocado } from './definitions';
 
 var Avocado:_Avocado = {
-  Plugins: null
+  Plugins: {}
 };
 
 declare var window: any;

@@ -8,6 +8,5 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NativePlugin {
-  String id();
   int[] requestCodes() default {};
 }

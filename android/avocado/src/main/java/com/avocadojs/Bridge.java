@@ -19,6 +19,9 @@ import com.avocadojs.plugin.Keyboard;
 import com.avocadojs.plugin.Modals;
 import com.avocadojs.plugin.StatusBar;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +32,9 @@ import java.util.Map;
  */
 public class Bridge {
   public static final String TAG = "Avocado";
+
+  // The name of the directory we use to look for index.html and the rest of our web assets
+  public static final String DEFAULT_WEB_ASSET_DIR = "public";
 
   private final Activity context;
   private final WebView webView;
@@ -44,15 +50,17 @@ public class Bridge {
     this.webView = webView;
     this.msgHandler = new MessageHandler(this, webView);
 
-    this.registerCorePlugins();
+    Log.d(TAG, "Loading web app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
     // Start the local web server
-    final WebViewLocalServer localServer = new WebViewLocalServer(context);
-    WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets("www");
+    final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
+    WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
     webView.setWebViewClient(new WebViewClient() {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        String path = request.getUrl().getPath();
+        Log.d(TAG, "Loading file: " + path);
         return localServer.shouldInterceptRequest(request);
       }
     });
@@ -60,6 +68,34 @@ public class Bridge {
     // Load the index.html file from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
     webView.loadUrl(url);
+
+    this.registerCoreJS();
+    this.registerCorePlugins();
+  }
+
+  public JSInjector getJSInjector() {
+    try {
+      String coreJS = getCoreJS();
+      String pluginJS = "";
+
+      return new JSInjector(coreJS, pluginJS);
+    } catch(IOException ex) {
+      Log.e(TAG, "Unable to inject Avocado JS. App will not function!", ex);
+    }
+    return null;
+  }
+
+  public String getCoreJS() throws IOException {
+    BufferedReader br = new BufferedReader(
+        new InputStreamReader(context.getAssets().open("public/native-bridge.js")));
+
+    StringBuffer b = new StringBuffer();
+    String line;
+    while((line = br.readLine()) != null) {
+      b.append(line);
+    }
+
+    return b.toString();
   }
 
   public Context getContext() {
@@ -72,6 +108,14 @@ public class Bridge {
     return this.webView;
   }
 
+  public void registerCoreJS() {
+    try {
+      Log.d(TAG, "Exporting core Avocado JS");
+      JSExport.exportAvocadoJS(context, webView);
+    } catch(JSExportException ex) {
+      Log.e(TAG, "Unable to export core bridge JS. Bridge will not function!", ex);
+    }
+  }
 
   public void registerCorePlugins() {
     this.registerPlugin(Camera.class);
@@ -96,14 +140,18 @@ public class Bridge {
       return;
     }
 
-    String pluginId = pluginAnnotation.id();
+    String pluginId = pluginClass.getName();
+    Log.d(Bridge.TAG, "Registering plugin: " + pluginId);
 
     try {
       this.plugins.put(pluginId, new KnownPlugin(this, pluginClass));
+      JSExport.exportJS(context, webView, pluginId, pluginClass);
     } catch(InvalidPluginException ex) {
       Log.e(Bridge.TAG, "NativePlugin " + pluginClass.getName() +
           " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
           " the class extends Plugin");
+    } catch(JSExportException ex) {
+      Log.e(TAG, "Unable to export JavaScript for plugin \"" + pluginId + "\". Plugin will not function!", ex);
     }
   }
 
@@ -145,12 +193,10 @@ public class Bridge {
       Runnable currentThreadTask = new Runnable() {
         @Override
         public void run() {
-          // since we use current thread (and from onCreate(), it's the UI thread), we can safely update the UI from here
           try {
             plugin.invoke(methodName, call);
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
-            Log.e(Bridge.TAG, "Unable to execute plugin method");
-            ex.printStackTrace();
+            Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
           }
         }
       };

@@ -7,7 +7,7 @@ import com.avocadojs.PluginMethod;
 
 import org.json.JSONArray;
 
-@NativePlugin(id="com.avocadojs.plugin.permissions")
+@NativePlugin()
 public class Permissions extends Plugin {
 
   @PluginMethod

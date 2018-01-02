@@ -15,7 +15,7 @@ import com.avocadojs.PluginMethod;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@NativePlugin(id="com.avocadojs.plugin.clipboard")
+@NativePlugin()
 public class Clipboard extends Plugin {
 
   @PluginMethod()

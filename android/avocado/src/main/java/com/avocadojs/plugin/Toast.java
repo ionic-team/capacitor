@@ -5,7 +5,7 @@ import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
-@NativePlugin(id="com.avocadojs.plugin.toast")
+@NativePlugin()
 public class Toast extends Plugin {
 
   @PluginMethod()
