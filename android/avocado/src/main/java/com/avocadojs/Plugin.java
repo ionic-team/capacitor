@@ -9,13 +9,23 @@ import android.util.Log;
 
 import com.avocadojs.android.BuildConfig;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Base class for all plugins
  */
 public class Plugin {
   protected Bridge bridge;
 
+  private final Map<String, List<PluginCall>> eventListeners;
+
   public Plugin() {
+    eventListeners = new HashMap<>();
   }
 
   public void setBridge(Bridge bridge) {
@@ -41,13 +51,75 @@ public class Plugin {
     ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
   }
 
+  /**
+   * Add a listener for the given event
+   * @param eventName
+   * @param call
+   */
+  private void addEventListener(String eventName, PluginCall call) {
+    List<PluginCall> listeners = eventListeners.get(eventName);
+    if (listeners == null) {
+      listeners = new ArrayList<PluginCall>();
+      eventListeners.put(eventName, listeners);
+    }
+    listeners.add(call);
+  }
+
+  /**
+   * Remove a listener from the given event
+   * @param eventName
+   * @param call
+   */
+  private void removeEventListener(String eventName, PluginCall call) {
+    List<PluginCall> listeners = eventListeners.get(eventName);
+    if (listeners == null) {
+      return;
+    }
+
+    listeners.remove(call);
+  }
+
+  /**
+   * Notify all listeners that an event occurred
+   * @param eventName
+   * @param data
+   */
+  protected void notifyListeners(String eventName, JSONObject data) {
+    List<PluginCall> listeners = eventListeners.get(eventName);
+    if (listeners == null) {
+      return;
+    }
+
+    for(PluginCall call : listeners) {
+      call.success(data);
+    }
+  }
+
+
+  @SuppressWarnings("unused")
+  public void addListener(PluginCall call) {
+    String eventName = call.getString("eventName");
+    addEventListener(eventName, call);
+    call.setSaved(true);
+  }
+
+  @SuppressWarnings("unused")
+  public void removeListener(PluginCall call) {
+    String eventName = call.getString("eventName");
+    String callbackId = call.getString("callbackId");
+    PluginCall savedCall = bridge.getSavedCall(callbackId);
+    if (savedCall != null) {
+      removeEventListener(eventName, call);
+      bridge.removeSavedCall(callbackId);
+    }
+  }
+
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {}
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {}
 
   public void execute(Runnable runnable) {
     bridge.execute(runnable);
   }
-
 
   protected void log(String... args) {
     StringBuffer b = new StringBuffer();
