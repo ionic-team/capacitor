@@ -212,19 +212,17 @@ export interface FilesystemPlugin extends Plugin {
 
   /**
    * Return a list of files from the directory (not recursive)
-   * @param path the directory path to read
-   * @param directory the FilesystemDirectory to read the directory under
+   * @param options the options for the readdir operation
    * @return a promise that resolves with the readdir directory listing result
    */
-  readdir(path: string, directory: FilesystemDirectory) : Promise<ReaddirResult>;
+  readdir(options: ReaddirOptions) : Promise<ReaddirResult>;
 
   /**
    * Return data about a file
-   * @param path the path of the file
-   * @param directory the FilesystemDirectory where the file lives
+   * @param options the options for the stat operation
    * @return a promise that resolves with the file stat result
    */
-  stat(path: string, directory: FilesystemDirectory) : Promise<StatResult>;
+  stat(options: StatOptions) : Promise<StatResult>;
 }
 
 export enum FilesystemDirectory {
@@ -254,11 +252,17 @@ export enum FilesystemDirectory {
   ExternalStorage = 'EXTERNAL_STORAGE'
 }
 
+export enum FilesystemEncoding {
+  UTF8 = 'utf8',
+  ASCII = 'ascii',
+  UTF16 = 'utf18'
+};
+
 export interface FileWriteOptions {
   /**
    * the filename to write
    */
-  file: string;
+  path: string;
   /**
    * The data to write
    */
@@ -270,14 +274,14 @@ export interface FileWriteOptions {
   /**
    * The encoding to write the file in (defautls to utf8)
    */
-  encoding: string;
+  encoding: FilesystemEncoding;
 }
 
 export interface FileAppendOptions {
   /**
    * the filename to write
    */
-  file: string;
+  path: string;
   /**
    * The data to write
    */
@@ -289,14 +293,14 @@ export interface FileAppendOptions {
   /**
    * The encoding to write the file in (defautls to utf8)
    */
-  encoding: string;
+  encoding: FilesystemEncoding;
 }
 
 export interface FileReadOptions {
   /**
    * the filename to read
    */
-  file: string;
+  path: string;
   /**
    * The FilesystemDirectory to read the file from
    */
@@ -304,14 +308,14 @@ export interface FileReadOptions {
   /**
    * The encoding to read the file in (defautls to utf8)
    */
-  encoding: string;
+  encoding: FilesystemEncoding;
 }
 
 export interface FileDeleteOptions {
   /**
    * the filename to delete
    */
-  file: string;
+  path: string;
   /**
    * The FilesystemDirectory to delete the file from
    */
@@ -334,6 +338,28 @@ export interface MkdirOptions {
 }
 
 export interface RmdirOptions {
+  /**
+   * The path of the directory to remove
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to remove the directory from
+   */
+  directory: FilesystemDirectory;
+}
+
+export interface ReaddirOptions {
+  /**
+   * The path of the directory to remove
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to remove the directory from
+   */
+  directory: FilesystemDirectory;
+}
+
+export interface StatOptions {
   /**
    * The path of the directory to remove
    */
@@ -448,7 +474,7 @@ export interface KeyboardPlugin extends Plugin {
    * Set whether the accessory bar should be visible on the keyboard. We recommend disabling
    * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
    */
-  setAccessoryBarVisible(isVisible: boolean): Promise<void>;
+  setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
 }
 
 //

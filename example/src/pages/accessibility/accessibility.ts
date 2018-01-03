@@ -38,6 +38,8 @@ export class AccessibilityPage {
       message: "Enter the value to speak"
     });
 
-    Plugins.Accessibility.speak(value.value);
+    Plugins.Accessibility.speak({
+      value: value.value
+    });
   }
 }

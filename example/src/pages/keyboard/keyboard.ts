@@ -35,9 +35,13 @@ export class KeyboardPage {
 
   toggleAccessoryBar() {
     if(this.isBarShowing) {
-      Plugins.Keyboard.setAccessoryBarVisible(false);
+      Plugins.Keyboard.setAccessoryBarVisible({
+       isVisible: false
+      });
     } else {
-      Plugins.Keyboard.setAccessoryBarVisible(true);
+      Plugins.Keyboard.setAccessoryBarVisible({
+        isVisible: true
+      });
     }
     this.isBarShowing = !this.isBarShowing;
   }
