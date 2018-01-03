@@ -35,12 +35,13 @@ public class PluginCall {
   }
 
 
-  public void success(JSONObject data) {
+  public void success(JSObject data) {
     PluginResult result = new PluginResult(data);
     this.msgHandler.responseMessage(this.callbackId, result, null);
   }
+
   public void success() {
-    this.success(new JSONObject());
+    this.success(new JSObject());
   }
 
 

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
+import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
@@ -56,24 +57,17 @@ public class Clipboard extends Plugin {
     if(clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
       Log.d(Bridge.TAG, "Got plaintxt");
       ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-      try {
-        JSONObject ret = new JSONObject();
-        ret.put("value", item.getText());
-        call.success(ret);
-      } catch(JSONException ex) {
-        call.error("Unable to get clipboard data", ex);
-      }
+
+      JSObject ret = new JSObject();
+      ret.put("value", item.getText());
+      call.success(ret);
     } else {
       Log.d(Bridge.TAG, "Not plaintext!");
       ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
       String value = item.coerceToText(this.getContext()).toString();
-      JSONObject ret = new JSONObject();
-      try {
-        ret.put("value", value);
-        call.success(ret);
-      } catch(JSONException ex) {
-        call.error("Unable to get clipboard data", ex);
-      }
+      JSObject ret = new JSObject();
+      ret.put("value", value);
+      call.success(ret);
     }
   }
 }
