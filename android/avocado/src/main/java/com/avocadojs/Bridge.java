@@ -41,6 +41,9 @@ public class Bridge {
 
   private Map<String, PluginHandle> plugins = new HashMap<>();
 
+  // Stored plugin calls that we're keeping around to call again someday
+  private Map<String, PluginCall> savedCalls = new HashMap<>();
+
 
   public Bridge(Activity context, WebView webView) {
     this.context = context;
@@ -101,7 +104,7 @@ public class Bridge {
       return;
     }
 
-    String pluginId = pluginClass.getName();
+    String pluginId = pluginClass.getSimpleName();
     Log.d(Bridge.TAG, "Registering plugin: " + pluginId);
 
     try {
@@ -117,6 +120,12 @@ public class Bridge {
     return this.plugins.get(pluginId);
   }
 
+  /**
+   * Find the plugin handle that responds to the given request code. This will
+   * fire after certain Android OS intent results/permission checks/etc.
+   * @param requestCode
+   * @return
+   */
   public PluginHandle getPluginWithRequestCode(int requestCode) {
     for(PluginHandle plugin : this.plugins.values()) {
       NativePlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(NativePlugin.class);
@@ -134,6 +143,13 @@ public class Bridge {
     return null;
   }
 
+
+  /**
+   * Call a method on a plugin.
+   * @param pluginId the plugin id to use to lookup the plugin handle
+   * @param methodName the name of the method to call
+   * @param call the call object to pass to the method
+   */
   public void callPluginMethod(String pluginId, final String methodName, final PluginCall call) {
     try {
       final PluginHandle plugin = this.getPlugin(pluginId);
@@ -153,6 +169,10 @@ public class Bridge {
         public void run() {
           try {
             plugin.invoke(methodName, call);
+
+            if(call.getSave()) {
+
+            }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
             Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
           }
@@ -169,6 +189,24 @@ public class Bridge {
 
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
+  }
+
+
+  /**
+   * Get a saved plugin call
+   * @param callbackId the callbackId to use to lookup the call with
+   * @return the stored call
+   */
+  public PluginCall getSavedCall(String callbackId) {
+    return this.savedCalls.get(callbackId);
+  }
+
+  /**
+   * Remove the saved call
+   * @param callbackId
+   */
+  public void removeSavedCall(String callbackId) {
+    this.savedCalls.remove(callbackId);
   }
 
   /**

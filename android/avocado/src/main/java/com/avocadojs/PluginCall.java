@@ -17,6 +17,7 @@ public class PluginCall {
   private final MessageHandler msgHandler;
   private final String callbackId;
   private final JSONObject data;
+  private boolean shouldSave = false;
 
   public PluginCall(MessageHandler msgHandler, String callbackId, JSONObject data) {
     this.msgHandler = msgHandler;
@@ -148,6 +149,20 @@ public class PluginCall {
       return (JSONArray) value;
     }
     return defaultValue;
+  }
+
+  /**
+   * Indicate that the Bridge should cache this call in order to call
+   * it again later. For example, the addListener system uses this to
+   * continuously call the call's callback (😆).
+   * @param shouldSave
+   */
+  public void setSaved(boolean shouldSave) {
+    this.shouldSave = shouldSave;
+  }
+
+  public boolean isSaved() {
+    return shouldSave;
   }
 
   class PluginCallDataTypeException extends Exception {

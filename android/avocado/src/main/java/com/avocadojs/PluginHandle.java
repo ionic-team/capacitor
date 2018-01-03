@@ -32,7 +32,11 @@ public class PluginHandle {
       throw new InvalidPluginException("No @NativePlugin annotation found for plugin " + pluginClass.getName());
     }
 
-    this.pluginId = pluginClass.getName();
+    if(!pluginAnnotation.name().equals("")) {
+      this.pluginId = pluginAnnotation.name();
+    } else {
+      this.pluginId = pluginClass.getSimpleName();
+    }
 
     this.indexMethods(pluginClass);
   }
