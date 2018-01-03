@@ -24,6 +24,7 @@ import android.webkit.WebResourceResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.net.URLConnection;
 import java.util.Map;
 import java.util.UUID;
@@ -224,9 +225,21 @@ public class WebViewLocalServer {
       return null;
     }
 
+    String path = request.getUrl().getPath();
+    String ext = path.substring(path.lastIndexOf("."), path.length());
+
+    Log.d(TAG, "Fetching a file with extension:" + ext);
+
+    InputStream responseStream = new LollipopLazyInputStream(handler, request);
+    InputStream stream = responseStream;
+
+    // TODO: Conjure up a bit more subtlety than this
+    if (ext.equals(".html")) {
+      stream = jsInjector.getInjectedStream(responseStream);
+    }
+
     return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
-        handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(),
-        new LollipopLazyInputStream(handler, request));
+        handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
   }
 
   /**

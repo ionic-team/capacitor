@@ -92,7 +92,7 @@ public class Bridge {
     StringBuffer b = new StringBuffer();
     String line;
     while((line = br.readLine()) != null) {
-      b.append(line);
+      b.append(line + "\n");
     }
 
     return b.toString();
