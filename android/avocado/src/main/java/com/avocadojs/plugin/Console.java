@@ -11,7 +11,7 @@ import com.avocadojs.PluginMethod;
 @NativePlugin()
 public class Console extends Plugin {
 
-  @PluginMethod()
+  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
   public void log(PluginCall call) {
     String level = call.getString("level", "log").toLowerCase();
     String message = call.getString("message", "");

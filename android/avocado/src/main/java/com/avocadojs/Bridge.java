@@ -19,10 +19,7 @@ import com.avocadojs.plugin.Keyboard;
 import com.avocadojs.plugin.Modals;
 import com.avocadojs.plugin.StatusBar;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +39,7 @@ public class Bridge {
 
   private final Handler taskHandler = new Handler();
 
-  private Map<String, KnownPlugin> plugins = new HashMap<>();
+  private Map<String, PluginHandle> plugins = new HashMap<>();
 
 
   public Bridge(Activity context, WebView webView) {
@@ -50,7 +47,9 @@ public class Bridge {
     this.webView = webView;
     this.msgHandler = new MessageHandler(this, webView);
 
-    Log.d(TAG, "Loading web app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
+    this.registerCorePlugins();
+
+    Log.d(TAG, "Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
     // Start the local web server
     final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
@@ -65,9 +64,8 @@ public class Bridge {
 
     // Load the index.html file from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
-    webView.loadUrl(url);
 
-    this.registerCorePlugins();
+    webView.loadUrl(url);
   }
 
   public Context getContext() {
@@ -107,22 +105,20 @@ public class Bridge {
     Log.d(Bridge.TAG, "Registering plugin: " + pluginId);
 
     try {
-      this.plugins.put(pluginId, new KnownPlugin(this, pluginClass));
+      this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
     } catch(InvalidPluginException ex) {
       Log.e(Bridge.TAG, "NativePlugin " + pluginClass.getName() +
           " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
           " the class extends Plugin");
-    } catch(JSExportException ex) {
-      Log.e(TAG, "Unable to export JavaScript for plugin \"" + pluginId + "\". Plugin will not function!", ex);
     }
   }
 
-  public KnownPlugin getPlugin(String pluginId) {
+  public PluginHandle getPlugin(String pluginId) {
     return this.plugins.get(pluginId);
   }
 
-  public KnownPlugin getPluginWithRequestCode(int requestCode) {
-    for(KnownPlugin plugin : this.plugins.values()) {
+  public PluginHandle getPluginWithRequestCode(int requestCode) {
+    for(PluginHandle plugin : this.plugins.values()) {
       NativePlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(NativePlugin.class);
       if(pluginAnnotation == null) {
         continue;
@@ -140,7 +136,7 @@ public class Bridge {
 
   public void callPluginMethod(String pluginId, final String methodName, final PluginCall call) {
     try {
-      final KnownPlugin plugin = this.getPlugin(pluginId);
+      final PluginHandle plugin = this.getPlugin(pluginId);
 
       if (plugin == null) {
         Log.e(Bridge.TAG, "unable to find plugin : " + pluginId);
@@ -181,61 +177,15 @@ public class Bridge {
    */
   private JSInjector getJSInjector() {
     try {
-      String coreJS = getCoreJS();
-      String pluginJS = getPluginJS();
+      String coreJS = JSExport.getCoreJS(context);
+      String pluginJS = JSExport.getPluginJS(plugins.values());
 
       return new JSInjector(coreJS, pluginJS);
-    } catch(IOException ex) {
-      Log.e(TAG, "Unable to inject Avocado JS. App will not function!", ex);
+    } catch(JSExportException ex) {
+      Log.e(TAG, "Unable to export Avocado JS. App will not function!", ex);
     }
     return null;
   }
-
-  private String getCoreJS() throws IOException {
-    BufferedReader br = new BufferedReader(
-        new InputStreamReader(context.getAssets().open("public/native-bridge.js")));
-
-    StringBuffer b = new StringBuffer();
-    String line;
-    while((line = br.readLine()) != null) {
-      b.append(line + "\n");
-    }
-
-    return b.toString();
-  }
-
-  private String getPluginJS() {
-    StringBuilder b = new StringBuilder();
-
-
-    for(KnownPlugin plugin : this.plugins.values()) {
-      b.append("(function(w) {\n" +
-          "var a = w.Avocado; var p = a.Plugins;\n" +
-          "var t = p['" + plugin.getId() + "'] = {};\n" +
-          "t.addListener = function(eventName, callback) {\n" +
-          "  return w.Avocado.addListener('" + plugin.getId() + "', eventName, callback);\n" +
-          "}\n" +
-          "t.removeListener = function(eventName, callback) {\n" +
-          "  return w.Avocado.removeListener('" + plugin.getId() + "', eventName, callback);\n" +
-          "}");
-
-
-      Collection<PluginMethodHandle> methods = plugin.getMethods();
-
-      for(PluginMethodHandle method : methods) {
-        b.append(generateMethodJS(method));
-      }
-    }
-
-    b.append("})(window);");
-
-    return b.toString();
-  }
-
-  private String generateMethodJS(PluginMethodHandle method) {
-
-  }
-
 
   /**
    * Handle a request permission result by finding the that requested
@@ -246,7 +196,7 @@ public class Bridge {
    */
 
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    KnownPlugin plugin = getPluginWithRequestCode(requestCode);
+    PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if(plugin == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
@@ -257,7 +207,7 @@ public class Bridge {
   }
 
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    KnownPlugin plugin = getPluginWithRequestCode(requestCode);
+    PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if(plugin == null || plugin.getInstance() == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);

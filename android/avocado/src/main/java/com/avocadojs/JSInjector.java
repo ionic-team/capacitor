@@ -22,7 +22,7 @@ class JSInjector {
 
   public InputStream getInjectedStream(InputStream responseStream) {
     try {
-      String js = "<script type=\"text/javascript\">" + coreJS + "</script>";
+      String js = "<script type=\"text/javascript\">" + coreJS + "\n\n" + pluginJS + "</script>";
       InputStream jsInputStream = new ByteArrayInputStream(js.getBytes(StandardCharsets.UTF_8.name()));
       return new SequenceInputStream(jsInputStream, responseStream);
     } catch(UnsupportedEncodingException ex) {
