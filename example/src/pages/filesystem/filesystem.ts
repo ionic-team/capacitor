@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins,
-  FilesystemDirectory
+  FilesystemDirectory,
+  FilesystemEncoding
 } from '@avocadojs/core';
 
 /**
@@ -28,7 +29,12 @@ export class FilesystemPage {
 
   fileWrite() {
     try {
-      Plugins.Filesystem.writeFile('secrets/text.txt', "This is a test", FilesystemDirectory.Documents, 'utf8')
+      Plugins.Filesystem.writeFile({
+        path: 'secrets/text.txt',
+        data: "This is a test",
+        directory: FilesystemDirectory.Documents,
+        encoding: FilesystemEncoding.UTF8
+      });
     } catch(e) {
       console.error('Unable to write file (press mkdir first, silly)', e);
     }
@@ -36,23 +42,39 @@ export class FilesystemPage {
   }
 
   async fileRead() {
-    let contents = await Plugins.Filesystem.readFile('secrets/text.txt', FilesystemDirectory.Documents, 'utf8');
+    let contents = await Plugins.Filesystem.readFile({
+      path: 'secrets/text.txt',
+      directory: FilesystemDirectory.Documents,
+      encoding: FilesystemEncoding.UTF8
+    });
     console.log(contents);
   }
 
   async fileAppend() {
-    await Plugins.Filesystem.appendFile('secrets/text.txt', "MORE TESTS", FilesystemDirectory.Documents, 'utf8');
+    await Plugins.Filesystem.appendFile({
+      path: 'secrets/text.txt',
+      data: "MORE TESTS",
+      directory: FilesystemDirectory.Documents,
+      encoding: FilesystemEncoding.UTF8
+    });
     console.log('Appended');
   }
 
   async fileDelete() {
-    await Plugins.Filesystem.deleteFile('secrets/text.txt', FilesystemDirectory.Documents);
+    await Plugins.Filesystem.deleteFile({
+      path: 'secrets/text.txt',
+      directory: FilesystemDirectory.Documents
+    });
     console.log('Deleted');
   }
 
   async mkdir() {
     try {
-      let ret = await Plugins.Filesystem.mkdir('secrets', FilesystemDirectory.Documents, false);
+      let ret = await Plugins.Filesystem.mkdir({
+        path: 'secrets',
+        directory: FilesystemDirectory.Documents,
+        createIntermediateDirectories: false
+      });
       console.log('Made dir', ret);
     } catch(e) {
       console.error('Unable to make directory', e);
@@ -61,7 +83,10 @@ export class FilesystemPage {
 
   async rmdir() {
     try {
-      let ret = await Plugins.Filesystem.rmdir('secrets', FilesystemDirectory.Documents);
+      let ret = await Plugins.Filesystem.rmdir({
+        path: 'secrets',
+        directory: FilesystemDirectory.Documents
+      });
       console.log('Removed dir', ret);
     } catch(e) {
       console.error('Unable to remove directory', e);
@@ -70,7 +95,10 @@ export class FilesystemPage {
 
   async readdir() {
     try {
-      let ret = await Plugins.Filesystem.readdir('secrets', FilesystemDirectory.Documents);
+      let ret = await Plugins.Filesystem.readdir({
+        path: 'secrets',
+        directory: FilesystemDirectory.Documents
+      });
       console.log('Read dir', ret);
     } catch(e) {
       console.error('Unable to read dir', e);
@@ -79,7 +107,10 @@ export class FilesystemPage {
 
   async stat() {
     try {
-      let ret = await Plugins.Filesystem.stat('secrets/text.txt', FilesystemDirectory.Documents);
+      let ret = await Plugins.Filesystem.stat({
+        path: 'secrets/text.txt',
+        directory: FilesystemDirectory.Documents
+      });
       console.log('STAT', ret);
     } catch(e) {
       console.error('Unable to stat file', e);

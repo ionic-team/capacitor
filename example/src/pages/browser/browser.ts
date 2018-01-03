@@ -32,7 +32,9 @@ export class BrowserPage {
   }
 
   browserOpen() {
-    Plugins.Browser.open('http://ionicframework.com');
+    Plugins.Browser.open({
+      url: 'http://ionicframework.com'
+    });
 
     setTimeout(() => {
       Plugins.Browser.close();
