@@ -103,7 +103,8 @@ public class PluginHandle {
    * invocation later
    */
   private void indexMethods(Class<? extends Plugin> plugin) {
-    Method[] methods = pluginClass.getDeclaredMethods();
+    //Method[] methods = pluginClass.getDeclaredMethods();
+    Method[] methods = pluginClass.getMethods();
 
     for(Method methodReflect: methods) {
       PluginMethod method = methodReflect.getAnnotation(PluginMethod.class);

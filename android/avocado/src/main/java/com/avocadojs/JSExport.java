@@ -51,6 +51,11 @@ public class JSExport {
       Collection<PluginMethodHandle> methods = plugin.getMethods();
 
       for(PluginMethodHandle method : methods) {
+        if (method.getName().equals("addListener") || method.getName().equals("removeListener")) {
+          // Don't export add/remove listener, we do that automatically above as they are "special snowflakes"
+          continue;
+        }
+
         lines.add(generateMethodJS(plugin, method));
       }
       lines.add("})(window);\n");

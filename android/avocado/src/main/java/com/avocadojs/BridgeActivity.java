@@ -7,6 +7,7 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import com.avocadojs.android.R;
+import com.avocadojs.plugin.AppState;
 
 public class BridgeActivity extends AppCompatActivity {
   private Bridge bridge;
@@ -24,21 +25,40 @@ public class BridgeActivity extends AppCompatActivity {
     bridge = new Bridge(this, webView);
   }
 
+  private void fireAppStateChanged(boolean isActive) {
+    PluginHandle handle = bridge.getPlugin("AppState");
+    if (handle == null) {
+      return;
+    }
+
+    AppState appState = (AppState) handle.getInstance();
+    if (appState != null) {
+      appState.fireChange(isActive);
+    }
+  }
+
   @Override
   public void onStart() {
     super.onStart();
+
     Log.d(Bridge.TAG, "App started");
   }
 
   @Override
   public void onResume() {
     super.onResume();
+
+    fireAppStateChanged(true);
+
     Log.d(Bridge.TAG, "App resumed");
   }
 
   @Override
   public void onPause() {
     super.onPause();
+
+    fireAppStateChanged(false);
+
     Log.d(Bridge.TAG, "App paused");
   }
 

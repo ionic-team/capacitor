@@ -85,8 +85,10 @@ public class Plugin {
    * @param data
    */
   protected void notifyListeners(String eventName, JSONObject data) {
+    Log.d(Bridge.TAG, "Notifying listeners");
     List<PluginCall> listeners = eventListeners.get(eventName);
     if (listeners == null) {
+      Log.d(Bridge.TAG, "No listeners found");
       return;
     }
 
@@ -97,6 +99,7 @@ public class Plugin {
 
 
   @SuppressWarnings("unused")
+  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
   public void addListener(PluginCall call) {
     String eventName = call.getString("eventName");
     addEventListener(eventName, call);
@@ -104,6 +107,7 @@ public class Plugin {
   }
 
   @SuppressWarnings("unused")
+  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
   public void removeListener(PluginCall call) {
     String eventName = call.getString("eventName");
     String callbackId = call.getString("callbackId");

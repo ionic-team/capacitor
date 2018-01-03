@@ -228,8 +228,6 @@ public class WebViewLocalServer {
     String path = request.getUrl().getPath();
     String ext = path.substring(path.lastIndexOf("."), path.length());
 
-    Log.d(TAG, "Fetching a file with extension:" + ext);
-
     InputStream responseStream = new LollipopLazyInputStream(handler, request);
     InputStream stream = responseStream;
 
@@ -358,7 +356,6 @@ public class WebViewLocalServer {
       public InputStream handle(Uri url) {
         InputStream stream;
         String path = url.getPath().replaceFirst(virtualAssetPath, assetPath);
-        Log.d("PATH", path);
         try {
           stream = protocolHandler.openAsset(path);
         } catch (IOException e) {
