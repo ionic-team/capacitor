@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * KnownPlugin is an instance of a plugin that has been registered
+ * PluginHandle is an instance of a plugin that has been registered
  * and indexed.
  */
-public class KnownPlugin {
+public class PluginHandle {
   private final Bridge bridge;
   private final Class<? extends Plugin> pluginClass;
 
@@ -23,7 +23,7 @@ public class KnownPlugin {
 
   private Plugin instance;
 
-  public KnownPlugin(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException {
+  public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException {
     this.bridge = bridge;
     this.pluginClass = pluginClass;
 
@@ -88,7 +88,7 @@ public class KnownPlugin {
 
 
     try {
-      methodMeta.method.invoke(this.instance, call);
+      methodMeta.getMethod().invoke(this.instance, call);
     } catch(InvocationTargetException | IllegalAccessException ex) {
       throw new PluginInvocationException("Unable to invoke method " + methodName + " on plugin " + pluginClass.getName(), ex);
     }
@@ -108,7 +108,7 @@ public class KnownPlugin {
         continue;
       }
 
-      PluginMethodHandle methodMeta = new PluginMethodHandle(methodReflect);
+      PluginMethodHandle methodMeta = new PluginMethodHandle(methodReflect, method);
       pluginMethods.put(methodReflect.getName(), methodMeta);
     }
   }

@@ -25,7 +25,7 @@ public class Haptics extends Plugin {
   @PluginMethod()
   public void vibrate(PluginCall call) {
     Context c = this.getContext();
-    int duration = call.getInt("duration", 300).intValue();
+    int duration = call.getInt("duration", 300);
 
     if(!hasPermission(Manifest.permission.VIBRATE)) {
       call.error("Can't vibrate: Missing VIBRATE permission in AndroidManifest.xml");

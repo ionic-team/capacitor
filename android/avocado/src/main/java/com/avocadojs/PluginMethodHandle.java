@@ -6,40 +6,30 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 public class PluginMethodHandle {
-  public static String RETURN_PROMISE = "promise";
-  public static String RETURN_CALLBACK = "callback";
-  private static String RETURN_NONE = "none";
+  // The reflect method reference
+  private final Method method;
+  // The name of the method
+  private final String name;
+  // The return type of the method (see PluginMethod for constants)
+  private final String returnType;
 
-  // Synchronous return not yet supported (if ever, tbqh)
-  private static String RETURN_SYNC = "sync";
-
-
-  public Method method;
-  public String name;
-  public String type;
-  public String returnType;
-
-  public PluginMethodHandle(Method method) {
+  public PluginMethodHandle(Method method, PluginMethod methodDecorator) {
     this.method = method;
 
     this.name = method.getName();
 
-    /*
-
-    String methodToString = method.toString();
-    Log.d("METHOD", methodToString);
-
-    Class<?>[] pType  = method.getParameterTypes();
-    Type[] gpType = method.getGenericParameterTypes();
-    for (int i = 0; i < pType.length; i++) {
-      Log.d("ParameterType ", pType[i].toString());
-      Log.d("GenericParameterType ", gpType[i].toString());
-    }
-    */
+    this.returnType = methodDecorator.returnType();
   }
 
   public String getReturnType() {
     return returnType;
   }
 
+  public String getName() {
+    return name;
+  }
+
+  public Method getMethod() {
+    return method;
+  }
 }

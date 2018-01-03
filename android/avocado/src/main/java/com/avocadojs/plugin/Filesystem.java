@@ -30,7 +30,7 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void readFile(PluginCall call) {
-    String file = call.getString("file");
+    String file = call.getString("path");
     String data = call.getString("data");
     String directory = call.getString("directory");
     String encoding = call.getString("encoding", "utf8");
@@ -79,7 +79,7 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void writeFile(PluginCall call) {
-    String file = call.getString("file");
+    String file = call.getString("path");
     String data = call.getString("data");
     String directory = call.getString("directory");
     String encoding = call.getString("encoding", "utf8");
@@ -129,7 +129,7 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void deleteFile(PluginCall call) {
-    String file = call.getString("file");
+    String file = call.getString("path");
     String directory = call.getString("directory");
 
     File androidDirectory = this.getDirectory(directory);
