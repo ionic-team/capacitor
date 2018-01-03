@@ -1,5 +1,4 @@
 (function(win) {
-  alert('Running avocado!');
   win.Avocado = win.Avocado || {};
   var avocado = Avocado;
 
@@ -19,6 +18,7 @@
       win.androidBridge.postMessage(JSON.stringify(data));
     };
     avocado.isNative = true;
+    avocado.isAndroid = true;
     avocado.platform = 'android';
 
   } else if (win.webkit && win.webkit.messageHandlers && win.webkit.messageHandlers.bridge) {
@@ -28,6 +28,7 @@
       win.webkit.messageHandlers.bridge.postMessage(data);
     };
     avocado.isNative = true;
+    avocado.isIOS = true;
     avocado.platform = 'ios';
   }
 
@@ -223,9 +224,9 @@
       };
 
       win.Avocado.handleError(error);
-      if(avocado.platform == 'android') {
+      if(avocado.isAndroid) {
         win.androidBridge.postMessage(JSON.stringify(errObj));
-      } else if(avocado.platform == 'ios') {
+      } else if(avocado.isIOS) {
         win.webkit.messageHandlers.bridge.postMessage(errObj);
       }
     }
@@ -238,7 +239,11 @@
   function injectCSS() {
     var css = `
     ._avc-modal {
+      ${avocado.isIOS ? `
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      ` : `
+      font-family: "Roboto", "Helvetica Neue", sans-serif;
+      `}
       position: fixed;
       top: 0;
       right: 0;
@@ -252,11 +257,17 @@
       height: 100%;
     }
     ._avc-modal-header {
-      padding: 32px 15px;
       font-size: 16px;
       position: relative;
+      ${avocado.isIOS ? `
+      padding: 32px 15px;
       -webkit-backdrop-filter: blur(10px);
       background-color: rgba(255, 255, 255, 0.5);
+      ` : `
+      background-color: #eee;
+      height: 60px;
+      padding: 15px;
+      `}
     }
     ._avc-modal-content {
       width: 100%;
@@ -268,15 +279,27 @@
       -webkit-overflow-scrolling: touch;
     }
     ._avc-modal-header-button {
-      float: right;
+      position: absolute;
       font-size: 16px;
+      right: 15px;
+      padding: 0px 10px;
+      ${avocado.isIOS ? `
+      top: 30px;
+      ` : `
+      top: 10px;
+      height: 40px;
+      `}
     }
     ._avc-modal-title {
+      ${avocado.isIOS ? `
       position: absolute;
       text-align: center;
       width: 100px;
       left: 50%;
       margin-left: -50px;
+      ` : `
+      margin-top: 7px;
+      `}
       font-weight: 600;
     }
     ._avc-error-content {
@@ -299,6 +322,10 @@
       bottom: 0;
       left: 15px;
       right: 15px;
+      ${avocado.isAndroid ? `
+      bottom: 15px;
+      width: calc(100% - 30px);
+      ` : ``}
       background-color: #e83d3d;
       color: #fff;
       font-weight: bold;
