@@ -11,13 +11,11 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
 
+import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -192,13 +190,9 @@ public class Camera extends Plugin {
     byte[] byteArray = byteArrayOutputStream .toByteArray();
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
-    JSONObject data = new JSONObject();
-    try {
-      data.put("base64_data", encoded);
-      call.success(data);
-    } catch(JSONException ex) {
-      call.error("Error returning image data back", ex);
-    }
+    JSObject data = new JSObject();
+    data.put("base64_data", encoded);
+    call.success(data);
   }
 
   private File createImageFile(boolean saveToGallery) throws IOException {

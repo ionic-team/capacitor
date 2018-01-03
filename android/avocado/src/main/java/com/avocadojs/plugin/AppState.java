@@ -3,10 +3,9 @@ package com.avocadojs.plugin;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
+import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
-
-import org.json.JSONObject;
 
 @NativePlugin()
 public class AppState extends Plugin {
@@ -20,12 +19,8 @@ public class AppState extends Plugin {
 
   public void fireChange(boolean isActive) {
     Log.d(Bridge.TAG, "Firing change: " + isActive);
-    JSONObject data = new JSONObject();
-    try {
-      data.put("isActive", isActive);
-      notifyListeners("appStateChanged", data);
-    } catch(Exception ex) {
-      Log.e(Bridge.TAG, "Serious error setting appStateChanged", ex);
-    }
+    JSObject data = new JSObject();
+    data.put("isActive", isActive);
+    notifyListeners("appStateChanged", data);
   }
 }

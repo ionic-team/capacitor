@@ -84,7 +84,7 @@ public class Plugin {
    * @param eventName
    * @param data
    */
-  protected void notifyListeners(String eventName, JSONObject data) {
+  protected void notifyListeners(String eventName, JSObject data) {
     Log.d(Bridge.TAG, "Notifying listeners");
     List<PluginCall> listeners = eventListeners.get(eventName);
     if (listeners == null) {

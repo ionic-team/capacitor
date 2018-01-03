@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
+import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
@@ -12,7 +13,6 @@ import com.avocadojs.PluginMethod;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -66,7 +66,7 @@ public class Filesystem extends Plugin {
       br.close();
 
       try {
-        JSONObject ret = new JSONObject();
+        JSObject ret = new JSObject();
         ret.putOpt("data", text.toString());
         call.success(ret);
       } catch(JSONException ex) {

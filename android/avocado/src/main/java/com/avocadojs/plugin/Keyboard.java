@@ -10,13 +10,13 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
+import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Ported from https://github.com/ionic-team/cordova-plugin-ionic-keyboard/blob/master/src/android/IonicKeyboard.java
@@ -70,13 +70,9 @@ public class Keyboard extends Plugin {
             if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
               String msg = Integer.toString(pixelHeightDiff);
 
-              JSONObject ret = new JSONObject();
-              try {
-                ret.put("show", msg);
-                call.success(ret);
-              } catch(JSONException ex) {
-                call.error("Error sending data back");
-              }
+              JSObject ret = new JSObject();
+              ret.put("show", msg);
+              call.success(ret);
               /*
               result = new PluginResult(PluginResult.Status.OK, ret);
               result.setKeepCallback(true);
@@ -84,13 +80,9 @@ public class Keyboard extends Plugin {
               */
             }
             else if ( pixelHeightDiff != previousHeightDiff && ( previousHeightDiff - pixelHeightDiff ) > 100 ){
-              JSONObject ret = new JSONObject();
-              try {
-                ret.put("hide", true);
-                call.success(ret);
-              } catch(JSONException ex) {
-                call.error("Error sending data back");
-              }
+              JSObject ret = new JSObject();
+              ret.put("hide", true);
+              call.success(ret);
             }
             previousHeightDiff = pixelHeightDiff;
           }
