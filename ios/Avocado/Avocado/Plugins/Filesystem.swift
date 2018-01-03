@@ -26,8 +26,8 @@ public class Filesystem : AVCPlugin {
   @objc func readFile(_ call: AVCPluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
-    guard let file = call.get("file", String.self) else {
-      handleError(call, "File must be provided and must be a string.")
+    guard let file = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
       return
     }
       
@@ -57,8 +57,8 @@ public class Filesystem : AVCPlugin {
   @objc func writeFile(_ call: AVCPluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
-    guard let file = call.get("file", String.self) else {
-      handleError(call, "File must be provided and must be a string.")
+    guard let file = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
       return
     }
     
@@ -91,8 +91,8 @@ public class Filesystem : AVCPlugin {
   @objc func appendFile(_ call: AVCPluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
-    guard let file = call.get("file", String.self) else {
-      handleError(call, "File must be provided and must be a string.")
+    guard let file = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
       return
     }
     
@@ -140,8 +140,8 @@ public class Filesystem : AVCPlugin {
   @objc func deleteFile(_ call: AVCPluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
     // TODO: Allow them to switch encoding
-    guard let file = call.get("file", String.self) else {
-      handleError(call, "File must be provided and must be a string.")
+    guard let file = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
       return
     }
     
@@ -171,7 +171,7 @@ public class Filesystem : AVCPlugin {
    */
   @objc func mkdir(_ call: AVCPluginCall) {
     guard let path = call.get("path", String.self) else {
-      handleError(call, "Path must be provided and must be a string.")
+      handleError(call, "path must be provided and must be a string.")
       return
     }
     
@@ -200,7 +200,7 @@ public class Filesystem : AVCPlugin {
    */
   @objc func rmdir(_ call: AVCPluginCall) {
     guard let path = call.get("path", String.self) else {
-      handleError(call, "Path must be provided and must be a string.")
+      handleError(call, "path must be provided and must be a string.")
       return
     }
     
@@ -228,7 +228,7 @@ public class Filesystem : AVCPlugin {
    */
   @objc func readdir(_ call: AVCPluginCall) {
     guard let path = call.get("path", String.self) else {
-      handleError(call, "Path must be provided and must be a string.")
+      handleError(call, "path must be provided and must be a string.")
       return
     }
     
@@ -260,7 +260,7 @@ public class Filesystem : AVCPlugin {
   
   @objc func stat(_ call: AVCPluginCall) {
     guard let path = call.get("path", String.self) else {
-      handleError(call, "Path must be provided and must be a string.")
+      handleError(call, "path must be provided and must be a string.")
       return
     }
     
