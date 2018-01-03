@@ -68,16 +68,12 @@ public class JSExport {
   private static func generateMethod(pluginClassName: String, method: AVCPluginMethod) -> String {
     let methodName = method.name!
     let returnType = method.returnType!
-    let args = method.args!
-    var paramList = args.map { $0.name } as! [String]
+    var paramList = [String]()
     
-    
-    // If no arguments were specified for this function, add the catch-all
+    // add the catch-all
     // options argument which takes a full object and converts each
     // key/value pair into an option for plugin call.
-    if args.count == 0 {
-      paramList.append(CATCHALL_OPTIONS_PARAM)
-    }
+    paramList.append(CATCHALL_OPTIONS_PARAM)
     
     // Automatically add the _callback param if returning data through a callback
     if returnType == AVCPluginReturnCallback {
@@ -88,7 +84,7 @@ public class JSExport {
     let paramString = paramList.joined(separator: ", ")
     
     // Generate the argument object that will be sent on each call
-    let argObjectString = args.count == 0 ? CATCHALL_OPTIONS_PARAM : generateArgObject(method: method)
+    let argObjectString = CATCHALL_OPTIONS_PARAM
     
     var lines = [String]()
     
@@ -117,27 +113,6 @@ public class JSExport {
     }
     
     // Close the function
-    lines.append("}")
-    return lines.joined(separator: "\n")
-  }
-  
-  /**
-   * Generate an argument object of the form:
-   * {
-   *   "key": "value"
-   * }
-   */
-  private static func generateArgObject(method: AVCPluginMethod) -> String {
-    let args = method.args!
-    var lines = [String]()
-    
-    // Object start
-    lines.append("{")
-
-    for arg in args {
-      lines.append("\(arg.name!): \(arg.name!),")
-    }
-
     lines.append("}")
     return lines.joined(separator: "\n")
   }

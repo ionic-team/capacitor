@@ -212,7 +212,7 @@ enum BridgeError: Error {
       
       //print("\n🥑  Calling method \"\(call.method)\" on plugin \"\(plugin.getId()!)\"")
       
-      selector = method.getSelector()
+      selector = method.selector
     }
     
     if !plugin.responds(to: selector) {

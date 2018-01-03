@@ -22,7 +22,7 @@ import com.avocadojs.plugin.StatusBar;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.Key;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,35 +67,8 @@ public class Bridge {
     String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
     webView.loadUrl(url);
 
-    this.registerCoreJS();
     this.registerCorePlugins();
   }
-
-  public JSInjector getJSInjector() {
-    try {
-      String coreJS = getCoreJS();
-      String pluginJS = "";
-
-      return new JSInjector(coreJS, pluginJS);
-    } catch(IOException ex) {
-      Log.e(TAG, "Unable to inject Avocado JS. App will not function!", ex);
-    }
-    return null;
-  }
-
-  public String getCoreJS() throws IOException {
-    BufferedReader br = new BufferedReader(
-        new InputStreamReader(context.getAssets().open("public/native-bridge.js")));
-
-    StringBuffer b = new StringBuffer();
-    String line;
-    while((line = br.readLine()) != null) {
-      b.append(line + "\n");
-    }
-
-    return b.toString();
-  }
-
 
   public Context getContext() {
     return this.context;
@@ -105,15 +78,6 @@ public class Bridge {
 
   public WebView getWebView() {
     return this.webView;
-  }
-
-  public void registerCoreJS() {
-    try {
-      Log.d(TAG, "Exporting core Avocado JS");
-      JSExport.exportAvocadoJS(context, webView);
-    } catch(JSExportException ex) {
-      Log.e(TAG, "Unable to export core bridge JS. Bridge will not function!", ex);
-    }
   }
 
   public void registerCorePlugins() {
@@ -144,7 +108,6 @@ public class Bridge {
 
     try {
       this.plugins.put(pluginId, new KnownPlugin(this, pluginClass));
-      JSExport.exportJS(context, webView, pluginId, pluginClass);
     } catch(InvalidPluginException ex) {
       Log.e(Bridge.TAG, "NativePlugin " + pluginClass.getName() +
           " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
@@ -211,6 +174,68 @@ public class Bridge {
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
   }
+
+  /**
+   * Build the JSInjector that will be used to inject JS into files served to the app,
+   * to ensure that Avocado's JS and the JS for all the plugins is loaded each time.
+   */
+  private JSInjector getJSInjector() {
+    try {
+      String coreJS = getCoreJS();
+      String pluginJS = getPluginJS();
+
+      return new JSInjector(coreJS, pluginJS);
+    } catch(IOException ex) {
+      Log.e(TAG, "Unable to inject Avocado JS. App will not function!", ex);
+    }
+    return null;
+  }
+
+  private String getCoreJS() throws IOException {
+    BufferedReader br = new BufferedReader(
+        new InputStreamReader(context.getAssets().open("public/native-bridge.js")));
+
+    StringBuffer b = new StringBuffer();
+    String line;
+    while((line = br.readLine()) != null) {
+      b.append(line + "\n");
+    }
+
+    return b.toString();
+  }
+
+  private String getPluginJS() {
+    StringBuilder b = new StringBuilder();
+
+
+    for(KnownPlugin plugin : this.plugins.values()) {
+      b.append("(function(w) {\n" +
+          "var a = w.Avocado; var p = a.Plugins;\n" +
+          "var t = p['" + plugin.getId() + "'] = {};\n" +
+          "t.addListener = function(eventName, callback) {\n" +
+          "  return w.Avocado.addListener('" + plugin.getId() + "', eventName, callback);\n" +
+          "}\n" +
+          "t.removeListener = function(eventName, callback) {\n" +
+          "  return w.Avocado.removeListener('" + plugin.getId() + "', eventName, callback);\n" +
+          "}");
+
+
+      Collection<PluginMethodHandle> methods = plugin.getMethods();
+
+      for(PluginMethodHandle method : methods) {
+        b.append(generateMethodJS(method));
+      }
+    }
+
+    b.append("})(window);");
+
+    return b.toString();
+  }
+
+  private String generateMethodJS(PluginMethodHandle method) {
+
+  }
+
 
   /**
    * Handle a request permission result by finding the that requested

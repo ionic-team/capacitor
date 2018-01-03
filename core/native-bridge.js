@@ -1,5 +1,8 @@
 (function(win) {
-  win.Avocado = win.Avocado || {};
+  win.Avocado = win.Avocado || {
+    Plugins: {}
+  };
+
   var avocado = Avocado;
 
   // keep a collection of callbacks for native response data
