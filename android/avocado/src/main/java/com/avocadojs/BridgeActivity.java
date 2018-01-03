@@ -18,10 +18,34 @@ public class BridgeActivity extends AppCompatActivity {
   }
 
   protected void load() {
-    Log.d(Bridge.TAG, "Starting Avocado Activity");
+    Log.d(Bridge.TAG, "Starting BridgeActivity");
 
     WebView webView = findViewById(R.id.webview);
     bridge = new Bridge(this, webView);
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    Log.d(Bridge.TAG, "App started");
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.d(Bridge.TAG, "App resumed");
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    Log.d(Bridge.TAG, "App paused");
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    Log.d(Bridge.TAG, "App destroyed");
   }
 
   @Override

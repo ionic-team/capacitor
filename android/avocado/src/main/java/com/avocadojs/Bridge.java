@@ -170,8 +170,8 @@ public class Bridge {
           try {
             plugin.invoke(methodName, call);
 
-            if(call.getSave()) {
-
+            if(call.isSaved()) {
+              saveCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
             Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
@@ -191,6 +191,9 @@ public class Bridge {
     taskHandler.post(runnable);
   }
 
+  public void saveCall(PluginCall call) {
+    this.savedCalls.put(call.getCallbackId(), call);
+  }
 
   /**
    * Get a saved plugin call
