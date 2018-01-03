@@ -59,8 +59,6 @@ public class Bridge {
     webView.setWebViewClient(new WebViewClient() {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        String path = request.getUrl().getPath();
-        Log.d(TAG, "Loading file: " + path);
         return localServer.shouldInterceptRequest(request);
       }
     });
@@ -97,6 +95,7 @@ public class Bridge {
 
     return b.toString();
   }
+
 
   public Context getContext() {
     return this.context;
