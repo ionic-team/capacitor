@@ -71,7 +71,7 @@ public class MessageHandler {
         data.put("data", successResult);
       }
 
-      final String runScript = "avocado.fromNative(" + data.toString() + ")";
+      final String runScript = "window.Avocado.fromNative(" + data.toString() + ")";
 
       final WebView webView = this.webView;
       webView.post(new Runnable() {

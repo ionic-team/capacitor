@@ -1,14 +1,13 @@
 (function(win) {
   alert('Running avocado!');
   win.Avocado = win.Avocado || {};
+  var avocado = Avocado;
 
   // keep a collection of callbacks for native response data
   var calls = {};
 
   // keep a counter of callback ids
   var callbackIdCount = 0;
-
-  var avocado = Avocado;
 
   var lastError = null;
   var errorModal = null;
@@ -222,8 +221,13 @@
           errorObject: JSON.stringify(error)
         }
       };
-      window.Avocado.handleError(error);
-      window.webkit.messageHandlers.avocado.postMessage(errObj);
+
+      win.Avocado.handleError(error);
+      if(avocado.platform == 'android') {
+        win.androidBridge.postMessage(JSON.stringify(errObj));
+      } else if(avocado.platform == 'ios') {
+        win.webkit.messageHandlers.bridge.postMessage(errObj);
+      }
     }
 
     return false;
