@@ -36,7 +36,7 @@ export interface AccessibilityPlugin {
    * Speak a string with a connected screen reader.
    * @param value the string to speak
    */
-  speak(value: string): Promise<void>;
+  speak(options: { value: string }): Promise<void>;
 
   /**
    * Listen for screen reader state change (on/off)
@@ -73,7 +73,7 @@ export interface BrowserPlugin extends Plugin {
   /**
    * Open a page with the given URL
    */
-  open(url: string): Promise<void>;
+  open(options: { url: string }): Promise<void>;
 
   /**
    * Close an open browser
@@ -171,56 +171,44 @@ export interface FilesystemPlugin extends Plugin {
 
   /**
    * Write a file to disk in the specified location on device
-   * @param file the filename to write
-   * @param data the data to write
-   * @param directory the FilesystemDirectory to store the file in
-   * @param encoding the encoding to write the file in (defaults to utf8)
+   * @param options options for the file write
    * @return a promise that resolves with the file write result
    */
-  writeFile(file: string, data: string, directory: FilesystemDirectory, encoding: string) : Promise<FileWriteResult>;
+  writeFile(options: FileWriteOptions) : Promise<FileWriteResult>;
 
   /**
    * Append to a file on disk in the specified location on device
-   * @param file the filename to write
-   * @param data the data to write
-   * @param directory the FilesystemDirectory to store the file in
-   * @param encoding the encoding to write the file in (defaults to utf8)
+   * @param options options for the file append
    * @return a promise that resolves with the file write result
    */
-  appendFile(file: string, data: string, directory: FilesystemDirectory, encoding: string) : Promise<FileAppendResult>;
+  appendFile(options: FileAppendOptions) : Promise<FileAppendResult>;
 
   /**
    * Read a file from disk
-   * @param file the filename to write
-   * @param directory the FilesystemDirectory to store the file in
-   * @param encoding the encoding to write the file in (defaults to utf8)
+   * @param options options for the file read
    * @return a promise that resolves with the read file data result
    */
-  readFile(file: string, directory: FilesystemDirectory, encoding: string) : Promise<FileReadResult>;
+  readFile(options: FileReadOptions) : Promise<FileReadResult>;
 
   /**
    * Delete a file from disk
-   * @param file the filename to write
-   * @param directory the FilesystemDirectory to store the file in
+   * @param options options for the file delete
    * @return a promise that resolves with the deleted file data result
    */
-  deleteFile(file: string, directory: FilesystemDirectory) : Promise<FileDeleteResult>;
+  deleteFile(options: FileDeleteOptions) : Promise<FileDeleteResult>;
 
   /**
    * Create a directory.
-   * @param path the path of the directory to create
-   * @param directory the FilesystemDirectory where the new directory will live under
-   * @param createIntermediateDirectories whether to create missing parent directories
+   * @param options options for the mkdir
    * @return a promise that resolves with the mkdir result
    */
-  mkdir(path: string, directory: FilesystemDirectory, createIntermediateDirectories: boolean) : Promise<MkdirResult>;
+  mkdir(options: MkdirOptions) : Promise<MkdirResult>;
 
   /**
    * Remove a directory
-   * @param path the path of directory to remove
-   * @param directory the FilesystemDirectory to remove the directory under
+   * @param options the options for the directory remove
    */
-  rmdir(path: string, directory: FilesystemDirectory) : Promise<RmdirResult>;
+  rmdir(options: RmdirOptions) : Promise<RmdirResult>;
 
   /**
    * Return a list of files from the directory (not recursive)
@@ -264,6 +252,96 @@ export enum FilesystemDirectory {
    * The external storage directory (Android only)
    */
   ExternalStorage = 'EXTERNAL_STORAGE'
+}
+
+export interface FileWriteOptions {
+  /**
+   * the filename to write
+   */
+  file: string;
+  /**
+   * The data to write
+   */
+  data: string;
+  /**
+   * The FilesystemDirectory to store the file in
+   */
+  directory: FilesystemDirectory;
+  /**
+   * The encoding to write the file in (defautls to utf8)
+   */
+  encoding: string;
+}
+
+export interface FileAppendOptions {
+  /**
+   * the filename to write
+   */
+  file: string;
+  /**
+   * The data to write
+   */
+  data: string;
+  /**
+   * The FilesystemDirectory to store the file in
+   */
+  directory: FilesystemDirectory;
+  /**
+   * The encoding to write the file in (defautls to utf8)
+   */
+  encoding: string;
+}
+
+export interface FileReadOptions {
+  /**
+   * the filename to read
+   */
+  file: string;
+  /**
+   * The FilesystemDirectory to read the file from
+   */
+  directory: FilesystemDirectory;
+  /**
+   * The encoding to read the file in (defautls to utf8)
+   */
+  encoding: string;
+}
+
+export interface FileDeleteOptions {
+  /**
+   * the filename to delete
+   */
+  file: string;
+  /**
+   * The FilesystemDirectory to delete the file from
+   */
+  directory: FilesystemDirectory;
+}
+
+export interface MkdirOptions {
+  /**
+   * The path of the new directory
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to make the new directory in
+   */
+  directory: FilesystemDirectory;
+  /**
+   * Whether to create any missing parent directories as well
+   */
+  createIntermediateDirectories: boolean;
+}
+
+export interface RmdirOptions {
+  /**
+   * The path of the directory to remove
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to remove the directory from
+   */
+  directory: FilesystemDirectory;
 }
 
 export interface FileReadResult {

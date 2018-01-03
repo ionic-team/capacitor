@@ -5,6 +5,7 @@ import android.os.Message;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class KnownPlugin {
   private final Bridge bridge;
   private final Class<? extends Plugin> pluginClass;
 
-  private Map<String, PluginMethodMetadata> pluginMethods = new HashMap<>();
+  private Map<String, PluginMethodHandle> pluginMethods = new HashMap<>();
 
   private final String pluginId;
 
@@ -48,6 +49,10 @@ public class KnownPlugin {
     return this.instance;
   }
 
+  public Collection<PluginMethodHandle> getMethods() {
+    return this.pluginMethods.values();
+  }
+
   public Plugin load() throws PluginLoadException {
     if(this.instance != null) {
       return this.instance;
@@ -76,7 +81,7 @@ public class KnownPlugin {
       this.load();
     }
 
-    PluginMethodMetadata methodMeta = pluginMethods.get(methodName);
+    PluginMethodHandle methodMeta = pluginMethods.get(methodName);
     if(methodMeta == null) {
       throw new InvalidPluginMethodException("No method " + methodName + " found for plugin " + pluginClass.getName());
     }
@@ -103,7 +108,7 @@ public class KnownPlugin {
         continue;
       }
 
-      PluginMethodMetadata methodMeta = new PluginMethodMetadata(methodReflect);
+      PluginMethodHandle methodMeta = new PluginMethodHandle(methodReflect);
       pluginMethods.put(methodReflect.getName(), methodMeta);
     }
   }
