@@ -6,6 +6,12 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Wraps a call from the web layer to native
  */
@@ -138,12 +144,27 @@ public class PluginCall {
     return this.getArray(name, new JSArray());
   }
 
+  /**
+   * Get a JSONArray and turn it into a JSArray
+   * @param name
+   * @param defaultValue
+   * @return
+   */
   public JSArray getArray(String name, JSArray defaultValue) {
     Object value = this.data.opt(name);
     if(value == null) { return defaultValue; }
 
-    if(value instanceof JSArray) {
-      return (JSArray) value;
+    if(value instanceof JSONArray) {
+      try {
+        JSONArray valueArray = (JSONArray) value;
+        List<Object> items = new ArrayList<>();
+        for (int i = 0; i < valueArray.length(); i++) {
+          items.add(valueArray.get(i));
+        }
+        return new JSArray(items.toArray());
+      } catch(JSONException ex) {
+        return defaultValue;
+      }
     }
     return defaultValue;
   }

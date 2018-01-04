@@ -3,9 +3,11 @@ package com.avocadojs.plugin;
 import android.content.ComponentName;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
@@ -23,6 +25,7 @@ public class Browser extends Plugin {
   public static final String CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome";  // Change when in stable
 
   private CustomTabsClient customTabsClient;
+  private CustomTabsSession currentSession;
 
   CustomTabsServiceConnection connection = new CustomTabsServiceConnection() {
     @Override
@@ -38,7 +41,20 @@ public class Browser extends Plugin {
   };
 
   public void load() {
+    Log.d(Bridge.TAG, "LOADING!");
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
+  }
+
+  public CustomTabsSession getCustomTabsSession() {
+    if (customTabsClient == null) {
+      return null;
+    }
+
+    if (currentSession == null) {
+      currentSession = customTabsClient.newSession(null);
+    }
+
+    return currentSession;
   }
 
   @PluginMethod()
@@ -71,6 +87,7 @@ public class Browser extends Plugin {
     call.success();
   }
 
+
   @PluginMethod()
   public void prefetch(PluginCall call) {
     JSArray urls = call.getArray("urls");
@@ -79,12 +96,21 @@ public class Browser extends Plugin {
       return;
     }
 
-    for(int i = 0; i < urls.length(); i++) {
-      try {
-        String url = urls.getString(i);
-      } catch(JSONException ex) {
-        Log.e(Bridge.TAG, "Invalid URL supplied to Browser.prefetch", ex);
+    CustomTabsSession session = getCustomTabsSession();
+
+    if (session == null) {
+      call.error("Browser session isn't ready yet");
+      return;
+    }
+
+    try {
+      for (String url : urls.<String>toList()) {
+        Log.d(Bridge.TAG, "May launch URL: " + url);
+        session.mayLaunchUrl(Uri.parse(url), null, null);
       }
+    } catch(JSONException ex) {
+      call.error("Unable to process provided urls list. Ensure each item is a string and valid URL", ex);
+      return;
     }
   }
 }

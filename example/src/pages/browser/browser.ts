@@ -25,6 +25,9 @@ export class BrowserPage {
     Plugins.Browser.addListener('browserPageLoaded', (err: any, info: any) => {
       console.log('Browser page loaded!');
     });
+    Plugins.Browser.prefetch({
+      urls: ["http://ionicframework.com/"]
+    });
   }
 
   ionViewDidLoad() {
