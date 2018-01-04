@@ -10,4 +10,5 @@ Pod::Spec.new do |s|
   s.source_files = 'Avocado/*.{swift,h,m}', 'Avocado/Plugins/*.{swift,h,m}', 'Avocado/Plugins/**/*.{swift,h,m}'
   s.resources = "Avocado/Scripts/*"
   s.dependency 'AvocadoCordova', '0.0.1'
+  s.dependency 'GCDWebServer', '~> 3.0'
 end

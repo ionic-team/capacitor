@@ -2,6 +2,7 @@
 target 'Avocado' do
   use_frameworks!
   pod 'AvocadoCordova', :path => '../AvocadoCordova'
+  pod 'GCDWebServer', '~> 3.0'
   target 'AvocadoTests' do
     inherit! :search_paths
     
