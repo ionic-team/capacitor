@@ -16,6 +16,7 @@ import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
+import com.avocadojs.PluginRequestCodes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,7 +34,7 @@ import java.util.Date;
 )
 public class Camera extends Plugin {
   // Request codes
-  static final int REQUEST_IMAGE_CAPTURE = 9001;
+  static final int REQUEST_IMAGE_CAPTURE = PluginRequestCodes.CAMERA_IMAGE_CAPTURE;
 
   // Message constants
   private static final String INVALID_RESULT_TYPE_ERROR = "Invalid resultType option";
