@@ -1,6 +1,7 @@
 package com.avocadojs.plugin;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsCallback;
@@ -35,19 +36,16 @@ public class Browser extends Plugin {
   CustomTabsServiceConnection connection = new CustomTabsServiceConnection() {
     @Override
     public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
-      Log.d(Bridge.TAG, "Connected to custom tabs service: " + name.toString());
       customTabsClient = client;
       client.warmup(0);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-      Log.d(Bridge.TAG, "Disconnected from custom tabs service: " + name.toString());
     }
   };
 
   public void load() {
-    Log.d(Bridge.TAG, "LOADING!");
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
   }
 
@@ -73,7 +71,9 @@ public class Browser extends Plugin {
       return;
     }
 
-    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(getCustomTabsSession());
+
+    builder.addDefaultShareMenuItem();
 
     if (toolbarColor != null) {
       try {
@@ -84,6 +84,8 @@ public class Browser extends Plugin {
     }
 
     CustomTabsIntent tabsIntent = builder.build();
+    tabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
+        Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + getContext().getPackageName()));
     tabsIntent.launchUrl(getContext(), Uri.parse(url));
   }
 

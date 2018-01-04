@@ -26,7 +26,7 @@ export class BrowserPage {
       console.log('Browser page loaded!');
     });
     Plugins.Browser.prefetch({
-      urls: ["http://ionicframework.com/"]
+      urls: ["https://ionicframework.com/"]
     });
   }
 
@@ -36,7 +36,7 @@ export class BrowserPage {
 
   browserOpen() {
     Plugins.Browser.open({
-      url: 'http://ionicframework.com',
+      url: 'https://ionicframework.com',
       toolbarColor: "#5A5DF5"
     });
 
