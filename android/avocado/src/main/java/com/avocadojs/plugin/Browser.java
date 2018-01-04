@@ -20,6 +20,11 @@ import com.avocadojs.PluginRequestCodes;
 
 import org.json.JSONException;
 
+/**
+ * The Browser plugin implements Custom Chrome Tabs. See
+ * https://developer.chrome.com/multidevice/android/customtabs for background
+ * on how this code works.
+ */
 @NativePlugin(requestCodes={PluginRequestCodes.BROWSER_OPEN_CHROME_TAB})
 public class Browser extends Plugin {
   public static final String CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome";  // Change when in stable
@@ -32,6 +37,7 @@ public class Browser extends Plugin {
     public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
       Log.d(Bridge.TAG, "Connected to custom tabs service: " + name.toString());
       customTabsClient = client;
+      client.warmup(0);
     }
 
     @Override
@@ -105,7 +111,6 @@ public class Browser extends Plugin {
 
     try {
       for (String url : urls.<String>toList()) {
-        Log.d(Bridge.TAG, "May launch URL: " + url);
         session.mayLaunchUrl(Uri.parse(url), null, null);
       }
     } catch(JSONException ex) {
