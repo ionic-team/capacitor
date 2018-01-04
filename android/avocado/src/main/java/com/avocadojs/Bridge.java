@@ -63,6 +63,7 @@ public class Bridge {
     final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
+    webView.setWebChromeClient(new BridgeWebChromeClient());
     webView.setWebViewClient(new WebViewClient() {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
