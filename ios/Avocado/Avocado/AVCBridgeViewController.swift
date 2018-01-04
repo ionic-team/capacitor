@@ -8,10 +8,12 @@
 
 import UIKit
 import WebKit
+import GCDWebServer
 
 class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
+  private var webServer: GCDWebServer?
   
   // Construct the avocado runtime
   public var bridge: AVCBridge?
@@ -36,6 +38,7 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     // Create the bridge with our ViewController and WebView
     bridge = AVCBridge(self, webView!)
+
   }
   
   override func viewDidLoad() {
@@ -56,14 +59,24 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       print("🥑  Avocado can run. Ensure you've run avocado sync at least once")
       exit(1)
     }
-    
-    let indexPath = "file://" + index;
-    let indexUrl = URL(fileURLWithPath: indexPath);
-    let indexDir = "file://" + indexUrl.deletingLastPathComponent().path;
-    
-    if let url = URL(string: indexPath) {
-      _ = webView?.loadFileURL(url, allowingReadAccessTo: URL(string: indexDir)!)
+
+    self.webServer = GCDWebServer.init()
+    self.webServer?.addGETHandler(forBasePath: "/", directoryPath: index, indexFilename: nil, cacheAge: 3600, allowRangeRequests: true)
+
+    do {
+      let options = [
+        GCDWebServerOption_Port: 8080,
+        GCDWebServerOption_BindToLocalhost: true,
+        GCDWebServerOption_ServerName: "Ionic"
+        ] as [String : Any]
+      try self.webServer?.start(options: options)
+    } catch {
+      print(error)
     }
+
+    let request = URLRequest(url: URL(string: "http://localhost:8080/index.html")!)
+    _ = webView?.load(request)
+
   }
   
   public func configureWebView(configuration: WKWebViewConfiguration) {
