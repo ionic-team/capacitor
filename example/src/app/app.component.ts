@@ -41,6 +41,16 @@ export class MyApp {
     Plugins.AppState.addListener('appStateChanged', (err: any, state: any) => {
       console.log('App state changed', state);
     });
+
+    this.getLaunchUrl();
+  }
+
+  async getLaunchUrl() {
+    const ret = await Plugins.AppState.getLaunchUrl();
+    if(ret && ret.url) {
+      alert('App opened with URL: ' + ret.url);
+    }
+    console.log('Launch url: ', ret);
   }
 
   openPlugin(plugin: any) {
