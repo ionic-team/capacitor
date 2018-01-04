@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.EditText;
 
+import com.avocadojs.Dialogs;
 import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
@@ -29,30 +30,10 @@ public class Modals extends Plugin {
       return;
     }
 
-    getActivity().runOnUiThread(new Runnable() {
+    Dialogs.alert(c, message, title, buttonTitle, new Dialogs.OnResultListener() {
       @Override
-      public void run() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(c);
-
-        builder
-            .setMessage(message)
-            .setTitle(title)
-            .setPositiveButton(buttonTitle, new AlertDialog.OnClickListener() {
-              public void onClick(DialogInterface dialog, int buttonIndex) {
-                dialog.dismiss();
-                call.success();
-              }
-            })
-            .setOnCancelListener(new AlertDialog.OnCancelListener() {
-              public void onCancel(DialogInterface dialog) {
-                dialog.dismiss();
-                call.success();
-              }
-            });
-
-        AlertDialog dialog = builder.create();
-
-        dialog.show();
+      public void onResult(boolean value, boolean didCancel, String inputValue) {
+        call.success();
       }
     });
   }
