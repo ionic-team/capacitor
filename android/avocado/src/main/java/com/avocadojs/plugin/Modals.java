@@ -5,14 +5,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.EditText;
 
+import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
 import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 /**
  * Common popup modals
@@ -84,32 +81,26 @@ public class Modals extends Plugin {
             .setPositiveButton(okButtonTitle, new AlertDialog.OnClickListener() {
               public void onClick(DialogInterface dialog, int buttonIndex) {
                 dialog.dismiss();
-                JSONObject ret = new JSONObject();
-                try {
-                  ret.put("value", true);
-                  call.success(ret);
-                } catch(JSONException ex) {}
+                JSObject ret = new JSObject();
+                ret.put("value", true);
+                call.success(ret);
               }
             })
             .setNegativeButton(cancelButtonTitle, new AlertDialog.OnClickListener() {
               public void onClick(DialogInterface dialog, int buttonIndex) {
                 dialog.dismiss();
-                JSONObject ret = new JSONObject();
-                try {
-                  ret.put("value", false);
-                  call.success(ret);
-                } catch(JSONException ex) {}
+                JSObject ret = new JSObject();
+                ret.put("value", false);
+                call.success(ret);
               }
             })
 
             .setOnCancelListener(new AlertDialog.OnCancelListener() {
               public void onCancel(DialogInterface dialog) {
                 dialog.dismiss();
-                JSONObject ret = new JSONObject();
-                try {
-                  ret.put("value", false);
-                  call.success(ret);
-                } catch(JSONException ex) {}
+                JSObject ret = new JSObject();
+                ret.put("value", false);
+                call.success(ret);
               }
             });
 
@@ -152,34 +143,28 @@ public class Modals extends Plugin {
 
                 String inputText = input.getText().toString().trim();
 
-                JSONObject ret = new JSONObject();
-                try {
-                  ret.put("value", inputText);
-                  ret.put("cancelled", false);
-                  call.success(ret);
-                } catch(JSONException ex) {}
+                JSObject ret = new JSObject();
+                ret.put("value", inputText);
+                ret.put("cancelled", false);
+                call.success(ret);
               }
             })
             .setNegativeButton(cancelButtonTitle, new AlertDialog.OnClickListener() {
               public void onClick(DialogInterface dialog, int buttonIndex) {
                 dialog.dismiss();
-                JSONObject ret = new JSONObject();
-                try {
-                  ret.put("value", "");
-                  ret.put("cancelled", true);
-                  call.success(ret);
-                } catch(JSONException ex) {}
+                JSObject ret = new JSObject();
+                ret.put("value", "");
+                ret.put("cancelled", true);
+                call.success(ret);
               }
             })
             .setOnCancelListener(new AlertDialog.OnCancelListener() {
               public void onCancel(DialogInterface dialog) {
                 dialog.dismiss();
-                JSONObject ret = new JSONObject();
-                try {
-                  ret.put("value", "");
-                  ret.put("cancelled", true);
-                  call.success(ret);
-                } catch(JSONException ex) {}
+                JSObject ret = new JSObject();
+                ret.put("value", "");
+                ret.put("cancelled", true);
+                call.success(ret);
               }
             });
 

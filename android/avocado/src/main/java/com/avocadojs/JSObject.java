@@ -1,5 +1,6 @@
 package com.avocadojs;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +28,14 @@ public class JSObject extends JSONObject {
 
   @Override
   public JSObject put(String key, long value) {
+    try {
+      super.put(key, value);
+    } catch(JSONException ex) {}
+    return this;
+  }
+
+  @Override
+  public JSObject put(String key, double value) {
     try {
       super.put(key, value);
     } catch(JSONException ex) {}
