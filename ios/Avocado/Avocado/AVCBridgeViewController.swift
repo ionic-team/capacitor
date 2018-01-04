@@ -53,15 +53,15 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   func loadWebView() {
-    guard let index = Bundle.main.path(forResource: "public/index", ofType: "html") else {
+    if Bundle.main.path(forResource: "public/index", ofType: "html") == nil {
       print("🥑  FATAL ERROR: Unable to load public/index.html")
       print("🥑  This file is the root of your web app and must exist before")
       print("🥑  Avocado can run. Ensure you've run avocado sync at least once")
       exit(1)
     }
-
+    let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
     self.webServer = GCDWebServer.init()
-    self.webServer?.addGETHandler(forBasePath: "/", directoryPath: index, indexFilename: nil, cacheAge: 3600, allowRangeRequests: true)
+    self.webServer?.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: nil, cacheAge: 3600, allowRangeRequests: true)
 
     do {
       let options = [
