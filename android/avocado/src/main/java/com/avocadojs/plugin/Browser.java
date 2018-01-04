@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
@@ -32,37 +33,6 @@ public class Browser extends Plugin {
 
   private CustomTabsClient customTabsClient;
   private CustomTabsSession currentSession;
-
-  CustomTabsServiceConnection connection = new CustomTabsServiceConnection() {
-    @Override
-    public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
-      customTabsClient = client;
-      client.warmup(0);
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-    }
-  };
-
-  public void load() {
-    boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
-    if (!ok) {
-      Log.e(Bridge.TAG, "Error binding to custom tabs service");
-    }
-  }
-
-  public CustomTabsSession getCustomTabsSession() {
-    if (customTabsClient == null) {
-      return null;
-    }
-
-    if (currentSession == null) {
-      currentSession = customTabsClient.newSession(null);
-    }
-
-    return currentSession;
-  }
 
   @PluginMethod()
   public void open(PluginCall call) {
@@ -122,5 +92,43 @@ public class Browser extends Plugin {
       call.error("Unable to process provided urls list. Ensure each item is a string and valid URL", ex);
       return;
     }
+  }
+
+  CustomTabsServiceConnection connection = new CustomTabsServiceConnection() {
+    @Override
+    public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
+      customTabsClient = client;
+      client.warmup(0);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+    }
+  };
+
+  public void load() {
+    boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
+    if (!ok) {
+      Log.e(Bridge.TAG, "Error binding to custom tabs service");
+    }
+  }
+
+  public CustomTabsSession getCustomTabsSession() {
+    if (customTabsClient == null) {
+      return null;
+    }
+
+    if (currentSession == null) {
+      currentSession = customTabsClient.newSession(null);
+    }
+
+    return currentSession;
+  }
+
+  @Override
+  protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
+    super.handleOnActivityResult(requestCode, resultCode, data);
+
+    Log.d(Bridge.TAG, "ACTIVITY RESULT! " + requestCode + ", " + resultCode);
   }
 }
