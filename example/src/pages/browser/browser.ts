@@ -33,7 +33,8 @@ export class BrowserPage {
 
   browserOpen() {
     Plugins.Browser.open({
-      url: 'http://ionicframework.com'
+      url: 'http://ionicframework.com',
+      toolbarColor: "#5A5DF5"
     });
 
     setTimeout(() => {

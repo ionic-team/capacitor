@@ -73,7 +73,7 @@ export interface BrowserPlugin extends Plugin {
   /**
    * Open a page with the given URL
    */
-  open(options: { url: string }): Promise<void>;
+  open(options: BrowserOpenOptions): Promise<void>;
 
   /**
    * Close an open browser
@@ -82,6 +82,18 @@ export interface BrowserPlugin extends Plugin {
 
   addListener(eventName: 'browserFinished', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
   addListener(eventName: 'browserPageLoaded', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
+}
+
+export interface BrowserOpenOptions {
+  /**
+   * The URL to open the browser to
+   */
+  url: string;
+
+  /**
+   * A hex color to set the toolbar color to.
+   */
+  toolbarColor?: string;
 }
 
 //
