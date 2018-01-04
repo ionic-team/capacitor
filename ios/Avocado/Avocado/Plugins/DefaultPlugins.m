@@ -12,6 +12,7 @@ AVC_PLUGIN(AppState,)
 AVC_PLUGIN(Browser,
   AVC_PLUGIN_METHOD(open, AVCPluginReturnPromise);
   AVC_PLUGIN_METHOD(close, AVCPluginReturnPromise);
+  AVC_PLUGIN_METHOD(prefetch, AVCPluginReturnPromise);
 )
 
 AVC_PLUGIN(Camera,

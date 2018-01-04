@@ -36,11 +36,11 @@ public class MessageHandler {
     try {
       Log.d("postMessage", jsonStr);
 
-      JSONObject postData = new JSONObject(jsonStr);
+      JSObject postData = new JSObject(jsonStr);
       String callbackId = postData.getString("callbackId");
       String pluginId = postData.getString("pluginId");
       String methodName = postData.getString("methodName");
-      JSONObject methodData = postData.getJSONObject("options");
+      JSObject methodData = postData.getJSObject("options");
 
       Log.d("postMessage", "callback: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName + ", methodData: " + methodData.toString());
 
@@ -51,7 +51,7 @@ public class MessageHandler {
     }
   }
 
-  void callPluginMethod(String callbackId, String pluginId, String methodName, JSONObject methodData) {
+  void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {
     PluginCall call = new PluginCall(this, callbackId, methodData);
 
     bridge.callPluginMethod(pluginId, methodName, call);
