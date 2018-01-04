@@ -51,6 +51,7 @@ export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnab
 //
 
 export interface AppStatePlugin extends Plugin {
+  getLaunchUrl(): Promise<{url: string}>;
   /**
    * Listen for internal plugin errors if you'd like to have more diagnostics on
    * serious plugin runtime errors.

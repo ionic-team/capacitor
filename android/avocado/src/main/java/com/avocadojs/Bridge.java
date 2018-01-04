@@ -3,6 +3,7 @@ package com.avocadojs;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
@@ -50,11 +51,18 @@ public class Bridge {
   // Stored plugin calls that we're keeping around to call again someday
   private Map<String, PluginCall> savedCalls = new HashMap<>();
 
+  // Any URI that was passed to the app on start
+  private Uri intentUri;
+
 
   public Bridge(Activity context, WebView webView) {
     this.context = context;
     this.webView = webView;
     this.msgHandler = new MessageHandler(this, webView);
+
+    Intent intent = context.getIntent();
+    Uri intentData = intent.getData();
+    this.intentUri = intentData;
 
     this.registerCorePlugins();
 
@@ -86,6 +94,15 @@ public class Bridge {
 
   public WebView getWebView() {
     return this.webView;
+  }
+
+
+  /**
+   * Get the URI that was used to launch the app (if any)
+   * @return
+   */
+  public Uri getIntentUri() {
+    return intentUri;
   }
 
   /*
