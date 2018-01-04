@@ -11,12 +11,18 @@ public class Browser : AVCPlugin, SFSafariViewControllerDelegate {
       return
     }
     
+    let toolbarColor = call.getString("toolbarColor")
     let url = URL(string: urlString)
     
     DispatchQueue.main.async {
       self.vc = SFSafariViewController.init(url: url!)
       self.vc!.delegate = self
       self.vc!.modalPresentationStyle = .popover
+      
+      if toolbarColor != nil {
+        self.vc!.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
+      }
+      
       self.setCenteredPopover(self.vc)
       self.bridge.viewController.present(self.vc!, animated: true, completion: {
         call.success()
