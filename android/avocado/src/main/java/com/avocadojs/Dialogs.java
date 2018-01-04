@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.EditText;
 
 /**
  * Simple utility for showing common web dialogs
@@ -68,5 +69,115 @@ public class Dialogs {
       }
     });
 
+  }
+
+  public static void confirm(final Context context,
+                             final String message,
+                             final Dialogs.OnResultListener listener) {
+    confirm(context, message, null, null, null, listener);
+  }
+
+  public static void confirm(final Context context,
+                             final String message,
+                             final String title,
+                             final String okButtonTitle,
+                             final String cancelButtonTitle,
+                             final Dialogs.OnResultListener listener) {
+    final String confirmTitle = title == null ? "Confirm" : title;
+    final String confirmOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
+    final String confirmCancelButtonTitle = cancelButtonTitle == null ? "Cancel" : cancelButtonTitle;
+
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
+      @Override
+      public void run() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder
+            .setMessage(message)
+            .setTitle(confirmTitle)
+            .setPositiveButton(confirmOkButtonTitle, new AlertDialog.OnClickListener() {
+              public void onClick(DialogInterface dialog, int buttonIndex) {
+                dialog.dismiss();
+                listener.onResult(true, false, null);
+              }
+            })
+            .setNegativeButton(confirmCancelButtonTitle, new AlertDialog.OnClickListener() {
+              public void onClick(DialogInterface dialog, int buttonIndex) {
+                dialog.dismiss();
+                listener.onResult(false, false, null);
+              }
+            })
+
+            .setOnCancelListener(new AlertDialog.OnCancelListener() {
+              public void onCancel(DialogInterface dialog) {
+                dialog.dismiss();
+                listener.onResult(false, true, null);
+              }
+            });
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
+      }
+    });
+  }
+
+  public static void prompt(final Context context,
+                            final String message,
+                            final Dialogs.OnResultListener listener) {
+
+    prompt(context, message, null, null, null, null, listener);
+  }
+
+  public static void prompt(final Context context,
+                            final String message,
+                            final String title,
+                            final String okButtonTitle,
+                            final String cancelButtonTitle,
+                            final String inputPlaceholder,
+                            final Dialogs.OnResultListener listener) {
+    final String promptTitle = title == null ? "Prompt" : title;
+    final String promptOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
+    final String promptCancelButtonTitle = cancelButtonTitle == null ? "Cancel" : cancelButtonTitle;
+    final String promptInputPlaceholder = inputPlaceholder == null ? "" : inputPlaceholder;
+
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
+      @Override
+      public void run() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final EditText input = new EditText(context);
+
+        input.setText(promptInputPlaceholder);
+
+        builder
+            .setMessage(message)
+            .setTitle(promptTitle)
+            .setView(input)
+            .setPositiveButton(promptOkButtonTitle, new AlertDialog.OnClickListener() {
+              public void onClick(DialogInterface dialog, int buttonIndex) {
+                dialog.dismiss();
+
+                String inputText = input.getText().toString().trim();
+                listener.onResult(true, false, inputText);
+              }
+            })
+            .setNegativeButton(promptCancelButtonTitle, new AlertDialog.OnClickListener() {
+              public void onClick(DialogInterface dialog, int buttonIndex) {
+                dialog.dismiss();
+                listener.onResult(false, true, null);
+              }
+            })
+            .setOnCancelListener(new AlertDialog.OnCancelListener() {
+              public void onCancel(DialogInterface dialog) {
+                dialog.dismiss();
+                listener.onResult(false, true, null);
+              }
+            });
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
+      }
+    });
   }
 }
