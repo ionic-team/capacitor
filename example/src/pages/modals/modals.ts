@@ -77,4 +77,16 @@ export class ModalsPage {
     });
     console.log('Share return', shareRet);
   }
+
+  nativeAlert() {
+    alert('This is a browser alert');
+  }
+  nativeConfirm() {
+    var yes = confirm('Do it?');
+    console.log('Confirm result', yes);
+  }
+  nativePrompt() {
+    var val = prompt('Enter name');
+    console.log('Val:', val);
+  }
 }
