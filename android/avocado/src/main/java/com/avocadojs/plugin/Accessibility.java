@@ -27,4 +27,10 @@ public class Accessibility extends Plugin {
     call.success(ret);
   }
 
+  @PluginMethod()
+  public void speak(PluginCall call) {
+    // Not yet implemented
+    throw new UnsupportedOperationException();
+  }
+
 }
