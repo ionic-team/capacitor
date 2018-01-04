@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.avocadojs.Bridge;
+import com.avocadojs.JSArray;
 import com.avocadojs.JSObject;
 import com.avocadojs.NativePlugin;
 import com.avocadojs.Plugin;
@@ -214,13 +215,9 @@ public class Filesystem extends Plugin {
 
     String[] files = fileObject.list();
 
-    JSONObject ret = new JSONObject();
-    try {
-      ret.put("files", new JSONArray(files));
-      call.success(ret);
-    } catch(JSONException ex) {
-      call.error("Unable to list directory", ex);
-    }
+    JSObject ret = new JSObject();
+    ret.put("files", JSArray.from(files));
+    call.success(ret);
   }
 
   @PluginMethod()
@@ -236,16 +233,12 @@ public class Filesystem extends Plugin {
 
     File fileObject = new File(androidDirectory, path);
 
-    try {
-      JSONObject data = new JSONObject();
-      data.put("type", fileObject.isDirectory() ? "directory" : "file");
-      data.put("size", fileObject.length());
-      data.put("ctime", null);
-      data.put("mtime", fileObject.lastModified());
-      call.success(data);
-    } catch(JSONException ex) {
-      call.error("Unable to stat file or directory", ex);
-    }
+    JSObject data = new JSObject();
+    data.put("type", fileObject.isDirectory() ? "directory" : "file");
+    data.put("size", fileObject.length());
+    data.put("ctime", null);
+    data.put("mtime", fileObject.lastModified());
+    call.success(data);
   }
 
   private Charset getEncoding(String encoding) {

@@ -10,6 +10,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.avocadojs.plugin.Accessibility;
 import com.avocadojs.plugin.AppState;
 import com.avocadojs.plugin.Camera;
 import com.avocadojs.plugin.Clipboard;
@@ -20,7 +21,10 @@ import com.avocadojs.plugin.Keyboard;
 import com.avocadojs.plugin.Modals;
 import com.avocadojs.plugin.StatusBar;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,8 +86,25 @@ public class Bridge {
     return this.webView;
   }
 
+  /*
+  public void registerPlugins() {
+    Log.d(TAG, "Finding plugins");
+    try {
+      Enumeration<URL> roots = getClass().getClassLoader().getResources("");
+      while (roots.hasMoreElements()) {
+        URL url = roots.nextElement();
+        Log.d(TAG, "CLASSAPTH ROOT: " + url.getPath());
+        //File root = new File(url.getPath());
+      }
+    } catch(Exception ex) {
+      Log.e(TAG, "Unable to query for plugin classes", ex);
+    }
+  }
+  */
+
   public void registerCorePlugins() {
     this.registerPlugin(AppState.class);
+    this.registerPlugin(Accessibility.class);
     this.registerPlugin(Camera.class);
     this.registerPlugin(Console.class);
     this.registerPlugin(Clipboard.class);
