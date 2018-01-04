@@ -39,6 +39,11 @@ public class Browser : AVCPlugin, SFSafariViewControllerDelegate {
     }
   }
   
+  @objc func prefetch(_ call: AVCPluginCall) {
+    // no-op
+    call.success()
+  }
+  
   public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
     self.notifyListeners("browserFinished", data: [:])
   }

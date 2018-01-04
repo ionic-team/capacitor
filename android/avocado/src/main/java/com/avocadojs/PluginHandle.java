@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * PluginHandle is an instance of a plugin that has been registered
- * and indexed.
+ * and indexed. Think of it as a Plugin instance with extra metadata goodies
  */
 public class PluginHandle {
   private final Bridge bridge;
@@ -23,7 +23,8 @@ public class PluginHandle {
 
   private Plugin instance;
 
-  public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException {
+  public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException,
+                                                                                 PluginLoadException {
     this.bridge = bridge;
     this.pluginClass = pluginClass;
 
@@ -39,6 +40,8 @@ public class PluginHandle {
     }
 
     this.indexMethods(pluginClass);
+
+    this.load();
   }
 
   public Class<? extends Plugin> getPluginClass() {
@@ -65,6 +68,7 @@ public class PluginHandle {
     try {
       this.instance = this.pluginClass.newInstance();
       this.instance.setBridge(this.bridge);
+      this.instance.load();
       return this.instance;
     } catch(InstantiationException | IllegalAccessException ex) {
       throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");

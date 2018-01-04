@@ -6,20 +6,16 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Wraps a call from the web layer to native
  */
 public class PluginCall {
   private final MessageHandler msgHandler;
   private final String callbackId;
-  private final JSONObject data;
+  private final JSObject data;
   private boolean shouldSave = false;
 
-  public PluginCall(MessageHandler msgHandler, String callbackId, JSONObject data) {
+  public PluginCall(MessageHandler msgHandler, String callbackId, JSObject data) {
     this.msgHandler = msgHandler;
     this.callbackId = callbackId;
     this.data = data;
@@ -81,7 +77,7 @@ public class PluginCall {
     return this.callbackId;
   }
 
-  public JSONObject getData() {
+  public JSObject getData() {
     return this.data;
   }
 
@@ -124,30 +120,30 @@ public class PluginCall {
     return defaultValue;
   }
 
-  public JSONObject getObject(String name) {
-    return this.getObject(name, new JSONObject());
+  public JSObject getObject(String name) {
+    return this.getObject(name, new JSObject());
   }
 
-  public JSONObject getObject(String name, JSONObject defaultValue) {
+  public JSObject getObject(String name, JSObject defaultValue) {
     Object value = this.data.opt(name);
     if(value == null) { return defaultValue; }
 
-    if(value instanceof JSONObject) {
-      return (JSONObject) value;
+    if(value instanceof JSObject) {
+      return (JSObject) value;
     }
     return defaultValue;
   }
 
-  public JSONArray getArray(String name) {
-    return this.getArray(name, new JSONArray());
+  public JSArray getArray(String name) {
+    return this.getArray(name, new JSArray());
   }
 
-  public JSONArray getArray(String name, JSONArray defaultValue) {
+  public JSArray getArray(String name, JSArray defaultValue) {
     Object value = this.data.opt(name);
     if(value == null) { return defaultValue; }
 
-    if(value instanceof JSONArray) {
-      return (JSONArray) value;
+    if(value instanceof JSArray) {
+      return (JSArray) value;
     }
     return defaultValue;
   }

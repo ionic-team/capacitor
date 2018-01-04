@@ -28,6 +28,12 @@ public class Plugin {
     eventListeners = new HashMap<>();
   }
 
+  /**
+   * Called when the plugin has been connected to the bridge
+   * and is ready to start initializing.
+   */
+  public void load() {}
+
   public void setBridge(Bridge bridge) {
     this.bridge = bridge;
   }

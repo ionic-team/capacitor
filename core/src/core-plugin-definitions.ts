@@ -76,6 +76,14 @@ export interface BrowserPlugin extends Plugin {
   open(options: BrowserOpenOptions): Promise<void>;
 
   /**
+   * Hint to the browser that the given URLs will be accessed
+   * to improve initial loading times.
+   *
+   * Only functional on Android, is a no-op on iOS
+   */
+  prefetch(options: BrowserPrefetchOptions): Promise<void>;
+
+  /**
    * Close an open browser
    */
   close(): Promise<void>;
@@ -94,6 +102,10 @@ export interface BrowserOpenOptions {
    * A hex color to set the toolbar color to.
    */
   toolbarColor?: string;
+}
+
+export interface BrowserPrefetchOptions {
+  urls: string[];
 }
 
 //

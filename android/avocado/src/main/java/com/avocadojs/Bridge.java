@@ -136,9 +136,11 @@ public class Bridge {
     try {
       this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
     } catch(InvalidPluginException ex) {
-      Log.e(Bridge.TAG, "NativePlugin " + pluginClass.getName() +
+      Log.e(TAG, "NativePlugin " + pluginClass.getName() +
           " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
           " the class extends Plugin");
+    } catch(PluginLoadException ex) {
+      Log.e(TAG, "NativePlugin " + pluginClass.getName() + " failed to load", ex);
     }
   }
 

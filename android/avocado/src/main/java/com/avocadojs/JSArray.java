@@ -4,6 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 public class JSArray extends JSONArray {
+  public JSArray() {
+    super();
+  }
 
   public JSArray(Object array) throws JSONException {
     super(array);
