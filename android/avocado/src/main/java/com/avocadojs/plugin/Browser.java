@@ -47,6 +47,9 @@ public class Browser extends Plugin {
 
   public void load() {
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
+    if (!ok) {
+      Log.e(Bridge.TAG, "Error binding to custom tabs service");
+    }
   }
 
   public CustomTabsSession getCustomTabsSession() {
