@@ -13,6 +13,8 @@ import com.avocadojs.plugin.AppState;
 public class BridgeActivity extends AppCompatActivity {
   private Bridge bridge;
 
+  private int activityDepth = 0;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -43,6 +45,8 @@ public class BridgeActivity extends AppCompatActivity {
   public void onStart() {
     super.onStart();
 
+    activityDepth++;
+
     Log.d(Bridge.TAG, "App started");
   }
 
@@ -59,9 +63,19 @@ public class BridgeActivity extends AppCompatActivity {
   public void onPause() {
     super.onPause();
 
-    fireAppStateChanged(false);
-
     Log.d(Bridge.TAG, "App paused");
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+
+    activityDepth = Math.max(0, activityDepth - 1);
+    if (activityDepth == 0) {
+      fireAppStateChanged(false);
+    }
+
+    Log.d(Bridge.TAG, "App stopped");
   }
 
   @Override

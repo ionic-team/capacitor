@@ -33,6 +33,10 @@ export class GeolocationPage {
     console.log('ionViewDidLoad GeolocationPage');
   }
 
+  async requestPermissions() {
+    const permResult = await Plugins.Geolocation.requestPermissions();
+    console.log('Perm request result: ', permResult);
+  }
 
   async getCurrentPosition() {
     try {

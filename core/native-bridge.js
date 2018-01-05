@@ -200,6 +200,8 @@
   }
 
   avocado.handleError = function(error) {
+    console.error(error);
+
     if(!errorModal) {
       errorModal = makeErrorModal(error);
     }
@@ -225,6 +227,8 @@
           errorObject: JSON.stringify(error)
         }
       };
+
+      console.error(error);
 
       win.Avocado.handleError(error);
       if(avocado.isAndroid) {
@@ -277,7 +281,11 @@
       height: 100%;
       padding: 15px;
       -webkit-backdrop-filter: blur(10px);
+      ${avocado.isIOS ? `
       background-color: rgba(255, 255, 255, 0.5);
+      ` : `
+      background-color: white;
+      `}
       overflow: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -376,7 +384,6 @@
   }
 
   function makeErrorModal(error) {
-    console.log('Making modal for error', error);
     var modalEl = makeModal();
     modalEl.id = "_avc-error";
     document.body.appendChild(modalEl);
@@ -389,6 +396,10 @@
     lastError = error;
 
     var message = error.message;
+    if(error.rejection) {
+      message = `Promise rejected: ${error.rejection.message}` + "<br />" + message;
+    }
+
     var stack = error.stack;
     var stackLines = cleanStack(stack);
     var stackHTML = stackLines.join('<br />');

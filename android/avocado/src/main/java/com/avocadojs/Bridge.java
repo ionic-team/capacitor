@@ -19,6 +19,7 @@ import com.avocadojs.plugin.Clipboard;
 import com.avocadojs.plugin.Console;
 import com.avocadojs.plugin.Device;
 import com.avocadojs.plugin.Filesystem;
+import com.avocadojs.plugin.Geolocation;
 import com.avocadojs.plugin.Keyboard;
 import com.avocadojs.plugin.Modals;
 import com.avocadojs.plugin.StatusBar;
@@ -72,7 +73,7 @@ public class Bridge {
     final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
-    webView.setWebChromeClient(new BridgeWebChromeClient());
+    webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -130,6 +131,7 @@ public class Bridge {
     this.registerPlugin(Clipboard.class);
     this.registerPlugin(Device.class);
     this.registerPlugin(Filesystem.class);
+    this.registerPlugin(Geolocation.class);
     this.registerPlugin(Keyboard.class);
     this.registerPlugin(Modals.class);
     this.registerPlugin(StatusBar.class);
@@ -142,7 +144,7 @@ public class Bridge {
   public void registerPlugin(Class<? extends Plugin> pluginClass) {
     NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
 
-    if(pluginAnnotation == null) {
+    if (pluginAnnotation == null) {
       Log.e(Bridge.TAG, "NativePlugin doesn't have the @NativePlugin annotation. Please add it");
       return;
     }
@@ -152,11 +154,11 @@ public class Bridge {
 
     try {
       this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
-    } catch(InvalidPluginException ex) {
+    } catch (InvalidPluginException ex) {
       Log.e(TAG, "NativePlugin " + pluginClass.getName() +
           " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
           " the class extends Plugin");
-    } catch(PluginLoadException ex) {
+    } catch (PluginLoadException ex) {
       Log.e(TAG, "NativePlugin " + pluginClass.getName() + " failed to load", ex);
     }
   }
@@ -172,17 +174,21 @@ public class Bridge {
    * @return
    */
   public PluginHandle getPluginWithRequestCode(int requestCode) {
-    for(PluginHandle plugin : this.plugins.values()) {
-      NativePlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(NativePlugin.class);
-      if(pluginAnnotation == null) {
+    for (PluginHandle handle : this.plugins.values()) {
+      NativePlugin pluginAnnotation = handle.getPluginAnnotation();
+      if (pluginAnnotation == null) {
         continue;
       }
 
       int[] requestCodes = pluginAnnotation.requestCodes();
-      for(int rc : requestCodes) {
-        if(rc == requestCode) {
-          return plugin;
+      for (int rc : requestCodes) {
+        if (rc == requestCode) {
+          return handle;
         }
+      }
+
+      if (pluginAnnotation.permissionRequestCode() == requestCode) {
+        return handle;
       }
     }
     return null;

@@ -20,6 +20,10 @@ public class AppState extends Plugin {
   }
   */
 
+  // TODO: Implement this
+  public void firePluginError() {
+  }
+
   public void fireChange(boolean isActive) {
     Log.d(Bridge.TAG, "Firing change: " + isActive);
     JSObject data = new JSObject();

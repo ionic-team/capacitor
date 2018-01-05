@@ -21,6 +21,7 @@ public class PluginHandle {
 
   private final String pluginId;
 
+  private NativePlugin pluginAnnotation;
   private Plugin instance;
 
   public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException,
@@ -39,6 +40,8 @@ public class PluginHandle {
       this.pluginId = pluginClass.getSimpleName();
     }
 
+    this.pluginAnnotation = pluginAnnotation;
+
     this.indexMethods(pluginClass);
 
     this.load();
@@ -51,7 +54,7 @@ public class PluginHandle {
   public String getId() {
     return this.pluginId;
   }
-
+  public NativePlugin getPluginAnnotation() { return this.pluginAnnotation; }
   public Plugin getInstance() {
     return this.instance;
   }
@@ -67,6 +70,7 @@ public class PluginHandle {
 
     try {
       this.instance = this.pluginClass.newInstance();
+      this.instance.setPluginHandle(this);
       this.instance.setBridge(this.bridge);
       this.instance.load();
       return this.instance;
@@ -94,7 +98,6 @@ public class PluginHandle {
       throw new InvalidPluginMethodException("No method " + methodName + " found for plugin " + pluginClass.getName());
     }
 
-
     try {
       methodMeta.getMethod().invoke(this.instance, call);
     } catch(InvocationTargetException | IllegalAccessException ex) {
@@ -119,14 +122,6 @@ public class PluginHandle {
 
       PluginMethodHandle methodMeta = new PluginMethodHandle(methodReflect, method);
       pluginMethods.put(methodReflect.getName(), methodMeta);
-    }
-  }
-
-  private class PluginMethodInvocationHandler extends Handler {
-
-    @Override
-    public void dispatchMessage(Message msg) {
-
     }
   }
 }

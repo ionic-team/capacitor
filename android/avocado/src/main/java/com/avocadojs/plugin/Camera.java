@@ -75,7 +75,7 @@ public class Camera extends Plugin {
 
     // If we want to save to the gallery, we need two permissions
     if(saveToGallery && !(hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
-      requestPermissions(new String[]{
+      pluginRequestPermissions(new String[]{
           Manifest.permission.CAMERA,
           Manifest.permission.WRITE_EXTERNAL_STORAGE,
           Manifest.permission.READ_EXTERNAL_STORAGE
@@ -83,7 +83,7 @@ public class Camera extends Plugin {
     }
     // If we don't need to save to the gallery, we can just ask for camera permissions
     else if(!hasPermission(Manifest.permission.CAMERA)) {
-      requestPermission(Manifest.permission.CAMERA, REQUEST_IMAGE_CAPTURE);
+      pluginRequestPermission(Manifest.permission.CAMERA, REQUEST_IMAGE_CAPTURE);
     }
 
     // We have all necessary permissions, open the camera
