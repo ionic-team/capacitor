@@ -12,7 +12,7 @@ import { doctorCommand } from './tasks/doctor';
 
 
 export function run(process: NodeJS.Process, cliBinDir: string) {
-  const config = new Config(process.cwd(), cliBinDir);
+  const config = new Config(process.platform, process.cwd(), cliBinDir);
 
   program
     .version(config.cli.package.version);
