@@ -38,7 +38,8 @@ export class Config implements CliConfig {
     rootDir: '',
     assetsName: 'assets',
     assetsDir: '',
-    package: Package
+    package: Package,
+    os: ''
   };
 
   app = {
@@ -58,9 +59,28 @@ export class Config implements CliConfig {
   platforms: string[] = [];
 
 
-  constructor(currentWorkingDir: string, cliBinDir: string) {
+  constructor(os: string, currentWorkingDir: string, cliBinDir: string) {
+    this.initOS(os);
     this.initCliConfig(cliBinDir);
     this.setCurrentWorkingDir(currentWorkingDir);
+  }
+
+  initOS(os: string) {
+    switch(os) {
+      case 'darwin': 
+        this.cli.os = 'mac';
+        break;
+      case 'win32':
+        this.cli.os = 'windows';
+        break;
+      case 'freebsd':
+        // Sure, why not
+        this.cli.os = 'freebsd';
+        break;
+      case 'linux':
+        this.cli.os = 'linux'
+        break;
+    }
   }
 
   setCurrentWorkingDir(currentWorkingDir: string) {
