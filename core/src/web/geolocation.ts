@@ -7,6 +7,7 @@ import {
   GeolocationPosition,
   GeolocationWatchCallback
 } from '../core-plugin-definitions';
+import { PermissionsRequestResult } from '../definitions';
 
 export class GeolocationPluginWeb extends WebPlugin implements GeolocationPlugin {
   constructor() {
@@ -18,11 +19,13 @@ export class GeolocationPluginWeb extends WebPlugin implements GeolocationPlugin
 
   getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
-      window.navigator.geolocation.getCurrentPosition((pos) => {
-        resolve(pos);
-      }, (err) => {
-        reject(err);
-      }, options);
+      return this.requestPermissions().then((_result: PermissionsRequestResult) => {
+        window.navigator.geolocation.getCurrentPosition((pos) => {
+          resolve(pos);
+        }, (err) => {
+          reject(err);
+        }, options);
+      });
     });
   }
 

@@ -21,8 +21,6 @@ public class MessageHandler {
     this.bridge = avocado;
     this.webView = webView;
 
-    webView.getSettings().setJavaScriptEnabled(true);
-    webView.getSettings().setDomStorageEnabled(true);
     webView.addJavascriptInterface(this, "androidBridge");
   }
 

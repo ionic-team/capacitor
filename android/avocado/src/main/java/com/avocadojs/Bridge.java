@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -59,6 +60,9 @@ public class Bridge {
   public Bridge(Activity context, WebView webView) {
     this.context = context;
     this.webView = webView;
+
+    this.initWebView();
+
     this.msgHandler = new MessageHandler(this, webView);
 
     Intent intent = context.getIntent();
@@ -121,6 +125,14 @@ public class Bridge {
     }
   }
   */
+
+  public void initWebView() {
+    Log.d(TAG, "Initializing web view");
+    WebSettings settings = webView.getSettings();
+    settings.setJavaScriptEnabled(true);
+    settings.setDomStorageEnabled(true);
+    settings.setGeolocationEnabled(true);
+  }
 
   public void registerCorePlugins() {
     this.registerPlugin(AppState.class);
