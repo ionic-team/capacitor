@@ -23,6 +23,11 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
+    do {
+      try JSExport.exportAvocadoJS(userContentController: o)
+    } catch {
+      AVCBridge.fatalError(error, error)
+    }
     webViewConfiguration.userContentController = o
     
     configureWebView(configuration: webViewConfiguration)

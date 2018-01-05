@@ -32,7 +32,6 @@ enum BridgeError: Error {
     self.viewController = vc
     self.webView = webView
     super.init()
-    exportCoreJS()
     registerPlugins()
     bindObservers()
   }
@@ -77,14 +76,6 @@ enum BridgeError: Error {
   
   func isAppActive() -> Bool {
     return isActive
-  }
-  
-  func exportCoreJS() {
-    do {
-      try JSExport.exportAvocadoJS(webView: self.webView)
-    } catch {
-      AVCBridge.fatalError(error, error)
-    }
   }
   
   func registerPlugins() {
