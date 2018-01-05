@@ -17,24 +17,32 @@ export class GeolocationPluginWeb extends WebPlugin implements GeolocationPlugin
     });
   }
 
-  getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition> {
+  getCurrentPosition(_options?: GeolocationOptions): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       return this.requestPermissions().then((_result: PermissionsRequestResult) => {
         window.navigator.geolocation.getCurrentPosition((pos) => {
           resolve(pos);
         }, (err) => {
           reject(err);
-        }, options);
+        }, {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        });
       });
     });
   }
 
-  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): CancellableCallback {
+  watchPosition(_options: GeolocationOptions, callback: GeolocationWatchCallback): CancellableCallback {
     let id = window.navigator.geolocation.watchPosition((pos) => {
       callback(null, pos);
     }, (err) => {
       callback(err, null);
-    }, options);
+    }, {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    });
 
     return {
       cancel: () => {
