@@ -24,6 +24,9 @@ declare global {
 
 export type ISODateString = string;
 
+export interface Cancellable {
+  cancel: Function;
+}
 //
 
 export interface AccessibilityPlugin {
@@ -424,23 +427,23 @@ export interface GeolocationPlugin extends Plugin {
   /**
    * Get the current GPS location of the device
    */
-  getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPositon>;
+  getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition>;
   /**
    * Set up a watch for location changes.
    */
   watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback) : void;
 }
-export interface GeolocationPositon {
+export interface GeolocationPosition {
   coords: {
     latitude: number;
     longitude: number;
+    accuracy: number;
   };
 }
 export interface GeolocationOptions {
-  
 }
 
-export type GeolocationWatchCallback = (err: any, position: GeolocationPositon) => void;
+export type GeolocationWatchCallback = (err: any, position: GeolocationPosition) => void;
 
 //
 

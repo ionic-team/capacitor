@@ -8,7 +8,7 @@ export class WebPluginRegistry {
   }
 
   addPlugin(plugin: WebPlugin) {
-    this.plugins[plugin.name] = plugin;
+    this.plugins[plugin.config.name] = plugin;
   }
 
   getPlugin(name: string) {
@@ -17,7 +17,7 @@ export class WebPluginRegistry {
 
   loadPlugin(name: string) {
     let plugin = this.getPlugin(name);
-    if(!plugin) {
+    if (!plugin) {
       console.error(`Unable to load web plugin ${name}, no such plugin found.`);
       return;
     }
@@ -27,7 +27,7 @@ export class WebPluginRegistry {
 
   getPlugins() {
     let p = [];
-    for(let name in this.plugins) {
+    for (let name in this.plugins) {
       p.push(this.plugins[name]);
     }
     return p;
@@ -46,14 +46,26 @@ export interface WindowListenerHandle {
   handler: (event: any) => void;
 }
 
+export interface WebPluginConfig {
+  /**
+   * The name of the plugin
+   */
+  name: string;
+  /**
+   * The platforms this web plugin should run on. Leave null
+   * for this plugin to always run.
+   */
+  platforms?: string[];
+}
+
 export class WebPlugin {
   loaded: boolean = false;
 
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
-  constructor(public name: string, pluginRegistry?: WebPluginRegistry) {
-    if(!pluginRegistry) {
+  constructor(public config: WebPluginConfig, pluginRegistry?: WebPluginRegistry) {
+    if (!pluginRegistry) {
       WebPlugins.addPlugin(this);
     } else {
       pluginRegistry.addPlugin(this);
@@ -66,7 +78,7 @@ export class WebPlugin {
   }
 
   private removeWindowListener(handle: WindowListenerHandle): void {
-    if(!handle) { return; }
+    if (!handle) { return; }
 
     window.removeEventListener(handle.windowEventName, handle.handler);
     handle.registered = false;
@@ -74,7 +86,7 @@ export class WebPlugin {
 
   addListener(eventName: string, listenerFunc: ListenerCallback): PluginListenerHandle {
     let listeners = this.listeners[eventName];
-    if(!listeners) {
+    if (!listeners) {
       this.listeners[eventName] = [];
     }
 
@@ -83,7 +95,7 @@ export class WebPlugin {
     // If we haven't added a window listener for this event and it requires one,
     // go ahead and add it
     let windowListener = this.windowListeners[eventName];
-    if(windowListener && !windowListener.registered) {
+    if (windowListener && !windowListener.registered) {
       this.addWindowListener(windowListener);
     }
 
@@ -91,21 +103,21 @@ export class WebPlugin {
       remove: () => {
         this.removeListener(eventName, listenerFunc);
       }
-    }
+    };
   }
 
   removeListener(eventName: string, listenerFunc: ListenerCallback): void {
     let listeners = this.listeners[eventName];
-    if(!listeners) {
+    if (!listeners) {
       return;
     }
 
     let index = listeners.indexOf(listenerFunc);
-    this.listeners[eventName].splice(index, 1); 
+    this.listeners[eventName].splice(index, 1);
 
     // If there are no more listeners for this type of event,
     // remove the window listener
-    if(!this.listeners[eventName].length) {
+    if (!this.listeners[eventName].length) {
       this.removeWindowListener(this.windowListeners[eventName]);
     }
   }
@@ -143,8 +155,8 @@ export class WebPlugin {
  */
 export const mergeWebPlugins = (knownPlugins: any) => {
   let plugins = WebPlugins.getPlugins();
-  for(let plugin of plugins) {
-    if(knownPlugins.hasOwnProperty(plugin.name)) { continue; }
-    knownPlugins[plugin.name] = plugin;
+  for (let plugin of plugins) {
+    if (knownPlugins.hasOwnProperty(plugin.config.name)) { continue; }
+    knownPlugins[plugin.config.name] = plugin;
   }
-}
+};
