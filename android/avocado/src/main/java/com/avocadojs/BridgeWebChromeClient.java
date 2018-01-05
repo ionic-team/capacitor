@@ -9,7 +9,8 @@ import android.webkit.WebView;
 import com.avocadojs.plugin.Geolocation;
 
 /**
- * Custom WebChromeClient handler, required for showing dialogs, confirms, etc.
+ * Custom WebChromeClient handler, required for showing dialogs, confirms, etc. in our
+ * WebView instance.
  */
 public class BridgeWebChromeClient extends WebChromeClient {
   private Bridge bridge;
@@ -18,6 +19,14 @@ public class BridgeWebChromeClient extends WebChromeClient {
     this.bridge = bridge;
   }
 
+  /**
+   * Show the browser alert modal
+   * @param view
+   * @param url
+   * @param message
+   * @param result
+   * @return
+   */
   @Override
   public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
     Dialogs.alert(view.getContext(), message, new Dialogs.OnResultListener() {
@@ -34,6 +43,14 @@ public class BridgeWebChromeClient extends WebChromeClient {
     return true;
   }
 
+  /**
+   * Show the browser confirm modal
+   * @param view
+   * @param url
+   * @param message
+   * @param result
+   * @return
+   */
   @Override
   public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
     Dialogs.confirm(view.getContext(), message, new Dialogs.OnResultListener() {
@@ -50,6 +67,15 @@ public class BridgeWebChromeClient extends WebChromeClient {
     return true;
   }
 
+  /**
+   * Show the browser prompt modal
+   * @param view
+   * @param url
+   * @param message
+   * @param defaultValue
+   * @param result
+   * @return
+   */
   @Override
   public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
     Dialogs.prompt(view.getContext(), message, new Dialogs.OnResultListener() {
@@ -66,6 +92,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
     return true;
   }
 
+  /**
+   * Handle the browser geolocation prompt
+   * @param origin
+   * @param callback
+   */
   @Override
   public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
     super.onGeolocationPermissionsShowPrompt(origin, callback);
