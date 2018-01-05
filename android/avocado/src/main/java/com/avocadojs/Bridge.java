@@ -132,6 +132,8 @@ public class Bridge {
     settings.setJavaScriptEnabled(true);
     settings.setDomStorageEnabled(true);
     settings.setGeolocationEnabled(true);
+    settings.setDatabaseEnabled(true);
+    settings.setAppCacheEnabled(true);
   }
 
   public void registerCorePlugins() {
