@@ -14,23 +14,19 @@
 
 
 <ion-content padding>
-
-  <ion-list>
-    <ion-item>
-      <button (click)="getCurrentPosition()" ion-button color="primary">
-        Geolocation.getCurrentPosition
-      </button>
-      <div>
-        Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}
-      </div>
-    </ion-item>
-    <ion-item>
-      <button (click)="watchPosition()" ion-button color="primary">
-        Geolocation.watchPosition
-      </button>
-      <div>
-        Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}
-      </div>
-    </ion-item>
-  </ion-list>
+  <button (click)="requestPermissions()" ion-button color="primary">
+    Geolocation.requestPermissions
+  </button>
+  <button (click)="getCurrentPosition()" ion-button color="primary">
+    Geolocation.getCurrentPosition
+  </button>
+  <div>
+    Lat: {{singleCoords.latitude}} Long: {{singleCoords.longitude}}
+  </div>
+  <button (click)="watchPosition()" ion-button color="primary">
+    Geolocation.watchPosition
+  </button>
+  <div>
+    Lat: {{watchCoords.latitude}} Long: {{watchCoords.longitude}}
+  </div>
 </ion-content>

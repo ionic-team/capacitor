@@ -5,14 +5,16 @@ declare global {
 export interface Plugin {
   addListener?: (eventName: string, listenerFunc: Function) => PluginListenerHandle;
   removeListener?: (eventName: string, listenerFunc: Function) => void;
+  requestPermissions?: () => Promise<PermissionsRequestResult>;
+}
+
+export interface PermissionsRequestResult {
+  results: any[];
 }
 
 export interface PluginListenerHandle {
   remove: () => void;
 }
-
-//const Plugins: PluginRegistry = {};
-//export { Plugins };
 
 export interface PluginResultData {
   [key: string]: any;

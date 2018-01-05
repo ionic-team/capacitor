@@ -1,4 +1,10 @@
-import { PluginListenerHandle } from '../definitions';
+import {
+  Avocado,
+  PluginListenerHandle,
+  PermissionsRequestResult
+} from '../definitions';
+
+declare var Avocado: Avocado;
 
 export class WebPluginRegistry {
   plugins: { [name: string]: WebPlugin } = {};
@@ -142,10 +148,22 @@ export class WebPlugin {
     };
   }
 
+  requestPermissions(): Promise<PermissionsRequestResult> {
+    if (Avocado.isNative) {
+      return Avocado.nativePromise(this.config.name, 'requestPermissions', {});
+    } else {
+      return Promise.resolve({ results: [] });
+    }
+  }
+
   load(): void {
     this.loaded = true;
   }
 }
+
+const shouldMergeWebPlugin = (plugin: WebPlugin) => {
+  return plugin.config.platforms && plugin.config.platforms.indexOf(Avocado.platform) >= 0;
+};
 
 /**
  * For all our known web plugins, merge them into the global plugins
@@ -156,7 +174,11 @@ export class WebPlugin {
 export const mergeWebPlugins = (knownPlugins: any) => {
   let plugins = WebPlugins.getPlugins();
   for (let plugin of plugins) {
-    if (knownPlugins.hasOwnProperty(plugin.config.name)) { continue; }
+    // If we already have a plugin registered (meaning it was defined in the native layer),
+    // then we should only overwrite it if the corresponding web plugin activates on
+    // a certain platform. For example: Geolocation uses the WebPlugin on Android but not iOS
+    if (knownPlugins.hasOwnProperty(plugin.config.name) && !shouldMergeWebPlugin(plugin)) { continue; }
+
     knownPlugins[plugin.config.name] = plugin;
   }
 };
