@@ -1,7 +1,7 @@
 import { WebPlugin } from './index';
 
 import {
-  Cancellable,
+  CancellableCallback,
   GeolocationPlugin,
   GeolocationOptions,
   GeolocationPosition,
@@ -26,7 +26,7 @@ export class GeolocationPluginWeb extends WebPlugin implements GeolocationPlugin
     });
   }
 
-  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): Cancellable {
+  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): CancellableCallback {
     let id = window.navigator.geolocation.watchPosition((pos) => {
       callback(null, pos);
     }, (err) => {
