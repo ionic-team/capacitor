@@ -18,7 +18,7 @@ EXTERNAL SOURCES:
     :path: ../../../ios/AvocadoCordova
 
 SPEC CHECKSUMS:
-  Avocado: f2b32b40c61a441665720d6561d7188246de5c48
+  Avocado: 36de5948a3923241f91873a101869276f2eb5406
   AvocadoCordova: d38c9c2ded6bf26b2414c0724aadf899869a0d45
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 

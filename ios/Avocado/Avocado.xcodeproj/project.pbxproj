@@ -18,7 +18,6 @@
 		502D89CC1FE0AEA60074F94E /* AVCPluginCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 502D89CB1FE0ACA70074F94E /* AVCPluginCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		502D89CE1FE0C12E0074F94E /* AVCPluginMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 502D89CD1FE0C12A0074F94E /* AVCPluginMethod.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		502D89D41FE0C1610074F94E /* AVCPluginMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 502D89D31FE0C1610074F94E /* AVCPluginMethod.m */; };
-		503ACBBD1FE440B600C5E136 /* avc.js in Resources */ = {isa = PBXBuildFile; fileRef = 503ACBBC1FE440B600C5E136 /* avc.js */; };
 		50474F051FC36E5700AA0184 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F041FC36E5700AA0184 /* Console.swift */; };
 		50474F071FC3B54800AA0184 /* Filesystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F061FC3B54800AA0184 /* Filesystem.swift */; };
 		50474F0B1FC527CA00AA0184 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50474F0A1FC527CA00AA0184 /* Storage.swift */; };
@@ -83,7 +82,6 @@
 		502D89CB1FE0ACA70074F94E /* AVCPluginCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVCPluginCall.h; sourceTree = "<group>"; };
 		502D89CD1FE0C12A0074F94E /* AVCPluginMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVCPluginMethod.h; sourceTree = "<group>"; };
 		502D89D31FE0C1610074F94E /* AVCPluginMethod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVCPluginMethod.m; sourceTree = "<group>"; };
-		503ACBBC1FE440B600C5E136 /* avc.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = avc.js; sourceTree = "<group>"; };
 		50474F041FC36E5700AA0184 /* Console.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
 		50474F061FC3B54800AA0184 /* Filesystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filesystem.swift; sourceTree = "<group>"; };
 		50474F0A1FC527CA00AA0184 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
@@ -160,14 +158,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		503ACBBB1FE440AA00C5E136 /* Scripts */ = {
-			isa = PBXGroup;
-			children = (
-				503ACBBC1FE440B600C5E136 /* avc.js */,
-			);
-			path = Scripts;
-			sourceTree = "<group>";
-		};
 		503ACC051FE98DA600C5E136 /* Photos */ = {
 			isa = PBXGroup;
 			children = (
@@ -208,7 +198,6 @@
 		50503EE11FC08594003606DC /* Avocado */ = {
 			isa = PBXGroup;
 			children = (
-				503ACBBB1FE440AA00C5E136 /* Scripts */,
 				50503F1F1FC095EA003606DC /* Plugins */,
 				50503EE21FC08594003606DC /* Avocado.h */,
 				50503EE31FC08594003606DC /* Info.plist */,
@@ -389,7 +378,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				503ACBBD1FE440B600C5E136 /* avc.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,10 +465,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-AvocadoTests/Pods-AvocadoTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AvocadoCordova/Cordova.framework",
+				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cordova.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
