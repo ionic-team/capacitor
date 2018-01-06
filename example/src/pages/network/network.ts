@@ -24,7 +24,7 @@ export class NetworkPage {
   }
 
   startListen() {
-    this.handler = Plugins.Network.addListener('networkStatusChanged', (err, status) => {
+    this.handler = Plugins.Network.addListener('networkStatusChange', (err, status) => {
       console.log("Network status changed", status);
     });
   }

@@ -17,7 +17,7 @@ public class Network : AVCPlugin {
     }
     reachability.whenUnreachable = { _ in
       print("Not reachable")
-      self.notifyStatusChangeListeners(connected: false, type: "")
+      self.notifyStatusChangeListeners(connected: false, type: "none")
     }
   
     do {
@@ -46,7 +46,7 @@ public class Network : AVCPlugin {
   }
   
   func notifyStatusChangeListeners(connected: Bool, type: String) {
-    notifyListeners("networkStatusChanged", data: [
+    notifyListeners("networkStatusChange", data: [
       "connected": connected,
       "connectionType": type
     ])

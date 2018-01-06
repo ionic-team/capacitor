@@ -741,12 +741,12 @@ export interface NetworkPlugin extends Plugin {
   /**
    * Listen for network status change events
    */
-  addListener(eventName: 'networkStatusChanged', listenerFunc: (err: any, status: NetworkStatus) => void): PluginListenerHandle;
+  addListener(eventName: 'networkStatusChange', listenerFunc: (err: any, status: NetworkStatus) => void): PluginListenerHandle;
 }
 
 export interface NetworkStatus {
   connected: boolean;
-  connectionType: string;
+  connectionType: 'wifi' | 'cellular' | 'none';
 }
 
 export type NetworkStatusChangeCallback = (err: any, status: NetworkStatus) => void;
