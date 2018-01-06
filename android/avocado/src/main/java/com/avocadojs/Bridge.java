@@ -24,6 +24,7 @@ import com.avocadojs.plugin.Geolocation;
 import com.avocadojs.plugin.Haptics;
 import com.avocadojs.plugin.Keyboard;
 import com.avocadojs.plugin.Modals;
+import com.avocadojs.plugin.Network;
 import com.avocadojs.plugin.Photos;
 import com.avocadojs.plugin.SplashScreen;
 import com.avocadojs.plugin.StatusBar;
@@ -151,6 +152,7 @@ public class Bridge {
     this.registerPlugin(Haptics.class);
     this.registerPlugin(Keyboard.class);
     this.registerPlugin(Modals.class);
+    this.registerPlugin(Network.class);
     this.registerPlugin(Photos.class);
     this.registerPlugin(SplashScreen.class);
     this.registerPlugin(StatusBar.class);
