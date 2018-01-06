@@ -448,7 +448,11 @@ export interface GeolocationPosition {
     accuracy: number;
   };
 }
+
 export interface GeolocationOptions {
+  enableHighAccuracy?: boolean, // default: true
+  timeout?: number, // default: 10000,
+  maximumAge?: number // default: 0
 }
 
 export type GeolocationWatchCallback = (err: any, position: GeolocationPosition) => void;
