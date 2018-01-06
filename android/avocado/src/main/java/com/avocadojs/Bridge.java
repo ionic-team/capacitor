@@ -21,8 +21,11 @@ import com.avocadojs.plugin.Console;
 import com.avocadojs.plugin.Device;
 import com.avocadojs.plugin.Filesystem;
 import com.avocadojs.plugin.Geolocation;
+import com.avocadojs.plugin.Haptics;
 import com.avocadojs.plugin.Keyboard;
 import com.avocadojs.plugin.Modals;
+import com.avocadojs.plugin.Photos;
+import com.avocadojs.plugin.SplashScreen;
 import com.avocadojs.plugin.StatusBar;
 
 import java.io.File;
@@ -127,7 +130,6 @@ public class Bridge {
   */
 
   public void initWebView() {
-    Log.d(TAG, "Initializing web view");
     WebSettings settings = webView.getSettings();
     settings.setJavaScriptEnabled(true);
     settings.setDomStorageEnabled(true);
@@ -141,14 +143,27 @@ public class Bridge {
     this.registerPlugin(Accessibility.class);
     this.registerPlugin(Browser.class);
     this.registerPlugin(Camera.class);
-    this.registerPlugin(Console.class);
     this.registerPlugin(Clipboard.class);
+    this.registerPlugin(Console.class);
     this.registerPlugin(Device.class);
     this.registerPlugin(Filesystem.class);
     this.registerPlugin(Geolocation.class);
+    this.registerPlugin(Haptics.class);
     this.registerPlugin(Keyboard.class);
     this.registerPlugin(Modals.class);
+    this.registerPlugin(Photos.class);
+    this.registerPlugin(SplashScreen.class);
     this.registerPlugin(StatusBar.class);
+  }
+
+  /**
+   * Register additional plugins
+   * @param plugins the plugins to register
+   */
+  public void registerPlugins(Plugin[] plugins) {
+    for (Plugin plugin : plugins) {
+      this.registerPlugin(plugin.getClass());
+    }
   }
 
   /**
