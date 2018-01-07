@@ -437,9 +437,17 @@ export interface GeolocationPlugin extends Plugin {
    */
   getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition>;
   /**
-   * Set up a watch for location changes.
+   * Set up a watch for location changes. Note that watching for location changes
+   * can consume a large amount of energy. Be smart about listening only when you need to.
    */
   watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback) : void;
+
+  /**
+   * Clear a given watch
+   */
+  /*
+  clearWatch(options: { id: string }): Promise<void>;
+  */
 }
 
 export interface GeolocationPosition {
@@ -466,9 +474,20 @@ export interface GeolocationPosition {
 }
 
 export interface GeolocationOptions {
-  enableHighAccuracy?: boolean, // default: true
+  enableHighAccuracy?: boolean, // default: false
   timeout?: number, // default: 10000,
   maximumAge?: number // default: 0
+  /**
+   * Whether your app needs altitude data or not. This can impact the
+   * sensor the device uses, increasing energy consumption.
+   * Note: altitude information may not be available even when 
+   * passing true here. Similarly, altitude data maybe be returned
+   * even if this value is false, in the case where doing so requires
+   * no increased energy consumption.
+   * 
+   * Default: false
+   */
+  requireAltitude?: boolean, // default: false
 }
 
 export type GeolocationWatchCallback = (err: any, position: GeolocationPosition) => void;

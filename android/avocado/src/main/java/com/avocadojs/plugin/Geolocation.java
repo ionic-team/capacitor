@@ -2,6 +2,7 @@ package com.avocadojs.plugin;
 
 import android.Manifest;
 import android.content.Context;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,7 +43,6 @@ public class Geolocation extends Plugin {
     locationListener = new LocationListener() {
       @Override
       public void onLocationChanged(Location location) {
-        log("LOCATION CHANGED");
         processLocation(location);
       }
 
@@ -60,7 +60,8 @@ public class Geolocation extends Plugin {
   @SuppressWarnings("MissingPermission")
   @PluginMethod()
   public void getCurrentPosition(PluginCall call) {
-    Location lastLocation = getBestLocation();
+    String provider = getBestProviderForCall(call);
+    Location lastLocation = getBestLocation(provider);
     if (lastLocation == null) {
       call.success();
     } else {
@@ -71,8 +72,8 @@ public class Geolocation extends Plugin {
   @SuppressWarnings("MissingPermission")
   @PluginMethod(returnType=PluginMethod.RETURN_CALLBACK)
   public void watchPosition(PluginCall call) {
-    log("Watching position...");
-    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+    String provider = getBestProviderForCall(call);
+    locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
 
     watchingCalls.put(call.getCallbackId(), call);
     call.retain();
@@ -94,22 +95,46 @@ public class Geolocation extends Plugin {
     call.success();
   }
 
+  /**
+   * Process a new location item and send it to any listening calls
+   * @param location
+   */
   private void processLocation(Location location) {
-    log("Processing new location: " + location.getLatitude() + ", " + location.getLongitude());
-
     for (Map.Entry<String, PluginCall> watch : watchingCalls.entrySet()) {
-      log("Found listener to send data back: " + watch.getValue().getCallbackId());
       watch.getValue().success(getJSObjectForLocation(location));
     }
   }
 
+  /**
+   * Given a call and its options, find the best provider that satisfies those
+   * required options.
+   * @param call
+   * @return
+   */
+  private String getBestProviderForCall(PluginCall call) {
+    Criteria locationCriteria = getCriteriaForCall(call);
+    return locationManager.getBestProvider(locationCriteria, true);
+  }
+
+  /**
+   * Get the best location we can, using the best provider we have available
+   * that satisfies the requirements of the client
+   * @param bestProvider
+   * @return
+   */
   @SuppressWarnings("MissingPermission")
-  private Location getBestLocation() {
+  private Location getBestLocation(String bestProvider) {
     List<String> providers = locationManager.getProviders(true);
 
-    Location bestLocation = null;
+    Location l = locationManager.getLastKnownLocation(bestProvider);
+    Location bestLocation = l;
+
+    if (bestLocation != null) {
+      return bestLocation;
+    }
+
     for (String provider : providers) {
-      Location l = locationManager.getLastKnownLocation(provider);
+      l = locationManager.getLastKnownLocation(provider);
       if (l == null) {
         continue;
       }
@@ -118,6 +143,29 @@ public class Geolocation extends Plugin {
       }
     }
     return bestLocation;
+  }
+
+  /**
+   * Given the call's options, return a Criteria object
+   * that will indicate which location provider we need to use.
+   * @param call
+   * @return
+   */
+  private Criteria getCriteriaForCall(PluginCall call) {
+    boolean enableHighAccuracy = call.getBoolean("enableHighAccuracy", false);
+    boolean altitudeRequired = call.getBoolean("altitudeRequired", false);
+    boolean speedRequired = call.getBoolean("speedRequired", false);
+    boolean bearingRequired = call.getBoolean("bearingRequired", false);
+
+    int timeout = call.getInt("timeout", 30000);
+    int maximumAge = call.getInt("maximumAge", 0);
+
+    Criteria c = new Criteria();
+    c.setAccuracy(enableHighAccuracy ? Criteria.ACCURACY_FINE : Criteria.ACCURACY_COARSE);
+    c.setAltitudeRequired(altitudeRequired);
+    c.setBearingRequired(bearingRequired);
+    c.setSpeedRequired(speedRequired);
+    return c;
   }
 
   private JSObject getJSObjectForLocation(Location location) {
