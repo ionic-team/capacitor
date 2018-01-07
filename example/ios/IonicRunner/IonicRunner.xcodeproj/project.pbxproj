@@ -23,6 +23,13 @@
 			remoteGlobalIDString = 8A4D82E4FC3A62678375E0F0AD1D2C00;
 			remoteInfo = AvocadoCordova;
 		};
+		2FCFC5701FFED9BE007F0C74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 157267DD0C6C10F8D86FEEAE81888E4E;
+			remoteInfo = GCDWebServer;
+		};
 		50B271C11FED987800F3C39B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
@@ -134,6 +141,7 @@
 			children = (
 				50B271C21FED987800F3C39B /* Avocado.framework */,
 				2F6533F61FF43E010070B1A7 /* Cordova.framework */,
+				2FCFC5711FFED9BE007F0C74 /* GCDWebServer.framework */,
 				C2BF9B2C1E874A960050F782 /* Pods_IonicRunner.framework */,
 			);
 			name = Products;
@@ -211,6 +219,13 @@
 			remoteRef = 2F6533F51FF43E010070B1A7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		2FCFC5711FFED9BE007F0C74 /* GCDWebServer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = GCDWebServer.framework;
+			remoteRef = 2FCFC5701FFED9BE007F0C74 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		50B271C21FED987800F3C39B /* Avocado.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -251,11 +266,13 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Avocado/Avocado.framework",
 				"${BUILT_PRODUCTS_DIR}/AvocadoCordova/Cordova.framework",
+				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Avocado.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cordova.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

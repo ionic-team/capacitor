@@ -8,10 +8,12 @@
 
 import UIKit
 import WebKit
+import GCDWebServer
 
 class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
+  private var webServer: GCDWebServer?
   
   // Construct the avocado runtime
   public var bridge: AVCBridge?
@@ -21,6 +23,11 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
+    do {
+      try JSExport.exportAvocadoJS(userContentController: o)
+    } catch {
+      AVCBridge.fatalError(error, error)
+    }
     webViewConfiguration.userContentController = o
     
     configureWebView(configuration: webViewConfiguration)
@@ -36,6 +43,7 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     // Create the bridge with our ViewController and WebView
     bridge = AVCBridge(self, webView!)
+
   }
   
   override func viewDidLoad() {
@@ -50,20 +58,30 @@ class AVCBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   func loadWebView() {
-    guard let index = Bundle.main.path(forResource: "public/index", ofType: "html") else {
+    if Bundle.main.path(forResource: "public/index", ofType: "html") == nil {
       print("🥑  FATAL ERROR: Unable to load public/index.html")
       print("🥑  This file is the root of your web app and must exist before")
       print("🥑  Avocado can run. Ensure you've run avocado sync at least once")
       exit(1)
     }
-    
-    let indexPath = "file://" + index;
-    let indexUrl = URL(fileURLWithPath: indexPath);
-    let indexDir = "file://" + indexUrl.deletingLastPathComponent().path;
-    
-    if let url = URL(string: indexPath) {
-      _ = webView?.loadFileURL(url, allowingReadAccessTo: URL(string: indexDir)!)
+    let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
+    self.webServer = GCDWebServer.init()
+    self.webServer?.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: nil, cacheAge: 3600, allowRangeRequests: true)
+
+    do {
+      let options = [
+        GCDWebServerOption_Port: 8080,
+        GCDWebServerOption_BindToLocalhost: true,
+        GCDWebServerOption_ServerName: "Ionic"
+        ] as [String : Any]
+      try self.webServer?.start(options: options)
+    } catch {
+      print(error)
     }
+
+    let request = URLRequest(url: URL(string: "http://localhost:8080/index.html")!)
+    _ = webView?.load(request)
+
   }
   
   public func configureWebView(configuration: WKWebViewConfiguration) {

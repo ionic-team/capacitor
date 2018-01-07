@@ -6,21 +6,19 @@ public class JSExport {
   static let CATCHALL_OPTIONS_PARAM = "_options"
   static let CALLBACK_PARAM = "_callback"
   
-  public static func exportAvocadoJS(webView: WKWebView) throws {
-    guard let jsUrl = Bundle(for: self).url(forResource: "avc", withExtension: "js") else {
-      print("ERROR: Required avc.js file in Avocado not found. Bridge will not function!")
+  public static func exportAvocadoJS(userContentController: WKUserContentController) throws {
+    guard let jsUrl = Bundle.main.url(forResource: "public/native-bridge", withExtension: "js") else {
+      print("ERROR: Required native-bridge.js file in Avocado not found. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
     }
     
     do {
+
       let data = try String(contentsOf: jsUrl, encoding: .utf8)
-      webView.evaluateJavaScript(data) { (result, error) in
-        if error != nil {
-          AVCBridge.fatalError(BridgeError.errorExportingCoreJS, error!)
-        }
-      }
+      let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+      userContentController.addUserScript(userScript)
     } catch {
-      print("ERROR: Unable to read required avc.js file from Avocado framework. Bridge will not function!")
+      print("ERROR: Unable to read required native-bridge.js file from Avocado framework. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
     }
   }
