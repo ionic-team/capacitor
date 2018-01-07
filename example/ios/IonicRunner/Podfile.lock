@@ -1,7 +1,11 @@
 PODS:
   - Avocado (0.0.1):
     - AvocadoCordova (= 0.0.1)
+    - GCDWebServer (~> 3.0)
   - AvocadoCordova (0.0.1)
+  - GCDWebServer (3.4.2):
+    - GCDWebServer/Core (= 3.4.2)
+  - GCDWebServer/Core (3.4.2)
 
 DEPENDENCIES:
   - Avocado (from `../../../ios/Avocado`)
@@ -14,8 +18,9 @@ EXTERNAL SOURCES:
     :path: ../../../ios/AvocadoCordova
 
 SPEC CHECKSUMS:
-  Avocado: ac0b9c5e2a23c1d17eb21b77d087334090607f46
+  Avocado: 36de5948a3923241f91873a101869276f2eb5406
   AvocadoCordova: d38c9c2ded6bf26b2414c0724aadf899869a0d45
+  GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 
 PODFILE CHECKSUM: a063ff6f6bdf2b6b3e9a9f4af9113e431d48f95f
 
