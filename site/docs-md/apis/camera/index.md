@@ -3,6 +3,29 @@
 The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses `UIImagePickerController`, and on Android this
 API sends an intent which will be handled by the core Camera app by default.
 
+## iOS Notes
+
+iOS requires the following usage description be added and filled out for your app in `Info.plist`:
+
+Name: `Privacy - Camera Usage Description`
+Key: 	`NSCameraUsageDescription`
+
+Read about [Setting iOS Permissions](../ios/permissions/) in the [iOS Guide](../ios) for more information on setting iOS permissions in Xcode
+
+## Android Notes
+
+This API requires the following permissions be added to your `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
+The first permission is for Camera access, and the storage permissions are for reading/saving photo files.
+
+Read about [Setting Android Permissions]('../android/permissions/) in the [Android Guide](../android) for more information on setting Android permissions.
+
 <plugin-api index="true" name="camera"></plugin-api>
 
 ## Example
