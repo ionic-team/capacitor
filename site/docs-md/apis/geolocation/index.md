@@ -7,17 +7,17 @@ with altitude, heading, and speed information if available.
 
 Apple requires privacy descriptions to be specified in `Info.plist` for location information:
 
-Name: Privacy - Location Always Usage Description
-Key: NSLocationAlwaysUsageDescription
+Name: `Privacy - Location Always Usage Description`
+Key: `NSLocationAlwaysUsageDescription`
 
-Name: Privacy - Location When In Use Usage Description
-Key: NSLocationWhenInUseUsageDescription
+Name: `Privacy - Location When In Use Usage Description`
+Key: `NSLocationWhenInUseUsageDescription`
 
 Read about [Setting iOS Permissions](../ios/permissions/) in the [iOS Guide](../ios) for more information on setting iOS permissions in Xcode
 
 ## Android Notes
 
-This API requires the following permissions to be added to your `AndroidManifest.xml`:
+This API requires the following permissions be added to your `AndroidManifest.xml`:
 
 ```xml
 <!-- Geolocation API -->
@@ -25,6 +25,8 @@ This API requires the following permissions to be added to your `AndroidManifest
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-feature android:name="android.hardware.location.gps" />
 ```
+
+The first two permissions ask for location data, both fine and coarse, and the last line is optional but necessary if your app _requires_ GPS to function. You may leave it out, though keep in mind that this may mean your app is installed on devices lacking GPS hardware.
 
 Read about [Setting Android Permissions]('../android/permissions/) in the [Android Guide](../android) for more information on setting Android permissions.
 
