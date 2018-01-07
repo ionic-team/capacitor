@@ -14,6 +14,7 @@ import java.util.List;
 public class PluginCall {
   private final MessageHandler msgHandler;
   private final String callbackId;
+  private final String methodName;
   private final JSObject data;
 
   private boolean shouldRetain = false;
@@ -23,9 +24,10 @@ public class PluginCall {
    */
   private boolean isReleased = false;
 
-  public PluginCall(MessageHandler msgHandler, String callbackId, JSObject data) {
+  public PluginCall(MessageHandler msgHandler, String callbackId, String methodName, JSObject data) {
     this.msgHandler = msgHandler;
     this.callbackId = callbackId;
+    this.methodName = methodName;
     this.data = data;
   }
 
@@ -84,6 +86,8 @@ public class PluginCall {
   public String getCallbackId() {
     return this.callbackId;
   }
+
+  public String getMethodName() { return this.methodName; }
 
   public JSObject getData() {
     return this.data;

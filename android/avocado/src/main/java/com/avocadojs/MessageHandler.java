@@ -50,7 +50,7 @@ public class MessageHandler {
   }
 
   void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {
-    PluginCall call = new PluginCall(this, callbackId, methodData);
+    PluginCall call = new PluginCall(this, callbackId, methodName, methodData);
 
     bridge.callPluginMethod(pluginId, methodName, call);
   }
