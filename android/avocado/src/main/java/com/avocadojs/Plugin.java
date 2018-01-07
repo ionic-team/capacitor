@@ -7,10 +7,6 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.avocadojs.android.BuildConfig;
-
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +173,7 @@ public class Plugin {
   public void addListener(PluginCall call) {
     String eventName = call.getString("eventName");
     addEventListener(eventName, call);
-    call.setSaved(true);
+    call.retain();
   }
 
   /**
@@ -189,10 +185,10 @@ public class Plugin {
   public void removeListener(PluginCall call) {
     String eventName = call.getString("eventName");
     String callbackId = call.getString("callbackId");
-    PluginCall savedCall = bridge.getSavedCall(callbackId);
+    PluginCall savedCall = bridge.getRetainedCall(callbackId);
     if (savedCall != null) {
       removeEventListener(eventName, call);
-      bridge.removeSavedCall(callbackId);
+      bridge.releaseCall(call);
     }
   }
 
