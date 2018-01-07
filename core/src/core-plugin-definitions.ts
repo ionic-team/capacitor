@@ -458,19 +458,19 @@ export interface GeolocationPosition {
     latitude: number;
     longitude: number;
     accuracy: number;
+    /**
+     * The altitude the user is at (if available)
+     */
+    altitude?: number;
+    /**
+     * The speed the user is traveling (if available)
+     */
+    speed?: number;
+    /**
+     * The heading the user is facing (if available)
+     */
+    heading?: number;
   };
-  /**
-   * The altitude the user is at (if available)
-   */
-  altitude?: number;
-  /**
-   * The speed the user is traveling (if available)
-   */
-  speed?: number;
-  /**
-   * The heading the user is facing (if available)
-   */
-  heading?: number;
 }
 
 export interface GeolocationOptions {
