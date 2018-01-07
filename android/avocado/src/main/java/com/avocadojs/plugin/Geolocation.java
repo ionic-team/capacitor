@@ -2,6 +2,7 @@ package com.avocadojs.plugin;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -32,8 +33,11 @@ import java.util.Map;
     permissionRequestCode = PluginRequestCodes.GEOLOCATION_REQUEST_PERMISSIONS
 )
 public class Geolocation extends Plugin {
-  LocationManager locationManager;
-  LocationListener locationListener;
+  private LocationManager locationManager;
+  private LocationListener locationListener;
+
+  // A call that is waiting for a permission result
+  private PluginCall permissionWaitCall;
 
   Map<String, PluginCall> watchingCalls = new HashMap<>();
 
@@ -57,9 +61,17 @@ public class Geolocation extends Plugin {
     };
   }
 
-  @SuppressWarnings("MissingPermission")
   @PluginMethod()
   public void getCurrentPosition(PluginCall call) {
+    if (!hasRequiredPermissions()) {
+      permissionWaitCall = call;
+      pluginRequestAllPermissions();
+    } else {
+      sendLocation(call);
+    }
+  }
+
+  private void sendLocation(PluginCall call) {
     String provider = getBestProviderForCall(call);
     Location lastLocation = getBestLocation(provider);
     if (lastLocation == null) {
@@ -69,14 +81,23 @@ public class Geolocation extends Plugin {
     }
   }
 
-  @SuppressWarnings("MissingPermission")
   @PluginMethod(returnType=PluginMethod.RETURN_CALLBACK)
   public void watchPosition(PluginCall call) {
+    call.retain();
+    if (!hasRequiredPermissions()) {
+      permissionWaitCall = call;
+      pluginRequestAllPermissions();
+    } else {
+      startWatch(call);
+    }
+  }
+
+  @SuppressWarnings("MissingPermission")
+  private void startWatch(PluginCall call) {
     String provider = getBestProviderForCall(call);
     locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
 
     watchingCalls.put(call.getCallbackId(), call);
-    call.retain();
   }
 
   @SuppressWarnings("MissingPermission")
@@ -143,6 +164,27 @@ public class Geolocation extends Plugin {
       }
     }
     return bestLocation;
+  }
+
+
+  @Override
+  protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    if (permissionWaitCall == null) {
+      return;
+    }
+
+    for(int result : grantResults) {
+      if (result == PackageManager.PERMISSION_DENIED) {
+        permissionWaitCall.error("User denied location permission");
+        return;
+      }
+    }
+
+    if (permissionWaitCall.getMethodName().equals("getCurrentPosition")) {
+      sendLocation(permissionWaitCall);
+    } else {
+      startWatch(permissionWaitCall);
+    }
   }
 
   /**
