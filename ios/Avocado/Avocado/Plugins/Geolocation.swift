@@ -43,17 +43,25 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     if let location = locations.first  {
-      let result = [
-        "coords": [
-          "latitude": location.coordinate.latitude,
-          "longitude": location.coordinate.longitude
-        ]
-      ]
-      call!.success(result)
+      let result = makePosition(location)
 
+      call!.success(result)
     } else {
       // TODO: Handle case where location is nil
+      call!.success()
     }
+  }
+  
+  func makePosition(_ location: CLLocation) -> JSObject {
+    var ret = JSObject()
+    var coords = JSObject()
+    coords["latitude"] = location.coordinate.latitude
+    coords["longitude"] = location.coordinate.longitude
+    coords["accuracy"] = location.horizontalAccuracy
+    coords["altitude"] = location.altitude
+    coords["speed"] = location.speed
+    coords["heading"] = location.course
+    return ret
   }
 }
 

@@ -216,9 +216,9 @@ public class Geolocation extends Plugin {
     ret.put("coords", coords);
     coords.put("latitude", location.getLatitude());
     coords.put("longitude", location.getLongitude());
-    ret.put("altitude", location.getAltitude());
-    ret.put("speed", location.getSpeed());
-    ret.put("heading", location.getBearing());
+    coords.put("altitude", location.getAltitude());
+    coords.put("speed", location.getSpeed());
+    coords.put("heading", location.getBearing());
     return ret;
   }
 
