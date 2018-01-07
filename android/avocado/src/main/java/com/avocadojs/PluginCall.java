@@ -1,9 +1,5 @@
 package com.avocadojs;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -19,7 +15,13 @@ public class PluginCall {
   private final MessageHandler msgHandler;
   private final String callbackId;
   private final JSObject data;
-  private boolean shouldSave = false;
+
+  private boolean shouldRetain = false;
+
+  /**
+   * Indicates that this PluginCall was released, and should no longer be used
+   */
+  private boolean isReleased = false;
 
   public PluginCall(MessageHandler msgHandler, String callbackId, JSObject data) {
     this.msgHandler = msgHandler;
@@ -175,12 +177,22 @@ public class PluginCall {
    * continuously call the call's callback (😆).
    * @param shouldSave
    */
-  public void setSaved(boolean shouldSave) {
-    this.shouldSave = shouldSave;
+  public void retain() {
+    this.shouldRetain = true;
   }
 
-  public boolean isSaved() {
-    return shouldSave;
+  public void release(Bridge bridge) {
+    this.shouldRetain = false;
+    bridge.releaseCall(this);
+    this.isReleased = true;
+  }
+
+  public boolean isRetained() {
+    return shouldRetain;
+  }
+
+  public boolean isReleased() {
+    return isReleased;
   }
 
   class PluginCallDataTypeException extends Exception {

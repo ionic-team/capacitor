@@ -441,12 +441,28 @@ export interface GeolocationPlugin extends Plugin {
    */
   watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback) : void;
 }
+
 export interface GeolocationPosition {
+  /**
+   * The GPS coordinates along with the accuracy of the data
+   */
   coords: {
     latitude: number;
     longitude: number;
     accuracy: number;
   };
+  /**
+   * The altitude the user is at (if available)
+   */
+  altitude?: number;
+  /**
+   * The speed the user is traveling (if available)
+   */
+  speed?: number;
+  /**
+   * The heading the user is facing (if available)
+   */
+  heading?: number;
 }
 
 export interface GeolocationOptions {

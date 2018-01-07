@@ -29,10 +29,6 @@ import com.avocadojs.plugin.Photos;
 import com.avocadojs.plugin.SplashScreen;
 import com.avocadojs.plugin.StatusBar;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,12 +91,24 @@ public class Bridge {
     webView.loadUrl(url);
   }
 
+  /**
+   * Get the Context for the App
+   * @return
+   */
   public Context getContext() {
     return this.context;
   }
 
+  /**
+   * Get the activity for the app
+   * @return
+   */
   public Activity getActivity() { return this.context; }
 
+  /**
+   * Get the core WebView under Avocado's control
+   * @return
+   */
   public WebView getWebView() {
     return this.webView;
   }
@@ -130,6 +138,9 @@ public class Bridge {
   }
   */
 
+  /**
+   * Initialize the WebView, setting required flags
+   */
   public void initWebView() {
     WebSettings settings = webView.getSettings();
     settings.setJavaScriptEnabled(true);
@@ -139,6 +150,9 @@ public class Bridge {
     settings.setAppCacheEnabled(true);
   }
 
+  /**
+   * Register our core Plugin APIs
+   */
   public void registerCorePlugins() {
     this.registerPlugin(AppState.class);
     this.registerPlugin(Accessibility.class);
@@ -252,8 +266,8 @@ public class Bridge {
           try {
             plugin.invoke(methodName, call);
 
-            if(call.isSaved()) {
-              saveCall(call);
+            if(call.isRetained()) {
+              retainCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
             Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
@@ -273,25 +287,30 @@ public class Bridge {
     taskHandler.post(runnable);
   }
 
-  public void saveCall(PluginCall call) {
+  /**
+   * Retain a call between plugin invocations
+   * @param call
+   */
+  public void retainCall(PluginCall call) {
     this.savedCalls.put(call.getCallbackId(), call);
   }
 
+
   /**
-   * Get a saved plugin call
+   * Get a retained plugin call
    * @param callbackId the callbackId to use to lookup the call with
    * @return the stored call
    */
-  public PluginCall getSavedCall(String callbackId) {
+  public PluginCall getRetainedCall(String callbackId) {
     return this.savedCalls.get(callbackId);
   }
 
   /**
-   * Remove the saved call
-   * @param callbackId
+   * Release a retained call
+   * @param call
    */
-  public void removeSavedCall(String callbackId) {
-    this.savedCalls.remove(callbackId);
+  public void releaseCall(PluginCall call) {
+    this.savedCalls.remove(call.getCallbackId());
   }
 
   /**
@@ -329,6 +348,13 @@ public class Bridge {
     plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 
+  /**
+   * Handle an activity result and pass it to a plugin that has indicated it wants to
+   * handle the result.
+   * @param requestCode
+   * @param resultCode
+   * @param data
+   */
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
