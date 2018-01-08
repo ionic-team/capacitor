@@ -1,8 +1,8 @@
 {
-  "name": "@avocadojs/core",
+  "name": "@capacitor/core",
   "version": "0.0.1",
-  "description": "Avocado: The universal App container",
-  "homepage": "http://avocadojs.com/",
+  "description": "Cordova: cross-platform mobile apps with the web",
+  "homepage": "http://getcapacitor.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "files": [
@@ -12,7 +12,7 @@
     "docs": "./node_modules/.bin/typedoc --exclude **/__test__/*.ts --json dist/docs.json --mode modules src/core-plugin-definitions.ts && node scripts/docs.js",
     "build": "npm run clean && npm run transpile-no-helpers && npm run rollup && npm run minify && npm run transpile",
     "clean": "rimraf dist",
-    "minify": "uglifyjs --mangle --compress --source-map \"content='dist/avocado.js.map',url='avocado.js.map'\" --comments '/^/*!/' --output dist/avocado.js dist/avocado.js",
+    "minify": "uglifyjs --mangle --compress --source-map \"content='dist/capacitor.js.map',url='capacitor.js.map'\" --comments '/^/*!/' --output dist/capacitor.js dist/capacitor.js",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
@@ -35,10 +35,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/avocado.git"
+    "url": "git+https://github.com/ionic-team/capacitor.git"
   },
   "bugs": {
-    "url": "https://github.com/ionic-team/avocado/issues"
+    "url": "https://github.com/ionic-team/capacitor/issues"
   },
   "publishConfig": {
     "access": "public"

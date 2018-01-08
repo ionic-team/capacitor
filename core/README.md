@@ -1,13 +1,13 @@
-# AvocadoJS Core
+# Capacitor Core
 
-The AvocadoJS Core package contains ES modules which can be imported by webapps. By default the core package already includes many ready to use plugins.
-
-```
-npm install @avocadojs/core
-```
+The Capacitor Core package contains ES modules which can be imported by webapps. By default the core package already includes many ready to use plugins.
 
 ```
-import { Modals } from '@avocadojs/core';
+npm install @capacitor/core
+```
+
+```
+import { Modals } from '@capacitor/core';
 
 const modals = new Modals();
 modals.alert('Hello World!');
@@ -31,11 +31,11 @@ modals.alert('Hello World!');
 
 ## Related Projects
 
-* [AvocadoJS Core](https://www.npmjs.com/package/@avocadojs/core) - Core Javascript Runtime
+* [Capacitor Core](https://www.npmjs.com/package/@capacitor /core) - Core Javascript Runtime
 * [Ionic](https://www.npmjs.com/package/@ionic/core) - UI Library
 * [StencilJS](https://www.npmjs.com/package/@stencil/core) - Web Component Generator
 
 
 ### License
 
-* [MIT](https://github.com/ionic-team/avocado/blob/master/LICENSE)
+* [MIT](https://github.com/ionic-team/capacitor/blob/master/LICENSE)
