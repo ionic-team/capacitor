@@ -17,7 +17,7 @@ fi
 
 cd $WORK_DIR
 git init
-git remote add origin git@github.com:ionic-team/avocado
+git remote add origin git@github.com:ionic-team/capacitor
 git fetch origin -- gh-pages
 git checkout gh-pages
 cp -R $MONOREPO_DIR/www/* .
