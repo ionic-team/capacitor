@@ -2,6 +2,8 @@
   .logo {
     //background-image: url(assets/img/avocado-logo.png);
     color: #fff;
+    font-family: 'Roboto Mono',-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    letter-spacing: 1px;
   }
   site-header {
     position: static;
@@ -32,7 +34,7 @@ site-header {
   }
   
   .site-header {
-    padding: 20px 15px;
+    padding: 20px 0px;
     max-width: 1080px;
     margin: auto;
     display: flex;
