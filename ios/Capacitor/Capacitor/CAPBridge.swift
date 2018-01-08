@@ -285,7 +285,7 @@ enum BridgeError: Error {
       print("🥑  TO JS", resultJson.prefix(256))
       
       DispatchQueue.main.async {
-        self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
+        self.webView.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
           if error != nil && result != nil {
             print(result!)
           }
@@ -306,7 +306,7 @@ enum BridgeError: Error {
    */
   public func toJsError(error: JSResultError) {
     DispatchQueue.main.async {
-      self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
+      self.webView.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
         if error != nil && result != nil {
           print(result!)
         }
@@ -319,7 +319,7 @@ enum BridgeError: Error {
    */
   @objc public func evalWithPlugin(_ plugin: CAPPlugin, js: String) {
     let wrappedJs = """
-    window.Avocado.withPlugin('\(plugin.getId())', function(plugin) {
+    window.Capacitor.withPlugin('\(plugin.getId())', function(plugin) {
       if(!plugin) { console.error('Unable to execute JS in plugin, no such plugin found for id \(plugin.getId())'); }
       \(js)
     });
