@@ -27,7 +27,7 @@ export class LandingPage {
         <main>
           <div class="row">
             <div class="col">
-              <h1 id="action-call">Native bridge for building powerful mobile web apps</h1>
+              <h1 id="action-call">Build cross platform mobile apps with JavaScript and the Web</h1>
               <div id="action-more">
                 Native Progressive Web Apps with HTML, CSS, and JavaScript
                 <br />
