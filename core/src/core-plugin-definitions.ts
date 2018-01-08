@@ -3,7 +3,7 @@ import { Plugin, PluginListenerHandle } from './definitions';
 declare global {
   interface PluginRegistry {
     Accessibility?: AccessibilityPlugin;
-    AppState?: AppStatePlugin;
+    App?: AppPlugin;
     Browser?: BrowserPlugin;
     Camera?: CameraPlugin;
     Clipboard?: ClipboardPlugin;
@@ -61,7 +61,7 @@ export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnab
 
 //
 
-export interface AppStatePlugin extends Plugin {
+export interface AppPlugin extends Plugin {
   getLaunchUrl(): Promise<{url: string}>;
   /**
    * Listen for internal plugin errors if you'd like to have more diagnostics on
@@ -72,10 +72,10 @@ export interface AppStatePlugin extends Plugin {
   /**
    * Listen for changes in the App's active state (whether the app is in the foreground or background)
    */
-  addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: AppStateState) => void): PluginListenerHandle;
+  addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: AppState) => void): PluginListenerHandle;
 }
 
-export interface AppStateState {
+export interface AppState {
   isActive: boolean;
 }
 

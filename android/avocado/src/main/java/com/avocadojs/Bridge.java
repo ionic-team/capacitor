@@ -13,7 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.avocadojs.plugin.Accessibility;
-import com.avocadojs.plugin.AppState;
+import com.avocadojs.plugin.App;
 import com.avocadojs.plugin.Browser;
 import com.avocadojs.plugin.Camera;
 import com.avocadojs.plugin.Clipboard;
@@ -154,7 +154,7 @@ public class Bridge {
    * Register our core Plugin APIs
    */
   public void registerCorePlugins() {
-    this.registerPlugin(AppState.class);
+    this.registerPlugin(App.class);
     this.registerPlugin(Accessibility.class);
     this.registerPlugin(Browser.class);
     this.registerPlugin(Camera.class);
