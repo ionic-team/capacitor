@@ -1,12 +1,12 @@
-import { Avocado as _Avocado } from './definitions';
+import { Capacitor as _Capacitor } from './definitions';
 
-var Avocado:_Avocado = {
+var Capacitor:_Capacitor = {
   Plugins: {}
 };
 
 declare var window: any;
-Avocado = window.Avocado || Avocado;
+Capacitor = window.Capacitor || Capacitor;
 
-const Plugins = Avocado.Plugins;
+const Plugins = Capacitor.Plugins;
 
-export { Avocado, Plugins };
+export { Capacitor, Plugins };

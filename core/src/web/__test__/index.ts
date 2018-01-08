@@ -12,7 +12,7 @@ class MockPlugin extends WebPlugin {
   }
   trigger() {
     this.notifyListeners('test', {
-      value: "Avocados on top of toast!"
+      value: "Capacitors on top of toast!"
     });
   }
 }
@@ -68,7 +68,7 @@ describe('Web Plugin', () => {
     plugin.trigger();
 
     expect(lf.mock.calls.length).toEqual(1);
-    expect(lf.mock.calls[0][0]).toEqual({ value: 'Avocados on top of toast!' })
+    expect(lf.mock.calls[0][0]).toEqual({ value: 'Capacitors on top of toast!' })
   });
 
   it('Should register and remove window listeners', () => {
@@ -84,13 +84,13 @@ describe('Web Plugin', () => {
     expect(pluginAddWindowListener.mock.calls.length).toEqual(1);
 
     // Trigger a custom window event
-    var event = new CustomEvent('fake', { detail: { value: 'Avocados on top of toast!' }});
+    var event = new CustomEvent('fake', { detail: { value: 'Capacitors on top of toast!' }});
     window.dispatchEvent(event);
 
     expect(lf.mock.calls.length).toEqual(1);
 
     const eventArg = lf.mock.calls[0][0];
-    expect(eventArg.detail.value).toEqual('Avocados on top of toast!');
+    expect(eventArg.detail.value).toEqual('Capacitors on top of toast!');
 
     handle.remove();
     windowListener = plugin.windowListeners['test'];
@@ -107,7 +107,7 @@ describe('Web Plugin', () => {
 
     let handlerFunction = jest.spyOn(windowListener, 'handler');
     // Trigger a custom window event
-    var event = new CustomEvent('fake', { detail: { value: 'Avocados on top of toast!' }});
+    var event = new CustomEvent('fake', { detail: { value: 'Capacitors on top of toast!' }});
     window.dispatchEvent(event);
 
     expect(handlerFunction).not.toHaveBeenCalled();

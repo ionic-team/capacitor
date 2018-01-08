@@ -1,10 +1,10 @@
 import {
-  Avocado,
+  Capacitor,
   PluginListenerHandle,
   PermissionsRequestResult
 } from '../definitions';
 
-declare var Avocado: Avocado;
+declare var Capacitor: Capacitor;
 
 export class WebPluginRegistry {
   plugins: { [name: string]: WebPlugin } = {};
@@ -149,8 +149,8 @@ export class WebPlugin {
   }
 
   requestPermissions(): Promise<PermissionsRequestResult> {
-    if (Avocado.isNative) {
-      return Avocado.nativePromise(this.config.name, 'requestPermissions', {});
+    if (Capacitor.isNative) {
+      return Capacitor.nativePromise(this.config.name, 'requestPermissions', {});
     } else {
       return Promise.resolve({ results: [] });
     }
@@ -162,14 +162,14 @@ export class WebPlugin {
 }
 
 const shouldMergeWebPlugin = (plugin: WebPlugin) => {
-  return plugin.config.platforms && plugin.config.platforms.indexOf(Avocado.platform) >= 0;
+  return plugin.config.platforms && plugin.config.platforms.indexOf(Capacitor.platform) >= 0;
 };
 
 /**
  * For all our known web plugins, merge them into the global plugins
  * registry if they aren't already existing. If they don't exist, that
  * means there's no existing native implementation for it.
- * @param knownPlugins the Avocado.Plugins global registry.
+ * @param knownPlugins the Capacitor.Plugins global registry.
  */
 export const mergeWebPlugins = (knownPlugins: any) => {
   let plugins = WebPlugins.getPlugins();

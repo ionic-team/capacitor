@@ -69,7 +69,7 @@ export interface PluginConfig {
   name: string;
 }
 
-export interface Avocado {
+export interface Capacitor {
   isNative?: boolean;
   platform?: string;
   toNative?: (pluginId: string, methodName: string, options: any, storedCallback?: StoredCallback) => void;
@@ -82,8 +82,8 @@ export interface Avocado {
   Plugins?: PluginRegistry;
 }
 
-export interface WindowAvocado {
-  avocado: Avocado;
+export interface WindowCapacitor {
+  capacitor: Capacitor;
   androidBridge: {
     postMessage: (data: any) => void;
   };
