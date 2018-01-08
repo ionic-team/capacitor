@@ -16,13 +16,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2F6533F51FF43E010070B1A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8A4D82E4FC3A62678375E0F0AD1D2C00;
-			remoteInfo = AvocadoCordova;
-		};
 		2FCFC5701FFED9BE007F0C74 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
@@ -30,12 +23,19 @@
 			remoteGlobalIDString = 157267DD0C6C10F8D86FEEAE81888E4E;
 			remoteInfo = GCDWebServer;
 		};
-		50B271C11FED987800F3C39B /* PBXContainerItemProxy */ = {
+		5057E1772003EC3F003545B8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = EC3A2650D96E24360D29CCE747F0C131;
-			remoteInfo = Avocado;
+			remoteGlobalIDString = EA66618D76FDC6CAFD376608E402ECEC;
+			remoteInfo = Capacitor;
+		};
+		5057E1792003EC3F003545B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 11C9BC21A40141CE24E81C710BB2CA11;
+			remoteInfo = CapacitorCordova;
 		};
 		C2BF9B2B1E874A960050F782 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -139,8 +139,8 @@
 		C2BF9B271E874A960050F782 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				50B271C21FED987800F3C39B /* Avocado.framework */,
-				2F6533F61FF43E010070B1A7 /* Cordova.framework */,
+				5057E1782003EC3F003545B8 /* Capacitor.framework */,
+				5057E17A2003EC3F003545B8 /* Cordova.framework */,
 				2FCFC5711FFED9BE007F0C74 /* GCDWebServer.framework */,
 				C2BF9B2C1E874A960050F782 /* Pods_IonicRunner.framework */,
 			);
@@ -212,13 +212,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		2F6533F61FF43E010070B1A7 /* Cordova.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cordova.framework;
-			remoteRef = 2F6533F51FF43E010070B1A7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		2FCFC5711FFED9BE007F0C74 /* GCDWebServer.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -226,11 +219,18 @@
 			remoteRef = 2FCFC5701FFED9BE007F0C74 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		50B271C21FED987800F3C39B /* Avocado.framework */ = {
+		5057E1782003EC3F003545B8 /* Capacitor.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Avocado.framework;
-			remoteRef = 50B271C11FED987800F3C39B /* PBXContainerItemProxy */;
+			path = Capacitor.framework;
+			remoteRef = 5057E1772003EC3F003545B8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5057E17A2003EC3F003545B8 /* Cordova.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Cordova.framework;
+			remoteRef = 5057E1792003EC3F003545B8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C2BF9B2C1E874A960050F782 /* Pods_IonicRunner.framework */ = {
@@ -452,7 +452,7 @@
 				INFOPLIST_FILE = IonicRunner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Ionic.Avocado;
+				PRODUCT_BUNDLE_IDENTIFIER = Ionic.CapacitorTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 			};
@@ -468,7 +468,7 @@
 				INFOPLIST_FILE = IonicRunner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Ionic.Avocado;
+				PRODUCT_BUNDLE_IDENTIFIER = Ionic.CapacitorTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 			};
