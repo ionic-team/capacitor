@@ -1,4 +1,4 @@
-#import <Avocado/Avocado-Swift.h>
+#import <Capacitor/Capacitor-Swift.h>
 #import "CAPPluginMethod.h"
 
 typedef void(^CAPCallback)(id _arg, NSInteger index);
