@@ -7,7 +7,9 @@ CAP_PLUGIN(Accessibility,
   CAP_PLUGIN_METHOD(speak, CAPPluginReturnPromise);
 )
 
-CAP_PLUGIN(App,)
+CAP_PLUGIN(App,
+  CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
+)
 
 CAP_PLUGIN(Browser,
   CAP_PLUGIN_METHOD(open, CAPPluginReturnPromise);

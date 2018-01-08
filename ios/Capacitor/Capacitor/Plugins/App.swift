@@ -14,6 +14,10 @@ public class App : CAPPlugin {
       "isActive": isActive
     ])
   }
+  
+  @objc func getLaunchUrl(_ call: CAPPluginCall) {
+    call.success()
+  }
 }
 
 
