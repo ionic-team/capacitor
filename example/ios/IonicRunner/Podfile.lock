@@ -1,27 +1,27 @@
 PODS:
-  - Avocado (0.0.1):
-    - AvocadoCordova (= 0.0.1)
+  - Capacitor (0.0.1):
+    - CapacitorCordova (= 0.0.1)
     - GCDWebServer (~> 3.0)
-  - AvocadoCordova (0.0.1)
+  - CapacitorCordova (0.0.1)
   - GCDWebServer (3.4.2):
     - GCDWebServer/Core (= 3.4.2)
   - GCDWebServer/Core (3.4.2)
 
 DEPENDENCIES:
-  - Avocado (from `../../../ios/Avocado`)
-  - AvocadoCordova (from `../../../ios/AvocadoCordova`)
+  - Capacitor (from `../../../ios/Capacitor`)
+  - CapacitorCordova (from `../../../ios/CapacitorCordova`)
 
 EXTERNAL SOURCES:
-  Avocado:
-    :path: ../../../ios/Avocado
-  AvocadoCordova:
-    :path: ../../../ios/AvocadoCordova
+  Capacitor:
+    :path: ../../../ios/Capacitor
+  CapacitorCordova:
+    :path: ../../../ios/CapacitorCordova
 
 SPEC CHECKSUMS:
-  Avocado: 36de5948a3923241f91873a101869276f2eb5406
-  AvocadoCordova: d38c9c2ded6bf26b2414c0724aadf899869a0d45
+  Capacitor: 693eb65a7b8cf10f0e371e9c9d74fb9f42e8894a
+  CapacitorCordova: 18dde0042337b93a89ce7a94938ca899c021f12f
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 
-PODFILE CHECKSUM: a063ff6f6bdf2b6b3e9a9f4af9113e431d48f95f
+PODFILE CHECKSUM: 30f00dd1fdf137b9415dd1890111c9c1b15a176c
 
 COCOAPODS: 1.3.1
