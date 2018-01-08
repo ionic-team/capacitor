@@ -12,7 +12,7 @@ export class LandingPage {
   constructor() {
     let root: any = document.querySelector('avocado-site');
     root.isLandingPage = true;
-    document.title = `Avocado: Universal Web Applications`;
+    document.title = `Capacitor: Universal Web Applications`;
   }
 
   componentDidUnload() {
@@ -82,7 +82,7 @@ export class LandingPage {
           <h2>Open Source</h2>
 
           <p>
-            Avocado is completely open source (MIT) and maintained
+            Capacitor is completely open source (MIT) and maintained
             by <a href="http://ionicframework.com/">Ionic</a> and its community.
           </p>
         </div>

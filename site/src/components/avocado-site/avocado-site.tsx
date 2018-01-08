@@ -23,7 +23,7 @@ export class App {
         {/*this.isLandingPage && (<site-bar />)*/}
         <site-header />
         <div class="app">
-          <stencil-router root="/avocado/">
+          <stencil-router root="/capacitor/">
 
             <stencil-route
               url="/"
@@ -171,10 +171,10 @@ export class App {
             */}
             <a class="svg-button"
               id="stencil-twitter"
-              href="https://twitter.com/avocadojs"
+              href="https://twitter.com/getcapacitor"
               target="_blank"
               rel="noopener"
-              title="Open the Avocado account on twitter">
+              title="Open the Capacitor account on twitter">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"

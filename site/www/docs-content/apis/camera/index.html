@@ -1,6 +1,19 @@
 <h1 id="camera">Camera</h1>
 <p>The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses <code>UIImagePickerController</code>, and on Android this
 API sends an intent which will be handled by the core Camera app by default.</p>
+<h2 id="ios-notes">iOS Notes</h2>
+<p>iOS requires the following usage description be added and filled out for your app in <code>Info.plist</code>:</p>
+<p>Name: <code>Privacy - Camera Usage Description</code>
+Key:     <code>NSCameraUsageDescription</code></p>
+<p>Read about <a href="../ios/permissions/">Setting iOS Permissions</a> in the <a href="../ios">iOS Guide</a> for more information on setting iOS permissions in Xcode</p>
+<h2 id="android-notes">Android Notes</h2>
+<p>This API requires the following permissions be added to your <code>AndroidManifest.xml</code>:</p>
+<pre><code class="lang-xml">&lt;uses-permission android:<span class="hljs-attribute">name</span>=<span class="hljs-string">"android.permission.CAMERA"</span> /&gt;
+&lt;uses-permission android:<span class="hljs-attribute">name</span>=<span class="hljs-string">"android.permission.READ_EXTERNAL_STORAGE"</span>/&gt;
+&lt;uses-permission android:<span class="hljs-attribute">name</span>=<span class="hljs-string">"android.permission.WRITE_EXTERNAL_STORAGE"</span> /&gt;
+</code></pre>
+<p>The first permission is for Camera access, and the storage permissions are for reading/saving photo files.</p>
+<p>Read about <a href="&#39;../android/permissions/">Setting Android Permissions</a> in the <a href="../android">Android Guide</a> for more information on setting Android permissions.</p>
 <p><plugin-api index="true" name="camera"></plugin-api></p>
 <h2 id="example">Example</h2>
 <pre><code class="lang-typescript">import { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;

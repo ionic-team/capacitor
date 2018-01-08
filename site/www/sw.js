@@ -96,7 +96,19 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "e053b3a0752d572ad45c53aeb603c7aa"
+    "revision": "b9a37ff8f65651059daff042ab907ec4"
+  },
+  {
+    "url": "build/app/0j3fzoku.js",
+    "revision": "1502aa784f953e20b0519d71bde60ea9"
+  },
+  {
+    "url": "build/app/4ywngyof.js",
+    "revision": "f81a0e4ddb32696a5e8591410e75e2ae"
+  },
+  {
+    "url": "build/app/8gfqpmuv.js",
+    "revision": "540a57c4aa245a3dc12fc78a45c3d086"
   },
   {
     "url": "build/app/9vp1kpca.js",
@@ -124,15 +136,7 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "7e1206d49887182b5d60a754ecb6d246"
-  },
-  {
-    "url": "build/app/b7mowk9t.js",
-    "revision": "3c9adb82724900595b7bb50152c94da4"
-  },
-  {
-    "url": "build/app/bua0xdue.js",
-    "revision": "b28d56d6f357f4fdd0ef6e3e6ce9debd"
+    "revision": "2e486d99d804bd136080175616a607c8"
   },
   {
     "url": "build/app/cv7cbtbi.js",
@@ -167,12 +171,12 @@ const fileManifest = [
     "revision": "bceea4fa858c798bb6fa201033865b51"
   },
   {
-    "url": "build/app/pxqetkvb.js",
-    "revision": "b265badb0f3b157462d6173e37e36a30"
+    "url": "build/app/pcza4zlw.js",
+    "revision": "0dbf052bd7e9b52f0cf7dc9bd7a24fb0"
   },
   {
-    "url": "build/app/qiy3cz0d.js",
-    "revision": "83e3021b4617f4cedbe189546fe6e7bf"
+    "url": "build/app/pxqetkvb.js",
+    "revision": "b265badb0f3b157462d6173e37e36a30"
   },
   {
     "url": "build/app/rhlmfaus.js",
@@ -181,10 +185,6 @@ const fileManifest = [
   {
     "url": "build/app/rjkvhcbv.js",
     "revision": "48c55f83fea984765543325f8a71dd02"
-  },
-  {
-    "url": "build/app/rn3mtayu.js",
-    "revision": "e8700405747f76057c6c1d89a8b4392d"
   },
   {
     "url": "build/app/xyfissap.js",
@@ -227,80 +227,228 @@ const fileManifest = [
     "revision": "d41d8cd98f00b204e9800998ecf8427e"
   },
   {
+    "url": "docs-content/apis/accessibility/api-index.html",
+    "revision": "8a1452ff00133ab6f0628d315a04daeb"
+  },
+  {
+    "url": "docs-content/apis/accessibility/api.html",
+    "revision": "72ef3e7ee3dec38ab075f1db2d52d4f2"
+  },
+  {
     "url": "docs-content/apis/accessibility/index.html",
-    "revision": "c7a1ad48f7bfb5cf38558b6fb7cba932"
+    "revision": "04a1f73ccead27ed3ada6b5a66422afa"
+  },
+  {
+    "url": "docs-content/apis/action-sheet/api.html",
+    "revision": "3ffe2ffa8453869d498ac2e6471a7e82"
+  },
+  {
+    "url": "docs-content/apis/action-sheet/index.html",
+    "revision": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  {
+    "url": "docs-content/apis/app-state/api-index.html",
+    "revision": "e2207ab59aa67612832360a65089826a"
+  },
+  {
+    "url": "docs-content/apis/app-state/api.html",
+    "revision": "446e4558627e59839f189245fbbfe2ed"
   },
   {
     "url": "docs-content/apis/app-state/index.html",
-    "revision": "999facfb22e542e738f0a8bad2e74284"
+    "revision": "e212f8f534e9c3dc74f1cc3c355ff2f5"
+  },
+  {
+    "url": "docs-content/apis/browser/api-index.html",
+    "revision": "1f25cccc29c0abb5e334aaa8d262c9d4"
+  },
+  {
+    "url": "docs-content/apis/browser/api.html",
+    "revision": "7113b26122766a54d6af4832fe726d60"
   },
   {
     "url": "docs-content/apis/browser/index.html",
-    "revision": "da02b104ee74dcf071a39358c4d1b128"
+    "revision": "cbcdd7df580bb8c4b1c54ba83a440394"
+  },
+  {
+    "url": "docs-content/apis/camera/api-index.html",
+    "revision": "8fe1f04dec60661b22ba77c4c0e131f4"
+  },
+  {
+    "url": "docs-content/apis/camera/api.html",
+    "revision": "e5936ac3020c8a273e5e5d1bd233e6c2"
   },
   {
     "url": "docs-content/apis/camera/index.html",
-    "revision": "425a74a3b2cb775baa156c23cf03ccf3"
+    "revision": "9dee3fa8dc87a090d449dd9d679469bf"
+  },
+  {
+    "url": "docs-content/apis/clipboard/api-index.html",
+    "revision": "35e61c8fe3baa6405d57f7a4bab70707"
+  },
+  {
+    "url": "docs-content/apis/clipboard/api.html",
+    "revision": "e777f5a3f644181bdefa2c9df1cb8dd9"
   },
   {
     "url": "docs-content/apis/clipboard/index.html",
-    "revision": "1e1bf66b8cbb696ab92ce2dd274a0470"
+    "revision": "0da6f103690a8ce2fbd3118b2113a662"
   },
   {
     "url": "docs-content/apis/console/index.html",
-    "revision": "3355094401ed4e2dd74b3c1b1a0b165a"
+    "revision": "ef48fee27581a2dfc7b0b83fc4b8fd32"
+  },
+  {
+    "url": "docs-content/apis/device/api-index.html",
+    "revision": "b7ea5710eba20e4ef0a00907c82e324e"
+  },
+  {
+    "url": "docs-content/apis/device/api.html",
+    "revision": "b317f08f62374a3208527963771a3b80"
   },
   {
     "url": "docs-content/apis/device/index.html",
-    "revision": "ede3c0be012bb689b9e534f20925d58a"
+    "revision": "50cf608c273c02967f46d7e40f7fd877"
+  },
+  {
+    "url": "docs-content/apis/filesystem/api-index.html",
+    "revision": "8940da970913f0089dd37775123d687c"
+  },
+  {
+    "url": "docs-content/apis/filesystem/api.html",
+    "revision": "1af06ba80c64f4cf2d4d993a9585009c"
   },
   {
     "url": "docs-content/apis/filesystem/index.html",
-    "revision": "080ae8008b9e1e179b807d6f88699c87"
+    "revision": "9f9306841c9f611cd3350c845e7bfc7c"
+  },
+  {
+    "url": "docs-content/apis/geolocation/api-index.html",
+    "revision": "bbe9c502412b099b853db9eb0af074a1"
+  },
+  {
+    "url": "docs-content/apis/geolocation/api.html",
+    "revision": "8b8071f292df7ddf23cb173fd256405c"
   },
   {
     "url": "docs-content/apis/geolocation/index.html",
-    "revision": "fe22d572e98e29c502dcbfb17c94a32e"
+    "revision": "5ecc744029872037d775bf52e58715ba"
+  },
+  {
+    "url": "docs-content/apis/haptics/api-index.html",
+    "revision": "720dd0704a6f502f85a3a411ee487672"
+  },
+  {
+    "url": "docs-content/apis/haptics/api.html",
+    "revision": "3fb144695e73850ccef007514fb4eba8"
   },
   {
     "url": "docs-content/apis/haptics/index.html",
-    "revision": "12fcb8a4f1ff57a02e8496adb7e4cf6d"
+    "revision": "ff4beebfdb33d4cf02b57806da6b8afc"
+  },
+  {
+    "url": "docs-content/apis/keyboard/api-index.html",
+    "revision": "e050c20cdde57c46f4f9c0191019c441"
+  },
+  {
+    "url": "docs-content/apis/keyboard/api.html",
+    "revision": "d1018c157735223acd96e7fabc2d62bb"
   },
   {
     "url": "docs-content/apis/keyboard/index.html",
-    "revision": "9c3d351f3e5c6f4a27f6ca5598832df8"
+    "revision": "c552be552a02e2b27acb97aa46e658c7"
+  },
+  {
+    "url": "docs-content/apis/local-notifications/api-index.html",
+    "revision": "e6dee56dbf1839ed2ae4c0c2c01e4432"
+  },
+  {
+    "url": "docs-content/apis/local-notifications/api.html",
+    "revision": "c6f44a02abbec4e362c7dd7a1e78ca03"
   },
   {
     "url": "docs-content/apis/local-notifications/index.html",
-    "revision": "ddd1ef0f281afd368b26b8ff9ffed359"
+    "revision": "a2daa6f2c0802d045cb0c407b53b34c4"
+  },
+  {
+    "url": "docs-content/apis/modals/api-index.html",
+    "revision": "e47b551faef400812b94f42858323a27"
+  },
+  {
+    "url": "docs-content/apis/modals/api.html",
+    "revision": "cf645c1a7cc6551bb70a503e6a03ff16"
   },
   {
     "url": "docs-content/apis/modals/index.html",
-    "revision": "d9035bd70f2aaea317f694211ce39b6c"
+    "revision": "9a2c532e3155e25b999c00d82d241bc8"
+  },
+  {
+    "url": "docs-content/apis/motion/api-index.html",
+    "revision": "e2207ab59aa67612832360a65089826a"
+  },
+  {
+    "url": "docs-content/apis/motion/api.html",
+    "revision": "7694cf1dc6a198a2360d55b9e1240ba7"
+  },
+  {
+    "url": "docs-content/apis/motion/index.html",
+    "revision": "0e52bbf40f136a2515bbb983b3f04be2"
+  },
+  {
+    "url": "docs-content/apis/network/api-index.html",
+    "revision": "c60515a73e88c5e49667f8fe4712025a"
+  },
+  {
+    "url": "docs-content/apis/network/api.html",
+    "revision": "9210a0f30533b66cd1f0fc2655a835cf"
   },
   {
     "url": "docs-content/apis/network/index.html",
-    "revision": "16138ec27d0fc0cad9a899160c27db92"
+    "revision": "ccf6ff184816c6b202869a753c6b5950"
+  },
+  {
+    "url": "docs-content/apis/photos/api-index.html",
+    "revision": "b24478efa3459ba287906cc6f534f763"
+  },
+  {
+    "url": "docs-content/apis/photos/api.html",
+    "revision": "3de351525559f6e2cdba84afb5e7d074"
   },
   {
     "url": "docs-content/apis/photos/index.html",
-    "revision": "717e033ab8c2253df05edd29b03988b7"
+    "revision": "60de1747dfc4b9462e3b926c9c3ef3e8"
   },
   {
     "url": "docs-content/apis/push-notifications/index.html",
-    "revision": "b6d305b8bbd5a93ea2c8670307ab8438"
+    "revision": "0f41912dda851ede7c794ab856aa954e"
   },
   {
     "url": "docs-content/apis/share/index.html",
-    "revision": "6251446ae6fc08cbd8fbacbeb38d31de"
+    "revision": "9dbf15fb5daddabef501c83aed2a68e4"
+  },
+  {
+    "url": "docs-content/apis/splash-screen/api-index.html",
+    "revision": "ece560175f6213b80afd4f1dcdec26bd"
+  },
+  {
+    "url": "docs-content/apis/splash-screen/api.html",
+    "revision": "c84d959b3e27789ab9c07fa95f459b71"
   },
   {
     "url": "docs-content/apis/splash-screen/index.html",
-    "revision": "3d347bc76abd2bec98a56394d863e9a3"
+    "revision": "4cb2716767134c10b9cc1a8dbbb4a0ab"
+  },
+  {
+    "url": "docs-content/apis/status-bar/api-index.html",
+    "revision": "928555f73f73a6df81d13b670145d85c"
+  },
+  {
+    "url": "docs-content/apis/status-bar/api.html",
+    "revision": "467b98e507c06b2b872d3b2817bf8aa2"
   },
   {
     "url": "docs-content/apis/status-bar/index.html",
-    "revision": "e694758194b36782bb5e9577c9927c3a"
+    "revision": "8eca2f9ba2e59f1d99b15d010d3161d3"
   },
   {
     "url": "docs-content/apis/storage/index.html",
@@ -308,7 +456,7 @@ const fileManifest = [
   },
   {
     "url": "docs-content/apis/toast/index.html",
-    "revision": "4a1f343616e45b363717beb971e835ea"
+    "revision": "4903999408c11031c9ac44d47e52b95c"
   },
   {
     "url": "docs-content/basics/app-project-structure.html",
@@ -416,15 +564,15 @@ const fileManifest = [
   },
   {
     "url": "docs/intro/index.html",
-    "revision": "5151de82bbbcd928230156e7cd22f2d9"
+    "revision": "70892f10a3e78aa922d6837833c1e230"
   },
   {
     "url": "host.config.json",
-    "revision": "ec2da7a8e895961e6fd75c02b4e92cd8"
+    "revision": "0ef54dfb90cecaba39320fba4696eff5"
   },
   {
     "url": "index.html",
-    "revision": "777bd0a2ae4fe2b51d8817614c29cdf5"
+    "revision": "e11a80ac8e55697bc95db7bef80f5306"
   },
   {
     "url": "manifest.json",

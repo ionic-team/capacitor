@@ -1,5 +1,60 @@
 <h1 id="modals">Modals</h1>
-<p>The Modals API provides methods for triggering native modal windows for alerts, confirmations, and input prompts.</p>
+<p>The Modals API provides methods for triggering native modal windows for alerts, confirmations, and input prompts, along
+with Action Sheets and the native Share modal.</p>
 <h2 id="example">Example</h2>
+<pre><code class="lang-javascript">import { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">showAlert</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">let</span> alertRet = <span class="hljs-keyword">await</span> Plugins.Modals.alert({
+    title: <span class="hljs-string">'Stop'</span>,
+    message: <span class="hljs-string">'this is an error'</span>
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">showConfirm</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">let</span> confirmRet = <span class="hljs-keyword">await</span> Plugins.Modals.confirm({
+    title: <span class="hljs-string">'Confirm'</span>,
+    message: <span class="hljs-string">'Are you sure you\'d like to press the red button?'</span>
+  });
+  console.log(<span class="hljs-string">'Confirm ret'</span>, confirmRet);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">showPrompt</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">let</span> promptRet = <span class="hljs-keyword">await</span> Plugins.Modals.prompt({
+    title: <span class="hljs-string">'Hello'</span>,
+    message: <span class="hljs-string">'What\'s your name?'</span>
+  });
+  console.log(<span class="hljs-string">'Prompt ret'</span>, promptRet);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">showActions</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">let</span> promptRet = <span class="hljs-keyword">await</span> Plugins.Modals.showActions({
+    title: <span class="hljs-string">'Photo Options'</span>,
+    message: <span class="hljs-string">'Select an option to perform'</span>,
+    options: [
+      {
+        title: <span class="hljs-string">'Upload'</span>
+      },
+      {
+        title: <span class="hljs-string">'Share'</span>
+      },
+      {
+        title: <span class="hljs-string">'Remove'</span>,
+        style: ActionSheetOptionStyle.Destructive
+      }
+    ]
+  })
+  console.log(<span class="hljs-string">'You selected'</span>, promptRet);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">showSharing</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">let</span> shareRet = <span class="hljs-keyword">await</span> Plugins.Modals.showSharing({
+    message: <span class="hljs-string">'Really awesome thing you need to see right meow'</span>,
+    url: <span class="hljs-string">'http://ionicframework.com/'</span>,
+    subject: <span class="hljs-string">'See cool stuff'</span>
+  });
+  console.log(<span class="hljs-string">'Share return'</span>, shareRet);
+}
+</code></pre>
 <h2 id="api">API</h2>
 <p><plugin-api name="modals"></plugin-api></p>
