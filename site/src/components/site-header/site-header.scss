@@ -17,10 +17,13 @@ site-header {
   z-index: 99;
 
   .logo {
+    /*
     background: url(assets/img/avocado-dark-logo.png);
     width: 128px;
     height: 38px;
     background-size: 100%;
+    */
+    font-size: 24px;
   }
 
   .logo-link a {
