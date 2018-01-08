@@ -1,4 +1,5 @@
 import Foundation
+import AdSupport
 
 public typealias DeviceInfo = [String:Any]
 
@@ -28,6 +29,17 @@ public class Device: AVCPlugin {
       "uuid": UIDevice.current.identifierForVendor!.uuidString,
       "battery": UIDevice.current.batteryLevel,
       "isVirtual": isSimulator
+    ])
+  }
+  
+  @objc func getAdvertisingIdentifier(_ call: AVCPluginCall) {
+    guard ASIdentifierManager.shared().isAdvertisingTrackingEnabled else {
+      call.error("User has disabled ad tracking")
+      return
+    }
+    
+    call.success([
+      "id": ASIdentifierManager.shared().advertisingIdentifier.uuidString
     ])
   }
   

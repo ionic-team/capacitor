@@ -4,13 +4,13 @@ high level operations.</p>
 <h2 id="example">Example</h2>
 <pre><code class="lang-typescript">import { Plugins, AppStateState } <span class="hljs-keyword">from</span> '@avocadojs/core';
 
-Plugins.AppState.addListener('appStateChanged', (err: <span class="hljs-literal">any</span>, <span class="hljs-keyword">state</span>: AppStateState) =&gt; {
+Plugins.App.addListener('appStateChanged', (err: <span class="hljs-literal">any</span>, <span class="hljs-keyword">state</span>: AppStateState) =&gt; {
   // <span class="hljs-keyword">state</span>.isActive contains the active <span class="hljs-keyword">state</span>
   console.<span class="hljs-keyword">log</span>('App <span class="hljs-keyword">state</span> changed. Is active?', <span class="hljs-keyword">state</span>.isActive);
 });
 
 // Listen <span class="hljs-keyword">for</span> serious plugin errors
-Plugins.AppState.addListener('pluginError', (err: <span class="hljs-literal">any</span>, info: <span class="hljs-literal">any</span>) =&gt; {
+Plugins.App.addListener('pluginError', (err: <span class="hljs-literal">any</span>, info: <span class="hljs-literal">any</span>) =&gt; {
   console.error('There was a serious error with a plugin', err, info);
 });
 </code></pre>
