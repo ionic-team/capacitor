@@ -1,0 +1,11 @@
+
+target 'Capacitor' do
+  use_frameworks!
+  pod 'CapacitorCordova', :path => '../CapacitorCordova'
+  pod 'GCDWebServer', '~> 3.0'
+  target 'CapacitorTests' do
+    inherit! :search_paths
+    
+  end
+
+end
