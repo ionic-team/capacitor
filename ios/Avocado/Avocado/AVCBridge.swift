@@ -60,7 +60,7 @@ enum BridgeError: Error {
   }
   
   func bindObservers() {
-    let appStatePlugin = getOrLoadPlugin(pluginId: "AppState") as? AppState
+    let appStatePlugin = getOrLoadPlugin(pluginId: "App") as? App
     
     NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { (notification) in
       print("APP ACTIVE")
@@ -293,7 +293,7 @@ enum BridgeError: Error {
       }
     } catch {
       if let jsError = error as? JSProcessingError {
-        let appState = getOrLoadPlugin(pluginId: "AppState") as! AppState
+        let appState = getOrLoadPlugin(pluginId: "App") as! App
         
         appState.firePluginError(jsError)
       }

@@ -7,7 +7,7 @@ AVC_PLUGIN(Accessibility,
   AVC_PLUGIN_METHOD(speak, AVCPluginReturnPromise);
 )
 
-AVC_PLUGIN(AppState,)
+AVC_PLUGIN(App,)
 
 AVC_PLUGIN(Browser,
   AVC_PLUGIN_METHOD(open, AVCPluginReturnPromise);

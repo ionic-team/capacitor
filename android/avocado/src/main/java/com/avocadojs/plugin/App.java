@@ -11,7 +11,7 @@ import com.avocadojs.PluginCall;
 import com.avocadojs.PluginMethod;
 
 @NativePlugin()
-public class AppState extends Plugin {
+public class App extends Plugin {
   /*
   public void firePluginError(_ jsError: JSProcessingError) {
     notifyListeners("pluginError", data: [

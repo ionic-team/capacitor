@@ -34,11 +34,11 @@ export class MyApp {
   ]
 
   constructor(platform: Platform) {
-    Plugins.AppState.addListener('pluginError', (err: any, info: any) => {
+    Plugins.App.addListener('pluginError', (err: any, info: any) => {
       console.error('There was a serious error with a plugin', err, info);
     });
 
-    Plugins.AppState.addListener('appStateChanged', (err: any, state: any) => {
+    Plugins.App.addListener('appStateChanged', (err: any, state: any) => {
       console.log('App state changed', state);
     });
 
@@ -46,7 +46,7 @@ export class MyApp {
   }
 
   async getLaunchUrl() {
-    const ret = await Plugins.AppState.getLaunchUrl();
+    const ret = await Plugins.App.getLaunchUrl();
     if(ret && ret.url) {
       alert('App opened with URL: ' + ret.url);
     }

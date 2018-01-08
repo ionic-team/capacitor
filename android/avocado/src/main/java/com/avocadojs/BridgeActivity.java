@@ -1,14 +1,13 @@
 package com.avocadojs;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
 
 import com.avocadojs.android.R;
-import com.avocadojs.plugin.AppState;
+import com.avocadojs.plugin.App;
 
 public class BridgeActivity extends AppCompatActivity {
   private Bridge bridge;
@@ -30,12 +29,12 @@ public class BridgeActivity extends AppCompatActivity {
   }
 
   private void fireAppStateChanged(boolean isActive) {
-    PluginHandle handle = bridge.getPlugin("AppState");
+    PluginHandle handle = bridge.getPlugin("App");
     if (handle == null) {
       return;
     }
 
-    AppState appState = (AppState) handle.getInstance();
+    App appState = (App) handle.getInstance();
     if (appState != null) {
       appState.fireChange(isActive);
     }

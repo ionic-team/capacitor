@@ -1,8 +1,8 @@
 import Foundation
 import SafariServices
 
-@objc(AppState)
-public class AppState : AVCPlugin {
+@objc(App)
+public class App : AVCPlugin {
   func firePluginError(_ jsError: JSProcessingError) {
     notifyListeners("pluginError", data: [
       "message": jsError.localizedDescription
