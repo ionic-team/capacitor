@@ -8,7 +8,7 @@ import { HomePage } from '../pages/home/home';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-import { Avocado } from '@avocadojs/core';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable()
 export class MyErrorHandler implements ErrorHandler {
@@ -24,7 +24,7 @@ export class MyErrorHandler implements ErrorHandler {
   }
 
   handleError(err: any): void {
-    Avocado.handleError(err);
+    Capacitor.handleError(err);
     // Remove this if you want to disable Ionic's auto exception handling
     // in development mode.
     this.ionicErrorHandler && this.ionicErrorHandler.handleError(err);
