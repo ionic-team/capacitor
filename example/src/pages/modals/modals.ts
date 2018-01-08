@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins,
   ActionSheetOptionStyle
-} from '@avocadojs/core';
+} from '@capacitor/core';
 
 /**
  * Generated class for the ModalsPage page.

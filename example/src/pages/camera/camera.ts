@@ -3,7 +3,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins
-} from '@avocadojs/core';
+} from '@capacitor/core';
 
 /**
  * Generated class for the CameraPage page.
