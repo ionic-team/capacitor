@@ -96,7 +96,7 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "3b7f2ee8a07e8f8b511db1a40ee2edc9"
+    "revision": "c7ff52c4fb047d40e35af6b04daa03e2"
   },
   {
     "url": "build/app/4ywngyof.js",
@@ -113,6 +113,10 @@ const fileManifest = [
   {
     "url": "build/app/a9pov8p9.js",
     "revision": "396bc3afa4b6aabbea62862f6283645e"
+  },
+  {
+    "url": "build/app/anwkbzbq.js",
+    "revision": "9ad5ca7854e7353262aee603cc4932bd"
   },
   {
     "url": "build/app/app.global.js",
@@ -132,11 +136,7 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "9cef88a973735f703d4ae205094ebc80"
-  },
-  {
-    "url": "build/app/awgkvu2h.js",
-    "revision": "bffe58ce7285e055eb4307f9bd91c643"
+    "revision": "93d515f9cfce6f4efc1b8fed4d39dc2b"
   },
   {
     "url": "build/app/cv7cbtbi.js",
@@ -175,6 +175,10 @@ const fileManifest = [
     "revision": "b265badb0f3b157462d6173e37e36a30"
   },
   {
+    "url": "build/app/qe0ktwa0.js",
+    "revision": "31d5f3946e33d1e4840c3a4c28cb4f74"
+  },
+  {
     "url": "build/app/rhlmfaus.js",
     "revision": "6be3c0d5f97086f8fab64b1bf2a654a5"
   },
@@ -185,10 +189,6 @@ const fileManifest = [
   {
     "url": "build/app/xyfissap.js",
     "revision": "25d03519f99399851b14fdc57d211da6"
-  },
-  {
-    "url": "build/app/zslmgth5.js",
-    "revision": "99d741d8f0740459473ae60c6aa206fb"
   },
   {
     "url": "docs-content/addons/stencil-router.html",
@@ -564,15 +564,15 @@ const fileManifest = [
   },
   {
     "url": "docs/intro/index.html",
-    "revision": "d3aa32de8f733cde161a048d398ef43e"
+    "revision": "b916f88d34e71274938901eb6c80307a"
   },
   {
     "url": "host.config.json",
-    "revision": "41c9f21dcab7811161270bfa48e1d166"
+    "revision": "e317aaf107e85dfc51924bb066b9f5f3"
   },
   {
     "url": "index.html",
-    "revision": "38ece2f6edd26e6866ab623c949b466e"
+    "revision": "5004315feebfbb5143dfc4941ab3ea7d"
   },
   {
     "url": "manifest.json",
