@@ -44,19 +44,19 @@ enum BridgeError: Error {
   }
   
   static func fatalError(_ error: Error, _ originalError: Error) {
-    print("🥑 ❌  Avocado: FATAL ERROR")
-    print("🥑 ❌  Error was: ", originalError.localizedDescription)
+    print("⚡️ ❌  Capacitor: FATAL ERROR")
+    print("⚡️ ❌  Error was: ", originalError.localizedDescription)
     switch error {
     case BridgeError.errorExportingCoreJS:
-      print("🥑 ❌  Unable to export required Bridge JavaScript. Bridge will not function.")
+      print("⚡️ ❌  Unable to export required Bridge JavaScript. Bridge will not function.")
       if let wke = originalError as? WKError {
-        print("🥑 ❌ ", wke.userInfo)
+        print("⚡️ ❌ ", wke.userInfo)
       }
     default:
-      print("🥑 ❌  Unknown error")
+      print("⚡️ ❌  Unknown error")
     }
     
-    print("🥑 ❌  Please verify your installation or file an issue")
+    print("⚡️ ❌  Please verify your installation or file an issue")
   }
   
   func bindObservers() {
@@ -110,7 +110,7 @@ enum BridgeError: Error {
   
   public func loadPlugin(pluginId: String) -> CAPPlugin? {
     guard let pluginType = knownPlugins[pluginId] else {
-      print("🥑  Unable to load plugin \(pluginId). No such module found.")
+      print("⚡️  Unable to load plugin \(pluginId). No such module found.")
       return nil
     }
     
@@ -160,7 +160,7 @@ enum BridgeError: Error {
   
   public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
     let output = items.map { "\($0)" }.joined(separator: " ")
-    Swift.print("🥑 ", plugin.pluginId, "-", output)
+    Swift.print("⚡️ ", plugin.pluginId, "-", output)
   }
   
   public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
@@ -179,7 +179,7 @@ enum BridgeError: Error {
    */
   public func handleJSCall(call: JSCall) {
     guard let plugin = self.getPlugin(pluginId: call.pluginId) ?? self.loadPlugin(pluginId: call.pluginId) else {
-      print("🥑  Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
+      print("⚡️  Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
       return
     }
     guard let pluginType = knownPlugins[plugin.getId()] else {
@@ -192,20 +192,20 @@ enum BridgeError: Error {
     } else {
       let bridgeType = pluginType as! CAPBridgedPlugin.Type
       guard let method = bridgeType.getMethod(call.method) else {
-        print("🥑  Error calling method \(call.method) on plugin \(call.pluginId): No method found.")
-        print("🥑  Ensure plugin method exists and uses @objc in its declaration, and has been defined")
+        print("⚡️  Error calling method \(call.method) on plugin \(call.pluginId): No method found.")
+        print("⚡️  Ensure plugin method exists and uses @objc in its declaration, and has been defined")
         return
       }
       
-      //print("\n🥑  Calling method \"\(call.method)\" on plugin \"\(plugin.getId()!)\"")
+      //print("\n⚡️  Calling method \"\(call.method)\" on plugin \"\(plugin.getId()!)\"")
       
       selector = method.selector
     }
     
     if !plugin.responds(to: selector) {
-      print("🥑  Error: Plugin \(plugin.getId()!) does not respond to method call \"\(call.method)\" using selector \"\(selector!)\".")
-      print("🥑  Ensure plugin method exists, uses @objc in its declaration, and arguments match selector without callbacks in CAP_PLUGIN_METHOD.")
-      print("🥑  Learn more: \(docLink(DocLinks.CAPPluginMethodSelector.rawValue))")
+      print("⚡️  Error: Plugin \(plugin.getId()!) does not respond to method call \"\(call.method)\" using selector \"\(selector!)\".")
+      print("⚡️  Ensure plugin method exists, uses @objc in its declaration, and arguments match selector without callbacks in CAP_PLUGIN_METHOD.")
+      print("⚡️  Learn more: \(docLink(DocLinks.CAPPluginMethodSelector.rawValue))")
       return
     }
     
@@ -278,7 +278,7 @@ enum BridgeError: Error {
   public func toJs(result: JSResult) {
     do {
       let resultJson = try result.toJson()
-      print("🥑  TO JS", resultJson.prefix(256))
+      print("⚡️  TO JS", resultJson.prefix(256))
       
       DispatchQueue.main.async {
         self.getWebView().evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
@@ -324,7 +324,7 @@ enum BridgeError: Error {
     DispatchQueue.main.async {
       self.getWebView().evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
         if error != nil {
-          print("🥑  JS Eval error", error!.localizedDescription)
+          print("⚡️  JS Eval error", error!.localizedDescription)
         }
       })
     }

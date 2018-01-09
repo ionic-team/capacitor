@@ -625,7 +625,7 @@ export interface LocalNotificationSchedule {
     day?: number;
     hour?: number;
     minute?: number;
-  }
+  };
 }
 
 export interface LocalNotificationActionPerformed {

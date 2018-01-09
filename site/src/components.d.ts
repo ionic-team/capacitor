@@ -8,29 +8,29 @@ import '@stencil/router';
 
 
 import {
-  LandingPage as LandingPage
-} from './components/landing-page/landing-page';
+  SiteHeader as SiteHeader
+} from './components/site-header/site-header';
 
 declare global {
-  interface HTMLLandingPageElement extends LandingPage, HTMLElement {
+  interface HTMLSiteHeaderElement extends SiteHeader, HTMLElement {
   }
-  var HTMLLandingPageElement: {
-    prototype: HTMLLandingPageElement;
-    new (): HTMLLandingPageElement;
+  var HTMLSiteHeaderElement: {
+    prototype: HTMLSiteHeaderElement;
+    new (): HTMLSiteHeaderElement;
   };
   interface HTMLElementTagNameMap {
-    "landing-page": HTMLLandingPageElement;
+    "site-header": HTMLSiteHeaderElement;
   }
   interface ElementTagNameMap {
-    "landing-page": HTMLLandingPageElement;
+    "site-header": HTMLSiteHeaderElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "landing-page": JSXElements.LandingPageAttributes;
+      "site-header": JSXElements.SiteHeaderAttributes;
     }
   }
   namespace JSXElements {
-    export interface LandingPageAttributes extends HTMLAttributes {
+    export interface SiteHeaderAttributes extends HTMLAttributes {
       
     }
   }

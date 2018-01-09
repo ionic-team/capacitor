@@ -21,12 +21,11 @@ site-header {
   z-index: 99;
 
   .logo {
-    /*
-    background: url(assets/img/avocado-dark-logo.png);
+    background: url(assets/img/logo-dark.png);
     width: 128px;
-    height: 38px;
-    background-size: 100%;
-    */
+    height: 22px;
+    background-size: contain;
+    background-repeat: no-repeat;
     font-size: 24px;
   }
 
