@@ -23,11 +23,6 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
-    do {
-      try JSExport.exportAvocadoJS(userContentController: o)
-    } catch {
-      CAPBridge.fatalError(error, error)
-    }
     bridge = CAPBridge(self, o)
     webViewConfiguration.userContentController = o
     

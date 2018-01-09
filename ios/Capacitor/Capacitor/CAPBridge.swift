@@ -32,6 +32,7 @@ enum BridgeError: Error {
     self.viewController = vc
     self.userContentController = userContentController
     super.init()
+    exportCoreJS()
     registerPlugins()
     bindObservers()
   }
@@ -76,6 +77,14 @@ enum BridgeError: Error {
   
   func isAppActive() -> Bool {
     return isActive
+  }
+
+  func exportCoreJS() {
+    do {
+      try JSExport.exportAvocadoJS(userContentController: self.userContentController)
+    } catch {
+      CAPBridge.fatalError(error, error)
+    }
   }
   
   func registerPlugins() {
