@@ -4,7 +4,7 @@ import {
   Plugins,
   FilesystemDirectory,
   FilesystemEncoding
-} from '@avocadojs/core';
+} from '@capacitor/core';
 
 /**
  * Generated class for the FilesystemPage page.

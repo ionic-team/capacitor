@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { Plugins } from '@avocadojs/core';
+import { Plugins } from '@capacitor/core';
 
 /**
  * Generated class for the KeyboardPage page.
