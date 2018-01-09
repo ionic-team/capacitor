@@ -1,9 +1,9 @@
 (function(win) {
-  win.Avocado = win.Avocado || {
+  win.Capacitor = win.Capacitor || {
     Plugins: {}
   };
 
-  var avocado = Avocado;
+  var capacitor = Capacitor;
 
   // keep a collection of callbacks for native response data
   var calls = {};
@@ -20,9 +20,9 @@
     postToNative = function androidBridge(data) {
       win.androidBridge.postMessage(JSON.stringify(data));
     };
-    avocado.isNative = true;
-    avocado.isAndroid = true;
-    avocado.platform = 'android';
+    capacitor.isNative = true;
+    capacitor.isAndroid = true;
+    capacitor.platform = 'android';
 
   } else if (win.webkit && win.webkit.messageHandlers && win.webkit.messageHandlers.bridge) {
     // ios platform
@@ -30,9 +30,9 @@
       data.type = 'message';
       win.webkit.messageHandlers.bridge.postMessage(data);
     };
-    avocado.isNative = true;
-    avocado.isIOS = true;
-    avocado.platform = 'ios';
+    capacitor.isNative = true;
+    capacitor.isIOS = true;
+    capacitor.platform = 'ios';
   }
 
   // patch window.console and store original console fns
@@ -42,13 +42,13 @@
       // loop through all the console functions and keep references to the original
       orgConsole[level] = win.console[level];
 
-      win.console[level] = function avocadoConsole() {
+      win.console[level] = function capacitorConsole() {
         var msgs = Array.prototype.slice.call(arguments);
 
         // console log to browser
         orgConsole[level].apply(win.console, msgs);
 
-        if (avocado.isNative) {
+        if (capacitor.isNative) {
           // send log to native to print
           try {
             // convert all args to strings
@@ -61,7 +61,7 @@
               // convert to string
               return arg + '';
             });
-            avocado.toNative('Console', 'log', {
+            capacitor.toNative('Console', 'log', {
               level,
               message: msgs.join(' ')
             });
@@ -78,9 +78,9 @@
   /**
    * Send a plugin method call to the native layer
    */
-  avocado.toNative = function toNative(pluginId, methodName, options, storedCallback) {
+  capacitor.toNative = function toNative(pluginId, methodName, options, storedCallback) {
     try {
-      if (avocado.isNative) {
+      if (capacitor.isNative) {
         let callbackId = '-1';
 
         if (storedCallback && (typeof storedCallback.callback === 'function' || typeof storedCallback.resolve === 'function')) {
@@ -113,7 +113,7 @@
   /**
    * Process a response from the native layer.
    */
-  avocado.fromNative = function fromNative(result) {
+  capacitor.fromNative = function fromNative(result) {
     // get the stored call, if it exists
     try {
       const storedCall = calls[result.callbackId];
@@ -157,22 +157,22 @@
     delete result.error;
   };
 
-  avocado.withPlugin = function withPlugin(_pluginId, _fn) {
+  capacitor.withPlugin = function withPlugin(_pluginId, _fn) {
   };
 
-  avocado.nativeCallback = function (pluginId, methodName, options, callback) {
+  capacitor.nativeCallback = function (pluginId, methodName, options, callback) {
     if(typeof options === 'function') {
       callback = options;
       options = null;
     }
-    return avocado.toNative(pluginId, methodName, options, {
+    return capacitor.toNative(pluginId, methodName, options, {
       callback
     });
   };
 
-  avocado.nativePromise = function (pluginId, methodName, options) {
+  capacitor.nativePromise = function (pluginId, methodName, options) {
     return new Promise((resolve, reject) => {
-      avocado.toNative(pluginId, methodName, options, {
+      capacitor.toNative(pluginId, methodName, options, {
         resolve,
         reject
       });
@@ -180,26 +180,26 @@
   };
 
 
-  avocado.addListener = function(pluginId, eventName, callback) {
-    var callbackId = avocado.nativeCallback(pluginId, 'addListener', {
+  capacitor.addListener = function(pluginId, eventName, callback) {
+    var callbackId = capacitor.nativeCallback(pluginId, 'addListener', {
       eventName
     }, callback);
     return {
       remove: function() {
         console.log('Removing listener', pluginId, eventName);
-        avocado.removeListener(pluginId, callbackId, eventName, callback);
+        capacitor.removeListener(pluginId, callbackId, eventName, callback);
       }
     }
   };
 
-  avocado.removeListener = function(pluginId, callbackId, eventName, callback) {
-    avocado.nativeCallback(pluginId, 'removeListener', {
+  capacitor.removeListener = function(pluginId, callbackId, eventName, callback) {
+    capacitor.nativeCallback(pluginId, 'removeListener', {
       callbackId,
       eventName
     }, callback);
   }
 
-  avocado.handleError = function(error) {
+  capacitor.handleError = function(error) {
     console.error(error);
 
     if(!errorModal) {
@@ -211,7 +211,7 @@
   }
  
  
-  avocado.handleWindowError = function (msg, url, lineNo, columnNo, error) {
+  capacitor.handleWindowError = function (msg, url, lineNo, columnNo, error) {
     var string = msg.toLowerCase();
     var substring = "script error";
     if (string.indexOf(substring) > -1) {
@@ -230,10 +230,10 @@
 
       console.error(error);
 
-      win.Avocado.handleError(error);
-      if(avocado.isAndroid) {
+      win.Capacitor.handleError(error);
+      if(capacitor.isAndroid) {
         win.androidBridge.postMessage(JSON.stringify(errObj));
-      } else if(avocado.isIOS) {
+      } else if(capacitor.isIOS) {
         win.webkit.messageHandlers.bridge.postMessage(errObj);
       }
     }
@@ -241,12 +241,12 @@
     return false;
   };
 
-  window.onerror = avocado.handleWindowError;
+  window.onerror = capacitor.handleWindowError;
 
   function injectCSS() {
     var css = `
     ._avc-modal {
-      ${avocado.isIOS ? `
+      ${capacitor.isIOS ? `
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
       ` : `
       font-family: "Roboto", "Helvetica Neue", sans-serif;
@@ -266,7 +266,7 @@
     ._avc-modal-header {
       font-size: 16px;
       position: relative;
-      ${avocado.isIOS ? `
+      ${capacitor.isIOS ? `
       padding: 32px 15px;
       -webkit-backdrop-filter: blur(10px);
       background-color: rgba(255, 255, 255, 0.5);
@@ -281,7 +281,7 @@
       height: 100%;
       padding: 15px;
       -webkit-backdrop-filter: blur(10px);
-      ${avocado.isIOS ? `
+      ${capacitor.isIOS ? `
       background-color: rgba(255, 255, 255, 0.5);
       ` : `
       background-color: white;
@@ -294,7 +294,7 @@
       font-size: 16px;
       right: 15px;
       padding: 0px 10px;
-      ${avocado.isIOS ? `
+      ${capacitor.isIOS ? `
       top: 30px;
       ` : `
       top: 10px;
@@ -302,7 +302,7 @@
       `}
     }
     ._avc-modal-title {
-      ${avocado.isIOS ? `
+      ${capacitor.isIOS ? `
       position: absolute;
       text-align: center;
       width: 100px;
@@ -333,7 +333,7 @@
       bottom: 0;
       left: 15px;
       right: 15px;
-      ${avocado.isAndroid ? `
+      ${capacitor.isAndroid ? `
       bottom: 15px;
       width: calc(100% - 30px);
       ` : ``}
@@ -374,7 +374,7 @@
     var copyButton = el.querySelector('#_avc-copy-error');
     copyButton.addEventListener('click', function(e) {
       if(lastError) {
-        Avocado.Plugins.Clipboard.set({
+        Capacitor.Plugins.Clipboard.set({
           string: lastError.message + '\n' + lastError.stack
         });
       }
