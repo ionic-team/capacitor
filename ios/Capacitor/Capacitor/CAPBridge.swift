@@ -10,7 +10,8 @@ enum BridgeError: Error {
 @objc public class CAPBridge : NSObject {
   public var CAP_SITE = "https://avocado.ionicframework.com"
   
-  public var webView: WKWebView
+  lazy public var webView = WKWebView()
+  public var userContentController:WKUserContentController
   @objc public var viewController: UIViewController
   
   public var lastPlugin: CAPPlugin?
@@ -28,9 +29,9 @@ enum BridgeError: Error {
   // TODO: Unique label?
   public var dispatchQueue = DispatchQueue(label: "bridge")
   
-  public init(_ vc: UIViewController, _ webView: WKWebView) {
+  public init(_ vc: UIViewController, _ userContentController: WKUserContentController) {
     self.viewController = vc
-    self.webView = webView
+    self.userContentController = userContentController
     super.init()
     registerPlugins()
     bindObservers()
@@ -94,7 +95,7 @@ enum BridgeError: Error {
   func registerPlugin(_ pluginClassName: String, _ pluginType: CAPPlugin.Type) {
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
-    JSExport.exportJS(webView: self.webView, pluginClassName: pluginClassName, pluginType: pluginType)
+    JSExport.exportJS(userContentController: self.userContentController, pluginClassName: pluginClassName, pluginType: pluginType)
   }
   
   public func getOrLoadPlugin(pluginId: String) -> CAPPlugin? {
