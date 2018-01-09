@@ -3,7 +3,7 @@ import { Platform, NavController, Nav } from 'ionic-angular';
 
 import { HomePage } from '../pages/home/home';
 
-import { Plugins } from '@avocadojs/core';
+import { Plugins } from '@capacitor/core';
 
 @Component({
   templateUrl: 'app.html'
