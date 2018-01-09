@@ -8,7 +8,7 @@
 }
 .landing-page {
   #main-div {
-    background-color: #070C10;
+    background-color: #070c11;
     color: #fff;
   }
 }
@@ -19,7 +19,7 @@ avocado-site.landing-page {
 }
 
 .footer-landing {
-  background: #1D2322;
+  background: #151c23;
   margin-top: 0;
 }
 
@@ -53,7 +53,8 @@ landing-page {
   #action-more {
     margin: 0.2em 0 1em;
     color: #D0D5D3;
-    font-weight: 400;
+    font-weight: 600;
+    font-size: 18px;
 
     b {
       color: #fff;
@@ -67,16 +68,20 @@ landing-page {
   }
 
   #cta-form {
+    max-width: 550px;
+    margin: auto;
     margin-top: 3em;
+
     input {
       font-size: 14px;
       padding: 5px 10px;
       width: 200px;
       color: #747A79;
-      background-color: #232926;
+      background-color: #2C3033;
       border: none;
       border-radius: 3px;
     }
+
     button {
       background-color: #5EB6FC;
       text-transform: uppercase;
