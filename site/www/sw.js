@@ -71,6 +71,10 @@ const fileManifest = [
     "revision": "d1d25937ddf7e6e453f5a623d0b25b89"
   },
   {
+    "url": "assets/img/logo-dark.png",
+    "revision": "a52acd621b2471bd4f5567ddb4570c32"
+  },
+  {
     "url": "assets/img/logo.png",
     "revision": "0ab79243b610b5eb6f909727799fe1df"
   },
@@ -96,11 +100,7 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "65cbdfee8244363af235e421a0c274b8"
-  },
-  {
-    "url": "build/app/51pdxdrl.js",
-    "revision": "e63cafe7fab60af7fcc7dea211ea2f05"
+    "revision": "2e6785fecac12f7cf1b7bea39ebf3709"
   },
   {
     "url": "build/app/9vp1kpca.js",
@@ -132,7 +132,7 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "027e147b40329ff76ef24924816e6ccb"
+    "revision": "fe205d4ef8df2c9b12f1892c0b811808"
   },
   {
     "url": "build/app/cv7cbtbi.js",
@@ -149,10 +149,6 @@ const fileManifest = [
   {
     "url": "build/app/lppew0yu.js",
     "revision": "6e6e62ef569bd610b181f19a188a47f8"
-  },
-  {
-    "url": "build/app/m4n76oyo.js",
-    "revision": "67ff9ac72759bbee70f29a80efca3aaf"
   },
   {
     "url": "build/app/n56a2jzp.js",
@@ -175,6 +171,10 @@ const fileManifest = [
     "revision": "b265badb0f3b157462d6173e37e36a30"
   },
   {
+    "url": "build/app/rbt8akez.js",
+    "revision": "f3d79989fc1d48615a2a81bdfce7e9b4"
+  },
+  {
     "url": "build/app/rhlmfaus.js",
     "revision": "6be3c0d5f97086f8fab64b1bf2a654a5"
   },
@@ -185,6 +185,10 @@ const fileManifest = [
   {
     "url": "build/app/sw8p3ksn.js",
     "revision": "8dc0eab6b1f0fe6587f9a456b07cd6b8"
+  },
+  {
+    "url": "build/app/wrn1ngvt.js",
+    "revision": "ae3da03bba7750bd66fcd6915c08337f"
   },
   {
     "url": "build/app/xyfissap.js",
@@ -564,15 +568,15 @@ const fileManifest = [
   },
   {
     "url": "docs/intro/index.html",
-    "revision": "542cbac26514e95481dfe2507b06a4aa"
+    "revision": "b3533ace9c1d72535785ea71aa3c9660"
   },
   {
     "url": "host.config.json",
-    "revision": "1c29200688f04f815d81f6a0c384f89c"
+    "revision": "3e1eab06f27f6be3bd942b358869d5ed"
   },
   {
     "url": "index.html",
-    "revision": "d5ac412c72e6519773dc2b2fb80ca98f"
+    "revision": "ee243bb414add6646d744fdbeff9b64a"
   },
   {
     "url": "manifest.json",
