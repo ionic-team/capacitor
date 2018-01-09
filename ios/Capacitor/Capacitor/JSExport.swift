@@ -31,15 +31,15 @@ public class JSExport {
     
     lines.append("""
       (function(w) {
-      w.Avocado = w.Avocado || {};
-      w.Avocado.Plugins = w.Avocado.Plugins || {};
-      var a = w.Avocado; var p = a.Plugins;
+      w.Capacitor = w.Capacitor || {};
+      w.Capacitor.Plugins = w.Capacitor.Plugins || {};
+      var a = w.Capacitor; var p = a.Plugins;
       var t = p['\(pluginClassName)'] = {};
       t.addListener = function(eventName, callback) {
-        return w.Avocado.addListener('\(pluginClassName)', eventName, callback);
+        return w.Capacitor.addListener('\(pluginClassName)', eventName, callback);
       }
       t.removeListener = function(eventName, callback) {
-        return w.Avocado.removeListener('\(pluginClassName)', eventName, callback);
+        return w.Capacitor.removeListener('\(pluginClassName)', eventName, callback);
       }
       """)
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
@@ -88,18 +88,18 @@ public class JSExport {
     if returnType == CAPPluginReturnNone {
       // ...using none
       lines.append("""
-        return w.Avocado.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString));
+        return w.Capacitor.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString));
         """)
     } else if returnType == CAPPluginReturnPromise {
       
       // ...using a promise
       lines.append("""
-        return w.Avocado.nativePromise('\(pluginClassName)', '\(methodName)', \(argObjectString));
+        return w.Capacitor.nativePromise('\(pluginClassName)', '\(methodName)', \(argObjectString));
       """)
     } else if returnType == CAPPluginReturnCallback {
       // ...using a callback
       lines.append("""
-        return w.Avocado.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(CALLBACK_PARAM));
+        return w.Capacitor.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(CALLBACK_PARAM));
         """)
     } else {
       print("Error: plugin method return type \(returnType) is not supported!")

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { Plugins, PhotosResult } from '@avocadojs/core';
+import { Plugins, PhotosResult } from '@capacitor/core';
 
 /**
  * Generated class for the PhotosPage page.
