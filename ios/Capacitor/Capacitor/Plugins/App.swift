@@ -30,11 +30,13 @@ public class App : CAPPlugin {
       return
     }
 
-    let canOpen = UIApplication.shared.canOpenURL(url)
-    
-    call.success([
-      "value": canOpen
-    ])
+    DispatchQueue.main.async {
+      let canOpen = UIApplication.shared.canOpenURL(url)
+      
+      call.success([
+        "value": canOpen
+      ])
+    }
   }
   
   @objc func openUrl(_ call: CAPPluginCall) {
@@ -48,10 +50,12 @@ public class App : CAPPlugin {
       return
     }
     
-    UIApplication.shared.open(url, options: [:]) { (completed) in
-      call.success([
-        "completed": completed
-      ])
+    DispatchQueue.main.async {
+      UIApplication.shared.open(url, options: [:]) { (completed) in
+        call.success([
+          "completed": completed
+        ])
+      }
     }
   }
 }
