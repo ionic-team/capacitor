@@ -10,7 +10,8 @@ enum BridgeError: Error {
 @objc public class CAPBridge : NSObject {
   public var CAP_SITE = "https://avocado.ionicframework.com"
   
-  public var webView: WKWebView
+  public var webView: WKWebView?
+  public var userContentController: WKUserContentController
   @objc public var viewController: UIViewController
   
   public var lastPlugin: CAPPlugin?
@@ -28,9 +29,9 @@ enum BridgeError: Error {
   // TODO: Unique label?
   public var dispatchQueue = DispatchQueue(label: "bridge")
   
-  public init(_ vc: UIViewController, _ webView: WKWebView) {
+  public init(_ vc: UIViewController, _ userContentController: WKUserContentController) {
     self.viewController = vc
-    self.webView = webView
+    self.userContentController = userContentController
     super.init()
     registerPlugins()
     bindObservers()
@@ -94,7 +95,7 @@ enum BridgeError: Error {
   func registerPlugin(_ pluginClassName: String, _ pluginType: CAPPlugin.Type) {
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
-    JSExport.exportJS(webView: self.webView, pluginClassName: pluginClassName, pluginType: pluginType)
+    JSExport.exportJS(userContentController: self.userContentController, pluginClassName: pluginClassName, pluginType: pluginType)
   }
   
   public func getOrLoadPlugin(pluginId: String) -> CAPPlugin? {
@@ -155,7 +156,7 @@ enum BridgeError: Error {
   }
   
   public func reload() {
-    webView.reload()
+    webView?.reload()
   }
   
   public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
@@ -285,7 +286,7 @@ enum BridgeError: Error {
       print("🥑  TO JS", resultJson.prefix(256))
       
       DispatchQueue.main.async {
-        self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
+        self.webView?.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
           if error != nil && result != nil {
             print(result!)
           }
@@ -306,7 +307,7 @@ enum BridgeError: Error {
    */
   public func toJsError(error: JSResultError) {
     DispatchQueue.main.async {
-      self.webView.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
+      self.webView?.evaluateJavaScript("window.Avocado.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
         if error != nil && result != nil {
           print(result!)
         }
@@ -326,7 +327,7 @@ enum BridgeError: Error {
     """
     
     DispatchQueue.main.async {
-      self.webView.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
+      self.webView?.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
         if error != nil {
           print("🥑  JS Eval error", error!.localizedDescription)
         }
