@@ -96,7 +96,7 @@ export class LandingPage {
             <h2>Extensible</h2>
 
             <p>
-              Easily build custom native plugins and functionality with a simple Plugin API, or 
+              Easily add custom native functionality with a simple Plugin API, or 
               use existing Cordova plugins with our compatibility layer.
             </p>
           </div>
