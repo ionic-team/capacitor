@@ -62,6 +62,10 @@ export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnab
 //
 
 export interface AppPlugin extends Plugin {
+  canOpenUrl(options: { url: string }): Promise<{value: boolean}>;
+
+  openUrl(options: { url: string }): Promise<{completed: boolean}>;
+
   getLaunchUrl(): Promise<{url: string}>;
   /**
    * Listen for internal plugin errors if you'd like to have more diagnostics on

@@ -9,6 +9,8 @@ CAP_PLUGIN(Accessibility,
 
 CAP_PLUGIN(App,
   CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(canOpenUrl, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(openUrl, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(Browser,
