@@ -6,6 +6,17 @@
     color: #BCC0BE;
   }
 }
+.landing-page {
+  #main-div {
+    background-color: #070C10;
+    color: #fff;
+  }
+}
+
+avocado-site.landing-page {
+  display: block;
+  background-color: #1E2322;
+}
 
 .footer-landing {
   background: #1D2322;
@@ -16,10 +27,8 @@ landing-page {
   main {
     display: flex;
     flex-direction: column;
-    margin-top: 3em;
-    margin-bottom: 2em;
+    margin: 3em auto 12em auto;
     max-width: 768px;
-    margin: auto;
     text-align: center;
   }
 
@@ -157,7 +166,7 @@ landing-page {
     width: 100%;
     background-color: #10141C;
     margin-top: 3.2em;
-    margin-bottom: 2.8em;
+    //margin-bottom: 2.8em;
   }
 
   #three-points .container-flex {
