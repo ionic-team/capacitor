@@ -19,6 +19,9 @@ avocado-site {
   max-width: 1080px;
   margin: auto;
 }
+.container-flex {
+  display: flex;
+}
 
 .input-with-button {
   display: flex;
@@ -42,13 +45,13 @@ avocado-site {
 
 .app {
   height: 100%;
-  max-width: 1080px;
-  margin: auto;
+  //max-width: 1080px;
+  //margin: auto;
 }
 
 .landing-page {
   #main-div {
-    background-color: #030A04;
+    background-color: #070C10;
     color: #fff;
   }
 }

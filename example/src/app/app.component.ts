@@ -11,10 +11,10 @@ import { Plugins } from '@capacitor/core';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage = 'AdminPage';
+  rootPage = 'AppPage';
 
   PLUGINS = [
-    { name: 'Admin', page: 'AdminPage' },
+    { name: 'App', page: 'AppPage' },
     { name: 'Accessibility', page: 'AccessibilityPage' },
     { name: 'Browser', page: 'BrowserPage' },
     { name: 'Camera', page: 'CameraPage' },

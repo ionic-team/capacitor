@@ -17,6 +17,10 @@ landing-page {
     display: flex;
     flex-direction: column;
     margin-top: 3em;
+    margin-bottom: 2em;
+    max-width: 768px;
+    margin: auto;
+    text-align: center;
   }
 
   #logo {
@@ -30,12 +34,13 @@ landing-page {
   }
 
   #action-call {
-    font-size: 2.1em;
+    font-size: 2.5em;
     line-height: normal;
-    margin-top: 1em;
+    margin-top: 2em;
     font-weight: 600;
     margin-bottom: 0.9em;
   }
+
   #action-more {
     margin: 0.2em 0 1em;
     color: #D0D5D3;
@@ -148,10 +153,15 @@ landing-page {
   }
 
   #three-points {
-    display: flex;
-    justify-content: space-around;
+    padding: 4em 0;
+    width: 100%;
+    background-color: #10141C;
     margin-top: 3.2em;
     margin-bottom: 2.8em;
+  }
+
+  #three-points .container-flex {
+    justify-content: space-around;
   }
 
   .point-card {
