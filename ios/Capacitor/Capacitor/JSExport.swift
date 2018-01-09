@@ -26,7 +26,7 @@ public class JSExport {
   /**
    * Export the JS required to implement the given plugin.
    */
-  public static func exportJS(webView: WKWebView, pluginClassName: String, pluginType: CAPPlugin.Type) {
+  public static func exportJS(userContentController: WKUserContentController, pluginClassName: String, pluginType: CAPPlugin.Type) {
     var lines = [String]()
     
     lines.append("""
@@ -54,13 +54,8 @@ public class JSExport {
     
     let js = lines.joined(separator: "\n")
     
-    webView.evaluateJavaScript(js) { (result, error) in
-      if error != nil {
-        print("ERROR EXPORTTING PLUGIN JS", js)
-      } else if result != nil {
-        print(result!)
-      }
-    }
+    let userScript = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+    userContentController.addUserScript(userScript)
   }
   
   private static func generateMethod(pluginClassName: String, method: CAPPluginMethod) -> String {
