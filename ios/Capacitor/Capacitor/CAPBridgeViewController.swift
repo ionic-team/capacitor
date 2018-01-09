@@ -28,6 +28,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     } catch {
       CAPBridge.fatalError(error, error)
     }
+    bridge = CAPBridge(self, o)
     webViewConfiguration.userContentController = o
     
     configureWebView(configuration: webViewConfiguration)
@@ -42,7 +43,6 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     view = webView
     
     // Create the bridge with our ViewController and WebView
-    bridge = CAPBridge(self, webView!)
 
   }
   
@@ -219,6 +219,10 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     }))
     
     self.present(alertController, animated: true, completion: nil)
+  }
+  
+  public func getWebView() -> WKWebView {
+    return self.webView!
   }
   
   /**
