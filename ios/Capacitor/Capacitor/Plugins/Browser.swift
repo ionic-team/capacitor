@@ -34,8 +34,10 @@ public class Browser : CAPPlugin, SFSafariViewControllerDelegate {
     if vc == nil {
       call.success()
     }
-    self.bridge.viewController.dismiss(animated: true) {
-      call.success()
+    DispatchQueue.main.async {
+      self.bridge.viewController.dismiss(animated: true) {
+        call.success()
+      }
     }
   }
   
