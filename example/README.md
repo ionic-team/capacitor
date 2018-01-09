@@ -1,7 +1,7 @@
 Build Example
 =====================
 
-## Build AvocadoJS Core Module
+## Build Capacitor Core Module
 
 ```
 cd to core
@@ -13,12 +13,12 @@ npm link
 
 ## Build Example App
 
-This will npm link to the AvocadoJS package, build the app, and copy the build files to the correct `www` directories for both the iOS and Android example apps.
+This will npm link to the Capacitor package, build the app, and copy the build files to the correct `public` directories for both the iOS and Android example apps.
 
 ```
 cd to example
 
-npm link @avocadojs/core
+npm link @capacitor/core
 npm run build
 npm run copy
 ```
