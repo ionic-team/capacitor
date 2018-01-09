@@ -19,7 +19,7 @@ avocado-site.landing-page {
 }
 
 .footer-landing {
-  background: #151c23;
+  background: #151a23;
   margin-top: 0;
 }
 
@@ -166,20 +166,21 @@ landing-page {
     pointer-events: auto !important;
   }
 
-  #three-points {
-    padding: 4em 0;
+  .three-points {
+    padding: 3em 0;
     width: 100%;
     background-color: #10141C;
-    margin-top: 3.2em;
+    //margin-top: 3.2em;
     //margin-bottom: 2.8em;
   }
 
-  #three-points .container-flex {
+  .three-points .container-flex {
     justify-content: space-around;
   }
 
   .point-card {
     flex: 1;
+    width: 33%;
     position: relative;
     padding: 0px 2em;
 
@@ -257,7 +258,7 @@ landing-page {
     }
     main {
       max-width: 90%;
-      margin: auto;
+      margin: 0 auto 2em auto;
     }
     #landing-cta-image {
       display: none;
@@ -275,11 +276,11 @@ landing-page {
       display: flex;
     }
 
-    #three-points {
+    .three-points {
       flex-direction: column;
       text-align: left;
       display: block;
-      max-width: 90%;
+      padding: 0px 2em;
       margin: auto;
 
       .point-card {
@@ -299,17 +300,22 @@ landing-page {
   @media screen and (max-width: 500px) {
     main {
       max-width: 90%;
-      margin: auto;
+      margin: 0 auto 2em auto;
     }
     #landing-cta-image {
       display: none;
     }
-    #three-points {
+    .three-points {
       display: block;
-      max-width: 90%;
+      padding: 1em;
       margin: auto;
 
+      .container-flex {
+        display: block;
+      }
+
       .point-card {
+        width: 100%;
         margin-left: 0;
         margin-right: 0;
         padding: 0;

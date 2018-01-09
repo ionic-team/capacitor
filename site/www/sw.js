@@ -40,19 +40,23 @@ const fileManifest = [
   },
   {
     "url": "assets/img/checkbox.png",
-    "revision": "3f093b7807311f1af30d586817e2107f"
+    "revision": "ae3b4b201fb303732670371d573dd3e8"
   },
   {
     "url": "assets/img/docs/project-structure.png",
     "revision": "f27c862862e8f36772a6700dd06c697c"
   },
   {
+    "url": "assets/img/favicon (1).ico",
+    "revision": "79825038f1642fd3849aed4a6deb1c9d"
+  },
+  {
     "url": "assets/img/favicon.ico",
-    "revision": "a61817507821162ce48c41fcaaa487d8"
+    "revision": "79825038f1642fd3849aed4a6deb1c9d"
   },
   {
     "url": "assets/img/favicon.png",
-    "revision": "a61817507821162ce48c41fcaaa487d8"
+    "revision": "79825038f1642fd3849aed4a6deb1c9d"
   },
   {
     "url": "assets/img/feature-icons.png",
@@ -100,11 +104,11 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "99a82bd72c625a08fb951f2ac9696af7"
+    "revision": "44161497c23cd17d2b639aab67919355"
   },
   {
-    "url": "build/app/8yfigk2x.js",
-    "revision": "5c0b8902e58e91fe1747c9511f8eddb9"
+    "url": "build/app/1swgjf2d.js",
+    "revision": "d9ca8f20a95ba1eeb36232a85f8c3eac"
   },
   {
     "url": "build/app/9vp1kpca.js",
@@ -136,11 +140,7 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "d96af7973c3a54f61525f473024d47b5"
-  },
-  {
-    "url": "build/app/bnjufv0f.js",
-    "revision": "10a319e1bc61b2ea31c87764f0fde932"
+    "revision": "2c1a8722377317b7c508740a4375a412"
   },
   {
     "url": "build/app/cv7cbtbi.js",
@@ -189,6 +189,10 @@ const fileManifest = [
   {
     "url": "build/app/sw8p3ksn.js",
     "revision": "8dc0eab6b1f0fe6587f9a456b07cd6b8"
+  },
+  {
+    "url": "build/app/vcjhltcx.js",
+    "revision": "23067f3a66ed34f40c55df8c696185ff"
   },
   {
     "url": "build/app/xyfissap.js",
@@ -572,11 +576,11 @@ const fileManifest = [
   },
   {
     "url": "host.config.json",
-    "revision": "1af1af1dfb67d31176eadfbced0f647c"
+    "revision": "6a1ddf61c7192c1dd3deb5210986176f"
   },
   {
     "url": "index.html",
-    "revision": "66f99c5e90f27c6a7d41b210807b4a50"
+    "revision": "99b11abf8ee6d54bfa01dd4399e46c62"
   },
   {
     "url": "manifest.json",

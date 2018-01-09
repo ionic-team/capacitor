@@ -55,7 +55,7 @@ export class LandingPage {
           </section>
         </main>
 
-        <section id="three-points">
+        <section class="three-points">
           <div class="container container-flex">
             <div class="point-card">
               <h2>Cross Platform</h2>
@@ -79,6 +79,31 @@ export class LandingPage {
             <p>
               Capacitor is completely open source (MIT) and maintained
               by <a href="http://ionicframework.com/">Ionic</a> and its community.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="three-points">
+        <div class="container container-flex">
+          <div class="point-card">
+            <h2>Web Native</h2>
+            <p>
+              Build apps with standardized web technologies that will work for decades, and 
+              easily reach users on the app stores <i>and</i> the mobile web.
+            </p>
+          </div>
+          <div class="point-card">
+            <h2>Extensible</h2>
+
+            <p>
+              Easily build custom native plugins and functionality with a simple Plugin API, or 
+              use existing Cordova plugins with our compatibility layer.
+            </p>
+          </div>
+          <div class="point-card">
+            <h2>Simple</h2>
+            <p>
+              Focus on what you want to do, not how. Capacitor turns complex, proprietary Native APIs into simple JS calls.
             </p>
           </div>
         </div>
