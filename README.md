@@ -1,14 +1,14 @@
-# AvocadoJS
+# Capacitor
 
-Monorepo for Avocado libraries.
+Monorepo for Capacitor libraries.
 
 ### Directory Structure
 
-* `cli`: Avocado CLI
-* `core`: Avocado Core JS library
-* `ios`: Avocado iOS Runtime
+* `cli`: Capacitor CLI
+* `core`: Capacitor Core JS library
+* `ios`: Capacitor iOS Runtime
 * `ios-template`: Default iOS App installed by the CLI
-* `android`: Avocado Android Runtime
+* `android`: Capacitor Android Runtime
 * `android-template`: Default Android App installed by the CLI
 * `example`: iOS Example for development
 
@@ -22,8 +22,8 @@ sudo npm link
 
 ```
 cd example
-npm link @avocadojs/core
-npm run build && cp -R www/* ios/IonicRunner/www/
+npm link @capacitor/core
+npm run build && npm run copy
 ```
 
 Then open `example/ios/IonicRunner/IonicRunner.xcodeproj` and run it
