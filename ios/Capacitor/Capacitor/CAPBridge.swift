@@ -44,6 +44,31 @@ enum BridgeError: Error {
     }*/
   }
   
+  public static func handleOpenUrl(_ url: URL, _ options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.URLOpen.name()), object: [
+      "url": url,
+      "options": options
+    ])
+    return true
+  }
+  
+  /**
+   * Handle continueUserActivity, for now this just provides universal link responding support.
+   */
+  public static func handleContinueActivity(_ userActivity: NSUserActivity, _ restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    // TODO: Support other types, emit to rest of plugins
+    if userActivity.activityType != NSUserActivityTypeBrowsingWeb || userActivity.webpageURL == nil {
+      return false
+    }
+    
+    let url = userActivity.webpageURL
+    
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.UniversalLinkOpen.name()), object: [
+      "url": url
+    ])
+    return true
+  }
+  
   static func fatalError(_ error: Error, _ originalError: Error) {
     print("⚡️ ❌  Capacitor: FATAL ERROR")
     print("⚡️ ❌  Error was: ", originalError.localizedDescription)

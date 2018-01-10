@@ -7,9 +7,18 @@ public class App : CAPPlugin {
   
   public override func load() {
     NotificationCenter.default.addObserver(self, selector: #selector(self.handleUrlOpened(notification:)), name: Notification.Name(CAPNotifications.URLOpen.name()), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(self.handleUniversalLink(notification:)), name: Notification.Name(CAPNotifications.UniversalLinkOpen.name()), object: nil)
   }
   
   @objc func handleUrlOpened(notification: NSNotification) {
+    guard let object = notification.object as? [String:Any?] else {
+      return
+    }
+    
+    notifyListeners("appUrlOpen", data: makeUrlOpenObject(object), retainUntilConsumed: true)
+  }
+  
+  @objc func handleUniversalLink(notification: NSNotification) {
     guard let object = notification.object as? [String:Any?] else {
       return
     }

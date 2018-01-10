@@ -1,5 +1,4 @@
 import Foundation
-import AdSupport
 
 public typealias DeviceInfo = [String:Any]
 
@@ -32,15 +31,9 @@ public class Device: CAPPlugin {
     ])
   }
   
+  
   @objc func getAdvertisingIdentifier(_ call: CAPPluginCall) {
-    guard ASIdentifierManager.shared().isAdvertisingTrackingEnabled else {
-      call.error("User has disabled ad tracking")
-      return
-    }
-    
-    call.success([
-      "id": ASIdentifierManager.shared().advertisingIdentifier.uuidString
-    ])
+
   }
   
   @objc func getMemoryUsage(_ call: CAPPluginCall) {
