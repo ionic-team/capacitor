@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name = 'Capacitor'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
   s.summary = 'Capacitor for iOS'
 	s.social_media_url = 'http://twitter.com/getcapacitor'
   s.license = 'MIT'
-  s.homepage = 'https://getcapacitor.com'
+  s.homepage = 'https://ionic-team.github.io/capacitor"
   s.ios.deployment_target  = '10.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version }
