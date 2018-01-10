@@ -62,6 +62,17 @@
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<string>fb</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.getcapacitor.avocado</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>avocado</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Store camera photos to camera</string>
 </dict>

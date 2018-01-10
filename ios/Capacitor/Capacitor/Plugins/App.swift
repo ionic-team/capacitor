@@ -3,6 +3,33 @@ import SafariServices
 
 @objc(App)
 public class App : CAPPlugin {
+  var lastUrlOpenOptions: [String:Any?]?
+  
+  public override func load() {
+    NotificationCenter.default.addObserver(self, selector: #selector(self.handleUrlOpened(notification:)), name: Notification.Name(CAPNotifications.URLOpen.name()), object: nil)
+  }
+  
+  @objc func handleUrlOpened(notification: NSNotification) {
+    guard let object = notification.object as? [String:Any?] else {
+      return
+    }
+    
+    notifyListeners("appUrlOpen", data: makeUrlOpenObject(object), retainUntilConsumed: true)
+  }
+  
+  func makeUrlOpenObject(_ object: [String:Any?]) -> JSObject {
+    guard let url = object["url"] as? NSURL else {
+      return [:]
+    }
+    
+    let options = object["options"] as? [String:Any?] ?? [:]
+    return [
+      "url": url.absoluteString ?? "",
+      "sourceApplication": options[UIApplicationOpenURLOptionsKey.sourceApplication.rawValue] as? String ?? "",
+      "openInPlace": options[UIApplicationOpenURLOptionsKey.openInPlace.rawValue] as? String ?? ""
+    ]
+  }
+  
   func firePluginError(_ jsError: JSProcessingError) {
     notifyListeners("pluginError", data: [
       "message": jsError.localizedDescription
@@ -10,7 +37,7 @@ public class App : CAPPlugin {
   }
   
   public func fireChange(isActive: Bool) {
-    notifyListeners("appStateChanged", data: [
+    notifyListeners("appStateChange", data: [
       "isActive": isActive
     ])
   }

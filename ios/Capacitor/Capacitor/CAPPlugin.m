@@ -9,6 +9,7 @@
   self.bridge = bridge;
   self.pluginId = pluginId;
   self.eventListeners = [[NSMutableDictionary alloc] init];
+  self.retainedEventArguments = [[NSMutableDictionary alloc] init];
   return self;
 }
 
@@ -40,9 +41,21 @@
   if(!listenersForEvent) {
     listenersForEvent = [[NSMutableArray alloc] initWithObjects:listener, nil];
     [self.eventListeners setValue:listenersForEvent forKey:eventName];
+    
+    [self sendRetainedArgumentsForEvent:eventName listener:listener];
   } else {
     [listenersForEvent addObject:listener];
   }
+}
+
+- (void)sendRetainedArgumentsForEvent:(NSString *)eventName listener:(CAPPluginCall *)listener {
+  id retained = [self.retainedEventArguments objectForKey:eventName];
+  if (retained == nil) {
+    return;
+  }
+  
+  [self notifyListeners:eventName data:retained];
+  [self.retainedEventArguments removeObjectForKey:eventName];
 }
 
 - (void)removeEventListener:(NSString *)eventName listener:(CAPPluginCall *)listener {
@@ -56,8 +69,15 @@
 }
 
 - (void)notifyListeners:(NSString *)eventName data:(NSDictionary<NSString *,id> *)data {
+  [self notifyListeners:eventName data:data retainUntilConsumed:NO];
+}
+
+- (void)notifyListeners:(NSString *)eventName data:(NSDictionary<NSString *,id> *)data retainUntilConsumed:(BOOL)retain {
   NSArray<CAPPluginCall *> *listenersForEvent = [self.eventListeners objectForKey:eventName];
   if(listenersForEvent == nil) {
+    if (retain == YES) {
+      [self.retainedEventArguments setObject:data forKey:eventName];
+    }
     return;
   }
   
@@ -66,7 +86,6 @@
     call.successHandler(result);
   }
 }
-
 
 - (void)addListener:(CAPPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
@@ -81,17 +100,20 @@
   [self removeEventListener:eventName listener:storedCall];
   [self.bridge removeSavedCallWithCallbackId:callbackId];
 }
-/*
- -(BOOL) getBool:(CAPPluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {
- NSNumber *value = [call getBool:field defaultValue:nil];
- if(value == nil) {
- return defaultValue;
- }
- if(value.integerValue == 0) {
- return FALSE;
- }
- return TRUE;
- }*/
+
+- (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
+  NSArray<CAPPluginCall *>* listeners = [self.eventListeners objectForKey:eventName];
+  return listeners;
+}
+
+- (BOOL)hasListeners:(NSString *)eventName {
+  NSArray<CAPPluginCall *>* listeners = [self.eventListeners objectForKey:eventName];
+  
+  if (listeners == nil) {
+    return false;
+  }
+  return [listeners count] > 0;
+}
 
 /**
  * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered

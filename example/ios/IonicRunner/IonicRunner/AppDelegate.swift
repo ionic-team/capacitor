@@ -8,6 +8,7 @@
 
 import UIKit
 import UserNotifications
+import Capacitor
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -41,7 +42,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func applicationWillTerminate(_ application: UIApplication) {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
   }
-
+  
+  func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.URLOpen.name()), object: [
+      "url": url,
+      "options": options
+    ])
+    return true
+  }
 
 }
 

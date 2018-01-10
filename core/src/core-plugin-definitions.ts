@@ -67,6 +67,7 @@ export interface AppPlugin extends Plugin {
   openUrl(options: { url: string }): Promise<{completed: boolean}>;
 
   getLaunchUrl(): Promise<{url: string}>;
+
   /**
    * Listen for internal plugin errors if you'd like to have more diagnostics on
    * serious plugin runtime errors.
@@ -76,11 +77,22 @@ export interface AppPlugin extends Plugin {
   /**
    * Listen for changes in the App's active state (whether the app is in the foreground or background)
    */
-  addListener(eventName: 'appStateChanged', listenerFunc: (err: any, state: AppState) => void): PluginListenerHandle;
+  addListener(eventName: 'appStateChange', listenerFunc: (err: any, state: AppState) => void): PluginListenerHandle;
+
+  /**
+   * Listen for url open events for the app
+   */
+  addListener(eventName: 'appUrlOpen', listenerFunc: (err: any, data: AppUrlOpen) => void): PluginListenerHandle;
 }
 
 export interface AppState {
   isActive: boolean;
+}
+
+export interface AppUrlOpen {
+  url: string;
+  annotation: any;
+  openInPlace: boolean;
 }
 
 //
