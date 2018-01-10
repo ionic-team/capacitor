@@ -44,11 +44,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.URLOpen.name()), object: [
-      "url": url,
-      "options": options
-    ])
-    return true
+    return CAPBridge.handleOpenUrl(url, options)
+  }
+  
+  func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    return CAPBridge.handleContinueActivity(userActivity, restorationHandler)
   }
 
 }
