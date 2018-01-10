@@ -8,7 +8,7 @@ enum BridgeError: Error {
 }
 
 @objc public class CAPBridge : NSObject {
-  public var CAP_SITE = "https://avocado.ionicframework.com"
+  public var CAP_SITE = "https://getcapacitor.com/"
   
   public var userContentController: WKUserContentController
   @objc public var viewController: UIViewController
