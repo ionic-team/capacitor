@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.module_name = 'Cordova'
   s.version      = "0.0.2"
   s.summary      = "Capacitor Cordova Compatibility Layer"
-  s.homepage     = 'https://ionic-team.github.io/capacitor"
+  s.homepage     = "https://ionic-team.github.io/capacitor"
   s.license      = 'MIT'
   s.authors      = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source       = { :git => 'https://github.com/ionic-team/capacitor', :tag => s.version }
