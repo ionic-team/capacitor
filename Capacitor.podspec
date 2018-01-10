@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target  = '10.0'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version }
-  s.source_files = 'ios/Capacitor/*.{swift,h,m}', 'ios/Capacitor/Plugins/*.{swift,h,m}', 'ios/Capacitor/Plugins/**/*.{swift,h,m}'
+  s.source_files = 'ios/Capacitor/Capacitor/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/**/*.{swift,h,m}'
   s.dependency 'CapacitorCordova', '0.0.1'
   s.dependency 'GCDWebServer', '~> 3.0'
 end

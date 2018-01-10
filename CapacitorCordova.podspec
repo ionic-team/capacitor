@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => 'https://github.com/ionic-team/capacitor', :tag => s.version }
   s.platform     = :ios, 10.0
   s.source_files = 'ios/CapacitorCordova/**/*.{h,m}'
-  s.public_header_files = 'ios/CapacitorCordova/Classes/Public/*.h'
+  s.public_header_files = 'ios/CapacitorCordova/CapacitorCordova/Classes/Public/*.h'
   s.requires_arc = true
   s.framework    = "WebKit"
 end
