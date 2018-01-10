@@ -38,8 +38,12 @@ export class MyApp {
       console.error('There was a serious error with a plugin', err, info);
     });
 
-    Plugins.App.addListener('appStateChanged', (err: any, state: any) => {
+    Plugins.App.addListener('appStateChange', (err: any, state: any) => {
       console.log('App state changed', state);
+    });
+
+    Plugins.App.addListener('appUrlOpen', (err: any, data: any) => {
+      alert('APP URL OPEN: ' +  data.url);
     });
 
     this.getLaunchUrl();
