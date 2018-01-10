@@ -59,7 +59,17 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       print("🥑  Avocado can run. Ensure you've run avocado sync at least once")
       exit(1)
     }
+
+    startWebServer()
+
+    let request = URLRequest(url: URL(string: "http://localhost:8080/index.html")!)
+    _ = webView?.load(request)
+
+  }
+
+  func startWebServer() {
     let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
+    GCDWebServer.setLogLevel(3)
     self.webServer = GCDWebServer.init()
     self.webServer?.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: nil, cacheAge: 3600, allowRangeRequests: true)
 
@@ -73,12 +83,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     } catch {
       print(error)
     }
-
-    let request = URLRequest(url: URL(string: "http://localhost:8080/index.html")!)
-    _ = webView?.load(request)
-
   }
-  
   public func configureWebView(configuration: WKWebViewConfiguration) {
     configuration.allowsInlineMediaPlayback = true
     configuration.suppressesIncrementalRendering = false
