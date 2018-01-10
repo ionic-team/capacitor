@@ -80,7 +80,8 @@ export interface AppPlugin extends Plugin {
   addListener(eventName: 'appStateChange', listenerFunc: (err: any, state: AppState) => void): PluginListenerHandle;
 
   /**
-   * Listen for url open events for the app
+   * Listen for url open events for the app. This handles both custom URL scheme links as well
+   * as URLs your app handles (Universal Links on iOS and App Links on Android)
    */
   addListener(eventName: 'appUrlOpen', listenerFunc: (err: any, data: AppUrlOpen) => void): PluginListenerHandle;
 }
