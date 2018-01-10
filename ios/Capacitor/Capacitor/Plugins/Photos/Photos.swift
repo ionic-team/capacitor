@@ -121,33 +121,33 @@ public class Photos : CAPPlugin {
     
     // Load our smart albums
     var fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
-    fetchResult.enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
+    fetchResult.enumerateObjects({ (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
       var o = JSObject()
       o["name"] = collection.localizedTitle
       o["identifier"] = collection.localIdentifier
       o["type"] = "smart"
       albums.append(o)
-    }
+    })
     
     if loadSharedAlbums {
       fetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumCloudShared, options: nil)
-      fetchResult.enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
+      fetchResult.enumerateObjects({ (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
         var o = JSObject()
         o["name"] = collection.localizedTitle
         o["identifier"] = collection.localIdentifier
         o["type"] = "shared"
         albums.append(o)
-      }
+      })
     }
     
     // Load our user albums
-    PHCollectionList.fetchTopLevelUserCollections(with: nil).enumerateObjects { (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
+    PHCollectionList.fetchTopLevelUserCollections(with: nil).enumerateObjects({ (collection, count, stop: UnsafeMutablePointer<ObjCBool>) in
       var o = JSObject()
       o["name"] = collection.localizedTitle
       o["identifier"] = collection.localIdentifier
       o["type"] = "user"
       albums.append(o)
-    }
+    })
     
     call.success([
       "albums": albums
