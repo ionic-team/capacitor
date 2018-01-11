@@ -22,8 +22,8 @@ export class LandingPage {
 
   render() {
     return (
-      <div>
-
+      <div class="landing-c">
+        <landing-gl />
         <main>
           <h1 id="action-call">Build cross platform mobile apps with JavaScript and the Web</h1>
           <div id="action-more">
@@ -88,7 +88,7 @@ export class LandingPage {
           <div class="point-card">
             <h2>Web Native</h2>
             <p>
-              Build apps with standardized web technologies that will work for decades, and 
+              Build apps with standardized web technologies that will work for decades, and
               easily reach users on the app stores <i>and</i> the mobile web.
             </p>
           </div>
@@ -96,7 +96,7 @@ export class LandingPage {
             <h2>Extensible</h2>
 
             <p>
-              Easily add custom native functionality with a simple Plugin API, or 
+              Easily add custom native functionality with a simple Plugin API, or
               use existing Cordova plugins with our compatibility layer.
             </p>
           </div>
