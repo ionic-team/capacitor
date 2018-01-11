@@ -3,6 +3,7 @@ package com.getcapacitor.plugin;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -12,6 +13,8 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+
+import java.util.List;
 
 @NativePlugin()
 public class App extends Plugin {
@@ -64,11 +67,31 @@ public class App extends Plugin {
     try {
       pm.getPackageInfo(url, PackageManager.GET_ACTIVITIES);
       ret.put("value", true);
+      call.success(ret);
       return;
     } catch(PackageManager.NameNotFoundException e) {}
 
     ret.put("value", false);
-    call.success();
+    call.success(ret);
+  }
+
+  @PluginMethod()
+  public void openUrl(PluginCall call) {
+    String url = call.getString("url");
+    if (url == null) {
+      call.error("Must provide a url to open");
+      return;
+    }
+
+    final PackageManager manager = getContext().getPackageManager();
+    final Intent launchIntent = new Intent(Intent.ACTION_VIEW);
+    launchIntent.setData(Uri.parse(url));
+
+    try {
+      getActivity().startActivity(launchIntent);
+    } catch(Exception ex) {
+      call.error("Unable to open url", ex);
+    }
   }
 
   /**
