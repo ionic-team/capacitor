@@ -85,13 +85,10 @@ export interface AppPlugin extends Plugin {
    */
   openUrl(options: { url: string }): Promise<{completed: boolean}>;
 
-  getLaunchUrl(): Promise<AppLaunchUrl>;
-
   /**
-   * Listen for internal plugin errors if you'd like to have more diagnostics on
-   * serious plugin runtime errors.
+   * Get the URL the app was launched with, if any
    */
-  addListener(eventName: 'pluginError', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
+  getLaunchUrl(): Promise<AppLaunchUrl>;
 
   /**
    * Listen for changes in the App's active state (whether the app is in the foreground or background)

@@ -21,18 +21,6 @@ public class App extends Plugin {
   private static final String EVENT_URL_OPEN = "appUrlOpen";
   private static final String EVENT_STATE_CHANGE = "appStateChange";
 
-  /*
-  public void firePluginError(_ jsError: JSProcessingError) {
-    notifyListeners("pluginError", data: [
-    "message": jsError.localizedDescription
-    ])
-  }
-  */
-
-  // TODO: Implement this
-  public void firePluginError() {
-  }
-
   public void fireChange(boolean isActive) {
     Log.d(Bridge.TAG, "Firing change: " + isActive);
     JSObject data = new JSObject();
