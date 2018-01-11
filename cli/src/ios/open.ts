@@ -11,6 +11,6 @@ export async function openIOS(config: Config) {
     await opn(xcodeProject, { wait: false });
     await wait(3000);
   } else {
-    throw new Error('Xcode workspace does not exist. Run "avocado create ios" to bootstrap a native ios project.');
+    throw new Error('Xcode workspace does not exist. Run "capacitor create ios" to bootstrap a native ios project.');
   }
 }

@@ -7,7 +7,7 @@ var currentNodeVersion = process.version.replace('v', '');
 var requiresNodeVersion = packageJson.engines.node;
 
 if (!semver.satisfies(currentNodeVersion, requiresNodeVersion)) {
-  console.error('ERROR: avocado cli requires node ' + requiresNodeVersion);
+  console.error('ERROR: Capacitor CLI requires Node ' + requiresNodeVersion);
   process.exit(1);
 }
 

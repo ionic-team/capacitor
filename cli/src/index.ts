@@ -19,7 +19,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .command('create [directory] [name] [identifier]')
-    .description('Creates a new avocado project in the given directory')
+    .description('Creates a new Capacitor project in the given directory')
     .action((directory, name, identifier) => {
       return createCommand(config, directory, name, identifier);
     });
@@ -68,7 +68,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .command('plugin:generate')
-    .description('start a new avocado plugin')
+    .description('start a new Capacitor plugin')
     .action(() => {
       return newPluginCommand(config);
     });

@@ -18,14 +18,14 @@ export async function add(config: Config, checks: CheckFunction[]): Promise<void
 
 export async function checkWebDir(config: Config): Promise<string | null> {
   if (!await existsAsync(config.app.webDir)) {
-    return `Avocado could not find the directory with the web assets in "${config.app.webDir}".
+    return `Capacitor could not find the directory with the web assets in "${config.app.webDir}".
     Please create it, also remember that it must include a index.html.
-    More info: https://avocadojs.com/docs/webDir`;
+    More info: https://getcapacitor.com/docs/webDir`;
   }
 
   if (!await existsAsync(join(config.app.webDir, 'index.html'))) {
     return `The web directory (${config.app.webDir}) must contain a "index.html".
-    It will be the entry point for the avocado hybrid app.`;
+    It will be the entry point for the web portion of the Capacitor app.`;
   }
   return null;
 }
@@ -33,8 +33,8 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 export async function checkPackage(config: Config): Promise<string | null> {
   config;
   if (!await existsAsync('package.json')) {
-    return `Avocado needs to run at the root of a NPM package.
-    Make sure you have a "package.json" in the working directory you run avocado.
+    return `Capacitor needs to run at the root of a NPM package.
+    Make sure you have a "package.json" in the working directory you run capacitor.
     More info: https://docs.npmjs.com/cli/init`;
   }
   return null;

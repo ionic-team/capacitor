@@ -5,7 +5,7 @@
   "homepage": "https://ionic-team.github.io/capacitor/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
   "bin": {
-    "avocado": "./bin/capacitor"
+    "capacitor": "./bin/capacitor"
   },
   "engines": {
     "node": ">=8.3.0"
