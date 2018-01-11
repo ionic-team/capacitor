@@ -276,6 +276,8 @@ public class Bridge {
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
             Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
+          } catch(Exception ex) {
+            Log.e(Bridge.TAG, "Serious error executing plugin", ex);
           }
         }
       };
