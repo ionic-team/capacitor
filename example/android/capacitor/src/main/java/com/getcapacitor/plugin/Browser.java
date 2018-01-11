@@ -126,7 +126,5 @@ public class Browser extends Plugin {
   @Override
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
-
-    Log.d(Bridge.TAG, "ACTIVITY RESULT! " + requestCode + ", " + resultCode);
   }
 }
