@@ -1,27 +1,27 @@
-# AvocadoJS CLI
+# Capacitor CLI
 
-The AvocadoJS command-line interface should be installed locally and executed through `npm` scripts.
+The Capacitor command-line interface should be installed locally and executed through `npm` scripts.
 
 ```
-npm install @avocadojs/cli --save-dev
+npm install @capacitor/cli --save-dev
 ```
 
 
 ### Local Commands
 
-Below is an example of running Avocado commands from a webapp's npm scripts within the local `package.json` file.
+Below is an example of running Capacitor commands from a webapp's npm scripts within the local `package.json` file.
 
 ```
 package.json scripts
 
   scripts: {
     "build": "tsc && npm run sync",
-    "create.android": "avocado create android",
-    "create.ios": "avocado create ios",
-    "doctor": "avocado doctor"
-    "open.android": "avocado open android",
-    "open.ios": "avocado open ios",
-    "sync": "avocado sync"
+    "create.android": "capacitor create android",
+    "create.ios": "capacitor create ios",
+    "doctor": "capacitor doctor"
+    "open.android": "capacitor open android",
+    "open.ios": "capacitor open ios",
+    "sync": "capacitor sync"
   }
 ```
 
@@ -35,7 +35,7 @@ copy [platform]    copies the web app build into the native app
 open [platform]    opens the native project workspace
 create [platform]  create a native project
 doctor [platform]  checks for common errors
-plugin:generate    start a new avocado plugin
+plugin:generate    start a new Capacitor plugin
 ```
 
 
@@ -48,4 +48,4 @@ plugin:generate    start a new avocado plugin
 
 ### License
 
-* [MIT](https://github.com/ionic-team/avocado/blob/master/LICENSE)
+* [MIT](https://github.com/ionic-team/capacitor/blob/master/LICENSE)

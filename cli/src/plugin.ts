@@ -42,14 +42,14 @@ export async function resolvePlugin(name: string): Promise<Plugin | null> {
     const rootPath = resolve('node_modules', name);
     const packagePath = join(rootPath, 'package.json');
     const meta = await readJSON(packagePath);
-    if (!meta || !meta.avocado) {
+    if (!meta || !meta.capacitor) {
       return null;
     }
     return {
       id: name,
       name: fixName(name),
       rootPath: rootPath,
-      manifest: meta.avocado
+      manifest: meta.capacitor
     };
   } catch (e) { }
   return null;
@@ -91,6 +91,6 @@ export function printPlugins(plugins: Plugin[]) {
 ${pluginNames.map(p => `     ${p}`).join('\n')}
 `);
   } else {
-    logInfo('no avocado plugin was found, that\'s ok, you can add more plugins later');
+    logInfo('no capacitor plugin was found, that\'s ok, you can add more plugins later');
   }
 }

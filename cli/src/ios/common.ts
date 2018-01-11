@@ -30,7 +30,7 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
 export async function checkIOSProject(config: Config): Promise<string | null> {
   const exists = config.platformDirExists('ios');
   if (exists === null) {
-    return 'iOS was not created yet. Run `avocado create ios`.';
+    return 'iOS was not created yet. Run `capacitor create ios`.';
   }
   return null;
 }
@@ -47,7 +47,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
   }
   try {
     if (!iosManifest.src) {
-      throw 'avocado.ios.path is missing';
+      throw 'capacitor.ios.path is missing';
     }
 
     const iosPath = join(plugin.rootPath, iosManifest.src);

@@ -54,7 +54,7 @@ async function checkNPMVersion() {
   const version = await runCommand('npm -v');
   const semver = await import('semver');
   if (semver.gt(minVersion, version)) {
-    return `Avocado CLI requires at least NPM ${minVersion}`;
+    return `Capacitor CLI requires at least NPM ${minVersion}`;
   }
   return null;
 }

@@ -25,7 +25,7 @@ export class Config implements CliConfig {
     minVersion: '10.0',
     platformDir: '',
     webDir: 'public',
-    avocadoRuntimePod: `pod 'Avocado'`,
+    avocadoRuntimePod: `pod 'Capacitor'`,
     nativeProjectName: 'App',
     assets: {
       templateName: 'ios-template',
@@ -47,7 +47,7 @@ export class Config implements CliConfig {
     webDir: 'public',
     symlinkWebDir: false,
     package: Package,
-    extConfigName: 'avocado.config.json',
+    extConfigName: 'capacitor.config.json',
     extConfigFilePath: '',
     extConfig: ExtConfig,
     assets: {
@@ -92,9 +92,9 @@ export class Config implements CliConfig {
       this.mergeConfigData();
 
       // TODO: remove this code
-      // Once Avocado library is released as a cocoapods package, this code is not needed
-      const avocadoRuntimePath = join(this.cli.assetsDir, 'Avocado');
-      this.ios.avocadoRuntimePod = `pod 'Avocado', :path => '${avocadoRuntimePath}'`;
+      // Once Capacitor library is released as a cocoapods package, this code is not needed
+      const avocadoRuntimePath = join(this.cli.assetsDir, 'Capacitor');
+      this.ios.avocadoRuntimePod = `pod 'Capacitor', :path => '${avocadoRuntimePath}'`;
 
     } catch (e) {
       logFatal(`Unable to load config`, e);
@@ -139,14 +139,14 @@ export class Config implements CliConfig {
       const extConfigStr = readFileSync(this.app.extConfigFilePath, 'utf-8');
 
       try {
-        // we've got an avocado.json file, let's parse it
+        // we've got an capacitor.json file, let's parse it
         this.app.extConfig = JSON.parse(extConfigStr);
       } catch (e) {
         logFatal(`error parsing: ${this.app.extConfigFilePath}`);
       }
 
     } catch {
-      // it's ok if there's no avocado.json file
+      // it's ok if there's no capacitor.json file
     }
   }
 
@@ -247,7 +247,7 @@ export class Config implements CliConfig {
 
 
 function platformNotCreatedError(platformName: string) {
-  logFatal(`"${platformName}" platform has not been created. Please use "avocado create ${platformName}" command to first create the platform.`);
+  logFatal(`"${platformName}" platform has not been created. Please use "capacitor create ${platformName}" command to first create the platform.`);
 }
 
 

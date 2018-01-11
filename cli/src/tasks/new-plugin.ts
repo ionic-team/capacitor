@@ -14,7 +14,7 @@ export async function newPluginCommand(config: Config) {
 
 
 export async function newPlugin(config: Config) {
-  logInfo('avocado new-plugin is about to create a new avocado plugin.');
+  logInfo('capacitor new-plugin is about to create a new capacitor plugin.');
 
   config;
 
@@ -72,7 +72,7 @@ export async function newPlugin(config: Config) {
       return runCommand('npm install');
     });
 
-    logInfo('DONE! avocado plugin was created.');
+    logInfo('DONE! capacitor plugin was created.');
     logInfo(`Get into the plugin: cd ./${pluginPath}`);
 
   } else {
@@ -106,11 +106,11 @@ function generatePackageJSON(answers: any) {
       'native/'
     ],
     keywords: [
-      'avocado',
+      'capacitor',
       'plugin',
       'native'
     ],
-    avocado: {
+    capacitor: {
       ios: {
         src: 'ios',
       },
