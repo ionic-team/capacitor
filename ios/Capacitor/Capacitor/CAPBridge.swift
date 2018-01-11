@@ -155,6 +155,7 @@ enum BridgeError: Error {
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
     JSExport.exportJS(userContentController: self.userContentController, pluginClassName: pluginClassName, pluginType: pluginType)
+    _ = loadPlugin(pluginId: bridgeType.pluginId())
   }
   
   public func getOrLoadPlugin(pluginId: String) -> CAPPlugin? {
