@@ -66,10 +66,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.getcapacitor.avocado</string>
+			<string>com.getcapacitor.capacitor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>avocado</string>
+				<string>capacitor</string>
 			</array>
 		</dict>
 	</array>

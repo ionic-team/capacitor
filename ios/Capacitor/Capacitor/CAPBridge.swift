@@ -8,7 +8,7 @@ enum BridgeError: Error {
 }
 
 @objc public class CAPBridge : NSObject {
-  public var CAP_SITE = "https://getcapacitor.com/"
+  public static var CAP_SITE = "https://getcapacitor.com/"
   
   public var userContentController: WKUserContentController
   @objc public var viewController: UIViewController
@@ -106,7 +106,7 @@ enum BridgeError: Error {
 
   func exportCoreJS() {
     do {
-      try JSExport.exportAvocadoJS(userContentController: self.userContentController)
+      try JSExport.exportCapacitorJS(userContentController: self.userContentController)
     } catch {
       CAPBridge.fatalError(error, error)
     }
@@ -204,7 +204,7 @@ enum BridgeError: Error {
   }
 
   func docLink(_ url: String) -> String {
-    return "\(CAP_SITE)/docs/\(url)"
+    return "\(CAPBridge.CAP_SITE)/docs/\(url)"
   }
   
   /**

@@ -22,9 +22,9 @@
 @end
 
 #define CAP_PLUGIN_CONFIG(plugin_id) \
-CAP_EXTERN void AvocadoRegisterPlugin(Class); \
+CAP_EXTERN void CapacitorRegisterPlugin(Class); \
 + (NSString *)pluginId { return @#plugin_id; } \
-+ (void)load { AvocadoRegisterPlugin(self); }
++ (void)load { CapacitorRegisterPlugin(self); }
 #define CAP_PLUGIN_METHOD(method_name, method_return_type) \
 [methods addObject:[[CAPPluginMethod alloc] initWithName:@#method_name returnType:method_return_type]]
 
