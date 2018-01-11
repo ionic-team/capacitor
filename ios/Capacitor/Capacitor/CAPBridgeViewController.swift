@@ -115,7 +115,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
         
         let options = dict["options"] as? [String:Any] ?? [:]
         
-        print("🥑  To Native -> ", pluginId, method, callbackId, options)
+        print("⚡️  To Native -> ", pluginId, method, callbackId, options)
         
         self.bridge!.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
       } else if type == "cordova" {
@@ -144,11 +144,11 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       filename = String(url[index...])
     }
     
-    print("\n🥑  ------ STARTUP JS ERROR ------\n")
-    print("🥑  \(message)")
-    print("🥑  URL: \(url)")
-    print("🥑  \(filename):\(line):\(col)")
-    print("\n🥑  See above for help with debugging blank-screen issues")
+    print("\n⚡️  ------ STARTUP JS ERROR ------\n")
+    print("⚡️  \(message)")
+    print("⚡️  URL: \(url)")
+    print("⚡️  \(filename):\(line):\(col)")
+    print("\n⚡️  See above for help with debugging blank-screen issues")
   }
   
   override func didReceiveMemoryWarning() {

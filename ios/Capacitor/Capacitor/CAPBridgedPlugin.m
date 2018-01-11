@@ -1,23 +1,23 @@
 #import <foundation/foundation.h>
 #import <Capacitor/Capacitor-Swift.h>
 
-static NSMutableArray<Class> *AvocadoPluginClasses;
-NSArray<Class> *AvocadoGetPluginClasses(void)
+static NSMutableArray<Class> *CapacitorPluginClasses;
+NSArray<Class> *CapacitorGetPluginClasses(void)
 {
-  return AvocadoPluginClasses;
+  return CapacitorPluginClasses;
 }
 
-void AvocadoRegisterPlugin(Class);
-void AvocadoRegisterPlugin(Class PluginClass)
+void CapacitorRegisterPlugin(Class);
+void CapacitorRegisterPlugin(Class PluginClass)
 {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    AvocadoPluginClasses = [NSMutableArray new];
+    CapacitorPluginClasses = [NSMutableArray new];
   });
 
   // TODO: Make sure the class conforms to the protocol
   NSLog(@"Registering Plugin %@", PluginClass);
   // Register Plugin
-  [AvocadoPluginClasses addObject:PluginClass];
+  [CapacitorPluginClasses addObject:PluginClass];
 }
 
