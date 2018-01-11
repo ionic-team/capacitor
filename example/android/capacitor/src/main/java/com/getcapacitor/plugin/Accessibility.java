@@ -18,12 +18,27 @@ import static android.content.Context.ACCESSIBILITY_SERVICE;
 
 @NativePlugin()
 public class Accessibility extends Plugin {
-  TextToSpeech tts;
+  private static final String EVENT_SCREEN_READER_STATE_CHANGE = "accessibilityScreenReaderStateChange";
+
+  private TextToSpeech tts;
+  private AccessibilityManager am;
+
+  public void load() {
+    am = (AccessibilityManager) getContext().getSystemService(ACCESSIBILITY_SERVICE);
+
+    am.addTouchExplorationStateChangeListener(new AccessibilityManager.TouchExplorationStateChangeListener() {
+      @Override
+      public void onTouchExplorationStateChanged(boolean b) {
+        JSObject ret = new JSObject();
+        ret.put("value", b);
+        notifyListeners(EVENT_SCREEN_READER_STATE_CHANGE, ret);
+      }
+    });
+  }
 
   @PluginMethod()
   public void isScreenReaderEnabled(PluginCall call) {
     Log.d(Bridge.TAG, "Checking for screen reader");
-    AccessibilityManager am = (AccessibilityManager) getContext().getSystemService(ACCESSIBILITY_SERVICE);
     Log.d(Bridge.TAG, "Is it enabled? " + am.isTouchExplorationEnabled());
     JSObject ret = new JSObject();
     ret.put("value", am.isTouchExplorationEnabled());
