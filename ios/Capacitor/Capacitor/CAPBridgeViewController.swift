@@ -23,7 +23,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
-    bridge = CAPBridge(self, o)
+
     webViewConfiguration.userContentController = o
     
     configureWebView(configuration: webViewConfiguration)
@@ -37,8 +37,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
-    // Create the bridge with our ViewController and WebView
-
+    bridge = CAPBridge(self, o)
   }
   
   override func viewDidLoad() {
