@@ -10,7 +10,6 @@ import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
 
-
 export function run(process: NodeJS.Process, cliBinDir: string) {
   const config = new Config(process.platform, process.cwd(), cliBinDir);
 
@@ -76,7 +75,8 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program.parse(process.argv);
 
   if (!program.args.length) {
-    console.log('\n  ⚡️');
+    const chalk = require('chalk');
+    console.log(`\n  ⚡️  ${chalk.bold('Capacitor - Cross-Platform apps with JavaScript and the Web')}  ⚡️`);
     program.help();
   }
 }
