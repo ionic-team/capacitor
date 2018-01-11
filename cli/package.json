@@ -1,11 +1,11 @@
 {
-  "name": "@avocadojs/cli",
+  "name": "@capacitor/cli",
   "version": "0.0.2",
-  "description": "Avocado: The universal App container",
-  "homepage": "http://avocadojs.com/",
-  "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
+  "description": "Capacitor: Cross-platform apps with JavaScript and the web",
+  "homepage": "https://ionic-team.github.io/capacitor/",
+  "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
   "bin": {
-    "avocado": "./bin/avocado"
+    "avocado": "./bin/capacitor"
   },
   "engines": {
     "node": ">=8.3.0"
@@ -29,16 +29,17 @@
   "keywords": [
     "ionic",
     "ionic framework",
-    "avocado",
+    "capacitor",
     "universal app",
+    "progressive web apps",
     "cross platform"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ionic-team/avocado.git"
+    "url": "https://github.com/ionic-team/capacitor.git"
   },
   "bugs": {
-    "url": "https://github.com/ionic-team/avocado/issues"
+    "url": "https://github.com/ionic-team/capacitor/issues"
   },
   "license": "MIT",
   "dependencies": {
