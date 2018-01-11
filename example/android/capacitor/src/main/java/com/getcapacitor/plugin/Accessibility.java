@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin;
 
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
 
@@ -10,10 +11,14 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import java.util.Date;
+import java.util.Locale;
+
 import static android.content.Context.ACCESSIBILITY_SERVICE;
 
 @NativePlugin()
 public class Accessibility extends Plugin {
+  TextToSpeech tts;
 
   @PluginMethod()
   public void isScreenReaderEnabled(PluginCall call) {
@@ -27,6 +32,23 @@ public class Accessibility extends Plugin {
 
   @PluginMethod()
   public void speak(PluginCall call) {
+    final String value = call.getString("value");
+    final String language = call.getString("language", "en");
+    final Locale locale = Locale.forLanguageTag(language);
+
+    if (locale == null) {
+      call.error("Language was not a valid language tag.");
+      return;
+    }
+
+    tts = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+      @Override
+      public void onInit(int i) {
+        tts.setLanguage(locale);
+        tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, "capacitoraccessibility" + System.currentTimeMillis());
+      }
+    });
+
     // Not yet implemented
     throw new UnsupportedOperationException();
   }
