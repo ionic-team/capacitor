@@ -61,7 +61,8 @@ export interface AccessibilitySpeakOptions {
    */
   value: string;
   /**
-   * The language to speak the string in, as its [ISO 639-1 Code](https://www.loc.gov/standards/iso639-2/php/code_list.php) (ex: "en")
+   * The language to speak the string in, as its [ISO 639-1 Code](https://www.loc.gov/standards/iso639-2/php/code_list.php) (ex: "en").
+   * Currently only supported on Android.
    */
   language?: string;
 }
@@ -74,11 +75,17 @@ export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnab
 //
 
 export interface AppPlugin extends Plugin {
+  /**
+   * Check if an app can be opened with the given URL
+   */
   canOpenUrl(options: { url: string }): Promise<{value: boolean}>;
 
+  /**
+   * Open an app with the given URL
+   */
   openUrl(options: { url: string }): Promise<{completed: boolean}>;
 
-  getLaunchUrl(): Promise<{url: string}>;
+  getLaunchUrl(): Promise<AppLaunchUrl>;
 
   /**
    * Listen for internal plugin errors if you'd like to have more diagnostics on
@@ -107,6 +114,10 @@ export interface AppUrlOpen {
 
   iosSourceApplication?: any;
   iosOpenInPlace?: boolean;
+}
+
+export interface AppLaunchUrl {
+  url: string;
 }
 
 //
