@@ -62,7 +62,7 @@ public class JSResult {
         return String(data: theJSONData,
                       encoding: .utf8)!
       } else {
-        print("[Avocado Module Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
+        print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
           "Ensure that all data passed to success callback from module method is JSON serializable!")
         throw JSProcessingError.jsonSerializeError(call: call)
       }

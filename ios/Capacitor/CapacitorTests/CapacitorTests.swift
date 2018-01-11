@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import Avocado
+@testable import Capacitor 
 
 class MockWebView: WKWebView {
 }

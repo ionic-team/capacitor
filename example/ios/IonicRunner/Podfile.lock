@@ -19,7 +19,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Capacitor: 693eb65a7b8cf10f0e371e9c9d74fb9f42e8894a
-  CapacitorCordova: 18dde0042337b93a89ce7a94938ca899c021f12f
+  CapacitorCordova: 1130b5cef4fa7546ffc9c32c4cda5f498e188eba
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 
 PODFILE CHECKSUM: 30f00dd1fdf137b9415dd1890111c9c1b15a176c

@@ -15,7 +15,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   private var webView: WKWebView?
   private var webServer: GCDWebServer?
   
-  // Construct the avocado runtime
+  // Construct the Capacitor runtime
   public var bridge: CAPBridge?
   
   override func loadView() {
@@ -54,9 +54,9 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   
   func loadWebView() {
     if Bundle.main.path(forResource: "public/index", ofType: "html") == nil {
-      print("🥑  FATAL ERROR: Unable to load public/index.html")
-      print("🥑  This file is the root of your web app and must exist before")
-      print("🥑  Avocado can run. Ensure you've run avocado sync at least once")
+      print("⚡️  FATAL ERROR: Unable to load public/index.html")
+      print("⚡️  This file is the root of your web app and must exist before")
+      print("⚡️  Capacitor can run. Ensure you've run capacitor sync at least once")
       exit(1)
     }
 
