@@ -98,7 +98,7 @@ public class JSResultError {
       return nil
     }
     
-    return "http://avocadojs.com/error/ios?m=\(data)"
+    return "\(CAPBridge.CAP_SITE)error/ios?m=\(data)"
   }
   
   public func toJson() -> String {
