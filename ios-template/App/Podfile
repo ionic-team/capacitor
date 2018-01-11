@@ -6,6 +6,5 @@ target 'App' do
   use_frameworks!
 
   # Pods for IonicRunner
-  pod 'CapacitorCordova'
   pod 'Capacitor'
 end
