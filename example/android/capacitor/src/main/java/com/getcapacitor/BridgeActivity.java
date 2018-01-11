@@ -85,7 +85,7 @@ public class BridgeActivity extends AppCompatActivity {
 
   @Override
   public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-    if(this.bridge == null) {
+    if (this.bridge == null) {
       return;
     }
 
@@ -94,10 +94,19 @@ public class BridgeActivity extends AppCompatActivity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if(this.bridge == null) {
+    if (this.bridge == null) {
       return;
     }
 
     this.bridge.onActivityResult(requestCode, resultCode, data);
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    if (this.bridge == null) {
+      return;
+    }
+
+    this.bridge.onNewIntent(intent);
   }
 }

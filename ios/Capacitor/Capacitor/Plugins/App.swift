@@ -34,8 +34,8 @@ public class App : CAPPlugin {
     let options = object["options"] as? [String:Any?] ?? [:]
     return [
       "url": url.absoluteString ?? "",
-      "sourceApplication": options[UIApplicationOpenURLOptionsKey.sourceApplication.rawValue] as? String ?? "",
-      "openInPlace": options[UIApplicationOpenURLOptionsKey.openInPlace.rawValue] as? String ?? ""
+      "iosSourceApplication": options[UIApplicationOpenURLOptionsKey.sourceApplication.rawValue] as? String ?? "",
+      "iosOpenInPlace": options[UIApplicationOpenURLOptionsKey.openInPlace.rawValue] as? String ?? ""
     ]
   }
   

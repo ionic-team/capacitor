@@ -22,9 +22,13 @@ public class Plugin {
 
   // Stored event listeners
   private final Map<String, List<PluginCall>> eventListeners;
+  // Stored results of an event if an event was fired and
+  // no listeners were attached yet. Only stores the last value.
+  private final Map<String, JSObject> retainedEventArguments;
 
   public Plugin() {
     eventListeners = new HashMap<>();
+    retainedEventArguments = new HashMap<>();
   }
 
   /**
@@ -127,7 +131,10 @@ public class Plugin {
     if (listeners == null) {
       listeners = new ArrayList<PluginCall>();
       eventListeners.put(eventName, listeners);
+
+      sendRetainedArgumentsForEvent(eventName);
     }
+
     listeners.add(call);
   }
 
@@ -150,17 +157,34 @@ public class Plugin {
    * @param eventName
    * @param data
    */
-  protected void notifyListeners(String eventName, JSObject data) {
-    Log.d(Bridge.TAG, "Notifying listeners");
+  protected void notifyListeners(String eventName, JSObject data, boolean retainUntilConsumed) {
+    Log.d(Bridge.TAG, "Notifying listeners for event " + eventName);
     List<PluginCall> listeners = eventListeners.get(eventName);
     if (listeners == null) {
-      Log.d(Bridge.TAG, "No listeners found");
+      Log.d(Bridge.TAG, "No listeners found for event " + eventName);
+      if (retainUntilConsumed) {
+        retainedEventArguments.put(eventName, data);
+      }
       return;
     }
 
     for(PluginCall call : listeners) {
       call.success(data);
     }
+  }
+
+  protected void notifyListeners(String eventName, JSObject data) {
+    notifyListeners(eventName, data, false);
+  }
+
+  private void sendRetainedArgumentsForEvent(String eventName) {
+    JSObject retained = retainedEventArguments.get(eventName);
+    if (retained == null) {
+      return;
+    }
+
+    notifyListeners(eventName, retained);
+    retainedEventArguments.remove(eventName);
   }
 
 
@@ -244,6 +268,8 @@ public class Plugin {
    * @param data
    */
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {}
+
+  protected void handleOnNewIntent(Intent intent) {}
 
   /**
    * Execute the given runnable on the Bridge's task handler

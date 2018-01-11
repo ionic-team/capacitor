@@ -42,13 +42,13 @@
     listenersForEvent = [[NSMutableArray alloc] initWithObjects:listener, nil];
     [self.eventListeners setValue:listenersForEvent forKey:eventName];
     
-    [self sendRetainedArgumentsForEvent:eventName listener:listener];
+    [self sendRetainedArgumentsForEvent:eventName];
   } else {
     [listenersForEvent addObject:listener];
   }
 }
 
-- (void)sendRetainedArgumentsForEvent:(NSString *)eventName listener:(CAPPluginCall *)listener {
+- (void)sendRetainedArgumentsForEvent:(NSString *)eventName {
   id retained = [self.retainedEventArguments objectForKey:eventName];
   if (retained == nil) {
     return;
