@@ -286,6 +286,12 @@ export interface DeviceInfo {
 //
 
 export interface FilesystemPlugin extends Plugin {
+  /**
+   * Read a file from disk
+   * @param options options for the file read
+   * @return a promise that resolves with the read file data result
+   */
+  readFile(options: FileReadOptions) : Promise<FileReadResult>;
 
   /**
    * Write a file to disk in the specified location on device
@@ -300,13 +306,6 @@ export interface FilesystemPlugin extends Plugin {
    * @return a promise that resolves with the file write result
    */
   appendFile(options: FileAppendOptions) : Promise<FileAppendResult>;
-
-  /**
-   * Read a file from disk
-   * @param options options for the file read
-   * @return a promise that resolves with the read file data result
-   */
-  readFile(options: FileReadOptions) : Promise<FileReadResult>;
 
   /**
    * Delete a file from disk
