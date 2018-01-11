@@ -8,7 +8,7 @@ public class JSExport {
   
   public static func exportAvocadoJS(userContentController: WKUserContentController) throws {
     guard let jsUrl = Bundle.main.url(forResource: "public/native-bridge", withExtension: "js") else {
-      print("ERROR: Required native-bridge.js file in Avocado not found. Bridge will not function!")
+      print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
     }
     
@@ -18,7 +18,7 @@ public class JSExport {
       let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
       userContentController.addUserScript(userScript)
     } catch {
-      print("ERROR: Unable to read required native-bridge.js file from Avocado framework. Bridge will not function!")
+      print("ERROR: Unable to read required native-bridge.js file from the Capacitor framework. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
     }
   }
@@ -84,7 +84,7 @@ public class JSExport {
     // Create the function declaration
     lines.append("t['\(method.name!)'] = function(\(paramString)) {")
     
-    // Create the call to Avocado...
+    // Create the call to Capacitor ...
     if returnType == CAPPluginReturnNone {
       // ...using none
       lines.append("""

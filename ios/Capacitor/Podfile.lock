@@ -13,7 +13,7 @@ EXTERNAL SOURCES:
     :path: ../CapacitorCordova
 
 SPEC CHECKSUMS:
-  CapacitorCordova: 18dde0042337b93a89ce7a94938ca899c021f12f
+  CapacitorCordova: 1130b5cef4fa7546ffc9c32c4cda5f498e188eba
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 
 PODFILE CHECKSUM: c7ac72bfdf4b67329eeb606703c4013da95c7fae
