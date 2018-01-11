@@ -33,7 +33,7 @@ public class Device: CAPPlugin {
       "isVirtual": isSimulator
     ])
     
-    //UIDevice.current.isBatteryMonitoringEnabled = false
+    UIDevice.current.isBatteryMonitoringEnabled = false
   }
   
   
