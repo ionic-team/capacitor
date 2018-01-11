@@ -23,13 +23,13 @@ public class MessageHandler {
 
   @JavascriptInterface
   public void postMessageStr(String str) {
-    Log.d("postMessageStr", str);
+    Log.d(Bridge.TAG, "Post message: " + str);
   }
 
   @JavascriptInterface
   public void postMessage(String jsonStr) {
     try {
-      Log.d("postMessage", jsonStr);
+      Log.d(Bridge.TAG, jsonStr);
 
       JSObject postData = new JSObject(jsonStr);
       String callbackId = postData.getString("callbackId");
@@ -37,12 +37,12 @@ public class MessageHandler {
       String methodName = postData.getString("methodName");
       JSObject methodData = postData.getJSObject("options");
 
-      Log.d("postMessage", "callback: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName + ", methodData: " + methodData.toString());
+      Log.d(Bridge.TAG, "callback: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName + ", methodData: " + methodData.toString());
 
       this.callPluginMethod(callbackId, pluginId, methodName, methodData);
 
     } catch (Exception ex) {
-      Log.e("postMessage", "error : " + ex);
+      Log.e(Bridge.TAG, "error : " + ex);
     }
   }
 
@@ -77,7 +77,7 @@ public class MessageHandler {
       });
 
     } catch (Exception ex) {
-      Log.e("responseMessage", "error : " + ex);
+      Log.e(Bridge.TAG, "responseMessage: error: " + ex);
     }
   }
 

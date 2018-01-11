@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -46,7 +47,8 @@ public class Bridge {
   private final WebView webView;
   private final MessageHandler msgHandler;
 
-  private final Handler taskHandler = new Handler();
+  private final HandlerThread handlerThread = new HandlerThread("CapacitorPlugins");
+  private Handler taskHandler = null;
 
   private Map<String, PluginHandle> plugins = new HashMap<>();
 
@@ -60,6 +62,9 @@ public class Bridge {
   public Bridge(Activity context, WebView webView) {
     this.context = context;
     this.webView = webView;
+
+    handlerThread.start();
+    taskHandler = new Handler(handlerThread.getLooper());
 
     this.initWebView();
 
