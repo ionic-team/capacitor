@@ -2,6 +2,14 @@
 
 The Haptics API provides physical feedback to the user through touch or vibration.
 
+## Android Notes
+
+To use vibration, you must add this permission to your `AndroidManifest.xml` file:
+
+```xml
+<uses-permission android:name="android.permission.VIBRATE" />
+```
+
 ## Example
 
 ```typescript
