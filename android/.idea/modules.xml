@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/avocado/avocado.iml" filepath="$PROJECT_DIR$/avocado/avocado.iml" />
+      <module fileurl="file://$PROJECT_DIR$/capacitor/avocado.iml" filepath="$PROJECT_DIR$/capacitor/avocado.iml" />
+      <module fileurl="file://$PROJECT_DIR$/capacitor/capacitor.iml" filepath="$PROJECT_DIR$/capacitor/capacitor.iml" />
     </modules>
   </component>
 </project>

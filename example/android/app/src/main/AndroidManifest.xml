@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-package="com.avocadojs.myapp">
+package="com.getcapacitor.myapp">
 
     <application
         android:allowBackup="true"
@@ -11,7 +11,7 @@ package="com.avocadojs.myapp">
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.getcapacitor.myapp.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -31,7 +31,7 @@ package="com.avocadojs.myapp">
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.avocadojs.myapp.fileprovider"
+            android:authorities="com.getcapacitor.myapp.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
