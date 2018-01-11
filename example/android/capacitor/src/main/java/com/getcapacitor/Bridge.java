@@ -266,7 +266,7 @@ public class Bridge {
           try {
             plugin.invoke(methodName, call);
 
-            if(call.isRetained()) {
+            if (call.isRetained()) {
               retainCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
@@ -340,7 +340,7 @@ public class Bridge {
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
-    if(plugin == null) {
+    if (plugin == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
       return;
     }
@@ -358,11 +358,21 @@ public class Bridge {
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
-    if(plugin == null || plugin.getInstance() == null) {
+    if (plugin == null || plugin.getInstance() == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
       return;
     }
 
     plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+  }
+
+  /**
+   * Handle an onNewIntent lifecycle event and notify the plugins
+   * @param intent
+   */
+  public void onNewIntent(Intent intent) {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnNewIntent(intent);
+    }
   }
 }

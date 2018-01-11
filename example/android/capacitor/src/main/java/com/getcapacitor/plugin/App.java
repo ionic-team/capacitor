@@ -1,5 +1,8 @@
 package com.getcapacitor.plugin;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 
@@ -12,6 +15,9 @@ import com.getcapacitor.PluginMethod;
 
 @NativePlugin()
 public class App extends Plugin {
+  private static final String EVENT_URL_OPEN = "appUrlOpen";
+  private static final String EVENT_STATE_CHANGE = "appStateChange";
+
   /*
   public void firePluginError(_ jsError: JSProcessingError) {
     notifyListeners("pluginError", data: [
@@ -28,7 +34,7 @@ public class App extends Plugin {
     Log.d(Bridge.TAG, "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
-    notifyListeners("appStateChanged", data);
+    notifyListeners(EVENT_STATE_CHANGE, data);
   }
 
   @PluginMethod()
@@ -41,5 +47,50 @@ public class App extends Plugin {
     } else {
       call.success();
     }
+  }
+
+  @PluginMethod()
+  public void canOpenUrl(PluginCall call) {
+    String url = call.getString("url");
+    if (url == null) {
+      call.error("Must supply a url");
+      return;
+    }
+
+    Context ctx = this.getActivity().getApplicationContext();
+    final PackageManager pm = ctx.getPackageManager();
+
+    JSObject ret = new JSObject();
+    try {
+      pm.getPackageInfo(url, PackageManager.GET_ACTIVITIES);
+      ret.put("value", true);
+      return;
+    } catch(PackageManager.NameNotFoundException e) {}
+
+    ret.put("value", false);
+    call.success();
+  }
+
+  /**
+   * Handle ACTION_VIEW intents to store a URL that was used to open the app
+   * @param intent
+   */
+  @Override
+  protected void handleOnNewIntent(Intent intent) {
+    super.handleOnNewIntent(intent);
+
+    final String intentString = intent.getDataString();
+
+    // read intent
+    String action = intent.getAction();
+    Uri url = intent.getData();
+
+    if (!Intent.ACTION_VIEW.equals(action) || url == null) {
+      return;
+    }
+
+    JSObject ret = new JSObject();
+    ret.put("url", url.toString());
+    notifyListeners(EVENT_URL_OPEN, ret);
   }
 }

@@ -92,8 +92,9 @@ export interface AppState {
 
 export interface AppUrlOpen {
   url: string;
-  annotation: any;
-  openInPlace: boolean;
+
+  iosSourceApplication?: any;
+  iosOpenInPlace?: boolean;
 }
 
 //
