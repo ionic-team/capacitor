@@ -1,8 +1,8 @@
 {
-  "name": "avocado-site",
+  "name": "capacitor-site",
   "private": true,
   "version": "0.0.1",
-  "description": "Stencil Site",
+  "description": "Capacitor Site",
   "scripts": {
     "docs": "gulp",
     "build": "gulp && stencil build --prerender",
@@ -27,10 +27,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/avocado-site.git"
+    "url": "git+https://github.com/ionic-team/capacitor.git"
   },
   "bugs": {
-    "url": "https://github.com/ionic-team/avocado-site"
+    "url": "https://github.com/ionic-team/capacitor"
   },
-  "homepage": "https://github.com/ionic-team/avocado-site"
+  "homepage": "https://github.com/ionic-team/capacitor"
 }
