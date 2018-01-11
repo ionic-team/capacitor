@@ -1,1 +1,1 @@
-include ':app', ':avocado-debug'
+include ':app', ':capacitor-debug', ':capacitor'

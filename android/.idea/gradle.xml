@@ -8,7 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/avocado" />
+            <option value="$PROJECT_DIR$/capacitor" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
