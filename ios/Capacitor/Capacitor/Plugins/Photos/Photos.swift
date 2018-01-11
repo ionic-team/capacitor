@@ -8,6 +8,7 @@ public class Photos : CAPPlugin {
   static let DEFAULT_THUMBNAIL_WIDTH = 256
   static let DEFAULT_THUMBNAIL_HEIGHT = 256
   
+  // Must be lazy here because it will prompt for permissions on instantiation without it
   lazy var imageManager = PHCachingImageManager()
   
   @objc func getAlbums(_ call: CAPPluginCall) {
