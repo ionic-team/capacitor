@@ -23,6 +23,22 @@ public class JSExport {
     }
   }
   
+  public static func exportCordovaJS(userContentController: WKUserContentController) throws {
+    guard let jsUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
+      print("ERROR: Required cordova.js file in Avocado not found. Bridge will not function!")
+      throw BridgeError.errorExportingCoreJS
+    }
+    
+    do {
+      let data = try String(contentsOf: jsUrl, encoding: .utf8)
+      let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+      userContentController.addUserScript(userScript)
+    } catch {
+      print("ERROR: Unable to read required cordova.js file from Avocado framework. Bridge will not function!")
+      throw BridgeError.errorExportingCoreJS
+    }
+  }
+  
   /**
    * Export the JS required to implement the given plugin.
    */
@@ -109,4 +125,33 @@ public class JSExport {
     lines.append("}")
     return lines.joined(separator: "\n")
   }
+  
+  public static func exportCordovaPluginsJS(userContentController: WKUserContentController) throws {
+    if let pluginsJSFolder = Bundle.main.url(forResource: "public/plugins", withExtension: nil) {
+      self.injectFilesForFolder(folder: pluginsJSFolder, userContentController: userContentController)
+    }
+  }
+  
+  static func injectFilesForFolder(folder: URL, userContentController: WKUserContentController) {
+    let fileManager = FileManager.default
+    do {
+      let fileURLs = try fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil, options: [])
+      for fileURL in fileURLs {
+        if fileURL.hasDirectoryPath {
+          injectFilesForFolder(folder: fileURL, userContentController: userContentController)
+        } else {
+          do {
+            let data = try String(contentsOf: fileURL, encoding: .utf8)
+            let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+            userContentController.addUserScript(userScript)
+          } catch {
+            print("Unable to inject js file from plugins folder")
+          }
+        }
+      }
+    } catch {
+      print("Error while enumerating files")
+    }
+  }
+  
 }

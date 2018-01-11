@@ -33,6 +33,7 @@ enum BridgeError: Error {
     self.userContentController = userContentController
     super.init()
     exportCoreJS()
+    setupCordovaCompatibility()
     registerPlugins()
     bindObservers()
   }
@@ -111,6 +112,31 @@ enum BridgeError: Error {
       CAPBridge.fatalError(error, error)
     }
   }
+
+  func setupCordovaCompatibility() {
+    var injectCordovaFiles = false
+    var numClasses = UInt32(0);
+    let classes = objc_copyClassList(&numClasses)
+    for i in 0..<Int(numClasses) {
+      let c: AnyClass = classes![i]
+      if class_getSuperclass(c) == CDVPlugin.self {
+        injectCordovaFiles = true
+        break
+      }
+    }
+    if injectCordovaFiles {
+      exportCordovaJS()
+      registerCordovaPlugins()
+    }
+  }
+
+  func exportCordovaJS() {
+    do {
+      try JSExport.exportCordovaJS(userContentController: self.userContentController)
+    } catch {
+      CAPBridge.fatalError(error, error)
+    }
+  }
   
   func registerPlugins() {
     var numClasses = UInt32(0);
@@ -169,6 +195,14 @@ enum BridgeError: Error {
   
   public func getDispatchQueue() -> DispatchQueue {
     return self.dispatchQueue
+  }
+  
+  func registerCordovaPlugins() {
+    do {
+      try JSExport.exportCordovaPluginsJS(userContentController: self.userContentController)
+    } catch {
+      CAPBridge.fatalError(error, error)
+    }
   }
   
   public func isSimulator() -> Bool {
