@@ -6,7 +6,7 @@ public class JSExport {
   static let CATCHALL_OPTIONS_PARAM = "_options"
   static let CALLBACK_PARAM = "_callback"
   
-  public static func exportAvocadoJS(userContentController: WKUserContentController) throws {
+  public static func exportCapacitorJS(userContentController: WKUserContentController) throws {
     guard let jsUrl = Bundle.main.url(forResource: "public/native-bridge", withExtension: "js") else {
       print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
