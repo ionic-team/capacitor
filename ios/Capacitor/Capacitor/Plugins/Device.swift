@@ -7,11 +7,12 @@ public class Device: CAPPlugin {
   let diagnostics: Diagnostics = Diagnostics()
   
   @objc func getInfo(_ call: CAPPluginCall) {
-    print("Getting info")
     var isSimulator = false
     #if arch(i386) || arch(x86_64)
       isSimulator = true
     #endif
+    
+    UIDevice.current.isBatteryMonitoringEnabled = true
     
     let memUsed = diagnostics.getMemoryUsage()
     let diskFree = diagnostics.getFreeDiskSize() ?? 0
@@ -27,9 +28,12 @@ public class Device: CAPPlugin {
       "platform": "ios",
       "manufacturer": "Apple",
       "uuid": UIDevice.current.identifierForVendor!.uuidString,
-      "battery": UIDevice.current.batteryLevel,
+      "batteryLevel": UIDevice.current.batteryLevel,
+      "isCharging": UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full,
       "isVirtual": isSimulator
     ])
+    
+    //UIDevice.current.isBatteryMonitoringEnabled = false
   }
   
   
