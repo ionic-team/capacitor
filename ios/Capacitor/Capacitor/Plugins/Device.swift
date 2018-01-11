@@ -23,6 +23,7 @@ public class Device: CAPPlugin {
       "diskTotal": diskTotal,
       "model": UIDevice.current.model,
       "osVersion": UIDevice.current.systemVersion,
+      "appVersion": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
       "platform": "ios",
       "manufacturer": "Apple",
       "uuid": UIDevice.current.identifierForVendor!.uuidString,
