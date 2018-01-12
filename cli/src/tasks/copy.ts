@@ -24,16 +24,15 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
 export async function copy(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     await copyWebDir(config, config.ios.webDir);
-
   } else if (platformName === config.android.name) {
     await copyWebDir(config, config.android.webDir);
-
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
+  var chalk = require('chalk');
   const webAbsDir = config.app.webDir;
   const webRelDir = relative(config.app.rootDir, webAbsDir);
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
@@ -44,9 +43,9 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
       await symlinkAsync(webAbsDir, nativeAbsDir);
     });
   } else {
-    await runTask(`Copying ${webRelDir} -> ${nativeRelDir}`, async () => {
+    await runTask(`Copying web assets from ${chalk.bold(webRelDir)} to ${chalk.bold(nativeRelDir)}`, async () => {
       await remove(nativeAbsDir);
-      await fsCopy(webAbsDir, nativeAbsDir);
+      return await fsCopy(webAbsDir, nativeAbsDir);
     });
   }
 }

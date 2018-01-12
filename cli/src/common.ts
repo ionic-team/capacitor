@@ -133,6 +133,7 @@ export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T
     return value;
 
   } catch (e) {
+    spinner.fail(`${title}: ${e.message}`);
     spinner.stop();
     throw e;
   }

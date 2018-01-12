@@ -10,11 +10,14 @@ export async function syncCommand(config: Config, selectedPlatform: string) {
     logInfo(`There are no platforms to sync yet. Create one with "capacitor create".`);
     return;
   }
-
-  await add(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
-  await Promise.all(platforms.map(platformName => {
-    return sync(config, platformName);
-  }));
+  try {
+    await add(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
+    await Promise.all(platforms.map(platformName => {
+      return sync(config, platformName);
+    }));
+  } catch (e)  {
+    logFatal(e);
+  }
 }
 
 export async function sync(config: Config, platformName: string) {
