@@ -6,8 +6,8 @@ export const existsSync = (path: string) => {
   return fs.existsSync(path);
 };
 
-export const mkdir = util.promisify(fs.mkdir);
-export const cp = util.promisify(fsExtra.copy);
+export const mkdirAsync = util.promisify(fs.mkdir);
+export const cpAsync = util.promisify(fsExtra.copy);
 export const symlinkAsync = util.promisify(fs.symlink);
 export const readFileAsync = util.promisify(fs.readFile);
 export const writeFileAsync = util.promisify(fs.writeFile);

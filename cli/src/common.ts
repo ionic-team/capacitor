@@ -7,7 +7,6 @@ import { readFile } from 'fs';
 
 export type CheckFunction = (config: Config) => Promise<string | null>;
 
-
 export async function add(config: Config, checks: CheckFunction[]): Promise<void> {
   const results = await Promise.all(checks.map(f => f(config)));
   const errors = results.filter(r => r != null) as string[];
@@ -67,6 +66,10 @@ export function readXML(path: string): Promise<any> {
       }
     });
   });
+}
+
+export function log(...args: any[]) {
+  console.log(...args);
 }
 
 export function logSuccess(...args: any[]) {

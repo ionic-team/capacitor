@@ -1,7 +1,7 @@
 import { accessSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { logFatal } from './common';
-import { CliConfig, PackageJson, ExternalConfig } from './definitions';
+import { CliConfig, ExternalConfig, PackageJson } from './definitions';
 import { currentId } from 'async_hooks';
 
 let Package: PackageJson;
@@ -25,7 +25,7 @@ export class Config implements CliConfig {
     minVersion: '10.0',
     platformDir: '',
     webDir: 'public',
-    avocadoRuntimePod: `pod 'Capacitor'`,
+    capacitorRuntimePod: `pod 'Capacitor'`,
     nativeProjectName: 'App',
     assets: {
       templateName: 'ios-template',
@@ -66,8 +66,8 @@ export class Config implements CliConfig {
   }
 
   initOS(os: string) {
-    switch(os) {
-      case 'darwin': 
+    switch (os) {
+      case 'darwin':
         this.cli.os = 'mac';
         break;
       case 'win32':
@@ -78,7 +78,7 @@ export class Config implements CliConfig {
         this.cli.os = 'freebsd';
         break;
       case 'linux':
-        this.cli.os = 'linux'
+        this.cli.os = 'linux';
         break;
     }
   }
@@ -93,8 +93,8 @@ export class Config implements CliConfig {
 
       // TODO: remove this code
       // Once Capacitor library is released as a cocoapods package, this code is not needed
-      const avocadoRuntimePath = join(this.cli.assetsDir, 'Capacitor');
-      this.ios.avocadoRuntimePod = `pod 'Capacitor', :path => '${avocadoRuntimePath}'`;
+      const capacitorRuntimePath = join(this.cli.assetsDir, 'Capacitor');
+      this.ios.capacitorRuntimePod = `pod 'Capacitor', :path => '${capacitorRuntimePath}'`;
 
     } catch (e) {
       logFatal(`Unable to load config`, e);

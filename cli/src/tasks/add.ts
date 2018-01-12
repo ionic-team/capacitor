@@ -24,7 +24,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
       config,
       [checkPackage, ...addChecks(config, platformName)]
     );
-    await generateAvocadoConfig(config);
+    await generateCapacitorConfig(config);
     await add(config, [checkWebDir]);
     await doAdd(config, platformName);
     await sync(config, platformName);
@@ -35,18 +35,17 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   }
 }
 
-export async function generateAvocadoConfig(config: Config) {
+export async function generateCapacitorConfig(config: Config) {
   if (config.foundExternalConfig()) {
     return;
   }
 
-  logInfo(`Remember you can change the web directory anytime by modifing ${config.app.extConfigName}`);
   const inquirer = await import('inquirer');
   const answers = await inquirer.prompt([{
     type: 'input',
     name: 'webDir',
-    message: 'web directory:',
-    default: 'www'
+    message: 'What directory are your web assets in? (index.html, built JavaScript, etc.):',
+    default: 'public'
   }]);
   const webDir = answers.webDir;
   await runTask(`Creating ${config.app.extConfigName}`, () => {
@@ -54,6 +53,7 @@ export async function generateAvocadoConfig(config: Config) {
       webDir: webDir
     });
   });
+  logInfo(`💡 You can change the web directory anytime by modifing ${config.app.extConfigName}`);
   config.app.webDir = webDir;
 }
 
