@@ -59,11 +59,12 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       exit(1)
     }
 
+    print("⚡️ Starting web server...")
     startWebServer()
 
+    print("⚡️ Loading index.html...")
     let request = URLRequest(url: URL(string: "http://localhost:8080/index.html")!)
     _ = webView?.load(request)
-
   }
 
   func startWebServer() {
@@ -91,7 +92,17 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    print("WEB VIEW FINISH", webView, navigation)
+    print("⚡️ WebView loaded")
+  }
+  
+  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    print("⚡️ WebView failed to load")
+    print(error.localizedDescription)
+  }
+  
+  func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    print("⚡️ WebView failed provisional navigation")
+    print(error.localizedDescription)
   }
   
   public override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
