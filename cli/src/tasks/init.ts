@@ -5,7 +5,7 @@ import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { download } from '../util/http';
 import { createTarExtraction } from '../util/archive';
 
-import { join } from 'path';
+import { join, relative } from 'path';
 
 const chalk = require('chalk');
 
@@ -48,7 +48,9 @@ async function getOrCreateConfig(config: Config) {
     return configPath;
   }
 
-  await writePrettyJSON(config.app.extConfigFilePath, {});
+  await writePrettyJSON(config.app.extConfigFilePath, {
+    webDir: relative(config.app.rootDir, config.app.webDir)
+  });
 
   // Store our newly created or found external config as the default
   config.loadExternalConfig();
