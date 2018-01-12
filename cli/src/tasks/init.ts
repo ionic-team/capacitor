@@ -2,6 +2,8 @@ import { Config } from '../config';
 import { addCommand } from '../tasks/add';
 import { checkWebDir, log, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
+import { download } from '../util/http';
+import { createTarExtraction } from '../util/archive';
 
 import { join } from 'path';
 
@@ -11,14 +13,28 @@ export async function initCommand(config: Config) {
   log(`${chalk.bold(`⚡️  Initializing Capacitor project in ${chalk.blue(config.cli.rootDir)}`)} ⚡️`);
 
   try {
+    const isNew = await promptNewProject(config);
     await getOrCreateConfig(config);
     await getOrCreateWebDir(config);
     await checkPackageJson(config);
     await installDeps(config);
+    isNew && await seedProject(config);
     await addPlatforms(config);
   } catch (e) {
     logFatal(e);
   }
+}
+
+async function promptNewProject(config: Config): Promise<boolean> {
+  const inquirer = await import('inquirer');
+  const answers = await inquirer.prompt([{
+    type: 'input',
+    name: 'isNew',
+    message: `Is this a new app? Answer 'n' if adding Capacitor to an existing project`,
+    default: 'y'
+  }]);
+
+  return answers.isNew === 'y';
 }
 
 /**
@@ -71,6 +87,17 @@ async function installDeps(config: Config) {
   let command = 'npm install --save @capacitor/core @capacitor/cli';
   await runTask(`Installing Capacitor dependencies (${chalk.blue(command)})`, () => {
    return runCommand(command);
+  });
+}
+
+async function seedProject(config: Config) {
+  await runTask(`Downloading and installing seed project`, async () => {
+    const url = 'https://github.com/ionic-team/ionic-pwa-toolkit/archive/master.tar.gz';
+    const ws = await createTarExtraction({ cwd: config.app.rootDir, strip: 1 });
+    await download(url, ws, {
+      // progress: (loaded, total) => task.progress(loaded, total),
+    });
+    return Promise.resolve();
   });
 }
 
