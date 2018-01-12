@@ -1,5 +1,6 @@
 import * as program from 'commander';
 
+import { initCommand } from './tasks/init';
 import { copyCommand } from './tasks/copy';
 import { createCommand } from './tasks/create';
 import { updateCommand } from './tasks/update';
@@ -9,12 +10,20 @@ import { Config } from './config';
 import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
+import { compareIdentifiers } from 'semver';
 
 export function run(process: NodeJS.Process, cliBinDir: string) {
   const config = new Config(process.platform, process.cwd(), cliBinDir);
 
   program
     .version(config.cli.package.version);
+
+  program
+    .command('init')
+    .description('Initializes a new Capacitor project in the current directory')
+    .action(() => {
+      return initCommand(config);
+    });
 
   program
     .command('create [directory] [name] [identifier]')

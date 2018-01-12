@@ -38,14 +38,6 @@ doctor [platform]  checks for common errors
 plugin:generate    start a new Capacitor plugin
 ```
 
-
-## Related Projects
-
-* [AvocadoJS CLI](https://www.npmjs.com/package/@avocadojs/cli) - AvocadoJS Command-line interface
-* [Ionic](https://www.npmjs.com/package/@ionic/core) - UI Library
-* [StencilJS](https://www.npmjs.com/package/@stencil/core) - Web Component Generator
-
-
 ### License
 
 * [MIT](https://github.com/ionic-team/capacitor/blob/master/LICENSE)

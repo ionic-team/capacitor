@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { logFatal, runTask } from '../common';
 import { addIOS } from '../ios/add';
-import { existsSync, mkdir, cp } from '../util/fs';
+import { existsSync, mkdirAsync, cpAsync } from '../util/fs';
 const chalk = require('chalk');
 
 export async function createCommand (config: Config, directory: string, name: string, identifier: string) {
@@ -18,7 +18,7 @@ export async function createCommand (config: Config, directory: string, name: st
     config.setCurrentWorkingDir(directory);
     await addIOS(config);
     /*
-    await generateAvocadoConfig(config);
+    await generateCapacitorConfig(config);
     await add(config, [checkWebDir]);
     await create(config, platformName);
     await sync(config, platformName);
@@ -31,12 +31,12 @@ export async function createCommand (config: Config, directory: string, name: st
 }
 
 export async function createApp(config: Config, directory: string, name: string, identifier: string) {
-  await mkdir(directory);
+  await mkdirAsync(directory);
 
   const templateDir = config.app.assets.templateDir;
 
   await runTask(chalk`Creating app {bold ${name}} in {bold ${directory}} with id {bold ${identifier}}`, () => {
-    return cp(templateDir, directory);
+    return cpAsync(templateDir, directory);
   });
 }
 

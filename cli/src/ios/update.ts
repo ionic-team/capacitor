@@ -89,8 +89,8 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
     platform :ios, '${config.ios.minVersion}'
     use_frameworks!
 
-    target 'AvocadoApp' do
-      ${config.ios.avocadoRuntimePod}
+    target 'CapacitorApp' do
+      ${config.ios.capacitorRuntimePod}
       ${pods.join('\n')}
     end`;
 }
