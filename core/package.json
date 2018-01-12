@@ -6,7 +6,8 @@
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "files": [
-    "dist/"
+    "dist/",
+    "native-bridge.js"
   ],
   "scripts": {
     "docs": "./node_modules/.bin/typedoc --exclude **/__test__/*.ts --json dist/docs.json --mode modules src/core-plugin-definitions.ts && node scripts/docs.js",
