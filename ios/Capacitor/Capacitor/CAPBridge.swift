@@ -20,6 +20,8 @@ enum BridgeError: Error {
   // List of known plugins by pluginId -> Plugin Type
   public var knownPlugins = [String:CAPPlugin.Type]()
   
+  public var cordovaPlugins = [String:CDVPlugin]()
+
   public var storedCalls = [String:CAPPluginCall]()
   
   private var isActive = true
@@ -310,24 +312,32 @@ enum BridgeError: Error {
    */
   public func handleCordovaJSCall(call: JSCall) {
     // Create a selector to send to the plugin
-    let selector = NSSelectorFromString("\(call.method):")
-    var className = call.pluginId
-    var vcClass = NSClassFromString(call.pluginId) as? CDVPlugin.Type
-    if vcClass == nil {
-      className = "CDV\(call.pluginId)"
-      vcClass = NSClassFromString(className) as? CDVPlugin.Type
-    }
-    if vcClass == nil {
-      print("Error: Plugin class not found")
-      return
+    var vcClass: CDVPlugin.Type?
+    let plugin: CDVPlugin
+    var className: String
+    if let firstPlugin = cordovaPlugins.first(where: { $0.key ==  call.pluginId ||  $0.key == "CDV\(call.pluginId)" }) {
+      className = firstPlugin.key
+      plugin = firstPlugin.value
+    } else {
+      className = call.pluginId
+      vcClass = NSClassFromString(call.pluginId) as? CDVPlugin.Type
+      if vcClass == nil {
+        className = "CDV\(call.pluginId)"
+        vcClass = NSClassFromString(className) as? CDVPlugin.Type
+      }
+      if vcClass == nil {
+        print("Error: Plugin class not found")
+        return
+      }
+      plugin = vcClass!.init()
+      cordovaPlugins[className] = plugin
     }
 
-    // Init the plugin and configure it
-    let plugin = vcClass!.init()
     plugin.viewController = self.viewController
     plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView())
     plugin.webView = self.getWebView() as! UIView
 
+    let selector = NSSelectorFromString("\(call.method):")
     if !plugin.responds(to: selector) {
       print("Error: Plugin \(call.pluginId) does not respond to method call \(selector).")
       print("Ensure plugin method exists and uses @objc in its declaration")
