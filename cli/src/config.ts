@@ -131,8 +131,17 @@ export class Config implements CliConfig {
     this.ios.webDir = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
   }
 
+  private mergeConfigData() {
+    const extConfig: ExternalConfig = this.app.extConfig || {};
 
-  private loadExternalConfig() {
+    Object.assign(this.app, extConfig);
+
+    if (!isAbsolute(this.app.webDir)) {
+      this.app.webDir = join(this.app.rootDir, this.app.webDir);
+    }
+  }
+
+  loadExternalConfig() {
     this.app.extConfigFilePath = join(this.app.rootDir, this.app.extConfigName);
 
     try {
@@ -147,17 +156,6 @@ export class Config implements CliConfig {
 
     } catch {
       // it's ok if there's no capacitor.json file
-    }
-  }
-
-
-  private mergeConfigData() {
-    const extConfig: ExternalConfig = this.app.extConfig || {};
-
-    Object.assign(this.app, extConfig);
-
-    if (!isAbsolute(this.app.webDir)) {
-      this.app.webDir = join(this.app.rootDir, this.app.webDir);
     }
   }
 
