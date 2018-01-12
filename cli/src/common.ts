@@ -29,8 +29,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkPackage(config: Config): Promise<string | null> {
-  config;
+export async function checkPackage(_config: Config): Promise<string | null> {
   if (!await existsAsync('package.json')) {
     return `Capacitor needs to run at the root of a NPM package.
     Make sure you have a "package.json" in the working directory you run capacitor.
