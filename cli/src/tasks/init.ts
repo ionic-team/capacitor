@@ -20,6 +20,7 @@ export async function initCommand(config: Config) {
     isNew && await seedProject(config);
     await installDeps(config);
     await addPlatforms(config);
+    await printNextSteps(config);
   } catch (e) {
     logFatal(`Unable to initialize Capacitor. Please see errors and try again or file an issue`, e);
   }
@@ -137,4 +138,10 @@ async function createWebDir(config: Config, webDir: string) {
 
 async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
   await cpAsync(join(config.app.assets.templateDir, 'public'), webDir);
+}
+
+async function printNextSteps(config: Config) {
+  log('\n');
+  log(`${chalk.bold(`🎉   Your Capacitor project is ready to go!  🎉`)}\n`);
+  log(`Follow the Getting Started guide for next steps:\n${chalk.bold(`https://getcapacitor.com/docs/getting-started`)}`);
 }

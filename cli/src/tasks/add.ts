@@ -27,7 +27,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     await generateCapacitorConfig(config);
     await add(config, []); // , [checkWebDir]);
     await doAdd(config, platformName);
-    await sync(config, platformName);
+    // await sync(config, platformName);
   } catch (e) {
     logFatal(e);
   }

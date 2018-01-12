@@ -16,7 +16,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     return iosPlugins;
   });
 
-  printPlugins(plugins);
+  // printPlugins(plugins);
   /*
   await autoGeneratePods(plugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
