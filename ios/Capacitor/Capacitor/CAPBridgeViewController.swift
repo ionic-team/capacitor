@@ -69,7 +69,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
 
   func startWebServer() {
     let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
-    GCDWebServer.setLogLevel(0)
+    GCDWebServer.setLogLevel(3)
     self.webServer = GCDWebServer.init()
     guard let webServer = self.webServer else {
       fatalError("Unable to create local web server")
