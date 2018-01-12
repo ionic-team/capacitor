@@ -15,13 +15,13 @@ export async function initCommand(config: Config) {
   try {
     const isNew = await promptNewProject(config);
     await getOrCreateConfig(config);
-    await getOrCreateWebDir(config);
+    !isNew && await getOrCreateWebDir(config);
     await checkPackageJson(config);
-    await installDeps(config);
     isNew && await seedProject(config);
+    await installDeps(config);
     await addPlatforms(config);
   } catch (e) {
-    logFatal(e);
+    logFatal(`Unable to initialize Capacitor. Please see errors and try again or file an issue`, e);
   }
 }
 
@@ -84,7 +84,12 @@ async function checkPackageJson(config: Config) {
 }
 
 async function installDeps(config: Config) {
-  let command = 'npm install --save @capacitor/core @capacitor/cli';
+  let command = 'npm install';
+  await runTask(`Installing dependencies for seed project (${chalk.blue(command)})`, () => {
+   return runCommand(command);
+  });
+
+  command = 'npm install --save @capacitor/core @capacitor/cli';
   await runTask(`Installing Capacitor dependencies (${chalk.blue(command)})`, () => {
    return runCommand(command);
   });
@@ -106,8 +111,10 @@ async function seedProject(config: Config) {
  * @param config
  */
 async function addPlatforms(config: Config) {
-  await addCommand(config, 'ios');
-  await addCommand(config, 'android');
+  await runTask(`Adding native platforms`, async () => {
+    await addCommand(config, 'ios');
+    return await addCommand(config, 'android');
+  });
 }
 
 /**
