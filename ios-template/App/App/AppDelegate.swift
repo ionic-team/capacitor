@@ -1,11 +1,5 @@
-//
-//  AppDelegate.swift
-//  App
-//
-//  Created by Max Lynch on 12/22/17.
-//
-
 import UIKit
+import Capacitor
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -40,6 +34,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
   }
 
+  func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    // Called when the app was launched with a url. Feel free to add additional processing here,
+    // but if you want the App API to support tracking app url opens, make sure to keep this call
+    return CAPBridge.handleOpenUrl(url, options)
+  }
+  
+  func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    // Called when the app was launched with an activity, including Universal Links.
+    // Feel free to add additional processing here, but if you want the App API to support
+    // tracking app url opens, make sure to keep this call
+    return CAPBridge.handleContinueActivity(userActivity, restorationHandler)
+  }
 
 }
 

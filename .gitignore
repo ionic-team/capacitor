@@ -7,6 +7,7 @@ Pods/
 test_project/
 *.map
 .DS_Store
+Podfile.lock
 example/www/
 example/android/app/src/main/assets/public/*
 !example/android/app/src/main/assets/public/.gitkeep

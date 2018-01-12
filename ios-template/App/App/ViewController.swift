@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  App
-//
-//  Created by Max Lynch on 12/22/17.
-//
-
 import UIKit
 
 class ViewController: UIViewController {

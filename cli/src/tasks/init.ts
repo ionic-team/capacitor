@@ -46,7 +46,7 @@ async function getOrCreateWebDir(config: Config) {
   const answers = await inquirer.prompt([{
     type: 'input',
     name: 'webDir',
-    message: 'What directory will your built web assets be in? (index.html, built JavaScript, etc.):',
+    message: 'What directory will your built web assets be in?',
     default: 'public'
   }]);
 
