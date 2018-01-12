@@ -108,7 +108,7 @@
     debug = YES;
 #endif
 
-    NSString* js = [NSString stringWithFormat:@"cordova.nativeCallback('%@',%d,%@,%d, %d)", callbackId, status, argumentsAsJSON, keepCallback, debug];
+    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d, %d)", callbackId, status, argumentsAsJSON, keepCallback, debug];
 
     [self evalJsHelper2:js];
 }
@@ -120,7 +120,7 @@
 
 - (void)evalJs:(NSString*)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop
 {
-    js = [NSString stringWithFormat:@"try{cordova.nativeEvalAndFetch(function(){%@})}catch(e){console.log('exception nativeEvalAndFetch : '+e);};", js];
+    js = [NSString stringWithFormat:@"try{cordova.require('cordova/exec').nativeEvalAndFetch(function(){%@})}catch(e){console.log('exception nativeEvalAndFetch : '+e);};", js];
      [self evalJsHelper2:js];
 }
 
