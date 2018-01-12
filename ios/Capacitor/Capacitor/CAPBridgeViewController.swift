@@ -59,27 +59,36 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       exit(1)
     }
 
-    print("⚡️ Starting web server...")
+    print("⚡️  Starting web server...")
     startWebServer()
 
-    print("⚡️ Loading index.html...")
-    let request = URLRequest(url: URL(string: "http://localhost:8080/index.html")!)
+    print("⚡️  Loading index.html...")
+    let request = URLRequest(url: URL(string: "http://localhost:8081/")!)
     _ = webView?.load(request)
   }
 
   func startWebServer() {
     let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
-    GCDWebServer.setLogLevel(3)
+    GCDWebServer.setLogLevel(0)
     self.webServer = GCDWebServer.init()
-    self.webServer?.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: nil, cacheAge: 3600, allowRangeRequests: true)
-
+    guard let webServer = self.webServer else {
+      fatalError("Unable to create local web server")
+    }
+    
+    webServer.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: "index.html", cacheAge: 3600, allowRangeRequests: true)
+    
+    // Optional config for SPAs to redirect all requests to index file? Not quite right, needs to rewrite instead of redirect
+    //webServer.addHandler(forMethod: "GET", path: "/", request: GCDWebServerRequest.self, processBlock: { (req) -> GCDWebServerResponse? in
+      //return GCDWebServerResponse(redirect: URL(string: "index.html")!, permanent: false)
+    //})
+    
     do {
       let options = [
-        GCDWebServerOption_Port: 8080,
+        GCDWebServerOption_Port: 8081,
         GCDWebServerOption_BindToLocalhost: true,
-        GCDWebServerOption_ServerName: "Ionic"
-        ] as [String : Any]
-      try self.webServer?.start(options: options)
+        GCDWebServerOption_ServerName: "Capacitor"
+      ] as [String : Any]
+      try webServer.start(options: options)
     } catch {
       print(error)
     }
@@ -92,17 +101,17 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    print("⚡️ WebView loaded")
+    //print("⚡️  WebView loaded")
   }
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-    print("⚡️ WebView failed to load")
-    print(error.localizedDescription)
+    print("⚡️  WebView failed to load")
+    print("⚡️  Error: " + error.localizedDescription)
   }
   
   func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-    print("⚡️ WebView failed provisional navigation")
-    print(error.localizedDescription)
+    print("⚡️  WebView failed provisional navigation")
+    print("⚡️  Error: " + error.localizedDescription)
   }
   
   public override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
