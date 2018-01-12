@@ -11,12 +11,9 @@ public class JSExport {
       print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
     }
-    
-    do {
 
-      let data = try String(contentsOf: jsUrl, encoding: .utf8)
-      let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-      userContentController.addUserScript(userScript)
+    do {
+      try self.injectFile(fileURL: jsUrl, userContentController: userContentController)
     } catch {
       print("ERROR: Unable to read required native-bridge.js file from the Capacitor framework. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
@@ -24,19 +21,22 @@ public class JSExport {
   }
   
   public static func exportCordovaJS(userContentController: WKUserContentController) throws {
-    guard let jsUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
-      print("ERROR: Required cordova.js file in Avocado not found. Bridge will not function!")
+    guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
+      print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
       throw BridgeError.errorExportingCoreJS
     }
-    
+    guard let cordova_pluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
+      print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
+      throw BridgeError.errorExportingCoreJS
+    }
     do {
-      let data = try String(contentsOf: jsUrl, encoding: .utf8)
-      let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-      userContentController.addUserScript(userScript)
+      try self.injectFile(fileURL: cordovaUrl, userContentController: userContentController)
+      try self.injectFile(fileURL: cordova_pluginsUrl, userContentController: userContentController)
     } catch {
-      print("ERROR: Unable to read required cordova.js file from Avocado framework. Bridge will not function!")
+      print("ERROR: Unable to read required cordova files. Cordova plugins will not function!")
       throw BridgeError.errorExportingCoreJS
     }
+
   }
   
   /**
@@ -140,13 +140,7 @@ public class JSExport {
         if fileURL.hasDirectoryPath {
           injectFilesForFolder(folder: fileURL, userContentController: userContentController)
         } else {
-          do {
-            let data = try String(contentsOf: fileURL, encoding: .utf8)
-            let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-            userContentController.addUserScript(userScript)
-          } catch {
-            print("Unable to inject js file from plugins folder")
-          }
+          try self.injectFile(fileURL: fileURL, userContentController: userContentController)
         }
       }
     } catch {
@@ -154,4 +148,13 @@ public class JSExport {
     }
   }
   
+  static func injectFile(fileURL: URL, userContentController: WKUserContentController) throws {
+    do {
+      let data = try String(contentsOf: fileURL, encoding: .utf8)
+      let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+      userContentController.addUserScript(userScript)
+    } catch {
+      print("Unable to inject js file")
+    }
+  }
 }
