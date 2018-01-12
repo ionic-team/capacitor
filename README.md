@@ -1,6 +1,8 @@
-# Capacitor
+# Capacitor: Cross-platform apps with JavaScript and the Web
 
-Monorepo for Capacitor libraries.
+Capacitor is a cross-platform API layer that makes it easy to call Native SDKs from web code, as well as providing first-class Progressive Web App support so you can write one app and deploy it to the app stores, _and_ the mobile web.
+
+Capacitor is still a work in progress and is not quite ready for use. Stay tuned for a public release in early 2018.
 
 ### Directory Structure
 
@@ -11,28 +13,3 @@ Monorepo for Capacitor libraries.
 * `android`: Capacitor Android Runtime
 * `android-template`: Default Android App installed by the CLI
 * `example`: iOS Example for development
-
-### Running iOS Example
-
-```
-cd core
-npm run build
-sudo npm link
-```
-
-```
-cd example
-npm link @capacitor/core
-npm run build && npm run copy
-```
-
-Then open `example/ios/IonicRunner/IonicRunner.xcodeproj` and run it
-
-### Running Android Example
-
-First, we need to build the Android runtime. Open `android` in Android Studio and do a build. Copy
-`android/avocado/build/outputs/aar/avocado-debug.aar` to `example/android/avocado-debug/`
-
-Open `examples/android` in Android Studio, run in emulator or on device.
-
-Enjoy.
