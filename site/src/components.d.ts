@@ -248,6 +248,36 @@ declare global {
 
 
 import {
+  LandingGL as LandingGl
+} from './components/landing-page/landing-gl';
+
+declare global {
+  interface HTMLLandingGlElement extends LandingGl, HTMLElement {
+  }
+  var HTMLLandingGlElement: {
+    prototype: HTMLLandingGlElement;
+    new (): HTMLLandingGlElement;
+  };
+  interface HTMLElementTagNameMap {
+    "landing-gl": HTMLLandingGlElement;
+  }
+  interface ElementTagNameMap {
+    "landing-gl": HTMLLandingGlElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "landing-gl": JSXElements.LandingGlAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface LandingGlAttributes extends HTMLAttributes {
+      
+    }
+  }
+}
+
+
+import {
   LandingPage as LandingPage
 } from './components/landing-page/landing-page';
 
@@ -394,6 +424,40 @@ declare global {
   namespace JSXElements {
     export interface ResourcesPageAttributes extends HTMLAttributes {
       
+    }
+  }
+}
+
+
+import {
+  ShaderPlayer as ShaderPlayer
+} from './components/shader-player/shader-player';
+
+declare global {
+  interface HTMLShaderPlayerElement extends ShaderPlayer, HTMLElement {
+  }
+  var HTMLShaderPlayerElement: {
+    prototype: HTMLShaderPlayerElement;
+    new (): HTMLShaderPlayerElement;
+  };
+  interface HTMLElementTagNameMap {
+    "shader-player": HTMLShaderPlayerElement;
+  }
+  interface ElementTagNameMap {
+    "shader-player": HTMLShaderPlayerElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "shader-player": JSXElements.ShaderPlayerAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface ShaderPlayerAttributes extends HTMLAttributes {
+      frag?: string;
+      ready?: boolean;
+      retina?: boolean;
+      uniforms?: any;
+      vert?: string;
     }
   }
 }

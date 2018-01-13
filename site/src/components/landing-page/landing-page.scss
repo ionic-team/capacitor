@@ -13,6 +13,19 @@
   }
 }
 
+.landing-c {
+  position: relative;
+  display: block;
+
+  shader-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 644px;
+  }
+}
+
 avocado-site.landing-page {
   display: block;
   background-color: #1E2322;
@@ -26,10 +39,15 @@ avocado-site.landing-page {
 landing-page {
   main {
     display: flex;
+    transform: translateZ(0);
     flex-direction: column;
-    margin: 3em auto 12em auto;
+    padding: 3em 0 12em 0;
+    margin: 0 auto 0 auto;
     max-width: 768px;
     text-align: center;
+
+    -moz-user-select: none;
+    user-select: none;
   }
 
   #logo {
@@ -230,7 +248,7 @@ landing-page {
     cursor: pointer;
     text-decoration: none;
     outline: none;
-    
+
     &:hover {
       opacity: 0.7;
     }
@@ -286,7 +304,7 @@ landing-page {
       .point-card {
         margin: 1em 2.4em;
       }
-      
+
       .point-card::before {
         left: 0;
       }
