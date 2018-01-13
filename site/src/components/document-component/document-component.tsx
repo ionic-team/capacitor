@@ -10,12 +10,14 @@ export class DocumentComponent {
     console.log(this.pages);
     return (
       <div class="wrapper">
-        <div class="pull-left">
-          <site-menu />
-        </div>
+        <div class="container container-flex">
+          <div class="pull-left">
+            <site-menu />
+          </div>
 
-        <div class="pull-right">
-          {this.pages.map(page => <app-marked doc={page} />)}
+          <div class="pull-right">
+            {this.pages.map(page => <app-marked doc={page} />)}
+          </div>
         </div>
       </div>
     );

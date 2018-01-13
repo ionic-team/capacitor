@@ -104,23 +104,15 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "73baff8789ced291b82a5336db4df02f"
+    "revision": "63b1795b56676f1f83f9feaf85c3bee2"
   },
   {
-    "url": "build/app/9vd7zquc.js",
-    "revision": "f84a367db2a5b9ef3d961499cc3d45a2"
+    "url": "build/app/4aobwvoq.js",
+    "revision": "ae87c55b6892652e607e2e3f282187d0"
   },
   {
     "url": "build/app/9vp1kpca.js",
     "revision": "ec63c784fbc2f0b40f0bcdb8ce78ee07"
-  },
-  {
-    "url": "build/app/a67u4vho.js",
-    "revision": "a5448d101432d5f6c9696b8f017c91cc"
-  },
-  {
-    "url": "build/app/a9pov8p9.js",
-    "revision": "396bc3afa4b6aabbea62862f6283645e"
   },
   {
     "url": "build/app/app.global.js",
@@ -140,15 +132,23 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "b61d10615b1a056904a4764aaaa3ea14"
+    "revision": "fffbd636d128d988161e7a9d614ad35e"
+  },
+  {
+    "url": "build/app/bc7eonai.js",
+    "revision": "da1852c1a30e1525c0cc28ba2a466d3e"
   },
   {
     "url": "build/app/cv7cbtbi.js",
     "revision": "b425d7fba0b1c25730cf13a34af6b556"
   },
   {
-    "url": "build/app/ebvx4eiq.js",
-    "revision": "a2688aaf4b70453333c8cd4989b7fa65"
+    "url": "build/app/gamrdk46.js",
+    "revision": "c81739a310170c9868e700e8229debbc"
+  },
+  {
+    "url": "build/app/iaarjqkc.js",
+    "revision": "985cf36ae24610165dff835d52dc156c"
   },
   {
     "url": "build/app/krirex7d.js",
@@ -157,10 +157,6 @@ const fileManifest = [
   {
     "url": "build/app/lljbbqab.js",
     "revision": "4cb1be69cd6f9e9015e3d5d93d0159e5"
-  },
-  {
-    "url": "build/app/lppew0yu.js",
-    "revision": "6e6e62ef569bd610b181f19a188a47f8"
   },
   {
     "url": "build/app/n56a2jzp.js",
@@ -179,24 +175,28 @@ const fileManifest = [
     "revision": "bceea4fa858c798bb6fa201033865b51"
   },
   {
-    "url": "build/app/pxqetkvb.js",
-    "revision": "b265badb0f3b157462d6173e37e36a30"
-  },
-  {
     "url": "build/app/rhlmfaus.js",
     "revision": "6be3c0d5f97086f8fab64b1bf2a654a5"
   },
   {
-    "url": "build/app/rjkvhcbv.js",
-    "revision": "48c55f83fea984765543325f8a71dd02"
+    "url": "build/app/sqi87dqk.js",
+    "revision": "2c546dbf30d539745ad397d4f54fd5c0"
   },
   {
-    "url": "build/app/sw8p3ksn.js",
-    "revision": "8dc0eab6b1f0fe6587f9a456b07cd6b8"
+    "url": "build/app/waljrbe1.js",
+    "revision": "68e972c9289dffeceb9a02d63e2da8c6"
+  },
+  {
+    "url": "build/app/wnmbbgpp.js",
+    "revision": "382d6822942bd45881e9b3874b5ed057"
   },
   {
     "url": "build/app/xyfissap.js",
     "revision": "25d03519f99399851b14fdc57d211da6"
+  },
+  {
+    "url": "build/app/yixawzuu.js",
+    "revision": "4ca9b9c2a08ba98a55cb5d34d5c01247"
   },
   {
     "url": "docs-content/addons/stencil-router.html",
@@ -276,7 +276,7 @@ const fileManifest = [
   },
   {
     "url": "docs-content/apis/browser/index.html",
-    "revision": "cbcdd7df580bb8c4b1c54ba83a440394"
+    "revision": "0ec4d09d7fbf7903d2d6506ae6878a96"
   },
   {
     "url": "docs-content/apis/camera/api-index.html",
@@ -304,7 +304,7 @@ const fileManifest = [
   },
   {
     "url": "docs-content/apis/console/index.html",
-    "revision": "ef48fee27581a2dfc7b0b83fc4b8fd32"
+    "revision": "fdd27fa91f519ac0ea09cfc1d1df4f08"
   },
   {
     "url": "docs-content/apis/device/api-index.html",
@@ -468,11 +468,11 @@ const fileManifest = [
   },
   {
     "url": "docs-content/basics/app-project-structure.html",
-    "revision": "d7f5fbded8eeca7fc7397ec496f0108d"
+    "revision": "6dade7ef57e53465497e3b242323bbeb"
   },
   {
     "url": "docs-content/basics/building-your-app.html",
-    "revision": "d9d82945a76f22ab1ff93a67fcf8a259"
+    "revision": "f5bfe5277cf31758e0342f56224ada4f"
   },
   {
     "url": "docs-content/basics/component-lifecycle.html",
@@ -480,11 +480,11 @@ const fileManifest = [
   },
   {
     "url": "docs-content/basics/configuring-your-app.html",
-    "revision": "ff88901bcbddffdba9e888801ab0f552"
+    "revision": "140de1ac0e0e4268ef803cb4333d1547"
   },
   {
     "url": "docs-content/basics/creating-apps.html",
-    "revision": "578b7e61f8128e22e48f1b8b2df9ecc3"
+    "revision": "5976ea72c54eb982a2ef2a6ed0bc4727"
   },
   {
     "url": "docs-content/basics/decorators.html",
@@ -504,7 +504,7 @@ const fileManifest = [
   },
   {
     "url": "docs-content/basics/managing-platforms.html",
-    "revision": "6a98177cdbea8085d7a925e04ee3a8d5"
+    "revision": "2d32a3349d035db2bda5ffdd14f165da"
   },
   {
     "url": "docs-content/basics/my-first-component.html",
@@ -512,7 +512,7 @@ const fileManifest = [
   },
   {
     "url": "docs-content/basics/running-your-app.html",
-    "revision": "d3367b599e5ea91c51cb42c795cf1a28"
+    "revision": "9973139235f6a59dc455686426d62025"
   },
   {
     "url": "docs-content/basics/stencil-config.html",
@@ -529,6 +529,18 @@ const fileManifest = [
   {
     "url": "docs-content/compiler/config.html",
     "revision": "f9c2cda306801bb1b38562175b7719d6"
+  },
+  {
+    "url": "docs-content/getting-started/index.html",
+    "revision": "5d15e20df0b4a548074da3885856d684"
+  },
+  {
+    "url": "docs-content/getting-started/migrating-from-phonegap-cordova.html",
+    "revision": "b6807f3b989dff610174bf32ced84809"
+  },
+  {
+    "url": "docs-content/index.html",
+    "revision": "e82ba712ccfa509d27553e6652c15685"
   },
   {
     "url": "docs-content/intro/browsers.html",
@@ -556,15 +568,15 @@ const fileManifest = [
   },
   {
     "url": "docs-content/plugins/creating-plugins.html",
-    "revision": "e0baf1a49824a26d4bc5e4e369b41e1d"
+    "revision": "839c7ec14524062bfbcbd49f5f85d588"
   },
   {
     "url": "docs-content/plugins/index.html",
-    "revision": "7f3e45e34d816318293edd4b8802b5dc"
+    "revision": "e54d8ea8c33e6f1eaceb5c71897ff9df"
   },
   {
     "url": "docs-content/plugins/plugin-api-javascript.html",
-    "revision": "39b5d2445d5998a98788aa0822a52f4f"
+    "revision": "d2107e6ad727ce0e7975e6853925aec7"
   },
   {
     "url": "docs-content/start/index.html",
@@ -572,19 +584,19 @@ const fileManifest = [
   },
   {
     "url": "docs/intro/index.html",
-    "revision": "b3533ace9c1d72535785ea71aa3c9660"
+    "revision": "2db3e8d0408dba94808e9b87bce7cbdc"
   },
   {
     "url": "host.config.json",
-    "revision": "eeaf6132deebd44d3dfc7abecb81e64e"
+    "revision": "72dd7aef167eb9f4e56ea9e8e334d0be"
   },
   {
     "url": "index.html",
-    "revision": "499785a186c105c87895a0d8fe427ef8"
+    "revision": "ede626018843a0d77dcdfdfdcbd6cbe3"
   },
   {
     "url": "manifest.json",
-    "revision": "10fddfb1d610b09dfc1c4578e1f2faf2"
+    "revision": "933334db099a12ff06af4b62e3c30872"
   }
 ];
 
