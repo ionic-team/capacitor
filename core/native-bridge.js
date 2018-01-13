@@ -5,6 +5,8 @@
 
   var capacitor = Capacitor;
 
+  capacitor.DEBUG = typeof capacitor.debug === 'undefined' ? true : capacitor.DEBUG;
+
   // keep a collection of callbacks for native response data
   var calls = {};
 
@@ -81,7 +83,7 @@
   capacitor.toNative = function toNative(pluginId, methodName, options, storedCallback) {
     try {
       if (capacitor.isNative) {
-        let callbackId = '-1';
+        var callbackId = '-1';
 
         if (storedCallback && (typeof storedCallback.callback === 'function' || typeof storedCallback.resolve === 'function')) {
           // store the call for later lookup
@@ -89,13 +91,22 @@
           calls[callbackId] = storedCallback;
         }
 
-        // post the call data to native
-        postToNative({
+        var call = {
           callbackId,
           pluginId,
           methodName,
           options: options || {}
-        });
+        };
+
+        if (capacitor.DEBUG) {
+          if (pluginId !== 'Console') {
+            capacitor.logToNative(call);
+          }
+        }
+        //capacitor.DEBUG && logToNative(call);
+
+        // post the call data to native
+        postToNative(call);
 
         return callbackId;
 
@@ -114,6 +125,11 @@
    * Process a response from the native layer.
    */
   capacitor.fromNative = function fromNative(result) {
+    if (capacitor.DEBUG) {
+      if (result.pluginId !== 'Console') {
+        capacitor.logFromNative(result);
+      }
+    }
     // get the stored call, if it exists
     try {
       const storedCall = calls[result.callbackId];
@@ -240,6 +256,23 @@
 
     return false;
   };
+
+  capacitor.logToNative = function(call) {
+    var c = orgConsole;
+    c.groupCollapsed(`%cnative -> %c${call.pluginId}.${call.methodName}`,
+    `font-weight: lighter; color: gray`, `font-weight: bold; color: #000`);
+    c.dir(call);
+    c.groupEnd();
+    //orgConsole.log('LOG TO NATIVE', call);
+  }
+
+  capacitor.logFromNative = function(result) {
+    var c = orgConsole;
+    c.groupCollapsed(`%c<- result %c${result.pluginId}.${result.methodName}`,
+    `font-weight: lighter; color: #ccc`, `font-weight: bold; color: #000`);
+    c.dir(result);
+    c.groupEnd();
+  }
 
   window.onerror = capacitor.handleWindowError;
 
