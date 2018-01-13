@@ -65,9 +65,17 @@
       1
     ],
     [
-      "avocado-site",
+      "blog-page",
       [
-        "avocado-site",
+        "blog-page",
+        null
+      ],
+      1
+    ],
+    [
+      "capacitor-site",
+      [
+        "capacitor-site",
         null
       ],
       1,
@@ -79,14 +87,6 @@
           3
         ]
       ]
-    ],
-    [
-      "blog-page",
-      [
-        "blog-page",
-        null
-      ],
-      1
     ],
     [
       "demos-page",
@@ -122,7 +122,7 @@
     [
       "landing-page",
       [
-        "avocado-site",
+        "capacitor-site",
         null
       ],
       1,
@@ -136,7 +136,7 @@
     [
       "lazy-iframe",
       [
-        "avocado-site",
+        "capacitor-site",
         null
       ],
       1,
@@ -216,7 +216,7 @@
     [
       "site-header",
       [
-        "avocado-site",
+        "capacitor-site",
         null
       ],
       1
@@ -224,7 +224,7 @@
     [
       "site-menu",
       [
-        "avocado-site",
+        "capacitor-site",
         null
       ],
       1

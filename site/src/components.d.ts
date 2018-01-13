@@ -98,36 +98,6 @@ declare global {
 
 
 import {
-  App as CapacitorSite
-} from './components/avocado-site/avocado-site';
-
-declare global {
-  interface HTMLCapacitorSiteElement extends CapacitorSite, HTMLElement {
-  }
-  var HTMLCapacitorSiteElement: {
-    prototype: HTMLCapacitorSiteElement;
-    new (): HTMLCapacitorSiteElement;
-  };
-  interface HTMLElementTagNameMap {
-    "capacitor-site": HTMLCapacitorSiteElement;
-  }
-  interface ElementTagNameMap {
-    "capacitor-site": HTMLCapacitorSiteElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "capacitor-site": JSXElements.CapacitorSiteAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface CapacitorSiteAttributes extends HTMLAttributes {
-      isLandingPage?: boolean;
-    }
-  }
-}
-
-
-import {
   BlogPage as BlogPage
 } from './components/blog-page/blog-page';
 
@@ -152,6 +122,36 @@ declare global {
   namespace JSXElements {
     export interface BlogPageAttributes extends HTMLAttributes {
       
+    }
+  }
+}
+
+
+import {
+  App as CapacitorSite
+} from './components/capacitor-site/capacitor-site';
+
+declare global {
+  interface HTMLCapacitorSiteElement extends CapacitorSite, HTMLElement {
+  }
+  var HTMLCapacitorSiteElement: {
+    prototype: HTMLCapacitorSiteElement;
+    new (): HTMLCapacitorSiteElement;
+  };
+  interface HTMLElementTagNameMap {
+    "capacitor-site": HTMLCapacitorSiteElement;
+  }
+  interface ElementTagNameMap {
+    "capacitor-site": HTMLCapacitorSiteElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "capacitor-site": JSXElements.CapacitorSiteAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface CapacitorSiteAttributes extends HTMLAttributes {
+      isLandingPage?: boolean;
     }
   }
 }

@@ -1,6 +1,6 @@
 <h1 id="plugin-api-javascript">Plugin API: JavaScript</h1>
-<p>The Avocado JavaScript API handles proxying calls to the Avocado cross-platform runtime.</p>
-<p>We recommend building plugins in TypeScript, which makes it easy to use Avocado&#39;s types
+<p>The Capacitor JavaScript API handles proxying calls to the Capacitor cross-platform runtime.</p>
+<p>We recommend building plugins in TypeScript, which makes it easy to use Capacitor&#39;s types
 during development of the JS side of your plugin.</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/plugin'</span>;
 
@@ -8,7 +8,7 @@ during development of the JS side of your plugin.</p>
 
 @Plugin({
   <span class="hljs-attr">name</span>: <span class="hljs-string">'Contacts'</span>,
-  <span class="hljs-attr">id</span>: <span class="hljs-string">'avocado-plugin-contacts'</span>
+  <span class="hljs-attr">id</span>: <span class="hljs-string">'capacitor-plugin-contacts'</span>
 })
 <span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contacts</span> </span>{
   <span class="hljs-keyword">async</span> create(person: Person) : Contact {
