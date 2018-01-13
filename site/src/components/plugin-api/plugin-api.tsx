@@ -10,7 +10,7 @@ export class PluginApi {
 
   componentDidLoad() {
     const url = `api${this.index ? '-index' : ''}.html`;
-    return fetch(`/avocado/docs-content/apis/${this.name}/${url}`)
+    return fetch(`/capacitor/docs-content/apis/${this.name}/${url}`)
       .then(response => response.text())
       .then(data => {
         this.content = data;

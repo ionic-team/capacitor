@@ -10,11 +10,11 @@ though we also provide a vanilla TypeScript starter for apps that aren't using a
 
 ```bash
 npm install -g ionic
-ionic start myApp --with-avocado
+ionic start myApp --with-capacitor
 ```
 
 ## Using the Capacitor TypeScript Starter
 
 ```bash
-git clone git@github.com:ionic-team/avocado-starter
+git clone git@github.com:ionic-team/capacitor-starter
 ```

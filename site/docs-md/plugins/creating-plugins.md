@@ -1,9 +1,9 @@
-# Creating Avocado Plugins
+# Creating Capacitor Plugins
 
-An Avocado plugin relies on a JavaScript layer that proxies calls to Avocado's cross-platform runtime which runs
+An Capacitor plugin relies on a JavaScript layer that proxies calls to Capacitor's cross-platform runtime which runs
 the corresponding native or pure-web code to handle the operation.
 
-Thus, an Avocado plugin consists of some JavaScript and then a native implementation for each platform that requires it.
+Thus, an Capacitor plugin consists of some JavaScript and then a native implementation for each platform that requires it.
 
 Let's implement a simple Todo plugin that stores a list of Todo's in native device storage or web storage depending on the platform available.
 
@@ -12,7 +12,7 @@ Let's implement a simple Todo plugin that stores a list of Todo's in native devi
 To generate a new plugin for development, run
 
 ```bash
-avocado plugin:generate com.example.plugin.todo Todo
+capacitor plugin:generate com.example.plugin.todo Todo
 ```
 
 The plugin's structure will look similar to this:
@@ -37,7 +37,7 @@ export interface Todo {
 
 @NativePlugin({
   name: 'Todo',
-  id: 'avocado-plugin-todo'
+  id: 'capacitor-plugin-todo'
 })
 export class TodoPlugin extends Plugin {
   async create(todo: Todo) : Promise<Todo> {
@@ -67,7 +67,7 @@ export class TodoPlugin extends Plugin {
 ## iOS Plugin
 
 ```swift
-import Avocado
+import Capacitor
 
 @objc(Todo)
 class Todo : Plugin {
@@ -155,12 +155,12 @@ import { Todo } from './definitions';
 
 @PluginWeb({
   name: 'Todo',
-  id: 'avocado-plugin-todo'
+  id: 'capacitor-plugin-todo'
 })
 export class Todo {
   open: any;
 
-  constructor(avocado: App) {
+  constructor(capacitor: App) {
     var indexedDB = window.indexedDB;
 
     // Open (or create) the database

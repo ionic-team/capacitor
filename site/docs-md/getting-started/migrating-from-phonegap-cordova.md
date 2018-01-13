@@ -1,6 +1,6 @@
 # Migrating from Cordova/PhoneGap to Capacitor
 
-Capacitor can be used as a replacement for Cordova/PhoneGap in many cases. The two projects provide a web environment with full access to native features and functionality, but with a few differences in their approach to tooling, native project management, and plugins.
+Capacitor can be used as a replacement for Cordova/PhoneGap in many cases. The two projects provide a web environment with full access to native features and functionality, but with a few differences in their approach to tooling, native project management, and plugins. Capacitor also has support for existing Cordova plugins, providing a new runtime with access to the rich Cordova plugin ecosystem.
 
 ## Differences between Capacitor and Cordova
 

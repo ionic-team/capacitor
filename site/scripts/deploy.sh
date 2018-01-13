@@ -2,7 +2,7 @@ MONOREPO_DIR=$(pwd)
 LAST_COMMIT_MESSAGE=`git log -1 --pretty=format:"%s" -- .`
 
 echo $MONOREPO_DIR
-echo "Deploying avocado-site to gh-pages branch"
+echo "Deploying capacitor-site to gh-pages branch"
 echo "Last commit in site/ was: $LAST_COMMIT_MESSAGE"
 npm run build
 
