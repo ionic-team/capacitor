@@ -1,5 +1,9 @@
 <h1 id="haptics">Haptics</h1>
 <p>The Haptics API provides physical feedback to the user through touch or vibration.</p>
+<h2 id="android-notes">Android Notes</h2>
+<p>To use vibration, you must add this permission to your <code>AndroidManifest.xml</code> file:</p>
+<pre><code class="lang-xml">&lt;uses-permission android:<span class="hljs-built_in">name</span>=<span class="hljs-string">"android.permission.VIBRATE"</span> /&gt;
+</code></pre>
 <h2 id="example">Example</h2>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> {
   Plugins,
