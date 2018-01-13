@@ -10,13 +10,13 @@ export class LandingPage {
   @Element() el: Element;
 
   constructor() {
-    let root: any = document.querySelector('avocado-site');
+    let root: any = document.querySelector('capacitor-site');
     root.isLandingPage = true;
     document.title = `Capacitor: Universal Web Applications`;
   }
 
   componentDidUnload() {
-    let root: any = document.querySelector('avocado-site');
+    let root: any = document.querySelector('capacitor-site');
     root.isLandingPage = false;
   }
 

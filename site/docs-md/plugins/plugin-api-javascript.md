@@ -1,8 +1,8 @@
 # Plugin API: JavaScript
 
-The Avocado JavaScript API handles proxying calls to the Avocado cross-platform runtime.
+The Capacitor JavaScript API handles proxying calls to the Capacitor cross-platform runtime.
 
-We recommend building plugins in TypeScript, which makes it easy to use Avocado's types
+We recommend building plugins in TypeScript, which makes it easy to use Capacitor's types
 during development of the JS side of your plugin.
 
 ```typescript
@@ -12,7 +12,7 @@ import { Contact, Person } from './definitions';
 
 @Plugin({
   name: 'Contacts',
-  id: 'avocado-plugin-contacts'
+  id: 'capacitor-plugin-contacts'
 })
 export class Contacts {
   async create(person: Person) : Contact {

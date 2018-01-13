@@ -1,9 +1,9 @@
 # Creating Apps
 
-To create a new Avocado app, use the `start` command from the Avocado CLI:
+To create a new Capacitor app, use the `start` command from the Capacitor CLI:
 
 ```bash
-avocado start
+capacitor start
 ```
 
 This will start an interactive app-creation wizard that will prompt for some initial settings

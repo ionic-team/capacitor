@@ -98,29 +98,29 @@ declare global {
 
 
 import {
-  App as AvocadoSite
+  App as CapacitorSite
 } from './components/avocado-site/avocado-site';
 
 declare global {
-  interface HTMLAvocadoSiteElement extends AvocadoSite, HTMLElement {
+  interface HTMLCapacitorSiteElement extends CapacitorSite, HTMLElement {
   }
-  var HTMLAvocadoSiteElement: {
-    prototype: HTMLAvocadoSiteElement;
-    new (): HTMLAvocadoSiteElement;
+  var HTMLCapacitorSiteElement: {
+    prototype: HTMLCapacitorSiteElement;
+    new (): HTMLCapacitorSiteElement;
   };
   interface HTMLElementTagNameMap {
-    "avocado-site": HTMLAvocadoSiteElement;
+    "capacitor-site": HTMLCapacitorSiteElement;
   }
   interface ElementTagNameMap {
-    "avocado-site": HTMLAvocadoSiteElement;
+    "capacitor-site": HTMLCapacitorSiteElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "avocado-site": JSXElements.AvocadoSiteAttributes;
+      "capacitor-site": JSXElements.CapacitorSiteAttributes;
     }
   }
   namespace JSXElements {
-    export interface AvocadoSiteAttributes extends HTMLAttributes {
+    export interface CapacitorSiteAttributes extends HTMLAttributes {
       isLandingPage?: boolean;
     }
   }

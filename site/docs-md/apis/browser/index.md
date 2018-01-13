@@ -8,7 +8,7 @@ On iOS this uses `SFSafariViewController` and is compliant with leading oAuth se
 ```typescript
 import { Plugins } from '@avocadojs/core';
 
-Plugins.Browser.open('http://ionic-team.github.io/avocado');
+Plugins.Browser.open('http://ionic-team.github.io/capacitor');
 ```
 
 ## API

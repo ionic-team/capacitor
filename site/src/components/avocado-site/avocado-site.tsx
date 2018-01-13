@@ -1,8 +1,8 @@
 import { Component, Prop } from '@stencil/core';
 
 @Component({
-  tag: 'avocado-site',
-  styleUrl: 'avocado-site.scss'
+  tag: 'capacitor-site',
+  styleUrl: 'capacitor-site.scss'
 })
 export class App {
   @Prop() isLandingPage = false;
@@ -184,7 +184,7 @@ export class App {
               </svg>
             </a>
             <a class="svg-button" id="ionic-forum" href="https://avocadojs.herokuapp.com/" target="_blank" rel="noopener"
-              title="Join the Avocado slack">
+              title="Join the Capacitor slack">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
