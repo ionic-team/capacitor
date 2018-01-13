@@ -42,13 +42,21 @@ export class App {
             />
 
             <stencil-route
-              url="/docs/intro/:pageName?"
+              url="/docs/"
+              exact={true}
+              routeRender={(props: { [key: string]: any }) => {
+                return (
+                  <document-component pages={['index.html']} />
+                );
+               }}
+              />
+
+            <stencil-route
+              url="/docs/getting-started/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 const map = {
-                  undefined: 'intro/index.html',
-                  'intro': 'intro/index.html',
-                  'getting-started': 'intro/getting-started.html',
-                  'migrating-from-phonegap-cordova': 'intro/migrating-from-phonegap-cordova.html'
+                  undefined: 'getting-started/index.html',
+                  'migrating-from-phonegap-cordova': 'getting-started/migrating-from-phonegap-cordova.html'
                 };
                 return (
                   <document-component pages={[map[props.match.params.pageName]]} />
@@ -134,11 +142,6 @@ export class App {
             <stencil-route
               url="/resources"
               component="resources-page"
-            />
-
-            <stencil-route
-              url="/pwa"
-              component="pwas-page"
             />
 
           </stencil-router>

@@ -11,15 +11,15 @@ export class SiteMenu {
       items: [
         { 
           title: 'Introduction',
-          url: '/docs/intro'
+          url: '/docs/'
         },
         { 
           title: 'Getting Started',
-          url: '/docs/intro/getting-started'
+          url: '/docs/getting-started/'
         },
         {
           title: 'Migrating from PhoneGap/Cordova',
-          url: '/docs/intro/migrating-from-phonegap-cordova'
+          url: '/docs/getting-started/migrating-from-phonegap-cordova'
         }
       ]
     },
