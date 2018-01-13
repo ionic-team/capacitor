@@ -104,11 +104,11 @@ const fileManifest = [
   },
   {
     "url": "build/app.js",
-    "revision": "285b98925bcb419af12e99644874a265"
+    "revision": "73baff8789ced291b82a5336db4df02f"
   },
   {
-    "url": "build/app/6bo0uds8.js",
-    "revision": "30baafc40594eb4364f17c106bc72010"
+    "url": "build/app/9vd7zquc.js",
+    "revision": "f84a367db2a5b9ef3d961499cc3d45a2"
   },
   {
     "url": "build/app/9vp1kpca.js",
@@ -140,11 +140,15 @@ const fileManifest = [
   },
   {
     "url": "build/app/app.registry.json",
-    "revision": "b17b083d7f8e16652bc85b22c13eb5da"
+    "revision": "b61d10615b1a056904a4764aaaa3ea14"
   },
   {
     "url": "build/app/cv7cbtbi.js",
     "revision": "b425d7fba0b1c25730cf13a34af6b556"
+  },
+  {
+    "url": "build/app/ebvx4eiq.js",
+    "revision": "a2688aaf4b70453333c8cd4989b7fa65"
   },
   {
     "url": "build/app/krirex7d.js",
@@ -173,10 +177,6 @@ const fileManifest = [
   {
     "url": "build/app/pbssls7g.js",
     "revision": "bceea4fa858c798bb6fa201033865b51"
-  },
-  {
-    "url": "build/app/px2eltlm.js",
-    "revision": "cf509fdf6798f9806d2db1cbc74c56a0"
   },
   {
     "url": "build/app/pxqetkvb.js",
@@ -352,7 +352,7 @@ const fileManifest = [
   },
   {
     "url": "docs-content/apis/haptics/index.html",
-    "revision": "ff4beebfdb33d4cf02b57806da6b8afc"
+    "revision": "98f9a00517aaabae8654d32c91f54b47"
   },
   {
     "url": "docs-content/apis/keyboard/api-index.html",
@@ -576,11 +576,11 @@ const fileManifest = [
   },
   {
     "url": "host.config.json",
-    "revision": "c1d97d68d9a9acd44e90bc0604425e2e"
+    "revision": "eeaf6132deebd44d3dfc7abecb81e64e"
   },
   {
     "url": "index.html",
-    "revision": "97e8d2f96e606f1f81d9d24b6c48037d"
+    "revision": "499785a186c105c87895a0d8fe427ef8"
   },
   {
     "url": "manifest.json",
