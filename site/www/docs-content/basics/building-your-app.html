@@ -1,17 +1,21 @@
 <h1 id="building-your-app">Building your App</h1>
-<p>Avocado works on a three-step build process. First, your web code is built if necessary. Next, the built web code is copied to each platform, and finally the app is compiled using the platform-specific tooling.</p>
+<p>Capacitor works on a three-step build process. First, your web code is built if necessary. Next, the built web code is copied to each platform, and finally the app is compiled using the platform-specific tooling.</p>
 <h2 id="ios">iOS</h2>
 <p>iOS relies on Xcode to do the final app compile</p>
-<pre><code class="lang-bash">avocado build
-avocado <span class="hljs-keyword">copy</span><span class="bash"> ios
-</span>avocado open ios
+<pre><code class="lang-bash">npm <span class="hljs-keyword">run</span><span class="bash"> capacitor build
+</span>npm <span class="hljs-keyword">run</span><span class="bash"> capacitor copy ios
+</span>npm <span class="hljs-keyword">run</span><span class="bash"> capacitor open ios</span>
 </code></pre>
 <p>Once XCode launches, you can build your finally app binary through the standard XCode workflow.</p>
 <h2 id="android">Android</h2>
-<pre><code class="lang-bash">avocado build
-avocado <span class="hljs-keyword">copy</span><span class="bash"> android
-</span>avocado compile android
+<pre><code class="lang-bash">npm <span class="hljs-keyword">run</span><span class="bash"> capacitor build
+</span>npm <span class="hljs-keyword">run</span><span class="bash"> capacitor copy android
+</span>npm <span class="hljs-keyword">run</span><span class="bash"> capacitor compile android</span>
 </code></pre>
 <h2 id="web">Web</h2>
-<pre><code class="lang-bash"><span class="hljs-attribute">avocado build</span>
+<p>Capacitor doesn&#39;t require any kind of build step for your web code. If you&#39;re using the standard
+&quot;build&quot; script in npm, then just run</p>
+<pre><code class="lang-bash">npm <span class="hljs-keyword">run</span><span class="bash"> build</span>
 </code></pre>
+<p>And capacitor will use the built web code in your <code>webDir</code> in your <code>capacitor.config.json</code>.</p>
+<p>If your web app doesn&#39;t need a build step, then skip the build and you&#39;re good to go.</p>

@@ -1,11 +1,11 @@
-<h1 id="creating-avocado-plugins">Creating Avocado Plugins</h1>
-<p>An Avocado plugin relies on a JavaScript layer that proxies calls to Avocado&#39;s cross-platform runtime which runs
+<h1 id="creating-capacitor-plugins">Creating Capacitor Plugins</h1>
+<p>An Capacitor plugin relies on a JavaScript layer that proxies calls to Capacitor&#39;s cross-platform runtime which runs
 the corresponding native or pure-web code to handle the operation.</p>
-<p>Thus, an Avocado plugin consists of some JavaScript and then a native implementation for each platform that requires it.</p>
+<p>Thus, an Capacitor plugin consists of some JavaScript and then a native implementation for each platform that requires it.</p>
 <p>Let&#39;s implement a simple Todo plugin that stores a list of Todo&#39;s in native device storage or web storage depending on the platform available.</p>
 <h2 id="generate-plugin-scaffolding">Generate Plugin Scaffolding</h2>
 <p>To generate a new plugin for development, run</p>
-<pre><code class="lang-bash">avocado plugin:<span class="hljs-keyword">generate</span> com<span class="hljs-variable">.example</span><span class="hljs-variable">.plugin</span><span class="hljs-variable">.todo</span> Todo
+<pre><code class="lang-bash">capacitor plugin:<span class="hljs-keyword">generate</span> com<span class="hljs-variable">.example</span><span class="hljs-variable">.plugin</span><span class="hljs-variable">.todo</span> Todo
 </code></pre>
 <p>The plugin&#39;s structure will look similar to this:</p>
 <h2 id="javascript-implementation">JavaScript Implementation</h2>
@@ -23,7 +23,7 @@ the iOS, Android, and Web implementations of your plugin.</p>
 
 <span class="hljs-meta">@NativePlugin</span>({
   name: <span class="hljs-string">'Todo'</span>,
-  id: <span class="hljs-string">'avocado-plugin-todo'</span>
+  id: <span class="hljs-string">'capacitor-plugin-todo'</span>
 })
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> TodoPlugin <span class="hljs-keyword">extends</span> Plugin {
   <span class="hljs-keyword">async</span> create(todo: Todo) : <span class="hljs-built_in">Promise</span>&lt;Todo&gt; {
@@ -50,7 +50,7 @@ the iOS, Android, and Web implementations of your plugin.</p>
 }
 </code></pre>
 <h2 id="ios-plugin">iOS Plugin</h2>
-<pre><code class="lang-swift"><span class="hljs-keyword">import</span> Avocado
+<pre><code class="lang-swift"><span class="hljs-keyword">import</span> Capacitor
 
 <span class="hljs-meta">@objc</span>(<span class="hljs-type">Todo</span>)
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> : <span class="hljs-title">Plugin</span> </span>{
@@ -129,12 +129,12 @@ public <span class="hljs-class"><span class="hljs-keyword">class</span> <span cl
 
 <span class="hljs-meta">@PluginWeb</span>({
   name: <span class="hljs-string">'Todo'</span>,
-  id: <span class="hljs-string">'avocado-plugin-todo'</span>
+  id: <span class="hljs-string">'capacitor-plugin-todo'</span>
 })
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Todo {
   open: <span class="hljs-built_in">any</span>;
 
-  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">avocado: App</span>) {
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">capacitor: App</span>) {
     <span class="hljs-keyword">var</span> indexedDB = <span class="hljs-built_in">window</span>.indexedDB;
 
     <span class="hljs-comment">// Open (or create) the database</span>
