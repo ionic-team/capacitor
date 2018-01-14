@@ -6,11 +6,11 @@ during development of the JS side of your plugin.</p>
 
 <span class="hljs-keyword">import</span> { Contact, Person } <span class="hljs-keyword">from</span> <span class="hljs-string">'./definitions'</span>;
 
-@Plugin({
-  <span class="hljs-attr">name</span>: <span class="hljs-string">'Contacts'</span>,
-  <span class="hljs-attr">id</span>: <span class="hljs-string">'capacitor-plugin-contacts'</span>
+<span class="hljs-meta">@Plugin</span>({
+  name: <span class="hljs-string">'Contacts'</span>,
+  id: <span class="hljs-string">'capacitor-plugin-contacts'</span>
 })
-<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contacts</span> </span>{
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Contacts {
   <span class="hljs-keyword">async</span> create(person: Person) : Contact {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.call(<span class="hljs-string">'create'</span>, {
       person

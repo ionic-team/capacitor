@@ -6,8 +6,11 @@ gulp.task('default', function() {
     .src('./docs-md/**/*.md')
     .pipe(
       markdown({
-        highlight: function(code) {
-          return hljs.highlightAuto(code, ['js','javascript','bash','typescript','xml','swift','java','kotlin','json']).value;
+        highlight: function(code, lang) {
+          if (!lang) {
+            return code;
+          }
+          return hljs.highlight(lang, code).value;
         }
       })
     )

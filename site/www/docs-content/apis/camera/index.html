@@ -20,9 +20,9 @@ Key:     <code>NSCameraUsageDescription</code></p>
 
 <span class="hljs-keyword">async</span> takePicture() {
   <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Plugins.Camera.getPhoto({
-    <span class="hljs-attr">quality</span>: <span class="hljs-number">90</span>,
-    <span class="hljs-attr">allowEditing</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">resultType</span>: <span class="hljs-string">'base64'</span>
+    quality: <span class="hljs-number">90</span>,
+    allowEditing: <span class="hljs-literal">true</span>,
+    resultType: <span class="hljs-string">'base64'</span>
   });
   <span class="hljs-comment">// image.base64_data will contain the base64 encoded result as a JPEG. Make sure to</span>
   <span class="hljs-comment">// add the proper base64 image prefix:</span>
@@ -62,8 +62,8 @@ image URL to be trusted:</p>
 }
 </code></pre>
 <p>Component template:</p>
-<pre><code class="lang-html">  &lt;img [src]=<span class="hljs-string">"image"</span> /&gt;
-  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"takePicture()"</span> <span class="hljs-attr">ion-button</span> <span class="hljs-attr">color</span>=<span class="hljs-string">"primary"</span>&gt;</span>Take Picture<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span>
+<pre><code class="lang-html">  <span class="hljs-tag">&lt;<span class="hljs-name">img</span> [<span class="hljs-attr">src</span>]=<span class="hljs-string">"image"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"takePicture()"</span> <span class="hljs-attr">ion-button</span> <span class="hljs-attr">color</span>=<span class="hljs-string">"primary"</span>&gt;</span>Take Picture<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
 </code></pre>
 <h2 id="api">API</h2>
 <p><plugin-api name="camera"></plugin-api></p>
