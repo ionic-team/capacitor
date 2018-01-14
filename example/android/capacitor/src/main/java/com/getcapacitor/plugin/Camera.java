@@ -124,7 +124,7 @@ public class Camera extends Plugin {
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == REQUEST_IMAGE_CAPTURE) {
+    if(requestCode == REQUEST_IMAGE_CAPTURE && lastCall != null) {
       processImage(lastCall, data);
     }
   }
