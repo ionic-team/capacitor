@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -54,6 +55,10 @@ public class Bridge {
 
   // Stored plugin calls that we're keeping around to call again someday
   private Map<String, PluginCall> savedCalls = new HashMap<>();
+
+  // Store a plugin call that started a new activity, in case we need to resume
+  // the app and return that data back
+  private Plugin pluginForLastActivity;
 
   // Any URI that was passed to the app on start
   private Uri intentUri;
@@ -336,6 +341,20 @@ public class Bridge {
     return null;
   }
 
+  public void saveInstanceState(Bundle outState) {
+    Log.d(TAG, "Saving instance state!");
+
+    if (pluginForLastActivity != null) {
+      outState.putString("capacitorLastActivityPlugin", pluginForLastActivity.)
+    }
+  }
+
+  public void startActivityForPluginWithResult(Plugin plugin, Intent intent, int requestCode) {
+    pluginForLastActivity = getPlugin(plugin)
+    Log.d(TAG, "Starting activity for result");
+    getActivity().startActivityForResult(intent, requestCode);
+  }
+
   /**
    * Handle a request permission result by finding the that requested
    * the permission and calling their permission handler
@@ -383,29 +402,45 @@ public class Bridge {
     }
   }
 
+  /**
+   * Handle onRestart lifecycle event and notify the plugins
+   */
   public void onRestart() {
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnRestart();
     }
   }
 
+  /**
+   * Handle onStart lifecycle event and notify the plugins
+   */
   public void onStart() {
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnStart();
     }
   }
 
+  /**
+   * Handle onResume lifecycle event and notify the plugins
+   */
   public void onResume() {
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnResume();
     }
   }
+
+  /**
+   * Handle onPause lifecycle event and notify the plugins
+   */
   public void onPause() {
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnPause();
     }
   }
 
+  /**
+   * Handle onStop lifecycle event and notify the plugins
+   */
   public void onStop() {
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnStop();

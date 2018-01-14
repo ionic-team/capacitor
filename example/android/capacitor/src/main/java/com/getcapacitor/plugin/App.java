@@ -25,7 +25,7 @@ public class App extends Plugin {
     Log.d(Bridge.TAG, "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
-    notifyListeners(EVENT_STATE_CHANGE, data);
+    notifyListeners(EVENT_STATE_CHANGE, data, true);
   }
 
   @PluginMethod()

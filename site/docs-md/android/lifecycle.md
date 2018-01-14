@@ -1,6 +1,8 @@
 # Android Lifecycle
 
-Understanding the Android App Lifecycle is crucial for building apps that act the way Android users expect.
+Understanding the Android Activity Lifecycle is crucial for building apps that act the way Android users expect.
+
+This document attempts to explain the lifecycle as it pertains to Capacitor. For more information, the [Activity Lifecycle](https://developer.android.com/guide/components/activities/activity-lifecycle.html) reference on the official Android docs is the best resource out there.
 
 ## Handling App Restarts
 
