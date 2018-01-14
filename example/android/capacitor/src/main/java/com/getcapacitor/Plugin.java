@@ -13,7 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base class for all plugins
+ * Plugin is the base class for all plugins, containing a number of
+ * convenient features for interacting with the {@link Bridge}, managing
+ * plugin permissions, tracking lifecycle events, and more.
+ *
+ * You should inherit from this class when creating new plugins, along with
+ * adding the {@link NativePlugin} annotation to add additional required
+ * metadata about the Plugin
  */
 public class Plugin {
   protected Bridge bridge;
@@ -37,7 +43,16 @@ public class Plugin {
    */
   public void load() {}
 
+  /**
+   * Get the main {@link Context} for the current Activity (your app)
+   * @return the Context for the current activity
+   */
   public Context getContext() { return this.bridge.getContext(); }
+
+  /**
+   * Get the main {@link Activity} for the app
+   * @return the Activity for the current app
+   */
   public Activity getActivity() { return this.bridge.getActivity(); }
 
   /**
@@ -49,14 +64,23 @@ public class Plugin {
   }
 
   /**
-   * Set the wrapper PluginHandle instance for this plugin that
+   * Set the wrapper {@link PluginHandle} instance for this plugin that
    * contains additional metadata about the Plugin instance (such
-   * as indexed methods for reflection, and NativePlugin annotation data).
+   * as indexed methods for reflection, and {@link NativePlugin} annotation data).
    * @param pluginHandle
    */
   public void setPluginHandle(PluginHandle pluginHandle) {
     this.handle = pluginHandle;
   }
+
+  /**
+   * Return the wrapper {@link PluginHandle} for this plugin.
+   *
+   * This wrapper contains additional metadata about the plugin instance,
+   * such as indexed methods for reflection, and {@link NativePlugin} annotation data).
+   * @return
+   */
+  public PluginHandle getPluginHandle() { return this.handle; }
 
   /**
    * Get the root App ID
@@ -76,7 +100,7 @@ public class Plugin {
   }
 
   /**
-   * If the NativePlugin annotation specified a set of permissions,
+   * If the {@link NativePlugin} annotation specified a set of permissions,
    * this method checks if each is granted. Note: if you are okay
    * with a limited subset of the permissions being granted, check
    * each one individually instead with hasPermission
@@ -173,10 +197,22 @@ public class Plugin {
     }
   }
 
+  /**
+   * Notify all listeners that an event occurred
+   * This calls {@link Plugin#notifyListeners(String, JSObject, boolean)}
+   * with retainUntilConsumed set to false
+   * @param eventName
+   * @param data
+   */
   protected void notifyListeners(String eventName, JSObject data) {
     notifyListeners(eventName, data, false);
   }
 
+  /**
+   * Send retained arguments (if any) for this event. This
+   * is called only when the first listener for an event is added
+   * @param eventName
+   */
   private void sendRetainedArgumentsForEvent(String eventName) {
     JSObject retained = retainedEventArguments.get(eventName);
     if (retained == null) {
@@ -276,6 +312,10 @@ public class Plugin {
   protected void handleOnResume() {}
   protected void handleOnPause() {}
   protected void handleOnStop() {}
+
+  protected void startActivityForResult(Intent intent, int resultCode) {
+    bridge.startActivityForPluginWithResult(this, intent, resultCode);
+  }
 
   /**
    * Execute the given runnable on the Bridge's task handler

@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
@@ -21,6 +22,10 @@ public class BridgeActivity extends AppCompatActivity {
 
   }
 
+
+  /**
+   * Load the WebView and create the Bridge
+   */
   protected void load() {
     Log.d(Bridge.TAG, "Starting BridgeActivity");
 
@@ -28,6 +33,10 @@ public class BridgeActivity extends AppCompatActivity {
     bridge = new Bridge(this, webView);
   }
 
+  /**
+   * Notify the App plugin that the current state changed
+   * @param isActive
+   */
   private void fireAppStateChanged(boolean isActive) {
     PluginHandle handle = bridge.getPlugin("App");
     if (handle == null) {
@@ -38,6 +47,12 @@ public class BridgeActivity extends AppCompatActivity {
     if (appState != null) {
       appState.fireChange(isActive);
     }
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    bridge.saveInstanceState(outState);
   }
 
   @Override

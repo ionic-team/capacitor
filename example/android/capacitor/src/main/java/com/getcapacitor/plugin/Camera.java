@@ -147,7 +147,7 @@ public class Camera extends Plugin {
         return;
       }
 
-      getActivity().startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+      startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     } else {
       call.error(NO_CAMERA_ACTIVITY_ERROR);
     }
