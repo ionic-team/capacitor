@@ -10,10 +10,10 @@
   HapticsImpactStyle
 } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
-<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HapticsExample</span> </span>{
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> HapticsExample {
   hapticsImpact(style = HapticsImpactStyle.Heavy) {
     Plugins.Haptics.impact({
-      <span class="hljs-attr">style</span>: style
+      style: style
     });
   }
 
