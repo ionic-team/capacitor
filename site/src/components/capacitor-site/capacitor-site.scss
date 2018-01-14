@@ -141,34 +141,6 @@ stencil-route-link:hover {
   align-items: flex-start;
 } 
 
-pre {
-  word-break: break-all;
-  word-wrap: break-word;
-  display: block;
-  white-space: pre-wrap;
-  margin: 24px 0px 28px;
-  padding: 16px 24px;
-  border-radius: 4px;
-  color: #abb2bf;
-  background-color: #404040;
-  code {
-    font-weight: 500;
-    display: block;
-    overflow-x: auto;
-    word-wrap: normal;
-    white-space: pre;
-    box-sizing: border-box;
-    font-size: 14px;
-    line-height: 20px;
-  }
-}
-
-code {
-  font-weight: 400;
-  font-family: "Source Code Pro", monospace;
-  font-size: 14px;
-}
-
 .nextButton {
   background: #5851ff;
   color: white;
@@ -223,6 +195,34 @@ code {
   }
 }
 
+
+pre {
+  word-break: break-all;
+  word-wrap: break-word;
+  display: block;
+  white-space: pre-wrap;
+  margin: 24px 0px 28px;
+  padding: 16px 24px;
+  border-radius: 4px;
+  color: #525252;
+  background-color: #f8f8f8;
+  code {
+    font-weight: 500;
+    display: block;
+    overflow-x: auto;
+    word-wrap: normal;
+    white-space: pre;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+code {
+  font-weight: 400;
+  font-family: "Source Code Pro", monospace;
+  font-size: 14px;
+}
 .hljs-comment, .hljs-quote {
   color: #5c6370;
   font-style: italic;

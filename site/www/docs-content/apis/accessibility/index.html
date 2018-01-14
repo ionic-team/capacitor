@@ -3,24 +3,24 @@
 labels through the connected screen reader.</p>
 <p><plugin-api index="true" name="accessibility"></plugin-api></p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript">import { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
-Plugins.Accessibility.addListener(<span class="hljs-string">'accessibilityScreenReaderStateChange'</span>, (err, state) =&gt; {
-  console.log(state.<span class="hljs-keyword">value</span>);
+Plugins.Accessibility.addListener(<span class="hljs-string">'accessibilityScreenReaderStateChange'</span>, <span class="hljs-function">(<span class="hljs-params">err, state</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(state.value);
 });
 
-<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">isVoiceOverEnabled</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-keyword">async</span> isVoiceOverEnabled() {
   <span class="hljs-keyword">var</span> vo = <span class="hljs-keyword">await</span> Plugins.Accessibility.isScreenReaderEnabled();
   alert(<span class="hljs-string">'Voice over enabled? '</span> + vo);
 }
 
-<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">speak</span>(<span class="hljs-params"></span>) </span>{
-  <span class="hljs-keyword">var</span> <span class="hljs-keyword">value</span> = <span class="hljs-keyword">await</span> Plugins.Modals.prompt({
+<span class="hljs-keyword">async</span> speak() {
+  <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">await</span> Plugins.Modals.prompt({
     title: <span class="hljs-string">"Value to speak"</span>,
     message: <span class="hljs-string">"Enter the value to speak"</span>
   });
 
-  Plugins.Accessibility.speak(<span class="hljs-keyword">value</span>.<span class="hljs-keyword">value</span>);
+  Plugins.Accessibility.speak(value.value);
 }
 </code></pre>
 <h2 id="api">API</h2>

@@ -7,7 +7,7 @@ gulp.task('default', function() {
     .pipe(
       markdown({
         highlight: function(code) {
-          return hljs.highlightAuto(code).value;
+          return hljs.highlightAuto(code, ['js','javascript','bash','typescript','xml','swift','java','kotlin','json']).value;
         }
       })
     )

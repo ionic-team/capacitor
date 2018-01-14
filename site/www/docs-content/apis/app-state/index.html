@@ -2,16 +2,16 @@
 <p>The AppState API emits events when the app enters and leaves, among other 
 high level operations.</p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript">import { Plugins, AppStateState } <span class="hljs-keyword">from</span> '@avocadojs/core';
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, AppStateState } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
-Plugins.App.addListener('appStateChanged', (err: <span class="hljs-literal">any</span>, <span class="hljs-keyword">state</span>: AppStateState) =&gt; {
-  // <span class="hljs-keyword">state</span>.isActive contains the active <span class="hljs-keyword">state</span>
-  console.<span class="hljs-keyword">log</span>('App <span class="hljs-keyword">state</span> changed. Is active?', <span class="hljs-keyword">state</span>.isActive);
+Plugins.App.addListener(<span class="hljs-string">'appStateChanged'</span>, <span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">any</span>, state: AppStateState</span>) =&gt;</span> {
+  <span class="hljs-comment">// state.isActive contains the active state</span>
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'App state changed. Is active?'</span>, state.isActive);
 });
 
-// Listen <span class="hljs-keyword">for</span> serious plugin errors
-Plugins.App.addListener('pluginError', (err: <span class="hljs-literal">any</span>, info: <span class="hljs-literal">any</span>) =&gt; {
-  console.error('There was a serious error with a plugin', err, info);
+<span class="hljs-comment">// Listen for serious plugin errors</span>
+Plugins.App.addListener(<span class="hljs-string">'pluginError'</span>, <span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">any</span>, info: <span class="hljs-built_in">any</span></span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'There was a serious error with a plugin'</span>, err, info);
 });
 </code></pre>
 <h2 id="api">API</h2>

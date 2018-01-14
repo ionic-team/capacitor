@@ -40,7 +40,7 @@ Capacitor was designed to drop-in to any existing modern JS web app.
 
 To add Capacitor to your web app, run the following commands:
 
-```bash
+```
 cd my-app
 npm install @capacitor/core @capacitor/cli
 npm run capacitor init

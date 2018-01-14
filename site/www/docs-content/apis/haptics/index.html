@@ -2,27 +2,27 @@
 <p>The Haptics API provides physical feedback to the user through touch or vibration.</p>
 <h2 id="android-notes">Android Notes</h2>
 <p>To use vibration, you must add this permission to your <code>AndroidManifest.xml</code> file:</p>
-<pre><code class="lang-xml">&lt;uses-permission android:<span class="hljs-built_in">name</span>=<span class="hljs-string">"android.permission.VIBRATE"</span> /&gt;
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.VIBRATE"</span> /&gt;</span>
 </code></pre>
 <h2 id="example">Example</h2>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> {
   Plugins,
   HapticsImpactStyle
-} from <span class="hljs-string">'@avocadojs/core'</span>;
+} <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
-export class HapticsExample {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HapticsExample</span> </span>{
   hapticsImpact(style = HapticsImpactStyle.Heavy) {
     Plugins.Haptics.impact({
-      style: style
+      <span class="hljs-attr">style</span>: style
     });
   }
 
   hapticsImpactMedium(style) {
-    this.hapticsImpact(HapticsImpactStyle.Medium);
+    <span class="hljs-keyword">this</span>.hapticsImpact(HapticsImpactStyle.Medium);
   }
 
   hapticsImpactLight(style) {
-    this.hapticsImpact(HapticsImpactStyle.Light);
+    <span class="hljs-keyword">this</span>.hapticsImpact(HapticsImpactStyle.Light);
   }
 
   hapticsVibrate() {
