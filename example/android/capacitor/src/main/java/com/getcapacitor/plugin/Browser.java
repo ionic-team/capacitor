@@ -105,10 +105,17 @@ public class Browser extends Plugin {
   };
 
   public void load() {
+  }
+
+  protected void handleOnResume() {
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
     if (!ok) {
       Log.e(Bridge.TAG, "Error binding to custom tabs service");
     }
+  }
+
+  protected void handleOnPause() {
+    getContext().unbindService(connection);
   }
 
   public CustomTabsSession getCustomTabsSession() {
