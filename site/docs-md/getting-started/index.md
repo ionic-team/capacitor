@@ -13,21 +13,6 @@ is ready for building a production-ready native app and Progressive Web App.
 
 To start a fresh Capacitor project, first clone the starter base:
 
-```javascript
-var app = new Vue({
-  el: '#app',
-  data: {
-    message: 'Hello Vue!'
-  }
-})
-```
-
-```html
-<div id="app">
-  {{ message }}
-</div>
-```
-
 ```
 git clone git@github.com/ionic-team/capacitor-starter.git my-app
 cd my-app
