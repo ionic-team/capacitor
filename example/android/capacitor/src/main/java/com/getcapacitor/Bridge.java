@@ -45,7 +45,10 @@ import java.util.Map;
  * to get a WebView instance and proxy native events automatically.
  *
  * If you want to use this Bridge in an existing Android app, please
- * see 
+ * see the source for BridgeActivity for the methods you'll need to
+ * pass through to Bridge:
+ * <a href="https://github.com/ionic-team/capacitor/blob/master/android/capacitor/src/main/java/com/getcapacitor/BridgeActivity.java">
+ *   BridgeActivity.java</a>
  */
 public class Bridge {
   private static final String BUNDLE_LAST_PLUGIN_KEY = "capacitorLastActivityPlugin";
