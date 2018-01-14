@@ -39,18 +39,28 @@ import java.util.Map;
  * Bridge is the main entrypoint for Capacitor
  */
 public class Bridge {
+  private static final String BUNDLE_LAST_PLUGIN_KEY = "capacitorLastActivityPlugin";
+
   public static final String TAG = "Capacitor";
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
 
+  // A reference to the main activity for the app
   private final Activity context;
+  // A reference to the main WebView for the app
   private final WebView webView;
+
+  // Our MessageHandler for sending and receiving data to the WebView
   private final MessageHandler msgHandler;
 
+  // The ThreadHandler for executing plugin calls
   private final HandlerThread handlerThread = new HandlerThread("CapacitorPlugins");
+
+  // Our Handler for posting plugin calls. Created from the ThreadHandler
   private Handler taskHandler = null;
 
+  // A map of Plugin Id's to PluginHandle's
   private Map<String, PluginHandle> plugins = new HashMap<>();
 
   // Stored plugin calls that we're keeping around to call again someday
@@ -68,17 +78,20 @@ public class Bridge {
     this.context = context;
     this.webView = webView;
 
+    // Start our plugin execution threads and handlers
     handlerThread.start();
     taskHandler = new Handler(handlerThread.getLooper());
 
+    // Initialize web view and message handler for it
     this.initWebView();
-
     this.msgHandler = new MessageHandler(this, webView);
 
+    // Grab any intent info that our app was launched with
     Intent intent = context.getIntent();
     Uri intentData = intent.getData();
     this.intentUri = intentData;
 
+    // Register our core plugins
     this.registerCorePlugins();
 
     Log.d(TAG, "Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
@@ -86,7 +99,6 @@ public class Bridge {
     // Start the local web server
     final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
-
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
       @Override
@@ -98,6 +110,7 @@ public class Bridge {
     // Load the index.html file from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
 
+    // Get to work
     webView.loadUrl(url);
   }
 
@@ -344,13 +357,16 @@ public class Bridge {
   public void saveInstanceState(Bundle outState) {
     Log.d(TAG, "Saving instance state!");
 
+    // Store the last plugin that started this activity, so we
+    // can send any result we might get back to it, even if the app
+    // is killed (to free up memory, for example)
     if (pluginForLastActivity != null) {
-      outState.putString("capacitorLastActivityPlugin", pluginForLastActivity.)
+      outState.putString(BUNDLE_LAST_PLUGIN_KEY, pluginForLastActivity.getPluginHandle().getId());
     }
   }
 
   public void startActivityForPluginWithResult(Plugin plugin, Intent intent, int requestCode) {
-    pluginForLastActivity = getPlugin(plugin)
+    pluginForLastActivity = plugin;
     Log.d(TAG, "Starting activity for result");
     getActivity().startActivityForResult(intent, requestCode);
   }
