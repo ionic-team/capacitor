@@ -26,7 +26,11 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
- * Camera plugin that opens the stock Camera app.
+ * The Camera plugin makes it easy to take a photo or have the user select a photo
+ * from their albums.
+ *
+ * On Android, this plugin sends an intent that opens the stock Camera app.
+ *
  * Adapted from https://developer.android.com/training/camera/photobasics.html
  */
 @NativePlugin(
@@ -52,13 +56,11 @@ public class Camera extends Plugin {
   private static final String RESULT_URI = "uri";
   private static final String[] VALID_RESULT_TYPES = { RESULT_BASE64, RESULT_URI };
 
-  private PluginCall lastCall;
-
   private String imageFileSavePath;
 
   @PluginMethod()
   public void getPhoto(PluginCall call) {
-    lastCall = call;
+    saveCall(call);
 
     String resultType = getResultType(call.getString("resultType"));
     boolean saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
@@ -93,7 +95,7 @@ public class Camera extends Plugin {
   }
 
   private String getResultType(String resultType) {
-    if(resultType == null) { return null; }
+    if (resultType == null) { return null; }
     return resultType.toLowerCase();
   }
 
@@ -103,20 +105,22 @@ public class Camera extends Plugin {
 
     log("handling request perms result");
 
-    if(lastCall == null) {
+    if (getSavedCall() == null) {
       log("No stored plugin call for permissions request result");
       return;
     }
 
-    for(int result : grantResults) {
+    PluginCall savedCall = getSavedCall();
+
+    for (int result : grantResults) {
       if(result == PackageManager.PERMISSION_DENIED) {
-        this.lastCall.error(PERMISSION_DENIED_ERROR);
+        savedCall.error(PERMISSION_DENIED_ERROR);
         return;
       }
     }
 
-    if(requestCode == REQUEST_IMAGE_CAPTURE) {
-      openCamera(lastCall);
+    if (requestCode == REQUEST_IMAGE_CAPTURE) {
+      openCamera(savedCall);
     }
   }
 
@@ -124,8 +128,10 @@ public class Camera extends Plugin {
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == REQUEST_IMAGE_CAPTURE && lastCall != null) {
-      processImage(lastCall, data);
+    PluginCall savedCall = getSavedCall();
+
+    if (requestCode == REQUEST_IMAGE_CAPTURE && savedCall != null) {
+      processImage(savedCall, data);
     }
   }
 
@@ -147,7 +153,7 @@ public class Camera extends Plugin {
         return;
       }
 
-      startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+      startActivityForResult(call, takePictureIntent, REQUEST_IMAGE_CAPTURE);
     } else {
       call.error(NO_CAMERA_ACTIVITY_ERROR);
     }

@@ -31,6 +31,8 @@ import com.getcapacitor.plugin.Photos;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,10 +47,16 @@ import java.util.Map;
  * to get a WebView instance and proxy native events automatically.
  *
  * If you want to use this Bridge in an existing Android app, please
- * see 
+ * see the source for BridgeActivity for the methods you'll need to
+ * pass through to Bridge:
+ * <a href="https://github.com/ionic-team/capacitor/blob/master/android/capacitor/src/main/java/com/getcapacitor/BridgeActivity.java">
+ *   BridgeActivity.java</a>
  */
 public class Bridge {
-  private static final String BUNDLE_LAST_PLUGIN_KEY = "capacitorLastActivityPlugin";
+  private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
+  private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
+  private static final String BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY = "capacitorLastPluginCallOptions";
+  private static final String BUNDLE_PLUGIN_CALL_BUNDLE_KEY = "capacitorLastPluginCallBundle";
 
   public static final String TAG = "Capacitor";
 
@@ -75,9 +83,9 @@ public class Bridge {
   // Stored plugin calls that we're keeping around to call again someday
   private Map<String, PluginCall> savedCalls = new HashMap<>();
 
-  // Store a plugin call that started a new activity, in case we need to resume
+  // Store a plugin that started a new activity, in case we need to resume
   // the app and return that data back
-  private Plugin pluginForLastActivity;
+  private PluginCall pluginCallForLastActivity;
 
   // Any URI that was passed to the app on start
   private Uri intentUri;
@@ -369,20 +377,57 @@ public class Bridge {
     return null;
   }
 
-  public void saveInstanceState(Bundle outState) {
-    Log.d(TAG, "Saving instance state!");
+  /**
+   * Restore any saved bundle state data
+   * @param savedInstanceState
+   */
+  protected void restoreInstanceState(Bundle savedInstanceState) {
+    String lastPluginId = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_ID_KEY);
+    String lastPluginCallMethod = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY);
+    String lastOptionsJson = savedInstanceState.getString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY);
 
-    // Store the last plugin that started this activity, so we
-    // can send any result we might get back to it, even if the app
-    // is killed (to free up memory, for example)
-    if (pluginForLastActivity != null) {
-      outState.putString(BUNDLE_LAST_PLUGIN_KEY, pluginForLastActivity.getPluginHandle().getId());
+    if (lastPluginId != null) {
+      if (lastOptionsJson != null) {
+        try {
+          JSObject options = new JSObject(lastOptionsJson);
+
+          pluginCallForLastActivity = new PluginCall(msgHandler,
+              PluginCall.CALLBACK_ID_DANGLING, lastPluginId, lastPluginCallMethod, options);
+
+        } catch (JSONException ex) {
+          Log.e(TAG, "Unable to restore plugin call, unable to parse persisted JSON object", ex);
+        }
+      } else {
+        Bundle bundleData = savedInstanceState.getBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY);
+
+        // TODO: Process a bundle
+      }
     }
   }
 
-  public void startActivityForPluginWithResult(Plugin plugin, Intent intent, int requestCode) {
-    pluginForLastActivity = plugin;
+  public void saveInstanceState(Bundle outState) {
+    Log.d(TAG, "Saving instance state!");
+
+    // If there was a last PluginCall for a started activity, we need to
+    // persist it so we can load it again in case our app gets terminated
+    if (pluginCallForLastActivity != null) {
+      PluginCall call = pluginCallForLastActivity;
+      PluginHandle handle = getPlugin(call.getPluginId());
+
+      if (handle != null) {
+        outState.putString(BUNDLE_LAST_PLUGIN_ID_KEY, call.getPluginId());
+        outState.putString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY, call.getMethodName());
+        outState.putString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY, call.getData().toString());
+        outState.putBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY, handle.getInstance().persistLastCallOptions());
+      }
+    }
+  }
+
+  public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
     Log.d(TAG, "Starting activity for result");
+
+    pluginCallForLastActivity = call;
+
     getActivity().startActivityForResult(intent, requestCode);
   }
 
@@ -420,7 +465,20 @@ public class Bridge {
       return;
     }
 
+    PluginCall lastCall = plugin.getInstance().getSavedCall();
+
+    // If we don't have a saved last call (because our app was killed and restarted, for example),
+    // Then we should see if we have any saved plugin call information and generate a new,
+    // "dangling" plugin call (a plugin call that doesn't have a corresponding web callback)
+    // and then send that to the plugin
+    if (lastCall == null && pluginCallForLastActivity != null) {
+      plugin.getInstance().saveCall(pluginCallForLastActivity);
+    }
+
     plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+
+    // Clear the plugin call we may have re-hydrated on app launch
+    pluginCallForLastActivity = null;
   }
 
   /**

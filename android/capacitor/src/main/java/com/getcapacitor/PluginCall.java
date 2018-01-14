@@ -12,7 +12,15 @@ import java.util.List;
  * Wraps a call from the web layer to native
  */
 public class PluginCall {
+  /**
+   * A special callback id that indicates there is no matching callback
+   * on the client to associate any PluginCall results back to. This is used
+   * in the case of an app resuming with saved instance data, for example.
+   */
+  public static final String CALLBACK_ID_DANGLING = "-1";
+
   private final MessageHandler msgHandler;
+  private final String pluginId;
   private final String callbackId;
   private final String methodName;
   private final JSObject data;
@@ -24,8 +32,9 @@ public class PluginCall {
    */
   private boolean isReleased = false;
 
-  public PluginCall(MessageHandler msgHandler, String callbackId, String methodName, JSObject data) {
+  public PluginCall(MessageHandler msgHandler, String pluginId, String callbackId, String methodName, JSObject data) {
     this.msgHandler = msgHandler;
+    this.pluginId = pluginId;
     this.callbackId = callbackId;
     this.methodName = methodName;
     this.data = data;
@@ -82,6 +91,8 @@ public class PluginCall {
   public void error(String msg) {
     this.error(msg, null);
   }
+
+  public String getPluginId() { return this.pluginId; }
 
   public String getCallbackId() {
     return this.callbackId;
