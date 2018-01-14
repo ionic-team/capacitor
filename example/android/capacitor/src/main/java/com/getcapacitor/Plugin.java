@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
@@ -22,7 +23,14 @@ import java.util.Map;
  * metadata about the Plugin
  */
 public class Plugin {
+  // The key we will use inside of a persisted Bundle for the JSON blob
+  // for a plugin call options.
+  private static final String BUNDLE_PERSISTED_OPTIONS_JSON_KEY = "_json";
+
+  // Reference to the Bridge
   protected Bridge bridge;
+
+  // Reference to the PluginHandle wrapper for this Plugin
   protected PluginHandle handle;
 
   // A way for plugins to quickly save a call that they will
@@ -31,6 +39,7 @@ public class Plugin {
 
   // Stored event listeners
   private final Map<String, List<PluginCall>> eventListeners;
+
   // Stored results of an event if an event was fired and
   // no listeners were attached yet. Only stores the last value.
   private final Map<String, JSObject> retainedEventArguments;
@@ -317,6 +326,33 @@ public class Plugin {
   }
 
   /**
+   * Called before the app is destroyed to give a plugin the chance to
+   * save the last call options for a saved plugin. By default, this
+   * method saves the full JSON blob of the options call. Since Bundle sizes
+   * may be limited, plugins that expect to be called with large data
+   * objects (such as a file), should override this method and selectively
+   * store option values in a {@link Bundle} to avoid exceeding limits.
+   * @return a new {@link Bundle} with fields set from the options of the last saved {@link PluginCall}
+   */
+  protected Bundle persistLastCallOptions() {
+    PluginCall savedCall = getSavedCall();
+
+    if (savedCall == null) {
+      return null;
+    }
+
+    Bundle ret = new Bundle();
+    JSObject callData = savedCall.getData();
+
+    if (callData != null) {
+      ret.putString(BUNDLE_PERSISTED_OPTIONS_JSON_KEY, callData.toString());
+    }
+
+    return ret;
+  }
+
+
+  /**
    * Handle activity result, should be overridden by each plugin
    * @param requestCode
    * @param resultCode
@@ -365,8 +401,8 @@ public class Plugin {
    * @param intent
    * @param resultCode
    */
-  protected void startActivityForResult(Intent intent, int resultCode) {
-    bridge.startActivityForPluginWithResult(this, intent, resultCode);
+  protected void startActivityForResult(PluginCall call, Intent intent, int resultCode) {
+    bridge.startActivityForPluginWithResult(call, intent, resultCode);
   }
 
   /**
