@@ -217,7 +217,11 @@ enum BridgeError: Error {
   }
   
   public func isDevMode() -> Bool {
-    return true
+    #if DEBUG
+      return true
+    #else
+      return false
+    #endif
   }
   
   public func showDevMode() {

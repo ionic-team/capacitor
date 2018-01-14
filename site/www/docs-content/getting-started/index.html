@@ -1,12 +1,29 @@
 <h1 id="getting-started-with-capacitor">Getting Started With Capacitor</h1>
+<p>There are two ways to start using Capacitor: adding Capacitor to an existing frontend project, or starting a fresh project.</p>
 <p>Capacitor provides a native mobile runtime and API layer for web apps. It does <em>not</em> come with any specific
-set of UI controls which you will most likely need.</p>
+set of UI controls which you will most likely need unless you&#39;re building a game or something similar.</p>
 <p>We strongly recommend starting an Capacitor project with your mobile frontend framework of choice (such as Ionic),
-though we also provide a vanilla TypeScript starter for apps that aren&#39;t using a frontend UI framework.</p>
+though we also provide a blank starter for apps that aren&#39;t using a frontend UI framework, and a starter that uses Ionic and
+is ready for building a production-ready native app and Progressive Web App.</p>
+<h2 id="starting-a-fresh-project">Starting a fresh project</h2>
+<p>To start a fresh Capacitor project, first clone the starter base:</p>
+<pre><code><span class="hljs-selector-tag">git</span> <span class="hljs-selector-tag">clone</span> <span class="hljs-selector-tag">git</span>@<span class="hljs-keyword">github</span>.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">ionic</span>-<span class="hljs-keyword">team</span>/<span class="hljs-keyword">capacitor</span>-<span class="hljs-keyword">starter</span>.<span class="hljs-keyword">git</span> my-app
+cd my-app
+npm install
+</code></pre><p>Next, run the capacitor initialization command <em>in the directory of the app</em>.</p>
+<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> capacitor init</span>
+</code></pre><p>When prompted for the starter template to use, choose either the official Ionic template, or 
+select blank. Note: blank does not come with any UI framework which you will most likely need!</p>
 <h2 id="using-capacitor-starter-with-ionic-framework">Using Capacitor Starter with Ionic Framework</h2>
-<pre><code class="lang-bash">npm <span class="hljs-keyword">install</span> -g ionic
-ionic <span class="hljs-keyword">start</span> myApp <span class="hljs-comment">--with-capacitor</span>
+<p>Integration into the Ionic CLI is coming soon. For now, use our stock starter.</p>
+<p>First, clone the project as shown above, then select the &quot;Ionic&quot; starter when prompted.</p>
+<h2 id="adding-capacitor-to-an-existing-web-app">Adding Capacitor to an existing web app</h2>
+<p>Capacitor was designed to drop-in to any existing modern JS web app.</p>
+<p>To add Capacitor to your web app, run the following commands:</p>
+<pre><code class="lang-bash">cd my-app
+<span class="hljs-built_in">npm</span> install @capacitor/core @capacitor/cli
+<span class="hljs-built_in">npm</span> run capacitor init
 </code></pre>
-<h2 id="using-the-capacitor-typescript-starter">Using the Capacitor TypeScript Starter</h2>
-<pre><code class="lang-bash">git <span class="hljs-keyword">clone</span> <span class="hljs-title">git</span>@github.com:ionic-team/capacitor-starter
-</code></pre>
+<p>When prompted whether this is a new project, select &quot;n&quot;</p>
+<h2 id="where-to-go-next">Where to go next</h2>
+<p>Your app is ready to start developing and testing! Follow the <a href="/docs/getting-started/developing">Getting Started with Development Guide</a> for information on the development process of a Capacitor app.</p>
