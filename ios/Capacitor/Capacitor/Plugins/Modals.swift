@@ -44,7 +44,10 @@ public class Modals : CAPPlugin {
         "value": false
       ])
     }))
-    self.bridge.viewController.present(alert, animated: true, completion: nil)
+    
+    DispatchQueue.main.async {
+      self.bridge.viewController.present(alert, animated: true, completion: nil)
+    }
   }
   
   @objc public func prompt (_ call: CAPPluginCall) {
