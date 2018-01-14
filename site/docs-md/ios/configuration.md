@@ -19,3 +19,5 @@ Unlike Android, permissions for iOS do not have to be specified in advance. Inst
 However, many iOS permissions require what are known as "usage descriptions" defined in `Info.plist`. These settings are human-readable descriptions of each permission the app will ask for.
 
 Consult the [Cocoa Keys](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html) list for keys containing `UsageDescription` to see the various usage description settings that may be required for your app.
+
+For more information, Apple has provided a guide to [managing Sensitive Data App Rejections](https://developer.apple.com/library/content/qa/qa1937/_index.html) which contains more information on APIs that require usage descriptions.
