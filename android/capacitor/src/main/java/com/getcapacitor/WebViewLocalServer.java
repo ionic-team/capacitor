@@ -225,18 +225,23 @@ public class WebViewLocalServer {
     }
 
     String path = request.getUrl().getPath();
-    String ext = path.substring(path.lastIndexOf("."), path.length());
+    int periodIndex = path.lastIndexOf(".");
+    if (periodIndex >= 0) {
+      String ext = path.substring(path.lastIndexOf("."), path.length());
 
-    InputStream responseStream = new LollipopLazyInputStream(handler, request);
-    InputStream stream = responseStream;
+      InputStream responseStream = new LollipopLazyInputStream(handler, request);
+      InputStream stream = responseStream;
 
-    // TODO: Conjure up a bit more subtlety than this
-    if (ext.equals(".html")) {
-      stream = jsInjector.getInjectedStream(responseStream);
+      // TODO: Conjure up a bit more subtlety than this
+      if (ext.equals(".html")) {
+        stream = jsInjector.getInjectedStream(responseStream);
+      }
+
+      return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
-    return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
-        handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+    return null;
   }
 
   /**

@@ -124,7 +124,7 @@ public class Camera extends Plugin {
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == REQUEST_IMAGE_CAPTURE) {
+    if(requestCode == REQUEST_IMAGE_CAPTURE && lastCall != null) {
       processImage(lastCall, data);
     }
   }
@@ -147,7 +147,7 @@ public class Camera extends Plugin {
         return;
       }
 
-      getActivity().startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+      startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     } else {
       call.error(NO_CAMERA_ACTIVITY_ERROR);
     }
@@ -186,6 +186,12 @@ public class Camera extends Plugin {
 
   private void returnBase64(PluginCall call, Bitmap bitmap) {
     int quality = call.getInt("quality", 100);
+
+    if (bitmap == null) {
+      call.error("User cancelled photos app");
+      return;
+    }
+
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream .toByteArray();

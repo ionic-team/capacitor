@@ -105,10 +105,17 @@ public class Browser extends Plugin {
   };
 
   public void load() {
+  }
+
+  protected void handleOnResume() {
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
     if (!ok) {
       Log.e(Bridge.TAG, "Error binding to custom tabs service");
     }
+  }
+
+  protected void handleOnPause() {
+    getContext().unbindService(connection);
   }
 
   public CustomTabsSession getCustomTabsSession() {
@@ -126,7 +133,5 @@ public class Browser extends Plugin {
   @Override
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
-
-    Log.d(Bridge.TAG, "ACTIVITY RESULT! " + requestCode + ", " + resultCode);
   }
 }

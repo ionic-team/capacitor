@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
@@ -19,8 +20,13 @@ public class BridgeActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bridge_layout_main);
 
+    String lastPlugin = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_KEY);
   }
 
+
+  /**
+   * Load the WebView and create the Bridge
+   */
   protected void load() {
     Log.d(Bridge.TAG, "Starting BridgeActivity");
 
@@ -28,6 +34,10 @@ public class BridgeActivity extends AppCompatActivity {
     bridge = new Bridge(this, webView);
   }
 
+  /**
+   * Notify the App plugin that the current state changed
+   * @param isActive
+   */
   private void fireAppStateChanged(boolean isActive) {
     PluginHandle handle = bridge.getPlugin("App");
     if (handle == null) {
@@ -41,12 +51,27 @@ public class BridgeActivity extends AppCompatActivity {
   }
 
   @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    bridge.saveInstanceState(outState);
+  }
+
+  @Override
   public void onStart() {
     super.onStart();
 
     activityDepth++;
 
+    this.bridge.onStart();
+
     Log.d(Bridge.TAG, "App started");
+  }
+
+  @Override
+  public void onRestart() {
+    super.onRestart();
+    this.bridge.onRestart();
+    Log.d(Bridge.TAG, "App restarted");
   }
 
   @Override
@@ -55,12 +80,16 @@ public class BridgeActivity extends AppCompatActivity {
 
     fireAppStateChanged(true);
 
+    this.bridge.onResume();
+
     Log.d(Bridge.TAG, "App resumed");
   }
 
   @Override
   public void onPause() {
     super.onPause();
+
+    this.bridge.onPause();
 
     Log.d(Bridge.TAG, "App paused");
   }
@@ -74,6 +103,8 @@ public class BridgeActivity extends AppCompatActivity {
       fireAppStateChanged(false);
     }
 
+    this.bridge.onStop();
+
     Log.d(Bridge.TAG, "App stopped");
   }
 
@@ -85,7 +116,7 @@ public class BridgeActivity extends AppCompatActivity {
 
   @Override
   public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-    if(this.bridge == null) {
+    if (this.bridge == null) {
       return;
     }
 
@@ -94,10 +125,19 @@ public class BridgeActivity extends AppCompatActivity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if(this.bridge == null) {
+    if (this.bridge == null) {
       return;
     }
 
     this.bridge.onActivityResult(requestCode, resultCode, data);
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    if (this.bridge == null) {
+      return;
+    }
+
+    this.bridge.onNewIntent(intent);
   }
 }
