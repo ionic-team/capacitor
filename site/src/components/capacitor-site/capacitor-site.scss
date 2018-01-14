@@ -234,7 +234,11 @@ code {
 }
 
 .hljs-section, .hljs-name, .hljs-selector-tag, .hljs-deletion, .hljs-subst {
-  color: #e06c75;
+  color: #2973b7;
+}
+
+.hljs-tag {
+  color: #2973b7;
 }
 
 .hljs-literal {
@@ -242,7 +246,7 @@ code {
 }
 
 .hljs-string, .hljs-regexp, .hljs-addition, .hljs-attribute, .hljs-meta-string {
-  color: #98c379;
+  color: #42b983;
 }
 
 .hljs-built_in, .hljs-class .hljs-title {
@@ -258,6 +262,10 @@ code {
 .hljs-selector-pseudo,
 .hljs-number {
   color: #d19a66;
+}
+
+.hljs-attr {
+  color: #525252;
 }
 
 .hljs-symbol,
