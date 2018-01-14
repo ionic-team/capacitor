@@ -229,7 +229,8 @@ code {
 }
 
 .hljs-doctag, .hljs-keyword, .hljs-formula {
-  color: #c678dd;
+  //color: #c678dd;
+  color: #e96900;
 }
 
 .hljs-section, .hljs-name, .hljs-selector-tag, .hljs-deletion, .hljs-subst {
@@ -245,7 +246,7 @@ code {
 }
 
 .hljs-built_in, .hljs-class .hljs-title {
-  color: #e6c07b;
+  color: #e96900;
 }
 
 .hljs-attr,
@@ -265,7 +266,8 @@ code {
 .hljs-meta,
 .hljs-selector-id,
 .hljs-title {
-  color: #61aeee;
+  //color: #61aeee;
+  color: #2973b7;
 }
 
 .hljs-emphasis {
