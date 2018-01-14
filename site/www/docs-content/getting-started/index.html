@@ -7,11 +7,11 @@ though we also provide a blank starter for apps that aren&#39;t using a frontend
 is ready for building a production-ready native app and Progressive Web App.</p>
 <h2 id="starting-a-fresh-project">Starting a fresh project</h2>
 <p>To start a fresh Capacitor project, first clone the starter base:</p>
-<pre><code><span class="hljs-selector-tag">git</span> <span class="hljs-selector-tag">clone</span> <span class="hljs-selector-tag">git</span>@<span class="hljs-keyword">github</span>.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">ionic</span>-<span class="hljs-keyword">team</span>/<span class="hljs-keyword">capacitor</span>-<span class="hljs-keyword">starter</span>.<span class="hljs-keyword">git</span> my-app
-cd my-app
+<pre><code>git <span class="hljs-built_in">clone</span> git@github.com/ionic-team/capacitor-starter.git my-app
+<span class="hljs-built_in">cd</span> my-app
 npm install
 </code></pre><p>Next, run the capacitor initialization command <em>in the directory of the app</em>.</p>
-<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> capacitor init</span>
+<pre><code>npm run capacitor <span class="hljs-keyword">init</span>
 </code></pre><p>When prompted for the starter template to use, choose either the official Ionic template, or 
 select blank. Note: blank does not come with any UI framework which you will most likely need!</p>
 <h2 id="using-capacitor-starter-with-ionic-framework">Using Capacitor Starter with Ionic Framework</h2>
@@ -20,10 +20,9 @@ select blank. Note: blank does not come with any UI framework which you will mos
 <h2 id="adding-capacitor-to-an-existing-web-app">Adding Capacitor to an existing web app</h2>
 <p>Capacitor was designed to drop-in to any existing modern JS web app.</p>
 <p>To add Capacitor to your web app, run the following commands:</p>
-<pre><code class="lang-bash">cd my-app
-<span class="hljs-built_in">npm</span> install @capacitor/core @capacitor/cli
-<span class="hljs-built_in">npm</span> run capacitor init
-</code></pre>
-<p>When prompted whether this is a new project, select &quot;n&quot;</p>
+<pre><code>cd my-app
+npm install <span class="hljs-meta">@capacitor</span>/core <span class="hljs-meta">@capacitor</span>/cli
+npm run capacitor init
+</code></pre><p>When prompted whether this is a new project, select &quot;n&quot;</p>
 <h2 id="where-to-go-next">Where to go next</h2>
 <p>Your app is ready to start developing and testing! Follow the <a href="/docs/getting-started/developing">Getting Started with Development Guide</a> for information on the development process of a Capacitor app.</p>

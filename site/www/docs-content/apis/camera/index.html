@@ -8,21 +8,21 @@ Key:     <code>NSCameraUsageDescription</code></p>
 <p>Read about <a href="../ios/permissions/">Setting iOS Permissions</a> in the <a href="../ios">iOS Guide</a> for more information on setting iOS permissions in Xcode</p>
 <h2 id="android-notes">Android Notes</h2>
 <p>This API requires the following permissions be added to your <code>AndroidManifest.xml</code>:</p>
-<pre><code class="lang-xml">&lt;uses-permission android:<span class="hljs-attribute">name</span>=<span class="hljs-string">"android.permission.CAMERA"</span> /&gt;
-&lt;uses-permission android:<span class="hljs-attribute">name</span>=<span class="hljs-string">"android.permission.READ_EXTERNAL_STORAGE"</span>/&gt;
-&lt;uses-permission android:<span class="hljs-attribute">name</span>=<span class="hljs-string">"android.permission.WRITE_EXTERNAL_STORAGE"</span> /&gt;
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.CAMERA"</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.READ_EXTERNAL_STORAGE"</span>/&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.WRITE_EXTERNAL_STORAGE"</span> /&gt;</span>
 </code></pre>
 <p>The first permission is for Camera access, and the storage permissions are for reading/saving photo files.</p>
 <p>Read about <a href="&#39;../android/permissions/">Setting Android Permissions</a> in the <a href="../android">Android Guide</a> for more information on setting Android permissions.</p>
 <p><plugin-api index="true" name="camera"></plugin-api></p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript">import { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
-<span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">takePicture</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-keyword">async</span> takePicture() {
   <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Plugins.Camera.getPhoto({
-    quality: <span class="hljs-number">90</span>,
-    allowEditing: <span class="hljs-literal">true</span>,
-    resultType: <span class="hljs-string">'base64'</span>
+    <span class="hljs-attr">quality</span>: <span class="hljs-number">90</span>,
+    <span class="hljs-attr">allowEditing</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">resultType</span>: <span class="hljs-string">'base64'</span>
   });
   <span class="hljs-comment">// image.base64_data will contain the base64 encoded result as a JPEG. Make sure to</span>
   <span class="hljs-comment">// add the proper base64 image prefix:</span>
@@ -62,8 +62,8 @@ image URL to be trusted:</p>
 }
 </code></pre>
 <p>Component template:</p>
-<pre><code class="lang-html">  &lt;<span class="hljs-selector-tag">img</span> [src]=<span class="hljs-string">"image"</span> /&gt;
-  &lt;<span class="hljs-selector-tag">button</span> (click)=<span class="hljs-string">"takePicture()"</span> ion-<span class="hljs-selector-tag">button</span> <span class="hljs-attribute">color</span>=<span class="hljs-string">"primary"</span>&gt;Take Picture&lt;/button&gt;
+<pre><code class="lang-html">  &lt;img [src]=<span class="hljs-string">"image"</span> /&gt;
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"takePicture()"</span> <span class="hljs-attr">ion-button</span> <span class="hljs-attr">color</span>=<span class="hljs-string">"primary"</span>&gt;</span>Take Picture<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span>
 </code></pre>
 <h2 id="api">API</h2>
 <p><plugin-api name="camera"></plugin-api></p>

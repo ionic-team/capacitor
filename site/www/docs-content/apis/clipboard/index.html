@@ -2,14 +2,14 @@
 <p>The Clipboard API enables copy and pasting to/from the clipboard. On iOS this API also allows 
 copying images and URLs.</p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript">Plugins.Clipboard.<span class="hljs-keyword">set</span>({
+<pre><code class="lang-typescript">Plugins.Clipboard.set({
   <span class="hljs-built_in">string</span>: <span class="hljs-string">"Hello, Moto"</span>
 });
 
-let str = await Plugins.Clipboard.<span class="hljs-keyword">get</span>({
-  type: <span class="hljs-string">"string"</span>
+<span class="hljs-keyword">let</span> str = <span class="hljs-keyword">await</span> Plugins.Clipboard.get({
+  <span class="hljs-keyword">type</span>: <span class="hljs-string">"string"</span>
 });
-console.<span class="hljs-built_in">log</span>('Got <span class="hljs-built_in">string</span> <span class="hljs-keyword">from</span> clipboard:', str);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Got string from clipboard:'</span>, str);
 </code></pre>
 <h2 id="api">API</h2>
 <p><plugin-api name="clipboard"></plugin-api></p>
