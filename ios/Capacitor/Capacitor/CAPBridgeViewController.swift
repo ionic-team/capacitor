@@ -176,8 +176,10 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
-    if motion == .motionShake {
-      bridge?.showDevMode()
+    if bridge != nil {
+      if motion == .motionShake && bridge!.isDevMode() {
+        bridge!.showDevMode()
+      }
     }
   }
   
