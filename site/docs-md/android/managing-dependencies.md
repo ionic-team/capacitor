@@ -1,0 +1,1 @@
+# Managing Android Dependencies in Capacitor
