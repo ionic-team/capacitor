@@ -52,13 +52,11 @@ public class Camera extends Plugin {
   private static final String RESULT_URI = "uri";
   private static final String[] VALID_RESULT_TYPES = { RESULT_BASE64, RESULT_URI };
 
-  private PluginCall lastCall;
-
   private String imageFileSavePath;
 
   @PluginMethod()
   public void getPhoto(PluginCall call) {
-    lastCall = call;
+    saveCall(call);
 
     String resultType = getResultType(call.getString("resultType"));
     boolean saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
@@ -103,14 +101,16 @@ public class Camera extends Plugin {
 
     log("handling request perms result");
 
-    if(lastCall == null) {
+    if(getSavedCall() == null) {
       log("No stored plugin call for permissions request result");
       return;
     }
 
+    PluginCall lastCall = getSavedCall();
+
     for(int result : grantResults) {
       if(result == PackageManager.PERMISSION_DENIED) {
-        this.lastCall.error(PERMISSION_DENIED_ERROR);
+        lastCall.error(PERMISSION_DENIED_ERROR);
         return;
       }
     }
@@ -124,8 +124,8 @@ public class Camera extends Plugin {
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == REQUEST_IMAGE_CAPTURE && lastCall != null) {
-      processImage(lastCall, data);
+    if(requestCode == REQUEST_IMAGE_CAPTURE && getSavedCall() != null) {
+      processImage(getSavedCall(), data);
     }
   }
 

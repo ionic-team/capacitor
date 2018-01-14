@@ -20,12 +20,17 @@ import java.util.List;
 public class App extends Plugin {
   private static final String EVENT_URL_OPEN = "appUrlOpen";
   private static final String EVENT_STATE_CHANGE = "appStateChange";
+  private static final String EVENT_RESTORED_RESULT = "appRestoredResult";
 
   public void fireChange(boolean isActive) {
     Log.d(Bridge.TAG, "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
     notifyListeners(EVENT_STATE_CHANGE, data, true);
+  }
+
+  public void fireRestoredResult() {
+
   }
 
   @PluginMethod()

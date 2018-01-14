@@ -24,7 +24,10 @@ import java.util.Map;
 public class Plugin {
   protected Bridge bridge;
   protected PluginHandle handle;
-  protected PluginCall permissionsRequestPluginCall;
+
+  // A way for plugins to quickly save a call that they will
+  // need to reference between activity/permissions starts/requests
+  protected PluginCall savedLastCall;
 
   // Stored event listeners
   private final Map<String, List<PluginCall>> eventListeners;
@@ -91,6 +94,23 @@ public class Plugin {
   }
 
   /**
+   * Called to save a {@link PluginCall} in order to reference it
+   * later, such as in an activity or permissions result handler
+   * @param lastCall
+   */
+  public void saveCall(PluginCall lastCall) {
+    this.savedLastCall = lastCall;
+  }
+
+  /**
+   * Get the last saved call, if any
+   * @return
+   */
+  public PluginCall getSavedCall() {
+    return this.savedLastCall;
+  }
+
+  /**
    * Check whether the given permission has been granted by the user
    * @param permission
    * @return
@@ -127,8 +147,6 @@ public class Plugin {
 
   /**
    * Request all of the specified permissions in the NativePlugin annotation (if any)
-   * @param permissions the set of permissions to request
-   * @param requestCode the requestCode to use to associate the result with the plugin
    */
   public void pluginRequestAllPermissions() {
     NativePlugin annotation = handle.getPluginAnnotation();
@@ -137,7 +155,7 @@ public class Plugin {
 
   /**
    * Helper to make requesting individual permissions easy
-   * @param permissions the set of permissions to request
+   * @param permission the permission to request
    * @param requestCode the requestCode to use to associate the result with the plugin
    */
   public void pluginRequestPermission(String permission, int requestCode) {
@@ -265,7 +283,7 @@ public class Plugin {
 
     if (perms.length > 0) {
       // Save the call so we can return data back once the permission request has completed
-      permissionsRequestPluginCall = call;
+      saveCall(call);
 
       pluginRequestPermissions(perms, annotation.permissionRequestCode());
     } else {
@@ -283,18 +301,19 @@ public class Plugin {
    * @param grantResults
    */
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    if (permissionsRequestPluginCall == null) {
+    PluginCall savedCall = getSavedCall();
+    if (savedCall == null) {
       return;
     }
 
     for(int result : grantResults) {
       if (result == PackageManager.PERMISSION_DENIED) {
-        permissionsRequestPluginCall.error("User denied permissions");
+        savedCall.error("User denied permissions");
         return;
       }
     }
 
-    permissionsRequestPluginCall.success();
+    savedCall.success();
   }
 
   /**
