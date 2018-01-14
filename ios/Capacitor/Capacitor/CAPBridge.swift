@@ -26,6 +26,8 @@ enum BridgeError: Error {
   
   private var isActive = true
   
+  private var jsVerboseModeEnabled = true
+  
   // Dispatch queue for our operations
   // TODO: Unique label?
   public var dispatchQueue = DispatchQueue(label: "bridge")
@@ -232,6 +234,7 @@ enum BridgeError: Error {
   public func reload() {
     self.getWebView().reload()
   }
+
   
   public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
     let output = items.map { "\($0)" }.joined(separator: " ")

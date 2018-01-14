@@ -1,5 +1,9 @@
 import Foundation
 
+/**
+ * DevMode manages a simple alert popup with developer options for reloading the app,
+ * among other things.
+ */
 class DevMode {
   var bridge: CAPBridge
   init(_ bridge: CAPBridge) {
@@ -13,6 +17,12 @@ class DevMode {
       print("Reloading")
       self.bridge.reload()
     }))
+    
+    /*
+    alert.addAction(UIAlertAction(title: "Toggle Dev Logging", style: .default, handler: { (action: UIAlertAction) in
+      print("Toggline dev logging")
+    }))
+     */
     
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
       alert.dismiss(animated: true, completion: nil)
