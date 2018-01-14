@@ -259,7 +259,7 @@
 
   capacitor.logToNative = function(call) {
     var c = orgConsole;
-    c.groupCollapsed(`%cnative -> %c${call.pluginId}.${call.methodName}`,
+    c.groupCollapsed(`%cnative (id: ${call.callbackId}) %c${call.pluginId}.${call.methodName}`,
     `font-weight: lighter; color: gray`, `font-weight: bold; color: #000`);
     c.dir(call);
     c.groupEnd();
@@ -268,8 +268,8 @@
 
   capacitor.logFromNative = function(result) {
     var c = orgConsole;
-    c.groupCollapsed(`%c<- result %c${result.pluginId}.${result.methodName}`,
-    `font-weight: lighter; color: #ccc`, `font-weight: bold; color: #000`);
+    c.groupCollapsed(`%cresult (id: ${result.callbackId}) %c${result.pluginId}.${result.methodName}`,
+    `font-weight: lighter; color: gray`, `font-weight: bold; color: #000`);
     c.dir(result);
     c.groupEnd();
   }
