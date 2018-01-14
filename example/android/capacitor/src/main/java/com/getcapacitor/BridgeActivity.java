@@ -20,6 +20,7 @@ public class BridgeActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bridge_layout_main);
 
+    String lastPlugin = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_KEY);
   }
 
 

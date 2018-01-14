@@ -305,14 +305,47 @@ public class Plugin {
    */
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {}
 
+  /**
+   * Handle onNewIntent
+   * @param intent
+   */
   protected void handleOnNewIntent(Intent intent) {}
 
+  /**
+   * Handle onStart
+   */
   protected void handleOnStart() {}
+
+  /**
+   * Handle onRestart
+   */
   protected void handleOnRestart() {}
+
+  /**
+   * Handle onResume
+   */
   protected void handleOnResume() {}
+
+  /**
+   * Handle onPause
+   */
   protected void handleOnPause() {}
+
+  /**
+   * Handle onStop
+   */
   protected void handleOnStop() {}
 
+  /**
+   * Start a new Activity.
+   *
+   * Note: This method must be used by all plugins instead of calling
+   * {@link Activity#startActivityForResult} as it associates the plugin with
+   * any resulting data from the new Activity even if this app
+   * is destroyed by the OS (to free up memory, for example).
+   * @param intent
+   * @param resultCode
+   */
   protected void startActivityForResult(Intent intent, int resultCode) {
     bridge.startActivityForPluginWithResult(this, intent, resultCode);
   }
