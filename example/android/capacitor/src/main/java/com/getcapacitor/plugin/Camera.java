@@ -191,7 +191,7 @@ public class Camera extends Plugin {
       call.error("User cancelled photos app");
       return;
     }
-    
+
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream .toByteArray();

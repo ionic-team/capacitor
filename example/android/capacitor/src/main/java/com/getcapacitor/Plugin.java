@@ -271,6 +271,12 @@ public class Plugin {
 
   protected void handleOnNewIntent(Intent intent) {}
 
+  protected void handleOnStart() {}
+  protected void handleOnRestart() {}
+  protected void handleOnResume() {}
+  protected void handleOnPause() {}
+  protected void handleOnStop() {}
+
   /**
    * Execute the given runnable on the Bridge's task handler
    * @param runnable

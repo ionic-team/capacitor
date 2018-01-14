@@ -382,4 +382,33 @@ public class Bridge {
       plugin.getInstance().handleOnNewIntent(intent);
     }
   }
+
+  public void onRestart() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnRestart();
+    }
+  }
+
+  public void onStart() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnStart();
+    }
+  }
+
+  public void onResume() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnResume();
+    }
+  }
+  public void onPause() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnPause();
+    }
+  }
+
+  public void onStop() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnStop();
+    }
+  }
 }

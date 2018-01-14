@@ -46,7 +46,16 @@ public class BridgeActivity extends AppCompatActivity {
 
     activityDepth++;
 
+    this.bridge.onStart();
+
     Log.d(Bridge.TAG, "App started");
+  }
+
+  @Override
+  public void onRestart() {
+    super.onRestart();
+    this.bridge.onRestart();
+    Log.d(Bridge.TAG, "App restarted");
   }
 
   @Override
@@ -55,12 +64,16 @@ public class BridgeActivity extends AppCompatActivity {
 
     fireAppStateChanged(true);
 
+    this.bridge.onResume();
+
     Log.d(Bridge.TAG, "App resumed");
   }
 
   @Override
   public void onPause() {
     super.onPause();
+
+    this.bridge.onPause();
 
     Log.d(Bridge.TAG, "App paused");
   }
@@ -73,6 +86,8 @@ public class BridgeActivity extends AppCompatActivity {
     if (activityDepth == 0) {
       fireAppStateChanged(false);
     }
+
+    this.bridge.onStop();
 
     Log.d(Bridge.TAG, "App stopped");
   }
