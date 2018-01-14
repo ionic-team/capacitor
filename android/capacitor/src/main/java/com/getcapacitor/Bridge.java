@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -34,41 +36,77 @@ import java.util.Map;
 
 
 /**
- * Bridge is the main entrypoint for Capacitor
+ * The Bridge class is the main engine of Capacitor. It manages
+ * loading and communicating with all Plugins,
+ * proxying Native events to Plugins, executing Plugin methods,
+ * communicating with the WebView, and a whole lot more.
+ *
+ * Generally, you'll not use Bridge directly, instead, extend from BridgeActivity
+ * to get a WebView instance and proxy native events automatically.
+ *
+ * If you want to use this Bridge in an existing Android app, please
+ * see 
  */
 public class Bridge {
+  private static final String BUNDLE_LAST_PLUGIN_KEY = "capacitorLastActivityPlugin";
+
   public static final String TAG = "Capacitor";
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
 
+  // A reference to the main activity for the app
   private final Activity context;
+  // A reference to the main WebView for the app
   private final WebView webView;
+
+  // Our MessageHandler for sending and receiving data to the WebView
   private final MessageHandler msgHandler;
 
-  private final Handler taskHandler = new Handler();
+  // The ThreadHandler for executing plugin calls
+  private final HandlerThread handlerThread = new HandlerThread("CapacitorPlugins");
 
+  // Our Handler for posting plugin calls. Created from the ThreadHandler
+  private Handler taskHandler = null;
+
+  // A map of Plugin Id's to PluginHandle's
   private Map<String, PluginHandle> plugins = new HashMap<>();
 
   // Stored plugin calls that we're keeping around to call again someday
   private Map<String, PluginCall> savedCalls = new HashMap<>();
 
+  // Store a plugin call that started a new activity, in case we need to resume
+  // the app and return that data back
+  private Plugin pluginForLastActivity;
+
   // Any URI that was passed to the app on start
   private Uri intentUri;
 
 
+  /**
+   * Create the Bridge with a reference to the main {@link Activity} for the
+   * app, and a reference to the {@link WebView} our app will use.
+   * @param context
+   * @param webView
+   */
   public Bridge(Activity context, WebView webView) {
     this.context = context;
     this.webView = webView;
 
-    this.initWebView();
+    // Start our plugin execution threads and handlers
+    handlerThread.start();
+    taskHandler = new Handler(handlerThread.getLooper());
 
+    // Initialize web view and message handler for it
+    this.initWebView();
     this.msgHandler = new MessageHandler(this, webView);
 
+    // Grab any intent info that our app was launched with
     Intent intent = context.getIntent();
     Uri intentData = intent.getData();
     this.intentUri = intentData;
 
+    // Register our core plugins
     this.registerCorePlugins();
 
     Log.d(TAG, "Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
@@ -76,7 +114,6 @@ public class Bridge {
     // Start the local web server
     final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
-
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
       @Override
@@ -88,6 +125,7 @@ public class Bridge {
     // Load the index.html file from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
 
+    // Get to work
     webView.loadUrl(url);
   }
 
@@ -266,11 +304,13 @@ public class Bridge {
           try {
             plugin.invoke(methodName, call);
 
-            if(call.isRetained()) {
+            if (call.isRetained()) {
               retainCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
             Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
+          } catch(Exception ex) {
+            Log.e(Bridge.TAG, "Serious error executing plugin", ex);
           }
         }
       };
@@ -329,6 +369,23 @@ public class Bridge {
     return null;
   }
 
+  public void saveInstanceState(Bundle outState) {
+    Log.d(TAG, "Saving instance state!");
+
+    // Store the last plugin that started this activity, so we
+    // can send any result we might get back to it, even if the app
+    // is killed (to free up memory, for example)
+    if (pluginForLastActivity != null) {
+      outState.putString(BUNDLE_LAST_PLUGIN_KEY, pluginForLastActivity.getPluginHandle().getId());
+    }
+  }
+
+  public void startActivityForPluginWithResult(Plugin plugin, Intent intent, int requestCode) {
+    pluginForLastActivity = plugin;
+    Log.d(TAG, "Starting activity for result");
+    getActivity().startActivityForResult(intent, requestCode);
+  }
+
   /**
    * Handle a request permission result by finding the that requested
    * the permission and calling their permission handler
@@ -340,7 +397,7 @@ public class Bridge {
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
-    if(plugin == null) {
+    if (plugin == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
       return;
     }
@@ -358,11 +415,66 @@ public class Bridge {
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
-    if(plugin == null || plugin.getInstance() == null) {
+    if (plugin == null || plugin.getInstance() == null) {
       Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
       return;
     }
 
     plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+  }
+
+  /**
+   * Handle an onNewIntent lifecycle event and notify the plugins
+   * @param intent
+   */
+  public void onNewIntent(Intent intent) {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnNewIntent(intent);
+    }
+  }
+
+  /**
+   * Handle onRestart lifecycle event and notify the plugins
+   */
+  public void onRestart() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnRestart();
+    }
+  }
+
+  /**
+   * Handle onStart lifecycle event and notify the plugins
+   */
+  public void onStart() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnStart();
+    }
+  }
+
+  /**
+   * Handle onResume lifecycle event and notify the plugins
+   */
+  public void onResume() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnResume();
+    }
+  }
+
+  /**
+   * Handle onPause lifecycle event and notify the plugins
+   */
+  public void onPause() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnPause();
+    }
+  }
+
+  /**
+   * Handle onStop lifecycle event and notify the plugins
+   */
+  public void onStop() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnStop();
+    }
   }
 }

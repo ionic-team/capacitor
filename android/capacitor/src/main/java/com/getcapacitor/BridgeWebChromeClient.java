@@ -1,9 +1,11 @@
 package com.getcapacitor;
 
+import android.net.Uri;
 import android.util.Log;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
@@ -110,5 +112,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
     } else {
       Log.d(bridge.TAG, "onGeolocationPermissionsShowPrompt: has required permis");
     }
+  }
+
+  @Override
+  public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+    return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
   }
 }

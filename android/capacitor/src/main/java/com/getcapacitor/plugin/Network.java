@@ -23,21 +23,22 @@ import com.getcapacitor.PluginMethod;
 public class Network extends Plugin {
   public static final String NETWORK_CHANGE_EVENT = "networkStatusChange";
 
+  private ConnectivityManager cm;
+  private BroadcastReceiver receiver;
+
   /**
    * Monitor for network status changes and fire our event.
    */
   @SuppressWarnings("MissingPermission")
   public void load() {
-    final ConnectivityManager cm =
-        (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    cm = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-    getActivity().registerReceiver(new BroadcastReceiver() {
+    receiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
         notifyListeners(NETWORK_CHANGE_EVENT, getStatusJSObject(cm.getActiveNetworkInfo()));
       }
-    }, filter);
+    };
   }
 
   /**
@@ -54,6 +55,24 @@ public class Network extends Plugin {
 
     call.success(getStatusJSObject(activeNetwork));
   }
+
+  /**
+   * Register the IntentReceiver on resume
+   */
+  @Override
+  protected void handleOnResume() {
+    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+    getActivity().registerReceiver(receiver, filter);
+  }
+
+  /**
+   * Unregister the IntentReceiver on pause to avoid leaking it
+   */
+  @Override
+  protected void handleOnPause() {
+    getActivity().unregisterReceiver(receiver);
+  }
+
 
   /**
    * Transform a NetworkInfo object into our JSObject for returning to client

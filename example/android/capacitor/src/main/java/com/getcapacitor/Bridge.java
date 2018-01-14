@@ -36,7 +36,16 @@ import java.util.Map;
 
 
 /**
- * Bridge is the main entrypoint for Capacitor
+ * The Bridge class is the main engine of Capacitor. It manages
+ * loading and communicating with all Plugins,
+ * proxying Native events to Plugins, executing Plugin methods,
+ * communicating with the WebView, and a whole lot more.
+ *
+ * Generally, you'll not use Bridge directly, instead, extend from BridgeActivity
+ * to get a WebView instance and proxy native events automatically.
+ *
+ * If you want to use this Bridge in an existing Android app, please
+ * see 
  */
 public class Bridge {
   private static final String BUNDLE_LAST_PLUGIN_KEY = "capacitorLastActivityPlugin";
@@ -74,6 +83,12 @@ public class Bridge {
   private Uri intentUri;
 
 
+  /**
+   * Create the Bridge with a reference to the main {@link Activity} for the
+   * app, and a reference to the {@link WebView} our app will use.
+   * @param context
+   * @param webView
+   */
   public Bridge(Activity context, WebView webView) {
     this.context = context;
     this.webView = webView;

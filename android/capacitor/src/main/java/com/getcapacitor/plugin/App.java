@@ -1,5 +1,9 @@
 package com.getcapacitor.plugin;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -10,25 +14,18 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import java.util.List;
+
 @NativePlugin()
 public class App extends Plugin {
-  /*
-  public void firePluginError(_ jsError: JSProcessingError) {
-    notifyListeners("pluginError", data: [
-    "message": jsError.localizedDescription
-    ])
-  }
-  */
-
-  // TODO: Implement this
-  public void firePluginError() {
-  }
+  private static final String EVENT_URL_OPEN = "appUrlOpen";
+  private static final String EVENT_STATE_CHANGE = "appStateChange";
 
   public void fireChange(boolean isActive) {
     Log.d(Bridge.TAG, "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
-    notifyListeners("appStateChanged", data);
+    notifyListeners(EVENT_STATE_CHANGE, data, true);
   }
 
   @PluginMethod()
@@ -41,5 +38,70 @@ public class App extends Plugin {
     } else {
       call.success();
     }
+  }
+
+  @PluginMethod()
+  public void canOpenUrl(PluginCall call) {
+    String url = call.getString("url");
+    if (url == null) {
+      call.error("Must supply a url");
+      return;
+    }
+
+    Context ctx = this.getActivity().getApplicationContext();
+    final PackageManager pm = ctx.getPackageManager();
+
+    JSObject ret = new JSObject();
+    try {
+      pm.getPackageInfo(url, PackageManager.GET_ACTIVITIES);
+      ret.put("value", true);
+      call.success(ret);
+      return;
+    } catch(PackageManager.NameNotFoundException e) {}
+
+    ret.put("value", false);
+    call.success(ret);
+  }
+
+  @PluginMethod()
+  public void openUrl(PluginCall call) {
+    String url = call.getString("url");
+    if (url == null) {
+      call.error("Must provide a url to open");
+      return;
+    }
+
+    final PackageManager manager = getContext().getPackageManager();
+    final Intent launchIntent = new Intent(Intent.ACTION_VIEW);
+    launchIntent.setData(Uri.parse(url));
+
+    try {
+      getActivity().startActivity(launchIntent);
+    } catch(Exception ex) {
+      call.error("Unable to open url", ex);
+    }
+  }
+
+  /**
+   * Handle ACTION_VIEW intents to store a URL that was used to open the app
+   * @param intent
+   */
+  @Override
+  protected void handleOnNewIntent(Intent intent) {
+    super.handleOnNewIntent(intent);
+
+    final String intentString = intent.getDataString();
+
+    // read intent
+    String action = intent.getAction();
+    Uri url = intent.getData();
+
+    if (!Intent.ACTION_VIEW.equals(action) || url == null) {
+      return;
+    }
+
+    JSObject ret = new JSObject();
+    ret.put("url", url.toString());
+    notifyListeners(EVENT_URL_OPEN, ret);
   }
 }
