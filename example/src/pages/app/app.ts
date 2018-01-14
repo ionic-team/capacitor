@@ -32,4 +32,8 @@ export class AppPage {
     const ret = await Plugins.App.openUrl({ url: 'com.getcapacitor.myapp://page?id=ionicframework' });
     console.log('Open url response: ', ret);
   }
+
+  async failCall() {
+    await Plugins.App.openUrl({ url: null });
+  }
 }
