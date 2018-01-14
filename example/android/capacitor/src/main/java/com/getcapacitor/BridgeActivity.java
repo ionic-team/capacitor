@@ -15,23 +15,28 @@ public class BridgeActivity extends AppCompatActivity {
 
   private int activityDepth = 0;
 
+  private String lastActivityPlugin;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bridge_layout_main);
-
-    String lastPlugin = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_KEY);
+    this.load(savedInstanceState);
   }
 
 
   /**
    * Load the WebView and create the Bridge
    */
-  protected void load() {
+  protected void load(Bundle savedInstanceState) {
     Log.d(Bridge.TAG, "Starting BridgeActivity");
 
     WebView webView = findViewById(R.id.webview);
     bridge = new Bridge(this, webView);
+
+    if (savedInstanceState != null) {
+      bridge.restoreState(savedInstanceState);
+    }
   }
 
   /**

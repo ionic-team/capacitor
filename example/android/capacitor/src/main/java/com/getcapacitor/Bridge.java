@@ -78,9 +78,9 @@ public class Bridge {
   // Stored plugin calls that we're keeping around to call again someday
   private Map<String, PluginCall> savedCalls = new HashMap<>();
 
-  // Store a plugin call that started a new activity, in case we need to resume
+  // Store a plugin that started a new activity, in case we need to resume
   // the app and return that data back
-  private Plugin pluginForLastActivity;
+  private PluginHandle pluginForLastActivity;
 
   // Any URI that was passed to the app on start
   private Uri intentUri;
@@ -178,6 +178,13 @@ public class Bridge {
     }
   }
   */
+
+  public void restoreState(Bundle savedInstanceState) {
+    String lastPluginId = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_KEY);
+    if (lastPluginId != null) {
+      pluginForLastActivity = getPlugin(lastPluginId);
+    }
+  }
 
   /**
    * Initialize the WebView, setting required flags
@@ -379,13 +386,14 @@ public class Bridge {
     // can send any result we might get back to it, even if the app
     // is killed (to free up memory, for example)
     if (pluginForLastActivity != null) {
-      outState.putString(BUNDLE_LAST_PLUGIN_KEY, pluginForLastActivity.getPluginHandle().getId());
+      outState.putString(BUNDLE_LAST_PLUGIN_KEY, pluginForLastActivity.getId());
     }
   }
 
   public void startActivityForPluginWithResult(Plugin plugin, Intent intent, int requestCode) {
-    pluginForLastActivity = plugin;
     Log.d(TAG, "Starting activity for result");
+
+    pluginForLastActivity = plugin.getPluginHandle();
     getActivity().startActivityForResult(intent, requestCode);
   }
 
