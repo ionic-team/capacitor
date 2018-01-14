@@ -35,7 +35,7 @@ public class BridgeActivity extends AppCompatActivity {
     bridge = new Bridge(this, webView);
 
     if (savedInstanceState != null) {
-      bridge.restoreState(savedInstanceState);
+      bridge.restoreInstanceState(savedInstanceState);
     }
   }
 
