@@ -393,6 +393,8 @@ public class Bridge {
     String lastOptionsJson = savedInstanceState.getString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY);
 
     if (lastPluginId != null) {
+
+      // If we have JSON blob saved, create a new plugin call with the original options
       if (lastOptionsJson != null) {
         try {
           JSObject options = new JSObject(lastOptionsJson);
@@ -403,10 +405,13 @@ public class Bridge {
         } catch (JSONException ex) {
           Log.e(TAG, "Unable to restore plugin call, unable to parse persisted JSON object", ex);
         }
-      } else {
-        Bundle bundleData = savedInstanceState.getBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY);
+      }
 
-        // TODO: Process a bundle
+      // Let the plugin restore any state it needs
+      Bundle bundleData = savedInstanceState.getBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY);
+      PluginHandle lastPlugin = getPlugin(lastPluginId);
+      if (lastPlugin != null) {
+        lastPlugin.getInstance().restoreState(bundleData);
       }
     }
   }
@@ -424,7 +429,7 @@ public class Bridge {
         outState.putString(BUNDLE_LAST_PLUGIN_ID_KEY, call.getPluginId());
         outState.putString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY, call.getMethodName());
         outState.putString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY, call.getData().toString());
-        outState.putBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY, handle.getInstance().persistLastCallOptions());
+        outState.putBundle(BUNDLE_PLUGIN_CALL_BUNDLE_KEY, handle.getInstance().saveInstanceState());
       }
     }
   }
