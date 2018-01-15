@@ -50,7 +50,7 @@ export class MyApp {
 
     Plugins.App.addListener('appRestoredResult', (err: any, data: any) => {
       alert('Got restored result');
-      console.log(data);
+      console.log('Restored result:', data);
     });
 
     this.getLaunchUrl();

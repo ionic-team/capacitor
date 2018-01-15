@@ -377,10 +377,10 @@ public class Bridge {
     return null;
   }
 
-  protected void storeDanglingPluginResult(PluginResult result) {
+  protected void storeDanglingPluginResult(PluginCall call, PluginResult result) {
     PluginHandle appHandle = getPlugin("App");
     App appPlugin = (App) appHandle.getInstance();
-    appPlugin.fireRestoredResult(result);
+    appPlugin.fireRestoredResult(result.getWrappedResult(call));
   }
 
   /**
