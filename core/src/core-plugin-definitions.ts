@@ -100,6 +100,13 @@ export interface AppPlugin extends Plugin {
    * as URLs your app handles (Universal Links on iOS and App Links on Android)
    */
   addListener(eventName: 'appUrlOpen', listenerFunc: (err: any, data: AppUrlOpen) => void): PluginListenerHandle;
+
+  /**
+   * If the app was launched with previously persisted plugin call data, such as on Android
+   * when an activity returns to an app that was closed, this call will return any data
+   * the app was launched with, converted into the form of a result from a plugin call.
+   */
+  addListener(eventName: 'appRestoredResult', listenerFunc: (err: any, data: any) => void): PluginListenerHandle;
 }
 
 export interface AppState {

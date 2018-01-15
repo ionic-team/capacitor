@@ -48,6 +48,11 @@ export class MyApp {
       alert('APP URL OPEN: ' +  data.url);
     });
 
+    Plugins.App.addListener('appRestoredResult', (err: any, data: any) => {
+      alert('Got restored result');
+      console.log(data);
+    });
+
     this.getLaunchUrl();
   }
 

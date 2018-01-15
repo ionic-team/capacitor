@@ -66,15 +66,20 @@ public class MessageHandler {
         data.put("data", successResult);
       }
 
-      final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
+      // Only eval the JS code if this is a valid callback id
+      if (!callbackId.equals(PluginCall.CALLBACK_ID_DANGLING)) {
+        final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
 
-      final WebView webView = this.webView;
-      webView.post(new Runnable() {
-        @Override
-        public void run() {
-          webView.evaluateJavascript(runScript, null);
-        }
-      });
+        final WebView webView = this.webView;
+        webView.post(new Runnable() {
+                       @Override
+                       public void run() {
+                              webView.evaluateJavascript(runScript, null);
+          }
+        });
+      } else {
+        bridge.storeDanglingPluginResult(data);
+      }
 
     } catch (Exception ex) {
       Log.e(Bridge.TAG, "responseMessage: error: " + ex);
