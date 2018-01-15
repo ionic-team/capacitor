@@ -377,6 +377,12 @@ public class Bridge {
     return null;
   }
 
+  protected void storeDanglingPluginResult(PluginResult result) {
+    PluginHandle appHandle = getPlugin("App");
+    App appPlugin = (App) appHandle.getInstance();
+    appPlugin.fireRestoredResult(result);
+  }
+
   /**
    * Restore any saved bundle state data
    * @param savedInstanceState
@@ -392,7 +398,7 @@ public class Bridge {
           JSObject options = new JSObject(lastOptionsJson);
 
           pluginCallForLastActivity = new PluginCall(msgHandler,
-              PluginCall.CALLBACK_ID_DANGLING, lastPluginId, lastPluginCallMethod, options);
+              lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
 
         } catch (JSONException ex) {
           Log.e(TAG, "Unable to restore plugin call, unable to parse persisted JSON object", ex);

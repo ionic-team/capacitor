@@ -1,7 +1,5 @@
 package com.getcapacitor;
 
-import org.json.JSONObject;
-
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -14,13 +12,13 @@ import java.util.TimeZone;
  * Wraps a result for web from calling a native plugin.
  */
 public class PluginResult {
-  private final JSONObject json;
+  private final JSObject json;
 
   public PluginResult() {
-    this(new JSONObject());
+    this(new JSObject());
   }
 
-  public PluginResult(JSONObject json) {
+  public PluginResult(JSObject json) {
     this.json = json;
   }
 
@@ -69,5 +67,9 @@ public class PluginResult {
 
   public String toString() {
     return this.json.toString();
+  }
+
+  public JSObject getData() {
+    return this.json;
   }
 }
