@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
@@ -185,10 +186,26 @@ public class Camera extends Plugin {
       BitmapFactory.Options bmOptions = new BitmapFactory.Options();
       Uri contentUri = Uri.fromFile(f);
       Bitmap bitmap = BitmapFactory.decodeFile(imageFileSavePath, bmOptions);
-      
+
       returnBase64(call, bitmap);
     }
   }
+
+  @Override
+  protected Bundle saveInstanceState() {
+    Bundle bundle = super.saveInstanceState();
+    bundle.putString("cameraImageFileSavePath", imageFileSavePath);
+    return bundle;
+  }
+
+  @Override
+  protected void restoreState(Bundle state) {
+    String storedImageFileSavePath = state.getString("cameraImageFileSavePath");
+    if (storedImageFileSavePath != null) {
+      imageFileSavePath = storedImageFileSavePath;
+    }
+  }
+
 
   private void returnBase64(PluginCall call, Bitmap bitmap) {
     int quality = call.getInt("quality", 100);

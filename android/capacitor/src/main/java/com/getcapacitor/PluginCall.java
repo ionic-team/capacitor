@@ -46,13 +46,13 @@ public class PluginCall {
       return;
     }
 
-    this.msgHandler.responseMessage(this.callbackId, successResult, null);
+    this.msgHandler.sendResponseMessage(this, successResult, null);
   }
 
 
   public void success(JSObject data) {
     PluginResult result = new PluginResult(data);
-    this.msgHandler.responseMessage(this.callbackId, result, null);
+    this.msgHandler.sendResponseMessage(this, result, null);
   }
 
   public void success() {
@@ -69,7 +69,7 @@ public class PluginCall {
       Log.e(Bridge.TAG, jsonEx.toString());
     }
 
-    this.msgHandler.responseMessage(this.callbackId, null, errorResult);
+    this.msgHandler.sendResponseMessage(this, null, errorResult);
   }
 
   public void error(String msg, Exception ex) {
@@ -85,7 +85,7 @@ public class PluginCall {
       Log.e(Bridge.TAG, jsonEx.toString());
     }
 
-    this.msgHandler.responseMessage(this.callbackId, null, errorResult);
+    this.msgHandler.sendResponseMessage(this, null, errorResult);
   }
 
   public void error(String msg) {
