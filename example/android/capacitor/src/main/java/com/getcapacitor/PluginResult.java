@@ -2,6 +2,8 @@ package com.getcapacitor;
 
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,6 +72,10 @@ public class PluginResult {
   }
 
   public JSObject getData() {
-    return this.json;
+    try {
+      return this.json.getJSObject("data");
+    } catch (JSONException ex) {
+      return null;
+    }
   }
 }

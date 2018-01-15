@@ -183,10 +183,13 @@ public class Plugin {
       listeners = new ArrayList<PluginCall>();
       eventListeners.put(eventName, listeners);
 
-      sendRetainedArgumentsForEvent(eventName);
-    }
+      // Must add the call before sending retained arguments
+      listeners.add(call);
 
-    listeners.add(call);
+      sendRetainedArgumentsForEvent(eventName);
+    } else {
+      listeners.add(call);
+    }
   }
 
   /**
@@ -334,7 +337,7 @@ public class Plugin {
    * store option values in a {@link Bundle} to avoid exceeding limits.
    * @return a new {@link Bundle} with fields set from the options of the last saved {@link PluginCall}
    */
-  protected Bundle persistLastCallOptions() {
+  protected Bundle saveInstanceState() {
     PluginCall savedCall = getSavedCall();
 
     if (savedCall == null) {
@@ -351,6 +354,15 @@ public class Plugin {
     return ret;
   }
 
+  /**
+   * Called when the app is opened with a previously un-handled
+   * activity response. If the plugin that started the activity
+   * stored data in {@link Plugin#saveInstanceState()} then this
+   * method will be called to allow the plugin to restore from that.
+   * @param state
+   */
+  protected void restoreState(Bundle state) {
+  }
 
   /**
    * Handle activity result, should be overridden by each plugin
