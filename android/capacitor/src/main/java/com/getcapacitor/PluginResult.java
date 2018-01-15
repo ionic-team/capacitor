@@ -1,8 +1,8 @@
 package com.getcapacitor;
 
-import org.json.JSONObject;
-
 import android.util.Log;
+
+import org.json.JSONException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,13 +14,13 @@ import java.util.TimeZone;
  * Wraps a result for web from calling a native plugin.
  */
 public class PluginResult {
-  private final JSONObject json;
+  private final JSObject json;
 
   public PluginResult() {
-    this(new JSONObject());
+    this(new JSObject());
   }
 
-  public PluginResult(JSONObject json) {
+  public PluginResult(JSObject json) {
     this.json = json;
   }
 
@@ -69,5 +69,30 @@ public class PluginResult {
 
   public String toString() {
     return this.json.toString();
+  }
+
+  public JSObject getData() {
+    try {
+      return this.json.getJSObject("data");
+    } catch (JSONException ex) {
+      return null;
+    }
+  }
+
+  /**
+   * Return a new data object with the actual payload data
+   * along side additional metadata about the plugin. This is used
+   * for appRestoredResult, as it's technically a raw data response
+   * from a plugin, but with metadata about the plugin.
+   * @return
+   */
+  public PluginResult getWrappedResult(PluginCall call) {
+    JSObject ret = new JSObject();
+    JSObject data = new JSObject();
+    data.put("pluginId", call.getPluginId());
+    data.put("methodName", call.getMethodName());
+    data.put("data", getData());
+    ret.put("data", data);
+    return new PluginResult(ret);
   }
 }

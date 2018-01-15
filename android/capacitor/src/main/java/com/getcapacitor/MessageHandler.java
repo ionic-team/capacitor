@@ -6,38 +6,37 @@ import android.webkit.WebView;
 
 
 /**
- * MessageHandler handles messages from the webview, dispatching them
+ * MessageHandler handles messages from the WebView, dispatching them
  * to plugins.
  */
 public class MessageHandler {
   private Bridge bridge;
   private WebView webView;
 
-
-  public MessageHandler(Bridge capacitor, WebView webView) {
-    this.bridge = capacitor;
+  public MessageHandler(Bridge bridge, WebView webView) {
+    this.bridge = bridge;
     this.webView = webView;
 
     webView.addJavascriptInterface(this, "androidBridge");
   }
 
+  /**
+   * The main message handler that will be called from JavaScript
+   * to send a message to the native bridge.
+   * @param jsonStr
+   */
   @JavascriptInterface
-  public void postMessageStr(String str) {
-    Log.d(Bridge.TAG, "Post message: " + str);
-  }
-
-  @JavascriptInterface
+  @SuppressWarnings("unused")
   public void postMessage(String jsonStr) {
     try {
-      Log.d(Bridge.TAG, jsonStr);
-
       JSObject postData = new JSObject(jsonStr);
       String callbackId = postData.getString("callbackId");
       String pluginId = postData.getString("pluginId");
       String methodName = postData.getString("methodName");
       JSObject methodData = postData.getJSObject("options");
 
-      Log.d(Bridge.TAG, "callback: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName + ", methodData: " + methodData.toString());
+      Log.d(Bridge.TAG, "To native: " + callbackId + ", pluginId: " + pluginId +
+          ", methodName: " + methodName);
 
       this.callPluginMethod(callbackId, pluginId, methodName, methodData);
 
@@ -46,16 +45,18 @@ public class MessageHandler {
     }
   }
 
-  void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {
+  private void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {
     PluginCall call = new PluginCall(this, pluginId, callbackId, methodName, methodData);
 
     bridge.callPluginMethod(pluginId, methodName, call);
   }
 
-  public void responseMessage(String callbackId, PluginResult successResult, PluginResult errorResult) {
+  public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
     try {
       PluginResult data = new PluginResult();
-      data.put("callbackId", callbackId);
+      data.put("callbackId", call.getCallbackId());
+      data.put("pluginId", call.getPluginId());
+      data.put("methodName", call.getMethodName());
 
       if (errorResult != null) {
         data.put("success", false);
@@ -66,18 +67,23 @@ public class MessageHandler {
         data.put("data", successResult);
       }
 
-      final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
+      // Only eval the JS code if this is a valid callback id
+      if (!call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING)) {
+        final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
 
-      final WebView webView = this.webView;
-      webView.post(new Runnable() {
-        @Override
-        public void run() {
-          webView.evaluateJavascript(runScript, null);
-        }
-      });
+        final WebView webView = this.webView;
+        webView.post(new Runnable() {
+          @Override
+          public void run() {
+            webView.evaluateJavascript(runScript, null);
+          }
+        });
+      } else {
+        bridge.storeDanglingPluginResult(call, data);
+      }
 
     } catch (Exception ex) {
-      Log.e(Bridge.TAG, "responseMessage: error: " + ex);
+      Log.e(Bridge.TAG, "sendResponseMessage: error: " + ex);
     }
   }
 

@@ -13,6 +13,9 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.PluginResult;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -29,8 +32,9 @@ public class App extends Plugin {
     notifyListeners(EVENT_STATE_CHANGE, data, true);
   }
 
-  public void fireRestoredResult() {
-
+  public void fireRestoredResult(PluginResult result) {
+    Log.d(Bridge.TAG, "Firing restored result");
+    notifyListeners(EVENT_RESTORED_RESULT, result.getData(), true);
   }
 
   @PluginMethod()
