@@ -51,12 +51,12 @@ public class MessageHandler {
     bridge.callPluginMethod(pluginId, methodName, call);
   }
 
-  public void sendResponseMessage(String callbackId, String pluginId, String methodName, PluginResult successResult, PluginResult errorResult) {
+  public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
     try {
       PluginResult data = new PluginResult();
-      data.put("callbackId", callbackId);
-      data.put("pluginId", pluginId);
-      data.put("methodName", methodName);
+      data.put("callbackId", call.getCallbackId());
+      data.put("pluginId", call.getPluginId());
+      data.put("methodName", call.getMethodName());
 
       if (errorResult != null) {
         data.put("success", false);
@@ -68,7 +68,7 @@ public class MessageHandler {
       }
 
       // Only eval the JS code if this is a valid callback id
-      if (!callbackId.equals(PluginCall.CALLBACK_ID_DANGLING)) {
+      if (!call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING)) {
         final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
 
         final WebView webView = this.webView;
@@ -79,7 +79,7 @@ public class MessageHandler {
           }
         });
       } else {
-        bridge.storeDanglingPluginResult(data);
+        bridge.storeDanglingPluginResult(call, data);
       }
 
     } catch (Exception ex) {

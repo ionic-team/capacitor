@@ -78,4 +78,21 @@ public class PluginResult {
       return null;
     }
   }
+
+  /**
+   * Return a new data object with the actual payload data
+   * along side additional metadata about the plugin. This is used
+   * for appRestoredResult, as it's technically a raw data response
+   * from a plugin, but with metadata about the plugin.
+   * @return
+   */
+  public PluginResult getWrappedResult(PluginCall call) {
+    JSObject ret = new JSObject();
+    JSObject data = new JSObject();
+    data.put("pluginId", call.getPluginId());
+    data.put("methodName", call.getMethodName());
+    data.put("data", getData());
+    ret.put("data", data);
+    return new PluginResult(ret);
+  }
 }
