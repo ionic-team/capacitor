@@ -19,7 +19,7 @@ import com.getcapacitor.PluginMethod;
 public class SplashScreen extends Plugin {
   private static final String SPLASH_DRAWABLE = "splash";
 
-  private static final int LAUNCH_SHOW_DURATION = 10000;
+  private static final int LAUNCH_SHOW_DURATION = 5000;
 
   private static final int DEFAULT_FADE_IN_DURATION = 200;
   private static final int DEFAULT_FADE_OUT_DURATION = 200;
