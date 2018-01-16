@@ -34,6 +34,8 @@ export class MyApp {
   ]
 
   constructor(platform: Platform) {
+    console.log('Hiding splash screen');
+    Plugins.SplashScreen.hide();
     /*
     Plugins.App.addListener('pluginError', (err: any, info: any) => {
       console.error('There was a serious error with a plugin', err, info);

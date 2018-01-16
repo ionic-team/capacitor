@@ -24,6 +24,11 @@ public class SplashScreen : CAPPlugin {
   @objc public func show(_ call: CAPPluginCall) {
     self.call = call
     
+    if image == nil {
+      call.error("No image named \"Splash\" found. Please check your Assets.xcassets for a file named Splash")
+      return
+    }
+    
     let showDuration = call.get("showDuration", Int.self, defaultShowDuration)!
     let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
     let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
@@ -46,6 +51,10 @@ public class SplashScreen : CAPPlugin {
     // Find the image asset named "Splash"
     // TODO: Find a way to not hard code this?
     image = UIImage.init(named: "Splash")
+    
+    if image == nil {
+      print("Unable to find splash screen image. Make sure an image called Splash exists in your assets")
+    }
     
     // Observe for changes on fram and bounds to handle rotation resizing
     let parentView = self.bridge.viewController.view

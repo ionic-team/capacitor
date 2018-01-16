@@ -43,10 +43,9 @@ enum BridgeError: Error {
   }
   
   public func willAppear() {
-    /*
-    if let splash = getOrLoadPlugin(pluginId: "com.avocadojs.plugin.splashscreen") as? SplashScreen {
+    if let splash = getOrLoadPlugin(pluginId: "SplashScreen") as? SplashScreen {
       splash.showOnLaunch()
-    }*/
+    }
   }
   
   public static func handleOpenUrl(_ url: URL, _ options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
