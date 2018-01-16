@@ -17,6 +17,11 @@ import com.getcapacitor.PluginMethod;
 
 @NativePlugin()
 public class SplashScreen extends Plugin {
+  interface SplashListener {
+    void completed();
+    void error();
+  }
+
   private static final String SPLASH_DRAWABLE = "splash";
 
   private static final int LAUNCH_SHOW_DURATION = 5000;
@@ -138,7 +143,6 @@ public class SplashScreen extends Plugin {
             .setDuration(fadeInDuration)
             .setListener(listener)
             .start();
-
       }
     });
   }
@@ -208,10 +212,5 @@ public class SplashScreen extends Plugin {
   @Override
   protected void handleOnResume() {
     super.handleOnResume();
-  }
-
-  interface SplashListener {
-    void completed();
-    void error();
   }
 }
