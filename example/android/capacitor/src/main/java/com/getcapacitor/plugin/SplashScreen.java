@@ -125,8 +125,7 @@ public class SplashScreen extends Plugin {
     bridge.executeOnMainThread(new Runnable() {
       @Override
       public void run() {
-        // Build the dialog window that will contain the image
-        imageDialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        imageDialog = new Dialog(getContext(), android.R.style.Theme_Translucent_NoTitleBar);
         imageDialog.setContentView(splashImage);
         imageDialog.setCancelable(false);
 
