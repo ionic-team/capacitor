@@ -118,6 +118,8 @@ public class Bridge {
     // Register our core plugins
     this.registerCorePlugins();
 
+    this.showSplash();
+
     Log.d(TAG, "Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
     // Start the local web server
@@ -185,10 +187,15 @@ public class Bridge {
   }
   */
 
+  private void showSplash() {
+    SplashScreen splash = (SplashScreen) getPlugin("SplashScreen").getInstance();
+    splash.showOnLaunch();
+  }
+
   /**
    * Initialize the WebView, setting required flags
    */
-  public void initWebView() {
+  private void initWebView() {
     WebSettings settings = webView.getSettings();
     settings.setJavaScriptEnabled(true);
     settings.setDomStorageEnabled(true);
@@ -200,7 +207,7 @@ public class Bridge {
   /**
    * Register our core Plugin APIs
    */
-  public void registerCorePlugins() {
+  private void registerCorePlugins() {
     this.registerPlugin(App.class);
     this.registerPlugin(Accessibility.class);
     this.registerPlugin(Browser.class);
