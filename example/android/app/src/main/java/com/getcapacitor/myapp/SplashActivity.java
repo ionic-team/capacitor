@@ -22,6 +22,7 @@ public class SplashActivity extends Activity {
       @Override
       public void run() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
         finish();
       }
