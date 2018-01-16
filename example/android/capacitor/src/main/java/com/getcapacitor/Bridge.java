@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -331,10 +332,24 @@ public class Bridge {
     }
   }
 
+  public void error(String... args) {
+    Log.e(TAG, "⚡️ " + TextUtils.join(" ", args));
+  }
+
+  public void fatalError(String... args) {
+    Log.e(TAG, "⚡️ FATAL ERROR ⚡️");
+    error(args);
+  }
+
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
   }
 
+  public void executeOnMainThread(Runnable runnable) {
+    Handler mainHandler = new Handler(context.getMainLooper());
+
+    mainHandler.post(runnable);
+  }
   /**
    * Retain a call between plugin invocations
    * @param call
