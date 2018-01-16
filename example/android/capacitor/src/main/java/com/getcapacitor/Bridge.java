@@ -348,6 +348,10 @@ public class Bridge {
     error(args);
   }
 
+  public void log(String... args) {
+    Log.d(TAG, TextUtils.join(" ", args));
+  }
+
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
   }
