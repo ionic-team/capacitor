@@ -2,14 +2,12 @@ package com.getcapacitor;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
 
 import com.getcapacitor.android.R;
 import com.getcapacitor.plugin.App;
-import com.getcapacitor.plugin.SplashScreen;
 
 public class BridgeActivity extends AppCompatActivity {
   private Bridge bridge;
