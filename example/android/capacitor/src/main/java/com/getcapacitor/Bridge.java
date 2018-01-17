@@ -118,8 +118,6 @@ public class Bridge {
     // Register our core plugins
     this.registerCorePlugins();
 
-    this.showSplash();
-
     Log.d(TAG, "Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
     // Start the local web server
@@ -186,11 +184,6 @@ public class Bridge {
     }
   }
   */
-
-  private void showSplash() {
-    SplashScreen splash = (SplashScreen) getPlugin("SplashScreen").getInstance();
-    splash.showOnLaunch();
-  }
 
   /**
    * Initialize the WebView, setting required flags
@@ -559,6 +552,8 @@ public class Bridge {
    * Handle onPause lifecycle event and notify the plugins
    */
   public void onPause() {
+    Splash.onPause();
+
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnPause();
     }

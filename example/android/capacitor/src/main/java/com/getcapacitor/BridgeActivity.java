@@ -9,6 +9,7 @@ import android.webkit.WebView;
 
 import com.getcapacitor.android.R;
 import com.getcapacitor.plugin.App;
+import com.getcapacitor.plugin.SplashScreen;
 
 public class BridgeActivity extends AppCompatActivity {
   private Bridge bridge;
@@ -20,10 +21,13 @@ public class BridgeActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    Splash.showOnLaunch(this);
+
     setContentView(R.layout.bridge_layout_main);
+
     this.load(savedInstanceState);
   }
-
 
   /**
    * Load the WebView and create the Bridge
