@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/capacitor-debug/android-capacitor-debug.iml" filepath="$PROJECT_DIR$/capacitor-debug/android-capacitor-debug.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/capacitor/capacitor.iml" filepath="$PROJECT_DIR$/capacitor/capacitor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/capacitor/capacitor.iml" filepath="$PROJECT_DIR$/capacitor/capacitor.iml" />
       <module fileurl="file://$PROJECT_DIR$/capacitor-debug/capacitor-debug.iml" filepath="$PROJECT_DIR$/capacitor-debug/capacitor-debug.iml" />
     </modules>
   </component>
