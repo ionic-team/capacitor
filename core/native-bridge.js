@@ -10,8 +10,10 @@
   // keep a collection of callbacks for native response data
   var calls = {};
 
-  // keep a counter of callback ids
-  var callbackIdCount = 0;
+  // Counter of callback ids, randomized to avoid
+  // any issues during reloads if a call comes back with
+  // an existing callback id from an old session
+  var callbackIdCount = Math.floor(Math.random() * 134217728);
 
   var lastError = null;
   var errorModal = null;
