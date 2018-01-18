@@ -15,6 +15,8 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   private var webView: WKWebView?
   private var webServer: GCDWebServer?
   
+  private var port = 3000
+  
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
   
