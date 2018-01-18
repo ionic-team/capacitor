@@ -58,11 +58,11 @@ import java.util.UUID;
  */
 public class WebViewLocalServer {
   private static String TAG = "WebViewAssetServer";
+
   /**
-   * The androidplatform.net domain currently belongs to Google and has been reserved for the
-   * purpose of Android applications intercepting navigations/requests directed there.
+   * capacitorapp.net is reserved by the Ionic team for use in local capacitor apps.
    */
-  public final static String knownUnusedAuthority = "ionicapps.com";
+  public final static String knownUnusedAuthority = "capacitorapp.net";
   private final static String httpScheme = "http";
   private final static String httpsScheme = "https";
 

@@ -118,7 +118,7 @@ public class Bridge {
     // Register our core plugins
     this.registerCorePlugins();
 
-    Log.d(TAG, "Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
+    log("Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
     // Start the local web server
     final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
