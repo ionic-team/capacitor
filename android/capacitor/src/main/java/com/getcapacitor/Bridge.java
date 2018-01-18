@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -187,7 +188,7 @@ public class Bridge {
   /**
    * Initialize the WebView, setting required flags
    */
-  public void initWebView() {
+  private void initWebView() {
     WebSettings settings = webView.getSettings();
     settings.setJavaScriptEnabled(true);
     settings.setDomStorageEnabled(true);
@@ -199,7 +200,7 @@ public class Bridge {
   /**
    * Register our core Plugin APIs
    */
-  public void registerCorePlugins() {
+  private void registerCorePlugins() {
     this.registerPlugin(App.class);
     this.registerPlugin(Accessibility.class);
     this.registerPlugin(Browser.class);
@@ -331,10 +332,28 @@ public class Bridge {
     }
   }
 
+  public void error(String... args) {
+    Log.e(TAG, "⚡️ " + TextUtils.join(" ", args));
+  }
+
+  public void fatalError(String... args) {
+    Log.e(TAG, "⚡️ FATAL ERROR ⚡️");
+    error(args);
+  }
+
+  public void log(String... args) {
+    Log.d(TAG, TextUtils.join(" ", args));
+  }
+
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
   }
 
+  public void executeOnMainThread(Runnable runnable) {
+    Handler mainHandler = new Handler(context.getMainLooper());
+
+    mainHandler.post(runnable);
+  }
   /**
    * Retain a call between plugin invocations
    * @param call
@@ -533,6 +552,8 @@ public class Bridge {
    * Handle onPause lifecycle event and notify the plugins
    */
   public void onPause() {
+    Splash.onPause();
+
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnPause();
     }
