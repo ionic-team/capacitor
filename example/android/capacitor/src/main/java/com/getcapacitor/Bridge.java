@@ -121,7 +121,7 @@ public class Bridge {
     log("Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
     // Start the local web server
-    final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
+    final WebViewLocalServer localServer = new WebViewLocalServer(context, this, getJSInjector());
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
@@ -184,6 +184,11 @@ public class Bridge {
     }
   }
   */
+
+  public void reset() {
+    savedCalls = new HashMap<>();
+  }
+
 
   /**
    * Initialize the WebView, setting required flags
