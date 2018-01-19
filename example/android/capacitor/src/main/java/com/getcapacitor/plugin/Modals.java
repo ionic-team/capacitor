@@ -11,6 +11,7 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,8 @@ import com.getcapacitor.PluginMethod;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Common popup modals
@@ -117,8 +120,17 @@ public class Modals extends Plugin {
       return;
     }
 
-    ModalsBottomSheetDialogFragment fragment = new ModalsBottomSheetDialogFragment();
+    final ModalsBottomSheetDialogFragment fragment = new ModalsBottomSheetDialogFragment();
     fragment.setOptions(options);
+    fragment.setOnSelectedListener(new ModalsBottomSheetDialogFragment.OnSelectedListener() {
+      @Override
+      public void onSelected(int index) {
+        JSObject ret = new JSObject();
+        ret.put("index", index);
+        call.success(ret);
+        fragment.dismiss();
+      }
+    });
     fragment.show(getActivity().getSupportFragmentManager(), "capacitorModalsActionSheet");
   }
 
@@ -129,10 +141,20 @@ public class Modals extends Plugin {
 
 
   public static class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
+    interface OnSelectedListener {
+      void onSelected(int index);
+    }
+
     private JSArray options;
+
+    private OnSelectedListener listener;
 
     public void setOptions(JSArray options) {
       this.options = options;
+    }
+
+    public void setOnSelectedListener(OnSelectedListener listener) {
+      this.listener = listener;
     }
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
@@ -142,7 +164,6 @@ public class Modals extends Plugin {
         if (newState == BottomSheetBehavior.STATE_HIDDEN) {
           dismiss();
         }
-
       }
 
       @Override
@@ -155,37 +176,58 @@ public class Modals extends Plugin {
     public void setupDialog(Dialog dialog, int style) {
       super.setupDialog(dialog, style);
 
-      dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+      if (options == null) {
+        return;
+      }
+
+      Window w = dialog.getWindow();
 
       final float scale = getResources().getDisplayMetrics().density;
 
-      float layoutPaddingDp = 16.0f;
-      int layoutPaddingPx = (int) (layoutPaddingDp * scale + 0.5f);
+      float layoutPaddingDp16 = 16.0f;
+      float layoutPaddingDp12  = 12.0f;
+      float layoutPaddingDp8  = 8.0f;
+      int layoutPaddingPx16 = (int) (layoutPaddingDp16 * scale + 0.5f);
+      int layoutPaddingPx12 = (int) (layoutPaddingDp12 * scale + 0.5f);
+      int layoutPaddingPx8 = (int) (layoutPaddingDp8 * scale + 0.5f);
 
       CoordinatorLayout parentLayout = new CoordinatorLayout(getContext());
-      parentLayout.setBackgroundColor(Color.parseColor("#000000"));
 
       LinearLayout layout = new LinearLayout(getContext());
       layout.setOrientation(LinearLayout.VERTICAL);
-      layout.setPadding(layoutPaddingPx, layoutPaddingPx, layoutPaddingPx, layoutPaddingPx);
-      layout.setBackgroundColor(Color.parseColor("#000000"));
-      //layout.setBackgroundColor(getContext().getResources().getIdentifier("colorBackground", "color", getContext().getPackageName()));
+      layout.setPadding(layoutPaddingPx16, layoutPaddingPx16, layoutPaddingPx16, layoutPaddingPx16);
 
       try {
-        for (Object obj : options.toList()) {
-          JSObject o = JSObject.fromJSONObject((JSONObject) obj);
+        List<Object> optionsList = options.toList();
+        for (int i = 0; i < optionsList.size(); i++) {
+          final int optionIndex = i;
+          JSObject o = JSObject.fromJSONObject((JSONObject) optionsList.get(i));
           String styleOption = o.getString("style", "DEFAULT");
           String titleOption = o.getString("title", "");
 
           TextView tv = new TextView(getContext());
-          tv.setBackgroundColor(Color.parseColor("#000000"));
+          tv.setTextColor(Color.parseColor("#000000"));
+          tv.setPadding(layoutPaddingPx12, layoutPaddingPx12, layoutPaddingPx12, layoutPaddingPx12);
+          //tv.setBackgroundColor(Color.parseColor("#80000000"));
           tv.setText(titleOption);
+          tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              Log.d(Bridge.TAG, "CliCKED: " + optionIndex);
+
+              if (listener != null) {
+                listener.onSelected(optionIndex);
+              }
+            }
+          });
           layout.addView(tv);
         }
 
         parentLayout.addView(layout.getRootView());
 
         dialog.setContentView(parentLayout.getRootView());
+
+        //dialog.getWindow().getDecorView().setBackgroundColor(Color.parseColor("#000000"));
 
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) parentLayout.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();

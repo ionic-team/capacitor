@@ -25,6 +25,8 @@ public class BridgeActivity extends AppCompatActivity {
     Splash.showOnLaunch(this);
 
     getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+    setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+    setTheme(R.style.AppTheme_NoActionBar);
     //setTheme(R.style.AppTheme_NoActionBar);
     //getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF0000")));
 
