@@ -11,26 +11,24 @@ export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject
 
 export async function updateIOS(config: Config, needsUpdate: boolean) {
   const plugins = await runTask('Fetching plugins', async () => {
-    const allplugins = await getPlugins();
-    const iosPlugins = await getIOSPlugins(allplugins);
+    const allPlugins = await getPlugins();
+    const iosPlugins = await getIOSPlugins(allPlugins);
     return iosPlugins;
   });
 
-  // printPlugins(plugins);
-  /*
+  //printPlugins(plugins);
   await autoGeneratePods(plugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
-  */
+
 }
 
 
 export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
   return Promise.all(plugins
-    .filter(p => p.ios!.type === PluginType.Code)
+    .filter(p => p.ios!.type !== PluginType.Cocoapods)
     .map(async p => {
       const name = p.ios!.name = p.name;
       p.ios!.type = PluginType.Cocoapods;
-
       const content = generatePodspec(name);
       const path = join(p.ios!.path, name + '.podspec');
       return writeFileAsync(path, content);
@@ -49,6 +47,7 @@ export function generatePodspec(name: string) {
     s.authors = { 'Capacitor generator' => 'hi@ionicframework.com' }
     s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => '0.0.1' }
     s.source_files = '*.{swift,h,m}'
+    s.dependency 'CapacitorCordova'
   end`;
 }
 
@@ -65,14 +64,15 @@ export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[],
 
 export async function updatePodfile(config: Config, plugins: Plugin[], needsUpdate: boolean) {
   const content = generatePodFile(config, plugins);
-  const podfilePath = join(config.ios.name, 'Podfile');
+  const projectName = config.ios.nativeProjectName;
+  const podfilePath = join(join(config.ios.name, projectName),'Podfile');
 
   await writeFileAsync(podfilePath, content, 'utf8');
 
   if (needsUpdate) {
-    await runCommand(`cd ${config.ios.name} && pod update`);
+    await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod update`);
   } else {
-    await runCommand(`cd ${config.ios.name} && pod install`);
+    await runCommand(`cd ${config.ios.name} && cd ${projectName}  &&pod install`);
   }
 }
 
@@ -89,7 +89,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
     platform :ios, '${config.ios.minVersion}'
     use_frameworks!
 
-    target 'CapacitorApp' do
+    target 'App' do
       ${config.ios.capacitorRuntimePod}
       ${pods.join('\n')}
     end`;

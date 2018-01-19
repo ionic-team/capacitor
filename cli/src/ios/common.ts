@@ -41,16 +41,18 @@ export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
 }
 
 export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
-  const iosManifest = plugin.manifest.ios;
-  if (!iosManifest) {
+  let iosPath = '';
+  if (plugin.manifest && plugin.manifest.ios) {
+    if (!plugin.manifest.ios.src) {
+      throw 'capacitor.ios.src is missing';
+    }
+    iosPath = join(plugin.rootPath, plugin.manifest.ios.src);
+  } else if (plugin.xml) {
+    iosPath = join(plugin.rootPath, "src/ios");
+  } else {
     return null;
   }
   try {
-    if (!iosManifest.src) {
-      throw 'capacitor.ios.path is missing';
-    }
-
-    const iosPath = join(plugin.rootPath, iosManifest.src);
     plugin.ios = {
       name: plugin.name,
       type: PluginType.Code,
@@ -61,6 +63,9 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
     if (podSpec) {
       plugin.ios.type = PluginType.Cocoapods;
       plugin.ios.name = podSpec.split('.')[0];
+    }
+    if (plugin.xml) {
+      plugin.ios.type = PluginType.Cordova;
     }
   } catch (e) {
     return null;
