@@ -61,6 +61,7 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
     coords["altitude"] = location.altitude
     coords["speed"] = location.speed
     coords["heading"] = location.course
+    ret["coords"] = coords
     return ret
   }
 }
@@ -80,6 +81,8 @@ public class Geolocation : CAPPlugin {
   }
   
   @objc public func watchPosition(_ call: CAPPluginCall) {
+    call.save()
+    
     DispatchQueue.main.async {
       self.watchLocationHandler = GetLocationHandler(call: call, options:[
         "watch": true

@@ -528,7 +528,7 @@ export interface GeolocationPlugin extends Plugin {
    * Set up a watch for location changes. Note that watching for location changes
    * can consume a large amount of energy. Be smart about listening only when you need to.
    */
-  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback) : void;
+  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): number;
 
   /**
    * Clear a given watch

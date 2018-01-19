@@ -318,8 +318,8 @@ public class Bridge {
           try {
             plugin.invoke(methodName, call);
 
-            if (call.isRetained()) {
-              retainCall(call);
+            if (call.isSaved()) {
+              saveCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
             Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
@@ -363,7 +363,7 @@ public class Bridge {
    * Retain a call between plugin invocations
    * @param call
    */
-  public void retainCall(PluginCall call) {
+  public void saveCall(PluginCall call) {
     this.savedCalls.put(call.getCallbackId(), call);
   }
 
@@ -373,7 +373,7 @@ public class Bridge {
    * @param callbackId the callbackId to use to lookup the call with
    * @return the stored call
    */
-  public PluginCall getRetainedCall(String callbackId) {
+  public PluginCall getSavedCall(String callbackId) {
     return this.savedCalls.get(callbackId);
   }
 
