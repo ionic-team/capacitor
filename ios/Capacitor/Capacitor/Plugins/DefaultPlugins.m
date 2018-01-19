@@ -77,7 +77,6 @@ CAP_PLUGIN(Modals,
   CAP_PLUGIN_METHOD(prompt, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(confirm, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(showActions, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(showSharing, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(Network,
@@ -89,6 +88,10 @@ CAP_PLUGIN(Photos,
   CAP_PLUGIN_METHOD(getAlbums, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(createAlbum, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(savePhoto, CAPPluginReturnPromise);
+)
+
+CAP_PLUGIN(Share,
+  CAP_PLUGIN_METHOD(share, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(SplashScreen,

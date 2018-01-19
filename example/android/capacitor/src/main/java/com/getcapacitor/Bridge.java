@@ -29,6 +29,7 @@ import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.Network;
 import com.getcapacitor.plugin.Photos;
+import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 
@@ -220,6 +221,7 @@ public class Bridge {
     this.registerPlugin(Modals.class);
     this.registerPlugin(Network.class);
     this.registerPlugin(Photos.class);
+    this.registerPlugin(Share.class);
     this.registerPlugin(SplashScreen.class);
     this.registerPlugin(StatusBar.class);
   }

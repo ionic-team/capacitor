@@ -11,7 +11,7 @@ import { Plugins } from '@capacitor/core';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage = 'ModalsPage';
+  rootPage = 'SharePage';
 
   PLUGINS = [
     { name: 'App', page: 'AppPage' },
@@ -29,6 +29,7 @@ export class MyApp {
     { name: 'Motion', page: 'MotionPage' },
     { name: 'Network', page: 'NetworkPage' },
     { name: 'Photos', page: 'PhotosPage' },
+    { name: 'Share', page: 'SharePage' },
     { name: 'SplashScreen', page: 'SplashScreenPage' },
     { name: 'StatusBar', page: 'StatusBarPage' }
   ]
