@@ -118,6 +118,7 @@ public class Modals : CAPPlugin {
       
       controller.addAction(action)
     }
+    self.setCenteredPopover(controller)
     
     return controller
   }
@@ -162,6 +163,7 @@ public class Modals : CAPPlugin {
           "activityType": activityType?.rawValue ?? ""
         ])
       }
+      self.setCenteredPopover(actionController)
       
       self.bridge.viewController.present(actionController, animated: true, completion: nil)
     }
