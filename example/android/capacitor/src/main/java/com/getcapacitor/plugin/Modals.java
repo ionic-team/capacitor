@@ -3,9 +3,7 @@ package com.getcapacitor.plugin;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -134,41 +132,6 @@ public class Modals extends Plugin {
     });
     fragment.show(getActivity().getSupportFragmentManager(), "capacitorModalsActionSheet");
   }
-
-  @PluginMethod()
-  public void showSharing(final PluginCall call) {
-    String title = call.getString("title", "Share");
-    String message = call.getString("message");
-    String url = call.getString("url");
-    String subject = call.getString("subject", "");
-
-    if (message == null && url == null) {
-      call.error("Must provide a URL or Message");
-      return;
-    }
-
-    // If they supplied both fields, concat em
-    if (message != null && url != null) {
-      message = message + " " + url;
-    } else if(url != null) {
-      message = url;
-    }
-
-    Intent intent = new Intent(Intent.ACTION_SEND);
-    intent.setTypeAndNormalize("text/plain");
-
-    intent.putExtra(Intent.EXTRA_TEXT, message);
-
-    if (subject != null) {
-      intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-    }
-
-    Intent chooser = Intent.createChooser(intent, title);
-    chooser.addCategory(Intent.CATEGORY_DEFAULT);
-
-    getActivity().startActivity(chooser);
-  }
-
 
   public static class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
     interface OnSelectedListener {
