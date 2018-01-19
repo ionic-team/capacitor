@@ -79,6 +79,13 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     webServer.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: "index.html", cacheAge: 3600, allowRangeRequests: true)
     
+    /*
+    webServer.addHandler(forMethod: "GET", path: "/", request: GCDWebServerRequest.self, processBlock: { (req) -> GCDWebServerResponse? in
+      print("Also in here")
+      return nil
+    })
+ */
+      
     // Optional config for SPAs to redirect all requests to index file? Not quite right, needs to rewrite instead of redirect
     //webServer.addHandler(forMethod: "GET", path: "/", request: GCDWebServerRequest.self, processBlock: { (req) -> GCDWebServerResponse? in
       //return GCDWebServerResponse(redirect: URL(string: "index.html")!, permanent: false)
@@ -102,8 +109,19 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     //configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone
   }
   
+  func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    // Reset the bridge on each navigation
+    bridge!.reset()
+  }
+  
+  func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    // TODO: Allow plugins to handle this. See
+    // https://github.com/ionic-team/cordova-plugin-ionic-webview/blob/608d64191405b233c01a939f5755f8b1fdd97f8c/src/ios/CDVWKWebViewEngine.m#L609
+    decisionHandler(.allow)
+  }
+  
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    //print("⚡️  WebView loaded")
+    print("⚡️  WebView loaded")
   }
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
