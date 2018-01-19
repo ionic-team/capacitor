@@ -298,11 +298,11 @@ enum BridgeError: Error {
     dispatchQueue.async {
       //let startTime = CFAbsoluteTimeGetCurrent()
       
-      let pluginCall = CAPPluginCall(callbackId: call.callbackId, options: call.options, success: {(result: CAPPluginCallResult?) -> Void in
+      let pluginCall = CAPPluginCall(callbackId: call.callbackId, options: call.options, success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
         if result != nil {
-          self.toJs(result: JSResult(call: call, result: result!.data ?? [:]))
+          self.toJs(result: JSResult(call: call, result: result!.data ?? [:]), save: pluginCall?.save ?? false)
         } else {
-          self.toJs(result: JSResult(call: call, result: [:]))
+          self.toJs(result: JSResult(call: call, result: [:]), save: pluginCall?.save ?? false)
         }
       }, error: {(error: CAPPluginCallError?) -> Void in
         let description = error?.error?.localizedDescription ?? ""
@@ -368,13 +368,22 @@ enum BridgeError: Error {
   /**
    * Send a successful result to the JavaScript layer.
    */
-  public func toJs(result: JSResult) {
+  public func toJs(result: JSResult, save: Bool) {
     do {
       let resultJson = try result.toJson()
       print("⚡️  TO JS", resultJson.prefix(256))
       
       DispatchQueue.main.async {
-        self.getWebView().evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(result.call.callbackId)', pluginId: '\(result.call.pluginId)', methodName: '\(result.call.method)', success: true, data: \(resultJson)})") { (result, error) in
+        self.getWebView().evaluateJavaScript("""
+          window.Capacitor.fromNative({
+            callbackId: '\(result.call.callbackId)',
+            pluginId: '\(result.call.pluginId)',
+            methodName: '\(result.call.method)',
+            save: \(save),
+            success: true,
+            data: \(resultJson)
+          })
+          """) { (result, error) in
           if error != nil && result != nil {
             print(result!)
           }

@@ -165,6 +165,10 @@
         orgConsole.warn.call(win.console, result.error);
       }
 
+      if (result.save === false) {
+        delete calls[result.callbackId];
+      }
+
     } catch (e) {
       orgConsole.error.call(win.console, e);
     }

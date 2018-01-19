@@ -17,7 +17,9 @@
 
 @end
 
-typedef void(^CAPPluginCallSuccessHandler)(CAPPluginCallResult *result);
+@class CAPPluginCall;
+
+typedef void(^CAPPluginCallSuccessHandler)(CAPPluginCallResult *result, CAPPluginCall* call);
 typedef void(^CAPPluginCallErrorHandler)(CAPPluginCallError *error);
 
 @interface CAPPluginCall : NSObject
