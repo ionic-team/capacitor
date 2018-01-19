@@ -30,4 +30,8 @@
   return self;
 }
 
+- (void)save {
+  self.isSaved = true;
+}
+
 @end

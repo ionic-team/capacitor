@@ -263,7 +263,7 @@ public class Plugin {
   public void addListener(PluginCall call) {
     String eventName = call.getString("eventName");
     addEventListener(eventName, call);
-    call.retain();
+    call.save();
   }
 
   /**
@@ -275,7 +275,7 @@ public class Plugin {
   public void removeListener(PluginCall call) {
     String eventName = call.getString("eventName");
     String callbackId = call.getString("callbackId");
-    PluginCall savedCall = bridge.getRetainedCall(callbackId);
+    PluginCall savedCall = bridge.getSavedCall(callbackId);
     if (savedCall != null) {
       removeEventListener(eventName, call);
       bridge.releaseCall(call);

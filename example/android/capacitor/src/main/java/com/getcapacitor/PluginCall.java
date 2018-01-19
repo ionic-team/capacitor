@@ -25,7 +25,7 @@ public class PluginCall {
   private final String methodName;
   private final JSObject data;
 
-  private boolean shouldRetain = false;
+  private boolean shouldSave = false;
 
   /**
    * Indicates that this PluginCall was released, and should no longer be used
@@ -192,18 +192,18 @@ public class PluginCall {
    * continuously call the call's callback (😆).
    * @param shouldSave
    */
-  public void retain() {
-    this.shouldRetain = true;
+  public void save() {
+    this.shouldSave = true;
   }
 
   public void release(Bridge bridge) {
-    this.shouldRetain = false;
+    this.shouldSave = false;
     bridge.releaseCall(this);
     this.isReleased = true;
   }
 
-  public boolean isRetained() {
-    return shouldRetain;
+  public boolean isSaved() {
+    return shouldSave;
   }
 
   public boolean isReleased() {

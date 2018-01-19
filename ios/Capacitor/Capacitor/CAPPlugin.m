@@ -90,7 +90,7 @@
 - (void)addListener:(CAPPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
   [self addEventListener:eventName listener:call];
-  [call setSave:TRUE];
+  [call setIsSaved:TRUE];
 }
 
 - (void)removeListener:(CAPPluginCall *)call {

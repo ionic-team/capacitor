@@ -53,12 +53,14 @@ export class GeolocationPage {
 
   watchPosition() {
     try {
-      const wait = Plugins.Geolocation.watchPosition({}, (err, position) => {
+      const watch = Plugins.Geolocation.watchPosition({}, (err, position) => {
         console.log('Watch', position);
         this.zone.run(() => {
           this.watchCoords = position.coords;
         });
       })
+
+      console.log('Got watch', watch);
     } catch(e) {
       alert('WebView geo error');
       console.error(e);
