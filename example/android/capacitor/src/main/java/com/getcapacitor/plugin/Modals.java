@@ -3,6 +3,8 @@ package com.getcapacitor.plugin;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -153,9 +155,21 @@ public class Modals extends Plugin {
     public void setupDialog(Dialog dialog, int style) {
       super.setupDialog(dialog, style);
 
+      dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+
+      final float scale = getResources().getDisplayMetrics().density;
+
+      float layoutPaddingDp = 16.0f;
+      int layoutPaddingPx = (int) (layoutPaddingDp * scale + 0.5f);
+
       CoordinatorLayout parentLayout = new CoordinatorLayout(getContext());
+      parentLayout.setBackgroundColor(Color.parseColor("#000000"));
 
       LinearLayout layout = new LinearLayout(getContext());
+      layout.setOrientation(LinearLayout.VERTICAL);
+      layout.setPadding(layoutPaddingPx, layoutPaddingPx, layoutPaddingPx, layoutPaddingPx);
+      layout.setBackgroundColor(Color.parseColor("#000000"));
+      //layout.setBackgroundColor(getContext().getResources().getIdentifier("colorBackground", "color", getContext().getPackageName()));
 
       try {
         for (Object obj : options.toList()) {
@@ -164,6 +178,7 @@ public class Modals extends Plugin {
           String titleOption = o.getString("title", "");
 
           TextView tv = new TextView(getContext());
+          tv.setBackgroundColor(Color.parseColor("#000000"));
           tv.setText(titleOption);
           layout.addView(tv);
         }
