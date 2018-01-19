@@ -17,6 +17,7 @@ declare global {
     Motion?: MotionPlugin;
     Network?: NetworkPlugin;
     Photos?: PhotosPlugin;
+    Share?: SharePlugin;
     SplashScreen?: SplashScreenPlugin;
     StatusBar?: StatusBarPlugin;
   }
@@ -748,11 +749,6 @@ export interface ModalsPlugin extends Plugin {
    * to select.
    */
   showActions(options: ActionSheetOptions): Promise<ActionSheetResult>;
-   
-  /**
-   * Show a Share modal for sharing content in your app with other apps
-   */
-  showSharing(options: any): Promise<any>;
 }
 
 export interface AlertOptions {
@@ -802,12 +798,6 @@ export interface ActionSheetOption {
 
 export interface ActionSheetResult {
   option: ActionSheetOption;
-}
-
-export interface ShareSheetOptions {
-  message?: string;
-  url?: string;
-  subject?: string;
 }
 
 //
@@ -1052,6 +1042,35 @@ export enum PhotosAlbumType {
    * Album is a user-created album
    */
   User = 'user'
+}
+
+//
+
+export interface SharePlugin extends Plugin {
+  /**
+   * Show a Share modal for sharing content in your app with other apps
+   */
+  share(options: ShareOptions): Promise<any>;
+}
+
+export interface ShareOptions {
+  /**
+   * Set a title for any message. This will be the subject
+   * if sharing to email
+   */
+  title?: string;
+  /**
+   * Set some text to share
+   */
+  text?: string;
+  /**
+   * Set a URL to share
+   */
+  url?: string;
+  /**
+   * Set a title for the share modal. Android only
+   */
+  dialogTitle?: string;
 }
 
 //
