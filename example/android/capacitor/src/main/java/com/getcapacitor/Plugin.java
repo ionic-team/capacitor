@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class Plugin {
    * Get the main {@link Activity} for the app
    * @return the Activity for the current app
    */
-  public Activity getActivity() { return this.bridge.getActivity(); }
+  public AppCompatActivity getActivity() { return (AppCompatActivity) this.bridge.getActivity(); }
 
   /**
    * Set the Bridge instance for this plugin

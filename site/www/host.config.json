@@ -10,28 +10,11 @@
           },
           {
             "name": "Link",
-            "value": "</build/app/xyfissap.js>;rel=preload;as=script"
-          },
-          {
-            "name": "Link",
-            "value": "</build/app/bc7eonai.js>;rel=preload;as=script"
-          }
-        ]
-      },
-      {
-        "include": "/docs/intro/",
-        "headers": [
-          {
-            "name": "Link",
-            "value": "</app.gzgsz0co.js>;rel=preload;as=script"
+            "value": "</build/app/3mk3rmrr.js>;rel=preload;as=script"
           },
           {
             "name": "Link",
             "value": "</build/app/xyfissap.js>;rel=preload;as=script"
-          },
-          {
-            "name": "Link",
-            "value": "</build/app/bc7eonai.js>;rel=preload;as=script"
           }
         ]
       },
