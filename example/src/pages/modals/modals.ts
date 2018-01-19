@@ -69,15 +69,6 @@ export class ModalsPage {
     console.log('You selected', promptRet);
   }
 
-  async showSharing() {
-    let shareRet = await Plugins.Modals.showSharing({
-      message: 'Really awesome thing you need to see right meow',
-      url: 'http://ionicframework.com/',
-      subject: 'See cool stuff'
-    });
-    console.log('Share return', shareRet);
-  }
-
   nativeAlert() {
     alert('This is a browser alert');
   }
