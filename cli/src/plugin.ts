@@ -1,10 +1,11 @@
 import { join, resolve } from 'path';
-import { logInfo, readJSON } from './common';
+import { logInfo, readJSON, readXML } from './common';
 
 
 export const enum PluginType {
   Code,
   Cocoapods,
+  Cordova,
 }
 export interface PluginManifest {
   ios: {
@@ -20,7 +21,8 @@ export interface Plugin {
   id: string;
   name: string;
   rootPath: string;
-  manifest: PluginManifest;
+  manifest?: PluginManifest;
+  xml?: any;
   ios?: {
     name: string;
     type: PluginType;
@@ -42,15 +44,27 @@ export async function resolvePlugin(name: string): Promise<Plugin | null> {
     const rootPath = resolve('node_modules', name);
     const packagePath = join(rootPath, 'package.json');
     const meta = await readJSON(packagePath);
-    if (!meta || !meta.capacitor) {
+    if (!meta) {
       return null;
     }
-    return {
-      id: name,
-      name: fixName(name),
-      rootPath: rootPath,
-      manifest: meta.capacitor
-    };
+    if (meta.capacitor) {
+      return {
+        id: name,
+        name: fixName(name),
+        rootPath: rootPath,
+        manifest: meta.capacitor
+      };
+    }
+    if (meta.cordova) {
+      const pluginXMLPath = join(rootPath, 'plugin.xml');
+      const xmlMeta = await readXML(pluginXMLPath);
+      return {
+        id: name,
+        name: fixName(name),
+        rootPath: rootPath,
+        xml: xmlMeta.plugin.platform
+      };
+    }
   } catch (e) { }
   return null;
 }
