@@ -1,7 +1,8 @@
 import { Component, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Plugins
+  Plugins,
+  CallbackID
 } from '@capacitor/core';
 
 /**
@@ -25,6 +26,8 @@ export class GeolocationPage {
     latitude: 0,
     longitude: 0
   };
+
+  watchId: CallbackID;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private zone: NgZone) {
   }
@@ -53,17 +56,23 @@ export class GeolocationPage {
 
   watchPosition() {
     try {
-      const watch = Plugins.Geolocation.watchPosition({}, (err, position) => {
+      this.watchId = Plugins.Geolocation.watchPosition({}, (err, position) => {
         console.log('Watch', position);
         this.zone.run(() => {
           this.watchCoords = position.coords;
         });
       })
 
-      console.log('Got watch', watch);
+      console.log('Got watch', this.watchId);
     } catch(e) {
       alert('WebView geo error');
       console.error(e);
+    }
+  }
+
+  clearWatch() {
+    if (this.watchId != null) {
+      Plugins.Geolocation.clearWatch({ id: this.watchId });
     }
   }
 }

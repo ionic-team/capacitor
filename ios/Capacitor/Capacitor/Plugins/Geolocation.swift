@@ -72,7 +72,7 @@ public class Geolocation : CAPPlugin {
   var locationHandler: CLLocationManagerDelegate?
   var watchLocationHandler: CLLocationManagerDelegate?
   
-  @objc public func getCurrentPosition(_ call: CAPPluginCall) {
+  @objc func getCurrentPosition(_ call: CAPPluginCall) {
     DispatchQueue.main.async {
       self.locationHandler = GetLocationHandler(call: call, options:[
         "watch": false
@@ -80,7 +80,7 @@ public class Geolocation : CAPPlugin {
     }
   }
   
-  @objc public func watchPosition(_ call: CAPPluginCall) {
+  @objc func watchPosition(_ call: CAPPluginCall) {
     call.save()
     
     DispatchQueue.main.async {
@@ -88,6 +88,18 @@ public class Geolocation : CAPPlugin {
         "watch": true
       ]);
     }
+  }
+  
+  @objc func clearWatch(_ call: CAPPluginCall) {
+    guard let callbackId = call.getString("id") else {
+      print("Must supply id")
+      return
+    }
+    let savedCall = bridge.getSavedCall(callbackId)
+    if savedCall != nil {
+      bridge.releaseCall(savedCall!)
+    }
+    call.success()
   }
   
 }

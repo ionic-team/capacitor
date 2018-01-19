@@ -96,9 +96,9 @@
 - (void)removeListener:(CAPPluginCall *)call {
   NSString *eventName = [call.options objectForKey:@"eventName"];
   NSString *callbackId = [call.options objectForKey:@"callbackId"];
-  CAPPluginCall *storedCall = [self.bridge getSavedCallWithCallbackId:callbackId];
+  CAPPluginCall *storedCall = [self.bridge getSavedCall:callbackId];
   [self removeEventListener:eventName listener:storedCall];
-  [self.bridge removeSavedCallWithCallbackId:callbackId];
+  [self.bridge releaseCallWithCallbackId:callbackId];
 }
 
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
