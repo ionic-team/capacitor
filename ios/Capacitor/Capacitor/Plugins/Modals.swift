@@ -118,6 +118,7 @@ public class Modals : CAPPlugin {
       
       controller.addAction(action)
     }
+    self.setCenteredPopover(controller)
     
     return controller
   }
