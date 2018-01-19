@@ -141,6 +141,14 @@ enum BridgeError: Error {
     }
   }
   
+  /**
+   * Reset the state of the bridge between navigations to avoid
+   * sending data back to the page from a previous page.
+   */
+  func reset() {
+    storedCalls = [String:CAPPluginCall]()
+  }
+  
   func registerPlugins() {
     var numClasses = UInt32(0);
     let classes = objc_copyClassList(&numClasses)
