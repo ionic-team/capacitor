@@ -752,7 +752,7 @@ export interface ModalsPlugin extends Plugin {
   /**
    * Show a Share modal for sharing content in your app with other apps
    */
-  showSharing(options: any): Promise<any>;
+  showSharing(options: ShareSheetOptions): Promise<any>;
 }
 
 export interface AlertOptions {
@@ -805,9 +805,22 @@ export interface ActionSheetResult {
 }
 
 export interface ShareSheetOptions {
+  /**
+   * Set a message to share
+   */
   message?: string;
+  /**
+   * Set a URL to share
+   */
   url?: string;
+  /**
+   * Set a subject for any message
+   */
   subject?: string;
+  /**
+   * Set a title for the share modal. Android only
+   */
+  title?: string;
 }
 
 //
