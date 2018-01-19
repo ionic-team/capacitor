@@ -25,6 +25,35 @@ public class JSObject extends JSONObject {
     super(obj, names);
   }
 
+  /**
+   * Convert a pathetic JSONObject into a JSObject
+   * @param obj
+   */
+  public static JSObject fromJSONObject(JSONObject obj) throws JSONException {
+    Iterator<String> keysIter = obj.keys();
+    List<String> keys = new ArrayList<>();
+    while (keysIter.hasNext()) {
+      keys.add(keysIter.next());
+    }
+
+    return new JSObject(obj, keys.toArray(new String[keys.size()]));
+  }
+
+  public String getString(String key) {
+    return getString(key, null);
+  }
+
+  public String getString(String key, String defaultValue) {
+    try {
+      String value = super.getString(key);
+      if (value != null) {
+        return value;
+      }
+    } catch (JSONException ex) {
+    }
+    return defaultValue;
+  }
+
   public JSObject getJSObject(String name) throws JSONException {
     Object obj = get(name);
     if (obj instanceof JSONObject) {
