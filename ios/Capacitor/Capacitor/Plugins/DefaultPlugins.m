@@ -50,6 +50,7 @@ CAP_PLUGIN(Filesystem,
 CAP_PLUGIN(Geolocation,
   CAP_PLUGIN_METHOD(getCurrentPosition, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(watchPosition, CAPPluginReturnCallback);
+  CAP_PLUGIN_METHOD(clearWatch, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(Haptics,

@@ -77,7 +77,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       fatalError("Unable to create local web server")
     }
     
-    webServer.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: "index.html", cacheAge: 3600, allowRangeRequests: true)
+    webServer.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
     
     /*
     webServer.addHandler(forMethod: "GET", path: "/", request: GCDWebServerRequest.self, processBlock: { (req) -> GCDWebServerResponse? in

@@ -197,11 +197,15 @@ enum BridgeError: Error {
     storedCalls[call.callbackId] = call
   }
   
-  @objc public func getSavedCall(callbackId: String) -> CAPPluginCall? {
+  @objc public func getSavedCall(_ callbackId: String) -> CAPPluginCall? {
     return storedCalls[callbackId]
   }
   
-  @objc public func removeSavedCall(callbackId: String) {
+  @objc public func releaseCall(_ call: CAPPluginCall) {
+    storedCalls.removeValue(forKey: call.callbackId)
+  }
+  
+  @objc public func releaseCall(callbackId: String) {
     storedCalls.removeValue(forKey: callbackId)
   }
   
@@ -349,7 +353,7 @@ enum BridgeError: Error {
 
     plugin.viewController = self.viewController
     plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView())
-    plugin.webView = self.getWebView() as! UIView
+    plugin.webView = self.getWebView() as UIView
 
     let selector = NSSelectorFromString("\(call.method):")
     if !plugin.responds(to: selector) {

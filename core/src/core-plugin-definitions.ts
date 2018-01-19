@@ -23,6 +23,7 @@ declare global {
 }
 
 export type ISODateString = string;
+export type CallbackID = string;
 
 /**
  * CancellableCallback is a simple wrapper that a method will
@@ -528,14 +529,12 @@ export interface GeolocationPlugin extends Plugin {
    * Set up a watch for location changes. Note that watching for location changes
    * can consume a large amount of energy. Be smart about listening only when you need to.
    */
-  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): number;
+  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): CallbackID;
 
   /**
    * Clear a given watch
    */
-  /*
   clearWatch(options: { id: string }): Promise<void>;
-  */
 }
 
 export interface GeolocationPosition {
