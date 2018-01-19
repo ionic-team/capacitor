@@ -43,11 +43,11 @@ public extension CAPPluginCall {
   }
 
   public func success() {
-    successHandler(CAPPluginCallResult())
+    successHandler(CAPPluginCallResult(), self)
   }
   
   public func success(_ data: PluginResultData = [:]) {
-    successHandler(CAPPluginCallResult(data))
+    successHandler(CAPPluginCallResult(data), self)
   }
   
   public func error(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {

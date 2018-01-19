@@ -83,7 +83,7 @@
   
   for(CAPPluginCall *call in listenersForEvent) {
     CAPPluginCallResult *result = [[CAPPluginCallResult alloc] init:data];
-    call.successHandler(result);
+    call.successHandler(result, call);
   }
 }
 
