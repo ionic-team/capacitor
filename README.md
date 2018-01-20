@@ -33,13 +33,8 @@ _Disclaimer_: These features and plans may change at any time, we are not making
  - Electron support
    - Support for building Electron apps and interacting with Node.js libraries
 
+### Contributing
 
-### Directory Structure
+Contributing to Capacitor may involve writing TypeScript, Swift/Obective-C, Java, or Markdown depending on the component you are working on. We are looking or help in any of those areas!
 
-* `cli`: Capacitor CLI
-* `core`: Capacitor Core JS library
-* `ios`: Capacitor iOS Runtime
-* `ios-template`: Default iOS App installed by the CLI
-* `android`: Capacitor Android Runtime
-* `android-template`: Default Android App installed by the CLI
-* `example`: iOS Example for development
+Please read the [Contributing](.github/CONTRIBUTING.md) guide for more information.
