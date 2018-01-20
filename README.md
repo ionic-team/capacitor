@@ -34,6 +34,7 @@ _Disclaimer_: These features and plans may change at any time, we are not making
    - Support for building Electron apps and interacting with Node.js libraries
  - __Enterprise Premium Plugins__
    - Paid add-on plugins with support for common Enterprise use cases, such as storage, authentication, security, and more
+   - Developer Support options with SLAs and priority patches
    - We are working with a few large teams/businesses as early development partners. Interested? Email [max@ionicframework.com](mailto:max@ionicframework.com)
 
 ## Contributing
