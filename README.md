@@ -22,7 +22,7 @@ _Disclaimer_: These dates are tentative. "It'll be ready when it's ready!"
  
 ## Roadmap
 
-_Disclaimer_: These features and plans may change at any time, we are not making any specific promises around new features
+_Disclaimer_: Our roadmap is subject to change at any time and has no specific date guarantees
 
 2018
 
