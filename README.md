@@ -32,6 +32,8 @@ _Disclaimer_: These features and plans may change at any time, we are not making
    - Support for interacting with Native UI shell elements, such as native menus, tabs, and navigation, with 1-1 fallbacks to the web for first-class Progressive Web App and Electron support.
  - Electron support
    - Support for building Electron apps and interacting with Node.js libraries
+ - Enterprise Premium Plugins
+   - Paid add-on plugins support for common Enterprise use cases, such as storage, authentication, security, and more
 
 ### Contributing
 
