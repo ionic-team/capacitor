@@ -12,7 +12,7 @@ Capacitor is still a work in progress and is not quite ready for use. Stay tuned
 
 ## Timeline
 
-_Disclaimer_: These dates are tentative. "It'll be ready when it's ready!"
+_Disclaimer: These dates are tentative. "It'll be ready when it's ready!"_
 
 *Short term milestones*
 
@@ -22,7 +22,7 @@ _Disclaimer_: These dates are tentative. "It'll be ready when it's ready!"
  
 ## Roadmap
 
-_Disclaimer_: Our roadmap is subject to change at any time and has no specific date guarantees
+_Disclaimer: Our roadmap is subject to change at any time and has no specific date guarantees_
 
 2018
 
