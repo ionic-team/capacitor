@@ -1,4 +1,4 @@
-*Capacitor is being actively developed and is not currently ready for public use. See our Roadmap for our upcoming plans and tentatively timeline*
+*Capacitor is being actively developed and is not currently ready for public use. See our [Timeline](#timeline) for our upcoming plans and tentatively timeline*
 
 # ⚡️ Capacitor: Cross-platform apps with JavaScript and the Web ⚡️
 
@@ -10,6 +10,8 @@ Capacitor is still a work in progress and is not quite ready for use. Stay tuned
 
 ### Timeline
 
+These dates are tentative. "It'll be ready when it's ready!"
+
 *Short term milestones*
 
  - November 2017 - Project Start
@@ -18,6 +20,10 @@ Capacitor is still a work in progress and is not quite ready for use. Stay tuned
  
 ### Roadmap
 
+2018
+
+ - Cordova Plugin Integration
+ - Native Shell Add-ons (native menu, tabs, navigation with web fallbacks)
 
 
 ### Directory Structure
