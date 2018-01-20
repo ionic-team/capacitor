@@ -8,7 +8,16 @@ Capacitor is being designed by the Ionic Framework team as an eventual alternati
 
 Capacitor is still a work in progress and is not quite ready for use. Stay tuned for a public release in early 2018.
 
+### Timeline
+
+*Short term milestones*
+
+ - November 2017 - Project Start
+ - January/Feb 2018 - Private alpha testing
+ - Feb 2018 - Public alpha
+ 
 ### Roadmap
+
 
 
 ### Directory Structure
