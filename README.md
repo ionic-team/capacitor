@@ -10,7 +10,7 @@ Capacitor also comes with a Plugin API for building native plugins. On iOS, firs
 
 Capacitor is still a work in progress and is not quite ready for use. Stay tuned for a public release in early 2018.
 
-### Timeline
+## Timeline
 
 _Disclaimer_: These dates are tentative. "It'll be ready when it's ready!"
 
@@ -20,22 +20,22 @@ _Disclaimer_: These dates are tentative. "It'll be ready when it's ready!"
  - January/Feb 2018 - Private alpha testing
  - Feb 2018 - Public alpha
  
-### Roadmap
+## Roadmap
 
 _Disclaimer_: These features and plans may change at any time, we are not making any specific promises around new features
 
 2018
 
- - Cordova Plugin Integration
+ - _Cordova Plugin Integration_
    - Preliminary support for using plugins from the existing Cordova community
- - Native Shell Add-ons
+ - _Native Shell Add-ons_
    - Support for interacting with Native UI shell elements, such as native menus, tabs, and navigation, with 1-1 fallbacks to the web for first-class Progressive Web App and Electron support.
- - Electron support
+ - _Electron support_
    - Support for building Electron apps and interacting with Node.js libraries
- - Enterprise Premium Plugins
+ - _Enterprise Premium Plugins_
    - Paid add-on plugins support for common Enterprise use cases, such as storage, authentication, security, and more
 
-### Contributing
+## Contributing
 
 Contributing to Capacitor may involve writing TypeScript, Swift/Obective-C, Java, or Markdown depending on the component you are working on. We are looking or help in any of those areas!
 
