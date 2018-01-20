@@ -1,3 +1,5 @@
+*Capacitor is being actively developed and is not currently ready for public use. See our Roadmap for our upcoming plans and tentatively timeline*
+
 # ⚡️ Capacitor: Cross-platform apps with JavaScript and the Web ⚡️
 
 Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom Native plugins that your app might need.  Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores, _and_ the mobile web.
@@ -5,6 +7,9 @@ Capacitor is a cross-platform API and code execution layer that makes it easy to
 Capacitor is being designed by the Ionic Framework team as an eventual alternative to Cordova, though backwards compatibility with Cordova plugins is a priority and is actively being worked on. Capacitor can be used without Ionic Framework, but soon it'll become a core part of the Ionic developer experience.
 
 Capacitor is still a work in progress and is not quite ready for use. Stay tuned for a public release in early 2018.
+
+### Roadmap
+
 
 ### Directory Structure
 
