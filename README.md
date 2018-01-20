@@ -10,7 +10,7 @@ Capacitor is still a work in progress and is not quite ready for use. Stay tuned
 
 ### Timeline
 
-These dates are tentative. "It'll be ready when it's ready!"
+_Disclaimer_: These dates are tentative. "It'll be ready when it's ready!"
 
 *Short term milestones*
 
@@ -19,6 +19,8 @@ These dates are tentative. "It'll be ready when it's ready!"
  - Feb 2018 - Public alpha
  
 ### Roadmap
+
+_Disclaimer_: These features and plans may change at any time, we are not making any specific promises around new features
 
 2018
 
