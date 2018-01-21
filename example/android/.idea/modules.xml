@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/capacitor-debug/android-capacitor-debug.iml" filepath="$PROJECT_DIR$/capacitor-debug/android-capacitor-debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/android.iml" filepath="$PROJECT_DIR$/.idea/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../android/capacitor/android-capacitor.iml" filepath="$PROJECT_DIR$/../../android/capacitor/android-capacitor.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/capacitor/capacitor.iml" filepath="$PROJECT_DIR$/capacitor/capacitor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/capacitor-debug/capacitor-debug.iml" filepath="$PROJECT_DIR$/capacitor-debug/capacitor-debug.iml" />
     </modules>
   </component>
 </project>

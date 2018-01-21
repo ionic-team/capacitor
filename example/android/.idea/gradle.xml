@@ -7,10 +7,9 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/../../android/capacitor" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/capacitor" />
-            <option value="$PROJECT_DIR$/capacitor-debug" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
