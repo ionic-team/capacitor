@@ -1,3 +1,6 @@
+# This script deploys the site repo by first building the site,
+# checking out gh-pages into a temporary directory, and then
+# pushing it to the remote gh-pages branch
 MONOREPO_DIR=$(pwd)
 LAST_COMMIT_MESSAGE=`git log -1 --pretty=format:"%s" -- .`
 
