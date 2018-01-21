@@ -15,7 +15,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   private var webView: WKWebView?
   private var webServer: GCDWebServer?
   
-  private var port = 3000
+  private var port: Int?
   
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
@@ -61,15 +61,22 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       exit(1)
     }
 
-    print("⚡️  Starting web server...")
-    startWebServer()
+    port = getRandomPort()
+    
+    print("⚡️  Starting web server on port \(port!)...")
+    startWebServer(port: port!)
 
     print("⚡️  Loading index.html...")
-    let request = URLRequest(url: URL(string: "http://localhost:8081/")!)
+    let request = URLRequest(url: URL(string: "http://localhost:\(port!)/")!)
     _ = webView?.load(request)
   }
+  
+  func getRandomPort() -> Int {
+    let range: [Int] = [3000, 9000]
+    return (range[0] + Int(arc4random_uniform(UInt32(range[1]-range[0])))) % range[1]
+  }
 
-  func startWebServer() {
+  func startWebServer(port: Int) {
     let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
     GCDWebServer.setLogLevel(3)
     self.webServer = GCDWebServer.init()
@@ -93,7 +100,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     do {
       let options = [
-        GCDWebServerOption_Port: 8081,
+        GCDWebServerOption_Port: port,
         GCDWebServerOption_BindToLocalhost: true,
         GCDWebServerOption_ServerName: "Capacitor"
       ] as [String : Any]
