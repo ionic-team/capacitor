@@ -5,7 +5,7 @@ import Foundation
  */
 @objc(Share)
 public class Share : CAPPlugin {
-  @objc func showSharing(_ call: CAPPluginCall) {
+  @objc func share(_ call: CAPPluginCall) {
     var items = [Any]()
     
     if let text = call.options["text"] as? String {
