@@ -73,6 +73,10 @@ enum BridgeError: Error {
     return true
   }
   
+  public static func handleAppBecameActive(_ application: UIApplication) {
+    // no-op for now
+  }
+  
   static func fatalError(_ error: Error, _ originalError: Error) {
     print("⚡️ ❌  Capacitor: FATAL ERROR")
     print("⚡️ ❌  Error was: ", originalError.localizedDescription)
