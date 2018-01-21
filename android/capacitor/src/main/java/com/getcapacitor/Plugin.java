@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class Plugin {
    * Get the main {@link Activity} for the app
    * @return the Activity for the current app
    */
-  public Activity getActivity() { return this.bridge.getActivity(); }
+  public AppCompatActivity getActivity() { return (AppCompatActivity) this.bridge.getActivity(); }
 
   /**
    * Set the Bridge instance for this plugin
@@ -263,7 +264,7 @@ public class Plugin {
   public void addListener(PluginCall call) {
     String eventName = call.getString("eventName");
     addEventListener(eventName, call);
-    call.retain();
+    call.save();
   }
 
   /**
@@ -275,7 +276,7 @@ public class Plugin {
   public void removeListener(PluginCall call) {
     String eventName = call.getString("eventName");
     String callbackId = call.getString("callbackId");
-    PluginCall savedCall = bridge.getRetainedCall(callbackId);
+    PluginCall savedCall = bridge.getSavedCall(callbackId);
     if (savedCall != null) {
       removeEventListener(eventName, call);
       bridge.releaseCall(call);

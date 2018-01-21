@@ -1,6 +1,8 @@
 package com.getcapacitor;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +23,12 @@ public class BridgeActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
 
     Splash.showOnLaunch(this);
+
+    getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+    setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+    setTheme(R.style.AppTheme_NoActionBar);
+    //setTheme(R.style.AppTheme_NoActionBar);
+    //getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF0000")));
 
     setContentView(R.layout.bridge_layout_main);
 

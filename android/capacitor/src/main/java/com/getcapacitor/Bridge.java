@@ -29,6 +29,7 @@ import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.Network;
 import com.getcapacitor.plugin.Photos;
+import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 
@@ -118,10 +119,10 @@ public class Bridge {
     // Register our core plugins
     this.registerCorePlugins();
 
-    Log.d(TAG, "Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
+    log("Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
     // Start the local web server
-    final WebViewLocalServer localServer = new WebViewLocalServer(context, getJSInjector());
+    final WebViewLocalServer localServer = new WebViewLocalServer(context, this, getJSInjector());
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
@@ -185,6 +186,11 @@ public class Bridge {
   }
   */
 
+  public void reset() {
+    savedCalls = new HashMap<>();
+  }
+
+
   /**
    * Initialize the WebView, setting required flags
    */
@@ -215,6 +221,7 @@ public class Bridge {
     this.registerPlugin(Modals.class);
     this.registerPlugin(Network.class);
     this.registerPlugin(Photos.class);
+    this.registerPlugin(Share.class);
     this.registerPlugin(SplashScreen.class);
     this.registerPlugin(StatusBar.class);
   }
@@ -313,8 +320,8 @@ public class Bridge {
           try {
             plugin.invoke(methodName, call);
 
-            if (call.isRetained()) {
-              retainCall(call);
+            if (call.isSaved()) {
+              saveCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
             Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
@@ -358,7 +365,7 @@ public class Bridge {
    * Retain a call between plugin invocations
    * @param call
    */
-  public void retainCall(PluginCall call) {
+  public void saveCall(PluginCall call) {
     this.savedCalls.put(call.getCallbackId(), call);
   }
 
@@ -368,7 +375,7 @@ public class Bridge {
    * @param callbackId the callbackId to use to lookup the call with
    * @return the stored call
    */
-  public PluginCall getRetainedCall(String callbackId) {
+  public PluginCall getSavedCall(String callbackId) {
     return this.savedCalls.get(callbackId);
   }
 

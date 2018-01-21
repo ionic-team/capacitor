@@ -58,11 +58,11 @@ import java.util.UUID;
  */
 public class WebViewLocalServer {
   private static String TAG = "WebViewAssetServer";
+
   /**
-   * The androidplatform.net domain currently belongs to Google and has been reserved for the
-   * purpose of Android applications intercepting navigations/requests directed there.
+   * capacitorapp.net is reserved by the Ionic team for use in local capacitor apps.
    */
-  public final static String knownUnusedAuthority = "ionicapps.com";
+  public final static String knownUnusedAuthority = "capacitorapp.net";
   private final static String httpScheme = "http";
   private final static String httpsScheme = "https";
 
@@ -70,6 +70,7 @@ public class WebViewLocalServer {
   private final AndroidProtocolHandler protocolHandler;
   private final String authority;
   private final JSInjector jsInjector;
+  private final Bridge bridge;
 
   /**
    * A handler that produces responses for paths on the virtual asset server.
@@ -169,10 +170,11 @@ public class WebViewLocalServer {
     }
   }
 
-  /*package*/ WebViewLocalServer(Context context, JSInjector jsInjector) {
+  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector) {
     uriMatcher = new UriMatcher(null);
     this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
     authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
+    this.bridge = bridge;
     this.jsInjector = jsInjector;
   }
 
@@ -235,6 +237,7 @@ public class WebViewLocalServer {
       // TODO: Conjure up a bit more subtlety than this
       if (ext.equals(".html")) {
         stream = jsInjector.getInjectedStream(responseStream);
+        bridge.reset();
       }
 
       return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
