@@ -83,7 +83,7 @@ public class Geolocation extends Plugin {
 
   @PluginMethod(returnType=PluginMethod.RETURN_CALLBACK)
   public void watchPosition(PluginCall call) {
-    call.retain();
+    call.save();
     if (!hasRequiredPermissions()) {
       permissionWaitCall = call;
       pluginRequestAllPermissions();

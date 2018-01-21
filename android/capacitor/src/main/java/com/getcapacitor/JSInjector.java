@@ -8,6 +8,11 @@ import java.io.SequenceInputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * JSInject is responsible for returning Capacitor's core
+ * runtime JS and any plugin JS back into HTML page responses
+ * to the client.
+ */
 class JSInjector {
   private String coreJS;
   private String pluginJS;
@@ -18,6 +23,12 @@ class JSInjector {
   }
 
 
+  /**
+   * Given an InputStream from the web server, prepend it with
+   * our JS stream
+   * @param responseStream
+   * @return
+   */
   public InputStream getInjectedStream(InputStream responseStream) {
     try {
       String js = "<script type=\"text/javascript\">" + coreJS + "\n\n" + pluginJS + "</script>";
