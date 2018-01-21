@@ -1,7 +1,8 @@
 {
 	"scripts": {
 		"deploy": "lerna publish",
-		"publish-pods": "bash scripts/pods.sh"
+		"publish-pods": "bash scripts/pods.sh",
+		"publish-starter": "bash scripts/starter.sh"
 	},
 	"devDependencies": {
 		"lerna": "^2.4.0"
