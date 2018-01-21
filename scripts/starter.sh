@@ -10,7 +10,7 @@ fi
 
 STARTER_REPO=$0
 cp -R starter/* STARTER_REPO
-cd STARTER_REPO
+cd $STARTER_REPO
 git add .
 git commit -m "$LAST_COMMIT_MESSAGE"
 git push origin master
