@@ -61,7 +61,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       exit(1)
     }
 
-    port = getRandomPort()
+    port = getPort()
     
     print("⚡️  Starting web server on port \(port!)...")
     startWebServer(port: port!)
@@ -71,9 +71,20 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     _ = webView?.load(request)
   }
   
+  func getPort() -> Int {
+    let defaults = UserDefaults.standard
+    var port = defaults.integer(forKey: "capacitorPort")
+    if port > 0 {
+      return port
+    }
+    port = getRandomPort()
+    defaults.set(port, forKey: "capacitorPort")
+    return port
+  }
+  
   func getRandomPort() -> Int {
     let range: [Int] = [3000, 9000]
-    return (range[0] + Int(arc4random_uniform(UInt32(range[1]-range[0])))) % range[1]
+    return range[0] + Int(arc4random_uniform(UInt32(range[1]-range[0])))
   }
 
   func startWebServer(port: Int) {
