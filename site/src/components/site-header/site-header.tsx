@@ -12,10 +12,10 @@ export class SiteHeader {
           <div class="logo"></div>
         </stencil-route-link>
         <div class="pull-right">
-          {/*
           <stencil-route-link urlMatch="/docs" url="/docs/">
             Docs
           </stencil-route-link>
+          {/*
           <a href="https://github.com/ionic-team/capacitor">
             GitHub
           </a>

@@ -26,6 +26,7 @@ export class SiteMenu {
     {
       title: 'Basics',
       items: [
+        /*
         {
           title: 'Creating Apps',
           url: '/docs/basics/creating-apps'
@@ -33,6 +34,11 @@ export class SiteMenu {
         {
           title: 'Project Structure',
           url: '/docs/basics/app-project-structure'
+        },
+        */
+        {
+          title: 'Opening Native Projects',
+          url: '/docs/basics/opening-native-projects'
         },
         {
           title: 'App Configuration',
