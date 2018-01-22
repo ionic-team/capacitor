@@ -4,7 +4,7 @@
       "lib": ["es2016"],
       "outDir": "dist",
       "module": "commonjs",
-      "target": "es2017",
+      "target": "es5",
       "moduleResolution": "node",
       "pretty": true,
       //"noUnusedLocals": true,
