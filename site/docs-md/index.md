@@ -7,3 +7,7 @@ Capacitor provides a consistent, web-focused set of APIs that enable an app to s
 while accessing rich native device features on platforms that support them. Adding native functionalty is easy with a simple Plugin API for Swift on iOS, Java on Android, and JavaScript for the web.
 
 Capacitor is a spiritual successor to Apache Cordova and Adobe PhoneGap, with inspiration from other popular cross-platform tools like React Native and Turbolinks, but focused entirely on enabling modern web apps to run on all major platforms with ease. Capacitor has backwards-compatible support for many existing Cordova plugins.
+
+Getting started with Capacitor is easy! Capacitor can be used as a drop in to any existing modern JavaScript project, or used to create a fresh Capacitor project from scratch.
+
+Follow the <stencil-route-link url="/docs/getting-started/">Getting Started</stencil-route-link> guide to get started building your app.

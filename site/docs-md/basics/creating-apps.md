@@ -1,10 +1,5 @@
 # Creating Apps
 
-To create a new Capacitor app, use the `start` command from the Capacitor CLI:
+To Create new apps, you'll either clone a starter project, use a framework CLI tool (like Ionic CLI), or drop-in Capacitor to an existing frontend project.
 
-```bash
-capacitor start
-```
-
-This will start an interactive app-creation wizard that will prompt for some initial settings
-to configure the app with.
+Follow the <stencil-route-link url="/docs/getting-started/">Getting Started</stencil-route-link> guide for instructions on each of these ways of using Capacitor.

@@ -1,8 +1,5 @@
 # App Project Structure
 
-Capacitor apps have a core `src` folder for web code, and folders for each platform the app will run on.
-
-![project structure](/assets/img/capacitor/project-structure.png)
 
 ## Configuration files
 
