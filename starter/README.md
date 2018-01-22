@@ -10,7 +10,7 @@ to the documentation (coming soon).
 Note: Capacitor requires Node 8.6.0 or later.
 
 ```bash
-git clone git@github.com:ionic-team/capacitor-starter.git my-app
+git clone git@github.com:ionic-team/capacitor-starter my-app
 cd my-app
 npm install
 npm run capacitor init
