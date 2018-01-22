@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { addCommand } from '../tasks/add';
-import { checkWebDir, log, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
+import { checkWebDir, log, logError, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { download } from '../util/http';
 import { createTarExtraction } from '../util/archive';
@@ -10,14 +10,29 @@ import { join, relative } from 'path';
 const chalk = require('chalk');
 
 export async function initCommand(config: Config) {
+  log('\n');
   log(`${chalk.bold(`⚡️  Initializing Capacitor project in ${chalk.blue(config.cli.rootDir)}`)} ⚡️`);
+  log('\n');
 
   try {
+    // Prompt for new or existing project
     const isNew = await promptNewProject(config);
+
+    // Initializing an existing app
+    if (!isNew) {
+      await printExistingProjectMessage(config);
+      return;
+    }
+
+    // Initialize a new project
+
+    // Get or create our config
     await getOrCreateConfig(config);
-    !isNew && await getOrCreateWebDir(config);
+    // Create the web directory
+    await createWebDir(config);
+    // Add our package.json
     await checkPackageJson(config);
-    isNew && await seedProject(config);
+    await seedProject(config);
     await installDeps(config);
     await addPlatforms(config);
     await printNextSteps(config);
@@ -38,6 +53,14 @@ async function promptNewProject(config: Config): Promise<boolean> {
   return answers.isNew === 'y';
 }
 
+async function printExistingProjectMessage(config: Config) {
+  log('\n\n');
+  log(`🎈   ${chalk.bold('Adding Capacitor to an existing project is easy:')}  🎈`);
+  log(`\nnpm install --save @capacitor/cli @capacitor/core`);
+  log(`\nnpm run capacitor add ios android`);
+  log(`\nLearn more: https://ionic-team.github.io/capacitor/docs/getting-started/\n`);
+}
+
 /**
  * Check for or create our main configuration file.
  * @param config
@@ -54,26 +77,6 @@ async function getOrCreateConfig(config: Config) {
 
   // Store our newly created or found external config as the default
   config.loadExternalConfig();
-}
-
-/**
- * Check for or create the main web assets directory (i.e. public/)
- * @param config
- */
-async function getOrCreateWebDir(config: Config) {
-  const inquirer = await import('inquirer');
-  const answers = await inquirer.prompt([{
-    type: 'input',
-    name: 'webDir',
-    message: 'What directory will your built web assets be in?',
-    default: 'public'
-  }]);
-
-  const webDir = answers.webDir;
-  if (!await existsAsync(config.app.webDir)) {
-    await createWebDir(config, webDir);
-  }
-  config.app.webDir = webDir;
 }
 
 /**
@@ -100,7 +103,7 @@ async function installDeps(config: Config) {
 
 async function seedProject(config: Config) {
   await runTask(`Downloading and installing seed project`, async () => {
-    const url = 'https://github.com/ionic-team/ionic-pwa-toolkit/archive/master.tar.gz';
+    const url = 'https://github.com/ionic-team/capacitor-starter/archive/master.tar.gz';
     const ws = await createTarExtraction({ cwd: config.app.rootDir, strip: 1 });
     await download(url, ws, {
       // progress: (loaded, total) => task.progress(loaded, total),
@@ -125,17 +128,21 @@ async function addPlatforms(config: Config) {
  * @param config
  * @param webDir
  */
-async function createWebDir(config: Config, webDir: string) {
+async function createWebDir(config: Config) {
+  const webDir = "public";
+  try {
+    await mkdirAsync(webDir);
 
-  await mkdirAsync(webDir);
-
-  await runTask(`Creating ${config.app.extConfigName}`, () => {
-    return writePrettyJSON(config.app.extConfigFilePath, {
-      webDir: webDir
+    await runTask(`Creating ${config.app.extConfigName}`, () => {
+      return writePrettyJSON(config.app.extConfigFilePath, {
+        webDir: webDir
+      });
     });
-  });
 
-  await copyAppTemplatePublicAssets(config, webDir);
+    await copyAppTemplatePublicAssets(config, webDir);
+  } catch(e) {
+    logError(`Unable to create web directory "${webDir}." You'll need to create it yourself or configure webDir in capacitor.config.json`);
+  }
 }
 
 async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
