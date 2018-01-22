@@ -62,7 +62,7 @@ export async function resolvePlugin(name: string): Promise<Plugin | null> {
         id: name,
         name: fixName(name),
         rootPath: rootPath,
-        xml: xmlMeta.plugin.platform
+        xml: xmlMeta.plugin
       };
     }
   } catch (e) { }
