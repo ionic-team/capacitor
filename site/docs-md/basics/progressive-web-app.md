@@ -22,7 +22,7 @@ Adding PWA support to any existing frontend project is easy. Just add an App Man
 
 ### App Manifest
 
-First, you'll need an [App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) file (`[manifest.json](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json)`)
+First, you'll need an [App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) file ([manifest.json](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json))
 that sits alongside your `index.html` file and provides metadata about your app, such as its name, theme colors, and icons. This information will be used
 when your app is installed on the home screen, for example.
 
