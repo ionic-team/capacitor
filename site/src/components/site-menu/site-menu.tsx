@@ -17,6 +17,10 @@ export class SiteMenu {
           title: 'Getting Started',
           url: '/docs/getting-started/'
         },
+        { 
+          title: 'Required Dependencies',
+          url: '/docs/getting-started/dependencies'
+        },
         {
           title: 'Migrating from PhoneGap/Cordova',
           url: '/docs/getting-started/migrating-from-phonegap-cordova'
