@@ -10,9 +10,11 @@ As a rule, the latest version of Capacitor always supports the last two iOS vers
 
 Android development requires the Android SDK installed with [Android Studio](https://developer.android.com/studio/index.html). Technically, Android Studio isn't required as you can build and run apps using only the Android CLI tools, but it will make building and running your app much easier so we strongly recommend using it.
 
-Android version support for Capacitor is more complex than iOS. Currently, we are targeting API level 21 or greater, meaning Android 5.0 (Lollipop) or above.
+Android version support for Capacitor is more complex than iOS. Currently, we are targeting API level 19 or greater, meaning Android 4.4 (KitKat) or above.
 
-As of January 2018, 5.0 or greater represents over 75% of the Android market, and this percentage is growing quickly. We anticipate that 4.4 and below will be under 10% usage by the time Capacitor reaches production-ready status.
+As of January 2018, 4.4 or greater represents over 88% of the Android market, and this percentage is growing quickly.
+
+Our goal with Android support will be to target at least 85% of the market.
 
 ## Progressive Web App Development
 
