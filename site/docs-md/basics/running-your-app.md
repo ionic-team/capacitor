@@ -7,7 +7,7 @@ Capacitor relies on each platform's IDE of choice to run and test your app.
 Currently, iOS requires using Xcode to run your app.
 
 ```bash
-capacitor open ios
+npm run capacitor open ios
 ```
 
 Once XCode launches, you can build/simulate/run your app through the standard XCode workflow.
@@ -15,27 +15,22 @@ Once XCode launches, you can build/simulate/run your app through the standard XC
 ## Android
 
 ```bash
-capacitor run android
+npm run capacitor open android
 ```
 
-This will run your Android app on an available device. Optionally, you can run `capacitor open android` and run your app from Android Studio
+Once Android Studio launches, you can build/emulate/run your app through the standard Android Studio workflow.
 
-## Web
+## Progressive Web App
+
+Capacitor has a tiny development web server for simple testing, but generally you'll run your web app
+using your framework of choice's server tools.
 
 ```bash
-capacitor run web
+npm run capacitor web
 ```
 
 This will open your web app in a local web server instance in the browser.
 
-If you have configured a separate tool, such as Ionic, this will launch that serve tool instead.
-
 ## Electron
 
 (Coming soon)
-
-```bash
-capacitor run electron
-```
-
-This will start your app in an Electron instance.
