@@ -1,4 +1,4 @@
-window.customElements.define('avocado-welcome', class extends HTMLElement {
+window.customElements.define('capacitor-welcome', class extends HTMLElement {
   constructor() {
     super();
     
@@ -48,41 +48,31 @@ window.customElements.define('avocado-welcome', class extends HTMLElement {
       }
     </style>
     <div>
-      <avocado-welcome-titlebar>
-        <h1>Avocado</h1>
-      </avocado-welcome-titlebar>
+      <capacitor-welcome-titlebar>
+        <h1>Capacitor</h1>
+      </capacitor-welcome-titlebar>
       <main>
-        <!--<h1>Welcome to Avocado</h1>-->
         <p>
-          Avocado makes it easy to build powerful apps for the app stores, mobile web (Progressive Web Apps), and desktop, all
+          Capacitor makes it easy to build powerful apps for the app stores, mobile web (Progressive Web Apps), and desktop, all
           with a single code base.
         </p>
         <h2>Getting Started</h2>
         <p>
-          You'll probably need a UI framework to build a full-featured app. We recommend
-          Ionic:
+          You'll probably need a UI framework to build a full-featured app. Might we recommend
+          <a href="http://ionicframework.com/">Ionic</a>?
         </p>
-        <h3>1. Using Ionic</h3>
-        <code><pre>
-          npm install -g ionic
-          ionic avocado init
-        </pre></code>
-        <a href="https://ionicframework.com/" target="_blank" class="button">Read more</a>
-        <h3>2. No UI or with another UI library</h3>
-        Continue to use the avocado CLI directly and/or follow your library's instructions.
-        <h2>Have fun!</h2>
         <p>
-          Visit <a href="http://ionic-team.github.io/avocado">ionic-team.github.io/avocado</a> for information
+          Visit <a href="http://ionic-team.github.io/capacitor">ionic-team.github.io/capacitor</a> for information
           on using native features, building plugins, and more.
         </p>
-        <a href="http://ionic-team.github.io/avocado" target="_blank" class="button">Read more</a>
+        <a href="http://ionic-team.github.io/capacitor" target="_blank" class="button">Read more</a>
       </main>
     </div>
     `
   }
 });
 
-window.customElements.define('avocado-welcome-titlebar', class extends HTMLElement {
+window.customElements.define('capacitor-welcome-titlebar', class extends HTMLElement {
   constructor() {
     super();
     const root = this.attachShadow({ mode: 'closed' });
