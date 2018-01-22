@@ -72,6 +72,7 @@ export class App {
                   'configuring-your-app': 'basics/configuring-your-app.html',
                   'app-project-structure': 'basics/app-project-structure.html',
                   'building-your-app': 'basics/building-your-app.html',
+                  'opening-native-projects': 'basics/opening-native-projects.html',
                   'running-your-app': 'basics/running-your-app.html'
                 };
                 return (

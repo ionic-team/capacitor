@@ -8,30 +8,30 @@ import '@stencil/router';
 
 
 import {
-  SiteMenu as SiteMenu
-} from './components/site-menu/site-menu';
+  App as CapacitorSite
+} from './components/capacitor-site/capacitor-site';
 
 declare global {
-  interface HTMLSiteMenuElement extends SiteMenu, HTMLElement {
+  interface HTMLCapacitorSiteElement extends CapacitorSite, HTMLElement {
   }
-  var HTMLSiteMenuElement: {
-    prototype: HTMLSiteMenuElement;
-    new (): HTMLSiteMenuElement;
+  var HTMLCapacitorSiteElement: {
+    prototype: HTMLCapacitorSiteElement;
+    new (): HTMLCapacitorSiteElement;
   };
   interface HTMLElementTagNameMap {
-    "site-menu": HTMLSiteMenuElement;
+    "capacitor-site": HTMLCapacitorSiteElement;
   }
   interface ElementTagNameMap {
-    "site-menu": HTMLSiteMenuElement;
+    "capacitor-site": HTMLCapacitorSiteElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "site-menu": JSXElements.SiteMenuAttributes;
+      "capacitor-site": JSXElements.CapacitorSiteAttributes;
     }
   }
   namespace JSXElements {
-    export interface SiteMenuAttributes extends HTMLAttributes {
-      
+    export interface CapacitorSiteAttributes extends HTMLAttributes {
+      isLandingPage?: boolean;
     }
   }
 }

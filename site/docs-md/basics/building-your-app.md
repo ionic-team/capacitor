@@ -7,7 +7,6 @@ Capacitor works on a three-step build process. First, your web code is built if 
 iOS relies on Xcode to do the final app compile
 
 ```bash
-npm run capacitor build
 npm run capacitor copy ios
 npm run capacitor open ios
 ```
@@ -16,10 +15,11 @@ Once XCode launches, you can build your finally app binary through the standard 
 
 ## Android
 
+Currently, Android relies on Android Studio (or, optionally, the android cli tools) to build the app:
+
 ```bash
-npm run capacitor build
 npm run capacitor copy android
-npm run capacitor compile android
+npm run capacitor open android
 ```
 
 ## Web
