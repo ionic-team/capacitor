@@ -1,0 +1,14 @@
+<h1 id="opening-native-projects">Opening Native Projects</h1>
+<p>Capacitor uses the native IDE for each platform in order to provide required configuration, and to build, test, and deploy apps.</p>
+<p>For iOS development, that means you must have Xcode 9 or above installed. For Android, <a href="https://developer.android.com/studio/index.html">Android Studio</a> 3 or above.</p>
+<p>Both IDEs can be opened manually or using the <code>npm run capacitor open</code> command:</p>
+<h2 id="opening-xcode">Opening Xcode</h2>
+<pre><code class="lang-bash">npm run capacitor open ios
+</code></pre>
+<p>Alternatively, you can open Xcode manually:</p>
+<pre><code class="lang-bash">open ios/App/App.xcworkspace
+</code></pre>
+<h2 id="opening-android-studio">Opening Android Studio</h2>
+<pre><code class="lang-bash">npm run capacitor open android
+</code></pre>
+<p>Alternatively, you can open Android Studio and import the <code>android/</code> directory as an Android Studio project.</p>
