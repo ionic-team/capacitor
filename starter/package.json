@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/ionic-team/capacitor-starter#readme",
   "dependencies": {
-    "@capacitor/cli": "0.0.10",
-    "@capacitor/core": "0.0.10"
+    "@capacitor/cli": "0.0.12",
+    "@capacitor/core": "0.0.11"
   }
 }
