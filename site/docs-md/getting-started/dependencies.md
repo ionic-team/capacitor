@@ -18,9 +18,9 @@ Our goal with Android support will be to target at least 85% of the market.
 
 ## Progressive Web App Development
 
-For building Progressive Web Apps, simply run and deploy your web assets folder to the web! Depending on your project set up, that folder may be `public/` or `www/`. 
+For building Progressive Web Apps, Capacitor currently requires a JavaScript project with module loading support. For example, using Webpack or Rollup.
 
-If you're using a framework like Ionic, consult the appropriate documentation for specific details relating to deploying PWAs in that framework.
+This is a limitation that will be resolved soon.
 
 ## Electron Development
 
