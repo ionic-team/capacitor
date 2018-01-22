@@ -1,8 +1,40 @@
 # Building your App
 
-Capacitor works on a three-step build process. First, your web code is built if necessary. Next, the built web code is copied to each platform, and finally the app is compiled using the platform-specific tooling.
+Capacitor works on a three-step build process: First, your web code is built (if necessary). Next, the built web code is copied to each platform. Finally, the app is compiled using the platform-specific tooling.
 
-## iOS
+## 1. Building web code
+
+Capacitor does not have any built-in feature to build web code. Instead, you will use your framework's build process of choice.
+
+Regardless of your build process, we recommend adding a `build` script to your `package.json` to enable the standard frontend
+build command:
+
+```json
+{
+  "scripts": {
+    "build": "command-to-build (ex: webpack, tsc, babel, etc.)"
+```
+
+
+```bash
+npm run build
+```
+
+This builds your Progressive Web App if you've configured <stencil-route-link url="/docs/basics/pwa">Progressive Web App</stencil-route-link> support already.
+
+## 2. Copying Web Code
+
+Once your web code is built, it needs to be copied to each native project:
+
+```bash
+npm run capacitor copy
+```
+
+This should be run each time you perform a build. Feel free to add this command to the end of your build script in `package.json`
+
+## 3. Building Native Project
+
+### iOS
 
 iOS relies on Xcode to do the final app compile
 
@@ -13,7 +45,7 @@ npm run capacitor open ios
 
 Once XCode launches, you can build your finally app binary through the standard XCode workflow.
 
-## Android
+### Android
 
 Currently, Android relies on Android Studio (or, optionally, the android cli tools) to build the app:
 
@@ -21,16 +53,3 @@ Currently, Android relies on Android Studio (or, optionally, the android cli too
 npm run capacitor copy android
 npm run capacitor open android
 ```
-
-## Web
-
-Capacitor doesn't require any kind of build step for your web code. If you're using the standard
-"build" script in npm, then just run
-
-```bash
-npm run build
-```
-
-And capacitor will use the built web code in your `webDir` in your `capacitor.config.json`.
-
-If your web app doesn't need a build step, then skip the build and you're good to go.

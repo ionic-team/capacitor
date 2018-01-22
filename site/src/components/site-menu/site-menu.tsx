@@ -49,6 +49,10 @@ export class SiteMenu {
           url: '/docs/basics/configuring-your-app'
         },
         {
+          title: 'Progressive Web App Configuration',
+          url: '/docs/basics/progressive-web-app'
+        },
+        {
           title: 'Building your App',
           url: '/docs/basics/building-your-app'
         },

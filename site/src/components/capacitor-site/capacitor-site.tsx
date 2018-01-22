@@ -68,12 +68,11 @@ export class App {
               url="/docs/basics/:pageName"
               routeRender={(props: { [key: string]: any }) => {
                 const map = {
-                  'creating-apps': 'basics/creating-apps.html',
                   'configuring-your-app': 'basics/configuring-your-app.html',
-                  'app-project-structure': 'basics/app-project-structure.html',
                   'building-your-app': 'basics/building-your-app.html',
                   'opening-native-projects': 'basics/opening-native-projects.html',
-                  'running-your-app': 'basics/running-your-app.html'
+                  'running-your-app': 'basics/running-your-app.html',
+                  'progressive-web-app': 'basics/progressive-web-app.html'
                 };
                 return (
                   <document-component pages={[map[props.match.params.pageName]]} />
