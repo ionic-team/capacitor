@@ -9,3 +9,6 @@ pod repo update
 
 # Finally, publish Capacitor
 pod trunk push Capacitor.podspec --allow-warnings
+
+# Again, needed to make sure we see the latest Capacitor locally
+pod repo update
