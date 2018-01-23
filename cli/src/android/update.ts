@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { runTask } from '../common';
+import { log, runTask } from '../common';
 
 
 export async function updateAndroid(config: Config, needsUpdate: boolean) {
@@ -7,6 +7,7 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
   needsUpdate;
 
   await runTask(`Updating android`, async () => {
+    log('\n');
     return Promise.resolve();
   });
 }

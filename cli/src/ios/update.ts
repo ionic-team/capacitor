@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { CheckFunction, log, runCommand, runTask } from '../common';
+import { CheckFunction, log, logInfo, runCommand, runTask } from '../common';
 import { writeFileAsync, readFileAsync, copySync, ensureDirSync, removeSync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
@@ -10,6 +10,25 @@ export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject
 
 
 export async function updateIOS(config: Config, needsUpdate: boolean) {
+
+  var chalk = require('chalk');
+  log(`\n${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
+          `local Pod repo is up to date and can find new Pod releases.\n`);
+
+  const inquirer = await import('inquirer');
+  const answers = await inquirer.prompt([{
+    type: 'input',
+    name: 'updateRepo',
+    message: `Run "pod repo update" to make sure you have the latest Pods available before updating (takes a few minutes)?`,
+    default: 'n'
+  }]);
+
+  if (answers.updateRepo) {
+    await runTask(`Running pod repo update to update CocoaPods`, () => {
+      return runCommand(`pod repo update`);
+    });
+  }
+
   const plugins = await runTask('Fetching plugins', async () => {
     const allPlugins = await getPlugins();
     const iosPlugins = await getIOSPlugins(allPlugins);
