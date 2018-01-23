@@ -9,46 +9,6 @@ the corresponding native or pure-web code to handle the operation.</p>
 </code></pre>
 <p>The plugin&#39;s structure will look similar to this:</p>
 <h2 id="javascript-implementation">JavaScript Implementation</h2>
-<p>The JavaScript Implementation using TypeScript will guide the rest of your development. We strongly recommend
-utilizing TypeScript types to make your plugin self-documenting, enable users to have rich typing information
-when developing, and to use as a reference for expected parameters and return values when developing
-the iOS, Android, and Web implementations of your plugin.</p>
-<p>Edit <code>src/plugin.ts</code> and add the following:</p>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { NativePlugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
-
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> Todo {
-  text: <span class="hljs-built_in">string</span>;
-  title: <span class="hljs-built_in">string</span>;
-}
-
-<span class="hljs-meta">@NativePlugin</span>({
-  name: <span class="hljs-string">'Todo'</span>,
-  id: <span class="hljs-string">'capacitor-plugin-todo'</span>
-})
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> TodoPlugin <span class="hljs-keyword">extends</span> Plugin {
-  <span class="hljs-keyword">async</span> create(todo: Todo) : <span class="hljs-built_in">Promise</span>&lt;Todo&gt; {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.nativePromise(<span class="hljs-string">'create'</span>, {
-      todo
-    });
-  }
-
-  <span class="hljs-keyword">async</span> update(todo: Todo) : <span class="hljs-built_in">Promise</span>&lt;Todo&gt; {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.nativePromise(<span class="hljs-string">'update'</span>, {
-      todo
-    });
-  }
-
-  <span class="hljs-keyword">async</span> <span class="hljs-keyword">delete</span>(todo: Todo) : <span class="hljs-built_in">Promise</span>&lt;Todo&gt; {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.nativePromise(<span class="hljs-string">'delete'</span>, {
-      todo
-    });
-  }
-
-  onChange(callback) {
-    <span class="hljs-keyword">this</span>.callback(<span class="hljs-string">'onChange'</span>, callback);
-  }
-}
-</code></pre>
 <h2 id="ios-plugin">iOS Plugin</h2>
 <pre><code class="lang-swift"><span class="hljs-keyword">import</span> Capacitor
 
@@ -72,12 +32,12 @@ the iOS, Android, and Web implementations of your plugin.</p>
 
     <span class="hljs-comment">// Construct a new PluginResult object with the</span>
     <span class="hljs-comment">// data we'll send back to the client</span>
-    <span class="hljs-keyword">let</span> result = <span class="hljs-type">PluginResult</span>(data: [
+    <span class="hljs-keyword">let</span> result = [
       <span class="hljs-string">"todoId"</span>: todo.id
-    ])
+    ]
 
     <span class="hljs-comment">// Send the result back to the client</span>
-    call.successCallback(result)
+    call.success(result)
   }
 
   <span class="hljs-meta">@objc</span> <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">update</span><span class="hljs-params">(<span class="hljs-number">_</span> call: PluginCall)</span></span> {
@@ -92,12 +52,13 @@ the iOS, Android, and Web implementations of your plugin.</p>
 <h2 id="android-plugin">Android Plugin</h2>
 <pre><code class="lang-java"><span class="hljs-keyword">package</span> com.example.plugin;
 
-<span class="hljs-keyword">import</span> com.avocadojs.NativePlugin;
-<span class="hljs-keyword">import</span> com.avocadojs.Plugin;
-<span class="hljs-keyword">import</span> com.avocadojs.PluginCall;
-<span class="hljs-keyword">import</span> com.avocadojs.PluginMethod;
+<span class="hljs-keyword">import</span> com.getcapacitor.NativePlugin;
+<span class="hljs-keyword">import</span> com.getcapacitor.Plugin;
+<span class="hljs-keyword">import</span> com.getcapacitor.PluginCall;
+<span class="hljs-keyword">import</span> com.getcapacitor.PluginMethod;
+<span class="hljs-keyword">import</span> com.getcapacitor.JSObject;
 
-<span class="hljs-meta">@NativePlugin</span>(id=<span class="hljs-string">"com.example.plugin.todo"</span>)
+<span class="hljs-meta">@NativePlugin</span>()
 <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Plugin</span> </span>{
 
   <span class="hljs-meta">@PluginMethod</span>()
@@ -108,7 +69,7 @@ the iOS, Android, and Web implementations of your plugin.</p>
     Todo t = <span class="hljs-keyword">new</span> Todo(title, text);
     <span class="hljs-comment">// save it somewhere</span>
 
-    JSONObject ret = <span class="hljs-keyword">new</span> JSONObject();
+    JSObject ret = <span class="hljs-keyword">new</span> JSONObject();
     <span class="hljs-keyword">try</span> {
       ret.put(<span class="hljs-string">"todoId"</span>, t.id);
       call.success(ret);
@@ -120,49 +81,3 @@ the iOS, Android, and Web implementations of your plugin.</p>
 }
 </code></pre>
 <h2 id="web-plugin">Web Plugin</h2>
-<p>Note: the text below is out of date.</p>
-<p>The Web Plugin implements Todo CRUD operations in a pure browser environment, such as a Progressive Web App, that may only have access to standard Web APIs.</p>
-<p>Generally, the Web API and the JavaScript API site side-by-side to enforce the importance of web support or sane web fallbacks for plugin operations.</p>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugin, App } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/plugin'</span>;
-
-<span class="hljs-keyword">import</span> { Todo } <span class="hljs-keyword">from</span> <span class="hljs-string">'./definitions'</span>;
-
-<span class="hljs-meta">@PluginWeb</span>({
-  name: <span class="hljs-string">'Todo'</span>,
-  id: <span class="hljs-string">'capacitor-plugin-todo'</span>
-})
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Todo {
-  open: <span class="hljs-built_in">any</span>;
-
-  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">capacitor: App</span>) {
-    <span class="hljs-keyword">var</span> indexedDB = <span class="hljs-built_in">window</span>.indexedDB;
-
-    <span class="hljs-comment">// Open (or create) the database</span>
-    <span class="hljs-keyword">var</span> open = indexedDB.open(<span class="hljs-string">"AvocadoTodos"</span>, <span class="hljs-number">1</span>);
-
-    <span class="hljs-comment">// Create the schema</span>
-    open.onupgradeneeded = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
-      <span class="hljs-keyword">var</span> db = open.result;
-      <span class="hljs-keyword">var</span> store = db.createObjectStore(<span class="hljs-string">"AvocadoTodoObjectStore"</span>, {keyPath: <span class="hljs-string">"id"</span>});
-    };
-
-    open.onsuccess = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {};
-
-    <span class="hljs-keyword">this</span>.open = open;
-  }
-
-  create(_ call: PluginCall) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
-      <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">this</span>.open.result;
-      <span class="hljs-keyword">var</span> tx = db.transaction(<span class="hljs-string">"AvocadoTodoObjectStore"</span>, <span class="hljs-string">"readwrite"</span>);
-      <span class="hljs-keyword">var</span> store = tx.objectStore(<span class="hljs-string">"AvocadoTodoObjectStore"</span>);
-      <span class="hljs-keyword">const</span> res = store.put(call.data);
-      <span class="hljs-keyword">return</span> res.complete.then(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
-        resolve(todo);
-      });
-    })
-  }
-  <span class="hljs-comment">// ...</span>
-}
-<span class="hljs-string">`</span>
-</code></pre>

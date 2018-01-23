@@ -4,10 +4,7 @@ Android apps manage permissions, device features, and other settings by modifyin
 
 This file references values from other files in `res/values/`, to make it easy to update them separately, including `styles.xml` and `strings.xml`.
 
-## Configuring `AndroidManifest.xml`
-
-The `AndroidManifest.xml` file contains a number of settings core to your app, including its name, 
-its theme, and any permissions you'll be requesting from the user.
+This article covers the basic modifications you'll need to make to your app. Read the [Android Manifest](https://developer.android.com/guide/topics/manifest/manifest-intro.html) docs to learn a whole lot more.
 
 ## Changing App ID
 
@@ -26,7 +23,7 @@ To change the name of your app, change the value for `app_name` in `strings.xml`
 <string name="app_name">MyApp</string>
 ```
 
-You might also want to set the Activity name to match the App, for apps that plan to only have one activity (the main web activity running your app):
+You probably also want to set the Activity name to match the App, for apps that plan to only have one activity (the main web activity running your app):
 
 ```xml
 <string name="title_activity_main">MyApp</string>
@@ -42,6 +39,7 @@ To change the URL, search for and modify this line in `strings.xml`. It's recomm
 <string name="custom_url_scheme">com.getcapacitor.myapp</string>
 ```
 
+In this example, the app will respond to URLs with the `com.getcapacitor.myapp://` scheme.
 
 ## Setting Permissions
 

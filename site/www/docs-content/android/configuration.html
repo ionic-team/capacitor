@@ -1,4 +1,43 @@
 <h1 id="configuring-android">Configuring Android</h1>
-<h2 id="configuring-androidmanifest-xml-">Configuring <code>AndroidManifest.xml</code></h2>
+<p>Android apps manage permissions, device features, and other settings by modifying <code>AndroidManifest.xml</code>.</p>
+<p>This file references values from other files in <code>res/values/</code>, to make it easy to update them separately, including <code>styles.xml</code> and <code>strings.xml</code>.</p>
+<p>This article covers the basic modifications you&#39;ll need to make to your app. Read the <a href="https://developer.android.com/guide/topics/manifest/manifest-intro.html">Android Manifest</a> docs to learn a whole lot more.</p>
+<h2 id="changing-app-id">Changing App ID</h2>
+<p>To modify the bundle/app id for your app, edit the top <code>&lt;manifest&gt;</code> line in <code>AndroidManifest.xml</code>:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">manifest</span> 
+<span class="hljs-attr">package</span>=<span class="hljs-string">"com.getcapacitor.myapp"</span>&gt;</span>
+</code></pre>
+<h2 id="changing-app-name">Changing App Name</h2>
+<p>To change the name of your app, change the value for <code>app_name</code> in <code>strings.xml</code>:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">string</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"app_name"</span>&gt;</span>MyApp<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
+</code></pre>
+<p>You might also want to set the Activity name to match the App, for apps that plan to only have one activity (the main web activity running your app):</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">string</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"title_activity_main"</span>&gt;</span>MyApp<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
+</code></pre>
+<h2 id="changing-custom-url">Changing Custom URL</h2>
+<p>Your app can respond to custom URLs on launch, making it possible to handle deeplinks and app interactions.</p>
+<p>To change the URL, search for and modify this line in <code>strings.xml</code>. It&#39;s recommended to set this to the bundle/app id.</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">string</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"custom_url_scheme"</span>&gt;</span>com.getcapacitor.myapp<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
+</code></pre>
 <h2 id="setting-permissions">Setting Permissions</h2>
-<p>In Android, permissions your app will need are defined in <code>AndroidManifest.xml</code>.</p>
+<p>In Android, permissions your app will need are defined in <code>AndroidManifest.xml</code> inside of the <code>&lt;manifest&gt;</code> tag, generally at the bottom
+of the file.</p>
+<p>For example, here&#39;s what adding Network permissions looks like:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">manifest</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">"http://schemas.android.com/apk/res/android"</span>
+<span class="hljs-attr">package</span>=<span class="hljs-string">"com.getcapacitor.myapp"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">activity</span>&gt;</span>
+      <span class="hljs-comment">&lt;!-- other stuff --&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">activity</span>&gt;</span>
+
+    <span class="hljs-comment">&lt;!-- More stuff --&gt;</span>
+
+    <span class="hljs-comment">&lt;!-- Your permissions --&gt;</span>
+
+    <span class="hljs-comment">&lt;!-- Network API --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.ACCESS_NETWORK_STATE"</span> /&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">manifest</span>&gt;</span>
+</code></pre>
+<p>Generally, the plugin you choose to use will ask you to set a permission. Add it in this file.</p>
+<h2 id="default-permissions">Default Permissions</h2>
+<p>By default, the entire initial permissions requested for the latest version of Capacitor with the standard plugins can
+be found in the android-template&#39;s <a href="https://github.com/ionic-team/capacitor/blob/master/android-template/app/src/main/AndroidManifest.xml">AndroidManifest.xml</a></p>
