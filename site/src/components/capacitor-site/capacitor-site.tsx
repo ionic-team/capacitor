@@ -55,7 +55,7 @@ export class App {
               url="/docs/getting-started/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 return (
-                  <document-component pages={[`getting-started/${props.match.params.pagename}.html`]} />
+                  <document-component pages={[`getting-started/${props.match.params.pagename || 'index'}.html`]} />
                 );
               }}
             />
@@ -106,7 +106,7 @@ export class App {
               url="/docs/plugins/:pageName"
               routeRender={(props: { [key: string]: any }) => {
                 return (
-                  <document-component pages={[`plugins/${props.match.params.pagename}.html`]} />
+                  <document-component pages={[`plugins/${props.match.params.pagename || 'index  '}.html`]} />
                 );
               }}
             />
