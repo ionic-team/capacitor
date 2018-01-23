@@ -55,7 +55,7 @@ export class App {
               url="/docs/getting-started/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 return (
-                  <document-component pages={[`getting-started/${props.match.params.pageName}.html`]} />
+                  <document-component pages={[`getting-started/${props.match.params.pagename}.html`]} />
                 );
               }}
             />
@@ -105,13 +105,8 @@ export class App {
             <stencil-route
               url="/docs/plugins/:pageName"
               routeRender={(props: { [key: string]: any }) => {
-                const map = {
-                  undefined: 'plugins/index.html',
-                  'creating-plugins': 'plugins/creating-plugins.html',
-                  'plugin-api-javascript': 'plugins/plugin-api-javascript.html'
-                };
                 return (
-                  <document-component pages={[map[props.match.params.pageName]]} />
+                  <document-component pages={[`plugins/${props.match.params.pagename}.html`]} />
                 );
               }}
             />
