@@ -99,6 +99,11 @@ export class SiteMenu {
           url: '/docs/plugins/'
         },
         {
+          title: 'Cordova Plugins',
+          url: '/docs/plugins/cordova'
+        },
+        /*
+        {
           title: 'Installing Plugins',
           url: '/docs/plugins/installng-plugins/'
         },
@@ -110,6 +115,7 @@ export class SiteMenu {
           title: 'Plugin JavaScript API',
           url: '/docs/plugins/plugin-api-javascript'
         }
+        */
       ]
     },
     {

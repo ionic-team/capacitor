@@ -11,7 +11,7 @@
 <p>To change the name of your app, change the value for <code>app_name</code> in <code>strings.xml</code>:</p>
 <pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">string</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"app_name"</span>&gt;</span>MyApp<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
 </code></pre>
-<p>You might also want to set the Activity name to match the App, for apps that plan to only have one activity (the main web activity running your app):</p>
+<p>You probably also want to set the Activity name to match the App, for apps that plan to only have one activity (the main web activity running your app):</p>
 <pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">string</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"title_activity_main"</span>&gt;</span>MyApp<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
 </code></pre>
 <h2 id="changing-custom-url">Changing Custom URL</h2>
@@ -19,6 +19,7 @@
 <p>To change the URL, search for and modify this line in <code>strings.xml</code>. It&#39;s recommended to set this to the bundle/app id.</p>
 <pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">string</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"custom_url_scheme"</span>&gt;</span>com.getcapacitor.myapp<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
 </code></pre>
+<p>In this example, the app will respond to URLs with the <code>com.getcapacitor.myapp://</code> scheme.</p>
 <h2 id="setting-permissions">Setting Permissions</h2>
 <p>In Android, permissions your app will need are defined in <code>AndroidManifest.xml</code> inside of the <code>&lt;manifest&gt;</code> tag, generally at the bottom
 of the file.</p>

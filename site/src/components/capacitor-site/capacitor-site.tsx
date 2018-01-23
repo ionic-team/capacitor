@@ -106,8 +106,9 @@ export class App {
             <stencil-route
               url="/docs/plugins/:pageName"
               routeRender={(props: { [key: string]: any }) => {
+                const page = props.match.params.pageName || 'index';
                 return (
-                  <document-component pages={[`plugins/${props.match.params.pagename || 'index  '}.html`]} />
+                  <document-component pages={[`plugins/${page}.html`]} />
                 );
               }}
             />
