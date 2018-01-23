@@ -95,7 +95,7 @@ async function installDeps(config: Config) {
    return runCommand(command);
   });
 
-  command = 'npm install --save @capacitor/core @capacitor/cli';
+  command = 'npm install --save @capacitor/core@latest @capacitor/cli@latest';
   await runTask(`Installing Capacitor dependencies (${chalk.blue(command)})`, () => {
    return runCommand(command);
   });
