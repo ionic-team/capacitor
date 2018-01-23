@@ -4,6 +4,7 @@
   "description": "A simple starter project for a Capacitor app",
   "main": "index.js",
   "scripts": {
+    "build": "echo \"Build complete\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "capacitor": "capacitor"
   },
