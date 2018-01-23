@@ -54,8 +54,9 @@ export class App {
             <stencil-route
               url="/docs/getting-started/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
+                const page = props.match.params.pageName || 'index';
                 return (
-                  <document-component pages={[`getting-started/${props.match.params.pagename || 'index'}.html`]} />
+                  <document-component pages={[`getting-started/${page}.html`]} />
                 );
               }}
             />
