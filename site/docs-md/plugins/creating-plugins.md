@@ -20,50 +20,6 @@ The plugin's structure will look similar to this:
 
 ## JavaScript Implementation
 
-The JavaScript Implementation using TypeScript will guide the rest of your development. We strongly recommend
-utilizing TypeScript types to make your plugin self-documenting, enable users to have rich typing information
-when developing, and to use as a reference for expected parameters and return values when developing
-the iOS, Android, and Web implementations of your plugin.
-
-Edit `src/plugin.ts` and add the following:
-
-```typescript
-import { NativePlugin } from '@avocadojs/core';
-
-export interface Todo {
-  text: string;
-  title: string;
-}
-
-@NativePlugin({
-  name: 'Todo',
-  id: 'capacitor-plugin-todo'
-})
-export class TodoPlugin extends Plugin {
-  async create(todo: Todo) : Promise<Todo> {
-    return await this.nativePromise('create', {
-      todo
-    });
-  }
-
-  async update(todo: Todo) : Promise<Todo> {
-    return await this.nativePromise('update', {
-      todo
-    });
-  }
-
-  async delete(todo: Todo) : Promise<Todo> {
-    return await this.nativePromise('delete', {
-      todo
-    });
-  }
-
-  onChange(callback) {
-    this.callback('onChange', callback);
-  }
-}
-```
-
 ## iOS Plugin
 
 ```swift
@@ -89,12 +45,12 @@ class Todo : Plugin {
 
     // Construct a new PluginResult object with the
     // data we'll send back to the client
-    let result = PluginResult(data: [
+    let result = [
       "todoId": todo.id
-    ])
+    ]
 
     // Send the result back to the client
-    call.successCallback(result)
+    call.success(result)
   }
 
   @objc public func update(_ call: PluginCall) {
@@ -112,12 +68,13 @@ class Todo : Plugin {
 ```java
 package com.example.plugin;
 
-import com.avocadojs.NativePlugin;
-import com.avocadojs.Plugin;
-import com.avocadojs.PluginCall;
-import com.avocadojs.PluginMethod;
+import com.getcapacitor.NativePlugin;
+import com.getcapacitor.Plugin;
+import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginMethod;
+import com.getcapacitor.JSObject;
 
-@NativePlugin(id="com.example.plugin.todo")
+@NativePlugin()
 public class Todo extends Plugin {
 
   @PluginMethod()
@@ -128,7 +85,7 @@ public class Todo extends Plugin {
     Todo t = new Todo(title, text);
     // save it somewhere
 
-    JSONObject ret = new JSONObject();
+    JSObject ret = new JSONObject();
     try {
       ret.put("todoId", t.id);
       call.success(ret);
@@ -141,53 +98,3 @@ public class Todo extends Plugin {
 ```
 
 ## Web Plugin
-
-Note: the text below is out of date.
-
-The Web Plugin implements Todo CRUD operations in a pure browser environment, such as a Progressive Web App, that may only have access to standard Web APIs.
-
-Generally, the Web API and the JavaScript API site side-by-side to enforce the importance of web support or sane web fallbacks for plugin operations.
-
-```typescript
-import { Plugin, App } from '@avocadojs/plugin';
-
-import { Todo } from './definitions';
-
-@PluginWeb({
-  name: 'Todo',
-  id: 'capacitor-plugin-todo'
-})
-export class Todo {
-  open: any;
-
-  constructor(capacitor: App) {
-    var indexedDB = window.indexedDB;
-
-    // Open (or create) the database
-    var open = indexedDB.open("AvocadoTodos", 1);
-
-    // Create the schema
-    open.onupgradeneeded = () => {
-      var db = open.result;
-      var store = db.createObjectStore("AvocadoTodoObjectStore", {keyPath: "id"});
-    };
-
-    open.onsuccess = () => {};
-
-    this.open = open;
-  }
-
-  create(_ call: PluginCall) {
-    return new Promise((resolve, reject) => {
-      var db = this.open.result;
-      var tx = db.transaction("AvocadoTodoObjectStore", "readwrite");
-      var store = tx.objectStore("AvocadoTodoObjectStore");
-      const res = store.put(call.data);
-      return res.complete.then(() => {
-        resolve(todo);
-      });
-    })
-  }
-  // ...
-}
-````
