@@ -54,12 +54,8 @@ export class App {
             <stencil-route
               url="/docs/getting-started/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
-                const map = {
-                  undefined: 'getting-started/index.html',
-                  'migrating-from-phonegap-cordova': 'getting-started/migrating-from-phonegap-cordova.html'
-                };
                 return (
-                  <document-component pages={[map[props.match.params.pageName]]} />
+                  <document-component pages={[`getting-started/${props.match.params.pageName}.html`]} />
                 );
               }}
             />

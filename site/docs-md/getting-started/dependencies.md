@@ -4,6 +4,8 @@
 
 For building iOS apps, Capacitor requires a Mac with Xcode 9 or above. Soon, you'll be able to use [Ionic Pro](http://ionicframework.com/pro) to build for iOS even if you're on Windows.
 
+Additionally, you'll need to install [CocoaPods](https://cocoapods.org/) and install the Xcode Command Line tools (either from Xcode, or running `xcode-select --install`).
+
 As a rule, the latest version of Capacitor always supports the last two iOS versions. For example, iOS 11 and iOS 10. For support for older versions of iOS, use an older version of Capacitor (if available).
 
 ## Android Development
