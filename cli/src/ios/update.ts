@@ -68,7 +68,7 @@ export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
       const name = p.ios!.name = p.name;
       p.ios!.type = PluginType.Cocoapods;
       const content = generatePodspec(name);
-      const path = join(p.ios!.path, name + '.podspec');
+      const path = join(p.rootPath, p.ios!.path, name + '.podspec');
       return writeFileAsync(path, content);
     }));
 }
@@ -118,7 +118,7 @@ export async function updatePodfile(config: Config, plugins: Plugin[], needsUpda
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
   const pods = plugins
-    .map((p) => `pod '${p.ios!.name}', :path => '${p.ios!.path}'`);
+    .map((p) => `pod '${p.ios!.name}', :path => '../../node_modules/${p.id}/${p.ios!.path}'`);
 
   return `
     # DO NOT MODIFY.

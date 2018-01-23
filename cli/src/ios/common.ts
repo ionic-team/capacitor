@@ -46,9 +46,9 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
     if (!plugin.manifest.ios.src) {
       throw 'capacitor.ios.src is missing';
     }
-    iosPath = join(plugin.rootPath, plugin.manifest.ios.src);
+    iosPath = plugin.manifest.ios.src;
   } else if (plugin.xml) {
-    iosPath = join(plugin.rootPath, "src/ios");
+    iosPath = "src/ios";
   } else {
     return null;
   }
@@ -58,7 +58,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
       type: PluginType.Code,
       path: iosPath
     };
-    const files = await readdirAsync(iosPath);
+    const files = await readdirAsync(join(plugin.rootPath, iosPath));
     const podSpec = files.find(file => file.endsWith('.podspec'));
     if (podSpec) {
       plugin.ios.type = PluginType.Cocoapods;
