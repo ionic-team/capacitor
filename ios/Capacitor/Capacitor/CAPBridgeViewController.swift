@@ -57,7 +57,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     if Bundle.main.path(forResource: "public/index", ofType: "html") == nil {
       print("⚡️  FATAL ERROR: Unable to load public/index.html")
       print("⚡️  This file is the root of your web app and must exist before")
-      print("⚡️  Capacitor can run. Ensure you've run capacitor sync at least once")
+      print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least once")
       exit(1)
     }
 
