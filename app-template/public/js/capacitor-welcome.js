@@ -2,7 +2,7 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
   constructor() {
     super();
 
-    window.Capacitor.Plugins.SplashScreen.hide();
+    Capacitor.Plugins.SplashScreen.hide();
     
     const root = this.attachShadow({ mode: 'closed' });
 
