@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { add, checkWebDir, logFatal, logInfo, runTask } from '../common';
-import { symlinkAsync } from '../util/fs';
-import { relative } from 'path';
+import { symlinkAsync, existsAsync } from '../util/fs';
+import { join, resolve, relative } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
 
 
@@ -29,6 +29,19 @@ export async function copy(config: Config, platformName: string) {
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
+
+  await copyNativeBridge(config, config.ios.webDir);
+}
+
+async function copyNativeBridge(config: Config, nativeAbsDir: string) {
+  const bridgePath = resolve('node_modules', '@capacitor/core', 'native-bridge.js');
+  if (!existsAsync(bridgePath)) {
+    logFatal(`Unable to find node_modules/@capacitor/core/native-bridge.js. Are you sure`,
+    '@capacitor/core is installed? This file is required for Capacitor to function');
+    return;
+  }
+
+  return await fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
