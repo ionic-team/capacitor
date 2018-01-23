@@ -90,12 +90,6 @@ export class Config implements CliConfig {
       this.initIosConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
-
-      // TODO: remove this code
-      // Once Capacitor library is released as a cocoapods package, this code is not needed
-      const capacitorRuntimePath = join(this.cli.assetsDir, 'Capacitor');
-      this.ios.capacitorRuntimePod = `pod 'Capacitor', :path => '${capacitorRuntimePath}'`;
-
     } catch (e) {
       logFatal(`Unable to load config`, e);
     }
