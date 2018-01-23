@@ -20,7 +20,6 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   await copyPluginsJS(config, plugins, "ios");
   await autoGeneratePods(plugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
-
 }
 
 export async function copyPluginsJS(config: Config, plugins: Plugin[], platform: string) {
@@ -90,7 +89,6 @@ export async function updatePodfile(config: Config, plugins: Plugin[], needsUpda
   await writeFileAsync(podfilePath, content, 'utf8');
 
   if (needsUpdate) {
-    log('Doing pod update');
     await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod update`);
   } else {
     log('Not doing pod update');
