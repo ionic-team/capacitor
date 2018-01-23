@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MyApp</string>
     <string name="title_activity_main">MyApp</string>
+    <string name="custom_url_scheme">com.getcapacitor.myapp</string>
 </resources>
