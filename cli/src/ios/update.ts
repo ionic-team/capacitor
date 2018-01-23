@@ -16,14 +16,15 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
           `local Pod repo is up to date and can find new Pod releases.\n`);
 
   const inquirer = await import('inquirer');
-  const answers = await inquirer.prompt([{
+
+  var answers = await inquirer.prompt([{
     type: 'input',
     name: 'updateRepo',
     message: `Run "pod repo update" to make sure you have the latest Pods available before updating (takes a few minutes)?`,
     default: 'n'
   }]);
 
-  if (answers.updateRepo) {
+  if (answers.updateRepo == 'y') {
     await runTask(`Running pod repo update to update CocoaPods`, () => {
       return runCommand(`pod repo update`);
     });
