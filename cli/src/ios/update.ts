@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { CheckFunction, runCommand, runTask } from '../common';
+import { CheckFunction, log, runCommand, runTask } from '../common';
 import { writeFileAsync, readFileAsync, copySync, ensureDirSync, removeSync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
@@ -90,9 +90,11 @@ export async function updatePodfile(config: Config, plugins: Plugin[], needsUpda
   await writeFileAsync(podfilePath, content, 'utf8');
 
   if (needsUpdate) {
+    log('Doing pod update');
     await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod update`);
   } else {
-    await runCommand(`cd ${config.ios.name} && cd ${projectName}  &&pod install`);
+    log('Not doing pod update');
+    await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod install`);
   }
 }
 
