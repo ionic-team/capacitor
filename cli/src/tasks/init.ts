@@ -11,7 +11,7 @@ const chalk = require('chalk');
 
 export async function initCommand(config: Config) {
   log('\n');
-  log(`${chalk.bold(`⚡️  Initializing Capacitor project in ${chalk.blue(config.cli.rootDir)}`)} ⚡️`);
+  log(`${chalk.bold(`⚡️  Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`)} ⚡️`);
   log('\n');
 
   try {
