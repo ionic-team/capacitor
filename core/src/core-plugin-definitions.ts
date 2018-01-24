@@ -108,7 +108,7 @@ export interface AppPlugin extends Plugin {
    * when an activity returns to an app that was closed, this call will return any data
    * the app was launched with, converted into the form of a result from a plugin call.
    */
-  addListener(eventName: 'appRestoredResult', listenerFunc: (err: any, data: any) => void): PluginListenerHandle;
+  addListener(eventName: 'appRestoredResult', listenerFunc: (err: any, data: AppRestoredResult) => void): PluginListenerHandle;
 }
 
 export interface AppState {
@@ -124,6 +124,22 @@ export interface AppUrlOpen {
 
 export interface AppLaunchUrl {
   url: string;
+}
+
+export interface AppRestoredResult {
+  /**
+   * The pluginId this result corresponds to. For example, `Camera`.
+   */
+  pluginId: string;
+  /**
+   * The methodName this result corresponds to. For example, `getPhoto`
+   */
+  methodName: string;
+  /**
+   * The result data passed from the plugin. This would be the result you'd
+   * expect from normally calling the plugin method. For example, `CameraPhoto`
+   */
+  data: any;
 }
 
 //
