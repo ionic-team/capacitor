@@ -1,0 +1,89 @@
+<div class="avc-code-plugin">
+      <div class="avc-code-plugin-name">CameraPlugin</div>
+    
+<div class="avc-code-method">
+                    <div class="avc-code-method-anchor-point" id="method-getPhoto-0"></div>
+                    <h3 class="avc-code-method-header">getPhoto</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">getPhoto</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="250">CameraOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="255">CameraPhoto</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
+    <div class="avc-code-method-comment">Prompt the user to pick a photo from an album, or take a new photo
+with the camera.</div>
+  </div>
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">options</span>
+                
+<avc-code-type type-id="250">CameraOptions</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="255">CameraPhoto</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+  </div>
+  
+</div>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">CameraOptions</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// Whether to allow the user to crop or make small edits (platform specific)</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">allowEditing</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">boolean</avc-code-type>
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The quality of image to return as JPEG, from 0-100</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">quality</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">number</avc-code-type>
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// How the data should be returned. Currently, only base64 is supported</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">resultType</span>
+              :
+              <avc-code-type type-id="undefined">undefined</avc-code-type>
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// Whether to save the photo to the gallery/photostream</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">saveToGallery</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type type-id="undefined">boolean</avc-code-type>
+            </div>
+          </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface">
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">CameraPhoto</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">base64_data</span>
+              :
+              <avc-code-type type-id="undefined">string</avc-code-type>
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">format</span>
+              :
+              <avc-code-type type-id="undefined">string</avc-code-type>
+            </div>
+          </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+</div>
