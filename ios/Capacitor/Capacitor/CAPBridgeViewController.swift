@@ -97,6 +97,9 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     
     webServer.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
     
+    webServer.addHandler(forMethod: "GET", pathRegex: "/var/mobile/Containers/Data/Application/", request: GCDWebServerFileRequest.self) { (request, block) in
+      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "http://localhost:\(port)", with: ""), byteRange: request.byteRange))
+    }
     /*
     webServer.addHandler(forMethod: "GET", path: "/", request: GCDWebServerRequest.self, processBlock: { (req) -> GCDWebServerResponse? in
       print("Also in here")
