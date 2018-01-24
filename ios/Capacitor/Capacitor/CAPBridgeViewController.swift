@@ -54,7 +54,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   func loadWebView() {
-    if Bundle.main.path(forResource: "public/index", ofType: "html") == nil {
+    guard let indexPath = Bundle.main.path(forResource: "public/index", ofType: "html") else {
       print("⚡️  FATAL ERROR: Unable to load public/index.html")
       print("⚡️  This file is the root of your web app and must exist before")
       print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least once")
@@ -67,7 +67,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     startWebServer(port: port!)
 
     print("⚡️  Loading index.html...")
-    let request = URLRequest(url: URL(string: "http://localhost:\(port!)/")!)
+    let request = URLRequest(url: URL(string: "http://localhost:\(port!)\(indexPath)")!)
     _ = webView?.load(request)
   }
   
@@ -88,14 +88,13 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
 
   func startWebServer(port: Int) {
-    let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
     GCDWebServer.setLogLevel(3)
     self.webServer = GCDWebServer.init()
     guard let webServer = self.webServer else {
       fatalError("Unable to create local web server")
     }
     
-    webServer.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
+    webServer.addGETHandler(forBasePath: "/", directoryPath: "/", indexFilename: nil, cacheAge: 0, allowRangeRequests: true)
     
     /*
     webServer.addHandler(forMethod: "GET", path: "/", request: GCDWebServerRequest.self, processBlock: { (req) -> GCDWebServerResponse? in
