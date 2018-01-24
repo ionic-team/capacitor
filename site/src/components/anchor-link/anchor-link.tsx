@@ -12,12 +12,14 @@ export class AnchorLink {
   @Prop() to: string;
 
   handleClick(e: MouseEvent) {
+    console.log('CLICK!', document.location.hash, this.to);
     if (document.location.hash !== '#' + this.to) {
       document.location.hash = this.to;
       let scrollTop = document.querySelector('html').scrollTop;
       // Update scroll top to clear the header bar
       window.scrollTo(0, scrollTop - 60);
     } else {
+      console.log('CLICK');
       document.location.hash = '';
       document.location.hash = this.to;
     }

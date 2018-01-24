@@ -17,7 +17,6 @@ export class AppMarked {
   }
 
   componentDidLoad() {
-    console.log('Listening', this.el);
     this.bindHeadings(this.el); 
   }
 
@@ -52,7 +51,7 @@ export class AppMarked {
       var link = document.createElement('anchor-link');
       link.className = 'hover-anchor';
       if (h.id) {
-        link.to = '#' + h.id;
+        link.to = h.id;
       }
       link.innerHTML = '#';
       h.insertBefore(link, h.firstChild);
