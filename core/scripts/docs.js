@@ -132,12 +132,16 @@ const generateDocumentationForPlugin = (plugin) => {
 
     if(interfaceDecl.children) {
       html.push(...interfaceDecl.children.map(c => {
+        const nameString = c.type.name ? c.type.name : c.type.value ? `'${c.type.value}'` : 'any';
+        if (!c.type.name && !c.type.value) {
+          console.log(c);
+        }
         return `
           <div class="avc-code-interface-param">
             <div class="avc-code-param-comment">${c.comment && `// ${c.comment.shortText}` || ''}</div>
             <div class="avc-code-line"><span class="avc-code-param-name">${c.name}</span>
               ${c.flags && c.flags.isOptional ? '<span class="avc-code-param-optional">?</span>' : ''}${kindString !== 'Enum' && `:
-              ${c.type && `<avc-code-type type-id="${c.type.id}">${c.type.name}</avc-code-type>` || ''}` || ''}
+              ${c.type.id && `<avc-code-type type-id="${c.type.id}">${nameString}</avc-code-type>` || `<avc-code-type>${nameString}</avc-code-type>`}` || ''}
             </div>
           </div>`;
       }));
@@ -346,7 +350,6 @@ const getReturnTypeName = (returnType) => {
       if(a.id) {
         html.push(`<avc-code-type type-id="${a.id}">${a.name}</avc-code-type>`);
       } else if(a.type == 'reflection') {
-        console.log('REFLECTION DECL TYPE', a);
         html.push(generateReflectionType(a));
       } else if(a.type == 'intrinsic') {
         html.push(generateIntrinsicType(a));
