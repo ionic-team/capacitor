@@ -116,9 +116,21 @@ export interface AppState {
 }
 
 export interface AppUrlOpen {
+  /**
+   * The URL the app was opened with
+   */
   url: string;
 
+  /**
+   * The source application opening the app (iOS only)
+   * https://developer.apple.com/documentation/uikit/uiapplicationopenurloptionskey/1623128-sourceapplication
+   */
   iosSourceApplication?: any;
+  /**
+   * Whether the app should open the passed document in-place
+   * or must copy it first. 
+   * https://developer.apple.com/documentation/uikit/uiapplicationopenurloptionskey/1623123-openinplace
+   */
   iosOpenInPlace?: boolean;
 }
 
