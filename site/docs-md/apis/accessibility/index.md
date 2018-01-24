@@ -8,7 +8,7 @@ labels through the connected screen reader.
 ## Example
 
 ```typescript
-import { Plugins } from '@avocadojs/core';
+import { Plugins } from '@capacitor/core';
 
 Plugins.Accessibility.addListener('accessibilityScreenReaderStateChange', (err, state) => {
   console.log(state.value);

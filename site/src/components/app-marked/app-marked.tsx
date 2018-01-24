@@ -25,6 +25,8 @@ export class AppMarked {
         const el = document.createElement('div');
         el.innerHTML = data;
 
+        this.bindHeadings(el);
+
         const headerEl = el.querySelector('h1');
         document.title = (headerEl && headerEl.textContent + ' - Capacitor') || 'Capacitor';
         
@@ -37,6 +39,19 @@ export class AppMarked {
         }
 
       });
+  }
+
+  bindHeadings(el: Element) {
+    const headings = Array.from(el.querySelectorAll('h1,h2,h3,h4,h5'));
+    headings.forEach(h => {
+      console.log('Heading', h);
+      var link = document.createElement('a');
+      if (h.id) {
+        link.href = '#' + h.id;
+      }
+      link.innerHTML = 'LINK';
+      h.insertBefore(link, h.firstChild);
+    });
   }
 
   render() {

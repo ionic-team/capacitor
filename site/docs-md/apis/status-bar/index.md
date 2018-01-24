@@ -8,7 +8,7 @@ The StatusBar API Provides methods for configuring the sytle of the Status Bar, 
 import {
   Plugins,
   StatusBarStyle,
-} from '@avocadojs/core';
+} from '@capacitor/core';
 
 export class StatusBarExample {
   isStatusBarLight = true

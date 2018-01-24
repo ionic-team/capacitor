@@ -8,30 +8,30 @@ import '@stencil/router';
 
 
 import {
-  SiteMenu as SiteMenu
-} from './components/site-menu/site-menu';
+  AppMarked as AppMarked
+} from './components/app-marked/app-marked';
 
 declare global {
-  interface HTMLSiteMenuElement extends SiteMenu, HTMLElement {
+  interface HTMLAppMarkedElement extends AppMarked, HTMLElement {
   }
-  var HTMLSiteMenuElement: {
-    prototype: HTMLSiteMenuElement;
-    new (): HTMLSiteMenuElement;
+  var HTMLAppMarkedElement: {
+    prototype: HTMLAppMarkedElement;
+    new (): HTMLAppMarkedElement;
   };
   interface HTMLElementTagNameMap {
-    "site-menu": HTMLSiteMenuElement;
+    "app-marked": HTMLAppMarkedElement;
   }
   interface ElementTagNameMap {
-    "site-menu": HTMLSiteMenuElement;
+    "app-marked": HTMLAppMarkedElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "site-menu": JSXElements.SiteMenuAttributes;
+      "app-marked": JSXElements.AppMarkedAttributes;
     }
   }
   namespace JSXElements {
-    export interface SiteMenuAttributes extends HTMLAttributes {
-      
+    export interface AppMarkedAttributes extends HTMLAttributes {
+      doc?: string;
     }
   }
 }

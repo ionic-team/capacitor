@@ -26,12 +26,15 @@ The first permission is for Camera access, and the storage permissions are for r
 
 Read about [Setting Android Permissions]('../android/permissions/) in the [Android Guide](../android) for more information on setting Android permissions.
 
+Additionally, because the Camera API launches a separate Activity to handle taking the photo, you should listen for `appRestoredResult` in the `App` plugin
+to handle any camera data that was sent in the case your app was terminated by the operating system while the Activity was running.
+
 <plugin-api index="true" name="camera"></plugin-api>
 
 ## Example
 
 ```typescript
-import { Plugins } from '@avocadojs/core';
+import { Plugins } from '@capacitor/core';
 
 async takePicture() {
   const image = await Plugins.Camera.getPhoto({
@@ -57,7 +60,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins
-} from '@avocadojs/core';
+} from '@capacitor/core';
 
 @IonicPage()
 @Component({
