@@ -2,14 +2,7 @@
 <p>The App API handles high level App state and events.</p>
 <p>For example, this API emits events when the app enters and leaves the foreground, handles
 deeplinks, opens other apps, and manages persisted plugin state.</p>
-<h2 id="a-note-about-apprestoredresult">A note about appRestoredResult</h2>
-<p>On Android, due to memory constraints on low-end devices, it&#39;s possible that, if your app launches a new activity, your app will be terminated by the operating system
-in order to reduce memory consumption. </p>
-<p>That means, for example, the <code>Camera</code> API, which launches a new Activity to take a photo, may not be able to return data back to your app.</p>
-<p>To avoid this, Capacitor stores all restored activity results on launch. You should listen for <code>appRestoredResult</code> in order to handle any 
-plugin call results that were delivered when your app was not running.</p>
-<p>Once you have that result (if any), you can update the UI to restore a logical experience for the user, such as navigating or selecting the proper tab.</p>
-<p>We recommend every app using plugins that rely on external Activities (for example, Camera) to have this event and processed handled.</p>
+<p><plugin-api index="true" name="app"></plugin-api></p>
 <h2 id="example">Example</h2>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, AppState } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
 
@@ -43,5 +36,13 @@ Plugins.App.addListener(<span class="hljs-string">'appRestoredResult'</span>, <s
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Restored state:'</span>, data);
 });
 </code></pre>
+<h2 id="android-use-apprestoredresult">Android: Use appRestoredResult</h2>
+<p>On Android, due to memory constraints on low-end devices, it&#39;s possible that, if your app launches a new activity, your app will be terminated by the operating system
+in order to reduce memory consumption. </p>
+<p>That means, for example, the <code>Camera</code> API, which launches a new Activity to take a photo, may not be able to return data back to your app.</p>
+<p>To avoid this, Capacitor stores all restored activity results on launch. You should listen for <code>appRestoredResult</code> in order to handle any 
+plugin call results that were delivered when your app was not running.</p>
+<p>Once you have that result (if any), you can update the UI to restore a logical experience for the user, such as navigating or selecting the proper tab.</p>
+<p>We recommend every app using plugins that rely on external Activities (for example, Camera) to have this event and processed handled.</p>
 <h2 id="api">API</h2>
 <p><plugin-api name="app"></plugin-api></p>
