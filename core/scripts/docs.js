@@ -273,6 +273,7 @@ const generateMethodSignature = (method, signature, signatureIndex) => {
   return parts.join('');
 }
 
+// Generate a type string for a param type
 const getParamTypeName = (param) => {
   const t = param.type.type;
   if(t == 'reference') {
@@ -294,64 +295,8 @@ const getParamTypeName = (param) => {
   return '<avc-code-type>any</avc-code-type>';
 };
 
+// Generate a type string for a reflection type
 const generateReflectionType = (t) => {
-  /*
-{
-  "type": "reflection",
-  "declaration": {
-    "id": 162,
-    "name": "__type",
-    "kind": 65536,
-    "kindString": "Type literal",
-    "flags": {},
-    "signatures": [
-      {
-        "id": 163,
-        "name": "__call",
-        "kind": 4096,
-        "kindString": "Call signature",
-        "flags": {},
-        "parameters": [
-          {
-            "id": 164,
-            "name": "err",
-            "kind": 32768,
-            "kindString": "Parameter",
-            "flags": {},
-            "type": {
-              "type": "intrinsic",
-              "name": "any"
-            }
-          },
-          {
-            "id": 165,
-            "name": "state",
-            "kind": 32768,
-            "kindString": "Parameter",
-            "flags": {},
-            "type": {
-              "type": "reference",
-              "name": "AppState",
-              "id": 188
-            }
-          }
-        ],
-        "type": {
-          "type": "intrinsic",
-          "name": "void"
-        }
-      }
-    ],
-    "sources": [
-      {
-        "fileName": "core-plugin-definitions.ts",
-        "line": 98,
-        "character": 56
-      }
-    ]
-  }
-}
-*/
   var d = t.declaration;
   var c = d.children;
   var s = d.signatures && d.signatures[0];
@@ -379,6 +324,7 @@ const generateReflectionType = (t) => {
   return 'any';
 }
 
+// Generate a type string for an intrinsic type (i.e. 'void')
 const generateIntrinsicType = (type) => {
   return type.name;
 }
