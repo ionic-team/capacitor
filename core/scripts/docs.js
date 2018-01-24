@@ -121,7 +121,7 @@ const generateDocumentationForPlugin = (plugin) => {
     }
 
     html.push(`
-    <div class="avc-code-interface">
+    <div class="avc-code-interface" id="type-${interface.id}">
       <div class="avc-code-line">
         <span class="avc-code-keyword">${kindString.toLowerCase()}</span> <span class="avc-code-type-name">${interface.name}</span>
         <span class="avc-code-brace">{</span>

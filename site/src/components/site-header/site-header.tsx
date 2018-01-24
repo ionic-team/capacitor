@@ -16,11 +16,9 @@ export class SiteHeader {
           <stencil-route-link urlMatch="/docs" url="/docs/">
             Docs
           </stencil-route-link>
-          {/*
           <a href="https://github.com/ionic-team/capacitor">
             GitHub
           </a>
-          */}
         </div>
       </div>
     );

@@ -3,7 +3,7 @@
 labels through the connected screen reader.</p>
 <p><plugin-api index="true" name="accessibility"></plugin-api></p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
 
 Plugins.Accessibility.addListener(<span class="hljs-string">'accessibilityScreenReaderStateChange'</span>, <span class="hljs-function">(<span class="hljs-params">err, state</span>) =&gt;</span> {
   <span class="hljs-built_in">console</span>.log(state.value);

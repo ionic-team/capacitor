@@ -4,7 +4,7 @@
 deeplinks, opens other apps, and manages persisted plugin state.</p>
 <p><plugin-api index="true" name="app"></plugin-api></p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, AppState } <span class="hljs-keyword">from</span> <span class="hljs-string">'@avocadojs/core'</span>;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, AppState } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
 
 Plugins.App.addListener(<span class="hljs-string">'appStateChanged'</span>, <span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">any</span>, state: AppState</span>) =&gt;</span> {
   <span class="hljs-comment">// state.isActive contains the active state</span>

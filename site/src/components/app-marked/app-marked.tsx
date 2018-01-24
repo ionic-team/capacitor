@@ -1,10 +1,11 @@
-import { Component, Prop, PropDidChange, State } from '@stencil/core';
+import { Component, Prop, Element, PropDidChange, State } from '@stencil/core';
 
 @Component({
   tag: 'app-marked',
   styleUrl: 'app-marked.scss'
 })
 export class AppMarked {
+  @Element() el: Element;
 
   @Prop() doc: string;
   @Prop({ context: 'isServer' }) private isServer: boolean;
@@ -13,6 +14,11 @@ export class AppMarked {
 
   componentWillLoad() {
     return this.fetchNewContent();
+  }
+
+  componentDidLoad() {
+    console.log('Listening', this.el);
+    this.bindHeadings(this.el); 
   }
 
   @PropDidChange('doc')
@@ -24,8 +30,6 @@ export class AppMarked {
 
         const el = document.createElement('div');
         el.innerHTML = data;
-
-        this.bindHeadings(el);
 
         const headerEl = el.querySelector('h1');
         document.title = (headerEl && headerEl.textContent + ' - Capacitor') || 'Capacitor';
@@ -44,12 +48,13 @@ export class AppMarked {
   bindHeadings(el: Element) {
     const headings = Array.from(el.querySelectorAll('h1,h2,h3,h4,h5'));
     headings.forEach(h => {
-      console.log('Heading', h);
-      var link = document.createElement('a');
+      h.classList.add('anchor-link-relative');
+      var link = document.createElement('anchor-link');
+      link.className = 'hover-anchor';
       if (h.id) {
-        link.href = '#' + h.id;
+        link.to = '#' + h.id;
       }
-      link.innerHTML = 'LINK';
+      link.innerHTML = '#';
       h.insertBefore(link, h.firstChild);
     });
   }
