@@ -25,6 +25,7 @@ const writeIndexHtmlOutput = (plugin, string) => {
     fs.writeFileSync(p, string, { encoding: 'utf8' });
   } catch(e) {
     console.error('Unable to write docs for plugin ', targetDirName);
+    console.error(e);
   }
 };
 
@@ -60,7 +61,12 @@ const generateIndexForPlugin = (plugin) => {
       return;
     }
     method.signatures.forEach((signature, index) => {
-      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}()</anchor-link></div>`);
+      var paramString = '';
+      const eventNameParam = signature.parameters[0];
+      if (eventNameParam && eventNameParam.type.type == 'stringLiteral') {
+        paramString = `'${eventNameParam.type.value}'`;
+      }
+      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}(${paramString})</anchor-link></div>`);
     })
   });
 
