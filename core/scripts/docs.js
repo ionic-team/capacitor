@@ -107,6 +107,8 @@ const generateDocumentationForPlugin = (plugin) => {
   methodChildren.forEach(method => methodBuild(method));
   listenerChildren.forEach(method => methodBuild(method));
 
+  html.push('<h3 id="interfaces">Interfaces</h3>');
+
   interfacesUsed.forEach(interface => {
     const interfaceDecl = typeLookup[interface.id];
     if(!interfaceDecl) {
@@ -237,8 +239,7 @@ const generateMethodParamDocs = (signature) => {
 const generateMethodSignature = (method, signature, signatureIndex) => {
   //console.log(util.inspect(signature, {showHidden: false, depth: 20}))
   const parts = [`<div class="avc-code-method">
-                    <div class="avc-code-method-anchor-point" id="method-${method.name}-${signatureIndex}"></div>
-                    <h3 class="avc-code-method-header">${method.name}</h3>
+                    <h3 class="avc-code-method-header" id="method-${method.name}-${signatureIndex}">${method.name}</h3>
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
 

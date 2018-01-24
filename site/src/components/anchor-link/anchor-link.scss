@@ -1,5 +1,6 @@
 anchor-link {
   cursor: pointer;
+  user-select: none;
   &.hover-anchor {
     position: absolute;
     margin-left: -25px;
