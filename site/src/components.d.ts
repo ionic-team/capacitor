@@ -8,30 +8,30 @@ import '@stencil/router';
 
 
 import {
-  AppMarked as AppMarked
-} from './components/app-marked/app-marked';
+  AnchorLink as AnchorLink
+} from './components/anchor-link/anchor-link';
 
 declare global {
-  interface HTMLAppMarkedElement extends AppMarked, HTMLElement {
+  interface HTMLAnchorLinkElement extends AnchorLink, HTMLElement {
   }
-  var HTMLAppMarkedElement: {
-    prototype: HTMLAppMarkedElement;
-    new (): HTMLAppMarkedElement;
+  var HTMLAnchorLinkElement: {
+    prototype: HTMLAnchorLinkElement;
+    new (): HTMLAnchorLinkElement;
   };
   interface HTMLElementTagNameMap {
-    "app-marked": HTMLAppMarkedElement;
+    "anchor-link": HTMLAnchorLinkElement;
   }
   interface ElementTagNameMap {
-    "app-marked": HTMLAppMarkedElement;
+    "anchor-link": HTMLAnchorLinkElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "app-marked": JSXElements.AppMarkedAttributes;
+      "anchor-link": JSXElements.AnchorLinkAttributes;
     }
   }
   namespace JSXElements {
-    export interface AppMarkedAttributes extends HTMLAttributes {
-      doc?: string;
+    export interface AnchorLinkAttributes extends HTMLAttributes {
+      to?: string;
     }
   }
 }

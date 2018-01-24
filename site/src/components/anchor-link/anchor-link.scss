@@ -1,0 +1,15 @@
+anchor-link {
+  cursor: pointer;
+  &.hover-anchor {
+    position: absolute;
+    margin-left: -25px;
+    color: #d6d1d1;
+  }
+}
+.anchor-link-relative {
+  position: relative;
+}
+
+.anchor-link-relative {
+  position: relative;
+}

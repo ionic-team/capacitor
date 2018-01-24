@@ -9,7 +9,7 @@ export class AvcCodeType {
 
   render() {
     if(this.typeId) {
-      return (<a href="#"><slot></slot></a>);
+      return (<anchor-link to={`type-${this.typeId}`}><slot></slot></anchor-link>);
     }
     return (
       <slot></slot>
