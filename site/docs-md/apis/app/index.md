@@ -10,7 +10,7 @@ deeplinks, opens other apps, and manages persisted plugin state.
 ## Example
 
 ```typescript
-import { Plugins, AppState } from '@avocadojs/core';
+import { Plugins, AppState } from '@capacitor/core';
 
 Plugins.App.addListener('appStateChanged', (err: any, state: AppState) => {
   // state.isActive contains the active state
@@ -48,15 +48,14 @@ Plugins.App.addListener('appRestoredResult', (err: any, data: any) => {
 On Android, due to memory constraints on low-end devices, it's possible that, if your app launches a new activity, your app will be terminated by the operating system
 in order to reduce memory consumption. 
 
-That means, for example, the `Camera` API, which launches a new Activity to take a photo, may not be able to return data back to your app.
+For example, that means the `Camera` API, which launches a new Activity to take a photo, may not be able to return data back to your app.
 
-To avoid this, Capacitor stores all restored activity results on launch. You should listen for `appRestoredResult` in order to handle any 
+To avoid this, Capacitor stores all restored activity results on launch. You should add a listener for `appRestoredResult` in order to handle any 
 plugin call results that were delivered when your app was not running.
 
 Once you have that result (if any), you can update the UI to restore a logical experience for the user, such as navigating or selecting the proper tab.
 
-We recommend every app using plugins that rely on external Activities (for example, Camera) to have this event and processed handled.
-
+We recommend every Android app using plugins that rely on external Activities (for example, Camera) to have this event and process handled.
 
 ## API
 

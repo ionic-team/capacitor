@@ -6,7 +6,7 @@ with Action Sheets and the native Share modal.
 ## Example
 
 ```javascript
-import { Plugins } from '@avocadojs/core';
+import { Plugins } from '@capacitor/core';
 
 async showAlert() {
   let alertRet = await Plugins.Modals.alert({

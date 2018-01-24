@@ -16,7 +16,7 @@ To use vibration, you must add this permission to your `AndroidManifest.xml` fil
 import {
   Plugins,
   HapticsImpactStyle
-} from '@avocadojs/core';
+} from '@capacitor/core';
 
 export class HapticsExample {
   hapticsImpact(style = HapticsImpactStyle.Heavy) {
