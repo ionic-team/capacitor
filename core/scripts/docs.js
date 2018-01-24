@@ -201,6 +201,9 @@ const generateMethodParamDocs = (signature) => {
     html.push(`<div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">${param.name}</span>
                 `)
+
+    html.push(getParamTypeName(param));
+    /*
     if (param.type.type == 'reference') {
       if(param.type.id) {
         html.push(`<avc-code-type type-id="${param.type.id}">${param.type.name}</avc-code-type>`);
@@ -212,6 +215,7 @@ const generateMethodParamDocs = (signature) => {
     } else {
       html.push(`<span class="avc-code-type-name">${param.type.name}</span>`);
     }
+    */
 
     if (param.comment) {
       html.push(`<div class="avc-code-method-param-comment">${param.comment.text}</div>`);
@@ -349,6 +353,7 @@ const generateReflectionType = (t) => {
 }
 */
   var d = t.declaration;
+  var c = d.children;
   var s = d.signatures && d.signatures[0];
 
   if (s && s.kind == 4096) { // Call signature
@@ -363,8 +368,19 @@ const generateReflectionType = (t) => {
     parts.push(') => ');
     parts.push(getReturnTypeName(s.type));
     return parts.join('');
+  } else if(c) {
+    var parts = ['{ '];
+    c.forEach(child => {
+      parts.push(`${child.name}: ${getParamTypeName(child)}`);
+    });
+    parts.push(' }');
+    return parts.join('');
   }
   return 'any';
+}
+
+const generateIntrinsicType = (type) => {
+  return type.name;
 }
 
 const getReturnTypeName = (returnType) => {
@@ -379,11 +395,20 @@ const getReturnTypeName = (returnType) => {
 
   if(r.typeArguments) {
     html.push('<span class="avc-code-typearg-bracket">&lt;</span>');
-    r.typeArguments.forEach(a => {
+    r.typeArguments.forEach((a, i) => {
       if(a.id) {
         html.push(`<avc-code-type type-id="${a.id}">${a.name}</avc-code-type>`);
+      } else if(a.type == 'reflection') {
+        console.log('REFLECTION DECL TYPE', a);
+        html.push(generateReflectionType(a));
+      } else if(a.type == 'intrinsic') {
+        html.push(generateIntrinsicType(a));
       } else {
         html.push(a.name);
+      }
+
+      if(i < r.typeArguments.length-1) {
+        html.push(', ');
       }
     })
     html.push('<span class="avc-code-typearg-bracket">&gt;</span>');
