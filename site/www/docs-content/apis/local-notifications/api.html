@@ -40,7 +40,7 @@
                     <div class="avc-code-method-anchor-point" id="method-registerActionTypes-0"></div>
                     <h3 class="avc-code-method-header">registerActionTypes</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">registerActionTypes</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type>any</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">registerActionTypes</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type>{ types: <avc-code-type>any</avc-code-type> }</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     
   </div>
@@ -48,7 +48,7 @@
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<span class="avc-code-type-name">undefined</span>
+<avc-code-type>{ types: <avc-code-type>any</avc-code-type> }</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -60,7 +60,7 @@
                     <div class="avc-code-method-anchor-point" id="method-schedule-0"></div>
                     <h3 class="avc-code-method-header">schedule</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">schedule</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type>any</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="514">LocalNotificationScheduleResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">schedule</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type>{ notifications: <avc-code-type>any</avc-code-type> }</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="514">LocalNotificationScheduleResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     
   </div>
@@ -68,7 +68,7 @@
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<span class="avc-code-type-name">undefined</span>
+<avc-code-type>{ notifications: <avc-code-type>any</avc-code-type> }</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -88,12 +88,12 @@
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">eventName</span>
                 
-<span class="avc-code-type-name">localNotificationReceived</span>
+<span class="avc-code-string">"localNotificationReceived"</span>
 </div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<span class="avc-code-type-name">undefined</span>
+<avc-code-type>(err: <avc-code-type>any</avc-code-type>, notification: <avc-code-type type-id="542">LocalNotification</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -113,12 +113,12 @@
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">eventName</span>
                 
-<span class="avc-code-type-name">localNotificationActionPerformed</span>
+<span class="avc-code-string">"localNotificationActionPerformed"</span>
 </div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<span class="avc-code-type-name">undefined</span>
+<avc-code-type>(err: <avc-code-type>any</avc-code-type>, notification: <avc-code-type type-id="562">LocalNotificationActionPerformed</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
