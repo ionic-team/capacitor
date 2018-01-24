@@ -8,6 +8,7 @@
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
+var util = require('util');
 
 var SITE_DIR = path.join(process.cwd(), '../site');
 
@@ -230,6 +231,7 @@ const generateMethodParamDocs = (signature) => {
 }
 
 const generateMethodSignature = (method, signature, signatureIndex) => {
+  //console.log(util.inspect(signature, {showHidden: false, depth: 20}))
   const parts = [`<div class="avc-code-method">
                     <div class="avc-code-method-anchor-point" id="method-${method.name}-${signatureIndex}"></div>
                     <h3 class="avc-code-method-header">${method.name}</h3>
@@ -280,11 +282,90 @@ const getParamTypeName = (param) => {
     return `<span class="avc-code-string">"${param.type.value}"</span>`;
   } else if(t == 'intrinsic') {
     return `<avc-code-type>${param.type.name}</avc-code-type>`;
+  } else if(t == 'reflection') {
+    return `<avc-code-type>${generateReflectionType(param.type)}</avc-code-type>`;
   } else if(param.type.name) {
     return `<avc-code-type>${param.type.name}</avc-code-type>`;
   }
   return '<avc-code-type>any</avc-code-type>';
 };
+
+const generateReflectionType = (t) => {
+  /*
+{
+  "type": "reflection",
+  "declaration": {
+    "id": 162,
+    "name": "__type",
+    "kind": 65536,
+    "kindString": "Type literal",
+    "flags": {},
+    "signatures": [
+      {
+        "id": 163,
+        "name": "__call",
+        "kind": 4096,
+        "kindString": "Call signature",
+        "flags": {},
+        "parameters": [
+          {
+            "id": 164,
+            "name": "err",
+            "kind": 32768,
+            "kindString": "Parameter",
+            "flags": {},
+            "type": {
+              "type": "intrinsic",
+              "name": "any"
+            }
+          },
+          {
+            "id": 165,
+            "name": "state",
+            "kind": 32768,
+            "kindString": "Parameter",
+            "flags": {},
+            "type": {
+              "type": "reference",
+              "name": "AppState",
+              "id": 188
+            }
+          }
+        ],
+        "type": {
+          "type": "intrinsic",
+          "name": "void"
+        }
+      }
+    ],
+    "sources": [
+      {
+        "fileName": "core-plugin-definitions.ts",
+        "line": 98,
+        "character": 56
+      }
+    ]
+  }
+}
+*/
+  var d = t.declaration;
+  var s = d.signatures && d.signatures[0];
+
+  if (s && s.kind == 4096) { // Call signature
+    var parts = ['('];
+
+    s.parameters.forEach((param, index) => {
+      parts.push(`${param.name}: ${getParamTypeName(param)}`);
+      if (index < s.parameters.length-1) {
+        parts.push(', ');
+      }
+    });
+    parts.push(') => ');
+    parts.push(getReturnTypeName(s.type));
+    return parts.join('');
+  }
+  return 'any';
+}
 
 const getReturnTypeName = (returnType) => {
   const r = returnType;
