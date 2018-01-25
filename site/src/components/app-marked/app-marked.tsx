@@ -55,7 +55,6 @@ export class AppMarked {
   }
 
   componentDidUpdate() {
-
     this.bindHeadings(this.el);
   }
 
