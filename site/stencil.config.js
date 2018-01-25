@@ -1,5 +1,5 @@
 exports.config = {
-  publicPath: 'build',
+  serviceWorker: false,
   bundles: [
     { components: ['capacitor-site', 'site-header', 'landing-page', 'lazy-iframe', 'site-menu'] },
     { components: ['app-marked', 'document-component', 'doc-snippet', 'plugin-api', 'avc-code-type', 'anchor-link'] },

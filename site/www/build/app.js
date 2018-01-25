@@ -1,2 +1,61 @@
 /*! Built with http://stenciljs.com */
-!function(e,t,s,i,a,o,r,c){function n(e){return"noModule"in e}function p(e){return e.customElements}function l(e){return e.fetch}function u(e){return e.CSS&&e.CSS.supports&&e.CSS.supports("color","var(--c)")}function d(e){return e.documentElement.hasAttribute("data-ssr")}!function(e,t,s,i,a,o,r,c,h,m){(e[s]=e[s]||{}).components=c,(m=c.filter(function(e){return e[2]}).map(function(e){return e[0]})).length&&((h=t.createElement("style")).innerHTML=m.join()+"{visibility:hidden}",h.setAttribute("data-visibility",""),t.head.insertBefore(h,t.head.firstChild)),s=s.toLowerCase(),(h=t.scripts[t.scripts.length-1])&&h.src&&(i=(m=h.src.split("/").slice(0,-1)).join("/")+(m.length?"/":"")+s+"/"),(h=t.createElement("script")).src=i+(n(h)&&p(e)&&l(e)&&u(e)?d(t)?o:a:r),h.setAttribute("data-path",i),h.setAttribute("data-namespace",s),t.head.appendChild(h)}(window,document,"App","build/app/","app.qnefnhxv.js","app.gzgsz0co.js","app.m3eyznes.js",[["anchor-link",["lshpsice","m372a6dd"],1,[["to",1,1,2]],0,1],["app-marked",["lshpsice","m372a6dd"],1,[["content",5],["doc",1,1,2],["el",7],["isServer",3,0,0,"isServer"]]],["avc-code-type",["lshpsice","m372a6dd"],0,[["typeId",1,1,2]],0,1],["blog-page",["wnmbbgpp","waljrbe1"],1],["capacitor-site",["ojvlu6aw","oqxa33jo"],1,[["isLandingPage",1,1,3]]],["demos-page",["nvgxmkhh","rhlmfaus"],1],["doc-snippet",["lshpsice","m372a6dd"]],["document-component",["lshpsice","m372a6dd"],1,[["pages",1,1,1]]],["landing-page",["ojvlu6aw","oqxa33jo"],1,[["el",7]]],["lazy-iframe",["ojvlu6aw","oqxa33jo"],1,[["el",7],["realSrc",5],["src",1,1,2],["title",1,1,2]]],["plugin-api",["lshpsice","m372a6dd"],1,[["content",5],["el",7],["index",1,1,3],["name",1,1,2]]],["pwas-page",["krirex7d","9vp1kpca"],1],["resources-page",["n56a2jzp","lljbbqab"],1],["site-bar",["sqi87dqk","4aobwvoq"],1],["site-header",["ojvlu6aw","oqxa33jo"],1],["site-menu",["ojvlu6aw","oqxa33jo"],1],["stencil-async-content",["xyfissap","pbssls7g"],0,[["content",5],["documentLocation",1,1,2]]],["stencil-route",["xyfissap","pbssls7g"],0,[["activeRouter",3,0,0,"activeRouter"],["component",1,1,2],["componentProps",1,1,1],["exact",1,1,3],["group",1,1,2],["location",3,0,0,"location"],["match",5],["routeRender",1,1,1],["url",1,1,1]]],["stencil-route-link",["xyfissap","pbssls7g"],0,[["activeClass",1,1,2],["activeRouter",3,0,0,"activeRouter"],["custom",1,1,3],["exact",1,1,3],["location",3,0,0,"location"],["match",5],["url",1,1,2],["urlMatch",1,1,1]],0,1],["stencil-route-title",["xyfissap","pbssls7g"],0,[["activeRouter",3,0,0,"activeRouter"],["title",1,1,2]]],["stencil-router",["xyfissap","pbssls7g"],0,[["activeRouter",3,0,0,"activeRouter"],["match",5],["root",1,1,2],["titleSuffix",1,1,2]],0,1],["stencil-router-redirect",["xyfissap","pbssls7g"],0,[["activeRouter",3,0,0,"activeRouter"],["url",1,1,2]]],["test-app",["cv7cbtbi","orsdhirh"]],["test-demo-four",["cv7cbtbi","orsdhirh"],0,[["history",1,1,1],["match",1,1,1],["pages",1,1,1]]],["test-demo-six",["cv7cbtbi","orsdhirh"],0,[["history",1,1,1],["match",1,1,1],["pages",1,1,1]]],["test-demo-three",["cv7cbtbi","orsdhirh"],0,[["history",1,1,1],["match",1,1,1],["pages",1,1,1]]]])}();
+(function(win, doc, appNamespace, urlNamespace, publicPath, appCore, appCoreSsr, appCorePolyfilled, hydratedCssClass, components) {
+
+function init(win, doc, appNamespace, urlNamespace, publicPath, appCore, appCorePolyfilled, hydratedCssClass, components, x, y) {
+    // create global namespace if it doesn't already exist
+    (win[appNamespace] = win[appNamespace] || {}).components = components;
+    y = components.filter(function (c) { return c[2]; }).map(function (c) { return c[0]; });
+    if (y.length) {
+        // auto hide components until they been fully hydrated
+        // reusing the "x" and "i" variables from the args for funzies
+        x = doc.createElement('style');
+        x.innerHTML = y.join() + '{visibility:hidden}.' + hydratedCssClass + '{visibility:inherit}';
+        x.setAttribute('data-visibility', '');
+        doc.head.insertBefore(x, doc.head.firstChild);
+    }
+    // get this current script
+    // script tag cannot use "async" attribute
+    x = doc.scripts[doc.scripts.length - 1];
+    if (x && x.src) {
+        y = x.src.split('/').slice(0, -1);
+        publicPath = (y.join('/')) + (y.length ? '/' : '') + urlNamespace + '/';
+    }
+    // request the core this browser needs
+    // test for native support of custom elements and fetch
+    // if either of those are not supported, then use the core w/ polyfills
+    // also check if the page was build with ssr or not
+    x = doc.createElement('script');
+    x.src = publicPath + ((supportsCustomElements(win) && supportsEsModules(x) && supportsFetch(win) && supportsCssVariables(win)) ? appCore : appCorePolyfilled);
+    x.setAttribute('data-path', publicPath);
+    x.setAttribute('data-namespace', urlNamespace);
+    doc.head.appendChild(x);
+}
+function supportsEsModules(scriptElm) {
+    // detect static ES module support
+    const staticModule = 'noModule' in scriptElm;
+    if (!staticModule) {
+        return false;
+    }
+    // detect dynamic import support
+    try {
+        new Function('import("")');
+        return true;
+    }
+    catch (err) {
+        return false;
+    }
+}
+function supportsCustomElements(win) {
+    return win.customElements;
+}
+function supportsFetch(win) {
+    return win.fetch;
+}
+function supportsCssVariables(win) {
+    return (win.CSS && win.CSS.supports && win.CSS.supports('color', 'var(--c)'));
+}
+
+
+init(win, doc, appNamespace, urlNamespace, publicPath, appCore, appCoreSsr, appCorePolyfilled, hydratedCssClass, components);
+
+})(window, document, "App","app","/build/app/","app.core.js","es5-build-disabled.js","hydrated",[["anchor-link","anchor-link",1,[["to",1,1,2]]],["app-marked","anchor-link",1,[["content",5],["doc",1,1,2],["el",7],["isServer",3,0,0,"isServer"]]],["avc-code-type","anchor-link",0,[["typeId",1,1,2]]],["blog-page","blog-page",1],["capacitor-site","capacitor-site",1,[["isLandingPage",1,1,3]]],["demos-page","demos-page",1],["doc-snippet","anchor-link"],["document-component","anchor-link",1,[["pages",1]]],["landing-page","capacitor-site",1,[["el",7]]],["lazy-iframe","capacitor-site",1,[["el",7],["realSrc",5],["src",1,1,2],["title",1,1,2]]],["plugin-api","anchor-link",1,[["content",5],["el",7],["index",1,1,3],["name",1,1,2]]],["pwas-page","pwas-page",1],["resources-page","resources-page",1],["site-bar","site-bar",1],["site-header","capacitor-site",1],["site-menu","capacitor-site",1],["stencil-async-content","stencil-async-content",0,[["content",5],["doc"],["documentLocation",1,1,2]]],["stencil-route","stencil-async-content",0,[["activeRouter",3,0,0,"activeRouter"],["component",1,1,2],["componentProps",1,1,1],["exact",1,1,3],["group",1,1,2],["location",3,0,0,"location"],["match",5],["routeRender",1,1,1],["url",1,1,1]]],["stencil-route-link","stencil-async-content",0,[["activeClass",1,1,2],["activeRouter",3,0,0,"activeRouter"],["custom",1,1,3],["exact",1,1,3],["location",3,0,0,"location"],["match",5],["url",1,1,2],["urlMatch",1,1,1]]],["stencil-route-title","stencil-async-content",0,[["activeRouter",3,0,0,"activeRouter"],["title",1,1,2]]],["stencil-router","stencil-async-content",0,[["activeRouter",3,0,0,"activeRouter"],["match",5],["root",1,1,2],["titleSuffix",1,1,2]]],["stencil-router-redirect","stencil-async-content",0,[["activeRouter",3,0,0,"activeRouter"],["url",1,1,2]]],["test-app","test-app"],["test-demo-four","test-app",0,[["history",1,1,1],["match",1,1,1],["pages",1,1,1]]],["test-demo-six","test-app",0,[["history",1,1,1],["match",1,1,1],["pages",1,1,1]]],["test-demo-three","test-app",0,[["history",1,1,1],["match",1,1,1],["pages",1,1,1]]]]);
