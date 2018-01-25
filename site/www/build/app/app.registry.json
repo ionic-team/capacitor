@@ -3,86 +3,86 @@
   "fsNamespace": "app",
   "loader": "../app.js",
   "global": "app.global.js",
-  "core": "app.core.js",
-  "corePolyfilled": "es5-build-disabled.js",
+  "core": "app.snnh5lmg.js",
+  "corePolyfilled": "app.eodewjpf.js",
   "components": {
     "anchor-link": {
-      "$": "anchor-link"
+      "$": "axpwt7lf"
     },
     "app-marked": {
-      "$": "anchor-link"
+      "$": "axpwt7lf"
     },
     "avc-code-type": {
-      "$": "anchor-link"
+      "$": "axpwt7lf"
     },
     "blog-page": {
-      "$": "blog-page"
+      "$": "g6jypwo3"
     },
     "capacitor-site": {
-      "$": "capacitor-site"
+      "$": "qxeuk68j"
     },
     "demos-page": {
-      "$": "demos-page"
+      "$": "uuzljhyi"
     },
     "doc-snippet": {
-      "$": "anchor-link"
+      "$": "axpwt7lf"
     },
     "document-component": {
-      "$": "anchor-link"
+      "$": "axpwt7lf"
     },
     "landing-page": {
-      "$": "capacitor-site"
+      "$": "qxeuk68j"
     },
     "lazy-iframe": {
-      "$": "capacitor-site"
+      "$": "qxeuk68j"
     },
     "plugin-api": {
-      "$": "anchor-link"
+      "$": "axpwt7lf"
     },
     "pwas-page": {
-      "$": "pwas-page"
+      "$": "ch1uwpb0"
     },
     "resources-page": {
-      "$": "resources-page"
+      "$": "47lqbmx8"
     },
     "site-bar": {
-      "$": "site-bar"
+      "$": "eaplf2fr"
     },
     "site-header": {
-      "$": "capacitor-site"
+      "$": "qxeuk68j"
     },
     "site-menu": {
-      "$": "capacitor-site"
+      "$": "qxeuk68j"
     },
     "stencil-async-content": {
-      "$": "stencil-async-content"
+      "$": "cudtowxa"
     },
     "stencil-route": {
-      "$": "stencil-async-content"
+      "$": "cudtowxa"
     },
     "stencil-route-link": {
-      "$": "stencil-async-content"
+      "$": "cudtowxa"
     },
     "stencil-route-title": {
-      "$": "stencil-async-content"
+      "$": "cudtowxa"
     },
     "stencil-router": {
-      "$": "stencil-async-content"
+      "$": "cudtowxa"
     },
     "stencil-router-redirect": {
-      "$": "stencil-async-content"
+      "$": "cudtowxa"
     },
     "test-app": {
-      "$": "test-app"
+      "$": "icgafrmb"
     },
     "test-demo-four": {
-      "$": "test-app"
+      "$": "icgafrmb"
     },
     "test-demo-six": {
-      "$": "test-app"
+      "$": "icgafrmb"
     },
     "test-demo-three": {
-      "$": "test-app"
+      "$": "icgafrmb"
     }
   }
 }
