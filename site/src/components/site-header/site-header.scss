@@ -1,7 +1,6 @@
 .landing-page {
   .logo {
-    background-image: url(/capacitor/assets/img/logo-dark.png);
-    //background-image: url(assets/img/capacitor-logo.png);
+    background-image: url(/assets/img/logo-dark.png);
     color: #fff;
     font-family: 'Roboto Mono',-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
     letter-spacing: 1px;
@@ -22,7 +21,7 @@ site-header {
   z-index: 99;
 
   .logo {
-    background: url(/capacitor/assets/img/logo-light.png);
+    background: url(/assets/img/logo-light.png);
     width: 128px;
     height: 22px;
     background-size: contain;

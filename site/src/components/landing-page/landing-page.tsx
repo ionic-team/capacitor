@@ -10,6 +10,7 @@ export class LandingPage {
   @Element() el: Element;
 
   constructor() {
+    console.log('ROOT IS LANDING PAGE');
     let root: any = document.querySelector('capacitor-site');
     root.isLandingPage = true;
     document.title = `Capacitor: Universal Web Applications`;

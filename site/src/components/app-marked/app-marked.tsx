@@ -1,4 +1,4 @@
-import { Component, Prop, Element, PropDidChange, State } from '@stencil/core';
+import { Component, Prop, Element, Watch, State } from '@stencil/core';
 
 @Component({
   tag: 'app-marked',
@@ -20,9 +20,14 @@ export class AppMarked {
     this.bindHeadings(this.el); 
   }
 
-  @PropDidChange('doc')
+  @Watch('doc')
+  docDidChange() {
+    this.bindHeadings(this.el);
+  }
+
+  @Watch('doc')
   fetchNewContent() {
-    return fetch(`/capacitor/docs-content/${this.doc}`)
+    return fetch(`/docs-content/${this.doc}`)
       .then(response => response.text())
       .then(data => {
         this.content = data;
