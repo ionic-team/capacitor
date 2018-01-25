@@ -7,7 +7,7 @@
     "docs": "gulp",
     "build": "gulp && stencil build --prerender",
     "dev": "gulp && sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
-    "deploy": "npm run build && firebase deploy",
+    "deploy": "rm -rf www && npm run build && firebase deploy",
     "serve": "stencil-dev-server",
     "start": "npm run dev"
   },
