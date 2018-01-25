@@ -22,7 +22,7 @@ export class App {
       <div id="main-div">
         <site-header />
         <div class="app">
-          <stencil-router root="/capacitor/">
+          <stencil-router>
 
             <stencil-route
               url="/"

@@ -4,8 +4,8 @@
     [
       "anchor-link",
       [
-        "anchor-link",
-        null
+        "lshpsice",
+        "m372a6dd"
       ],
       1,
       [
@@ -22,8 +22,8 @@
     [
       "app-marked",
       [
-        "anchor-link",
-        null
+        "lshpsice",
+        "m372a6dd"
       ],
       1,
       [
@@ -53,8 +53,8 @@
     [
       "avc-code-type",
       [
-        "anchor-link",
-        null
+        "lshpsice",
+        "m372a6dd"
       ],
       0,
       [
@@ -71,16 +71,16 @@
     [
       "blog-page",
       [
-        "blog-page",
-        null
+        "wnmbbgpp",
+        "waljrbe1"
       ],
       1
     ],
     [
       "capacitor-site",
       [
-        "capacitor-site",
-        null
+        "ojvlu6aw",
+        "oqxa33jo"
       ],
       1,
       [
@@ -95,23 +95,23 @@
     [
       "demos-page",
       [
-        "demos-page",
-        null
+        "nvgxmkhh",
+        "rhlmfaus"
       ],
       1
     ],
     [
       "doc-snippet",
       [
-        "anchor-link",
-        null
+        "lshpsice",
+        "m372a6dd"
       ]
     ],
     [
       "document-component",
       [
-        "anchor-link",
-        null
+        "lshpsice",
+        "m372a6dd"
       ],
       1,
       [
@@ -126,8 +126,8 @@
     [
       "landing-page",
       [
-        "capacitor-site",
-        null
+        "ojvlu6aw",
+        "oqxa33jo"
       ],
       1,
       [
@@ -140,8 +140,8 @@
     [
       "lazy-iframe",
       [
-        "capacitor-site",
-        null
+        "ojvlu6aw",
+        "oqxa33jo"
       ],
       1,
       [
@@ -170,8 +170,8 @@
     [
       "plugin-api",
       [
-        "anchor-link",
-        null
+        "lshpsice",
+        "m372a6dd"
       ],
       1,
       [
@@ -200,48 +200,48 @@
     [
       "pwas-page",
       [
-        "pwas-page",
-        null
+        "krirex7d",
+        "9vp1kpca"
       ],
       1
     ],
     [
       "resources-page",
       [
-        "resources-page",
-        null
+        "n56a2jzp",
+        "lljbbqab"
       ],
       1
     ],
     [
       "site-bar",
       [
-        "site-bar",
-        null
+        "sqi87dqk",
+        "4aobwvoq"
       ],
       1
     ],
     [
       "site-header",
       [
-        "capacitor-site",
-        null
+        "ojvlu6aw",
+        "oqxa33jo"
       ],
       1
     ],
     [
       "site-menu",
       [
-        "capacitor-site",
-        null
+        "ojvlu6aw",
+        "oqxa33jo"
       ],
       1
     ],
     [
       "stencil-async-content",
       [
-        "stencil-async-content",
-        null
+        "xyfissap",
+        "pbssls7g"
       ],
       0,
       [
@@ -260,8 +260,8 @@
     [
       "stencil-route",
       [
-        "stencil-async-content",
-        null
+        "xyfissap",
+        "pbssls7g"
       ],
       0,
       [
@@ -324,8 +324,8 @@
     [
       "stencil-route-link",
       [
-        "stencil-async-content",
-        null
+        "xyfissap",
+        "pbssls7g"
       ],
       0,
       [
@@ -384,8 +384,8 @@
     [
       "stencil-route-title",
       [
-        "stencil-async-content",
-        null
+        "xyfissap",
+        "pbssls7g"
       ],
       0,
       [
@@ -407,8 +407,8 @@
     [
       "stencil-router",
       [
-        "stencil-async-content",
-        null
+        "xyfissap",
+        "pbssls7g"
       ],
       0,
       [
@@ -442,8 +442,8 @@
     [
       "stencil-router-redirect",
       [
-        "stencil-async-content",
-        null
+        "xyfissap",
+        "pbssls7g"
       ],
       0,
       [
@@ -465,15 +465,15 @@
     [
       "test-app",
       [
-        "test-app",
-        null
+        "cv7cbtbi",
+        "orsdhirh"
       ]
     ],
     [
       "test-demo-four",
       [
-        "test-app",
-        null
+        "cv7cbtbi",
+        "orsdhirh"
       ],
       0,
       [
@@ -500,8 +500,8 @@
     [
       "test-demo-six",
       [
-        "test-app",
-        null
+        "cv7cbtbi",
+        "orsdhirh"
       ],
       0,
       [
@@ -528,8 +528,8 @@
     [
       "test-demo-three",
       [
-        "test-app",
-        null
+        "cv7cbtbi",
+        "orsdhirh"
       ],
       0,
       [
@@ -555,7 +555,7 @@
     ]
   ],
   "global": "app.global.js",
-  "core": "app.core.js",
-  "coreSsr": "app.core.ssr.js",
-  "corePolyfilled": "es5-build-disabled.js"
+  "core": "app.qnefnhxv.js",
+  "coreSsr": "app.gzgsz0co.js",
+  "corePolyfilled": "app.m3eyznes.js"
 }
