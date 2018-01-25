@@ -21,6 +21,7 @@
     "gh-pages": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-markdown": "^2.0.1",
+    "gulp-rename": "^1.2.2",
     "highlight.js": "^9.12.0"
   },
   "author": "Ionic Team",

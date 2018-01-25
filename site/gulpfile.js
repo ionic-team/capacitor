@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var markdown = require('gulp-markdown');
 var hljs = require('highlight.js');
+var rename = require('gulp-rename');
 gulp.task('default', function() {
   return gulp
     .src('./docs-md/**/*.md')
@@ -14,5 +15,8 @@ gulp.task('default', function() {
         }
       })
     )
+    .pipe(rename(function(path) {
+      path.extname = '.html';
+    }))
     .pipe(gulp.dest('./www/docs-content'));
 });
