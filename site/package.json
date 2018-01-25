@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@stencil/core": "^0.2.3",
-    "@stencil/dev-server": "0.0.18-0",
+    "@stencil/dev-server": "0.0.18",
     "@stencil/utils": "latest",
     "gh-pages": "^1.0.0",
     "gulp": "^3.9.1",
