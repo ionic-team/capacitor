@@ -21,7 +21,7 @@ export class PluginApi {
       });
   }
 
-  componentDidLoad() {
+  componentDidUpdate() {
     this.bindHeadings(this.el); 
   }
 
