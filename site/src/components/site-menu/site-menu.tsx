@@ -73,9 +73,13 @@ export class SiteMenu {
           url: '/docs/ios/configuration'
         },
         {
+          title: 'Setting Entitlements',
+          url: '/docs/ios/entitlements'
+        },
+        {
           title: 'Managing Dependencies',
           url: '/docs/ios/managing-dependencies'
-        }
+        },
       ]
     },
     {

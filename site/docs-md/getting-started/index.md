@@ -14,7 +14,7 @@ is ready for building a production-ready native app and Progressive Web App.
 To start a fresh Capacitor project, first clone the starter base:
 
 ```
-git clone git@github.com/ionic-team/capacitor-starter.git my-app
+git clone https://github.com/ionic-team/capacitor-starter my-app
 cd my-app
 npm install
 ```
