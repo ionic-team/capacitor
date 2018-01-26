@@ -29,6 +29,7 @@ public class BridgeActivity extends AppCompatActivity {
     setTheme(R.style.AppTheme_NoActionBar);
     //setTheme(R.style.AppTheme_NoActionBar);
     //getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF0000")));
+    WebView.setWebContentsDebuggingEnabled(true);
 
     setContentView(R.layout.bridge_layout_main);
 
