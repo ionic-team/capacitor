@@ -395,8 +395,11 @@ public class Bridge {
     try {
       String coreJS = JSExport.getCoreJS(context);
       String pluginJS = JSExport.getPluginJS(plugins.values());
+      String cordovaJS = JSExport.getCordovaJS(context);
+      String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
+      String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
 
-      return new JSInjector(coreJS, pluginJS);
+      return new JSInjector(coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS);
     } catch(JSExportException ex) {
       Log.e(TAG, "Unable to export Capacitor JS. App will not function!", ex);
     }
