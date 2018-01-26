@@ -7,6 +7,10 @@ import { open } from './open';
 
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
+  if (selectedPlatformName === 'ios' && config.cli.os !== 'mac') {
+    logFatal('Not running Mac OS X, can\'t add ios platform');
+  }
+
   const platformName = await config.askPlatform(
     selectedPlatformName,
     `Please choose a platform to add:`
