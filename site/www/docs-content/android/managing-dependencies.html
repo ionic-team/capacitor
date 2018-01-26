@@ -1,1 +1,0 @@
-<h1 id="managing-android-dependencies-in-capacitor">Managing Android Dependencies in Capacitor</h1>
