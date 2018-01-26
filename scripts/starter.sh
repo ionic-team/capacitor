@@ -14,4 +14,4 @@ cp -R starter/* $STARTER_REPO
 cd $STARTER_REPO
 git add .
 git commit -m "$LAST_COMMIT_MESSAGE"
-git push origin master
+git push -f origin master
