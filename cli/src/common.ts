@@ -81,6 +81,11 @@ export function logInfo(...args: any[]) {
   console.log(chalk.yellow('  [info]'), ...args);
 }
 
+export function logWarn(...args: any[]) {
+  const chalk = require('chalk');
+  console.log(chalk.bold.yellow('[warn]'), ...args);
+}
+
 export function logError(...args: any[]) {
   const chalk = require('chalk');
   console.log(chalk.red('[error]'), ...args);
