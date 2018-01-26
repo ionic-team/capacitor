@@ -50,4 +50,4 @@ When prompted whether this is a new project, select "n"
 
 ## Where to go next
 
-Your app is ready to start developing and testing! Follow the [Getting Started with Development Guide](/docs/getting-started/developing) for information on the development process of a Capacitor app.
+Make sure you have the [Required Dependencies](/docs/getting-started/dependencies) installed, then proceed to [App Configuration](/docs/basics/configuring-your-app) and [Building your App](/docs/basics/building-your-app)
