@@ -1,6 +1,12 @@
 $link-color: #5EB6FC;
 
 document-component {
+  h1:first-child {
+    anchor-link {
+      display: none;
+    }
+  }
+
   ul {
     -webkit-padding-start: 0px;
     li, code {

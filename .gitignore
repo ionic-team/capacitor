@@ -16,3 +16,4 @@ example/ios/IonicRunner/public/*
 Build/
 Index/
 .*.sw*
+site/www

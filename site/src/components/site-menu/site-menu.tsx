@@ -160,7 +160,7 @@ export class SiteMenu {
                 {s.items.map(i => {
                   return (
                   <li>
-                    <stencil-route-link url={i.url}>
+                    <stencil-route-link url={i.url} exact={true}>
                       {i.title}
                     </stencil-route-link>
                   </li>
