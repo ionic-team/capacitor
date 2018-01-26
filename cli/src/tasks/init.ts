@@ -154,5 +154,5 @@ async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
 async function printNextSteps(config: Config) {
   log('\n');
   log(`${chalk.bold(`🎉   Your Capacitor project is ready to go!  🎉`)}\n`);
-  log(`Follow the Getting Started guide for next steps:\n${chalk.bold(`https://getcapacitor.com/docs/getting-started`)}`);
+  log(`Follow the Getting Started guide for next steps:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/getting-started`)}`);
 }
