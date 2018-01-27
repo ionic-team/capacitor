@@ -1,13 +1,16 @@
 import { accessSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { logFatal } from './common';
-import { CliConfig, ExternalConfig, PackageJson } from './definitions';
+import { CliConfig, ExternalConfig, PackageJson, OS } from './definitions';
 import { currentId } from 'async_hooks';
 
 let Package: PackageJson;
 let ExtConfig: ExternalConfig;
 
 export class Config implements CliConfig {
+  windows = {
+    androidStudioPath: "C:\\Program Files\\Android Studio\\bin\\studio64.exe"
+  }
 
   android = {
     name: 'android',
@@ -39,7 +42,7 @@ export class Config implements CliConfig {
     assetsName: 'assets',
     assetsDir: '',
     package: Package,
-    os: ''
+    os: OS.Unknown
   };
 
   app = {
@@ -68,17 +71,13 @@ export class Config implements CliConfig {
   initOS(os: string) {
     switch (os) {
       case 'darwin':
-        this.cli.os = 'mac';
+        this.cli.os = OS.Mac;
         break;
       case 'win32':
-        this.cli.os = 'windows';
-        break;
-      case 'freebsd':
-        // Sure, why not
-        this.cli.os = 'freebsd';
+        this.cli.os = OS.Windows;
         break;
       case 'linux':
-        this.cli.os = 'linux';
+        this.cli.os = OS.Linux;
         break;
     }
   }

@@ -1,12 +1,24 @@
+export type PlatformName = '' | 'mac' | 'windows' | 'linux';
+
+export enum OS {
+  Unknown = 'unknown',
+  Mac = 'mac',
+  Windows = 'windows',
+  Linux = 'linux'
+}
+
 export interface PackageJson {
   name: string;
   version: string;
 }
 
-
 export interface ExternalConfig {
   webDir: string;
   startPage: string;
+}
+
+export interface CliConfigWindows {
+  androidStudioPath?: string;
 }
 
 export interface CliConfigPlatformAssets {
@@ -32,7 +44,8 @@ export interface CliConfigCli {
   rootDir: string;
   assetsName: string;
   assetsDir: string;
-  package: PackageJson
+  package: PackageJson;
+  os: OS;
 }
 
 export interface CliConfigApp {
@@ -48,6 +61,7 @@ export interface CliConfigApp {
 
 
 export interface CliConfig {
+  windows: CliConfigWindows;
   android: CliConfigPlatform;
   ios: CliConfigPlatform;
   cli: CliConfigCli;
