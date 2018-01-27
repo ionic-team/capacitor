@@ -1,4 +1,5 @@
 import { Config } from '../config';
+import { OS } from '../definitions';
 import { addCommand } from '../tasks/add';
 import { checkWebDir, log, logError, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
@@ -118,7 +119,7 @@ async function seedProject(config: Config) {
  */
 async function addPlatforms(config: Config) {
   await runTask(`Adding native platforms`, async () => {
-    if (config.cli.os === 'mac') {
+    if (config.cli.os === OS.Mac) {
       await addCommand(config, 'ios');
     }
     return await addCommand(config, 'android');
