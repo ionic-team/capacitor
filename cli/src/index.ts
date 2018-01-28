@@ -10,6 +10,8 @@ import { Config } from './config';
 import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
+import { emoji as _e } from './util/emoji';
+
 import { compareIdentifiers } from 'semver';
 
 export function run(process: NodeJS.Process, cliBinDir: string) {
@@ -85,7 +87,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   if (!program.args.length) {
     const chalk = require('chalk');
-    console.log(`\n  ⚡️  ${chalk.bold('Capacitor - Cross-Platform apps with JavaScript and the Web')}  ⚡️`);
+    console.log(`\n  ${_e('⚡️', '--')}  ${chalk.bold('Capacitor - Cross-Platform apps with JavaScript and the Web')}  ${_e('⚡️', '--')}`);
     program.help();
   }
 }
