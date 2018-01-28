@@ -47,7 +47,9 @@ export async function copyPluginsJS(config: Config, plugins: Plugin[], platform:
   const cordovaPluginsJSFile = join(config.ios.webDir, 'cordova_plugins.js');
   removeSync(pluginsDir);
   removeSync(cordovaPluginsJSFile);
-  plugins.filter(p => p.ios!.type === PluginType.Cordova).map(async p => {
+  const cordovaPlugins = plugins
+    .filter(p => p.ios!.type === PluginType.Cordova);
+  cordovaPlugins.map(async p => {
     const pluginDir = join(pluginsDir, p.id, 'www');
     ensureDirSync(pluginDir);
     const jsModules = getJSModules(p, platform);
@@ -59,7 +61,7 @@ export async function copyPluginsJS(config: Config, plugins: Plugin[], platform:
       await writeFileAsync(filePath, data, 'utf8');
     });
   });
-  writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, plugins, platform));
+  writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }
 
 export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
@@ -140,7 +142,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
   let pluginExports: Array<string> = [];
   plugins.map((p) => {
     const jsModules = getJSModules(p, platform);
-      jsModules.map((jsModule: any) => {
+    jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
       jsModule.clobbers.map((clobber: any)=> {
         clobbers.push(clobber.$.target);
@@ -164,7 +166,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     module.exports.metadata =
     // TOP OF METADATA
     {
-      ${pluginExports.join(',')}
+      ${pluginExports.join(',\n')}
     };
     // BOTTOM OF METADATA
     });
@@ -172,7 +174,13 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
 }
 
 function getJSModules(p: Plugin, platform: string) {
-  const modules: Array<string> = p.xml["js-module"];
+  let modules: Array<string> = [];
+  if (p.xml["js-module"]) {
+    modules = modules.concat(p.xml["js-module"]);
+  }
   const platformModules = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
-  return modules.concat(platformModules[0]["js-module"]);
+  if(platformModules[0]["js-module"]) {
+    modules = modules.concat(platformModules[0]["js-module"]);
+  }
+  return modules;
 }
