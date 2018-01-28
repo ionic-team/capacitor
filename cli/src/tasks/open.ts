@@ -4,6 +4,7 @@ import { openAndroid } from '../android/open';
 import { openIOS } from '../ios/open';
 
 
+
 export async function openCommand(config: Config, selectedPlatform: string) {
   const platforms = config.selectPlatforms(selectedPlatform);
   let platformName: string;
