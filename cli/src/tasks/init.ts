@@ -5,14 +5,14 @@ import { checkWebDir, log, logError, logFatal, runCommand, runTask, writePrettyJ
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { download } from '../util/http';
 import { createTarExtraction } from '../util/archive';
-
+import { emoji as _e } from '../util/emoji';
 import { join, relative } from 'path';
 
 const chalk = require('chalk');
 
 export async function initCommand(config: Config) {
   log('\n');
-  log(`${chalk.bold(`⚡️  Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`)} ⚡️`);
+  log(`${chalk.bold(`${_e('⚡️', '*')}  Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`)} ${_e('⚡️', '*')}`);
   log('\n');
 
   try {
@@ -56,7 +56,7 @@ async function promptNewProject(config: Config): Promise<boolean> {
 
 async function printExistingProjectMessage(config: Config) {
   log('\n\n');
-  log(`🎈   ${chalk.bold('Adding Capacitor to an existing project is easy:')}  🎈`);
+  log(`${_e('🎈', '*')}   ${chalk.bold('Adding Capacitor to an existing project is easy:')}  ${_e('🎈', '*')}`);
   log(`\nnpm install --save @capacitor/cli @capacitor/core`);
   log(`\nnpm run capacitor add ios android`);
   log(`\nLearn more: https://ionic-team.github.io/capacitor/docs/getting-started/\n`);
@@ -154,6 +154,6 @@ async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
 
 async function printNextSteps(config: Config) {
   log('\n');
-  log(`${chalk.bold(`🎉   Your Capacitor project is ready to go!  🎉`)}\n`);
+  log(`${chalk.bold(`${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e('🎉', '*')}`)}\n`);
   log(`Follow the Getting Started guide for next steps:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/getting-started`)}`);
 }
