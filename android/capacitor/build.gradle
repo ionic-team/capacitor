@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.android.tools.build:gradle:3.0.1'
+    }
+}
+apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.android.library'
 
 android {
@@ -13,6 +24,25 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'capacitor'
+        name = 'capacitor-android'
+        userOrg = 'ionic-team'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/ionic-team/capacitor.git'
+        version {
+            name = System.getenv('BINTRAY_PKG_VERSION')
+            desc = 'Capacitor Android Runtime'
+            released  = new Date()
+            vcsTag = System.getenv('BINTRAY_PKG_VERSION')
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
         }
     }
 }
