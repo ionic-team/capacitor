@@ -10,7 +10,6 @@ import { join } from 'path';
 export async function newPluginCommand(config: Config) {
   try {
     await newPlugin(config);
-
   } catch (e) {
     logFatal(e);
   }
@@ -72,7 +71,7 @@ export async function newPlugin(config: Config) {
     await mkdirAsync(pluginPath);
 
     await runTask('Adding plugin files', async () => {
-      copy(config.plugins.assets.templateDir, pluginPath);
+      return copy(config.plugins.assets.templateDir, pluginPath);
     });
 
     await runTask('Writing package.json', () => {

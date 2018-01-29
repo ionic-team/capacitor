@@ -94,6 +94,7 @@ export class Config implements CliConfig {
       this.initAppConfig(currentWorkingDir);
       this.initAndroidConfig();
       this.initIosConfig();
+      this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
     } catch (e) {
