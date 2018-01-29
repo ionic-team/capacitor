@@ -44,7 +44,6 @@ export async function readJSON(path: string): Promise<any> {
 }
 
 export function writePrettyJSON(path: string, data: any) {
-  log(`Writing pretty JSON ${path}`);
   return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
 }
 
