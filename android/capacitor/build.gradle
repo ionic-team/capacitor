@@ -1,3 +1,6 @@
+def siteUrl = 'https://github.com/ionic-team/capacitor'
+def gitUrl = 'https://github.com/ionic-team/capacitor.git'
+
 buildscript {
     repositories {
         jcenter()
@@ -6,10 +9,14 @@ buildscript {
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
     }
 }
+
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.android.library'
+//apply plugin: 'maven-publish'
+apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 26
@@ -28,9 +35,20 @@ android {
     }
 }
 
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:customtabs:26.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
+    configurations = ['archives']
     pkg {
         repo = 'capacitor'
         name = 'capacitor-android'
@@ -47,12 +65,97 @@ bintray {
     }
 }
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support:customtabs:26.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "developer-id"
+            name "developer-name"
+            email "dev@d.com"
+        }
+    }
+
+    scm {
+       url "https://github.com/yourgithubaccount/example"
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'Capacitor Android'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'MIT'
+                        url 'https://github.com/ionic-team/capacitor/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'jbaruch'
+                        name 'Baruch Sadogursky'
+                        email 'jbaruch@jfrog.com'
+                    }
+                }
+                scm {
+                    connection 'https://github.com/bintray/bintray-examples.git'
+                    developerConnection 'https://github.com/bintray/bintray-examples.git'
+                    url siteUrl
+
+                }
+            }
+        }
+    }
+}
+
+// Create the publication with the pom configuration:
+/*
+publishing {
+    publications {
+        CapacitorPublication(MavenPublication) {
+            //from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId 'com.getcapacitor.android'
+            artifactId 'capacitor-android'
+            version System.getenv('BINTRAY_PKG_VERSION')
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Capacitor Android Runtime')
+                root.appendNode('name', 'capacitor-android')
+                root.appendNode('url', 'https://capacitor.ionicframework.com/')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+*/
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
 }
