@@ -12,7 +12,10 @@ export class PluginApi {
   componentWillLoad() {
     const url = `api${this.index ? '-index' : ''}.html`;
     return fetch(`/capacitor/docs-content/apis/${this.name}/${url}`)
-      .then(response => response.text())
+      .then(response => {
+        console.log('RESPONSE', response);
+        return response.text()
+      })
       .then(data => {
         this.content = data;
 

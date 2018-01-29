@@ -63,15 +63,9 @@ export class App {
             <stencil-route
               url="/docs/basics/:pageName"
               routeRender={(props: { [key: string]: any }) => {
-                const map = {
-                  'configuring-your-app': 'basics/configuring-your-app.html',
-                  'building-your-app': 'basics/building-your-app.html',
-                  'opening-native-projects': 'basics/opening-native-projects.html',
-                  'running-your-app': 'basics/running-your-app.html',
-                  'progressive-web-app': 'basics/progressive-web-app.html'
-                };
+                const page = props.match.params.pageName || 'index';
                 return (
-                  <document-component pages={[map[props.match.params.pageName]]} />
+                  <document-component pages={[`basics/${page}.html`]} />
                 );
               }}
             />
@@ -79,12 +73,9 @@ export class App {
             <stencil-route
               url="/docs/ios/:pageName"
               routeRender={(props: { [key: string]: any }) => {
-                const map = {
-                  'configuration': 'ios/configuration.html',
-                  'managing-dependencies': 'ios/managing-dependencies.html'
-                };
+                const page = props.match.params.pageName || 'index';
                 return (
-                  <document-component pages={[map[props.match.params.pageName]]} />
+                  <document-component pages={[`ios/${page}.html`]} />
                 );
               }}
             />
@@ -92,12 +83,9 @@ export class App {
             <stencil-route
               url="/docs/android/:pageName"
               routeRender={(props: { [key: string]: any }) => {
-                const map = {
-                  'configuration': 'android/configuration.html',
-                  'managing-dependencies': 'android/managing-dependencies.html'
-                };
+                const page = props.match.params.pageName || 'index';
                 return (
-                  <document-component pages={[map[props.match.params.pageName]]} />
+                  <document-component pages={[`android/${page}.html`]} />
                 );
               }}
             />
@@ -115,11 +103,6 @@ export class App {
             <stencil-route
               url="/docs/apis/:pageName"
               routeRender={(props: { [key: string]: any }) => {
-                const map = {
-                  undefined: 'apis/index.html',
-                  'accessibility': 'plugins/creating-plugins.html',
-                  '': 'plugins/plugin-api-javascript.html'
-                };
                 let page = 'apis/index.html';
                 const pageName = props.match.params.pageName;
                 if(pageName) {
