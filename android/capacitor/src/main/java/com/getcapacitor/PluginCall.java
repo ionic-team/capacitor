@@ -190,7 +190,6 @@ public class PluginCall {
    * Indicate that the Bridge should cache this call in order to call
    * it again later. For example, the addListener system uses this to
    * continuously call the call's callback (😆).
-   * @param shouldSave
    */
   public void save() {
     this.shouldSave = true;

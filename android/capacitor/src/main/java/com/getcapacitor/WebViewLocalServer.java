@@ -39,22 +39,6 @@ import java.util.UUID;
  * {@link android.webkit.WebViewClient#shouldInterceptRequest(android.webkit.WebView,
  * android.webkit.WebResourceRequest)}
  * methods.
- * <pre>
- *     WebViewLocalServer localServer = new WebViewLocalServer(this);
- *     // For security WebViewLocalServer uses a unique subdomain by default.
- *     AssetHostingDetails ahd = localServer.hostAssets("/www");
- *     webView.setWebViewClient(new WebViewClient() {
- *         @Override
- *         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
- *             return localServer.shouldInterceptRequest(request);
- *         }
- *     });
- *     // If your application's assets are in the "main/assets" folder this will read the file
- *     // from "main/assets/www/index.html" and load it as if it were hosted on:
- *     // https://{uuid}.androidplatform.net/assets/index.html
- *     webview.loadUrl(ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString());
- *
- * </pre>
  */
 public class WebViewLocalServer {
   private static String TAG = "WebViewAssetServer";
