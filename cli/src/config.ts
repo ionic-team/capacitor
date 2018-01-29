@@ -42,7 +42,7 @@ export class Config implements CliConfig {
     assetsName: 'assets',
     assetsDir: '',
     package: Package,
-    os: OS.Unknown
+    os: OS.Unknown,
   };
 
   app = {
@@ -58,6 +58,13 @@ export class Config implements CliConfig {
       templateDir: ''
     }
   };
+
+  plugins = {
+    assets: {
+      templateName: 'plugin-template',
+      templateDir: ''
+    }
+  }
 
   platforms: string[] = [];
 
@@ -122,6 +129,10 @@ export class Config implements CliConfig {
     this.ios.platformDir = join(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = join(this.cli.assetsDir, this.ios.assets.templateName);
     this.ios.webDir = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
+  }
+
+  private initPluginsConfig() {
+    this.plugins.assets.templateDir = join(this.cli.assetsDir, this.plugins.assets.templateName); 
   }
 
   private mergeConfigData() {

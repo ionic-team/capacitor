@@ -1,7 +1,10 @@
 import { Config } from '../config';
-import { join } from 'path';
 import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
 import { emoji } from '../util/emoji';
+import { existsAsync, mkdirAsync } from '../util/fs';
+
+import { copy } from 'fs-extra';
+import { join } from 'path';
 
 
 export async function newPluginCommand(config: Config) {
@@ -22,7 +25,13 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'name',
-      message: 'plugin name (snake-case):'
+      message: 'plugin name (snake-case):',
+      validate: function(input) {
+        if (!input || input.trim() == '') {
+          return false;
+        }
+        return true;
+      }
     }, {
       type: 'input',
       name: 'description',
@@ -55,11 +64,18 @@ export async function newPlugin(config: Config) {
 
   if (answers.confirm) {
     const pluginPath = answers.name;
+
+    if (await existsAsync(pluginPath)) {
+      logFatal(`Directory ${pluginPath} already exists. Not overwriting.`);
+    }
+
+    await mkdirAsync(pluginPath);
+
     await runTask('Adding plugin files', async () => {
-      //cp('-R', getAssetsPath('plugin-base'), pluginPath);
+      copy(config.plugins.assets.templateDir, pluginPath);
     });
 
-    await runTask('Genering package.json', () => {
+    await runTask('Writing package.json', () => {
       return writePrettyJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers));
     });
 

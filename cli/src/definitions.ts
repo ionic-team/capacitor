@@ -59,6 +59,9 @@ export interface CliConfigApp {
   assets: CliConfigPlatformAssets;
 }
 
+export interface CliConfigPlugins {
+  assets: CliConfigPlatformAssets;
+}
 
 export interface CliConfig {
   windows: CliConfigWindows;
@@ -66,4 +69,5 @@ export interface CliConfig {
   ios: CliConfigPlatform;
   cli: CliConfigCli;
   app: CliConfigApp;
+  plugins: CliConfigPlugins;
 }
