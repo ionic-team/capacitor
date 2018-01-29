@@ -1,6 +1,7 @@
 import { Config } from '../config';
 import { join } from 'path';
-import { logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
+import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
+import { emoji } from '../util/emoji';
 
 
 export async function newPluginCommand(config: Config) {
@@ -14,9 +15,7 @@ export async function newPluginCommand(config: Config) {
 
 
 export async function newPlugin(config: Config) {
-  logInfo('capacitor new-plugin is about to create a new capacitor plugin.');
-
-  config;
+  log(`${emoji('✏️', '*')}  Creating new Capacitor plugin`);
 
   const inquirer = await import('inquirer');
   const answers = await inquirer.prompt([
@@ -57,7 +56,7 @@ export async function newPlugin(config: Config) {
   if (answers.confirm) {
     const pluginPath = answers.name;
     await runTask('Adding plugin files', async () => {
-      // cp('-R', getAssetsPath('plugin-base'), pluginPath);
+      //cp('-R', getAssetsPath('plugin-base'), pluginPath);
     });
 
     await runTask('Genering package.json', () => {
