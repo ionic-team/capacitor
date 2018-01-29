@@ -21,6 +21,7 @@ export class AppMarked {
     return fetch(`/docs-content/${this.doc}`)
       .then(response => response.text())
       .then(data => {
+        console.log('LAODED DATA?', data);
         this.content = data;
 
         const el = document.createElement('div');
@@ -37,7 +38,9 @@ export class AppMarked {
           })
         }
 
-      });
+      }).catch(err => {
+        console.error('UNABLE TO LOAD', err);
+      })
   }
 
   bindHeadings(el: Element) {
