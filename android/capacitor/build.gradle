@@ -1,22 +1,16 @@
-def siteUrl = 'https://github.com/ionic-team/capacitor'
-def gitUrl = 'https://github.com/ionic-team/capacitor.git'
-
 buildscript {
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+        classpath 'com.novoda:bintray-release:0.8.0'
     }
 }
 
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.android.library'
-//apply plugin: 'maven-publish'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 26
@@ -35,6 +29,11 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
@@ -45,6 +44,17 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
 
+publish {
+    userOrg = 'ionic-team'
+    groupId = 'ionic-team'
+    artifactId = 'capacitor-android'
+    publishVersion = '0.0.18'
+    desc = 'Capacitor Android Runtime'
+    website = 'https://github.com/ionic-team/capacitor'
+}
+
+
+/*
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
@@ -117,6 +127,7 @@ install {
         }
     }
 }
+*/
 
 // Create the publication with the pom configuration:
 /*
@@ -139,7 +150,6 @@ publishing {
         }
     }
 }
-*/
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -159,3 +169,5 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
+*/
