@@ -25,14 +25,15 @@ Next, run the capacitor initialization command _in the directory of the app_.
 npm run capacitor init
 ```
 
-When prompted for the starter template to use, choose either the official Ionic template, or 
-select blank. Note: blank does not come with any UI framework which you will most likely need!
+As of version 0.1.0, this will create a very simple starting app with no UI library that you should nuke before
+starting your own app.
 
 ## Using Capacitor Starter with Ionic Framework
 
-Integration into the Ionic CLI is coming soon. For now, use our stock starter.
+Integration into the Ionic CLI is coming soon.
 
-First, clone the project as shown above, then select the "Ionic" starter when prompted.
+For now, create a new ionic app using `ionic start`, then follow the steps below to add
+Capacitor to an existing web app (in this case, your new Ionic app).
 
 ## Adding Capacitor to an existing web app
 
