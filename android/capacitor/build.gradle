@@ -27,6 +27,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 repositories {
@@ -46,9 +49,10 @@ dependencies {
 
 publish {
     userOrg = 'ionic-team'
+    repoName = 'capacitor'
     groupId = 'ionic-team'
     artifactId = 'capacitor-android'
-    publishVersion = '0.0.18'
+    publishVersion = System.getenv("BINTRAY_PKG_VERSION")
     desc = 'Capacitor Android Runtime'
     website = 'https://github.com/ionic-team/capacitor'
 }
