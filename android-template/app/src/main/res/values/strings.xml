@@ -1,3 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">App</string>
+    <string name="app_name">MyApp</string>
+    <string name="title_activity_main">MyApp</string>
+    <string name="custom_url_scheme">com.getcapacitor.app</string>
 </resources>
