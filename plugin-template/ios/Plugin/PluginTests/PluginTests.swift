@@ -32,9 +32,4 @@ class PluginTests: XCTestCase {
         
         plugin.echo(call!)
     }
-    
-    func testAsync() {
-        // This is an example of a functiona test case for an asynchronous plugin call.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
 }
