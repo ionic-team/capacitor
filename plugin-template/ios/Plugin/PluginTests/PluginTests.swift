@@ -1,4 +1,5 @@
 import XCTest
+import Capacitor
 @testable import Plugin
 
 class PluginTests: XCTestCase {
@@ -13,16 +14,27 @@ class PluginTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
+    func testEcho() {
+        // This is an example of a functional test case for a plugin.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        let value = "Hello, World!"
+        let plugin = MyPlugin()
+        
+        let call = CAPPluginCall(callbackId: "test", options: [
+            "value": value
+        ], success: { (result, call) in
+            let resultValue = result!.data["value"] as? String
+            XCTAssertEqual(value, resultValue)
+        }, error: { (err) in
+            XCTFail("Error shouldn't have been called")
+        })
+        
+        plugin.echo(call!)
+    }
+    
+    func testAsync() {
+        // This is an example of a functiona test case for an asynchronous plugin call.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
 }
