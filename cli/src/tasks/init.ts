@@ -11,8 +11,7 @@ import { join, relative } from 'path';
 const chalk = require('chalk');
 
 export async function initCommand(config: Config) {
-  log('\n');
-  log(`${chalk.bold(`${_e('⚡️', '*')}  Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`)} ${_e('⚡️', '*')}`);
+  log(`\n${chalk.bold(`${_e('⚡️', '*')}  Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`)} ${_e('⚡️', '*')}`);
   log('\n');
 
   try {

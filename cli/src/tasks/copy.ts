@@ -24,13 +24,13 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
 export async function copy(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     await copyWebDir(config, config.ios.webDir);
+    await copyNativeBridge(config, config.ios.webDir);
   } else if (platformName === config.android.name) {
     await copyWebDir(config, config.android.webDir);
+    await copyNativeBridge(config, config.android.webDir);
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
-
-  await copyNativeBridge(config, config.ios.webDir);
 }
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
