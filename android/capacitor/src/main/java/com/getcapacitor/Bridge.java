@@ -33,6 +33,8 @@ import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 
+import org.apache.cordova.CordovaInterfaceImpl;
+import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 
 import java.util.HashMap;
@@ -69,6 +71,7 @@ public class Bridge {
   private final Activity context;
   // A reference to the main WebView for the app
   private final WebView webView;
+  private final CordovaInterfaceImpl cordovaInterface;
 
   // Our MessageHandler for sending and receiving data to the WebView
   private final MessageHandler msgHandler;
@@ -99,9 +102,10 @@ public class Bridge {
    * @param context
    * @param webView
    */
-  public Bridge(Activity context, WebView webView) {
+  public Bridge(Activity context,  WebView webView, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
     this.context = context;
     this.webView = webView;
+    this.cordovaInterface = cordovaInterface;
 
     // Start our plugin execution threads and handlers
     handlerThread.start();
@@ -109,7 +113,7 @@ public class Bridge {
 
     // Initialize web view and message handler for it
     this.initWebView();
-    this.msgHandler = new MessageHandler(this, webView);
+    this.msgHandler = new MessageHandler(this, webView, pluginManager);
 
     // Grab any intent info that our app was launched with
     Intent intent = context.getIntent();
@@ -483,7 +487,12 @@ public class Bridge {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if (plugin == null) {
-      Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
+      Log.d(Bridge.TAG, "Unable to find a Capacitor plugin to handle requestCode, try with Cordova plugins " + requestCode);
+      try {
+        cordovaInterface.onRequestPermissionResult(requestCode, permissions, grantResults);
+      } catch (JSONException e) {
+        Log.d(Bridge.TAG, "Error on Cordova plugin permissions request " + e.getMessage());
+      }
       return;
     }
 
@@ -501,7 +510,8 @@ public class Bridge {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if (plugin == null || plugin.getInstance() == null) {
-      Log.d(Bridge.TAG, "Unable to find a plugin to handle requestCode " + requestCode);
+      Log.d(Bridge.TAG, "Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
+      cordovaInterface.onActivityResult(requestCode, resultCode, data);
       return;
     }
 
