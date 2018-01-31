@@ -18,7 +18,9 @@ The `ionic-team/capacitor` repo is a monorepo containing all of the standard Cap
 
 ### Deploying Capacitor (requires commit privileges)
 
-The `publish` npm task runs lerna to update and publish JS dependencies, and then uses that version number to deploy the Android and iOS runtimes. Finally, it updates the master branch of the [capacitor-starter](https://github.com/ionic-team/capacitor-starter) mirror, which contains an exported starter project for easy project creation, based on the code in the `starter` folder in this monorepo.
+The `publish` npm task runs lerna to update and publish JS dependencies, and then uses that version number to deploy the Android and iOS runtimes.
+
+Additionally, it updates the master branch of the [capacitor-starter](https://github.com/ionic-team/capacitor-starter) mirror, which contains an exported starter project for easy project creation, based on the code in the `starter` folder in this monorepo.
 
 Before deploying, you must set the following environment variables:
 
@@ -30,3 +32,5 @@ Finally, to deploy Capacitor, in the root of the project run
 ```bash
 npm run publish
 ```
+
+Note: if you don't have any JS updates that cause lerna to increment the version, just increment it yourself in `lerna.json` and you're golden.
