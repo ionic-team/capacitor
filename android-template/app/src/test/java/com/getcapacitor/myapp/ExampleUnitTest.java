@@ -1,4 +1,4 @@
-package com.getcapacitor.app;
+package com.getcapacitor.myapp;
 
 import org.junit.Test;
 
