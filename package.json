@@ -1,9 +1,7 @@
 {
 	"scripts": {
-		"publish": "lerna publish && npm run publish-starter ../capacitor-starter && npm run publish-android",
-		"publish-pods": "bash scripts/pods.sh",
-		"publish-starter": "bash scripts/starter.sh",
-		"publish-android": "bash scripts/android.sh"
+		"publish": "lerna publish && npm run deploy",
+		"deploy": "bash scripts/deploy.sh"
 	},
 	"devDependencies": {
 		"lerna": "^2.4.0"

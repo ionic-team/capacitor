@@ -1,5 +1,9 @@
-# Make sure the version numbers are properly incremented in each podspect
-# and that a tag corresponding to the version was pushed to github!
+export POD_VERSION=$LERNA_VERSION
+
+echo "Deploying iOS Pods v$POD_VERSION"
+
+sed "s/POD_VERSION/'$POD_VERSION'/g" scripts/deploy/Capacitor.podspec.template > Capacitor.podspec
+sed "s/POD_VERSION/'$POD_VERSION'/g" scripts/deploy/CapacitorCordova.podspec.template > CapacitorCordova.podspec
 
 # Publish CapacitorCordova first
 pod trunk push CapacitorCordova.podspec --allow-warnings
