@@ -11,10 +11,17 @@ fi
 
 echo "Deploying Capacitor v$LERNA_VERSION"
 
-git add lerna.json
-git tag $LERNA_VERSION
-git push --tags
 bash scripts/deploy/pods.sh
 bash scripts/deploy/android.sh
 bash scripts/deploy/starter.sh ../capacitor-starter
+
+# This is what we do instead of letting lerna git commit for us
+git add lerna.json
+git add Capacitor.podspec
+git add CapacitorCordova.podspec
+git add cli/package.json
+git add core/package.json
+git tag $LERNA_VERSION
+git push --tags
+git commit -m "Release v$LERNA_VERSION"
 git push origin master
