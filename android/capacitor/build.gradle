@@ -47,12 +47,18 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
 
+def version = System.getenv("BINTRAY_PKG_VERSION")
+
 publish {
     userOrg = 'ionic-team'
     repoName = 'capacitor'
     groupId = 'ionic-team'
     artifactId = 'capacitor-android'
-    publishVersion = System.getenv("BINTRAY_PKG_VERSION")
+    if(version != null) {
+        publishVersion = System.getenv("BINTRAY_PKG_VERSION")
+    } else {
+        publishVersion = '0.0.0'
+    }
     desc = 'Capacitor Android Runtime'
     website = 'https://github.com/ionic-team/capacitor'
 }
