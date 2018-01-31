@@ -1,3 +1,7 @@
+if [ ! -z $BINTRAY_USER]; then
+  echo "Must define BINTRAY_USER and BINTRAY_KEY env var before deploying. See https://github.com/ionic-team/capacitor/blob/master/.github/CONTRIBUTING.md"
+fi
+
 LERNA_JSON=`cat lerna.json`;
 export LERNA_VERSION="$(node -pe "JSON.parse(\`$LERNA_JSON\`)['version']")"
 
