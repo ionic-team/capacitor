@@ -8,7 +8,7 @@ if [ "$#" -ne "1" ]; then
 	exit 1
 fi
 STARTER_REPO=$1
-echo $STARTER_REPO
+echo "Deploying Capacitor starter to $STARTER_REPO"
 
 cp -R starter/* $STARTER_REPO
 cd $STARTER_REPO
