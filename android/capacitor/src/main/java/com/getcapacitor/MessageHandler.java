@@ -4,6 +4,7 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import org.apache.cordova.PluginManager;
 
 /**
  * MessageHandler handles messages from the WebView, dispatching them
@@ -12,10 +13,12 @@ import android.webkit.WebView;
 public class MessageHandler {
   private Bridge bridge;
   private WebView webView;
+  private PluginManager cordovaPluginManager;
 
-  public MessageHandler(Bridge bridge, WebView webView) {
+  public MessageHandler(Bridge bridge, WebView webView, PluginManager cordovaPluginManager) {
     this.bridge = bridge;
     this.webView = webView;
+    this.cordovaPluginManager = cordovaPluginManager;
 
     webView.addJavascriptInterface(this, "androidBridge");
   }
@@ -30,15 +33,26 @@ public class MessageHandler {
   public void postMessage(String jsonStr) {
     try {
       JSObject postData = new JSObject(jsonStr);
-      String callbackId = postData.getString("callbackId");
-      String pluginId = postData.getString("pluginId");
-      String methodName = postData.getString("methodName");
-      JSObject methodData = postData.getJSObject("options");
 
-      Log.d(Bridge.TAG, "To native: " + callbackId + ", pluginId: " + pluginId +
-          ", methodName: " + methodName);
+      String type = postData.getString("type");
 
-      this.callPluginMethod(callbackId, pluginId, methodName, methodData);
+      if (type != null && type.equals("cordova")) {
+        String callbackId = postData.getString("callbackId");
+        String service = postData.getString("service");
+        String action = postData.getString("action");
+        String actionArgs = postData.getString("actionArgs");
+        Log.d(Bridge.TAG, "To native (Cordova): " + callbackId + ", service: " + service +
+                ", action: " + action +", actionArgs: " + actionArgs);
+        this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
+      } else {
+        String callbackId = postData.getString("callbackId");
+        String pluginId = postData.getString("pluginId");
+        String methodName = postData.getString("methodName");
+        JSObject methodData = postData.getJSObject("options");
+        Log.d(Bridge.TAG, "To native: " + callbackId + ", pluginId: " + pluginId +
+                ", methodName: " + methodName);
+        this.callPluginMethod(callbackId, pluginId, methodName, methodData);
+      }
 
     } catch (Exception ex) {
       Log.e(Bridge.TAG, "error : " + ex);
@@ -49,6 +63,10 @@ public class MessageHandler {
     PluginCall call = new PluginCall(this, pluginId, callbackId, methodName, methodData);
 
     bridge.callPluginMethod(pluginId, methodName, call);
+  }
+
+  private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs){
+    cordovaPluginManager.exec(service, action, callbackId, actionArgs);
   }
 
   public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
