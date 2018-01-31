@@ -102,7 +102,7 @@ public class Bridge {
    * @param context
    * @param webView
    */
-  public Bridge(Activity context,  WebView webView, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
+  public Bridge(Activity context, WebView webView, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
     this.context = context;
     this.webView = webView;
     this.cordovaInterface = cordovaInterface;

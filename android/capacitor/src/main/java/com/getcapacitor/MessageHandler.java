@@ -36,12 +36,12 @@ public class MessageHandler {
 
       String type = postData.getString("type");
 
-      if (type!=null && type.equals("cordova")) {
+      if (type != null && type.equals("cordova")) {
         String callbackId = postData.getString("callbackId");
         String service = postData.getString("service");
         String action = postData.getString("action");
         String actionArgs = postData.getString("actionArgs");
-        Log.d(Bridge.TAG, "To native: " + callbackId + ", service: " + service +
+        Log.d(Bridge.TAG, "To native (Cordova): " + callbackId + ", service: " + service +
                 ", action: " + action +", actionArgs: " + actionArgs);
         this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
       } else {
