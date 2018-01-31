@@ -11,8 +11,10 @@ fi
 
 echo "Deploying Capacitor v$LERNA_VERSION"
 
-#git tag $LERNA_VERSION
-#git push --tags
+git add lerna.json
+git tag $LERNA_VERSION
+git push --tags
 bash scripts/deploy/pods.sh
 bash scripts/deploy/android.sh
 bash scripts/deploy/starter.sh ../capacitor-starter
+git push origin master
