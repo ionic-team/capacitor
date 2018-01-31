@@ -1,9 +1,4 @@
-export POD_VERSION=$LERNA_VERSION
-
 echo "Deploying iOS Pods v$POD_VERSION"
-
-sed "s/POD_VERSION/'$POD_VERSION'/g" scripts/deploy/Capacitor.podspec.template > Capacitor.podspec
-sed "s/POD_VERSION/'$POD_VERSION'/g" scripts/deploy/CapacitorCordova.podspec.template > CapacitorCordova.podspec
 
 # Publish CapacitorCordova first
 pod trunk push CapacitorCordova.podspec --allow-warnings
