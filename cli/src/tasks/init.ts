@@ -121,7 +121,7 @@ async function addPlatforms(config: Config) {
     if (config.cli.os === OS.Mac) {
       await addCommand(config, 'ios');
     }
-    return await addCommand(config, 'android');
+    return addCommand(config, 'android');
   });
 }
 

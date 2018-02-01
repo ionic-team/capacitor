@@ -1,7 +1,7 @@
 import { accessSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { logFatal } from './common';
-import { CliConfig, ExternalConfig, PackageJson, OS } from './definitions';
+import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 import { currentId } from 'async_hooks';
 
 let Package: PackageJson;
@@ -9,8 +9,8 @@ let ExtConfig: ExternalConfig;
 
 export class Config implements CliConfig {
   windows = {
-    androidStudioPath: "C:\\Program Files\\Android Studio\\bin\\studio64.exe"
-  }
+    androidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe'
+  };
 
   android = {
     name: 'android',

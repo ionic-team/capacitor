@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { addAndroid } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
-import { add, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
+import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 import { open } from './open';
 
@@ -24,12 +24,12 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   }
 
   try {
-    await add(
+    await check(
       config,
       [checkPackage, ...addChecks(config, platformName)]
     );
     await generateCapacitorConfig(config);
-    await add(config, []); // , [checkWebDir]);
+    await check(config, []); // , [checkWebDir]);
     await doAdd(config, platformName);
     // await sync(config, platformName);
   } catch (e) {

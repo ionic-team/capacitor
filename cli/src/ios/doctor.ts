@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject } from './common';
-import { add, checkWebDir, isInstalled, logFatal, logSuccess, runCommand, runTask } from '../common';
+import { check, checkWebDir, isInstalled, logFatal, logSuccess, runCommand, runTask } from '../common';
 import { Config } from '../config';
 import { getPlugins, printPlugins } from '../plugin';
 
@@ -18,7 +18,7 @@ export async function doctorIOS(config: Config) {
   // check if www folder is empty (index.html does not exist)
   try {
     await runTask('Checking environment', () => {
-      return add(
+      return check(
         config,
         [checkCocoaPods, checkIOSProject, checkWebDir, checkNPMVersion, checkXcode]
       );

@@ -7,7 +7,7 @@ import { readFile } from 'fs';
 
 export type CheckFunction = (config: Config) => Promise<string | null>;
 
-export async function add(config: Config, checks: CheckFunction[]): Promise<void> {
+export async function check(config: Config, checks: CheckFunction[]): Promise<void> {
   const results = await Promise.all(checks.map(f => f(config)));
   const errors = results.filter(r => r != null) as string[];
   if (errors.length > 0) {

@@ -1,13 +1,13 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import { CheckFunction, log, logInfo, runCommand, runTask } from '../common';
-import { writeFileAsync, readFileAsync, copySync, ensureDirSync, removeSync } from '../util/fs';
+import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
 import { Plugin, PluginType, getPlugins, printPlugins } from '../plugin';
 
+import * as inquirer from 'inquirer';
 
 export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
-
 
 export async function updateIOS(config: Config, needsUpdate: boolean) {
 
@@ -15,7 +15,6 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   log(`\n${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
           `local Pod repo is up to date and can find new Pod releases.\n`);
 
-  const inquirer = await import('inquirer');
 
   var answers = await inquirer.prompt([{
     type: 'input',
@@ -24,7 +23,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     default: 'n'
   }]);
 
-  if (answers.updateRepo == 'y') {
+  if (answers.updateRepo === 'y') {
     await runTask(`Running pod repo update to update CocoaPods`, () => {
       return runCommand(`pod repo update`);
     });
@@ -36,8 +35,8 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     return iosPlugins;
   });
 
-  //printPlugins(plugins);
-  await copyPluginsJS(config, plugins, "ios");
+  printPlugins(plugins);
+  await copyPluginsJS(config, plugins, 'ios');
   await autoGeneratePods(plugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
 }
@@ -144,7 +143,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
-      jsModule.clobbers.map((clobber: any)=> {
+      jsModule.clobbers.map((clobber: any) => {
         clobbers.push(clobber.$.target);
       });
       pluginModules.push(`{
@@ -175,12 +174,12 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
 
 function getJSModules(p: Plugin, platform: string) {
   let modules: Array<string> = [];
-  if (p.xml["js-module"]) {
-    modules = modules.concat(p.xml["js-module"]);
+  if (p.xml['js-module']) {
+    modules = modules.concat(p.xml['js-module']);
   }
   const platformModules = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
-  if(platformModules[0]["js-module"]) {
-    modules = modules.concat(platformModules[0]["js-module"]);
+  if (platformModules[0]['js-module']) {
+    modules = modules.concat(platformModules[0]['js-module']);
   }
   return modules;
 }
