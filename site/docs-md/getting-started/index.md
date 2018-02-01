@@ -22,8 +22,10 @@ npm install
 Next, run the capacitor initialization command _in the directory of the app_.
 
 ```
-npm run capacitor init
+npx capacitor init
 ```
+
+*Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
 
 As of version 0.1.0, this will create a very simple starting app with no UI library that you should nuke before
 starting your own app.
@@ -44,7 +46,7 @@ To add Capacitor to your web app, run the following commands:
 ```
 cd my-app
 npm install @capacitor/core @capacitor/cli
-npm run capacitor init
+npx capacitor init
 ```
 
 When prompted whether this is a new project, select "n"
