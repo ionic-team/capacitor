@@ -17,9 +17,10 @@ export async function check(config: Config, checks: CheckFunction[]): Promise<vo
 
 export async function checkWebDir(config: Config): Promise<string | null> {
   if (!await existsAsync(config.app.webDir)) {
-    return `Capacitor could not find the directory with the web assets in "${config.app.webDir}".
-    Please create it, also remember that it must include a index.html.
-    More info: https://capacitor.ionicframework.com/docs/webDir`;
+    return `Capacitor could not find the web assets directory "${config.app.webDir}".
+    Please create it, and make sure it has an index.html file. You can change
+    the path of this directory in capacitor.config.json.
+    More info: https://capacitor.ionicframework.com/docs/basics/configuration`;
   }
 
   if (!await existsAsync(join(config.app.webDir, 'index.html'))) {
@@ -31,8 +32,8 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 
 export async function checkPackage(_config: Config): Promise<string | null> {
   if (!await existsAsync('package.json')) {
-    return `Capacitor needs to run at the root of a NPM package.
-    Make sure you have a "package.json" in the working directory you run capacitor.
+    return `Capacitor needs to run at the root of an npm package.
+    Make sure you have a "package.json" in the directory where you run capacitor.
     More info: https://docs.npmjs.com/cli/init`;
   }
   return null;
