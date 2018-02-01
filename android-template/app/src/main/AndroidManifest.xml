@@ -32,7 +32,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="@string/fileprovider_authority"
+            android:authorities="com.getcapacitor.myapp.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -40,6 +40,8 @@
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
     </application>
+
+    <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Camera, Photos -->
