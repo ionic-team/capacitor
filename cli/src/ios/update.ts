@@ -1,9 +1,10 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import { CheckFunction, log, logInfo, runCommand, runTask } from '../common';
-import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
+import { writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
-import { Plugin, PluginType, getPlugins, printPlugins } from '../plugin';
+import { getPlugins, Plugin, PluginType, printPlugins } from '../plugin';
+import { copyPluginsJS } from '../tasks/update';
 
 import * as inquirer from 'inquirer';
 
@@ -41,27 +42,6 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
 }
 
-export async function copyPluginsJS(config: Config, plugins: Plugin[], platform: string) {
-  const pluginsDir = join(config.ios.webDir, 'plugins');
-  const cordovaPluginsJSFile = join(config.ios.webDir, 'cordova_plugins.js');
-  removeSync(pluginsDir);
-  removeSync(cordovaPluginsJSFile);
-  const cordovaPlugins = plugins
-    .filter(p => p.ios!.type === PluginType.Cordova);
-  cordovaPlugins.map(async p => {
-    const pluginDir = join(pluginsDir, p.id, 'www');
-    ensureDirSync(pluginDir);
-    const jsModules = getJSModules(p, platform);
-    jsModules.map(async (jsModule: any) => {
-      const filePath = join(config.ios.webDir, 'plugins', p.id, jsModule.$.src);
-      copySync(join(p.rootPath, jsModule.$.src), filePath);
-      let data = await readFileAsync(filePath, 'utf8');
-      data = `cordova.define("${p.id}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
-      await writeFileAsync(filePath, data, 'utf8');
-    });
-  });
-  writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
-}
 
 export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
   return Promise.all(plugins
@@ -134,52 +114,4 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
       ${config.ios.capacitorRuntimePod}
       ${pods.join('\n')}
     end`;
-}
-
-export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], platform: string) {
-  let pluginModules: Array<string> = [];
-  let pluginExports: Array<string> = [];
-  plugins.map((p) => {
-    const jsModules = getJSModules(p, platform);
-    jsModules.map((jsModule: any) => {
-      let clobbers: Array<string> = [];
-      jsModule.clobbers.map((clobber: any) => {
-        clobbers.push(clobber.$.target);
-      });
-      pluginModules.push(`{
-        "id": "${p.id}.${jsModule.$.name}",
-        "file": "plugins/${p.id}/${jsModule.$.src}",
-        "pluginId": "${p.id}",
-        "clobbers": [
-          "${clobbers.join(',')}"
-        ]}`
-      );
-    });
-    pluginExports.push(`"${p.id}": "${p.xml.$.version}"`);
-  });
-  return `
-  cordova.define('cordova/plugin_list', function(require, exports, module) {
-    module.exports = [
-      ${pluginModules.join(',')}
-    ];
-    module.exports.metadata =
-    // TOP OF METADATA
-    {
-      ${pluginExports.join(',\n')}
-    };
-    // BOTTOM OF METADATA
-    });
-    `;
-}
-
-function getJSModules(p: Plugin, platform: string) {
-  let modules: Array<string> = [];
-  if (p.xml['js-module']) {
-    modules = modules.concat(p.xml['js-module']);
-  }
-  const platformModules = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
-  if (platformModules[0]['js-module']) {
-    modules = modules.concat(platformModules[0]['js-module']);
-  }
-  return modules;
 }

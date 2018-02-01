@@ -17,6 +17,7 @@ export class Config implements CliConfig {
     minVersion: '21',
     platformDir: '',
     webDir: 'app/src/main/assets/public',
+    resDir: 'app/src/main/res',
     assets: {
       templateName: 'android-template',
       templateDir: ''
