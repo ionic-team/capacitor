@@ -947,7 +947,11 @@
                 action,
                 actionArgs
             };
-            window.webkit.messageHandlers.bridge.postMessage(command);
+            if (window.androidBridge) {
+                window.androidBridge.postMessage(JSON.stringify(command));
+            } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge) {
+                window.webkit.messageHandlers.bridge.postMessage(command);
+            }
 
         };
 
