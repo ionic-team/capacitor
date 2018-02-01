@@ -1,4 +1,6 @@
-.idea/
+assets/android-template/.idea
+assets/android-template/.gradle
+.npmignore
 *.iml
 .*.sw*
 assets/android-template/app/build/*
