@@ -36,7 +36,7 @@ export async function copy(config: Config, platformName: string) {
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
   const bridgePath = resolve('node_modules', '@capacitor/core', 'native-bridge.js');
-  if (!existsAsync(bridgePath)) {
+  if (!await existsAsync(bridgePath)) {
     logFatal(`Unable to find node_modules/@capacitor/core/native-bridge.js. Are you sure`,
     '@capacitor/core is installed? This file is required for Capacitor to function');
     return;
@@ -47,7 +47,7 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
 
 async function copyCordovaJS(config: Config, nativeAbsDir: string) {
   const cordovaPath = resolve('node_modules', '@capacitor/core', 'cordova.js');
-  if (!existsAsync(cordovaPath)) {
+  if (!await existsAsync(cordovaPath)) {
     logFatal(`Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
     '@capacitor/core is installed? This file is currently required for Capacitor to function.');
     return;
