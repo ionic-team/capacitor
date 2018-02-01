@@ -1,0 +1,178 @@
+0 silly input [ 'publish' ]
+1 silly flags { _: [ 'publish' ],
+1 silly flags   'reject-cycles': false,
+1 silly flags   rejectCycles: false,
+1 silly flags   'skip-git': true,
+1 silly flags   skipGit: true,
+1 silly flags   'force-publish': true,
+1 silly flags   forcePublish: true }
+2 verbose rootPath /Users/max/git/capacitor
+3 info version 2.8.0
+4 silly isInitialized
+5 silly isInitialized true
+6 silly existsSync /Users/max/git/capacitor/VERSION
+7 silly initialize attempt
+8 info current version 0.0.57
+9 silly getUpdates
+10 info Checking for updated packages...
+11 silly hasTags
+12 verbose hasTags true
+13 silly getLastTag
+14 verbose getLastTag 0.0.47
+15 info Comparing with 0.0.47.
+16 verbose updated @capacitor/cli
+17 verbose updated @capacitor/core
+18 info Checking for prereleased packages...
+19 silly collectDependents
+20 silly isPackageDependentOf @capacitor/cli @capacitor/cli
+21 silly isPackageDependentOf @capacitor/cli @capacitor/core
+22 silly isPackageDependentOf @capacitor/core @capacitor/cli
+23 silly isPackageDependentOf @capacitor/core @capacitor/core
+24 silly collectUpdates
+25 verbose has filtered update @capacitor/cli
+26 verbose has filtered update @capacitor/core
+27 silly initialize success
+28 silly execute attempt
+29 silly runScriptSync preversion undefined
+30 silly runScriptSync preversion @capacitor/cli
+31 silly runScriptSync version @capacitor/cli
+32 silly runScriptSync preversion @capacitor/core
+33 silly runScriptSync version @capacitor/core
+34 silly runScriptSync version undefined
+35 info publish Publishing packages to npm...
+36 silly existsSync /Users/max/git/capacitor/cli/scripts/prepublish.js
+37 verbose execScript No prepublish script found at /Users/max/git/capacitor/cli/scripts/prepublish.js
+38 silly existsSync /Users/max/git/capacitor/core/scripts/prepublish.js
+39 verbose execScript No prepublish script found at /Users/max/git/capacitor/core/scripts/prepublish.js
+40 verbose publishing @capacitor/cli
+41 silly publishTaggedInDir latest cli
+42 silly getExecOpts { cwd: '/Users/max/git/capacitor/cli' }
+43 verbose publishing @capacitor/core
+44 silly publishTaggedInDir latest core
+45 silly getExecOpts { cwd: '/Users/max/git/capacitor/core' }
+46 error publish Retrying failed publish: @capacitor/core
+47 verbose publish error undefined
+48 verbose publishing @capacitor/core
+49 silly publishTaggedInDir latest core
+50 silly getExecOpts { cwd: '/Users/max/git/capacitor/core' }
+51 error publish Retrying failed publish: @capacitor/core
+52 verbose publish error undefined
+53 verbose publishing @capacitor/core
+54 silly publishTaggedInDir latest core
+55 silly getExecOpts { cwd: '/Users/max/git/capacitor/core' }
+56 error publish Retrying failed publish: @capacitor/core
+57 verbose publish error undefined
+58 verbose publishing @capacitor/core
+59 silly publishTaggedInDir latest core
+60 silly getExecOpts { cwd: '/Users/max/git/capacitor/core' }
+61 error publish Retrying failed publish: @capacitor/core
+62 verbose publish error undefined
+63 verbose publishing @capacitor/core
+64 silly publishTaggedInDir latest core
+65 silly getExecOpts { cwd: '/Users/max/git/capacitor/core' }
+66 error publish Ran out of retries while publishing @capacitor/core Error: Command failed: npm publish --tag latest
+66 error publish sh: rimraf: command not found
+66 error publish npm ERR! file sh
+66 error publish npm ERR! code ELIFECYCLE
+66 error publish npm ERR! errno ENOENT
+66 error publish npm ERR! syscall spawn
+66 error publish npm ERR! @capacitor/core@0.0.58 clean: `rimraf dist`
+66 error publish npm ERR! spawn ENOENT
+66 error publish npm ERR!
+66 error publish npm ERR! Failed at the @capacitor/core@0.0.58 clean script.
+66 error publish npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+66 error publish npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+66 error publish
+66 error publish npm ERR! A complete log of this run can be found in:
+66 error publish npm ERR!     /Users/max/.npm/_logs/2018-02-01T23_19_44_125Z-debug.log
+66 error publish npm ERR! code ELIFECYCLE
+66 error publish npm ERR! errno 1
+66 error publish npm ERR! @capacitor/core@0.0.58 build: `npm run clean && npm run transpile-no-helpers && npm run rollup && npm run minify && npm run transpile`
+66 error publish npm ERR! Exit status 1
+66 error publish npm ERR!
+66 error publish npm ERR! Failed at the @capacitor/core@0.0.58 build script.
+66 error publish npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+66 error publish npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+66 error publish
+66 error publish npm ERR! A complete log of this run can be found in:
+66 error publish npm ERR!     /Users/max/.npm/_logs/2018-02-01T23_19_44_156Z-debug.log
+66 error publish npm ERR! code ELIFECYCLE
+66 error publish npm ERR! errno 1
+66 error publish npm ERR! @capacitor/core@0.0.58 prepublishOnly: `npm run build`
+66 error publish npm ERR! Exit status 1
+66 error publish npm ERR!
+66 error publish npm ERR! Failed at the @capacitor/core@0.0.58 prepublishOnly script.
+66 error publish npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+66 error publish npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+66 error publish
+66 error publish npm ERR! A complete log of this run can be found in:
+66 error publish npm ERR!     /Users/max/.npm/_logs/2018-02-01T23_19_44_180Z-debug.log
+66 error publish
+66 error publish > @capacitor/core@0.0.58 prepublishOnly .
+66 error publish > npm run build
+66 error publish
+66 error publish
+66 error publish > @capacitor/core@0.0.58 build /Users/max/git/capacitor/core
+66 error publish > npm run clean && npm run transpile-no-helpers && npm run rollup && npm run minify && npm run transpile
+66 error publish
+66 error publish
+66 error publish > @capacitor/core@0.0.58 clean /Users/max/git/capacitor/core
+66 error publish > rimraf dist
+66 error publish
+66 error publish
+66 error publish     at Promise.all.then.arr (/usr/local/lib/node_modules/lerna/node_modules/execa/index.js:236:11)
+66 error publish     at <anonymous>
+66 error publish     at process._tickCallback (internal/process/next_tick.js:188:7)
+67 error execute callback with error
+68 error Error: Command failed: npm publish --tag latest
+68 error sh: rimraf: command not found
+68 error npm ERR! file sh
+68 error npm ERR! code ELIFECYCLE
+68 error npm ERR! errno ENOENT
+68 error npm ERR! syscall spawn
+68 error npm ERR! @capacitor/core@0.0.58 clean: `rimraf dist`
+68 error npm ERR! spawn ENOENT
+68 error npm ERR!
+68 error npm ERR! Failed at the @capacitor/core@0.0.58 clean script.
+68 error npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+68 error npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+68 error
+68 error npm ERR! A complete log of this run can be found in:
+68 error npm ERR!     /Users/max/.npm/_logs/2018-02-01T23_19_44_125Z-debug.log
+68 error npm ERR! code ELIFECYCLE
+68 error npm ERR! errno 1
+68 error npm ERR! @capacitor/core@0.0.58 build: `npm run clean && npm run transpile-no-helpers && npm run rollup && npm run minify && npm run transpile`
+68 error npm ERR! Exit status 1
+68 error npm ERR!
+68 error npm ERR! Failed at the @capacitor/core@0.0.58 build script.
+68 error npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+68 error npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+68 error
+68 error npm ERR! A complete log of this run can be found in:
+68 error npm ERR!     /Users/max/.npm/_logs/2018-02-01T23_19_44_156Z-debug.log
+68 error npm ERR! code ELIFECYCLE
+68 error npm ERR! errno 1
+68 error npm ERR! @capacitor/core@0.0.58 prepublishOnly: `npm run build`
+68 error npm ERR! Exit status 1
+68 error npm ERR!
+68 error npm ERR! Failed at the @capacitor/core@0.0.58 prepublishOnly script.
+68 error npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+68 error npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+68 error
+68 error npm ERR! A complete log of this run can be found in:
+68 error npm ERR!     /Users/max/.npm/_logs/2018-02-01T23_19_44_180Z-debug.log
+68 error
+68 error > @capacitor/core@0.0.58 prepublishOnly .
+68 error > npm run build
+68 error
+68 error
+68 error > @capacitor/core@0.0.58 build /Users/max/git/capacitor/core
+68 error > npm run clean && npm run transpile-no-helpers && npm run rollup && npm run minify && npm run transpile
+68 error
+68 error
+68 error > @capacitor/core@0.0.58 clean /Users/max/git/capacitor/core
+68 error > rimraf dist
+68 error
+68 error
+68 error     at Promise.all.then.arr (/usr/local/lib/node_modules/lerna/node_modules/execa/index.js:236:11)
+68 error     at <anonymous>
