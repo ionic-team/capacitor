@@ -52,10 +52,10 @@ export interface CliConfigApp {
   rootDir: string;
   webDir: string;
   symlinkWebDir: boolean;
-  package: PackageJson,
+  package: PackageJson;
   extConfigName: string;
   extConfigFilePath: string;
-  extConfig: ExternalConfig,
+  extConfig: ExternalConfig;
   assets: CliConfigPlatformAssets;
 }
 

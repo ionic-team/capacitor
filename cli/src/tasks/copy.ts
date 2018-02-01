@@ -1,8 +1,9 @@
 import { Config } from '../config';
-import { add, checkWebDir, logFatal, logInfo, runTask } from '../common';
-import { symlinkAsync, existsAsync } from '../util/fs';
-import { join, resolve, relative } from 'path';
+import { check, checkWebDir, logFatal, logInfo, runTask } from '../common';
+import { existsAsync, symlinkAsync } from '../util/fs';
+import { join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
+import { allSerial } from '../util/promise';
 
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
@@ -12,10 +13,8 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
     return;
   }
   try {
-    await add(config, [checkWebDir]);
-    await Promise.all(platforms.map(platformName => {
-      return copy(config, platformName);
-    }));
+    await check(config, [checkWebDir]);
+    await allSerial(platforms.map(platformName => () => copy(config, platformName)));
   } catch (e) {
     logFatal(e);
   }
@@ -25,9 +24,11 @@ export async function copy(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     await copyWebDir(config, config.ios.webDir);
     await copyNativeBridge(config, config.ios.webDir);
+    await copyCordovaJS(config, config.ios.webDir);
   } else if (platformName === config.android.name) {
     await copyWebDir(config, config.android.webDir);
     await copyNativeBridge(config, config.android.webDir);
+    await copyCordovaJS(config, config.android.webDir);
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
@@ -41,7 +42,18 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
     return;
   }
 
-  return await fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
+  return fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
+}
+
+async function copyCordovaJS(config: Config, nativeAbsDir: string) {
+  const cordovaPath = resolve('node_modules', '@capacitor/core', 'cordova.js');
+  if (!existsAsync(cordovaPath)) {
+    logFatal(`Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
+    '@capacitor/core is installed? This file is currently required for Capacitor to function.');
+    return;
+  }
+
+  return fsCopy(cordovaPath, join(nativeAbsDir, 'cordova.js'));
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
@@ -58,7 +70,7 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   } else {
     await runTask(`Copying web assets from ${chalk.bold(webRelDir)} to ${chalk.bold(nativeRelDir)}`, async () => {
       await remove(nativeAbsDir);
-      return await fsCopy(webAbsDir, nativeAbsDir);
+      return fsCopy(webAbsDir, nativeAbsDir);
     });
   }
 }

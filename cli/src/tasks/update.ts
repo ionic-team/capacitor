@@ -1,7 +1,8 @@
 import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
-import { CheckFunction, add, checkPackage, logFatal, logInfo } from '../common';
+import { CheckFunction, check, checkPackage, logFatal, logInfo } from '../common';
+import { allSerial } from '../util/promise';
 
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
@@ -11,14 +12,12 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     return;
   }
   try {
-    await add(
+    await check(
       config,
       [checkPackage, ...updateChecks(config, platforms)]
     );
-    await Promise.all(platforms.map(platformName => {
-      return update(config, platformName, true);
-    }));
-    process.exit(0);
+
+    await allSerial(platforms.map(platformName => async () => await update(config, platformName, true)));
   } catch (e) {
     logFatal(e);
   }

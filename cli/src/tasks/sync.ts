@@ -1,7 +1,9 @@
 import { Config } from '../config';
 import { copy } from './copy';
 import { update, updateChecks } from './update';
-import { add, checkPackage, checkWebDir, logFatal, logInfo } from '../common';
+import { check, checkPackage, checkWebDir, logFatal, logInfo } from '../common';
+
+import { allSerial } from '../util/promise';
 
 
 export async function syncCommand(config: Config, selectedPlatform: string) {
@@ -11,16 +13,14 @@ export async function syncCommand(config: Config, selectedPlatform: string) {
     return;
   }
   try {
-    await add(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
-    await Promise.all(platforms.map(platformName => {
-      return sync(config, platformName);
-    }));
+    await check(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
+    await allSerial(platforms.map(platformName => () => sync(config, platformName)));
   } catch (e)  {
     logFatal(e);
   }
 }
 
 export async function sync(config: Config, platformName: string) {
-  await update(config, platformName, false);
-  await copy(config, platformName);
+  const tasks = [() => update(config, platformName, false), () => copy(config, platformName)];
+  await allSerial(tasks);
 }
