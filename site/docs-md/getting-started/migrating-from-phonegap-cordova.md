@@ -35,7 +35,7 @@ Finally, Capacitor has implications for plugin authors. On iOS, Swift 4 is offic
 
 Capacitor, unlike Cordova, does not use a global CLI. Instead, the Capacitor "CLI" is installed locally to each project as an npm script. This makes it easier to manage versions of Capacitor across many different apps.
 
-Thus, instead of running `capacitor` directly from the command line, Capacitor is invoked by calling `npm run capacitor` in the directory of your app.
+Thus, instead of running `capacitor` directly from the command line, Capacitor is invoked by calling `npx capacitor` in the directory of your app.
 
 ## Migration Process
 

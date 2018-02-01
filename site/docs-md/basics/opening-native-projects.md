@@ -4,12 +4,12 @@ Capacitor uses the native IDE for each platform in order to provide required con
 
 For iOS development, that means you must have Xcode 9 or above installed. For Android, [Android Studio](https://developer.android.com/studio/index.html) 3 or above.
 
-Both IDEs can be opened manually or using the `npm run capacitor open` command:
+Both IDEs can be opened manually or using the `npx capacitor open` command:
 
 ## Opening Xcode
 
 ```bash
-npm run capacitor open ios
+npx capacitor open ios
 ```
 
 Alternatively, you can open Xcode manually:
@@ -21,7 +21,7 @@ open ios/App/App.xcworkspace
 ## Opening Android Studio
 
 ```bash
-npm run capacitor open android
+npx capacitor open android
 ```
 
 Alternatively, you can open Android Studio and import the `android/` directory as an Android Studio project.
