@@ -28,4 +28,6 @@ fs.copySync(ANDROID_TEMPLATE_SRC, ANDROID_TEMPLATE_DST);
 fs.copySync(IOS_TEMPLATE_SRC, IOS_TEMPLATE_DST);
 fs.copySync(PLUGIN_TEMPLATE_SRC, PLUGIN_TEMPLATE_DST);
 
+// Remove .iml files to avoid comitting them
 fs.unlinkSync(path.join(ANDROID_TEMPLATE_DST, 'android-template.iml'))
+fs.unlinkSync(path.join(ANDROID_TEMPLATE_DST, 'app/app.iml'))
