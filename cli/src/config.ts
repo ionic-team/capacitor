@@ -123,6 +123,7 @@ export class Config implements CliConfig {
     this.android.platformDir = join(this.app.rootDir, this.android.name);
     this.android.assets.templateDir = join(this.cli.assetsDir, this.android.assets.templateName);
     this.android.webDir = join(this.android.platformDir, this.android.webDir);
+    this.android.resDir = join(this.android.platformDir, this.android.resDir);
   }
 
 
