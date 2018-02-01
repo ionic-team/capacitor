@@ -1,2 +1,3 @@
 *.iml
 assets/android-template/app/build/*
+!assets/android-template/app/build/.npmkeep
