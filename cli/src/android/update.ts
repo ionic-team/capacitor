@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { log, runTask } from '../common';
-import { getPlugins, Plugin, PluginType } from '../plugin';
+import { Plugin, PluginType, getPlugins } from '../plugin';
 import { getAndroidPlugins } from './common';
 import { copyPluginsJS } from '../tasks/update';
 import { ensureDirSync, removeSync, writeFileAsync } from '../util/fs';
@@ -30,12 +30,12 @@ export async function autoGenerateConfig(config: Config, plugins: Plugin[]) {
   removeSync(cordovaConfigXMLFile);
   let pluginEntries: Array<any> = [];
   plugins.filter(p => p.android!.type === PluginType.Cordova).map( p => {
-    const androidPlatform = p.xml.platform.filter(function(item: any) { return item.$.name === "android"; });
-    const androidConfigFiles = androidPlatform[0]["config-file"];
+    const androidPlatform = p.xml.platform.filter(function(item: any) { return item.$.name === 'android'; });
+    const androidConfigFiles = androidPlatform[0]['config-file'];
     if (androidConfigFiles) {
-      const configXMLEntries = androidConfigFiles.filter(function(item: any) { return item.$.target === "res/xml/config.xml"; });
+      const configXMLEntries = androidConfigFiles.filter(function(item: any) { return item.$.target === 'res/xml/config.xml'; });
       configXMLEntries.map(  (entry: any)  => {
-        const feature = {feature: entry.feature}
+        const feature = { feature: entry.feature };
         pluginEntries.push(feature);
       });
     }
@@ -56,9 +56,9 @@ export async function autoGenerateConfig(config: Config, plugins: Plugin[]) {
 export function writeXML(object: any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     const xml2js = await import('xml2js');
-    const builder = new xml2js.Builder({headless: true, explicitRoot:false, rootName: 'deleteme'});
+    const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: 'deleteme' });
     let xml = builder.buildObject(object);
-    xml = xml.replace('<deleteme>','').replace('</deleteme>','');
+    xml = xml.replace('<deleteme>', '').replace('</deleteme>', '');
     resolve(xml);
   });
 }
