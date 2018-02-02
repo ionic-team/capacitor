@@ -2,7 +2,6 @@ import * as program from 'commander';
 
 import { initCommand } from './tasks/init';
 import { copyCommand } from './tasks/copy';
-import { createCommand } from './tasks/create';
 import { updateCommand } from './tasks/update';
 import { openCommand } from './tasks/open';
 import { syncCommand } from './tasks/sync';
@@ -25,13 +24,6 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .description('Initializes a new Capacitor project in the current directory')
     .action(() => {
       return initCommand(config);
-    });
-
-  program
-    .command('create [directory] [name] [identifier]')
-    .description('Creates a new Capacitor project in the given directory')
-    .action((directory, name, identifier) => {
-      return createCommand(config, directory, name, identifier);
     });
 
   program
