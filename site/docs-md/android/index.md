@@ -15,7 +15,16 @@ project, you can manually add the Android project using
 
 ```bash
 npx capacitor add android
+npx capacitor sync
 ```
+
+The `sync` command updates dependencies, and copies any web assets to your project. You can also run
+
+```bash
+npx capacitor copy
+```
+
+To copy web assets only, which is faster if you know you don't need to update native dependencies.
 
 ### Opening Android Project
 
