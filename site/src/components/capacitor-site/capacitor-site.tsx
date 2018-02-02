@@ -130,7 +130,7 @@ export class App {
             <a href="http://ionicframework.com/" title="IonicFramework.com" rel="noopener">
               <div class="ionic-oss-logo"></div>
             </a>
-            <p>Released under <span id="mit">MIT License</span> | Copyright @ 2017</p>
+            <p>Released under <span id="mit">MIT License</span> | Copyright @ 2017 Drifty Co.</p>
           </div>
 
           <div id="footer-icons">
