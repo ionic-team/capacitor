@@ -4,6 +4,7 @@ import { initCommand } from './tasks/init';
 import { copyCommand } from './tasks/copy';
 import { updateCommand } from './tasks/update';
 import { openCommand } from './tasks/open';
+import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
 import { Config } from './config';
 import { addCommand } from './tasks/add';
@@ -24,6 +25,13 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .description('Initializes a new Capacitor project in the current directory')
     .action(() => {
       return initCommand(config);
+    });
+
+  program
+    .command('serve')
+    .description('Serves a Capacitor Progressive Web App in the browser')
+    .action(() => {
+      return serveCommand(config);
     });
 
   program

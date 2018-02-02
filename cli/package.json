@@ -43,6 +43,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@stencil/dev-server": "0.0.18-1",
     "@types/tar": "^4.0.0",
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
