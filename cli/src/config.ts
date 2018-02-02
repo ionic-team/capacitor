@@ -103,6 +103,8 @@ export class Config implements CliConfig {
       this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
+
+      this.platforms.push(this.web.name);
     } catch (e) {
       logFatal(`Unable to load config`, e);
     }
