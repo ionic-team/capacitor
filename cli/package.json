@@ -17,7 +17,7 @@
     "deploy": "np",
     "lint": "tslint --project tsconfig.json",
     "assets": "node scripts/copy-assets.js",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run lint && npm run build",
     "test": "jest",
     "watch": "npm run assets && tsc -w"
   },
