@@ -1,6 +1,10 @@
 $link-color: #5EB6FC;
 
 document-component {
+  img {
+    max-width: 100%;
+  }
+
   h1:first-child {
     anchor-link {
       display: none;
