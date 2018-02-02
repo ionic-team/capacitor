@@ -13,7 +13,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
     }
     androidPath = plugin.manifest.android.src;
   } else if (plugin.xml) {
-    androidPath = "src/android";
+    androidPath = 'src/android';
   } else {
     return null;
   }

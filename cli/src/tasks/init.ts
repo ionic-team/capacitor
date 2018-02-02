@@ -131,7 +131,7 @@ async function addPlatforms(config: Config) {
  * @param webDir
  */
 async function createWebDir(config: Config) {
-  const webDir = "public";
+  const webDir = 'public';
   try {
     await mkdirAsync(webDir);
 
@@ -142,7 +142,7 @@ async function createWebDir(config: Config) {
     });
 
     await copyAppTemplatePublicAssets(config, webDir);
-  } catch(e) {
+  } catch (e) {
     logError(`Unable to create web directory "${webDir}." You'll need to create it yourself or configure webDir in capacitor.config.json`);
   }
 }

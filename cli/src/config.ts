@@ -140,7 +140,7 @@ export class Config implements CliConfig {
   }
 
   private initPluginsConfig() {
-    this.plugins.assets.templateDir = join(this.cli.assetsDir, this.plugins.assets.templateName); 
+    this.plugins.assets.templateDir = join(this.cli.assetsDir, this.plugins.assets.templateName);
   }
 
   private mergeConfigData() {
