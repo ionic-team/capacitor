@@ -17,6 +17,7 @@ export class Config implements CliConfig {
     minVersion: '21',
     platformDir: '',
     webDir: 'app/src/main/assets/public',
+    resDir: 'app/src/main/res',
     assets: {
       templateName: 'android-template',
       templateDir: ''
@@ -122,6 +123,7 @@ export class Config implements CliConfig {
     this.android.platformDir = join(this.app.rootDir, this.android.name);
     this.android.assets.templateDir = join(this.cli.assetsDir, this.android.assets.templateName);
     this.android.webDir = join(this.android.platformDir, this.android.webDir);
+    this.android.resDir = join(this.android.platformDir, this.android.resDir);
   }
 
 
