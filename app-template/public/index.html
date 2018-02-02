@@ -12,8 +12,6 @@
   <link rel="stylesheet" href="css/style.css">
   <meta name="theme-color" content="#31d53d">
 
-  <style>html, body { padding: 0; margin: 0; }</style>
-  
   <!-- un-comment this code to enable service worker
   <script>
     if ('serviceWorker' in navigator) {
@@ -25,6 +23,13 @@
 </head>
 <body>
   <capacitor-welcome></capacitor-welcome>
+
+  <!--
+    This simple example uses Capacitor Core as a bundled file.
+    For large apps, we recommend using a bundler/module loader such as
+    rollup or webpack and importing Capacitor using ES2015 imports.
+  -->
+  <script src="capacitor.js"></script>
 
   <script src="js/capacitor-welcome.js"></script>
 </body>
