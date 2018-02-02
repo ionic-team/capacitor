@@ -104,6 +104,15 @@ export class SiteMenu {
       ]
     },
     {
+      title: 'Web',
+      items: [
+        {
+          title: 'Getting Started',
+          url: '/docs/web/'
+        },
+      ]
+    },
+    {
       title: 'Plugins',
       items: [
         {
