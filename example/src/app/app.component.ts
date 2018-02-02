@@ -1,8 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Platform, NavController, Nav } from 'ionic-angular';
 
-import { HomePage } from '../pages/home/home';
-
 import { Plugins } from '@capacitor/core';
 
 @Component({
