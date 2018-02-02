@@ -2,7 +2,7 @@
 
 Capacitor features a native Android runtime that enables developers to communicate between JavaScript and Native Java for Android code.
 
-Capacitor Android apps are configured and managed through Android Studio (generally), with dependencies managed by gradle.
+Capacitor Android apps are configured and managed through Android Studio (generally).
 
 Follow these guides for more information on each topic:
 
@@ -24,6 +24,12 @@ To open the project in Android Studio, run
 ```bash
 npx capacitor open android
 ```
+
+You'll be prompted to import this project from Gradle, just hit OK:
+
+![Gradle Import](/assets/img/docs/android/gradle-import.png)
+
+Android projects are really just Gradle projects that have to be imported into Android Studio, as Android is more IDE-agnostic than iOS.
 
 ### Syncing Gradle
 
