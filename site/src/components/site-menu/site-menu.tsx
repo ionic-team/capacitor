@@ -69,6 +69,10 @@ export class SiteMenu {
       title: 'iOS',
       items: [
         {
+          title: 'Getting Started',
+          url: '/docs/ios/'
+        },
+        {
           title: 'Configuration',
           url: '/docs/ios/configuration'
         },
@@ -85,6 +89,10 @@ export class SiteMenu {
     {
       title: 'Android',
       items: [
+        {
+          title: 'Getting Started',
+          url: '/docs/android/'
+        },
         {
           title: 'Configuration',
           url: '/docs/android/configuration'
