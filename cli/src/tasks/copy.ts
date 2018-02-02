@@ -1,9 +1,10 @@
 import { Config } from '../config';
 import { check, checkWebDir, logFatal, logInfo, runTask } from '../common';
 import { existsAsync, symlinkAsync } from '../util/fs';
+import { allSerial } from '../util/promise';
+import { copyWeb } from '../web/copy';
 import { join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
-import { allSerial } from '../util/promise';
 
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
@@ -29,6 +30,8 @@ export async function copy(config: Config, platformName: string) {
     await copyWebDir(config, config.android.webDir);
     await copyNativeBridge(config, config.android.webDir);
     await copyCordovaJS(config, config.android.webDir);
+  } else if (platformName === config.web.name) {
+    await copyWeb(config);
   } else {
     throw `Platform ${platformName} is not valid.`;
   }

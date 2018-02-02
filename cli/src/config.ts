@@ -37,6 +37,10 @@ export class Config implements CliConfig {
     }
   };
 
+  web = {
+    name: 'web'
+  };
+
   cli = {
     binDir: '',
     rootDir: '',
@@ -54,6 +58,7 @@ export class Config implements CliConfig {
     extConfigName: 'capacitor.config.json',
     extConfigFilePath: '',
     extConfig: ExtConfig,
+    bundledWebRuntime: false,
     assets: {
       templateName: 'app-template',
       templateDir: ''
@@ -65,7 +70,7 @@ export class Config implements CliConfig {
       templateName: 'plugin-template',
       templateDir: ''
     }
-  }
+  };
 
   platforms: string[] = [];
 
@@ -226,6 +231,8 @@ export class Config implements CliConfig {
     if (this.platformDirExists(this.ios.name)) {
       platforms.push(this.ios.name);
     }
+
+    platforms.push(this.web.name);
 
     return platforms;
   }

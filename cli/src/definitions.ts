@@ -28,10 +28,10 @@ export interface CliConfigPlatformAssets {
 
 export interface CliConfigPlatform {
   name: string;
-  minVersion: string;
-  platformDir: string;
-  webDir: string;
-  assets: CliConfigPlatformAssets;
+  minVersion?: string;
+  platformDir?: string;
+  webDir?: string;
+  assets?: CliConfigPlatformAssets;
 }
 
 export interface CliConfigPlatformIOS extends CliConfigPlatform {
@@ -56,6 +56,12 @@ export interface CliConfigApp {
   extConfigName: string;
   extConfigFilePath: string;
   extConfig: ExternalConfig;
+  /**
+   * Whether to use a bundled web runtime instead of relying on a bundler/module
+   * loader. If you're not using something like rollup or webpack or dynamic ES
+   * module imports, set this to "true" and import "capacitor.js" manually.
+   */
+  bundledWebRuntime: boolean;
   assets: CliConfigPlatformAssets;
 }
 
@@ -66,6 +72,7 @@ export interface CliConfigPlugins {
 export interface CliConfig {
   windows: CliConfigWindows;
   android: CliConfigPlatform;
+  web: CliConfigPlatform;
   ios: CliConfigPlatform;
   cli: CliConfigCli;
   app: CliConfigApp;
