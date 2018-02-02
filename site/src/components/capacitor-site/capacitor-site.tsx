@@ -61,7 +61,7 @@ export class App {
             />
 
             <stencil-route
-              url="/docs/basics/:pageName"
+              url="/docs/basics/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 const page = props.match.params.pageName || 'index';
                 return (
@@ -71,7 +71,7 @@ export class App {
             />
 
             <stencil-route
-              url="/docs/ios/:pageName"
+              url="/docs/ios/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 const page = props.match.params.pageName || 'index';
                 return (
@@ -81,7 +81,7 @@ export class App {
             />
 
             <stencil-route
-              url="/docs/android/:pageName"
+              url="/docs/android/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 const page = props.match.params.pageName || 'index';
                 return (
@@ -91,7 +91,7 @@ export class App {
             />
 
             <stencil-route
-              url="/docs/plugins/:pageName"
+              url="/docs/plugins/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 const page = props.match.params.pageName || 'index';
                 return (
@@ -101,7 +101,7 @@ export class App {
             />
 
             <stencil-route
-              url="/docs/apis/:pageName"
+              url="/docs/apis/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 let page = 'apis/index.html';
                 const pageName = props.match.params.pageName;
