@@ -8,16 +8,13 @@ import { join } from 'path';
 
 
 export async function updateAndroid(config: Config, needsUpdate: boolean) {
-  config;
-  needsUpdate;
-
   const plugins = await runTask('Fetching plugins', async () => {
     const allPlugins = await getPlugins();
     const androidPlugins = await getAndroidPlugins(allPlugins);
     return androidPlugins;
   });
 
-  await copyPluginsJS(config, plugins, "android");
+  await copyPluginsJS(config, plugins, 'android');
   await autoGenerateConfig(config, plugins);
   await runTask(`Updating android`, async () => {
     log('\n');
