@@ -26,7 +26,7 @@ export async function newPlugin(config: Config) {
       name: 'name',
       message: 'plugin name (snake-case):',
       validate: function(input) {
-        if (!input || input.trim() == '') {
+        if (!input || input.trim() === '') {
           return false;
         }
         return true;

@@ -82,7 +82,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
-      jsModule.clobbers.map((clobber: any)=> {
+      jsModule.clobbers.map((clobber: any) => {
         clobbers.push(clobber.$.target);
       });
       pluginModules.push(`{
@@ -114,33 +114,33 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
 
 function getJSModules(p: Plugin, platform: string) {
   let modules: Array<string> = [];
-  if (p.xml["js-module"]) {
-    modules = modules.concat(p.xml["js-module"]);
+  if (p.xml['js-module']) {
+    modules = modules.concat(p.xml['js-module']);
   }
   const platformModules = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
-  if(platformModules[0]["js-module"]) {
-    modules = modules.concat(platformModules[0]["js-module"]);
+  if (platformModules[0]['js-module']) {
+    modules = modules.concat(platformModules[0]['js-module']);
   }
   return modules;
 }
 
 
 function getwebDir(config: Config, platform: string): string {
-  if (platform === "ios") {
+  if (platform === 'ios') {
     return config.ios.webDir;
   }
-  if (platform === "android") {
+  if (platform === 'android') {
     return config.android.webDir;
   }
-  return "";
+  return '';
 }
 
 
 function getPluginType(p: Plugin, platform: string): PluginType {
-  if (platform === "ios") {
+  if (platform === 'ios') {
     return p.ios!.type;
   }
-  if (platform === "android") {
+  if (platform === 'android') {
     return p.android!.type;
   }
   return PluginType.Code;

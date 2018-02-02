@@ -48,7 +48,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
     }
     iosPath = plugin.manifest.ios.src;
   } else if (plugin.xml) {
-    iosPath = "src/ios";
+    iosPath = 'src/ios';
   } else {
     return null;
   }
