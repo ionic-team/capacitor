@@ -29,6 +29,7 @@ export interface Plugin {
     path: string;
   };
   android?: {
+    type: PluginType;
     path: string
   };
 }
