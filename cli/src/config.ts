@@ -186,7 +186,7 @@ export class Config implements CliConfig {
         logFatal(`Invalid platform: ${platformName}`);
 
       } else if (!this.platformDirExists(platformName)) {
-        platformNotCreatedError(platformName);
+        this.platformNotCreatedError(platformName);
       }
 
       // return the platform in an string array
@@ -239,12 +239,14 @@ export class Config implements CliConfig {
     return platforms;
   }
 
-
   platformDirExists(platformName: any): string {
     let platformDir: any = null;
 
     try {
       let testDir = join(this.app.rootDir, platformName);
+      if (platformName === 'web') {
+        testDir = join(this.app.rootDir, this.app.webDir);
+      }
       accessSync(testDir);
       platformDir = testDir;
     } catch (e) {}
@@ -252,18 +254,18 @@ export class Config implements CliConfig {
     return platformDir;
   }
 
-
   isValidPlatform(platform: any) {
     return this.platforms.includes(platform);
   }
 
+  platformNotCreatedError(platformName: string) {
+    const chalk = require('chalk');
+    if (platformName == 'web') {
+      logFatal(`Could not find the web platform directory. Make sure ${chalk.bold(this.app.webDir)} exists.`);
+    }
+    logFatal(`${chalk.bold(platformName)}" platform has not been created. Use "capacitor add ${platformName}" to add the platform project.`);
+  }
 }
-
-
-function platformNotCreatedError(platformName: string) {
-  logFatal(`"${platformName}" platform has not been created. Please use "capacitor create ${platformName}" command to first create the platform.`);
-}
-
 
 function loadPackageJson(dir: string): PackageJson {
   let p: any = null;
