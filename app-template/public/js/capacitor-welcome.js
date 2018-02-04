@@ -20,7 +20,7 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
       .button {
         display: inline-block;
         padding: 10px;
-        background-color: #5ec166;
+        background-color: #73B5F6;
         color: #fff;
         font-size: 0.9em;
         border: 0;
@@ -61,7 +61,7 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
         <h2>Getting Started</h2>
         <p>
           You'll probably need a UI framework to build a full-featured app. Might we recommend
-          <a href="http://ionicframework.com/">Ionic</a>?
+          <a target="_blank" href="http://ionicframework.com/">Ionic</a>?
         </p>
         <p>
           Visit <a href="http://ionic-team.github.io/capacitor">ionic-team.github.io/capacitor</a> for information
@@ -85,7 +85,7 @@ window.customElements.define('capacitor-welcome-titlebar', class extends HTMLEle
         display: block;
         padding: 15px 15px 15px 15px;
         text-align: center;
-        background-color: #5ec166;
+        background-color: #73B5F6;
       }
       ::slotted(h1) {
         margin: 0;
