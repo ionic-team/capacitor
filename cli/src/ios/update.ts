@@ -92,7 +92,6 @@ export async function updatePodfile(config: Config, plugins: Plugin[], needsUpda
   if (needsUpdate) {
     await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod update && xcodebuild -project App.xcodeproj clean`);
   } else {
-    log('Not doing pod update');
     await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod install && xcodebuild -project App.xcodeproj clean`);
   }
 }
