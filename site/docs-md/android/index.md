@@ -8,6 +8,14 @@ Follow these guides for more information on each topic:
 
 ## Getting Started
 
+Developing Android apps requires some Android SDK dependencies to be installed. Make sure to install the Android SDK Tools (26.0.1 or greater required), and a version of
+the Android SDK Platforms for API 21 or greater.
+
+You can install these easily by opening Android Studio, and going to Tools -> Android -> SDK Manager from the top menu bar:
+
+![SDK Platforms](/assets/img/docs/android/sdk-platforms.png)
+![SDK Tools](/assets/img/docs/android/sdk-tools.png)
+
 ### Creating Android Project
 
 By default, an Android project is created for every Capacitor project. If you are adding Capacitor to an existing
