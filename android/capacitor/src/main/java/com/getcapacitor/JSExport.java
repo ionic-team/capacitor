@@ -39,20 +39,24 @@ public class JSExport {
     }
   }
 
-  public static String getCordovaJS(Context context) throws JSExportException {
+  public static String getCordovaJS(Context context) {
+    String fileContent = "";
     try {
-      return getJS(context, "public/cordova.js");
+      fileContent = getJS(context, "public/cordova.js");
     } catch(IOException ex) {
-      throw new JSExportException("Unable to load cordova.js. Capacitor will not function!", ex);
+      Log.e(Bridge.TAG, "Unable to read public/cordova.js file, Cordova plugins will not work");
     }
+    return fileContent;
   }
 
-  public static String getCordovaPluginsFileJS(Context context) throws JSExportException {
+  public static String getCordovaPluginsFileJS(Context context) {
+    String fileContent = "";
     try {
-      return getJS(context, "public/cordova_plugins.js");
+      fileContent = getJS(context, "public/cordova_plugins.js");
     } catch(IOException ex) {
-      throw new JSExportException("Unable to load cordova_plugins.js. Capacitor will not function!", ex);
+      Log.e(Bridge.TAG, "Unable to read public/cordova_plugins.js file, Cordova plugins will not work");
     }
+    return fileContent;
   }
 
   public static String getPluginJS(Collection<PluginHandle> plugins) {
