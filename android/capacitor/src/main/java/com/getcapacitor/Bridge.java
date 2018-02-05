@@ -399,7 +399,7 @@ public class Bridge {
     try {
       String coreJS = JSExport.getCoreJS(context);
       String pluginJS = JSExport.getPluginJS(plugins.values());
-      String cordovaJS = JSExport.getCordovaJS(context);
+      String cordovaJS = ""; // JSExport.getCordovaJS(context);
       String cordovaPluginsJS = ""; // JSExport.getCordovaPluginJS(context);
       String cordovaPluginsFileJS = ""; // JSExport.getCordovaPluginsFileJS(context);
 
