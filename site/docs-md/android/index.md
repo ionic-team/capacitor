@@ -54,7 +54,7 @@ To manually sync Gradle, open Tools -> Android -> Sync Project with Gradle Files
 Follow these Android-specific guides for more information on setting permissions for your app, updating dependencies, building
 plugins, and more:
 
-[Configuring and setting permissions for Android](./configuration.html)
+[Configuring and setting permissions for Android](./configuration)
 
 [Managing plugins and dependencies for Android](./managing-dependencies.html)
 
