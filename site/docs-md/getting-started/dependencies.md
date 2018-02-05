@@ -1,5 +1,11 @@
 # Capacitor Required Dependencies
 
+Capacitor has a number of dependencies depending on which platforms you're targeting and which operating systems you are developing on.
+
+The base requirements are [Node v8.6.0](https://nodejs.org) or later, and NPM version 5.6.0 or later (installed with a recent version of Node).
+
+For specific platforms, follow each guide below to ensure you have the correct dependencies installed.
+
 ## iOS Development
 
 For building iOS apps, Capacitor requires a Mac with Xcode 9 or above. Soon, you'll be able to use [Ionic Pro](http://ionicframework.com/pro) to build for iOS even if you're on Windows.
