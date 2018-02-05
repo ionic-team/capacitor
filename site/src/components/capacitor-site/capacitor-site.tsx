@@ -118,6 +118,7 @@ export class App {
                 if(pageName) {
                   page = `apis/${pageName}/index.html`
                 }
+                console.log('Showing api page', page);
                 return (
                   <document-component pages={[page]} />
                 );

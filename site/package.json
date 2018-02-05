@@ -5,9 +5,9 @@
   "description": "Capacitor Site",
   "scripts": {
     "docs": "gulp",
-    "build": "gulp && stencil build --prerender",
+    "build": "gulp && bash scripts/docs.sh && stencil build --prerender",
     "dev": "gulp && sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
-    "deploy": "rm -rf www && npm run build && firebase deploy",
+    "deploy": "bash scripts/deploy.sh",
     "serve": "stencil-dev-server",
     "start": "rm -rf www && npm run dev"
   },
