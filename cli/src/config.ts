@@ -55,6 +55,7 @@ export class Config implements CliConfig {
     webDir: 'public',
     symlinkWebDir: false,
     package: Package,
+    windowsAndroidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe',
     extConfigName: 'capacitor.config.json',
     extConfigFilePath: '',
     extConfig: ExtConfig,
@@ -101,6 +102,7 @@ export class Config implements CliConfig {
       this.initAndroidConfig();
       this.initIosConfig();
       this.initPluginsConfig();
+      this.initWindowsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
 
@@ -139,6 +141,10 @@ export class Config implements CliConfig {
     this.ios.platformDir = join(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = join(this.cli.assetsDir, this.ios.assets.templateName);
     this.ios.webDir = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
+  }
+
+  private initWindowsConfig() {
+    this.windows.androidStudioPath = this.app.windowsAndroidStudioPath;
   }
 
   private initPluginsConfig() {
