@@ -102,9 +102,11 @@ export class Config implements CliConfig {
       this.initAndroidConfig();
       this.initIosConfig();
       this.initPluginsConfig();
-      this.initWindowsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
+
+      // Post-merge
+      this.initWindowsConfig();
 
       this.platforms.push(this.web.name);
     } catch (e) {
