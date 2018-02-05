@@ -6,8 +6,8 @@ Capacitor iOS apps are configured and managed through Xcode, with dependencies m
 
 Follow these guides for more information on each topic:
 
-[Configuring and setting permissions for iOS](./configuration.html)
+[Configuring and setting permissions for iOS](./configuration)
 
-[Managing plugins and dependencies for iOS](./managing-dependencies.html)
+[Managing plugins and dependencies for iOS](./managing-dependencies)
 
-[Building Native Plugins for iOS](./plugins.html)
+[Building Native Plugins for iOS](./plugins)
