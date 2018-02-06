@@ -54,6 +54,14 @@ export class AppMarked {
       link.innerHTML = '#';
       h.insertBefore(link, h.firstChild);
     });
+
+    setTimeout(() => {
+      const hash = window.location.hash;
+      if (hash) {
+        window.location.hash = '';
+        window.location.hash = hash;
+      }
+    }, 50);
   }
 
   componentDidUpdate() {
