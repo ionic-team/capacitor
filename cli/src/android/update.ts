@@ -2,20 +2,29 @@ import { Config } from '../config';
 import { log, runTask } from '../common';
 import { Plugin, PluginType, getPlugins } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { copyPluginsJS } from '../tasks/update';
+import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPluginType, removePluginFiles } from '../tasks/update';
 import { ensureDirSync, removeSync, writeFileAsync } from '../util/fs';
 import { join } from 'path';
 
 
 export async function updateAndroid(config: Config, needsUpdate: boolean) {
+  const platform = 'android';
   const plugins = await runTask('Fetching plugins', async () => {
     const allPlugins = await getPlugins();
     const androidPlugins = await getAndroidPlugins(allPlugins);
     return androidPlugins;
   });
 
-  await copyPluginsJS(config, plugins, 'android');
-  await autoGenerateConfig(config, plugins);
+  const cordovaPlugins = plugins
+    .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  if (cordovaPlugins.length > 0) {
+    await copyCordovaJS(config, platform);
+    await copyPluginsJS(config, cordovaPlugins, platform);
+  } else {    
+    removePluginFiles(config, platform);
+    createEmptyCordovaJS(config, platform);
+  }
+  await autoGenerateConfig(config, cordovaPlugins);
   await runTask(`Updating android`, async () => {
     log('\n');
     return Promise.resolve();
@@ -23,13 +32,13 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
 }
 
 
-export async function autoGenerateConfig(config: Config, plugins: Plugin[]) {
+export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[]) {
   const xmlDir = join(config.android.resDir, 'xml');
   ensureDirSync(xmlDir);
   const cordovaConfigXMLFile = join(xmlDir, 'config.xml');
   removeSync(cordovaConfigXMLFile);
   let pluginEntries: Array<any> = [];
-  plugins.filter(p => p.android!.type === PluginType.Cordova).map( p => {
+  cordovaPlugins.map( p => {
     const androidPlatform = p.xml.platform.filter(function(item: any) { return item.$.name === 'android'; });
     const androidConfigFiles = androidPlatform[0]['config-file'];
     if (androidConfigFiles) {

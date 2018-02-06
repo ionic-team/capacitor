@@ -4,8 +4,10 @@ import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
 import { CheckFunction, check, checkPackage, logFatal, logInfo } from '../common';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { Plugin, PluginType } from '../plugin';
+import { existsAsync } from '../util/fs';
+import { copy as fsCopy } from 'fs-extra';
 
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
@@ -26,7 +28,6 @@ export async function updateCommand(config: Config, selectedPlatformName: string
   }
 }
 
-
 export function updateChecks(config: Config, platforms: string[]): CheckFunction[] {
   const checks: CheckFunction[] = [];
   for (let platformName of platforms) {
@@ -41,24 +42,20 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
   return checks;
 }
 
-
 export async function update(config: Config, platformName: string, needsUpdate: boolean) {
   if (platformName === config.ios.name) {
     await updateIOS(config, needsUpdate);
   } else if (platformName === config.android.name) {
     await updateAndroid(config, needsUpdate);
+    await copyCordovaJS(config, config.android.webDir);
   }
 }
 
-
-export async function copyPluginsJS(config: Config, plugins: Plugin[], platform: string) {
+export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], platform: string) {
   const webDir = getwebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
-  removeSync(pluginsDir);
-  removeSync(cordovaPluginsJSFile);
-  const cordovaPlugins = plugins
-    .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  removePluginFiles(config, platform);
   cordovaPlugins.map(async p => {
     const pluginDir = join(pluginsDir, p.id, 'www');
     ensureDirSync(pluginDir);
@@ -73,7 +70,6 @@ export async function copyPluginsJS(config: Config, plugins: Plugin[], platform:
   });
   writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }
-
 
 export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], platform: string) {
   let pluginModules: Array<string> = [];
@@ -111,7 +107,6 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     `;
 }
 
-
 function getJSModules(p: Plugin, platform: string) {
   let modules: Array<string> = [];
   if (p.xml['js-module']) {
@@ -136,7 +131,7 @@ function getwebDir(config: Config, platform: string): string {
 }
 
 
-function getPluginType(p: Plugin, platform: string): PluginType {
+export function getPluginType(p: Plugin, platform: string): PluginType {
   if (platform === 'ios') {
     return p.ios!.type;
   }
@@ -144,4 +139,28 @@ function getPluginType(p: Plugin, platform: string): PluginType {
     return p.android!.type;
   }
   return PluginType.Code;
+}
+
+export async function copyCordovaJS(config: Config, platform: string) {
+  const cordovaPath = resolve('node_modules', '@capacitor/core', 'cordova.js');
+  if (!await existsAsync(cordovaPath)) {
+    logFatal(`Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
+    '@capacitor/core is installed? This file is currently required for Capacitor to function.');
+    return;
+  }
+
+  return fsCopy(cordovaPath, join(getwebDir(config, platform), 'cordova.js'));
+}
+
+export function createEmptyCordovaJS(config: Config, platform: string) {
+  writeFileAsync(join(getwebDir(config, platform), 'cordova.js'), "");
+  writeFileAsync(join(getwebDir(config, platform), 'cordova_plugins.js'), "");
+}
+
+export function removePluginFiles(config: Config, platform: string) {
+  const webDir = getwebDir(config, platform);
+  const pluginsDir = join(webDir, 'plugins');
+  const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
+  removeSync(pluginsDir);
+  removeSync(cordovaPluginsJSFile);
 }
