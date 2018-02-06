@@ -9,30 +9,34 @@ Current mobile OS's have additional layers of separation between files, such as 
 ## Example
 
 ```typescript
+import { Plugins } from '@capacitor/core';
+
+const { Filesystem } = Plugins;
+
 fileWrite() {
   try {
-    Plugins.Filesystem.writeFile('secrets/text.txt', "This is a test", FilesystemDirectory.Documents, 'utf8')
+    Filesystem.writeFile('secrets/text.txt', "This is a test", FilesystemDirectory.Documents, 'utf8')
   } catch(e) {
     console.error('Unable to write file', e);
   }
 }
 
 async fileRead() {
-  let contents = await Plugins.Filesystem.readFile('secrets/text.txt', FilesystemDirectory.Documents, 'utf8');
+  let contents = await Filesystem.readFile('secrets/text.txt', FilesystemDirectory.Documents, 'utf8');
   console.log(contents);
 }
 
 async fileAppend() {
-  await Plugins.Filesystem.appendFile('secrets/text.txt', "MORE TESTS", FilesystemDirectory.Documents, 'utf8');
+  await Filesystem.appendFile('secrets/text.txt', "MORE TESTS", FilesystemDirectory.Documents, 'utf8');
 }
 
 async fileDelete() {
-  await Plugins.Filesystem.deleteFile('secrets/text.txt', FilesystemDirectory.Documents);
+  await Filesystem.deleteFile('secrets/text.txt', FilesystemDirectory.Documents);
 }
 
 async mkdir() {
   try {
-    let ret = await Plugins.Filesystem.mkdir('secrets', FilesystemDirectory.Documents, false);
+    let ret = await Filesystem.mkdir('secrets', FilesystemDirectory.Documents, false);
   } catch(e) {
     console.error('Unable to make directory', e);
   }
@@ -40,7 +44,7 @@ async mkdir() {
 
 async rmdir() {
   try {
-    let ret = await Plugins.Filesystem.rmdir('secrets', FilesystemDirectory.Documents);
+    let ret = await Filesystem.rmdir('secrets', FilesystemDirectory.Documents);
   } catch(e) {
     console.error('Unable to remove directory', e);
   }
@@ -48,7 +52,7 @@ async rmdir() {
 
 async readdir() {
   try {
-    let ret = await Plugins.Filesystem.readdir('secrets', FilesystemDirectory.Documents);
+    let ret = await Filesystem.readdir('secrets', FilesystemDirectory.Documents);
   } catch(e) {
     console.error('Unable to read dir', e);
   }
@@ -56,7 +60,7 @@ async readdir() {
 
 async stat() {
   try {
-    let ret = await Plugins.Filesystem.stat('secrets/text.txt', FilesystemDirectory.Documents);
+    let ret = await Filesystem.stat('secrets/text.txt', FilesystemDirectory.Documents);
   } catch(e) {
     console.error('Unable to stat file', e);
   }

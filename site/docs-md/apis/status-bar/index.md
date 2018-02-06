@@ -10,22 +10,24 @@ import {
   StatusBarStyle,
 } from '@capacitor/core';
 
+const { StatusBar } = Plugins;
+
 export class StatusBarExample {
   isStatusBarLight = true
 
   changeStatusBar() {
-    Plugins.StatusBar.setStyle({
+    StatusBar.setStyle({
       style: this.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
     }, () => {});
     this.isStatusBarLight = !this.isStatusBarLight;
   }
 
   hideStatusBar() {
-    Plugins.StatusBar.hide();
+    StatusBar.hide();
   }
 
   showStatusBar() {
-    Plugins.StatusBar.show();
+    StatusBar.show();
   }
 }
 ```

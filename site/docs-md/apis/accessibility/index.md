@@ -10,22 +10,24 @@ labels through the connected screen reader.
 ```typescript
 import { Plugins } from '@capacitor/core';
 
-Plugins.Accessibility.addListener('accessibilityScreenReaderStateChange', (err, state) => {
+const { Accessibility, Modals } = Plugins;
+
+Accessibility.addListener('accessibilityScreenReaderStateChange', (err, state) => {
   console.log(state.value);
 });
 
 async isVoiceOverEnabled() {
-  var vo = await Plugins.Accessibility.isScreenReaderEnabled();
+  var vo = await Accessibility.isScreenReaderEnabled();
   alert('Voice over enabled? ' + vo);
 }
 
 async speak() {
-  var value = await Plugins.Modals.prompt({
+  var value = await Modals.prompt({
     title: "Value to speak",
     message: "Enter the value to speak"
   });
 
-  Plugins.Accessibility.speak(value.value);
+  Accessibility.speak(value.value);
 }
 ```
 

@@ -43,3 +43,6 @@ Progressive Web Apps are judged by serveral performance standards, including [Ti
 Follow the [Progressive Web App Checklist](https://developers.google.com/web/progressive-web-apps/checklist) before going live, and use [Lighthouse](https://developers.google.com/web/tools/lighthouse/) to audit and test your app.
 
 If you're struggling to meet Progressive Web App performance standards with your existing frontend stack, take a look at [Ionic Framework](http://ionicframework.com/) version 4 (in beta at the time of this writing) or greater as an option for getting fast PWA support with nearly zero configuration. Ionic 4.x or above is a web component library that works in several popular frontend frameworks, not just Angular.
+
+## Running Natively and on the Web
+

@@ -18,9 +18,11 @@ import {
   HapticsImpactStyle
 } from '@capacitor/core';
 
+const { Haptics } = Plugins;
+
 export class HapticsExample {
   hapticsImpact(style = HapticsImpactStyle.Heavy) {
-    Plugins.Haptics.impact({
+    Haptics.impact({
       style: style
     });
   }
@@ -34,19 +36,19 @@ export class HapticsExample {
   }
 
   hapticsVibrate() {
-    Plugins.Haptics.vibrate();
+    Haptics.vibrate();
   }
 
   hapticsSelectionStart() {
-    Plugins.Haptics.selectionStart();
+    Haptics.selectionStart();
   }
 
   hapticsSelectionChanged() {
-    Plugins.Haptics.selectionChanged();
+    Haptics.selectionChanged();
   }
 
   hapticsSelectionEnd() {
-    Plugins.Haptics.selectionEnd();
+    Haptics.selectionEnd();
   }
 }
 ```

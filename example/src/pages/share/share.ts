@@ -5,6 +5,8 @@ import {
   ShareOptions
 } from '@capacitor/core';
 
+const { Share } = Plugins;
+
 /**
  * Generated class for the SharePage page.
  *
@@ -23,7 +25,7 @@ export class SharePage {
   }
 
   async showSharing() {
-    let shareRet = await Plugins.Share.share({
+    let shareRet = await Share.share({
       title: 'See cool stuff',
       text: 'Really awesome thing you need to see right meow',
       url: 'http://ionicframework.com/',

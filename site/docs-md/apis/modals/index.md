@@ -8,15 +8,17 @@ with Action Sheets and the native Share modal.
 ```javascript
 import { Plugins } from '@capacitor/core';
 
+const { Modals } = Plugins;
+
 async showAlert() {
-  let alertRet = await Plugins.Modals.alert({
+  let alertRet = await Modals.alert({
     title: 'Stop',
     message: 'this is an error'
   });
 }
 
 async showConfirm() {
-  let confirmRet = await Plugins.Modals.confirm({
+  let confirmRet = await Modals.confirm({
     title: 'Confirm',
     message: 'Are you sure you\'d like to press the red button?'
   });
@@ -24,7 +26,7 @@ async showConfirm() {
 }
 
 async showPrompt() {
-  let promptRet = await Plugins.Modals.prompt({
+  let promptRet = await Modals.prompt({
     title: 'Hello',
     message: 'What\'s your name?'
   });
@@ -32,7 +34,7 @@ async showPrompt() {
 }
 
 async showActions() {
-  let promptRet = await Plugins.Modals.showActions({
+  let promptRet = await Modals.showActions({
     title: 'Photo Options',
     message: 'Select an option to perform',
     options: [
@@ -52,7 +54,7 @@ async showActions() {
 }
 
 async showSharing() {
-  let shareRet = await Plugins.Modals.showSharing({
+  let shareRet = await Modals.showSharing({
     message: 'Really awesome thing you need to see right meow',
     url: 'http://ionicframework.com/',
     subject: 'See cool stuff'

@@ -12,33 +12,35 @@ deeplinks, opens other apps, and manages persisted plugin state.
 ```typescript
 import { Plugins, AppState } from '@capacitor/core';
 
-Plugins.App.addListener('appStateChanged', (err: any, state: AppState) => {
+const { App } = Plugins;
+
+App.addListener('appStateChanged', (err: any, state: AppState) => {
   // state.isActive contains the active state
   console.log('App state changed. Is active?', state.isActive);
 });
 
 // Listen for serious plugin errors
-Plugins.App.addListener('pluginError', (err: any, info: any) => {
+App.addListener('pluginError', (err: any, info: any) => {
   console.error('There was a serious error with a plugin', err, info);
 });
 
-var ret = await Plugins.App.canOpenUrl({ url: 'com.getcapacitor.myapp' });
+var ret = await App.canOpenUrl({ url: 'com.getcapacitor.myapp' });
 console.log('Can open url: ', ret.value);
 
-ret = await Plugins.App.openUrl({ url: 'com.getcapacitor.myapp://page?id=ionicframework' });
+ret = await App.openUrl({ url: 'com.getcapacitor.myapp://page?id=ionicframework' });
 console.log('Open url response: ', ret);
 
-ret = await Plugins.App.getLaunchUrl();
+ret = await App.getLaunchUrl();
 if(ret && ret.url) {
   console.log('App opened with URL: ' + ret.url);
 }
 console.log('Launch url: ', ret);
 
-Plugins.App.addListener('appUrlOpen', (err: any, data: any) => {
+App.addListener('appUrlOpen', (err: any, data: any) => {
   console.log('App opened with URL: ' +  data.url);
 });
 
-Plugins.App.addListener('appRestoredResult', (err: any, data: any) => {
+App.addListener('appRestoredResult', (err: any, data: any) => {
   console.log('Restored state:', data);
 });
 ```
