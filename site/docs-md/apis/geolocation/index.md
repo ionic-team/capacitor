@@ -33,14 +33,18 @@ Read about [Setting Android Permissions]('../android/permissions/) in the [Andro
 ## Example
 
 ```typescript
+import { Plugins } from '@capacitor/core';
+
+const { Geolocation } = Plugins;
+
 class GeolocationExample {
   async getCurrentPosition() {
-    const coordinates = await Plugins.Geolocation.getCurrentPosition()
+    const coordinates = await Geolocation.getCurrentPosition()
     console.log('Current', coordinates);
   }
 
   watchPosition() {
-    const wait = Plugins.Geolocation.watchPosition({}, (err, position) => {
+    const wait = Geolocation.watchPosition({}, (err, position) => {
     })
   }
 }

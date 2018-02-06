@@ -8,11 +8,13 @@ copying images and URLs.
 ## Example
 
 ```typescript
-Plugins.Clipboard.set({
+const { Clipboard } = Plugins;
+
+Clipboard.set({
   string: "Hello, Moto"
 });
 
-let str = await Plugins.Clipboard.get({
+let str = await Clipboard.get({
   type: "string"
 });
 console.log('Got string from clipboard:', str);

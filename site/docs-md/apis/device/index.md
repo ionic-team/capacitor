@@ -6,7 +6,9 @@ The Device API exposes internal information about the device
 
 
 ```typescript
-const info = await Plugins.Device.getInfo()
+const { Device } = Plugins;
+
+const info = await Device.getInfo();
 console.log(info);
 
 // Example output:

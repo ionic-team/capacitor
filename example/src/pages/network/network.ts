@@ -4,6 +4,9 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins
 } from '@capacitor/core';
+
+const { Network } = Plugins;
+
 /**
  * Generated class for the NetworkPage page.
  *
@@ -24,7 +27,7 @@ export class NetworkPage {
   }
 
   startListen() {
-    this.handler = Plugins.Network.addListener('networkStatusChange', (err, status) => {
+    this.handler = Network.addListener('networkStatusChange', (err, status) => {
       console.log("Network status changed", status);
     });
   }
@@ -34,7 +37,7 @@ export class NetworkPage {
   }
 
   async getStatus() {
-    let status = await Plugins.Network.getStatus();
+    let status = await Network.getStatus();
     console.log('NETWORK STATUS', status);
   }
 

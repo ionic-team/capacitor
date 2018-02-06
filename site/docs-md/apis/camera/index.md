@@ -36,8 +36,10 @@ to handle any camera data that was sent in the case your app was terminated by t
 ```typescript
 import { Plugins } from '@capacitor/core';
 
+const { Camera } = Plugins;
+
 async takePicture() {
-  const image = await Plugins.Camera.getPhoto({
+  const image = await Camera.getPhoto({
     quality: 90,
     allowEditing: true,
     resultType: 'base64'
@@ -74,7 +76,9 @@ export class CameraPage {
   }
 
   async takePicture() {
-    const image = await Plugins.Camera.getPhoto({
+    const { Camera } = Plugins;
+
+    const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: true,
       resultType: 'base64'
