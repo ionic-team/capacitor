@@ -25,11 +25,9 @@ export async function copy(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     await copyWebDir(config, config.ios.webDir);
     await copyNativeBridge(config, config.ios.webDir);
-    await copyCordovaJS(config, config.ios.webDir);
   } else if (platformName === config.android.name) {
     await copyWebDir(config, config.android.webDir);
     await copyNativeBridge(config, config.android.webDir);
-    await copyCordovaJS(config, config.android.webDir);
   } else if (platformName === config.web.name) {
     await copyWeb(config);
   } else {
@@ -46,17 +44,6 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
   }
 
   return fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
-}
-
-async function copyCordovaJS(config: Config, nativeAbsDir: string) {
-  const cordovaPath = resolve('node_modules', '@capacitor/core', 'cordova.js');
-  if (!await existsAsync(cordovaPath)) {
-    logFatal(`Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
-    '@capacitor/core is installed? This file is currently required for Capacitor to function.');
-    return;
-  }
-
-  return fsCopy(cordovaPath, join(nativeAbsDir, 'cordova.js'));
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
