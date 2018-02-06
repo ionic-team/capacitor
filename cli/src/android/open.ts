@@ -24,7 +24,7 @@ export async function openAndroid(config: Config) {
 
                  'Example:\n' +
                  '{\n' +
-                    '  "windowsAndroidStudioPath": "H:\\Android Studio\\bin\\studio64.exe"\n' +
+                    '  "windowsAndroidStudioPath": "H:\\\\Android Studio\\\\bin\\\\studio64.exe"\n' +
                   '}');
       }
       break;
