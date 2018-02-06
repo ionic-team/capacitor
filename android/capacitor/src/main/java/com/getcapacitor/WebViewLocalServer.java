@@ -211,6 +211,12 @@ public class WebViewLocalServer {
     }
 
     String path = request.getUrl().getPath();
+
+    if (path.equals("/cordova.js")) {
+      return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
+    }
+
     int periodIndex = path.lastIndexOf(".");
     if (periodIndex >= 0) {
       String ext = path.substring(path.lastIndexOf("."), path.length());
