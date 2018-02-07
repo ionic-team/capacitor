@@ -93,15 +93,16 @@ public class JSExport {
   }
 
   public static String getCordovaPluginJS(Context context) {
-    return getFilesContent(context, "public/plugins", "");
+    return getFilesContent(context, "public/plugins");
   }
 
-  public static String getFilesContent(Context context, String path, String currentContent) {
+  public static String getFilesContent(Context context, String path) {
+    String currentContent = "";
     try {
       String[] content = context.getAssets().list(path);
       if (content.length  > 0) {
         for (String file: content) {
-          currentContent += getFilesContent(context, path+"/"+file, currentContent);
+          currentContent += getFilesContent(context, path+"/"+file);
         }
       } else {
         return getJS(context, path);
