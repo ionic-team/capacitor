@@ -107,7 +107,7 @@ public class JSExport {
         return getJS(context, path);
       }
     } catch(IOException ex) {
-      Log.e(Bridge.TAG, "Unable to read file at path "+path, ex);
+      Log.e(Bridge.TAG, "Unable to read file at path "+path);
     }
     return currentContent;
   }
