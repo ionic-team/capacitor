@@ -97,12 +97,12 @@ public class JSExport {
   }
 
   public static String getFilesContent(Context context, String path) {
-    String currentContent = "";
+    StringBuilder builder = new StringBuilder();
     try {
       String[] content = context.getAssets().list(path);
       if (content.length  > 0) {
         for (String file: content) {
-          currentContent += getFilesContent(context, path+"/"+file);
+          builder.append(getFilesContent(context, path + "/" + file));
         }
       } else {
         return getJS(context, path);
@@ -110,7 +110,7 @@ public class JSExport {
     } catch(IOException ex) {
       Log.e(Bridge.TAG, "Unable to read file at path "+path);
     }
-    return currentContent;
+    return builder.toString();
   }
 
   private static String generateMethodJS(PluginHandle plugin, PluginMethodHandle method) {
