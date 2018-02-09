@@ -42,4 +42,8 @@ export class CapacitorWeb {
   isPluginAvailable(name: string) {
     return this.Plugins.hasOwnProperty(name);
   }
+
+  handleError(e: Error) {
+    console.error(e);
+  }
 }
