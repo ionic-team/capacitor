@@ -57,5 +57,8 @@
     "testMatch": [
       "**/__test__/*.(ts|tsx|js)"
     ]
+  },
+  "dependencies": {
+    "@ionic/pwa-elements": "0.0.1"
   }
 }

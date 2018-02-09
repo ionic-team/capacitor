@@ -34,6 +34,7 @@ export class CameraPage {
       allowEditing: true,
       resultType: 'base64'
     })
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
   }
 }
