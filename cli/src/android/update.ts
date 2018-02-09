@@ -3,12 +3,12 @@ import { log, runTask } from '../common';
 import { Plugin, PluginType, getPlugins } from '../plugin';
 import { getAndroidPlugins } from './common';
 import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPluginType, removePluginFiles } from '../tasks/update';
-import { ensureDirSync, removeSync, writeFileAsync } from '../util/fs';
-import { join } from 'path';
+import { copySync, ensureDirSync, removeSync, writeFileAsync } from '../util/fs';
+import { join, resolve } from 'path';
 
+const platform = 'android';
 
 export async function updateAndroid(config: Config, needsUpdate: boolean) {
-  const platform = 'android';
   const plugins = await runTask('Fetching plugins', async () => {
     const allPlugins = await getPlugins();
     const androidPlugins = await getAndroidPlugins(allPlugins);
@@ -20,6 +20,7 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
   if (cordovaPlugins.length > 0) {
     await copyCordovaJS(config, platform);
     await copyPluginsJS(config, cordovaPlugins, platform);
+    copyPluginsNativeFiles(config, cordovaPlugins);
   } else {    
     removePluginFiles(config, platform);
     createEmptyCordovaJS(config, platform);
@@ -69,5 +70,20 @@ export function writeXML(object: any): Promise<any> {
     let xml = builder.buildObject(object);
     xml = xml.replace('<deleteme>', '').replace('</deleteme>', '');
     resolve(xml);
+  });
+}
+
+function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
+  const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
+  removeSync(join(pluginsPath, 'java'));
+  removeSync(join(pluginsPath, 'res'));
+  cordovaPlugins.map( p => {
+    const platformFiles = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
+    const sourceFiles = platformFiles[0]['source-file'];
+    sourceFiles.map( (sourceFile: any) => {
+      const fileName = sourceFile.$.src.split("/").pop();
+      const target = sourceFile.$["target-dir"].replace('src/', 'java/');
+      copySync(join(p.rootPath, sourceFile.$.src), join(pluginsPath, target, fileName));
+    });
   });
 }
