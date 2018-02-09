@@ -18,7 +18,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     options;
 
     return new Promise<CameraPhoto>(async (resolve, reject) => {
-      var modalController:any = document.querySelector('ion-modal-controller');
+      var modalController: any = document.querySelector('ion-modal-controller');
 
       if (!modalController) {
         modalController = document.createElement('ion-modal-controller');
