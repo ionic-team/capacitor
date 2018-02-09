@@ -85,7 +85,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
         });
         clobbersModule = `,
         "clobbers": [
-          "${clobbers.join(',')}"
+          "${clobbers.join('",\n          "')}"
         ]`}
       pluginModules.push(`{
         "id": "${p.id}.${jsModule.$.name}",
