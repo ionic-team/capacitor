@@ -78,16 +78,20 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
-      jsModule.clobbers.map((clobber: any) => {
-        clobbers.push(clobber.$.target);
-      });
+      let clobbersModule = "";
+      if (jsModule.clobbers) {
+        jsModule.clobbers.map((clobber: any) => {
+          clobbers.push(clobber.$.target);
+        });
+        clobbersModule = `,
+        "clobbers": [
+          "${clobbers.join(',')}"
+        ]`}
       pluginModules.push(`{
         "id": "${p.id}.${jsModule.$.name}",
         "file": "plugins/${p.id}/${jsModule.$.src}",
-        "pluginId": "${p.id}",
-        "clobbers": [
-          "${clobbers.join(',')}"
-        ]}`
+        "pluginId": "${p.id}"${clobbersModule}
+      }`
       );
     });
     pluginExports.push(`"${p.id}": "${p.xml.$.version}"`);
@@ -95,12 +99,12 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
   return `
   cordova.define('cordova/plugin_list', function(require, exports, module) {
     module.exports = [
-      ${pluginModules.join(',')}
+      ${pluginModules.join(',\n      ')}
     ];
     module.exports.metadata =
     // TOP OF METADATA
     {
-      ${pluginExports.join(',\n')}
+      ${pluginExports.join(',\n      ')}
     };
     // BOTTOM OF METADATA
     });
