@@ -42,26 +42,26 @@ export class ClipboardPage {
   }
 
   clipboardSetString() {
-    Plugins.Clipboard.set({
+    Plugins.Clipboard.write({
       string: "Hello, Moto"
     });
   }
 
   async clipboardGetString() {
-    let str = await Plugins.Clipboard.get({
+    let str = await Plugins.Clipboard.read({
       type: "string"
     });
     console.log('Got string from clipboard:', str);
   }
 
   clipboardSetURL() {
-    Plugins.Clipboard.set({
+    Plugins.Clipboard.write({
       url: "http://google.com/"
     });
   }
 
   async clipboardGetURL() {
-    let url = Plugins.Clipboard.get({
+    let url = Plugins.Clipboard.read({
       type: "url"
     });
     console.log("Get URL from clipboard", url);
@@ -69,13 +69,13 @@ export class ClipboardPage {
 
   clipboardSetImage () {
     console.log('Setting image', this.base64Image);
-    Plugins.Clipboard.set({
+    Plugins.Clipboard.write({
       image: this.base64Image
     });
   }
 
   async clipboardGetImage() {
-    const image = await Plugins.Clipboard.get({
+    const image = await Plugins.Clipboard.read({
       type: "image"
     });
     console.log('Got image', image);
