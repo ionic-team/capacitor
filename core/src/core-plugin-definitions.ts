@@ -186,6 +186,13 @@ export interface BrowserOpenOptions {
   url: string;
 
   /**
+   * Web only: Optional target for browser open. Follows
+   * the `target` property for window.open. Defaults
+   * to _blank
+   */
+  windowName?: string;
+
+  /**
    * A hex color to set the toolbar color to.
    */
   toolbarColor?: string;
@@ -233,27 +240,27 @@ export interface CameraPhoto {
 
 export interface ClipboardPlugin extends Plugin {
   /**
-   * Set a value on the clipboard (the "copy" action)
+   * Write a value to the clipboard (the "copy" action)
    */
-  set(options: ClipboardSet): Promise<void>;
+  write(options: ClipboardWrite): Promise<void>;
   /**
-   * Get a value from the clipboard (the "paste" action)
+   * Read a value from the clipboard (the "paste" action)
    */
-  get(options: ClipboardGet): Promise<ClipboardGetResult>;
+  read(options: ClipboardRead): Promise<ClipboardReadResult>;
 }
 
-export interface ClipboardSet {
+export interface ClipboardWrite {
   string?: string;
   image?: string;
   url?: string;
   label?: string; // Android only
 }
 
-export interface ClipboardGet {
+export interface ClipboardRead {
   type: 'string' | 'url' | 'image';
 }
 
-export interface ClipboardGetResult {
+export interface ClipboardReadResult {
   value: string;
 }
 
@@ -300,24 +307,24 @@ export interface DeviceInfo {
    * Approximate memory used by the current app, in bytes. Divide by 
    * 1048576 to get the number of MBs used.
    */
-  memUsed: number;
+  memUsed?: number;
   /**
    * How much free disk space is available on the the normal data storage
    * path for the os, in bytes
    */
-  diskFree: number;
+  diskFree?: number;
   /**
    * The total size of the normal data storage path for the OS, in bytes
    */
-  diskTotal: number;
+  diskTotal?: number;
   /**
    * A percentage (0 to 1) indicating how much the battery is charged
    */
-  batteryLevel: number;
+  batteryLevel?: number;
   /**
    * Whether the device is charging
    */
-  isCharging: boolean;
+  isCharging?: boolean;
 }
 
 //

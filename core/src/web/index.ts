@@ -43,7 +43,7 @@ export class WebPluginRegistry {
 let WebPlugins = new WebPluginRegistry();
 export { WebPlugins };
 
-export type ListenerCallback = (data: any) => void;
+export type ListenerCallback = (err: any, ...args: any[]) => void;
 
 export interface WindowListenerHandle {
   registered: boolean;
