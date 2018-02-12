@@ -42,7 +42,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
       batteryLevel: battery.level,
       isCharging: battery.charging,
       uuid: this.getUid()
-    })
+    });
   }
 
   parseUa(_ua: string) {
