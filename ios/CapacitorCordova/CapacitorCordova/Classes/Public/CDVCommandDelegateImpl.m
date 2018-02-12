@@ -64,15 +64,17 @@
 
 - (void)evalJsHelper2:(NSString*)js
 {
-    [_webView evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_webView evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
         // TODO: obj can be something other than string
         if ([obj isKindOfClass:[NSString class]]) {
             NSString* commandsJSON = (NSString*)obj;
             if ([commandsJSON length] > 0) {
                 NSLog(@"Exec: Retrieved new exec messages by chaining.");
-            } 
+            }
         }
-    }];
+        }];
+    });
 }
 
 - (BOOL)isValidCallbackId:(NSString*)callbackId
