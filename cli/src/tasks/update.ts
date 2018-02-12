@@ -51,8 +51,11 @@ export async function update(config: Config, platformName: string, needsUpdate: 
   }
 }
 
+/**
+ * Build the plugins/* files for each Cordova plugin installed.
+ */
 export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], platform: string) {
-  const webDir = getwebDir(config, platform);
+  const webDir = getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removePluginFiles(config, platform);
@@ -71,6 +74,9 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
   writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }
 
+/**
+ * Build the root cordova_plugins.js file referencing each Plugin JS file.
+ */
 export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], platform: string) {
   let pluginModules: Array<string> = [];
   let pluginExports: Array<string> = [];
@@ -111,6 +117,9 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     `;
 }
 
+/**
+ * Get each JavaScript Module for the give nplugin
+ */
 function getJSModules(p: Plugin, platform: string) {
   let modules: Array<string> = [];
   if (p.xml['js-module']) {
@@ -124,7 +133,7 @@ function getJSModules(p: Plugin, platform: string) {
 }
 
 
-function getwebDir(config: Config, platform: string): string {
+function getWebDir(config: Config, platform: string): string {
   if (platform === 'ios') {
     return config.ios.webDir;
   }
@@ -133,7 +142,6 @@ function getwebDir(config: Config, platform: string): string {
   }
   return '';
 }
-
 
 export function getPluginType(p: Plugin, platform: string): PluginType {
   if (platform === 'ios') {
@@ -153,16 +161,16 @@ export async function copyCordovaJS(config: Config, platform: string) {
     return;
   }
 
-  return fsCopy(cordovaPath, join(getwebDir(config, platform), 'cordova.js'));
+  return fsCopy(cordovaPath, join(getWebDir(config, platform), 'cordova.js'));
 }
 
 export function createEmptyCordovaJS(config: Config, platform: string) {
-  writeFileAsync(join(getwebDir(config, platform), 'cordova.js'), "");
-  writeFileAsync(join(getwebDir(config, platform), 'cordova_plugins.js'), "");
+  writeFileAsync(join(getWebDir(config, platform), 'cordova.js'), "");
+  writeFileAsync(join(getWebDir(config, platform), 'cordova_plugins.js'), "");
 }
 
 export function removePluginFiles(config: Config, platform: string) {
-  const webDir = getwebDir(config, platform);
+  const webDir = getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removeSync(pluginsDir);
