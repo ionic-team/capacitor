@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Capacitor'
-  s.version = '0.0.76'
+  s.version = '0.0.77'
   s.summary = 'Capacitor for iOS'
 	s.social_media_url = 'http://twitter.com/getcapacitor'
   s.license = 'MIT'
@@ -9,6 +9,6 @@ Pod::Spec.new do |s|
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version.to_s }
   s.source_files = 'ios/Capacitor/Capacitor/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/**/*.{swift,h,m}'
-  s.dependency 'CapacitorCordova', '0.0.76'
+  s.dependency 'CapacitorCordova', '0.0.77'
   s.dependency 'GCDWebServer', '~> 3.0'
 end
