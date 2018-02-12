@@ -128,7 +128,7 @@ export interface AppUrlOpen {
   iosSourceApplication?: any;
   /**
    * Whether the app should open the passed document in-place
-   * or must copy it first. 
+   * or must copy it first.
    * https://developer.apple.com/documentation/uikit/uiapplicationopenurloptionskey/1623123-openinplace
    */
   iosOpenInPlace?: boolean;
@@ -224,7 +224,7 @@ export interface CameraOptions {
   /**
    * How the data should be returned. Currently, only base64 is supported
    */
-  resultType: 'base64'
+  resultType: 'base64';
   /**
    * Whether to save the photo to the gallery/photostream
    */
@@ -304,7 +304,7 @@ export interface DeviceInfo {
    */
   isVirtual: boolean;
   /**
-   * Approximate memory used by the current app, in bytes. Divide by 
+   * Approximate memory used by the current app, in bytes. Divide by
    * 1048576 to get the number of MBs used.
    */
   memUsed?: number;
@@ -335,55 +335,55 @@ export interface FilesystemPlugin extends Plugin {
    * @param options options for the file read
    * @return a promise that resolves with the read file data result
    */
-  readFile(options: FileReadOptions) : Promise<FileReadResult>;
+  readFile(options: FileReadOptions): Promise<FileReadResult>;
 
   /**
    * Write a file to disk in the specified location on device
    * @param options options for the file write
    * @return a promise that resolves with the file write result
    */
-  writeFile(options: FileWriteOptions) : Promise<FileWriteResult>;
+  writeFile(options: FileWriteOptions): Promise<FileWriteResult>;
 
   /**
    * Append to a file on disk in the specified location on device
    * @param options options for the file append
    * @return a promise that resolves with the file write result
    */
-  appendFile(options: FileAppendOptions) : Promise<FileAppendResult>;
+  appendFile(options: FileAppendOptions): Promise<FileAppendResult>;
 
   /**
    * Delete a file from disk
    * @param options options for the file delete
    * @return a promise that resolves with the deleted file data result
    */
-  deleteFile(options: FileDeleteOptions) : Promise<FileDeleteResult>;
+  deleteFile(options: FileDeleteOptions): Promise<FileDeleteResult>;
 
   /**
    * Create a directory.
    * @param options options for the mkdir
    * @return a promise that resolves with the mkdir result
    */
-  mkdir(options: MkdirOptions) : Promise<MkdirResult>;
+  mkdir(options: MkdirOptions): Promise<MkdirResult>;
 
   /**
    * Remove a directory
    * @param options the options for the directory remove
    */
-  rmdir(options: RmdirOptions) : Promise<RmdirResult>;
+  rmdir(options: RmdirOptions): Promise<RmdirResult>;
 
   /**
    * Return a list of files from the directory (not recursive)
    * @param options the options for the readdir operation
    * @return a promise that resolves with the readdir directory listing result
    */
-  readdir(options: ReaddirOptions) : Promise<ReaddirResult>;
+  readdir(options: ReaddirOptions): Promise<ReaddirResult>;
 
   /**
    * Return data about a file
    * @param options the options for the stat operation
    * @return a promise that resolves with the file stat result
    */
-  stat(options: StatOptions) : Promise<StatResult>;
+  stat(options: StatOptions): Promise<StatResult>;
 }
 
 export enum FilesystemDirectory {
@@ -417,7 +417,7 @@ export enum FilesystemEncoding {
   UTF8 = 'utf8',
   ASCII = 'ascii',
   UTF16 = 'utf18'
-};
+}
 
 export interface FileWriteOptions {
   /**
@@ -597,20 +597,20 @@ export interface GeolocationPosition {
 }
 
 export interface GeolocationOptions {
-  enableHighAccuracy?: boolean, // default: false
-  timeout?: number, // default: 10000,
-  maximumAge?: number // default: 0
+  enableHighAccuracy?: boolean; // default: false
+  timeout?: number; // default: 10000,
+  maximumAge?: number; // default: 0
   /**
    * Whether your app needs altitude data or not. This can impact the
    * sensor the device uses, increasing energy consumption.
-   * Note: altitude information may not be available even when 
+   * Note: altitude information may not be available even when
    * passing true here. Similarly, altitude data maybe be returned
    * even if this value is false, in the case where doing so requires
    * no increased energy consumption.
-   * 
+   *
    * Default: false
    */
-  requireAltitude?: boolean, // default: false
+  requireAltitude?: boolean; // default: false
 }
 
 export type GeolocationWatchCallback = (err: any, position: GeolocationPosition) => void;
@@ -787,24 +787,24 @@ export interface ModalsPlugin extends Plugin {
 }
 
 export interface AlertOptions {
-  title: string,
-  message: string,
-  buttonTitle?: string
+  title: string;
+  message: string;
+  buttonTitle?: string;
 }
 
 export interface PromptOptions {
-  title: string,
-  message: string,
-  okButtonTitle?: string,
-  cancelButtonTitle?: string,
-  inputPlaceholder?: string
+  title: string;
+  message: string;
+  okButtonTitle?: string;
+  cancelButtonTitle?: string;
+  inputPlaceholder?: string;
 }
 
 export interface ConfirmOptions {
-  title: string,
-  message: string,
-  okButtonTitle?: string,
-  cancelButtonTitle?: string
+  title: string;
+  message: string;
+  okButtonTitle?: string;
+  cancelButtonTitle?: string;
 }
 
 export interface PromptResult {
@@ -824,15 +824,21 @@ export interface ActionSheetOptions {
 
 export enum ActionSheetOptionStyle {
   Default = 'DEFAULT',
-  Destructive = 'DESTRUCTIVE'
-};
+  Destructive = 'DESTRUCTIVE',
+  Cancel = 'CANCEL'
+}
+
 export interface ActionSheetOption {
   title: string;
-  style?: ActionSheetOptionStyle
+  style?: ActionSheetOptionStyle;
+  /**
+   * Icon for web (ionicon naming convention)
+   */
+  icon?: string;
 }
 
 export interface ActionSheetResult {
-  option: ActionSheetOption;
+  index: number;
 }
 
 //
@@ -1050,7 +1056,7 @@ export interface PhotosAlbum {
    * Name of the album
    */
   name: string;
-  /** 
+  /**
    * Number of items in the album
    */
   count: number;
@@ -1114,11 +1120,11 @@ export interface SplashScreenPlugin extends Plugin {
   /**
    * Show the splash screen
    */
-  show(options?: SplashScreenShowOptions, callback?: Function) : void;
+  show(options?: SplashScreenShowOptions, callback?: Function): void;
   /**
    * Hide the splash screen
    */
-  hide(options?: SplashScreenHideOptions, callback?: Function) : void;
+  hide(options?: SplashScreenHideOptions, callback?: Function): void;
 }
 
 export interface SplashScreenShowOptions {
@@ -1158,11 +1164,11 @@ export interface StatusBarPlugin extends Plugin {
   /**
    * Show the status bar
    */
-  show() : Promise<void>;
+  show(): Promise<void>;
   /**
    *  Hide the status bar
    */
-  hide() : Promise<void>;
+  hide(): Promise<void>;
 }
 
 export interface StatusBarStyleOptions {

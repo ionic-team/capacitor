@@ -22,7 +22,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
       if (!modalController) {
         modalController = document.createElement('ion-modal-controller');
-        document.body.appendChild(modalController)
+        document.body.appendChild(modalController);
       }
 
       await modalController.componentOnReady();
@@ -39,7 +39,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         }
 
         modalController.dismiss();
-      })
+      });
 
       const modal = await modalController.create({
         component: camera
