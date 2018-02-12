@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "CapacitorCordova"
   s.module_name = 'Cordova'
-  s.version      = '0.0.81'
+  s.version      = '0.0.82'
   s.summary      = "Capacitor Cordova Compatibility Layer"
   s.homepage     = "https://ionic-team.github.io/capacitor"
   s.license      = 'MIT'
