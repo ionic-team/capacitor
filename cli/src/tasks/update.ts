@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, logFatal, logInfo } from '../common';
+import { CheckFunction, check, checkPackage, log, logFatal, logInfo } from '../common';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 import { Plugin, PluginType } from '../plugin';
@@ -35,6 +35,8 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
       checks.push(...updateIOSChecks);
     } else if (platformName === config.android.name) {
       return [];
+    } else if (platformName === config.web.name) {
+      return [];
     } else {
       throw `Platform ${platformName} is not valid.`;
     }
@@ -43,6 +45,7 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
 }
 
 export async function update(config: Config, platformName: string, needsUpdate: boolean) {
+  log(`Updating platform ${platformName}`)
   if (platformName === config.ios.name) {
     await updateIOS(config, needsUpdate);
   } else if (platformName === config.android.name) {

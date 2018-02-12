@@ -64,6 +64,8 @@ export function addChecks(config: Config, platformName: string) {
     return addIOSChecks;
   } else if (platformName === config.android.name) {
     return [];
+  } else if (platformName === config.web.name) {
+    return [];
   } else {
     throw `Platform ${platformName} is not valid.`;
   }

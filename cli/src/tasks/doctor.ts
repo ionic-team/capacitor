@@ -17,6 +17,8 @@ export async function doctor(config: Config, platformName: string) {
     await doctorIOS(config);
   } else if (platformName === config.android.name) {
     await doctorAndroid(config);
+  } else if (platformName === config.web.name) {
+    return Promise.resolve();
   } else {
     throw `Platform ${platformName} is not valid.`;
   }

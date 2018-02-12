@@ -21,6 +21,6 @@ export async function syncCommand(config: Config, selectedPlatform: string) {
 }
 
 export async function sync(config: Config, platformName: string) {
-  const tasks = [() => update(config, platformName, false), () => copy(config, platformName)];
+  const tasks = [() => copy(config, platformName), () => update(config, platformName, false)];
   await allSerial(tasks);
 }
