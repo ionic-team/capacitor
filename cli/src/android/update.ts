@@ -85,5 +85,9 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const target = sourceFile.$["target-dir"].replace('src/', 'java/');
       copySync(join(p.rootPath, sourceFile.$.src), join(pluginsPath, target, fileName));
     });
+    const resourceFiles = platformFiles[0]['resource-file'];
+    resourceFiles.map( (resourceFile: any) => {
+      copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
+    });
   });
 }
