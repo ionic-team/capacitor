@@ -1,0 +1,35 @@
+{
+  "name": "my-capacitor-plugin",
+  "version": "0.0.1",
+  "description": "Capacitor plugin",
+  "homepage": "http://getcapacitor.com/",
+  "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
+  "license": "MIT",
+  "files": [
+    "dist/",
+    "android/",
+    "ios/"
+  ],
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "main": "dist/esm/index.js",
+  "typings": "dist/esm/index.d.ts",
+  "devDependencies": {
+    "rimraf": "^2.6.1",
+    "rollup": "^0.52.0",
+    "typescript": "^2.6.2",
+    "uglify-js": "^3.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionic-team/capacitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ionic-team/capacitor/issues"
+  },
+  "dependencies": {},
+  "capacitor": {}
+}
