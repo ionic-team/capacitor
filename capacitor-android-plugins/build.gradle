@@ -31,6 +31,7 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.apache.cordova:framework:7.0.0'
 }
 
 
