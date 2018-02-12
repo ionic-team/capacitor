@@ -37,7 +37,8 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     return iosPlugins;
   });
 
-  // printPlugins(plugins);
+  printPlugins(plugins);
+
   const cordovaPlugins = plugins
     .filter(p => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {

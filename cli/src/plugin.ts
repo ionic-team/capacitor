@@ -97,6 +97,7 @@ const CORE_PLUGINS = [
 ].sort();
 
 export function printPlugins(plugins: Plugin[]) {
+  console.log('Printing plugins');
   const chalk = require('chalk');
   const pluginNames = plugins.map(p => p.id).sort();
   const builtinPlugins = CORE_PLUGINS.map(p => `${chalk.dim('[core]')} ${p}`);
