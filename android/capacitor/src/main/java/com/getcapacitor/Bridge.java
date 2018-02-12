@@ -3,6 +3,7 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -141,6 +142,10 @@ public class Bridge {
 
     // Get to work
     webView.loadUrl(url);
+  }
+
+  public boolean isDevMode() {
+    return (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
   }
 
   /**
@@ -397,13 +402,14 @@ public class Bridge {
    */
   private JSInjector getJSInjector() {
     try {
+      String globalJS = JSExport.getGlobalJS(context, isDevMode());
       String coreJS = JSExport.getCoreJS(context);
       String pluginJS = JSExport.getPluginJS(plugins.values());
       String cordovaJS = JSExport.getCordovaJS(context);
       String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
       String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
 
-      return new JSInjector(coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS);
+      return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS);
     } catch(JSExportException ex) {
       Log.e(TAG, "Unable to export Capacitor JS. App will not function!", ex);
     }

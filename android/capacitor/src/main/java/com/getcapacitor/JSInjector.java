@@ -14,13 +14,15 @@ import java.nio.charset.StandardCharsets;
  * to the client.
  */
 class JSInjector {
+  private String globalJS;
   private String coreJS;
   private String pluginJS;
   private String cordovaJS;
   private String cordovaPluginsJS;
   private String cordovaPluginsFileJS;
 
-  public JSInjector(String coreJS, String pluginJS) {
+  public JSInjector(String globalJS, String coreJS, String pluginJS) {
+    this.globalJS = globalJS;
     this.coreJS = coreJS;
     this.pluginJS = pluginJS;
     this.cordovaJS = "";
@@ -28,7 +30,8 @@ class JSInjector {
     this.cordovaPluginsFileJS = "";
   }
 
-  public JSInjector(String coreJS, String pluginJS, String cordovaJS, String cordovaPluginsJS, String cordovaPluginsFileJS) {
+  public JSInjector(String globalJS, String coreJS, String pluginJS, String cordovaJS, String cordovaPluginsJS, String cordovaPluginsFileJS) {
+    this.globalJS = globalJS;
     this.coreJS = coreJS;
     this.pluginJS = pluginJS;
     this.cordovaJS = cordovaJS;
@@ -45,7 +48,9 @@ class JSInjector {
    */
   public InputStream getInjectedStream(InputStream responseStream) {
     try {
-      String js = "<script type=\"text/javascript\">" + coreJS + "\n\n" + pluginJS + "\n\n" + cordovaJS + "\n\n" + cordovaPluginsFileJS + "\n\n" + cordovaPluginsJS + "</script>";
+      String js = "<script type=\"text/javascript\">" + globalJS + "\n\n" +
+              coreJS + "\n\n" + pluginJS + "\n\n" + cordovaJS + "\n\n" +
+              cordovaPluginsFileJS + "\n\n" + cordovaPluginsJS + "</script>";
       InputStream jsInputStream = new ByteArrayInputStream(js.getBytes(StandardCharsets.UTF_8.name()));
       return new SequenceInputStream(jsInputStream, responseStream);
     } catch(UnsupportedEncodingException ex) {

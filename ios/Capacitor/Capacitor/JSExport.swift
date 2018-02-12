@@ -6,6 +6,12 @@ public class JSExport {
   static let CATCHALL_OPTIONS_PARAM = "_options"
   static let CALLBACK_PARAM = "_callback"
   
+  public static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool) throws {
+    let data = "window.Capacitor = { DEBUG: \(isDebug), Plugins: {} }"
+    let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+    userContentController.addUserScript(userScript)
+  }
+  
   public static func exportCapacitorJS(userContentController: WKUserContentController) throws {
     guard let jsUrl = Bundle.main.url(forResource: "public/native-bridge", withExtension: "js") else {
       print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")

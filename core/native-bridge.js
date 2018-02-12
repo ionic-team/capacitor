@@ -5,7 +5,9 @@
 
   var capacitor = Capacitor;
 
-  capacitor.DEBUG = typeof capacitor.debug === 'undefined' ? true : capacitor.DEBUG;
+  capacitor.Plugins = capacitor.Plugins || {};
+  
+  capacitor.DEBUG = typeof capacitor.DEBUG === 'undefined' ? true : capacitor.DEBUG;
 
   // keep a collection of callbacks for native response data
   var calls = {};
@@ -223,6 +225,10 @@
   capacitor.handleError = function(error) {
     console.error(error);
 
+    if (!Capacitor.DEBUG) {
+      return;
+    }
+
     if(!errorModal) {
       errorModal = makeErrorModal(error);
     }
@@ -297,7 +303,9 @@
     });
   }
 
-  window.onerror = capacitor.handleWindowError;
+  if (Capacitor.DEBUG) {
+    window.onerror = capacitor.handleWindowError;
+  }
 
   function injectCSS() {
     var css = `
