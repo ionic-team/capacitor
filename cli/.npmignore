@@ -3,6 +3,6 @@ assets/android-template/app/build/*
 !assets/android-template/app/build/.npmkeep
 assets/android-template/.idea
 assets/android-template/.gradle
+assets/ios-template/App/Pods
 Podfile.lock
-Pods/
 *.iml
