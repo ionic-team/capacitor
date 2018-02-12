@@ -31,6 +31,8 @@ export async function open(config: Config, platformName: string) {
     });
   } else if (platformName === config.android.name) {
     return openAndroid(config);
+  } else if (platformName === config.web.name) {
+    return Promise.resolve();
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
