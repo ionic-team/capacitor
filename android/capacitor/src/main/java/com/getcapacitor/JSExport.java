@@ -15,6 +15,10 @@ public class JSExport {
   private static String CATCHALL_OPTIONS_PARAM = "_options";
   private static String CALLBACK_PARAM = "_callback";
 
+  public static String getGlobalJS(Context context, boolean isDebug) {
+    return "window.Capacitor = { DEBUG: " + isDebug + " };";
+  }
+
   public static String getCoreJS(Context context) throws JSExportException {
     try {
       return getJS(context, "public/native-bridge.js");
