@@ -37,7 +37,6 @@ export async function checkIOSProject(config: Config): Promise<string | null> {
 
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
   const resolved = await Promise.all(allPlugins.map(resolvePlugin));
-  console.log('Found these iOS Plugins: ', resolved);
   return resolved.filter(plugin => !!plugin) as Plugin[];
 }
 
