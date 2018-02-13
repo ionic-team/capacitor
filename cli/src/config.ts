@@ -253,7 +253,7 @@ export class Config implements CliConfig {
     try {
       let testDir = join(this.app.rootDir, platformName);
       if (platformName === 'web') {
-        testDir = join(this.app.rootDir, this.app.webDir);
+        testDir = this.app.webDir;
       }
       accessSync(testDir);
       platformDir = testDir;
@@ -268,7 +268,7 @@ export class Config implements CliConfig {
 
   platformNotCreatedError(platformName: string) {
     const chalk = require('chalk');
-    if (platformName == 'web') {
+    if (platformName === 'web') {
       logFatal(`Could not find the web platform directory. Make sure ${chalk.bold(this.app.webDir)} exists.`);
     }
     logFatal(`${chalk.bold(platformName)}" platform has not been created. Use "capacitor add ${platformName}" to add the platform project.`);
