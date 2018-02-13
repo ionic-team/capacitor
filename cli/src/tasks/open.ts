@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { logFatal, logInfo, runTask } from '../common';
+import { log, logFatal, logInfo, runTask } from '../common';
 import { openAndroid } from '../android/open';
 import { openIOS } from '../ios/open';
 
@@ -25,6 +25,7 @@ export async function openCommand(config: Config, selectedPlatform: string) {
 
 
 export async function open(config: Config, platformName: string) {
+  log(`Don't forget to run "npx capacitor copy" before running your app`);
   if (platformName === config.ios.name) {
     await runTask('Opening the Xcode workspace...', () => {
       return openIOS(config);

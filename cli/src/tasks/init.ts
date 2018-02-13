@@ -34,7 +34,7 @@ export async function initCommand(config: Config) {
     // Add our package.json
     await checkPackageJson(config);
     await seedProject(config);
-    await installDeps(config);
+    await installDeps(config, isNew);
     await addPlatforms(config);
     await runSync(config);
     await printNextSteps(config);
@@ -91,16 +91,18 @@ async function checkPackageJson(config: Config) {
   }
 }
 
-async function installDeps(config: Config) {
-  let command = 'npm install';
-  await runTask(`Installing dependencies for seed project (${chalk.blue(command)})`, () => {
-   return runCommand(command);
-  });
-
-  command = 'npm install --save @capacitor/core@latest @capacitor/cli@latest';
-  await runTask(`Installing Capacitor dependencies (${chalk.blue(command)})`, () => {
-   return runCommand(command);
-  });
+async function installDeps(config: Config, isNew: boolean) {
+  if (isNew) {
+    const command = 'npm install';
+    await runTask(`Installing dependencies for seed project (${chalk.blue(command)})`, () => {
+    return runCommand(command);
+    });
+  } else {
+    const command = 'npm install --save @capacitor/core@latest @capacitor/cli@latest';
+    await runTask(`Installing Capacitor dependencies (${chalk.blue(command)})`, () => {
+    return runCommand(command);
+    });
+  }
 }
 
 async function seedProject(config: Config) {
