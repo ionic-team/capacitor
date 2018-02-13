@@ -221,7 +221,7 @@ public class Camera extends Plugin {
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
     JSObject data = new JSObject();
-    data.put("base64_data", encoded);
+    data.put("base64_data", "data:image/jpeg;base64," + encoded);
     call.success(data);
   }
 

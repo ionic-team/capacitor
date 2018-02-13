@@ -6,7 +6,7 @@ import { CapacitorWeb } from './web-runtime';
 
 // Create our default Capacitor instance, which will be
 // overridden on on native platforms
-var Capacitor:_Capacitor = new CapacitorWeb();
+var Capacitor: _Capacitor = new CapacitorWeb();
 
 Capacitor = window.Capacitor || Capacitor;
 

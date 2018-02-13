@@ -44,9 +44,8 @@ async takePicture() {
     allowEditing: true,
     resultType: 'base64'
   });
-  // image.base64_data will contain the base64 encoded result as a JPEG. Make sure to
-  // add the proper base64 image prefix:
-  var imageUrl = 'data:image/jpeg;base64,' + image.base64_data;
+  // image.base64_data will contain the base64 encoded result as a JPEG, with the data-uri prefix added
+  var imageUrl = image.base64_data;
   // can be set to the src of an image now
 }
 ```
@@ -83,7 +82,7 @@ export class CameraPage {
       allowEditing: true,
       resultType: 'base64'
     })
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && ('data:image/jpeg;base64,' + image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
   }
 }
 ```
