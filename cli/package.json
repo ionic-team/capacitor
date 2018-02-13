@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "0.0.83",
+  "version": "0.0.84",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
