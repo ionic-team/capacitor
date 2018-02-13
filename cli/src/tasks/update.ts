@@ -87,7 +87,9 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
+      let merges: Array<string> = [];
       let clobbersModule = "";
+      let mergesModule = "";
       if (jsModule.clobbers) {
         jsModule.clobbers.map((clobber: any) => {
           clobbers.push(clobber.$.target);
@@ -95,11 +97,21 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
         clobbersModule = `,
         "clobbers": [
           "${clobbers.join('",\n          "')}"
-        ]`}
+        ]`
+      }
+      if (jsModule.merges) {
+        jsModule.merges.map((merge: any) => {
+          merges.push(merge.$.target);
+        });
+        mergesModule = `,
+        "merges": [
+          "${merges.join('",\n          "')}"
+        ]`
+      }
       pluginModules.push(`{
         "id": "${p.id}.${jsModule.$.name}",
         "file": "plugins/${p.id}/${jsModule.$.src}",
-        "pluginId": "${p.id}"${clobbersModule}
+        "pluginId": "${p.id}"${clobbersModule}${mergesModule}
       }`
       );
     });
