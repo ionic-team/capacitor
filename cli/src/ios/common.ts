@@ -37,16 +37,17 @@ export async function checkIOSProject(config: Config): Promise<string | null> {
 
 export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
   const resolved = await Promise.all(allPlugins.map(resolvePlugin));
+  console.log('Found these iOS Plugins: ', resolved);
   return resolved.filter(plugin => !!plugin) as Plugin[];
 }
 
 export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
   let iosPath = '';
   if (plugin.manifest && plugin.manifest.ios) {
-    if (!plugin.manifest.ios.src) {
-      throw 'capacitor.ios.src is missing';
-    }
     iosPath = plugin.manifest.ios.src;
+    if (!plugin.manifest.ios.src) {
+      iosPath = 'ios';
+    }
   } else if (plugin.xml) {
     iosPath = 'src/ios';
   } else {
@@ -68,6 +69,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
       plugin.ios.type = PluginType.Cordova;
     }
   } catch (e) {
+    console.error('Unable to resolve plugin', e);
     return null;
   }
   return plugin;

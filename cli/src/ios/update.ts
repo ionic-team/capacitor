@@ -48,7 +48,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     removePluginFiles(config, platform);
     createEmptyCordovaJS(config, platform);
   }
-  
+
   await autoGeneratePods(plugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
 }
