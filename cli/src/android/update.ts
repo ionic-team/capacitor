@@ -83,15 +83,19 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const androidPlatform = getPluginPlatform(p, platform);
     if (androidPlatform) {
       const sourceFiles = androidPlatform['source-file'];
-      sourceFiles.map( (sourceFile: any) => {
-        const fileName = sourceFile.$.src.split("/").pop();
-        const target = sourceFile.$["target-dir"].replace('src/', 'java/');
-        copySync(join(p.rootPath, sourceFile.$.src), join(pluginsPath, target, fileName));
-      });
+      if (sourceFiles) {
+        sourceFiles.map( (sourceFile: any) => {
+          const fileName = sourceFile.$.src.split("/").pop();
+          const target = sourceFile.$["target-dir"].replace('src/', 'java/');
+          copySync(join(p.rootPath, sourceFile.$.src), join(pluginsPath, target, fileName));
+        });
+      }
       const resourceFiles = androidPlatform['resource-file'];
-      resourceFiles.map( (resourceFile: any) => {
-        copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
-      });
+      if(resourceFiles) {
+        resourceFiles.map( (resourceFile: any) => {
+          copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
+        });
+      }
     }
   });
 }
