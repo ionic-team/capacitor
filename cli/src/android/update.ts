@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { log, runTask } from '../common';
 import { Plugin, PluginType, getPlugins } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPluginType, removePluginFiles } from '../tasks/update';
+import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPluginPlatform, getPluginType, removePluginFiles } from '../tasks/update';
 import { copySync, ensureDirSync, removeSync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 
@@ -40,14 +40,16 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
   removeSync(cordovaConfigXMLFile);
   let pluginEntries: Array<any> = [];
   cordovaPlugins.map( p => {
-    const androidPlatform = p.xml.platform.filter(function(item: any) { return item.$.name === 'android'; });
-    const androidConfigFiles = androidPlatform[0]['config-file'];
-    if (androidConfigFiles) {
-      const configXMLEntries = androidConfigFiles.filter(function(item: any) { return item.$.target === 'res/xml/config.xml'; });
-      configXMLEntries.map(  (entry: any)  => {
-        const feature = { feature: entry.feature };
-        pluginEntries.push(feature);
-      });
+    const androidPlatform = getPluginPlatform(p, platform);
+    if (androidPlatform) {
+      const androidConfigFiles = androidPlatform['config-file'];
+      if (androidConfigFiles) {
+        const configXMLEntries = androidConfigFiles.filter(function(item: any) { return item.$.target === 'res/xml/config.xml'; });
+        configXMLEntries.map(  (entry: any)  => {
+          const feature = { feature: entry.feature };
+          pluginEntries.push(feature);
+        });
+      }
     }
   });
 
@@ -78,16 +80,18 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
   removeSync(join(pluginsPath, 'java'));
   removeSync(join(pluginsPath, 'res'));
   cordovaPlugins.map( p => {
-    const platformFiles = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
-    const sourceFiles = platformFiles[0]['source-file'];
-    sourceFiles.map( (sourceFile: any) => {
-      const fileName = sourceFile.$.src.split("/").pop();
-      const target = sourceFile.$["target-dir"].replace('src/', 'java/');
-      copySync(join(p.rootPath, sourceFile.$.src), join(pluginsPath, target, fileName));
-    });
-    const resourceFiles = platformFiles[0]['resource-file'];
-    resourceFiles.map( (resourceFile: any) => {
-      copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
-    });
+    const androidPlatform = getPluginPlatform(p, platform);
+    if (androidPlatform) {
+      const sourceFiles = androidPlatform['source-file'];
+      sourceFiles.map( (sourceFile: any) => {
+        const fileName = sourceFile.$.src.split("/").pop();
+        const target = sourceFile.$["target-dir"].replace('src/', 'java/');
+        copySync(join(p.rootPath, sourceFile.$.src), join(pluginsPath, target, fileName));
+      });
+      const resourceFiles = androidPlatform['resource-file'];
+      resourceFiles.map( (resourceFile: any) => {
+        copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
+      });
+    }
   });
 }
