@@ -80,7 +80,7 @@ export function generatePodspec(plugin: Plugin) {
     s.homepage = 'https://example.com'
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => '${repo}', :tag => '${plugin.version}' }
-    s.source_files = '*.{swift,h,m}'
+    s.source_files = 'Plugin/**/*.{swift,h,m}'
     s.dependency 'Capacitor'
   end`;
 }
