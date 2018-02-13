@@ -20,8 +20,10 @@ export interface PluginManifest {
 export interface Plugin {
   id: string;
   name: string;
+  version: string;
   rootPath: string;
   manifest?: PluginManifest;
+  repository?: any;
   xml?: any;
   ios?: {
     name: string;
@@ -52,7 +54,9 @@ export async function resolvePlugin(name: string): Promise<Plugin | null> {
       return {
         id: name,
         name: fixName(name),
+        version: meta.version,
         rootPath: rootPath,
+        repository: meta.repository,
         manifest: meta.capacitor
       };
     }
@@ -62,7 +66,9 @@ export async function resolvePlugin(name: string): Promise<Plugin | null> {
       return {
         id: name,
         name: fixName(name),
+        version: meta.version,
         rootPath: rootPath,
+        repository: meta.repository,
         xml: xmlMeta.plugin
       };
     }
