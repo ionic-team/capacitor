@@ -128,9 +128,9 @@ function getJSModules(p: Plugin, platform: string) {
   if (p.xml['js-module']) {
     modules = modules.concat(p.xml['js-module']);
   }
-  const platformModules = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
-  if (platformModules[0]['js-module']) {
-    modules = modules.concat(platformModules[0]['js-module']);
+  const platformModules = getPluginPlatform(p, platform);
+  if (platformModules && platformModules['js-module']) {
+    modules = modules.concat(platformModules['js-module']);
   }
   return modules;
 }
@@ -178,4 +178,13 @@ export function removePluginFiles(config: Config, platform: string) {
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removeSync(pluginsDir);
   removeSync(cordovaPluginsJSFile);
+}
+
+export function getPluginPlatform(p: Plugin, platform: string) {
+  const platforms = p.xml.platform;
+  if (platforms) {
+    const platforms = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
+    return platforms[0];
+  }
+  return null;
 }
