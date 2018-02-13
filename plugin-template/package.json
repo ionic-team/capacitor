@@ -5,11 +5,6 @@
   "homepage": "http://getcapacitor.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
-  "files": [
-    "dist/",
-    "android/",
-    "ios/"
-  ],
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf dist",
