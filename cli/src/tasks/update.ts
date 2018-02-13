@@ -45,7 +45,7 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
 }
 
 export async function update(config: Config, platformName: string, needsUpdate: boolean) {
-  log(`Updating platform ${platformName}`)
+  log(`Updating platform ${platformName}`);
   if (platformName === config.ios.name) {
     await updateIOS(config, needsUpdate);
   } else if (platformName === config.android.name) {
@@ -88,8 +88,8 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
     jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
       let merges: Array<string> = [];
-      let clobbersModule = "";
-      let mergesModule = "";
+      let clobbersModule = '';
+      let mergesModule = '';
       if (jsModule.clobbers) {
         jsModule.clobbers.map((clobber: any) => {
           clobbers.push(clobber.$.target);
@@ -97,7 +97,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
         clobbersModule = `,
         "clobbers": [
           "${clobbers.join('",\n          "')}"
-        ]`
+        ]`;
       }
       if (jsModule.merges) {
         jsModule.merges.map((merge: any) => {
@@ -106,7 +106,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
         mergesModule = `,
         "merges": [
           "${merges.join('",\n          "')}"
-        ]`
+        ]`;
       }
       pluginModules.push(`{
         "id": "${p.id}.${jsModule.$.name}",
@@ -180,8 +180,8 @@ export async function copyCordovaJS(config: Config, platform: string) {
 }
 
 export function createEmptyCordovaJS(config: Config, platform: string) {
-  writeFileAsync(join(getWebDir(config, platform), 'cordova.js'), "");
-  writeFileAsync(join(getWebDir(config, platform), 'cordova_plugins.js'), "");
+  writeFileAsync(join(getWebDir(config, platform), 'cordova.js'), '');
+  writeFileAsync(join(getWebDir(config, platform), 'cordova_plugins.js'), '');
 }
 
 export function removePluginFiles(config: Config, platform: string) {
