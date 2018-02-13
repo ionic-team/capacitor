@@ -87,7 +87,7 @@ public class Camera : CAPPlugin, UIImagePickerControllerDelegate, UINavigationCo
     let base64String = jpeg.base64EncodedString()
     
     self.call?.success([
-      "base64_data": base64String,
+      "base64_data": "data:image/jpeg;base64," + base64String,
       "format": "jpeg"
     ])
     

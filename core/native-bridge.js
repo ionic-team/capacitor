@@ -457,6 +457,10 @@
   function updateErrorModal(error) {
     if(!errorModal) { return; }
 
+    if (typeof error === 'string') {
+      return;
+    }
+
     lastError = error;
 
     var message = error.message;
