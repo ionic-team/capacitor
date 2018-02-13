@@ -1,5 +1,5 @@
 import { join, resolve } from 'path';
-import { logInfo, readJSON, readXML } from './common';
+import { log, logInfo, readJSON, readXML } from './common';
 
 
 export const enum PluginType {
@@ -90,23 +90,14 @@ export function fixName(name: string): string {
 }
 
 
-const CORE_PLUGINS = [
-  'Camera', 'Network', 'Browser', 'Clipboard', 'Console', 'Device', 'Filesystem',
-  'Geolocation', 'Haptics', 'LocalNotifications', 'Modals', 'Motion', 'PushNotifications',
-  'Share', 'SplashScreen', 'StatusBar', 'Storage', 'Toast'
-].sort();
-
 export function printPlugins(plugins: Plugin[]) {
-  console.log('Printing plugins');
   const chalk = require('chalk');
   const pluginNames = plugins.map(p => p.id).sort();
-  const builtinPlugins = CORE_PLUGINS.map(p => `${chalk.dim('[core]')} ${p}`);
-  pluginNames.push(...builtinPlugins);
   if (pluginNames.length > 0) {
-    logInfo(`found ${pluginNames.length} native modules
+    log(`\n${chalk.bold(`Found ${pluginNames.length} additional Capacitor plugin(s):`)}
 ${pluginNames.map(p => `     ${p}`).join('\n')}
 `);
   } else {
-    logInfo('no capacitor plugin was found, that\'s ok, you can add more plugins later');
+    logInfo('No Capacitor plugins found. That\'s ok, you can add more plugins later by npm installing them.');
   }
 }
