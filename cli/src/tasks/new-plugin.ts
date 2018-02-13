@@ -117,7 +117,8 @@ function generatePackageJSON(answers: any) {
     },
     files: [
       'dist/',
-      'native/'
+      'ios/',
+      'android/'
     ],
     keywords: [
       'capacitor',
