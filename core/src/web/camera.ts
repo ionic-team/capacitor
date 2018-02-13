@@ -6,6 +6,8 @@ import {
   CameraOptions
 } from '../core-plugin-definitions';
 
+//import '@ionic/pwa-elements';
+
 export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   constructor() {
     super({
@@ -18,18 +20,10 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     options;
 
     return new Promise<CameraPhoto>(async (resolve, reject) => {
-      var modalController: any = document.querySelector('ion-modal-controller');
-
-      if (!modalController) {
-        modalController = document.createElement('ion-modal-controller');
-        document.body.appendChild(modalController);
-      }
-
-      await modalController.componentOnReady();
-
-      const camera = document.createElement('ion-camera');
-
-      camera.addEventListener('onPhoto', async (e: any) => {
+      const cameraModal: any = document.createElement('ion-pwa-camera-modal');
+      document.body.appendChild(cameraModal);
+      await cameraModal.componentOnReady();
+      cameraModal.addEventListener('onPhoto', async (e: any) => {
         const photo = e.detail;
 
         if (photo === null) {
@@ -38,14 +32,10 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
           resolve(await this.getCameraPhoto(photo));
         }
 
-        modalController.dismiss();
+        cameraModal.dismiss();
       });
 
-      const modal = await modalController.create({
-        component: camera
-      });
-
-      modal.present();
+      cameraModal.present();
     });
   }
 
