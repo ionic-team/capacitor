@@ -60,8 +60,8 @@ export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
     // .filter(p => p.ios!.type !== PluginType.Cocoapods)
     .map(async p => {
       const name = p.ios!.name = p.name;
-      p.ios!.type = PluginType.Cocoapods;
       const content = generatePodspec(p);
+      p.ios!.type = PluginType.Cocoapods;
       const path = join(p.rootPath, p.ios!.path, name + '.podspec');
       return writeFileAsync(path, content);
     }));
@@ -70,7 +70,10 @@ export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
 
 export function generatePodspec(plugin: Plugin) {
   const repo = (plugin.repository && plugin.repository.url) || 'https://github.com/ionic-team/does-not-exist.git';
-
+  let sourceFiles = 'Plugin/**/*.{swift,h,m}';
+  if (plugin.ios!.type === PluginType.Cordova) {
+    sourceFiles = '*.{swift,h,m}';
+  }
   return `
   Pod::Spec.new do |s|
     s.name = '${plugin.name}'
@@ -80,7 +83,7 @@ export function generatePodspec(plugin: Plugin) {
     s.homepage = 'https://example.com'
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => '${repo}', :tag => '${plugin.version}' }
-    s.source_files = 'Plugin/**/*.{swift,h,m}'
+    s.source_files = '${sourceFiles}'
     s.dependency 'Capacitor'
   end`;
 }
