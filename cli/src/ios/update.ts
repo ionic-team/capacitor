@@ -70,8 +70,30 @@ export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
 export function generatePodspec(plugin: Plugin) {
   const repo = (plugin.repository && plugin.repository.url) || 'https://github.com/ionic-team/does-not-exist.git';
   let sourceFiles = 'Plugin/**/*.{swift,h,m}';
+  let frameworksString = "";
   if (plugin.ios!.type === PluginType.Cordova) {
     sourceFiles = '*.{swift,h,m}';
+    let weakFrameworks: Array<string> = [];
+    let linkedFrameworks: Array<string> = [];
+    const frameworks = getPluginFrameworks(plugin);
+    frameworks.map((framework: any) => {
+      if (!framework.$.type) {
+        if (framework.$.weak && framework.$.weak === 'true') {
+          weakFrameworks.push(getFrameworkName(framework));
+        } else {
+          linkedFrameworks.push(getFrameworkName(framework));
+        }
+      }
+    });
+    if (weakFrameworks.length > 0) {
+      frameworksString += `s.weak_frameworks = '${weakFrameworks.join("', '")}'`;
+    }
+    if (linkedFrameworks.length > 0) {
+      if (frameworksString !== "") {
+        frameworksString += '\n    ';
+      }
+      frameworksString += `s.frameworks = '${linkedFrameworks.join("', '")}'`;
+    }
   }
   return `
   Pod::Spec.new do |s|
@@ -84,6 +106,7 @@ export function generatePodspec(plugin: Plugin) {
     s.source = { :git => '${repo}', :tag => '${plugin.version}' }
     s.source_files = '${sourceFiles}'
     s.dependency 'Capacitor'
+    ${frameworksString}
   end`;
 }
 
@@ -116,17 +139,12 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   const cordovaPlugins = plugins.filter(p => p.ios!.type === PluginType.Cordova);
   let dependencies = '';
   cordovaPlugins.map((p: any) => {
-    const iosPlatform = getPluginPlatform(p, platform);
-    if (iosPlatform) {
-      const frameworks = iosPlatform['framework'];
-      if (frameworks) {
-        frameworks.map( (framework: any) => {
-          if (framework.$.type && framework.$.type === 'podspec') {
-            dependencies += `pod '${framework.$.src}', '${framework.$.spec}'\n      `;
-          }
-        });
+    const frameworks = getPluginFrameworks(p);
+    frameworks.map((framework: any) => {
+      if (framework.$.type && framework.$.type === 'podspec') {
+        dependencies += `pod '${framework.$.src}', '${framework.$.spec}'\n      `;
       }
-    }
+    });
   });
   return `
     # DO NOT MODIFY.
@@ -141,4 +159,19 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
       ${pods.join('\n      ')}
       ${dependencies}
     end`;
+}
+
+function getPluginFrameworks(p: Plugin) {
+  const iosPlatform = getPluginPlatform(p, platform);
+    if (iosPlatform) {
+      const frameworks = iosPlatform['framework'];
+      if (frameworks) {
+        return frameworks;
+      }
+    }
+    return [];
+}
+
+function getFrameworkName(framework: any) {
+  return framework.$.src.substr(0, framework.$.src.indexOf('.'));
 }
