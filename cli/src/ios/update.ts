@@ -71,7 +71,9 @@ export function generatePodspec(plugin: Plugin) {
   const repo = (plugin.repository && plugin.repository.url) || 'https://github.com/ionic-team/does-not-exist.git';
   let sourceFiles = 'Plugin/**/*.{swift,h,m}';
   let frameworksString = "";
+  let dependency = 'Capacitor';
   if (plugin.ios!.type === PluginType.Cordova) {
+    dependency = 'CapacitorCordova';
     sourceFiles = '*.{swift,h,m}';
     let weakFrameworks: Array<string> = [];
     let linkedFrameworks: Array<string> = [];
@@ -105,7 +107,7 @@ export function generatePodspec(plugin: Plugin) {
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => '${repo}', :tag => '${plugin.version}' }
     s.source_files = '${sourceFiles}'
-    s.dependency 'Capacitor'
+    s.dependency '${dependency}'
     ${frameworksString}
   end`;
 }
