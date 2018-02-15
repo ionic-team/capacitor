@@ -15,8 +15,9 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
     return androidPlugins;
   });
 
-  const cordovaPlugins = plugins
-    .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Code);
+  const cordovaPlugins = plugins .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+
   if (cordovaPlugins.length > 0) {
     await copyCordovaJS(config, platform);
     await copyPluginsJS(config, cordovaPlugins, platform);
@@ -26,12 +27,9 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
     createEmptyCordovaJS(config, platform);
   }
   await autoGenerateConfig(config, cordovaPlugins);
-  await runTask(`Updating android`, async () => {
-    log('\n');
-    return Promise.resolve();
-  });
-}
 
+  await installGradlePlugins(config, capacitorPlugins);
+}
 
 export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[]) {
   const xmlDir = join(config.android.resDir, 'xml');
@@ -64,6 +62,11 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
   writeFileAsync(cordovaConfigXMLFile, content);
 }
 
+export async function installGradlePlugins(config: Config, plugins: Plugin[]) {
+  plugins.forEach(async (p) => {
+    log(`Installing plugin ${p.name} with code at ${join(p.rootPath, p.android!.path)}`);
+  });
+}
 
 export function writeXML(object: any): Promise<any> {
   return new Promise(async (resolve, reject) => {
