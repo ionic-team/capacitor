@@ -244,7 +244,7 @@ public class Bridge {
 
   /**
    * Register additional plugins
-   * @param plugins the plugins to register
+   * @param pluginClasses the plugins to register
    */
   public void registerPlugins(Class<? extends Plugin>[] pluginClasses) {
     for (Class<? extends Plugin> plugin : pluginClasses) {
