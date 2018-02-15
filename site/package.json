@@ -15,7 +15,7 @@
     "@stencil/router": "0.0.22"
   },
   "devDependencies": {
-    "@stencil/core": "^0.3.0-5",
+    "@stencil/core": "^0.5.0",
     "@stencil/dev-server": "0.0.18",
     "@stencil/utils": "latest",
     "gh-pages": "^1.0.0",
