@@ -21,7 +21,7 @@ import org.apache.cordova.PluginManager;
 import java.util.ArrayList;
 
 public class BridgeActivity extends AppCompatActivity {
-  private Bridge bridge;
+  protected Bridge bridge;
   public CordovaInterfaceImpl cordovaInterface;
   private ArrayList<PluginEntry> pluginEntries;
   PluginManager pluginManager;
@@ -31,18 +31,27 @@ public class BridgeActivity extends AppCompatActivity {
 
   private String lastActivityPlugin;
 
+  private Class<? extends Plugin>[] initialPlugins = new Class[] { };
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    this.init(savedInstanceState);
+  }
 
+  protected void onCreate(Bundle savedInstanceState, Class<? extends Plugin>[] plugins) {
+    super.onCreate(savedInstanceState);
+    this.initialPlugins = plugins;
+    this.init(savedInstanceState);
+  }
+
+  private void init(Bundle savedInstanceState) {
     loadConfig(this.getApplicationContext(),this);
     Splash.showOnLaunch(this);
 
     getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(R.style.AppTheme_NoActionBar);
-    //setTheme(R.style.AppTheme_NoActionBar);
-    //getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF0000")));
     WebView.setWebContentsDebuggingEnabled(true);
 
     setContentView(R.layout.bridge_layout_main);
@@ -67,11 +76,15 @@ public class BridgeActivity extends AppCompatActivity {
 
     this.pluginManager = mockWebView.getPluginManager();
     cordovaInterface.onCordovaInit(this.pluginManager);
-    bridge = new Bridge(this, webView, cordovaInterface, this.pluginManager);
+    bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, this.pluginManager);
 
     if (savedInstanceState != null) {
       bridge.restoreInstanceState(savedInstanceState);
     }
+  }
+
+  public Bridge getBridge() {
+    return this.bridge;
   }
 
   /**

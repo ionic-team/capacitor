@@ -83,6 +83,8 @@ public class Bridge {
   // Our Handler for posting plugin calls. Created from the ThreadHandler
   private Handler taskHandler = null;
 
+  private final Class<? extends Plugin>[] initialPlugins;
+
   // A map of Plugin Id's to PluginHandle's
   private Map<String, PluginHandle> plugins = new HashMap<>();
 
@@ -103,9 +105,10 @@ public class Bridge {
    * @param context
    * @param webView
    */
-  public Bridge(Activity context, WebView webView, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
+  public Bridge(Activity context, WebView webView, Class<? extends Plugin>[] initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
     this.context = context;
     this.webView = webView;
+    this.initialPlugins = initialPlugins;
     this.cordovaInterface = cordovaInterface;
 
     // Start our plugin execution threads and handlers
@@ -122,7 +125,7 @@ public class Bridge {
     this.intentUri = intentData;
 
     // Register our core plugins
-    this.registerCorePlugins();
+    this.registerAllPlugins();
 
     log("Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
 
@@ -215,7 +218,7 @@ public class Bridge {
   /**
    * Register our core Plugin APIs
    */
-  private void registerCorePlugins() {
+  private void registerAllPlugins() {
     this.registerPlugin(App.class);
     this.registerPlugin(Accessibility.class);
     this.registerPlugin(Browser.class);
@@ -233,15 +236,19 @@ public class Bridge {
     this.registerPlugin(Share.class);
     this.registerPlugin(SplashScreen.class);
     this.registerPlugin(StatusBar.class);
+
+    for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
+      this.registerPlugin(pluginClass);
+    }
   }
 
   /**
    * Register additional plugins
    * @param plugins the plugins to register
    */
-  public void registerPlugins(Plugin[] plugins) {
-    for (Plugin plugin : plugins) {
-      this.registerPlugin(plugin.getClass());
+  public void registerPlugins(Class<? extends Plugin>[] pluginClasses) {
+    for (Class<? extends Plugin> plugin : pluginClasses) {
+      this.registerPlugin(plugin);
     }
   }
 
