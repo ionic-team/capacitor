@@ -59,7 +59,10 @@ async function printExistingProjectMessage(config: Config) {
   log('\n\n');
   log(`${_e('🎈', '*')}   ${chalk.bold('Adding Capacitor to an existing project is easy:')}  ${_e('🎈', '*')}`);
   log(`\nnpm install --save @capacitor/cli @capacitor/core`);
-  log(`\nnpx capacitor add ios android`);
+  if (config.cli.os === OS.Mac) {
+    log(`\nnpx capacitor add ios`);
+  }
+  log(`\nnpx capacitor add android`);
   log(`\nLearn more: https://capacitor.ionicframework.com/docs/getting-started/\n`);
 }
 

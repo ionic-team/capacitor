@@ -63,8 +63,8 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-    .command('add [platforms]')
-    .description('add native platform projects')
+    .command('add [platform]')
+    .description('add a native platform project')
     .action(platform => {
       return addCommand(config, platform);
     });
