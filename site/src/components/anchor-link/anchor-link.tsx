@@ -1,4 +1,4 @@
-import { Component, Prop, PropDidChange, State } from '@stencil/core';
+import { Component, Prop } from '@stencil/core';
 
 /**
  * Used in the generated doc markup as well as the site, so don't remve this
@@ -11,7 +11,7 @@ import { Component, Prop, PropDidChange, State } from '@stencil/core';
 export class AnchorLink {
   @Prop() to: string;
 
-  handleClick(e: MouseEvent) {
+  handleClick(_e: MouseEvent) {
     if (document.location.hash !== '#' + this.to) {
       document.location.hash = this.to;
       let scrollTop = document.querySelector('html').scrollTop;

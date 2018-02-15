@@ -43,7 +43,7 @@ export class App {
             <stencil-route
               url="/docs/"
               exact={true}
-              routeRender={(props: { [key: string]: any }) => {
+              routeRender={(_props: { [key: string]: any }) => {
                 return (
                   <document-component pages={['index.html']} />
                 );
