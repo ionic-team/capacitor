@@ -1,22 +1,18 @@
 package com.getcapacitor.plugin;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.BatteryManager;
 import android.os.Environment;
 import android.os.StatFs;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-import com.getcapacitor.PluginResult;
 
 
 @NativePlugin()

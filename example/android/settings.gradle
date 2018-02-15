@@ -1,3 +1,4 @@
-include ':app', ':android-capacitor'
+include ':app', ':android-capacitor', ':plugin'
 project(':android-capacitor').projectDir=new File('../../android/capacitor/')
+project(':plugin').projectDir=new File('../../plugin-template/android/plugin/')
 

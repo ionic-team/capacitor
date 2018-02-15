@@ -3,7 +3,6 @@ package com.getcapacitor.plugin;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -14,10 +13,6 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginResult;
-
-import org.json.JSONException;
-
-import java.util.List;
 
 @NativePlugin()
 public class App extends Plugin {
