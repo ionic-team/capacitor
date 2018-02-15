@@ -16,6 +16,8 @@ As a rule, the latest version of Capacitor always supports the last two iOS vers
 
 ## Android Development
 
+First, the Java 8 JDK must be installed and [set to the default](https://stackoverflow.com/a/24657630/32140) if you have other versions of the JDK installed. Java 9 does _not_ work at the moment.
+
 Android development requires the Android SDK installed with [Android Studio](https://developer.android.com/studio/index.html). Technically, Android Studio isn't required as you can build and run apps using only the Android CLI tools, but it will make building and running your app much easier so we strongly recommend using it.
 
 Android version support for Capacitor is more complex than iOS. Currently, we are targeting API level 21 or greater, meaning Android 5.0 (Lollipop) or above.
