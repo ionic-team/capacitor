@@ -1,9 +1,9 @@
 import { Config } from '../config';
 import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
 import { emoji } from '../util/emoji';
-import { existsAsync, mkdirAsync } from '../util/fs';
+import { existsAsync, mkdirAsync, writeFileAsync } from '../util/fs';
 
-import { copy } from 'fs-extra';
+import { copy, move } from 'fs-extra';
 import { join } from 'path';
 
 
@@ -31,7 +31,19 @@ export async function newPlugin(config: Config) {
         }
         return true;
       }
-    }, {
+    },
+    {
+      type: 'input',
+      name: 'domain',
+      message: 'plugin id (domain-style syntax. ex: com.example.plugin)',
+      validate: function(input) {
+        if (!input || input.trim() === '') {
+          return false;
+        }
+        return true;
+      }
+    },
+    {
       type: 'input',
       name: 'description',
       message: 'description:'
@@ -71,7 +83,14 @@ export async function newPlugin(config: Config) {
     await mkdirAsync(pluginPath);
 
     await runTask('Adding plugin files', async () => {
-      return copy(config.plugins.assets.templateDir, pluginPath);
+      await copy(config.plugins.assets.templateDir, pluginPath);
+      
+      // Android specific stuff
+      const newPluginPath = join(pluginPath, 'android/', pluginPath);
+      // Move the 'plugin' folder inside $pluginPath/android/plugin to be the same name as the plugin
+      const gradleProjectPath = join(pluginPath, 'android/plugin');
+      await move(gradleProjectPath, newPluginPath);
+      await writeFileAsync(join(newPluginPath, 'src/main/AndroidManifest.xml'), generateAndroidManifest(answers.domain, pluginPath));
     });
 
     await runTask('Writing package.json', () => {
@@ -92,6 +111,15 @@ export async function newPlugin(config: Config) {
   } else {
     logInfo('Aborted');
   }
+}
+
+function generateAndroidManifest(domain: string, pluginPath: string) {
+  const pluginPackage = pluginPath.split('-').join('');
+  return `
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="${domain}.${pluginPackage}">
+</manifest>
+`
 }
 
 function generatePackageJSON(answers: any) {
