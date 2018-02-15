@@ -19,6 +19,7 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
   const cordovaPlugins = plugins .filter(p => getPluginType(p, platform) === PluginType.Cordova);
 
   if (cordovaPlugins.length > 0) {
+    log(`Found ${cordovaPlugins.length} Cordova plugin(s):\n${cordovaPlugins.map(p => '  ' + p.name).join('\n')}`);
     await copyCordovaJS(config, platform);
     await copyPluginsJS(config, cordovaPlugins, platform);
     copyPluginsNativeFiles(config, cordovaPlugins);
@@ -63,8 +64,10 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
 }
 
 export async function installGradlePlugins(config: Config, plugins: Plugin[]) {
+  log(`Found ${plugins.length} Capacitor plugin(s):\n${plugins.map(p => '  ' + p.name).join('\n')}`);
   plugins.forEach(async (p) => {
-    log(`Installing plugin ${p.name} with code at ${join(p.rootPath, p.android!.path)}`);
+    const gradleProjectPath = join(p.rootPath, p.android!.path, p.id);
+    log(`Installing plugin ${p.name} with code at ${gradleProjectPath}`);
   });
 }
 
