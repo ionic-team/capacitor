@@ -49,18 +49,18 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     createEmptyCordovaJS(config, platform);
   }
 
-  await autoGeneratePods(plugins);
+  await autoGeneratePods(config, plugins);
   await autoGenerateResourcesPods(cordovaPlugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
 }
 
-export async function autoGeneratePods(plugins: Plugin[]): Promise<void[]> {
+export async function autoGeneratePods(config: Config, plugins: Plugin[]): Promise<void[]> {
   // Always re-generate the podspec to keep it up to date
   return Promise.all(plugins
     // .filter(p => p.ios!.type !== PluginType.Cocoapods)
     .map(async p => {
       const name = p.ios!.name = p.name;
-      const content = generatePodspec(p);
+      const content = generatePodspec(config, p);
       const path = join(p.rootPath, p.ios!.path, name + '.podspec');
       return writeFileAsync(path, content);
     }));
@@ -77,7 +77,7 @@ export async function autoGenerateResourcesPods(plugins: Plugin[]): Promise<void
     }));
 }
 
-export function generatePodspec(plugin: Plugin) {
+export function generatePodspec(config: Config, plugin: Plugin) {
   const repo = (plugin.repository && plugin.repository.url) || 'https://github.com/ionic-team/does-not-exist.git';
   let sourceFiles = 'Plugin/Plugin/**/*.{swift,h,m}';
   let frameworksString = "";
@@ -117,7 +117,7 @@ export function generatePodspec(plugin: Plugin) {
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => '${repo}', :tag => '${plugin.version}' }
     s.source_files = '${sourceFiles}'
-    s.ios.deployment_target  = '10.0'
+    s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency '${dependency}'
     ${frameworksString}
   end`;
