@@ -17,7 +17,7 @@ import com.getcapacitor.PluginMethod;
 public class Clipboard extends Plugin {
 
   @PluginMethod()
-  public void set(PluginCall call) {
+  public void write(PluginCall call) {
     String strVal = call.getString("string");
     String imageVal = call.getString("image");
     String urlVal = call.getString("url");
@@ -44,7 +44,7 @@ public class Clipboard extends Plugin {
   }
 
   @PluginMethod()
-  public void get(PluginCall call) {
+  public void read(PluginCall call) {
     Context c = this.getContext();
 
     String type = call.getString("type");
