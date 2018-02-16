@@ -22,14 +22,15 @@
 @optional
 @end
 
-#define CAP_PLUGIN_CONFIG(plugin_id) \
+#define CAP_PLUGIN_CONFIG(plugin_id, js_name) \
 CAP_EXTERN void CapacitorRegisterPlugin(Class); \
 + (NSString *)pluginId { return @#plugin_id; } \
++ (NSString *)jsName { return @#js_name; } \
 + (void)load { CapacitorRegisterPlugin(self); }
 #define CAP_PLUGIN_METHOD(method_name, method_return_type) \
 [methods addObject:[[CAPPluginMethod alloc] initWithName:@#method_name returnType:method_return_type]]
 
-#define CAP_PLUGIN(objc_name, methods_body) \
+#define CAP_PLUGIN(objc_name, js_name, methods_body) \
 @interface objc_name : NSObject \
 @end \
 @interface objc_name (CAPPluginCategory) <CAPBridgedPlugin> \
@@ -49,6 +50,6 @@ CAP_EXTERN void CapacitorRegisterPlugin(Class); \
   } \
   return nil; \
 } \
-CAP_PLUGIN_CONFIG(objc_name) \
+CAP_PLUGIN_CONFIG(objc_name, js_name) \
 @end
 
