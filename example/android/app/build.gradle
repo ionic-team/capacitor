@@ -28,5 +28,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile project(':android-capacitor')
-    compile project(':plugin')
+    // Uncomment to develop the plugin template
+    // compile project(':plugin')
 }
