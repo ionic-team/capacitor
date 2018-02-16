@@ -108,11 +108,18 @@ export async function newPlugin(config: Config) {
       // Update the AndroidManifest to point to our new package
       await writeFileAsync(join(newPluginPath, 'src/main/AndroidManifest.xml'), generateAndroidManifest(answers.domain, pluginPath));
 
+      // Make the package source path to the new plugin Java file
       const newPluginJavaPath = join(newPluginPath, `src/main/java/${domainPath}/${className}.java`);
       await mkdirs(dirname(newPluginJavaPath));
+
+      // Read the original plugin java template and replace package/class names
       const originalPluginJava = await readFileAsync(join(pluginPath, 'android/Plugin.java'), 'utf8');
       const pluginJava = originalPluginJava.replace('PACKAGE_NAME', domain).replace('CLASS_NAME', className);
+
+      // Write the new plugin file
       await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
+
+      // Remove the old template
       await unlink(join(pluginPath, 'android/Plugin.java'));
     });
 
