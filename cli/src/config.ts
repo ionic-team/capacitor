@@ -12,6 +12,10 @@ export class Config implements CliConfig {
     androidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe'
   };
 
+  linux = {
+    androidStudioPath: '/usr/local/android-studio/bin/studio.sh'
+  };
+
   android = {
     name: 'android',
     minVersion: '21',
@@ -56,6 +60,7 @@ export class Config implements CliConfig {
     symlinkWebDir: false,
     package: Package,
     windowsAndroidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe',
+    linuxAndroidStudioPath: '',
     extConfigName: 'capacitor.config.json',
     extConfigFilePath: '',
     extConfig: ExtConfig,
@@ -107,6 +112,7 @@ export class Config implements CliConfig {
 
       // Post-merge
       this.initWindowsConfig();
+      this.initLinuxConfig();
 
       this.platforms.push(this.web.name);
     } catch (e) {
@@ -147,6 +153,10 @@ export class Config implements CliConfig {
 
   private initWindowsConfig() {
     this.windows.androidStudioPath = this.app.windowsAndroidStudioPath;
+  }
+
+  private initLinuxConfig() {
+    this.linux.androidStudioPath = this.app.linuxAndroidStudioPath;
   }
 
   private initPluginsConfig() {
