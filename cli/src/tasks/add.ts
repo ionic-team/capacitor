@@ -3,8 +3,6 @@ import { addAndroid } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
-import { open } from './open';
-
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName === 'ios' && config.cli.os !== 'mac') {
@@ -31,7 +29,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     await generateCapacitorConfig(config);
     await check(config, []); // , [checkWebDir]);
     await doAdd(config, platformName);
-    // await sync(config, platformName);
+    await sync(config, platformName);
   } catch (e) {
     logFatal(e);
   }

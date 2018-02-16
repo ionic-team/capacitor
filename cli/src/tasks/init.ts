@@ -159,10 +159,12 @@ async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
 }
 
 async function runSync(config: Config) {
+  /*
   if (config.cli.os === OS.Mac) {
     await syncCommand(config, 'ios');
   }
   await syncCommand(config, 'android');
+  */
   await syncCommand(config, 'web');
 }
 
