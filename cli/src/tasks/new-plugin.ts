@@ -88,7 +88,6 @@ export async function newPlugin(config: Config) {
   if (answers.confirm) {
     const pluginPath = answers.name;
     const domain = answers.domain;
-    const domainPath = domain.split('.').join('/');
     const className = answers.className;
 
     if (await existsAsync(pluginPath)) {
@@ -99,37 +98,14 @@ export async function newPlugin(config: Config) {
 
     await runTask('Adding plugin files', async () => {
       await copy(config.plugins.assets.templateDir, pluginPath);
-      
-      // Android specific stuff
-      const newPluginPath = join(pluginPath, 'android/', pluginPath);
-      // Move the 'plugin' folder inside $pluginPath/android/plugin to be the same name as the plugin
-      const gradleProjectPath = join(pluginPath, 'android/plugin');
-      await move(gradleProjectPath, newPluginPath);
-      // Update the AndroidManifest to point to our new package
-      await writeFileAsync(join(newPluginPath, 'src/main/AndroidManifest.xml'), generateAndroidManifest(answers.domain, pluginPath));
 
-      // Make the package source path to the new plugin Java file
-      const newPluginJavaPath = join(newPluginPath, `src/main/java/${domainPath}/${className}.java`);
-      await mkdirs(dirname(newPluginJavaPath));
-
-      // Read the original plugin java template and replace package/class names
-      const originalPluginJava = await readFileAsync(join(pluginPath, 'android/Plugin.java'), 'utf8');
-      const pluginJava = originalPluginJava.replace('PACKAGE_NAME', domain).replace('CLASS_NAME', className);
-
-      // Write the new plugin file
-      await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
-
-      // Remove the old template
-      await unlink(join(pluginPath, 'android/Plugin.java'));
+      await createIosPlugin(config, pluginPath, domain, className);
+      await createAndroidPlugin(config, pluginPath, domain, className);
     });
 
     await runTask('Writing package.json', () => {
       return writePrettyJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers));
     });
-
-    // await runTask('Configuring', () => {
-    //   return writeFileAsync(join(pluginPath, 'package.json'), generatePackageJSON(answers));
-    // });
 
     await runTask('Installing NPM dependencies', () => {
       return runCommand('npm install');
@@ -143,8 +119,46 @@ export async function newPlugin(config: Config) {
   }
 }
 
+async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string) {
+  const newPluginPath = join(pluginPath, 'ios/Plugin');
+
+  const originalPluginSwift = await readFileAsync(join(newPluginPath, 'Plugin/Plugin.swift'), 'utf8');
+  const originalPluginObjc  = await readFileAsync(join(newPluginPath, 'Plugin/Plugin.m'), 'utf8');
+  const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
+  const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
+
+  await writeFileAsync(join(newPluginPath, `Plugin/Plugin.swift`), pluginSwift, 'utf8');
+  await writeFileAsync(join(newPluginPath, `Plugin/Plugin.m`), pluginObjc, 'utf8');
+}
+
+async function createAndroidPlugin(config: Config, pluginPath: string, domain: string, className: string) {
+  const domainPath = domain.split('.').join('/');
+
+  // Android specific stuff
+  const newPluginPath = join(pluginPath, 'android/', pluginPath);
+  // Move the 'plugin' folder inside $pluginPath/android/plugin to be the same name as the plugin
+  const gradleProjectPath = join(pluginPath, 'android/plugin');
+  await move(gradleProjectPath, newPluginPath);
+  // Update the AndroidManifest to point to our new package
+  await writeFileAsync(join(newPluginPath, 'src/main/AndroidManifest.xml'), generateAndroidManifest(domain, pluginPath));
+
+  // Make the package source path to the new plugin Java file
+  const newPluginJavaPath = join(newPluginPath, `src/main/java/${domainPath}/${className}.java`);
+  await mkdirs(dirname(newPluginJavaPath));
+
+  // Read the original plugin java template and replace package/class names
+  const originalPluginJava = await readFileAsync(join(pluginPath, 'android/Plugin.java'), 'utf8');
+  const pluginJava = originalPluginJava.replace(/PACKAGE_NAME/g, domain).replace(/CLASS_NAME/g, className);
+
+  // Write the new plugin file
+  await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
+
+  // Remove the old template
+  await unlink(join(pluginPath, 'android/Plugin.java'));
+}
+
 function generateAndroidManifest(domain: string, pluginPath: string) {
-  const pluginPackage = pluginPath.split('-').join('');
+const pluginPackage = pluginPath.split('-').join('');
   return `
   <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="${domain}.${pluginPackage}">
