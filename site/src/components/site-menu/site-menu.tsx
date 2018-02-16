@@ -100,7 +100,11 @@ export class SiteMenu {
         {
           title: 'Managing Dependencies',
           url: '/docs/android/managing-dependencies'
-        }
+        },
+        {
+          title: 'Troubleshooting',
+          url: '/docs/android/troubleshooting'
+        },
       ]
     },
     {
