@@ -45,7 +45,7 @@ To add Capacitor to your web app, run the following commands:
 
 ```
 cd my-app
-npm install @capacitor/core @capacitor/cli
+npm install --save @capacitor/core @capacitor/cli
 npx capacitor init
 ```
 
