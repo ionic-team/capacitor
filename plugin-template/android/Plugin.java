@@ -1,4 +1,4 @@
-package com.getcapacitor.myplugin;
+package PACKAGE_NAME;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -7,7 +7,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
 @NativePlugin()
-public class MyPlugin extends Plugin {
+public class CLASS_NAME extends Plugin {
 
     @PluginMethod()
     public void echo(PluginCall call) {
