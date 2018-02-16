@@ -19,17 +19,14 @@ enum BridgeError: Error {
   public var plugins =  [String:CAPPlugin]()
   // List of known plugins by pluginId -> Plugin Type
   public var knownPlugins = [String:CAPPlugin.Type]()
-  
+  // List of known cordova plugins
   public var cordovaPlugins = [String:CDVPlugin]()
-
+  // Calls we are storing to resolve later
   public var storedCalls = [String:CAPPluginCall]()
-  
+  // Whether the app is active
   private var isActive = true
   
-  private var jsVerboseModeEnabled = true
-  
-  // Dispatch queue for our operations
-  // TODO: Unique label?
+  // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
   
   public init(_ vc: UIViewController, _ userContentController: WKUserContentController) {
@@ -48,6 +45,9 @@ enum BridgeError: Error {
     }
   }
   
+  /**
+   * Handle an openUrl action and dispatch a notification.
+   */
   public static func handleOpenUrl(_ url: URL, _ options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.URLOpen.name()), object: [
       "url": url,
@@ -77,6 +77,10 @@ enum BridgeError: Error {
     // no-op for now
   }
   
+  /**
+   * Print a hopefully informative error message to the log when something
+   * particularly dreadful happens.
+   */
   static func fatalError(_ error: Error, _ originalError: Error) {
     print("⚡️ ❌  Capacitor: FATAL ERROR")
     print("⚡️ ❌  Error was: ", originalError.localizedDescription)
@@ -93,6 +97,9 @@ enum BridgeError: Error {
     print("⚡️ ❌  Please verify your installation or file an issue")
   }
   
+  /**
+   * Bind notification center observers to watch for app active/inactive status
+   */
   func bindObservers() {
     let appStatePlugin = getOrLoadPlugin(pluginId: "App") as? App
     
@@ -108,10 +115,16 @@ enum BridgeError: Error {
     }
   }
   
+  /**
+   * - Returns: whether the app is currently active
+   */
   func isAppActive() -> Bool {
     return isActive
   }
 
+  /**
+   * Export core JavaScript to the webview
+   */
   func exportCoreJS() {
     do {
       try JSExport.exportCapacitorGlobalJS(userContentController: self.userContentController, isDebug: isDevMode())
@@ -121,6 +134,10 @@ enum BridgeError: Error {
     }
   }
 
+  /**
+   * Set up our Cordova compat by loading all known Cordova plugins and injecting
+   * their JS.
+   */
   func setupCordovaCompatibility() {
     var injectCordovaFiles = false
     var numClasses = UInt32(0);
@@ -138,6 +155,9 @@ enum BridgeError: Error {
     }
   }
 
+  /**
+   * Export the core Cordova JS runtime
+   */
   func exportCordovaJS() {
     do {
       try JSExport.exportCordovaJS(userContentController: self.userContentController)
@@ -154,6 +174,9 @@ enum BridgeError: Error {
     storedCalls = [String:CAPPluginCall]()
   }
   
+  /**
+   * Register all plugins that have been declared
+   */
   func registerPlugins() {
     var numClasses = UInt32(0);
     let classes = objc_copyClassList(&numClasses)
@@ -167,6 +190,9 @@ enum BridgeError: Error {
     }
   }
   
+  /**
+   * Register a single plugin.
+   */
   func registerPlugin(_ pluginClassName: String, _ pluginType: CAPPlugin.Type) {
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
@@ -174,6 +200,10 @@ enum BridgeError: Error {
     _ = loadPlugin(pluginId: bridgeType.pluginId())
   }
   
+  /**
+   * - parameter pluginId: the ID of the plugin
+   * - returns: the plugin, if found
+   */
   public func getOrLoadPlugin(pluginId: String) -> CAPPlugin? {
     guard let plugin = self.getPlugin(pluginId: pluginId) ?? self.loadPlugin(pluginId: pluginId) else {
       return nil
