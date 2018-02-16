@@ -24,8 +24,8 @@ CAP_PLUGIN(Camera, "Camera",
 )
 
 CAP_PLUGIN(Clipboard, "Clipboard",
-  CAP_PLUGIN_METHOD(get, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(set, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(read, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(write, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(Console, "Console",

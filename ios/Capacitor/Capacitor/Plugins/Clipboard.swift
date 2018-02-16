@@ -3,7 +3,7 @@ import CoreMotion
 
 @objc(Clipboard)
 public class Clipboard : CAPPlugin {
-  @objc func set(_ call: CAPPluginCall) {
+  @objc func write(_ call: CAPPluginCall) {
     guard let options = call.getObject("options") else {
       call.error("No options provided")
       return
@@ -32,7 +32,7 @@ public class Clipboard : CAPPlugin {
     call.success()
   }
   
-  @objc func get(_ call: CAPPluginCall) {
+  @objc func read(_ call: CAPPluginCall) {
     guard let options = call.getObject("options") else {
       call.error("No options provided")
       return

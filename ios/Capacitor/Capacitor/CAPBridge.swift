@@ -185,7 +185,9 @@ enum BridgeError: Error {
       if class_conformsToProtocol(c, CAPBridgedPlugin.self) {
         let pluginClassName = NSStringFromClass(c)
         let pluginType = c as! CAPPlugin.Type
-        registerPlugin(pluginClassName, pluginType)
+        let bridgeType = c as! CAPBridgedPlugin.Type
+        
+        registerPlugin(pluginClassName, bridgeType.jsName(), pluginType)
       }
     }
   }
@@ -193,10 +195,10 @@ enum BridgeError: Error {
   /**
    * Register a single plugin.
    */
-  func registerPlugin(_ pluginClassName: String, _ pluginType: CAPPlugin.Type) {
+  func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
     knownPlugins[bridgeType.pluginId()] = pluginType
-    JSExport.exportJS(userContentController: self.userContentController, pluginClassName: pluginClassName, pluginType: pluginType)
+    JSExport.exportJS(userContentController: self.userContentController, pluginClassName: jsName, pluginType: pluginType)
     _ = loadPlugin(pluginId: bridgeType.pluginId())
   }
   
