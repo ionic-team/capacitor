@@ -14,7 +14,7 @@ import { Plugins, AppState } from '@capacitor/core';
 
 const { App } = Plugins;
 
-App.addListener('appStateChanged', (err: any, state: AppState) => {
+App.addListener('appStateChange', (err: any, state: AppState) => {
   // state.isActive contains the active state
   console.log('App state changed. Is active?', state.isActive);
 });
