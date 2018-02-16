@@ -39,6 +39,7 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -83,7 +84,7 @@ public class Bridge {
   // Our Handler for posting plugin calls. Created from the ThreadHandler
   private Handler taskHandler = null;
 
-  private final Class<? extends Plugin>[] initialPlugins;
+  private final List<Class<? extends Plugin>> initialPlugins;
 
   // A map of Plugin Id's to PluginHandle's
   private Map<String, PluginHandle> plugins = new HashMap<>();
@@ -105,7 +106,7 @@ public class Bridge {
    * @param context
    * @param webView
    */
-  public Bridge(Activity context, WebView webView, Class<? extends Plugin>[] initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
+  public Bridge(Activity context, WebView webView, List<Class<? extends Plugin>> initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
     this.context = context;
     this.webView = webView;
     this.initialPlugins = initialPlugins;

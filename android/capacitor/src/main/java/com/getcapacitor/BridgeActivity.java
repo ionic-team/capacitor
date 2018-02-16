@@ -19,6 +19,7 @@ import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BridgeActivity extends AppCompatActivity {
   protected Bridge bridge;
@@ -31,21 +32,16 @@ public class BridgeActivity extends AppCompatActivity {
 
   private String lastActivityPlugin;
 
-  private Class<? extends Plugin>[] initialPlugins = new Class[] { };
+  private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.init(savedInstanceState);
   }
 
-  protected void onCreate(Bundle savedInstanceState, Class<? extends Plugin>[] plugins) {
-    super.onCreate(savedInstanceState);
+  protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
     this.initialPlugins = plugins;
-    this.init(savedInstanceState);
-  }
 
-  private void init(Bundle savedInstanceState) {
     loadConfig(this.getApplicationContext(),this);
     Splash.showOnLaunch(this);
 
