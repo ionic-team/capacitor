@@ -98,8 +98,8 @@ export class SiteMenu {
           url: '/docs/android/configuration'
         },
         {
-          title: 'Managing Dependencies',
-          url: '/docs/android/managing-dependencies'
+          title: 'Custom Native Code',
+          url: '/docs/android/custom-code'
         },
         {
           title: 'Troubleshooting',
