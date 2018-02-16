@@ -87,13 +87,19 @@ export function generatePodspec(config: Config, plugin: Plugin) {
     sourceFiles = '*.{swift,h,m}';
     let weakFrameworks: Array<string> = [];
     let linkedFrameworks: Array<string> = [];
+    let systemLibraries: Array<string> = [];
     const frameworks = getPluginFrameworks(plugin);
     frameworks.map((framework: any) => {
       if (!framework.$.type) {
-        if (framework.$.weak && framework.$.weak === 'true') {
-          weakFrameworks.push(getFrameworkName(framework));
+        const name = getFrameworkName(framework);
+        if (isFramework(framework)) {
+          if (framework.$.weak && framework.$.weak === 'true') {
+            weakFrameworks.push(name);
+          } else {
+            linkedFrameworks.push(name);
+          }
         } else {
-          linkedFrameworks.push(getFrameworkName(framework));
+          systemLibraries.push(name);
         }
       }
     });
@@ -105,6 +111,12 @@ export function generatePodspec(config: Config, plugin: Plugin) {
         frameworksString += '\n    ';
       }
       frameworksString += `s.frameworks = '${linkedFrameworks.join("', '")}'`;
+    }
+    if (systemLibraries.length > 0) {
+      if (frameworksString !== "") {
+        frameworksString += '\n    ';
+      }
+      frameworksString += `s.libraries = '${systemLibraries.join("', '")}'`;
     }
   }
   return `
@@ -217,5 +229,13 @@ function getPluginResources(p: Plugin) {
 }
 
 function getFrameworkName(framework: any) {
-  return framework.$.src.substr(0, framework.$.src.indexOf('.'));
+  if (isFramework(framework)) {
+    return framework.$.src.substr(0, framework.$.src.indexOf('.'));
+  } else {
+    return framework.$.src.substr(0, framework.$.src.indexOf('.')).replace('lib','');
+  }
+}
+
+function isFramework(framework: any) {
+  return framework.$.src.split(".").pop() === 'framework';
 }
