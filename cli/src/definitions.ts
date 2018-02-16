@@ -21,6 +21,10 @@ export interface CliConfigWindows {
   androidStudioPath?: string;
 }
 
+export interface CliConfigLinux {
+  androidStudioPath?: string;
+}
+
 export interface CliConfigPlatformAssets {
   templateName: string;
   templateDir?: string;
@@ -57,6 +61,7 @@ export interface CliConfigApp {
   extConfigFilePath: string;
   extConfig: ExternalConfig;
   windowsAndroidStudioPath: string;
+  linuxAndroidStudioPath: string;
   /**
    * Whether to use a bundled web runtime instead of relying on a bundler/module
    * loader. If you're not using something like rollup or webpack or dynamic ES
@@ -72,6 +77,7 @@ export interface CliConfigPlugins {
 
 export interface CliConfig {
   windows: CliConfigWindows;
+  linux: CliConfigLinux;
   android: CliConfigPlatform;
   web: CliConfigPlatform;
   ios: CliConfigPlatform;

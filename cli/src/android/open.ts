@@ -29,7 +29,21 @@ export async function openAndroid(config: Config) {
       }
       break;
     case OS.Linux:
-      logError('Opening Android Studio from the command line in Linux is not yet supported, sorry :(');
+      const linuxError = () => {
+        logError('Unable to launch Android Studio. You must configure "linuxAndroidStudioPath" ' +
+                 'in your capacitor.config.json to point to the location of studio.sh, using JavaScript-escaped paths:\n' +
+
+                 'Example:\n' +
+                 '{\n' +
+                    '  "linuxAndroidStudioPath": "/usr/local/android-studio/bin/studio.sh"\n' +
+                  '}');
+      };
+
+      try {
+        await opn(dir, { app: config.linux.androidStudioPath, wait: true });
+      } catch (e) {
+        linuxError();
+      }
       break;
   }
 
