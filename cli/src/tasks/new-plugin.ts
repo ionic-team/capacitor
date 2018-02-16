@@ -1,10 +1,11 @@
 import { Config } from '../config';
 import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
 import { emoji } from '../util/emoji';
-import { existsAsync, mkdirAsync, writeFileAsync } from '../util/fs';
+import { existsAsync, mkdirAsync, writeFileAsync, readFileAsync } from '../util/fs';
 
-import { copy, move } from 'fs-extra';
-import { join } from 'path';
+import { copy, move, mkdirs, unlink } from 'fs-extra';
+import { dirname, join } from 'path';
+import { mkdir, writeFile } from 'fs';
 
 
 export async function newPluginCommand(config: Config) {
@@ -24,7 +25,7 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'name',
-      message: 'plugin name (snake-case):',
+      message: 'Plugin NPM name (snake-case):',
       validate: function(input) {
         if (!input || input.trim() === '') {
           return false;
@@ -35,7 +36,18 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'domain',
-      message: 'plugin id (domain-style syntax. ex: com.example.plugin)',
+      message: 'Plugin id (domain-style syntax. ex: com.example.plugin)',
+      validate: function(input) {
+        if (!input || input.trim() === '') {
+          return false;
+        }
+        return true;
+      }
+    },
+    {
+      type: 'input',
+      name: 'className',
+      message: 'Plugin class name (ex: AwesomePlugin)',
       validate: function(input) {
         if (!input || input.trim() === '') {
           return false;
@@ -75,6 +87,9 @@ export async function newPlugin(config: Config) {
 
   if (answers.confirm) {
     const pluginPath = answers.name;
+    const domain = answers.domain;
+    const domainPath = domain.split('.').join('/');
+    const className = answers.className;
 
     if (await existsAsync(pluginPath)) {
       logFatal(`Directory ${pluginPath} already exists. Not overwriting.`);
@@ -90,7 +105,15 @@ export async function newPlugin(config: Config) {
       // Move the 'plugin' folder inside $pluginPath/android/plugin to be the same name as the plugin
       const gradleProjectPath = join(pluginPath, 'android/plugin');
       await move(gradleProjectPath, newPluginPath);
+      // Update the AndroidManifest to point to our new package
       await writeFileAsync(join(newPluginPath, 'src/main/AndroidManifest.xml'), generateAndroidManifest(answers.domain, pluginPath));
+
+      const newPluginJavaPath = join(newPluginPath, `src/main/java/${domainPath}/${className}.java`);
+      await mkdirs(dirname(newPluginJavaPath));
+      const originalPluginJava = await readFileAsync(join(pluginPath, 'android/Plugin.java'), 'utf8');
+      const pluginJava = originalPluginJava.replace('PACKAGE_NAME', domain).replace('CLASS_NAME', className);
+      await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
+      await unlink(join(pluginPath, 'android/Plugin.java'));
     });
 
     await runTask('Writing package.json', () => {
