@@ -63,4 +63,4 @@ plugins, and more:
 
 [Configuring and setting permissions for Android](./configuration)
 
-[Building Native Plugins for Android](./plugins.html)
+[Building Native Plugins for Android](../plugins)
