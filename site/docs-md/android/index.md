@@ -42,7 +42,7 @@ To open the project in Android Studio, run
 npx capacitor open android
 ```
 
-### Running your App
+### Running Your App
 
 Once Android Studio is open, you should be able to run your app on a device or emulator. Go to Run or Debug in the Run menu:
 
