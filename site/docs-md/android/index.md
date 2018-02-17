@@ -42,20 +42,19 @@ To open the project in Android Studio, run
 npx capacitor open android
 ```
 
-You'll be prompted to import this project from Gradle, just hit OK:
+### Running your App
 
-![Gradle Import](/assets/img/docs/android/gradle-import.png)
+Once Android Studio is open, you should be able to run your app on a device or emulator. Go to Run or Debug in the Run menu:
 
-Android projects are really just Gradle projects that have to be imported into Android Studio, as Android is more IDE-agnostic than iOS.
+![Running App](/assets/img/docs/android/running.png)
 
-### Syncing Gradle
+### Troubleshooting
 
-After opening the project, you _must_ sync Gradle or you will receive an error saying "Please select Android SDK." It's also possible you'll need to sync
-Gradle periodically after updating dependencies and changing project settings.
+If you encountered any issue above, please let us know by filing an issue on the repo, and then consult the [Troubleshooting Android](troubleshooting/) page for solutions to common Android problems.
 
-To manually sync Gradle, open Tools -> Android -> Sync Project with Gradle Files from the main menu bar:
+### Next Steps
 
-![Sync Gradle](/assets/img/docs/android/sync-gradle.png)
+If your app ran you are now ready to continue developing and building your app. Use the various APIs available, Capacitor or Cordova plugins, or custom native code to build our the rest of your app.
 
 ## Further Reading
 
@@ -63,7 +62,5 @@ Follow these Android-specific guides for more information on setting permissions
 plugins, and more:
 
 [Configuring and setting permissions for Android](./configuration)
-
-[Managing plugins and dependencies for Android](./managing-dependencies.html)
 
 [Building Native Plugins for Android](./plugins.html)

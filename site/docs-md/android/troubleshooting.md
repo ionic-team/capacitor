@@ -30,7 +30,16 @@ That can be done easily from the File menu:
 
 ![Android Invalidate Caches](/assets/img/docs/android/invalidate-caches.png)
 
-## APK Can't be installed
+## Error: "Please select Android SDK"
+
+This error is often due to Gradle needing to be synced, something you'll need to do
+periodically after updating dependencies and changing project settings.
+
+To manually sync Gradle, open Tools -> Android -> Sync Project with Gradle Files from the main menu bar:
+
+![Sync Gradle](/assets/img/docs/android/sync-gradle.png)
+
+## Error: "APK Can't be installed"
 
 An APK not installing to an Emulator or Device is often due to having an existing app with the same package name. You may see an error like this when trying to run your app:
 
