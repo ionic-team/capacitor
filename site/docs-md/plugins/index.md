@@ -58,3 +58,21 @@ export interface EchoPlugin {
   echo(options: { value: string }): Promise<{value: string}>;
 }
 ```
+
+## Publishing
+
+Whenever you are ready to publish your plugin, just use:
+
+```bash
+npm publish
+```
+
+This will build the JS portion of your plugin and publish the rest of your plugin files to NPM. 
+
+Your package can now be installed using `npm install your-plugin` in any Capacitor app.
+
+## Next steps
+
+Now it's up to you to make your plugin do something truly awesome!
+
+Follow the [iOS](./ios) guide for information on using Swift (or Obj-C) to build an iOS plugin, the [Android](./android) guide for building Android plugins with Java, the [Web](./web) guide for implementing web and PWA functionality for your plugin, and the [Custom JavaScript](./js) guide for information on how to build a custom JavaScript plugin (i.e. in addition to Capacitor's auto-JS plugin binding).
