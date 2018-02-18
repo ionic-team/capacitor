@@ -8,7 +8,7 @@ This guide attempts to document common Android issues with possible solutions.
 
 Every Android developer learns a few common techniques for debugging Android issues, and you should incorporate these into your workflow:
 
-#### Google, Google, Google
+### Google, Google, Google
 
 Any time you encounter an issue with Android, or Gradle, or Emulators, your first step should be to copy and paste the error into a Google search.
 
@@ -16,7 +16,7 @@ Capacitor uses the standard Android toolkit, so chances are if you run into some
 
 It could be as simple as updating a dependency, running Gradle sync, or invalidating caches
 
-#### Clean/Rebuild
+### Clean/Rebuild
 
 Cleaning and rebuilding can fix a number of build issues:
 
