@@ -1,6 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
 
-
 export class MyPluginWeb extends WebPlugin {
   constructor() {
     super({

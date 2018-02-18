@@ -174,11 +174,15 @@ const shouldMergeWebPlugin = (plugin: WebPlugin) => {
 export const mergeWebPlugins = (knownPlugins: any) => {
   let plugins = WebPlugins.getPlugins();
   for (let plugin of plugins) {
-    // If we already have a plugin registered (meaning it was defined in the native layer),
-    // then we should only overwrite it if the corresponding web plugin activates on
-    // a certain platform. For example: Geolocation uses the WebPlugin on Android but not iOS
-    if (knownPlugins.hasOwnProperty(plugin.config.name) && !shouldMergeWebPlugin(plugin)) { continue; }
-
-    knownPlugins[plugin.config.name] = plugin;
+    mergeWebPlugin(knownPlugins, plugin);
   }
+};
+
+export const mergeWebPlugin = (knownPlugins: any, plugin: WebPlugin) => {
+  // If we already have a plugin registered (meaning it was defined in the native layer),
+  // then we should only overwrite it if the corresponding web plugin activates on
+  // a certain platform. For example: Geolocation uses the WebPlugin on Android but not iOS
+  if (knownPlugins.hasOwnProperty(plugin.config.name) && !shouldMergeWebPlugin(plugin)) { return; }
+
+  knownPlugins[plugin.config.name] = plugin;
 };
