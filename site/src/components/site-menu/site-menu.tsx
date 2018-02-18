@@ -62,7 +62,11 @@ export class SiteMenu {
         {
           title: 'Running your App',
           url: '/docs/basics/running-your-app'
-        }
+        },
+        {
+          title: 'Using Cordova Plugins',
+          url: '/docs/basics/cordova'
+        },
       ]
     },
     {
@@ -124,9 +128,21 @@ export class SiteMenu {
           url: '/docs/plugins/'
         },
         {
-          title: 'Cordova Plugins',
-          url: '/docs/plugins/cordova'
+          title: 'iOS Guide',
+          url: '/docs/plugins/ios'
         },
+        {
+          title: 'Android Guide',
+          url: '/docs/plugins/android'
+        },
+        {
+          title: 'Web/PWA Guide',
+          url: '/docs/plugins/web'
+        },
+        {
+          title: 'JavaScript Guide',
+          url: '/docs/plugins/javascript'
+        }
         /*
         {
           title: 'Installing Plugins',
