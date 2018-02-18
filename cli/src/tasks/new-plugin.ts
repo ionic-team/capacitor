@@ -177,7 +177,7 @@ function generatePackageJSON(answers: any) {
       'build': 'npm run clean && tsc',
       'clean': 'rm -rf ./dist',
       'watch': 'tsc --watch',
-      'version': 'npm run build'
+      'prepublishOnly': 'npm run build'
     },
     author: answers.author,
     license: answers.license,
