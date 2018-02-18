@@ -81,6 +81,14 @@ export class SiteMenu {
           url: '/docs/ios/configuration'
         },
         {
+          title: 'Updating',
+          url: '/docs/ios/updating'
+        },
+        {
+          title: 'Custom Native Code',
+          url: '/docs/android/custom-code'
+        },
+        {
           title: 'Troubleshooting',
           url: '/docs/ios/troubleshooting'
         },
@@ -96,6 +104,10 @@ export class SiteMenu {
         {
           title: 'Configuration',
           url: '/docs/android/configuration'
+        },
+        {
+          title: 'Updating',
+          url: '/docs/android/updating'
         },
         {
           title: 'Custom Native Code',
