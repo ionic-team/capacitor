@@ -21,3 +21,11 @@ However, many iOS permissions require what are known as "usage descriptions" def
 Consult the [Cocoa Keys](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html) list for keys containing `UsageDescription` to see the various usage description settings that may be required for your app.
 
 For more information, Apple has provided a guide to [managing Sensitive Data App Rejections](https://developer.apple.com/library/content/qa/qa1937/_index.html) which contains more information on APIs that require usage descriptions.
+
+# Setting Entitlements
+
+Entitlements are used to enable key features that your app may need.
+
+Unlike certain configuration options or usage descriptions, entitlements are configured in a special area inside of Xcode, rather than in Info.plist
+
+If a plugin requires certain entitlements, open your app in Xcode, click on the name of your project in the left project menu, and select `Capabilities` in the tab bar.
