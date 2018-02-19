@@ -1,8 +1,8 @@
 import { Config } from '../config';
 import { log, runTask } from '../common';
-import { Plugin, PluginType, getPlugins } from '../plugin';
+import { getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPlatformElement, getPluginPlatform, getPluginType, removePluginFiles } from '../tasks/update';
+import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, removePluginFiles } from '../tasks/update';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { join, resolve } from 'path';

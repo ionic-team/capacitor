@@ -107,3 +107,33 @@ ${pluginNames.map(p => `     ${p}`).join('\n')}
     logInfo('No Capacitor plugins found. That\'s ok, you can add more plugins later by npm installing them.');
   }
 }
+
+export function getPluginPlatform(p: Plugin, platform: string) {
+  const platforms = p.xml.platform;
+  if (platforms) {
+    const platforms = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
+    return platforms[0];
+  }
+  return null;
+}
+
+export function getPlatformElement(p: Plugin, platform: string, elementName: string) {
+  const platformTag = getPluginPlatform(p, platform);
+  if (platformTag) {
+    const element = platformTag[elementName];
+    if (element) {
+      return element;
+    }
+  }
+  return [];
+}
+
+export function getPluginType(p: Plugin, platform: string): PluginType {
+  if (platform === 'ios') {
+    return p.ios!.type;
+  }
+  if (platform === 'android') {
+    return p.android!.type;
+  }
+  return PluginType.Code;
+}

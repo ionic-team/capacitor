@@ -5,7 +5,7 @@ import { allSerial } from '../util/promise';
 import { CheckFunction, check, checkPackage, log, logFatal, logInfo } from '../common';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
-import { Plugin, PluginType } from '../plugin';
+import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 import { existsAsync } from '../util/fs';
 import { copy as fsCopy } from 'fs-extra';
 
@@ -158,16 +158,6 @@ function getWebDir(config: Config, platform: string): string {
   return '';
 }
 
-export function getPluginType(p: Plugin, platform: string): PluginType {
-  if (platform === 'ios') {
-    return p.ios!.type;
-  }
-  if (platform === 'android') {
-    return p.android!.type;
-  }
-  return PluginType.Code;
-}
-
 export async function copyCordovaJS(config: Config, platform: string) {
   const cordovaPath = resolve('node_modules', '@capacitor/core', 'cordova.js');
   if (!await existsAsync(cordovaPath)) {
@@ -190,24 +180,4 @@ export function removePluginFiles(config: Config, platform: string) {
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removeSync(pluginsDir);
   removeSync(cordovaPluginsJSFile);
-}
-
-export function getPluginPlatform(p: Plugin, platform: string) {
-  const platforms = p.xml.platform;
-  if (platforms) {
-    const platforms = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
-    return platforms[0];
-  }
-  return null;
-}
-
-export function getPlatformElement(p: Plugin, platform: string, elementName: string) {
-  const platformTag = getPluginPlatform(p, platform);
-  if (platformTag) {
-    const element = platformTag[elementName];
-    if (element) {
-      return element;
-    }
-  }
-  return [];
 }
