@@ -26,13 +26,13 @@ Sometimes, Xcode clings to old, outdated build artifacts. To start fresh, you'll
 
 To do this, open Xcode Preferences, choose the Locations tab, and click the small arrow next to your Derived Data path:
 
-![Locations](/assets/docs/ios/location-prefs.png)
+![Locations](/assets/img/docs/ios/location-prefs.png)
 
 This opens a Finder window to the location of Xcode's temporary Derived Data.
 
 Next, select all items in that directory and delete:
 
-![Deleting Derived Data](/assets/docs/ios/deleting-derived-data.png)
+![Deleting Derived Data](/assets/img/docs/ios/deleting-derived-data.png)
 
 Finally, do a rebuild in Xcode.
 
