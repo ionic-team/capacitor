@@ -4,7 +4,7 @@ import { writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
 import { Plugin, PluginType, getPlugins, printPlugins } from '../plugin';
-import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPluginPlatform, getPluginType, removePluginFiles } from '../tasks/update';
+import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPlatformElement, getPluginType, removePluginFiles } from '../tasks/update';
 
 import * as inquirer from 'inquirer';
 import { create } from 'domain';
@@ -67,7 +67,7 @@ export async function autoGeneratePods(config: Config, plugins: Plugin[]): Promi
 }
 
 export async function autoGenerateResourcesPods(plugins: Plugin[]): Promise<void[]> {
-  const resoucesPlugins = plugins.filter(p => getPluginResources(p).length > 0);
+  const resoucesPlugins = plugins.filter(p => getPlatformElement(p, platform, 'resource-file').length > 0);
   return Promise.all(resoucesPlugins
     .map(async p => {
       const name = p.name + 'Resources';
@@ -88,7 +88,7 @@ export function generatePodspec(config: Config, plugin: Plugin) {
     let weakFrameworks: Array<string> = [];
     let linkedFrameworks: Array<string> = [];
     let systemLibraries: Array<string> = [];
-    const frameworks = getPluginFrameworks(plugin);
+    const frameworks = getPlatformElement(plugin, platform, 'framework');
     frameworks.map((framework: any) => {
       if (!framework.$.type) {
         const name = getFrameworkName(framework);
@@ -137,7 +137,7 @@ export function generatePodspec(config: Config, plugin: Plugin) {
 
 export function generateResourcesPodspec(plugin: Plugin) {
   const repo = (plugin.repository && plugin.repository.url) || 'https://github.com/ionic-team/does-not-exist.git';
-  const resources = getPluginResources(plugin);
+  const resources = getPlatformElement(plugin, platform, 'resource-file');
   let resourceFiles: Array<string> = [];
   resources.map((resource: any) => {
     resourceFiles.push (resource.$.src.replace('src/ios/', ''))
@@ -181,13 +181,13 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   const cordovaPlugins = plugins.filter(p => p.ios!.type === PluginType.Cordova);
   let dependencies = '';
   cordovaPlugins.map((p: any) => {
-    const frameworks = getPluginFrameworks(p);
+    const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (framework.$.type && framework.$.type === 'podspec') {
         dependencies += `pod '${framework.$.src}', '${framework.$.spec}'\n      `;
       }
     });
-    if (getPluginResources(p).length > 0) {
+    if (getPlatformElement(p, platform, 'resource-file').length > 0) {
       pods.push(`pod '${p.ios!.name}Resources', :path => '../../node_modules/${p.id}/${p.ios!.path}'`);
     }
   });
@@ -204,28 +204,6 @@ target 'App' do
   ${pods.join('\n      ')}
   ${dependencies}
 end`;
-}
-
-function getPluginFrameworks(p: Plugin) {
-  const iosPlatform = getPluginPlatform(p, platform);
-    if (iosPlatform) {
-      const frameworks = iosPlatform['framework'];
-      if (frameworks) {
-        return frameworks;
-      }
-    }
-    return [];
-}
-
-function getPluginResources(p: Plugin) {
-  const iosPlatform = getPluginPlatform(p, platform);
-    if (iosPlatform) {
-      const resourceFiles = iosPlatform['resource-file'];
-      if (resourceFiles) {
-        return resourceFiles;
-      }
-    }
-    return [];
 }
 
 function getFrameworkName(framework: any) {
