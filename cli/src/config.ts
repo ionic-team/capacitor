@@ -152,11 +152,11 @@ export class Config implements CliConfig {
   }
 
   private initWindowsConfig() {
-    this.windows.androidStudioPath = this.app.windowsAndroidStudioPath;
+    this.windows.androidStudioPath = this.app.windowsAndroidStudioPath && this.app.windowsAndroidStudioPath;
   }
 
   private initLinuxConfig() {
-    this.linux.androidStudioPath = this.app.linuxAndroidStudioPath;
+    this.linux.androidStudioPath = this.app.linuxAndroidStudioPath && this.app.linuxAndroidStudioPath;
   }
 
   private initPluginsConfig() {
