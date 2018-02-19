@@ -3,7 +3,7 @@ import { isInstalled } from '../common';
 import { readdirAsync } from '../util/fs';
 import { join } from 'path';
 
-import { Plugin, PluginType } from '../plugin';
+import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 
 
 export async function findXcodePath(config: Config): Promise<string | null> {
@@ -47,11 +47,12 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
     if (!plugin.manifest.ios.src) {
       iosPath = 'ios';
     }
-  } else if (plugin.xml) {
+  } else if (plugin.xml && getPluginPlatform(plugin, 'ios')) {
     iosPath = 'src/ios';
   } else {
     return null;
   }
+
   try {
     plugin.ios = {
       name: plugin.name,
