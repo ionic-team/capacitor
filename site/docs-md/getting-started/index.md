@@ -9,6 +9,11 @@ We strongly recommend starting an Capacitor project with your mobile frontend fr
 though we also provide a blank starter for apps that aren't using a frontend UI framework, and a starter that uses Ionic and
 is ready for building a production-ready native app and Progressive Web App.
 
+## Before you start
+
+Make sure you have all the required [Dependencies](./dependencies) installed for the platforms you will be building for. Most importantly,
+make sure you update CocoaPods using `pod repo update` before starting a new project, if you plan on building for iOS using a Mac.
+
 ## Starting a fresh project
 
 To start a fresh Capacitor project, first clone the starter base:
