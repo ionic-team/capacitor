@@ -2,8 +2,8 @@ import { Config } from '../config';
 import { log, runTask } from '../common';
 import { Plugin, PluginType, getPlugins } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPluginPlatform, getPluginType, removePluginFiles } from '../tasks/update';
-import { copySync, ensureDirSync, removeSync, writeFileAsync } from '../util/fs';
+import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPlatformElement, getPluginPlatform, getPluginType, removePluginFiles } from '../tasks/update';
+import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { join, resolve } from 'path';
 
@@ -31,6 +31,7 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
   await autoGenerateConfig(config, cordovaPlugins);
 
   await installGradlePlugins(config, capacitorPlugins);
+  await handleCordovaPluginsGradle(config, cordovaPlugins);
 }
 
 export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[]) {
@@ -86,6 +87,24 @@ ${plugins.map(p => {
 
   await writeFileAsync(join(config.app.rootDir, 'android/capacitor.settings.gradle'), settingsLines);
   await writeFileAsync(join(config.app.rootDir, 'android/app/capacitor.build.gradle'), dependencyLines)
+}
+
+export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
+  const pluginsGradlePath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'build.gradle');
+  let deps = "";
+  cordovaPlugins.map( p => {
+    const frameworks = getPlatformElement(p, platform, 'framework');
+    frameworks.map((framework: any) => {
+      if (!framework.$.type && !framework.$.custom) {
+        deps += '    implementation "'+framework.$.src+'"\n';
+      }
+    });
+  });
+  let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
+  buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + deps + '    $2');
+  //TODO - replace value with a confg.xml preference value or from capacitor config file.
+  buildGradle = buildGradle.replace('$FCM_VERSION','11.6.2');
+  await writeFileAsync(pluginsGradlePath, buildGradle);
 }
 
 export function writeXML(object: any): Promise<any> {

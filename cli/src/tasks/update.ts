@@ -200,3 +200,14 @@ export function getPluginPlatform(p: Plugin, platform: string) {
   }
   return null;
 }
+
+export function getPlatformElement(p: Plugin, platform: string, elementName: string) {
+  const platformTag = getPluginPlatform(p, platform);
+  if (platformTag) {
+    const element = platformTag[elementName];
+    if (element) {
+      return element;
+    }
+  }
+  return [];
+}
