@@ -11,7 +11,3 @@ To get started, first generate a plugin as shown in the [Getting Started](./#get
 Next, open `your-plugin/ios/Plugin/Plugin.xcworkspace` in Xcode.
 
 ## Building your Plugin
-
-
-
-## Exporting to JavaScriptk
