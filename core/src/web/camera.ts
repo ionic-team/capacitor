@@ -29,7 +29,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         if (photo === null) {
           reject();
         } else {
-          resolve(await this.getCameraPhoto(photo));
+          resolve(await this._getCameraPhoto(photo));
         }
 
         cameraModal.dismiss();
@@ -39,7 +39,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     });
   }
 
-  getCameraPhoto(photo: Blob) {
+  private _getCameraPhoto(photo: Blob) {
     return new Promise<CameraPhoto>((resolve, reject) => {
       var reader = new FileReader();
       reader.readAsDataURL(photo); 
