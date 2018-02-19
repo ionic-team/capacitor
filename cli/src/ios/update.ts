@@ -3,8 +3,8 @@ import { CheckFunction, log, logInfo, runCommand, runTask } from '../common';
 import { writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
-import { Plugin, PluginType, getPlugins, printPlugins } from '../plugin';
-import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, getPlatformElement, getPluginType, removePluginFiles } from '../tasks/update';
+import { getPlatformElement, getPlugins, getPluginType, Plugin, PluginType, printPlugins } from '../plugin';
+import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, removePluginFiles } from '../tasks/update';
 
 import * as inquirer from 'inquirer';
 import { create } from 'domain';
