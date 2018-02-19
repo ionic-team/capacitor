@@ -9,7 +9,7 @@ public class SplashScreen : CAPPlugin {
   var hideTask: Any?
   var isVisible: Bool = false
   
-  let launchShowDuration = 5000
+  let launchShowDuration = 3000
   
   let defaultFadeInDuration = 200
   let defaultFadeOutDuration = 200
