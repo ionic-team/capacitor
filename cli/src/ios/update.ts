@@ -18,6 +18,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
           `local Pod repo is up to date and can find new Pod releases.\n`);
 
 
+  /*
   var answers = await inquirer.prompt([{
     type: 'input',
     name: 'updateRepo',
@@ -30,6 +31,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
       return runCommand(`pod repo update`);
     });
   }
+  */
 
   const plugins = await runTask('Fetching plugins', async () => {
     const allPlugins = await getPlugins();

@@ -126,9 +126,13 @@ async function seedProject(config: Config) {
 async function addPlatforms(config: Config) {
   await runTask(`Adding native platforms`, async () => {
     if (config.cli.os === OS.Mac) {
-      await addCommand(config, 'ios');
+      await runTask(`Adding iOS platform`, async () => {
+        await addCommand(config, 'ios');
+      });
     }
-    return addCommand(config, 'android');
+    await runTask(`Adding Android platform`, async() => {
+      await addCommand(config, 'android');
+    });
   });
 }
 
