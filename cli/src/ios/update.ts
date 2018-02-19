@@ -69,8 +69,8 @@ export async function autoGeneratePods(config: Config, plugins: Plugin[]): Promi
 }
 
 export async function autoGenerateResourcesPods(plugins: Plugin[]): Promise<void[]> {
-  const resoucesPlugins = plugins.filter(p => getPlatformElement(p, platform, 'resource-file').length > 0);
-  return Promise.all(resoucesPlugins
+  const pluginResourceFiles = plugins.filter(p => getPlatformElement(p, platform, 'resource-file').length > 0);
+  return Promise.all(pluginResourceFiles
     .map(async p => {
       const name = p.name + 'Resources';
       const content = generateResourcesPodspec(p);
