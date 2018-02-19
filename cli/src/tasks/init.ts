@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
 import { addCommand } from '../tasks/add';
-import { syncCommand } from '../tasks/sync';
+import { copyCommand } from '../tasks/copy';
 import { checkWebDir, log, logError, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { download } from '../util/http';
@@ -36,7 +36,7 @@ export async function initCommand(config: Config) {
     await seedProject(config);
     await installDeps(config, isNew);
     await addPlatforms(config);
-    await runSync(config);
+    await runCopy(config);
     await printNextSteps(config);
   } catch (e) {
     logFatal(`Unable to initialize Capacitor. Please see errors and try again or file an issue`, e);
@@ -162,14 +162,12 @@ async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
   await cpAsync(join(config.app.assets.templateDir, 'public'), webDir);
 }
 
-async function runSync(config: Config) {
-  /*
+async function runCopy(config: Config) {
   if (config.cli.os === OS.Mac) {
-    await syncCommand(config, 'ios');
+    await copyCommand(config, 'ios');
   }
-  await syncCommand(config, 'android');
-  */
-  await syncCommand(config, 'web');
+  await copyCommand(config, 'android');
+  await copyCommand(config, 'web');
 }
 
 async function printNextSteps(config: Config) {
