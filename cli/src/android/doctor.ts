@@ -1,5 +1,5 @@
 import { accessSync } from 'fs';
-import { check, isInstalled, logFatal, logSuccess, readXML, runTask } from '../common';
+import { check, isInstalled, logFatal, logSuccess, readXML } from '../common';
 import { existsAsync, readFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
@@ -7,18 +7,15 @@ import { join } from 'path';
 
 export async function doctorAndroid(config: Config) {
   try {
-    await runTask('Checking Android Environment', () => {
-      return check(
-        config,
-        [
-          checkAndroidInstalled,
-          checkGradlew,
-          checkAppSrcDirs
-        ]
-      );
-    });
+    await check(
+      config,
+      [
+        checkAndroidInstalled,
+        checkGradlew,
+        checkAppSrcDirs
+      ]
+    );
     logSuccess('Android looking great! 👌');
-
   } catch (e) {
     logFatal(e);
   }
@@ -218,8 +215,10 @@ async function checkGradlew(config: Config) {
 }
 
 async function checkAndroidInstalled() {
+  /*
   if (!await isInstalled('android')) {
     return 'Android is not installed. For information: https://developer.android.com/studio/index.html';
   }
+  */
   return null;
 }

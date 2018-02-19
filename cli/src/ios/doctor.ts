@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject } from './common';
-import { check, checkWebDir, isInstalled, logFatal, logSuccess, runCommand, runTask } from '../common';
+import { check, checkWebDir, isInstalled, logFatal, logSuccess, runCommand } from '../common';
 import { Config } from '../config';
 import { getPlugins, printPlugins } from '../plugin';
 
@@ -17,16 +17,13 @@ export async function doctorIOS(config: Config) {
   // check online datebase of common errors
   // check if www folder is empty (index.html does not exist)
   try {
-    await runTask('Checking environment', () => {
-      return check(
-        config,
-        [checkCocoaPods, checkIOSProject, checkWebDir, checkNPMVersion, checkXcode]
-      );
-    });
+    await check(
+      config,
+      [checkCocoaPods, checkIOSProject, checkWebDir, checkNPMVersion, checkXcode]
+    );
     const plugins = await getPlugins();
     printPlugins(plugins);
     logSuccess('Everything looking great! 👌');
-
   } catch (e) {
     logFatal(e);
   }
