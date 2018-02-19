@@ -33,7 +33,7 @@ To copy web assets only, which is faster if you know you don't need to update na
 To open the project in Xcode, run
 
 ```bash
-npx capacitor open android
+npx capacitor open ios
 ```
 
 ### Running Your App
