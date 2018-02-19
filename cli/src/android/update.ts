@@ -91,17 +91,20 @@ ${plugins.map(p => {
 
 export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
   const pluginsGradlePath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'build.gradle');
-  let deps = "";
+  let frameworksArray: Array<any> = [];
   cordovaPlugins.map( p => {
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (!framework.$.type && !framework.$.custom) {
-        deps += '    implementation "'+framework.$.src+'"\n';
+        frameworksArray.push(framework.$.src);
       }
     });
   });
+  const frameworkString = frameworksArray.map(f => {
+    return `    implementation "${f}"`;
+  }).join('\n');
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
-  buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + deps + '    $2');
+  buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat("\n") + '    $2');
   //TODO - replace value with a confg.xml preference value or from capacitor config file.
   buildGradle = buildGradle.replace('$FCM_VERSION','11.6.2');
   await writeFileAsync(pluginsGradlePath, buildGradle);
