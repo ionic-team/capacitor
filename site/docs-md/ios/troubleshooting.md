@@ -47,3 +47,11 @@ npx capacitor update ios
 ```
 
 To update your pods. Perform a new build after running this command.
+
+## Indexing FOREVER
+
+Xcode sometimes gets stuck indexing forever. This unfortunate situation looks like this:
+
+![Xcode indexing](/assets/img/docs/ios/indexing.png)
+
+The only solution is to Force Close Xcode (using Activity Monitor) and start it up again.
