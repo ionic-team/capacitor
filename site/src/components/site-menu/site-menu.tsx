@@ -183,7 +183,7 @@ export class SiteMenu {
         { title: 'Modals', url: '/docs/apis/modals' },
         { title: 'Motion', url: '/docs/apis/motion' },
         { title: 'Network', url: '/docs/apis/network' },
-        { title: 'Photos', url: '/docs/apis/photos' },
+        // { title: 'Photos', url: '/docs/apis/photos' },
         //{ title: 'Push Notifications', url: '/docs/apis/push-notifications' },
         { title: 'Share', url: '/docs/apis/share' },
         { title: 'Splash Screen', url: '/docs/apis/splash-screen' },
