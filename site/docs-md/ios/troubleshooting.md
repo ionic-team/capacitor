@@ -8,7 +8,7 @@ This guide attempts to document common iOS/Xcode issues with possible solutions.
 
 Every iOS developer learns a few common techniques for debugging iOS issues, and you should incorporate these into your workflow:
 
-#### Google, Google, Google
+### Google, Google, Google
 
 Any time you encounter an issue with iOS, or Xcode, your first step should be to copy and paste the error into a Google search.
 
@@ -16,9 +16,9 @@ Capacitor uses the standard iOS toolchain, so chances are if you run into someth
 
 It could be as simple as updating a dependency, running clean, or removing Derived Data
 
-#### Clean/Rebuild
+### Clean/Rebuild
 
-Cleaning and rebuilding can fix a number of build issues:
+Cleaning and rebuilding can fix a number of build issues. Navigate to Product -> Clean in the Xcode menu to clean your current build.
 
 ### Removing Derived Data
 
@@ -35,3 +35,15 @@ Next, select all items in that directory and delete:
 ![Deleting Derived Data](/assets/docs/ios/deleting-derived-data.png)
 
 Finally, do a rebuild in Xcode.
+
+## Error: Sandbox not in sync with the Podfile.lock
+
+This error can happen if CocoaPods hasn't been able to run to install your dependencies.
+
+Run
+
+```bash
+npx capacitor update ios
+```
+
+To update your pods. Perform a new build after running this command.
