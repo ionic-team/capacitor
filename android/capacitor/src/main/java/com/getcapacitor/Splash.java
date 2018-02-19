@@ -21,7 +21,7 @@ public class Splash {
 
   private static final String SPLASH_DRAWABLE = "splash";
 
-  public static final int LAUNCH_SHOW_DURATION = 5000;
+  public static final int LAUNCH_SHOW_DURATION = 3000;
 
   public static final int DEFAULT_FADE_IN_DURATION = 200;
   public static final int DEFAULT_FADE_OUT_DURATION = 200;
