@@ -1,5 +1,4 @@
 import Foundation
-import CoreMotion
 
 @objc(Clipboard)
 public class Clipboard : CAPPlugin {
