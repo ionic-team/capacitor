@@ -87,6 +87,7 @@ enum BridgeError: Error {
     switch error {
     case BridgeError.errorExportingCoreJS:
       print("⚡️ ❌  Unable to export required Bridge JavaScript. Bridge will not function.")
+      print("⚡️ ❌  You should run \"npx capacitor copy\" to ensure the Bridge JS is added to your project.")
       if let wke = originalError as? WKError {
         print("⚡️ ❌ ", wke.userInfo)
       }
