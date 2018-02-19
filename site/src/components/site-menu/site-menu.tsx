@@ -86,7 +86,7 @@ export class SiteMenu {
         },
         {
           title: 'Custom Native Code',
-          url: '/docs/android/custom-code'
+          url: '/docs/ios/custom-code'
         },
         {
           title: 'Troubleshooting',
