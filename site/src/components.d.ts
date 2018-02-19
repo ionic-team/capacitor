@@ -7,21 +7,12 @@
 import '@stencil/router';
 
 
-declare global {
-  interface HTMLStencilElement extends HTMLElement {
-    componentOnReady(): Promise<this>;
-    componentOnReady(done: (ele?: this) => void): void;
-  }
-}
-
-
-
 import {
   AnchorLink as AnchorLink
 } from './components/anchor-link/anchor-link';
 
 declare global {
-  interface HTMLAnchorLinkElement extends AnchorLink, HTMLStencilElement {
+  interface HTMLAnchorLinkElement extends AnchorLink, HTMLElement {
   }
   var HTMLAnchorLinkElement: {
     prototype: HTMLAnchorLinkElement;
@@ -51,7 +42,7 @@ import {
 } from './components/app-marked/app-marked';
 
 declare global {
-  interface HTMLAppMarkedElement extends AppMarked, HTMLStencilElement {
+  interface HTMLAppMarkedElement extends AppMarked, HTMLElement {
   }
   var HTMLAppMarkedElement: {
     prototype: HTMLAppMarkedElement;
@@ -81,7 +72,7 @@ import {
 } from './components/avc-code-type/avc-code-type';
 
 declare global {
-  interface HTMLAvcCodeTypeElement extends AvcCodeType, HTMLStencilElement {
+  interface HTMLAvcCodeTypeElement extends AvcCodeType, HTMLElement {
   }
   var HTMLAvcCodeTypeElement: {
     prototype: HTMLAvcCodeTypeElement;
@@ -111,7 +102,7 @@ import {
 } from './components/blog-page/blog-page';
 
 declare global {
-  interface HTMLBlogPageElement extends BlogPage, HTMLStencilElement {
+  interface HTMLBlogPageElement extends BlogPage, HTMLElement {
   }
   var HTMLBlogPageElement: {
     prototype: HTMLBlogPageElement;
@@ -141,7 +132,7 @@ import {
 } from './components/capacitor-site/capacitor-site';
 
 declare global {
-  interface HTMLCapacitorSiteElement extends CapacitorSite, HTMLStencilElement {
+  interface HTMLCapacitorSiteElement extends CapacitorSite, HTMLElement {
   }
   var HTMLCapacitorSiteElement: {
     prototype: HTMLCapacitorSiteElement;
@@ -171,7 +162,7 @@ import {
 } from './components/demos-page/demos-page';
 
 declare global {
-  interface HTMLDemosPageElement extends DemosPage, HTMLStencilElement {
+  interface HTMLDemosPageElement extends DemosPage, HTMLElement {
   }
   var HTMLDemosPageElement: {
     prototype: HTMLDemosPageElement;
@@ -201,7 +192,7 @@ import {
 } from './components/doc-snippet/doc-snippet';
 
 declare global {
-  interface HTMLDocSnippetElement extends DocSnippet, HTMLStencilElement {
+  interface HTMLDocSnippetElement extends DocSnippet, HTMLElement {
   }
   var HTMLDocSnippetElement: {
     prototype: HTMLDocSnippetElement;
@@ -231,7 +222,7 @@ import {
 } from './components/document-component/document-component';
 
 declare global {
-  interface HTMLDocumentComponentElement extends DocumentComponent, HTMLStencilElement {
+  interface HTMLDocumentComponentElement extends DocumentComponent, HTMLElement {
   }
   var HTMLDocumentComponentElement: {
     prototype: HTMLDocumentComponentElement;
@@ -261,7 +252,7 @@ import {
 } from './components/landing-page/landing-page';
 
 declare global {
-  interface HTMLLandingPageElement extends LandingPage, HTMLStencilElement {
+  interface HTMLLandingPageElement extends LandingPage, HTMLElement {
   }
   var HTMLLandingPageElement: {
     prototype: HTMLLandingPageElement;
@@ -291,7 +282,7 @@ import {
 } from './components/lazy-iframe/lazy-iframe';
 
 declare global {
-  interface HTMLLazyIframeElement extends LazyIframe, HTMLStencilElement {
+  interface HTMLLazyIframeElement extends LazyIframe, HTMLElement {
   }
   var HTMLLazyIframeElement: {
     prototype: HTMLLazyIframeElement;
@@ -322,7 +313,7 @@ import {
 } from './components/plugin-api/plugin-api';
 
 declare global {
-  interface HTMLPluginApiElement extends PluginApi, HTMLStencilElement {
+  interface HTMLPluginApiElement extends PluginApi, HTMLElement {
   }
   var HTMLPluginApiElement: {
     prototype: HTMLPluginApiElement;
@@ -353,7 +344,7 @@ import {
 } from './components/pwas-page/pwas-page';
 
 declare global {
-  interface HTMLPwasPageElement extends PwasPage, HTMLStencilElement {
+  interface HTMLPwasPageElement extends PwasPage, HTMLElement {
   }
   var HTMLPwasPageElement: {
     prototype: HTMLPwasPageElement;
@@ -383,7 +374,7 @@ import {
 } from './components/resources-page/resources-page';
 
 declare global {
-  interface HTMLResourcesPageElement extends ResourcesPage, HTMLStencilElement {
+  interface HTMLResourcesPageElement extends ResourcesPage, HTMLElement {
   }
   var HTMLResourcesPageElement: {
     prototype: HTMLResourcesPageElement;
@@ -413,7 +404,7 @@ import {
 } from './components/site-bar/site-bar';
 
 declare global {
-  interface HTMLSiteBarElement extends SiteBar, HTMLStencilElement {
+  interface HTMLSiteBarElement extends SiteBar, HTMLElement {
   }
   var HTMLSiteBarElement: {
     prototype: HTMLSiteBarElement;
@@ -443,7 +434,7 @@ import {
 } from './components/site-header/site-header';
 
 declare global {
-  interface HTMLSiteHeaderElement extends SiteHeader, HTMLStencilElement {
+  interface HTMLSiteHeaderElement extends SiteHeader, HTMLElement {
   }
   var HTMLSiteHeaderElement: {
     prototype: HTMLSiteHeaderElement;
@@ -473,7 +464,7 @@ import {
 } from './components/site-menu/site-menu';
 
 declare global {
-  interface HTMLSiteMenuElement extends SiteMenu, HTMLStencilElement {
+  interface HTMLSiteMenuElement extends SiteMenu, HTMLElement {
   }
   var HTMLSiteMenuElement: {
     prototype: HTMLSiteMenuElement;
