@@ -36,6 +36,14 @@ Next, select all items in that directory and delete:
 
 Finally, do a rebuild in Xcode.
 
+## Error: Unable to export required Bridge JavaScript
+
+![Can't export](/assets/img/docs/ios/export-bridge.png)
+
+This error occurs when Capacitor's `native-bridge.js` file was not copied to the native project.
+
+The fix is simple: run `npx capacitor copy ios` to copy this file.
+
 ## Error: Sandbox not in sync with the Podfile.lock
 
 This error can happen if CocoaPods hasn't been able to run to install your dependencies.

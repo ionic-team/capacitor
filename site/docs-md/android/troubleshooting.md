@@ -30,6 +30,12 @@ That can be done easily from the File menu:
 
 ![Android Invalidate Caches](/assets/img/docs/android/invalidate-caches.png)
 
+## Error: "Unable to load native-bridge.js. Capacitor will not function!"
+
+This error occurs when Capacitor's `native-bridge.js` file was not copied to the native project.
+
+The fix is simple: run `npx capacitor copy android` to copy this file.
+
 ## Error: "Please select Android SDK"
 
 This error is often due to Gradle needing to be synced, something you'll need to do
