@@ -54,18 +54,21 @@ public class JSObject extends JSONObject {
     return defaultValue;
   }
 
-  public JSObject getJSObject(String name) throws JSONException {
-    Object obj = get(name);
-    if (obj instanceof JSONObject) {
-      Iterator<String> keysIter = ((JSONObject) obj).keys();
-      List<String> keys = new ArrayList<>();
-      while (keysIter.hasNext()) {
-        keys.add(keysIter.next());
-      }
+  public JSObject getJSObject(String name, JSObject defaultValue) throws JSONException {
+    try {
+      Object obj = get(name);
+      if (obj instanceof JSONObject) {
+        Iterator<String> keysIter = ((JSONObject) obj).keys();
+        List<String> keys = new ArrayList<>();
+        while (keysIter.hasNext()) {
+          keys.add(keysIter.next());
+        }
 
-      return new JSObject((JSONObject) obj, keys.toArray(new String[keys.size()]));
+        return new JSObject((JSONObject) obj, keys.toArray(new String[keys.size()]));
+      }
+    } catch (JSONException ex) {
     }
-    return null;
+    return defaultValue;
   }
 
   @Override

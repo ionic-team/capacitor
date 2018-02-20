@@ -172,6 +172,7 @@ export class SiteMenu {
       items: [
         { title: 'Accessibility', url: '/docs/apis/accessibility' },
         { title: 'App', url: '/docs/apis/app' },
+        { title: 'Background Task', url: '/docs/apis/background-task' },
         { title: 'Camera', url: '/docs/apis/camera' },
         { title: 'Clipboard', url: '/docs/apis/clipboard' },
         { title: 'Console', url: '/docs/apis/console' },

@@ -48,9 +48,11 @@ public class MessageHandler {
         String callbackId = postData.getString("callbackId");
         String pluginId = postData.getString("pluginId");
         String methodName = postData.getString("methodName");
-        JSObject methodData = postData.getJSObject("options");
-        Log.d(Bridge.TAG, "To native: " + callbackId + ", pluginId: " + pluginId +
-                ", methodName: " + methodName);
+        JSObject methodData = postData.getJSObject("options", new JSObject());
+        if (!pluginId.equals("Console")) {
+          Log.d(Bridge.TAG, "To native: " + callbackId + ", pluginId: " + pluginId +
+              ", methodName: " + methodName);
+        }
         this.callPluginMethod(callbackId, pluginId, methodName, methodData);
       }
 

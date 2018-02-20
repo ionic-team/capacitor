@@ -4,6 +4,7 @@ declare global {
   interface PluginRegistry {
     Accessibility?: AccessibilityPlugin;
     App?: AppPlugin;
+    BackgroundTask?: BackgroundTaskPlugin;
     Browser?: BrowserPlugin;
     Camera?: CameraPlugin;
     Clipboard?: ClipboardPlugin;
@@ -152,6 +153,32 @@ export interface AppRestoredResult {
    * expect from normally calling the plugin method. For example, `CameraPhoto`
    */
   data: any;
+}
+
+//
+
+export interface BackgroundTaskPlugin extends Plugin {
+  /**
+   * When the app is backgrounded, this method allows you to run a short-lived
+   * background task that will ensure that you
+   * can finish any work your app needs to do (such as finishing an upload
+   * or network request). This is especially important on iOS as any operations
+   * would normally be suspended without initiating a background task.
+   * 
+   * This method should finish in less than 3 minutes or your app risks
+   * being terminated by the OS.
+   * 
+   * When you are finished, this callback _must_ call `BackgroundTask.finish({ taskId })`
+   * where `taskId` is the value returned from `BackgroundTask.beforeExit()`
+   * @param cb the task to run when the app is backgrounded but before it is terminated
+   */
+  beforeExit(cb: Function): CallbackID;
+
+  /**
+   * Notify the OS that the given task is finished and the OS can continue
+   * backgrounding the app.
+   */
+  finish(options: {taskId: CallbackID}): void;
 }
 
 //

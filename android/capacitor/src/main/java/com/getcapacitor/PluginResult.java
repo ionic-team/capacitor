@@ -73,7 +73,7 @@ public class PluginResult {
 
   public JSObject getData() {
     try {
-      return this.json.getJSObject("data");
+      return this.json.getJSObject("data", new JSObject());
     } catch (JSONException ex) {
       return null;
     }

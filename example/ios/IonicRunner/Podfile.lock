@@ -1,8 +1,8 @@
 PODS:
-  - Capacitor (0.0.95):
-    - CapacitorCordova (= 0.0.95)
+  - Capacitor (0.0.101):
+    - CapacitorCordova (= 0.0.101)
     - GCDWebServer (~> 3.0)
-  - CapacitorCordova (0.0.95)
+  - CapacitorCordova (0.0.101)
   - GCDWebServer (3.4.2):
     - GCDWebServer/Core (= 3.4.2)
   - GCDWebServer/Core (3.4.2)
@@ -18,8 +18,8 @@ EXTERNAL SOURCES:
     :path: ../../../
 
 SPEC CHECKSUMS:
-  Capacitor: 6e07aefc23164a837682eab51446da71944c51c8
-  CapacitorCordova: 0b2c82f236cb8d8e12b631cf7cb605444d45752c
+  Capacitor: b59874637ba21c084c8543e2c634c7dbba2fba9d
+  CapacitorCordova: b403371f3860e8f7b561d68f95beee16a45b394a
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 
 PODFILE CHECKSUM: cf3dd73a42bef0923c014a1179dc29d10aa5cae0
