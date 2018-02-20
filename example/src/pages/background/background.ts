@@ -28,7 +28,7 @@ export class BackgroundPage {
   }
 
   startTask() {
-    this.taskId = BackgroundTask.start(async () => {
+    this.taskId = BackgroundTask.beforeExit(async () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           console.log('TASK DONE!', this.taskId);

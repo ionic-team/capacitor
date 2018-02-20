@@ -43,7 +43,7 @@ public class BackgroundTask extends Plugin {
   }
 
   @PluginMethod(returnType=PluginMethod.RETURN_CALLBACK)
-  public void start(PluginCall call) {
+  public void beforeExit(PluginCall call) {
     String taskId = "";
 
     /*
