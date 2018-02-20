@@ -388,6 +388,7 @@ enum BridgeError: Error {
         }
         plugin = vcClass!.init()
         cordovaPlugins[className] = plugin
+        plugin.pluginInitialize()
       }
 
       plugin.viewController = self.viewController
