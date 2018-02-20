@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import android.net.Uri;
 import android.util.Log;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -117,5 +118,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
   @Override
   public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
     return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+  }
+
+  @Override
+  public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+    return true;
   }
 }

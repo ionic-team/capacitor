@@ -13,6 +13,11 @@ CAP_PLUGIN(App, "App",
   CAP_PLUGIN_METHOD(openUrl, CAPPluginReturnPromise);
 )
 
+CAP_PLUGIN(BackgroundTask, "BackgroundTask",
+  CAP_PLUGIN_METHOD(start, CAPPluginReturnCallback);
+  CAP_PLUGIN_METHOD(finish, CAPPluginReturnPromise);
+)
+
 CAP_PLUGIN(Browser, "Browser",
   CAP_PLUGIN_METHOD(open, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(close, CAPPluginReturnPromise);

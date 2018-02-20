@@ -14,6 +14,7 @@ export class MyApp {
   PLUGINS = [
     { name: 'App', page: 'AppPage' },
     { name: 'Accessibility', page: 'AccessibilityPage' },
+    { name: 'Background', page: 'BackgroundPage' },
     { name: 'Browser', page: 'BrowserPage' },
     { name: 'Camera', page: 'CameraPage' },
     { name: 'Clipboard', page: 'ClipboardPage' },
@@ -33,7 +34,6 @@ export class MyApp {
   ]
 
   constructor(platform: Platform) {
-    console.log('Hiding splash screen');
     Plugins.SplashScreen.hide();
     /*
     Plugins.App.addListener('pluginError', (err: any, info: any) => {

@@ -33,6 +33,7 @@ import com.getcapacitor.plugin.Photos;
 import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
+import com.getcapacitor.plugin.background.BackgroundTask;
 
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.PluginManager;
@@ -222,6 +223,7 @@ public class Bridge {
   private void registerAllPlugins() {
     this.registerPlugin(App.class);
     this.registerPlugin(Accessibility.class);
+    this.registerPlugin(BackgroundTask.class);
     this.registerPlugin(Browser.class);
     this.registerPlugin(Camera.class);
     this.registerPlugin(Clipboard.class);

@@ -19,7 +19,7 @@ public extension CAPPluginCall {
     return self.options[key] as? Bool ?? defaultValue
   }
   
-  public func getInt(_ key: String, defaultValue: Int?) -> Int? {
+  public func getInt(_ key: String, defaultValue: Int? = nil) -> Int? {
     return self.options[key] as? Int ?? defaultValue
   }
   
