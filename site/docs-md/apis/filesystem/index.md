@@ -15,28 +15,49 @@ const { Filesystem } = Plugins;
 
 fileWrite() {
   try {
-    Filesystem.writeFile('secrets/text.txt', "This is a test", FilesystemDirectory.Documents, 'utf8')
+    Filesystem.writeFile({
+      path: 'secrets/text.txt',
+      data: "This is a test",
+      directory: FilesystemDirectory.Documents,
+      encoding: 'utf8'
+    })
   } catch(e) {
     console.error('Unable to write file', e);
   }
 }
 
 async fileRead() {
-  let contents = await Filesystem.readFile('secrets/text.txt', FilesystemDirectory.Documents, 'utf8');
+  let contents = await Filesystem.readFile({
+    path: 'secrets/text.txt',
+    directory: FilesystemDirectory.Documents,
+    encoding: 'utf8'
+  });
   console.log(contents);
 }
 
 async fileAppend() {
-  await Filesystem.appendFile('secrets/text.txt', "MORE TESTS", FilesystemDirectory.Documents, 'utf8');
+  await Filesystem.appendFile({
+    path: 'secrets/text.txt',
+    data: "MORE TESTS",
+    directory: FilesystemDirectory.Documents,
+    encoding: 'utf8'
+  });
 }
 
 async fileDelete() {
-  await Filesystem.deleteFile('secrets/text.txt', FilesystemDirectory.Documents);
+  await Filesystem.deleteFile({
+    path: 'secrets/text.txt',
+    directory: FilesystemDirectory.Documents
+  });
 }
 
 async mkdir() {
   try {
-    let ret = await Filesystem.mkdir('secrets', FilesystemDirectory.Documents, false);
+    let ret = await Filesystem.mkdir({
+      path: 'secrets',
+      directory: FilesystemDirectory.Documents,
+      createIntermediateDirectories: false // like mkdir -p
+    });
   } catch(e) {
     console.error('Unable to make directory', e);
   }
@@ -44,7 +65,10 @@ async mkdir() {
 
 async rmdir() {
   try {
-    let ret = await Filesystem.rmdir('secrets', FilesystemDirectory.Documents);
+    let ret = await Filesystem.rmdir({
+      path: 'secrets',
+      directory: FilesystemDirectory.Documents
+    });
   } catch(e) {
     console.error('Unable to remove directory', e);
   }
@@ -52,7 +76,10 @@ async rmdir() {
 
 async readdir() {
   try {
-    let ret = await Filesystem.readdir('secrets', FilesystemDirectory.Documents);
+    let ret = await Filesystem.readdir({
+      path: 'secrets',
+      directory: FilesystemDirectory.Documents
+    });
   } catch(e) {
     console.error('Unable to read dir', e);
   }
@@ -60,7 +87,10 @@ async readdir() {
 
 async stat() {
   try {
-    let ret = await Filesystem.stat('secrets/text.txt', FilesystemDirectory.Documents);
+    let ret = await Filesystem.stat({
+      path: 'secrets/text.txt',
+      directory: FilesystemDirectory.Documents
+    });
   } catch(e) {
     console.error('Unable to stat file', e);
   }
