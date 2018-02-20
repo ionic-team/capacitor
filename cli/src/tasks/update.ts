@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, log, logFatal, logInfo } from '../common';
+import { CheckFunction, check, checkPackage, log, logFatal, logInfo, writeXML } from '../common';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 import { getPluginPlatform, Plugin, PluginType } from '../plugin';
@@ -180,4 +180,40 @@ export function removePluginFiles(config: Config, platform: string) {
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removeSync(pluginsDir);
   removeSync(cordovaPluginsJSFile);
+}
+
+export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[], platform: string) {
+  let xmlDir = join(config.android.resDir, 'xml');
+  let target = 'res/xml/config.xml';
+  if (platform === 'ios') {
+    xmlDir = join(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName);
+    target = 'config.xml';
+  }
+  ensureDirSync(xmlDir);
+  const cordovaConfigXMLFile = join(xmlDir, 'config.xml');
+  removeSync(cordovaConfigXMLFile);
+  let pluginEntries: Array<any> = [];
+  cordovaPlugins.map( p => {
+    const currentPlatform = getPluginPlatform(p, platform);
+    if (currentPlatform) {
+      const configFiles = currentPlatform['config-file'];
+      if (configFiles) {
+        const configXMLEntries = configFiles.filter(function(item: any) { return item.$.target === target; });
+        configXMLEntries.map(  (entry: any)  => {
+          const feature = { feature: entry.feature };
+          pluginEntries.push(feature);
+        });
+      }
+    }
+  });
+
+  const pluginEntriesString: Array<string> = await Promise.all(pluginEntries.map(async (item): Promise<string> => {
+    const xmlString = await writeXML(item);
+    return xmlString;
+  }));
+  const content = `<?xml version='1.0' encoding='utf-8'?>
+  <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  ${pluginEntriesString.join('\n')}
+  </widget>`;
+  writeFileAsync(cordovaConfigXMLFile, content);
 }
