@@ -21,6 +21,7 @@ enum BridgeError: Error {
   public var knownPlugins = [String:CAPPlugin.Type]()
   // List of known cordova plugins
   public var cordovaPlugins = [String:CDVPlugin]()
+  public var cordovaPluginsMapping = NSMutableDictionary()
   // Calls we are storing to resolve later
   public var storedCalls = [String:CAPPluginCall]()
   // Whether the app is active
@@ -252,6 +253,12 @@ enum BridgeError: Error {
   }
   
   func registerCordovaPlugins() {
+    let cordovaParser = CDVConfigParser.init();
+    let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
+    let configParser = XMLParser(contentsOf: configUrl!)!;
+    configParser.delegate = cordovaParser
+    configParser.parse()
+    cordovaPluginsMapping = cordovaParser.pluginsDict
     do {
       try JSExport.exportCordovaPluginsJS(userContentController: self.userContentController)
     } catch {
@@ -370,40 +377,38 @@ enum BridgeError: Error {
     // Create a selector to send to the plugin
     var vcClass: CDVPlugin.Type?
     let plugin: CDVPlugin
-    var className: String
-    if let firstPlugin = cordovaPlugins.first(where: { $0.key ==  call.pluginId ||  $0.key == "CDV\(call.pluginId)" }) {
-      className = firstPlugin.key
-      plugin = firstPlugin.value
-    } else {
-      className = call.pluginId
-      vcClass = NSClassFromString(call.pluginId) as? CDVPlugin.Type
-      if vcClass == nil {
-        className = "CDV\(call.pluginId)"
+    if let className = cordovaPluginsMapping.object(forKey: call.pluginId.lowercased()) as? String {
+      if let firstPlugin = cordovaPlugins.first(where: { $0.key ==  className }) {
+        plugin = firstPlugin.value
+      } else {
         vcClass = NSClassFromString(className) as? CDVPlugin.Type
+        if vcClass == nil {
+          print("Error: Cordova Plugin class not found")
+          return
+        }
+        plugin = vcClass!.init()
+        cordovaPlugins[className] = plugin
       }
-      if vcClass == nil {
-        print("Error: Plugin class not found")
+
+      plugin.viewController = self.viewController
+      plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView())
+      plugin.webView = self.getWebView() as UIView
+
+      let selector = NSSelectorFromString("\(call.method):")
+      if !plugin.responds(to: selector) {
+        print("Error: Plugin \(className) does not respond to method call \(selector).")
+        print("Ensure plugin method exists and uses @objc in its declaration")
         return
       }
-      plugin = vcClass!.init()
-      cordovaPlugins[className] = plugin
-    }
 
-    plugin.viewController = self.viewController
-    plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView())
-    plugin.webView = self.getWebView() as UIView
-
-    let selector = NSSelectorFromString("\(call.method):")
-    if !plugin.responds(to: selector) {
-      print("Error: Plugin \(call.pluginId) does not respond to method call \(selector).")
-      print("Ensure plugin method exists and uses @objc in its declaration")
+      dispatchQueue.sync {
+        let arguments = call.options["options"] as! [Any]
+        let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: className, methodName: call.method)
+        plugin.perform(selector, with: pluginCall)
+      }
+    } else {
+      print("Error: Cordova Plugin mapping not found")
       return
-    }
-
-    dispatchQueue.sync {
-      let arguments = call.options["options"] as! [Any]
-      let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: className, methodName: call.method)
-      plugin.perform(selector, with: pluginCall)
     }
   }
   

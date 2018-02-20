@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { log, runTask } from '../common';
 import { getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, removePluginFiles } from '../tasks/update';
+import { autoGenerateConfig, copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, removePluginFiles } from '../tasks/update';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { join, resolve } from 'path';
@@ -28,41 +28,10 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
     removePluginFiles(config, platform);
     createEmptyCordovaJS(config, platform);
   }
-  await autoGenerateConfig(config, cordovaPlugins);
+  await autoGenerateConfig(config, cordovaPlugins, platform);
 
   await installGradlePlugins(config, capacitorPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
-}
-
-export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[]) {
-  const xmlDir = join(config.android.resDir, 'xml');
-  ensureDirSync(xmlDir);
-  const cordovaConfigXMLFile = join(xmlDir, 'config.xml');
-  removeSync(cordovaConfigXMLFile);
-  let pluginEntries: Array<any> = [];
-  cordovaPlugins.map( p => {
-    const androidPlatform = getPluginPlatform(p, platform);
-    if (androidPlatform) {
-      const androidConfigFiles = androidPlatform['config-file'];
-      if (androidConfigFiles) {
-        const configXMLEntries = androidConfigFiles.filter(function(item: any) { return item.$.target === 'res/xml/config.xml'; });
-        configXMLEntries.map(  (entry: any)  => {
-          const feature = { feature: entry.feature };
-          pluginEntries.push(feature);
-        });
-      }
-    }
-  });
-
-  const pluginEntriesString: Array<string> = await Promise.all(pluginEntries.map(async (item): Promise<string> => {
-    const xmlString = await writeXML(item);
-    return xmlString;
-  }));
-  const content = `<?xml version='1.0' encoding='utf-8'?>
-  <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  ${pluginEntriesString.join('\n')}
-  </widget>`;
-  writeFileAsync(cordovaConfigXMLFile, content);
 }
 
 export async function installGradlePlugins(config: Config, plugins: Plugin[]) {
@@ -108,16 +77,6 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
   //TODO - replace value with a confg.xml preference value or from capacitor config file.
   buildGradle = buildGradle.replace('$FCM_VERSION','11.6.2');
   await writeFileAsync(pluginsGradlePath, buildGradle);
-}
-
-export function writeXML(object: any): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    const xml2js = await import('xml2js');
-    const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: 'deleteme' });
-    let xml = builder.buildObject(object);
-    xml = xml.replace('<deleteme>', '').replace('</deleteme>', '');
-    resolve(xml);
-  });
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {

@@ -19,6 +19,8 @@
 		2F5C87251FE98418004B09C7 /* CDVAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C871A1FE98418004B09C7 /* CDVAvailability.h */; };
 		2F5C87261FE98418004B09C7 /* CDVPluginResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C871B1FE98418004B09C7 /* CDVPluginResult.h */; };
 		2F5C87271FE98418004B09C7 /* CDVPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F5C871C1FE98418004B09C7 /* CDVPlugin.h */; };
+		2FAD9772203C77B9000D30F8 /* CDVConfigParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FAD9770203C77B8000D30F8 /* CDVConfigParser.h */; };
+		2FAD9773203C77B9000D30F8 /* CDVConfigParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		2F5C871A1FE98418004B09C7 /* CDVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVAvailability.h; sourceTree = "<group>"; };
 		2F5C871B1FE98418004B09C7 /* CDVPluginResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVPluginResult.h; sourceTree = "<group>"; };
 		2F5C871C1FE98418004B09C7 /* CDVPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVPlugin.h; sourceTree = "<group>"; };
+		2FAD9770203C77B8000D30F8 /* CDVConfigParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVConfigParser.h; sourceTree = "<group>"; };
+		2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVConfigParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +90,8 @@
 		2F5C86E81FE94861004B09C7 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				2FAD9770203C77B8000D30F8 /* CDVConfigParser.h */,
+				2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */,
 				2F5C87131FE98417004B09C7 /* CDV.h */,
 				2F5C871A1FE98418004B09C7 /* CDVAvailability.h */,
 				2F5C87171FE98417004B09C7 /* CDVCommandDelegate.h */,
@@ -109,6 +115,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F5C87261FE98418004B09C7 /* CDVPluginResult.h in Headers */,
+				2FAD9772203C77B9000D30F8 /* CDVConfigParser.h in Headers */,
 				2F5C87221FE98418004B09C7 /* CDVCommandDelegate.h in Headers */,
 				2F5C871E1FE98418004B09C7 /* CDV.h in Headers */,
 				2F5C86E11FE94845004B09C7 /* CapacitorCordova.h in Headers */,
@@ -190,6 +197,7 @@
 				2F5C871F1FE98418004B09C7 /* CDVCommandDelegateImpl.m in Sources */,
 				2F5C871D1FE98418004B09C7 /* CDVPluginResult.m in Sources */,
 				2F5C87211FE98418004B09C7 /* CDVPlugin.m in Sources */,
+				2FAD9773203C77B9000D30F8 /* CDVConfigParser.m in Sources */,
 				2F5C87201FE98418004B09C7 /* CDVInvokedUrlCommand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
