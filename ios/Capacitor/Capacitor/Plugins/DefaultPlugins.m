@@ -14,7 +14,7 @@ CAP_PLUGIN(App, "App",
 )
 
 CAP_PLUGIN(BackgroundTask, "BackgroundTask",
-  CAP_PLUGIN_METHOD(start, CAPPluginReturnCallback);
+  CAP_PLUGIN_METHOD(beforeExit, CAPPluginReturnCallback);
   CAP_PLUGIN_METHOD(finish, CAPPluginReturnPromise);
 )
 
