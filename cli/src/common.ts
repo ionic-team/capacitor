@@ -68,6 +68,16 @@ export function readXML(path: string): Promise<any> {
   });
 }
 
+export function writeXML(object: any): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    const xml2js = await import('xml2js');
+    const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: 'deleteme' });
+    let xml = builder.buildObject(object);
+    xml = xml.replace('<deleteme>', '').replace('</deleteme>', '');
+    resolve(xml);
+  });
+}
+
 export function log(...args: any[]) {
   console.log(...args);
 }
