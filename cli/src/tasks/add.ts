@@ -45,7 +45,7 @@ export async function generateCapacitorConfig(config: Config) {
     type: 'input',
     name: 'webDir',
     message: 'What directory are your web assets in? (index.html, built JavaScript, etc.):',
-    default: 'public'
+    default: 'www'
   }]);
   const webDir = answers.webDir;
   await runTask(`Creating ${config.app.extConfigName}`, () => {
