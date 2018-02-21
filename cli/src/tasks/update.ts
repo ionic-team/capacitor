@@ -6,11 +6,15 @@ import { CheckFunction, check, checkPackage, log, logFatal, logInfo, writeXML } 
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 import { getPluginPlatform, Plugin, PluginType } from '../plugin';
+import { emoji as _e } from '../util/emoji';
 import { existsAsync } from '../util/fs';
 import { copy as fsCopy } from 'fs-extra';
 
+import chalk from 'chalk';
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
+  const now = +new Date;
+
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
     logInfo(`There are no platforms to update yet. Create one with "capacitor create".`);
@@ -23,6 +27,9 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     );
 
     await allSerial(platforms.map(platformName => async () => await update(config, platformName, true)));
+    const then = +new Date;
+
+    log(`${_e('✅  ', '')}Update finished in ${(then-now)/1000}s`);
   } catch (e) {
     logFatal(e);
   }
@@ -45,7 +52,7 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
 }
 
 export async function update(config: Config, platformName: string, needsUpdate: boolean) {
-  log(`Updating platform ${platformName}`);
+  log(`${_e('📲  ', '')}Updating ${chalk.bold(platformName)}`);
   if (platformName === config.ios.name) {
     await updateIOS(config, needsUpdate);
   } else if (platformName === config.android.name) {
