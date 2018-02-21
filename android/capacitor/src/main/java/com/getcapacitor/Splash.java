@@ -1,6 +1,7 @@
 package com.getcapacitor;
 
 import android.animation.Animator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
@@ -34,7 +35,6 @@ public class Splash {
   private static boolean isHiding = false;
 
   private static void buildViews(Context c) {
-    wm = (WindowManager)c.getSystemService(Context.WINDOW_SERVICE);
 
     int splashId = c.getResources().getIdentifier("splash", "drawable", c.getPackageName());
     Drawable splash = c.getResources().getDrawable(splashId);
@@ -51,37 +51,43 @@ public class Splash {
 
   /**
    * Show the splash screen on launch without fading in
-   * @param c
+   * @param a
    */
-  public static void showOnLaunch(final Context c) {
-    show(c, LAUNCH_SHOW_DURATION, 0, DEFAULT_FADE_OUT_DURATION, true, null);
+  public static void showOnLaunch(final Activity a) {
+    show(a, LAUNCH_SHOW_DURATION, 0, DEFAULT_FADE_OUT_DURATION, true, null);
   }
 
   /**
    * Show the Splash Screen with default settings
-   * @param c
+   * @param a
    */
-  public static void show(final Context c) {
-    show(c, LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
+  public static void show(final Activity a) {
+    show(a, LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
   }
 
   /**
    * Show the Splash Screen
-   * @param c
+   * @param a
    * @param showDuration how long to show the splash for if autoHide is enabled
    * @param fadeInDuration how long to fade the splash screen in
    * @param fadeOutDuration how long to fade the splash screen out
    * @param autoHide whether to auto hide after showDuration ms
    * @param splashListener A listener to handle the finish of the animation (if any)
    */
-  public static void show(final Context c,
+  public static void show(final Activity a,
                           final int showDuration,
                           final int fadeInDuration,
                           final int fadeOutDuration,
                           final boolean autoHide,
                           final SplashListener splashListener) {
+    wm = (WindowManager)a.getSystemService(Context.WINDOW_SERVICE);
+
+    if (a.isFinishing()) {
+      return;
+    }
+
     if (splashImage == null) {
-      buildViews(c);
+      buildViews(a);
     }
 
     if (isVisible) {
@@ -97,7 +103,7 @@ public class Splash {
           new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-              Splash.hide(c, fadeOutDuration);
+              Splash.hide(a, fadeOutDuration);
 
               if (splashListener != null) {
                 splashListener.completed();
@@ -115,7 +121,7 @@ public class Splash {
       public void onAnimationStart(Animator animator) {}
     };
 
-    Handler mainHandler = new Handler(c.getMainLooper());
+    Handler mainHandler = new Handler(a.getMainLooper());
 
     mainHandler.post(new Runnable() {
       @Override
