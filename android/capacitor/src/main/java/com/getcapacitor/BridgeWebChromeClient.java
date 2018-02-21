@@ -31,6 +31,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
    */
   @Override
   public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+    if (bridge.getActivity().isFinishing()) {
+      return true;
+    }
+
     Dialogs.alert(view.getContext(), message, new Dialogs.OnResultListener() {
       @Override
       public void onResult(boolean value, boolean didCancel, String inputValue) {
@@ -55,6 +59,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
    */
   @Override
   public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+    if (bridge.getActivity().isFinishing()) {
+      return true;
+    }
+
     Dialogs.confirm(view.getContext(), message, new Dialogs.OnResultListener() {
       @Override
       public void onResult(boolean value, boolean didCancel, String inputValue) {
@@ -80,6 +88,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
    */
   @Override
   public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
+    if (bridge.getActivity().isFinishing()) {
+      return true;
+    }
+
     Dialogs.prompt(view.getContext(), message, new Dialogs.OnResultListener() {
       @Override
       public void onResult(boolean value, boolean didCancel, String inputValue) {

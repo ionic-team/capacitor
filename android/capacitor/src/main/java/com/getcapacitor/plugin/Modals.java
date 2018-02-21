@@ -46,6 +46,11 @@ public class Modals extends Plugin {
       return;
     }
 
+    if (c.isFinishing()) {
+      call.error("App is finishing");
+      return;
+    }
+
     Dialogs.alert(c, message, title, buttonTitle, new Dialogs.OnResultListener() {
       @Override
       public void onResult(boolean value, boolean didCancel, String inputValue) {
@@ -64,6 +69,11 @@ public class Modals extends Plugin {
 
     if(title == null || message == null) {
       call.error("Please provide a title or message for the alert");
+      return;
+    }
+
+    if (c.isFinishing()) {
+      call.error("App is finishing");
       return;
     }
 
@@ -88,6 +98,11 @@ public class Modals extends Plugin {
 
     if(title == null || message == null) {
       call.error("Please provide a title or message for the alert");
+      return;
+    }
+
+    if (c.isFinishing()) {
+      call.error("App is finishing");
       return;
     }
 
@@ -116,6 +131,11 @@ public class Modals extends Plugin {
 
     if (options == null) {
       call.error("Must supply options");
+      return;
+    }
+
+    if (getActivity().isFinishing()) {
+      call.error("App is finishing");
       return;
     }
 
