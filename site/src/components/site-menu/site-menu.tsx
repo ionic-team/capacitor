@@ -33,27 +33,9 @@ export class SiteMenu {
     {
       title: 'Basics',
       items: [
-        /*
         {
-          title: 'Creating Apps',
-          url: '/docs/basics/creating-apps'
-        },
-        {
-          title: 'Project Structure',
-          url: '/docs/basics/app-project-structure'
-        },
-        */
-        {
-          title: 'Opening Native Projects',
+          title: 'Opening Native IDE',
           url: '/docs/basics/opening-native-projects'
-        },
-        {
-          title: 'App Configuration',
-          url: '/docs/basics/configuring-your-app'
-        },
-        {
-          title: 'Progressive Web Apps',
-          url: '/docs/basics/progressive-web-app'
         },
         {
           title: 'Building your App',
@@ -66,6 +48,14 @@ export class SiteMenu {
         {
           title: 'Using Cordova Plugins',
           url: '/docs/basics/cordova'
+        },
+        {
+          title: 'Native Project Configuration',
+          url: '/docs/basics/configuring-your-app'
+        },
+        {
+          title: 'Progressive Web Apps',
+          url: '/docs/basics/progressive-web-app'
         },
       ]
     },
