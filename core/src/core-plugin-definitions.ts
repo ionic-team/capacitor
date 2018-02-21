@@ -73,7 +73,7 @@ export interface AccessibilitySpeakOptions {
 export interface ScreenReaderEnabledResult {
   value: boolean;
 }
-export type ScreenReaderStateChangeCallback = (err: any, state: ScreenReaderEnabledResult) => void;
+export type ScreenReaderStateChangeCallback = (state: ScreenReaderEnabledResult) => void;
 
 //
 
@@ -96,20 +96,20 @@ export interface AppPlugin extends Plugin {
   /**
    * Listen for changes in the App's active state (whether the app is in the foreground or background)
    */
-  addListener(eventName: 'appStateChange', listenerFunc: (err: any, state: AppState) => void): PluginListenerHandle;
+  addListener(eventName: 'appStateChange', listenerFunc: (state: AppState) => void): PluginListenerHandle;
 
   /**
    * Listen for url open events for the app. This handles both custom URL scheme links as well
    * as URLs your app handles (Universal Links on iOS and App Links on Android)
    */
-  addListener(eventName: 'appUrlOpen', listenerFunc: (err: any, data: AppUrlOpen) => void): PluginListenerHandle;
+  addListener(eventName: 'appUrlOpen', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
 
   /**
    * If the app was launched with previously persisted plugin call data, such as on Android
    * when an activity returns to an app that was closed, this call will return any data
    * the app was launched with, converted into the form of a result from a plugin call.
    */
-  addListener(eventName: 'appRestoredResult', listenerFunc: (err: any, data: AppRestoredResult) => void): PluginListenerHandle;
+  addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
 }
 
 export interface AppState {
@@ -202,8 +202,8 @@ export interface BrowserPlugin extends Plugin {
    */
   close(): Promise<void>;
 
-  addListener(eventName: 'browserFinished', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
-  addListener(eventName: 'browserPageLoaded', listenerFunc: (err: any, info: any) => void): PluginListenerHandle;
+  addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): PluginListenerHandle;
+  addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): PluginListenerHandle;
 }
 
 export interface BrowserOpenOptions {
@@ -640,7 +640,7 @@ export interface GeolocationOptions {
   requireAltitude?: boolean; // default: false
 }
 
-export type GeolocationWatchCallback = (err: any, position: GeolocationPosition) => void;
+export type GeolocationWatchCallback = (position: GeolocationPosition, err?: any) => void;
 
 //
 
@@ -785,8 +785,8 @@ export interface LocalNotificationsPlugin extends Plugin {
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
-  addListener(eventName: 'localNotificationReceived', listenerFunc: (err: any, notification: LocalNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (err: any, notification: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+  addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
+  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notification: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 }
 
 
@@ -881,8 +881,8 @@ export interface MotionPlugin extends Plugin {
   addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
 }
 
-export type MotionWatchOrientationCallback = (err: any, accel: MotionOrientationEventResult) => void;
-export type MotionWatchAccelCallback = (err: any, accel: MotionEventResult) => void;
+export type MotionWatchOrientationCallback = (accel: MotionOrientationEventResult) => void;
+export type MotionWatchAccelCallback = (accel: MotionEventResult) => void;
 
 export interface MotionOrientationEventResult {
   alpha: number;
@@ -921,7 +921,7 @@ export interface NetworkPlugin extends Plugin {
   /**
    * Listen for network status change events
    */
-  addListener(eventName: 'networkStatusChange', listenerFunc: (err: any, status: NetworkStatus) => void): PluginListenerHandle;
+  addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle;
 }
 
 export interface NetworkStatus {
@@ -929,7 +929,7 @@ export interface NetworkStatus {
   connectionType: 'wifi' | 'cellular' | 'none';
 }
 
-export type NetworkStatusChangeCallback = (err: any, status: NetworkStatus) => void;
+export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
 
 //
 

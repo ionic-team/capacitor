@@ -18,7 +18,7 @@ import { Plugins } from '@capacitor/core';
 export class AccessibilityPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    Plugins.Accessibility.addListener('accessibilityScreenReaderStateChange', ((err, state) => {
+    Plugins.Accessibility.addListener('accessibilityScreenReaderStateChange', ((state) => {
       console.log('SCREEN READER STATE CHANGE', state.value);
     }));
   }

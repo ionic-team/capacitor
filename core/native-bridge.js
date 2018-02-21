@@ -143,9 +143,9 @@
         if (typeof storedCall.callback === 'function') {
           // callback
           if (result.success) {
-            storedCall.callback(null, result.data);
+            storedCall.callback(result.data);
           } else {
-            storedCall.callback(result.error, null);
+            storedCall.callback(null, result.error);
           }
 
         } else if (typeof storedCall.resolve === 'function') {

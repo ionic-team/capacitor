@@ -12,7 +12,7 @@ import { Plugins } from '@capacitor/core';
 
 const { Accessibility, Modals } = Plugins;
 
-Accessibility.addListener('accessibilityScreenReaderStateChange', (err, state) => {
+Accessibility.addListener('accessibilityScreenReaderStateChange', (state) => {
   console.log(state.value);
 });
 
