@@ -51,11 +51,10 @@ To add Capacitor to your web app, run the following commands:
 ```
 cd my-app
 npm install --save @capacitor/core @capacitor/cli
-npx capacitor init
 ```
 
-When prompted whether this is a new project, select "n"
+Capacitor is now installed in your project 🎉
 
 ## Where to go next
 
-Make sure you have the [Required Dependencies](/docs/getting-started/dependencies) installed, then proceed to [App Configuration](/docs/basics/configuring-your-app) and [Building your App](/docs/basics/building-your-app)
+Make sure you have the [Required Dependencies](/docs/getting-started/dependencies) installed, then proceed to [App Configuration](/docs/basics/configuring-your-app) and [Building](/docs/basics/building-your-app) your app.
