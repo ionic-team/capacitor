@@ -31,7 +31,9 @@ public class MyPlugin: CAPPlugin {
 
 The `@objc` decorators are required to make sure Capacitor's runtime (which must use Obj-C for dynamic plugin support) can see it.
 
-Finally, register the plugin by creating a corresponding `MyPlugin.m` Objective-C file and using the Capacitor plugin macros:
+Next, you'll need to create a new Objective-C file (with a `.m` extension, _not_ `.h`!) corresponding to your plugin (such as `MyPlugin.m`). Important: you _must_ use the New File dialog in Xcode to do this. You'll then be prompted by Xcode to create a Bridging Header, which you should do.
+
+Finally, register the plugin by adding the required Capacitor plugin macros into your new `.m` file:
 
 ```objc
 #import <Capacitor/Capacitor.h>
