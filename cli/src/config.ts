@@ -56,7 +56,7 @@ export class Config implements CliConfig {
 
   app = {
     rootDir: '',
-    webDir: 'public',
+    webDir: 'www',
     symlinkWebDir: false,
     package: Package,
     windowsAndroidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe',

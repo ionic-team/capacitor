@@ -142,7 +142,7 @@ async function addPlatforms(config: Config) {
  * @param webDir
  */
 async function createWebDir(config: Config) {
-  const webDir = 'public';
+  const webDir = 'www';
   try {
     await mkdirAsync(webDir);
 
@@ -159,7 +159,7 @@ async function createWebDir(config: Config) {
 }
 
 async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
-  await cpAsync(join(config.app.assets.templateDir, 'public'), webDir);
+  await cpAsync(join(config.app.assets.templateDir, 'www'), webDir);
 }
 
 async function runCopy(config: Config) {
