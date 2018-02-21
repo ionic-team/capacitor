@@ -43,11 +43,11 @@ export class LocalNotificationsPage {
       ]
     })
 
-    Plugins.LocalNotifications.addListener('localNotificationReceived', (err, notification) => {
+    Plugins.LocalNotifications.addListener('localNotificationReceived', (notification) => {
       console.log('Notification: ', notification);
     })
 
-    Plugins.LocalNotifications.addListener('localNotificationActionPerformed', (err, notification) => {
+    Plugins.LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
       console.log('Notification action performed', notification);
     });
   }

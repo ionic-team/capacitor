@@ -6,9 +6,10 @@ public class BackgroundTask : CAPPlugin {
   
   public override func load() {
     NotificationCenter.default.addObserver(self, selector: #selector(self.onAppTerminate), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
+    //NotificationCenter.default.addObserver(self, selector: #selector(self.onAppBackgrounded), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
   }
   
-  @objc func beforeExit(_ call: CAPPluginCall) {
+  @objc func exec(_ call: CAPPluginCall) {
     var taskId: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     
     taskId = UIApplication.shared.beginBackgroundTask {

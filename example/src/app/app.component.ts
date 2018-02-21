@@ -41,15 +41,15 @@ export class MyApp {
     });
     */
 
-    Plugins.App.addListener('appStateChange', (err: any, state: any) => {
+    Plugins.App.addListener('appStateChange', (state: any) => {
       console.log('App state changed', state);
     });
 
-    Plugins.App.addListener('appUrlOpen', (err: any, data: any) => {
+    Plugins.App.addListener('appUrlOpen', (data: any) => {
       alert('APP URL OPEN: ' +  data.url);
     });
 
-    Plugins.App.addListener('appRestoredResult', (err: any, data: any) => {
+    Plugins.App.addListener('appRestoredResult', (data: any) => {
       alert('Got restored result');
       console.log('Restored result:', data);
     });

@@ -37,9 +37,9 @@ export class GeolocationPluginWeb extends WebPlugin implements GeolocationPlugin
 
   watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): string {
     let id = window.navigator.geolocation.watchPosition((pos) => {
-      callback(null, pos);
+      callback(pos);
     }, (err) => {
-      callback(err, null);
+      callback(null, err);
     }, extend({
       enableHighAccuracy: true,
       timeout: 10000,

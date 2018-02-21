@@ -24,22 +24,31 @@ in order to be a good actor on all platforms.
 ```typescript
 import { Plugins } from '@capacitor/core';
 
-const { BackgroundTask } = Plugins;
+const { App, BackgroundTask } = Plugins;
 
-let taskId = BackgroundTask.start(async () => {
-  // In this function We might finish an upload, let a network request
-  // finish, persist some data, or perform some other task
+App.addEventListener('appStateChange', (state) => {
 
-  // Example
-  setTimeout(() => {
-    // Must call in order to end our task otherwise
-    // we risk our app being terminated, and possibly
-    // being labled as impacting battery life
-    BackgroundTask.finish({
-      taskId
+  if (!state.isActive) {
+    // The app has become inactive. We should check if we have some work left to do, and, if so,
+    // execute a background task that will allow us to finish that work before the OS
+    // suspends or terminates our app:
+
+    let taskId = BackgroundTask.exec(async () => {
+      // In this function We might finish an upload, let a network request
+      // finish, persist some data, or perform some other task
+
+      // Example
+      setTimeout(() => {
+        // Must call in order to end our task otherwise
+        // we risk our app being terminated, and possibly
+        // being labled as impacting battery life
+        BackgroundTask.finish({
+          taskId
+        });
+      }, 30000); // Set a long timeout as an example
     });
-  }, 30000); // Set a long timeout as an example
-});
+  }
+})
 ```
 
 ## API

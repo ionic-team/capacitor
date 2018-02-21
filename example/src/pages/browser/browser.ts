@@ -19,10 +19,10 @@ import {
 export class BrowserPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    Plugins.Browser.addListener('browserFinished', (err: any, info: any) => {
+    Plugins.Browser.addListener('browserFinished', (info: any) => {
       console.log('Browser all done!');
     });
-    Plugins.Browser.addListener('browserPageLoaded', (err: any, info: any) => {
+    Plugins.Browser.addListener('browserPageLoaded', (info: any) => {
       console.log('Browser page loaded!');
     });
     Plugins.Browser.prefetch({
