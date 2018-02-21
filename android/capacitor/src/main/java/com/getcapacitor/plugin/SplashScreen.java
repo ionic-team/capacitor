@@ -15,7 +15,7 @@ public class SplashScreen extends Plugin {
     int fadeOutDuration = call.getInt("fadeOutDuration", Splash.DEFAULT_FADE_OUT_DURATION);
     boolean autoHide = call.getBoolean("autoHide", Splash.DEFAULT_AUTO_HIDE);
 
-    Splash.show(getContext(), showDuration, fadeInDuration, fadeOutDuration, autoHide, new Splash.SplashListener() {
+    Splash.show(getActivity(), showDuration, fadeInDuration, fadeOutDuration, autoHide, new Splash.SplashListener() {
       @Override
       public void completed() {
         call.success();
