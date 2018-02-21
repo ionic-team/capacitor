@@ -1,0 +1,56 @@
+# Using Capacitor with Ionic
+
+Capacitor installs directly into any Ionic project (1.0-4.0x+) with a simple `npm install`:
+
+## Start Ionic Project
+
+```bash
+ionic start myApp tabs
+cd myApp
+```
+
+Select "N" when asked to add Cordova.
+
+## Build your Ionic App
+
+You must run `npm run build` at least once to create the `www` folder:
+
+```bash
+npm run build
+```
+
+## Install Capacitor
+
+Next, install capacitor into your project:
+
+```bash
+npm install --save @capacitor/cli @capacitor/core
+```
+
+## Add Platforms
+
+```bash
+npx capacitor add ios
+npx capacitor add android
+```
+
+## Syncing your app with Capacitor
+
+Every time you perform a build, you'll need to copy those changes down to your native projects:
+
+```bash
+npm run build
+npx capacitor copy
+```
+
+## Using Ionic Native
+
+Ionic Native is supported in Capacitor. Currently, Ionic Native contains only Cordova plugins, so whenever you find
+an Ionic Native wrapper you'd like to use, install it and then install the corresponding Cordova plugin by running
+
+```bash
+npm install your-cordova-plugin
+npx capacitor update
+```
+
+See the [Cordova](../basics/cordova) guide for more information.

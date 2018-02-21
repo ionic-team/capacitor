@@ -17,6 +17,10 @@ export class SiteMenu {
           title: 'Getting Started',
           url: '/docs/getting-started/'
         },
+        {
+          title: 'Using with Ionic',
+          url: '/docs/with-ionic'
+        },
         { 
           title: 'Required Dependencies',
           url: '/docs/getting-started/dependencies'
