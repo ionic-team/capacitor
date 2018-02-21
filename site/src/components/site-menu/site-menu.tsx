@@ -19,7 +19,7 @@ export class SiteMenu {
         },
         {
           title: 'Using with Ionic',
-          url: '/docs/with-ionic'
+          url: '/docs/getting-started/with-ionic'
         },
         { 
           title: 'Required Dependencies',
