@@ -17,10 +17,10 @@
  under the License.
  */
 
-#import "CDVAvailability.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVCommandDelegate.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVViewController.h"
+#import <UIKit/UIKit.h>
 
+@interface CDVViewController : UIViewController
+
+@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
+
+@end
