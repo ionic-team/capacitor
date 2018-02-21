@@ -17,10 +17,17 @@
  under the License.
  */
 
-#import "CDVAvailability.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVCommandDelegate.h"
-#import "CDVInvokedUrlCommand.h"
+
 #import "CDVViewController.h"
 
+@interface CDVViewController () {
+  
+}
+
+
+
+@end
+
+@implementation CDVViewController
+
+@end
