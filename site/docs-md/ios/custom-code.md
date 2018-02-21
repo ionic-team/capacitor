@@ -16,6 +16,8 @@ and registering it with Capacitor.
 `MyPlugin.swift`
 
 ```swift
+import Capacitor
+
 @objc(MyPlugin)
 public class MyPlugin: CAPPlugin {
   @objc func echo(_ call: CAPPluginCall) {
