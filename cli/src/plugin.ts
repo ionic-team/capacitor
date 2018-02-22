@@ -137,3 +137,18 @@ export function getPluginType(p: Plugin, platform: string): PluginType {
   }
   return PluginType.Code;
 }
+
+/**
+ * Get each JavaScript Module for the give nplugin
+ */
+export function getJSModules(p: Plugin, platform: string) {
+  let modules: Array<string> = [];
+  if (p.xml['js-module']) {
+    modules = modules.concat(p.xml['js-module']);
+  }
+  const platformModules = getPluginPlatform(p, platform);
+  if (platformModules && platformModules['js-module']) {
+    modules = modules.concat(platformModules['js-module']);
+  }
+  return modules;
+}

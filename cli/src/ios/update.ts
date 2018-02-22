@@ -4,7 +4,7 @@ import { writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
 import { getPlatformElement, getPlugins, getPluginType, Plugin, PluginType, printPlugins } from '../plugin';
-import { autoGenerateConfig, copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, removePluginFiles } from '../tasks/update';
+import { handleCordovaPluginsJS } from '../cordova';
 
 import * as inquirer from 'inquirer';
 import { create } from 'domain';
@@ -43,15 +43,8 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
 
   const cordovaPlugins = plugins
     .filter(p => getPluginType(p, platform) === PluginType.Cordova);
-  if (cordovaPlugins.length > 0) {
-    await copyCordovaJS(config, platform);
-    await copyPluginsJS(config, cordovaPlugins, platform);
-  } else {
-    removePluginFiles(config, platform);
-    createEmptyCordovaJS(config, platform);
-  }
 
-  await autoGenerateConfig(config, cordovaPlugins, platform);
+  await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await autoGeneratePods(config, plugins);
   await autoGenerateResourcesPods(cordovaPlugins);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
