@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { log, runTask } from '../common';
 import { getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { autoGenerateConfig, copyCordovaJS, copyPluginsJS, createEmptyCordovaJS, removePluginFiles } from '../tasks/update';
+import { handleCordovaPluginsJS } from '../cordova';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { join, resolve } from 'path';
@@ -20,16 +20,11 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
   const cordovaPlugins = plugins .filter(p => getPluginType(p, platform) === PluginType.Cordova);
 
   if (cordovaPlugins.length > 0) {
-    log(`Found ${cordovaPlugins.length} Cordova plugin(s):\n${cordovaPlugins.map(p => '  ' + p.name).join('\n')}`);
-    await copyCordovaJS(config, platform);
-    await copyPluginsJS(config, cordovaPlugins, platform);
     copyPluginsNativeFiles(config, cordovaPlugins);
   } else {    
-    removePluginFiles(config, platform);
-    createEmptyCordovaJS(config, platform);
+    removePluginsNativeFiles(config);
   }
-  await autoGenerateConfig(config, cordovaPlugins, platform);
-
+  await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await installGradlePlugins(config, capacitorPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
 }
@@ -81,8 +76,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
   const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
-  removeSync(join(pluginsPath, 'java'));
-  removeSync(join(pluginsPath, 'res'));
+  removePluginsNativeFiles(config);
   cordovaPlugins.map( p => {
     const androidPlatform = getPluginPlatform(p, platform);
     if (androidPlatform) {
@@ -102,4 +96,10 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       }
     }
   });
+}
+
+function removePluginsNativeFiles(config: Config) {
+  const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
+  removeSync(join(pluginsPath, 'java'));
+  removeSync(join(pluginsPath, 'res'));
 }
