@@ -27,40 +27,43 @@ public class Camera : CAPPlugin, UIImagePickerControllerDelegate, UINavigationCo
     self.setCenteredPopover(self.imagePicker!)
     //imagePicker!.popoverPresentationController?.sourceView = view
     
-    // Build the action sheet
-    let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-    alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
-      let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-      if photoAuthorizationStatus == .restricted || photoAuthorizationStatus == .denied {
-        call.error("User denied access to photos")
-        return
-      }
+    DispatchQueue.main.async {
       
-      self.imagePicker!.sourceType = .photoLibrary
-      self.imagePicker!.allowsEditing = allowEditing
+      // Build the action sheet
+      let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+      alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
+        let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
+        if photoAuthorizationStatus == .restricted || photoAuthorizationStatus == .denied {
+          call.error("User denied access to photos")
+          return
+        }
+        
+        self.imagePicker!.sourceType = .photoLibrary
+        self.imagePicker!.allowsEditing = allowEditing
 
-      self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
-    }))
-    
-    alert.addAction(UIAlertAction(title: "Take Picture", style: .default, handler: { (action: UIAlertAction) in
-      if self.bridge.isSimulator() || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) {
-        self.bridge.modulePrint(self, "Camera not available in simulator")
-        self.bridge.alert("Camera Error", "Camera not available in Simulator")
-        call.error("Camera not available while running in Simulator")
-        return
-      }
+        self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+      }))
       
-      self.imagePicker!.sourceType = .camera
+      alert.addAction(UIAlertAction(title: "Take Picture", style: .default, handler: { (action: UIAlertAction) in
+        if self.bridge.isSimulator() || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) {
+          self.bridge.modulePrint(self, "Camera not available in simulator")
+          self.bridge.alert("Camera Error", "Camera not available in Simulator")
+          call.error("Camera not available while running in Simulator")
+          return
+        }
+        
+        self.imagePicker!.sourceType = .camera
 
-      self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
-    }))
-    
-    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
-      alert.dismiss(animated: true, completion: nil)
-    }))
-    
-    self.setCenteredPopover(alert)
-    self.bridge.viewController.present(alert, animated: true, completion: nil)
+        self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+      }))
+      
+      alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
+        alert.dismiss(animated: true, completion: nil)
+      }))
+      
+      self.setCenteredPopover(alert)
+      self.bridge.viewController.present(alert, animated: true, completion: nil)
+    }
   }
   
   public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
