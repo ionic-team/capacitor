@@ -17,6 +17,8 @@ import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
 
+
+
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
   private CordovaResourceApi resourceApi;
   private NativeToJsMessageQueue nativeToJsMessageQueue;
   private CordovaInterface cordova;
+  private CapacitorCordovaCookieManager cookieManager;
 
   public MockCordovaWebViewImpl(Context context) {
     this.context = context;
@@ -51,6 +54,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
     nativeToJsMessageQueue = new NativeToJsMessageQueue();
     nativeToJsMessageQueue.addBridgeMode(new CapacitorEvalBridgeMode(webView, this.cordova));
     nativeToJsMessageQueue.setBridgeMode(0);
+    this.cookieManager = new CapacitorCordovaCookieManager(webView);
   }
 
   public static class CapacitorEvalBridgeMode extends NativeToJsMessageQueue.BridgeMode {
@@ -212,7 +216,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public ICordovaCookieManager getCookieManager() {
-    return null;
+    return cookieManager;
   }
 
   @Override
