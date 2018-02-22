@@ -5,6 +5,7 @@ import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 import { join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
+import { copyCordovaJSFiles } from '../cordova'
 
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
@@ -25,9 +26,11 @@ export async function copy(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     await copyWebDir(config, config.ios.webDir);
     await copyNativeBridge(config, config.ios.webDir);
+    await copyCordovaJSFiles(config, platformName);
   } else if (platformName === config.android.name) {
     await copyWebDir(config, config.android.webDir);
     await copyNativeBridge(config, config.android.webDir);
+    await copyCordovaJSFiles(config, platformName);
   } else if (platformName === config.web.name) {
     await copyWeb(config);
   } else {
