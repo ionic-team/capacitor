@@ -1,6 +1,6 @@
 # Storage
 
-The Storage API provides a simple key-value store for storing simple data.
+The Storage API provides a key-value store for simple data.
 
 Mobile OS's may periodically clear data set in `window.localStorage`, so this API should be used instead of `window.localStorage`. This API will fall back to using `localStorage` when running as a Progressive Web App.
 
