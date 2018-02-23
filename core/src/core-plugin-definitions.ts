@@ -1209,7 +1209,7 @@ export enum StatusBarStyle {
 }
 
 export interface StoragePlugin extends Plugin {
-  get(options: { key: string }): Promise<string>;
+  get(options: { key: string }): Promise<{ value: string }>;
   set(options: { key: string, value: string }): Promise<void>;
   remove(options: { key: string }): Promise<void>;
   clear(): Promise<void>;
