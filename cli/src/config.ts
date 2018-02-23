@@ -147,12 +147,10 @@ export class Config implements CliConfig {
 
 
   private initIosConfig() {
-    console.log('BEFORE IOS CONFIG', this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
     this.platforms.push(this.ios.name);
     this.ios.platformDir = join(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = join(this.cli.assetsDir, this.ios.assets.templateName);
     this.ios.webDirAbs = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
-    console.log('IOS WEB DIR', this.ios.webDirAbs);
   }
 
   private initWindowsConfig() {

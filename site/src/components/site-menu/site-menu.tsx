@@ -7,14 +7,14 @@ import { Component } from '@stencil/core';
 export class SiteMenu {
   MENU = [
     {
-      title: 'Essentials',
+      title: 'Getting Started',
       items: [
         { 
           title: 'Introduction',
           url: '/docs/'
         },
         { 
-          title: 'Getting Started',
+          title: 'Installation',
           url: '/docs/getting-started/'
         },
         {
@@ -37,6 +37,10 @@ export class SiteMenu {
     {
       title: 'Basics',
       items: [
+        {
+          title: 'Development Workflow',
+          url: '/docs/basics/workflow'
+        },
         {
           title: 'Opening Native IDE',
           url: '/docs/basics/opening-native-projects'

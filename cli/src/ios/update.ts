@@ -145,7 +145,7 @@ function isFramework(framework: any) {
 }
 
 async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) {
-  const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
+  const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
   let frameworksString = '';
   let weakFrameworks: Array<string> = [];
   let linkedFrameworks: Array<string> = [];
@@ -206,7 +206,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
-  const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
+  const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
   cordovaPlugins.map( p => {
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
     const headerFiles = getPlatformElement(p, platform, 'header-file');
@@ -224,7 +224,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 }
 
 function removePluginsNativeFiles(config: Config) {
-  const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
+  const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
   removeSync(join(pluginsPath, 'sources'));
   removeSync(join(pluginsPath, 'resources'));
 }
