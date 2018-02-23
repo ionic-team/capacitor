@@ -2,11 +2,12 @@ import { Config } from '../config';
 import { OS } from '../definitions';
 import { addAndroid } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
+import { editProjectSettingsAndroid } from '../android/common';
+import { editProjectSettingsIOS } from '../ios/common';
 import { sync } from './sync';
 import { check, checkPackage, checkWebDir, log, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
-import { emoji as _e } from '../util/emoji';
-
+import { emoji as _e } from '../util/emoji'; 
 import { basename, join } from 'path';
 
 import * as inquirer from 'inquirer';
@@ -32,6 +33,8 @@ export async function createCommand(config: Config, dir: string, name: string, i
     await installDeps(config, appDir);
     // Add default platforms (ios on mac, android)
     await addPlatforms(config, appDir);
+    // Apply project-specific settings to platform projects
+    await editPlatforms(config, appName, appId);
     // Say something nice
     await printNextSteps(config);
   } catch (e) {
@@ -55,6 +58,7 @@ async function getName(config: Config, name: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'name',
+      default: 'App',
       message: `App name`
     }]);
     return answers.name;
@@ -67,7 +71,8 @@ async function getIdentifier(config: Config, id: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'id',
-      message: `App id (i.e. com.example.app)`
+      default: 'com.example.app',
+      message: 'App/Bundle ID'
     }]);
     return answers.id;
   }
@@ -107,9 +112,21 @@ async function addPlatforms(config: Config, dir: string) {
   });
 }
 
+async function editPlatforms(config: Config, appName: string, appId: string) {
+  if (config.cli.os == OS.Mac) {
+    await editProjectSettingsIOS(config, appName, appId);
+  }
+  await editProjectSettingsAndroid(config, appName, appId);
+}
+
 async function printNextSteps(config: Config) {
-  log(chalk`${_e('✅  ', '')}Your app is ready!`);
+  log(chalk`{green ✔} Your app is ready!`);
   log(`\nNext steps:`)
   log(`cd ./${basename(config.app.rootDir)}`);
-  log(`Read more about the Capacitor workflow: https://capacitor.ionicframework.com/docs/basics/workflow`);
+  log(`Get to work by following the Capacitor Development Workflow: https://capacitor.ionicframework.com/docs/basics/workflow`);
+}
+
+export async function editCommand(config: Config, appName: string, appId: string) {
+  await editProjectSettingsIOS(config, appName, appId);
+  await editProjectSettingsAndroid(config, appName, appId);
 }
