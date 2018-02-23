@@ -15,27 +15,27 @@ public extension CAPPluginCall {
     return self.options[key] as? [T] ?? defaultValue
   }
   
-  public func getBool(_ key: String, defaultValue: Bool? = nil) -> Bool? {
+  public func getBool(_ key: String, _ defaultValue: Bool? = nil) -> Bool? {
     return self.options[key] as? Bool ?? defaultValue
   }
   
-  public func getInt(_ key: String, defaultValue: Int? = nil) -> Int? {
+  public func getInt(_ key: String, _ defaultValue: Int? = nil) -> Int? {
     return self.options[key] as? Int ?? defaultValue
   }
   
-  public func getFloat(_ key: String, defaultValue: Float? = nil) -> Float? {
+  public func getFloat(_ key: String, _ defaultValue: Float? = nil) -> Float? {
     return self.options[key] as? Float ?? defaultValue
   }
   
-  public func getDouble(_ key: String, defaultValue: Double? = nil) -> Double? {
+  public func getDouble(_ key: String, _ defaultValue: Double? = nil) -> Double? {
     return self.options[key] as? Double ?? defaultValue
   }
   
-  public func getString(_ key: String, defaultValue: String? = nil) -> String? {
+  public func getString(_ key: String, _ defaultValue: String? = nil) -> String? {
     return self.options[key] as? String ?? defaultValue
   }
   
-  public func getDate(_ key: String, defaultValue: Date? = nil) -> Date? {
+  public func getDate(_ key: String, _ defaultValue: Date? = nil) -> Date? {
     guard let isoString = self.options[key] as? String else {
       return defaultValue
     }

@@ -8,11 +8,12 @@
 
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) NSString *pluginId;
+@property (nonatomic, strong) NSString *pluginName;
 @property (nonatomic, strong) CAPBridge *bridge;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSMutableArray<CAPPluginCall *>*> *eventListeners;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id> *retainedEventArguments;
 
-- (instancetype) initWithBridge:(CAPBridge*) bridge pluginId:(NSString*) pluginId;
+- (instancetype) initWithBridge:(CAPBridge*) bridge pluginId:(NSString*) pluginId pluginName:(NSString*) pluginName;
 - (void)addEventListener:(NSString *) eventName listener:(CAPPluginCall *)listener;
 - (void)removeEventListener:(NSString *) eventName listener:(CAPPluginCall *)listener;
 - (void)notifyListeners:(NSString *) eventName data:(NSDictionary<NSString *, id>*)data;
