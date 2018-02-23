@@ -35,12 +35,12 @@ export async function checkIOSProject(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function getIOSPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
-  const resolved = await Promise.all(allPlugins.map(resolvePlugin));
+export async function getIOSPlugins(config: Config, allPlugins: Plugin[]): Promise<Plugin[]> {
+  const resolved = await Promise.all(allPlugins.map(p => resolvePlugin(config, p)));
   return resolved.filter(plugin => !!plugin) as Plugin[];
 }
 
-export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
+export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plugin|null> {
   let iosPath = '';
   if (plugin.manifest && plugin.manifest.ios) {
     iosPath = plugin.manifest.ios.src;
@@ -59,7 +59,7 @@ export async function resolvePlugin(plugin: Plugin): Promise<Plugin|null> {
       type: PluginType.Code,
       path: iosPath
     };
-    const files = await readdirAsync(join(plugin.rootPath, iosPath));
+    const files = await readdirAsync(join(config.app.rootDir, plugin.rootPath, iosPath));
     const podSpec = files.find(file => file.endsWith('.podspec'));
     if (podSpec) {
       plugin.ios.type = PluginType.Cocoapods;

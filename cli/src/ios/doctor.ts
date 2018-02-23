@@ -21,7 +21,7 @@ export async function doctorIOS(config: Config) {
       config,
       [checkCocoaPods, checkIOSProject, checkWebDir, checkNPMVersion, checkXcode]
     );
-    const plugins = await getPlugins();
+    const plugins = await getPlugins(config);
     printPlugins(plugins);
     logSuccess('Everything looking great! 👌');
   } catch (e) {

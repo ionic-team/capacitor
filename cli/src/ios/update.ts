@@ -34,8 +34,8 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   */
 
   const plugins = await runTask('Fetching plugins', async () => {
-    const allPlugins = await getPlugins();
-    const iosPlugins = await getIOSPlugins(allPlugins);
+    const allPlugins = await getPlugins(config);
+    const iosPlugins = await getIOSPlugins(config, allPlugins);
     return iosPlugins;
   });
 
@@ -90,14 +90,14 @@ export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[],
 export async function updatePodfile(config: Config, plugins: Plugin[], needsUpdate: boolean) {
   const content = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
-  const podfilePath = join(config.ios.name, projectName, 'Podfile');
+  const podfilePath = resolve(config.app.rootDir, config.ios.name, projectName, 'Podfile');
 
   await writeFileAsync(podfilePath, content, 'utf8');
 
   if (needsUpdate) {
-    await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod update && xcodebuild -project App.xcodeproj clean`);
+    await runCommand(`cd ${config.app.rootDir} && cd ${config.ios.name} && cd ${projectName} && pod update && xcodebuild -project App.xcodeproj clean`);
   } else {
-    await runCommand(`cd ${config.ios.name} && cd ${projectName} && pod install && xcodebuild -project App.xcodeproj clean`);
+    await runCommand(`cd ${config.app.rootDir} && cd ${config.ios.name} && cd ${projectName} && pod install && xcodebuild -project App.xcodeproj clean`);
   }
 }
 

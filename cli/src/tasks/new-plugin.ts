@@ -107,7 +107,8 @@ export async function newPlugin(config: Config) {
       return writePrettyJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers));
     });
 
-    await runTask('Installing NPM dependencies', () => {
+    await runTask('Installing NPM dependencies', async () => {
+      await runCommand(`cd ${pluginPath}`);
       return runCommand('npm install');
     });
 

@@ -11,8 +11,8 @@ const platform = 'android';
 
 export async function updateAndroid(config: Config, needsUpdate: boolean) {
   const plugins = await runTask('Fetching plugins', async () => {
-    const allPlugins = await getPlugins();
-    const androidPlugins = await getAndroidPlugins(allPlugins);
+    const allPlugins = await getPlugins(config);
+    const androidPlugins = await getAndroidPlugins(config, allPlugins);
     return androidPlugins;
   });
 
@@ -54,7 +54,7 @@ ${plugins.map(p => {
 }
 
 export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
-  const pluginsGradlePath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'build.gradle');
+  const pluginsGradlePath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'build.gradle');
   let frameworksArray: Array<any> = [];
   cordovaPlugins.map( p => {
     const frameworks = getPlatformElement(p, platform, 'framework');
@@ -75,7 +75,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
-  const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
+  const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
   removePluginsNativeFiles(config);
   cordovaPlugins.map( p => {
     const androidPlatform = getPluginPlatform(p, platform);
@@ -99,7 +99,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 }
 
 function removePluginsNativeFiles(config: Config) {
-  const pluginsPath = resolve('node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
+  const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
   removeSync(join(pluginsPath, 'java'));
   removeSync(join(pluginsPath, 'res'));
 }
