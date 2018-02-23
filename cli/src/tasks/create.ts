@@ -13,7 +13,8 @@ import * as inquirer from 'inquirer';
 import chalk from 'chalk';
 
 export async function createCommand(config: Config, dir: string, name: string, id: string) {
-  log(`\n${chalk.bold(`${_e('⚡️', '*')}  Creating Capacitor App in ${chalk.blue(join(config.app.rootDir, dir))}`)} ${_e('⚡️', '*')}`);
+  const cliVersion = require('../../package.json').version;
+  log(chalk`\n{bold ${_e('⚡️', '*')}   Welcome to Capacitor (CLI v${cliVersion}) ${_e('⚡️', '*')}}\n`);
   try {
     // Prompt for app name if not provided
     const appDir = await getDir(config, dir);
