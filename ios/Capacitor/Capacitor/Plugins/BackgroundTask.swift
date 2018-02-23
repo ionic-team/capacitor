@@ -1,7 +1,7 @@
 import Foundation
 
-@objc(BackgroundTask)
-public class BackgroundTask : CAPPlugin {
+@objc(CAPBackgroundTaskPlugin)
+public class CAPBackgroundTaskPlugin : CAPPlugin {
   var tasks: [String:UIBackgroundTaskIdentifier] = [:]
   
   public override func load() {

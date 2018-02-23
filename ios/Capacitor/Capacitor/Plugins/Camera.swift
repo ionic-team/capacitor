@@ -1,8 +1,8 @@
 import Foundation
 import Photos
 
-@objc(Camera)
-public class Camera : CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
+@objc(CAPCameraPlugin)
+public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
   var imagePicker: UIImagePickerController?
   var call: CAPPluginCall?
   var quality: Float = 1.0

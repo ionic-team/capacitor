@@ -1,8 +1,8 @@
 import Foundation
 import AudioToolbox
 
-@objc(SplashScreen)
-public class SplashScreen : CAPPlugin {
+@objc(CAPSplashScreenPlugin)
+public class CAPSplashScreenPlugin : CAPPlugin {
   var imageView = UIImageView()
   var image: UIImage?
   var call: CAPPluginCall?

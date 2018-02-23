@@ -1,8 +1,8 @@
 import Foundation
 
 
-@objc(Filesystem)
-public class Filesystem : CAPPlugin {
+@objc(CAPFilesystemPlugin)
+public class CAPFilesystemPlugin : CAPPlugin {
   let DEFAULT_DIRECTORY = "DOCUMENTS"
   
   // Get the SearchPathDirectory corresponding to the JS string

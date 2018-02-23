@@ -67,8 +67,8 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
   }
 }
 
-@objc(Geolocation)
-public class Geolocation : CAPPlugin {
+@objc(CAPGeolocationPlugin)
+public class CAPGeolocationPlugin : CAPPlugin {
   var locationHandler: GetLocationHandler?
   var watchLocationHandler: GetLocationHandler?
   

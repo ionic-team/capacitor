@@ -26,8 +26,8 @@ enum LocalNotificationError: LocalizedError {
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
-@objc(LocalNotifications)
-public class LocalNotifications : CAPPlugin, UNUserNotificationCenterDelegate {
+@objc(CAPLocalNotificationsPlugin)
+public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDelegate {
   // Local list of notification id -> JSObject for storing options
   // between notification requets
   var notificationRequestLookup = [String:JSObject]()

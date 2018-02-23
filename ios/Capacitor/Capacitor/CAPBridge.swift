@@ -41,7 +41,7 @@ enum BridgeError: Error {
   }
   
   public func willAppear() {
-    if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? SplashScreen {
+    if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
       splash.showOnLaunch()
     }
   }
@@ -103,7 +103,7 @@ enum BridgeError: Error {
    * Bind notification center observers to watch for app active/inactive status
    */
   func bindObservers() {
-    let appStatePlugin = getOrLoadPlugin(pluginName: "App") as? App
+    let appStatePlugin = getOrLoadPlugin(pluginName: "App") as? CAPAppPlugin
     
     NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { (notification) in
       print("APP ACTIVE")
@@ -439,7 +439,7 @@ enum BridgeError: Error {
       }
     } catch {
       if let jsError = error as? JSProcessingError {
-        let appState = getOrLoadPlugin(pluginName: "App") as! App
+        let appState = getOrLoadPlugin(pluginName: "App") as! CAPAppPlugin
         
         appState.firePluginError(jsError)
       }

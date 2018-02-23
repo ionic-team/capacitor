@@ -1,8 +1,8 @@
 import Foundation
 import SafariServices
 
-@objc(Browser)
-public class Browser : CAPPlugin, SFSafariViewControllerDelegate {
+@objc(CAPBrowserPlugin)
+public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
   var vc: SFSafariViewController?
   
   @objc func open(_ call: CAPPluginCall) {
