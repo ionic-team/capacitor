@@ -3,6 +3,8 @@
 The Modals API provides methods for triggering native modal windows for alerts, confirmations, and input prompts, along
 with Action Sheets and the native Share modal.
 
+<plugin-api index="true" name="modals"></plugin-api>
+
 ## Example
 
 ```javascript
