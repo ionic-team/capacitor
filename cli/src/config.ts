@@ -1,5 +1,5 @@
 import { accessSync, readFileSync } from 'fs';
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join, resolve } from 'path';
 import { logFatal } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 import { currentId } from 'async_hooks';
@@ -21,6 +21,7 @@ export class Config implements CliConfig {
     minVersion: '21',
     platformDir: '',
     webDir: 'app/src/main/assets/public',
+    webDirAbs: '',
     resDir: 'app/src/main/res',
     assets: {
       templateName: 'android-template',
@@ -33,6 +34,7 @@ export class Config implements CliConfig {
     minVersion: '10.0',
     platformDir: '',
     webDir: 'public',
+    webDirAbs: '',
     capacitorRuntimePod: `pod 'Capacitor'`,
     nativeProjectName: 'App',
     assets: {
@@ -57,7 +59,7 @@ export class Config implements CliConfig {
   app = {
     rootDir: '',
     webDir: 'www',
-    symlinkWebDir: false,
+    webDirAbs: '',
     package: Package,
     windowsAndroidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe',
     linuxAndroidStudioPath: '',
@@ -103,7 +105,7 @@ export class Config implements CliConfig {
 
   setCurrentWorkingDir(currentWorkingDir: string) {
     try {
-      this.initAppConfig(currentWorkingDir);
+      this.initAppConfig(resolve(currentWorkingDir));
       this.initAndroidConfig();
       this.initIosConfig();
       this.initPluginsConfig();
@@ -129,7 +131,7 @@ export class Config implements CliConfig {
 
 
   private initAppConfig(currentWorkingDir: string) {
-    this.app.rootDir = currentWorkingDir,
+    this.app.rootDir = currentWorkingDir;
     this.app.package = loadPackageJson(currentWorkingDir);
     this.app.assets.templateDir = join(this.cli.assetsDir, this.app.assets.templateName);
   }
@@ -139,16 +141,18 @@ export class Config implements CliConfig {
     this.platforms.push(this.android.name);
     this.android.platformDir = join(this.app.rootDir, this.android.name);
     this.android.assets.templateDir = join(this.cli.assetsDir, this.android.assets.templateName);
-    this.android.webDir = join(this.android.platformDir, this.android.webDir);
+    this.android.webDirAbs = join(this.android.platformDir, this.android.webDir);
     this.android.resDir = join(this.android.platformDir, this.android.resDir);
   }
 
 
   private initIosConfig() {
+    console.log('BEFORE IOS CONFIG', this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
     this.platforms.push(this.ios.name);
     this.ios.platformDir = join(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = join(this.cli.assetsDir, this.ios.assets.templateName);
-    this.ios.webDir = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
+    this.ios.webDirAbs = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
+    console.log('IOS WEB DIR', this.ios.webDirAbs);
   }
 
   private initWindowsConfig() {
@@ -168,9 +172,8 @@ export class Config implements CliConfig {
 
     Object.assign(this.app, extConfig);
 
-    if (!isAbsolute(this.app.webDir)) {
-      this.app.webDir = join(this.app.rootDir, this.app.webDir);
-    }
+    // Build the absolute path to the web directory
+    this.app.webDirAbs = resolve(this.app.rootDir, this.app.webDir);
   }
 
   loadExternalConfig() {
@@ -263,7 +266,7 @@ export class Config implements CliConfig {
     try {
       let testDir = join(this.app.rootDir, platformName);
       if (platformName === 'web') {
-        testDir = this.app.webDir;
+        testDir = this.app.webDirAbs;
       }
       accessSync(testDir);
       platformDir = testDir;

@@ -87,7 +87,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
 }
 
 export async function copyCordovaJS(config: Config, platform: string) {
-  const cordovaPath = resolve('node_modules', '@capacitor/core', 'cordova.js');
+  const cordovaPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/core', 'cordova.js');
   if (!await existsAsync(cordovaPath)) {
     logFatal(`Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
     '@capacitor/core is installed? This file is currently required for Capacitor to function.');
@@ -148,10 +148,10 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
 
 function getWebDir(config: Config, platform: string): string {
   if (platform === 'ios') {
-    return config.ios.webDir;
+    return config.ios.webDirAbs;
   }
   if (platform === 'android') {
-    return config.android.webDir;
+    return config.android.webDirAbs;
   }
   return '';
 }
@@ -169,12 +169,12 @@ export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: C
 }
 
 export async function copyCordovaJSFiles(config: Config, platform: string) {
-  const allPlugins = await getPlugins();
+  const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
-    plugins = await getIOSPlugins(allPlugins);
+    plugins = await getIOSPlugins(config, allPlugins);
   } else if (platform === config.android.name) { 
-    plugins = await getAndroidPlugins(allPlugins);
+    plugins = await getAndroidPlugins(config, allPlugins);
   }
   const cordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Cordova);

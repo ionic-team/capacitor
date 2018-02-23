@@ -55,7 +55,7 @@ export interface CliConfigCli {
 export interface CliConfigApp {
   rootDir: string;
   webDir: string;
-  symlinkWebDir: boolean;
+  webDirAbs: string;
   package: PackageJson;
   extConfigName: string;
   extConfigFilePath: string;

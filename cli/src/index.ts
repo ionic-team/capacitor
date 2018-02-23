@@ -1,5 +1,6 @@
 import * as program from 'commander';
 
+import { createCommand } from './tasks/create';
 import { initCommand } from './tasks/init';
 import { copyCommand } from './tasks/copy';
 import { updateCommand } from './tasks/update';
@@ -19,6 +20,13 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .version(config.cli.package.version);
+
+  program
+    .command('create [directory] [name] [id]')
+    .description('Creates a new Capacitor project')
+    .action((directory, name, id) => {
+      return createCommand(config, directory, name, id);
+    });
 
   program
     .command('init')

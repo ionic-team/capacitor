@@ -1,3 +1,4 @@
+import { Config } from './config';
 import { join, resolve } from 'path';
 import { log, logInfo, readJSON, readXML } from './common';
 
@@ -36,15 +37,15 @@ export interface Plugin {
   };
 }
 
-export async function getPlugins(): Promise<Plugin[]> {
-  const deps = await getDependencies();
-  const plugins = await Promise.all(deps.map(resolvePlugin));
+export async function getPlugins(config: Config): Promise<Plugin[]> {
+  const deps = await getDependencies(config);
+  const plugins = await Promise.all(deps.map(p => resolvePlugin(config, p)));
   return plugins.filter(p => !!p) as Plugin[];
 }
 
-export async function resolvePlugin(name: string): Promise<Plugin | null> {
+export async function resolvePlugin(config: Config, name: string): Promise<Plugin | null> {
   try {
-    const rootPath = resolve('node_modules', name);
+    const rootPath = resolve(config.app.rootDir, 'node_modules', name);
     const packagePath = join(rootPath, 'package.json');
     const meta = await readJSON(packagePath);
     if (!meta) {
@@ -76,8 +77,8 @@ export async function resolvePlugin(name: string): Promise<Plugin | null> {
   return null;
 }
 
-export async function getDependencies(): Promise<string[]> {
-  const json = await readJSON('package.json');
+export async function getDependencies(config: Config): Promise<string[]> {
+  const json = await readJSON(resolve(config.app.rootDir, 'package.json'));
   const { dependencies } = json;
   if (!dependencies) {
     return [];

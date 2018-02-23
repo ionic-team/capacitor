@@ -16,15 +16,15 @@ export async function check(config: Config, checks: CheckFunction[]): Promise<vo
 }
 
 export async function checkWebDir(config: Config): Promise<string | null> {
-  if (!await existsAsync(config.app.webDir)) {
-    return `Capacitor could not find the web assets directory "${config.app.webDir}".
+  if (!await existsAsync(config.app.webDirAbs)) {
+    return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
     Please create it, and make sure it has an index.html file. You can change
     the path of this directory in capacitor.config.json.
     More info: https://capacitor.ionicframework.com/docs/basics/configuration`;
   }
 
-  if (!await existsAsync(join(config.app.webDir, 'index.html'))) {
-    return `The web directory (${config.app.webDir}) must contain a "index.html".
+  if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
+    return `The web directory (${config.app.webDirAbs}) must contain a "index.html".
     It will be the entry point for the web portion of the Capacitor app.`;
   }
   return null;
@@ -89,7 +89,7 @@ export function logSuccess(...args: any[]) {
 
 export function logInfo(...args: any[]) {
   const chalk = require('chalk');
-  console.log(chalk.yellow('  [info]'), ...args);
+  console.log(...args);
 }
 
 export function logWarn(...args: any[]) {
@@ -102,9 +102,10 @@ export function logError(...args: any[]) {
   console.log(chalk.red('[error]'), ...args);
 }
 
-export function logFatal(...args: any[]) {
+export function logFatal(...args: any[]): never {
   logError(...args);
   process.exit(1);
+  throw new Error('Never say never!');
 }
 
 export async function isInstalled(command: string): Promise<boolean> {

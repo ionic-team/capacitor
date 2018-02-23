@@ -4,6 +4,8 @@ import { addIOS, addIOSChecks } from '../ios/add';
 import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
+import { resolve } from 'path';
+
 export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName === 'ios' && config.cli.os !== 'mac') {
     logFatal('Not running Mac OS X, can\'t add ios platform');
@@ -55,6 +57,7 @@ export async function generateCapacitorConfig(config: Config) {
   });
   logInfo(`💡 You can change the web directory anytime by modifing ${config.app.extConfigName}`);
   config.app.webDir = webDir;
+  config.app.webDirAbs = resolve(config.app.rootDir, webDir);
 }
 
 export function addChecks(config: Config, platformName: string) {
