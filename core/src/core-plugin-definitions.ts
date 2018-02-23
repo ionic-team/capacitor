@@ -21,6 +21,7 @@ declare global {
     Share?: SharePlugin;
     SplashScreen?: SplashScreenPlugin;
     StatusBar?: StatusBarPlugin;
+    Storage?: StoragePlugin;
   }
 }
 
@@ -1205,4 +1206,12 @@ export interface StatusBarStyleOptions {
 export enum StatusBarStyle {
   Dark = 'DARK',
   Light = 'LIGHT'
+}
+
+export interface StoragePlugin extends Plugin {
+  get(options: { key: string }): Promise<string>;
+  set(options: { key: string, value: string }): Promise<void>;
+  remove(options: { key: string }): Promise<void>;
+  clear(): Promise<void>;
+  keys(): Promise<{ keys: string[] }>;
 }

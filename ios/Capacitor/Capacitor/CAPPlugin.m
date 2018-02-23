@@ -5,16 +5,17 @@
 
 @implementation CAPPlugin
 
--(instancetype) initWithBridge:(CAPBridge *)bridge pluginId:(NSString *)pluginId {
+-(instancetype) initWithBridge:(CAPBridge *)bridge pluginId:(NSString *)pluginId pluginName:(NSString *)pluginName {
   self.bridge = bridge;
   self.pluginId = pluginId;
+  self.pluginName = pluginName;
   self.eventListeners = [[NSMutableDictionary alloc] init];
   self.retainedEventArguments = [[NSMutableDictionary alloc] init];
   return self;
 }
 
 -(NSString *) getId {
-  return self.pluginId;
+  return self.pluginName;
 }
 
 -(BOOL) getBool:(CAPPluginCall *)call field:(NSString *)field defaultValue:(BOOL)defaultValue {

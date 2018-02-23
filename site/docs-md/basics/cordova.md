@@ -19,4 +19,9 @@ Consult the [iOS](../ios/configuration) and [Android](../android/configuration) 
 
 ## Compatibility Issues
 
+The following plugins don't work with Capacitor, or Capacitor provides a conflicting alternative. These plugins should be removed for your app:
+
+- cordova-plugin-splashscreen: Capacitor provides its own API
+
+
 While we've tested a number of popular Cordova plugins, it's possible Capacitor doesn't support every Cordova plugin. If you find an issue with an existing Cordova plugin, please [file an issue](https://github.com/ionic-team/capacitor/issues/new) with the issue you've found and the plugin information.

@@ -118,7 +118,7 @@ public class Photos : CAPPlugin {
   func fetchAlbumsToJs(_ call: CAPPluginCall) {
     var albums = [JSObject]()
     
-    let loadSharedAlbums = call.getBool("loadShared", defaultValue: false)!
+    let loadSharedAlbums = call.getBool("loadShared", false)!
     
     // Load our smart albums
     var fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
@@ -159,7 +159,7 @@ public class Photos : CAPPlugin {
     var assets: [JSObject] = []
     
     let albumId = call.getString("albumIdentifier")
-    let quantity = call.getInt("quantity", defaultValue: Photos.DEFAULT_QUANTITY)!
+    let quantity = call.getInt("quantity", Photos.DEFAULT_QUANTITY)!
     
     var targetCollection: PHAssetCollection?
     
@@ -183,10 +183,10 @@ public class Photos : CAPPlugin {
     
     //let after = call.getString("after")
     let types = call.getString("types") ?? Photos.DEFAULT_TYPES
-    let thumbnailWidth = call.getInt("thumbnailWidth", defaultValue: Photos.DEFAULT_THUMBNAIL_WIDTH)!
-    let thumbnailHeight = call.getInt("thumbnailHeight", defaultValue: Photos.DEFAULT_THUMBNAIL_HEIGHT)!
+    let thumbnailWidth = call.getInt("thumbnailWidth", Photos.DEFAULT_THUMBNAIL_WIDTH)!
+    let thumbnailHeight = call.getInt("thumbnailHeight", Photos.DEFAULT_THUMBNAIL_HEIGHT)!
     let thumbnailSize = CGSize(width: thumbnailWidth, height: thumbnailHeight)
-    let thumbnailQuality = call.getInt("thumbnailQuality", defaultValue: 95)!
+    let thumbnailQuality = call.getInt("thumbnailQuality", 95)!
     
     let requestOptions = PHImageRequestOptions()
     requestOptions.isNetworkAccessAllowed = true

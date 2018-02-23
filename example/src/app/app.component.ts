@@ -30,6 +30,7 @@ export class MyApp {
     { name: 'Photos', page: 'PhotosPage' },
     { name: 'Share', page: 'SharePage' },
     { name: 'SplashScreen', page: 'SplashScreenPage' },
+    { name: 'Storage', page: 'StoragePage' },
     { name: 'StatusBar', page: 'StatusBarPage' }
   ]
 

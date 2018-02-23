@@ -41,7 +41,7 @@ enum BridgeError: Error {
   }
   
   public func willAppear() {
-    if let splash = getOrLoadPlugin(pluginId: "SplashScreen") as? SplashScreen {
+    if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? SplashScreen {
       splash.showOnLaunch()
     }
   }
@@ -103,7 +103,7 @@ enum BridgeError: Error {
    * Bind notification center observers to watch for app active/inactive status
    */
   func bindObservers() {
-    let appStatePlugin = getOrLoadPlugin(pluginId: "App") as? App
+    let appStatePlugin = getOrLoadPlugin(pluginName: "App") as? App
     
     NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { (notification) in
       print("APP ACTIVE")
@@ -199,36 +199,36 @@ enum BridgeError: Error {
    */
   func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
-    knownPlugins[bridgeType.pluginId()] = pluginType
+    knownPlugins[jsName] = pluginType
     JSExport.exportJS(userContentController: self.userContentController, pluginClassName: jsName, pluginType: pluginType)
-    _ = loadPlugin(pluginId: bridgeType.pluginId())
+    _ = loadPlugin(pluginName: jsName)
   }
   
   /**
    * - parameter pluginId: the ID of the plugin
    * - returns: the plugin, if found
    */
-  public func getOrLoadPlugin(pluginId: String) -> CAPPlugin? {
-    guard let plugin = self.getPlugin(pluginId: pluginId) ?? self.loadPlugin(pluginId: pluginId) else {
+  public func getOrLoadPlugin(pluginName: String) -> CAPPlugin? {
+    guard let plugin = self.getPlugin(pluginName: pluginName) ?? self.loadPlugin(pluginName: pluginName) else {
       return nil
     }
     return plugin
   }
   
-  public func getPlugin(pluginId: String) -> CAPPlugin? {
-    return self.plugins[pluginId]
+  public func getPlugin(pluginName: String) -> CAPPlugin? {
+    return self.plugins[pluginName]
   }
   
-  public func loadPlugin(pluginId: String) -> CAPPlugin? {
-    guard let pluginType = knownPlugins[pluginId] else {
-      print("⚡️  Unable to load plugin \(pluginId). No such module found.")
+  public func loadPlugin(pluginName: String) -> CAPPlugin? {
+    guard let pluginType = knownPlugins[pluginName] else {
+      print("⚡️  Unable to load plugin \(pluginName). No such module found.")
       return nil
     }
     
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
-    let p = pluginType.init(bridge: self, pluginId: bridgeType.pluginId())
+    let p = pluginType.init(bridge: self, pluginId: bridgeType.pluginId(), pluginName: bridgeType.jsName())
     p!.load()
-    self.plugins[bridgeType.pluginId()] = p
+    self.plugins[bridgeType.jsName()] = p
     return p
   }
   
@@ -312,7 +312,7 @@ enum BridgeError: Error {
    * construct a selector, and perform that selector on the plugin instance.
    */
   public func handleJSCall(call: JSCall) {
-    guard let plugin = self.getPlugin(pluginId: call.pluginId) ?? self.loadPlugin(pluginId: call.pluginId) else {
+    guard let plugin = self.getPlugin(pluginName: call.pluginId) ?? self.loadPlugin(pluginName: call.pluginId) else {
       print("⚡️  Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
       return
     }
@@ -439,7 +439,7 @@ enum BridgeError: Error {
       }
     } catch {
       if let jsError = error as? JSProcessingError {
-        let appState = getOrLoadPlugin(pluginId: "App") as! App
+        let appState = getOrLoadPlugin(pluginName: "App") as! App
         
         appState.firePluginError(jsError)
       }
