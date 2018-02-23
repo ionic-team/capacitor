@@ -104,8 +104,7 @@ export function logError(...args: any[]) {
 
 export function logFatal(...args: any[]): never {
   logError(...args);
-  process.exit(1);
-  throw new Error('Never say never!');
+  return process.exit(1);
 }
 
 export async function isInstalled(command: string): Promise<boolean> {

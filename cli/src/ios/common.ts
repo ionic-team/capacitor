@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { isInstalled } from '../common';
-import { readdirAsync } from '../util/fs';
-import { join } from 'path';
+import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
+import { join, resolve } from 'path';
 
 import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 
@@ -73,4 +73,28 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
     return null;
   }
   return plugin;
+}
+
+/**
+ * Update the native project files with the desired app id and app name
+ */
+export async function editProjectSettingsIOS(config: Config, appName: string, appId: string) {
+  const pbxPath = resolve(config.app.rootDir, config.ios.platformDir, config.ios.nativeProjectName, 'App\.xcodeproj/project.pbxproj');
+  const plistPath = resolve(config.app.rootDir, config.ios.platformDir, config.ios.nativeProjectName, 'App/Info.plist');
+
+  let plistContent = await readFileAsync(plistPath, 'utf-8');
+
+  plistContent = plistContent.replace(
+    /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^\<]*)<\/string>/,
+    `<key>CFBundleDisplayName</key>\n        <string>${appName}</string>`);
+
+  console.log(plistContent);
+
+  let pbxContent = await readFileAsync(pbxPath, 'utf8');
+  pbxContent = pbxContent.replace(
+    /PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/,
+    `PRODUCT_BUNDLE_IDENTIFIER = ${appId}`);
+
+  await writeFileAsync(plistPath, plistContent, 'utf8');
+  await writeFileAsync(pbxPath, pbxContent, 'utf8');
 }
