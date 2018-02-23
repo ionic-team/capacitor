@@ -59,7 +59,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
       type: PluginType.Code,
       path: iosPath
     };
-    const files = await readdirAsync(join(config.app.rootDir, plugin.rootPath, iosPath));
+    const files = await readdirAsync(join(plugin.rootPath, iosPath));
     const podSpec = files.find(file => file.endsWith('.podspec'));
     if (podSpec) {
       plugin.ios.type = PluginType.Cocoapods;
