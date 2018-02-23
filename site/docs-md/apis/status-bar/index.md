@@ -2,6 +2,8 @@
 
 The StatusBar API Provides methods for configuring the sytle of the Status Bar, along with showing or hiding it.
 
+<plugin-api index="true" name="status-bar"></plugin-api>
+
 ## Example
 
 ```typescript

@@ -2,6 +2,8 @@
 
 The Network API provides events for monitoring network status changes, along with querying the current state of the network.
 
+<plugin-api index="true" name="network"></plugin-api>
+
 ## Example
 
 ```typescript
