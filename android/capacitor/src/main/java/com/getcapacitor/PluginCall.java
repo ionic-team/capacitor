@@ -59,6 +59,14 @@ public class PluginCall {
     this.success(new JSObject());
   }
 
+  public void resolve(JSObject data) {
+    PluginResult result = new PluginResult(data);
+    this.msgHandler.sendResponseMessage(this, result, null);
+  }
+
+  public void resolve() {
+    this.success(new JSObject());
+  }
 
   public void errorCallback(String msg) {
     PluginResult errorResult = new PluginResult();
@@ -89,8 +97,17 @@ public class PluginCall {
   }
 
   public void error(String msg) {
-    this.error(msg, null);
+    error(msg, null);
   }
+
+  public void reject(String msg, Exception ex) {
+    error(msg, ex);
+  }
+
+  public void reject(String msg) {
+    error(msg, null);
+  }
+
 
   public String getPluginId() { return this.pluginId; }
 
@@ -126,6 +143,32 @@ public class PluginCall {
 
     if(value instanceof Integer) {
       return (Integer) value;
+    }
+    return defaultValue;
+  }
+
+  public Float getFloat(String name) {
+    return this.getFloat(name, null);
+  }
+  public Float getFloat(String name, Float defaultValue) {
+    Object value = this.data.opt(name);
+    if(value == null) { return defaultValue; }
+
+    if(value instanceof Float) {
+      return (Float) value;
+    }
+    return defaultValue;
+  }
+
+  public Double getDouble(String name) {
+    return this.getDouble(name, null);
+  }
+  public Double getDouble(String name, Double defaultValue) {
+    Object value = this.data.opt(name);
+    if(value == null) { return defaultValue; }
+
+    if(value instanceof Double) {
+      return (Double) value;
     }
     return defaultValue;
   }
@@ -184,6 +227,10 @@ public class PluginCall {
       }
     }
     return defaultValue;
+  }
+
+  public boolean hasOption(String name) {
+    return this.data.has(name);
   }
 
   /**
