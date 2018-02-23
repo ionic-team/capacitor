@@ -7,7 +7,7 @@ import { check, checkPackage, checkWebDir, log, logFatal, runCommand, runTask, w
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { emoji as _e } from '../util/emoji';
 
-import { join } from 'path';
+import { basename, join } from 'path';
 
 import * as inquirer from 'inquirer';
 import chalk from 'chalk';
@@ -108,4 +108,7 @@ async function addPlatforms(config: Config, dir: string) {
 
 async function printNextSteps(config: Config) {
   log(chalk`${_e('✅  ', '')}Your app is ready!`);
+  log(`\nNext steps:`)
+  log(`cd ./${basename(config.app.rootDir)}`);
+  log(`Read more about the Capacitor workflow: https://capacitor.ionicframework.com/docs/basics/workflow`);
 }
