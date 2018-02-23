@@ -3,8 +3,8 @@ import Foundation
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
-@objc(Modals)
-public class Modals : CAPPlugin {
+@objc(CAPModalsPlugin)
+public class CAPModalsPlugin : CAPPlugin {
   @objc public func alert(_ call: CAPPluginCall) {
     guard let title = call.options["title"] as? String else {
       call.error("title must be provided")

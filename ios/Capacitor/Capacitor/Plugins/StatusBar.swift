@@ -4,8 +4,8 @@ import Foundation
  * StatusBar plugin. Requires "View controller-based status bar appearance" to
  * be "NO" in Info.plist
  */
-@objc(StatusBar)
-public class StatusBar: CAPPlugin {
+@objc(CAPStatusBarPlugin)
+public class CAPStatusBarPlugin: CAPPlugin {
   @objc public func setStyle(_ call: CAPPluginCall) {
     let options = call.options!
 

@@ -1,7 +1,7 @@
 import Foundation
 
-@objc(Console)
-public class Console : CAPPlugin {
+@objc(CAPConsolePlugin)
+public class CAPConsolePlugin : CAPPlugin {
 
   @objc public func log(_ call: CAPPluginCall) {
     let message = call.getString("message") ?? ""

@@ -1,8 +1,8 @@
 import Foundation
 import Photos
 
-@objc(Photos)
-public class Photos : CAPPlugin {
+@objc(CAPPhotosPlugin)
+public class CAPPhotosPlugin : CAPPlugin {
   static let DEFAULT_QUANTITY = 25
   static let DEFAULT_TYPES = "photos"
   static let DEFAULT_THUMBNAIL_WIDTH = 256
@@ -159,7 +159,8 @@ public class Photos : CAPPlugin {
     var assets: [JSObject] = []
     
     let albumId = call.getString("albumIdentifier")
-    let quantity = call.getInt("quantity", Photos.DEFAULT_QUANTITY)!
+
+    let quantity = call.getInt("quantity", CAPPhotosPlugin.DEFAULT_QUANTITY)!
     
     var targetCollection: PHAssetCollection?
     
@@ -182,9 +183,10 @@ public class Photos : CAPPlugin {
     }
     
     //let after = call.getString("after")
-    let types = call.getString("types") ?? Photos.DEFAULT_TYPES
-    let thumbnailWidth = call.getInt("thumbnailWidth", Photos.DEFAULT_THUMBNAIL_WIDTH)!
-    let thumbnailHeight = call.getInt("thumbnailHeight", Photos.DEFAULT_THUMBNAIL_HEIGHT)!
+
+    let types = call.getString("types") ?? CAPPhotosPlugin.DEFAULT_TYPES
+    let thumbnailWidth = call.getInt("thumbnailWidth", CAPPhotosPlugin.DEFAULT_THUMBNAIL_WIDTH)!
+    let thumbnailHeight = call.getInt("thumbnailHeight", CAPPhotosPlugin.DEFAULT_THUMBNAIL_HEIGHT)!
     let thumbnailSize = CGSize(width: thumbnailWidth, height: thumbnailHeight)
     let thumbnailQuality = call.getInt("thumbnailQuality", 95)!
     

@@ -3,8 +3,8 @@ import Foundation
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
-@objc(Share)
-public class Share : CAPPlugin {
+@objc(CAPSharePlugin)
+public class CAPSharePlugin : CAPPlugin {
   @objc func share(_ call: CAPPluginCall) {
     var items = [Any]()
     

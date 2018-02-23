@@ -1,8 +1,8 @@
 import Foundation
 import AudioToolbox
 
-@objc(Haptics)
-public class Haptics: CAPPlugin {
+@objc(CAPHapticsPlugin)
+public class CAPHapticsPlugin: CAPPlugin {
   var selectionFeedbackGenerator: UISelectionFeedbackGenerator?
   
   @objc public func impact(_ call: CAPPluginCall) {

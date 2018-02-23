@@ -1,7 +1,7 @@
 import Foundation
 
-@objc(Clipboard)
-public class Clipboard : CAPPlugin {
+@objc(CAPClipboardPlugin)
+public class CAPClipboardPlugin : CAPPlugin {
   @objc func write(_ call: CAPPluginCall) {
     guard let options = call.getObject("options") else {
       call.error("No options provided")

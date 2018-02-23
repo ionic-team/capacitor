@@ -1,7 +1,7 @@
 import Foundation
 
-@objc(Network)
-public class Network : CAPPlugin {
+@objc(CAPNetworkPlugin)
+public class CAPNetworkPlugin : CAPPlugin {
   let reachability = Reachability()!
   
   public override func load() {

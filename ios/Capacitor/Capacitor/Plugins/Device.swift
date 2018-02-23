@@ -2,8 +2,8 @@ import Foundation
 
 public typealias DeviceInfo = [String:Any]
 
-@objc(Device)
-public class Device: CAPPlugin {
+@objc(CAPDevicePlugin)
+public class CAPDevicePlugin: CAPPlugin {
   let diagnostics: Diagnostics = Diagnostics()
   
   @objc func getInfo(_ call: CAPPluginCall) {
