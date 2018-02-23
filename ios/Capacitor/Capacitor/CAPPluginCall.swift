@@ -51,7 +51,7 @@ public extension CAPPluginCall {
   }
   
   public func hasOption(_ key: String) -> Bool {
-    return self.options[key] != nil
+    return self.options.index(forKey: key) != nil
   }
 
   public func success() {
