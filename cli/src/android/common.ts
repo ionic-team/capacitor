@@ -38,7 +38,10 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
  * This is a little trickier for Android because the appId becomes
  * the package name.
  */
-export async function editProjectSettingsAndroid(config: Config, appName: string, appId: string) {
+export async function editProjectSettingsAndroid(config: Config) {
+  const appId = config.app.appId;
+  const appName = config.app.appName;
+
   const manifestPath = resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/AndroidManifest.xml');
   const buildGradlePath = resolve(config.app.rootDir, config.android.platformDir, 'app/build.gradle');
 

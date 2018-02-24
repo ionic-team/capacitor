@@ -78,7 +78,10 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
 /**
  * Update the native project files with the desired app id and app name
  */
-export async function editProjectSettingsIOS(config: Config, appName: string, appId: string) {
+export async function editProjectSettingsIOS(config: Config) {
+  const appId = config.app.appId;
+  const appName = config.app.appName;
+
   const pbxPath = resolve(config.app.rootDir, config.ios.platformDir, config.ios.nativeProjectName, 'App\.xcodeproj/project.pbxproj');
   const plistPath = resolve(config.app.rootDir, config.ios.platformDir, config.ios.nativeProjectName, 'App/Info.plist');
 

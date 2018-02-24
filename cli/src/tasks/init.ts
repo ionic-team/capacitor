@@ -1,7 +1,5 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
-import { editProjectSettingsAndroid } from '../android/common';
-import { editProjectSettingsIOS } from '../ios/common';
 import { addCommand } from '../tasks/add';
 import { copyCommand } from '../tasks/copy';
 import {
@@ -106,25 +104,6 @@ async function addPlatforms(config: Config) {
       await addCommand(config, 'android');
     });
   });
-}
-
-async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
-  await cpAsync(join(config.app.assets.templateDir, 'www'), webDir);
-}
-
-async function editPlatforms(config: Config, appName: string, appId: string) {
-  if (config.cli.os == OS.Mac) {
-    await editProjectSettingsIOS(config, appName, appId);
-  }
-  await editProjectSettingsAndroid(config, appName, appId);
-}
-
-async function runCopy(config: Config) {
-  if (config.cli.os === OS.Mac) {
-    await copyCommand(config, 'ios');
-  }
-  await copyCommand(config, 'android');
-  await copyCommand(config, 'web');
 }
 
 async function printNextSteps(config: Config) {
