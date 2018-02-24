@@ -38,8 +38,8 @@ npm uninstall --save cordova-plugin-splash
 ## Add Platforms
 
 ```bash
-npx capacitor add ios
-npx capacitor add android
+npx cap add ios
+npx cap add android
 ```
 
 ## Syncing your app with Capacitor
@@ -48,7 +48,7 @@ Every time you perform a build, you'll need to copy those changes down to your n
 
 ```bash
 npm run build
-npx capacitor copy
+npx cap copy
 ```
 
 ## Using Ionic Native
@@ -58,7 +58,7 @@ an Ionic Native wrapper you'd like to use, install it and then install the corre
 
 ```bash
 npm install your-cordova-plugin
-npx capacitor update
+npx cap update
 ```
 
 See the [Cordova](../basics/cordova) guide for more information.

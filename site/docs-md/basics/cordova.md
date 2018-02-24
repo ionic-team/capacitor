@@ -8,7 +8,7 @@ Simply `npm install` your plugin of choice, sync your project, finish configurat
 
 ```bash
 npm install cool-cordova-plugin
-npx capacitor sync
+npx cap sync
 ```
 
 ## Important: Configuration 

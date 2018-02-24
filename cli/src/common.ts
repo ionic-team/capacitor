@@ -53,6 +53,11 @@ export async function checkAppId(config:Config, id: string): Promise<string | nu
   return `Invalid App ID. Must be in domain form (ex: com.example.app)`;
 }
 
+export async function checkAppName(config:Config, id: string): Promise<string | null> {
+  // We allow pretty much anything right now, have fun
+  return null;
+}
+
 
 export async function readJSON(path: string): Promise<any> {
   const data = await readFileAsync(path, 'utf8');

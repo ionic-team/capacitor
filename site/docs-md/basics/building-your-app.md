@@ -27,7 +27,7 @@ This builds your Progressive Web App if you've configured <stencil-route-link ur
 Once your web code is built, it needs to be copied to each native project:
 
 ```bash
-npx capacitor copy
+npx cap copy
 ```
 
 This should be run each time you perform a build. Feel free to add this command to the end of your build script in `package.json`
@@ -39,8 +39,8 @@ This should be run each time you perform a build. Feel free to add this command 
 iOS relies on Xcode to do the final app compile
 
 ```bash
-npx capacitor copy ios
-npx capacitor open ios
+npx cap copy ios
+npx cap open ios
 ```
 
 Once XCode launches, you can build your finally app binary through the standard XCode workflow.
@@ -50,6 +50,6 @@ Once XCode launches, you can build your finally app binary through the standard 
 Currently, Android relies on Android Studio (or, optionally, the android cli tools) to build the app:
 
 ```bash
-npx capacitor copy android
-npx capacitor open android
+npx cap copy android
+npx cap open android
 ```

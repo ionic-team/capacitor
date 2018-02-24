@@ -34,7 +34,7 @@ That can be done easily from the File menu:
 
 This error occurs when Capacitor's `native-bridge.js` file was not copied to the native project.
 
-The fix is simple: run `npx capacitor copy android` to copy this file.
+The fix is simple: run `npx cap copy android` to copy this file.
 
 ## Error: "Please select Android SDK"
 
@@ -64,5 +64,5 @@ To do this, follow these steps:
 1. Copy any source code you created (such as Java files in `app/android/src`, manifest files, or resource files) into a safe location outside of `app/android`.
 2. Next, make sure you are running an updated version of the Capacitor CLI: `npm install @capacitor/cli@latest`
 3. Remove the android directory: `rm -rf android/`
-4. Re-create the Android app from Capacitor: `npx capacitor add android`
+4. Re-create the Android app from Capacitor: `npx cap add android`
 5. Copy your saved source files back into the project

@@ -7,7 +7,7 @@ Occasionally, you'll need to make Capacitor updates to your iOS app, including u
 To update the version of Capacitor used in your app, ust run
 
 ```bash
-npx capacitor update ios
+npx cap update ios
 ```
 
 To update iOS, including any plugins and the core Capacitor libraries.
