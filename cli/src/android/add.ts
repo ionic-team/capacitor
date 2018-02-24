@@ -32,7 +32,7 @@ async function createLocalProperties(platformDir: string) {
 # header note.
 sdk.dir=${defaultAndroidPath}
   `;
-    await writeFileAsync(join(platformDir, 'local.properties'), 'utf8');
+    await writeFileAsync(join(platformDir, 'local.properties'), localSettings, 'utf8');
 
     // Only sync if we were able to create the local properties above, otherwise
     // this will fail
