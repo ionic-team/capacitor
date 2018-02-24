@@ -39,6 +39,27 @@ export async function checkPackage(_config: Config): Promise<string | null> {
   return null;
 }
 
+export async function checkAppConfig(config: Config): Promise<string | null> {
+  if (!config.app.appId) {
+    return 'Missing appId in config. Please add it';
+  }
+  if (!config.app.appName) {
+    return 'Missing appName in config. Please add it';
+  }
+
+  const appIdError = await checkAppId(config, config.app.appId);
+  if (appIdError) {
+    return appIdError;
+  }
+
+  const appNameError = await checkAppName(config, config.app.appName);
+  if (appNameError) {
+    return appNameError;
+  }
+
+  return null;
+}
+
 export async function checkAppDir(config:Config, dir: string): Promise<string | null> {
   if (!/^\S*$/.test(dir)) {
     return `Your app directory should not contain spaces`;

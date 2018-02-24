@@ -1,7 +1,9 @@
 import { Config } from '../config';
 import { addAndroid } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
-import { check, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
+import { editProjectSettingsAndroid } from '../android/common';
+import { editProjectSettingsIOS } from '../ios/common';
+import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
 import { resolve } from 'path';
@@ -26,11 +28,12 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   try {
     await check(
       config,
-      [checkPackage, ...addChecks(config, platformName)]
+      [checkPackage, checkAppConfig, ...addChecks(config, platformName)]
     );
     await generateCapacitorConfig(config);
     await check(config, []); // , [checkWebDir]);
     await doAdd(config, platformName);
+    await editPlatforms(config, platformName);
     await sync(config, platformName);
   } catch (e) {
     logFatal(e);
@@ -77,5 +80,13 @@ export async function doAdd(config: Config, platformName: string) {
     await addIOS(config);
   } else if (platformName === config.android.name) {
     await addAndroid(config);
+  }
+}
+
+async function editPlatforms(config: Config, platformName: string) {
+  if (platformName == config.ios.name) {
+    await editProjectSettingsIOS(config);
+  } else if (platformName == config.android.name) {
+    await editProjectSettingsAndroid(config);
   }
 }

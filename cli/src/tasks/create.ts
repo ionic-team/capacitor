@@ -53,6 +53,8 @@ export async function createCommand(config: Config, dir: string, name: string, i
     // Get app identifier
     const appId = await getAppId(config, id);
     // Copy the starter project
+    config.app.appName = appName;
+    config.app.appId = appId;
     await create(config, appDir, appName, appId);
     // npm install
     await installDeps(config, appDir);
@@ -139,9 +141,9 @@ async function addPlatforms(config: Config, dir: string) {
 
 async function editPlatforms(config: Config, appName: string, appId: string) {
   if (config.cli.os == OS.Mac) {
-    await editProjectSettingsIOS(config, appName, appId);
+    await editProjectSettingsIOS(config);
   }
-  await editProjectSettingsAndroid(config, appName, appId);
+  await editProjectSettingsAndroid(config);
 }
 
 async function printNextSteps(config: Config) {
