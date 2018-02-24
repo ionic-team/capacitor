@@ -33,15 +33,18 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
   return plugin;
 }
 
+/**
+ * Update an Android project with the desired app name and appId.
+ * This is a little trickier for Android because the appId becomes
+ * the package name.
+ */
 export async function editProjectSettingsAndroid(config: Config, appName: string, appId: string) {
   const manifestPath = resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/AndroidManifest.xml');
   const buildGradlePath = resolve(config.app.rootDir, config.android.platformDir, 'app/build.gradle');
 
-  console.log(manifestPath);
+  let manifestContent = await readFileAsync(manifestPath, 'utf8');
 
-  let manifestContent = await readFileAsync(manifestPath, 'utf-8');
-
-  manifestContent = manifestContent.replace(/package="([^"]+)"/, `package="${appId}"`);
+  manifestContent = manifestContent.replace(/com.getcapacitor.myapp/g, `${appId}`);
   await writeFileAsync(manifestPath, manifestContent, 'utf8');
 
   const domainPath = appId.split('.').join('/');
@@ -63,4 +66,23 @@ export async function editProjectSettingsAndroid(config: Config, appName: string
   if (appId.split('.')[0] !== 'com') {
     await remove(resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/'));
   }
+
+  // Update the package in the MainActivity java file
+  const activityPath = resolve(config.app.rootDir, config.android.platformDir, newJavaPath, 'MainActivity.java');
+  let activityContent = await readFileAsync(activityPath, 'utf8');
+
+  activityContent = activityContent.replace(/package ([^;]*)/, `package ${appId}`);
+  await writeFileAsync(activityPath, activityContent, 'utf8');
+
+  let gradleContent = await readFileAsync(buildGradlePath, 'utf8');
+  gradleContent = gradleContent.replace(/applicationId "[^"]+"/, `applicationId "${appId}"`);
+
+  await writeFileAsync(buildGradlePath, gradleContent, 'utf8');
+
+  const stringsPath = resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/res/values/strings.xml');
+  let stringsContent = await readFileAsync(stringsPath, 'utf8');
+  stringsContent = stringsContent.replace(/com.getcapacitor.myapp/g, appId);
+  stringsContent = stringsContent.replace(/My App/g, appName);
+
+  await writeFileAsync(stringsPath, stringsContent);
 }
