@@ -54,6 +54,8 @@ export interface CliConfigCli {
 
 export interface CliConfigApp {
   rootDir: string;
+  appId: string;
+  appName: string;
   webDir: string;
   webDirAbs: string;
   package: PackageJson;

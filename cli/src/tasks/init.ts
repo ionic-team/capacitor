@@ -24,28 +24,27 @@ import { join, relative } from 'path';
 
 const chalk = require('chalk');
 
-export async function initCommand(config: Config, appId: string, appName: string) {
-  log(`\n${chalk.bold(`${_e('⚡️', '*')}  Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`)} ${_e('⚡️', '*')}`);
-  log('\n');
-
+export async function initCommand(config: Config, appName: string, appId: string) {
   try {
     await check(
       config,
       [
-        (config) => checkAppId(config, appId),
-        (config) => checkAppName(config, appName)
+        (config) => checkAppName(config, appName),
+        (config) => checkAppId(config, appId)
       ]
     );
 
-    // Get or create our config
-    await getOrCreateConfig(config);
-    await addPlatforms(config);
-    // Apply project-specific settings to platform projects
-    await editPlatforms(config, appName, appId);
-    await runCopy(config);
+    await runTask(`Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`, async () => {
+      config.app.appId = appId;
+      config.app.appName = appName;
+
+      // Get or create our config
+      await getOrCreateConfig(config);
+    });
+
     await printNextSteps(config);
   } catch (e) {
-    logFatal(`Unable to initialize Capacitor. Please see errors and try again or file an issue`, e);
+    logFatal('Usage: npx cap init appName appId\nErrors:\n' + e);
   }
 }
 
@@ -83,6 +82,8 @@ async function getOrCreateConfig(config: Config) {
   }
 
   await writePrettyJSON(config.app.extConfigFilePath, {
+    appId: config.app.appId,
+    appName: config.app.appName,
     webDir: relative(config.app.rootDir, config.app.webDir)
   });
 
@@ -129,5 +130,9 @@ async function runCopy(config: Config) {
 async function printNextSteps(config: Config) {
   log('\n');
   log(`${chalk.bold(`${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e('🎉', '*')}`)}\n`);
-  log(`Follow the Getting Started guide for next steps:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/getting-started`)}`);
+  log(`Add platforms using "npx cap add":\n`);
+  log(`  npx cap add android`);
+  log(`  npx cap add ios`);
+  log('');
+  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}`);
 }
