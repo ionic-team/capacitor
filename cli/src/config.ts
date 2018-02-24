@@ -178,7 +178,7 @@ export class Config implements CliConfig {
     this.app.extConfigFilePath = join(this.app.rootDir, this.app.extConfigName);
 
     try {
-      const extConfigStr = readFileSync(this.app.extConfigFilePath, 'utf-8');
+      const extConfigStr = readFileSync(this.app.extConfigFilePath, 'utf8');
 
       try {
         // we've got an capacitor.json file, let's parse it

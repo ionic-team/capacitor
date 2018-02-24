@@ -5,7 +5,7 @@ import { join } from 'path';
 import { existsAsync, readFileAsync, writeFileAsync } from './util/fs';
 import { readFile } from 'fs';
 
-export type CheckFunction = (config: Config) => Promise<string | null>;
+export type CheckFunction = (config: Config, ...args: any[]) => Promise<string | null>;
 
 export async function check(config: Config, checks: CheckFunction[]): Promise<void> {
   const results = await Promise.all(checks.map(f => f(config)));
@@ -39,6 +39,21 @@ export async function checkPackage(_config: Config): Promise<string | null> {
   return null;
 }
 
+export async function checkAppDir(config:Config, dir: string): Promise<string | null> {
+  if (!/^\S*$/.test(dir)) {
+    return `Your app directory should not contain spaces`;
+  }
+  return null;
+}
+
+export async function checkAppId(config:Config, id: string): Promise<string | null> {
+  if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id)) {
+    return null;
+  }
+  return `Invalid App ID. Must be in domain form (ex: com.example.app)`;
+}
+
+
 export async function readJSON(path: string): Promise<any> {
   const data = await readFileAsync(path, 'utf8');
   return JSON.parse(data);
@@ -50,7 +65,7 @@ export function writePrettyJSON(path: string, data: any) {
 
 export function readXML(path: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    readFile(path, 'utf-8', async (err, xmlStr) => {
+    readFile(path, 'utf8', async (err, xmlStr) => {
       if (err) {
         reject(`Unable to read: ${path}`);
 

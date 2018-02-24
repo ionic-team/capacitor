@@ -139,7 +139,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     const xmlString = await writeXML(item);
     return xmlString;
   }));
-  const content = `<?xml version='1.0' encoding='utf-8'?>
+  const content = `<?xml version='1.0' encoding='utf8'?>
   <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   ${pluginEntriesString.join('\n')}
   </widget>`;

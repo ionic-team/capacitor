@@ -82,13 +82,11 @@ export async function editProjectSettingsIOS(config: Config, appName: string, ap
   const pbxPath = resolve(config.app.rootDir, config.ios.platformDir, config.ios.nativeProjectName, 'App\.xcodeproj/project.pbxproj');
   const plistPath = resolve(config.app.rootDir, config.ios.platformDir, config.ios.nativeProjectName, 'App/Info.plist');
 
-  let plistContent = await readFileAsync(plistPath, 'utf-8');
+  let plistContent = await readFileAsync(plistPath, 'utf8');
 
   plistContent = plistContent.replace(
     /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^\<]*)<\/string>/,
     `<key>CFBundleDisplayName</key>\n        <string>${appName}</string>`);
-
-  console.log(plistContent);
 
   let pbxContent = await readFileAsync(pbxPath, 'utf8');
   pbxContent = pbxContent.replace(

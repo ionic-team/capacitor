@@ -5,7 +5,20 @@ import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
 import { sync } from './sync';
-import { check, checkPackage, checkWebDir, log, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
+
+import {
+  check,
+  checkAppDir,
+  checkAppId,
+  checkPackage,
+  checkWebDir,
+  log,
+  logFatal,
+  runCommand,
+  runTask,
+  writePrettyJSON
+} from '../common';
+
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { emoji as _e } from '../util/emoji'; 
 import { basename, join } from 'path';
@@ -14,9 +27,16 @@ import * as inquirer from 'inquirer';
 import chalk from 'chalk';
 
 export async function createCommand(config: Config, dir: string, name: string, id: string) {
-  const cliVersion = require('../../package.json').version;
-  log(chalk`\n{bold ${_e('⚡️', '*')}   Welcome to Capacitor (CLI v${cliVersion}) ${_e('⚡️', '*')}}\n`);
+
   try {
+    await check(
+      config,
+      [(config) => checkAppDir(config, dir), (config) => checkAppId(config, id)]
+    );
+
+    const cliVersion = require('../../package.json').version;
+    log(chalk`\n{bold ${_e('⚡️', '*')}   Welcome to Capacitor (CLI v${cliVersion}) ${_e('⚡️', '*')}}\n`);
+
     // Prompt for app name if not provided
     const appDir = await getDir(config, dir);
     // Create the directory
@@ -26,7 +46,7 @@ export async function createCommand(config: Config, dir: string, name: string, i
     // Get app name
     const appName = await getName(config, name);
     // Get app identifier
-    const appId = await getIdentifier(config, id);
+    const appId = await getAppId(config, id);
     // Copy the starter project
     await create(config, appDir, appName, appId);
     // npm install
@@ -66,7 +86,7 @@ async function getName(config: Config, name: string) {
   return name;
 }
 
-async function getIdentifier(config: Config, id: string) {
+async function getAppId(config: Config, id: string) {
   if (!id) {
     const answers = await inquirer.prompt([{
       type: 'input',

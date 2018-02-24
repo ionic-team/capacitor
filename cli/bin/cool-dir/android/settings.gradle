@@ -1,0 +1,3 @@
+include ':app'
+include ':capacitor-android-plugins'
+project(':capacitor-android-plugins').projectDir = new File('../node_modules/@capacitor/cli/assets/capacitor-android-plugins/')
