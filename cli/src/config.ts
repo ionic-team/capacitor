@@ -58,6 +58,8 @@ export class Config implements CliConfig {
 
   app = {
     rootDir: '',
+    appId: '',
+    appName: '',
     webDir: 'www',
     webDirAbs: '',
     package: Package,

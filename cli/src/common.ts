@@ -55,6 +55,9 @@ export async function checkAppId(config:Config, id: string): Promise<string | nu
 
 export async function checkAppName(config:Config, id: string): Promise<string | null> {
   // We allow pretty much anything right now, have fun
+  if (!id || !id.length) {
+    return 'Must provide an app name';
+  }
   return null;
 }
 
@@ -119,7 +122,7 @@ export function logWarn(...args: any[]) {
 
 export function logError(...args: any[]) {
   const chalk = require('chalk');
-  console.log(chalk.red('[error]'), ...args);
+  console.error(chalk.red('[error]'), ...args);
 }
 
 export function logFatal(...args: any[]): never {
