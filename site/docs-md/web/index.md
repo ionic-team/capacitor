@@ -43,7 +43,7 @@ and then import `capacitor.js` into your `index.html`:
 Copy to your project:
 
 ```bash
-npx capacitor copy web
+npx cap copy web
 ```
 
 In `index.html`, import `capacitor.js` before your app's JS:
@@ -62,7 +62,7 @@ If you're not using a framework, Capacitor comes with a small development servic
 run:
 
 ```bash
-npx capacitor serve
+npx cap serve
 ```
 
 ## Going Live

@@ -1,8 +1,21 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
+import { editProjectSettingsAndroid } from '../android/common';
+import { editProjectSettingsIOS } from '../ios/common';
 import { addCommand } from '../tasks/add';
 import { copyCommand } from '../tasks/copy';
-import { checkWebDir, log, logError, logFatal, runCommand, runTask, writePrettyJSON } from '../common';
+import {
+  check,
+  checkAppId,
+  checkAppName,
+  checkWebDir,
+  log,
+  logError,
+  logFatal,
+  runCommand,
+  runTask,
+  writePrettyJSON
+} from '../common';
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { download } from '../util/http';
 import { createTarExtraction } from '../util/archive';
@@ -11,31 +24,24 @@ import { join, relative } from 'path';
 
 const chalk = require('chalk');
 
-export async function initCommand(config: Config) {
+export async function initCommand(config: Config, appId: string, appName: string) {
   log(`\n${chalk.bold(`${_e('⚡️', '*')}  Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`)} ${_e('⚡️', '*')}`);
   log('\n');
 
   try {
-    // Prompt for new or existing project
-    const isNew = await promptNewProject(config);
-
-    // Initializing an existing app
-    if (!isNew) {
-      await printExistingProjectMessage(config);
-      return;
-    }
-
-    // Initialize a new project
+    await check(
+      config,
+      [
+        (config) => checkAppId(config, appId),
+        (config) => checkAppName(config, appName)
+      ]
+    );
 
     // Get or create our config
     await getOrCreateConfig(config);
-    // Create the web directory
-    await createWebDir(config);
-    // Add our package.json
-    await checkPackageJson(config);
-    await seedProject(config);
-    await installDeps(config, isNew);
     await addPlatforms(config);
+    // Apply project-specific settings to platform projects
+    await editPlatforms(config, appName, appId);
     await runCopy(config);
     await printNextSteps(config);
   } catch (e) {
@@ -85,41 +91,6 @@ async function getOrCreateConfig(config: Config) {
 }
 
 /**
- * Check for or create the main package.json file
- * @param config
- */
-async function checkPackageJson(config: Config) {
-  if (!await existsAsync(join(config.app.rootDir, 'package.json'))) {
-    await cpAsync(join(config.app.assets.templateDir, 'package.json'), 'package.json');
-  }
-}
-
-async function installDeps(config: Config, isNew: boolean) {
-  if (isNew) {
-    const command = 'npm install';
-    await runTask(`Installing dependencies for seed project (${chalk.blue(command)})`, () => {
-    return runCommand(command);
-    });
-  } else {
-    const command = 'npm install --save @capacitor/core@latest @capacitor/cli@latest';
-    await runTask(`Installing Capacitor dependencies (${chalk.blue(command)})`, () => {
-    return runCommand(command);
-    });
-  }
-}
-
-async function seedProject(config: Config) {
-  await runTask(`Downloading and installing seed project`, async () => {
-    const url = 'https://github.com/ionic-team/capacitor-starter/archive/master.tar.gz';
-    const ws = await createTarExtraction({ cwd: config.app.rootDir, strip: 1 });
-    await download(url, ws, {
-      // progress: (loaded, total) => task.progress(loaded, total),
-    });
-    return Promise.resolve();
-  });
-}
-
-/**
  * Add Android and iOS by default
  * @param config
  */
@@ -136,30 +107,15 @@ async function addPlatforms(config: Config) {
   });
 }
 
-/**
- * Create the web directory and copy our default public assets
- * @param config
- * @param webDir
- */
-async function createWebDir(config: Config) {
-  const webDir = 'www';
-  try {
-    await mkdirAsync(webDir);
-
-    await runTask(`Creating ${config.app.extConfigName}`, () => {
-      return writePrettyJSON(config.app.extConfigFilePath, {
-        webDir: webDir
-      });
-    });
-
-    await copyAppTemplatePublicAssets(config, webDir);
-  } catch (e) {
-    logError(`Unable to create web directory "${webDir}." You'll need to create it yourself or configure webDir in capacitor.config.json`);
-  }
-}
-
 async function copyAppTemplatePublicAssets(config: Config, webDir: string) {
   await cpAsync(join(config.app.assets.templateDir, 'www'), webDir);
+}
+
+async function editPlatforms(config: Config, appName: string, appId: string) {
+  if (config.cli.os == OS.Mac) {
+    await editProjectSettingsIOS(config, appName, appId);
+  }
+  await editProjectSettingsAndroid(config, appName, appId);
 }
 
 async function runCopy(config: Config) {

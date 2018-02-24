@@ -16,14 +16,14 @@ By default, an iOS project is created for every Capacitor project. If you are ad
 project, you can manually add the iOS project using
 
 ```bash
-npx capacitor add ios
-npx capacitor sync
+npx cap add ios
+npx cap sync
 ```
 
 The `sync` command updates dependencies, and copies any web assets to your project. You can also run
 
 ```bash
-npx capacitor copy
+npx cap copy
 ```
 
 To copy web assets only, which is faster if you know you don't need to update native dependencies.
@@ -33,7 +33,7 @@ To copy web assets only, which is faster if you know you don't need to update na
 To open the project in Xcode, run
 
 ```bash
-npx capacitor open ios
+npx cap open ios
 ```
 
 ### Running Your App

@@ -25,7 +25,7 @@ export async function openCommand(config: Config, selectedPlatform: string) {
 
 
 export async function open(config: Config, platformName: string) {
-  log(`Don't forget to run "npx capacitor copy" before running your app`);
+  log(`Don't forget to run "npx cap copy" before running your app`);
   if (platformName === config.ios.name) {
     await runTask('Opening the Xcode workspace...', () => {
       return openIOS(config);

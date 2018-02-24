@@ -42,7 +42,7 @@ Finally, do a rebuild in Xcode.
 
 This error occurs when Capacitor's `native-bridge.js` file was not copied to the native project.
 
-The fix is simple: run `npx capacitor copy ios` to copy this file.
+The fix is simple: run `npx cap copy ios` to copy this file.
 
 ## Error: Sandbox not in sync with the Podfile.lock
 
@@ -51,7 +51,7 @@ This error can happen if CocoaPods hasn't been able to run to install your depen
 Run
 
 ```bash
-npx capacitor update ios
+npx cap update ios
 ```
 
 To update your pods. Perform a new build after running this command.

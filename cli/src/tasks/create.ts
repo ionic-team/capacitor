@@ -10,6 +10,7 @@ import {
   check,
   checkAppDir,
   checkAppId,
+  checkAppName,
   checkPackage,
   checkWebDir,
   log,
@@ -31,7 +32,11 @@ export async function createCommand(config: Config, dir: string, name: string, i
   try {
     await check(
       config,
-      [(config) => checkAppDir(config, dir), (config) => checkAppId(config, id)]
+      [
+        (config) => checkAppDir(config, dir),
+        (config) => checkAppId(config, id),
+        (config) => checkAppName(config, name)
+      ]
     );
 
     const cliVersion = require('../../package.json').version;
@@ -144,9 +149,4 @@ async function printNextSteps(config: Config) {
   log(`\nNext steps:`)
   log(`cd ./${basename(config.app.rootDir)}`);
   log(`Get to work by following the Capacitor Development Workflow: https://capacitor.ionicframework.com/docs/basics/workflow`);
-}
-
-export async function editCommand(config: Config, appName: string, appId: string) {
-  await editProjectSettingsIOS(config, appName, appId);
-  await editProjectSettingsAndroid(config, appName, appId);
 }

@@ -22,14 +22,14 @@ By default, an Android project is created for every Capacitor project. If you ar
 project, you can manually add the Android project using
 
 ```bash
-npx capacitor add android
-npx capacitor sync
+npx cap add android
+npx cap sync
 ```
 
 The `sync` command updates dependencies, and copies any web assets to your project. You can also run
 
 ```bash
-npx capacitor copy
+npx cap copy
 ```
 
 To copy web assets only, which is faster if you know you don't need to update native dependencies.
@@ -39,7 +39,7 @@ To copy web assets only, which is faster if you know you don't need to update na
 To open the project in Android Studio, run
 
 ```bash
-npx capacitor open android
+npx cap open android
 ```
 
 ### Running Your App

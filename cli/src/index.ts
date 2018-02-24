@@ -9,7 +9,6 @@ import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
 import { Config } from './config';
 import { addCommand } from './tasks/add';
-import { editCommand } from './tasks/create';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
 import { emoji as _e } from './util/emoji';
@@ -30,17 +29,10 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-    .command('init')
+    .command('init [appName] [appId]')
     .description('Initializes a new Capacitor project in the current directory')
-    .action(() => {
-      return initCommand(config);
-    });
-
-  program
-    .command('edit [appName] [appId]')
-    .description('TEST')
     .action((appName, appId) => {
-      return editCommand(config, appName, appId);
+      return initCommand(config, appName, appId);
     });
 
   program

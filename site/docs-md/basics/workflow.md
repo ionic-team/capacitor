@@ -15,7 +15,7 @@ Additionally, this is where you might use [Ionic](https://ionicframework.com/), 
 When you are ready to run your app natively on a device or in a simulator, copy your built web assets using
 
 ```
-npx capacitor copy
+npx cap copy
 ```
 
 ## 3. Open your Native IDE
@@ -23,7 +23,7 @@ npx capacitor copy
 Capacitor uses the Native IDE's to build, simulate, and run your app.
 
 ```bash
-npx capacitor open
+npx cap open
 ```
 
 ## 4. Periodic Maintenance
@@ -33,12 +33,12 @@ Your Capacitor app needs periodic maintenance, such as updating dependencies and
 To update your app's dependencies, run
 
 ```bash
-npx capacitor update
+npx cap update
 ```
 
 To install new plugins (including Cordova ones), run
 
 ```bash
 npm install really-cool-plugin
-npx capacitor update
+npx cap update
 ```
