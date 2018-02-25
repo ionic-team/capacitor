@@ -31,6 +31,11 @@ describe('Add: Android', () => {
     expect(await FS.exists('android/')).toBe(true);
   });
 
+  it('Should have Cordova JS copied', async () => {
+    expect(await FS.exists('android/app/src/main/assets/public/cordova.js')).toBe(true);
+    expect(await FS.exists('android/app/src/main/assets/public/cordova_plugins.js')).toBe(true);
+  });
+
   it('Should rename package', async () => {
     expect(await FS.exists('android/app/src/main/java/com/getcapacitor/cli/test/MainActivity.java')).toBe(true);
   });
