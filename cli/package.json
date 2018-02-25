@@ -72,6 +72,7 @@
     "jest": "^21.2.1",
     "mock-fs": "^4.4.2",
     "np": "^2.18.2",
+    "tmp": "0.0.33",
     "ts-jest": "^21.2.4",
     "tslint": "^5.8.0",
     "tslint-ionic-rules": "0.0.11",
@@ -89,6 +90,10 @@
     "transform": {
       "^.+\\.(ts)$": "ts-jest"
     },
-    "testRegex": "(/test/.*|(\\.|/))\\.(jsx?|tsx?)$"
+    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/test/util.ts"
+    ]
   }
 }

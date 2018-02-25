@@ -7,6 +7,7 @@ import {
   checkAppId,
   checkAppName,
   checkWebDir,
+  getOrCreateConfig,
   log,
   logError,
   logFatal,
@@ -67,26 +68,6 @@ async function printExistingProjectMessage(config: Config) {
   }
   log(`\nnpx capacitor add android`);
   log(`\nLearn more: https://capacitor.ionicframework.com/docs/getting-started/\n`);
-}
-
-/**
- * Check for or create our main configuration file.
- * @param config
- */
-async function getOrCreateConfig(config: Config) {
-  const configPath = join(config.app.rootDir, config.app.extConfigName);
-  if (await existsAsync(configPath)) {
-    return configPath;
-  }
-
-  await writePrettyJSON(config.app.extConfigFilePath, {
-    appId: config.app.appId,
-    appName: config.app.appName,
-    webDir: relative(config.app.rootDir, config.app.webDir)
-  });
-
-  // Store our newly created or found external config as the default
-  config.loadExternalConfig();
 }
 
 /**

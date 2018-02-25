@@ -1,7 +1,7 @@
 import { Config } from './config';
 import { exec } from 'child_process';
 import { setTimeout } from 'timers';
-import { join } from 'path';
+import { join, relative } from 'path';
 import { existsAsync, readFileAsync, writeFileAsync } from './util/fs';
 import { readFile } from 'fs';
 
@@ -71,7 +71,7 @@ export async function checkAppId(config:Config, id: string): Promise<string | nu
   if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id)) {
     return null;
   }
-  return `Invalid App ID. Must be in domain form (ex: com.example.app)`;
+  return `Invalid App ID "${id}". Must be in domain form (ex: com.example.app)`;
 }
 
 export async function checkAppName(config:Config, id: string): Promise<string | null> {
@@ -121,6 +121,27 @@ export function writeXML(object: any): Promise<any> {
     resolve(xml);
   });
 }
+
+/**
+ * Check for or create our main configuration file.
+ * @param config
+ */
+export async function getOrCreateConfig(config: Config) {
+  const configPath = join(config.app.rootDir, config.app.extConfigName);
+  if (await existsAsync(configPath)) {
+    return configPath;
+  }
+
+  await writePrettyJSON(config.app.extConfigFilePath, {
+    appId: config.app.appId,
+    appName: config.app.appName,
+    webDir: relative(config.app.rootDir, config.app.webDir)
+  });
+
+  // Store our newly created or found external config as the default
+  config.loadExternalConfig();
+}
+
 
 export function log(...args: any[]) {
   console.log(...args);
