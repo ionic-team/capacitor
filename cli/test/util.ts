@@ -32,6 +32,12 @@ export function mktmp(dir: string) {
   });
 }
 
+export function existsWithRoot(dir: string) {
+  return (appFile) => {
+    return existsAsync(resolve(dir, appFile));
+  }
+}
+
 export async function exists(dir: string, appFile: string) {
   return existsAsync(resolve(dir, appFile));
 }
