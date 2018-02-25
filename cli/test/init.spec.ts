@@ -1,4 +1,4 @@
-import { run, mktmp, read, exists } from './util';
+import { run, mktmp, read, existsWithRoot } from './util';
 
 const APP_ID = 'com.getcapacitor.cli.test';
 const APP_NAME = 'Capacitor CLI Test';
@@ -20,8 +20,10 @@ describe('CLI Init/Create', () => {
 
   it('Should create a project', async () => {
     await run(`create "${appDir}" "${APP_NAME}" "${APP_ID}"`);
-    expect(await exists(appDir, 'capacitor.config.json')).toBe(true);
-    expect(await exists(appDir, 'ios')).toBe(true);
-    expect(await exists(appDir, 'android')).toBe(true);
+    const exists = existsWithRoot(appDir);
+    console.log('EXISTS: ', exists);
+    expect(await exists('capacitor.config.json')).toBe(true);
+    expect(await exists('ios')).toBe(true);
+    expect(await exists('android')).toBe(true);
   });
 });
