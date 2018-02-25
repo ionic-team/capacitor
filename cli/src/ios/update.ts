@@ -40,6 +40,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     const iosPlugins = await getIOSPlugins(config, allPlugins);
     return iosPlugins;
   });
+  console.log('iOS found these plugins: ', plugins);
 
   printPlugins(plugins);
 

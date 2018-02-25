@@ -1,11 +1,11 @@
-import { APP_ID, APP_NAME, run, makeAppDir, mktmp, MappedFS, CORDOVA_PLUGIN_ID } from './util';
+import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, run, makeAppDir, mktmp, MappedFS } from './util';
 
 import { runCommand } from '../src/common';
 import { mkdirAsync, writeFileAsync } from '../src/util/fs';
 
 import { join } from 'path';
 
-describe('Update: Android', () => {
+describe('Update: iOS', () => {
   let appDirObj;
   let appDir;
   let FS;
@@ -17,9 +17,9 @@ describe('Update: Android', () => {
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
-    await run(appDir, `add android`);
+    await run(appDir, `add ios`);
     // Redundant, because add does this, but called explicitly for thoroughness
-    await run(appDir, `update android`);
+    await run(appDir, `update ios`);
     FS = new MappedFS(appDir);
   });
 
@@ -31,7 +31,9 @@ describe('Update: Android', () => {
   });
 
   it('Should install Cordova plugin JS', async () => {
-    const cordovaPluginJSContent = await FS.read('android/app/src/main/assets/public/cordova_plugins.js');
+    console.log(appDir);
+    const cordovaPluginJSContent = await FS.read('ios/App/public/cordova_plugins.js');
+    console.log(cordovaPluginJSContent);
     let regex = new RegExp(CORDOVA_PLUGIN_ID);
     expect(regex.test(cordovaPluginJSContent)).toBe(true);
   });
