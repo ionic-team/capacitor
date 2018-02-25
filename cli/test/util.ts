@@ -7,6 +7,8 @@ const tmp = require('tmp');
 const cwd = process.cwd();
 
 export const CORDOVA_PLUGIN_ID = 'cool-cordova-plugin';
+export const APP_ID = 'com.getcapacitor.cli.test';
+export const APP_NAME = 'Capacitor CLI Test';
 
 export async function run(appRoot: string, capCommand: string) {
   return new Promise((resolve, reject) => {

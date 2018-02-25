@@ -1,12 +1,9 @@
-import { run, mktmp, MappedFS } from './util';
+import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';
 
 import { runCommand } from '../src/common';
 import { mkdirAsync } from '../src/util/fs';
 
 import { join } from 'path';
-
-const APP_ID = 'com.getcapacitor.cli.test';
-const APP_NAME = 'Capacitor CLI Test';
 
 describe('Init', () => {
   let appDirObj;
