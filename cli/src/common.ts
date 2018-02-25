@@ -41,10 +41,10 @@ export async function checkPackage(_config: Config): Promise<string | null> {
 
 export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appId) {
-    return 'Missing appId in config. Please add it';
+    return 'Missing appId for new platform. Please add it in capacitor.config.json.';
   }
   if (!config.app.appName) {
-    return 'Missing appName in config. Please add it';
+    return 'Missing appName for new platform. Please add it in capacitor.config.json.';
   }
 
   const appIdError = await checkAppId(config, config.app.appId);
