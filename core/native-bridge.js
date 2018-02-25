@@ -5,6 +5,9 @@
 
   var capacitor = Capacitor;
 
+  // Export Cordova if not defined
+  win.cordova = win.cordova || {};
+
   capacitor.Plugins = capacitor.Plugins || {};
   
   capacitor.DEBUG = typeof capacitor.DEBUG === 'undefined' ? true : capacitor.DEBUG;

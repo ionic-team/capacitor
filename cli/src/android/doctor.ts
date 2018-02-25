@@ -191,7 +191,7 @@ async function checkBuildGradle(config: Config, packageId: string) {
     return `${fileName} file is missing in: ${appDir}`;
   }
 
-  let fileContent = await readFileAsync(filePath, 'utf8');
+  let fileContent = await readFileAsync(filePath, 'utf-8');
 
   fileContent = fileContent.replace(/'|"/g, '').replace(/\s+/g, ' ');
 

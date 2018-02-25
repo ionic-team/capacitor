@@ -8,8 +8,6 @@ import { emoji as _e } from '../util/emoji';
 import chalk from 'chalk';
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
-  const now = +new Date;
-
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
     logInfo(`There are no platforms to update yet. Create one with "capacitor create".`);
@@ -23,8 +21,6 @@ export async function updateCommand(config: Config, selectedPlatformName: string
 
     await allSerial(platforms.map(platformName => async () => await update(config, platformName, true)));
     const then = +new Date;
-
-    log(`${_e('✅  ', '')}Update finished in ${(then-now)/1000}s`);
   } catch (e) {
     logFatal(e);
   }
