@@ -362,10 +362,11 @@ public class WebViewLocalServer {
 
         try {
           mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
-          if (mimeType == null){
-            if(path.endsWith(".js")) {
-              mimeType = "application/javascript"; //ES6 Modules need mime
-            }else{
+          if (mimeType == null) {
+            if (path.endsWith(".js")) {
+              // Make sure JS files get the proper mimetype to support ES modules
+              mimeType = "application/javascript";
+            } else {
               mimeType = URLConnection.guessContentTypeFromStream(stream);
             }
           }
