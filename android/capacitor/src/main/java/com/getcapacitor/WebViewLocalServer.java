@@ -71,7 +71,7 @@ public class WebViewLocalServer {
    * minimum.
    */
   public abstract static class PathHandler {
-    private String mimeType;
+    protected String mimeType;
     private String encoding;
     private String charset;
     private int statusCode;
@@ -360,11 +360,15 @@ public class WebViewLocalServer {
           return null;
         }
 
-        String mimeType = null;
         try {
-          mimeType = URLConnection.guessContentTypeFromName(path);
-          if (mimeType == null)
-            mimeType = URLConnection.guessContentTypeFromStream(stream);
+          mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
+          if (mimeType == null){
+            if(path.endsWith(".js")) {
+              mimeType = "application/javascript"; //ES6 Modules need mime
+            }else{
+              mimeType = URLConnection.guessContentTypeFromStream(stream);
+            }
+          }
         } catch (Exception ex) {
           Log.e(TAG, "Unable to get mime type" + url);
         }
