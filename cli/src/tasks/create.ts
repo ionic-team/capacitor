@@ -13,6 +13,7 @@ import {
   checkAppName,
   checkPackage,
   checkWebDir,
+  getOrCreateConfig,
   log,
   logFatal,
   runCommand,
@@ -55,6 +56,9 @@ export async function createCommand(config: Config, dir: string, name: string, i
     // Copy the starter project
     config.app.appName = appName;
     config.app.appId = appId;
+
+    await getOrCreateConfig(config);
+
     await create(config, appDir, appName, appId);
     // npm install
     await installDeps(config, appDir);

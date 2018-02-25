@@ -63,7 +63,9 @@ export async function editProjectSettingsAndroid(config: Config) {
     resolve(newJavaPath, 'MainActivity.java')
   );
 
-  await remove(resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/getcapacitor'));
+  if (appId.split('.')[1] !== 'getcapacitor') {
+    await remove(resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/getcapacitor'));
+  }
 
   // Remove our template 'com' folder if their ID doesn't have it
   if (appId.split('.')[0] !== 'com') {
