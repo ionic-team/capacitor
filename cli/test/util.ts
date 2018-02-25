@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
-import { existsAsync, readFileAsync } from '../src/util/fs';
+import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, cpAsync } from '../src/util/fs';
+import { mkdirs } from 'fs-extra';
 const tmp = require('tmp');
 
 const cwd = process.cwd();
@@ -32,16 +33,39 @@ export function mktmp() {
   });
 }
 
-export function existsWithRoot(dir: string) {
-  return (appFile) => {
-    return existsAsync(resolve(dir, appFile));
+export async function makeAppDir() {
+  const appDirObj: any = await mktmp();
+  const tmpDir = appDirObj.path;
+  const appDir = join(tmpDir, 'test-app');
+  await mkdirAsync(appDir);
+  // Make the web dir
+  await mkdirAsync(join(appDir, 'www'));
+  // Make a fake package.json
+  await writeFileAsync(join(appDir, 'package.json'), "{}");
+  await mkdirAsync(join(appDir, 'node_modules'));
+  const cliModulesPath = join(appDir, 'node_modules/@capacitor/cli');
+  const coreModulesPath = join(appDir, 'node_modules/@capacitor/core');
+  await mkdirs(cliModulesPath);
+  await mkdirs(coreModulesPath);
+  await cpAsync(join(cwd, 'dist'), cliModulesPath);
+  await cpAsync(resolve(cwd, '../core/dist'), coreModulesPath);
+  await cpAsync(resolve(cwd, '../core/native-bridge.js'), join(coreModulesPath, 'native-bridge.js'));
+
+  return {
+    ...appDirObj,
+     appDir
+  };
+}
+
+class MappedFS {
+  constructor(private rootDir) {
+  }
+  async read (path) {
+    return readFileAsync(resolve(this.rootDir, path), 'utf8');
+  }
+  async exists(path) {
+    return existsAsync(resolve(this.rootDir, path));
   }
 }
 
-export async function exists(dir: string, appFile: string) {
-  return existsAsync(resolve(dir, appFile));
-}
-
-export async function read(dir: string, appFile: string) {
-  return readFileAsync(resolve(dir, appFile));
-}
+export { MappedFS };

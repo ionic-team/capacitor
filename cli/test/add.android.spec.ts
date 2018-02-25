@@ -1,0 +1,62 @@
+import { run, makeAppDir, mktmp, MappedFS } from './util';
+
+import { runCommand } from '../src/common';
+import { mkdirAsync, writeFileAsync } from '../src/util/fs';
+
+import { join } from 'path';
+
+const APP_ID = 'com.getcapacitor.cli.test';
+const APP_NAME = 'Capacitor CLI Test';
+
+describe('Add: Android', () => {
+  let appDirObj;
+  let FS;
+
+  beforeAll(async () => {
+    // These commands are slowww...
+    jest.setTimeout(20000);
+    appDirObj = await makeAppDir();
+    const appDir = appDirObj.appDir;
+    // Init in this directory so we can test add
+    await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
+    await run(appDir, `add android`);
+    FS = new MappedFS(appDir);
+  });
+
+  afterAll(() => {
+    appDirObj.cleanupCallback();
+  });
+
+  it('Should add', async () => {
+    expect(await FS.exists('android/')).toBe(true);
+  });
+
+  it('Should rename package', async () => {
+    expect(await FS.exists('android/app/src/main/java/com/getcapacitor/cli/test/MainActivity.java')).toBe(true);
+  });
+
+  it('Should rename package in main activity', async () => {
+    const activityContent = await FS.read('android/app/src/main/java/com/getcapacitor/cli/test/MainActivity.java');
+    const regex = new RegExp(`package ${APP_ID};`);
+    expect(regex.test(activityContent)).toBe(true);
+  });
+
+  it('Should rename app id in build.gradle', async () => {
+    const gradleContent = await FS.read('android/app/build.gradle');
+    const regex = new RegExp(`applicationId "${APP_ID}"`);
+    expect(regex.test(gradleContent)).toBe(true);
+  });
+
+  it('Should update strings.xml', async () => {
+    const stringsContent = await FS.read('android/app/src/main/res/values/strings.xml');
+    let regex = new RegExp(`<string name="app_name">${APP_NAME}</string>`);
+    expect(regex.test(stringsContent)).toBe(true);
+    regex = new RegExp(`<string name="title_activity_main">${APP_NAME}</string>`);
+    expect(regex.test(stringsContent)).toBe(true);
+    regex = new RegExp(`<string name="custom_url_scheme">${APP_ID}</string>`);
+    expect(regex.test(stringsContent)).toBe(true);
+  });
+
+  // Other test ideas:
+  // should install/copy pre-existing cordova/capacitor plugins in package.json
+});
