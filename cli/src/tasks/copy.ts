@@ -6,7 +6,7 @@ import { copyWeb } from '../web/copy';
 import { basename, join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
 import { copyCordovaJSFiles } from '../cordova'
-
+import chalk from 'chalk';
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
   const platforms = config.selectPlatforms(selectedPlatformName);
@@ -23,19 +23,25 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
 }
 
 export async function copy(config: Config, platformName: string) {
-  if (platformName === config.ios.name) {
-    await copyWebDir(config, config.ios.webDirAbs);
-    await copyNativeBridge(config, config.ios.webDirAbs);
-    await copyCordovaJSFiles(config, platformName);
-  } else if (platformName === config.android.name) {
-    await copyWebDir(config, config.android.webDirAbs);
-    await copyNativeBridge(config, config.android.webDirAbs);
-    await copyCordovaJSFiles(config, platformName);
-  } else if (platformName === config.web.name) {
-    await copyWeb(config);
-  } else {
-    throw `Platform ${platformName} is not valid.`;
-  }
+  await runTask(chalk`{green {bold copy}}`, async () => {
+    if (!await existsAsync(config.app.webDirAbs)) {
+      throw new Error('Web dir doesn\'t exist. Make sure you\'ve run npm build then run npx cap copy again');
+    }
+
+    if (platformName === config.ios.name) {
+      await copyWebDir(config, config.ios.webDirAbs);
+      await copyNativeBridge(config, config.ios.webDirAbs);
+      await copyCordovaJSFiles(config, platformName);
+    } else if (platformName === config.android.name) {
+      await copyWebDir(config, config.android.webDirAbs);
+      await copyNativeBridge(config, config.android.webDirAbs);
+      await copyCordovaJSFiles(config, platformName);
+    } else if (platformName === config.web.name) {
+      await copyWeb(config);
+    } else {
+      throw `Platform ${platformName} is not valid.`;
+    }
+  });
 }
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
@@ -46,9 +52,9 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
     return;
   }
 
-  console.log('Copying native bridge', bridgePath, nativeAbsDir);
-
-  return fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
+  await runTask('Copying native bridge', async () => {
+    return fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
+  });
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {

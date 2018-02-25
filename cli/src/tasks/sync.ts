@@ -5,7 +5,9 @@ import { check, checkPackage, checkWebDir, logFatal, logInfo } from '../common';
 
 import { allSerial } from '../util/promise';
 
-
+/**
+ * Sync is a copy and an update in one.
+ */
 export async function syncCommand(config: Config, selectedPlatform: string) {
   const platforms = config.selectPlatforms(selectedPlatform);
   if (platforms.length === 0) {

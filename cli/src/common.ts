@@ -133,7 +133,7 @@ export function logSuccess(...args: any[]) {
 
 export function logInfo(...args: any[]) {
   const chalk = require('chalk');
-  console.log(...args);
+  console.log(chalk.bold.cyan('[info]'), ...args);
 }
 
 export function logWarn(...args: any[]) {
