@@ -6,6 +6,7 @@ import { editProjectSettingsIOS } from '../ios/common';
 import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
+import chalk from 'chalk';
 import { resolve } from 'path';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
@@ -76,11 +77,13 @@ export function addChecks(config: Config, platformName: string) {
 }
 
 export async function doAdd(config: Config, platformName: string) {
-  if (platformName === config.ios.name) {
-    await addIOS(config);
-  } else if (platformName === config.android.name) {
-    await addAndroid(config);
-  }
+  await runTask(chalk`{green {bold add}}`, async () => {
+    if (platformName === config.ios.name) {
+      await addIOS(config);
+    } else if (platformName === config.android.name) {
+      await addAndroid(config);
+    }
+  });
 }
 
 async function editPlatforms(config: Config, platformName: string) {

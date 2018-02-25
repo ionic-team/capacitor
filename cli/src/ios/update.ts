@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { CheckFunction, log, logInfo, runCommand, runTask } from '../common';
+import { CheckFunction, log, logInfo, logWarn, runCommand, runTask } from '../common';
 import { copySync, removeSync, writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join, resolve } from 'path';
@@ -14,8 +14,10 @@ const platform = 'ios';
 
 export async function updateIOS(config: Config, needsUpdate: boolean) {
   var chalk = require('chalk');
+  /*
   log(`\n${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
           `local Pod repo is up to date and can find new Pod releases.\n`);
+  */
 
 
   /*
@@ -33,7 +35,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   }
   */
 
-  const plugins = await runTask('Fetching plugins', async () => {
+  const plugins = await runTask('Fetching installed plugins', async () => {
     const allPlugins = await getPlugins(config);
     const iosPlugins = await getIOSPlugins(config, allPlugins);
     return iosPlugins;
@@ -51,6 +53,9 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   await autoGeneratePods(config, plugins);
   await generateCordovaPodspec(cordovaPlugins, config);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
+
+  logWarn(`${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
+          `local Pod repo is up to date and can find new Pod releases.`);
 }
 
 export async function autoGeneratePods(config: Config, plugins: Plugin[]): Promise<void[]> {

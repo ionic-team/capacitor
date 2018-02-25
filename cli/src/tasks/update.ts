@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, log, logFatal, logInfo, writeXML } from '../common';
+import { CheckFunction, check, checkPackage, log, logFatal, logInfo, runTask, writeXML } from '../common';
 import { emoji as _e } from '../util/emoji';
 
 import chalk from 'chalk';
@@ -47,10 +47,11 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
 }
 
 export async function update(config: Config, platformName: string, needsUpdate: boolean) {
-  log(`${_e('📲  ', '')}Updating ${chalk.bold(platformName)}`);
-  if (platformName === config.ios.name) {
-    await updateIOS(config, needsUpdate);
-  } else if (platformName === config.android.name) {
-    await updateAndroid(config, needsUpdate);
-  }
+  runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
+    if (platformName === config.ios.name) {
+      await updateIOS(config, needsUpdate);
+    } else if (platformName === config.android.name) {
+      await updateAndroid(config, needsUpdate);
+    }
+  });
 }
