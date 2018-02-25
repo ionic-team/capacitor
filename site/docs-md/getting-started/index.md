@@ -36,9 +36,19 @@ Where `appName` is the name of your app, and `appId` is the domain-style app ide
 
 Capacitor is now installed in your project 🎉
 
-## Starting a fresh project
+## Using Capacitor Starter with Ionic Framework
 
-To start a fresh Capacitor project, run
+Integration into the Ionic CLI is coming soon.
+
+For now, create a new ionic app using `ionic start`, then follow the steps above to add
+Capacitor to an existing web app (in this case, your new Ionic app).
+
+
+## Optional: Starting a fresh project
+
+Capacitor comes with a stock project structure if you'd rather start fresh and plan to add a UI/frontend framework separately.
+
+To create it, run:
 
 ```
 npx @capacitor/cli create [appDir] [appName] [appId]
@@ -50,13 +60,6 @@ Where `appDir` is the directory of your app (no spaces), `appName` is the name o
 
 This will create a very simple starting app with no UI library that you should nuke before
 starting your own app.
-
-## Using Capacitor Starter with Ionic Framework
-
-Integration into the Ionic CLI is coming soon.
-
-For now, create a new ionic app using `ionic start`, then follow the steps above to add
-Capacitor to an existing web app (in this case, your new Ionic app).
 
 ## Where to go next
 
