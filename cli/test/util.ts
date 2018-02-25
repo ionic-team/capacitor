@@ -3,9 +3,11 @@ import { join, resolve } from 'path';
 import { existsAsync, readFileAsync } from '../src/util/fs';
 const tmp = require('tmp');
 
-export async function run(capCommand: string) {
+const cwd = process.cwd();
+
+export async function run(appRoot: string, capCommand: string) {
   return new Promise((resolve, reject) => {
-    exec(`bin/cap ${capCommand}`, (error, stdout, stderr) => {
+    exec(`cd ${appRoot} && ${cwd}/bin/cap ${capCommand}`, (error, stdout, stderr) => {
       if (error) {
         reject(stdout + stderr);
       } else {
@@ -15,18 +17,16 @@ export async function run(capCommand: string) {
   });
 }
 
-export function mktmp(dir: string) {
+export function mktmp() {
   return new Promise((resolve, reject) => {
     tmp.dir((err, path, cleanupCallback) => {
-      console.log('Created tmp path', path);
       if (err) {
         throw err;
       }
 
-      console.log('RESOLVING', path);
       resolve({
         cleanupCallback,
-        path: join(path, dir)
+        path
       });
     });
   });
