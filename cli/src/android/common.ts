@@ -79,11 +79,13 @@ export async function editProjectSettingsAndroid(config: Config) {
   activityContent = activityContent.replace(/package ([^;]*)/, `package ${appId}`);
   await writeFileAsync(activityPath, activityContent, 'utf8');
 
+  // Update the applicationId in build.gradle
   let gradleContent = await readFileAsync(buildGradlePath, 'utf8');
   gradleContent = gradleContent.replace(/applicationId "[^"]+"/, `applicationId "${appId}"`);
 
   await writeFileAsync(buildGradlePath, gradleContent, 'utf8');
 
+  // Update the settings in res/values/strings.xml
   const stringsPath = resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/res/values/strings.xml');
   let stringsContent = await readFileAsync(stringsPath, 'utf8');
   stringsContent = stringsContent.replace(/com.getcapacitor.myapp/g, appId);
