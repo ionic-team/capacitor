@@ -17,8 +17,7 @@ import {
   log,
   logFatal,
   runCommand,
-  runTask,
-  writePrettyJSON
+  runTask
 } from '../common';
 
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
