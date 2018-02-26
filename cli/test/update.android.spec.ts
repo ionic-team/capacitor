@@ -1,7 +1,8 @@
-import { APP_ID, APP_NAME, run, makeAppDir, mktmp, MappedFS, CORDOVA_PLUGIN_ID } from './util';
+import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, mktmp, run, } from './util';
 
 import { runCommand } from '../src/common';
 import { mkdirAsync, writeFileAsync } from '../src/util/fs';
+import { updateCommand } from '../src/tasks/update';
 
 import { join } from 'path';
 
@@ -19,7 +20,7 @@ describe('Update: Android', () => {
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await run(appDir, `add android`);
     // Redundant, because add does this, but called explicitly for thoroughness
-    await run(appDir, `update android`);
+    await updateCommand(makeConfig(appDir), 'android');
     FS = new MappedFS(appDir);
   });
 
