@@ -9,7 +9,7 @@ public class CAPBackgroundTaskPlugin : CAPPlugin {
     //NotificationCenter.default.addObserver(self, selector: #selector(self.onAppBackgrounded), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
   }
   
-  @objc func exec(_ call: CAPPluginCall) {
+  @objc func beforeExit(_ call: CAPPluginCall) {
     var taskId: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     
     taskId = UIApplication.shared.beginBackgroundTask {
