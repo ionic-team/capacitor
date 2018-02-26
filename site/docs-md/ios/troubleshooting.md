@@ -63,3 +63,21 @@ Xcode sometimes gets stuck indexing forever. This unfortunate situation looks li
 ![Xcode indexing](/assets/img/docs/ios/indexing.png)
 
 The only solution is to Force Close Xcode (using Activity Monitor) and start it up again.
+
+## CocoaPods: Failed to connect to GitHub
+
+This error can happen on Mac's with an old version of openssl and ruby installed, since GitHub
+restricted the allowed cryptographic protocols when accessing repos.
+
+The solution is to update openssl and update Ruby:
+
+```bash
+brew install openssl
+brew upgrade openssl
+brew install ruby
+brew link --overwrite ruby
+```
+
+Finally, make sure your `PATH` environment variable does not put `/usr/local/bin` after `$PATH`, but rather _before_ it.
+
+See [this StackOverflow issue](https://stackoverflow.com/questions/38993527/cocoapods-failed-to-connect-to-github-to-update-the-cocoapods-specs-specs-repo/48996424#48996424) for other possible solutions to this problem.
