@@ -5,7 +5,8 @@
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
   "bin": {
-    "capacitor": "./bin/capacitor"
+    "capacitor": "./bin/capacitor",
+    "cap": "./bin/capacitor"
   },
   "engines": {
     "node": ">=8.3.0"
