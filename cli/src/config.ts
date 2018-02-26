@@ -23,6 +23,7 @@ export class Config implements CliConfig {
     webDir: 'app/src/main/assets/public',
     webDirAbs: '',
     resDir: 'app/src/main/res',
+    resDirAbs: '',
     assets: {
       templateName: 'android-template',
       templateDir: ''
@@ -141,18 +142,18 @@ export class Config implements CliConfig {
 
   private initAndroidConfig() {
     this.platforms.push(this.android.name);
-    this.android.platformDir = join(this.app.rootDir, this.android.name);
-    this.android.assets.templateDir = join(this.cli.assetsDir, this.android.assets.templateName);
-    this.android.webDirAbs = join(this.android.platformDir, this.android.webDir);
-    this.android.resDir = join(this.android.platformDir, this.android.resDir);
+    this.android.platformDir = resolve(this.app.rootDir, this.android.name);
+    this.android.assets.templateDir = resolve(this.cli.assetsDir, this.android.assets.templateName);
+    this.android.webDirAbs = resolve(this.android.platformDir, this.android.webDir);
+    this.android.resDirAbs = resolve(this.android.platformDir, this.android.resDir);
   }
 
 
   private initIosConfig() {
     this.platforms.push(this.ios.name);
-    this.ios.platformDir = join(this.app.rootDir, this.ios.name);
-    this.ios.assets.templateDir = join(this.cli.assetsDir, this.ios.assets.templateName);
-    this.ios.webDirAbs = join(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
+    this.ios.platformDir = resolve(this.app.rootDir, this.ios.name);
+    this.ios.assets.templateDir = resolve(this.cli.assetsDir, this.ios.assets.templateName);
+    this.ios.webDirAbs = resolve(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
   }
 
   private initWindowsConfig() {

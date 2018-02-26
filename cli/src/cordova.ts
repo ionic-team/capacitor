@@ -111,7 +111,7 @@ export function removePluginFiles(config: Config, platform: string) {
 }
 
 export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[], platform: string) {
-  let xmlDir = join(config.android.resDir, 'xml');
+  let xmlDir = join(config.android.resDirAbs, 'xml');
   let target = 'res/xml/config.xml';
   if (platform === 'ios') {
     xmlDir = join(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName);
