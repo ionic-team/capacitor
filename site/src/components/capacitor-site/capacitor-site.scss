@@ -85,6 +85,9 @@ html, body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
+body {
+  background-color: black;
+}
 
 h1, h2, h3, h4 {
   color: #16161d;
