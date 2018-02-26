@@ -16,9 +16,8 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
     return androidPlugins;
   });
 
-  console.log('Android found these plugins: ', plugins);
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Code);
-  const cordovaPlugins = plugins .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
 
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
