@@ -87,9 +87,9 @@ export async function doAdd(config: Config, platformName: string) {
 }
 
 async function editPlatforms(config: Config, platformName: string) {
-  if (platformName == config.ios.name) {
+  if (platformName === config.ios.name) {
     await editProjectSettingsIOS(config);
-  } else if (platformName == config.android.name) {
+  } else if (platformName === config.android.name) {
     await editProjectSettingsAndroid(config);
   }
 }
