@@ -25,12 +25,12 @@
 
 @synthesize urlTransformer;
 
-- (id)initWithWebView:(WKWebView*)webView
+- (id)initWithWebView:(WKWebView*)webView pluginManager:(CDVPluginManager *)manager
 {
     self = [super init];
     if (self != nil) {
         _webView = webView;
-
+        _manager = manager;
         NSError* err = nil;
         _callbackIdPattern = [NSRegularExpression regularExpressionWithPattern:@"[^A-Za-z0-9._-]" options:0 error:&err];
         if (err != nil) {
@@ -128,7 +128,7 @@
 
 - (id)getCommandInstance:(NSString*)pluginName
 {
-    return nil;
+    return [_manager getCommandInstance:pluginName];
 }
 
 - (void)runInBackground:(void (^)())block

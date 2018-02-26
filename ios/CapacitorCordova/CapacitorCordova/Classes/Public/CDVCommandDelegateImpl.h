@@ -20,6 +20,7 @@
 #import <UIKit/UIKit.h>
 #import "CDVCommandDelegate.h"
 #import <WebKit/WebKit.h>
+#import "CDVPluginManager.h"
 
 @class CDVViewController;
 @class CDVCommandQueue;
@@ -27,11 +28,12 @@
 @interface CDVCommandDelegateImpl : NSObject <CDVCommandDelegate>{
     @private
     __weak WKWebView* _webView;
+    __weak CDVPluginManager* _manager;
     NSRegularExpression* _callbackIdPattern;
     @protected
     __weak CDVCommandQueue* _commandQueue;
     BOOL _delayResponses;
 }
-- (id)initWithWebView:(WKWebView*)webView;
+- (id)initWithWebView:(WKWebView*)webView pluginManager:(CDVPluginManager *)manager;
 - (void)flushCommandQueueWithDelayedJs;
 @end
