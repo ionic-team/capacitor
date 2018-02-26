@@ -43,8 +43,8 @@ export async function initCommand(config: Config, appName: string, appId: string
 
     await printNextSteps(config);
   } catch (e) {
-    log('Usage: npx @capacitor/cli create appDir appName appId');
-    log('Example: npx @capacitor/cli create my-app "My App" "com.example.myapp"\n');
+    log('Usage: npx cap init appName appId\n');
+    log('Example: npx cap init "My App" "com.example.myapp"\n');
     logFatal(e);
   }
 }
