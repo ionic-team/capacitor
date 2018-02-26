@@ -19,9 +19,8 @@ enum BridgeError: Error {
   public var plugins =  [String:CAPPlugin]()
   // List of known plugins by pluginId -> Plugin Type
   public var knownPlugins = [String:CAPPlugin.Type]()
-  // List of known cordova plugins
-  public var cordovaPlugins = [String:CDVPlugin]()
-  public var cordovaPluginsMapping = NSMutableDictionary()
+  // Manager for getting Cordova plugins
+  public var cordovaPluginManager: CDVPluginManager?
   // Calls we are storing to resolve later
   public var storedCalls = [String:CAPPluginCall]()
   // Whether the app is active
@@ -258,7 +257,7 @@ enum BridgeError: Error {
     let configParser = XMLParser(contentsOf: configUrl!)!;
     configParser.delegate = cordovaParser
     configParser.parse()
-    cordovaPluginsMapping = cordovaParser.pluginsDict
+    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict)
     do {
       try JSExport.exportCordovaPluginsJS(userContentController: self.userContentController)
     } catch {
@@ -375,36 +374,22 @@ enum BridgeError: Error {
    */
   public func handleCordovaJSCall(call: JSCall) {
     // Create a selector to send to the plugin
-    var vcClass: CDVPlugin.Type?
-    let plugin: CDVPlugin
-    if let className = cordovaPluginsMapping.object(forKey: call.pluginId.lowercased()) as? String {
-      if let firstPlugin = cordovaPlugins.first(where: { $0.key ==  className }) {
-        plugin = firstPlugin.value
-      } else {
-        vcClass = NSClassFromString(className) as? CDVPlugin.Type
-        if vcClass == nil {
-          print("Error: Cordova Plugin class not found")
-          return
-        }
-        plugin = vcClass!.init()
-        cordovaPlugins[className] = plugin
-        plugin.pluginInitialize()
-      }
 
+    if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
       plugin.viewController = self.viewController
-      plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView())
+      plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView(), pluginManager: self.cordovaPluginManager)
       plugin.webView = self.getWebView() as UIView
 
       let selector = NSSelectorFromString("\(call.method):")
       if !plugin.responds(to: selector) {
-        print("Error: Plugin \(className) does not respond to method call \(selector).")
+        print("Error: Plugin \(plugin.className) does not respond to method call \(selector).")
         print("Ensure plugin method exists and uses @objc in its declaration")
         return
       }
 
       dispatchQueue.sync {
         let arguments = call.options["options"] as! [Any]
-        let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: className, methodName: call.method)
+        let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
         plugin.perform(selector, with: pluginCall)
       }
     } else {
