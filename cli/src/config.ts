@@ -1,5 +1,5 @@
 import { accessSync, readFileSync } from 'fs';
-import { isAbsolute, join, resolve } from 'path';
+import { basename, isAbsolute, join, resolve } from 'path';
 import { logFatal } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 import { currentId } from 'async_hooks';
@@ -186,7 +186,7 @@ export class Config implements CliConfig {
         // we've got an capacitor.json file, let's parse it
         this.app.extConfig = JSON.parse(extConfigStr);
       } catch (e) {
-        logFatal(`error parsing: ${this.app.extConfigFilePath}`);
+        logFatal(`error parsing: ${basename(this.app.extConfigFilePath)}\n`, e);
       }
 
     } catch {

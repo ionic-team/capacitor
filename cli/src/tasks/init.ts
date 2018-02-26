@@ -11,9 +11,9 @@ import {
   log,
   logError,
   logFatal,
+  mergeConfig,
   runCommand,
-  runTask,
-  writePrettyJSON
+  runTask
 } from '../common';
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { download } from '../util/http';
@@ -39,6 +39,10 @@ export async function initCommand(config: Config, appName: string, appId: string
 
       // Get or create our config
       await getOrCreateConfig(config);
+      await mergeConfig(config, {
+        appId,
+        appName
+      });
     });
 
     await printNextSteps(config);

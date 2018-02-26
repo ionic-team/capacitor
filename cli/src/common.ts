@@ -142,6 +142,17 @@ export async function getOrCreateConfig(config: Config) {
   config.loadExternalConfig();
 }
 
+export async function mergeConfig(config: Config, settings: any) {
+  const configPath = join(config.app.rootDir, config.app.extConfigName);
+
+  await writePrettyJSON(config.app.extConfigFilePath, {
+    ...config.app.extConfig,
+    ...settings
+  });
+
+  // Store our newly created or found external config as the default
+  config.loadExternalConfig();
+}
 
 export function log(...args: any[]) {
   console.log(...args);
