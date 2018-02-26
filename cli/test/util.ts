@@ -1,6 +1,7 @@
+import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, cpAsync } from '../src/util/fs';
+import { Config } from '../src/config';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
-import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, cpAsync } from '../src/util/fs';
 import { mkdirs } from 'fs-extra';
 const tmp = require('tmp');
 
@@ -9,6 +10,10 @@ const cwd = process.cwd();
 export const CORDOVA_PLUGIN_ID = 'cool-cordova-plugin';
 export const APP_ID = 'com.getcapacitor.cli.test';
 export const APP_NAME = 'Capacitor CLI Test';
+
+export function makeConfig(appRoot: string): Config {
+  return new Config(process.platform, appRoot, `${cwd}/bin`);
+}
 
 export async function run(appRoot: string, capCommand: string) {
   return new Promise((resolve, reject) => {
@@ -94,7 +99,21 @@ const CORDOVA_PLUGIN_PACKAGE = `
     ]
   }
 }
-`
+`;
+
+const CORDOVA_PLUGINS_PODSPEC = `
+Pod::Spec.new do |s|
+  s.name = 'CordovaPluginsResources'
+  s.version = '0.0.105'
+  s.summary = 'Resources for Cordova plugins'
+  s.social_media_url = 'http://twitter.com/getcapacitor'
+  s.license = 'MIT'
+  s.homepage = 'https://capacitor.ionicframework.com/'
+  s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
+  s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version.to_s }
+  s.resources = ['resources/*']
+end
+`;
 
 async function makeCordovaPlugin(appDir: string) {
   const cordovaPluginPath = join(appDir, `node_modules/${CORDOVA_PLUGIN_ID}`);
@@ -107,6 +126,9 @@ async function makeCordovaPlugin(appDir: string) {
   await mkdirs(androidPath);
   await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');
   await writeFileAsync(join(androidPath, 'CoolPlugin.java'), '');
+  const cliAssetsCordova = join(appDir, 'node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins');
+  await mkdirs(cliAssetsCordova);
+  await writeFileAsync(join(cliAssetsCordova, 'CordovaPluginsResources.podspec'), CORDOVA_PLUGINS_PODSPEC);
 }
 
 class MappedFS {

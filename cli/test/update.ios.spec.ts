@@ -1,9 +1,11 @@
-import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, run, makeAppDir, mktmp, MappedFS } from './util';
+import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, mktmp, run } from './util';
 
 import { runCommand } from '../src/common';
+import { updateCommand } from '../src/tasks/update';
 import { mkdirAsync, writeFileAsync } from '../src/util/fs';
 
 import { join } from 'path';
+
 
 describe('Update: iOS', () => {
   let appDirObj;
@@ -19,7 +21,7 @@ describe('Update: iOS', () => {
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await run(appDir, `add ios`);
     // Redundant, because add does this, but called explicitly for thoroughness
-    await run(appDir, `update ios`);
+    await updateCommand(makeConfig(appDir), 'ios');
     FS = new MappedFS(appDir);
   });
 
