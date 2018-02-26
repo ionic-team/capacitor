@@ -69,6 +69,8 @@ export async function createCommand(config: Config, dir: string, name: string, i
     // Say something nice
     await printNextSteps(config);
   } catch (e) {
+    log('Usage: npx @capacitor/cli create appDir appName appId');
+    log('Example: npx @capacitor/cli create my-app "My App" "com.example.myapp"');
     logFatal(e);
   }
 }
