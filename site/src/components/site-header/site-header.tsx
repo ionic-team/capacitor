@@ -12,6 +12,7 @@ export class SiteHeader {
           <div class="logo"></div>
         </stencil-route-link>
         <div class="pull-right">
+          <b>1.0.0-alpha.x</b>
           <stencil-route-link urlMatch="/docs" url="/docs/">
             Docs
           </stencil-route-link>
