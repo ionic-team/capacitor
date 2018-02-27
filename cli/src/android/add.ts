@@ -46,6 +46,6 @@ sdk.dir=${defaultAndroidPath}
   }
 }
 
-function gradleSync(platformDir: string) {
-  return runCommand(`${platformDir}/gradlew build`);
+async function gradleSync(platformDir: string) {
+  await runCommand(`${platformDir}/gradlew`);
 }

@@ -32,7 +32,12 @@ const IOS_PLUGINS_FOLDER_DST = path.join(ASSETS_DIST, IOS_PLUGINS_FOLDER);
 fs.emptyDirSync(ASSETS_DIST);
 
 fs.copySync(APP_TEMPLATE_SRC, APP_TEMPLATE_DST);
+// Rename our Android .iml file
 fs.copySync(ANDROID_TEMPLATE_SRC, ANDROID_TEMPLATE_DST);
+fs.moveSync(path.join(ANDROID_TEMPLATE_DST, 'android-template.iml'), path.join(ANDROID_TEMPLATE_DST, 'android.iml'));
+let imlContent = fs.readFileSync(path.join(ANDROID_TEMPLATE_DST, 'android.iml'), 'utf8');
+imlContent = imlContent.replace(/android-template/g, 'android');
+fs.writeFileSync(path.join(ANDROID_TEMPLATE_DST, 'android.iml'), imlContent);
 fs.copySync(IOS_TEMPLATE_SRC, IOS_TEMPLATE_DST);
 fs.copySync(PLUGIN_TEMPLATE_SRC, PLUGIN_TEMPLATE_DST);
 fs.copySync(ANDROID_PLUGINS_FOLDER_SRC, ANDROID_PLUGINS_FOLDER_DST);
