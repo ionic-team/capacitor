@@ -5,5 +5,5 @@
     "./cli/",
     "./core/"
   ],
-  "version": "0.0.113"
+  "version": "1.0.0-alpha.0"
 }
