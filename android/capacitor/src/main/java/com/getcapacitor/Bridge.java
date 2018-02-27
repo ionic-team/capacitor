@@ -141,6 +141,18 @@ public class Bridge {
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         return localServer.shouldInterceptRequest(request);
       }
+
+      @Override
+      public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        String url = request.getUrl().toString();
+        if (url.contains(localServer.getAuthority())) {
+          return super.shouldOverrideUrlLoading(view, request);
+        } else {
+          Intent openIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+          getContext().startActivity(openIntent);
+          return true;
+        }
+      }
     });
 
     // Load the index.html file from our www folder

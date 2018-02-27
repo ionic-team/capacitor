@@ -56,6 +56,8 @@ public class WebViewLocalServer {
   private final JSInjector jsInjector;
   private final Bridge bridge;
 
+  public String getAuthority() { return authority; }
+
   /**
    * A handler that produces responses for paths on the virtual asset server.
    * <p>
