@@ -14,7 +14,7 @@ describe('Update: iOS', () => {
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(20000);
+    jest.setTimeout(120000);
     appDirObj = await makeAppDir();
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add
@@ -33,9 +33,7 @@ describe('Update: iOS', () => {
   });
 
   it('Should install Cordova plugin JS', async () => {
-    console.log(appDir);
     const cordovaPluginJSContent = await FS.read('ios/App/public/cordova_plugins.js');
-    console.log(cordovaPluginJSContent);
     let regex = new RegExp(CORDOVA_PLUGIN_ID);
     expect(regex.test(cordovaPluginJSContent)).toBe(true);
   });
