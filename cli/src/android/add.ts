@@ -9,11 +9,11 @@ import { getDefaultSettings } from 'http2';
 export async function addAndroid(config: Config) {
 
   await runTask(`Adding native android project in: ${config.android.platformDir}`, async () => {
-    await copy(config.android.assets.templateDir, config.android.platformDir);
+    return copy(config.android.assets.templateDir, config.android.platformDir);
   });
 
   await runTask(`Syncing Gradle`, async () => {
-    await createLocalProperties(config.android.platformDir);
+    return createLocalProperties(config.android.platformDir);
   });
 }
 

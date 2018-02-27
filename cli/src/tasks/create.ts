@@ -66,7 +66,7 @@ export async function createCommand(config: Config, dir: string, name: string, i
     // Apply project-specific settings to platform projects
     await editPlatforms(config, appName, appId);
     // Say something nice
-    await printNextSteps(config);
+    printNextSteps(config);
   } catch (e) {
     // String errors are our check errors (most likely)
     if (typeof e === 'string') {
@@ -85,7 +85,8 @@ async function getDir(config: Config, dir: string) {
       name: 'dir',
       message: `Directory for new app`
     }]);
-    return answers.dir; }
+    return answers.dir;
+  }
   return dir;
 }
 
@@ -138,7 +139,7 @@ async function installDeps(config: Config, dir: string) {
 }
 
 async function addPlatforms(config: Config, dir: string) {
-  await runTask(chalk`Adding initial platforms`, async () => {
+  await runTask(chalk`{green {bold add}} default platforms`, async () => {
     if (config.cli.os == OS.Mac) {
       await addIOS(config);
       await sync(config, config.ios.name);
@@ -155,7 +156,7 @@ async function editPlatforms(config: Config, appName: string, appId: string) {
   await editProjectSettingsAndroid(config);
 }
 
-async function printNextSteps(config: Config) {
+function printNextSteps(config: Config) {
   log(chalk`{green ✔} Your app is ready!`);
   log(`\nNext steps:`)
   log(`cd ./${basename(config.app.rootDir)}`);
