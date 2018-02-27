@@ -35,6 +35,12 @@ Capacitor conflicts with Cordova's Splash Plugin. It needs to be removed:
 npm uninstall --save cordova-plugin-splash
 ```
 
+## Init Capacitor with your app information.
+
+```
+npx cap init [appName] [appId]
+```
+
 ## Add Platforms
 
 ```bash
