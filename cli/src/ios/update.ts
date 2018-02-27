@@ -234,7 +234,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (framework.$.custom && framework.$.custom === 'true') {
-        copySync(join(p.rootPath, framework.$.src),  join(pluginsPath, framework.$.src);
+        copySync(join(p.rootPath, framework.$.src),  join(pluginsPath, framework.$.src));
       }
     });
   });
