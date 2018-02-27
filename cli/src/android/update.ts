@@ -56,6 +56,7 @@ ${plugins.map(p => {
 export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
   const pluginsGradlePath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'build.gradle');
   let frameworksArray: Array<any> = [];
+  let preferencessArray: Array<any> = [];
   cordovaPlugins.map( p => {
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
@@ -63,10 +64,14 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
         frameworksArray.push(framework.$.src);
       }
     });
+    preferencessArray = preferencessArray.concat(getPlatformElement(p, platform, 'preference'));
   });
-  const frameworkString = frameworksArray.map(f => {
+  let frameworkString = frameworksArray.map(f => {
     return `    implementation "${f}"`;
   }).join('\n');
+  preferencessArray.map((preference: any) => {
+    frameworkString = frameworkString.replace("$"+preference.$.name, preference.$.default);
+  });
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
   buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat("\n") + '    $2');
   //TODO - replace value with a confg.xml preference value or from capacitor config file.
