@@ -26,7 +26,7 @@ Capacitor has a tiny development web server for simple testing, but generally yo
 using your framework of choice's server tools.
 
 ```bash
-npx cap web
+npx cap serve
 ```
 
 This will open your web app in a local web server instance in the browser.

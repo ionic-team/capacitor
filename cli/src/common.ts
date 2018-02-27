@@ -1,7 +1,7 @@
 import { Config } from './config';
 import { exec } from 'child_process';
 import { setTimeout } from 'timers';
-import { join, resolve } from 'path';
+import { basename, join, resolve } from 'path';
 import { existsAsync, readFileAsync, writeFileAsync } from './util/fs';
 import { readFile } from 'fs';
 
@@ -135,7 +135,8 @@ export async function getOrCreateConfig(config: Config) {
   await writePrettyJSON(config.app.extConfigFilePath, {
     appId: config.app.appId,
     appName: config.app.appName,
-    webDir: resolve(config.app.rootDir, config.app.webDir)
+    bundledWebRuntime: config.app.bundledWebRuntime,
+    webDir: basename(resolve(config.app.rootDir, config.app.webDir))
   });
 
   // Store our newly created or found external config as the default

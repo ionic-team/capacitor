@@ -2,6 +2,7 @@ import { Config } from '../config';
 import { OS } from '../definitions';
 import { addAndroid } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
+import { copy } from './copy';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
 import { sync } from './sync';
@@ -52,12 +53,15 @@ export async function createCommand(config: Config, dir: string, name: string, i
     const appName = await getName(config, name);
     // Get app identifier
     const appId = await getAppId(config, id);
-    // Copy the starter project
+
+    // Set some default settings
     config.app.appName = appName;
     config.app.appId = appId;
+    config.app.bundledWebRuntime = true;
 
     await getOrCreateConfig(config);
 
+    // Copy the starter project
     await create(config, appDir, appName, appId);
     // npm install
     await installDeps(config, appDir);
@@ -65,6 +69,8 @@ export async function createCommand(config: Config, dir: string, name: string, i
     await addPlatforms(config, appDir);
     // Apply project-specific settings to platform projects
     await editPlatforms(config, appName, appId);
+    // Copy web and capacitor to web assets
+    await copy(config, config.web.name);
     // Say something nice
     printNextSteps(config);
   } catch (e) {

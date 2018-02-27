@@ -5,11 +5,11 @@ import { join, relative, resolve } from 'path';
 
 export async function copyWeb(config: Config) {
   const chalk = require('chalk');
+  console.log('Copying web!');
   if (config.app.bundledWebRuntime) {
     const runtimePath = resolve(config.app.rootDir, 'node_modules', '@capacitor/core', 'dist/capacitor.js');
-    const relativeWebDir = relative(config.app.rootDir, config.app.webDir);
-    return runTask(`Copying capacitor.js to web dir ${chalk.bold(relativeWebDir)}/`, () => {
-      return copy(runtimePath, join(config.app.webDir, 'capacitor.js'));
+    return runTask(`Copying capacitor.js to web dir`, () => {
+      return copy(runtimePath, join(config.app.webDirAbs, 'capacitor.js'));
     });
   }
 }
