@@ -141,6 +141,14 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    if navigationAction.targetFrame == nil {
+      UIApplication.shared.open(
+        URL(string: navigationAction.request.url!.absoluteString)!,
+        options: [:],
+        completionHandler: { (status) in
+        }
+      )
+    }
     // TODO: Allow plugins to handle this. See
     // https://github.com/ionic-team/cordova-plugin-ionic-webview/blob/608d64191405b233c01a939f5755f8b1fdd97f8c/src/ios/CDVWKWebViewEngine.m#L609
     decisionHandler(.allow)
