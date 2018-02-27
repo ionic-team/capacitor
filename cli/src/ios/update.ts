@@ -140,10 +140,12 @@ end`;
 
 function getFrameworkName(framework: any) {
   if (isFramework(framework)) {
+    if (framework.$.custom && framework.$.custom === 'true') {
+      return framework.$.src;
+    }
     return framework.$.src.substr(0, framework.$.src.indexOf('.'));
-  } else {
-    return framework.$.src.substr(0, framework.$.src.indexOf('.')).replace('lib','');
   }
+  return framework.$.src.substr(0, framework.$.src.indexOf('.')).replace('lib','');
 }
 
 function isFramework(framework: any) {
@@ -152,9 +154,9 @@ function isFramework(framework: any) {
 
 async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) {
   const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
-  let frameworksString = '';
   let weakFrameworks: Array<string> = [];
   let linkedFrameworks: Array<string> = [];
+  let customFrameworks: Array<string> = [];
   let systemLibraries: Array<string> = [];
   cordovaPlugins.map((plugin: any) => {
     const frameworks = getPlatformElement(plugin, platform, 'framework');
@@ -165,6 +167,10 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
           if (framework.$.weak && framework.$.weak === 'true') {
             if (!weakFrameworks.includes(name)) {
               weakFrameworks.push(name);
+            }
+          } if (framework.$.custom && framework.$.custom === 'true') {
+            if (!customFrameworks.includes(name)) {
+              customFrameworks.push(name);
             }
           } else {
             if (!linkedFrameworks.includes(name)) {
@@ -179,21 +185,20 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
       }
     });
   });
+  let frameworkDeps: Array<string> = [];
   if (weakFrameworks.length > 0) {
-    frameworksString += `s.weak_frameworks = '${weakFrameworks.join("', '")}'`;
+    frameworkDeps.push(`s.weak_frameworks = '${weakFrameworks.join("', '")}'`);
   }
   if (linkedFrameworks.length > 0) {
-    if (frameworksString !== "") {
-      frameworksString += '\n    ';
-    }
-    frameworksString += `s.frameworks = '${linkedFrameworks.join("', '")}'`;
+    frameworkDeps.push(`s.frameworks = '${linkedFrameworks.join("', '")}'`);
   }
   if (systemLibraries.length > 0) {
-    if (frameworksString !== "") {
-      frameworksString += '\n    ';
-    }
-    frameworksString += `s.libraries = '${systemLibraries.join("', '")}'`;
+    frameworkDeps.push(`s.libraries = '${systemLibraries.join("', '")}'`);
   }
+  if (customFrameworks.length > 0) {
+    frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join("', '")}'`);
+  }
+  const frameworksString = frameworkDeps.join("\n    ");
   const content = `
   Pod::Spec.new do |s|
     s.name = 'CordovaPlugins'
@@ -225,6 +230,12 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     resourceFiles.map( (resourceFile: any) => {
       const fileName = resourceFile.$.src.split("/").pop();
       copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, 'resources', fileName));
+    });
+    const frameworks = getPlatformElement(p, platform, 'framework');
+    frameworks.map((framework: any) => {
+      if (framework.$.custom && framework.$.custom === 'true') {
+        copySync(join(p.rootPath, framework.$.src),  join(pluginsPath, framework.$.src);
+      }
     });
   });
 }
