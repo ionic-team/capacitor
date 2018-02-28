@@ -169,8 +169,9 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
               weakFrameworks.push(name);
             }
           } if (framework.$.custom && framework.$.custom === 'true') {
-            if (!customFrameworks.includes(name)) {
-              customFrameworks.push(name);
+            const frameworktPath = join('sources', plugin.name, name);
+            if (!customFrameworks.includes(frameworktPath)) {
+              customFrameworks.push(frameworktPath);
             }
           } else {
             if (!linkedFrameworks.includes(name)) {
@@ -222,9 +223,10 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
     const headerFiles = getPlatformElement(p, platform, 'header-file');
     const codeFiles = sourceFiles.concat(headerFiles);
+    const sourcesFolder = join(pluginsPath, 'sources', p.name);
     codeFiles.map( (codeFile: any) => {
       const fileName = codeFile.$.src.split("/").pop();
-      copySync(join(p.rootPath, codeFile.$.src), join(pluginsPath, 'sources', p.name, fileName));
+      copySync(join(p.rootPath, codeFile.$.src), join(sourcesFolder, fileName));
     });
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
     resourceFiles.map( (resourceFile: any) => {
@@ -234,7 +236,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (framework.$.custom && framework.$.custom === 'true') {
-        copySync(join(p.rootPath, framework.$.src),  join(pluginsPath, framework.$.src));
+        copySync(join(p.rootPath, framework.$.src),  join(sourcesFolder, framework.$.src));
       }
     });
   });
