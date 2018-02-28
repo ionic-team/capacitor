@@ -140,7 +140,7 @@ export async function create(config: Config, dir: string, appName: string, appId
 
 async function installDeps(config: Config, dir: string) {
   await runTask(chalk`Installing dependencies`, async () => {
-    return runCommand(`cd ${dir} && npm install --save @capacitor/cli @capacitor/core`);
+    return runCommand(`cd "${dir}" && npm install --save @capacitor/cli @capacitor/core`);
   })
 }
 

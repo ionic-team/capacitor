@@ -101,9 +101,9 @@ export async function updatePodfile(config: Config, plugins: Plugin[], needsUpda
   await writeFileAsync(podfilePath, content, 'utf8');
 
   if (needsUpdate) {
-    await runCommand(`cd ${config.app.rootDir} && cd ${config.ios.name} && cd ${projectName} && pod update && xcodebuild -project App.xcodeproj clean`);
+    await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && pod update && xcodebuild -project App.xcodeproj clean`);
   } else {
-    await runCommand(`cd ${config.app.rootDir} && cd ${config.ios.name} && cd ${projectName} && pod install && xcodebuild -project App.xcodeproj clean`);
+    await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && pod install && xcodebuild -project App.xcodeproj clean`);
   }
 }
 

@@ -17,7 +17,7 @@ export function makeConfig(appRoot: string): Config {
 
 export async function run(appRoot: string, capCommand: string) {
   return new Promise((resolve, reject) => {
-    exec(`cd ${appRoot} && ${cwd}/bin/capacitor ${capCommand}`, (error, stdout, stderr) => {
+    exec(`cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`, (error, stdout, stderr) => {
       if (error) {
         reject(stdout + stderr);
       } else {
