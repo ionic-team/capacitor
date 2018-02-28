@@ -10,7 +10,7 @@ Currently, iOS requires using Xcode to run your app.
 npx cap open ios
 ```
 
-Once XCode launches, you can build/simulate/run your app through the standard XCode workflow.
+Once Xcode launches, you can build/simulate/run your app through the standard Xcode workflow.
 
 ## Android
 
