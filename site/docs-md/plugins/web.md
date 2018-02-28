@@ -18,7 +18,7 @@ import { WebPlugin } from '@capacitor/core';
 
 export class MyPluginWeb extends WebPlugin {
   constructor() {
-    // Call super with the name of our plugin (this should match the natve name),
+    // Call super with the name of our plugin (this should match the native name),
     // along with the platforms this plugin will activate on. For example, it's possible
     // to use a web plugin for Android and iOS by adding them to the platforms list (lowercased)
     super({
