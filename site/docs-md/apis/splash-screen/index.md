@@ -13,7 +13,7 @@ const { SplashScreen } = Plugins;
 // Hide the splash (you should do this on app launch)
 SplashScreen.hide();
 
-// Show the splash for an indefinate amount of time:
+// Show the splash for an indefinite amount of time:
 SplashScreen.show({
   autoHide: false
 });
