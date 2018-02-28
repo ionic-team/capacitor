@@ -13,6 +13,8 @@ build command:
 {
   "scripts": {
     "build": "command-to-build (ex: webpack, tsc, babel, etc.)"
+  }
+}
 ```
 
 
@@ -20,7 +22,7 @@ build command:
 npm run build
 ```
 
-This builds your Progressive Web App if you've configured <stencil-route-link url="/docs/basics/pwa">Progressive Web App</stencil-route-link> support already.
+This builds your Progressive Web App if you've configured <stencil-route-link url="/docs/basics/progressive-web-app">Progressive Web App</stencil-route-link> support already.
 
 ## 2. Copying Web Code
 
@@ -43,11 +45,11 @@ npx cap copy ios
 npx cap open ios
 ```
 
-Once XCode launches, you can build your finally app binary through the standard XCode workflow.
+Once Xcode launches, you can build your finally app binary through the standard Xcode workflow.
 
 ### Android
 
-Currently, Android relies on Android Studio (or, optionally, the android cli tools) to build the app:
+Currently, Android relies on Android Studio (or, optionally, the Android CLI tools) to build the app:
 
 ```bash
 npx cap copy android
