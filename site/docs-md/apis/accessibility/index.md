@@ -27,7 +27,7 @@ async speak() {
     message: "Enter the value to speak"
   });
 
-  Accessibility.speak(value.value);
+  Accessibility.speak({value: value.value});
 }
 ```
 
