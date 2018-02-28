@@ -16,7 +16,7 @@ background, and periodically syncing data.
 
 Plugins that claim to offer infinite background operation outside of those core use cases _will cause App Store rejections_! This limitation is the same for developers using any mobile app technology, not just Capacitor.
 
-Generally, Android is less strict about background tasks, but your app should code to the lowest common demoniator
+Generally, Android is less strict about background tasks, but your app should code to the lowest common denominator
 in order to be a good actor on all platforms.
 
 ## Example
