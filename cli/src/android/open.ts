@@ -1,10 +1,15 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
 import { logError, logInfo } from '../common';
-
+import { existsAsync } from '../util/fs';
+import { resolve } from 'path';
 
 export async function openAndroid(config: Config) {
   logInfo(`Opening Android project at ${config.android.platformDir}`);
+
+  if (!await existsAsync(resolve(config.app.rootDir, config.android.platformDir))) {
+    throw new Error('Android project does not exist. Create one with "npx cap add android"');
+  }
 
   const opn = await import('opn');
 
