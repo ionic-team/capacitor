@@ -108,7 +108,7 @@ export async function newPlugin(config: Config) {
     });
 
     await runTask('Installing NPM dependencies', async () => {
-      await runCommand(`cd ${pluginPath}`);
+      await runCommand(`cd "${pluginPath}"`);
       return runCommand('npm install');
     });
 
