@@ -25,6 +25,8 @@ Android development requires the **Android SDK** installed with **[Android Studi
 Android version support for Capacitor is more complex than iOS. Currently, we are targeting API level 21 or greater, meaning Android 5.0 (Lollipop) or above.  
 As of January 2018, 5.0 or greater represents over 75% of the Android market, and this percentage is growing quickly. By the time Capacitor is production ready, this percentage should be much higher.
 
+Also, Capacitor requires an Android WebView with Chrome version 50 or later.
+
 ## Progressive Web App Development
 
 For building Progressive Web Apps, Capacitor currently requires a JavaScript project with module loading support. For example, using Webpack or Rollup.
