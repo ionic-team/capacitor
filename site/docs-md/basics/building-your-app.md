@@ -55,3 +55,5 @@ Currently, Android relies on Android Studio (or, optionally, the Android CLI too
 npx cap copy android
 npx cap open android
 ```
+
+Once Android Studio launches, you can build your app through the standard Android Studio workflow.
