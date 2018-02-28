@@ -47,7 +47,7 @@ This makes `MyPlugin`, and the `echo` method available to the Capacitor web runt
 
 ## Private Native Code
 
-If your code doens't need to be accessible from the WebView, then simply add your code anywhere it needs to go. With Capacitor, you have full
+If your code doesn't need to be accessible from the WebView, then simply add your code anywhere it needs to go. With Capacitor, you have full
 control over your native project.
 
 Need to add a new event handler in `AppDelegate`? Just add it! Capacitor won't touch your code.

@@ -1,7 +1,7 @@
 # Modals
 
-The Modals API provides methods for triggering native modal windows for alerts, confirmations, and input prompts, along
-with Action Sheets and the native Share modal.
+The Modals API provides methods for triggering native modal windows for alerts, confirmations, and input prompts, as
+well as Action Sheets.
 
 <plugin-api index="true" name="modals"></plugin-api>
 
@@ -53,15 +53,6 @@ async showActions() {
     ]
   })
   console.log('You selected', promptRet);
-}
-
-async showSharing() {
-  let shareRet = await Modals.showSharing({
-    message: 'Really awesome thing you need to see right meow',
-    url: 'http://ionicframework.com/',
-    subject: 'See cool stuff'
-  });
-  console.log('Share return', shareRet);
 }
 ```
 
