@@ -74,8 +74,6 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
   });
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
   buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat("\n") + '    $2');
-  //TODO - replace value with a confg.xml preference value or from capacitor config file.
-  buildGradle = buildGradle.replace('$FCM_VERSION','11.6.2');
   await writeFileAsync(pluginsGradlePath, buildGradle);
 }
 
