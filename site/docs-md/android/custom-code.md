@@ -54,5 +54,5 @@ public class MainActivity extends BridgeActivity {
 
 ## Private Native Code
 
-If your code doens't need to be accessible from the WebView, then simply add your code anywhere it needs to go. With Capacitor, you have full
+If your code doesn't need to be accessible from the WebView, then simply add your code anywhere it needs to go. With Capacitor, you have full
 control over your native project. Need to add a new event handler in your Activity? Just update `MainActivity` and add it. The world is truly your oyster.

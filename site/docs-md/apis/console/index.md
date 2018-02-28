@@ -8,7 +8,7 @@ Currently it's not possible to disable it, but that feature is coming.
 ## Example
 
 ```typescript
-console.log('I really enjoy Avoacdo Toast, and I\'m not ashamed to admit it');
+console.log('I really enjoy Avocado Toast, and I\'m not ashamed to admit it');
 ```
 
 The string will show up in your Xcode or Android Studio log stream.
