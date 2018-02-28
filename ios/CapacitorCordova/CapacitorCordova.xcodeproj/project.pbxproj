@@ -23,6 +23,8 @@
 		2F856C00203DEB320047344A /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F856BFE203DEB320047344A /* CDVViewController.m */; };
 		2FAD9772203C77B9000D30F8 /* CDVConfigParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FAD9770203C77B8000D30F8 /* CDVConfigParser.h */; };
 		2FAD9773203C77B9000D30F8 /* CDVConfigParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */; };
+		2FE19E2A20473160002A4E89 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE19E2820473160002A4E89 /* AppDelegate.h */; };
+		2FE19E2B20473160002A4E89 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE19E2920473160002A4E89 /* AppDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,8 @@
 		2F856BFE203DEB320047344A /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVViewController.m; sourceTree = "<group>"; };
 		2FAD9770203C77B8000D30F8 /* CDVConfigParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVConfigParser.h; sourceTree = "<group>"; };
 		2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVConfigParser.m; sourceTree = "<group>"; };
+		2FE19E2820473160002A4E89 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		2FE19E2920473160002A4E89 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,8 @@
 				2F5C87161FE98417004B09C7 /* CDVPlugin.m */,
 				2F5C871B1FE98418004B09C7 /* CDVPluginResult.h */,
 				2F5C87121FE98417004B09C7 /* CDVPluginResult.m */,
+				2FE19E2820473160002A4E89 /* AppDelegate.h */,
+				2FE19E2920473160002A4E89 /* AppDelegate.m */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -130,6 +136,7 @@
 				2F856BFF203DEB320047344A /* CDVViewController.h in Headers */,
 				2F5C87231FE98418004B09C7 /* CDVCommandDelegateImpl.h in Headers */,
 				2F5C87241FE98418004B09C7 /* CDVInvokedUrlCommand.h in Headers */,
+				2FE19E2A20473160002A4E89 /* AppDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +214,7 @@
 				2FAD9773203C77B9000D30F8 /* CDVConfigParser.m in Sources */,
 				2F856C00203DEB320047344A /* CDVViewController.m in Sources */,
 				2F5C87201FE98418004B09C7 /* CDVInvokedUrlCommand.m in Sources */,
+				2FE19E2B20473160002A4E89 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
