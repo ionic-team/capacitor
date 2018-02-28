@@ -147,7 +147,7 @@ export class SiteMenu {
         },
         {
           title: 'JavaScript Guide',
-          url: '/docs/plugins/javascript'
+          url: '/docs/plugins/js'
         }
         /*
         {
