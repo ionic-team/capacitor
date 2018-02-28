@@ -158,6 +158,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
   let linkedFrameworks: Array<string> = [];
   let customFrameworks: Array<string> = [];
   let systemLibraries: Array<string> = [];
+  let sourceFrameworks: Array<string> = [];
   cordovaPlugins.map((plugin: any) => {
     const frameworks = getPlatformElement(plugin, platform, 'framework');
     frameworks.map((framework: any) => {
@@ -185,6 +186,16 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
         }
       }
     });
+    const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
+    sourceFiles.map((sourceFile: any) => {
+      if (sourceFile.$.framework && sourceFile.$.framework === 'true') {
+        const fileName = sourceFile.$.src.split("/").pop();
+        const frameworktPath = join('sources', plugin.name, fileName);
+        if (!sourceFrameworks.includes(frameworktPath)) {
+          sourceFrameworks.push(frameworktPath);
+        }
+      }
+    })
   });
   let frameworkDeps: Array<string> = [];
   if (weakFrameworks.length > 0) {
@@ -198,6 +209,9 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
   }
   if (customFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join("', '")}'`);
+  }
+  if (sourceFrameworks.length > 0) {
+    frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join("', '")}'`);
   }
   const frameworksString = frameworkDeps.join("\n    ");
   const content = `
