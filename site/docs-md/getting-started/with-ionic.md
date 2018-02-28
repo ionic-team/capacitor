@@ -52,7 +52,7 @@ npx cap add android
 
 ## Syncing your app with Capacitor
 
-Every time you perform a build that changes `/www`, you'll need to copy those changes down to your native projects:
+Every time you perform a build that changes your web directory (default: `www`), you'll need to copy those changes down to your native projects:
 
 ```bash
 npm run build
