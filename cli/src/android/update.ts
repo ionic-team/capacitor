@@ -70,7 +70,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
     return `    implementation "${f}"`;
   }).join('\n');
   preferencessArray.map((preference: any) => {
-    frameworkString = frameworkString.replace("$"+preference.$.name, preference.$.default);
+    frameworkString = frameworkString.replace(new RegExp(("$"+preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
   });
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
   buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat("\n") + '    $2');
