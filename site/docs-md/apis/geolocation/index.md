@@ -15,7 +15,7 @@ Key: `NSLocationAlwaysUsageDescription`
 Name: `Privacy - Location When In Use Usage Description`
 Key: `NSLocationWhenInUseUsageDescription`
 
-Read about [Setting iOS Permissions](../ios/permissions/) in the [iOS Guide](../ios) for more information on setting iOS permissions in Xcode
+Read about [Setting iOS Permissions](../ios/permissions/) in the [iOS Guide](../ios/) for more information on setting iOS permissions in Xcode
 
 ## Android Notes
 
@@ -30,7 +30,7 @@ This API requires the following permissions be added to your `AndroidManifest.xm
 
 The first two permissions ask for location data, both fine and coarse, and the last line is optional but necessary if your app _requires_ GPS to function. You may leave it out, though keep in mind that this may mean your app is installed on devices lacking GPS hardware.
 
-Read about [Setting Android Permissions]('../android/permissions/) in the [Android Guide](../android) for more information on setting Android permissions.
+Read about [Setting Android Permissions](../android/permissions/) in the [Android Guide](../android/) for more information on setting Android permissions.
 
 ## Example
 
