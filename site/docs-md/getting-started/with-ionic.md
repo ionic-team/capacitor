@@ -29,10 +29,10 @@ npm install --save @capacitor/cli @capacitor/core
 
 ## Remove Cordova Splash
 
-Capacitor conflicts with Cordova's Splash Plugin. It needs to be removed:
+Capacitor conflicts with Cordova's Splashscreen Plugin. It needs to be removed:
 
 ```bash
-npm uninstall --save cordova-plugin-splash
+npm uninstall --save cordova-plugin-splashscreen
 ```
 
 ## Init Capacitor with your app information
@@ -41,7 +41,7 @@ npm uninstall --save cordova-plugin-splash
 npx cap init [appName] [appId]
 ```
 
-Where `appName` is the name of your app, and `appId` is the domain identifier of your app (ex: `com.example.app`).
+where `appName` is the name of your app, and `appId` is the domain identifier of your app (ex: `com.example.app`).
 
 ## Add Platforms
 
@@ -52,10 +52,9 @@ npx cap add android
 
 ## Syncing your app with Capacitor
 
-Every time you perform a build that changes your web directory (default: `www`), you'll need to copy those changes down to your native projects:
+Every time you perform a build (e.g. `npm run build`) that changes your web directory (default: `www`), you'll need to copy those changes down to your native projects:
 
 ```bash
-npm run build
 npx cap copy
 ```
 
