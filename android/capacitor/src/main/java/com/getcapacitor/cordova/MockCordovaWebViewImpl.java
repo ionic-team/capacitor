@@ -31,6 +31,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
   private NativeToJsMessageQueue nativeToJsMessageQueue;
   private CordovaInterface cordova;
   private CapacitorCordovaCookieManager cookieManager;
+  private WebView webView;
 
   public MockCordovaWebViewImpl(Context context) {
     this.context = context;
@@ -47,6 +48,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   public void init(CordovaInterface cordova, List<PluginEntry> pluginEntries, CordovaPreferences preferences, WebView webView) {
     this.cordova = cordova;
+    this.webView = webView;
     this.preferences = preferences;
     this.pluginManager = new PluginManager(this, this.cordova, pluginEntries);
     this.pluginManager.init();
@@ -86,7 +88,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public View getView() {
-    return null;
+    return this.webView;
   }
 
   @Override
