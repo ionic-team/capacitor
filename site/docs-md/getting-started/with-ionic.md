@@ -1,8 +1,10 @@
 # Using Capacitor with Ionic
 
+## Install Capacitor into an Ionic project
+
 Capacitor installs directly into any Ionic project (1.0-4.x+) with a simple `npm install`:
 
-## Start Ionic Project
+### Start Ionic Project
 
 ```bash
 ionic start myApp tabs
@@ -11,7 +13,7 @@ cd myApp
 
 Select "N" when asked to add Cordova.
 
-## Build your Ionic App
+### Build your Ionic App
 
 You must run `npm run build` at least once to create the `www` folder:
 
@@ -19,7 +21,7 @@ You must run `npm run build` at least once to create the `www` folder:
 npm run build
 ```
 
-## Install Capacitor
+### Install Capacitor
 
 Next, install capacitor into your project:
 
@@ -27,7 +29,7 @@ Next, install capacitor into your project:
 npm install --save @capacitor/cli @capacitor/core
 ```
 
-## Remove Cordova Splash
+### Remove Cordova Splash
 
 Capacitor conflicts with Cordova's Splashscreen Plugin. It needs to be removed:
 
@@ -35,7 +37,7 @@ Capacitor conflicts with Cordova's Splashscreen Plugin. It needs to be removed:
 npm uninstall --save cordova-plugin-splashscreen
 ```
 
-## Init Capacitor with your app information
+### Init Capacitor with your app information
 
 ```
 npx cap init [appName] [appId]
@@ -43,11 +45,18 @@ npx cap init [appName] [appId]
 
 where `appName` is the name of your app, and `appId` is the domain identifier of your app (ex: `com.example.app`).
 
-## Add Platforms
+### Add Platforms
 
 ```bash
 npx cap add ios
 npx cap add android
+```
+
+### Open IDE to build
+
+```bash
+npx cap open ios
+npx cap open android
 ```
 
 ## Syncing your app with Capacitor
