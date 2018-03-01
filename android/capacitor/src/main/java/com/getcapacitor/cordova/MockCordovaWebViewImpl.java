@@ -228,7 +228,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public Context getContext() {
-    return this.context;
+    return this.webView.getContext();
   }
 
   @Override
