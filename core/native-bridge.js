@@ -271,33 +271,24 @@
     return false;
   };
 
-  capacitor.logToNative = function(call) {
-    var c = orgConsole;
-    c.groupCollapsed(`%cnative %c${call.pluginId}.${call.methodName} (#${call.callbackId})`,
-    `font-weight: lighter; color: gray`, `font-weight: bold; color: #000`);
-    c.dir(call);
-    c.groupEnd();
-    //orgConsole.log('LOG TO NATIVE', call);
-  }
-
-  capacitor.logFromNative = function(result) {
-    var c = orgConsole;
-
-    const success = result.success === true;
-
-    const tagStyles = success ? `font-style: italic; font-weight: lighter; color: gray` :
-      `font-style: italic; font-weight: lighter; color: red`;
-
-    c.groupCollapsed(`%cresult %c${result.pluginId}.${result.methodName} (#${result.callbackId})`,
-      tagStyles,
-      `font-style: italic; font-weight: bold; color: #444`);
-    if (result.success === false) {
-      c.error(result.error);
-    } else {
-      c.dir(result.data);
+    capacitor.logToNative = function(call) {
+        win.console.log('LOG TO NATIVE: ', call);
+        if (capacitor.isNative) {
+            try {
+                capacitor.toNative('Console', 'log', {message: JSON.stringify(call)});
+            } catch (e) {
+                win.console.log('Error converting/posting console messages');
+            }
+        }
     }
-    c.groupEnd();
-  }
+
+    capacitor.logFromNative = function(result) {
+        if (result.success === false) {
+            win.console.error(result.error);
+        } else {
+            win.console.log(result.data);
+        }
+    }
 
   capacitor.uuidv4 = function() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
