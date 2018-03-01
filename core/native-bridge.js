@@ -272,6 +272,19 @@
   };
 
     capacitor.logToNative = function(call) {
+        /*
+        *** Code from past logToNative ***
+
+        var c = orgConsole;
+        c.groupCollapsed(`%cnative %c${call.pluginId}.${call.methodName} (#${call.callbackId})`,
+        `font-weight: lighter; color: gray`, `font-weight: bold; color: #000`);
+        c.dir(call);
+        c.groupEnd();
+        //orgConsole.log('LOG TO NATIVE', call);
+
+        */
+
+        // This should be temp.
         win.console.log('LOG TO NATIVE: ', call);
         if (capacitor.isNative) {
             try {
@@ -283,6 +296,25 @@
     }
 
     capacitor.logFromNative = function(result) {
+        /*
+        *** Code from past logFromNative ***
+
+        var c = orgConsole;
+        const success = result.success === true;
+        const tagStyles = success ? `font-style: italic; font-weight: lighter; color: gray` :
+          `font-style: italic; font-weight: lighter; color: red`;
+        c.groupCollapsed(`%cresult %c${result.pluginId}.${result.methodName} (#${result.callbackId})`,
+          tagStyles,
+          `font-style: italic; font-weight: bold; color: #444`);
+        if (result.success === false) {
+          c.error(result.error);
+        } else {
+          c.dir(result.data);
+        }
+        c.groupEnd();
+        */
+
+        //This should be temp.
         if (result.success === false) {
             win.console.error(result.error);
         } else {
