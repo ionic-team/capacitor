@@ -35,6 +35,7 @@ export async function copy(config: Config, platformName: string) {
     } else if (platformName === config.android.name) {
       await copyWebDir(config, config.android.webDirAbs);
       await copyNativeBridge(config, config.android.webDirAbs);
+      await copyProxyPolyfill(config, config.android.webDirAbs);
       await copyCordovaJSFiles(config, platformName);
     } else if (platformName === config.web.name) {
       await copyWeb(config);
@@ -55,6 +56,19 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
   await runTask('Copying native bridge', async () => {
     return fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
   });
+}
+
+async function copyProxyPolyfill(config: Config, nativeAbsDir: string) {
+    const polyfillPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/core', 'proxy-polyfill.js');
+    if (!await existsAsync(polyfillPath)) {
+        logFatal(`Unable to find node_modules/@capacitor/core/proxy-polyfill.js. Are you sure`,
+            '@capacitor/core is installed?');
+        return;
+    }
+
+    await runTask('Copying Proxy-Polyfill', async () => {
+        return fsCopy(polyfillPath, join(nativeAbsDir, 'proxy-polyfill.js'));
+    });
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
