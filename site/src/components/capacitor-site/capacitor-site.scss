@@ -286,7 +286,7 @@ code {
 .landing-page {
   footer {
     .ionic-oss-logo {
-      background-image: url(assets/img/ionic-os-logo.png);
+      background-image: url(/assets/img/ionic-os-logo.png);
     }
   }
 }
@@ -302,7 +302,7 @@ footer {
   flex: 0 0 8em;
 
   .ionic-oss-logo {
-    background: url(assets/img/ionic-os-dark-logo.png) no-repeat transparent;
+    background: url(/assets/img/ionic-os-dark-logo.png) no-repeat transparent;
     width: 124px;
     height: 16px;
     background-size: 100%;
