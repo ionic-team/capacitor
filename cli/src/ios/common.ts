@@ -59,14 +59,15 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
       type: PluginType.Code,
       path: iosPath
     };
-    const files = await readdirAsync(join(plugin.rootPath, iosPath));
-    const podSpec = files.find(file => file.endsWith('.podspec'));
-    if (podSpec) {
-      plugin.ios.type = PluginType.Cocoapods;
-      plugin.ios.name = podSpec.split('.')[0];
-    }
     if (plugin.xml) {
       plugin.ios.type = PluginType.Cordova;
+    } else {
+      const files = await readdirAsync(join(plugin.rootPath, iosPath));
+      const podSpec = files.find(file => file.endsWith('.podspec'));
+      if (podSpec) {
+        plugin.ios.type = PluginType.Cocoapods;
+        plugin.ios.name = podSpec.split('.')[0];
+      }
     }
   } catch (e) {
     console.error('Unable to resolve plugin', e);
