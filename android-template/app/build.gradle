@@ -22,6 +22,9 @@ repositories {
     maven {
         url  "https://dl.bintray.com/ionic-team/capacitor"
     }
+    flatDir{
+        dirs '../../node_modules/@capacitor/cli/assets/capacitor-android-plugins/src/main/libs', 'libs'
+    }
 }
 
 dependencies {

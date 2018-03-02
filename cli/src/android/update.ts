@@ -54,14 +54,19 @@ ${plugins.map(p => {
 }
 
 export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
-  const pluginsGradlePath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'build.gradle');
+  const pluginsFolder = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
   let frameworksArray: Array<any> = [];
   let preferencessArray: Array<any> = [];
+  let applyArray: Array<any> = [];
   cordovaPlugins.map( p => {
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (!framework.$.type && !framework.$.custom) {
         frameworksArray.push(framework.$.src);
+      } else if (framework.$.custom && framework.$.custom === "true" && framework.$.type && framework.$.type === "gradleReference"){
+        const fileName = framework.$.src.split("/").pop();
+        applyArray.push(join(p.id, fileName));
       }
     });
     preferencessArray = preferencessArray.concat(getPlatformElement(p, platform, 'preference'));
@@ -69,16 +74,21 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
   let frameworkString = frameworksArray.map(f => {
     return `    implementation "${f}"`;
   }).join('\n');
+  let applyString = applyArray.map(ap => {
+    return `apply from: "${pluginsFolder}/gradle-files/${ap}"`
+  }).join('\n');
   preferencessArray.map((preference: any) => {
     frameworkString = frameworkString.replace(new RegExp(("$"+preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
   });
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
   buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat("\n") + '    $2');
+  buildGradle = buildGradle.replace(/(PLUGIN GRADLE EXTENSIONS START)[\s\S]*(\/\/ PLUGIN GRADLE EXTENSIONS END)/, '$1\n' + applyString.concat("\n") + '$2');
   await writeFileAsync(pluginsGradlePath, buildGradle);
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
-  const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
+  const pluginsRoot = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsPath = join(pluginsRoot, 'src', 'main');
   removePluginsNativeFiles(config);
   cordovaPlugins.map( p => {
     const androidPlatform = getPluginPlatform(p, platform);
@@ -94,15 +104,29 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const resourceFiles = androidPlatform['resource-file'];
       if(resourceFiles) {
         resourceFiles.map( (resourceFile: any) => {
-          copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
+          if (resourceFile.$.src.split(".").pop() === "aar") {
+            copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, 'libs', resourceFile.$["target"].split("/").pop()));
+          } else {
+            copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
+          }
         });
       }
+      const frameworks = getPlatformElement(p, platform, 'framework');
+      frameworks.map((framework: any) => {
+        if (framework.$.custom && framework.$.custom === "true" && framework.$.type && framework.$.type === "gradleReference"){
+          const fileName = framework.$.src.split("/").pop();
+          copySync(join(p.rootPath, framework.$.src), join(pluginsRoot, 'gradle-files', p.id, fileName));
+        }
+      });
     }
   });
 }
 
 function removePluginsNativeFiles(config: Config) {
-  const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins', 'src', 'main');
+  const pluginsRoot = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsPath = join(pluginsRoot, 'src', 'main');
+  removeSync(join(pluginsRoot, 'gradle-files'));
   removeSync(join(pluginsPath, 'java'));
   removeSync(join(pluginsPath, 'res'));
+  removeSync(join(pluginsPath, 'libs'));
 }
