@@ -11,7 +11,7 @@ import chalk from 'chalk';
 export async function copyCommand(config: Config, selectedPlatformName: string) {
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
-    logInfo(`There are no platforms to copy yet. Create one with "capacitor create".`);
+    logInfo(`There are no platforms to copy yet. Create one with \`capacitor create\`.`);
     return;
   }
   try {
@@ -25,7 +25,7 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
 export async function copy(config: Config, platformName: string) {
   await runTask(chalk`{green {bold copy}}`, async () => {
     if (!await existsAsync(config.app.webDirAbs)) {
-      throw new Error('Web dir doesn\'t exist. Make sure you\'ve run npm build then run npx cap copy again');
+      throw new Error('Web dir doesn\'t exist. Make sure you\'ve run `npm build` then run `npx cap copy again`');
     }
 
     if (platformName === config.ios.name) {
