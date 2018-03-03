@@ -1,7 +1,8 @@
 # Capacitor APIs
 
-Capacitors includes a number of APIs that are available to all Capacitor projects. 
-In Cordova projects these functionalities were traditionally covered by core plugins and user space plugins.
+Capacitor includes a number of Native APIs that are available to all Capacitor apps. These can be thought of as Capacitor "core plugins," and they make it easy to access commonly needed functionality on each platform.
+
+For those coming from Cordova, the core Capacitor APIs cover much of the core Cordova plugins, and also include some new ones.
 
 ## Available Capacitor APIs
 
