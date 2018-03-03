@@ -168,6 +168,10 @@ export class SiteMenu {
     {
       title: 'APIs',
       items: [
+        {
+          title: 'Introduction',
+          url: '/docs/apis/'
+        },
         { title: 'Accessibility', url: '/docs/apis/accessibility' },
         { title: 'App', url: '/docs/apis/app' },
         { title: 'Background Task', url: '/docs/apis/background-task' },
@@ -183,12 +187,12 @@ export class SiteMenu {
         { title: 'Motion', url: '/docs/apis/motion' },
         { title: 'Network', url: '/docs/apis/network' },
         // { title: 'Photos', url: '/docs/apis/photos' },
-        //{ title: 'Push Notifications', url: '/docs/apis/push-notifications' },
+        // { title: 'Push Notifications', url: '/docs/apis/push-notifications' },
         { title: 'Share', url: '/docs/apis/share' },
         { title: 'Splash Screen', url: '/docs/apis/splash-screen' },
         { title: 'Status Bar', url: '/docs/apis/status-bar' },
         { title: 'Storage', url: '/docs/apis/storage' },
-        //{ title: 'Toast', url: '/docs/apis/toast' },
+        // { title: 'Toast', url: '/docs/apis/toast' },
       ]
     }
   ];
