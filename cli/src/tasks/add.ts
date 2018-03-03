@@ -1,4 +1,5 @@
 import { Config } from '../config';
+import { OS } from '../definitions';
 import { addAndroid } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
@@ -35,7 +36,10 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     await check(config, []); // , [checkWebDir]);
     await doAdd(config, platformName);
     await editPlatforms(config, platformName);
-    await sync(config, platformName);
+
+    if (shouldSync(config, platformName)) {
+      await sync(config, platformName);
+    }
   } catch (e) {
     logFatal(e);
   }
@@ -92,4 +96,12 @@ async function editPlatforms(config: Config, platformName: string) {
   } else if (platformName === config.android.name) {
     await editProjectSettingsAndroid(config);
   }
+}
+
+function shouldSync(config: Config, platformName: string) {
+  // Don't sync if we're adding the iOS platform not on a mac
+  if (config.cli.os !== OS.Mac && platformName === "ios") {
+    return false;
+  }
+  return true;
 }
