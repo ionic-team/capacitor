@@ -9,7 +9,7 @@ Current mobile OS's have additional layers of separation between files, such as 
 ## Example
 
 ```typescript
-import { Plugins } from '@capacitor/core';
+import { Plugins, FilesystemDirectory } from '@capacitor/core';
 
 const { Filesystem } = Plugins;
 
