@@ -43,9 +43,9 @@ async function checkAppSrcDirs(config: Config) {
     return `"assets" directory is missing in: ${appSrcMainDir}`;
   }
 
-  const appSrcMainAssetsWwwDir = join(appSrcMainAssetsDir, 'www');
+  const appSrcMainAssetsWwwDir = join(appSrcMainAssetsDir, 'public');
   if (!await existsAsync(appSrcMainAssetsWwwDir)) {
-    return `"www" directory is missing in: ${appSrcMainAssetsDir}`;
+    return `"public" directory is missing in: ${appSrcMainAssetsDir}`;
   }
 
   const appSrcMainAssetsWwwIndexHtmlDir = join(appSrcMainAssetsWwwDir, 'index.html');
