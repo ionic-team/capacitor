@@ -257,6 +257,20 @@ export interface CameraOptions {
    * Whether to save the photo to the gallery/photostream
    */
   saveToGallery?: boolean;
+  /**
+   * The width of the saved image
+   */
+  width?: number;
+  /**
+   * The height of the saved image
+   */
+  height?: number;
+  /**
+   * Whether to automatically rotate the image "up" to correct for orientation
+   * in portrait mode
+   * Default: false
+   */
+  correctOrientation?: boolean;
 }
 
 export interface CameraPhoto {

@@ -6,11 +6,25 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   var imagePicker: UIImagePickerController?
   var call: CAPPluginCall?
   var quality: Float = 1.0
+  var width: Float = 0
+  var height: Float = 0
+  var shouldResize = false
+  var shouldCorrectOrientation = false
   
   @objc func getPhoto(_ call: CAPPluginCall) {
     self.call = call
     self.quality = call.get("quality", Float.self, 100)!
     let allowEditing = call.get("allowEditing", Bool.self, false)!
+    
+    // Get the new image dimensions if provided
+    self.width = Float(call.get("width", Int.self, 0)!)
+    self.height = Float(call.get("height", Int.self, 0)!)
+    if self.width > 0 || self.height > 0 {
+      // We resize only if a dimension was provided
+      shouldResize = true
+    }
+    
+    self.shouldCorrectOrientation = call.get("correctOrientation", Bool.self, false)!
     
     // Make sure they have all the necessary info.plist settings
     if let missingUsageDescription = checkUsageDescriptions() {
@@ -80,6 +94,22 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       // Use originalImage Here
       image = originalImage
     }
+    
+    if shouldResize {
+      guard let convertedImage = resizeImage(image!) else {
+        self.call?.error("Error resizing image")
+        return
+      }
+      image = convertedImage
+    }
+    
+    if shouldCorrectOrientation {
+      guard let convertedImage = correctOrientation(image!) else {
+        self.call?.error("Error resizing image")
+        return
+      }
+      image = convertedImage
+    }
 
     guard let jpeg = UIImageJPEGRepresentation(image!, CGFloat(quality/100)) else {
       print("Unable to convert image to jpeg")
@@ -95,6 +125,35 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     ])
     
     picker.dismiss(animated: true, completion: nil)
+  }
+  
+  func resizeImage(_ image: UIImage) -> UIImage? {
+    let isAspectScale = self.width > 0 && self.height == 0 || self.height > 0 && self.width == 0
+    let aspect = Float(image.size.width / image.size.height);
+
+    var size = CGSize.init(width: Int(self.width), height: Int(self.height))
+    if isAspectScale {
+      if self.width > 0 {
+        size = CGSize.init(width: Int(self.width), height: Int(self.width * (1/aspect)))
+      } else if self.height > 0 {
+        size = CGSize.init(width: Int(self.height * (1/aspect)), height: Int(self.height))
+      }
+    }
+
+    UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
+    image.draw(in: CGRect(origin: CGPoint.zero, size: size))
+    
+    let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return scaledImage
+  }
+  
+  func correctOrientation(_ image: UIImage) -> UIImage? {
+    UIGraphicsBeginImageContext(image.size)
+    image.draw(at: .zero)
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return newImage ?? image
   }
   
   /**

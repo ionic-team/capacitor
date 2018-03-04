@@ -37,4 +37,27 @@ export class CameraPage {
     console.log('Got image back', image);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
   }
+
+  async takePictureScaled() {
+    const image = await Plugins.Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: 'base64',
+      width: 128
+    })
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+  }
+
+  async takePictureCorrected() {
+    const image = await Plugins.Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: 'base64',
+      width: 128,
+      correctOrientation: true
+    })
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+  }
 }
