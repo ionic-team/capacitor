@@ -2,7 +2,8 @@ import { Component, NgZone } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
-  Plugins
+  Plugins,
+  CameraResultType
 } from '@capacitor/core';
 
 /**
@@ -32,7 +33,7 @@ export class CameraPage {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: 'base64'
+      resultType: CameraResultType.Base64,
     })
     console.log('Got image back', image);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
@@ -42,7 +43,7 @@ export class CameraPage {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: 'base64',
+      resultType: CameraResultType.Base64,
       width: 128
     })
     console.log('Got image back', image);
@@ -53,9 +54,19 @@ export class CameraPage {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: 'base64',
+      resultType: CameraResultType.Base64,
       width: 128,
       correctOrientation: true
+    })
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+  }
+
+  async takePictureFile() {
+    const image = await Plugins.Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Uri
     })
     console.log('Got image back', image);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));

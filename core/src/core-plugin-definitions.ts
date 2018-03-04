@@ -250,9 +250,9 @@ export interface CameraOptions {
    */
   allowEditing?: boolean;
   /**
-   * How the data should be returned. Currently, only base64 is supported
+   * How the data should be returned. Currently, only 'base64' or 'uri' is supported
    */
-  resultType: 'base64';
+  resultType: CameraResultType;
   /**
    * Whether to save the photo to the gallery/photostream
    */
@@ -276,6 +276,11 @@ export interface CameraOptions {
 export interface CameraPhoto {
   base64_data: string;
   format: string;
+}
+
+export enum CameraResultType {
+  Uri = 'uri',
+  Base64 = 'base64'
 }
 
 //
