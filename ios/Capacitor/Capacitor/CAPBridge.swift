@@ -40,6 +40,9 @@ enum BridgeError: Error {
   }
   
   public func willAppear() {
+  }
+
+  public func didLoad() {
     if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
       splash.showOnLaunch()
     }

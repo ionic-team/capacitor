@@ -47,6 +47,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     self.becomeFirstResponder()
     
     loadWebView()
+    bridge!.didLoad()
   }
   
   public override func viewWillAppear(_ animated: Bool) {
