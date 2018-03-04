@@ -364,6 +364,9 @@ public class WebViewLocalServer {
 
         try {
           mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
+          if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
+            Log.d(Bridge.TAG, "We shouldn't be here");
+          }
           if (mimeType == null) {
             if (path.endsWith(".js")) {
               // Make sure JS files get the proper mimetype to support ES modules
@@ -373,7 +376,7 @@ public class WebViewLocalServer {
             }
           }
         } catch (Exception ex) {
-          Log.e(TAG, "Unable to get mime type" + url);
+          Log.e(TAG, "Unable to get mime type" + url, ex);
         }
 
         return stream;

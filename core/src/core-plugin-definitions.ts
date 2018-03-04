@@ -250,18 +250,37 @@ export interface CameraOptions {
    */
   allowEditing?: boolean;
   /**
-   * How the data should be returned. Currently, only base64 is supported
+   * How the data should be returned. Currently, only 'base64' or 'uri' is supported
    */
-  resultType: 'base64';
+  resultType: CameraResultType;
   /**
    * Whether to save the photo to the gallery/photostream
    */
   saveToGallery?: boolean;
+  /**
+   * The width of the saved image
+   */
+  width?: number;
+  /**
+   * The height of the saved image
+   */
+  height?: number;
+  /**
+   * Whether to automatically rotate the image "up" to correct for orientation
+   * in portrait mode
+   * Default: false
+   */
+  correctOrientation?: boolean;
 }
 
 export interface CameraPhoto {
   base64_data: string;
   format: string;
+}
+
+export enum CameraResultType {
+  Uri = 'uri',
+  Base64 = 'base64'
 }
 
 //

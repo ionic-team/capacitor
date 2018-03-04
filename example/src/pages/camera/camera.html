@@ -15,5 +15,8 @@
 
 <ion-content padding>
   <img [src]="image" />
-  <button (click)="takePicture()" ion-button color="primary">Take Picture</button>
+  <button (click)="takePicture()" ion-button color="primary">Prompt</button>
+  <button (click)="takePictureScaled()" ion-button color="primary">Scaled</button>
+  <button (click)="takePictureCorrected()" ion-button color="primary">Orientation Corrected</button>
+  <button (click)="takePictureFile()" ion-button color="primary">File URI</button>
 </ion-content>

@@ -5,13 +5,17 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
+import android.util.Log;
 
+import com.getcapacitor.Bridge;
+import com.getcapacitor.ImageUtils;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -50,7 +54,9 @@ public class Camera extends Plugin {
   private static final String IMAGE_PROCESS_NO_FILE_ERROR = "Unable to process image, file not found on disk";
 
   // Default values
+  private static final int DEFAULT_QUALITY = 100;
   private static final boolean DEFAULT_SAVE_IMAGE_TO_GALLERY = true;
+  private static final boolean DEFAULT_CORRECT_ORIENTATION = false;
 
   // Valid result types
   private static final String RESULT_BASE64 = "base64";
@@ -58,6 +64,11 @@ public class Camera extends Plugin {
   private static final String[] VALID_RESULT_TYPES = { RESULT_BASE64, RESULT_URI };
 
   private String imageFileSavePath;
+  private int quality = 100;
+  private boolean shouldResize = false;
+  private boolean shouldCorrectOrientation = false;
+  private int width = 0;
+  private int height = 0;
 
   @PluginMethod()
   public void getPhoto(PluginCall call) {
@@ -65,6 +76,11 @@ public class Camera extends Plugin {
 
     String resultType = getResultType(call.getString("resultType"));
     boolean saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
+    quality = call.getInt("quality", DEFAULT_QUALITY);
+    width = call.getInt("width", 0);
+    height = call.getInt("height", 0);
+    shouldResize = width > 0 || height > 0;
+    shouldCorrectOrientation = call.getBoolean("correctOrientation", DEFAULT_CORRECT_ORIENTATION);
 
     if(resultType == null || Arrays.asList(VALID_RESULT_TYPES).indexOf(resultType) < 0) {
       call.error(INVALID_RESULT_TYPE_ERROR);
@@ -170,9 +186,7 @@ public class Camera extends Plugin {
       return;
     }
 
-    log("Processing image");
-    if(saveToGallery) {
-      log("Saving image to gallery");
+    if (saveToGallery) {
       Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
       File f = new File(imageFileSavePath);
       Uri contentUri = Uri.fromFile(f);
@@ -180,44 +194,49 @@ public class Camera extends Plugin {
       getActivity().sendBroadcast(mediaScanIntent);
     }
 
-    if(resultType.equals(RESULT_BASE64)) {
-      log("Returning base64 value");
-      File f = new File(imageFileSavePath);
-      BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-      Uri contentUri = Uri.fromFile(f);
-      Bitmap bitmap = BitmapFactory.decodeFile(imageFileSavePath, bmOptions);
-
-      returnBase64(call, bitmap);
-    }
-  }
-
-  @Override
-  protected Bundle saveInstanceState() {
-    Bundle bundle = super.saveInstanceState();
-    bundle.putString("cameraImageFileSavePath", imageFileSavePath);
-    return bundle;
-  }
-
-  @Override
-  protected void restoreState(Bundle state) {
-    String storedImageFileSavePath = state.getString("cameraImageFileSavePath");
-    if (storedImageFileSavePath != null) {
-      imageFileSavePath = storedImageFileSavePath;
-    }
-  }
-
-
-  private void returnBase64(PluginCall call, Bitmap bitmap) {
-    int quality = call.getInt("quality", 100);
+    // Load the image as a Bitmap
+    File f = new File(imageFileSavePath);
+    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+    Uri contentUri = Uri.fromFile(f);
+    Bitmap bitmap = BitmapFactory.decodeFile(imageFileSavePath, bmOptions);
+    int orientation = ExifInterface.ORIENTATION_NORMAL;
 
     if (bitmap == null) {
       call.error("User cancelled photos app");
       return;
     }
 
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
-    byte[] byteArray = byteArrayOutputStream .toByteArray();
+    if (shouldCorrectOrientation) {
+      Bitmap newBitmap = ImageUtils.correctOrientation(bitmap, imageFileSavePath);
+      if (bitmap != newBitmap) {
+        bitmap.recycle();
+      }
+      bitmap = newBitmap;
+    }
+
+    if (shouldResize) {
+      Bitmap newBitmap = ImageUtils.resize(bitmap, width, height);
+      if (bitmap != newBitmap) {
+        bitmap.recycle();
+      }
+      bitmap = newBitmap;
+    }
+
+    // Compress the final image and prepare for output to client
+    ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
+    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, bitmapOutputStream);
+
+    if (resultType.equals(RESULT_BASE64)) {
+      returnBase64(call, bitmapOutputStream);
+    } else if (resultType.equals(RESULT_URI)) {
+      JSObject ret = new JSObject();
+      ret.put("path", contentUri.toString());
+      call.success(ret);
+    }
+  }
+
+  private void returnBase64(PluginCall call, ByteArrayOutputStream bitmapOutputStream) {
+    byte[] byteArray = bitmapOutputStream.toByteArray();
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
     JSObject data = new JSObject();
@@ -245,4 +264,21 @@ public class Camera extends Plugin {
 
     return image;
   }
+
+
+  @Override
+  protected Bundle saveInstanceState() {
+    Bundle bundle = super.saveInstanceState();
+    bundle.putString("cameraImageFileSavePath", imageFileSavePath);
+    return bundle;
+  }
+
+  @Override
+  protected void restoreState(Bundle state) {
+    String storedImageFileSavePath = state.getString("cameraImageFileSavePath");
+    if (storedImageFileSavePath != null) {
+      imageFileSavePath = storedImageFileSavePath;
+    }
+  }
+
 }

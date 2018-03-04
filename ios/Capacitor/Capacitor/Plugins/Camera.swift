@@ -5,12 +5,30 @@ import Photos
 public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
   var imagePicker: UIImagePickerController?
   var call: CAPPluginCall?
+  
+  var imageCounter = 0
+  
+  var resultType: String = "base64"
   var quality: Float = 1.0
+  var width: Float = 0
+  var height: Float = 0
+  var shouldResize = false
+  var shouldCorrectOrientation = false
   
   @objc func getPhoto(_ call: CAPPluginCall) {
     self.call = call
     self.quality = call.get("quality", Float.self, 100)!
     let allowEditing = call.get("allowEditing", Bool.self, false)!
+    self.resultType = call.get("resultType", String.self, "base64")!
+    // Get the new image dimensions if provided
+    self.width = Float(call.get("width", Int.self, 0)!)
+    self.height = Float(call.get("height", Int.self, 0)!)
+    if self.width > 0 || self.height > 0 {
+      // We resize only if a dimension was provided
+      shouldResize = true
+    }
+    
+    self.shouldCorrectOrientation = call.get("correctOrientation", Bool.self, false)!
     
     // Make sure they have all the necessary info.plist settings
     if let missingUsageDescription = checkUsageDescriptions() {
@@ -80,21 +98,85 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       // Use originalImage Here
       image = originalImage
     }
-
+    
+    if shouldResize {
+      guard let convertedImage = resizeImage(image!) else {
+        self.call?.error("Error resizing image")
+        return
+      }
+      image = convertedImage
+    }
+    
+    if shouldCorrectOrientation {
+      guard let convertedImage = correctOrientation(image!) else {
+        self.call?.error("Error resizing image")
+        return
+      }
+      image = convertedImage
+    }
+    
     guard let jpeg = UIImageJPEGRepresentation(image!, CGFloat(quality/100)) else {
       print("Unable to convert image to jpeg")
       self.call?.error("Unable to convert image to jpeg")
       return
     }
-    
-    let base64String = jpeg.base64EncodedString()
-    
-    self.call?.success([
-      "base64_data": "data:image/jpeg;base64," + base64String,
-      "format": "jpeg"
-    ])
+
+    if resultType == "base64" {
+      let base64String = jpeg.base64EncodedString()
+      
+      self.call?.success([
+        "base64_data": "data:image/jpeg;base64," + base64String,
+        "format": "jpeg"
+      ])
+    } else if resultType == "uri" {
+      let path = try! saveTemporaryImage(jpeg)
+      call?.success([
+        "path": path,
+        "format": "jpeg"
+      ])
+    }
     
     picker.dismiss(animated: true, completion: nil)
+  }
+  
+  func resizeImage(_ image: UIImage) -> UIImage? {
+    let isAspectScale = self.width > 0 && self.height == 0 || self.height > 0 && self.width == 0
+    let aspect = Float(image.size.width / image.size.height);
+
+    var size = CGSize.init(width: Int(self.width), height: Int(self.height))
+    if isAspectScale {
+      if self.width > 0 {
+        size = CGSize.init(width: Int(self.width), height: Int(self.width * (1/aspect)))
+      } else if self.height > 0 {
+        size = CGSize.init(width: Int(self.height * (1/aspect)), height: Int(self.height))
+      }
+    }
+
+    UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
+    image.draw(in: CGRect(origin: CGPoint.zero, size: size))
+    
+    let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return scaledImage
+  }
+  
+  func correctOrientation(_ image: UIImage) -> UIImage? {
+    UIGraphicsBeginImageContext(image.size)
+    image.draw(at: .zero)
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return newImage ?? image
+  }
+  
+  func saveTemporaryImage(_ data: Data) throws -> String {
+    var url: URL
+    repeat {
+      imageCounter += 1
+      url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("photo-\(imageCounter).jpg")
+    } while FileManager.default.fileExists(atPath: url.absoluteString)
+    
+    try data.write(to: url, options: .atomic)
+    return url.absoluteString
   }
   
   /**
