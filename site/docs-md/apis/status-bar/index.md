@@ -4,6 +4,10 @@ The StatusBar API Provides methods for configuring the sytle of the Status Bar, 
 
 <plugin-api index="true" name="status-bar"></plugin-api>
 
+## iOS Note
+
+This plugin requires "View controller-based status bar appearance" (`UIViewControllerBasedStatusBarAppearance`) set to `YES` in `Info.plist`. Read about [Configuring iOS](../../ios/configuration) for help.
+
 ## Example
 
 ```typescript

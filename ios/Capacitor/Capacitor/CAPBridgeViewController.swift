@@ -17,8 +17,12 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   
   private var port: Int?
   
+  private var isStatusBarVisible = true
+  private var statusBarStyle: UIStatusBarStyle = .default
+  
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
+  
   
   override func loadView() {
     let webViewConfiguration = WKWebViewConfiguration()
@@ -129,6 +133,7 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
       print(error)
     }
   }
+  
   public func configureWebView(configuration: WKWebViewConfiguration) {
     configuration.allowsInlineMediaPlayback = true
     configuration.suppressesIncrementalRendering = false
@@ -245,6 +250,36 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
     get {
       return true
     }
+  }
+  
+  override var prefersStatusBarHidden: Bool {
+    get {
+      return !isStatusBarVisible
+    }
+  }
+  
+  override var preferredStatusBarStyle: UIStatusBarStyle {
+    get {
+      return statusBarStyle
+    }
+  }
+  
+  override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+    get {
+      return .slide
+    }
+  }
+  
+  public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
+    self.isStatusBarVisible = isStatusBarVisible
+    UIView.animate(withDuration: 0.2, animations: {
+      self.setNeedsStatusBarAppearanceUpdate()
+    })
+  }
+  
+  public func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
+    self.statusBarStyle = statusBarStyle
+    self.setNeedsStatusBarAppearanceUpdate()
   }
   
   func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {

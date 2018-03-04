@@ -25,7 +25,6 @@ enum BridgeError: Error {
   public var storedCalls = [String:CAPPluginCall]()
   // Whether the app is active
   private var isActive = true
-  
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
   
@@ -45,6 +44,24 @@ enum BridgeError: Error {
   public func didLoad() {
     if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
       splash.showOnLaunch()
+    }
+  }
+  
+  public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return
+    }
+    DispatchQueue.main.async {
+      bridgeVC.setStatusBarVisible(isStatusBarVisible)
+    }
+  }
+  
+  public func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return
+    }
+    DispatchQueue.main.async {
+      bridgeVC.setStatusBarStyle(statusBarStyle)
     }
   }
   
