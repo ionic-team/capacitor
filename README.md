@@ -9,16 +9,6 @@ Capacitor is being designed by the Ionic Framework team as an eventual alternati
 Capacitor also comes with a Plugin API for building native plugins. On iOS, first-class Swift support is available, and much of the iOS Capacitor runtime is written in Swift. Plugins may also be written in Objective-C. On Android, support for writing plugins with Java and Kotlin is supported.
 
 Capacitor is still a work in progress and is not quite ready for use. Stay tuned for a public release in early 2018.
-
-## Timeline
-
-_Disclaimer: These dates are tentative. "It'll be ready when it's ready!"_
-
-*Short term milestones*
-
- - November 2017 - Project Start
- - January/Feb 2018 - Private alpha testing
- - Feb 2018 - Public alpha
  
 ## Roadmap
 
