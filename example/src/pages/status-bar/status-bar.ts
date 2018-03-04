@@ -5,6 +5,8 @@ import {
   StatusBarStyle,
 } from '@capacitor/core';
 
+const { StatusBar } = Plugins;
+
 /**
  * Generated class for the StatusBarPage page.
  *
@@ -42,4 +44,16 @@ export class StatusBarPage {
     Plugins.StatusBar.show();
   }
 
+  setBackgroundColor() {
+    const bits = [0, 0, 0];
+    const randomColor = bits.map(b => {
+      const v = Math.floor(Math.random() * 0xff).toString(16);
+      if (v.length < 2) {
+        return '0' + v;
+      }
+      return v;
+    }).join('');
+    console.log(`Random color: #${randomColor}`);
+    StatusBar.setBackgroundColor({ color: `#${randomColor}` })
+  }
 }

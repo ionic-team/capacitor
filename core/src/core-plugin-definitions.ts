@@ -1190,6 +1190,10 @@ export interface StatusBarPlugin extends Plugin {
    */
   setStyle(options: StatusBarStyleOptions): Promise<void>;
   /**
+   *  Set the background color of the status bar
+   */
+  setBackgroundColor(options: StatusBarBackgroundColorOptions): Promise<void>;
+  /**
    * Show the status bar
    */
   show(): Promise<void>;
@@ -1206,6 +1210,10 @@ export interface StatusBarStyleOptions {
 export enum StatusBarStyle {
   Dark = 'DARK',
   Light = 'LIGHT'
+}
+
+export interface StatusBarBackgroundColorOptions {
+  color: string;
 }
 
 export interface StoragePlugin extends Plugin {
