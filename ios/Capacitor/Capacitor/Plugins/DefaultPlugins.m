@@ -106,6 +106,7 @@ CAP_PLUGIN(CAPSplashScreenPlugin, "SplashScreen",
 
 CAP_PLUGIN(CAPStatusBarPlugin, "StatusBar",
   CAP_PLUGIN_METHOD(setStyle, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(setBackgroundColor, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
 )

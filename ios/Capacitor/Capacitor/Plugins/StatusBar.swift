@@ -6,7 +6,7 @@ import Foundation
  */
 @objc(CAPStatusBarPlugin)
 public class CAPStatusBarPlugin: CAPPlugin {
-  @objc public func setStyle(_ call: CAPPluginCall) {
+  @objc func setStyle(_ call: CAPPluginCall) {
     let options = call.options!
 
     if let style = options["style"] as? String {
@@ -20,6 +20,11 @@ public class CAPStatusBarPlugin: CAPPlugin {
     }
     
     call.success([:])
+  }
+  
+  @objc func setBackgroundColor(_ call: CAPPluginCall) {
+    // noop on iOS
+    call.success()
   }
 }
 

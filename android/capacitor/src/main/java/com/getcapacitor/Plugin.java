@@ -77,6 +77,11 @@ public class Plugin {
   }
 
   /**
+   * Get the Bridge instance for this plugin
+   */
+  public Bridge getBridge() { return this.bridge; }
+
+  /**
    * Set the wrapper {@link PluginHandle} instance for this plugin that
    * contains additional metadata about the Plugin instance (such
    * as indexed methods for reflection, and {@link NativePlugin} annotation data).
