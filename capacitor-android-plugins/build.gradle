@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'src/main/libs', include: ['*.jar'])
     implementation 'org.apache.cordova:framework:7.0.0'
     // SUB-PROJECT DEPENDENCIES START
     
