@@ -118,6 +118,10 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
           copySync(getFilePath(config, p, framework.$.src), join(pluginsRoot, 'gradle-files', p.id, fileName));
         }
       });
+      const libFiles = getPlatformElement(p, platform, 'lib-file');
+      libFiles.map((libFile: any) => {
+        copySync(getFilePath(config, p, libFile.$.src), join(pluginsPath, 'libs', libFile.$.src.split("/").pop()));
+      });
     }
   });
 }
