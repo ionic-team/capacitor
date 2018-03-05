@@ -3,7 +3,7 @@ import { CheckFunction, log, logInfo, logWarn, runCommand, runTask } from '../co
 import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join, resolve } from 'path';
-import { getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType, printPlugins } from '../plugin';
+import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType, printPlugins } from '../plugin';
 import { handleCordovaPluginsJS } from '../cordova';
 
 import * as inquirer from 'inquirer';
@@ -232,17 +232,17 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const sourcesFolder = join(pluginsPath, 'sources', p.name);
     codeFiles.map( (codeFile: any) => {
       const fileName = codeFile.$.src.split("/").pop();
-      copySync(join(p.rootPath, codeFile.$.src), join(sourcesFolder, fileName));
+      copySync(getFilePath(config, p, codeFile.$.src), join(sourcesFolder, fileName));
     });
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
     resourceFiles.map( (resourceFile: any) => {
       const fileName = resourceFile.$.src.split("/").pop();
-      copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, 'resources', fileName));
+      copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'resources', fileName));
     });
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (framework.$.custom && framework.$.custom === 'true') {
-        copySync(join(p.rootPath, framework.$.src),  join(sourcesFolder, framework.$.src));
+        copySync(getFilePath(config, p, framework.$.src),  join(sourcesFolder, framework.$.src));
       }
     });
   });
