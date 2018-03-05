@@ -27,6 +27,14 @@ public class JSExport {
     }
   }
 
+  public static String getProxyPolyFillJS(Context context) throws JSExportException {
+      try {
+        return getJS(context, "public/proxy-polyfill.js");
+      } catch(IOException ex) {
+        throw new JSExportException("Unable to load proxy-polyfill.js. Emulators may not function!", ex);
+      }
+    }
+
   private static String getJS(Context context, String fileName) throws IOException {
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
