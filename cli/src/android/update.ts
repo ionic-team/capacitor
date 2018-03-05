@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { log, runTask } from '../common';
-import { getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from '../plugin';
+import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
 import { handleCordovaPluginsJS } from '../cordova';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
@@ -98,16 +98,16 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
         sourceFiles.map( (sourceFile: any) => {
           const fileName = sourceFile.$.src.split("/").pop();
           const target = sourceFile.$["target-dir"].replace('src/', 'java/');
-          copySync(join(p.rootPath, sourceFile.$.src), join(pluginsPath, target, fileName));
+          copySync(getFilePath(config, p, sourceFile.$.src), join(pluginsPath, target, fileName));
         });
       }
       const resourceFiles = androidPlatform['resource-file'];
       if(resourceFiles) {
         resourceFiles.map( (resourceFile: any) => {
           if (resourceFile.$.src.split(".").pop() === "aar") {
-            copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, 'libs', resourceFile.$["target"].split("/").pop()));
+            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'libs', resourceFile.$["target"].split("/").pop()));
           } else {
-            copySync(join(p.rootPath, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
+            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
           }
         });
       }
@@ -115,7 +115,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       frameworks.map((framework: any) => {
         if (framework.$.custom && framework.$.custom === "true" && framework.$.type && framework.$.type === "gradleReference"){
           const fileName = framework.$.src.split("/").pop();
-          copySync(join(p.rootPath, framework.$.src), join(pluginsRoot, 'gradle-files', p.id, fileName));
+          copySync(getFilePath(config, p, framework.$.src), join(pluginsRoot, 'gradle-files', p.id, fileName));
         }
       });
     }

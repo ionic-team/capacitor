@@ -153,3 +153,10 @@ export function getJSModules(p: Plugin, platform: string) {
   }
   return modules;
 }
+
+export function getFilePath(config: Config, plugin: Plugin, path: string) {
+  if (path.startsWith("node_modules")) {
+    return join(config.app.rootDir, path);
+  }
+  return join(plugin.rootPath, path);
+}
