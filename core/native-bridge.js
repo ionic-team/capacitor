@@ -44,6 +44,11 @@
     capacitor.platform = 'ios';
   }
 
+  var useFallbackLogging = Object.keys(win.console).length === 0;
+  if(useFallbackLogging) {
+    win.console.warn('Advance console logging disabled.')
+  }
+
   // patch window.console and store original console fns
   var orgConsole = {};
   Object.keys(win.console).forEach(level => {
@@ -272,7 +277,7 @@
   };
 
   capacitor.logToNative = function(call) {
-    if(Object.keys(win.console).length > 0) {
+    if(!useFallbackLogging) {
         var c = orgConsole;
         c.groupCollapsed(`%cnative %c${call.pluginId}.${call.methodName} (#${call.callbackId})`,
             `font-weight: lighter; color: gray`, `font-weight: bold; color: #000`);
@@ -292,7 +297,7 @@
   }
 
   capacitor.logFromNative = function(result) {
-      if(Object.keys(orgConsole).length > 0) {
+      if(!useFallbackLogging) {
           var c = orgConsole;
 
           var success = result.success === true;
