@@ -81,7 +81,7 @@ export function generatePodspec(config: Config, plugin: Plugin) {
     s.homepage = 'https://example.com'
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => '${repo}', :tag => '${plugin.version}' }
-    s.source_files = 'Plugin/Plugin/**/*.{swift,h,m}'
+    s.source_files = 'Plugin/Plugin/**/*.{swift,h,m,c,cc,mm}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'Capacitor'
   end`;
@@ -215,7 +215,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
     s.homepage = 'https://example.com'
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => 'https://github.com/ionic-team/does-not-exist.git', :tag => '${config.cli.package.version}' }
-    s.source_files = 'sources/**/*.{swift,h,m}'
+    s.source_files = 'sources/**/*.{swift,h,m,c,cc,mm}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'CapacitorCordova'
     ${frameworksString}
