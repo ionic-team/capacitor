@@ -14,14 +14,13 @@
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <button (click)="showSplash()" ion-button color="primary">
-        Splash Show
-      </button>
-      <button (click)="showSplashAutoFade()" ion-button color="primary">
-        Splash Auto Fade
-      </button>
-    </ion-item>
-  </ion-list>
+  <button (click)="showSplashAutoHide()" ion-button color="primary">
+    Show Splash, auto-hide, default length
+  </button>
+  <button (click)="showSplashAutoHide2s()" ion-button color="primary">
+    Show Splash, auto-hide, 2s
+  </button>
+  <button (click)="showSplash6s()" ion-button color="primary">
+    Show Splash, 6s
+  </button>
 </ion-content>
