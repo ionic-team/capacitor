@@ -60,24 +60,24 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkAppDir(config:Config, dir: string): Promise<string | null> {
+export async function checkAppDir(config: Config, dir: string): Promise<string | null> {
   if (!/^\S*$/.test(dir)) {
     return `Your app directory should not contain spaces`;
   }
   return null;
 }
 
-export async function checkAppId(config:Config, id: string): Promise<string | null> {
+export async function checkAppId(config: Config, id: string): Promise<string | null> {
   if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id)) {
     return null;
   }
   return `Invalid App ID "${id}". Must be in domain form (ex: com.example.app)`;
 }
 
-export async function checkAppName(config:Config, id: string): Promise<string | null> {
+export async function checkAppName(config: Config, name: string): Promise<string | null> {
   // We allow pretty much anything right now, have fun
-  if (!id || !id.length) {
-    return `Invalid App Name "${id}". Must provide an app name`;
+  if (!name || !name.length) {
+    return `Must provide an app name. For example: 'Spacebook'`;
   }
   return null;
 }
