@@ -8,7 +8,7 @@ Note: This project does _not_ use the Capacitor CLI. Please follow the steps bel
 
 Start by building the Capacitor Core Module in `/core`:
 
-```bash
+```
 cd ../core
 
 npm install
@@ -20,7 +20,7 @@ npm link
 
 Switch back over to this example project in `/example` where you first install dependencies and link in the `@capacitor/core` you just built in the step before, then build the app and copy the build files to the correct `public` directories for both the iOS and Android example apps:
 
-```bash
+```
 cd ../example
 
 npm install
@@ -36,14 +36,8 @@ Now that everything is in place you can build the native Capacitor Apps:
 
 ### a) Build iOS App
 
-```bash
-Open in XCode
-example/ios/IonicRunner/IonicRunner.xcodeproj
-```
+Open in XCode: `example/ios/IonicRunner/IonicRunner.xcworkspace`
 
 ### b) Build Android App
 
-```bash
-Open in Android Studio
-example/android
-```
+Open in Android Studio: `example/android`
