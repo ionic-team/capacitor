@@ -16,12 +16,14 @@ export async function addElectron(config: Config) {
 
 function installNpmDeps(pathToElectronPackageJson: string) {
   return new Promise((resolve, reject) => {
+    console.log('Installing NPM Dependencies...');
     exec('npm install', {cwd: pathToElectronPackageJson}, (error, stdout, stderr) => {
       if(error) {
         reject(error);
       }
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
+      console.log(`${stdout}`);
+      console.log(`${stderr}`);
+      console.log(`NPM Dependencies installed!`);
       resolve();
     });
   });
