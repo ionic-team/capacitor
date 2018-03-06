@@ -24,7 +24,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   if (existingPlatformDir) {
     logFatal(`"${platformName}" platform already exists.
     To add a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.
-    WARNING! your xcode setup will be completely removed.`);
+    WARNING! your native IDE project will be completely removed.`);
   }
 
   try {
