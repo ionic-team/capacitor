@@ -123,7 +123,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   }
 
   func hideSplash(fadeOutDuration: Int) {
-    self.hideSplash(fadeDuration, false);
+    self.hideSplash(fadeOutDuration: fadeOutDuration, isLaunchSplash: false);
   }
   
   func hideSplash(fadeOutDuration: Int, isLaunchSplash: Bool) {
