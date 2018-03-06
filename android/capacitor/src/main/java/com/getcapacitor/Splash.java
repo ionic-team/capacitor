@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
@@ -54,7 +55,7 @@ public class Splash {
    * @param a
    */
   public static void showOnLaunch(final Activity a) {
-    show(a, LAUNCH_SHOW_DURATION, 0, DEFAULT_FADE_OUT_DURATION, true, null);
+    show(a, LAUNCH_SHOW_DURATION, 0, DEFAULT_FADE_OUT_DURATION, true, null, true);
   }
 
   /**
@@ -63,6 +64,18 @@ public class Splash {
    */
   public static void show(final Activity a) {
     show(a, LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
+  }
+
+  /**
+   * Show the Splash Screen
+   */
+  public static void show(final Activity a,
+                          final int showDuration,
+                          final int fadeInDuration,
+                          final int fadeOutDuration,
+                          final boolean autoHide,
+                          final SplashListener splashListener) {
+    show(a, showDuration, fadeInDuration, fadeOutDuration, autoHide, splashListener, false);
   }
 
   /**
@@ -79,7 +92,8 @@ public class Splash {
                           final int fadeInDuration,
                           final int fadeOutDuration,
                           final boolean autoHide,
-                          final SplashListener splashListener) {
+                          final SplashListener splashListener,
+                          final boolean isLaunchSplash) {
     wm = (WindowManager)a.getSystemService(Context.WINDOW_SERVICE);
 
     if (a.isFinishing()) {
@@ -103,7 +117,7 @@ public class Splash {
           new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-              Splash.hide(a, fadeOutDuration);
+              Splash.hide(a, fadeOutDuration, isLaunchSplash);
 
               if (splashListener != null) {
                 splashListener.completed();
@@ -149,6 +163,22 @@ public class Splash {
   }
 
   public static void hide(Context c, final int fadeOutDuration) {
+    hide(c, fadeOutDuration, false);
+  }
+
+  public static void hide(Context c, final int fadeOutDuration, boolean isLaunchSplash) {
+    Log.d("Splash hide", "isLaunchSplash = " + isLaunchSplash);
+
+    if(isLaunchSplash) {
+      if(isVisible) {
+        Log.d("Splash hide", "SplashScreen was automatically hidden after default timeout. " +
+                "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
+                "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
+      } else {
+        Log.d("Splash hide", "Splash was already hidden before. Good!");
+      }
+    }
+
     if (isHiding || splashImage == null || splashImage.getParent() == null) {
       return;
     }
