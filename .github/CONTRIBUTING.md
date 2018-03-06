@@ -6,15 +6,19 @@ This guide attemps to make it easy for volunteer contributors and the core team 
 
 The `ionic-team/capacitor` repo is a monorepo containing all of the standard Capacitor components. The current directory structure looks like this:
 
-
 * `cli`: Capacitor CLI/Build scripts
 * `core`: Capacitor Core JS library
 * `ios`: Capacitor iOS Runtime
 * `ios-template`: Default iOS App installed by the CLI
 * `android`: Capacitor Android Runtime
 * `android-template`: Default Android App installed by the CLI
-* `example`: iOS Example for development
+* `example`: Example project for development
 * `e2e`: an end-to-end testing app
+
+## Developing Capacitor
+
+1. Check out this repository.
+2. Read and follow [`example/README.md`](../example/README.md)
 
 ### Deploying Capacitor (requires commit privileges)
 
