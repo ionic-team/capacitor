@@ -1,0 +1,22 @@
+{
+  "name": "capacitor-app",
+  "version": "1.0.0",
+  "description": "An Amazing Capacitor App",
+  "main": "index.js",
+  "scripts": {
+    "electron:start": "electron ./"
+  },
+  "dependencies": {
+    "electron-is-dev": "^0.3.0"
+  },
+  "devDependencies": {
+    "electron": "^1.8.2",
+    "electron-reload": "^1.2.2"
+  },
+  "keywords": [
+    "capacitor",
+    "electron"
+  ],
+  "author": "",
+  "license": "ISC"
+}

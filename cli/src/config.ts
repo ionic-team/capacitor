@@ -16,6 +16,17 @@ export class Config implements CliConfig {
     androidStudioPath: '/usr/local/android-studio/bin/studio.sh'
   };
 
+  electron = {
+    name: 'electron',
+    platformDir: '',
+    webDir: 'app',
+    webDirAbs: '',
+    assets: {
+      templateName: 'electron-template',
+      templateDir: ''
+    }
+  };
+
   android = {
     name: 'android',
     minVersion: '21',
@@ -111,6 +122,7 @@ export class Config implements CliConfig {
       this.initAppConfig(resolve(currentWorkingDir));
       this.initAndroidConfig();
       this.initIosConfig();
+      this.initElectronConfig();
       this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
@@ -139,6 +151,12 @@ export class Config implements CliConfig {
     this.app.assets.templateDir = join(this.cli.assetsDir, this.app.assets.templateName);
   }
 
+  private initElectronConfig() {
+    this.platforms.push(this.electron.name);
+    this.electron.platformDir = resolve(this.app.rootDir, this.electron.name);
+    this.electron.assets.templateDir = resolve(this.cli.assetsDir, this.electron.assets.templateName);
+    this.electron.webDirAbs = resolve(this.electron.platformDir, this.electron.webDir);
+  }
 
   private initAndroidConfig() {
     this.platforms.push(this.android.name);
@@ -254,6 +272,10 @@ export class Config implements CliConfig {
 
     if (this.platformDirExists(this.ios.name)) {
       platforms.push(this.ios.name);
+    }
+
+    if (this.platformDirExists(this.electron.name)) {
+      platforms.push(this.electron.name);
     }
 
     platforms.push(this.web.name);
