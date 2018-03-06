@@ -22,6 +22,7 @@ function installNpmDeps(pathToElectronPackageJson: string) {
       }
       console.log(`stdout: ${stdout}`);
       console.log(`stderr: ${stderr}`);
+      resolve();
     });
   });
 }
