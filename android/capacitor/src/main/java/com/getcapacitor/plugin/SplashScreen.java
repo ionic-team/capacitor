@@ -23,7 +23,7 @@ public class SplashScreen extends Plugin {
 
       @Override
       public void error() {
-        call.error("An error ocurred while showing splash");
+        call.error("An error occurred while showing splash");
       }
     });
   }
