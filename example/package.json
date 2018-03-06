@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
-    "copy": "cp ../core/native-bridge.js www/ && npm run copy.ios && npm run copy.android",
+    "copy": "cp ../core/native-bridge.js www/ && cp ../core/cordova.js www/ && npm run copy.ios && npm run copy.android",
     "copy.ios": "cp -R www/* ios/IonicRunner/public/",
     "copy.android": "cp -R www/* android/app/src/main/assets/public/",
     "ionic:build": "ionic-app-scripts build",
