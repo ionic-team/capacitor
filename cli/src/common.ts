@@ -68,6 +68,9 @@ export async function checkAppDir(config: Config, dir: string): Promise<string |
 }
 
 export async function checkAppId(config: Config, id: string): Promise<string | null> {
+  if (!id) {
+    return `Invalid App ID. Must be in domain form (ex: com.example.app)`;
+  }
   if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id)) {
     return null;
   }
