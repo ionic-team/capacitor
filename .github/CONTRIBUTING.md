@@ -1,8 +1,8 @@
-### Contributing to Capacitor
+# Contributing to Capacitor
 
 This guide attemps to make it easy for volunteer contributors and the core team to contribute to and publish Capacitor. Please let us know if there's something missing!
 
-### Directory Structure
+## Directory Structure
 
 The `ionic-team/capacitor` repo is a monorepo containing all of the standard Capacitor components. The current directory structure looks like this:
 
@@ -20,7 +20,7 @@ The `ionic-team/capacitor` repo is a monorepo containing all of the standard Cap
 1. Check out this repository.
 2. Read and follow [`example/README.md`](../example/README.md)
 
-### Deploying Capacitor (requires commit privileges)
+## Deploying Capacitor (requires commit privileges)
 
 The `publish` npm task runs lerna to update and publish JS dependencies, and then uses that version number to deploy the Android and iOS runtimes.
 
