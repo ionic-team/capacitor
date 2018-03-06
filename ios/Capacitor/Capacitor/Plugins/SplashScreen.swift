@@ -36,7 +36,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
     
     showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, completion: {
       call.success()
-    })
+    }, isLaunchSplash: false)
   }
   
   // Hide the splash screen
@@ -96,10 +96,10 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   func showOnLaunch() {
     showSplash(showDuration: launchShowDuration, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: true, completion: {
       
-    })
+    }, isLaunchSplash: true)
   }
   
-  func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, completion: @escaping () -> Void) {
+  func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, completion: @escaping () -> Void, isLaunchSplash: Bool) {
     
     DispatchQueue.main.async {
       
@@ -114,15 +114,28 @@ public class CAPSplashScreenPlugin : CAPPlugin {
 
         if autoHide {
           self.hideTask = DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + (Double(showDuration) / 1000), execute: {
-            self.hideSplash(fadeOutDuration: fadeOutDuration)
+            self.hideSplash(fadeOutDuration: fadeOutDuration, isLaunchSplash: isLaunchSplash)
             completion()
           })
         }
       }
     }
   }
-  
+
   func hideSplash(fadeOutDuration: Int) {
+    self.hideSplash(fadeDuration, false);
+  }
+  
+  func hideSplash(fadeOutDuration: Int, isLaunchSplash: Bool) {
+    if(isLaunchSplash) {
+      if(isVisible) {
+        print("SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. " +
+                "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
+                "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
+      } else {
+        print("SplashScreen.hideSplash: Splash was already hidden before. Good!");
+      }
+    }
     if !isVisible { return }
     DispatchQueue.main.async {
       UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeOutDuration) / 1000), options: .curveLinear, animations: {
