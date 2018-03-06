@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
-    "copy": "npm run copy.ios && npm run copy.android",
+    "copy": "cp ../core/native-bridge.js www/ && npm run copy.ios && npm run copy.android",
     "copy.ios": "cp -R www/* ios/IonicRunner/public/",
     "copy.android": "cp -R www/* android/app/src/main/assets/public/",
     "ionic:build": "ionic-app-scripts build",
@@ -32,7 +32,7 @@
     "zone.js": "0.8.18"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "3.1.2",
+    "@ionic/app-scripts": "3.1.8",
     "@ionic/cli-build-ionic-angular": "0.0.3",
     "@ionic/cli-plugin-cordova": "0.0.9",
     "typescript": "2.4.2"
