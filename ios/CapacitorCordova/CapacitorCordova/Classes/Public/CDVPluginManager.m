@@ -8,6 +8,7 @@
   self = [super init];
   if (self != nil) {
     _pluginsMap = mapping;
+    _pluginObjects = [[NSMutableDictionary alloc] init];
   }
   return self;
 }
