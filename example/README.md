@@ -36,7 +36,7 @@ Now that everything is in place you can build the native Capacitor Apps:
 
 ### a) Build iOS App
 
-Open in XCode: `example/ios/IonicRunner/IonicRunner.xcworkspace`
+Open in Xcode: `example/ios/IonicRunner/IonicRunner.xcworkspace`
 
 ### b) Build Android App
 
