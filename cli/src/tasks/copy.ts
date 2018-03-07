@@ -40,7 +40,6 @@ export async function copy(config: Config, platformName: string) {
     } else if (platformName === config.web.name) {
       await copyWeb(config);
     } else if (platformName === config.electron.name) {
-      await copyWebDir(config, config.electron.webDirAbs);
       await copyElectron(config);
     } else {
       throw `Platform ${platformName} is not valid.`;
