@@ -10,10 +10,18 @@ import UIKit
 import WebKit
 import GCDWebServer
 
-class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
+class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
   private var webServer: GCDWebServer?
+    
+    var bridgedWebView: WKWebView? {
+        return webView
+    }
+    
+    var bridgedViewController: UIViewController? {
+        return self
+    }
   
   private var port: Int?
   
@@ -179,39 +187,10 @@ class CAPBridgeViewController: UIViewController, WKScriptMessageHandler, WKUIDel
   }
   
   public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    let body = message.body
-    if let dict = body as? [String:Any] {
-      let type = dict["type"] as? String ?? ""
-      
-      if type == "js.error" {
-        if let error = dict["error"] as! [String:Any]? {
-          handleJSStartupError(error)
-        }
-      } else if type == "message" {
-        let pluginId = dict["pluginId"] as? String ?? ""
-        let method = dict["methodName"] as? String ?? ""
-        let callbackId = dict["callbackId"] as? String ?? ""
-        
-        let options = dict["options"] as? [String:Any] ?? [:]
-        
-        if pluginId != "Console" {
-          print("⚡️  To Native -> ", pluginId, method, callbackId, options)
-        }
-        
-        self.bridge!.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
-      } else if type == "cordova" {
-        let pluginId = dict["service"] as? String ?? ""
-        let method = dict["action"] as? String ?? ""
-        let callbackId = dict["callbackId"] as? String ?? ""
-        
-        let args = dict["actionArgs"] as? Array ?? []
-        let options = ["options":args]
-        
-        print("To Native Cordova -> ", pluginId, method, callbackId, options)
-        
-        self.bridge!.handleCordovaJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
-      }
+    guard let bridge = bridge else {
+        return
     }
+    self.userContentController(userContentController, didReceive: message, bridge: bridge)
   }
   
   func handleJSStartupError(_ error: [String:Any]) {
