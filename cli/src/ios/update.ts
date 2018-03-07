@@ -113,21 +113,11 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   const capacitorPlugins = plugins.filter(p => p.ios!.type !== PluginType.Cordova);
   const pods = capacitorPlugins
     .map((p) => `pod '${p.ios!.name}', :path => '../../node_modules/${p.id}/${p.ios!.path}'`);
-  const cordovaPlugins = plugins.filter(p => p.ios!.type === PluginType.Cordova);
-  let dependencies: Array<string> = [];
-  cordovaPlugins.map((p: any) => {
-    const frameworks = getPlatformElement(p, platform, 'framework');
-    frameworks.map((framework: any) => {
-      if (framework.$.type && framework.$.type === 'podspec') {
-        dependencies.push(`pod '${framework.$.src}', '${framework.$.spec}'`);
-      }
-    });
-  });
   return `
   ${config.ios.capacitorRuntimePod}
   pod 'CordovaPlugins', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
   pod 'CordovaPluginsResources', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
-  ${pods.join('\n      ')}${dependencies.join('\n      ')}`;
+  ${pods.join('\n      ')}`;
 }
 
 function getFrameworkName(framework: any) {
@@ -151,6 +141,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
   let customFrameworks: Array<string> = [];
   let systemLibraries: Array<string> = [];
   let sourceFrameworks: Array<string> = [];
+  let frameworkDeps: Array<string> = [];
   cordovaPlugins.map((plugin: any) => {
     const frameworks = getPlatformElement(plugin, platform, 'framework');
     frameworks.map((framework: any) => {
@@ -176,6 +167,8 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
             systemLibraries.push(name);
           }
         }
+      } else if (framework.$.type && framework.$.type === 'podspec') {
+        frameworkDeps.push(`s.dependency '${framework.$.src}', '${framework.$.spec}'`);
       }
     });
     const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
@@ -189,7 +182,6 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
       }
     })
   });
-  let frameworkDeps: Array<string> = [];
   if (weakFrameworks.length > 0) {
     frameworkDeps.push(`s.weak_frameworks = '${weakFrameworks.join("', '")}'`);
   }
@@ -218,6 +210,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
     s.source_files = 'sources/**/*.{swift,h,m,c,cc,mm}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'CapacitorCordova'
+    s.static_framework = true
     ${frameworksString}
   end`;
   await writeFileAsync(join(pluginsPath,'CordovaPlugins.podspec'), content);
