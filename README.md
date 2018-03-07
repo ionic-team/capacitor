@@ -1,4 +1,4 @@
-*Capacitor is being actively developed and is not currently ready for public use. See our [Timeline](#timeline) for our upcoming plans and tentatively timeline*
+*Capacitor is currently in alpha and is not production ready. We'd love your help testing!*
 
 # ⚡️ Capacitor: Cross-platform apps with JavaScript and the Web ⚡️
 
