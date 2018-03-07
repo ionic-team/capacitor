@@ -3,6 +3,7 @@ import { check, checkWebDir, logFatal, logInfo, runTask } from '../common';
 import { existsAsync, symlinkAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
+import { copyElectron } from '../electron/copy';
 import { basename, join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
 import { copyCordovaJSFiles } from '../cordova'
@@ -38,6 +39,8 @@ export async function copy(config: Config, platformName: string) {
       await copyCordovaJSFiles(config, platformName);
     } else if (platformName === config.web.name) {
       await copyWeb(config);
+    } else if (platformName === config.electron.name) {
+      await copyElectron(config);
     } else {
       throw `Platform ${platformName} is not valid.`;
     }
