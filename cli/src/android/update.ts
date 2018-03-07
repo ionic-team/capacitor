@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { log, runTask } from '../common';
 import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { handleCordovaPluginsJS } from '../cordova';
+import { handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { join, resolve } from 'path';
@@ -27,6 +27,7 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await installGradlePlugins(config, capacitorPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
+  await logCordovaManualSteps(cordovaPlugins, config, platform);
 }
 
 export async function installGradlePlugins(config: Config, plugins: Plugin[]) {

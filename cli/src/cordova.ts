@@ -1,8 +1,8 @@
 import { Config } from './config';
-import { getJSModules, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from './plugin';
+import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { log, logFatal, writeXML } from './common';
+import { log, logFatal, writeXML, readXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -179,4 +179,88 @@ export async function copyCordovaJSFiles(config: Config, platform: string) {
   const cordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Cordova);
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
+}
+
+export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Config, platform: string) {
+  cordovaPlugins.map( p => {
+    const editConfig = getPlatformElement(p, platform, 'edit-config');
+    const configFile = getPlatformElement(p, platform, 'config-file');
+    editConfig.concat(configFile).map(async (configElement: any) =>{
+      if (!configElement.$.target.includes("config.xml")) {
+        if (platform === config.ios.name) {
+          if (configElement.$.target.includes("Info.plist")) {
+            logiOSPlist(configElement, config, p);
+          }
+        } else if (platform === config.android.name) {
+          if (configElement.$.target.includes("AndroidManifest.xml")) {
+            logAndroidManifest(configElement, config, p);
+          }
+        }
+      }
+    });
+  });
+}
+
+async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) {
+  const plistPath = resolve(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName, 'Info.plist');
+  const xmlMeta = await readXML(plistPath);
+  const dict = xmlMeta.plist.dict.pop();
+  if (!dict.key.includes(configElement.$.parent)) {
+    let xml = await buildConfigFileXml(configElement);
+    xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
+    console.log(`plugin ${plugin.id} requires to add \n  ${xml} to your Info.plist to work`);
+  }
+}
+
+async function logAndroidManifest (configElement: any, config: Config, plugin: Plugin) {
+  const manifestPath = resolve(config.android.platformDir, 'app', 'src', 'main', 'AndroidManifest.xml');
+  const xmlMeta = await readXML(manifestPath);
+  const xmlElement = getXMLElement(configElement.$.parent, xmlMeta);
+  let xmlEntries: Array<any> = [];
+  const keys = Object.keys(configElement).filter(k  => k !== '$');
+  await Promise.all(keys.map(async k => {
+    let element = xmlElement[k];
+    if (Object.getPrototypeOf(xmlElement) === Array.prototype) {
+      element = xmlElement[0][k];
+    }
+    await Promise.all(configElement[k].map(async (e: any) => {
+      if (element === undefined || !contains(element, e)) {
+        xmlEntries.push(await buildXmlElement(e, k));
+      }
+    }));
+  }));
+  if (xmlEntries.length > 0) {
+    console.log(`plugin ${plugin.id} requires to add \n  ${xmlEntries.join("\n  ")} \nto your AndroidManifest.xml at ${configElement.$.parent.split("/").filter((part: string) => part !== '').join(" ")} level to work\n`);
+  }
+}
+
+async function buildXmlElement(configElement: any, rootName: string) {
+  const xml2js = await import('xml2js');
+  const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: rootName });
+  return builder.buildObject(configElement);
+}
+
+async function buildConfigFileXml(configElement: any) {
+  return buildXmlElement(configElement, 'config-file');
+}
+
+function getConfigFileTagContent(string: string) {
+  return string.replace(/\<config-file.+\"\>|\<\/config-file>/g, '');
+}
+
+function getXMLElement(path: string, xml:any) {
+  let xmlElement = xml;
+  path.split("/").filter(part => part !== '').map(part => {
+    xmlElement = xmlElement[part];
+  })
+  return xmlElement;
+}
+
+function contains(a: Array<any>, obj: any) {
+  for (var i = 0; i < a.length; i++) {
+      if (JSON.stringify(a[i]) === JSON.stringify(obj)) {
+          return true;
+      }
+  }
+  return false;
 }
