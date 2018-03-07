@@ -1,6 +1,16 @@
 # Capacitor Example App
 
-This Example app can be used to develop Capacitor. It uses Capacitor to create native iOS and Android apps, the web app itself is an Ionic app, but the important bit is that the native apps are set up in a way that enables development of the native code by loading it from the parent folder instead of as an external dependency.
+This example app can be used to develop and test Capacitor.
+
+This project contains an Ionic app as the web app, that demos the use of the Capacitor APIs (from `@capacitor/code`). The project is also already set up with two native projects, `ios` and `android`, that can be used to build and debug native apps for those platforms.
+
+The installation instructions and native projects are set up in such a way, that `@capacitor/core` and the Capacitor Android and iOS libraries that are used in the native projects are loaded from the local (parent) directory, instead of as an external depdency through the normal distribution mechanism (npm, Cocoapods and Gradle/Bintray):
+
+* `@capacitor/core` = `../core`
+* Capacitor iOS = `../ios`
+* Capacitor Android = `../android`
+
+This way you can make direct changes to all those and use them in the native apps, allowing quick iteration of development.
 
 Note: This project does _not_ use the Capacitor CLI. Please follow the steps below to build, prepare and run the apps.
 
