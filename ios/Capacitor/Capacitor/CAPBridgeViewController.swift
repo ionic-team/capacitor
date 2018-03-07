@@ -15,13 +15,13 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
   private var webView: WKWebView?
   private var webServer: GCDWebServer?
     
-    var bridgedWebView: WKWebView? {
-        return webView
-    }
+	var bridgedWebView: WKWebView? {
+		return webView
+	}
     
-    var bridgedViewController: UIViewController? {
-        return self
-    }
+	var bridgedViewController: UIViewController? {
+		return self
+	}
   
   private var port: Int?
   
@@ -186,12 +186,12 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     return false
   }
   
-  public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    guard let bridge = bridge else {
-        return
-    }
-    self.userContentController(userContentController, didReceive: message, bridge: bridge)
-  }
+	public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+		guard let bridge = bridge else {
+			return
+		}
+		self.userContentController(userContentController, didReceive: message, bridge: bridge)
+	}
   
   func handleJSStartupError(_ error: [String:Any]) {
     let message = error["message"] ?? "No message"

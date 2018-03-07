@@ -11,10 +11,10 @@ enum BridgeError: Error {
   public static var CAP_SITE = "https://getcapacitor.com/"
   
   public var userContentController: WKUserContentController
-    public var bridgeDelegate: CAPBridgeDelegate
-    @objc public var viewController: UIViewController {
-        return bridgeDelegate.bridgedViewController!
-    }
+	public var bridgeDelegate: CAPBridgeDelegate
+	@objc public var viewController: UIViewController {
+		return bridgeDelegate.bridgedViewController!
+	}
   
   public var lastPlugin: CAPPlugin?
   
@@ -31,9 +31,9 @@ enum BridgeError: Error {
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
   
-    internal convenience init(_ vc: CAPBridgeViewController, _ userContentController: WKUserContentController) {
-        self.init(vc, userContentController)
-    }
+	internal convenience init(_ vc: CAPBridgeViewController, _ userContentController: WKUserContentController) {
+		self.init(vc, userContentController)
+	}
     
   public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController) {
     self.bridgeDelegate = bridgeDelegate
@@ -405,9 +405,9 @@ enum BridgeError: Error {
     if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
       plugin.viewController = self.viewController
       plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView(), pluginManager: self.cordovaPluginManager)
-        if let webView = self.getWebView() {
-            plugin.webView = webView
-        }
+			if let webView = self.getWebView() {
+				plugin.webView = webView
+			}
 
       let selector = NSSelectorFromString("\(call.method):")
       if !plugin.responds(to: selector) {
