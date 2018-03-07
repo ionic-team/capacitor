@@ -13,15 +13,15 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   Capacitor:
-    :path: "../../../"
+    :path: ../../../
   CapacitorCordova:
-    :path: "../../../"
+    :path: ../../../
 
 SPEC CHECKSUMS:
-  Capacitor: 0e43d967ebda8c71b21d9dad9b0e3c64022fa66f
-  CapacitorCordova: 72176adc05a2bad4bce903138d1a1119e00f932a
+  Capacitor: ac338c253c6a5fc73441c2d676ad8d11d97a790b
+  CapacitorCordova: 1408e2d3f484efc252cf8b1cae3fb1cd14c92e57
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 
 PODFILE CHECKSUM: cf3dd73a42bef0923c014a1179dc29d10aa5cae0
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.4.0
