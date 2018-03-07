@@ -3,7 +3,7 @@ const isDevMode = require('electron-is-dev');
 
 // If we are running this via the command line we can enable hot-reloads whenever the app code changes.
 if (isDevMode) {
-  require('electron-reload')(__dirname + '/www');
+  require('electron-reload')(__dirname + '/app');
 }
 
 let mainWindow = null;
