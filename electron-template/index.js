@@ -13,6 +13,12 @@ const menuTemplateDev = [
         click() {
           mainWindow.openDevTools();
         },
+      },
+      {
+        label: 'Reload Web App',
+        click() {
+          mainWindow.reload();
+        }
       }
     ],
   },
@@ -25,8 +31,9 @@ function createWindow () {
     width: 1600
   });
 
-  // Set our above template to the Menu Object.
-  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplateDev));
+  // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.
+  if (isDevMode)
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplateDev));
 
   // If we are developers we might as well open the devtools by default.
   if (isDevMode)
