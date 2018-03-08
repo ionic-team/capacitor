@@ -1,9 +1,9 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {
-  input: 'dist/esm/voltage/src/index.js',
+  input: 'dist/esm/electron/src/index.js',
   output: {
-    file: 'dist/voltage.js',
+    file: 'dist/capacitor.js',
     format: 'iife',
     name: 'capacitorExports'
   },
