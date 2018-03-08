@@ -1,34 +1,31 @@
 import { WebPlugin } from '../../../core/src/web/index';
 import {
   FileReadOptions, FileReadResult,
-  FilesystemPlugin, FileWriteOptions
+  FilesystemPlugin, FileWriteOptions,
+  FileWriteResult
 } from "../../../core/src/core-plugin-definitions";
-import {FileWriteResult} from "../../../core/src";
 
-export interface ElectronFileLocations {
-  DOCUMENTS: string,
-  DRIVE_ROOT: string,
-}
 
 export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlugin {
 
   NodeFS:any = null;
-  fileLocations: ElectronFileLocations;
+  fileLocations:any = null;
 
   constructor() {
     super({
       name: 'Filesystem',
       platforms: ['electron']
     });
+    this.fileLocations = {DRIVE_ROOT: '', DOCUMENTS: ''};
 
     let path = require("path");
     let os = require("os");
     if(os.platform == "win32" ) {
-      this.fileLocations.DRIVE_ROOT = process.cwd().split(path.sep)[0];
-      this.fileLocations.DOCUMENTS = os.homedir() + `\\Documents\\`;
+      this.fileLocations["DRIVE_ROOT"] = process.cwd().split(path.sep)[0];
+      this.fileLocations["DOCUMENTS"] = os.homedir() + `\\Documents\\`;
     } else {
-      this.fileLocations.DRIVE_ROOT = '/';
-      this.fileLocations.DOCUMENTS = os.homedir() + `\\Documents\\`;
+      this.fileLocations["DRIVE_ROOT"] = '/';
+      this.fileLocations["DOCUMENTS"] = os.homedir() + `\\Documents\\`;
     }
 
     this.NodeFS = require('fs');
@@ -36,7 +33,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
 
   readFile(options: FileReadOptions): Promise<FileReadResult>{
     return new Promise<FileReadResult>((resolve, reject) => {
-      if(!this.fileLocations[options.directory])
+      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.readFile(lookupPath, options.encoding, (err:any, data:any) => {
