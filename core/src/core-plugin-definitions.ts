@@ -482,7 +482,7 @@ export interface FileWriteOptions {
   /**
    * The FilesystemDirectory to store the file in
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
   /**
    * The encoding to write the file in (defautls to utf8)
    */
@@ -501,7 +501,7 @@ export interface FileAppendOptions {
   /**
    * The FilesystemDirectory to store the file in
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
   /**
    * The encoding to write the file in (defautls to utf8)
    */
@@ -516,7 +516,7 @@ export interface FileReadOptions {
   /**
    * The FilesystemDirectory to read the file from
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
   /**
    * The encoding to read the file in (defautls to utf8)
    */
@@ -531,7 +531,7 @@ export interface FileDeleteOptions {
   /**
    * The FilesystemDirectory to delete the file from
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
 }
 
 export interface MkdirOptions {
@@ -542,7 +542,7 @@ export interface MkdirOptions {
   /**
    * The FilesystemDirectory to make the new directory in
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
   /**
    * Whether to create any missing parent directories as well
    */
@@ -557,7 +557,7 @@ export interface RmdirOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
 }
 
 export interface ReaddirOptions {
@@ -568,7 +568,7 @@ export interface ReaddirOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
 }
 
 export interface StatOptions {
@@ -579,7 +579,7 @@ export interface StatOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory;
+  directory: FilesystemDirectory | string;
 }
 
 export interface FileReadResult {
