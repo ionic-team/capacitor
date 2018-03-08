@@ -11,7 +11,7 @@
       "es2015"
     ],
     "module": "es2015",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",

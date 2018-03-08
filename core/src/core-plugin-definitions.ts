@@ -457,7 +457,11 @@ export enum FilesystemDirectory {
   /**
    * The external storage directory (Android only)
    */
-  ExternalStorage = 'EXTERNAL_STORAGE'
+  ExternalStorage = 'EXTERNAL_STORAGE',
+  /**
+   * The root of the hard drive (Electron only)
+   */
+  DriveRoot = 'DRIVE_ROOT'
 }
 
 export enum FilesystemEncoding {
@@ -478,7 +482,7 @@ export interface FileWriteOptions {
   /**
    * The FilesystemDirectory to store the file in
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
   /**
    * The encoding to write the file in (defautls to utf8)
    */
@@ -497,7 +501,7 @@ export interface FileAppendOptions {
   /**
    * The FilesystemDirectory to store the file in
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
   /**
    * The encoding to write the file in (defautls to utf8)
    */
@@ -512,7 +516,7 @@ export interface FileReadOptions {
   /**
    * The FilesystemDirectory to read the file from
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
   /**
    * The encoding to read the file in (defautls to utf8)
    */
@@ -527,7 +531,7 @@ export interface FileDeleteOptions {
   /**
    * The FilesystemDirectory to delete the file from
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
 }
 
 export interface MkdirOptions {
@@ -538,7 +542,7 @@ export interface MkdirOptions {
   /**
    * The FilesystemDirectory to make the new directory in
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
   /**
    * Whether to create any missing parent directories as well
    */
@@ -553,7 +557,7 @@ export interface RmdirOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
 }
 
 export interface ReaddirOptions {
@@ -564,7 +568,7 @@ export interface ReaddirOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
 }
 
 export interface StatOptions {
@@ -575,7 +579,7 @@ export interface StatOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory | string;
+  directory: FilesystemDirectory;
 }
 
 export interface FileReadResult {

@@ -1,5 +1,5 @@
 {
-  "name": "@capacitor/voltage",
+  "name": "@capacitor/electron",
   "version": "1.0.0-alpha.7",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "http://getcapacitor.com/",
@@ -14,15 +14,15 @@
     "docs": "cd ../site && gulp && cd ../core && ./node_modules/.bin/typedoc --exclude **/__test__/*.ts --json dist/docs.json --mode modules src/core-plugin-definitions.ts && node scripts/docs.js",
     "build": "npm run clean && npm run transpile && npm run rollup && npm run minify",
     "clean": "rimraf dist",
-    "minify": "uglifyjs --mangle --compress --source-map \"content='dist/voltage.js.map',url='voltage.js.map'\" --comments '/^/*!/' --output dist/voltage.js dist/voltage.js",
+    "minify": "uglifyjs --mangle --compress --source-map \"content='dist/capacitor.js.map',url='capacitor.js.map'\" --comments '/^/*!/' --output dist/capacitor.js dist/capacitor.js",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
     "transpile-no-helpers": "tsc --module ES2015 --target ES5 --noEmitHelpers true --outDir dist/esm",
     "test": "jest"
   },
-  "main": "dist/esm/index.js",
-  "typings": "dist/esm/index.d.ts",
+  "main": "dist/esm/electron/src/index.js",
+  "typings": "dist/esm/electron/src/index.d.ts",
   "devDependencies": {
     "@ionic/core": "0.0.2-59",
     "@ionic/pwa-elements": "0.0.9",
