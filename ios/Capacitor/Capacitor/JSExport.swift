@@ -63,6 +63,9 @@ public class JSExport {
       t.removeListener = function(eventName, callback) {
         return w.Capacitor.removeListener('\(pluginClassName)', eventName, callback);
       }
+      t.requestPermissions = function() {
+        return w.Capacitor.requestPermissions('\(pluginClassName)');
+      }
       """)
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
     let methods = bridgeType.pluginMethods() as! [CAPPluginMethod]

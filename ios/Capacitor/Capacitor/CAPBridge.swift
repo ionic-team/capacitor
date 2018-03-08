@@ -137,6 +137,11 @@ enum BridgeError: Error {
     // no-op for now
   }
   
+  public static func handleDidFinishLaunchingWithOptions(_ options: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    
+    return true
+  }
+  
   /**
    * Print a hopefully informative error message to the log when something
    * particularly dreadful happens.
@@ -380,7 +385,7 @@ enum BridgeError: Error {
     }
     
     var selector: Selector? = nil
-    if call.method == "addListener" || call.method == "removeListener" {
+    if call.method == "addListener" || call.method == "removeListener" || call.method == "requestPermissions" {
       selector = NSSelectorFromString(call.method + ":")
     } else {
       let bridgeType = pluginType as! CAPBridgedPlugin.Type
@@ -500,6 +505,16 @@ enum BridgeError: Error {
   public func toJsError(error: JSResultError) {
     DispatchQueue.main.async {
       self.getWebView()?.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
+        if error != nil && result != nil {
+          print(result!)
+        }
+      }
+    }
+  }
+  
+  public func logToJs(_ message: String, _ level: String = "log") {
+    DispatchQueue.main.async {
+      self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
         if error != nil && result != nil {
           print(result!)
         }

@@ -97,6 +97,10 @@ CAP_PLUGIN(CAPPhotosPlugin, "Photos",
   CAP_PLUGIN_METHOD(savePhoto, CAPPluginReturnPromise);
 )
 
+CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
+  CAP_PLUGIN_METHOD(setup, CAPPluginReturnPromise);
+)
+
 CAP_PLUGIN(CAPSharePlugin, "Share",
   CAP_PLUGIN_METHOD(share, CAPPluginReturnPromise);
 )

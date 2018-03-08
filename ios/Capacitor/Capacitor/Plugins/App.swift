@@ -48,6 +48,7 @@ public class CAPAppPlugin : CAPPlugin {
     notifyListeners("appStateChange", data: [
       "isActive": isActive
     ])
+    bridge.logToJs("Active state changed")
   }
   
   @objc func exitApp(_ call: CAPPluginCall) {

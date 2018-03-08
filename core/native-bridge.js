@@ -246,6 +246,10 @@
     }, callback);
   }
 
+  capacitor.requestPermissions = function(pluginId) {
+    return capacitor.nativePromise(pluginId, 'requestPermissions', {});
+  }
+
   capacitor.handleError = function(error) {
     console.error(error);
 
@@ -337,6 +341,22 @@
               win.console.log(result.data);
           }
       }
+  }
+
+  capacitor.logJs = function(message, level) {
+    switch (level) {
+      case 'error':
+        console.error(message);
+        break;
+      case 'warn':
+        console.warn(message);
+        break;
+      case 'info':
+        console.info(message);
+        break;
+      default:
+        console.log(message);
+    }
   }
 
   capacitor.uuidv4 = function() {
