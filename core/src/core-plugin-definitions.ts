@@ -1201,7 +1201,18 @@ export enum PhotosAlbumType {
 //
 
 export interface PushNotificationsPlugin extends Plugin {
-  setup(options: any): Promise<void>;
+  setup(options: PushNotificationOptions): Promise<void>;
+}
+
+export interface PushNotificationOptions {
+  /**
+   * Whether to prompt for permissions on setup. Set to false to
+   * control when to prompt the user for permissions (you must call
+   * PushNotifications.requestPermissions() before calling setup in that case)
+   * 
+   * Default is true
+   **/
+  promptForPermissions: boolean;
 }
 
 //
