@@ -11,7 +11,6 @@ export class DocumentComponent {
   }
 
   render() {
-    console.log(this.pages);
     return (
       <div class="wrapper">
         <div class="container container-flex">

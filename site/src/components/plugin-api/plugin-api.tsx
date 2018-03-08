@@ -13,7 +13,6 @@ export class PluginApi {
     const url = `api${this.index ? '-index' : ''}.html`;
     return fetch(`/docs-content/apis/${this.name}/${url}`)
       .then(response => {
-        console.log('RESPONSE', response);
         return response.text()
       })
       .then(data => {
