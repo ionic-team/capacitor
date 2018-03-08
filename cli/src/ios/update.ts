@@ -4,7 +4,7 @@ import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs'
 import { Config } from '../config';
 import { join, resolve } from 'path';
 import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType, printPlugins } from '../plugin';
-import { handleCordovaPluginsJS } from '../cordova';
+import { handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
 import * as inquirer from 'inquirer';
 import { create } from 'domain';
@@ -54,6 +54,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   await autoGeneratePods(config, plugins);
   await generateCordovaPodspec(cordovaPlugins, config);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
+  await logCordovaManualSteps(cordovaPlugins, config, platform);
 
   logWarn(`${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
           `local Pod repo is up to date and can find new Pod releases.`);
