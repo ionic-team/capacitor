@@ -11,7 +11,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   
   
   @objc func setup(_ call: CAPPluginCall) {
-    setupCheckPermissions(call)
+    self.setupCheckPermissions(call)
   }
   
   /**
@@ -46,6 +46,9 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   
   func setupRegister(_ call: CAPPluginCall) {
     print("Continuing to register...")
+    DispatchQueue.main.async {
+      UIApplication.shared.registerForRemoteNotifications()
+    }
   }
   
   func permissionDenied(_ call: CAPPluginCall) {
