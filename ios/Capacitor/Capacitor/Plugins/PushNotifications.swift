@@ -4,9 +4,10 @@ import UserNotifications
 @objc(CAPPushNotificationsPlugin)
 public class CAPPushNotificationsPlugin : CAPPlugin {
   let DEFAULT_PROMPT_FOR_PERMISSIONS = true
+  let EVENT_REGISTER_ERROR = "pushRegisterError"
   
   public override func load() {
-    
+    NotificationCenter.default.addObserver(self, selector: #selector(self.handleRegisterError(notification:)), name: Notification.Name(CAPNotifications.PushNotificationsRegisterError.name()), object: nil)
   }
   
   
@@ -53,6 +54,16 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   
   func permissionDenied(_ call: CAPPluginCall) {
     call.error("User denied push notifications")
+  }
+  
+  @objc func handleRegisterError(notification: NSNotification) {
+    guard let error = notification.object as? Error else {
+      return
+    }
+    
+    notifyListeners(EVENT_REGISTER_ERROR, data: [
+      "error": error.localizedDescription
+    ])
   }
   
   @objc public override func requestPermissions(_ call: CAPPluginCall) {

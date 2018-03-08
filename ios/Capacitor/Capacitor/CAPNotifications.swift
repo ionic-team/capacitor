@@ -5,12 +5,14 @@
   case URLOpen
   case UniversalLinkOpen
   case ContinueActivity
+  case PushNotificationsRegisterError
   
   public func name() -> String {
     switch self {
     case .URLOpen: return "CAPNotificationsURLOpen"
     case .UniversalLinkOpen: return "CAPUniversalLinkOpen"
     case .ContinueActivity: return "CAPNotificationsContinueActivity"
+    case .PushNotificationsRegisterError: return "CAPPushNotificationsRegisterError"
     }
   }
 }

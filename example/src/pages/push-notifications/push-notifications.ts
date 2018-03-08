@@ -19,6 +19,9 @@ const { PushNotifications } = Plugins;
 export class PushNotificationsPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+    PushNotifications.addListener('pushRegisterError', (err) => {
+      console.error('Unable to register push', err);
+    })
   }
 
   ionViewDidLoad() {

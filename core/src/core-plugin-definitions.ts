@@ -1202,6 +1202,11 @@ export enum PhotosAlbumType {
 
 export interface PushNotificationsPlugin extends Plugin {
   setup(options: PushNotificationOptions): Promise<void>;
+  /**
+   * Called when a register failed to happen. For example, when running in a simulator
+   * or if the registration server couldn't be accessed.
+   */
+  addListener(eventName: 'pushRegisterError', listenerFunc: (error: any) => void): PluginListenerHandle;
 }
 
 export interface PushNotificationOptions {
@@ -1209,10 +1214,9 @@ export interface PushNotificationOptions {
    * Whether to prompt for permissions on setup. Set to false to
    * control when to prompt the user for permissions (you must call
    * PushNotifications.requestPermissions() before calling setup in that case)
-   * 
    * Default is true
    **/
-  promptForPermissions: boolean;
+  promptForPermissions?: boolean;
 }
 
 //

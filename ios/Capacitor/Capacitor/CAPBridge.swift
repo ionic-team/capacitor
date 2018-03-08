@@ -142,6 +142,20 @@ enum BridgeError: Error {
     return true
   }
   
+  public static func handleDidRegisterForRemoteNotificationsWithDeviceToken(_ deviceToken: Data) {
+    let tokenParts = deviceToken.map { data -> String in
+      return String(format: "%02.2hhx", data)
+    }
+    
+    let token = tokenParts.joined()
+    print("Device Token: \(token)")
+  }
+  
+  public static func handleDidFailToRegisterForRemoteNotificationsWithError(_ error: Error) {
+    print("Failed to register: \(error)")
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.PushNotificationsRegisterError.name()), object: error)
+  }
+  
   /**
    * Print a hopefully informative error message to the log when something
    * particularly dreadful happens.

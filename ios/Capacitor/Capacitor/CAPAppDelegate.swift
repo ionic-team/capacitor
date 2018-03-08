@@ -14,15 +14,10 @@ public final class CAPAppDelegate {
   }
   
   public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    let tokenParts = deviceToken.map { data -> String in
-      return String(format: "%02.2hhx", data)
-    }
-    
-    let token = tokenParts.joined()
-    print("Device Token: \(token)")
+    return CAPBridge.handleDidRegisterForRemoteNotificationsWithDeviceToken(deviceToken)
   }
   
   public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-    print("Failed to register: \(error)")
+    return CAPBridge.handleDidFailToRegisterForRemoteNotificationsWithError(error)
   }
 }
