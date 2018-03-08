@@ -30,11 +30,7 @@ enum BridgeError: Error {
   private var isActive = true
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
-  
-  internal convenience init(_ vc: CAPBridgeViewController, _ userContentController: WKUserContentController) {
-    self.init(vc, userContentController)
-  }
-  
+
   public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController) {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
