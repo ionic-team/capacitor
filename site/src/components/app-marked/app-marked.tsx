@@ -16,6 +16,10 @@ export class AppMarked {
     return this.fetchNewContent();
   }
 
+  componentDidLoad() {
+    this.bindHeadings(this.el);
+  }
+
   @Watch('doc')
   fetchNewContent() {
     return fetch(`/docs-content/${this.doc}`)
@@ -65,6 +69,7 @@ export class AppMarked {
   }
 
   componentDidUpdate() {
+    console.log('COMPONENT DID UPDATE');
     this.bindHeadings(this.el);
   }
 
