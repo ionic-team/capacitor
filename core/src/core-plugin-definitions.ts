@@ -1217,6 +1217,18 @@ export interface PushNotificationOptions {
    * Default is true
    **/
   promptForPermissions?: boolean;
+  /**
+   * Whether to play a sound on notification
+   */
+  sound: boolean;
+  /**
+   * Whether to show an alert on notification
+   */
+  alert: boolean;
+  /**
+   * Whether to show a badge count
+   */
+  badge: boolean;
 }
 
 //

@@ -20,4 +20,8 @@ public final class CAPAppDelegate {
   public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
     return CAPBridge.handleDidFailToRegisterForRemoteNotificationsWithError(error)
   }
+  
+  public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    
+  }
 }

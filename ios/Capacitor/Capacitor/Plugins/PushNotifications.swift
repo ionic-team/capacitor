@@ -7,7 +7,8 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   let EVENT_REGISTER_ERROR = "pushRegisterError"
   
   public override func load() {
-    NotificationCenter.default.addObserver(self, selector: #selector(self.handleRegisterError(notification:)), name: Notification.Name(CAPNotifications.PushNotificationsRegisterError.name()), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(self.handleRegisterError(notification:)),
+                                           name: Notification.Name(CAPNotifications.PushNotificationsRegisterError.name()), object: nil)
   }
   
   
