@@ -226,7 +226,15 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   if (sourceFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join("', '")}'`);
   }
+  const arcPlugins = cordovaPlugins.filter(filterARCFiles);
+  if (arcPlugins.length > 0) {
+    frameworkDeps.push(`s.subspec 'noarc' do |sna|
+      sna.requires_arc = false
+      sna.source_files = 'noarc/**/*.{swift,h,m,c,cc,mm,cpp}'
+    end`);
+  }
   const frameworksString = frameworkDeps.join("\n    ");
+
   const content = `
   Pod::Spec.new do |s|
     s.name = '${name}'
@@ -259,7 +267,11 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
     codeFiles.map( (codeFile: any) => {
       const fileName = codeFile.$.src.split("/").pop();
-      copySync(getFilePath(config, p, codeFile.$.src), join(sourcesFolder, fileName));
+      let destFolder = sourcesFolderName;
+      if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
+        destFolder = 'noarc';
+      }
+      copySync(getFilePath(config, p, codeFile.$.src), join(pluginsPath, destFolder, p.name, fileName));
     });
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
     resourceFiles.map( (resourceFile: any) => {
@@ -279,6 +291,7 @@ function removePluginsNativeFiles(config: Config) {
   removeSync(join(pluginsPath, 'sources'));
   removeSync(join(pluginsPath, 'sourcesstatic'));
   removeSync(join(pluginsPath, 'resources'));
+  removeSync(join(pluginsPath, 'noarc'));
 }
 
 function filterNoPods(plugin: Plugin) {
@@ -290,4 +303,10 @@ function filterNoPods(plugin: Plugin) {
 function filterResources(plugin: Plugin) {
   const resources = getPlatformElement(plugin, platform, 'resource-file');
   return resources.length > 0;
+}
+
+function filterARCFiles(plugin: Plugin) {
+  const sources = getPlatformElement(plugin, platform, 'source-file');
+  const sourcesARC = sources.filter((sourceFile: any) => sourceFile.$['compiler-flags'] && sourceFile.$['compiler-flags'] === '-fno-objc-arc');
+  return sourcesARC.length > 0;
 }
