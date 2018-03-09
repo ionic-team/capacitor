@@ -52,7 +52,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await autoGeneratePods(config, plugins);
-  await generateCordovaPodspec(cordovaPlugins, config);
+  await generateCordovaPodspecs(cordovaPlugins, config);
   await installCocoaPodsPlugins(config, plugins, needsUpdate);
   await logCordovaManualSteps(cordovaPlugins, config, platform);
 
@@ -62,7 +62,7 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
 
 export async function autoGeneratePods(config: Config, plugins: Plugin[]): Promise<void[]> {
   // Always re-generate the podspec to keep it up to date
-  return Promise.all(plugins.filter(p => p.ios!.type !== PluginType.Cordova)
+  return Promise.all(plugins.filter(p => getPluginType(p, platform) !== PluginType.Cordova)
     .map(async p => {
       const name = p.ios!.name = p.name;
       const content = generatePodspec(config, p);
@@ -82,7 +82,7 @@ export function generatePodspec(config: Config, plugin: Plugin) {
     s.homepage = 'https://example.com'
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => '${repo}', :tag => '${plugin.version}' }
-    s.source_files = 'Plugin/Plugin/**/*.{swift,h,m,c,cc,mm}'
+    s.source_files = 'Plugin/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'Capacitor'
   end`;
@@ -111,13 +111,27 @@ export async function updatePodfile(config: Config, plugins: Plugin[], needsUpda
 }
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
-  const capacitorPlugins = plugins.filter(p => p.ios!.type !== PluginType.Cordova);
+  const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) !== PluginType.Cordova);
   const pods = capacitorPlugins
     .map((p) => `pod '${p.ios!.name}', :path => '../../node_modules/${p.id}/${p.ios!.path}'`);
-  return `
+  const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  const noPodPlugins = cordovaPlugins.filter(filterNoPods);
+  if (noPodPlugins.length > 0) {
+    pods.push(`pod 'CordovaPlugins', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
+    `);
+  }
+  const podPlugins = cordovaPlugins.filter((el) => !noPodPlugins.includes(el));
+  if (podPlugins.length > 0) {
+    pods.push(`pod 'CordovaPluginsStatic', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
+    `);
+  }
+  const resourcesPlugins = cordovaPlugins.filter(filterResources);
+  if (resourcesPlugins.length > 0) {
+    pods.push(`pod 'CordovaPluginsResources', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
+    `);
+  }
+    return `
   ${config.ios.capacitorRuntimePod}
-  pod 'CordovaPlugins', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
-  pod 'CordovaPluginsResources', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
   ${pods.join('\n      ')}`;
 }
 
@@ -135,7 +149,14 @@ function isFramework(framework: any) {
   return framework.$.src.split(".").pop() === 'framework';
 }
 
-async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) {
+async function generateCordovaPodspecs(cordovaPlugins: Plugin[], config: Config) {
+  const noPodPlugins = cordovaPlugins.filter(filterNoPods);
+  const podPlugins = cordovaPlugins.filter((el) => !noPodPlugins.includes(el));
+  generateCordovaPodspec(noPodPlugins, config, false);
+  generateCordovaPodspec(podPlugins, config, true);
+}
+
+async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, isStatic: boolean) {
   const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
   let weakFrameworks: Array<string> = [];
   let linkedFrameworks: Array<string> = [];
@@ -143,6 +164,13 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
   let systemLibraries: Array<string> = [];
   let sourceFrameworks: Array<string> = [];
   let frameworkDeps: Array<string> = [];
+  let name = 'CordovaPlugins';
+  let sourcesFolderName = 'sources';
+  if (isStatic) {
+    name += "Static";
+    frameworkDeps.push('s.static_framework = true');
+    sourcesFolderName += 'static';
+  }
   cordovaPlugins.map((plugin: any) => {
     const frameworks = getPlatformElement(plugin, platform, 'framework');
     frameworks.map((framework: any) => {
@@ -154,7 +182,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
               weakFrameworks.push(name);
             }
           } if (framework.$.custom && framework.$.custom === 'true') {
-            const frameworktPath = join('sources', plugin.name, name);
+            const frameworktPath = join(sourcesFolderName, plugin.name, name);
             if (!customFrameworks.includes(frameworktPath)) {
               customFrameworks.push(frameworktPath);
             }
@@ -176,7 +204,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
     sourceFiles.map((sourceFile: any) => {
       if (sourceFile.$.framework && sourceFile.$.framework === 'true') {
         const fileName = sourceFile.$.src.split("/").pop();
-        const frameworktPath = join('sources', plugin.name, fileName);
+        const frameworktPath = join(sourcesFolderName, plugin.name, fileName);
         if (!sourceFrameworks.includes(frameworktPath)) {
           sourceFrameworks.push(frameworktPath);
         }
@@ -201,20 +229,19 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config) 
   const frameworksString = frameworkDeps.join("\n    ");
   const content = `
   Pod::Spec.new do |s|
-    s.name = 'CordovaPlugins'
+    s.name = '${name}'
     s.version = '${config.cli.package.version}'
     s.summary = 'Autogenerated spec'
     s.license = 'Unknown'
     s.homepage = 'https://example.com'
     s.authors = { 'Capacitor Generator' => 'hi@example.com' }
     s.source = { :git => 'https://github.com/ionic-team/does-not-exist.git', :tag => '${config.cli.package.version}' }
-    s.source_files = 'sources/**/*.{swift,h,m,c,cc,mm}'
+    s.source_files = '${sourcesFolderName}/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'CapacitorCordova'
-    s.static_framework = true
     ${frameworksString}
   end`;
-  await writeFileAsync(join(pluginsPath,'CordovaPlugins.podspec'), content);
+  await writeFileAsync(join(pluginsPath, `${name}.podspec`), content);
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
@@ -223,7 +250,13 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
     const headerFiles = getPlatformElement(p, platform, 'header-file');
     const codeFiles = sourceFiles.concat(headerFiles);
-    const sourcesFolder = join(pluginsPath, 'sources', p.name);
+    const frameworks = getPlatformElement(p, platform, 'framework');
+    const podFrameworks = frameworks.filter((framework: any) => framework.$.type && framework.$.type === 'podspec');
+    let sourcesFolderName = 'sources';
+    if (podFrameworks.length > 0) {
+      sourcesFolderName += 'static';
+    }
+    const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
     codeFiles.map( (codeFile: any) => {
       const fileName = codeFile.$.src.split("/").pop();
       copySync(getFilePath(config, p, codeFile.$.src), join(sourcesFolder, fileName));
@@ -233,7 +266,6 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const fileName = resourceFile.$.src.split("/").pop();
       copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'resources', fileName));
     });
-    const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (framework.$.custom && framework.$.custom === 'true') {
         copySync(getFilePath(config, p, framework.$.src),  join(sourcesFolder, framework.$.src));
@@ -245,5 +277,17 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 function removePluginsNativeFiles(config: Config) {
   const pluginsPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-cordova-ios-plugins');
   removeSync(join(pluginsPath, 'sources'));
+  removeSync(join(pluginsPath, 'sourcesstatic'));
   removeSync(join(pluginsPath, 'resources'));
+}
+
+function filterNoPods(plugin: Plugin) {
+  const frameworks = getPlatformElement(plugin, platform, 'framework');
+  const podFrameworks = frameworks.filter((framework: any) => framework.$.type && framework.$.type === 'podspec');
+  return podFrameworks.length == 0;
+}
+
+function filterResources(plugin: Plugin) {
+  const resources = getPlatformElement(plugin, platform, 'resource-file');
+  return resources.length > 0;
 }
