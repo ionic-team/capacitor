@@ -15,12 +15,6 @@ const menuTemplateDev = [
           mainWindow.openDevTools();
         },
       },
-      {
-        label: 'Reload Web App',
-        click() {
-          mainWindow.reload();
-        }
-      }
     ],
   },
 ];
@@ -45,7 +39,7 @@ async function createWindow () {
   });
 
   // Render our app onto the page.
-  mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/app/index.html`));
+  mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/app/index.html`), {baseURLForDataURL: `file://${__dirname}/app/`});
 }
 
 // This method will be called when Electron has finished
