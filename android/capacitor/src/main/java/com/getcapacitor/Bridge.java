@@ -617,4 +617,12 @@ public class Bridge {
       plugin.getInstance().handleOnStop();
     }
   }
+
+  public void onBackPressed() {
+    PluginHandle appHandle = getPlugin("App");
+    if (appHandle != null) {
+      App appPlugin = (App) appHandle.getInstance();
+      appPlugin.fireBackButton();
+    }
+  }
 }
