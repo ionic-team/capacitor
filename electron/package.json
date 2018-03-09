@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/electron",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.9",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "http://getcapacitor.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -17,12 +17,11 @@
     "minify": "uglifyjs --mangle --compress --source-map \"content='dist/capacitor.js.map',url='capacitor.js.map'\" --comments '/^/*!/' --output dist/capacitor.js dist/capacitor.js",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
-    "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
+    "transpile": "tsc --module ESNext --target ES5 --outDir dist/esm",
     "transpile-no-helpers": "tsc --module ES2015 --target ES5 --noEmitHelpers true --outDir dist/esm",
     "test": "jest"
   },
-  "main": "dist/esm/index.js",
-  "typings": "dist/esm/index.d.ts",
+  "main": "index.js",
   "devDependencies": {
     "@ionic/core": "0.0.2-59",
     "@ionic/pwa-elements": "0.0.9",
