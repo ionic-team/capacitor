@@ -457,7 +457,11 @@ export enum FilesystemDirectory {
   /**
    * The external storage directory (Android only)
    */
-  ExternalStorage = 'EXTERNAL_STORAGE'
+  ExternalStorage = 'EXTERNAL_STORAGE',
+  /**
+   * The root of the hard drive (Electron only)
+   */
+  DriveRoot = 'DRIVE_ROOT'
 }
 
 export enum FilesystemEncoding {
