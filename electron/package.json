@@ -12,13 +12,12 @@
   ],
   "scripts": {
     "docs": "cd ../site && gulp && cd ../core && ./node_modules/.bin/typedoc --exclude **/__test__/*.ts --json dist/docs.json --mode modules src/core-plugin-definitions.ts && node scripts/docs.js",
-    "build": "npm run clean && npm run transpile && npm run rollup && npm run minify",
-    "clean": "rimraf dist",
-    "minify": "uglifyjs --mangle --compress --source-map \"content='dist/capacitor.js.map',url='capacitor.js.map'\" --comments '/^/*!/' --output dist/capacitor.js dist/capacitor.js",
+    "build": "npm run clean && npm run transpile && npm run rollup",
+    "clean": "rimraf plugins/",
+    "minify": "uglifyjs --mangle --compress --source-map \"content='plugins/index.js.map',url='index.js.map'\" --comments '/^/*!/' --output plugins/index.js plugins/index.js",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
-    "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
-    "transpile-no-helpers": "tsc --module ES2015 --target ES5 --noEmitHelpers true --outDir dist/esm",
+    "transpile": "tsc --module ES2015 --target ES5 --outDir plugins/esm",
     "test": "jest"
   },
   "main": "index.js",

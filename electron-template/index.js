@@ -1,6 +1,6 @@
 const {app, BrowserWindow, Menu} = require('electron');
 const isDevMode = require('electron-is-dev');
-const injectCapacitor = require('@capacitor/electron');
+const { injectCapacitor } = require('@capacitor/electron');
 
 let mainWindow = null;
 
