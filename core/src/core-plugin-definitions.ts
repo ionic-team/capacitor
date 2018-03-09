@@ -80,6 +80,13 @@ export type ScreenReaderStateChangeCallback = (state: ScreenReaderEnabledResult)
 
 export interface AppPlugin extends Plugin {
   /**
+   * Force exit the app. This should only be used in conjunction with the `backButton` handler for Android to
+   * exit the app when navigation is complete.
+   * 
+   * Ionic handles this itself so you shouldn't need to call this if using Ionic
+   */
+  exitApp(): never;
+  /**
    * Check if an app can be opened with the given URL
    */
   canOpenUrl(options: { url: string }): Promise<{value: boolean}>;
@@ -111,6 +118,11 @@ export interface AppPlugin extends Plugin {
    * the app was launched with, converted into the form of a result from a plugin call.
    */
   addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
+
+  /**
+   * Listen for the hardware back button event (Android only). If you want to close the app, call `App.exitApp()`
+   */
+  addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
 }
 
 export interface AppState {

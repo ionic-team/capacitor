@@ -189,6 +189,15 @@ public class BridgeActivity extends AppCompatActivity {
     this.bridge.onNewIntent(intent);
   }
 
+  @Override
+  public void onBackPressed() {
+    if (this.bridge == null) {
+      return;
+    }
+
+    this.bridge.onBackPressed();
+  }
+
   public void loadConfig(Context context, Activity activity) {
     ConfigXmlParser parser = new ConfigXmlParser();
     parser.parse(context);

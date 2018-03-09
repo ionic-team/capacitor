@@ -55,6 +55,11 @@ export class MyApp {
       console.log('Restored result:', data);
     });
 
+    Plugins.App.addListener('backButton', () => {
+      console.log('BACK BUTTON PRESSED');
+      Plugins.App.exitApp();
+    })
+
     this.getLaunchUrl();
   }
 
