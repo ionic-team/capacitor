@@ -6,7 +6,6 @@ import {
   FileAppendOptions, FileAppendResult, FileDeleteOptions, FileDeleteResult,
   MkdirOptions, MkdirResult
 } from "@capacitor/core";
-declare var window:any;
 
 export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlugin {
 
@@ -30,7 +29,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       this.fileLocations["DOCUMENTS"] = os.homedir() + `\\Documents\\`;
     }
 
-    this.NodeFS = window.require('fs');
+    this.NodeFS = require('fs');
   }
 
   readFile(options: FileReadOptions): Promise<FileReadResult>{

@@ -17,7 +17,7 @@
     "minify": "uglifyjs --mangle --compress --source-map \"content='plugins/index.js.map',url='index.js.map'\" --comments '/^/*!/' --output plugins/index.js plugins/index.js",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
-    "transpile": "tsc --module ES2015 --target ES5 --outDir plugins/esm",
+    "transpile": "tsc --module ES2015 --target ES5 --moduleResolution Node --outDir plugins/esm",
     "test": "jest"
   },
   "main": "index.js",
@@ -34,7 +34,7 @@
     "tslint": "^5.6.0",
     "tslint-ionic-rules": "0.0.8",
     "typedoc": "^0.9.0",
-    "typescript": "^2.6.2",
+    "typescript": "~2.6.2",
     "uglify-js": "^3.2.0"
   },
   "repository": {
@@ -59,5 +59,8 @@
     "testMatch": [
       "**/__test__/*.(ts|tsx|js)"
     ]
+  },
+  "dependencies": {
+    "@capacitor/core": "^1.0.0-alpha.9"
   }
 }
