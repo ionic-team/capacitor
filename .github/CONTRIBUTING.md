@@ -6,6 +6,7 @@ This guide attemps to make it easy for volunteer contributors and the core team 
 
 The `ionic-team/capacitor` repo is a monorepo containing all of the standard Capacitor components. The current directory structure looks like this:
 
+* `app-template`: the default app template used during `create`
 * `cli`: Capacitor CLI/Build scripts
 * `core`: Capacitor Core JS library
 * `ios`: Capacitor iOS Runtime
@@ -14,6 +15,9 @@ The `ionic-team/capacitor` repo is a monorepo containing all of the standard Cap
 * `android-template`: Default Android App installed by the CLI
 * `example`: Example project for development
 * `e2e`: an end-to-end testing app
+* `plugin-template`: the default plugin template when creating a new plugin
+* `scripts`: deploy and task scripts
+* `site`: Website and documentation
 
 ## Developing Capacitor
 
