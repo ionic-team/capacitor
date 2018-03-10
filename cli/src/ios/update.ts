@@ -3,7 +3,7 @@ import { CheckFunction, log, logInfo, logWarn, runCommand, runTask } from '../co
 import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join, resolve } from 'path';
-import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType, printPlugins } from '../plugin';
+import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType, printCapacitorPlugins } from '../plugin';
 import { handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
 import * as inquirer from 'inquirer';
@@ -40,9 +40,8 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
     const iosPlugins = await getIOSPlugins(config, allPlugins);
     return iosPlugins;
   });
-  console.log('iOS found these plugins: ', plugins);
 
-  printPlugins(plugins);
+  printCapacitorPlugins(plugins, platform);
 
   removePluginsNativeFiles(config);
   const cordovaPlugins = plugins
