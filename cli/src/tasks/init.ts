@@ -7,6 +7,8 @@ import {
   checkAppId,
   checkAppName,
   checkWebDir,
+  getAppId,
+  getName,
   getOrCreateConfig,
   log,
   logError,
@@ -23,8 +25,13 @@ import { join, relative } from 'path';
 
 const chalk = require('chalk');
 
-export async function initCommand(config: Config, appName: string, appId: string) {
+export async function initCommand(config: Config, name: string, id: string) {
   try {
+    // Get app name
+    const appName = await getName(config, name);
+    // Get app identifier
+    const appId = await getAppId(config, id);
+
     await check(
       config,
       [
