@@ -14,6 +14,8 @@ import {
   checkAppName,
   checkPackage,
   checkWebDir,
+  getAppId,
+  getName,
   getOrCreateConfig,
   log,
   logFatal,
@@ -31,28 +33,28 @@ import chalk from 'chalk';
 export async function createCommand(config: Config, dir: string, name: string, id: string) {
 
   try {
+    // Get app name
+    const appName = await getName(config, name);
+    // Get app identifier
+    const appId = await getAppId(config, id);
+    // Prompt for app name if not provided
+    const appDir = await getDir(config, dir);
+
     await check(
       config,
       [
         (config) => checkAppDir(config, dir),
-        (config) => checkAppId(config, id),
-        (config) => checkAppName(config, name)
+        (config) => checkAppId(config, appId),
+        (config) => checkAppName(config, appName)
       ]
     );
 
     const cliVersion = require('../../package.json').version;
     log(chalk`\n{bold ${_e('⚡️', '*')}   Welcome to Capacitor (CLI v${cliVersion}) ${_e('⚡️', '*')}}\n`);
-
-    // Prompt for app name if not provided
-    const appDir = await getDir(config, dir);
     // Create the directory
     await makeDirectory(config, appDir);
     // Set current working directory for config
     config.setCurrentWorkingDir(appDir);
-    // Get app name
-    const appName = await getName(config, name);
-    // Get app identifier
-    const appId = await getAppId(config, id);
 
     // Set some default settings
     config.app.appName = appName;
@@ -72,7 +74,7 @@ export async function createCommand(config: Config, dir: string, name: string, i
     // Copy web and capacitor to web assets
     await copy(config, config.web.name);
     // Say something nice
-    printNextSteps(config);
+    printNextSteps(config, appDir);
   } catch (e) {
     // String errors are our check errors (most likely)
     if (typeof e === 'string') {
@@ -94,32 +96,6 @@ async function getDir(config: Config, dir: string) {
     return answers.dir;
   }
   return dir;
-}
-
-async function getName(config: Config, name: string) {
-  if (!name) {
-    const answers = await inquirer.prompt([{
-      type: 'input',
-      name: 'name',
-      default: 'App',
-      message: `App name`
-    }]);
-    return answers.name;
-  }
-  return name;
-}
-
-async function getAppId(config: Config, id: string) {
-  if (!id) {
-    const answers = await inquirer.prompt([{
-      type: 'input',
-      name: 'id',
-      default: 'com.example.app',
-      message: 'App/Bundle ID'
-    }]);
-    return answers.id;
-  }
-  return id;
 }
 
 async function makeDirectory(config: Config, dir: string) {
@@ -162,9 +138,9 @@ async function editPlatforms(config: Config, appName: string, appId: string) {
   await editProjectSettingsAndroid(config);
 }
 
-function printNextSteps(config: Config) {
+function printNextSteps(config: Config, appDir: string) {
   log(chalk`{green ✔} Your app is ready!`);
   log(`\nNext steps:`)
-  log(`cd ./${basename(config.app.rootDir)}`);
+  log(chalk`cd {bold ./${appDir}}`);
   log(`Get to work by following the Capacitor Development Workflow: https://capacitor.ionicframework.com/docs/basics/workflow`);
 }
