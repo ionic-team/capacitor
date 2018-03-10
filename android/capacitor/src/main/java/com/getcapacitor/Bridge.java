@@ -400,8 +400,17 @@ public class Bridge {
       public void run() {
         webView.evaluateJavascript(js, callback);
       }
-    })
+    });
   }
+
+  public void logToJs(final String message, final String level) {
+    eval("window.Capacitor.logJs(\"" + message + "\", \"" + level + "\")", null);
+  }
+
+  public void logToJs(final String message) {
+    logToJs(message, "log");
+  }
+
 
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
