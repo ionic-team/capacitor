@@ -74,7 +74,7 @@
               }
               // convert to string
               return arg + '';
-            });
+          });
             capacitor.toNative('Console', 'log', {
               level,
               message: msgs.join(' ')
@@ -187,6 +187,22 @@
     delete result.data;
     delete result.error;
   };
+
+  capacitor.logJs = function(message, level) {
+    switch (level) {
+      case 'error':
+        console.error(message);
+        break;
+      case 'warn':
+        console.warn(message);
+        break;
+      case 'info':
+        console.info(message);
+        break;
+      default:
+        console.log(message);
+    }
+  }
 
   capacitor.withPlugin = function withPlugin(_pluginId, _fn) {
   };

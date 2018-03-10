@@ -503,6 +503,15 @@ enum BridgeError: Error {
     }
   }
   
+  public func logToJs(_ message: String, _ level: String = "log") {
+    DispatchQueue.main.async {
+      self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
+        if error != nil && result != nil {
+          print(result!)
+        }
+      }
+    }
+  }
   
   func getWebView() -> WKWebView? {
     return self.bridgeDelegate.bridgedWebView
