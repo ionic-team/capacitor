@@ -27,9 +27,9 @@ const injectCapacitor = async function(url) {
   }
 };
 
-const CorePlugins = require('./plugins');
+//const CorePlugins = require('./plugins');
 
 module.exports = {
   injectCapacitor,
-  CorePlugins,
+  //CorePlugins,
 };
