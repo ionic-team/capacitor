@@ -31,4 +31,3 @@ git push --follow-tags origin master
 # Do the actual native deploys second, because they require tags/releases in github
 bash scripts/deploy/pods.sh
 bash scripts/deploy/android.sh
-bash scripts/deploy/starter.sh ../capacitor-starter
