@@ -56,7 +56,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
   try {
     plugin.ios = {
       name: plugin.name,
-      type: PluginType.Code,
+      type: PluginType.Core,
       path: iosPath
     };
     if (plugin.xml) {

@@ -16,7 +16,7 @@ export async function updateAndroid(config: Config, needsUpdate: boolean) {
     return androidPlugins;
   });
 
-  const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Code);
+  const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
 
   if (cordovaPlugins.length > 0) {
