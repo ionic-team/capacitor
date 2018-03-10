@@ -490,6 +490,20 @@ enum BridgeError: Error {
     }
   }
   
+  /**
+   * Eval JS in the web view
+   */
+  @objc public func eval(js: String) {
+    DispatchQueue.main.async {
+      self.getWebView()?.evaluateJavaScript(js, completionHandler: { (result, error) in
+        if error != nil {
+          print("⚡️  JS Eval error", error!.localizedDescription)
+        }
+      })
+    }
+  }
+  
+  
   func getWebView() -> WKWebView? {
     return self.bridgeDelegate.bridgedWebView
   }

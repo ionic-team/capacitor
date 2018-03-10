@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -383,6 +384,23 @@ public class Bridge {
 
   public void log(String... args) {
     Log.d(TAG, TextUtils.join(" ", args));
+  }
+
+  /**
+   * Evaluate JavaScript in the web view. This method
+   * executes on the main thread automatically.
+   * @param js the JS to execute
+   * @param callback an optional `ValueCallback<String>` that will synchronously recieve a value
+   *                 after calling the JS
+   */
+  public void eval(final String js, final ValueCallback<String> callback) {
+    Handler mainHandler = new Handler(context.getMainLooper());
+    mainHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        webView.evaluateJavascript(js, callback);
+      }
+    })
   }
 
   public void execute(Runnable runnable) {
