@@ -283,6 +283,18 @@ export interface CameraOptions {
    * Default: false
    */
   correctOrientation?: boolean;
+  /**
+   * The source to get the photo from. By default this prompts the user to select
+   * either the photo album or take a photo.
+   * Default: CameraSource.Prompt
+   */
+  source?: CameraSource;
+}
+
+export enum CameraSource {
+  Prompt = 'PROMPT',
+  Camera = 'CAMERA',
+  Photos = 'PHOTOS'
 }
 
 export interface CameraPhoto {
