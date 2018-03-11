@@ -3,7 +3,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins,
-  CameraResultType
+  CameraResultType,
+  CameraSource
 } from '@capacitor/core';
 
 /**
@@ -29,11 +30,33 @@ export class CameraPage {
   }
 
 
+  async getPhoto() {
+    const image = await Plugins.Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Base64,
+    })
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+  }
+
   async takePicture() {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
       resultType: CameraResultType.Base64,
+      source: CameraSource.Camera
+    })
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+  }
+
+  async getFromPhotos() {
+    const image = await Plugins.Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Photos
     })
     console.log('Got image back', image);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
