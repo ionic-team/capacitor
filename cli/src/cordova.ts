@@ -230,7 +230,7 @@ async function logAndroidManifest (configElement: any, config: Config, plugin: P
     }));
   }));
   if (xmlEntries.length > 0) {
-    console.log(`plugin ${plugin.id} requires to add \n  ${xmlEntries.join("\n  ")} \nto your AndroidManifest.xml at ${configElement.$.parent.split("/").filter((part: string) => part !== '').join(" ")} level to work\n`);
+    console.log(`plugin ${plugin.id} requires to add \n  ${xmlEntries.join("\n  ")} \nto your AndroidManifest.xml at ${getPathParts(configElement.$.parent).join(" ")} level to work\n`);
   }
 }
 
@@ -250,7 +250,8 @@ function getConfigFileTagContent(string: string) {
 
 function getXMLElement(path: string, xml:any) {
   let xmlElement = xml;
-  path.split("/").filter(part => part !== '').map(part => {
+  const parts = getPathParts(path);
+  parts.map(part => {
     xmlElement = xmlElement[part];
   })
   return xmlElement;
@@ -263,4 +264,9 @@ function contains(a: Array<any>, obj: any) {
       }
   }
   return false;
+}
+
+function getPathParts(path: string) {
+  path = path.replace("/*", "/manifest");
+  return path.split("/").filter(part => part !== '');
 }
