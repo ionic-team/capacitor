@@ -50,7 +50,7 @@ public class ImageUtils {
     try {
       ExifInterface exif = new ExifInterface(imageFileSavePath);
 
-      int orientation = exif.getAttributeInt("orientation", ExifInterface.ORIENTATION_NORMAL);
+      int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
       if (orientation != ExifInterface.ORIENTATION_NORMAL) {
         Bitmap newBitmap = transform(bitmap, getOrientationRotateMatrix(orientation));
