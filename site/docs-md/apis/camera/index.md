@@ -34,7 +34,7 @@ to handle any camera data that was sent in the case your app was terminated by t
 ## Example
 
 ```typescript
-import { Plugins } from '@capacitor/core';
+import { Plugins, CameraResultType } from '@capacitor/core';
 
 const { Camera } = Plugins;
 
@@ -42,7 +42,7 @@ async takePicture() {
   const image = await Camera.getPhoto({
     quality: 90,
     allowEditing: true,
-    resultType: 'base64'
+    resultType: CameraResultType.Base64
   });
   // image.base64_data will contain the base64 encoded result as a JPEG, with the data-uri prefix added
   var imageUrl = image.base64_data;
