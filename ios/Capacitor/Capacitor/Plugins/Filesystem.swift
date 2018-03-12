@@ -280,11 +280,34 @@ public class CAPFilesystemPlugin : CAPPlugin {
         "type": attr[.type] as! String,
         "size": attr[.size] as! UInt64,
         "ctime": (attr[.creationDate] as! Date).timeIntervalSince1970,
-        "mtime": (attr[.modificationDate] as! Date).timeIntervalSince1970
+        "mtime": (attr[.modificationDate] as! Date).timeIntervalSince1970,
+        "uri": pathUrl
       ])
     } catch {
       handleError(call, error.localizedDescription, error)
     }
+  }
+  
+  @objc func getUri(_ call: CAPPluginCall) {
+    guard let path = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directory = getDirectory(directory: directoryOption)
+    
+    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
+      handleError(call, "Invalid device directory '\(directoryOption)'")
+      return
+    }
+    
+    let pathUrl = dir.appendingPathComponent(path)
+    
+    call.success([
+      "uri": pathUrl.absoluteString
+    ])
+    
   }
 
   // Helper function for handling errors

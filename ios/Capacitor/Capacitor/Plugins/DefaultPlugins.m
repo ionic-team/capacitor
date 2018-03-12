@@ -50,6 +50,7 @@ CAP_PLUGIN(CAPFilesystemPlugin, "Filesystem",
   CAP_PLUGIN_METHOD(mkdir, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(rmdir, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(readdir, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(getUri, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(stat, CAPPluginReturnPromise);
 )
 
