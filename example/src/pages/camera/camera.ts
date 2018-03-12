@@ -94,4 +94,33 @@ export class CameraPage {
     console.log('Got image back', image);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
   }
+
+  async testImageSize() {
+    const image = await Plugins.Camera.getPhoto({
+      allowEditing: false,
+      correctOrientation: false,
+      height: 1080,
+      width: 1080,
+      quality: 90,
+      resultType: CameraResultType.Base64,
+      saveToGallery: false
+    });
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+  }
+
+  async testAndroidBreak() {
+    const image = await Plugins.Camera.getPhoto({
+      allowEditing: false,
+      correctOrientation: true, // <------------ oups
+      height: 1080,
+      width: 1080,
+      quality: 90,
+      resultType: CameraResultType.Base64,
+      saveToGallery: false, 
+      source: CameraSource.Photos
+    });
+    console.log('Got image back', image);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+  }
 }

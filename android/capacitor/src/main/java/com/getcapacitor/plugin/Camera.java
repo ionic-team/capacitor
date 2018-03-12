@@ -267,7 +267,7 @@ public class Camera extends Plugin {
       return;
     }
 
-    bitmap = prepareBitmap(bitmap);
+    bitmap = prepareBitmap(bitmap, imageFileSavePath);
 
     // Compress the final image and prepare for output to client
     ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
@@ -294,8 +294,7 @@ public class Camera extends Plugin {
       InputStream imageStream = getActivity().getContentResolver().openInputStream(u);
       Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
 
-      int orientation = ExifInterface.ORIENTATION_NORMAL;
-      bitmap = prepareBitmap(bitmap);
+      bitmap = prepareBitmap(bitmap, u.toString());
 
       // Compress the final image and prepare for output to client
       ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
@@ -319,9 +318,9 @@ public class Camera extends Plugin {
    * @param bitmap
    * @return
    */
-  private Bitmap prepareBitmap(Bitmap bitmap) {
+  private Bitmap prepareBitmap(Bitmap bitmap, String imagePath) {
     if (settings.shouldCorrectOrientation) {
-      Bitmap newBitmap = ImageUtils.correctOrientation(bitmap, imageFileSavePath);
+      Bitmap newBitmap = ImageUtils.correctOrientation(bitmap, imagePath);
       if (bitmap != newBitmap) {
         bitmap.recycle();
       }
