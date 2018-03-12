@@ -450,6 +450,13 @@ export interface FilesystemPlugin extends Plugin {
   readdir(options: ReaddirOptions): Promise<ReaddirResult>;
 
   /**
+   * Return full File URI for a path and directory
+   * @param options the options for the stat operation
+   * @return a promise that resolves with the file stat result
+   */
+  getUri(options: GetUriOptions): Promise<GetUriResult>;
+
+  /**
    * Return data about a file
    * @param options the options for the stat operation
    * @return a promise that resolves with the file stat result
@@ -591,6 +598,17 @@ export interface ReaddirOptions {
   directory: FilesystemDirectory;
 }
 
+export interface GetUriOptions {
+  /**
+   * The path of the file to get the URI for
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to get the file under
+   */
+  directory: FilesystemDirectory;
+}
+
 export interface StatOptions {
   /**
    * The path of the directory to remove
@@ -618,11 +636,15 @@ export interface RmdirResult {
 export interface ReaddirResult {
   files: string[];
 }
+export interface GetUriResult {
+  uri: string;
+}
 export interface StatResult {
   type: string;
   size: number;
   ctime: number;
   mtime: number;
+  uri: string;
 }
 
 //

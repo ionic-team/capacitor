@@ -1,6 +1,7 @@
 package com.getcapacitor.plugin;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -220,6 +221,29 @@ public class Filesystem extends Plugin {
   }
 
   @PluginMethod()
+  public void getUri(PluginCall call) {
+    String path = call.getString("path");
+    String directory = call.getString("directory");
+
+    File androidDirectory = this.getDirectory(directory);
+    if(androidDirectory == null) {
+      call.error("Unable to find system directory \"" + directory + "\"");
+      return;
+    }
+
+    File fileObject = new File(androidDirectory, path);
+
+    if (!fileObject.exists()) {
+      call.error("File does not exist");
+      return;
+    }
+
+    JSObject data = new JSObject();
+    data.put("uri", Uri.fromFile(fileObject).toString());
+    call.success(data);
+  }
+
+  @PluginMethod()
   public void stat(PluginCall call) {
     String path = call.getString("path");
     String directory = call.getString("directory");
@@ -232,11 +256,17 @@ public class Filesystem extends Plugin {
 
     File fileObject = new File(androidDirectory, path);
 
+    if (!fileObject.exists()) {
+      call.error("File does not exist");
+      return;
+    }
+
     JSObject data = new JSObject();
     data.put("type", fileObject.isDirectory() ? "directory" : "file");
     data.put("size", fileObject.length());
     data.put("ctime", null);
     data.put("mtime", fileObject.lastModified());
+    data.put("uri", Uri.fromFile(fileObject).toString());
     call.success(data);
   }
 
