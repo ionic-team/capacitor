@@ -53,15 +53,15 @@ async takePicture() {
 ## Angular example
 
 By default, Angular (>= 2.x) won't trust dynamic image urls. To trust the URL, inject `DomSanitizer` and make sure to allow the 
-image URL to be trusted:
+image URL to be trusted.
+
+The source for the photo could be specified too. Per default, the user will be prompted for camera or gallery source. 
 
 ```typescript
 import { Component } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import {
-  Plugins
-} from '@capacitor/core';
+import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
 
 @IonicPage()
 @Component({
@@ -80,8 +80,10 @@ export class CameraPage {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: 'base64'
-    })
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera
+    });
+    
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
   }
 }
