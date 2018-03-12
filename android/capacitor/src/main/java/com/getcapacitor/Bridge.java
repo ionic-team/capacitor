@@ -390,7 +390,7 @@ public class Bridge {
    * Evaluate JavaScript in the web view. This method
    * executes on the main thread automatically.
    * @param js the JS to execute
-   * @param callback an optional `ValueCallback<String>` that will synchronously recieve a value
+   * @param callback an optional ValueCallback that will synchronously recieve a value
    *                 after calling the JS
    */
   public void eval(final String js, final ValueCallback<String> callback) {
