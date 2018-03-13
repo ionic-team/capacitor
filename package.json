@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"publish": "lerna run build && lerna publish --force-publish --skip-git && npm run deploy",
+		"publish": "bash scripts/generate.sh && lerna run build && lerna publish --force-publish --skip-git && npm run deploy",
 		"deploy": "bash scripts/deploy.sh"
 	},
 	"devDependencies": {
