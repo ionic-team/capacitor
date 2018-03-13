@@ -9,7 +9,7 @@ import { Plugins } from '@capacitor/core';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage = 'CameraPage';
+  rootPage = 'FilesystemPage';
 
   PLUGINS = [
     { name: 'App', page: 'AppPage' },
