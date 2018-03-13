@@ -1,5 +1,6 @@
 const {app, BrowserWindow, Menu} = require('electron');
 const isDevMode = require('electron-is-dev');
+const { injectCapacitor } = require('@capacitor/electron');
 
 let mainWindow = null;
 
@@ -14,21 +15,16 @@ const menuTemplateDev = [
           mainWindow.openDevTools();
         },
       },
-      {
-        label: 'Reload Web App',
-        click() {
-          mainWindow.reload();
-        }
-      }
     ],
   },
 ];
 
-function createWindow () {
+async function createWindow () {
   // Define our window size
   mainWindow = new BrowserWindow({
     height: 920,
-    width: 1600
+    width: 1600,
+    show: false,
   });
 
   if (isDevMode) {
@@ -38,8 +34,15 @@ function createWindow () {
     mainWindow.webContents.openDevTools();
   }
 
+  mainWindow.webContents.on('dom-ready', () => {
+    mainWindow.show();
+  });
+
   // Render our app onto the page.
-  mainWindow.loadURL(`file://${__dirname}/app/index.html`);
+  mainWindow.loadURL(
+    await injectCapacitor(`file://${__dirname}/app/index.html`),
+    {baseURLForDataURL: `file://${__dirname}/app/`}
+  );
 }
 
 // This method will be called when Electron has finished
