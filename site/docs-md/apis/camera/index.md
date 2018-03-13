@@ -55,7 +55,7 @@ async takePicture() {
 By default, Angular (>= 2.x) won't trust dynamic image urls. To trust the URL, inject `DomSanitizer` and make sure to allow the 
 image URL to be trusted.
 
-The source for the photo could be specified too. Per default, the user will be prompted for camera or gallery source. 
+This example also demonstrates how to set the default source of the image. By default, `getPhoto` will prompt the user to take a picture or select a photo from their existing photos. 
 
 ```typescript
 import { Component } from '@angular/core';
