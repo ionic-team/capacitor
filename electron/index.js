@@ -16,7 +16,7 @@ const injectCapacitor = async function(url) {
   try {
     // console.log(url.substr(url.indexOf('://') + 3));
     let urlFileContents = await getURLFileContents(url.substr(url.indexOf('://') + 3));
-    let pathing = path.join(url.substr(url.indexOf('://') + 3), '../../node_modules/@capacitor/electron/electron-bridge.js');
+    let pathing = path.join(url.substr(url.indexOf('://') + 3), '../../node_modules/@capacitor/electron/dist/electron-bridge.js');
     // console.log(pathing);
     urlFileContents = urlFileContents.replace('<body>', `<body><script>window.require('${pathing.replace(/\\/g,'\\\\')}')</script>`);
     // console.log(urlFileContents);
