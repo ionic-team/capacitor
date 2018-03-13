@@ -62,5 +62,7 @@
       "**/__test__/*.(ts|tsx|js)"
     ]
   },
-  "dependencies": {}
+  "dependencies": {
+    "@capacitor/core": "^1.0.0-alpha.13"
+  }
 }
