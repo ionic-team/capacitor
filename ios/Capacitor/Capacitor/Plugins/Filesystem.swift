@@ -19,6 +19,41 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
   }
   
+  func getDirectoryFromFileUrl(_ url: String) -> FileManager.SearchPathDirectory {
+    guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+      return .documentDirectory
+    }
+    guard let cachesDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
+      return .documentDirectory
+    }
+    guard let applicationDirectory = FileManager.default.urls(for: .applicationDirectory, in: .userDomainMask).first else {
+      return .documentDirectory
+    }
+    
+    if url.starts(with: docsDir.absoluteString) {
+      return .documentDirectory
+    }
+    
+    if url.starts(with: cachesDir.absoluteString) {
+      return .cachesDirectory
+    }
+    
+    if url.starts(with: applicationDirectory.absoluteString) {
+      return .applicationDirectory
+    }
+    
+    return .documentDirectory
+  }
+  
+  func getRelativeFileUrl(_ url: String, _ directoryUrl: URL) -> URL {
+    if !url.starts(with: directoryUrl.absoluteString) {
+      return directoryUrl.appendingPathComponent(url)
+    }
+    var urlStr = String(url)
+    let len = directoryUrl.absoluteString.count
+    urlStr.removeFirst(len)
+    return directoryUrl.appendingPathComponent(urlStr)
+  }
   
   /**
    * Read a file from the filesystem.
@@ -30,16 +65,25 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-      
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    let directory = getDirectory(directory: directoryOption)
-
+    
+    var fileUrl = URL(fileURLWithPath: file)
+    let directoryOption = call.get("directory", String.self)
+    var directory: FileManager.SearchPathDirectory
+    
+    if directoryOption != nil {
+      directory = getDirectory(directory: directoryOption!)
+    } else {
+      directory = getDirectoryFromFileUrl(file)
+    }
+    
+    
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
       handleError(call, "Invalid device directory '\(directoryOption)'")
       return
     }
+    
+    fileUrl = getRelativeFileUrl(file, dir)
 
-    let fileUrl = dir.appendingPathComponent(file)
     do {
       let data = try String(contentsOf: fileUrl, encoding: .utf8)
       call.success([
@@ -281,7 +325,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
         "size": attr[.size] as! UInt64,
         "ctime": (attr[.creationDate] as! Date).timeIntervalSince1970,
         "mtime": (attr[.modificationDate] as! Date).timeIntervalSince1970,
-        "uri": pathUrl
+        "uri": pathUrl.absoluteString
       ])
     } catch {
       handleError(call, error.localizedDescription, error)
