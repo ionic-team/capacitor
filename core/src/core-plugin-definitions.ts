@@ -298,7 +298,8 @@ export enum CameraSource {
 }
 
 export interface CameraPhoto {
-  base64_data: string;
+  base64_data?: string;
+  path?: string;
   format: string;
 }
 
@@ -545,7 +546,10 @@ export interface FileReadOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * The encoding to read the file in (defautls to utf8)
+   * The encoding to read the file in, if not provided, data
+   * is read as binary and returned as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to read data as string
    */
   encoding?: FilesystemEncoding;
 }

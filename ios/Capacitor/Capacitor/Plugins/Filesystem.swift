@@ -19,84 +19,55 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
   }
   
-  func getDirectoryFromFileUrl(_ url: String) -> FileManager.SearchPathDirectory {
-    guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-      return .documentDirectory
-    }
-    guard let cachesDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
-      return .documentDirectory
-    }
-    guard let applicationDirectory = FileManager.default.urls(for: .applicationDirectory, in: .userDomainMask).first else {
-      return .documentDirectory
+  func getFileUrl(_ path: String, _ directoryOption: String) -> URL? {
+    if path.starts(with: "file://") {
+      return URL(string: path)
     }
     
-    if url.starts(with: docsDir.absoluteString) {
-      return .documentDirectory
+    let directory = getDirectory(directory: directoryOption)
+    
+    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
+      return nil
     }
     
-    if url.starts(with: cachesDir.absoluteString) {
-      return .cachesDirectory
-    }
-    
-    if url.starts(with: applicationDirectory.absoluteString) {
-      return .applicationDirectory
-    }
-    
-    return .documentDirectory
+    return dir.appendingPathComponent(path)
   }
-  
-  func getRelativeFileUrl(_ url: String, _ directoryUrl: URL) -> URL {
-    if !url.starts(with: directoryUrl.absoluteString) {
-      return directoryUrl.appendingPathComponent(url)
-    }
-    var urlStr = String(url)
-    let len = directoryUrl.absoluteString.count
-    urlStr.removeFirst(len)
-    return directoryUrl.appendingPathComponent(urlStr)
-  }
+
   
   /**
    * Read a file from the filesystem.
    */
   @objc func readFile(_ call: CAPPluginCall) {
-    //let encoding = call.get("encoding") as? String ?? "utf8"
-    // TODO: Allow them to switch encoding
+    let encoding = call.getString("encoding")
+
     guard let file = call.get("path", String.self) else {
       handleError(call, "path must be provided and must be a string.")
       return
     }
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     
-    var fileUrl = URL(fileURLWithPath: file)
-    let directoryOption = call.get("directory", String.self)
-    var directory: FileManager.SearchPathDirectory
-    
-    if directoryOption != nil {
-      directory = getDirectory(directory: directoryOption!)
-    } else {
-      directory = getDirectoryFromFileUrl(file)
-    }
-    
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(file, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
-    
-    fileUrl = getRelativeFileUrl(file, dir)
 
-   
     do {
-      // let s = try String(contentsOfFile: URL(string: file)!.path, encoding: .utf8)
-      let data = try String(contentsOf: fileUrl, encoding: .utf8)
-      call.success([
-        "data": data
-      ])
+      if encoding != nil {
+        let data = try String(contentsOf: fileUrl, encoding: .utf8)
+        call.success([
+          "data": data
+        ])
+      } else {
+        let data = try Data(contentsOf: fileUrl)
+        call.success([
+          "data": data.base64EncodedString()
+        ])
+      }
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
-  
+
   /**
    * Write a file to the filesystem.
    */

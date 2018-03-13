@@ -7,6 +7,8 @@ import {
   CameraSource
 } from '@capacitor/core';
 
+const { Filesystem } = Plugins;
+
 /**
  * Generated class for the CameraPage page.
  *
@@ -92,7 +94,13 @@ export class CameraPage {
       resultType: CameraResultType.Uri
     })
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+
+
+    const imageData = await Filesystem.readFile({
+      path: image.path
+    });
+
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl("data:image/jpeg;base64," + imageData.data);
   }
 
   async testImageSize() {
