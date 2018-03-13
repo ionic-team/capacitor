@@ -84,7 +84,9 @@ public class CAPFilesystemPlugin : CAPPlugin {
     
     fileUrl = getRelativeFileUrl(file, dir)
 
+   
     do {
+      // let s = try String(contentsOfFile: URL(string: file)!.path, encoding: .utf8)
       let data = try String(contentsOf: fileUrl, encoding: .utf8)
       call.success([
         "data": data
