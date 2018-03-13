@@ -5,7 +5,9 @@ import Foundation
 public class CAPFilesystemPlugin : CAPPlugin {
   let DEFAULT_DIRECTORY = "DOCUMENTS"
   
-  // Get the SearchPathDirectory corresponding to the JS string
+  /**
+   * Get the SearchPathDirectory corresponding to the JS string
+   */
   func getDirectory(directory: String) -> FileManager.SearchPathDirectory {
     switch directory {
     case "DOCUMENTS":
@@ -19,6 +21,10 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
   }
   
+  /**
+   * Get the URL for this file, supporting file:// paths and
+   * files with directory mappings.
+   */
   func getFileUrl(_ path: String, _ directoryOption: String) -> URL? {
     if path.starts(with: "file://") {
       return URL(string: path)
@@ -33,6 +39,12 @@ public class CAPFilesystemPlugin : CAPPlugin {
     return dir.appendingPathComponent(path)
   }
 
+  /**
+   * Helper for handling errors
+   */
+  func handleError(_ call: CAPPluginCall, _ message: String, _ error: Error? = nil) {
+    call.error(message, error)
+  }
   
   /**
    * Read a file from the filesystem.
@@ -121,14 +133,10 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(file, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
-    
-    let fileUrl = dir.appendingPathComponent(file)
     
     do {
       if FileManager.default.fileExists(atPath: fileUrl.path) {
@@ -165,14 +173,10 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(file, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
-    
-    let fileUrl = dir.appendingPathComponent(file)
     
     do {
       
@@ -196,14 +200,10 @@ public class CAPFilesystemPlugin : CAPPlugin {
     
     let createIntermediateDirectories = call.get("createIntermediateDirectories", Bool.self, false)!
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(path, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
-    
-    let fileUrl = dir.appendingPathComponent(path)
     
     do {
       try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: createIntermediateDirectories, attributes: nil)
@@ -224,14 +224,10 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(path, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
-    
-    let fileUrl = dir.appendingPathComponent(path)
     
     do {
       try FileManager.default.removeItem(at: fileUrl)
@@ -252,18 +248,14 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(path, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
     
-    let dirUrl = dir.appendingPathComponent(path)
-    
     do {
 
-      let directoryContents = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: nil, options: [])
+      let directoryContents = try FileManager.default.contentsOfDirectory(at: fileUrl, includingPropertiesForKeys: nil, options: [])
       
       let directoryPathStrings = directoryContents.map {(url: URL) -> String in
         return url.path
@@ -284,23 +276,19 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(path, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
     
-    let pathUrl = dir.appendingPathComponent(path)
-    
     do {
-      let attr = try FileManager.default.attributesOfItem(atPath: pathUrl.path)
+      let attr = try FileManager.default.attributesOfItem(atPath: fileUrl.path)
       call.success([
         "type": attr[.type] as! String,
         "size": attr[.size] as! UInt64,
         "ctime": (attr[.creationDate] as! Date).timeIntervalSince1970,
         "mtime": (attr[.modificationDate] as! Date).timeIntervalSince1970,
-        "uri": pathUrl.absoluteString
+        "uri": fileUrl.absoluteString
       ])
     } catch {
       handleError(call, error.localizedDescription, error)
@@ -314,24 +302,16 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+    guard let fileUrl = getFileUrl(path, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
     
-    let pathUrl = dir.appendingPathComponent(path)
-    
     call.success([
-      "uri": pathUrl.absoluteString
+      "uri": fileUrl.absoluteString
     ])
     
   }
 
-  // Helper function for handling errors
-  func handleError(_ call: CAPPluginCall, _ message: String, _ error: Error? = nil) {
-    call.error(message, error)
-  }
 }
 
