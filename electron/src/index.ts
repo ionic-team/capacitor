@@ -3,7 +3,7 @@ export {
   PluginResultData,
   PluginResultError,
   PluginConfig
-} from '@capacitor/core/dist/esm/definitions';
+} from '@capacitor/core';
 
 export * from '@capacitor/core/dist/esm/core-plugin-definitions';
 export * from './global';

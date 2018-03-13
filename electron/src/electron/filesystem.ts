@@ -1,11 +1,11 @@
-import { WebPlugin } from '@capacitor/core/dist/esm/web';
 import {
+  WebPlugin,
   FileReadOptions, FileReadResult,
   FilesystemPlugin, FileWriteOptions,
   FileWriteResult,
   FileAppendOptions, FileAppendResult, FileDeleteOptions, FileDeleteResult,
   MkdirOptions, MkdirResult
-} from "@capacitor/core/dist/esm/core-plugin-definitions";
+} from "@capacitor/core";
 
 export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlugin {
 

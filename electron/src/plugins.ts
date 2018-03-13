@@ -1,5 +1,5 @@
 import { Plugins } from './global';
-import { mergeWebPlugins, mergeWebPlugin, WebPlugin } from '@capacitor/core/dist/esm/web';
+import { mergeWebPlugins, mergeWebPlugin, WebPlugin } from '@capacitor/core';
 
 export * from '@capacitor/core/dist/esm/web/browser';
 export * from '@capacitor/core/dist/esm/web/camera';
