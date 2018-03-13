@@ -72,7 +72,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
    * Write a file to the filesystem.
    */
   @objc func writeFile(_ call: CAPPluginCall) {
-    //let encoding = call.get("encoding") as? String ?? "utf8"
+    let encoding = call.getString("encoding")
     // TODO: Allow them to switch encoding
     guard let file = call.get("path", String.self) else {
       handleError(call, "path must be provided and must be a string.")
@@ -85,16 +85,18 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
       
     let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
-    let directory = getDirectory(directory: directoryOption)
-    
-    guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
-      handleError(call, "Invalid device directory '\(directoryOption)'")
+
+    guard let fileUrl = getFileUrl(file, directoryOption) else {
+      handleError(call, "Invalid path")
       return
     }
-    
-    let fileUrl = dir.appendingPathComponent(file)
+
     do {
-      try data.write(to: fileUrl, atomically: false, encoding: .utf8)
+      if encoding != nil {
+        try data.write(to: fileUrl, atomically: false, encoding: .utf8)
+      } else {
+        try Data(base64Encoded: data)?.write(to: fileUrl)
+      }
       call.success()
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)
