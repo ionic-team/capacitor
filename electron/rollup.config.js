@@ -1,7 +1,7 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {
-  input: 'dist/esm/electron/src/index.js',
+  input: 'dist/esm/index.js',
   output: {
     file: 'dist/electron-bridge.js',
     format: 'iife',

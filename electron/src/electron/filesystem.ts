@@ -1,11 +1,11 @@
-import { WebPlugin } from '../../../core/src/web/index';
+import { WebPlugin } from '@capacitor/core/dist/esm/web';
 import {
   FileReadOptions, FileReadResult,
   FilesystemPlugin, FileWriteOptions,
   FileWriteResult,
   FileAppendOptions, FileAppendResult, FileDeleteOptions, FileDeleteResult,
-  MkdirOptions, MkdirResult, GetUriResult, GetUriOptions
-} from "../../../core/src/core-plugin-definitions";
+  MkdirOptions, MkdirResult
+} from "@capacitor/core/dist/esm/core-plugin-definitions";
 
 export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlugin {
 
@@ -119,7 +119,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     });
   }
 
-  getUri(options: GetUriOptions): Promise<GetUriResult> {
+  getUri(options: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
