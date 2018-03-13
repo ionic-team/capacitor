@@ -134,14 +134,19 @@ export class FilesystemPage {
       await Plugins.Filesystem.writeFile({
         path: 'text.txt',
         data: "This is a test",
-        directory: FilesystemDirectory.Application,
+        directory: FilesystemDirectory.Data,
         encoding: FilesystemEncoding.UTF8
       });
       let stat = await Plugins.Filesystem.stat({
         path: 'text.txt',
-        directory: FilesystemDirectory.Application
+        directory: FilesystemDirectory.Data
+      });
+      let data = Plugins.Filesystem.readFile({
+        path: stat.uri
       });
       console.log('Stat 1', stat);
+      console.log(data);
+      /*
       await Plugins.Filesystem.writeFile({
         path: 'text.txt',
         data: "This is a test",
@@ -163,6 +168,7 @@ export class FilesystemPage {
         path: 'text.txt',
         directory: FilesystemDirectory.Cache
       });
+      */
       console.log('Stat 3', stat);
     } catch(e) {
       console.error('Unable to write file (press mkdir first, silly)', e);
