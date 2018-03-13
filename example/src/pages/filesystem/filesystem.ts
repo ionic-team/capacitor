@@ -141,7 +141,7 @@ export class FilesystemPage {
         path: 'text.txt',
         directory: FilesystemDirectory.Data
       });
-      let data = Plugins.Filesystem.readFile({
+      let data = await Plugins.Filesystem.readFile({
         path: stat.uri
       });
       console.log('Stat 1', stat);

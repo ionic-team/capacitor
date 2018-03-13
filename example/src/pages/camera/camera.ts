@@ -4,7 +4,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins,
   CameraResultType,
-  CameraSource
+  CameraSource,
+  FilesystemDirectory
 } from '@capacitor/core';
 
 const { Filesystem } = Plugins;
@@ -99,6 +100,19 @@ export class CameraPage {
     const imageData = await Filesystem.readFile({
       path: image.path
     });
+
+    await Filesystem.writeFile({
+      path: 'cool-photo.jpg',
+      directory: FilesystemDirectory.Data,
+      data: imageData.data
+    });
+
+    let stat = await Plugins.Filesystem.stat({
+      path: 'cool-photo.jpg',
+      directory: FilesystemDirectory.Data
+    });
+
+    console.log(stat);
 
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl("data:image/jpeg;base64," + imageData.data);
   }
