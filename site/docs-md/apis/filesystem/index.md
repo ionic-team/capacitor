@@ -2,9 +2,14 @@
 
 The Filsystem API provides a NodeJS-like API for working with files on the device.
 
-Current mobile OS's have additional layers of separation between files, such as special directories that are backed up to the Cloud, or ones for storing Documents. The Filesystem API offers a simple way to scope each operation to a specific special directory on the device.
-
 <plugin-api index="true" name="filesystem"></plugin-api>
+
+## Understanding Directories and Files
+
+iOS and Android have additional layers of separation between files, such as special directories that are backed up to the Cloud, or ones for storing Documents. The Filesystem API offers a simple way to scope each operation to a specific special directory on the device.
+
+Additionally, the Filesystem API supports using full `file://` paths, or reading `content://` files on Android. Simply
+leave out the `directory` param to use a full file path.
 
 ## Example
 
@@ -93,6 +98,17 @@ async stat() {
     });
   } catch(e) {
     console.error('Unable to stat file', e);
+  }
+}
+
+async readFilePath() {
+  // Here's an example of reading a file with a full file path. Use this to
+  // read binary data (base64 encoded) from plugins that return File URIs, such as
+  // the Camera.
+  try {
+    let data = await Filesystem.readFile({
+      path: 'file:///var/mobile/Containers/Data/Application/22A433FD-D82D-4989-8BE6-9FC49DEA20BB/Documents/text.txt'
+    })
   }
 }
 ```
