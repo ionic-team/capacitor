@@ -32,7 +32,7 @@ export async function copy(config: Config, platformName: string) {
     if (platformName === config.ios.name) {
       await copyWebDir(config, config.ios.webDirAbs);
       await copyNativeBridge(config, config.ios.webDirAbs);
-      await copyCapacitorConfig(config, join(config.ios.platformDir, config.ios.nativeProjectName));
+      await copyCapacitorConfig(config, join(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName));
       await copyCordovaJSFiles(config, platformName);
     } else if (platformName === config.android.name) {
       await copyWebDir(config, config.android.webDirAbs);
