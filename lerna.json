@@ -3,7 +3,8 @@
   "gitVersionPrefix": "",
   "packages": [
     "./cli/",
-    "./core/"
+    "./core/",
+    "./capacitor-ios/"
   ],
   "version": "1.0.0-alpha.13"
 }
