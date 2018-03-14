@@ -91,6 +91,16 @@ export class App {
             />
           
             <stencil-route
+              url="/docs/electron/:pageName?"
+              routeRender={(props: { [key: string]: any }) => {
+                const page = props.match.params.pageName || 'index';
+                return (
+                  <document-component pages={[`electron/${page}.html`]} />
+                );
+              }}
+            />
+
+            <stencil-route
               url="/docs/web/:pageName?"
               routeRender={(props: { [key: string]: any }) => {
                 const page = props.match.params.pageName || 'index';
