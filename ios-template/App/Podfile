@@ -5,6 +5,6 @@ target 'App' do
   # Add your Pods here
 
   # Automatic Capacitor Pod dependencies, do not delete
-  pod 'Capacitor', '1.0.0-alpha.12'
+  pod 'Capacitor', '1.0.0-alpha.14'
   # Do not delete
 end
