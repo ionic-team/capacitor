@@ -275,7 +275,7 @@ public class Camera extends Plugin {
     } else if (resultType == CameraResultType.URI) {
       JSObject ret = new JSObject();
       ret.put("path", contentUri.toString());
-      ret.put("webPath", FileUtils.getPortablePath(contentUri));
+      ret.put("webPath", FileUtils.getPortablePath(getContext(), contentUri));
       call.success(ret);
     }
   }
@@ -303,7 +303,7 @@ public class Camera extends Plugin {
       } else if (settings.resultType == CameraResultType.URI) {
         JSObject ret = new JSObject();
         ret.put("path", u.toString());
-        ret.put("webPath", FileUtils.getPortablePath(u));
+        ret.put("webPath", FileUtils.getPortablePath(getContext(), u));
         call.success(ret);
       }
     } catch (FileNotFoundException ex) {
