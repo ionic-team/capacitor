@@ -1,7 +1,7 @@
 import { accessSync, readFileSync } from 'fs';
 import { basename, isAbsolute, join, resolve } from 'path';
 import { logFatal } from './common';
-import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
+import { AppPluginsConfig, CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 import { currentId } from 'async_hooks';
 
 let Package: PackageJson;
@@ -81,6 +81,7 @@ export class Config implements CliConfig {
     extConfigFilePath: '',
     extConfig: ExtConfig,
     bundledWebRuntime: false,
+    plugins: {},
     assets: {
       templateName: 'app-template',
       templateDir: ''

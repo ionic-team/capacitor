@@ -35,6 +35,10 @@
   return TRUE;
 }
 
+-(id)getConfigValue:(NSString *)key {
+  return [self.bridge getConfigValue:self.pluginName :key];
+}
+
 -(void)load {}
 
 - (void)addEventListener:(NSString *)eventName listener:(CAPPluginCall *)listener {
