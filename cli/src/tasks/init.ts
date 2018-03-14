@@ -106,6 +106,7 @@ async function printNextSteps(config: Config) {
   log(`Add platforms using "npx cap add":\n`);
   log(`  npx cap add android`);
   log(`  npx cap add ios`);
+  log(`  npx cap add electron`);
   log('');
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}`);
 }
