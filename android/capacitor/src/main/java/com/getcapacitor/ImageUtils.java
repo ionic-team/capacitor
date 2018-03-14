@@ -1,11 +1,17 @@
 package com.getcapacitor;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ImageUtils {
   /**
@@ -39,65 +45,46 @@ public class ImageUtils {
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
   }
 
+  private static String getFileUrlForContentImage(Context c, Uri uri) {
+    String wholeID = DocumentsContract.getDocumentId(uri);
+
+    // Split at colon, use second item in the array
+    String id = wholeID.split(":")[1];
+    String[] column = { MediaStore.Images.Media.DATA };
+
+    // where id is equal to
+    String sel = MediaStore.Images.Media._ID + "=?";
+    Cursor cursor = c.getContentResolver().
+        query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            column, sel, new String[]{ id }, null);
+
+    String filePath = "";
+    int columnIndex = cursor.getColumnIndex(column[0]);
+    if (cursor.moveToFirst()) {
+      filePath = cursor.getString(columnIndex);
+    }
+
+    cursor.close();
+    return filePath;
+  }
+
   /**
    * Correct the orientation of an image by reading its exif information and rotating
    * the appropriate amount for portrait mode
    * @param bitmap
-   * @param imageFileSavePath
+   * @param imageUri
    * @return
    */
-  public static Bitmap correctOrientation(Bitmap bitmap, String imageFileSavePath) {
-    try {
-      ExifInterface exif = new ExifInterface(imageFileSavePath);
-
-      int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-      if (orientation != ExifInterface.ORIENTATION_NORMAL) {
-        Bitmap newBitmap = transform(bitmap, getOrientationRotateMatrix(orientation));
-
-        exif.setAttribute(ExifInterface.TAG_ORIENTATION, "" + ExifInterface.ORIENTATION_NORMAL);
-        exif.saveAttributes();
-      }
-    } catch (IOException ex) {
-      Log.e(Bridge.TAG, "Unable to load exif data for saved image", ex);
+  public static Bitmap correctOrientation(Context c, Bitmap bitmap, Uri imageUri) {
+    String[] orientationColumn = { MediaStore.Images.Media.ORIENTATION };
+    Cursor cur = c.getContentResolver().query(imageUri, orientationColumn, null, null, null);
+    int orientation = -1;
+    if (cur != null && cur.moveToFirst()) {
+      orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
     }
-    return bitmap;
-  }
-
-  /**
-   * Get the Matrix needed to transform an image with the given orientation
-   * to face up on portrait mode
-   * @param orientation
-   * @return
-   */
-  private static Matrix getOrientationRotateMatrix(int orientation) {
     Matrix matrix = new Matrix();
-    switch (orientation) {
-      case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-        matrix.setScale(-1, 1);
-        break;
-      case ExifInterface.ORIENTATION_ROTATE_180:
-        matrix.setRotate(180);
-        break;
-      case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-        matrix.setRotate(180);
-        matrix.postScale(-1, 1);
-        break;
-      case ExifInterface.ORIENTATION_TRANSPOSE:
-        matrix.setRotate(90);
-        matrix.postScale(-1, 1);
-        break;
-      case ExifInterface.ORIENTATION_ROTATE_90:
-        matrix.setRotate(90);
-        break;
-      case ExifInterface.ORIENTATION_TRANSVERSE:
-        matrix.setRotate(-90);
-        matrix.postScale(-1, 1);
-        break;
-      case ExifInterface.ORIENTATION_ROTATE_270:
-        matrix.setRotate(-90);
-        break;
-    }
-    return matrix;
+    matrix.postRotate(orientation);
+
+    return transform(bitmap, matrix);
   }
 }
