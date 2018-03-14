@@ -24,7 +24,20 @@ export class SplashScreenPage {
     console.log('ionViewDidLoad SplashScreenPage');
   }
 
-  showSplash() {
+  showSplashAutoHide() {
+    SplashScreen.show({
+      autoHide: true
+    });
+  }
+
+  showSplashAutoHide2s() {
+    SplashScreen.show({
+      showDuration: 2000,
+      autoHide: true
+    });
+  }
+
+  showSplash6s() {
     SplashScreen.show({
       autoHide: false
     });
@@ -33,10 +46,4 @@ export class SplashScreenPage {
     }, 6000);
   }
 
-  showSplashAutoFade() {
-    Plugins.SplashScreen.show({
-      showDuration: 2000,
-      autoHide: true
-    });
-  }
 }
