@@ -81,12 +81,11 @@ public class WebViewLocalServer {
     private Map<String, String> responseHeaders;
 
     public PathHandler() {
-      this(null, null, null, 200, "OK", null);
+      this(null, null, 200, "OK", null);
     }
 
-    public PathHandler(String mimeType, String encoding, String charset, int statusCode,
+    public PathHandler(String encoding, String charset, int statusCode,
                        String reasonPhrase, Map<String, String> responseHeaders) {
-      this.mimeType = mimeType;
       this.encoding = encoding;
       this.charset = charset;
       this.statusCode = statusCode;
@@ -99,10 +98,6 @@ public class WebViewLocalServer {
     }
 
     abstract public InputStream handle(Uri url);
-
-    public String getMimeType() {
-      return mimeType;
-    }
 
     public String getEncoding() {
       return encoding;
@@ -215,7 +210,7 @@ public class WebViewLocalServer {
     String path = request.getUrl().getPath();
 
     if (path.equals("/cordova.js")) {
-      return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
+      return new WebResourceResponse("application/javascript", handler.getEncoding(),
               handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
     }
 
@@ -232,40 +227,29 @@ public class WebViewLocalServer {
         bridge.reset();
       }
 
-      return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
+      String mimeType = null;
+      try {
+        mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
+        if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
+          Log.d(Bridge.TAG, "We shouldn't be here");
+        }
+        if (mimeType == null) {
+          if (path.endsWith(".js")) {
+            // Make sure JS files get the proper mimetype to support ES modules
+            mimeType = "application/javascript";
+          } else {
+            mimeType = URLConnection.guessContentTypeFromStream(stream);
+          }
+        }
+      } catch (Exception ex) {
+        Log.e(TAG, "Unable to get mime type" + request.getUrl().getPath(), ex);
+      }
+
+      return new WebResourceResponse(mimeType, handler.getEncoding(),
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
     return null;
-  }
-
-  /**
-   * Attempt to retrieve the WebResourceResponse associated with the given <code>url</code>.
-   * This method should be invoked from within
-   * {@link android.webkit.WebViewClient#shouldInterceptRequest(android.webkit.WebView, String)}.
-   *
-   * @param url the url to process.
-   * @return a response if the request URL had a matching handler, null if no handler was found.
-   */
-  public WebResourceResponse shouldInterceptRequest(String url) {
-    PathHandler handler = null;
-    Uri uri = parseAndVerifyUrl(url);
-    if (uri != null) {
-      synchronized (uriMatcher) {
-        handler = (PathHandler) uriMatcher.match(uri);
-      }
-    }
-    if (handler == null)
-      return null;
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
-          new LegacyLazyInputStream(handler, uri));
-    } else {
-      InputStream is = handler.handle(uri);
-      return new WebResourceResponse(handler.getMimeType(), handler.getEncoding(),
-          is);
-    }
   }
 
   /**
@@ -362,23 +346,6 @@ public class WebViewLocalServer {
           return null;
         }
 
-        try {
-          mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
-          if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
-            Log.d(Bridge.TAG, "We shouldn't be here");
-          }
-          if (mimeType == null) {
-            if (path.endsWith(".js")) {
-              // Make sure JS files get the proper mimetype to support ES modules
-              mimeType = "application/javascript";
-            } else {
-              mimeType = URLConnection.guessContentTypeFromStream(stream);
-            }
-          }
-        } catch (Exception ex) {
-          Log.e(TAG, "Unable to get mime type" + url, ex);
-        }
-
         return stream;
       }
     };
@@ -452,6 +419,7 @@ public class WebViewLocalServer {
     PathHandler handler = new PathHandler() {
       @Override
       public InputStream handle(Uri url) {
+        Log.d(Bridge.TAG, "Inside this shitty handler " + url.getPath());
         InputStream stream = protocolHandler.openResource(url);
         String mimeType = null;
         try {
@@ -525,22 +493,6 @@ public class WebViewLocalServer {
     public long skip(long n) throws IOException {
       InputStream is = getInputStream();
       return (is != null) ? is.skip(n) : 0;
-    }
-  }
-
-  // For earlier than L.
-  private static class LegacyLazyInputStream extends LazyInputStream {
-    private Uri uri;
-    private InputStream is;
-
-    public LegacyLazyInputStream(PathHandler handler, Uri uri) {
-      super(handler);
-      this.uri = uri;
-    }
-
-    @Override
-    protected InputStream handle() {
-      return handler.handle(uri);
     }
   }
 
