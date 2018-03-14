@@ -1,5 +1,5 @@
 {
-  "name": "@capacitor/capacitor-ios",
+  "name": "@capacitor/ios",
   "version": "LERNA_VERSION",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "http://getcapacitor.com/",
