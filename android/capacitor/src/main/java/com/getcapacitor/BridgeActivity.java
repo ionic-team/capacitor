@@ -43,7 +43,6 @@ public class BridgeActivity extends AppCompatActivity {
     this.initialPlugins = plugins;
 
     loadConfig(this.getApplicationContext(),this);
-    Splash.showOnLaunch(this);
 
     getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
@@ -73,6 +72,8 @@ public class BridgeActivity extends AppCompatActivity {
     this.pluginManager = mockWebView.getPluginManager();
     cordovaInterface.onCordovaInit(this.pluginManager);
     bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, this.pluginManager);
+
+    Splash.showOnLaunch(this);
 
     if (savedInstanceState != null) {
       bridge.restoreInstanceState(savedInstanceState);
