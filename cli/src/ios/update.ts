@@ -136,6 +136,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   }
     return `
   ${config.ios.capacitorRuntimePod}
+  ${config.ios.capacitorCordovaRuntimePod}
   ${pods.join('\n      ')}`;
 }
 
