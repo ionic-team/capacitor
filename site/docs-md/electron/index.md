@@ -36,7 +36,7 @@ cd electron/
 npm run electron:start
 ```
 
-This will launch an Electron instance running your app!
+This will launch an Electron instance running your app.
 
 ## Plugin Support
 
