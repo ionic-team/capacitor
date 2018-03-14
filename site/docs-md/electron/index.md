@@ -1,54 +1,51 @@
-# Building Electron Apps
+# Building Electron Apps with Capacitor
 
-Electron Apps are JavaScript applications that run on desktops of the major operating systems including Linux, Windows, and Mac.
+Capacitor has preliminary support for [Electron](https://electronjs.org), the popular tool used for building desktop apps
+with HTML, JavaScript, and CSS.
 
-Capacitor supports Electron Apps, which means your web apps can run on the desktop.
+With Electron, Capacitor apps can run natively on Windows, Mac, and Linux!
 
-## Using Capacitor Core
+Note: Electron support for Capacitor is currently in preview, and lags behind iOS, Android, and Web support. 
 
-Capacitor Core is a JavaScript library that runs on all platforms that Capacitor supports, and desktop is no different.
+## Getting Started
 
-### With a Build System
-
-Generally, apps will be using a framework with a build system that supports importing JavaScript modules.
-
-In your apps `index.html`, be sure to import `capacitor.js` before your app's JS:
-
-```html
-<script src="capacitor.js"></script>
-<script src="your/app.js"></script>
-```
-
-Then simply import Capacitor at the top of your app and you're set:
-
-```typescript
-import { Capacitor } from '@capacitor/core';
-```
-
-To use a plugin, import `Plugins` and call it, noting that only plugins
-with web support will actually provide useful functionality:
-
-```typescript
-import { Plugins } from '@capacitor/core';
-
-const position = await Plugins.Geolocation.getCurrentPosition();
-
-OR
-
-const { Geolocation } = Plugins;
-let position = await Geolocation.getCurrentPosition();
-```
-
-Run your build script/process then copy it into the electron project:
+After creating a new Capacitor app, add the `electron` platform:
 
 ```bash
-npx cap copy electron
+npx cap add electron
 ```
 
-## Developing
+This will generate a new Electron project in the `electron/` folder in the root of your app.
 
-Simply `cd` into the electron project `your_great_app/electron` and run `npm run electron:start` and electron will boot up your app with full Chrome Devtools support.
+## Preparing your app
 
-## Distributing
+Just like the other Capacitor platforms, the `copy` command must be run periodically to sync web content with Electron:
 
-Coming soon...
+```bash
+npx cap copy
+```
+
+Run this after making any modifications to your web app.
+
+## Running your App
+
+To run your app, cd into it and use the npm script provided by Capacitor:
+
+```
+cd electron/
+npm run electron:start
+```
+
+This will launch an Electron instance running your app!
+
+## Plugin Support
+
+Electron supports any plugin with a Web implementation, as well as a few plugins with custom Electron support (such as `Filesystem`).
+
+We will have more info on building Electron plugins soon.
+
+## Where to go next
+
+That's pretty much all you need to know to build an Electron app with Capacitor!
+
+Follow the [Development Workflow](../basics/workflow) guide to continue building and testing your app.
