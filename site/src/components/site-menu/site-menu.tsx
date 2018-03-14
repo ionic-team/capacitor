@@ -127,6 +127,15 @@ export class SiteMenu {
       ]
     },
     {
+      title: 'Electron',
+      items: [
+        {
+          title: 'Getting Started',
+          url: '/docs/electron/'
+        }
+      ]
+    },
+    {
       title: 'Plugins',
       items: [
         {
