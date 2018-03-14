@@ -190,16 +190,12 @@ public class Splash {
   }
 
   public static void hide(Context c, final int fadeOutDuration, boolean isLaunchSplash) {
-    Log.d("Splash hide", "isLaunchSplash = " + isLaunchSplash);
-
-    if(isLaunchSplash) {
-      if(isVisible) {
-        Log.d("Splash hide", "SplashScreen was automatically hidden after default timeout. " +
-                "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
-                "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
-      } else {
-        Log.d("Splash hide", "Splash was already hidden before. Good!");
-      }
+    // Warn the user if the splash was hidden automatically, which means they could be experiencing an app
+    // that feels slower than it actually is.
+    if(isLaunchSplash && isVisible) {
+      Log.d("Splash hide", "SplashScreen was automatically hidden after the launch timeout. " +
+              "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
+              "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
     }
 
     if (isHiding || splashImage == null || splashImage.getParent() == null) {
