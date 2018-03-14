@@ -12,12 +12,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
-import android.util.Log;
 
-import com.getcapacitor.Bridge;
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.ImageUtils;
-import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -31,7 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 enum CameraSource {
@@ -92,7 +88,7 @@ public class Camera extends Plugin {
   // Default values
   private static final int DEFAULT_QUALITY = 100;
   protected static final boolean DEFAULT_SAVE_IMAGE_TO_GALLERY = true;
-  protected static final boolean DEFAULT_CORRECT_ORIENTATION = false;
+  protected static final boolean DEFAULT_CORRECT_ORIENTATION = true;
 
   private String imageFileSavePath;
 
@@ -267,7 +263,7 @@ public class Camera extends Plugin {
       return;
     }
 
-    bitmap = prepareBitmap(bitmap, imageFileSavePath);
+    bitmap = prepareBitmap(bitmap, contentUri);
 
     // Compress the final image and prepare for output to client
     ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
@@ -294,7 +290,7 @@ public class Camera extends Plugin {
       InputStream imageStream = getActivity().getContentResolver().openInputStream(u);
       Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
 
-      bitmap = prepareBitmap(bitmap, u.toString());
+      bitmap = prepareBitmap(bitmap, u);
 
       // Compress the final image and prepare for output to client
       ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
@@ -316,11 +312,12 @@ public class Camera extends Plugin {
    * Apply our standard processing of the bitmap, returning a new one and
    * recycling the old one in the process
    * @param bitmap
+   * @param imageUri
    * @return
    */
-  private Bitmap prepareBitmap(Bitmap bitmap, String imagePath) {
+  private Bitmap prepareBitmap(Bitmap bitmap, Uri imageUri) {
     if (settings.shouldCorrectOrientation) {
-      Bitmap newBitmap = ImageUtils.correctOrientation(bitmap, imagePath);
+      Bitmap newBitmap = ImageUtils.correctOrientation(getContext(), bitmap, imageUri);
       if (bitmap != newBitmap) {
         bitmap.recycle();
       }
