@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.util.TypedValue;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -24,8 +26,18 @@ public class AndroidProtocolHandler {
     this.context = context;
   }
 
-  public InputStream openAsset(String path) throws IOException {
-    return context.getAssets().open(path, AssetManager.ACCESS_STREAMING);
+  public InputStream openAsset(String path, String assetPath) throws IOException {
+    if (path.startsWith(assetPath + "/_capacitor_")) {
+      if (path.contains("content://")) {
+        String contentPath = path.replace(assetPath + "/_capacitor_/", "content://");
+        return context.getContentResolver().openInputStream(Uri.parse(contentPath));
+      } else {
+        String filePath = path.replace(assetPath + "/_capacitor_/", "");
+        return new FileInputStream(new File(filePath));
+      }
+    } else {
+      return context.getAssets().open(path, AssetManager.ACCESS_STREAMING);
+    }
   }
 
   public InputStream openResource(Uri uri) {

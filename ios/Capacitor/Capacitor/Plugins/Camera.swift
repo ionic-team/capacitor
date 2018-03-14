@@ -199,13 +199,15 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       let base64String = jpeg.base64EncodedString()
       
       self.call?.success([
-        "base64_data": "data:image/jpeg;base64," + base64String,
+        "base64Data": "data:image/jpeg;base64," + base64String,
         "format": "jpeg"
       ])
     } else if settings.resultType == "uri" {
       let path = try! saveTemporaryImage(jpeg)
+      let webPath = CAPFileManager.getPortablePath(uri: URL(string: path))
       call?.success([
         "path": path,
+        "webPath": webPath,
         "format": "jpeg"
       ])
     }

@@ -14,6 +14,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Base64;
 
 import com.getcapacitor.Dialogs;
+import com.getcapacitor.FileUtils;
 import com.getcapacitor.ImageUtils;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -274,6 +275,7 @@ public class Camera extends Plugin {
     } else if (resultType == CameraResultType.URI) {
       JSObject ret = new JSObject();
       ret.put("path", contentUri.toString());
+      ret.put("webPath", FileUtils.getPortablePath(getContext(), contentUri));
       call.success(ret);
     }
   }
@@ -301,6 +303,7 @@ public class Camera extends Plugin {
       } else if (settings.resultType == CameraResultType.URI) {
         JSObject ret = new JSObject();
         ret.put("path", u.toString());
+        ret.put("webPath", FileUtils.getPortablePath(getContext(), u));
         call.success(ret);
       }
     } catch (FileNotFoundException ex) {
@@ -339,7 +342,7 @@ public class Camera extends Plugin {
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
     JSObject data = new JSObject();
-    data.put("base64_data", "data:image/jpeg;base64," + encoded);
+    data.put("base64Data", "data:image/jpeg;base64," + encoded);
     call.success(data);
   }
 

@@ -40,7 +40,7 @@ export class CameraPage {
       resultType: CameraResultType.Base64,
     })
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
   async takePicture() {
@@ -51,7 +51,7 @@ export class CameraPage {
       source: CameraSource.Camera
     })
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
   async getFromPhotos() {
@@ -62,7 +62,7 @@ export class CameraPage {
       source: CameraSource.Photos
     })
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
   async takePictureScaled() {
@@ -73,7 +73,7 @@ export class CameraPage {
       width: 128
     })
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
   async takePictureCorrected() {
@@ -85,7 +85,7 @@ export class CameraPage {
       correctOrientation: true
     })
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
   async takePictureFile() {
@@ -114,7 +114,13 @@ export class CameraPage {
 
     console.log(stat);
 
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl("data:image/jpeg;base64," + imageData.data);
+    //this.image = this.sanitizer.bypassSecurityTrustResourceUrl("data:image/jpeg;base64," + imageData.data);
+    const imageUrl = image.webPath;
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(imageUrl);
+  }
+
+  getCapacitorPath(url: string) {
+    return url.replace("file://", "_capacitor_");
   }
 
   async testImageSize() {
@@ -128,7 +134,7 @@ export class CameraPage {
       saveToGallery: false
     });
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
   async testAndroidBreak() {
@@ -143,6 +149,6 @@ export class CameraPage {
       source: CameraSource.Photos
     });
     console.log('Got image back', image);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 }
