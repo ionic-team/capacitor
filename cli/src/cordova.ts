@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { log, logFatal, writeXML, readXML } from './common';
+import { log, logFatal, readXML, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -269,4 +269,21 @@ function contains(a: Array<any>, obj: any) {
 function getPathParts(path: string) {
   path = path.replace("/*", "/manifest");
   return path.split("/").filter(part => part !== '');
+}
+
+export async function checkAndInstallDependencies(config: Config, cordovaPlugins: Plugin[], platform: string) {
+  let needsUpdate = false;
+  await Promise.all(cordovaPlugins.map(async (p) => {
+    const dependencies = p.xml['dependency'];
+    if (dependencies) {
+      await Promise.all(dependencies.map(async (dep: any) => {
+        if (cordovaPlugins.filter(p => p.id === dep.$.id).length === 0) {
+          console.log("installing missing dependency plugin "+dep.$.id);
+          await runCommand(`npm install ${dep.$.id}`);
+          needsUpdate = true;
+        }
+      }));
+    }
+  }));
+  return needsUpdate;
 }

@@ -4,7 +4,7 @@ import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs'
 import { Config } from '../config';
 import { join, resolve } from 'path';
 import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType, printCapacitorPlugins } from '../plugin';
-import { handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
+import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
 import * as inquirer from 'inquirer';
 import { create } from 'domain';
@@ -35,17 +35,22 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   }
   */
 
-  const plugins = await runTask('Fetching installed plugins', async () => {
-    const allPlugins = await getPlugins(config);
-    const iosPlugins = await getIOSPlugins(config, allPlugins);
-    return iosPlugins;
-  });
+  let plugins = await getPluginsTask(config);
+
+  let cordovaPlugins: Array<Plugin> = [];
+  let needsPluginUpdate = true;
+  while (needsPluginUpdate) {
+    cordovaPlugins = plugins
+      .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+    needsPluginUpdate = await checkAndInstallDependencies(config, cordovaPlugins, platform);
+    if (needsPluginUpdate) {
+      plugins = await getPluginsTask(config);
+    }
+  }
 
   printCapacitorPlugins(plugins, platform);
 
   removePluginsNativeFiles(config);
-  const cordovaPlugins = plugins
-    .filter(p => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
   }
@@ -308,4 +313,12 @@ function filterARCFiles(plugin: Plugin) {
   const sources = getPlatformElement(plugin, platform, 'source-file');
   const sourcesARC = sources.filter((sourceFile: any) => sourceFile.$['compiler-flags'] && sourceFile.$['compiler-flags'] === '-fno-objc-arc');
   return sourcesARC.length > 0;
+}
+
+async function getPluginsTask(config: Config) {
+  return await runTask('Fetching installed plugins', async () => {
+    const allPlugins = await getPlugins(config);
+    const iosPlugins = await getIOSPlugins(config, allPlugins);
+    return iosPlugins;
+  });
 }
