@@ -9,6 +9,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -123,6 +126,17 @@ public class Plugin {
    */
   public PluginCall getSavedCall() {
     return this.savedLastCall;
+  }
+
+  public Object getConfigValue(String key) {
+    JSONObject config = bridge.getConfig();
+    try {
+      JSONObject plugins = config.getJSONObject("plugins");
+      JSONObject pluginConfig = plugins.getJSONObject(getPluginHandle().getId());
+      return pluginConfig.get(key);
+    } catch (JSONException ex) {
+      return null;
+    }
   }
 
   /**

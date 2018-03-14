@@ -3,7 +3,9 @@
   "gitVersionPrefix": "",
   "packages": [
     "./cli/",
-    "./core/"
+    "./core/",
+    "./electron",
+    "./capacitor-ios/"
   ],
-  "version": "1.0.0-alpha.7"
+  "version": "1.0.0-alpha.15"
 }

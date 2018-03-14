@@ -16,6 +16,7 @@ import com.getcapacitor.PluginResult;
 
 @NativePlugin()
 public class App extends Plugin {
+  private static final String EVENT_BACK_BUTTON = "backButton";
   private static final String EVENT_URL_OPEN = "appUrlOpen";
   private static final String EVENT_STATE_CHANGE = "appStateChange";
   private static final String EVENT_RESTORED_RESULT = "appRestoredResult";
@@ -30,6 +31,15 @@ public class App extends Plugin {
   public void fireRestoredResult(PluginResult result) {
     Log.d(Bridge.TAG, "Firing restored result");
     notifyListeners(EVENT_RESTORED_RESULT, result.getData(), true);
+  }
+
+  public void fireBackButton() {
+    notifyListeners(EVENT_BACK_BUTTON, new JSObject(), true);
+  }
+
+  @PluginMethod()
+  public void exitApp(PluginCall call) {
+    getBridge().getActivity().finish();
   }
 
   @PluginMethod()
@@ -108,4 +118,5 @@ public class App extends Plugin {
     ret.put("url", url.toString());
     notifyListeners(EVENT_URL_OPEN, ret);
   }
+
 }

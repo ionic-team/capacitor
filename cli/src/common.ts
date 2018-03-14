@@ -5,6 +5,8 @@ import { basename, join, resolve } from 'path';
 import { existsAsync, readFileAsync, writeFileAsync } from './util/fs';
 import { readFile } from 'fs';
 
+import * as inquirer from 'inquirer';
+
 export type CheckFunction = (config: Config, ...args: any[]) => Promise<string | null>;
 
 export async function check(config: Config, checks: CheckFunction[]): Promise<void> {
@@ -69,12 +71,12 @@ export async function checkAppDir(config: Config, dir: string): Promise<string |
 
 export async function checkAppId(config: Config, id: string): Promise<string | null> {
   if (!id) {
-    return `Invalid App ID. Must be in domain form (ex: com.example.app)`;
+    return `Invalid App ID. Must be in package form (ex: com.example.app)`;
   }
-  if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id)) {
+  if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id.toLowerCase())) {
     return null;
   }
-  return `Invalid App ID "${id}". Must be in domain form (ex: com.example.app)`;
+  return `Invalid App ID "${id}". Must be in package form (ex: com.example.app)`;
 }
 
 export async function checkAppName(config: Config, name: string): Promise<string | null> {
@@ -245,4 +247,30 @@ export function formatHrTime(hrtime: any) {
     }
   }
   return time.toFixed(2) + TIME_UNITS[index];
+}
+
+export async function getName(config: Config, name: string) {
+  if (!name) {
+    const answers = await inquirer.prompt([{
+      type: 'input',
+      name: 'name',
+      default: 'App',
+      message: `App name`
+    }]);
+    return answers.name;
+  }
+  return name;
+}
+
+export async function getAppId(config: Config, id: string) {
+  if (!id) {
+    const answers = await inquirer.prompt([{
+      type: 'input',
+      name: 'id',
+      default: 'com.example.app',
+      message: 'App Package ID (must be a valid Java package)'
+    }]);
+    return answers.id;
+  }
+  return id;
 }

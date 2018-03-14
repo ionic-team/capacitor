@@ -21,3 +21,4 @@ site/www
 android-template.iml
 !/build/.npmkeep
 lerna-debug.log
+capacitor-ios/

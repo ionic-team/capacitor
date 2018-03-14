@@ -1,6 +1,11 @@
+const sass = require('@stencil/sass');
+
 exports.config = {
   serviceWorker: false,
   collections: [{ name: '@stencil/router' }],
+  plugins: [
+    sass()
+  ]
   /*
   plugins: [{
     name: 'version-replace',

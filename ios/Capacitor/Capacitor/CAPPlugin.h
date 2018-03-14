@@ -18,7 +18,6 @@
 - (void)removeEventListener:(NSString *) eventName listener:(CAPPluginCall *)listener;
 - (void)notifyListeners:(NSString *) eventName data:(NSDictionary<NSString *, id>*)data;
 - (void)notifyListeners:(NSString *) eventName data:(NSDictionary<NSString *, id>*)data retainUntilConsumed:(BOOL)retain;
-
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName;
 - (BOOL)hasListeners:(NSString *)eventName;
 - (void)addListener:(CAPPluginCall *)call;
@@ -30,6 +29,7 @@
 -(void) load;
 -(NSString *)getId;
 -(BOOL)getBool:(CAPPluginCall*) call field:(NSString *)field defaultValue:(BOOL)defaultValue;
+-(id)getConfigValue:(NSString *) key;
 -(void)setCenteredPopover:(UIViewController *) vc;
 
 @end

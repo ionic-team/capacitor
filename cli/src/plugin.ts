@@ -4,7 +4,7 @@ import { log, logInfo, readJSON, readXML } from './common';
 
 
 export const enum PluginType {
-  Code,
+  Core,
   Cocoapods,
   Cordova,
 }
@@ -97,8 +97,9 @@ export function fixName(name: string): string {
 }
 
 
-export function printPlugins(plugins: Plugin[]) {
+export function printCapacitorPlugins(allPlugins: Plugin[], platform: string) {
   const chalk = require('chalk');
+  const plugins = allPlugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   const pluginNames = plugins.map(p => p.id).sort();
   if (pluginNames.length > 0) {
     log(`\n${chalk.bold(`Found ${pluginNames.length} additional Capacitor plugin(s):`)}
@@ -136,7 +137,7 @@ export function getPluginType(p: Plugin, platform: string): PluginType {
   if (platform === 'android') {
     return p.android!.type;
   }
-  return PluginType.Code;
+  return PluginType.Core;
 }
 
 /**

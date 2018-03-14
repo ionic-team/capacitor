@@ -50,6 +50,10 @@ public class CAPAppPlugin : CAPPlugin {
     ])
   }
   
+  @objc func exitApp(_ call: CAPPluginCall) {
+    // No-op, this isn't allowed by Apple
+  }
+  
   @objc func getLaunchUrl(_ call: CAPPluginCall) {
     call.success()
   }

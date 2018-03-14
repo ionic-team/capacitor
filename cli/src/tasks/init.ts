@@ -7,6 +7,8 @@ import {
   checkAppId,
   checkAppName,
   checkWebDir,
+  getAppId,
+  getName,
   getOrCreateConfig,
   log,
   logError,
@@ -23,8 +25,13 @@ import { join, relative } from 'path';
 
 const chalk = require('chalk');
 
-export async function initCommand(config: Config, appName: string, appId: string) {
+export async function initCommand(config: Config, name: string, id: string) {
   try {
+    // Get app name
+    const appName = await getName(config, name);
+    // Get app identifier
+    const appId = await getAppId(config, id);
+
     await check(
       config,
       [
@@ -99,6 +106,7 @@ async function printNextSteps(config: Config) {
   log(`Add platforms using "npx cap add":\n`);
   log(`  npx cap add android`);
   log(`  npx cap add ios`);
+  log(`  npx cap add electron`);
   log('');
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}`);
 }

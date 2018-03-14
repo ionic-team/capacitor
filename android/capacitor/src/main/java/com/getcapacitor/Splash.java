@@ -12,6 +12,10 @@ import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
+import com.getcapacitor.plugin.SplashScreen;
+
+import org.json.JSONObject;
+
 /**
  * A Splash Screen service for showing and hiding a splash screen in the app.
  */
@@ -54,8 +58,27 @@ public class Splash {
    * Show the splash screen on launch without fading in
    * @param a
    */
-  public static void showOnLaunch(final Activity a) {
-    show(a, LAUNCH_SHOW_DURATION, 0, DEFAULT_FADE_OUT_DURATION, true, null, true);
+  public static void showOnLaunch(final BridgeActivity a) {
+    Bridge b = a.getBridge();
+    if (b == null) {
+      return;
+    }
+
+    PluginHandle splashPluginHandle = b.getPlugin("SplashScreen");
+    if (splashPluginHandle == null) {
+      return;
+    }
+
+    SplashScreen splashPlugin = (SplashScreen) splashPluginHandle.getInstance();
+
+    Integer durationValue = (Integer) splashPlugin.getConfigValue("launchShowDuration");
+
+    int duration = LAUNCH_SHOW_DURATION;
+    if (durationValue != null) {
+      duration = durationValue.intValue();
+    }
+
+    show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, true, null, true);
   }
 
   /**

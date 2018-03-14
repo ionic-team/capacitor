@@ -1,11 +1,18 @@
 package com.getcapacitor;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
+
+import com.getcapacitor.ui.ModalsBottomSheetDialogFragment;
+
+import org.json.JSONException;
 
 /**
  * Simple utility for showing common web dialogs
@@ -13,6 +20,10 @@ import android.widget.EditText;
 public class Dialogs {
   public interface OnResultListener {
     void onResult(boolean value, boolean didCancel, String inputValue);
+  }
+
+  public interface OnSelectListener {
+    void onSelect(int index);
   }
 
   /**
@@ -179,5 +190,28 @@ public class Dialogs {
         dialog.show();
       }
     });
+  }
+
+  public static void actions(final AppCompatActivity activity,
+                             final Object[] options,
+                             final Dialogs.OnSelectListener listener) {
+
+    JSArray optionsArray;
+    try {
+      optionsArray = new JSArray(options);
+    } catch (JSONException ex) {
+      return;
+    }
+
+    final ModalsBottomSheetDialogFragment fragment = new ModalsBottomSheetDialogFragment();
+    fragment.setOptions(optionsArray);
+    fragment.setOnSelectedListener(new ModalsBottomSheetDialogFragment.OnSelectedListener() {
+      @Override
+      public void onSelected(int index) {
+        listener.onSelect(index);
+        fragment.dismiss();
+      }
+    });
+    fragment.show(activity.getSupportFragmentManager(), "capacitorModalsActionSheet");
   }
 }

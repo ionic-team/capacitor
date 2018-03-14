@@ -11,10 +11,14 @@ enum BridgeError: Error {
   public static var CAP_SITE = "https://getcapacitor.com/"
   
   public var userContentController: WKUserContentController
-  @objc public var viewController: UIViewController
+  public var bridgeDelegate: CAPBridgeDelegate
+  @objc public var viewController: UIViewController {
+    return bridgeDelegate.bridgedViewController!
+  }
   
   public var lastPlugin: CAPPlugin?
   
+  public var config = [String:Any]()
   // Map of all loaded and instantiated plugins by pluginId -> instance
   public var plugins =  [String:CAPPlugin]()
   // List of known plugins by pluginId -> Plugin Type
@@ -27,11 +31,12 @@ enum BridgeError: Error {
   private var isActive = true
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
-  
-  public init(_ vc: UIViewController, _ userContentController: WKUserContentController) {
-    self.viewController = vc
+
+  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController) {
+    self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
     super.init()
+    loadConfig()
     exportCoreJS()
     setupCordovaCompatibility()
     registerPlugins()
@@ -45,6 +50,37 @@ enum BridgeError: Error {
     if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
       splash.showOnLaunch()
     }
+  }
+  
+  func loadConfig() {
+    guard let configUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") else {
+      print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy")
+      return
+    }
+    do {
+      let contents = try Data(contentsOf: configUrl)
+      guard let json = try JSONSerialization.jsonObject(with: contents) as? [String: Any] else {
+        return
+      }
+      self.config = json
+    } catch {
+      print("Unable to parse capacitor.config.json. Make sure it's valid JSON")
+    }
+  }
+  
+  /**
+   * Get the value of a configuration option for a specific plugin.
+   */
+  @objc public func getConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
+    guard let plugins = self.config["plugins"] as? [String:Any] else {
+      return nil
+    }
+    
+    guard let pluginOptions = plugins[pluginId] as? [String:Any] else {
+      return nil
+    }
+    
+    return pluginOptions[configKey]
   }
   
   public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
@@ -307,7 +343,7 @@ enum BridgeError: Error {
   }
   
   public func reload() {
-    self.getWebView().reload()
+    self.getWebView()?.reload()
   }
 
   
@@ -398,7 +434,9 @@ enum BridgeError: Error {
     if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
       plugin.viewController = self.viewController
       plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView(), pluginManager: self.cordovaPluginManager)
-      plugin.webView = self.getWebView() as UIView
+      if let webView = self.getWebView() {
+        plugin.webView = webView
+      }
 
       let selector = NSSelectorFromString("\(call.method):")
       if !plugin.responds(to: selector) {
@@ -427,7 +465,7 @@ enum BridgeError: Error {
       print("⚡️  TO JS", resultJson.prefix(256))
       
       DispatchQueue.main.async {
-        self.getWebView().evaluateJavaScript("""
+        self.getWebView()?.evaluateJavaScript("""
           window.Capacitor.fromNative({
             callbackId: '\(result.call.callbackId)',
             pluginId: '\(result.call.pluginId)',
@@ -457,7 +495,7 @@ enum BridgeError: Error {
    */
   public func toJsError(error: JSResultError) {
     DispatchQueue.main.async {
-      self.getWebView().evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
+      self.getWebView()?.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
         if error != nil && result != nil {
           print(result!)
         }
@@ -477,7 +515,7 @@ enum BridgeError: Error {
     """
     
     DispatchQueue.main.async {
-      self.getWebView().evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
+      self.getWebView()?.evaluateJavaScript(wrappedJs, completionHandler: { (result, error) in
         if error != nil {
           print("⚡️  JS Eval error", error!.localizedDescription)
         }
@@ -485,9 +523,31 @@ enum BridgeError: Error {
     }
   }
   
-  func getWebView() -> WKWebView {
-    let vc = self.viewController as! CAPBridgeViewController
-    return vc.getWebView()
+  /**
+   * Eval JS in the web view
+   */
+  @objc public func eval(js: String) {
+    DispatchQueue.main.async {
+      self.getWebView()?.evaluateJavaScript(js, completionHandler: { (result, error) in
+        if error != nil {
+          print("⚡️  JS Eval error", error!.localizedDescription)
+        }
+      })
+    }
+  }
+  
+  public func logToJs(_ message: String, _ level: String = "log") {
+    DispatchQueue.main.async {
+      self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
+        if error != nil && result != nil {
+          print(result!)
+        }
+      }
+    }
+  }
+  
+  func getWebView() -> WKWebView? {
+    return self.bridgeDelegate.bridgedWebView
   }
 }
 
