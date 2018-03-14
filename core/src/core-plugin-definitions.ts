@@ -80,6 +80,13 @@ export type ScreenReaderStateChangeCallback = (state: ScreenReaderEnabledResult)
 
 export interface AppPlugin extends Plugin {
   /**
+   * Force exit the app. This should only be used in conjunction with the `backButton` handler for Android to
+   * exit the app when navigation is complete.
+   * 
+   * Ionic handles this itself so you shouldn't need to call this if using Ionic
+   */
+  exitApp(): never;
+  /**
    * Check if an app can be opened with the given URL
    */
   canOpenUrl(options: { url: string }): Promise<{value: boolean}>;
@@ -111,6 +118,11 @@ export interface AppPlugin extends Plugin {
    * the app was launched with, converted into the form of a result from a plugin call.
    */
   addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
+
+  /**
+   * Listen for the hardware back button event (Android only). If you want to close the app, call `App.exitApp()`
+   */
+  addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
 }
 
 export interface AppState {
@@ -268,13 +280,26 @@ export interface CameraOptions {
   /**
    * Whether to automatically rotate the image "up" to correct for orientation
    * in portrait mode
-   * Default: false
+   * Default: true
    */
   correctOrientation?: boolean;
+  /**
+   * The source to get the photo from. By default this prompts the user to select
+   * either the photo album or take a photo.
+   * Default: CameraSource.Prompt
+   */
+  source?: CameraSource;
+}
+
+export enum CameraSource {
+  Prompt = 'PROMPT',
+  Camera = 'CAMERA',
+  Photos = 'PHOTOS'
 }
 
 export interface CameraPhoto {
-  base64_data: string;
+  base64_data?: string;
+  path?: string;
   format: string;
 }
 
@@ -426,6 +451,13 @@ export interface FilesystemPlugin extends Plugin {
   readdir(options: ReaddirOptions): Promise<ReaddirResult>;
 
   /**
+   * Return full File URI for a path and directory
+   * @param options the options for the stat operation
+   * @return a promise that resolves with the file stat result
+   */
+  getUri(options: GetUriOptions): Promise<GetUriResult>;
+
+  /**
    * Return data about a file
    * @param options the options for the stat operation
    * @return a promise that resolves with the file stat result
@@ -478,11 +510,11 @@ export interface FileWriteOptions {
   /**
    * The FilesystemDirectory to store the file in
    */
-  directory: FilesystemDirectory;
+  directory?: FilesystemDirectory;
   /**
    * The encoding to write the file in (defautls to utf8)
    */
-  encoding: FilesystemEncoding;
+  encoding?: FilesystemEncoding;
 }
 
 export interface FileAppendOptions {
@@ -497,11 +529,11 @@ export interface FileAppendOptions {
   /**
    * The FilesystemDirectory to store the file in
    */
-  directory: FilesystemDirectory;
+  directory?: FilesystemDirectory;
   /**
    * The encoding to write the file in (defautls to utf8)
    */
-  encoding: FilesystemEncoding;
+  encoding?: FilesystemEncoding;
 }
 
 export interface FileReadOptions {
@@ -512,11 +544,14 @@ export interface FileReadOptions {
   /**
    * The FilesystemDirectory to read the file from
    */
-  directory: FilesystemDirectory;
+  directory?: FilesystemDirectory;
   /**
-   * The encoding to read the file in (defautls to utf8)
+   * The encoding to read the file in, if not provided, data
+   * is read as binary and returned as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to read data as string
    */
-  encoding: FilesystemEncoding;
+  encoding?: FilesystemEncoding;
 }
 
 export interface FileDeleteOptions {
@@ -527,7 +562,7 @@ export interface FileDeleteOptions {
   /**
    * The FilesystemDirectory to delete the file from
    */
-  directory: FilesystemDirectory;
+  directory?: FilesystemDirectory;
 }
 
 export interface MkdirOptions {
@@ -538,7 +573,7 @@ export interface MkdirOptions {
   /**
    * The FilesystemDirectory to make the new directory in
    */
-  directory: FilesystemDirectory;
+  directory?: FilesystemDirectory;
   /**
    * Whether to create any missing parent directories as well
    */
@@ -553,7 +588,7 @@ export interface RmdirOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory;
+  directory?: FilesystemDirectory;
 }
 
 export interface ReaddirOptions {
@@ -563,6 +598,17 @@ export interface ReaddirOptions {
   path: string;
   /**
    * The FilesystemDirectory to remove the directory from
+   */
+  directory?: FilesystemDirectory;
+}
+
+export interface GetUriOptions {
+  /**
+   * The path of the file to get the URI for
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to get the file under
    */
   directory: FilesystemDirectory;
 }
@@ -575,7 +621,7 @@ export interface StatOptions {
   /**
    * The FilesystemDirectory to remove the directory from
    */
-  directory: FilesystemDirectory;
+  directory?: FilesystemDirectory;
 }
 
 export interface FileReadResult {
@@ -594,11 +640,15 @@ export interface RmdirResult {
 export interface ReaddirResult {
   files: string[];
 }
+export interface GetUriResult {
+  uri: string;
+}
 export interface StatResult {
   type: string;
   size: number;
   ctime: number;
   mtime: number;
+  uri: string;
 }
 
 //

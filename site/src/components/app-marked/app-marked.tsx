@@ -16,6 +16,14 @@ export class AppMarked {
     return this.fetchNewContent();
   }
 
+  componentDidLoad() {
+    this.bindHeadings(this.el);
+  }
+
+  componentDidUpdate() {
+    this.bindHeadings(this.el);
+  }
+
   @Watch('doc')
   fetchNewContent() {
     return fetch(`/docs-content/${this.doc}`)
@@ -62,10 +70,6 @@ export class AppMarked {
         window.location.hash = hash;
       }
     }, 50);
-  }
-
-  componentDidUpdate() {
-    this.bindHeadings(this.el);
   }
 
   render() {

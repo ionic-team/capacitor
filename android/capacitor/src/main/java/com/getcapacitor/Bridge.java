@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -39,7 +40,11 @@ import com.getcapacitor.plugin.background.BackgroundTask;
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +75,9 @@ public class Bridge {
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
+
+  // Loaded Capacitor config
+  private JSONObject config = new JSONObject();
 
   // A reference to the main activity for the app
   private final Activity context;
@@ -127,6 +135,8 @@ public class Bridge {
     Uri intentData = intent.getData();
     this.intentUri = intentData;
 
+    this.loadConfig();
+
     // Register our core plugins
     this.registerAllPlugins();
 
@@ -160,6 +170,41 @@ public class Bridge {
 
     // Get to work
     webView.loadUrl(url);
+  }
+
+  // Load our capacitor.config.json
+  private void loadConfig() {
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new InputStreamReader(getActivity().getAssets().open("capacitor.config.json")));
+
+      // do reading, usually loop until end of file reading
+      StringBuilder b = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        //process line
+        b.append(line);
+      }
+
+      String jsonString = b.toString();
+      this.config = new JSONObject(jsonString);
+    } catch (IOException ex) {
+      Log.e(TAG, "Unable to load capacitor.config.json. Run npx cap copy first", ex);
+    } catch (JSONException ex) {
+      Log.e(TAG, "Unable to parse capacitor.config.json. Make sure it's valid json", ex);
+    } finally {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (IOException e) {
+        }
+      }
+    }
+
+  }
+
+  public JSONObject getConfig() {
+    return this.config;
   }
 
   public boolean isDevMode() {
@@ -384,6 +429,32 @@ public class Bridge {
   public void log(String... args) {
     Log.d(TAG, TextUtils.join(" ", args));
   }
+
+  /**
+   * Evaluate JavaScript in the web view. This method
+   * executes on the main thread automatically.
+   * @param js the JS to execute
+   * @param callback an optional ValueCallback that will synchronously recieve a value
+   *                 after calling the JS
+   */
+  public void eval(final String js, final ValueCallback<String> callback) {
+    Handler mainHandler = new Handler(context.getMainLooper());
+    mainHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        webView.evaluateJavascript(js, callback);
+      }
+    });
+  }
+
+  public void logToJs(final String message, final String level) {
+    eval("window.Capacitor.logJs(\"" + message + "\", \"" + level + "\")", null);
+  }
+
+  public void logToJs(final String message) {
+    logToJs(message, "log");
+  }
+
 
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
@@ -615,6 +686,14 @@ public class Bridge {
   public void onStop() {
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnStop();
+    }
+  }
+
+  public void onBackPressed() {
+    PluginHandle appHandle = getPlugin("App");
+    if (appHandle != null) {
+      App appPlugin = (App) appHandle.getInstance();
+      appPlugin.fireBackButton();
     }
   }
 }

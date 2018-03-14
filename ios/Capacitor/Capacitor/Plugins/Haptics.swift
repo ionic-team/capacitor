@@ -6,30 +6,37 @@ public class CAPHapticsPlugin: CAPPlugin {
   var selectionFeedbackGenerator: UISelectionFeedbackGenerator?
   
   @objc public func impact(_ call: CAPPluginCall) {
-    if let style = call.options["style"] as? String {
-      var impactStyle = UIImpactFeedbackStyle.heavy
-      if style == "MEDIUM" {
-        impactStyle = UIImpactFeedbackStyle.medium
-      } else if style == "LIGHT" {
-        impactStyle = UIImpactFeedbackStyle.light
+    DispatchQueue.main.async {
+      if let style = call.options["style"] as? String {
+        var impactStyle = UIImpactFeedbackStyle.heavy
+        if style == "MEDIUM" {
+          impactStyle = UIImpactFeedbackStyle.medium
+        } else if style == "LIGHT" {
+          impactStyle = UIImpactFeedbackStyle.light
+        }
+        
+        let generator = UIImpactFeedbackGenerator(style: impactStyle)
+        generator.impactOccurred()
+      } else {
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
       }
-      let generator = UIImpactFeedbackGenerator(style: impactStyle)
-      generator.impactOccurred()
-    } else {
-      let generator = UIImpactFeedbackGenerator(style: .heavy)
-      generator.impactOccurred()
     }
   }
   
   @objc public func selectionStart(_ call: CAPPluginCall) {
-    selectionFeedbackGenerator = UISelectionFeedbackGenerator()
-    selectionFeedbackGenerator?.prepare()
+    DispatchQueue.main.async {
+      self.selectionFeedbackGenerator = UISelectionFeedbackGenerator()
+      self.selectionFeedbackGenerator?.prepare()
+    }
   }
   
   @objc public func selectionChanged(_ call: CAPPluginCall) {
-    if let generator = selectionFeedbackGenerator {
-      generator.selectionChanged()
-      generator.prepare()
+    DispatchQueue.main.async {
+      if let generator = self.selectionFeedbackGenerator {
+        generator.selectionChanged()
+        generator.prepare()
+      }
     }
   }
   
@@ -38,6 +45,8 @@ public class CAPHapticsPlugin: CAPPlugin {
   }
   
   @objc public func vibrate(_ call: CAPPluginCall) {
-    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate)
+    DispatchQueue.main.async {
+      AudioServicesPlayAlertSound(kSystemSoundID_Vibrate)
+    }
   }
 }

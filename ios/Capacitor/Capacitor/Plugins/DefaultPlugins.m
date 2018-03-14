@@ -8,6 +8,7 @@ CAP_PLUGIN(CAPAccessibilityPlugin, "Accessibility",
 )
 
 CAP_PLUGIN(CAPAppPlugin, "App",
+  CAP_PLUGIN_METHOD(exitApp, CAPPluginReturnNone);
   CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(canOpenUrl, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(openUrl, CAPPluginReturnPromise);
@@ -49,6 +50,7 @@ CAP_PLUGIN(CAPFilesystemPlugin, "Filesystem",
   CAP_PLUGIN_METHOD(mkdir, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(rmdir, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(readdir, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(getUri, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(stat, CAPPluginReturnPromise);
 )
 

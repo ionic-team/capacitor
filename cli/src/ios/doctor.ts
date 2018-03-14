@@ -1,7 +1,7 @@
 import { checkCocoaPods, checkIOSProject } from './common';
 import { check, checkWebDir, isInstalled, logFatal, logSuccess, runCommand } from '../common';
 import { Config } from '../config';
-import { getPlugins, printPlugins } from '../plugin';
+import { getPlugins, printCapacitorPlugins } from '../plugin';
 
 
 export async function doctorIOS(config: Config) {
@@ -22,7 +22,7 @@ export async function doctorIOS(config: Config) {
       [checkCocoaPods, checkIOSProject, checkWebDir, checkNPMVersion, checkXcode]
     );
     const plugins = await getPlugins(config);
-    printPlugins(plugins);
+    printCapacitorPlugins(plugins, "ios");
     logSuccess('Everything looking great! 👌');
   } catch (e) {
     logFatal(e);

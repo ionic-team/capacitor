@@ -15,8 +15,12 @@
 
 <ion-content padding>
   <img [src]="image" />
-  <button (click)="takePicture()" ion-button color="primary">Prompt</button>
+  <button (click)="getPhoto()" ion-button color="primary">Prompt</button>
+  <button (click)="takePicture()" ion-button color="primary">From Camera</button>
+  <button (click)="getFromPhotos()" ion-button color="primary">From Photos</button>
   <button (click)="takePictureScaled()" ion-button color="primary">Scaled</button>
   <button (click)="takePictureCorrected()" ion-button color="primary">Orientation Corrected</button>
   <button (click)="takePictureFile()" ion-button color="primary">File URI</button>
+  <button (click)="testImageSize()" ion-button color="primary">Image Size Test (#307)</button>
+  <button (click)="testAndroidBreak()" ion-button color="primary">Photos Orientation Test (#319)</button>
 </ion-content>

@@ -1,0 +1,68 @@
+{
+  "name": "@capacitor/electron",
+  "version": "1.0.0-alpha.14",
+  "description": "Capacitor: cross-platform mobile apps with the web",
+  "homepage": "http://getcapacitor.com/",
+  "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
+  "license": "MIT",
+  "files": [
+    "dist/",
+    "cordova.js",
+    "native-bridge.js"
+  ],
+  "scripts": {
+    "docs": "cd ../site && gulp && cd ../core && ./node_modules/.bin/typedoc --exclude **/__test__/*.ts --json dist/docs.json --mode modules src/core-plugin-definitions.ts && node scripts/docs.js",
+    "build": "npm run clean && npm run transpile && npm run rollup && npm run minify",
+    "clean": "rimraf dist",
+    "minify": "uglifyjs --mangle --compress --source-map \"content='dist/electron-bridge.js.map',url='electron-bridge.js.map'\" --comments '/^/*!/' --output dist/electron-bridge.js dist/electron-bridge.js",
+    "prepublishOnly": "npm run build",
+    "rollup": "rollup --config rollup.config.js",
+    "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
+    "transpile-no-helpers": "tsc --module ES2015 --target ES5 --noEmitHelpers true --outDir dist/esm",
+    "test": "jest"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "@ionic/core": "0.0.2-59",
+    "@ionic/pwa-elements": "0.0.9",
+    "@types/jest": "^21.1.8",
+    "@types/lodash": "^4.14.104",
+    "jest": "^22.0.0",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.52.0",
+    "rollup-plugin-node-resolve": "^3.0.3",
+    "ts-jest": "^21.2.4",
+    "tslib": "^1.9.0",
+    "tslint": "^5.6.0",
+    "tslint-ionic-rules": "0.0.8",
+    "typedoc": "^0.9.0",
+    "typescript": "^2.6.2",
+    "uglify-js": "^3.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionic-team/capacitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ionic-team/capacitor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testMatch": [
+      "**/__test__/*.(ts|tsx|js)"
+    ]
+  },
+  "dependencies": {
+    "@capacitor/core": "^1.0.0-alpha.14"
+  }
+}

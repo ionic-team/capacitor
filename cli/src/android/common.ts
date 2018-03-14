@@ -23,7 +23,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
   }
 
   plugin.android = {
-    type: PluginType.Code,
+    type: PluginType.Core,
     path: androidPath
   };
   if (plugin.xml) {

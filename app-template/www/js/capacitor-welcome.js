@@ -4,7 +4,7 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
 
     Capacitor.Plugins.SplashScreen.hide();
     
-    const root = this.attachShadow({ mode: 'closed' });
+    const root = this.attachShadow({ mode: 'open' });
 
     root.innerHTML = `
     <style>
@@ -68,16 +68,31 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
           on using native features, building plugins, and more.
         </p>
         <a href="http://ionic-team.github.io/capacitor" target="_blank" class="button">Read more</a>
+        <h2>Tiny Demo</h2>
+        <p>
+          This demo shows how to call Capacitor plugins. Say cheese!
+        </p>
+        <p>
+          <button class="button" id="take-photo">Take Photo</button>
+        </p>
       </main>
     </div>
     `
+  }
+
+  connectedCallback() {
+    this.shadowRoot.querySelector('#take-photo').addEventListener('click', async (e) => {
+      const { Camera } = Capacitor.Plugins;
+      const photo = await Camera.getPhoto();
+      console.log('Got photo', photo);
+    })
   }
 });
 
 window.customElements.define('capacitor-welcome-titlebar', class extends HTMLElement {
   constructor() {
     super();
-    const root = this.attachShadow({ mode: 'closed' });
+    const root = this.attachShadow({ mode: 'open' });
     root.innerHTML = `
     <style>
       :host {

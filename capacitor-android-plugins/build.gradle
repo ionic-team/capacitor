@@ -27,6 +27,9 @@ repositories {
     google()
     jcenter()
     mavenCentral()
+    flatDir{
+        dirs 'src/main/libs', 'libs'
+    }
 }
 
 dependencies {
