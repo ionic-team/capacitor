@@ -23,7 +23,7 @@ extension CAPBridgeDelegate {
         let options = dict["options"] as? [String:Any] ?? [:]
         
         if pluginId != "Console" {
-          print("⚡️  To Native -> ", pluginId, method, callbackId, options)
+          print("⚡️  To Native -> ", pluginId, method, callbackId)
         }
         
         bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))

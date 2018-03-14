@@ -298,8 +298,23 @@ export enum CameraSource {
 }
 
 export interface CameraPhoto {
-  base64_data?: string;
+  /**
+   * The base64 encoded data of the image, if using CameraResultType.Base64.
+   */
+  base64Data?: string;
+  /**
+   * If using CameraResultType.Uri, the path will contain a full,
+   * platform-specific file URL that can be read later using the Filsystem API.
+   */
   path?: string;
+  /**
+   * webPath returns a path that can be used to set the src attribute of an image for efficient
+   * loading and rendering.
+   */
+  webPath?: string;
+  /**
+   * The format of the image. Currently, only "jpeg" is supported.
+   */
   format: string;
 }
 

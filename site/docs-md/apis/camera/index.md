@@ -42,11 +42,14 @@ async takePicture() {
   const image = await Camera.getPhoto({
     quality: 90,
     allowEditing: true,
-    resultType: CameraResultType.Base64
+    resultType: CameraResultType.Uri
   });
-  // image.base64_data will contain the base64 encoded result as a JPEG, with the data-uri prefix added
-  var imageUrl = image.base64_data;
+  // image.webPath will contain a path that can be set as an image src. You can access
+  // the original file using image.path, which can be passed to the Filesystem API to
+  // read the raw data of the image, if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
+  var imageUrl = image.webPath;
   // can be set to the src of an image now
+  imageElement.src = imageUrl;
 }
 ```
 
@@ -84,7 +87,9 @@ export class CameraPage {
       source: CameraSource.Camera
     });
     
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64_data));
+    // Example of using the Base64 return type. It's recommended to use CameraResultType.Uri
+    // instead for performance reasons when showing large, or a large amount of images.
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 }
 ```

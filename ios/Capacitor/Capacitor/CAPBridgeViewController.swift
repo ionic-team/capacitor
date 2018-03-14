@@ -111,13 +111,14 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     
     webServer.addGETHandler(forBasePath: "/", directoryPath: publicPath!, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
     
-    webServer.addHandler(forMethod: "GET", pathRegex: "/var/mobile/Containers/Data/Application/", request: GCDWebServerFileRequest.self) { (request, block) in
-      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "http://localhost:\(port)", with: ""), byteRange: request.byteRange))
+    webServer.addHandler(forMethod: "GET", pathRegex: "_capacitor_/", request: GCDWebServerFileRequest.self) { (request, block) in
+      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "http://localhost:\(port)/_capacitor_/", with: ""), byteRange: request.byteRange))
     }
 
     webServer.addHandler(forMethod: "GET", pathRegex: "cordova.js", request: GCDWebServerFileRequest.self) { (request, block) in
       block(GCDWebServerResponse())
     }
+    
     /*
     webServer.addHandler(forMethod: "GET", path: "/", request: GCDWebServerRequest.self, processBlock: { (req) -> GCDWebServerResponse? in
       print("Also in here")
