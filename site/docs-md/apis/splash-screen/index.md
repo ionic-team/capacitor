@@ -30,9 +30,21 @@ SplashScreen.show({
 By default, the Splash Screen is set to automatically hide after a certain amount of time (3 seconds). However, your
 app should boot much faster than this!
 
-To make sure you provide the fastest app loading experience to your users, you must hide the splash screen automatically when your app is ready to be used.
+To make sure you provide the fastest app loading experience to your users, you must hide the splash screen automatically when your app is ready to be used. Simply add the `SplashScreen.hide()` call near the top of your app's JS, such as in `app.component.ts` if using Angular.
 
-Simply add the `SplashScreen.hide()` call near the top of your app's JS, such as in `app.component.ts` if using Angular.
+If you app needs longer than 3 seconds to load, configure the default duration by setting `launchShowDuration` in your `capacitor.config.json`:
+
+```json
+{
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 5000
+    }
+  }
+}
+```
+
+Then run `npx cap copy` to apply these changes.
 
 ## API
 
