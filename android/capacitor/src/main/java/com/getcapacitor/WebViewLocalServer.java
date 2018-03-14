@@ -340,7 +340,7 @@ public class WebViewLocalServer {
         InputStream stream;
         String path = url.getPath().replaceFirst(virtualAssetPath, assetPath);
         try {
-          stream = protocolHandler.openAsset(path);
+          stream = protocolHandler.openAsset(path, assetPath);
         } catch (IOException e) {
           Log.e(TAG, "Unable to open asset URL: " + url);
           return null;

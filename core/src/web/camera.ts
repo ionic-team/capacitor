@@ -42,10 +42,10 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   private _getCameraPhoto(photo: Blob) {
     return new Promise<CameraPhoto>((resolve, reject) => {
       var reader = new FileReader();
-      reader.readAsDataURL(photo); 
+      reader.readAsDataURL(photo);
       reader.onloadend = () => {
         resolve({
-          base64_data: reader.result,
+          base64Data: reader.result,
           format: 'jpeg'
         });
       };
