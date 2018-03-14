@@ -5,7 +5,6 @@ import { join, relative, resolve } from 'path';
 
 export async function copyWeb(config: Config) {
   const chalk = require('chalk');
-  console.log('Copying web!');
   if (config.app.bundledWebRuntime) {
     const runtimePath = resolve(config.app.rootDir, 'node_modules', '@capacitor/core', 'dist/capacitor.js');
     return runTask(`Copying capacitor.js to web dir`, () => {

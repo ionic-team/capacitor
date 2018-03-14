@@ -17,6 +17,10 @@ export interface ExternalConfig {
   startPage: string;
 }
 
+export interface AppPluginsConfig {
+  [key: string]: any;
+}
+
 export interface CliConfigWindows {
   androidStudioPath?: string;
 }
@@ -62,6 +66,7 @@ export interface CliConfigApp {
   extConfigName: string;
   extConfigFilePath: string;
   extConfig: ExternalConfig;
+  plugins: AppPluginsConfig;
   windowsAndroidStudioPath: string;
   linuxAndroidStudioPath: string;
   /**

@@ -6,7 +6,9 @@
   "scripts": {
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
-    "copy": "cp ../core/native-bridge.js www/ && npm run copy.ios && npm run copy.android",
+    "copy": "npm run copy.config.ios && npm run copy.config.android && cp ../core/native-bridge.js www/ && npm run copy.ios && npm run copy.android",
+    "copy.config.ios": "cp capacitor.config.json ios/IonicRunner/capacitor.config.json",
+    "copy.config.android": "cp capacitor.config.json android/capacitor.config.json",
     "copy.ios": "cp -R www/* ios/IonicRunner/public/",
     "copy.android": "cp -R www/* android/app/src/main/assets/public/",
     "ionic:build": "ionic-app-scripts build",

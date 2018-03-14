@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		50379B202058AD05000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B1B2058AD04000EE86E /* capacitor.config.json */; };
 		50473AD71FF2A6F600C17FC9 /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50473AD61FF2A6F500C17FC9 /* public */; };
 		A3729E091E83246400B7334A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3729E081E83246400B7334A /* AppDelegate.swift */; };
 		A3729E0E1E83246400B7334A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3729E0C1E83246400B7334A /* Main.storyboard */; };
@@ -60,6 +61,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		50379B1B2058AD04000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		503ACBFD1FE98C0C00C5E136 /* Avocado.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Avocado.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/IonicRunner-dtawthqbknkuwzeomrletvvwmolw/Build/Products/Debug-iphonesimulator/Avocado.framework"; sourceTree = "<group>"; };
 		50473AD61FF2A6F500C17FC9 /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		6DB15BC5FAA699B4570C9B64 /* Pods-IonicRunner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IonicRunner.release.xcconfig"; path = "Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner.release.xcconfig"; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 		A3729DFC1E83246400B7334A = {
 			isa = PBXGroup;
 			children = (
+				50379B1B2058AD04000EE86E /* capacitor.config.json */,
 				50473AD61FF2A6F500C17FC9 /* public */,
 				A3729E071E83246400B7334A /* IonicRunner */,
 				A3729E061E83246400B7334A /* Products */,
@@ -250,6 +253,7 @@
 			files = (
 				50473AD71FF2A6F600C17FC9 /* public in Resources */,
 				A3729E131E83246400B7334A /* LaunchScreen.storyboard in Resources */,
+				50379B202058AD05000EE86E /* capacitor.config.json in Resources */,
 				A3729E101E83246400B7334A /* Assets.xcassets in Resources */,
 				A3729E0E1E83246400B7334A /* Main.storyboard in Resources */,
 			);

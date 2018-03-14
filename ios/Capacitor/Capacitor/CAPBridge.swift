@@ -18,6 +18,7 @@ enum BridgeError: Error {
   
   public var lastPlugin: CAPPlugin?
   
+  public var config = [String:Any]()
   // Map of all loaded and instantiated plugins by pluginId -> instance
   public var plugins =  [String:CAPPlugin]()
   // List of known plugins by pluginId -> Plugin Type
@@ -35,6 +36,7 @@ enum BridgeError: Error {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
     super.init()
+    loadConfig()
     exportCoreJS()
     setupCordovaCompatibility()
     registerPlugins()
@@ -48,6 +50,37 @@ enum BridgeError: Error {
     if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
       splash.showOnLaunch()
     }
+  }
+  
+  func loadConfig() {
+    guard let configUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") else {
+      print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy")
+      return
+    }
+    do {
+      let contents = try Data(contentsOf: configUrl)
+      guard let json = try JSONSerialization.jsonObject(with: contents) as? [String: Any] else {
+        return
+      }
+      self.config = json
+    } catch {
+      print("Unable to parse capacitor.config.json. Make sure it's valid JSON")
+    }
+  }
+  
+  /**
+   * Get the value of a configuration option for a specific plugin.
+   */
+  @objc public func getConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
+    guard let plugins = self.config["plugins"] as? [String:Any] else {
+      return nil
+    }
+    
+    guard let pluginOptions = plugins[pluginId] as? [String:Any] else {
+      return nil
+    }
+    
+    return pluginOptions[configKey]
   }
   
   public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
