@@ -164,6 +164,16 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
         }
       )
     }
+    
+    if let scheme = navigationAction.request.url?.scheme {
+      let validSchemes = ["tel", "mailto", "facetime", "sms", "maps", "itms-services"]
+      if validSchemes.contains(scheme) {
+        UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
+        decisionHandler(.cancel)
+        return
+      }
+    }
+
     // TODO: Allow plugins to handle this. See
     // https://github.com/ionic-team/cordova-plugin-ionic-webview/blob/608d64191405b233c01a939f5755f8b1fdd97f8c/src/ios/CDVWKWebViewEngine.m#L609
     decisionHandler(.allow)
