@@ -51,6 +51,8 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
+    setKeyboardRequiresUserInteraction(false)
+    
     bridge = CAPBridge(self, o)
   }
   
@@ -202,6 +204,22 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
       return
     }
     self.userContentController(userContentController, didReceive: message, bridge: bridge)
+  }
+  
+  typealias ClosureType =  @convention(c) (Any, Selector, UnsafeRawPointer, Bool, Bool, Any) -> Void
+  func setKeyboardRequiresUserInteraction( _ value: Bool) {
+    let frameworkName = "WK"
+    let className = "ContentView"
+    let sel: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
+    let wkc: AnyClass = NSClassFromString(frameworkName + className)!
+    let method = class_getInstanceMethod(wkc, sel)
+    let originalImp: IMP = method_getImplementation(method!)
+    let original: ClosureType = unsafeBitCast(originalImp, to: ClosureType.self)
+    let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Any) -> Void = {(me, arg0, arg1, arg2, arg3) in
+      original(me, sel, arg0, !value, arg2, arg3)
+    }
+    let imp: IMP = imp_implementationWithBlock(block)
+    method_setImplementation(method!, imp)
   }
   
   func handleJSStartupError(_ error: [String:Any]) {
