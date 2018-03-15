@@ -75,6 +75,9 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
         <p>
           <button class="button" id="take-photo">Take Photo</button>
         </p>
+        <p>
+          <img id="image" style="max-width: 100%">
+        </p>
       </main>
     </div>
     `
@@ -83,8 +86,20 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
   connectedCallback() {
     this.shadowRoot.querySelector('#take-photo').addEventListener('click', async (e) => {
       const { Camera } = Capacitor.Plugins;
-      const photo = await Camera.getPhoto();
-      console.log('Got photo', photo);
+      const photo = await Camera.getPhoto({
+        resultType: "uri"
+      });
+
+      const image = this.shadowRoot.querySelector('#image');
+      if (!image) {
+        return;
+      }
+
+      if (photo.webUrl) {
+        image.src = photo.webUrl;
+      } else {
+        image.src = photo.base64Data;
+      }
     })
   }
 });
