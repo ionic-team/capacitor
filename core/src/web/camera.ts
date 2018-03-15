@@ -46,6 +46,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
       reader.onloadend = () => {
         resolve({
           base64Data: reader.result,
+          webPath: reader.result,
           format: 'jpeg'
         });
       };

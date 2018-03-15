@@ -94,12 +94,8 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
       if (!image) {
         return;
       }
-
-      if (photo.webUrl) {
-        image.src = photo.webUrl;
-      } else {
-        image.src = photo.base64Data;
-      }
+      
+      image.src = photo.webPath;
     })
   }
 });
