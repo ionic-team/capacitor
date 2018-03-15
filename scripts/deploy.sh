@@ -6,10 +6,6 @@ fi
 LERNA_JSON=`cat lerna.json`;
 export LERNA_VERSION="$(node -pe "JSON.parse(\`$LERNA_JSON\`)['version']")"
 
-if [ -z $STARTER_PATH ]; then
-  STARTER_PATH=../capacitor-starter
-fi
-
 echo "Deploying Capacitor v$LERNA_VERSION"
 
 export POD_VERSION=$LERNA_VERSION
