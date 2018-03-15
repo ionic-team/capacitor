@@ -19,7 +19,7 @@ export async function updateCommand(config: Config, selectedPlatformName: string
       [checkPackage, ...updateChecks(config, platforms)]
     );
 
-    await allSerial(platforms.map(platformName => async () => await update(config, platformName, true)));
+    await allSerial(platforms.map(platformName => async () => await update(config, platformName)));
     const then = +new Date;
   } catch (e) {
     logFatal(e);
@@ -44,12 +44,12 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
   return checks;
 }
 
-export async function update(config: Config, platformName: string, needsUpdate: boolean) {
+export async function update(config: Config, platformName: string) {
   runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
     if (platformName === config.ios.name) {
-      await updateIOS(config, needsUpdate);
+      await updateIOS(config);
     } else if (platformName === config.android.name) {
-      await updateAndroid(config, needsUpdate);
+      await updateAndroid(config);
     }
   });
 }

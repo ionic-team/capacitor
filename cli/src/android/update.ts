@@ -9,7 +9,7 @@ import { join, resolve } from 'path';
 
 const platform = 'android';
 
-export async function updateAndroid(config: Config, needsUpdate: boolean) {
+export async function updateAndroid(config: Config) {
   let plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
