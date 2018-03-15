@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { log, logFatal, readXML, runCommand, writeXML } from './common';
+import { log, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -208,7 +208,7 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
   if (!dict.key.includes(configElement.$.parent)) {
     let xml = await buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
-    console.log(`plugin ${plugin.id} requires to add \n  ${xml} to your Info.plist to work`);
+    logInfo(`plugin ${plugin.id} requires to add \n  ${xml} to your Info.plist to work`);
   }
 }
 
@@ -230,7 +230,7 @@ async function logAndroidManifest (configElement: any, config: Config, plugin: P
     }));
   }));
   if (xmlEntries.length > 0) {
-    console.log(`plugin ${plugin.id} requires to add \n  ${xmlEntries.join("\n  ")} \nto your AndroidManifest.xml at ${getPathParts(configElement.$.parent).join(" ")} level to work\n`);
+    logInfo(`plugin ${plugin.id} requires to add \n  ${xmlEntries.join("\n  ")} \nto your AndroidManifest.xml at ${getPathParts(configElement.$.parent).join(" ")} level to work\n`);
   }
 }
 
@@ -267,8 +267,13 @@ function contains(a: Array<any>, obj: any) {
 }
 
 function getPathParts(path: string) {
-  path = path.replace("/*", "/manifest");
-  return path.split("/").filter(part => part !== '');
+  const rootPath = "manifest";
+  path = path.replace("/*", rootPath);
+  let parts = path.split("/").filter(part => part !== '');
+  if (parts.length > 1 || parts.includes(rootPath)) {
+    return parts;
+  }
+  return [rootPath, path];
 }
 
 export async function checkAndInstallDependencies(config: Config, cordovaPlugins: Plugin[], platform: string) {
