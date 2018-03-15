@@ -12,7 +12,7 @@ import { create } from 'domain';
 export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
 const platform = 'ios';
 
-export async function updateIOS(config: Config, needsUpdate: boolean) {
+export async function updateIOS(config: Config) {
   var chalk = require('chalk');
   /*
   log(`\n${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
@@ -57,11 +57,9 @@ export async function updateIOS(config: Config, needsUpdate: boolean) {
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await autoGeneratePods(config, plugins);
   await generateCordovaPodspecs(cordovaPlugins, config);
-  await installCocoaPodsPlugins(config, plugins, needsUpdate);
+  await installCocoaPodsPlugins(config, plugins);
   await logCordovaManualSteps(cordovaPlugins, config, platform);
 
-  logWarn(`${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
-          `local Pod repo is up to date and can find new Pod releases.`);
 }
 
 export async function autoGeneratePods(config: Config, plugins: Plugin[]): Promise<void[]> {
@@ -92,26 +90,24 @@ export function generatePodspec(config: Config, plugin: Plugin) {
   end`;
 }
 
-export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], needsUpdate: boolean) {
+export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[]) {
   await runTask('Updating iOS native dependencies', () => {
-    return updatePodfile(config, plugins, needsUpdate);
+    return updatePodfile(config, plugins);
   });
 }
 
-export async function updatePodfile(config: Config, plugins: Plugin[], needsUpdate: boolean) {
+export async function updatePodfile(config: Config, plugins: Plugin[]) {
   const dependenciesContent = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
-  const podfilePath = resolve(config.app.rootDir, config.ios.name, projectName, 'Podfile');
+  const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
+  const podfilePath = join(projectRoot, 'Podfile');
+  const podfileLockPath = join(projectRoot, 'Podfile.lock');
   let podfileContent = await readFileAsync(podfilePath, 'utf8');
   podfileContent = podfileContent.replace(/(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/, '$1' + dependenciesContent + '\n  $2');
   podfileContent = podfileContent.replace(/platform :ios, '[^']*'/ , `platform :ios, '${config.ios.minVersion}'`);
   await writeFileAsync(podfilePath, podfileContent, 'utf8');
-
-  if (needsUpdate) {
-    await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && pod update && xcodebuild -project App.xcodeproj clean`);
-  } else {
-    await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && pod install && xcodebuild -project App.xcodeproj clean`);
-  }
+  removeSync(podfileLockPath);
+  await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && pod install && xcodebuild -project App.xcodeproj clean`);
 }
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
