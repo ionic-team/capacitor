@@ -117,12 +117,12 @@ export async function create(config: Config, dir: string, appName: string, appId
 async function installDeps(config: Config, dir: string) {
   await runTask(chalk`Installing dependencies`, async () => {
     return runCommand(`cd "${dir}" && npm install --save @capacitor/cli @capacitor/core`);
-  })
+  });
 }
 
 async function addPlatforms(config: Config, dir: string) {
   await runTask(chalk`{green {bold add}} default platforms`, async () => {
-    if (config.cli.os == OS.Mac) {
+    if (config.cli.os === OS.Mac) {
       await addIOS(config);
       await sync(config, config.ios.name);
     }
@@ -132,7 +132,7 @@ async function addPlatforms(config: Config, dir: string) {
 }
 
 async function editPlatforms(config: Config, appName: string, appId: string) {
-  if (config.cli.os == OS.Mac) {
+  if (config.cli.os === OS.Mac) {
     await editProjectSettingsIOS(config);
   }
   await editProjectSettingsAndroid(config);
@@ -140,7 +140,7 @@ async function editPlatforms(config: Config, appName: string, appId: string) {
 
 function printNextSteps(config: Config, appDir: string) {
   log(chalk`{green ✔} Your app is ready!`);
-  log(`\nNext steps:`)
+  log(`\nNext steps:`);
   log(chalk`cd {bold ./${appDir}}`);
   log(`Get to work by following the Capacitor Development Workflow: https://capacitor.ionicframework.com/docs/basics/workflow`);
 }
