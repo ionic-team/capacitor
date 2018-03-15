@@ -1,6 +1,9 @@
 LERNA_JSON=`cat lerna.json`;
 export LERNA_VERSION="$(node -pe "JSON.parse(\`$LERNA_JSON\`)['version']")"
 
+rm -rf capacitor-ios
+mkdir capacitor-ios
+
 export POD_VERSION=$LERNA_VERSION
 
 # Update the version number in the podspec
