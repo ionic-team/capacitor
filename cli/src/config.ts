@@ -9,7 +9,7 @@ let ExtConfig: ExternalConfig;
 
 export class Config implements CliConfig {
   windows = {
-    androidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe'
+    androidStudioPath: 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe'
   };
 
   linux = {
