@@ -4,8 +4,9 @@
   "packages": [
     "./cli/",
     "./core/",
-    "./electron",
-    "./capacitor-ios/"
+    "./electron/",
+    "./capacitor-ios/",
+    "./android/"
   ],
   "version": "1.0.0-alpha.20"
 }
