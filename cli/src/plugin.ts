@@ -61,18 +61,16 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
         manifest: meta.capacitor
       };
     }
-    if (meta.cordova) {
-      const pluginXMLPath = join(rootPath, 'plugin.xml');
-      const xmlMeta = await readXML(pluginXMLPath);
-      return {
-        id: name,
-        name: fixName(name),
-        version: meta.version,
-        rootPath: rootPath,
-        repository: meta.repository,
-        xml: xmlMeta.plugin
-      };
-    }
+    const pluginXMLPath = join(rootPath, 'plugin.xml');
+    const xmlMeta = await readXML(pluginXMLPath);
+    return {
+      id: name,
+      name: fixName(name),
+      version: meta.version,
+      rootPath: rootPath,
+      repository: meta.repository,
+      xml: xmlMeta.plugin
+    };
   } catch (e) { }
   return null;
 }
