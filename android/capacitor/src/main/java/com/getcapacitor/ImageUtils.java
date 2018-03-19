@@ -60,7 +60,10 @@ public class ImageUtils {
       orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
     }
     Matrix matrix = new Matrix();
-    matrix.postRotate(orientation);
+
+    if (orientation != -1) {
+      matrix.postRotate(orientation);
+    }
 
     return transform(bitmap, matrix);
   }

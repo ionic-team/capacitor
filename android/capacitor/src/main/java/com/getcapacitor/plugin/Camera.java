@@ -161,7 +161,7 @@ public class Camera extends Plugin {
   private boolean checkPermissions(PluginCall call) {
     // If we want to save to the gallery, we need two permissions
     if(settings.saveToGallery && !(hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
-      pluginRequestPermissions(new String[]{
+      pluginRequestPermissions(new String[] {
         Manifest.permission.CAMERA,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
@@ -276,7 +276,7 @@ public class Camera extends Plugin {
       JSObject ret = new JSObject();
       ret.put("path", contentUri.toString());
       ret.put("webPath", FileUtils.getPortablePath(getContext(), contentUri));
-      call.success(ret);
+      call.resolve(ret);
     }
   }
 
@@ -304,7 +304,7 @@ public class Camera extends Plugin {
         JSObject ret = new JSObject();
         ret.put("path", u.toString());
         ret.put("webPath", FileUtils.getPortablePath(getContext(), u));
-        call.success(ret);
+        call.resolve(ret);
       }
     } catch (FileNotFoundException ex) {
       call.error("No such image found", ex);
@@ -343,7 +343,7 @@ public class Camera extends Plugin {
 
     JSObject data = new JSObject();
     data.put("base64Data", "data:image/jpeg;base64," + encoded);
-    call.success(data);
+    call.resolve(data);
   }
 
   private File createImageFile(boolean saveToGallery) throws IOException {
@@ -388,7 +388,7 @@ public class Camera extends Plugin {
     }
 
     if (requestCode == REQUEST_IMAGE_CAPTURE) {
-      openCamera(savedCall);
+      doShow(savedCall);
     }
   }
 
