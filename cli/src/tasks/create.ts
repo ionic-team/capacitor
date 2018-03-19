@@ -2,6 +2,7 @@ import { Config } from '../config';
 import { OS } from '../definitions';
 import { addAndroid } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
+import { gradleClean } from '../android/common';
 import { copy } from './copy';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
@@ -24,7 +25,7 @@ import {
 } from '../common';
 
 import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
-import { emoji as _e } from '../util/emoji'; 
+import { emoji as _e } from '../util/emoji';
 import { basename, join } from 'path';
 
 import * as inquirer from 'inquirer';
@@ -71,6 +72,8 @@ export async function createCommand(config: Config, dir: string, name: string, i
     await addPlatforms(config, appDir);
     // Apply project-specific settings to platform projects
     await editPlatforms(config, appName, appId);
+    // Clean platforms if needed
+    await cleanPlatforms(config);
     // Copy web and capacitor to web assets
     await copy(config, config.web.name);
     // Say something nice
@@ -91,7 +94,13 @@ async function getDir(config: Config, dir: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'dir',
-      message: `Directory for new app`
+      message: `Directory for new app`,
+      validate: function(input) {
+        if (!input || input.trim() === '') {
+          return false;
+        }
+        return true;
+      }
     }]);
     return answers.dir;
   }
@@ -136,6 +145,10 @@ async function editPlatforms(config: Config, appName: string, appId: string) {
     await editProjectSettingsIOS(config);
   }
   await editProjectSettingsAndroid(config);
+}
+
+async function cleanPlatforms(config: Config) {
+  await gradleClean(config);
 }
 
 function printNextSteps(config: Config, appDir: string) {
