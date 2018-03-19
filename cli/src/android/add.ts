@@ -8,6 +8,9 @@ import { getDefaultSettings } from 'http2';
 
 export async function addAndroid(config: Config) {
 
+  await runTask(`Installing android dependencies`, async () => {
+    return runCommand(`cd "${config.app.rootDir}" && npm install --save @capacitor/android`);
+  });
   await runTask(`Adding native android project in: ${config.android.platformDir}`, async () => {
     return copy(config.android.assets.templateDir, config.android.platformDir);
   });
