@@ -1,8 +1,13 @@
+import { runCommand } from '../common';
 import { Config } from '../config';
 import { Plugin, PluginType } from '../plugin';
 import { mkdirs, remove } from 'fs-extra';
 import { cpAsync, existsAsync, readFileAsync, writeFileAsync } from '../util/fs';
 import { dirname, join, resolve } from 'path';
+
+export async function gradleClean(config: Config) {
+  await runCommand(`cd ${config.android.platformDir} && ./gradlew clean`);
+}
 
 export async function getAndroidPlugins(config: Config, allPlugins: Plugin[]): Promise<Plugin[]> {
   const resolved = await Promise.all(allPlugins.map(plugin => resolvePlugin(config, plugin)));
