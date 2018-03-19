@@ -1,6 +1,5 @@
 import {
-  WebPlugin, NetworkPlugin,
-  NetworkStatus
+  WebPlugin, NetworkPlugin, NetworkStatus
 } from "@capacitor/core";
 
 export interface PluginListenerHandle {
