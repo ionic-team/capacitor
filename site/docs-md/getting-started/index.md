@@ -14,6 +14,7 @@ is ready for building a production-ready native app and Progressive Web App.
 Make sure you have all the required [Dependencies](./dependencies) installed for the platforms you will be building for. Most importantly,
 make sure you update CocoaPods using `pod repo update` before starting a new project, if you plan on building for iOS using a Mac.
 
+
 ## Adding Capacitor to an existing web app
 
 Capacitor was designed to drop-in to any existing modern JS web app.
@@ -29,12 +30,14 @@ Then, init Capacitor with your app information. This will also install the defau
 native platforms.
 
 ```
-npx cap init [appName] [appId]
+npx cap init
 ```
 
-Where `appName` is the name of your app, and `appId` is the domain-style app identifier for your app (for example, `com.example.app`)
+This command will prompt you to enter the name of your app, the app id (used primarily as the package for android), and the directory of your app.
 
 Capacitor is now installed in your project 🎉
+
+*Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
 
 ## Using Capacitor Starter with Ionic Framework
 
@@ -51,12 +54,10 @@ Capacitor comes with a stock project structure if you'd rather start fresh and p
 To create it, run:
 
 ```
-npx @capacitor/cli create [appDir] [appName] [appId]
+npx @capacitor/cli create
 ```
 
-Where `appDir` is the directory of your app (no spaces), `appName` is the name of your app, and `appId` is the domain-style app identifier for your app (for example, `com.example.app`)
-
-*Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
+This command will prompt you to enter the name of your app, the app id (used primarily as the package for android), and the directory of your app.
 
 This will create a very simple starting app with no UI library that you should nuke before
 starting your own app.
