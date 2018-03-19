@@ -10,6 +10,8 @@ declare var window:any;
 
 export class NetworkPluginElectron extends WebPlugin implements NetworkPlugin {
 
+  listenerFunction:any = null;
+
   constructor() {
     super({
       name: 'Network',
@@ -27,13 +29,16 @@ export class NetworkPluginElectron extends WebPlugin implements NetworkPlugin {
   }
 
   addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle {
+    let thisRef = this;
+    let onlineBindFunc = listenerFunc.bind(thisRef,{connected: true, connectionType: 'wifi'});
+    let offlineBindFunc = listenerFunc.bind(thisRef,{connected: false, connectionType: 'none'});
     if(eventName.localeCompare('networkStatusChange') === 0) {
-      window.addEventListener('online', listenerFunc({connected: true, connectionType: 'wifi'}));
-      window.addEventListener('offline', listenerFunc({connected: false, connectionType: 'none'}));
+      window.addEventListener('online', onlineBindFunc);
+      window.addEventListener('offline', offlineBindFunc);
       return {
         remove: () => {
-          window.removeEventListener('online', listenerFunc({connected: true, connectionType: 'wifi'}));
-          window.removeEventListener('offline', listenerFunc({connected: false, connectionType: 'none'}));
+          window.removeEventListener('online', onlineBindFunc);
+          window.removeEventListener('offline', offlineBindFunc);
         }
       };
     }
