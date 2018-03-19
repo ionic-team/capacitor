@@ -10,6 +10,7 @@ export * from '@capacitor/core/dist/esm/web/share';
 export * from '@capacitor/core/dist/esm/web/modals';
 export * from '@capacitor/core/dist/esm/web/storage';
 export * from './electron/filesystem';
+export * from './electron/network';
 
 mergeWebPlugins(Plugins);
 
