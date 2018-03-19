@@ -2,9 +2,12 @@ import {
   WebPlugin,
   FileReadOptions, FileReadResult,
   FilesystemPlugin, FileWriteOptions,
-  FileWriteResult,
-  FileAppendOptions, FileAppendResult, FileDeleteOptions, FileDeleteResult,
-  MkdirOptions, MkdirResult
+  FileWriteResult, FileDeleteResult,
+  FileAppendOptions, FileAppendResult,
+  ReaddirOptions, ReaddirResult,
+  MkdirOptions, MkdirResult, GetUriOptions,
+  RmdirOptions, RmdirResult, GetUriResult,
+  StatOptions, StatResult,FileDeleteOptions,
 } from "@capacitor/core";
 
 export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlugin {
@@ -74,7 +77,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
   deleteFile(options: FileDeleteOptions): Promise<FileDeleteResult> {
     return new Promise((resolve, reject) => {
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
-        reject(`${options.directory} is currently not supported in the Electron implementation.`);
+        reject(`${options.directory} directory is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.unlink(lookupPath, (err:any) => {
         if(err)
@@ -98,7 +101,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
   }
 
   // TODO: continue bring to spec.
-  rmdir(options: {path: string}): Promise<any> {
+  rmdir(options: RmdirOptions): Promise<RmdirResult> {
     return new Promise((resolve, reject) => {
       this.NodeFS.rmdir(options.path, (err:any) => {
         if(err)
@@ -108,7 +111,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     });
   }
 
-  readdir(options: {path: string, encoding?: string}): Promise<any> {
+  readdir(options: ReaddirOptions): Promise<ReaddirResult> {
     return new Promise((resolve, reject) => {
       let opts = {path: options.path, encoding: 'utf-8'};
       this.NodeFS.readdir(opts.path, opts.encoding, (err:any, files: string[]) => {
@@ -119,25 +122,24 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     });
   }
 
-  getUri(options: any): Promise<any> {
+  getUri(options: GetUriOptions): Promise<GetUriResult> {
+    return new Promise((resolve, reject) => {
+      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+        reject(`${options.directory} directory is currently not supported in the Electron implementation.`);
+      let lookupPath = this.fileLocations[options.directory] + options.path;
+      resolve({uri: lookupPath});
+    });
+  };
+
+  stat(options: StatOptions): Promise<StatResult> {
     return new Promise((resolve, reject) => {
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.mkdir(lookupPath, (err:any) => {
-        if(err)
-          reject(err);
-        resolve();
-      });
-    });
-  };
-
-  stat(options: {path: string}): Promise<any> {
-    return new Promise((resolve, reject) => {
       this.NodeFS.stat(options.path, (err:any, stats:any) => {
         if(err)
           reject(err);
-        resolve({type: 'Not Available', size: stats.size, ctime: stats.ctimeMs, mtime: stats.mtimeMs});
+        resolve({type: 'Not Available', size: stats.size, ctime: stats.ctimeMs, mtime: stats.mtimeMs, uri: lookupPath});
       });
     });
   }
