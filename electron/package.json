@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/electron",
-  "version": "1.0.0-alpha.22",
+  "version": "1.0.0-alpha.23",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "http://getcapacitor.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -63,6 +63,6 @@
     ]
   },
   "dependencies": {
-    "@capacitor/core": "^1.0.0-alpha.22"
+    "@capacitor/core": "^1.0.0-alpha.23"
   }
 }
