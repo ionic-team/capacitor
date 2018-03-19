@@ -333,19 +333,6 @@ public class Plugin {
    * @param grantResults
    */
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    PluginCall savedCall = getSavedCall();
-    if (savedCall == null) {
-      return;
-    }
-
-    for(int result : grantResults) {
-      if (result == PackageManager.PERMISSION_DENIED) {
-        savedCall.error("User denied permissions");
-        return;
-      }
-    }
-
-    savedCall.success();
   }
 
   /**
