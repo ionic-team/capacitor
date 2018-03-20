@@ -23,11 +23,14 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -257,27 +260,13 @@ public class Camera extends Plugin {
     BitmapFactory.Options bmOptions = new BitmapFactory.Options();
     Uri contentUri = Uri.fromFile(f);
     Bitmap bitmap = BitmapFactory.decodeFile(imageFileSavePath, bmOptions);
-    int orientation = ExifInterface.ORIENTATION_NORMAL;
 
     if (bitmap == null) {
       call.error("User cancelled photos app");
       return;
     }
 
-    bitmap = prepareBitmap(bitmap, contentUri);
-
-    // Compress the final image and prepare for output to client
-    ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
-    bitmap.compress(Bitmap.CompressFormat.JPEG, settings.quality, bitmapOutputStream);
-
-    if (resultType == CameraResultType.BASE64) {
-      returnBase64(call, bitmapOutputStream);
-    } else if (resultType == CameraResultType.URI) {
-      JSObject ret = new JSObject();
-      ret.put("path", contentUri.toString());
-      ret.put("webPath", FileUtils.getPortablePath(getContext(), contentUri));
-      call.resolve(ret);
-    }
+    returnResult(call, bitmap, contentUri);
   }
 
   public void processPickedImage(PluginCall call, Intent data) {
@@ -292,22 +281,69 @@ public class Camera extends Plugin {
       InputStream imageStream = getActivity().getContentResolver().openInputStream(u);
       Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
 
-      bitmap = prepareBitmap(bitmap, u);
-
-      // Compress the final image and prepare for output to client
-      ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
-      bitmap.compress(Bitmap.CompressFormat.JPEG, settings.quality, bitmapOutputStream);
-
-      if (settings.resultType == CameraResultType.BASE64) {
-        returnBase64(call, bitmapOutputStream);
-      } else if (settings.resultType == CameraResultType.URI) {
-        JSObject ret = new JSObject();
-        ret.put("path", u.toString());
-        ret.put("webPath", FileUtils.getPortablePath(getContext(), u));
-        call.resolve(ret);
+      if (bitmap == null) {
+        call.reject("Unable to process bitmap");
+        return;
       }
+
+      returnResult(call, bitmap, u);
     } catch (FileNotFoundException ex) {
       call.error("No such image found", ex);
+    }
+  }
+
+  /**
+   * Save the modified image we've created to a temporary location, so we can
+   * return a URI to it later
+   * @param bitmap
+   * @param contentUri
+   * @param is
+   * @return
+   * @throws IOException
+   */
+  private Uri saveTemporaryImage(Bitmap bitmap, Uri contentUri, InputStream is) throws IOException {
+    String filename = contentUri.getLastPathSegment();
+    if (!filename.contains(".jpg") && !filename.contains(".jpeg")) {
+      filename += "." + (new java.util.Date()).getTime() + ".jpeg";
+    }
+    File cacheDir = getActivity().getCacheDir();
+    File outFile = new File(cacheDir, filename);
+    FileOutputStream fos = new FileOutputStream(outFile);
+    byte[] buffer = new byte[1024];
+    int len;
+    while ((len = is.read(buffer)) != -1) {
+      fos.write(buffer, 0, len);
+    }
+    fos.close();
+    return Uri.fromFile(outFile);
+  }
+
+  /**
+   * After processing the image, return the final result back to the caller.
+   * @param call
+   * @param bitmap
+   * @param u
+   */
+  private void returnResult(PluginCall call, Bitmap bitmap, Uri u) {
+    bitmap = prepareBitmap(bitmap, u);
+
+    // Compress the final image and prepare for output to client
+    ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
+    bitmap.compress(Bitmap.CompressFormat.JPEG, settings.quality, bitmapOutputStream);
+
+    if (settings.resultType == CameraResultType.BASE64) {
+      returnBase64(call, bitmapOutputStream);
+    } else if (settings.resultType == CameraResultType.URI) {
+      try {
+        ByteArrayInputStream bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
+        Uri newUri = saveTemporaryImage(bitmap, u, bis);
+        JSObject ret = new JSObject();
+        ret.put("path", newUri.toString());
+        ret.put("webPath", FileUtils.getPortablePath(getContext(), newUri));
+        call.resolve(ret);
+      } catch (IOException ex) {
+        call.reject("Unable to process image", ex);
+      }
     }
   }
 
