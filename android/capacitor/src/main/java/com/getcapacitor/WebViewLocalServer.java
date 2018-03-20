@@ -159,18 +159,6 @@ public class WebViewLocalServer {
     this.jsInjector = jsInjector;
   }
 
-  /**
-   * Creates a new instance of the WebView local server.
-   *
-   * @param context context used to resolve resources/assets/
-   */
-  /*
-  public WebViewLocalServer(Context context) {
-    // We only need the context to resolve assets and resources so the ApplicationContext is
-    // sufficient while holding on to an Activity context could cause leaks.
-    this(new AndroidProtocolHandler(context.getApplicationContext()));
-  }
-  */
 
   private static Uri parseAndVerifyUrl(String url) {
     if (url == null) {
@@ -200,6 +188,7 @@ public class WebViewLocalServer {
    */
   public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
     PathHandler handler;
+
     synchronized (uriMatcher) {
       handler = (PathHandler) uriMatcher.match(request.getUrl());
     }
@@ -209,9 +198,23 @@ public class WebViewLocalServer {
 
     String path = request.getUrl().getPath();
 
+
     if (path.equals("/cordova.js")) {
       return new WebResourceResponse("application/javascript", handler.getEncoding(),
               handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
+    }
+
+    if (path.equals("/")) {
+      InputStream stream;
+      try {
+        stream = protocolHandler.openAsset("public/index.html", "");
+      } catch (IOException e) {
+        Log.e(TAG, "Unable to open index.html", e);
+        return null;
+      }
+
+      return new WebResourceResponse("text/html", handler.getEncoding(),
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
     int periodIndex = path.lastIndexOf(".");
@@ -352,11 +355,13 @@ public class WebViewLocalServer {
 
     if (enableHttp) {
       httpPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpPrefix, "/"), handler);
       register(Uri.withAppendedPath(httpPrefix, "**"), handler);
     }
     if (enableHttps) {
       uriBuilder.scheme(httpsScheme);
       httpsPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpsPrefix, "/"), handler);
       register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
     }
     return new AssetHostingDetails(httpPrefix, httpsPrefix);

@@ -166,7 +166,7 @@ public class Bridge {
     });
 
     // Load the index.html file from our www folder
-    String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
+    String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
     // Get to work
     webView.loadUrl(url);
@@ -273,6 +273,9 @@ public class Bridge {
     settings.setGeolocationEnabled(true);
     settings.setDatabaseEnabled(true);
     settings.setAppCacheEnabled(true);
+    settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
+    settings.setMediaPlaybackRequiresUserGesture(false);
+    this.webView.setInitialScale(0);
   }
 
   /**
