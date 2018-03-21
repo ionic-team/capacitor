@@ -18,5 +18,5 @@ gulp.task('default', function() {
     .pipe(rename(function(path) {
       path.extname = '.html';
     }))
-    .pipe(gulp.dest('./www/docs-content'));
+    .pipe(gulp.dest('./src/assets/docs-content'));
 });

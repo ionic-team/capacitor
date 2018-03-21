@@ -1,3 +1,5 @@
+<plugin-platforms platforms="ios,android"></plugin-platforms>
+
 # Haptics
 
 The Haptics API provides physical feedback to the user through touch or vibration.

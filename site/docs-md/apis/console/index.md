@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Console
 
 The Console API automatically sends `console.log` calls to the native log system on each respective platform. This enables, for example,

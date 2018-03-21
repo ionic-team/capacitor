@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Filesystem
 
 The Filsystem API provides a NodeJS-like API for working with files on the device.

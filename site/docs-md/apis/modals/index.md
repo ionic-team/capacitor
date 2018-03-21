@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Modals
 
 The Modals API provides methods for triggering native modal windows for alerts, confirmations, and input prompts, as

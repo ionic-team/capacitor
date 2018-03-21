@@ -1,0 +1,35 @@
+<p><plugin-platforms platforms="ios,android"></plugin-platforms></p>
+<h1 id="status-bar">Status Bar</h1>
+<p>The StatusBar API Provides methods for configuring the sytle of the Status Bar, along with showing or hiding it.</p>
+<p><plugin-api index="true" name="status-bar"></plugin-api></p>
+<h2 id="ios-note">iOS Note</h2>
+<p>This plugin requires &quot;View controller-based status bar appearance&quot; (<code>UIViewControllerBasedStatusBarAppearance</code>) set to <code>YES</code> in <code>Info.plist</code>. Read about <a href="../../ios/configuration">Configuring iOS</a> for help.</p>
+<h2 id="example">Example</h2>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> {
+  Plugins,
+  StatusBarStyle,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { StatusBar } = Plugins;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> StatusBarExample {
+  isStatusBarLight = <span class="hljs-literal">true</span>
+
+  changeStatusBar() {
+    StatusBar.setStyle({
+      style: <span class="hljs-keyword">this</span>.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
+    }, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {});
+    <span class="hljs-keyword">this</span>.isStatusBarLight = !<span class="hljs-keyword">this</span>.isStatusBarLight;
+  }
+
+  hideStatusBar() {
+    StatusBar.hide();
+  }
+
+  showStatusBar() {
+    StatusBar.show();
+  }
+}
+</code></pre>
+<h2 id="api">API</h2>
+<p><plugin-api name="status-bar"></plugin-api></p>

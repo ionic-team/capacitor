@@ -1,0 +1,16 @@
+<h1 id="configuring-ios">Configuring iOS</h1>
+<h2 id="configuring-info-plist-">Configuring <code>Info.plist</code></h2>
+<p>iOS developers should get used to working with the <code>Info.plist</code> file, the main configuration file for their app. This file will be updated frequently with new settings that a Capacitor Plugin might require, additional configuration for your app, and for permissions your app will ask for.</p>
+<p>In general, the easiest way to modify this file is to open your project in Xcode (<code>npx cap open ios</code>), and edit the file in Xcode&#39;s property list editor. Each settings in <code>Info.plist</code> has a low-level parameter name, and a high level name. By default, the property list editor shows the high level names, but it&#39;s often useful to switch to showing the raw, low level names. To do this, right click anywhere in the property list editor and toggle &quot;Show Raw Keys/Values.&quot;</p>
+<p>Underneath the hood, <code>Info.plist</code> is actually a plain XML file and can be edited directly if you desire. In this case, make sure to use the low-level parameter name for the XML <code>&lt;key&gt;</code> values in <code>Info.plist</code>.</p>
+<p>Some plugins and SDKs will show settings using the low-level key, and others will use the high level key. Get used to mapping between them.</p>
+<p>This list of <a href="https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Cocoa Keys</a> shows many possible configuration options that can be set in <code>Info.plist</code>.</p>
+<h2 id="managing-permissions">Managing Permissions</h2>
+<p>Unlike Android, permissions for iOS do not have to be specified in advance. Instead, they are prompted for when using a certain Plugin or SDK.</p>
+<p>However, many iOS permissions require what are known as &quot;Usage Descriptions&quot; defined in <code>Info.plist</code>. These settings are human-readable descriptions of each permission the app will ask for.</p>
+<p>Consult the <a href="https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Cocoa Keys</a> list for keys containing <code>UsageDescription</code> to see the various usage description settings that may be required for your app.</p>
+<p>For more information, Apple has provided a guide to <a href="https://developer.apple.com/library/content/qa/qa1937/_index.html">Resolving the Privacy-Sensitive Data App Rejection</a> which contains more information on APIs that require usage descriptions.</p>
+<h1 id="setting-entitlements">Setting Entitlements</h1>
+<p>Entitlements are used to enable key features that your app may need.</p>
+<p>Unlike certain configuration options or usage descriptions, entitlements are configured in a special area inside of Xcode, rather than in <code>Info.plist</code>.</p>
+<p>If a plugin requires certain entitlements, open your app in Xcode, click on the name of your project in the left project menu, and select <code>Capabilities</code> in the tab bar.</p>

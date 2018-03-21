@@ -1,3 +1,5 @@
+<plugin-platforms platforms="ios,android"></plugin-platforms>
+
 # Local Notifications
 
 The Local Notification API provides a way to schedule "local" notifications - notifications that are scheduled and delivered on the device as opposed to "push" notifications sent from a server.

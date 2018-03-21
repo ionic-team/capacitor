@@ -1,0 +1,46 @@
+<p><plugin-platforms platforms="ios,android"></plugin-platforms></p>
+<h1 id="background-tasks">Background Tasks</h1>
+<p>The Background Task API makes it easy to run background tasks. Currently, this plugin
+supports running a task when the app is backgrounded, and soon will support periodic background
+fetch operations.</p>
+<p><plugin-api index="true" name="background-task"></plugin-api></p>
+<h2 id="background-task-guidelines">Background Task Guidelines</h2>
+<p>Mobile operating systems have strict, constantly changing guidelines for background tasks. Running
+indefinitely in the background is limited to apps that need to play audio, maintain VoIP connections,
+track geolocation for navigation purposes, and a limited set of other tasks. All other apps should
+expect to perform periodic, short background tasks, such as finishing an upload when the app goes to the
+background, and periodically syncing data.</p>
+<p>Plugins that claim to offer infinite background operation outside of those core use cases <em>will cause App Store rejections</em>! This limitation is the same for developers using any mobile app technology, not just Capacitor.</p>
+<p>Generally, Android is less strict about background tasks, but your app should code to the lowest common denominator
+in order to be a good actor on all platforms.</p>
+<h2 id="example">Example</h2>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { App, BackgroundTask } = Plugins;
+
+App.addEventListener(<span class="hljs-string">'appStateChange'</span>, <span class="hljs-function">(<span class="hljs-params">state</span>) =&gt;</span> {
+
+  <span class="hljs-keyword">if</span> (!state.isActive) {
+    <span class="hljs-comment">// The app has become inactive. We should check if we have some work left to do, and, if so,</span>
+    <span class="hljs-comment">// execute a background task that will allow us to finish that work before the OS</span>
+    <span class="hljs-comment">// suspends or terminates our app:</span>
+
+    <span class="hljs-keyword">let</span> taskId = BackgroundTask.beforeExit(<span class="hljs-keyword">async</span> () =&gt; {
+      <span class="hljs-comment">// In this function We might finish an upload, let a network request</span>
+      <span class="hljs-comment">// finish, persist some data, or perform some other task</span>
+
+      <span class="hljs-comment">// Example</span>
+      setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-comment">// Must call in order to end our task otherwise</span>
+        <span class="hljs-comment">// we risk our app being terminated, and possibly</span>
+        <span class="hljs-comment">// being labled as impacting battery life</span>
+        BackgroundTask.finish({
+          taskId
+        });
+      }, <span class="hljs-number">30000</span>); <span class="hljs-comment">// Set a long timeout as an example</span>
+    });
+  }
+})
+</code></pre>
+<h2 id="api">API</h2>
+<p><plugin-api name="background-task"></plugin-api></p>

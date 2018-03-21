@@ -1,3 +1,5 @@
+<plugin-platforms platforms="ios,android"></plugin-platforms>
+
 # Background Tasks
 
 The Background Task API makes it easy to run background tasks. Currently, this plugin

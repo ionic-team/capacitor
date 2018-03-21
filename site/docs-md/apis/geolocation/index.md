@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Geolocation
 
 The Geolocation API provides simple methods for getting and tracking the current position of the device using GPS, along

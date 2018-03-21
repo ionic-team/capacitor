@@ -1,8 +1,8 @@
+<plugin-api index="true" name="splash-screen"></plugin-api>
+
 # Splash Screen
 
 The Splash Screen API provides methods for showing or hiding a Splash image.
-
-<plugin-api index="true" name="splash-screen"></plugin-api>
 
 ## Example
 
@@ -32,7 +32,7 @@ app should boot much faster than this!
 
 To make sure you provide the fastest app loading experience to your users, you must hide the splash screen automatically when your app is ready to be used. Simply add the `SplashScreen.hide()` call near the top of your app's JS, such as in `app.component.ts` if using Angular.
 
-If you app needs longer than 3 seconds to load, configure the default duration by setting `launchShowDuration` in your `capacitor.config.json`:
+If your app needs longer than 3 seconds to load, configure the default duration by setting `launchShowDuration` in your `capacitor.config.json`:
 
 ```json
 {

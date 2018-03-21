@@ -1,0 +1,81 @@
+<p><plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms></p>
+<h1 id="camera">Camera</h1>
+<p>The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses <code>UIImagePickerController</code>, and on Android this
+API sends an intent which will be handled by the core Camera app by default.</p>
+<p><plugin-api index="true" name="camera"></plugin-api></p>
+<h2 id="ios-notes">iOS Notes</h2>
+<p>iOS requires the following usage description be added and filled out for your app in <code>Info.plist</code>:</p>
+<p>Name: <code>Privacy - Camera Usage Description</code>
+Key:     <code>NSCameraUsageDescription</code></p>
+<p>Read about <a href="../ios/permissions/">Setting iOS Permissions</a> in the <a href="../ios/">iOS Guide</a> for more information on setting iOS permissions in Xcode</p>
+<h2 id="android-notes">Android Notes</h2>
+<p>This API requires the following permissions be added to your <code>AndroidManifest.xml</code>:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.CAMERA"</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.READ_EXTERNAL_STORAGE"</span>/&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.WRITE_EXTERNAL_STORAGE"</span> /&gt;</span>
+</code></pre>
+<p>The first permission is for Camera access, and the storage permissions are for reading/saving photo files.</p>
+<p>Read about <a href="../android/permissions/">Setting Android Permissions</a> in the <a href="../android/">Android Guide</a> for more information on setting Android permissions.</p>
+<p>Additionally, because the Camera API launches a separate Activity to handle taking the photo, you should listen for <code>appRestoredResult</code> in the <code>App</code> plugin
+to handle any camera data that was sent in the case your app was terminated by the operating system while the Activity was running.</p>
+<h2 id="example">Example</h2>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, CameraResultType } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { Camera } = Plugins;
+
+<span class="hljs-keyword">async</span> takePicture() {
+  <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Camera.getPhoto({
+    quality: <span class="hljs-number">90</span>,
+    allowEditing: <span class="hljs-literal">true</span>,
+    resultType: CameraResultType.Uri
+  });
+  <span class="hljs-comment">// image.webPath will contain a path that can be set as an image src. You can access</span>
+  <span class="hljs-comment">// the original file using image.path, which can be passed to the Filesystem API to</span>
+  <span class="hljs-comment">// read the raw data of the image, if desired (or pass resultType: CameraResultType.Base64 to getPhoto)</span>
+  <span class="hljs-keyword">var</span> imageUrl = image.webPath;
+  <span class="hljs-comment">// can be set to the src of an image now</span>
+  imageElement.src = imageUrl;
+}
+</code></pre>
+<h2 id="angular-example">Angular example</h2>
+<p>By default, Angular (&gt;= 2.x) won&#39;t trust dynamic image urls. To trust the URL, inject <code>DomSanitizer</code> and make sure to allow the 
+image URL to be trusted.</p>
+<p>This example also demonstrates how to set the default source of the image. By default, <code>getPhoto</code> will prompt the user to take a picture or select a photo from their existing photos. </p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+<span class="hljs-keyword">import</span> { DomSanitizer, SafeResourceUrl } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/platform-browser'</span>;
+<span class="hljs-keyword">import</span> { IonicPage, NavController, NavParams } <span class="hljs-keyword">from</span> <span class="hljs-string">'ionic-angular'</span>;
+<span class="hljs-keyword">import</span> { Plugins, CameraResultType, CameraSource } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-meta">@IonicPage</span>()
+<span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'page-camera'</span>,
+  templateUrl: <span class="hljs-string">'camera.html'</span>,
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> CameraPage {
+  image: SafeResourceUrl;
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">public</span> navCtrl: NavController, <span class="hljs-keyword">public</span> navParams: NavParams, <span class="hljs-keyword">private</span> zone: NgZone, <span class="hljs-keyword">private</span> sanitizer: DomSanitizer</span>) {
+  }
+
+  <span class="hljs-keyword">async</span> takePicture() {
+    <span class="hljs-keyword">const</span> { Camera } = Plugins;
+
+    <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Camera.getPhoto({
+      quality: <span class="hljs-number">90</span>,
+      allowEditing: <span class="hljs-literal">true</span>,
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera
+    });
+
+    <span class="hljs-comment">// Example of using the Base64 return type. It's recommended to use CameraResultType.Uri</span>
+    <span class="hljs-comment">// instead for performance reasons when showing large, or a large amount of images.</span>
+    <span class="hljs-keyword">this</span>.image = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (image.base64Data));
+  }
+}
+</code></pre>
+<p>Component template:</p>
+<pre><code class="lang-html">  <span class="hljs-tag">&lt;<span class="hljs-name">img</span> [<span class="hljs-attr">src</span>]=<span class="hljs-string">"image"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"takePicture()"</span> <span class="hljs-attr">ion-button</span> <span class="hljs-attr">color</span>=<span class="hljs-string">"primary"</span>&gt;</span>Take Picture<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+<h2 id="api">API</h2>
+<p><plugin-api name="camera"></plugin-api></p>

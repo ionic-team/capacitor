@@ -26,7 +26,7 @@ export class AppMarked {
 
   @Watch('doc')
   fetchNewContent() {
-    return fetch(`/docs-content/${this.doc}`)
+    return fetch(`/assets/docs-content/${this.doc}`)
       .then(response => response.text())
       .then(data => {
         this.content = data;

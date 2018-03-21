@@ -11,7 +11,7 @@ export class PluginApi {
 
   componentWillLoad() {
     const url = `api${this.index ? '-index' : ''}.html`;
-    return fetch(`/docs-content/apis/${this.name}/${url}`)
+    return fetch(`/assets/docs-content/apis/${this.name}/${url}`)
       .then(response => {
         return response.text()
       })
