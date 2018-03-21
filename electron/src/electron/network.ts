@@ -24,13 +24,23 @@ export class NetworkPluginElectron extends WebPlugin implements NetworkPlugin {
       if(!window.navigator)
         reject('Network info not available');
       let connected = window.navigator.onLine;
-      resolve({connected: connected, connectionType: connected ? 'unknown' : 'none'});
+      let connection = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection;
+      let connectionType = 'wifi';
+      if(connection) {
+        connectionType = connection.type;
+      }
+      resolve({connected: connected, connectionType: connected ? connectionType : 'none'});
     });
   }
 
   addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle {
     let thisRef = this;
-    let onlineBindFunc = listenerFunc.bind(thisRef,{connected: true, connectionType: 'unknown'});
+    let connection = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection;
+    let connectionType = 'wifi';
+    if(connection) {
+      connectionType = connection.type;
+    }
+    let onlineBindFunc = listenerFunc.bind(thisRef,{connected: true, connectionType: connectionType});
     let offlineBindFunc = listenerFunc.bind(thisRef,{connected: false, connectionType: 'none'});
     if(eventName.localeCompare('networkStatusChange') === 0) {
       window.addEventListener('online', onlineBindFunc);
