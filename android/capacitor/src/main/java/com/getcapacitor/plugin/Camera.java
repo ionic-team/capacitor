@@ -265,7 +265,7 @@ public class Camera extends Plugin {
         try {
           imageStream.close();
         } catch (IOException e) {
-          call.reject(UNABLE_TO_PROCESS_IMAGE, e);
+          logError(UNABLE_TO_PROCESS_IMAGE, e);
         }
       }
     }
@@ -341,7 +341,7 @@ public class Camera extends Plugin {
         try {
           bis.close();
         } catch (IOException e) {
-          call.reject(UNABLE_TO_PROCESS_IMAGE, e);
+          logError(UNABLE_TO_PROCESS_IMAGE, e);
         }
       }
     }

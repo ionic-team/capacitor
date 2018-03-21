@@ -448,4 +448,8 @@ public class Plugin {
     }
     Log.d(Bridge.TAG, b.toString());
   }
+
+  protected void logError(final String msg, final Throwable t) {
+    Log.e(Bridge.TAG, msg, t);
+  }
 }
