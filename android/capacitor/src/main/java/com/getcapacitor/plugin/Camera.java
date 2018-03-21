@@ -14,7 +14,7 @@ import android.util.Base64;
 
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.FileUtils;
-import com.getcapacitor.ImageUtils;
+import com.getcapacitor.plugin.camera.ImageUtils;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
