@@ -59,5 +59,8 @@
     "testMatch": [
       "**/__test__/*.(ts|tsx|js)"
     ]
+  },
+  "dependencies": {
+    "tslib": "^1.9.0"
   }
 }
