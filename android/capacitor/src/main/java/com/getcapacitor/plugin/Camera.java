@@ -294,7 +294,12 @@ public class Camera extends Plugin {
    * @param u
    */
   private void returnResult(PluginCall call, Bitmap bitmap, Uri u) {
-    bitmap = prepareBitmap(bitmap, u);
+    try {
+      bitmap = prepareBitmap(bitmap, u);
+    } catch (IOException e) {
+      call.reject(UNABLE_TO_PROCESS_IMAGE);
+      return;
+    }
 
     // Compress the final image and prepare for output to client
     ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
@@ -303,18 +308,22 @@ public class Camera extends Plugin {
     if (settings.getResultType() == CameraResultType.BASE64) {
       returnBase64(call, bitmapOutputStream);
     } else if (settings.getResultType() == CameraResultType.URI) {
-      try {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
-        Uri newUri = saveTemporaryImage(bitmap, u, bis);
-        JSObject ret = new JSObject();
-        ret.put("path", newUri.toString());
-        ret.put("webPath", FileUtils.getPortablePath(getContext(), newUri));
-        call.resolve(ret);
-      } catch (IOException ex) {
-        call.reject(UNABLE_TO_PROCESS_IMAGE, ex);
-      }
+      returnFileURI(call, bitmap, u, bitmapOutputStream);
     } else {
       call.reject(INVALID_RESULT_TYPE_ERROR);
+    }
+  }
+
+  private void returnFileURI(PluginCall call, Bitmap bitmap, Uri u, ByteArrayOutputStream bitmapOutputStream) {
+    try {
+      ByteArrayInputStream bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
+      Uri newUri = saveTemporaryImage(bitmap, u, bis);
+      JSObject ret = new JSObject();
+      ret.put("path", newUri.toString());
+      ret.put("webPath", FileUtils.getPortablePath(getContext(), newUri));
+      call.resolve(ret);
+    } catch (IOException ex) {
+      call.reject(UNABLE_TO_PROCESS_IMAGE, ex);
     }
   }
 
@@ -325,22 +334,24 @@ public class Camera extends Plugin {
    * @param imageUri
    * @return
    */
-  private Bitmap prepareBitmap(Bitmap bitmap, Uri imageUri) {
+  private Bitmap prepareBitmap(Bitmap bitmap, Uri imageUri) throws IOException {
     if (settings.isShouldCorrectOrientation()) {
-      Bitmap newBitmap = ImageUtils.correctOrientation(getContext(), bitmap, imageUri);
-      if (bitmap != newBitmap) {
-        bitmap.recycle();
-      }
-      bitmap = newBitmap;
+      final Bitmap newBitmap = ImageUtils.correctOrientation(getContext(), bitmap, imageUri);
+      bitmap = replaceBitmap(bitmap, newBitmap);
     }
 
     if (settings.isShouldResize()) {
-      Bitmap newBitmap = ImageUtils.resize(bitmap, settings.getWidth(), settings.getHeight());
-      if (bitmap != newBitmap) {
-        bitmap.recycle();
-      }
-      bitmap = newBitmap;
+      final Bitmap newBitmap = ImageUtils.resize(bitmap, settings.getWidth(), settings.getHeight());
+      bitmap = replaceBitmap(bitmap, newBitmap);
     }
+    return bitmap;
+  }
+
+  private Bitmap replaceBitmap(Bitmap bitmap, final Bitmap newBitmap) {
+    if (bitmap != newBitmap) {
+      bitmap.recycle();
+    }
+    bitmap = newBitmap;
     return bitmap;
   }
 
