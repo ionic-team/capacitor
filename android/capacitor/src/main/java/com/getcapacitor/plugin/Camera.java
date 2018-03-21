@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,13 +14,16 @@ import android.util.Base64;
 
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.FileUtils;
-import com.getcapacitor.ImageUtils;
+import com.getcapacitor.plugin.camera.ImageUtils;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
+import com.getcapacitor.plugin.camera.CameraResultType;
+import com.getcapacitor.plugin.camera.CameraSettings;
+import com.getcapacitor.plugin.camera.CameraSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,40 +32,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-enum CameraSource {
-  PROMPT("PROMPT"),
-  CAMERA("CAMERA"),
-  PHOTOS("PHOTOS");
-  private String source;
-  CameraSource(String source) {
-    this.source = source;
-  }
-  public String getSource() { return this.source; }
-}
-
-enum CameraResultType {
-  BASE64("base64"),
-  URI("uri");
-  private String type;
-  CameraResultType(String type) {
-    this.type = type;
-  }
-}
-
-class CameraSettings {
-  CameraResultType resultType = CameraResultType.BASE64;
-  int quality = 100;
-  boolean shouldResize = false;
-  boolean shouldCorrectOrientation = Camera.DEFAULT_CORRECT_ORIENTATION;
-  boolean saveToGallery = Camera.DEFAULT_SAVE_IMAGE_TO_GALLERY;
-  int width = 0;
-  int height = 0;
-  CameraSource source = CameraSource.PROMPT;
-}
 
 /**
  * The Camera plugin makes it easy to take a photo or have the user select a photo
@@ -88,11 +58,7 @@ public class Camera extends Plugin {
   private static final String NO_CAMERA_ACTIVITY_ERROR = "Unable to resolve camera activity";
   private static final String IMAGE_FILE_SAVE_ERROR = "Unable to create photo on disk";
   private static final String IMAGE_PROCESS_NO_FILE_ERROR = "Unable to process image, file not found on disk";
-
-  // Default values
-  private static final int DEFAULT_QUALITY = 100;
-  protected static final boolean DEFAULT_SAVE_IMAGE_TO_GALLERY = true;
-  protected static final boolean DEFAULT_CORRECT_ORIENTATION = true;
+  private static final String UNABLE_TO_PROCESS_IMAGE = "Unable to process image";
 
   private String imageFileSavePath;
 
@@ -108,7 +74,7 @@ public class Camera extends Plugin {
   }
 
   private void doShow(PluginCall call) {
-    switch (settings.source) {
+    switch (settings.getSource()) {
       case PROMPT:
         showPrompt(call);
         break;
@@ -117,6 +83,9 @@ public class Camera extends Plugin {
         break;
       case PHOTOS:
         showPhotos(call);
+        break;
+      default:
+        showPrompt(call);
         break;
     }
   }
@@ -163,7 +132,7 @@ public class Camera extends Plugin {
 
   private boolean checkPermissions(PluginCall call) {
     // If we want to save to the gallery, we need two permissions
-    if(settings.saveToGallery && !(hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+    if(settings.isSaveToGallery() && !(hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
       pluginRequestPermissions(new String[] {
         Manifest.permission.CAMERA,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -182,17 +151,17 @@ public class Camera extends Plugin {
 
   private CameraSettings getSettings(PluginCall call) {
     CameraSettings settings = new CameraSettings();
-    settings.resultType = getResultType(call.getString("resultType"));
-    settings.saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
-    settings.quality = call.getInt("quality", DEFAULT_QUALITY);
-    settings.width = call.getInt("width", 0);
-    settings.height = call.getInt("height", 0);
-    settings.shouldResize = settings.width > 0 || settings.height > 0;
-    settings.shouldCorrectOrientation = call.getBoolean("correctOrientation", DEFAULT_CORRECT_ORIENTATION);
+    settings.setResultType(getResultType(call.getString("resultType")));
+    settings.setSaveToGallery(call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY));
+    settings.setQuality(call.getInt("quality", CameraSettings.DEFAULT_QUALITY));
+    settings.setWidth(call.getInt("width", 0));
+    settings.setHeight(call.getInt("height", 0));
+    settings.setShouldResize(settings.getWidth() > 0 || settings.getHeight() > 0);
+    settings.setShouldCorrectOrientation(call.getBoolean("correctOrientation", CameraSettings.DEFAULT_CORRECT_ORIENTATION));
     try {
-      settings.source = CameraSource.valueOf(call.getString("source", CameraSource.PROMPT.getSource()));
+      settings.setSource(CameraSource.valueOf(call.getString("source", CameraSource.PROMPT.getSource())));
     } catch (IllegalArgumentException ex) {
-      settings.source = CameraSource.PROMPT;
+      settings.setSource(CameraSource.PROMPT);
     }
     return settings;
   }
@@ -208,7 +177,7 @@ public class Camera extends Plugin {
   }
 
   public void openCamera(final PluginCall call) {
-    boolean saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
+    boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
 
     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -239,7 +208,7 @@ public class Camera extends Plugin {
 
   public void processCameraImage(PluginCall call, Intent data) {
     boolean allowEditing = call.getBoolean("allowEditing", false);
-    boolean saveToGallery = call.getBoolean("saveToGallery", DEFAULT_SAVE_IMAGE_TO_GALLERY);
+    boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
     CameraResultType resultType = getResultType(call.getString("resultType"));
 
     if(imageFileSavePath == null) {
@@ -277,8 +246,10 @@ public class Camera extends Plugin {
 
     Uri u = data.getData();
 
+    InputStream imageStream = null;
+
     try {
-      InputStream imageStream = getActivity().getContentResolver().openInputStream(u);
+      imageStream = getActivity().getContentResolver().openInputStream(u);
       Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
 
       if (bitmap == null) {
@@ -289,6 +260,14 @@ public class Camera extends Plugin {
       returnResult(call, bitmap, u);
     } catch (FileNotFoundException ex) {
       call.error("No such image found", ex);
+    } finally {
+      if (imageStream != null) {
+        try {
+          imageStream.close();
+        } catch (IOException e) {
+          logError(UNABLE_TO_PROCESS_IMAGE, e);
+        }
+      }
     }
   }
 
@@ -325,24 +304,45 @@ public class Camera extends Plugin {
    * @param u
    */
   private void returnResult(PluginCall call, Bitmap bitmap, Uri u) {
-    bitmap = prepareBitmap(bitmap, u);
+    try {
+      bitmap = prepareBitmap(bitmap, u);
+    } catch (IOException e) {
+      call.reject(UNABLE_TO_PROCESS_IMAGE);
+      return;
+    }
 
     // Compress the final image and prepare for output to client
     ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
-    bitmap.compress(Bitmap.CompressFormat.JPEG, settings.quality, bitmapOutputStream);
+    bitmap.compress(Bitmap.CompressFormat.JPEG, settings.getQuality(), bitmapOutputStream);
 
-    if (settings.resultType == CameraResultType.BASE64) {
+    if (settings.getResultType() == CameraResultType.BASE64) {
       returnBase64(call, bitmapOutputStream);
-    } else if (settings.resultType == CameraResultType.URI) {
-      try {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
-        Uri newUri = saveTemporaryImage(bitmap, u, bis);
-        JSObject ret = new JSObject();
-        ret.put("path", newUri.toString());
-        ret.put("webPath", FileUtils.getPortablePath(getContext(), newUri));
-        call.resolve(ret);
-      } catch (IOException ex) {
-        call.reject("Unable to process image", ex);
+    } else if (settings.getResultType() == CameraResultType.URI) {
+      returnFileURI(call, bitmap, u, bitmapOutputStream);
+    } else {
+      call.reject(INVALID_RESULT_TYPE_ERROR);
+    }
+  }
+
+  private void returnFileURI(PluginCall call, Bitmap bitmap, Uri u, ByteArrayOutputStream bitmapOutputStream) {
+    ByteArrayInputStream bis = null;
+
+    try {
+      bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
+      Uri newUri = saveTemporaryImage(bitmap, u, bis);
+      JSObject ret = new JSObject();
+      ret.put("path", newUri.toString());
+      ret.put("webPath", FileUtils.getPortablePath(getContext(), newUri));
+      call.resolve(ret);
+    } catch (IOException ex) {
+      call.reject(UNABLE_TO_PROCESS_IMAGE, ex);
+    } finally {
+      if (bis != null) {
+        try {
+          bis.close();
+        } catch (IOException e) {
+          logError(UNABLE_TO_PROCESS_IMAGE, e);
+        }
       }
     }
   }
@@ -354,22 +354,24 @@ public class Camera extends Plugin {
    * @param imageUri
    * @return
    */
-  private Bitmap prepareBitmap(Bitmap bitmap, Uri imageUri) {
-    if (settings.shouldCorrectOrientation) {
-      Bitmap newBitmap = ImageUtils.correctOrientation(getContext(), bitmap, imageUri);
-      if (bitmap != newBitmap) {
-        bitmap.recycle();
-      }
-      bitmap = newBitmap;
+  private Bitmap prepareBitmap(Bitmap bitmap, Uri imageUri) throws IOException {
+    if (settings.isShouldCorrectOrientation()) {
+      final Bitmap newBitmap = ImageUtils.correctOrientation(getContext(), bitmap, imageUri);
+      bitmap = replaceBitmap(bitmap, newBitmap);
     }
 
-    if (settings.shouldResize) {
-      Bitmap newBitmap = ImageUtils.resize(bitmap, settings.width, settings.height);
-      if (bitmap != newBitmap) {
-        bitmap.recycle();
-      }
-      bitmap = newBitmap;
+    if (settings.isShouldResize()) {
+      final Bitmap newBitmap = ImageUtils.resize(bitmap, settings.getWidth(), settings.getHeight());
+      bitmap = replaceBitmap(bitmap, newBitmap);
     }
+    return bitmap;
+  }
+
+  private Bitmap replaceBitmap(Bitmap bitmap, final Bitmap newBitmap) {
+    if (bitmap != newBitmap) {
+      bitmap.recycle();
+    }
+    bitmap = newBitmap;
     return bitmap;
   }
 
