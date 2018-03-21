@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Browser
 
 The Browser API makes it easy to open an in-app browser session to show external web content,

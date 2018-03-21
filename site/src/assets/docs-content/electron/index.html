@@ -1,0 +1,26 @@
+<h1 id="building-electron-apps-with-capacitor">Building Electron Apps with Capacitor</h1>
+<p>Capacitor has preliminary support for <a href="https://electronjs.org">Electron</a>, the popular tool used for building desktop apps
+with HTML, JavaScript, and CSS.</p>
+<p>With Electron, Capacitor apps can run natively on Windows, Mac, and Linux!</p>
+<p>Note: Electron support for Capacitor is currently in preview, and lags behind iOS, Android, and Web support. </p>
+<h2 id="getting-started">Getting Started</h2>
+<p>After creating a new Capacitor app, add the <code>electron</code> platform:</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> add electron
+</code></pre>
+<p>This will generate a new Electron project in the <code>electron/</code> folder in the root of your app.</p>
+<h2 id="preparing-your-app">Preparing your app</h2>
+<p>Just like the other Capacitor platforms, the <code>copy</code> command must be run periodically to sync web content with Electron:</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> copy
+</code></pre>
+<p>Run this after making any modifications to your web app.</p>
+<h2 id="running-your-app">Running your App</h2>
+<p>To run your app, cd into it and use the npm script provided by Capacitor:</p>
+<pre><code>cd electron/
+npm run electron:start
+</code></pre><p>This will launch an Electron instance running your app.</p>
+<h2 id="plugin-support">Plugin Support</h2>
+<p>Electron supports any plugin with a Web implementation, as well as a few plugins with custom Electron support (such as <code>Filesystem</code>).</p>
+<p>We will have more info on building Electron plugins soon.</p>
+<h2 id="where-to-go-next">Where to go next</h2>
+<p>That&#39;s pretty much all you need to know to build an Electron app with Capacitor!</p>
+<p>Follow the <a href="../basics/workflow">Development Workflow</a> guide to continue building and testing your app.</p>

@@ -1,6 +1,14 @@
 $link-color: #5EB6FC;
 
 document-component {
+  plugin-platforms {
+    display: block;
+    float: right;
+    .platform {
+      margin-left: 8px;
+    }
+  }
+
   img {
     max-width: 100%;
   }

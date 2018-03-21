@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Camera
 
 The Camera API allows a user to pick a photo from their photo album or take a picture. On iOS, this uses `UIImagePickerController`, and on Android this

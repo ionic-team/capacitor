@@ -1,0 +1,41 @@
+<h1 id="using-capacitor-with-ionic">Using Capacitor with Ionic</h1>
+<h2 id="install-capacitor-into-an-ionic-project">Install Capacitor into an Ionic project</h2>
+<p>Capacitor installs directly into any Ionic project (1.0-4.x+) with a simple <code>npm install</code>:</p>
+<h3 id="start-ionic-project">Start Ionic Project</h3>
+<pre><code class="lang-bash">ionic start myApp tabs
+<span class="hljs-built_in">cd</span> myApp
+</code></pre>
+<p>Select &quot;N&quot; when asked to add Cordova.</p>
+<h3 id="build-your-ionic-app">Build your Ionic App</h3>
+<p>You must run <code>npm run build</code> at least once to create the <code>www</code> folder:</p>
+<pre><code class="lang-bash">npm run build
+</code></pre>
+<h3 id="install-capacitor">Install Capacitor</h3>
+<p>Next, install capacitor into your project:</p>
+<pre><code class="lang-bash">npm install --save @capacitor/cli @capacitor/core
+</code></pre>
+<h3 id="remove-cordova-splash">Remove Cordova Splash</h3>
+<p>Capacitor conflicts with Cordova&#39;s Splashscreen Plugin. It needs to be removed:</p>
+<pre><code class="lang-bash">npm uninstall --save cordova-plugin-splashscreen
+</code></pre>
+<h3 id="init-capacitor-with-your-app-information">Init Capacitor with your app information</h3>
+<pre><code>npx cap init [appName] [appId]
+</code></pre><p>where <code>appName</code> is the name of your app, and <code>appId</code> is the domain identifier of your app (ex: <code>com.example.app</code>).</p>
+<h3 id="add-platforms">Add Platforms</h3>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> add ios
+npx <span class="hljs-built_in">cap</span> add android
+</code></pre>
+<h3 id="open-ide-to-build">Open IDE to build</h3>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> open ios
+npx <span class="hljs-built_in">cap</span> open android
+</code></pre>
+<h2 id="syncing-your-app-with-capacitor">Syncing your app with Capacitor</h2>
+<p>Every time you perform a build (e.g. <code>npm run build</code>) that changes your web directory (default: <code>www</code>), you&#39;ll need to copy those changes down to your native projects:</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> copy
+</code></pre>
+<h2 id="using-ionic-native">Using Ionic Native</h2>
+<p><a href="https://ionicframework.com/docs/native/">Ionic Native</a> is supported in Capacitor. Currently, Ionic Native contains only Cordova plugins, so whenever you find an Ionic Native wrapper you&#39;d like to use, install it and then install the corresponding Cordova plugin by running</p>
+<pre><code class="lang-bash">npm install your-cordova-plugin
+npx <span class="hljs-built_in">cap</span> update
+</code></pre>
+<p>See the <a href="../../basics/cordova/">Cordova</a> guide for more information.</p>

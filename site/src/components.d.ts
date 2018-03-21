@@ -354,6 +354,36 @@ declare global {
 
 
 import {
+  PluginPlatforms as PluginPlatforms
+} from './components/plugin-platforms/plugin-platforms';
+
+declare global {
+  interface HTMLPluginPlatformsElement extends PluginPlatforms, HTMLStencilElement {
+  }
+  var HTMLPluginPlatformsElement: {
+    prototype: HTMLPluginPlatformsElement;
+    new (): HTMLPluginPlatformsElement;
+  };
+  interface HTMLElementTagNameMap {
+    "plugin-platforms": HTMLPluginPlatformsElement;
+  }
+  interface ElementTagNameMap {
+    "plugin-platforms": HTMLPluginPlatformsElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "plugin-platforms": JSXElements.PluginPlatformsAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface PluginPlatformsAttributes extends HTMLAttributes {
+      platforms?: string;
+    }
+  }
+}
+
+
+import {
   pwasPage as PwasPage
 } from './components/pwas-page/pwas-page';
 

@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Network
 
 The Network API provides events for monitoring network status changes, along with querying the current state of the network.

@@ -1,0 +1,36 @@
+<h1 id="capacitor-web-plugin-guide">Capacitor Web Plugin Guide</h1>
+<p>Capacitor utilizes a web/native compatibility layer, making it easy to build plugins that have functionality when running natively, as well as when running in a PWA on the Web.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>To get started, first generate a plugin as shown in the <a href="&#39;./#getting-started">Getting Started</a> section of the Plugin guide.</p>
+<p>Next, open <code>your-plugin/src/web.ts</code> in your editor of choice.</p>
+<h2 id="example">Example</h2>
+<p>The basic structure of a Web plugin looks like this, follow the comments inline for
+more explanation:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { WebPlugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> MyPluginWeb <span class="hljs-keyword">extends</span> WebPlugin {
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-comment">// Call super with the name of our plugin (this should match the native name),</span>
+    <span class="hljs-comment">// along with the platforms this plugin will activate on. For example, it's possible</span>
+    <span class="hljs-comment">// to use a web plugin for Android and iOS by adding them to the platforms list (lowercased)</span>
+    <span class="hljs-keyword">super</span>({
+      name: <span class="hljs-string">'MyPlugin'</span>,
+      platforms: [<span class="hljs-string">'web'</span>]
+    });
+  }
+
+  <span class="hljs-keyword">async</span> echo(options: { value: <span class="hljs-built_in">string</span> }) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'ECHO'</span>, options);
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve();
+  }
+}
+
+<span class="hljs-comment">// Instantiate the plugin</span>
+<span class="hljs-keyword">const</span> MyPlugin = <span class="hljs-keyword">new</span> MyPluginWeb();
+
+<span class="hljs-comment">// Export the plugin</span>
+<span class="hljs-keyword">export</span> { MyPlugin };
+</code></pre>
+<p>Finally, make sure your <code>src/index.ts</code> has this line:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">export</span> * <span class="hljs-keyword">from</span> <span class="hljs-string">'./web'</span>;
+</code></pre>

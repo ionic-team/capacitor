@@ -9,7 +9,7 @@
     "dev": "gulp && sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
     "deploy": "bash scripts/deploy.sh",
     "serve": "stencil-dev-server",
-    "start": "rm -rf www && npm run dev"
+    "start": "rm -rf www && npm run build && npm run dev"
   },
   "dependencies": {
     "@stencil/router": "0.0.25",

@@ -1,0 +1,34 @@
+<h1 id="configuring-your-app">Configuring Your App</h1>
+<p>Capacitor embraces the idea of &quot;Code once, configure everywhere&quot;: configuration is
+managed per-platform instead of in an abstracted system like a <code>config.xml</code> in Cordova, for example.</p>
+<p>This is an important point, because it means that Capacitor requires you to be more involved in the native project configuration than with Cordova, for example. However,
+we think this is the right approach, because it makes it easy to follow existing Native iOS/Android guides, get help on Stack Overflow, and have full control over your project.</p>
+<p>Additionally, because configuring a Capacitor project is no different from configuring an iOS or Android project, existing native development teams can easily work alongside
+web developers, with each side using the tools and SDKs they are familiar with. Of course, we believe web developers can handle all the required Native configuration on their own, and 
+the Capacitor documentation exists to help web developers do just that.</p>
+<h2 id="common-configuration">Common Configuration</h2>
+<p>Capacitor has some high level configuration options that are set in <code>capacitor.config.json</code>. These generally don&#39;t modify native functionality, but control Capacitor&#39;s tooling.</p>
+<p>The current ones you might configure are:</p>
+<pre><code class="lang-javascript">{
+  <span class="hljs-comment">// Sets the directory of your built web assets. This is the directory that will be</span>
+  <span class="hljs-comment">// used to run your app in a native environment</span>
+  <span class="hljs-string">"webDir"</span>: <span class="hljs-string">"public"</span>,
+
+  <span class="hljs-comment">// Whether to use capacitor.js as a bundle that is copied to your web code,</span>
+  <span class="hljs-comment">// or require it to be bundled/imported through a typical</span>
+  <span class="hljs-comment">// typescript/babel/webpack/rollup workflow.</span>
+  <span class="hljs-comment">//</span>
+  <span class="hljs-comment">// The starter project sets this to true, but if you're using Ionic or another framework,</span>
+  <span class="hljs-comment">// you'll probably want this to be false (default is false)</span>
+  <span class="hljs-string">"bundledWebRuntime"</span>: <span class="hljs-literal">false</span>
+
+  <span class="hljs-comment">// On Windows, we aren't able to automatically open Android Studio</span>
+  <span class="hljs-comment">// without knowing the full path. The default is set to the default</span>
+  <span class="hljs-comment">// Android Studio install path, but you may change it manually.</span>
+  <span class="hljs-string">"windowsAndroidStudioPath"</span>: <span class="hljs-string">'C:\\Program Files\\Android Studio\\bin\\studio64.exe'</span>,
+}
+</code></pre>
+<h2 id="native-configuration">Native Configuration</h2>
+<p>iOS and Android each have configuration guides walking through making common changes to their behavior:</p>
+<p><a href="/docs/ios/configuration">Configuring iOS</a></p>
+<p><a href="/docs/android/configuration">Configuring Android</a></p>

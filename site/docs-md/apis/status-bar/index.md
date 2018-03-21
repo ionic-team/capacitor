@@ -1,3 +1,5 @@
+<plugin-platforms platforms="ios,android"></plugin-platforms>
+
 # Status Bar
 
 The StatusBar API Provides methods for configuring the sytle of the Status Bar, along with showing or hiding it.

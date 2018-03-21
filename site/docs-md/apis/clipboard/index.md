@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Clipboard
 
 The Clipboard API enables copy and pasting to/from the clipboard. On iOS this API also allows 

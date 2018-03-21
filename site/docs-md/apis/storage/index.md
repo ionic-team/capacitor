@@ -1,3 +1,5 @@
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
+
 # Storage
 
 The Storage API provides a key-value store for simple data.
