@@ -246,8 +246,10 @@ public class Camera extends Plugin {
 
     Uri u = data.getData();
 
+    InputStream imageStream = null;
+
     try {
-      InputStream imageStream = getActivity().getContentResolver().openInputStream(u);
+      imageStream = getActivity().getContentResolver().openInputStream(u);
       Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
 
       if (bitmap == null) {
@@ -258,6 +260,14 @@ public class Camera extends Plugin {
       returnResult(call, bitmap, u);
     } catch (FileNotFoundException ex) {
       call.error("No such image found", ex);
+    } finally {
+      if (imageStream != null) {
+        try {
+          imageStream.close();
+        } catch (IOException e) {
+          call.reject(UNABLE_TO_PROCESS_IMAGE, e);
+        }
+      }
     }
   }
 
@@ -315,8 +325,10 @@ public class Camera extends Plugin {
   }
 
   private void returnFileURI(PluginCall call, Bitmap bitmap, Uri u, ByteArrayOutputStream bitmapOutputStream) {
+    ByteArrayInputStream bis = null;
+
     try {
-      ByteArrayInputStream bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
+      bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
       Uri newUri = saveTemporaryImage(bitmap, u, bis);
       JSObject ret = new JSObject();
       ret.put("path", newUri.toString());
@@ -324,6 +336,14 @@ public class Camera extends Plugin {
       call.resolve(ret);
     } catch (IOException ex) {
       call.reject(UNABLE_TO_PROCESS_IMAGE, ex);
+    } finally {
+      if (bis != null) {
+        try {
+          bis.close();
+        } catch (IOException e) {
+          call.reject(UNABLE_TO_PROCESS_IMAGE, e);
+        }
+      }
     }
   }
 
