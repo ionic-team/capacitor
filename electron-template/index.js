@@ -101,18 +101,18 @@ function hideCapacitorSplash() {
   }
 }
 
-ipcMain.on('showCapacitorSplashScreen', (options) => {
+ipcMain.on('showCapacitorSplashScreen', (event, options) => {
   showCapacitorSplash();
   if(options) {
     if(options.autoHide) {
       let showTime = options.showDuration || 3000;
       setTimeout(() => {
         hideCapacitorSplash();
-      }, showTime);
+    }, showTime);
     }
   }
 });
 
-ipcMain.on('hideCapacitorSplashScreen', (options) => {
+ipcMain.on('hideCapacitorSplashScreen', (event, options) => {
   hideCapacitorSplash();
 });
