@@ -1011,7 +1011,7 @@ export interface NetworkPlugin extends Plugin {
 
 export interface NetworkStatus {
   connected: boolean;
-  connectionType: 'wifi' | 'cellular' | 'none';
+  connectionType: 'wifi' | 'cellular' | 'none' | 'unknown';
 }
 
 export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
