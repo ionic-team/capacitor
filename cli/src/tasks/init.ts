@@ -17,7 +17,7 @@ import {
   runCommand,
   runTask
 } from '../common';
-import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
+import { copyAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { download } from '../util/http';
 import { createTarExtraction } from '../util/archive';
 import { emoji as _e } from '../util/emoji';
