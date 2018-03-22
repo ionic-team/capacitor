@@ -2,7 +2,7 @@ import { Config } from './config';
 import { exec } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, join, resolve } from 'path';
-import { existsAsync, readFileAsync, writeFileAsync } from './util/fs';
+import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
 import { readFile } from 'fs';
 
 import * as inquirer from 'inquirer';
@@ -273,4 +273,15 @@ export async function getAppId(config: Config, id: string) {
     return answers.id;
   }
   return id;
+}
+
+export async function copyTemplate(src: string, dst: string) {
+  await copyAsync(src, dst);
+
+  // npm renames .gitignore to something else, so our templates
+  // have .gitignore as gitignore, we need to rename it here.
+  const gitignorePath = join(dst, 'gitignore');
+  if ( await existsAsync(gitignorePath)) {
+    await renameAsync(gitignorePath, join(dst, '.gitignore'));
+  }
 }

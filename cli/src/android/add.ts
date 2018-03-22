@@ -1,6 +1,5 @@
-import { copy } from 'fs-extra';
 import { Config } from '../config';
-import { log, runCommand, runTask } from '../common';
+import { copyTemplate, log, runCommand, runTask } from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
 import { homedir } from 'os';
 import { join } from 'path';
@@ -12,7 +11,7 @@ export async function addAndroid(config: Config) {
     return runCommand(`cd "${config.app.rootDir}" && npm install --save @capacitor/android`);
   });
   await runTask(`Adding native android project in: ${config.android.platformDir}`, async () => {
-    return copy(config.android.assets.templateDir, config.android.platformDir);
+    return copyTemplate(config.android.assets.templateDir, config.android.platformDir);
   });
 
   await runTask(`Syncing Gradle`, async () => {

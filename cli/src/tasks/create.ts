@@ -24,7 +24,7 @@ import {
   runTask
 } from '../common';
 
-import { cpAsync, existsAsync, mkdirAsync } from '../util/fs';
+import { copyAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { emoji as _e } from '../util/emoji';
 import { basename, join } from 'path';
 
@@ -119,7 +119,7 @@ export async function create(config: Config, dir: string, appName: string, appId
   const templateDir = config.app.assets.templateDir;
 
   await runTask(chalk`Creating app {bold ${appName}} in {bold ${dir}} with id {bold ${appId}}`, () => {
-    return cpAsync(templateDir, dir);
+    return copyAsync(templateDir, dir);
   });
 }
 
