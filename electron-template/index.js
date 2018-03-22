@@ -60,6 +60,9 @@ async function createWindow () {
 
   mainWindow.webContents.on('dom-ready', () => {
     mainWindow.show();
+    if(useSplashWindow) {
+      splashWindow.hide();
+    }
   });
 }
 
