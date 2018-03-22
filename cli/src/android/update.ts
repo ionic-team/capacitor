@@ -72,7 +72,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
         frameworksArray.push(framework.$.src);
       } else if (framework.$.custom && framework.$.custom === "true" && framework.$.type && framework.$.type === "gradleReference"){
         const fileName = framework.$.src.split("/").pop();
-        applyArray.push(join(p.id, fileName));
+        applyArray.push(`apply from: "gradle-files/${p.id}/${fileName}"`);
       }
     });
     preferencessArray = preferencessArray.concat(getPlatformElement(p, platform, 'preference'));
@@ -80,9 +80,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
   let frameworkString = frameworksArray.map(f => {
     return `    implementation "${f}"`;
   }).join('\n');
-  let applyString = applyArray.map(ap => {
-    return `apply from: "${pluginsFolder}/gradle-files/${ap}"`
-  }).join('\n');
+  let applyString = applyArray.join('\n');
   preferencessArray.map((preference: any) => {
     frameworkString = frameworkString.replace(new RegExp(("$"+preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
   });
