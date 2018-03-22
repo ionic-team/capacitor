@@ -1,8 +1,12 @@
-const {app, BrowserWindow, Menu} = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const isDevMode = require('electron-is-dev');
 const { injectCapacitor } = require('@capacitor/electron');
 
 let mainWindow = null;
+let splashWindow = null;
+
+// Change this to false, to disable splashscreen on startup.
+let useSplashWindow = true;
 
 // Create simple menu for easy devtools access, and for demo
 const menuTemplateDev = [
@@ -34,15 +38,29 @@ async function createWindow () {
     mainWindow.webContents.openDevTools();
   }
 
+  if(useSplashWindow) {
+    splashWindow = new BrowserWindow({
+      width: 480,
+      height: 800,
+      frame: false,
+      show: false,
+    });
+    let splashHtml = `<html style="width: 100%; height: 100%; margin: 0; overflow: hidden;"><body style="width: 100%; height: 100%; margin: 0; overflow: hidden;"><img src="./splash.png" style="width: 100%;height: 100%" /></body></html>`;
+    mainWindow.on('closed', () => {
+      splashWindow.close();
+    });
+    splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`, {baseURLForDataURL: `file://${__dirname}/splash_assets/`});
+    splashWindow.webContents.on('dom-ready', async () => {
+      splashWindow.show();
+      mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/app/index.html`), {baseURLForDataURL: `file://${__dirname}/app/`});
+    });
+  } else {
+    mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/app/index.html`), {baseURLForDataURL: `file://${__dirname}/app/`});
+  }
+
   mainWindow.webContents.on('dom-ready', () => {
     mainWindow.show();
   });
-
-  // Render our app onto the page.
-  mainWindow.loadURL(
-    await injectCapacitor(`file://${__dirname}/app/index.html`),
-    {baseURLForDataURL: `file://${__dirname}/app/`}
-  );
 }
 
 // This method will be called when Electron has finished
@@ -54,13 +72,44 @@ app.on('ready', createWindow);
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin')
+  if (process.platform !== 'darwin') {
     app.quit();
+  }
 });
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null)
+  if (mainWindow === null) {
     createWindow();
+  }
+});
+
+function showCapacitorSplash() {
+  if(useSplashWindow) {
+    splashWindow.show();
+    mainWindow.hide();
+  }
+}
+function hideCapacitorSplash() {
+  if(useSplashWindow) {
+    mainWindow.show();
+    splashWindow.hide();
+  }
+}
+
+ipcMain.on('showCapacitorSplashScreen', (options) => {
+  showCapacitorSplash();
+  if(options) {
+    if(options.autoHide) {
+      let showTime = options.showDuration || 3000;
+      setTimeout(() => {
+        hideCapacitorSplash();
+      }, showTime);
+    }
+  }
+});
+
+ipcMain.on('hideCapacitorSplashScreen', (options) => {
+  hideCapacitorSplash();
 });
