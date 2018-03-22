@@ -33,7 +33,7 @@ The current ones you might configure are:
   // On Windows, we aren't able to automatically open Android Studio
   // without knowing the full path. The default is set to the default
   // Android Studio install path, but you may change it manually.
-  "windowsAndroidStudioPath": 'C:\\Program Files\\Android Studio\\bin\\studio64.exe',
+  "windowsAndroidStudioPath": 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
 }
 ```
 

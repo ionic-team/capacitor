@@ -76,7 +76,7 @@ export class Config implements CliConfig {
     webDir: 'www',
     webDirAbs: '',
     package: Package,
-    windowsAndroidStudioPath: 'C:\\Program Files\\Android Studio\\bin\\studio64.exe',
+    windowsAndroidStudioPath: 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
     linuxAndroidStudioPath: '',
     extConfigName: 'capacitor.config.json',
     extConfigFilePath: '',
