@@ -1,8 +1,8 @@
 import { runCommand } from '../common';
 import { Config } from '../config';
 import { Plugin, PluginType } from '../plugin';
-import { mkdirs, remove } from 'fs-extra';
-import { cpAsync, existsAsync, readFileAsync, writeFileAsync } from '../util/fs';
+import { mkdirs } from 'fs-extra';
+import { copyAsync, existsAsync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
 import { dirname, join, resolve } from 'path';
 
 export async function gradleClean(config: Config) {
@@ -63,18 +63,18 @@ export async function editProjectSettingsAndroid(config: Config) {
     await mkdirs(newJavaPath);
   }
 
-  await cpAsync(
+  await copyAsync(
     resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/getcapacitor/myapp/MainActivity.java'),
     resolve(newJavaPath, 'MainActivity.java')
   );
 
   if (appId.split('.')[1] !== 'getcapacitor') {
-    await remove(resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/getcapacitor'));
+    await removeAsync(resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/getcapacitor'));
   }
 
   // Remove our template 'com' folder if their ID doesn't have it
   if (appId.split('.')[0] !== 'com') {
-    await remove(resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/'));
+    await removeAsync(resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/java/com/'));
   }
 
   // Update the package in the MainActivity java file

@@ -1,12 +1,11 @@
-import { copy } from 'fs-extra';
 import { exec } from 'child_process';
 import { Config } from '../config';
-import { log, runCommand, runTask } from '../common';
+import { copyTemplate, log, runCommand, runTask } from '../common';
 
 export async function addElectron(config: Config) {
 
   await runTask(`Adding Electron project in: ${config.electron.platformDir}`, async () => {
-    return copy(config.electron.assets.templateDir, config.electron.platformDir);
+    return copyTemplate(config.electron.assets.templateDir, config.electron.platformDir);
   });
 
   await runTask(`Installing NPM Dependencies`, async () => {
@@ -18,7 +17,7 @@ function installNpmDeps(pathToElectronPackageJson: string) {
   return new Promise((resolve, reject) => {
     console.log('Installing NPM Dependencies...');
     exec('npm install', {cwd: pathToElectronPackageJson}, (error, stdout, stderr) => {
-      if(error) {
+      if (error) {
         reject(error);
       }
       console.log(`${stdout}`);
