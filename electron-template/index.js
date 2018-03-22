@@ -39,13 +39,31 @@ async function createWindow () {
   }
 
   if(useSplashWindow) {
+    let splashOptions = {
+      imageFileName: "splash.png",
+      windowWidth: 400,
+      windowHeight: 400,
+      textColor: '#43A8FF',
+      loadingText: 'Loading',
+      textPercentageFromTop: 75
+    };
+    try {
+      let FS = require('fs');
+      let capConfigJson = JSON.parse(FS.readFileSync('./capacitor.config.json', 'utf-8'));
+      splashOptions = Object.assign(
+        splashOptions,
+        capConfigJson.plugins.SplashScreen
+      );
+    } catch(e) {
+      console.error(e);
+    }
     splashWindow = new BrowserWindow({
       width: 480,
       height: 800,
       frame: false,
       show: false,
     });
-    let splashHtml = `<html style="width: 100%; height: 100%; margin: 0; overflow: hidden;"><body style="width: 100%; height: 100%; margin: 0; overflow: hidden;"><img src="./splash.png" style="width: 100%;height: 100%" /></body></html>`;
+    let splashHtml = `<html style="width: 100%; height: 100%; margin: 0; overflow: hidden;"><body style="background-image: url('./${splashOptions.imageFileName}'); background-position: center center; width: 100%; height: 100%; margin: 0; overflow: hidden;"><div style="color: ${splashOptions.textColor}; position: absolute; top: ${splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;">${splashOptions.loadingText}</div></body></html>`;
     mainWindow.on('closed', () => {
       splashWindow.close();
     });
