@@ -24,6 +24,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
   }
   
   private var port: Int?
+  private var hostname: String?
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
@@ -77,13 +78,14 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
       exit(1)
     }
 
-    port = getPort()
     
-    print("⚡️  Starting web server on port \(port!)...")
+    port = getPort()
+    hostname = bridge?.getConfigValue("appUrl") as? String ?? "http://localhost:\(port!)/"
+    
     startWebServer(port: port!)
 
-    print("⚡️  Loading index.html...")
-    let request = URLRequest(url: URL(string: "http://localhost:\(port!)/")!)
+    print("⚡️  Loading app at \(hostname!)...")
+    let request = URLRequest(url: URL(string: hostname!)!)
     _ = webView?.load(request)
   }
   

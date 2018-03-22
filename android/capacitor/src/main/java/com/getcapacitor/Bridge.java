@@ -140,11 +140,15 @@ public class Bridge {
     // Register our core plugins
     this.registerAllPlugins();
 
-    log("Loading app from " + DEFAULT_WEB_ASSET_DIR + "/index.html");
-
     // Start the local web server
     final WebViewLocalServer localServer = new WebViewLocalServer(context, this, getJSInjector());
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
+    // Load the index.html file from our www folder
+    String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
+
+    final String appUrl = getConfigString("appUrl", url);
+
+    log("Loading app at " + appUrl);
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
       @Override
@@ -155,7 +159,7 @@ public class Bridge {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         String url = request.getUrl().toString();
-        if (url.contains(localServer.getAuthority())) {
+        if (url.contains(appUrl)) {
           return super.shouldOverrideUrlLoading(view, request);
         } else {
           Intent openIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
@@ -165,11 +169,9 @@ public class Bridge {
       }
     });
 
-    // Load the index.html file from our www folder
-    String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
 
     // Get to work
-    webView.loadUrl(url);
+    webView.loadUrl(appUrl);
   }
 
   // Load our capacitor.config.json
@@ -205,6 +207,17 @@ public class Bridge {
 
   public JSONObject getConfig() {
     return this.config;
+  }
+
+  public String getConfigString(String key, String defaultValue) {
+    try {
+      String value = this.config.getString(key);
+      if (value == null) {
+        return defaultValue;
+      }
+      return value;
+    } catch (JSONException ex) {}
+    return null;
   }
 
   public boolean isDevMode() {

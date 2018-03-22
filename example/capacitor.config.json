@@ -3,6 +3,7 @@
   "appName": "App",
   "bundledWebRuntime": true,
   "webDir": "www",
+  "appUrl": "http://127.0.0.1:3333/",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 12345

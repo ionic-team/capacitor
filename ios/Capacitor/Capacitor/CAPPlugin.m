@@ -36,7 +36,7 @@
 }
 
 -(id)getConfigValue:(NSString *)key {
-  return [self.bridge getConfigValue:self.pluginName :key];
+  return [self.bridge getPluginConfigValue:self.pluginName :key];
 }
 
 -(void)load {}

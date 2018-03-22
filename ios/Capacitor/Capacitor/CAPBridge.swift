@@ -71,7 +71,7 @@ enum BridgeError: Error {
   /**
    * Get the value of a configuration option for a specific plugin.
    */
-  @objc public func getConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
+  @objc public func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
     guard let plugins = self.config["plugins"] as? [String:Any] else {
       return nil
     }
@@ -81,6 +81,10 @@ enum BridgeError: Error {
     }
     
     return pluginOptions[configKey]
+  }
+  
+  @objc public func getConfigValue(_ configKey: String) -> Any? {
+    return self.config[configKey]
   }
   
   public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
