@@ -12,11 +12,11 @@ copying images and URLs.
 ```typescript
 const { Clipboard } = Plugins;
 
-Clipboard.set({
+Clipboard.write({
   string: "Hello, Moto"
 });
 
-let str = await Clipboard.get({
+let str = await Clipboard.read({
   type: "string"
 });
 console.log('Got string from clipboard:', str);
