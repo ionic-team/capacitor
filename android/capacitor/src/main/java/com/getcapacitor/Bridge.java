@@ -190,8 +190,9 @@ public class Bridge {
     // Start the local web server
     final WebViewLocalServer localServer = new WebViewLocalServer(context, this, getJSInjector(), authority);
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
-    // Load the index.html file from our www folder
-    String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
+
+    // Load the index route from our www folder
+    String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
     final String appUrl = appUrlConfig == null ? url : appUrlConfig;
 

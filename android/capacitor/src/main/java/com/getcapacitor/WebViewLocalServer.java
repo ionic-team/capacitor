@@ -218,6 +218,19 @@ public class WebViewLocalServer {
               handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
     }
 
+    if (path.equals("/")) {
+      InputStream stream;
+      try {
+        stream = protocolHandler.openAsset("public/index.html", "");
+      } catch (IOException e) {
+        Log.e(TAG, "Unable to open index.html", e);
+        return null;
+      }
+
+      return new WebResourceResponse("text/html", handler.getEncoding(),
+        handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+    }
+
     int periodIndex = path.lastIndexOf(".");
     if (periodIndex >= 0) {
       String ext = path.substring(path.lastIndexOf("."), path.length());
@@ -356,11 +369,13 @@ public class WebViewLocalServer {
 
     if (enableHttp) {
       httpPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpPrefix, "/"), handler);
       register(Uri.withAppendedPath(httpPrefix, "**"), handler);
     }
     if (enableHttps) {
       uriBuilder.scheme(httpsScheme);
       httpsPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpsPrefix, "/"), handler);
       register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
     }
     return new AssetHostingDetails(httpPrefix, httpsPrefix);
