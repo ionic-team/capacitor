@@ -1,85 +1,63 @@
-/*
 import Foundation
 
-@IBDesignable class UIPaddingLabel: UILabel {
-  
-  private var _padding:CGFloat = 0.0;
-  
-  public var padding:CGFloat {
-    
-    get { return _padding; }
-    set {
-      _padding = newValue;
-      
-      paddingTop = _padding;
-      paddingLeft = _padding;
-      paddingBottom = _padding;
-      paddingRight = _padding;
-    }
-  }
-  
-  @IBInspectable var paddingTop:CGFloat = 0.0;
-  @IBInspectable var paddingLeft:CGFloat = 0.0;
-  @IBInspectable var paddingBottom:CGFloat = 0.0;
-  @IBInspectable var paddingRight:CGFloat = 0.0;
-  
-  override func drawText(in rect: CGRect) {
-    let insets = UIEdgeInsets(top:paddingTop, left:paddingLeft, bottom:paddingBottom, right:paddingRight);
-    super.drawText(in: UIEdgeInsetsInsetRect(rect, insets));
-  }
-  
-  override var intrinsicContentSize: CGSize {
-    
-    get {
-      var intrinsicSuperViewContentSize = super.intrinsicContentSize;
-      intrinsicSuperViewContentSize.height += paddingTop + paddingBottom;
-      intrinsicSuperViewContentSize.width += paddingLeft + paddingRight;
-      return intrinsicSuperViewContentSize;
-    }
-  }
-}
 
-@objc(Toast)
-public class Toast : Plugin {
+
+@objc(CAPToastPlugin)
+public class CAPToastPlugin : CAPPlugin {
+  var toast: UILabel?
   @objc func show(_ call: CAPPluginCall) {
     guard let text = call.get("text", String.self) else {
       call.error("text must be provided and must be a string.")
       return
     }
-    let durationStyle = call.get("durationStyle", String.self, "short")!
-    let duration = durationStyle == "short" ? 1000 : 5000
+    let durationStyle = call.get("durationStyle", String.self, "long")!
+    let duration = durationStyle == "short" ? 1500 : 3000
     
-    let toastLabel = UIPaddingLabel();
-    toastLabel.padding = 10;
-    toastLabel.translatesAutoresizingMaskIntoConstraints = false;
-    toastLabel.backgroundColor = UIColor.darkGray;
-    toastLabel.textColor = UIColor.white;
-    toastLabel.textAlignment = .center;
-    toastLabel.text = text;
-    toastLabel.numberOfLines = 0;
-    toastLabel.alpha = 0.9;
-    toastLabel.layer.cornerRadius = 20;
-    toastLabel.clipsToBounds = true;
-    
-    let vc = self.bridge.viewController
-    
-    vc.view.addSubview(toastLabel);
-    
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.left, relatedBy:.greaterThanOrEqual, toItem:self, attribute:.left, multiplier:1, constant:20));
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.right, relatedBy:.lessThanOrEqual, toItem:self, attribute:.right, multiplier:1, constant:-20));
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.bottom, relatedBy:.equal, toItem:self, attribute:.bottom, multiplier:1, constant:-20));
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.centerX, relatedBy:.equal, toItem:self, attribute:.centerX, multiplier:1, constant:0));
-    
-    UIView.animate(withDuration:0.5, delay:Double(duration) / 1000.0, options:[], animations: {
+    DispatchQueue.main.async {
+      let vc = self.bridge!.viewController
       
-      toastLabel.alpha = 0.0;
+      let maxSizeTitle : CGSize = CGSize(width: vc.view.bounds.size.width-16, height: vc.view.bounds.size.height)
       
-    }) { (Bool) in
+      let lb = UILabel()
+      lb.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+      lb.textColor = UIColor.white
+      lb.textAlignment = .center;
+      //lb.font = UIFont(name: "Montserrat-Light", size: 12.0)
+      lb.text = text
+      lb.alpha = 0
+      lb.layer.cornerRadius = 18;
+      lb.clipsToBounds  =  true
       
-      toastLabel.removeFromSuperview();
+      var expectedSizeTitle : CGSize = lb.sizeThatFits(maxSizeTitle)
+      // UILabel can return a size larger than the max size when the number of lines is 1
+      let minWidth = min(maxSizeTitle.width, expectedSizeTitle.width)
+      let minHeight = min(maxSizeTitle.height, expectedSizeTitle.height)
+      expectedSizeTitle = CGSize(width: minWidth, height: minHeight)
+      lb.frame = CGRect(
+        x: ((vc.view.bounds.size.width)/2) - ((expectedSizeTitle.width+32)/2),
+        y: (vc.view.bounds.size.height-(expectedSizeTitle.height+32)) - ((expectedSizeTitle.height+32)/2),
+        width: expectedSizeTitle.width+32,
+        height: expectedSizeTitle.height+32)
+      
+      lb.padding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+      self.toast = lb
+      
+      vc.view.addSubview(lb)
+      
+      UIView.animateKeyframes(withDuration: 0.3, delay: 0, animations: {
+        self.toast!.alpha = 1.0
+      }, completion: {(isCompleted) in
+        
+        UIView.animate(withDuration: 0.3, delay: (Double(duration) / 1000), options: .curveEaseOut, animations: {
+          self.toast!.alpha = 0.0
+        }, completion: {(isCompleted) in
+          self.toast!.removeFromSuperview()
+        })
+
+      })
     }
   }
 }
- */
+
 
 
