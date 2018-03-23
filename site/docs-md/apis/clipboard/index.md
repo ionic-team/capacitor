@@ -19,7 +19,7 @@ Clipboard.write({
 let str = await Clipboard.read({
   type: "string"
 });
-console.log('Got string from clipboard:', str);
+console.log('Got string from clipboard:', str.value);
 ```
 
 ## API

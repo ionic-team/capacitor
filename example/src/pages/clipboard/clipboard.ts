@@ -51,7 +51,7 @@ export class ClipboardPage {
     let str = await Plugins.Clipboard.read({
       type: "string"
     });
-    console.log('Got string from clipboard:', str);
+    console.log('Got string from clipboard:', str.value);
   }
 
   clipboardSetURL() {
@@ -61,10 +61,10 @@ export class ClipboardPage {
   }
 
   async clipboardGetURL() {
-    let url = Plugins.Clipboard.read({
+    let url = await Plugins.Clipboard.read({
       type: "url"
     });
-    console.log("Get URL from clipboard", url);
+    console.log("Get URL from clipboard", url.value);
   }
 
   clipboardSetImage () {
@@ -78,6 +78,6 @@ export class ClipboardPage {
     const image = await Plugins.Clipboard.read({
       type: "image"
     });
-    console.log('Got image', image);
+    console.log('Got image', image.value);
   }
 }

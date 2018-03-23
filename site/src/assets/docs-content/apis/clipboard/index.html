@@ -13,7 +13,7 @@ Clipboard.write({
 <span class="hljs-keyword">let</span> str = <span class="hljs-keyword">await</span> Clipboard.read({
   <span class="hljs-keyword">type</span>: <span class="hljs-string">"string"</span>
 });
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Got string from clipboard:'</span>, str);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Got string from clipboard:'</span>, str.value);
 </code></pre>
 <h2 id="api">API</h2>
 <p><plugin-api name="clipboard"></plugin-api></p>
