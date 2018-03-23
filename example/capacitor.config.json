@@ -3,7 +3,10 @@
   "appName": "App",
   "bundledWebRuntime": true,
   "webDir": "www",
-  "appUrl": "http://10.0.1.8:3333/index.html",
+  "server": {
+    "url": "http://10.0.1.102:3333/",
+    "html5mode": true
+  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 12345
