@@ -279,8 +279,6 @@ public class WebViewLocalServer {
   }
 
   private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
-    Log.d("SERVER", "Handling proxy request for " + request.getUrl().toString());
-
     try {
       URL url = new URL(request.getUrl().toString());
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();

@@ -83,6 +83,7 @@ public class Bridge {
 
   // A reference to the main activity for the app
   private final Activity context;
+  private WebViewLocalServer localServer;
   // A reference to the main WebView for the app
   private final WebView webView;
   private final CordovaInterfaceImpl cordovaInterface;
@@ -191,7 +192,7 @@ public class Bridge {
     }
 
     // Start the local web server
-    final WebViewLocalServer localServer = new WebViewLocalServer(context, this, getJSInjector(), authority);
+    localServer = new WebViewLocalServer(context, this, getJSInjector(), authority);
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
     // Load the index route from our www folder
@@ -227,7 +228,9 @@ public class Bridge {
   }
 
   public void handleAppUrlLoadError(Exception ex) {
-    Toast.show(getContext(), "Unable to load from app url. Make sure the server is running or edit/remove appUrl from the Capacitor config");
+    Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + localServer.getAuthority() + "?");
+    Log.e(TAG, "Unable to load app. Ensure the server is running at " + localServer.getAuthority() + ", or modify the " +
+    "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
   }
 
   public JSONObject getConfig() {
