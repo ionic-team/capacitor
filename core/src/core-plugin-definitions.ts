@@ -22,6 +22,7 @@ declare global {
     SplashScreen?: SplashScreenPlugin;
     StatusBar?: StatusBarPlugin;
     Storage?: StoragePlugin;
+    Toast?: ToastPlugin;
   }
 }
 
@@ -1321,4 +1322,8 @@ export interface StoragePlugin extends Plugin {
    * Return the list of known keys
    */
   keys(): Promise<{ keys: string[] }>;
+}
+
+export interface ToastPlugin extends Plugin {
+  show(options: any): Promise<void>;
 }
