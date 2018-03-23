@@ -14,7 +14,7 @@ Accessibility.addListener(<span class="hljs-string">'accessibilityScreenReaderSt
 
 <span class="hljs-keyword">async</span> isVoiceOverEnabled() {
   <span class="hljs-keyword">var</span> vo = <span class="hljs-keyword">await</span> Accessibility.isScreenReaderEnabled();
-  alert(<span class="hljs-string">'Voice over enabled? '</span> + vo);
+  alert(<span class="hljs-string">'Voice over enabled? '</span> + vo.value);
 }
 
 <span class="hljs-keyword">async</span> speak() {

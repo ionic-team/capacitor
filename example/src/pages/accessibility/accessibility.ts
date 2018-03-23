@@ -29,7 +29,7 @@ export class AccessibilityPage {
 
   async isVoiceOverEnabled() {
     var vo = await Plugins.Accessibility.isScreenReaderEnabled();
-    alert('Voice over? ' + vo);
+    alert('Voice over? ' + vo.value);
   }
 
   async speak() {
