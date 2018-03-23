@@ -6,11 +6,11 @@ copying images and URLs.</p>
 <h2 id="example">Example</h2>
 <pre><code class="lang-typescript"><span class="hljs-keyword">const</span> { Clipboard } = Plugins;
 
-Clipboard.set({
+Clipboard.write({
   <span class="hljs-built_in">string</span>: <span class="hljs-string">"Hello, Moto"</span>
 });
 
-<span class="hljs-keyword">let</span> str = <span class="hljs-keyword">await</span> Clipboard.get({
+<span class="hljs-keyword">let</span> str = <span class="hljs-keyword">await</span> Clipboard.read({
   <span class="hljs-keyword">type</span>: <span class="hljs-string">"string"</span>
 });
 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Got string from clipboard:'</span>, str);
