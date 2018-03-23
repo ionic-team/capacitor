@@ -201,7 +201,7 @@ export class SiteMenu {
         { title: 'Splash Screen', url: '/docs/apis/splash-screen' },
         { title: 'Status Bar', url: '/docs/apis/status-bar' },
         { title: 'Storage', url: '/docs/apis/storage' },
-        // { title: 'Toast', url: '/docs/apis/toast' },
+        { title: 'Toast', url: '/docs/apis/toast' },
       ]
     }
   ];
