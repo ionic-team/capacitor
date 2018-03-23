@@ -1,3 +1,5 @@
+//# sourceURL=capacitor-runtime.js
+
 (function(win) {
   win.Capacitor = win.Capacitor || {
     Plugins: {}

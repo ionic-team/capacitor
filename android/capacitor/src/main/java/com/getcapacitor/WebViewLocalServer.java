@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.SequenceInputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -253,23 +254,7 @@ public class WebViewLocalServer {
         bridge.reset();
       }
 
-      String mimeType = null;
-      try {
-        mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
-        if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
-          Log.d(Bridge.TAG, "We shouldn't be here");
-        }
-        if (mimeType == null) {
-          if (path.endsWith(".js")) {
-            // Make sure JS files get the proper mimetype to support ES modules
-            mimeType = "application/javascript";
-          } else {
-            mimeType = URLConnection.guessContentTypeFromStream(stream);
-          }
-        }
-      } catch (Exception ex) {
-        Log.e(TAG, "Unable to get mime type" + request.getUrl().getPath(), ex);
-      }
+      String mimeType = getMimeType(path, stream);
 
       return new WebResourceResponse(mimeType, handler.getEncoding(),
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
@@ -278,13 +263,48 @@ public class WebViewLocalServer {
     return null;
   }
 
+  /**
+   * Instead of reading files from the filesystem/assets, proxy through to the URL
+   * and let an external server handle it.
+   * @param request
+   * @param handler
+   * @return
+   */
   private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
     try {
+      String path = request.getUrl().getPath();
       URL url = new URL(request.getUrl().toString());
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
       conn.setReadTimeout(30 * 1000);
       conn.setConnectTimeout(30 * 1000);
+
+      InputStream stream = conn.getInputStream();
+
+      if (path.equals("/")) {
+        stream = jsInjector.getInjectedStream(stream);
+
+        bridge.reset();
+
+        return new WebResourceResponse("text/html", handler.getEncoding(),
+            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+      }
+
+      int periodIndex = path.lastIndexOf(".");
+      if (periodIndex >= 0) {
+        String ext = path.substring(path.lastIndexOf("."), path.length());
+
+        // TODO: Conjure up a bit more subtlety than this
+        if (ext.equals(".html")) {
+          stream = jsInjector.getInjectedStream(stream);
+          bridge.reset();
+        }
+
+        String mimeType = getMimeType(path, stream);
+
+        return new WebResourceResponse(mimeType, handler.getEncoding(),
+            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+      }
 
       return new WebResourceResponse("", handler.getEncoding(),
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
@@ -295,6 +315,27 @@ public class WebViewLocalServer {
       bridge.handleAppUrlLoadError(ex);
     }
     return null;
+  }
+
+  private String getMimeType(String path, InputStream stream) {
+    String mimeType = null;
+    try {
+      mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
+      if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
+        Log.d(Bridge.TAG, "We shouldn't be here");
+      }
+      if (mimeType == null) {
+        if (path.endsWith(".js")) {
+          // Make sure JS files get the proper mimetype to support ES modules
+          mimeType = "application/javascript";
+        } else {
+          mimeType = URLConnection.guessContentTypeFromStream(stream);
+        }
+      }
+    } catch (Exception ex) {
+      Log.e(TAG, "Unable to get mime type" + path, ex);
+    }
+    return mimeType;
   }
 
   /**

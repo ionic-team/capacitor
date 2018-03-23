@@ -46,6 +46,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -228,9 +230,11 @@ public class Bridge {
   }
 
   public void handleAppUrlLoadError(Exception ex) {
-    Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + localServer.getAuthority() + "?");
-    Log.e(TAG, "Unable to load app. Ensure the server is running at " + localServer.getAuthority() + ", or modify the " +
-    "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
+    if (ex instanceof SocketTimeoutException) {
+      Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + localServer.getAuthority() + "?");
+      Log.e(TAG, "Unable to load app. Ensure the server is running at " + localServer.getAuthority() + ", or modify the " +
+          "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
+    }
   }
 
   public JSONObject getConfig() {
