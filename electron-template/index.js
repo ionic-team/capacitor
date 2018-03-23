@@ -72,7 +72,7 @@ async function createWindow () {
 
     // Define default splash screen options
     let splashOptions = {
-      imageFileName: "splash.png",
+      imageFileName: "splash.gif", // Change this to splash.png for a static image
       windowWidth: 400,
       windowHeight: 400,
       textColor: '#43A8FF',
