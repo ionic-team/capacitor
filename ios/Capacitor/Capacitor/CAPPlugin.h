@@ -3,6 +3,7 @@
 
 @class CAPBridge;
 @class CAPPluginCall;
+@class CAPConfig;
 
 @interface CAPPlugin : NSObject
 

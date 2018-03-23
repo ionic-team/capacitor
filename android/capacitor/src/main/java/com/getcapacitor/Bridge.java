@@ -36,6 +36,7 @@ import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.Storage;
 import com.getcapacitor.plugin.background.BackgroundTask;
+import com.getcapacitor.ui.Toast;
 
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.PluginManager;
@@ -45,6 +46,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +85,7 @@ public class Bridge {
 
   // A reference to the main activity for the app
   private final Activity context;
+  private WebViewLocalServer localServer;
   // A reference to the main WebView for the app
   private final WebView webView;
   private final CordovaInterfaceImpl cordovaInterface;
@@ -136,7 +140,7 @@ public class Bridge {
     Uri intentData = intent.getData();
     this.intentUri = intentData;
 
-    this.loadConfig();
+    Config.load(getActivity());
 
     // Register our core plugins
     this.registerAllPlugins();
@@ -144,39 +148,8 @@ public class Bridge {
     this.loadWebView();
   }
 
-  // Load our capacitor.config.json
-  private void loadConfig() {
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new InputStreamReader(getActivity().getAssets().open("capacitor.config.json")));
-
-      // do reading, usually loop until end of file reading
-      StringBuilder b = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        //process line
-        b.append(line);
-      }
-
-      String jsonString = b.toString();
-      this.config = new JSONObject(jsonString);
-    } catch (IOException ex) {
-      Log.e(TAG, "Unable to load capacitor.config.json. Run npx cap copy first", ex);
-    } catch (JSONException ex) {
-      Log.e(TAG, "Unable to parse capacitor.config.json. Make sure it's valid json", ex);
-    } finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        } catch (IOException e) {
-        }
-      }
-    }
-
-  }
-
   private void loadWebView() {
-    final String appUrlConfig = getConfigString("appUrl");
+    final String appUrlConfig = Config.getString("server.url");
 
     String authority = null;
     if (appUrlConfig != null) {
@@ -185,13 +158,18 @@ public class Bridge {
         authority = appUrlObject.getAuthority();
       } catch (Exception ex) {
       }
+
+      Toast.show(getContext(), "Using app server " + appUrlConfig.toString());
     }
 
+    final boolean html5mode = Config.getBoolean("server.html5mode", true);
+
     // Start the local web server
-    final WebViewLocalServer localServer = new WebViewLocalServer(context, this, getJSInjector(), authority);
+    localServer = new WebViewLocalServer(context, this, getJSInjector(), authority, html5mode);
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
-    // Load the index.html file from our www folder
-    String url = ahd.getHttpsPrefix().buildUpon().appendPath("index.html").build().toString();
+
+    // Load the index route from our www folder
+    String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
     final String appUrl = appUrlConfig == null ? url : appUrlConfig;
 
@@ -222,24 +200,12 @@ public class Bridge {
     webView.loadUrl(appUrl);
   }
 
-
-  public JSONObject getConfig() {
-    return this.config;
-  }
-
-  public String getConfigString(String key) {
-    return getConfigString(key, null);
-  }
-
-  public String getConfigString(String key, String defaultValue) {
-    try {
-      String value = this.config.getString(key);
-      if (value == null) {
-        return defaultValue;
-      }
-      return value;
-    } catch (JSONException ex) {}
-    return null;
+  public void handleAppUrlLoadError(Exception ex) {
+    if (ex instanceof SocketTimeoutException) {
+      Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + localServer.getAuthority() + "?");
+      Log.e(TAG, "Unable to load app. Ensure the server is running at " + localServer.getAuthority() + ", or modify the " +
+          "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
+    }
   }
 
   public boolean isDevMode() {

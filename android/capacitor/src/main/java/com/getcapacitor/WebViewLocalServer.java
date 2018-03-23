@@ -22,8 +22,14 @@ import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.SequenceInputStream;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 import java.util.UUID;
@@ -53,6 +59,11 @@ public class WebViewLocalServer {
   private final UriMatcher uriMatcher;
   private final AndroidProtocolHandler protocolHandler;
   private final String authority;
+  // Whether we're serving local files or proxying (for example, when doing livereload on a
+  // non-local endpoint (will be false in that case)
+  private final boolean isLocal;
+  // Whether to route all requests to paths without extensions back to `index.html`
+  private final boolean html5mode;
   private final JSInjector jsInjector;
   private final Bridge bridge;
 
@@ -151,30 +162,20 @@ public class WebViewLocalServer {
     }
   }
 
-  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, String authority) {
+  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, String authority, boolean html5mode) {
     uriMatcher = new UriMatcher(null);
+    this.html5mode = html5mode;
     this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
     if (authority != null) {
       this.authority = authority;
+      this.isLocal = false;
     } else {
+      this.isLocal = true;
       this.authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
     }
     this.bridge = bridge;
     this.jsInjector = jsInjector;
   }
-
-  /**
-   * Creates a new instance of the WebView local server.
-   *
-   * @param context context used to resolve resources/assets/
-   */
-  /*
-  public WebViewLocalServer(Context context) {
-    // We only need the context to resolve assets and resources so the ApplicationContext is
-    // sufficient while holding on to an Activity context could cause leaks.
-    this(new AndroidProtocolHandler(context.getApplicationContext()));
-  }
-  */
 
   private static Uri parseAndVerifyUrl(String url) {
     if (url == null) {
@@ -211,11 +212,36 @@ public class WebViewLocalServer {
       return null;
     }
 
+    if (this.isLocal) {
+      Log.d("SERVER", "Handling local request: " + request.getUrl().toString());
+      return handleLocalRequest(request, handler);
+    } else {
+      return handleProxyRequest(request, handler);
+    }
+  }
+
+  private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
     String path = request.getUrl().getPath();
 
     if (path.equals("/cordova.js")) {
       return new WebResourceResponse("application/javascript", handler.getEncoding(),
-              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
+    }
+
+    if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
+      InputStream stream;
+      try {
+        stream = protocolHandler.openAsset("public/index.html", "");
+      } catch (IOException e) {
+        Log.e(TAG, "Unable to open index.html", e);
+        return null;
+      }
+
+      stream = jsInjector.getInjectedStream(stream);
+      bridge.reset();
+
+      return new WebResourceResponse("text/html", handler.getEncoding(),
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
     int periodIndex = path.lastIndexOf(".");
@@ -231,29 +257,88 @@ public class WebViewLocalServer {
         bridge.reset();
       }
 
-      String mimeType = null;
-      try {
-        mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
-        if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
-          Log.d(Bridge.TAG, "We shouldn't be here");
-        }
-        if (mimeType == null) {
-          if (path.endsWith(".js")) {
-            // Make sure JS files get the proper mimetype to support ES modules
-            mimeType = "application/javascript";
-          } else {
-            mimeType = URLConnection.guessContentTypeFromStream(stream);
-          }
-        }
-      } catch (Exception ex) {
-        Log.e(TAG, "Unable to get mime type" + request.getUrl().getPath(), ex);
-      }
+      String mimeType = getMimeType(path, stream);
 
       return new WebResourceResponse(mimeType, handler.getEncoding(),
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
     return null;
+  }
+
+  /**
+   * Instead of reading files from the filesystem/assets, proxy through to the URL
+   * and let an external server handle it.
+   * @param request
+   * @param handler
+   * @return
+   */
+  private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
+    try {
+      String path = request.getUrl().getPath();
+      URL url = new URL(request.getUrl().toString());
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+      conn.setReadTimeout(30 * 1000);
+      conn.setConnectTimeout(30 * 1000);
+
+      InputStream stream = conn.getInputStream();
+
+      if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
+        stream = jsInjector.getInjectedStream(stream);
+
+        bridge.reset();
+
+        return new WebResourceResponse("text/html", handler.getEncoding(),
+            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+      }
+
+      int periodIndex = path.lastIndexOf(".");
+      if (periodIndex >= 0) {
+        String ext = path.substring(path.lastIndexOf("."), path.length());
+
+        // TODO: Conjure up a bit more subtlety than this
+        if (ext.equals(".html")) {
+          stream = jsInjector.getInjectedStream(stream);
+          bridge.reset();
+        }
+
+        String mimeType = getMimeType(path, stream);
+
+        return new WebResourceResponse(mimeType, handler.getEncoding(),
+            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+      }
+
+      return new WebResourceResponse("", handler.getEncoding(),
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
+
+    } catch (SocketTimeoutException ex) {
+      bridge.handleAppUrlLoadError(ex);
+    } catch (Exception ex) {
+      bridge.handleAppUrlLoadError(ex);
+    }
+    return null;
+  }
+
+  private String getMimeType(String path, InputStream stream) {
+    String mimeType = null;
+    try {
+      mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
+      if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
+        Log.d(Bridge.TAG, "We shouldn't be here");
+      }
+      if (mimeType == null) {
+        if (path.endsWith(".js")) {
+          // Make sure JS files get the proper mimetype to support ES modules
+          mimeType = "application/javascript";
+        } else {
+          mimeType = URLConnection.guessContentTypeFromStream(stream);
+        }
+      }
+    } catch (Exception ex) {
+      Log.e(TAG, "Unable to get mime type" + path, ex);
+    }
+    return mimeType;
   }
 
   /**
@@ -356,11 +441,13 @@ public class WebViewLocalServer {
 
     if (enableHttp) {
       httpPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpPrefix, "/"), handler);
       register(Uri.withAppendedPath(httpPrefix, "**"), handler);
     }
     if (enableHttps) {
       uriBuilder.scheme(httpsScheme);
       httpsPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpsPrefix, "/"), handler);
       register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
     }
     return new AssetHostingDetails(httpPrefix, httpsPrefix);
@@ -423,7 +510,6 @@ public class WebViewLocalServer {
     PathHandler handler = new PathHandler() {
       @Override
       public InputStream handle(Uri url) {
-        Log.d(Bridge.TAG, "Inside this shitty handler " + url.getPath());
         InputStream stream = protocolHandler.openResource(url);
         String mimeType = null;
         try {

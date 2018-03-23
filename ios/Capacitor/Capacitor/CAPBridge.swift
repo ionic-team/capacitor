@@ -36,7 +36,7 @@ enum BridgeError: Error {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
     super.init()
-    loadConfig()
+    CAPConfig.loadConfig()
     exportCoreJS()
     setupCordovaCompatibility()
     registerPlugins()
@@ -50,41 +50,6 @@ enum BridgeError: Error {
     if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
       splash.showOnLaunch()
     }
-  }
-  
-  func loadConfig() {
-    guard let configUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") else {
-      print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy")
-      return
-    }
-    do {
-      let contents = try Data(contentsOf: configUrl)
-      guard let json = try JSONSerialization.jsonObject(with: contents) as? [String: Any] else {
-        return
-      }
-      self.config = json
-    } catch {
-      print("Unable to parse capacitor.config.json. Make sure it's valid JSON")
-    }
-  }
-  
-  /**
-   * Get the value of a configuration option for a specific plugin.
-   */
-  @objc public func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
-    guard let plugins = self.config["plugins"] as? [String:Any] else {
-      return nil
-    }
-    
-    guard let pluginOptions = plugins[pluginId] as? [String:Any] else {
-      return nil
-    }
-    
-    return pluginOptions[configKey]
-  }
-  
-  @objc public func getConfigValue(_ configKey: String) -> Any? {
-    return self.config[configKey]
   }
   
   public func setStatusBarVisible(_ isStatusBarVisible: Bool) {

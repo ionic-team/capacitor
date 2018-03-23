@@ -80,7 +80,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
 
     
     port = getPort()
-    hostname = bridge?.getConfigValue("appUrl") as? String ?? "http://localhost:\(port!)/"
+    hostname = CAPConfig.getValue("server.url") as? String ?? "http://localhost:\(port!)/"
     
     startWebServer(port: port!)
 

@@ -129,9 +129,8 @@ public class Plugin {
   }
 
   public Object getConfigValue(String key) {
-    JSONObject config = bridge.getConfig();
     try {
-      JSONObject plugins = config.getJSONObject("plugins");
+      JSONObject plugins = Config.getObject("plugins");
       JSONObject pluginConfig = plugins.getJSONObject(getPluginHandle().getId());
       return pluginConfig.get(key);
     } catch (JSONException ex) {

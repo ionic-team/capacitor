@@ -1,3 +1,5 @@
+//# sourceURL=capacitor-runtime.js
+
 (function(win) {
   win.Capacitor = win.Capacitor || {
     Plugins: {}
@@ -481,7 +483,7 @@
     var copyButton = el.querySelector('#_avc-copy-error');
     copyButton.addEventListener('click', function(e) {
       if(lastError) {
-        Capacitor.Plugins.Clipboard.set({
+        Capacitor.Plugins.Clipboard.write({
           string: lastError.message + '\n' + lastError.stack
         });
       }
