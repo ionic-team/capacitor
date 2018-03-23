@@ -6,6 +6,17 @@ The Toast API provides a notification pop up for displaying important informatio
 
 ## Example
 
+```typescript
+import { Plugins } from '@capacitor/core';
+const { Toast } = Plugins;
+
+async show() {
+  await Toast.show({
+    text: 'Hello!'
+  });
+}
+```
+
 ## API
 
 <plugin-api name="toast"></plugin-api>
