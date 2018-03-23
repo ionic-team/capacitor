@@ -36,6 +36,7 @@ import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.Storage;
 import com.getcapacitor.plugin.background.BackgroundTask;
+import com.getcapacitor.ui.Toast;
 
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.PluginManager;
@@ -185,6 +186,8 @@ public class Bridge {
         authority = appUrlObject.getAuthority();
       } catch (Exception ex) {
       }
+
+      Toast.show(getContext(), "Using app server " + appUrlConfig.toString());
     }
 
     // Start the local web server
@@ -223,6 +226,9 @@ public class Bridge {
     webView.loadUrl(appUrl);
   }
 
+  public void handleAppUrlLoadError(Exception ex) {
+    Toast.show(getContext(), "Unable to load from app url. Make sure the server is running or edit/remove appUrl from the Capacitor config");
+  }
 
   public JSONObject getConfig() {
     return this.config;

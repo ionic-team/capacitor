@@ -22,8 +22,13 @@ import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 import java.util.UUID;
@@ -53,6 +58,9 @@ public class WebViewLocalServer {
   private final UriMatcher uriMatcher;
   private final AndroidProtocolHandler protocolHandler;
   private final String authority;
+  // Whether we're serving local files or proxying (for example, when doing livereload on a
+  // non-local endpoint (will be false in that case)
+  private final boolean isLocal;
   private final JSInjector jsInjector;
   private final Bridge bridge;
 
@@ -156,7 +164,9 @@ public class WebViewLocalServer {
     this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
     if (authority != null) {
       this.authority = authority;
+      this.isLocal = false;
     } else {
+      this.isLocal = true;
       this.authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
     }
     this.bridge = bridge;
@@ -198,11 +208,20 @@ public class WebViewLocalServer {
       return null;
     }
 
+    if (this.isLocal) {
+      Log.d("SERVER", "Handling local request: " + request.getUrl().toString());
+      return handleLocalRequest(request, handler);
+    } else {
+      return handleProxyRequest(request, handler);
+    }
+  }
+
+  private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
     String path = request.getUrl().getPath();
 
     if (path.equals("/cordova.js")) {
       return new WebResourceResponse("application/javascript", handler.getEncoding(),
-              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
     }
 
     if (path.equals("/")) {
@@ -218,7 +237,7 @@ public class WebViewLocalServer {
       bridge.reset();
 
       return new WebResourceResponse("text/html", handler.getEncoding(),
-        handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
     int periodIndex = path.lastIndexOf(".");
@@ -256,6 +275,27 @@ public class WebViewLocalServer {
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
+    return null;
+  }
+
+  private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
+    Log.d("SERVER", "Handling proxy request for " + request.getUrl().toString());
+
+    try {
+      URL url = new URL(request.getUrl().toString());
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+      conn.setReadTimeout(30 * 1000);
+      conn.setConnectTimeout(30 * 1000);
+
+      return new WebResourceResponse("", handler.getEncoding(),
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
+
+    } catch (SocketTimeoutException ex) {
+      bridge.handleAppUrlLoadError(ex);
+    } catch (Exception ex) {
+      bridge.handleAppUrlLoadError(ex);
+    }
     return null;
   }
 
@@ -428,7 +468,6 @@ public class WebViewLocalServer {
     PathHandler handler = new PathHandler() {
       @Override
       public InputStream handle(Uri url) {
-        Log.d(Bridge.TAG, "Inside this shitty handler " + url.getPath());
         InputStream stream = protocolHandler.openResource(url);
         String mimeType = null;
         try {
