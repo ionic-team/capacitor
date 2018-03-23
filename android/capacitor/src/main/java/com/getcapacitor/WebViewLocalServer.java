@@ -151,10 +151,14 @@ public class WebViewLocalServer {
     }
   }
 
-  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector) {
+  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, String authority) {
     uriMatcher = new UriMatcher(null);
     this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
-    authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
+    if (authority != null) {
+      this.authority = authority;
+    } else {
+      this.authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
+    }
     this.bridge = bridge;
     this.jsInjector = jsInjector;
   }
