@@ -48,7 +48,7 @@ class GeolocationExample {
   }
 
   watchPosition() {
-    const wait = Geolocation.watchPosition({}, (err, position) => {
+    const wait = Geolocation.watchPosition({}, (position, err) => {
     })
   }
 }
