@@ -20,7 +20,7 @@ Accessibility.addListener('accessibilityScreenReaderStateChange', (state) => {
 
 async isVoiceOverEnabled() {
   var vo = await Accessibility.isScreenReaderEnabled();
-  alert('Voice over enabled? ' + vo);
+  alert('Voice over enabled? ' + vo.value);
 }
 
 async speak() {
