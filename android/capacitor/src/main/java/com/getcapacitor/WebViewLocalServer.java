@@ -163,19 +163,6 @@ public class WebViewLocalServer {
     this.jsInjector = jsInjector;
   }
 
-  /**
-   * Creates a new instance of the WebView local server.
-   *
-   * @param context context used to resolve resources/assets/
-   */
-  /*
-  public WebViewLocalServer(Context context) {
-    // We only need the context to resolve assets and resources so the ApplicationContext is
-    // sufficient while holding on to an Activity context could cause leaks.
-    this(new AndroidProtocolHandler(context.getApplicationContext()));
-  }
-  */
-
   private static Uri parseAndVerifyUrl(String url) {
     if (url == null) {
       return null;
@@ -226,6 +213,9 @@ public class WebViewLocalServer {
         Log.e(TAG, "Unable to open index.html", e);
         return null;
       }
+
+      stream = jsInjector.getInjectedStream(stream);
+      bridge.reset();
 
       return new WebResourceResponse("text/html", handler.getEncoding(),
         handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
