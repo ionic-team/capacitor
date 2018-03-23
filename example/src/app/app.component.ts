@@ -9,7 +9,7 @@ import { Plugins } from '@capacitor/core';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage = 'AppPage';
+  rootPage = 'ToastPage';
 
   PLUGINS = [
     { name: 'App', page: 'AppPage' },
@@ -31,7 +31,8 @@ export class MyApp {
     { name: 'Share', page: 'SharePage' },
     { name: 'SplashScreen', page: 'SplashScreenPage' },
     { name: 'Storage', page: 'StoragePage' },
-    { name: 'StatusBar', page: 'StatusBarPage' }
+    { name: 'StatusBar', page: 'StatusBarPage' },
+    { name: 'Toast', page: 'ToastPage' }
   ]
 
   constructor(platform: Platform) {

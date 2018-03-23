@@ -1,46 +1,7 @@
-/*
 import Foundation
 
-@IBDesignable class UIPaddingLabel: UILabel {
-  
-  private var _padding:CGFloat = 0.0;
-  
-  public var padding:CGFloat {
-    
-    get { return _padding; }
-    set {
-      _padding = newValue;
-      
-      paddingTop = _padding;
-      paddingLeft = _padding;
-      paddingBottom = _padding;
-      paddingRight = _padding;
-    }
-  }
-  
-  @IBInspectable var paddingTop:CGFloat = 0.0;
-  @IBInspectable var paddingLeft:CGFloat = 0.0;
-  @IBInspectable var paddingBottom:CGFloat = 0.0;
-  @IBInspectable var paddingRight:CGFloat = 0.0;
-  
-  override func drawText(in rect: CGRect) {
-    let insets = UIEdgeInsets(top:paddingTop, left:paddingLeft, bottom:paddingBottom, right:paddingRight);
-    super.drawText(in: UIEdgeInsetsInsetRect(rect, insets));
-  }
-  
-  override var intrinsicContentSize: CGSize {
-    
-    get {
-      var intrinsicSuperViewContentSize = super.intrinsicContentSize;
-      intrinsicSuperViewContentSize.height += paddingTop + paddingBottom;
-      intrinsicSuperViewContentSize.width += paddingLeft + paddingRight;
-      return intrinsicSuperViewContentSize;
-    }
-  }
-}
-
-@objc(Toast)
-public class Toast : Plugin {
+@objc(CAPToastPlugin)
+public class CAPToastPlugin : CAPPlugin {
   @objc func show(_ call: CAPPluginCall) {
     guard let text = call.get("text", String.self) else {
       call.error("text must be provided and must be a string.")
@@ -49,37 +10,34 @@ public class Toast : Plugin {
     let durationStyle = call.get("durationStyle", String.self, "short")!
     let duration = durationStyle == "short" ? 1000 : 5000
     
-    let toastLabel = UIPaddingLabel();
-    toastLabel.padding = 10;
-    toastLabel.translatesAutoresizingMaskIntoConstraints = false;
-    toastLabel.backgroundColor = UIColor.darkGray;
-    toastLabel.textColor = UIColor.white;
-    toastLabel.textAlignment = .center;
-    toastLabel.text = text;
-    toastLabel.numberOfLines = 0;
-    toastLabel.alpha = 0.9;
-    toastLabel.layer.cornerRadius = 20;
-    toastLabel.clipsToBounds = true;
-    
-    let vc = self.bridge.viewController
-    
-    vc.view.addSubview(toastLabel);
-    
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.left, relatedBy:.greaterThanOrEqual, toItem:self, attribute:.left, multiplier:1, constant:20));
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.right, relatedBy:.lessThanOrEqual, toItem:self, attribute:.right, multiplier:1, constant:-20));
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.bottom, relatedBy:.equal, toItem:self, attribute:.bottom, multiplier:1, constant:-20));
-    vc.view.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.centerX, relatedBy:.equal, toItem:self, attribute:.centerX, multiplier:1, constant:0));
-    
-    UIView.animate(withDuration:0.5, delay:Double(duration) / 1000.0, options:[], animations: {
+    DispatchQueue.main.async {
+      let vc = self.bridge!.viewController
       
-      toastLabel.alpha = 0.0;
+      let toastLabel = UILabel(frame: CGRect(x: vc.view.frame.size.width/2 - 75, y: vc.view.frame.size.height-100, width: 150, height: 35))
+      toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+      toastLabel.textColor = UIColor.white
+      toastLabel.textAlignment = .center;
+      toastLabel.font = UIFont(name: "Montserrat-Light", size: 12.0)
+      toastLabel.text = text
+      toastLabel.alpha = 0
+      toastLabel.layer.cornerRadius = 10;
+      toastLabel.clipsToBounds  =  true
+      vc.view.addSubview(toastLabel)
       
-    }) { (Bool) in
-      
-      toastLabel.removeFromSuperview();
+      UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseIn, animations: {
+        toastLabel.alpha = 1.0
+      }, completion: {(isCompleted) in
+        DispatchQueue.main.async {
+          UIView.animate(withDuration: 1000, delay: Double(duration)/1000, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+          }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+          })
+        }
+      })
     }
   }
 }
- */
+
 
 
