@@ -279,12 +279,20 @@ function getPathParts(path: string) {
 export async function checkAndInstallDependencies(config: Config, cordovaPlugins: Plugin[], platform: string) {
   let needsUpdate = false;
   await Promise.all(cordovaPlugins.map(async (p) => {
-    const dependencies = p.xml['dependency'];
-    if (dependencies) {
-      await Promise.all(dependencies.map(async (dep: any) => {
-        if (cordovaPlugins.filter(p => p.id === dep.$.id).length === 0) {
-          console.log("installing missing dependency plugin "+dep.$.id);
-          await runCommand(`npm install ${dep.$.id}`);
+    let allDependencies: Array<string> = [];
+    allDependencies = allDependencies.concat(getPlatformElement(p, platform, 'dependency'));
+    if (p.xml['dependency']) {
+      allDependencies = allDependencies.concat(p.xml['dependency']);
+    }
+    if (allDependencies) {
+      await Promise.all(allDependencies.map(async (dep: any) => {
+        if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
+          let plugin = dep.$.id;
+          if (dep.$.url && dep.$.url.startsWith('http')) {
+            plugin = dep.$.url;
+          }
+          console.log("installing missing dependency plugin "+plugin);
+          await runCommand(`npm install ${plugin}`);
           needsUpdate = true;
         }
       }));
