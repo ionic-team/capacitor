@@ -7,7 +7,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.webkit.WebView;
 
-public class CapacitorWebview extends WebView {
+public class CapacitorWebView extends WebView {
   public CapacitorWebview(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
