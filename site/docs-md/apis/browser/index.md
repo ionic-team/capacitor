@@ -2,6 +2,8 @@
 
 # Browser
 
+<plugin-api name="browser" index="true"></plugin-api>
+
 The Browser API makes it easy to open an in-app browser session to show external web content,
 handle authentication flows, and more.
 
@@ -12,7 +14,7 @@ import { Plugins } from '@capacitor/core';
 
 const { Browser } = Plugins;
 
-Browser.open('http://capacitor.ionicframework.com/');
+await Browser.open('http://capacitor.ionicframework.com/');
 ```
 
 ## API
