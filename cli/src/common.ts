@@ -43,10 +43,10 @@ export async function checkPackage(_config: Config): Promise<string | null> {
 
 export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appId) {
-    return 'Missing appId for new platform. Please add it in capacitor.config.json.';
+    return 'Missing appId for new platform. Please add it in capacitor.config.json or run npx cap init.';
   }
   if (!config.app.appName) {
-    return 'Missing appName for new platform. Please add it in capacitor.config.json.';
+    return 'Missing appName for new platform. Please add it in capacitor.config.json or run npx cap init.';
   }
 
   const appIdError = await checkAppId(config, config.app.appId);
