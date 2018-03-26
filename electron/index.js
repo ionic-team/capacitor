@@ -103,7 +103,6 @@ class CapacitorSplashScreen {
 
     this.splashWindow.webContents.on('dom-ready', async () => {
       this.splashWindow.show();
-      console.log(`file://${__dirname}/app/index.html`);
       setTimeout(async () => {
         this.mainWindowRef.loadURL(await injectCapacitor(`file://${rootPath}/app/index.html`), {baseURLForDataURL: `file://${rootPath}/app/`});
       }, 4500);
