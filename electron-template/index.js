@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const isDevMode = require('electron-is-dev');
 const { injectCapacitor, CapacitorSplashScreen } = require('@capacitor/electron');
 
