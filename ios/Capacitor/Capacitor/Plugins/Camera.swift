@@ -204,7 +204,10 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       ])
     } else if settings.resultType == "uri" {
       let path = try! saveTemporaryImage(jpeg)
-      let webPath = CAPFileManager.getPortablePath(uri: URL(string: path))
+      guard let webPath = CAPFileManager.getPortablePath(uri: URL(string: path)) else {
+        call?.reject("Unable to get portable path to file")
+        return
+      }
       call?.success([
         "path": path,
         "webPath": webPath,

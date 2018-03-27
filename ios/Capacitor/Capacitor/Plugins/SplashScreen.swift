@@ -95,7 +95,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   
   func showOnLaunch() {
     let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
-    showSplash(showDuration: launchShowDuration, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: true, completion: {
+    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: true, completion: {
       
     }, isLaunchSplash: true)
   }

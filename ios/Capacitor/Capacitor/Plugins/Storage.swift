@@ -20,9 +20,9 @@ public class CAPStoragePlugin: CAPPlugin {
       return
     }
 
-    let value: String? = getDefaults().string(forKey: makeKey(key))
+    let value = getDefaults().string(forKey: makeKey(key))
     call.resolve([
-      "value": value
+      "value": value as Any
     ])
   }
   

@@ -56,7 +56,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
         return
       }
       
-      let extra = notification["options"] as? JSObject ?? [:]
+      // let extra = notification["options"] as? JSObject ?? [:]
       
       var content: UNNotificationContent
       do {
