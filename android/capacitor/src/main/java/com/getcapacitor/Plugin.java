@@ -131,6 +131,9 @@ public class Plugin {
   public Object getConfigValue(String key) {
     try {
       JSONObject plugins = Config.getObject("plugins");
+      if (plugins == null) {
+        return null;
+      }
       JSONObject pluginConfig = plugins.getJSONObject(getPluginHandle().getId());
       return pluginConfig.get(key);
     } catch (JSONException ex) {
