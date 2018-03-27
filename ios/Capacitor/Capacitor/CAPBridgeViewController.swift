@@ -213,15 +213,19 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     let frameworkName = "WK"
     let className = "ContentView"
     let sel: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
-    let wkc: AnyClass = NSClassFromString(frameworkName + className)!
-    let method = class_getInstanceMethod(wkc, sel)
-    let originalImp: IMP = method_getImplementation(method!)
+    guard let wkc: AnyClass = NSClassFromString(frameworkName + className)! else {
+      return
+    }
+    guard let method = class_getInstanceMethod(wkc, sel) else {
+      return
+    }
+    let originalImp: IMP = method_getImplementation(method)
     let original: ClosureType = unsafeBitCast(originalImp, to: ClosureType.self)
     let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Any) -> Void = {(me, arg0, arg1, arg2, arg3) in
       original(me, sel, arg0, !value, arg2, arg3)
     }
     let imp: IMP = imp_implementationWithBlock(block)
-    method_setImplementation(method!, imp)
+    method_setImplementation(method, imp)
   }
   
   func handleJSStartupError(_ error: [String:Any]) {
