@@ -8,7 +8,7 @@ npm install @capacitor/cli --save-dev
 
 ## Using Capacitor CLI
 
-Consule the Getting Started guide for information on using the CLI and Capacitor scripts.
+Consult the Getting Started guide for information on using the CLI and Capacitor scripts.
 
 ### License
 
