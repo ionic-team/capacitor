@@ -184,6 +184,7 @@ export class SiteMenu {
         { title: 'Accessibility', url: '/docs/apis/accessibility' },
         { title: 'App', url: '/docs/apis/app' },
         { title: 'Background Task', url: '/docs/apis/background-task' },
+        { title: 'Browser', url: '/docs/apis/browser' },
         { title: 'Camera', url: '/docs/apis/camera' },
         { title: 'Clipboard', url: '/docs/apis/clipboard' },
         { title: 'Console', url: '/docs/apis/console' },
@@ -201,7 +202,7 @@ export class SiteMenu {
         { title: 'Splash Screen', url: '/docs/apis/splash-screen' },
         { title: 'Status Bar', url: '/docs/apis/status-bar' },
         { title: 'Storage', url: '/docs/apis/storage' },
-        // { title: 'Toast', url: '/docs/apis/toast' },
+        { title: 'Toast', url: '/docs/apis/toast' },
       ]
     }
   ];

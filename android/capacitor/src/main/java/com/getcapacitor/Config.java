@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
  * Management interface for accessing values in capacitor.config.json
  */
 public class Config {
-  private JSONObject config;
+  private JSONObject config = new JSONObject();
 
   private static Config instance;
 
@@ -62,7 +62,7 @@ public class Config {
   public static JSONObject getObject(String key) {
     try {
       return getInstance().config.getJSONObject(key);
-    } catch (JSONException ex) {
+    } catch (Exception ex) {
     }
     return null;
   }
@@ -94,7 +94,7 @@ public class Config {
         return defaultValue;
       }
       return value;
-    } catch (JSONException ex) {}
+    } catch (Exception ex) {}
     return defaultValue;
   }
 
@@ -104,7 +104,7 @@ public class Config {
       JSONObject o = getInstance().getConfigObjectDeepest(key);
 
       return o.getBoolean(k);
-    } catch (JSONException ex) {}
+    } catch (Exception ex) {}
     return defaultValue;
   }
 
