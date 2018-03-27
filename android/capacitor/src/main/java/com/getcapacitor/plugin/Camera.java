@@ -258,6 +258,8 @@ public class Camera extends Plugin {
       }
 
       returnResult(call, bitmap, u);
+    } catch (OutOfMemoryError err) {
+      call.error("Out of memory");
     } catch (FileNotFoundException ex) {
       call.error("No such image found", ex);
     } finally {
