@@ -16,7 +16,7 @@ leave out the `directory` param to use a full file path.
 ## Example
 
 ```typescript
-import { Plugins, FilesystemDirectory } from '@capacitor/core';
+import { Plugins, FilesystemDirectory, FilesystemEncoding } from '@capacitor/core';
 
 const { Filesystem } = Plugins;
 
@@ -26,7 +26,7 @@ fileWrite() {
       path: 'secrets/text.txt',
       data: "This is a test",
       directory: FilesystemDirectory.Documents,
-      encoding: 'utf8'
+      encoding: FilesystemEncoding.UTF8
     })
   } catch(e) {
     console.error('Unable to write file', e);
@@ -37,7 +37,7 @@ async fileRead() {
   let contents = await Filesystem.readFile({
     path: 'secrets/text.txt',
     directory: FilesystemDirectory.Documents,
-    encoding: 'utf8'
+    encoding: FilesystemEncoding.UTF8
   });
   console.log(contents);
 }
@@ -47,7 +47,7 @@ async fileAppend() {
     path: 'secrets/text.txt',
     data: "MORE TESTS",
     directory: FilesystemDirectory.Documents,
-    encoding: 'utf8'
+    encoding: FilesystemEncoding.UTF8
   });
 }
 
