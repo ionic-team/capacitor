@@ -222,7 +222,7 @@ enum BridgeError: Error {
    * Register a single plugin.
    */
   func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
-    let bridgeType = pluginType as! CAPBridgedPlugin.Type
+    // let bridgeType = pluginType as! CAPBridgedPlugin.Type
     knownPlugins[jsName] = pluginType
     JSExport.exportJS(userContentController: self.userContentController, pluginClassName: jsName, pluginType: pluginType)
     _ = loadPlugin(pluginName: jsName)

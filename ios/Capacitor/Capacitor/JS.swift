@@ -6,8 +6,6 @@ enum JSProcessingError: LocalizedError {
     switch self {
     case .jsonSerializeError(call: let call):
       return "Unable to JSON serialize plugin data result for plugin \(call.pluginId) and method \(call.method)"
-    default:
-      return ""
     }
   }
 }

@@ -213,7 +213,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     let frameworkName = "WK"
     let className = "ContentView"
     let sel: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
-    guard let wkc: AnyClass = NSClassFromString(frameworkName + className)! else {
+    guard let wkc = NSClassFromString(frameworkName + className) else {
       return
     }
     guard let method = class_getInstanceMethod(wkc, sel) else {

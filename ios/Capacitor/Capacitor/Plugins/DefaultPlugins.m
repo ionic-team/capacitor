@@ -70,6 +70,8 @@ CAP_PLUGIN(CAPHapticsPlugin, "Haptics",
 
 CAP_PLUGIN(CAPKeyboard, "Keyboard",
   CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(setAccessoryBarVisible, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",

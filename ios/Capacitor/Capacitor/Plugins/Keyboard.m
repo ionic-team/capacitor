@@ -61,7 +61,7 @@ typedef enum : NSUInteger {
         self.keyboardResizes = ResizeBody;
       }
     }
-    NSLog(@"CAPIonicKeyboard: resize mode %d", self.keyboardResizes);
+    // NSLog(@"CAPIonicKeyboard: resize mode %d", self.keyboardResizes);
   }
   self.hideFormAccessoryBar = YES;
   
@@ -224,11 +224,15 @@ static IMP WKOriginalImp;
   [call successHandler];
 }
 
-- (void)hide:(CAPPluginCall *)command
+- (void)hide:(CAPPluginCall *)call
 {
   [self.webView endEditing:YES];
 }
 
+- (void)show:(CAPPluginCall *)call
+{
+  [call successHandler];
+}
 
 #pragma mark dealloc
 

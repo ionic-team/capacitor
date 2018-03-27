@@ -35,7 +35,7 @@
     let parts = key.split(separator: ".")
     
     var o = self.config
-    for (i, k) in parts[0..<parts.count-1].enumerated() {
+    for (_, k) in parts[0..<parts.count-1].enumerated() {
       o = self.config![String(k)] as? [String:Any?]
     }
     return o
@@ -67,10 +67,7 @@
   @objc public static func getValue(_ key: String) -> Any? {
     let k = CAPConfig.getConfigKey(key)
     let o = getInstance().getConfigObjectDeepest(key: key)
-    if o == nil {
-      return nil
-    }
-    return o![k]
+    return o?[k] ?? nil
   }
   
   @objc public static func getString(_ key: String) -> String? {
