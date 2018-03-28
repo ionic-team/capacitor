@@ -112,8 +112,7 @@ export async function newPlugin(config: Config) {
       return runCommand('npm install');
     });
 
-    logInfo('DONE! capacitor plugin was created.');
-    logInfo(`Get into the plugin: cd ./${pluginPath}`);
+    logInfo(`Your Capacitor plugin was created at ${pluginPath}`);
 
   } else {
     logInfo('Aborted');
