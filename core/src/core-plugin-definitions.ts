@@ -1335,9 +1335,9 @@ export interface ToastOptions {
    */
   text?: string;
   /**
-   * Set duration (in constant). Default is short (short/long)
+   * Set duration (in constant). Default is short
    */
-  duration?: string;
+  duration?: 'short' | 'long';
 }
 
 export interface SnackbarPlugin extends Plugin {
@@ -1350,11 +1350,11 @@ export interface SnackbarOptions {
   */
   text?: string;
   /**
-  * Set duration (in constant). Default is short (short/long/indefinite)
+  * Set duration (in constant). Default is short
   */
-  duration?: string;
+  duration?: 'short' | 'long' | 'indefinite';
   /**
-  * Set text of button action to be displayed (Callback: { clicked: true } )
+  * Set text of button action to be displayed (Callback: { clicked: true })
   */
   button?: string;
   /**
