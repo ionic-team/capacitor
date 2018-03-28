@@ -11,7 +11,7 @@ public class CAPModalsPlugin : CAPPlugin {
       return
     }
     let message = call.options["message"] as? String
-    let buttonTitle = call.options["buttonTitle"] as? String ?? "OK"
+    let buttonTitle = call.options["buttonTitle"] as? String ?? UIKitLocalizedString.ok
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
     alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: nil))
@@ -25,13 +25,14 @@ public class CAPModalsPlugin : CAPPlugin {
   }
   
   @objc public func confirm(_ call: CAPPluginCall) {
+    
     guard let title = call.options["title"] as? String else {
       call.error("title must be provided")
       return
     }
     let message = call.options["message"] as? String ?? ""
-    let okButtonTitle = call.options["okButtonTitle"] as? String ?? "OK"
-    let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? "Cancel"
+    let okButtonTitle = call.options["okButtonTitle"] as? String ?? UIKitLocalizedString.ok
+    let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? UIKitLocalizedString.cancel
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
     alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
@@ -39,7 +40,7 @@ public class CAPModalsPlugin : CAPPlugin {
         "value": true
       ])
     }))
-    alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+    alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.cancel, handler: { (action) -> Void in
       call.success([
         "value": false
       ])
@@ -56,8 +57,8 @@ public class CAPModalsPlugin : CAPPlugin {
       return
     }
     let message = call.options["message"] as? String ?? ""
-    let okButtonTitle = call.options["okButtonTitle"] as? String ?? "OK"
-    let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? "Cancel"
+    let okButtonTitle = call.options["okButtonTitle"] as? String ?? UIKitLocalizedString.ok
+    let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? UIKitLocalizedString.cancel
     let inputPlaceholder = call.options["inputPlaceholder"] as? String ?? ""
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
@@ -75,7 +76,7 @@ public class CAPModalsPlugin : CAPPlugin {
           "cancelled": false
         ])
       }))
-      alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+      alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.cancel, handler: { (action) -> Void in
         call.success([
           "value": "",
           "cancelled": true
