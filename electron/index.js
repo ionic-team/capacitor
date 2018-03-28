@@ -42,6 +42,7 @@ class CapacitorSplashScreen {
       loadingText: 'Loading...',
       textPercentageFromTop: 75,
       transparentWindow: false,
+      autoHideLaunchSplash: true
     };
 
     this.mainWindowRef = mainWindow;
@@ -108,10 +109,12 @@ class CapacitorSplashScreen {
       }, 4500);
     });
 
-    this.mainWindowRef.webContents.on('dom-ready', () => {
-      this.mainWindowRef.show();
-      this.splashWindow.hide();
-    });
+    if(this.splashOptions.autoHideLaunchSplash) {
+      this.mainWindowRef.webContents.on('dom-ready', () => {
+        this.mainWindowRef.show();
+        this.splashWindow.hide();
+      });
+    }
   }
 
   show() {
