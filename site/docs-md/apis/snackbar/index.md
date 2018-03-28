@@ -12,7 +12,7 @@ const { Snackbar } = Plugins;
 
 
 async show() {
-  let clickedRet = await Toast.show({
+  let clickedRet = await Snackbar.show({
      text: 'If you are only changing method implementations or resources, you can make them appear faster by using the Apply Changes button.',
      button: 'GOT IT!',
      duration: 'indefinite',
