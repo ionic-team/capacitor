@@ -1325,5 +1325,10 @@ export interface StoragePlugin extends Plugin {
 }
 
 export interface ToastPlugin extends Plugin {
-  show(options: any): Promise<void>;
+  show(options: ToastShowOptions): Promise<void>;
+}
+
+export interface ToastShowOptions {
+  title: string;
+  duration: 'short' | 'long';
 }
