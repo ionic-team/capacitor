@@ -23,6 +23,7 @@ declare global {
     StatusBar?: StatusBarPlugin;
     Storage?: StoragePlugin;
     Toast?: ToastPlugin;
+    Snackbar?: SnackbarPlugin;
   }
 }
 
@@ -1337,4 +1338,27 @@ export interface ToastOptions {
    * Set duration (in constant). Default is short (short/long)
    */
   duration?: string;
+}
+
+export interface SnackbarPlugin extends Plugin {
+  show(option: SnackbarOptions): Promise<any>;
+}
+
+export interface SnackbarOptions {
+  /**
+  * Set some text
+  */
+  text?: string;
+  /**
+  * Set duration (in constant). Default is short (short/long/indefinite)
+  */
+  duration?: string;
+  /**
+  * Set text of button action to be displayed (Callback: { clicked: true } )
+  */
+  button?: string;
+  /**
+  * Sets the text color of the action
+  */
+  color?: string;
 }
