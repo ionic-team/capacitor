@@ -14,6 +14,7 @@ export * from './electron/network';
 export * from './electron/splashscreen';
 export * from './electron/toast';
 
+
 mergeWebPlugins(Plugins);
 
 export const registerElectronPlugin = (plugin: WebPlugin) => {

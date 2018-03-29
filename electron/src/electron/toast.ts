@@ -32,7 +32,6 @@ export class ToastPluginElectron extends WebPlugin implements ToastPlugin {
     });
     return await toastElement.present();
   }
-
 }
 
 const Toast = new ToastPluginElectron();
