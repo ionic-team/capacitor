@@ -5,26 +5,36 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import android.widget.Toast;
+
 @NativePlugin()
 public class Toast extends Plugin {
 
   @PluginMethod()
   public void show(PluginCall call) {
-    CharSequence text = call.getString("text");
-    if(text == null) {
-      call.error("Must provide text");
+
+    String text = call.getString("text");
+
+    String duration = call.getString("duration", "short");
+
+    if (text == null) {
+      call.error("Must provide a message");
       return;
     }
 
-    String durationType = call.getString("durationType", "short");
+    Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
 
-    int duration = android.widget.Toast.LENGTH_SHORT;
-    if(durationType == "long") {
-      duration = android.widget.Toast.LENGTH_LONG;
+    switch (duration ) {
+      case "short":
+        toast.setDuration(Toast.LENGTH_SHORT);
+        break;
+      case "long":
+        toast.setDuration(Toast.LENGTH_LONG);
+        break;
     }
 
-    android.widget.Toast toast = android.widget.Toast.makeText(getContext(), text, duration);
     toast.show();
+
     call.success();
   }
 }

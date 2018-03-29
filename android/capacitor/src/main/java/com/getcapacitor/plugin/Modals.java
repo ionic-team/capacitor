@@ -40,7 +40,7 @@ public class Modals extends Plugin {
     final Activity c = this.getActivity();
     final String title = call.getString("title");
     final String message = call.getString("message");
-    final String buttonTitle = call.getString("buttonTitle", "OK");
+    final String buttonTitle = call.getString("buttonTitle", getContext().getString(android.R.string.ok) );
 
     if(title == null || message == null) {
       call.error("Please provide a title or message for the alert");
@@ -65,8 +65,8 @@ public class Modals extends Plugin {
     final Activity c = this.getActivity();
     final String title = call.getString("title");
     final String message = call.getString("message");
-    final String okButtonTitle = call.getString("okButtonTitle", "OK");
-    final String cancelButtonTitle = call.getString("cancelButtonTitle", "Cancel");
+    final String okButtonTitle = call.getString("okButtonTitle", getContext().getString(android.R.string.ok) );
+    final String cancelButtonTitle = call.getString("cancelButtonTitle", getContext().getString(android.R.string.cancel) );
 
     if(title == null || message == null) {
       call.error("Please provide a title or message for the alert");
@@ -93,8 +93,8 @@ public class Modals extends Plugin {
     final Activity c = this.getActivity();
     final String title = call.getString("title");
     final String message = call.getString("message");
-    final String okButtonTitle = call.getString("okButtonTitle", "OK");
-    final String cancelButtonTitle = call.getString("cancelButtonTitle", "Cancel");
+    final String okButtonTitle = call.getString("okButtonTitle", getContext().getString(android.R.string.ok) );
+    final String cancelButtonTitle = call.getString("cancelButtonTitle", getContext().getString(android.R.string.cancel) );
     final String inputPlaceholder = call.getString("inputPlaceholder", "");
 
     if(title == null || message == null) {

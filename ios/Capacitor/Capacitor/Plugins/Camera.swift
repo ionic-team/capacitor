@@ -99,16 +99,16 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   
   func showPrompt(_ call: CAPPluginCall) {
     // Build the action sheet
-    let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-    alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
+    let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+    alert.addAction(UIAlertAction(title: UIKitLocalizedString.photoLibrary, style: .default, handler: { (action: UIAlertAction) in
       self.showPhotos(call)
     }))
     
-    alert.addAction(UIAlertAction(title: "Take Picture", style: .default, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: UIKitLocalizedString.camera, style: .default, handler: { (action: UIAlertAction) in
       self.showCamera(call)
     }))
     
-    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: UIKitLocalizedString.cancel, style: .cancel, handler: { (action: UIAlertAction) in
       alert.dismiss(animated: true, completion: nil)
     }))
     
