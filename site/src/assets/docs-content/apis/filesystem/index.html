@@ -7,7 +7,7 @@
 <p>Additionally, the Filesystem API supports using full <code>file://</code> paths, or reading <code>content://</code> files on Android. Simply
 leave out the <code>directory</code> param to use a full file path.</p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, FilesystemDirectory } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, FilesystemDirectory, FilesystemEncoding } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
 
 <span class="hljs-keyword">const</span> { Filesystem } = Plugins;
 
@@ -17,7 +17,7 @@ fileWrite() {
       path: <span class="hljs-string">'secrets/text.txt'</span>,
       data: <span class="hljs-string">"This is a test"</span>,
       directory: FilesystemDirectory.Documents,
-      encoding: <span class="hljs-string">'utf8'</span>
+      encoding: FilesystemEncoding.UTF8
     })
   } <span class="hljs-keyword">catch</span>(e) {
     <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Unable to write file'</span>, e);
@@ -28,7 +28,7 @@ fileWrite() {
   <span class="hljs-keyword">let</span> contents = <span class="hljs-keyword">await</span> Filesystem.readFile({
     path: <span class="hljs-string">'secrets/text.txt'</span>,
     directory: FilesystemDirectory.Documents,
-    encoding: <span class="hljs-string">'utf8'</span>
+    encoding: FilesystemEncoding.UTF8
   });
   <span class="hljs-built_in">console</span>.log(contents);
 }
@@ -38,7 +38,7 @@ fileWrite() {
     path: <span class="hljs-string">'secrets/text.txt'</span>,
     data: <span class="hljs-string">"MORE TESTS"</span>,
     directory: FilesystemDirectory.Documents,
-    encoding: <span class="hljs-string">'utf8'</span>
+    encoding: FilesystemEncoding.UTF8
   });
 }
 
