@@ -1,6 +1,10 @@
 import { WebPlugin, ToastPlugin } from "@capacitor/core";
-
 import {ToastController} from "@ionic/core";
+
+export interface ToastShowOptions {
+  title: string;
+  duration: 'short' | 'long';
+}
 
 export class ToastPluginElectron extends WebPlugin implements ToastPlugin {
 
@@ -9,19 +13,22 @@ export class ToastPluginElectron extends WebPlugin implements ToastPlugin {
       name: 'Toast',
       platforms: ['electron']
     });
-    if(document.querySelector('ion-toast-controller') === null) {
-      let toastEl = document.createElement('ion-toast-controller');
-      let firstEl = document.body.children[0];
-      document.insertBefore(toastEl, firstEl);
+    let testel = document.querySelector('ion-toast-controller');
+    if(testel == null) {
+      console.error()
     }
   }
 
-  async show(message: string, position?: 'top' | 'middle' | 'bottom', duration?: number) {
+  async show(options: ToastShowOptions) {
     const toastController:ToastController = document.querySelector('ion-toast-controller');
+    let duration = 3000;
+    if(options.duration) {
+      duration = options.duration.localeCompare('long') === 0 ? 5000 : 3000;
+    }
     const toastElement = await toastController.create({
-      position: position || 'bottom',
-      message: message,
-      duration: duration || 3000,
+      position: 'bottom',
+      message: options.title,
+      duration: duration,
     });
     return await toastElement.present();
   }
