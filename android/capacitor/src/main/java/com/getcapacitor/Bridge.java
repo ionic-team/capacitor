@@ -329,6 +329,12 @@ public class Bridge {
     }
 
     String pluginId = pluginClass.getSimpleName();
+
+    // Use the supplied name as the id if available
+    if (!pluginAnnotation.name().equals("")) {
+      pluginId = pluginAnnotation.name();
+    }
+
     Log.d(Bridge.TAG, "Registering plugin: " + pluginId);
 
     try {
