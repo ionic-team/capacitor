@@ -1,5 +1,6 @@
 export {
   PluginCallback,
+  PluginListenerHandle,
   PluginResultData,
   PluginResultError,
   PluginConfig
