@@ -1329,6 +1329,6 @@ export interface ToastPlugin extends Plugin {
 }
 
 export interface ToastShowOptions {
-  title: string;
+  text: string;
   duration: 'short' | 'long';
 }
