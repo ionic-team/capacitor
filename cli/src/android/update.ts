@@ -56,7 +56,7 @@ ${plugins.map(p => {
 }`;
 
   await writeFileAsync(join(config.app.rootDir, 'android/capacitor.settings.gradle'), settingsLines);
-  await writeFileAsync(join(config.app.rootDir, 'android/app/capacitor.build.gradle'), dependencyLines)
+  await writeFileAsync(join(config.app.rootDir, 'android/app/capacitor.build.gradle'), dependencyLines);
 }
 
 export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
