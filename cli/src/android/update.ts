@@ -63,30 +63,30 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
   const pluginsFolder = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
   const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
   let frameworksArray: Array<any> = [];
-  let preferencessArray: Array<any> = [];
+  let prefsArray: Array<any> = [];
   let applyArray: Array<any> = [];
   cordovaPlugins.map( p => {
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (!framework.$.type && !framework.$.custom) {
         frameworksArray.push(framework.$.src);
-      } else if (framework.$.custom && framework.$.custom === "true" && framework.$.type && framework.$.type === "gradleReference"){
-        const fileName = framework.$.src.split("/").pop();
+      } else if (framework.$.custom && framework.$.custom === 'true' && framework.$.type && framework.$.type === 'gradleReference') {
+        const fileName = framework.$.src.split('/').pop();
         applyArray.push(`apply from: "gradle-files/${p.id}/${fileName}"`);
       }
     });
-    preferencessArray = preferencessArray.concat(getPlatformElement(p, platform, 'preference'));
+    prefsArray = prefsArray.concat(getPlatformElement(p, platform, 'preference'));
   });
   let frameworkString = frameworksArray.map(f => {
     return `    implementation "${f}"`;
   }).join('\n');
   let applyString = applyArray.join('\n');
-  preferencessArray.map((preference: any) => {
-    frameworkString = frameworkString.replace(new RegExp(("$"+preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
+  prefsArray.map((preference: any) => {
+    frameworkString = frameworkString.replace(new RegExp(('$'+preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
   });
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
-  buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat("\n") + '    $2');
-  buildGradle = buildGradle.replace(/(PLUGIN GRADLE EXTENSIONS START)[\s\S]*(\/\/ PLUGIN GRADLE EXTENSIONS END)/, '$1\n' + applyString.concat("\n") + '$2');
+  buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat('\n') + '    $2');
+  buildGradle = buildGradle.replace(/(PLUGIN GRADLE EXTENSIONS START)[\s\S]*(\/\/ PLUGIN GRADLE EXTENSIONS END)/, '$1\n' + applyString.concat('\n') + '$2');
   await writeFileAsync(pluginsGradlePath, buildGradle);
 }
 
@@ -99,31 +99,31 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const sourceFiles = androidPlatform['source-file'];
       if (sourceFiles) {
         sourceFiles.map( (sourceFile: any) => {
-          const fileName = sourceFile.$.src.split("/").pop();
-          const target = sourceFile.$["target-dir"].replace('src/', 'java/');
+          const fileName = sourceFile.$.src.split('/').pop();
+          const target = sourceFile.$['target-dir'].replace('src/', 'java/');
           copySync(getFilePath(config, p, sourceFile.$.src), join(pluginsPath, target, fileName));
         });
       }
       const resourceFiles = androidPlatform['resource-file'];
       if(resourceFiles) {
         resourceFiles.map( (resourceFile: any) => {
-          if (resourceFile.$.src.split(".").pop() === "aar") {
-            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'libs', resourceFile.$["target"].split("/").pop()));
+          if (resourceFile.$.src.split('.').pop() === 'aar') {
+            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'libs', resourceFile.$['target'].split('/').pop()));
           } else {
-            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, resourceFile.$["target"]));
+            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, resourceFile.$['target']));
           }
         });
       }
       const frameworks = getPlatformElement(p, platform, 'framework');
       frameworks.map((framework: any) => {
-        if (framework.$.custom && framework.$.custom === "true" && framework.$.type && framework.$.type === "gradleReference"){
-          const fileName = framework.$.src.split("/").pop();
+        if (framework.$.custom && framework.$.custom === 'true' && framework.$.type && framework.$.type === 'gradleReference') {
+          const fileName = framework.$.src.split('/').pop();
           copySync(getFilePath(config, p, framework.$.src), join(pluginsRoot, 'gradle-files', p.id, fileName));
         }
       });
       const libFiles = getPlatformElement(p, platform, 'lib-file');
       libFiles.map((libFile: any) => {
-        copySync(getFilePath(config, p, libFile.$.src), join(pluginsPath, 'libs', libFile.$.src.split("/").pop()));
+        copySync(getFilePath(config, p, libFile.$.src), join(pluginsPath, 'libs', libFile.$.src.split('/').pop()));
       });
     }
   });
