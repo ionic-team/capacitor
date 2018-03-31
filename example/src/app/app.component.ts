@@ -59,7 +59,7 @@ export class MyApp {
 
     Plugins.App.addListener('backButton', () => {
       console.log('BACK BUTTON PRESSED');
-      Plugins.App.exitApp();
+      //Plugins.App.exitApp();
     })
 
     this.getLaunchUrl();

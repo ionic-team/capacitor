@@ -10,6 +10,9 @@
   // Export Cordova if not defined
   win.cordova = win.cordova || {};
 
+  // Add any legacy handlers to keep Cordova compat 100% good
+  addLegacyHandlers(win);
+
   capacitor.Plugins = capacitor.Plugins || {};
   
   capacitor.DEBUG = typeof capacitor.DEBUG === 'undefined' ? true : capacitor.DEBUG;
@@ -90,6 +93,14 @@
       };
     }
   });
+
+  function addLegacyHandlers(win) {
+    win.navigator.app = {
+      exitApp: function() {
+        capacitor.toNative("App", "exitApp", {}, null);
+      }
+    }
+  }
 
   /**
    * Send a plugin method call to the native layer
