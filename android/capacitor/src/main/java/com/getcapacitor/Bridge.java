@@ -463,6 +463,13 @@ public class Bridge {
     logToJs(message, "log");
   }
 
+  public void triggerJSEvent(final String eventName, final String target) {
+    eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\")", new ValueCallback<String>() {
+      @Override
+      public void onReceiveValue(String s) {
+      }
+    });
+  }
 
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
