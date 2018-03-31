@@ -23,10 +23,14 @@ export async function doctorCommand(config: Config, selectedPlatform: string) {
 export async function doctorCore(config: Config) {
   let cliVersion = await runCommand(`npm info @capacitor/cli version`);
   let coreVersion = await runCommand(`npm info @capacitor/cli version`);
+  let androidVersion = await runCommand(`npm info @capacitor/ios version`);
+  let iosVersion = await runCommand(`npm info @capacitor/ios version`);
 
   log(`${chalk.bold.blue('Dependencies:')}\n`);
   log(`  ${chalk.bold('@capacitor/cli:')}`, cliVersion);
   log(`  ${chalk.bold('@capacitor/core:')}`, coreVersion);
+  log(`  ${chalk.bold('@capacitor/android:')}`, androidVersion);
+  log(`  ${chalk.bold('@capacitor/ios:')}`, iosVersion);
 
   // Get the version of our pod installed
   const podLockPath = join(config.app.rootDir, 'ios/App/Podfile.lock');
