@@ -100,6 +100,17 @@
         capacitor.toNative("App", "exitApp", {}, null);
       }
     }
+    let documentAddEventListener = document.addEventListener;
+    document.addEventListener = function() {
+      var name = arguments[0];
+      var handler = arguments[1];
+      if (name === 'deviceready') {
+        setTimeout(function() {
+          handler && handler();
+        });
+      }
+      return documentAddEventListener.apply(document, arguments);
+    }
   }
 
   /**
