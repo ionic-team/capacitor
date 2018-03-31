@@ -248,6 +248,18 @@
     }, callback);
   }
 
+  capacitor.triggerEvent = function(eventName, target, data) {
+    var event = new CustomEvent(eventName, { detail: data || {} });
+    if (target === "document") {
+      document.dispatchEvent(event);
+    } else if (target === "window") {
+      window.dispatchEvent(event);
+    } else {
+      const targetEl = document.querySelector(target);
+      targetEl && targetEl.dispatchEvent(event);
+    }
+  }
+
   capacitor.handleError = function(error) {
     console.error(error);
 

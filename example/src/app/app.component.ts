@@ -26,6 +26,7 @@ export class MyApp {
     { name: 'LocalNotifications', page: 'LocalNotificationsPage' },
     { name: 'Modals', page: 'ModalsPage' },
     { name: 'Motion', page: 'MotionPage' },
+    { name: 'Nav', page: 'NavPage' },
     { name: 'Network', page: 'NetworkPage' },
     { name: 'Photos', page: 'PhotosPage' },
     { name: 'Share', page: 'SharePage' },

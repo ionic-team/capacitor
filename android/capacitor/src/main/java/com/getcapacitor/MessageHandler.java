@@ -42,8 +42,10 @@ public class MessageHandler {
         String action = postData.getString("action");
         String actionArgs = postData.getString("actionArgs");
         Log.d(Bridge.TAG, "To native (Cordova): " + callbackId + ", service: " + service +
-                ", action: " + action +", actionArgs: " + actionArgs);
+          ", action: " + action + ", actionArgs: " + actionArgs);
         this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
+      } else if (type != null && type.equals("js.error")) {
+        Log.e(Bridge.TAG, "JavaScript Error: " + jsonStr);
       } else {
         String callbackId = postData.getString("callbackId");
         String pluginId = postData.getString("pluginId");
@@ -57,7 +59,7 @@ public class MessageHandler {
       }
 
     } catch (Exception ex) {
-      Log.e(Bridge.TAG, "error : " + ex);
+      Log.e(Bridge.TAG, "Post message error:", ex);
     }
   }
 
