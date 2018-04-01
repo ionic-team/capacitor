@@ -11,7 +11,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
+import android.util.Log;
 
+import com.getcapacitor.Bridge;
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.FileUtils;
 import com.getcapacitor.plugin.camera.ImageUtils;
@@ -420,8 +422,11 @@ public class Camera extends Plugin {
 
     PluginCall savedCall = getSavedCall();
 
-    for (int result : grantResults) {
+    for (int i = 0; i < grantResults.length; i++) {
+      int result = grantResults[i];
+      String perm = permissions[i];
       if(result == PackageManager.PERMISSION_DENIED) {
+        Log.d(Bridge.TAG, "User denied camera permission: " + perm);
         savedCall.error(PERMISSION_DENIED_ERROR);
         return;
       }
