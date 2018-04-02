@@ -14,16 +14,16 @@ export class SiteMenu {
           url: '/docs/'
         },
         { 
+          title: 'Required Dependencies',
+          url: '/docs/getting-started/dependencies'
+        },
+        { 
           title: 'Installation',
           url: '/docs/getting-started/'
         },
         {
           title: 'Using with Ionic',
           url: '/docs/getting-started/with-ionic'
-        },
-        { 
-          title: 'Required Dependencies',
-          url: '/docs/getting-started/dependencies'
         }
         /*
         ,
