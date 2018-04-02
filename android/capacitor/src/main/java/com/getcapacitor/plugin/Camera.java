@@ -46,12 +46,13 @@ import java.util.Date;
  * Adapted from https://developer.android.com/training/camera/photobasics.html
  */
 @NativePlugin(
-    requestCodes={Camera.REQUEST_IMAGE_CAPTURE, Camera.REQUEST_IMAGE_PICK}
+    requestCodes={Camera.REQUEST_IMAGE_CAPTURE, Camera.REQUEST_IMAGE_PICK, Camera.REQUEST_IMAGE_EDIT}
 )
 public class Camera extends Plugin {
   // Request codes
   static final int REQUEST_IMAGE_CAPTURE = PluginRequestCodes.CAMERA_IMAGE_CAPTURE;
   static final int REQUEST_IMAGE_PICK = PluginRequestCodes.CAMERA_IMAGE_PICK;
+  static final int REQUEST_IMAGE_EDIT = PluginRequestCodes.CAMERA_IMAGE_EDIT;
 
   // Message constants
   private static final String INVALID_RESULT_TYPE_ERROR = "Invalid resultType option";
@@ -61,13 +62,18 @@ public class Camera extends Plugin {
   private static final String IMAGE_FILE_SAVE_ERROR = "Unable to create photo on disk";
   private static final String IMAGE_PROCESS_NO_FILE_ERROR = "Unable to process image, file not found on disk";
   private static final String UNABLE_TO_PROCESS_IMAGE = "Unable to process image";
+  private static final String IMAGE_EDIT_ERROR = "Unable to edit image";
 
   private String imageFileSavePath;
+  private Uri imageFileUri;
+  private boolean isEdited = false;
 
   private CameraSettings settings = new CameraSettings();
 
   @PluginMethod()
   public void getPhoto(PluginCall call) {
+    isEdited = false;
+
     saveCall(call);
 
     settings = getSettings(call);
@@ -155,6 +161,7 @@ public class Camera extends Plugin {
     CameraSettings settings = new CameraSettings();
     settings.setResultType(getResultType(call.getString("resultType")));
     settings.setSaveToGallery(call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY));
+    settings.setAllowEditing(call.getBoolean("allowEditing", false));
     settings.setQuality(call.getInt("quality", CameraSettings.DEFAULT_QUALITY));
     settings.setWidth(call.getInt("width", 0));
     settings.setHeight(call.getInt("height", 0));
@@ -189,8 +196,8 @@ public class Camera extends Plugin {
         File photoFile = createImageFile(saveToGallery);
         imageFileSavePath = photoFile.getAbsolutePath();
         // TODO: Verify provider config exists
-        Uri photoURI = FileProvider.getUriForFile(getActivity(), appId + ".fileprovider", photoFile);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+        imageFileUri = FileProvider.getUriForFile(getActivity(), appId + ".fileprovider", photoFile);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
       } catch (Exception ex) {
         call.error(IMAGE_FILE_SAVE_ERROR, ex);
         return;
@@ -209,10 +216,8 @@ public class Camera extends Plugin {
   }
 
   public void processCameraImage(PluginCall call, Intent data) {
-    boolean allowEditing = call.getBoolean("allowEditing", false);
     boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
     CameraResultType resultType = getResultType(call.getString("resultType"));
-
     if(imageFileSavePath == null) {
       call.error(IMAGE_PROCESS_NO_FILE_ERROR);
       return;
@@ -318,6 +323,11 @@ public class Camera extends Plugin {
     // Compress the final image and prepare for output to client
     ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
     bitmap.compress(Bitmap.CompressFormat.JPEG, settings.getQuality(), bitmapOutputStream);
+
+    if (settings.isAllowEditing() && !isEdited) {
+      editImage(call, u);
+      return;
+    }
 
     if (settings.getResultType() == CameraResultType.BASE64) {
       returnBase64(call, bitmapOutputStream);
@@ -451,9 +461,30 @@ public class Camera extends Plugin {
       processCameraImage(savedCall, data);
     } else if (requestCode == REQUEST_IMAGE_PICK) {
       processPickedImage(savedCall, data);
+    } else if (requestCode == REQUEST_IMAGE_EDIT) {
+      isEdited = true;
+      processPickedImage(savedCall, data);
     }
   }
 
+  private void editImage(PluginCall call, Uri uri) {
+    try {
+      Uri origPhotoUri = uri;
+      if (imageFileUri != null) {
+        origPhotoUri = imageFileUri;
+      }
+      Intent editIntent = new Intent(Intent.ACTION_EDIT);
+      editIntent.setDataAndType(origPhotoUri, "image/*");
+      File editedFile = createImageFile(false);
+      Uri editedUri = Uri.fromFile(editedFile);
+      editIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      editIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+      editIntent.putExtra(MediaStore.EXTRA_OUTPUT, editedUri);
+      startActivityForResult(call, editIntent, REQUEST_IMAGE_EDIT);
+    } catch (Exception ex) {
+      call.error(IMAGE_EDIT_ERROR, ex);
+    }
+  }
 
   @Override
   protected Bundle saveInstanceState() {
