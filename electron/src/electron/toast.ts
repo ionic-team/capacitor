@@ -32,7 +32,7 @@ export class ToastPluginElectron extends WebPlugin implements ToastPlugin {
       }
       const toastElement = await toastController.create({
         position: 'bottom',
-        message: options.title,
+        message: options.text,
         duration: duration,
       });
       return await toastElement.present();
