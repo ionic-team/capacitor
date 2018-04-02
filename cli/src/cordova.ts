@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType } from './plugin';
+import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
 import { log, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
@@ -71,7 +71,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removePluginFiles(config, platform);
-  cordovaPlugins.map(async p => {
+  await Promise.all(cordovaPlugins.map(async p => {
     const pluginDir = join(pluginsDir, p.id, 'www');
     ensureDirSync(pluginDir);
     const jsModules = getJSModules(p, platform);
@@ -82,7 +82,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       data = `cordova.define("${p.id}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
       await writeFileAsync(filePath, data, 'utf8');
     });
-  });
+  }));
   writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }
 
@@ -97,9 +97,9 @@ export async function copyCordovaJS(config: Config, platform: string) {
   return fsCopy(cordovaPath, join(getWebDir(config, platform), 'cordova.js'));
 }
 
-export function createEmptyCordovaJS(config: Config, platform: string) {
-  writeFileAsync(join(getWebDir(config, platform), 'cordova.js'), '');
-  writeFileAsync(join(getWebDir(config, platform), 'cordova_plugins.js'), '');
+export async function createEmptyCordovaJS(config: Config, platform: string) {
+  await writeFileAsync(join(getWebDir(config, platform), 'cordova.js'), '');
+  await writeFileAsync(join(getWebDir(config, platform), 'cordova_plugins.js'), '');
 }
 
 export function removePluginFiles(config: Config, platform: string) {
@@ -121,7 +121,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
   const cordovaConfigXMLFile = join(xmlDir, 'config.xml');
   removeSync(cordovaConfigXMLFile);
   let pluginEntries: Array<any> = [];
-  cordovaPlugins.map( p => {
+  cordovaPlugins.map(p => {
     const currentPlatform = getPluginPlatform(p, platform);
     if (currentPlatform) {
       const configFiles = currentPlatform['config-file'];
@@ -143,7 +143,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
   <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   ${pluginEntriesString.join('\n')}
   </widget>`;
-  writeFileAsync(cordovaConfigXMLFile, content);
+  await writeFileAsync(cordovaConfigXMLFile, content);
 }
 
 function getWebDir(config: Config, platform: string): string {
@@ -158,7 +158,7 @@ function getWebDir(config: Config, platform: string): string {
 
 export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: Config, platform: string) {
   if (cordovaPlugins.length > 0) {
-    log(`Found ${cordovaPlugins.length} Cordova plugin(s):\n${cordovaPlugins.map(p => '  ' + p.id).join('\n')}`);
+    printPlugins(cordovaPlugins, platform, 'cordova');
     await copyCordovaJS(config, platform);
     await copyPluginsJS(config, cordovaPlugins, platform);
   } else {
@@ -182,17 +182,17 @@ export async function copyCordovaJSFiles(config: Config, platform: string) {
 }
 
 export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Config, platform: string) {
-  cordovaPlugins.map( p => {
+  cordovaPlugins.map(p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
-    editConfig.concat(configFile).map(async (configElement: any) =>{
-      if (!configElement.$.target.includes("config.xml")) {
+    editConfig.concat(configFile).map(async (configElement: any) => {
+      if (!configElement.$.target.includes('config.xml')) {
         if (platform === config.ios.name) {
-          if (configElement.$.target.includes("Info.plist")) {
+          if (configElement.$.target.includes('Info.plist')) {
             logiOSPlist(configElement, config, p);
           }
         } else if (platform === config.android.name) {
-          if (configElement.$.target.includes("AndroidManifest.xml")) {
+          if (configElement.$.target.includes('AndroidManifest.xml')) {
             logAndroidManifest(configElement, config, p);
           }
         }
@@ -244,16 +244,16 @@ async function buildConfigFileXml(configElement: any) {
   return buildXmlElement(configElement, 'config-file');
 }
 
-function getConfigFileTagContent(string: string) {
-  return string.replace(/\<config-file.+\"\>|\<\/config-file>/g, '');
+function getConfigFileTagContent(str: string) {
+  return str.replace(/\<config-file.+\"\>|\<\/config-file>/g, '');
 }
 
-function getXMLElement(path: string, xml:any) {
+function getXMLElement(path: string, xml: any) {
   let xmlElement = xml;
   const parts = getPathParts(path);
   parts.map(part => {
     xmlElement = xmlElement[part];
-  })
+  });
   return xmlElement;
 }
 
@@ -267,9 +267,9 @@ function contains(a: Array<any>, obj: any) {
 }
 
 function getPathParts(path: string) {
-  const rootPath = "manifest";
-  path = path.replace("/*", rootPath);
-  let parts = path.split("/").filter(part => part !== '');
+  const rootPath = 'manifest';
+  path = path.replace('/*', rootPath);
+  let parts = path.split('/').filter(part => part !== '');
   if (parts.length > 1 || parts.includes(rootPath)) {
     return parts;
   }
@@ -291,7 +291,7 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
           if (dep.$.url && dep.$.url.startsWith('http')) {
             plugin = dep.$.url;
           }
-          console.log("installing missing dependency plugin "+plugin);
+          console.log(`installing missing dependency plugin ${plugin}`);
           await runCommand(`npm install ${plugin}`);
           needsUpdate = true;
         }

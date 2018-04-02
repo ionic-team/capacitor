@@ -8,6 +8,7 @@ import { emoji as _e } from '../util/emoji';
 import chalk from 'chalk';
 
 export async function updateCommand(config: Config, selectedPlatformName: string) {
+  const then = +new Date;
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
     logInfo(`There are no platforms to update yet. Create one with "capacitor create".`);
@@ -20,7 +21,9 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     );
 
     await allSerial(platforms.map(platformName => async () => await update(config, platformName)));
-    const then = +new Date;
+    const now = +new Date;
+    const diff = (now - then) / 1000;
+    log(`Update finished in ${diff}s`);
   } catch (e) {
     logFatal(e);
   }
@@ -45,7 +48,7 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
 }
 
 export async function update(config: Config, platformName: string) {
-  runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
+  await runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
     if (platformName === config.ios.name) {
       await updateIOS(config);
     } else if (platformName === config.android.name) {

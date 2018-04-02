@@ -10,7 +10,7 @@ export async function gradleClean(config: Config) {
 }
 
 export async function getAndroidPlugins(config: Config, allPlugins: Plugin[]): Promise<Plugin[]> {
-  const resolved = await Promise.all(allPlugins.map(plugin => resolvePlugin(config, plugin)));
+  const resolved = await Promise.all(allPlugins.map(async plugin => resolvePlugin(config, plugin)));
   return resolved.filter(plugin => !!plugin) as Plugin[];
 }
 
