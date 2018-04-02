@@ -11,6 +11,7 @@ public class CameraSettings {
     private boolean shouldResize = false;
     private boolean shouldCorrectOrientation = DEFAULT_CORRECT_ORIENTATION;
     private boolean saveToGallery = DEFAULT_SAVE_IMAGE_TO_GALLERY;
+    private boolean allowEditing = false;
     private int width = 0;
     private int height = 0;
     private CameraSource source = CameraSource.PROMPT;
@@ -54,6 +55,10 @@ public class CameraSettings {
     public void setSaveToGallery(boolean saveToGallery) {
         this.saveToGallery = saveToGallery;
     }
+
+    public boolean isAllowEditing() { return  allowEditing; }
+
+    public void setAllowEditing(boolean allowEditing) { this.allowEditing = allowEditing; }
 
     public int getWidth() {
         return width;
