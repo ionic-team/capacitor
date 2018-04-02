@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -98,8 +99,13 @@ public class Keyboard extends Plugin {
     execute(new Runnable() {
       @Override
       public void run() {
-        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        call.success(); // Thread-safe.
+        new Handler().postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            call.success(); // Thread-safe.
+          }
+        }, 350);
       }
     });
   }
