@@ -3,7 +3,7 @@ import { CheckFunction, log, logInfo, logWarn, runCommand, runTask } from '../co
 import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join, resolve } from 'path';
-import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, Plugin, PluginType, printCapacitorPlugins } from '../plugin';
+import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
 import * as inquirer from 'inquirer';
@@ -37,6 +37,10 @@ export async function updateIOS(config: Config) {
 
   let plugins = await getPluginsTask(config);
 
+  const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
+
+  printPlugins(capacitorPlugins, 'ios');
+
   let cordovaPlugins: Array<Plugin> = [];
   let needsPluginUpdate = true;
   while (needsPluginUpdate) {
@@ -47,8 +51,6 @@ export async function updateIOS(config: Config) {
       plugins = await getPluginsTask(config);
     }
   }
-
-  printCapacitorPlugins(plugins, platform);
 
   removePluginsNativeFiles(config);
   if (cordovaPlugins.length > 0) {
@@ -168,7 +170,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';
   if (isStatic) {
-    name += "Static";
+    name += 'Static';
     frameworkDeps.push('s.static_framework = true');
     sourcesFolderName += 'static';
   }
@@ -298,7 +300,7 @@ function removePluginsNativeFiles(config: Config) {
 function filterNoPods(plugin: Plugin) {
   const frameworks = getPlatformElement(plugin, platform, 'framework');
   const podFrameworks = frameworks.filter((framework: any) => framework.$.type && framework.$.type === 'podspec');
-  return podFrameworks.length == 0;
+  return podFrameworks.length === 0;
 }
 
 function filterResources(plugin: Plugin) {
@@ -313,7 +315,7 @@ function filterARCFiles(plugin: Plugin) {
 }
 
 async function getPluginsTask(config: Config) {
-  return await runTask('Fetching installed plugins', async () => {
+  return await runTask('Updating iOS plugins', async () => {
     const allPlugins = await getPlugins(config);
     const iosPlugins = await getIOSPlugins(config, allPlugins);
     return iosPlugins;

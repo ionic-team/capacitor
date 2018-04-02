@@ -39,7 +39,7 @@ export interface Plugin {
 
 export async function getPlugins(config: Config): Promise<Plugin[]> {
   const deps = await getDependencies(config);
-  const plugins = await Promise.all(deps.map(p => resolvePlugin(config, p)));
+  const plugins = await Promise.all(deps.map(async p => resolvePlugin(config, p)));
   return plugins.filter(p => !!p) as Plugin[];
 }
 
@@ -95,16 +95,17 @@ export function fixName(name: string): string {
 }
 
 
-export function printCapacitorPlugins(allPlugins: Plugin[], platform: string) {
-  const chalk = require('chalk');
-  const plugins = allPlugins.filter(p => getPluginType(p, platform) === PluginType.Core);
-  const pluginNames = plugins.map(p => p.id).sort();
-  if (pluginNames.length > 0) {
-    log(`\n${chalk.bold(`Found ${pluginNames.length} additional Capacitor plugin(s):`)}
-${pluginNames.map(p => `     ${p}`).join('\n')}
-`);
+export function printPlugins(plugins: Plugin[], platform: string, type: string = 'capacitor') {
+  const plural = plugins.length === 1 ? '' : 's';
+
+  if (type === 'cordova') {
+    log(`  Found ${plugins.length} Cordova plugin${plural} for ${platform}:`);
   } else {
-    logInfo('No Capacitor plugins found. That\'s ok, you can add more plugins later by npm installing them.');
+    log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
+  }
+  const chalk = require('chalk');
+  for (let p of plugins) {
+    log(`    ${chalk.bold(`${p.name}`)} (${chalk.green(p.version)})`);
   }
 }
 
