@@ -99,7 +99,7 @@ export async function newPlugin(config: Config) {
     await runTask('Adding plugin files', async () => {
       await copy(config.plugins.assets.templateDir, pluginPath);
 
-      await createIosPlugin(config, pluginPath, domain, className);
+      await createIosPlugin(config, pluginPath, domain, className, answers);
       await createAndroidPlugin(config, pluginPath, domain, className);
     });
 
@@ -119,7 +119,7 @@ export async function newPlugin(config: Config) {
   }
 }
 
-async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string) {
+async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
   const newPluginPath = join(pluginPath, 'ios/Plugin');
 
   const originalPluginSwift = await readFileAsync(join(newPluginPath, 'Plugin/Plugin.swift'), 'utf8');
@@ -127,8 +127,25 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
   const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
 
+  await writeFileAsync(join(pluginPath, `${answers.className}.podspec`), generatePodspec(config, answers), 'utf8');
   await writeFileAsync(join(newPluginPath, `Plugin/Plugin.swift`), pluginSwift, 'utf8');
   await writeFileAsync(join(newPluginPath, `Plugin/Plugin.m`), pluginObjc, 'utf8');
+}
+
+function generatePodspec(config: Config, answers: any) {
+  return `
+  Pod::Spec.new do |s|
+    s.name = '${answers.className}'
+    s.version = '0.0.1'
+    s.summary = '${answers.description}'
+    s.license = '${answers.license}'
+    s.homepage = '${answers.git}'
+    s.author = '${answers.author}'
+    s.source = { :git => '${answers.git}', :tag => s.version.to_s }
+    s.source_files = 'Plugin/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
+    s.ios.deployment_target  = '${config.ios.minVersion}'
+    s.dependency 'Capacitor'
+  end`;
 }
 
 async function createAndroidPlugin(config: Config, pluginPath: string, domain: string, className: string) {
