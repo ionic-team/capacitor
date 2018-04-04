@@ -1,12 +1,15 @@
 package com.getcapacitor.plugin;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
+import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -19,9 +22,14 @@ import com.getcapacitor.PluginMethod;
  * https://developer.android.com/training/monitoring-device-state/connectivity-monitoring.html
  * https://developer.android.com/training/basics/network-ops/managing.html
  */
-@NativePlugin()
+@NativePlugin(
+  permissions={
+    Manifest.permission.ACCESS_NETWORK_STATE
+  }
+)
 public class Network extends Plugin {
   public static final String NETWORK_CHANGE_EVENT = "networkStatusChange";
+  private static final String PERMISSION_NOT_SET = Manifest.permission.ACCESS_NETWORK_STATE + " not set in AndroidManifest.xml";
 
   private ConnectivityManager cm;
   private BroadcastReceiver receiver;
@@ -36,7 +44,11 @@ public class Network extends Plugin {
     receiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
-        notifyListeners(NETWORK_CHANGE_EVENT, getStatusJSObject(cm.getActiveNetworkInfo()));
+        if (hasRequiredPermissions()) {
+          notifyListeners(NETWORK_CHANGE_EVENT, getStatusJSObject(cm.getActiveNetworkInfo()));
+        } else {
+          Log.e(Bridge.TAG, PERMISSION_NOT_SET);
+        }
       }
     };
   }
@@ -48,12 +60,16 @@ public class Network extends Plugin {
   @SuppressWarnings("MissingPermission")
   @PluginMethod()
   public void getStatus(PluginCall call) {
-    ConnectivityManager cm =
-        (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    if (hasRequiredPermissions()) {
+      ConnectivityManager cm =
+              (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+      NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-    call.success(getStatusJSObject(activeNetwork));
+      call.success(getStatusJSObject(activeNetwork));
+    } else {
+      call.error(PERMISSION_NOT_SET);
+    }
   }
 
   /**
