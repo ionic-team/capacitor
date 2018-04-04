@@ -108,6 +108,10 @@
         setTimeout(function() {
           handler && handler();
         });
+      } else if (name === 'backbutton') {
+        // Add a dummy listener so Capacitor doesn't do the default
+        // back button action
+        Capacitor.Plugins.App && Capacitor.Plugins.App.addListener('backButton', function() {});
       }
       return documentAddEventListener.apply(document, arguments);
     }

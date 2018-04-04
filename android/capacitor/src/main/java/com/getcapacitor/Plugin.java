@@ -261,6 +261,17 @@ public class Plugin {
   }
 
   /**
+   * Check if there are any listeners for the given event
+   */
+  protected boolean hasListeners(String eventName) {
+    List<PluginCall> listeners = eventListeners.get(eventName);
+    if (listeners == null) {
+      return false;
+    }
+    return listeners.size() > 0;
+  }
+
+  /**
    * Send retained arguments (if any) for this event. This
    * is called only when the first listener for an event is added
    * @param eventName
