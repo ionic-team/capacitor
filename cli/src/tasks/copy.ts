@@ -26,7 +26,7 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
 export async function copy(config: Config, platformName: string) {
   await runTask(chalk`{green {bold copy}}`, async () => {
     if (!await existsAsync(config.app.webDirAbs)) {
-      throw new Error('Web dir doesn\'t exist. Make sure you\'ve run `npm build` then run `npx cap copy again`');
+      throw new Error('Web dir doesn\'t exist. Verify webDir is set to your built web assets folder in capacitor.config.json, and make sure you\'ve run `npm build` and `npx cap copy`');
     }
 
     if (platformName === config.ios.name) {
