@@ -9,7 +9,7 @@ import { Plugins } from '@capacitor/core';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage = 'ToastPage';
+  rootPage = 'AppPage';
 
   PLUGINS = [
     { name: 'App', page: 'AppPage' },
@@ -56,11 +56,6 @@ export class MyApp {
       alert('Got restored result');
       console.log('Restored result:', data);
     });
-
-    Plugins.App.addListener('backButton', () => {
-      console.log('BACK BUTTON PRESSED');
-      //Plugins.App.exitApp();
-    })
 
     this.getLaunchUrl();
   }

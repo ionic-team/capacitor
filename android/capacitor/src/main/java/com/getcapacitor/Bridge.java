@@ -708,7 +708,17 @@ public class Bridge {
     PluginHandle appHandle = getPlugin("App");
     if (appHandle != null) {
       App appPlugin = (App) appHandle.getInstance();
-      appPlugin.fireBackButton();
+
+      // If there are listeners, don't do the default action, as this means the user
+      // wants to override the back button
+      if (appPlugin.hasBackButtonListeners()) {
+        appPlugin.fireBackButton();
+      } else {
+        if (webView.canGoBack()) {
+          webView.goBack();
+        }
+      }
     }
+
   }
 }
