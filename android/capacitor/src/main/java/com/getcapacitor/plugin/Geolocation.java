@@ -36,9 +36,6 @@ public class Geolocation extends Plugin {
   private LocationManager locationManager;
   private LocationListener locationListener;
 
-  // A call that is waiting for a permission result
-  private PluginCall permissionWaitCall;
-
   Map<String, PluginCall> watchingCalls = new HashMap<>();
 
   public void load() {
@@ -64,7 +61,7 @@ public class Geolocation extends Plugin {
   @PluginMethod()
   public void getCurrentPosition(PluginCall call) {
     if (!hasRequiredPermissions()) {
-      permissionWaitCall = call;
+      saveCall(call);
       pluginRequestAllPermissions();
     } else {
       sendLocation(call);
@@ -85,7 +82,7 @@ public class Geolocation extends Plugin {
   public void watchPosition(PluginCall call) {
     call.save();
     if (!hasRequiredPermissions()) {
-      permissionWaitCall = call;
+      saveCall(call);
       pluginRequestAllPermissions();
     } else {
       startWatch(call);
@@ -106,7 +103,9 @@ public class Geolocation extends Plugin {
     String callbackId = call.getString("id");
     if (callbackId != null) {
       PluginCall removed = watchingCalls.remove(callbackId);
-      removed.release(bridge);
+      if (removed != null) {
+        removed.release(bridge);
+      }
     }
 
     if (watchingCalls.size() == 0) {
@@ -169,21 +168,24 @@ public class Geolocation extends Plugin {
 
   @Override
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    if (permissionWaitCall == null) {
+    super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    PluginCall savedCall = getSavedCall();
+    if (savedCall == null) {
       return;
     }
 
     for(int result : grantResults) {
       if (result == PackageManager.PERMISSION_DENIED) {
-        permissionWaitCall.error("User denied location permission");
+        savedCall.error("User denied location permission");
         return;
       }
     }
 
-    if (permissionWaitCall.getMethodName().equals("getCurrentPosition")) {
-      sendLocation(permissionWaitCall);
+    if (savedCall.getMethodName().equals("getCurrentPosition")) {
+      sendLocation(savedCall);
     } else {
-      startWatch(permissionWaitCall);
+      startWatch(savedCall);
     }
   }
 
