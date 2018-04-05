@@ -56,7 +56,7 @@ export class GeolocationPage {
 
   watchPosition() {
     try {
-      this.watchId = Plugins.Geolocation.watchPosition({}, (err, position) => {
+      this.watchId = Plugins.Geolocation.watchPosition({}, (position, err) => {
         console.log('Watch', position);
         this.zone.run(() => {
           this.watchCoords = position.coords;
