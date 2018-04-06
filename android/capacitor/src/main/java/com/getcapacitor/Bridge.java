@@ -216,7 +216,8 @@ public class Bridge {
   private void loadCustomWebView() {
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
 
-    // Get to work
+    // Saving off old client so no functionality is lost if
+    // custom webview implements an existing client
     final WebViewClient oldClient = webView.getWebViewClient();
     webView.setWebViewClient(new WebViewClient() {
 
