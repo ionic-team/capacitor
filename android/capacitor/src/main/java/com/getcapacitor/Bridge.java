@@ -1,14 +1,18 @@
 package com.getcapacitor;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
@@ -114,7 +118,6 @@ public class Bridge {
   // Any URI that was passed to the app on start
   private Uri intentUri;
 
-
   /**
    * Create the Bridge with a reference to the main {@link Activity} for the
    * app, and a reference to the {@link WebView} our app will use.
@@ -122,6 +125,16 @@ public class Bridge {
    * @param webView
    */
   public Bridge(Activity context, WebView webView, List<Class<? extends Plugin>> initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
+    this(context, webView, initialPlugins, cordovaInterface, pluginManager, false);
+  }
+
+  /**
+   * Create the Bridge with a reference to the main {@link Activity} for the
+   * app, and a reference to the {@link WebView} our app will use.
+   * @param context
+   * @param webView
+   */
+  public Bridge(Activity context, WebView webView, List<Class<? extends Plugin>> initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager, boolean usingCustomURL) {
     this.context = context;
     this.webView = webView;
     this.initialPlugins = initialPlugins;
@@ -145,10 +158,14 @@ public class Bridge {
     // Register our core plugins
     this.registerAllPlugins();
 
-    this.loadWebView();
+    if (!usingCustomURL) {
+      this.loadLocalWebView();
+    } else {
+      this.loadCustomWebView();
+    }
   }
 
-  private void loadWebView() {
+  private void loadLocalWebView() {
     final String appUrlConfig = Config.getString("server.url");
 
     String authority = null;
@@ -194,10 +211,70 @@ public class Bridge {
         }
       }
     });
+  }
 
+  private void loadCustomWebView() {
+    webView.setWebChromeClient(new BridgeWebChromeClient(this));
 
     // Get to work
-    webView.loadUrl(appUrl);
+    final WebViewClient oldClient = webView.getWebViewClient();
+    webView.setWebViewClient(new WebViewClient() {
+
+      @Override
+      public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        if (oldClient != null) {
+          oldClient.onPageStarted(view, url, favicon);
+        }
+      }
+
+      @Override
+      public void onPageFinished(WebView view, final String location) {
+        if (oldClient != null) {
+          oldClient.onPageFinished(view, location);
+        }
+
+        JSInjector injector = getJSInjector();
+        injectScriptFile(view, injector.getScriptString());
+      }
+
+      private void injectScriptFile(WebView view, String script) {
+
+        // String-ify the script byte-array using BASE64 encoding !!!
+        String encoded = Base64.encodeToString(script.getBytes(), Base64.NO_WRAP);
+        Log.d(TAG, "Trying to inject - " + encoded);
+        view.loadUrl("javascript:(function() {" +
+                "var parent = document.getElementsByTagName('head').item(0);" +
+                "var script = document.createElement('script');" +
+                "script.type = 'text/javascript';" +
+                // Tell the browser to BASE64-decode the string into your script !!!
+                "script.innerHTML = window.atob('" + encoded + "');" +
+                "parent.appendChild(script)" +
+                "})()");
+      }
+
+      @Override
+      public boolean shouldOverrideUrlLoading(WebView view, String location) {
+        if (oldClient != null) {
+          return oldClient.shouldOverrideUrlLoading(view, location);
+        }
+        return false;
+      }
+
+      @Override
+      public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+        if (oldClient != null) {
+          oldClient.onReceivedError(view, errorCode, description, failingUrl);
+        }
+      }
+
+      @Override
+      @TargetApi(Build.VERSION_CODES.M)
+      public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+        if (oldClient != null) {
+          oldClient.onReceivedHttpError(view, request, errorResponse);
+        }
+      }
+    });
   }
 
   public void handleAppUrlLoadError(Exception ex) {
