@@ -240,14 +240,13 @@ public class Bridge {
 
       private void injectScriptFile(WebView view, String script) {
 
-        // String-ify the script byte-array using BASE64 encoding !!!
+        // Base64 encode string before injecting as innerHTML
         String encoded = Base64.encodeToString(script.getBytes(), Base64.NO_WRAP);
-        Log.d(TAG, "Trying to inject - " + encoded);
         view.loadUrl("javascript:(function() {" +
                 "var parent = document.getElementsByTagName('head').item(0);" +
                 "var script = document.createElement('script');" +
                 "script.type = 'text/javascript';" +
-                // Tell the browser to BASE64-decode the string into your script !!!
+                // Base64 decode injected javascript
                 "script.innerHTML = window.atob('" + encoded + "');" +
                 "parent.appendChild(script)" +
                 "})()");
