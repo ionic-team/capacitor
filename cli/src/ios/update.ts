@@ -86,7 +86,7 @@ export async function updatePodfile(config: Config, plugins: Plugin[]) {
 export function generatePodFile(config: Config, plugins: Plugin[]) {
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) !== PluginType.Cordova);
   const pods = capacitorPlugins
-    .map((p) => `pod '${p.ios!.name}', :path => '../../node_modules/${p.id}/${p.ios!.path}'`);
+    .map((p) => `pod '${p.ios!.name}', :path => '../../node_modules/${p.id}'`);
   const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   if (noPodPlugins.length > 0) {
