@@ -142,7 +142,7 @@ function generatePodspec(config: Config, answers: any) {
     s.homepage = '${answers.git}'
     s.author = '${answers.author}'
     s.source = { :git => '${answers.git}', :tag => s.version.to_s }
-    s.source_files = 'Plugin/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
+    s.source_files = 'ios/Plugin/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'Capacitor'
   end`;
