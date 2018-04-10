@@ -88,7 +88,7 @@ class CapacitorSplashScreen {
 
     let splashHtml = `
       <html style="width: 100%; height: 100%; margin: 0; overflow: hidden;">
-        <body style="background-image: url('./${this.splashOptions.imageFileName}'); background-position: center center; width: 100%; height: 100%; margin: 0; overflow: hidden;">
+        <body style="background-image: url('./${this.splashOptions.imageFileName}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">
           <div style="color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw; text-shadow: -0.6px -0.6px 0 #f4f4f4, 0.6px -0.6px 0 #f4f4f4, -0.6px 0.6px 0 #f4f4f4, 0.8px 0.6px 0 #f4f4f4">
             ${this.splashOptions.loadingText}
           </div>
