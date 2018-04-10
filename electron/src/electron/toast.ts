@@ -1,10 +1,5 @@
-import { WebPlugin, ToastPlugin } from "@capacitor/core";
-import {ToastController} from "@ionic/core";
-
-export interface ToastShowOptions {
-  title: string;
-  duration: 'short' | 'long';
-}
+import { WebPlugin, ToastPlugin, ToastShowOptions } from "@capacitor/core";
+import { ToastController } from "@ionic/core";
 
 export class ToastPluginElectron extends WebPlugin implements ToastPlugin {
 
