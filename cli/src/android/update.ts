@@ -73,6 +73,10 @@ ${capacitorPlugins.map(p => {
 ${frameworkString}
 }
 ${applyArray.join('\n')}
+
+if (hasProperty('postBuildExtras')) {
+  postBuildExtras()
+}
 `;
 
   await writeFileAsync(join(config.app.rootDir, 'android/capacitor.settings.gradle'), settingsLines);
