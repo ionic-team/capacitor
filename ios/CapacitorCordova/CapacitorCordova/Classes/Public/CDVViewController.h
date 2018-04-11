@@ -23,4 +23,6 @@
 
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 
+- (id) getCommandInstance:(NSString*)className;
+
 @end
