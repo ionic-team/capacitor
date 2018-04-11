@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { log, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
+import { buildXmlElement, log, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -191,10 +191,6 @@ export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Co
           if (configElement.$.target.includes('Info.plist')) {
             logiOSPlist(configElement, config, p);
           }
-        } else if (platform === config.android.name) {
-          if (configElement.$.target.includes('AndroidManifest.xml')) {
-            logAndroidManifest(configElement, config, p);
-          }
         }
       }
     });
@@ -212,68 +208,12 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
   }
 }
 
-async function logAndroidManifest (configElement: any, config: Config, plugin: Plugin) {
-  const manifestPath = resolve(config.android.platformDir, 'app', 'src', 'main', 'AndroidManifest.xml');
-  const xmlMeta = await readXML(manifestPath);
-  const xmlElement = getXMLElement(configElement.$.parent, xmlMeta);
-  let xmlEntries: Array<any> = [];
-  const keys = Object.keys(configElement).filter(k  => k !== '$');
-  await Promise.all(keys.map(async k => {
-    let element = xmlElement[k];
-    if (Object.getPrototypeOf(xmlElement) === Array.prototype) {
-      element = xmlElement[0][k];
-    }
-    await Promise.all(configElement[k].map(async (e: any) => {
-      if (element === undefined || !contains(element, e)) {
-        xmlEntries.push(await buildXmlElement(e, k));
-      }
-    }));
-  }));
-  if (xmlEntries.length > 0) {
-    logInfo(`plugin ${plugin.id} requires to add \n  ${xmlEntries.join("\n  ")} \nto your AndroidManifest.xml at ${getPathParts(configElement.$.parent).join(" ")} level to work\n`);
-  }
-}
-
-async function buildXmlElement(configElement: any, rootName: string) {
-  const xml2js = await import('xml2js');
-  const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: rootName });
-  return builder.buildObject(configElement);
-}
-
 async function buildConfigFileXml(configElement: any) {
   return buildXmlElement(configElement, 'config-file');
 }
 
 function getConfigFileTagContent(str: string) {
   return str.replace(/\<config-file.+\"\>|\<\/config-file>/g, '');
-}
-
-function getXMLElement(path: string, xml: any) {
-  let xmlElement = xml;
-  const parts = getPathParts(path);
-  parts.map(part => {
-    xmlElement = xmlElement[part];
-  });
-  return xmlElement;
-}
-
-function contains(a: Array<any>, obj: any) {
-  for (var i = 0; i < a.length; i++) {
-      if (JSON.stringify(a[i]) === JSON.stringify(obj)) {
-          return true;
-      }
-  }
-  return false;
-}
-
-function getPathParts(path: string) {
-  const rootPath = 'manifest';
-  path = path.replace('/*', rootPath);
-  let parts = path.split('/').filter(part => part !== '');
-  if (parts.length > 1 || parts.includes(rootPath)) {
-    return parts;
-  }
-  return [rootPath, path];
 }
 
 export async function checkAndInstallDependencies(config: Config, cordovaPlugins: Plugin[], platform: string) {
