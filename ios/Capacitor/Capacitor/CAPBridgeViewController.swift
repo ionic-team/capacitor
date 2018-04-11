@@ -45,6 +45,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
+    webView?.scrollView.decelerationRate = UIScrollViewDecelerationRateFast
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
     //If you want to implement the delegate
