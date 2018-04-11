@@ -22,6 +22,7 @@
 #import "CDVPluginResult.h"
 #import "CDVCommandDelegate.h"
 #import "CDVAvailability.h"
+#import <WebKit/WebKit.h>
 
 @interface UIView (org_apache_cordova_UIView_Extension)
 
