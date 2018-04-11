@@ -127,8 +127,8 @@ export function writeXML(object: any): Promise<any> {
   });
 }
 
-export async function buildXmlElement(configElement: any, rootName: string) {
-  const xml2js = await import('xml2js');
+export function buildXmlElement(configElement: any, rootName: string) {
+  const xml2js = require('xml2js');
   const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: rootName });
   return builder.buildObject(configElement);
 }
