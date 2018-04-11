@@ -162,15 +162,15 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
   const manifestPath = join(pluginsFolder, 'src', 'main', 'AndroidManifest.xml');
   let rootXMLEntries: Array<any> = [];
   let applicationXMLEntries: Array<any> = [];
-  await Promise.all(cordovaPlugins.map(async p => {
+  cordovaPlugins.map(async p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
-    await Promise.all(editConfig.concat(configFile).map(async (configElement: any) => {
+    editConfig.concat(configFile).map(async (configElement: any) => {
       if (configElement.$.target.includes('AndroidManifest.xml')) {
         const keys = Object.keys(configElement).filter(k  => k !== '$');
-        await Promise.all(keys.map(async k => {
-          await Promise.all(configElement[k].map(async (e: any) => {
-            const xmlElement = await buildXmlElement(e, k)
+        keys.map(k => {
+          configElement[k].map((e: any) => {
+            const xmlElement = buildXmlElement(e, k);
             const pathParts = getPathParts(configElement.$.parent);
             if(pathParts.length > 1) {
               if (pathParts.pop() === 'application') {
@@ -181,11 +181,11 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
             } else {
               rootXMLEntries.push(xmlElement);
             }
-          }));
-        }));
+          });
+        });
       }
-    }));
-  }));
+    });
+  });
   let content = `<?xml version='1.0' encoding='utf-8'?>
 <manifest package='capacitor.android.plugins' xmlns:android='http://schemas.android.com/apk/res/android'>
 <application>
