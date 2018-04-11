@@ -202,13 +202,13 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
   const xmlMeta = await readXML(plistPath);
   const dict = xmlMeta.plist.dict.pop();
   if (!dict.key.includes(configElement.$.parent)) {
-    let xml = await buildConfigFileXml(configElement);
+    let xml = buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
     logInfo(`plugin ${plugin.id} requires to add \n  ${xml} to your Info.plist to work`);
   }
 }
 
-async function buildConfigFileXml(configElement: any) {
+function buildConfigFileXml(configElement: any) {
   return buildXmlElement(configElement, 'config-file');
 }
 
