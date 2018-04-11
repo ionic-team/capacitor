@@ -1,8 +1,8 @@
 import { Config } from '../config';
-import { log, runTask } from '../common';
+import { buildXmlElement, log, logInfo, runTask } from '../common';
 import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
-import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
+import { checkAndInstallDependencies, handleCordovaPluginsJS } from '../cordova';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { join, resolve } from 'path';
@@ -34,7 +34,7 @@ export async function updateAndroid(config: Config) {
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
-  await logCordovaManualSteps(cordovaPlugins, config, platform);
+  await writeCordovaAndroidManifest(cordovaPlugins, config);
 }
 
 export async function installGradlePlugins(config: Config, capacitorPlugins: Plugin[], cordovaPlugins: Plugin[]) {
@@ -155,4 +155,53 @@ async function getPluginsTask(config: Config) {
     const androidPlugins = await getAndroidPlugins(config, allPlugins);
     return androidPlugins;
   });
+}
+
+async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Config) {
+  const pluginsFolder = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const manifestPath = join(pluginsFolder, 'src', 'main', 'AndroidManifest.xml');
+  let rootXMLEntries: Array<any> = [];
+  let applicationXMLEntries: Array<any> = [];
+  await Promise.all(cordovaPlugins.map(async p => {
+    const editConfig = getPlatformElement(p, platform, 'edit-config');
+    const configFile = getPlatformElement(p, platform, 'config-file');
+    await Promise.all(editConfig.concat(configFile).map(async (configElement: any) => {
+      if (configElement.$.target.includes('AndroidManifest.xml')) {
+        const keys = Object.keys(configElement).filter(k  => k !== '$');
+        await Promise.all(keys.map(async k => {
+          await Promise.all(configElement[k].map(async (e: any) => {
+            const xmlElement = await buildXmlElement(e, k)
+            const pathParts = getPathParts(configElement.$.parent);
+            if(pathParts.length > 1) {
+              if (pathParts.pop() === 'application') {
+                applicationXMLEntries.push(xmlElement);
+              } else {
+                logInfo(`plugin ${p.id} requires to add \n  ${xmlElement} to your Info.plist to work`);
+              }
+            } else {
+              rootXMLEntries.push(xmlElement);
+            }
+          }));
+        }));
+      }
+    }));
+  }));
+  let content = `<?xml version='1.0' encoding='utf-8'?>
+<manifest package='capacitor.android.plugins' xmlns:android='http://schemas.android.com/apk/res/android'>
+<application>
+${applicationXMLEntries.join('\n')}
+</application>
+${rootXMLEntries.join('\n')}
+</manifest>`;
+  await writeFileAsync(manifestPath, content);
+}
+
+function getPathParts(path: string) {
+  const rootPath = 'manifest';
+  path = path.replace('/*', rootPath);
+  let parts = path.split('/').filter(part => part !== '');
+  if (parts.length > 1 || parts.includes(rootPath)) {
+    return parts;
+  }
+  return [rootPath, path];
 }
