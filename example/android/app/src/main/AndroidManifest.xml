@@ -52,4 +52,6 @@ package="com.getcapacitor.myapp">
     <uses-feature android:name="android.hardware.location.gps" />
     <!-- Network API -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Vibration API -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>
