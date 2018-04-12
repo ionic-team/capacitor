@@ -185,13 +185,21 @@ public class Bridge {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         String url = request.getUrl().toString();
-        if (url.contains(appUrl)) {
-          return super.shouldOverrideUrlLoading(view, request);
-        } else {
-          Intent openIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+        return launchIntent(url);
+      }
+
+      @Override
+      public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        return launchIntent(url);
+      }
+
+      private boolean launchIntent(String url) {
+        if (!url.contains(appUrl)) {
+          Intent openIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
           getContext().startActivity(openIntent);
           return true;
         }
+        return false;
       }
     });
 
