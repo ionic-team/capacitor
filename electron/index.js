@@ -30,19 +30,31 @@ const injectCapacitor = async function(url) {
 
 class CapacitorSplashScreen {
 
-  constructor(mainWindow) {
+  /**
+ * @param {BrowserWindow} mainWindow
+ * @param {Object} splashOptions Options for customizing the splash screen.
+ * @param {string} splashOptions.imageFileName Name of file placed in splash_assets folder
+ * @param {number} splashOptions.windowWidth Width of the splash screen
+ * @param {number} splashOptions.windowHeight Height of the splash screen
+ * @param {string} splashOptions.textColor Loading text color
+ * @param {string} splashOptions.loadingText Loading text
+ * @param {number} splashOptions.textPercentageFromTop Relative distance of the loading text from top of the window
+ * @param {boolean} splashOptions.transparentWindow If the window should of transparent
+ * @param {boolean} splashOptions.autoHideLaunchSplash If auto hide the splash screen
+ */
+  constructor(mainWindow, splashOptions) {
     this.mainWindowRef = null;
     this.splashWindow = null;
 
     this.splashOptions = {
-      imageFileName: "splash.png",
-      windowWidth: 400,
-      windowHeight: 400,
-      textColor: '#43A8FF',
-      loadingText: 'Loading...',
-      textPercentageFromTop: 75,
-      transparentWindow: false,
-      autoHideLaunchSplash: true
+      imageFileName: typeof splashOptions.imageFileName === 'string' ? splashOptions.imageFileName : 'splash.png',
+      windowWidth: splashOptions.windowWidth || 400,
+      windowHeight: splashOptions.windowHeight || 400,
+      textColor: typeof splashOptions.textColor === 'string' ? splashOptions.textColor : '#43A8FF',
+      loadingText: typeof splashOptions.loadingText === 'string' ? splashOptions.loadingText : 'Loading...',
+      textPercentageFromTop: splashOptions.textPercentageFromTop || 75,
+      transparentWindow: splashOptions.transparentWindow || false,
+      autoHideLaunchSplash: splashOptions.autoHideLaunchSplash || true
     };
 
     this.mainWindowRef = mainWindow;
