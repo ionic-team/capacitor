@@ -5,6 +5,7 @@ target 'App' do
   # Add your Pods here
 
   # Automatic Capacitor Pod dependencies, do not delete
-  pod 'Capacitor', '1.0.0-alpha.14'
+  pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   # Do not delete
 end
