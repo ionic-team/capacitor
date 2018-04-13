@@ -22,34 +22,40 @@ export class LocalNotificationsPage {
   pendingNotifs: LocalNotificationScheduleResult;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
-    Plugins.LocalNotifications.registerActionTypes({
-      types: [
-        {
-          id: 'OPEN_PRODUCT',
-          actions: [
-            {
-              id: 'view',
-              title: 'Product'
-            }, {
-              id: 'remove', title: 'Remove', destructive: true
-            },
-            {
-              id: 'response',
-              title: 'Response',
-              input: true
-            }
-          ]
-        }
-      ]
-    })
+    try {
+      Plugins.LocalNotifications.registerActionTypes({
+        types: [
+          {
+            id: 'OPEN_PRODUCT',
+            actions: [
+              {
+                id: 'view',
+                title: 'Product'
+              }, {
+                id: 'remove', title: 'Remove', destructive: true
+              },
+              {
+                id: 'response',
+                title: 'Response',
+                input: true
+              }
+            ]
+          }
+        ]
+      });
 
-    Plugins.LocalNotifications.addListener('localNotificationReceived', (notification) => {
-      console.log('Notification: ', notification);
-    })
+      Plugins.LocalNotifications.addListener('localNotificationReceived', (notification) => {
+        console.log('Notification: ', notification);
+      })
 
-    Plugins.LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
-      console.log('Notification action performed', notification);
-    });
+      Plugins.LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+        console.log('Notification action performed', notification);
+      });
+
+    } catch(e) {
+      console.log(e);
+    }
+
   }
 
   ionViewDidLoad() {
