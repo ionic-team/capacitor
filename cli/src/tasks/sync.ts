@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { copy } from './copy';
 import { update, updateChecks } from './update';
-import { check, checkPackage, checkWebDir, log, logFatal, logInfo } from '../common';
+import { check, checkPackage, checkWebDir, log, logError, logFatal, logInfo } from '../common';
 
 import { allSerial } from '../util/promise';
 
@@ -27,6 +27,10 @@ export async function syncCommand(config: Config, selectedPlatform: string) {
 }
 
 export async function sync(config: Config, platformName: string) {
-  const tasks = [() => copy(config, platformName), () => update(config, platformName)];
-  await allSerial(tasks);
+  try {
+    await copy(config, platformName);
+  } catch (e) {
+    logError(e);
+  }
+  await update(config, platformName);
 }

@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { check, checkWebDir, logFatal, logInfo, runTask } from '../common';
+import { check, checkWebDir, logError, logFatal, logInfo, runTask } from '../common';
 import { existsAsync, symlinkAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
@@ -16,17 +16,18 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
     return;
   }
   try {
-    await check(config, [checkWebDir]);
     await allSerial(platforms.map(platformName => () => copy(config, platformName)));
   } catch (e) {
-    logFatal(e);
+    logError(e);
   }
 }
 
 export async function copy(config: Config, platformName: string) {
   await runTask(chalk`{green {bold copy}}`, async () => {
-    if (!await existsAsync(config.app.webDirAbs)) {
-      throw new Error('Web dir doesn\'t exist. Verify webDir is set to your built web assets folder in capacitor.config.json, and make sure you\'ve run `npm build` and `npx cap copy`');
+
+    const result = await checkWebDir(config);
+    if (result) {
+      throw result;
     }
 
     if (platformName === config.ios.name) {
