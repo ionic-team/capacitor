@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { buildXmlElement, log, logInfo, runTask } from '../common';
+import { buildXmlElement, log, logInfo, parseXML, runTask } from '../common';
 import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
 import { checkAndInstallDependencies, handleCordovaPluginsJS } from '../cordova';
@@ -178,12 +178,16 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
             const pathParts = getPathParts(configElement.$.parent);
             if(pathParts.length > 1) {
               if (pathParts.pop() === 'application') {
-                applicationXMLEntries.push(xmlElement);
+                if (!applicationXMLEntries.includes(xmlElement) && !contains(applicationXMLEntries, xmlElement, k)) {
+                  applicationXMLEntries.push(xmlElement);
+                }
               } else {
                 logInfo(`plugin ${p.id} requires to add \n  ${xmlElement} to your Info.plist to work`);
               }
             } else {
-              rootXMLEntries.push(xmlElement);
+              if (!rootXMLEntries.includes(xmlElement) && !contains(rootXMLEntries, xmlElement, k)) {
+                rootXMLEntries.push(xmlElement);
+              }
             }
           });
         });
@@ -208,4 +212,15 @@ function getPathParts(path: string) {
     return parts;
   }
   return [rootPath, path];
+}
+
+function contains(a: Array<any>, obj: any, k: string) {
+  const element = parseXML(obj);
+  for (var i = 0; i < a.length; i++) {
+    const current = parseXML(a[i]);
+    if (element && current && current[k]  && element[k] && current[k].$ && element[k].$ && element[k].$["android:name"] === current[k].$["android:name"]){
+      return true;
+    }
+  }
+  return false;
 }
