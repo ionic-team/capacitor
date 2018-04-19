@@ -88,11 +88,14 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
   const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
   let frameworksArray: Array<any> = [];
   let prefsArray: Array<any> = [];
+  let applyArray: Array<any> = [];
   cordovaPlugins.map( p => {
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
       if (!framework.$.type && !framework.$.custom) {
         frameworksArray.push(framework.$.src);
+      } else if (framework.$.custom && framework.$.custom === 'true' && framework.$.type && framework.$.type === 'gradleReference') {
+        applyArray.push(`apply from: "../../../../${p.id}/${framework.$.src}"`);
       }
     });
     prefsArray = prefsArray.concat(getPlatformElement(p, platform, 'preference'));
@@ -103,8 +106,10 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
   prefsArray.map((preference: any) => {
     frameworkString = frameworkString.replace(new RegExp(('$'+preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
   });
+  let applyString = applyArray.join('\n');
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
   buildGradle = buildGradle.replace(/(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/, '$1\n' + frameworkString.concat('\n') + '    $2');
+  buildGradle = buildGradle.replace(/(PLUGIN GRADLE EXTENSIONS START)[\s\S]*(\/\/ PLUGIN GRADLE EXTENSIONS END)/, '$1\n' + applyString.concat('\n') + '$2');
   await writeFileAsync(pluginsGradlePath, buildGradle);
 }
 
@@ -143,7 +148,6 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 function removePluginsNativeFiles(config: Config) {
   const pluginsRoot = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
   const pluginsPath = join(pluginsRoot, 'src', 'main');
-  removeSync(join(pluginsRoot, 'gradle-files'));
   removeSync(join(pluginsPath, 'java'));
   removeSync(join(pluginsPath, 'res'));
   removeSync(join(pluginsPath, 'libs'));
@@ -187,7 +191,7 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
     });
   });
   let content = `<?xml version='1.0' encoding='utf-8'?>
-<manifest package='capacitor.android.plugins' xmlns:android='http://schemas.android.com/apk/res/android'>
+<manifest package="capacitor.android.plugins" xmlns:android='http://schemas.android.com/apk/res/android'>
 <application>
 ${applicationXMLEntries.join('\n')}
 </application>
