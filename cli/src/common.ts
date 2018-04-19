@@ -117,6 +117,17 @@ export function readXML(path: string): Promise<any> {
   });
 }
 
+export function parseXML(xmlStr: string): any {
+  const parseString = require('xml2js').parseString;
+  var xmlObj;
+  parseString(xmlStr, (err: any, result: any) => {
+    if (!err) {
+      xmlObj = result;
+    }
+  });
+  return xmlObj;
+}
+
 export function writeXML(object: any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     const xml2js = await import('xml2js');
