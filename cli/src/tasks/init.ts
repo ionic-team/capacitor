@@ -14,6 +14,7 @@ import {
   logError,
   logFatal,
   mergeConfig,
+  printNextSteps,
   runCommand,
   runTask
 } from '../common';
@@ -52,7 +53,7 @@ export async function initCommand(config: Config, name: string, id: string) {
       });
     });
 
-    await printNextSteps(config);
+    await printNextSteps(config, "");
   } catch (e) {
     log('Usage: npx cap init appName appId\n');
     log('Example: npx cap init "My App" "com.example.myapp"\n');
@@ -98,15 +99,4 @@ async function addPlatforms(config: Config) {
       await addCommand(config, 'android');
     });
   });
-}
-
-async function printNextSteps(config: Config) {
-  log('\n');
-  log(`${chalk.bold(`${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e('🎉', '*')}`)}\n`);
-  log(`Add platforms using "npx cap add":\n`);
-  log(`  npx cap add android`);
-  log(`  npx cap add ios`);
-  log(`  npx cap add electron`);
-  log('');
-  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}`);
 }
