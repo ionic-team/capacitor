@@ -4,8 +4,11 @@ import { setTimeout } from 'timers';
 import { basename, join, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
 import { readFile } from 'fs';
+import { emoji as _e } from './util/emoji';
 
 import * as inquirer from 'inquirer';
+
+const chalk = require('chalk');
 
 export type CheckFunction = (config: Config, ...args: any[]) => Promise<string | null>;
 
@@ -301,4 +304,21 @@ export async function copyTemplate(src: string, dst: string) {
   if ( await existsAsync(gitignorePath)) {
     await renameAsync(gitignorePath, join(dst, '.gitignore'));
   }
+}
+
+export async function printNextSteps(config: Config, appDir: string) {
+  log('\n');
+  log(`${chalk.bold(`${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e('🎉', '*')}`)}\n`);
+  if (appDir !== "") {
+    log(`Next steps:`);
+    log('');
+    log(chalk`cd {bold ./${appDir}}`);
+    log('');
+  }
+  log(`Add platforms using "npx cap add":\n`);
+  log(`  npx cap add android`);
+  log(`  npx cap add ios`);
+  log(`  npx cap add electron`);
+  log('');
+  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
 }
