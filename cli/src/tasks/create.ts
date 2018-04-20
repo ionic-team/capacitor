@@ -20,6 +20,7 @@ import {
   getOrCreateConfig,
   log,
   logFatal,
+  printNextSteps,
   runCommand,
   runTask
 } from '../common';
@@ -68,14 +69,6 @@ export async function createCommand(config: Config, dir: string, name: string, i
     await create(config, appDir, appName, appId);
     // npm install
     await installDeps(config, appDir);
-    // Add default platforms (ios on mac, android)
-    await addPlatforms(config, appDir);
-    // Apply project-specific settings to platform projects
-    await editPlatforms(config, appName, appId);
-    // Clean platforms if needed
-    await cleanPlatforms(config);
-    // Copy web and capacitor to web assets
-    await copy(config, config.web.name);
     // Say something nice
     printNextSteps(config, appDir);
   } catch (e) {
@@ -127,33 +120,4 @@ async function installDeps(config: Config, dir: string) {
   await runTask(chalk`Installing dependencies`, async () => {
     return runCommand(`cd "${dir}" && npm install --save @capacitor/cli @capacitor/core`);
   });
-}
-
-async function addPlatforms(config: Config, dir: string) {
-  await runTask(chalk`{green {bold add}} default platforms`, async () => {
-    if (config.cli.os === OS.Mac) {
-      await addIOS(config);
-      await sync(config, config.ios.name);
-    }
-    await addAndroid(config);
-    await sync(config, config.android.name);
-  });
-}
-
-async function editPlatforms(config: Config, appName: string, appId: string) {
-  if (config.cli.os === OS.Mac) {
-    await editProjectSettingsIOS(config);
-  }
-  await editProjectSettingsAndroid(config);
-}
-
-async function cleanPlatforms(config: Config) {
-  await gradleClean(config);
-}
-
-function printNextSteps(config: Config, appDir: string) {
-  log(chalk`{green ✔} Your app is ready!`);
-  log(`\nNext steps:`);
-  log(chalk`cd {bold ./${appDir}}`);
-  log(`Get to work by following the Capacitor Development Workflow: https://capacitor.ionicframework.com/docs/basics/workflow`);
 }
