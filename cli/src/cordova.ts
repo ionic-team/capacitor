@@ -7,6 +7,7 @@ import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 
+const chalk = require('chalk');
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
@@ -204,7 +205,12 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
   if (!dict.key.includes(configElement.$.parent)) {
     let xml = buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
-    logInfo(`plugin ${plugin.id} requires to add \n  ${xml} to your Info.plist to work`);
+    logInfo(`Plugin ${plugin.id} requires you to add \n  ${xml} to your Info.plist to work`);
+  } else if (configElement.array || configElement.dict) {
+    let xml = buildConfigFileXml(configElement);
+    xml = getConfigFileTagContent(xml);
+    xml = removeOuterTags(xml);
+    logInfo(`Plugin ${plugin.id} might require you to add ${xml} in the existing ${chalk.bold(configElement.$.parent)} entry of your Info.plist to work`);
   }
 }
 
@@ -214,6 +220,12 @@ function buildConfigFileXml(configElement: any) {
 
 function getConfigFileTagContent(str: string) {
   return str.replace(/\<config-file.+\"\>|\<\/config-file>/g, '');
+}
+
+function removeOuterTags(str: string) {
+  var start = str.indexOf('>')+1;
+  var end = str.lastIndexOf('<');
+  return str.substring(start, end);
 }
 
 export async function checkAndInstallDependencies(config: Config, cordovaPlugins: Plugin[], platform: string) {
