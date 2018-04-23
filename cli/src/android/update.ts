@@ -130,10 +130,11 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const resourceFiles = androidPlatform['resource-file'];
       if (resourceFiles) {
         resourceFiles.map((resourceFile: any) => {
+          const target = resourceFile.$['target'];
           if (resourceFile.$.src.split('.').pop() === 'aar') {
-            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'libs', resourceFile.$['target'].split('/').pop()));
-          } else {
-            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, resourceFile.$['target']));
+            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'libs', target.split('/').pop()));
+          } else if (target !== ".") {
+            copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, target));
           }
         });
       }
