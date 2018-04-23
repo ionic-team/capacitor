@@ -140,18 +140,10 @@ export function getPluginType(p: Plugin, platform: string): PluginType {
 }
 
 /**
- * Get each JavaScript Module for the give nplugin
+ * Get each JavaScript Module for the given plugin
  */
 export function getJSModules(p: Plugin, platform: string) {
-  let modules: Array<string> = [];
-  if (p.xml['js-module']) {
-    modules = modules.concat(p.xml['js-module']);
-  }
-  const platformModules = getPluginPlatform(p, platform);
-  if (platformModules && platformModules['js-module']) {
-    modules = modules.concat(platformModules['js-module']);
-  }
-  return modules;
+  return getAllElements(p, platform, 'js-module');
 }
 
 export function getFilePath(config: Config, plugin: Plugin, path: string) {
@@ -159,4 +151,19 @@ export function getFilePath(config: Config, plugin: Plugin, path: string) {
     return join(config.app.rootDir, path);
   }
   return join(plugin.rootPath, path);
+}
+
+/**
+ * For a given plugin, return all the plugin.xml elements with elementName, checking root and specified platform
+ */
+export function getAllElements(p: Plugin, platform: string, elementName: string) {
+  let modules: Array<string> = [];
+  if (p.xml[elementName]) {
+    modules = modules.concat(p.xml[elementName]);
+  }
+  const platformModules = getPluginPlatform(p, platform);
+  if (platformModules && platformModules[elementName]) {
+    modules = modules.concat(platformModules[elementName]);
+  }
+  return modules;
 }

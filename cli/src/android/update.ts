@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { buildXmlElement, log, logInfo, parseXML, runTask } from '../common';
-import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
+import { getAllElements, getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
 import { checkAndInstallDependencies, handleCordovaPluginsJS } from '../cordova';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
@@ -58,7 +58,7 @@ project(':${p.id}').projectDir = new File('../node_modules/${p.id}/android/${p.i
         frameworksArray.push(`    implementation "${framework.$.src}"`);
       }
     });
-    prefsArray = prefsArray.concat(getPlatformElement(p, platform, 'preference'));
+    prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
   });
   let frameworkString = frameworksArray.join('\n');
   prefsArray.map((preference: any) => {
@@ -98,7 +98,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
         applyArray.push(`apply from: "../../../../${p.id}/${framework.$.src}"`);
       }
     });
-    prefsArray = prefsArray.concat(getPlatformElement(p, platform, 'preference'));
+    prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
   });
   let frameworkString = frameworksArray.map(f => {
     return `    implementation "${f}"`;
