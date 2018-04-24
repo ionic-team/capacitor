@@ -22,7 +22,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
 
     console.log(ua);
 
-    // const uaFields = this.parseUa(ua);
+    const uaFields = this.parseUa(ua);
 
     let battery: any = {};
 
@@ -33,11 +33,11 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
     }
 
     return Promise.resolve({
-      model: 'web',
-      platform: 'web',
+      model: uaFields.model,
+      platform: "pwa",
       appVersion: '',
-      osVersion: '',
-      manufacturer: '',
+      osVersion: uaFields.osVersion,
+      manufacturer: navigator.vendor,
       isVirtual: false,
       batteryLevel: battery.level,
       isCharging: battery.charging,
@@ -46,7 +46,19 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   }
 
   parseUa(_ua: string) {
-    return {};
+    let uaFields: any = {};
+    const start = _ua.indexOf('(')+1;
+    const end = _ua.indexOf(')');
+    const fields = _ua.substring(start, end);
+    if (_ua.indexOf('Android') !== -1) {
+      uaFields.model = fields.split("; ").pop().split(' Build')[0];
+      uaFields.osVersion = fields.split('; ')[1];
+    } else {
+      uaFields.model = fields.split('; ')[0];
+      uaFields.osVersion = navigator.oscpu ? navigator.oscpu : fields.split('; ').pop();
+    }
+
+    return uaFields;
   }
 
   getUid() {
