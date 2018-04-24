@@ -11,7 +11,7 @@ The Share API works on iOS, Android, and the Web (using the new [Web Share API](
 ## Example
 
 ```typescript
-import { Plugins } from '@capacitore/core';
+import { Plugins } from '@capacitor/core';
 const { Share } = Plugins;
 
 let shareRet = await Share.share({
