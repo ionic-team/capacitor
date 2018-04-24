@@ -10,6 +10,8 @@ copying images and URLs.
 ## Example
 
 ```typescript
+import { Plugins } from '@capacitor/core';
+
 const { Clipboard } = Plugins;
 
 Clipboard.write({
