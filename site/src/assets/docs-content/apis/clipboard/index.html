@@ -4,7 +4,9 @@
 copying images and URLs.</p>
 <p><plugin-api index="true" name="clipboard"></plugin-api></p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> { Clipboard } = Plugins;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { Clipboard } = Plugins;
 
 Clipboard.write({
   <span class="hljs-built_in">string</span>: <span class="hljs-string">"Hello, Moto"</span>

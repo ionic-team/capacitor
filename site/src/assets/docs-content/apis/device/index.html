@@ -4,7 +4,9 @@
 such as unique ids.</p>
 <p><plugin-api name="device" index="true"></plugin-api></p>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> { Device } = Plugins;
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { Device } = Plugins;
 
 <span class="hljs-keyword">const</span> info = <span class="hljs-keyword">await</span> Device.getInfo();
 <span class="hljs-built_in">console</span>.log(info);

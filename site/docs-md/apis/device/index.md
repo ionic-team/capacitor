@@ -10,6 +10,8 @@ such as unique ids.
 ## Example
 
 ```typescript
+import { Plugins } from '@capacitor/core';
+
 const { Device } = Plugins;
 
 const info = await Device.getInfo();
