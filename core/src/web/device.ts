@@ -48,14 +48,14 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   parseUa(_ua: string) {
     let uaFields: any = {};
     const start = _ua.indexOf('(')+1;
-    const end = _ua.indexOf(')');
+    const end = _ua.indexOf('Apple')-2;
     const fields = _ua.substring(start, end);
     if (_ua.indexOf('Android') !== -1) {
-      uaFields.model = fields.split("; ").pop().split(' Build')[0];
+      uaFields.model = fields.replace(" wv", "").split("; ").pop().split(' Build')[0];
       uaFields.osVersion = fields.split('; ')[1];
     } else {
       uaFields.model = fields.split('; ')[0];
-      uaFields.osVersion = navigator.oscpu ? navigator.oscpu : fields.split('; ').pop();
+      uaFields.osVersion = navigator.oscpu ? navigator.oscpu : fields.split('; ').pop().split(" ")[3].replace(/_/g, ".");
     }
 
     return uaFields;
