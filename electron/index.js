@@ -46,12 +46,16 @@ class CapacitorSplashScreen {
     this.mainWindowRef = null;
     this.splashWindow = null;
 
+    if(!splashOptions) {
+      splashOptions = {};
+    }
+
     this.splashOptions = {
-      imageFileName: typeof splashOptions.imageFileName === 'string' ? splashOptions.imageFileName : 'splash.png',
+      imageFileName: splashOptions.imageFileName || 'splash.png',
       windowWidth: splashOptions.windowWidth || 400,
       windowHeight: splashOptions.windowHeight || 400,
-      textColor: typeof splashOptions.textColor === 'string' ? splashOptions.textColor : '#43A8FF',
-      loadingText: typeof splashOptions.loadingText === 'string' ? splashOptions.loadingText : 'Loading...',
+      textColor: splashOptions.textColor || '#43A8FF',
+      loadingText: splashOptions.loadingText || 'Loading...',
       textPercentageFromTop: splashOptions.textPercentageFromTop || 75,
       transparentWindow: splashOptions.transparentWindow || false,
       autoHideLaunchSplash: splashOptions.autoHideLaunchSplash || true
