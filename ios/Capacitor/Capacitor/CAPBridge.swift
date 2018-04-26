@@ -282,7 +282,7 @@ enum BridgeError: Error {
     let configParser = XMLParser(contentsOf: configUrl!)!;
     configParser.delegate = cordovaParser
     configParser.parse()
-    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict)
+    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController)
     do {
       try JSExport.exportCordovaPluginsJS(userContentController: self.userContentController)
     } catch {
@@ -401,7 +401,6 @@ enum BridgeError: Error {
     // Create a selector to send to the plugin
 
     if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
-      plugin.viewController = self.viewController
       plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView(), pluginManager: self.cordovaPluginManager)
       if let webView = self.getWebView() {
         plugin.webView = webView
