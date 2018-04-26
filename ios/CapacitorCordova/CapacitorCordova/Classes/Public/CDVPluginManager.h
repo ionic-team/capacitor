@@ -12,8 +12,9 @@
 
 @property (nonatomic, strong) NSMutableDictionary * pluginsMap;
 @property (nonatomic, strong) NSMutableDictionary * pluginObjects;
+@property (nonatomic, strong) UIViewController * viewController;
 
-- (id)initWithMapping:(NSMutableDictionary*)mapping;
+- (id)initWithMapping:(NSMutableDictionary*)mapping viewController:(UIViewController*)viewController;
 - (CDVPlugin *)getCommandInstance:(NSString*)pluginName;
 
 @end

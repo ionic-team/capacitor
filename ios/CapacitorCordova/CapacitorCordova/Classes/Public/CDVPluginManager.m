@@ -3,11 +3,12 @@
 
 @implementation CDVPluginManager
 
-- (id)initWithMapping:(NSMutableDictionary*)mapping
+- (id)initWithMapping:(NSMutableDictionary*)mapping viewController:(UIViewController*)viewController
 {
   self = [super init];
   if (self != nil) {
     _pluginsMap = mapping;
+    _viewController = viewController;
     _pluginObjects = [[NSMutableDictionary alloc] init];
   }
   return self;
@@ -49,6 +50,7 @@
 - (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className
 {
   [self.pluginObjects setObject:plugin forKey:className];
+  plugin.viewController = self.viewController;
   [plugin pluginInitialize];
 }
 
