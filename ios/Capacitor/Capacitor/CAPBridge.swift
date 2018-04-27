@@ -8,6 +8,8 @@ enum BridgeError: Error {
 }
 
 @objc public class CAPBridge : NSObject {
+
+  public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://getcapacitor.com/"
   
   public var userContentController: WKUserContentController
