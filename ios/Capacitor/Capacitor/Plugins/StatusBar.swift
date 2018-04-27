@@ -6,6 +6,13 @@ import Foundation
  */
 @objc(CAPStatusBarPlugin)
 public class CAPStatusBarPlugin: CAPPlugin {
+
+  public override func load() {
+    NotificationCenter.default.addObserver(forName: CAPBridge.statusBarTappedNotification.name, object: .none, queue: .none) { _ in
+      self.bridge.triggerJSEvent(eventName: "statusTap", target: "window")
+    }
+  }
+
   @objc func setStyle(_ call: CAPPluginCall) {
     let options = call.options!
 
