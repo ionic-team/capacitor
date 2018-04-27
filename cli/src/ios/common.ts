@@ -2,6 +2,7 @@ import { Config } from '../config';
 import { isInstalled } from '../common';
 import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
+import { getIncompatibleCordovaPlugins } from '../cordova';
 
 import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 
@@ -59,15 +60,10 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
       type: PluginType.Core,
       path: iosPath
     };
-    if (plugin.xml) {
+    if(getIncompatibleCordovaPlugins().includes(plugin.id)) {
+      plugin.ios.type = PluginType.Incompatible;
+    } else if (plugin.xml) {
       plugin.ios.type = PluginType.Cordova;
-    } else {
-      const files = await readdirAsync(join(plugin.rootPath, iosPath));
-      const podSpec = files.find(file => file.endsWith('.podspec'));
-      if (podSpec) {
-        plugin.ios.type = PluginType.Cocoapods;
-        plugin.ios.name = podSpec.split('.')[0];
-      }
     }
   } catch (e) {
     console.error('Unable to resolve plugin', e);

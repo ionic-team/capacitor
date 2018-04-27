@@ -35,6 +35,11 @@ export async function updateAndroid(config: Config) {
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config);
+
+  const incompatibleCordovaPlugins = plugins
+  .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
+  printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
+
 }
 
 export async function installGradlePlugins(config: Config, capacitorPlugins: Plugin[], cordovaPlugins: Plugin[]) {
