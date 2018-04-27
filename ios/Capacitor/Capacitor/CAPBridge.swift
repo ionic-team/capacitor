@@ -8,6 +8,8 @@ enum BridgeError: Error {
 }
 
 @objc public class CAPBridge : NSObject {
+
+  public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://getcapacitor.com/"
   
   public var userContentController: WKUserContentController
@@ -504,6 +506,10 @@ enum BridgeError: Error {
     }
   }
   
+  @objc public func triggerJSEvent(eventName: String, target: String) {
+    self.eval(js: "window.Capacitor.triggerEvent('\(eventName)', '\(target)')")
+  }
+
   public func logToJs(_ message: String, _ level: String = "log") {
     DispatchQueue.main.async {
       self.getWebView()?.evaluateJavaScript("window.Capacitor.logJs('\(message)', '\(level)')") { (result, error) in
