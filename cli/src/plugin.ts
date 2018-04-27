@@ -1,12 +1,13 @@
 import { Config } from './config';
 import { join, resolve } from 'path';
 import { log, logInfo, readJSON, readXML } from './common';
+import { getIncompatibleCordovaPlugins } from './cordova';
 
 
 export const enum PluginType {
   Core,
-  Cocoapods,
   Cordova,
+  Incompatible
 }
 export interface PluginManifest {
   ios: {
@@ -100,6 +101,8 @@ export function printPlugins(plugins: Plugin[], platform: string, type: string =
 
   if (type === 'cordova') {
     log(`  Found ${plugins.length} Cordova plugin${plural} for ${platform}:`);
+  } else if (type === 'incompatible') {
+    log(`  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install:`);
   } else {
     log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
   }

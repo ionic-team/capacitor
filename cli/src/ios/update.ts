@@ -61,6 +61,10 @@ export async function updateIOS(config: Config) {
   await installCocoaPodsPlugins(config, plugins);
   await logCordovaManualSteps(cordovaPlugins, config, platform);
 
+  const incompatibleCordovaPlugins = plugins
+  .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
+  printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
+
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[]) {
@@ -84,7 +88,7 @@ export async function updatePodfile(config: Config, plugins: Plugin[]) {
 }
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
-  const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) !== PluginType.Cordova);
+  const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   const pods = capacitorPlugins
     .map((p) => `pod '${p.ios!.name}', :path => '../../node_modules/${p.id}'`);
   const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);

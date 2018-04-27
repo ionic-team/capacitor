@@ -1,9 +1,10 @@
 import { runCommand } from '../common';
 import { Config } from '../config';
-import { Plugin, PluginType } from '../plugin';
+import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 import { mkdirs } from 'fs-extra';
 import { copyAsync, existsAsync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
 import { dirname, join, resolve } from 'path';
+import { getIncompatibleCordovaPlugins } from '../cordova';
 
 export async function gradleClean(config: Config) {
   await runCommand(`cd ${config.android.platformDir} && ./gradlew clean`);
@@ -21,7 +22,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
       throw 'capacitor.android.src is missing';
     }
     androidPath = plugin.manifest.android.src;
-  } else if (plugin.xml) {
+  } else if (plugin.xml && getPluginPlatform(plugin, 'android')) {
     androidPath = 'src/android';
   } else {
     return null;
@@ -31,7 +32,9 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
     type: PluginType.Core,
     path: androidPath
   };
-  if (plugin.xml) {
+  if(getIncompatibleCordovaPlugins().includes(plugin.id)) {
+    plugin.android.type = PluginType.Incompatible;
+  } else if (plugin.xml) {
     plugin.android.type = PluginType.Cordova;
   }
 
