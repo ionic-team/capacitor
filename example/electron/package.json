@@ -1,0 +1,21 @@
+{
+  "name": "capacitor-electron-example",
+  "version": "1.0.0",
+  "description": "An Example Electron Application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ./"
+  },
+  "dependencies": {
+    "@capacitor/electron": "^1.0.0-alpha.28"
+  },
+  "devDependencies": {
+    "electron": "^1.8.2"
+  },
+  "keywords": [
+    "capacitor",
+    "electron"
+  ],
+  "author": "",
+  "license": "ISC"
+}

@@ -10,6 +10,7 @@ test_project/
 .DS_Store
 Podfile.lock
 example/www/
+example/electron/www/*
 example/android/app/src/main/assets/public/*
 !example/android/app/src/main/assets/public/.gitkeep
 example/ios/IonicRunner/public/*
