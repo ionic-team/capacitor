@@ -15,7 +15,7 @@ export class ClipboardPluginElectron extends WebPlugin implements ClipboardPlugi
 
   async write(options: ClipboardWrite): Promise<void> {
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
         if (options.string) {
             clipboard.writeText(options.string);
         } else if(options.url){
