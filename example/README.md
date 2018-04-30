@@ -76,6 +76,8 @@ Open in Android Studio: `example/android`
 cd ./electron
 # Install dependencies
 npm install
+# Link to the local @capacitor/electron
+npm link @capacitor/electron
 # Run the app
 npm start
 ```
