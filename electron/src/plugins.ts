@@ -13,7 +13,7 @@ export * from './electron/filesystem';
 export * from './electron/network';
 export * from './electron/splashscreen';
 export * from './electron/toast';
-
+export * from './electron/clipboard';
 
 mergeWebPlugins(Plugins);
 
