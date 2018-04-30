@@ -31,7 +31,7 @@ export class ClipboardPluginElectron extends WebPlugin implements ClipboardPlugi
                 image: nativeImage.createFromDataURL(dataURL)
             });            
         }
-        return Promise.resolve();
+        return resolve();
     });
 
 
@@ -44,18 +44,18 @@ export class ClipboardPluginElectron extends WebPlugin implements ClipboardPlugi
 
         for(const format of availableFormats){
             if(format === "text/plain"){
-                return Promise.resolve(clipboard.readText());
+                return resolve(clipboard.readText());
             }
             else if (format === "text/html"){
-                return Promise.resolve(clipboard.readHTML());
+                return resolve(clipboard.readHTML());
             }
             else if (format === "image/png" || format === "image/jpeg" ){
                 
-                return Promise.resolve(clipboard.readImage().toDataURL());
+                return resolve(clipboard.readImage().toDataURL());
             }
         }
 
-        return Promise.reject('Unable to get data from clipboard');
+        return reject('Unable to get data from clipboard');
     });
   }  
 
