@@ -6,13 +6,15 @@
   "scripts": {
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
-    "copy": "npm run copy.config.ios && npm run copy.config.android && cp ../core/native-bridge.js www/ && npm run copy.ios && npm run copy.android",
+    "copy": "npm run copy.config.ios && npm run copy.config.android && npm run copy.config.electron && cp ../core/native-bridge.js www/ && npm run copy.ios && npm run copy.android && npm run copy.electron",
     "copy.config.ios": "cp capacitor.config.json ios/IonicRunner/IonicRunner/capacitor.config.json",
     "copy.config.android": "cp capacitor.config.json android/app/src/main/assets/capacitor.config.json",
+    "copy.config.electron": "cp capacitor.config.json electron/capacitor.config.json",
     "copy.ios": "cp -R www/* ios/IonicRunner/public/",
     "copy.android": "cp -R www/* android/app/src/main/assets/public/",
+    "copy.electron": "cp -R www/* electron/www",
     "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve"
+    "ionic:serve": "ionic-app-scripts serve"    
   },
   "dependencies": {
     "@angular/common": "5.0.1",
