@@ -20,12 +20,17 @@ the Capacitor documentation exists to help web developers do just that.</p>
   <span class="hljs-comment">//</span>
   <span class="hljs-comment">// The starter project sets this to true, but if you're using Ionic or another framework,</span>
   <span class="hljs-comment">// you'll probably want this to be false (default is false)</span>
-  <span class="hljs-string">"bundledWebRuntime"</span>: <span class="hljs-literal">false</span>
+  <span class="hljs-string">"bundledWebRuntime"</span>: <span class="hljs-literal">false</span>,
 
   <span class="hljs-comment">// On Windows, we aren't able to automatically open Android Studio</span>
   <span class="hljs-comment">// without knowing the full path. The default is set to the default</span>
   <span class="hljs-comment">// Android Studio install path, but you may change it manually.</span>
   <span class="hljs-string">"windowsAndroidStudioPath"</span>: <span class="hljs-string">'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe'</span>,
+
+  <span class="hljs-comment">// On Android, Capacitor loads your local assets using https</span>
+  <span class="hljs-comment">// Chrome by default prevents loading files from a different scheme (i.e. from http)</span>
+  <span class="hljs-comment">// This setting allows to mix content from different schemes</span>
+  <span class="hljs-string">"allowMixedContent"</span>: <span class="hljs-literal">true</span>
 }
 </code></pre>
 <h2 id="native-configuration">Native Configuration</h2>

@@ -28,12 +28,17 @@ The current ones you might configure are:
   //
   // The starter project sets this to true, but if you're using Ionic or another framework,
   // you'll probably want this to be false (default is false)
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
 
   // On Windows, we aren't able to automatically open Android Studio
   // without knowing the full path. The default is set to the default
   // Android Studio install path, but you may change it manually.
   "windowsAndroidStudioPath": 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
+
+  // On Android, Capacitor loads your local assets using https
+  // Chrome by default prevents loading files from a different scheme (i.e. from http)
+  // This setting allows to mix content from different schemes
+  "allowMixedContent": true
 }
 ```
 
