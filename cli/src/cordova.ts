@@ -113,13 +113,12 @@ export function removePluginFiles(config: Config, platform: string) {
 
 export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[], platform: string) {
   let xmlDir = join(config.android.resDirAbs, 'xml');
-  let target = 'res/xml/config.xml';
+  const fileName = 'config.xml';
   if (platform === 'ios') {
     xmlDir = join(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName);
-    target = 'config.xml';
   }
   ensureDirSync(xmlDir);
-  const cordovaConfigXMLFile = join(xmlDir, 'config.xml');
+  const cordovaConfigXMLFile = join(xmlDir, fileName);
   removeSync(cordovaConfigXMLFile);
   let pluginEntries: Array<any> = [];
   cordovaPlugins.map(p => {
@@ -127,7 +126,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     if (currentPlatform) {
       const configFiles = currentPlatform['config-file'];
       if (configFiles) {
-        const configXMLEntries = configFiles.filter(function(item: any) { return item.$.target === target; });
+        const configXMLEntries = configFiles.filter(function(item: any) { return item.$.target.includes(fileName); });
         configXMLEntries.map(  (entry: any)  => {
           const feature = { feature: entry.feature };
           pluginEntries.push(feature);
