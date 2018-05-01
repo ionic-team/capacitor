@@ -44,14 +44,15 @@ export class ClipboardPluginElectron extends WebPlugin implements ClipboardPlugi
 
         for(const format of availableFormats){
             if(format === "text/plain"){
-                return resolve(clipboard.readText());
+                return resolve({"value": clipboard.readText()});
             }
             else if (format === "text/html"){
-                return resolve(clipboard.readHTML());
+                return resolve({"value": clipboard.readHTML()});
             }
             else if (format === "image/png" || format === "image/jpeg" ){
                 
-                return resolve(clipboard.readImage().toDataURL());
+                
+                return resolve({"value": clipboard.readImage().toDataURL()});
             }
         }
 
