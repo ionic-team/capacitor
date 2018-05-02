@@ -3,7 +3,7 @@ import { mergeWebPlugins, mergeWebPlugin, WebPlugin } from '@capacitor/core';
 
 export * from '@capacitor/core/dist/esm/web/browser';
 export * from '@capacitor/core/dist/esm/web/camera';
-export * from '@capacitor/core/dist/esm/web/clipboard';
+//export * from '@capacitor/core/dist/esm/web/clipboard';
 export * from '@capacitor/core/dist/esm/web/geolocation';
 export * from '@capacitor/core/dist/esm/web/device';
 export * from '@capacitor/core/dist/esm/web/share';

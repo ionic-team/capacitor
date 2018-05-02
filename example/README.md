@@ -26,6 +26,16 @@ npm run build
 npm link
 ```
 
+### Build Capacitor Electron Module
+
+```
+cd ../electron
+
+npm install
+npm run build
+npm link
+```
+
 ## 2. Build Example App
 
 Switch back over to this example project in `/example` where you first install dependencies and link in the `@capacitor/core` you just built in the step before, then build the app and copy the build files to the correct `public` directories for both the iOS and Android example apps:
@@ -35,6 +45,7 @@ cd ../example
 
 npm install
 npm link @capacitor/core
+npm link @capacitor/electron
 
 npm run build
 npm run copy
@@ -58,3 +69,17 @@ Open in Xcode: `example/ios/IonicRunner/IonicRunner.xcworkspace`
 ### b) Build and run Android App
 
 Open in Android Studio: `example/android`
+
+### c) Run Electron App
+
+```bash
+cd ./electron
+# Install dependencies
+npm install
+# Link to the local @capacitor/electron
+npm link @capacitor/electron
+# Run the app
+npm start
+```
+
+
