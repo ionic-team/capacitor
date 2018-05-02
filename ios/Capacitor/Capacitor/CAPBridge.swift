@@ -285,6 +285,11 @@ enum BridgeError: Error {
     configParser.delegate = cordovaParser
     configParser.parse()
     cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController)
+    if cordovaParser.startupPluginNames.count > 0 {
+      for pluginName in cordovaParser.startupPluginNames {
+        _ = cordovaPluginManager?.getCommandInstance(pluginName as! String)
+      }
+    }
     do {
       try JSExport.exportCordovaPluginsJS(userContentController: self.userContentController)
     } catch {
