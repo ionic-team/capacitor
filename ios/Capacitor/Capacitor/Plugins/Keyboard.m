@@ -69,6 +69,8 @@ typedef enum : NSUInteger {
   
   [nc addObserver:self selector:@selector(onKeyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
   [nc addObserver:self selector:@selector(onKeyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+  [nc addObserver:self selector:@selector(onKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+  [nc addObserver:self selector:@selector(onKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
   
   [nc removeObserver:self.webView name:UIKeyboardWillChangeFrameNotification object:nil];
   [nc removeObserver:self.webView name:UIKeyboardDidChangeFrameNotification object:nil];
@@ -87,7 +89,7 @@ typedef enum : NSUInteger {
 {
   [self setKeyboardHeight:0 delay:0.01];
   [self resetScrollView];
-  [self.bridge evalWithPlugin:self js:@"plugin.fireOnHiding();"];
+  [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)note
@@ -99,8 +101,8 @@ typedef enum : NSUInteger {
   [self setKeyboardHeight:height delay:duration/2.0];
   [self resetScrollView];
   
-  NSString *js = [NSString stringWithFormat:@"plugin.fireOnShowing(%d);", (int)height];
-  [self.bridge evalWithPlugin:self js:js];
+  NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
+  [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillShow" data:data];
 }
 
 - (void)onKeyboardDidShow:(NSNotification *)note
@@ -110,13 +112,13 @@ typedef enum : NSUInteger {
   
   [self resetScrollView];
   
-  NSString *js = [NSString stringWithFormat:@"plugin.fireOnShow(%d);", (int)height];
-  [self.bridge evalWithPlugin:self js:js];
+  NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
+  [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidShow" data:data];
 }
 
 - (void)onKeyboardDidHide:(NSNotification *)sender
 {
-  [self.bridge evalWithPlugin:self js:@"plugin.fireOnHide();"];
+  [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidHide"];
   [self resetScrollView];
 }
 

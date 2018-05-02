@@ -505,9 +505,29 @@ enum BridgeError: Error {
       })
     }
   }
-  
+
   @objc public func triggerJSEvent(eventName: String, target: String) {
     self.eval(js: "window.Capacitor.triggerEvent('\(eventName)', '\(target)')")
+  }
+
+  @objc public func triggerJSEvent(eventName: String, target: String, data: String) {
+    self.eval(js: "window.Capacitor.triggerEvent('\(eventName)', '\(target)', \(data))")
+  }
+
+  @objc public func triggerWindowJSEvent(eventName: String) {
+    self.triggerJSEvent(eventName: eventName, target: "window")
+  }
+
+  @objc public func triggerWindowJSEvent(eventName: String, data: String) {
+    self.triggerJSEvent(eventName: eventName, target: "window", data: data)
+  }
+
+  @objc public func triggerDocumentJSEvent(eventName: String) {
+    self.triggerJSEvent(eventName: eventName, target: "document")
+  }
+
+  @objc public func triggerDocumentJSEvent(eventName: String, data: String) {
+    self.triggerJSEvent(eventName: eventName, target: "document", data: data)
   }
 
   public func logToJs(_ message: String, _ level: String = "log") {
