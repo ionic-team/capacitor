@@ -12,7 +12,7 @@
     "copy.config.electron": "cp capacitor.config.json electron/capacitor.config.json",
     "copy.ios": "cp -R www/* ios/IonicRunner/public/",
     "copy.android": "cp -R www/* android/app/src/main/assets/public/",
-    "copy.electron": "cp -R www/* electron/www",
+    "copy.electron": "cp -R www electron/",
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve"    
   },

@@ -131,6 +131,8 @@ public class Bridge {
     handlerThread.start();
     taskHandler = new Handler(handlerThread.getLooper());
 
+    Config.load(getActivity());
+
     // Initialize web view and message handler for it
     this.initWebView();
     this.msgHandler = new MessageHandler(this, webView, pluginManager);
@@ -139,8 +141,6 @@ public class Bridge {
     Intent intent = context.getIntent();
     Uri intentData = intent.getData();
     this.intentUri = intentData;
-
-    Config.load(getActivity());
 
     // Register our core plugins
     this.registerAllPlugins();
@@ -282,6 +282,9 @@ public class Bridge {
     settings.setGeolocationEnabled(true);
     settings.setDatabaseEnabled(true);
     settings.setAppCacheEnabled(true);
+    if (Config.getBoolean("allowMixedContent", false)) {
+      settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+    }
   }
 
   /**

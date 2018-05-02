@@ -284,7 +284,12 @@ enum BridgeError: Error {
     let configParser = XMLParser(contentsOf: configUrl!)!;
     configParser.delegate = cordovaParser
     configParser.parse()
-    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController)
+    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController, webView: self.getWebView())
+    if cordovaParser.startupPluginNames.count > 0 {
+      for pluginName in cordovaParser.startupPluginNames {
+        _ = cordovaPluginManager?.getCommandInstance(pluginName as! String)
+      }
+    }
     do {
       try JSExport.exportCordovaPluginsJS(userContentController: self.userContentController)
     } catch {
@@ -403,11 +408,6 @@ enum BridgeError: Error {
     // Create a selector to send to the plugin
 
     if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
-      plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView(), pluginManager: self.cordovaPluginManager)
-      if let webView = self.getWebView() {
-        plugin.webView = webView
-      }
-
       let selector = NSSelectorFromString("\(call.method):")
       if !plugin.responds(to: selector) {
         print("Error: Plugin \(plugin.className) does not respond to method call \(selector).")
@@ -505,9 +505,29 @@ enum BridgeError: Error {
       })
     }
   }
-  
+
   @objc public func triggerJSEvent(eventName: String, target: String) {
     self.eval(js: "window.Capacitor.triggerEvent('\(eventName)', '\(target)')")
+  }
+
+  @objc public func triggerJSEvent(eventName: String, target: String, data: String) {
+    self.eval(js: "window.Capacitor.triggerEvent('\(eventName)', '\(target)', \(data))")
+  }
+
+  @objc public func triggerWindowJSEvent(eventName: String) {
+    self.triggerJSEvent(eventName: eventName, target: "window")
+  }
+
+  @objc public func triggerWindowJSEvent(eventName: String, data: String) {
+    self.triggerJSEvent(eventName: eventName, target: "window", data: data)
+  }
+
+  @objc public func triggerDocumentJSEvent(eventName: String) {
+    self.triggerJSEvent(eventName: eventName, target: "document")
+  }
+
+  @objc public func triggerDocumentJSEvent(eventName: String, data: String) {
+    self.triggerJSEvent(eventName: eventName, target: "document", data: data)
   }
 
   public func logToJs(_ message: String, _ level: String = "log") {
