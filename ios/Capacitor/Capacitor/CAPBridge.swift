@@ -284,7 +284,7 @@ enum BridgeError: Error {
     let configParser = XMLParser(contentsOf: configUrl!)!;
     configParser.delegate = cordovaParser
     configParser.parse()
-    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController)
+    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController, webView: self.getWebView())
     if cordovaParser.startupPluginNames.count > 0 {
       for pluginName in cordovaParser.startupPluginNames {
         _ = cordovaPluginManager?.getCommandInstance(pluginName as! String)
@@ -408,11 +408,6 @@ enum BridgeError: Error {
     // Create a selector to send to the plugin
 
     if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
-      plugin.commandDelegate = CDVCommandDelegateImpl.init(webView: self.getWebView(), pluginManager: self.cordovaPluginManager)
-      if let webView = self.getWebView() {
-        plugin.webView = webView
-      }
-
       let selector = NSSelectorFromString("\(call.method):")
       if !plugin.responds(to: selector) {
         print("Error: Plugin \(plugin.className) does not respond to method call \(selector).")

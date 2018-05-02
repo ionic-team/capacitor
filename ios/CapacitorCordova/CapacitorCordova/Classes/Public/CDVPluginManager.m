@@ -1,14 +1,16 @@
 #import "CDVPluginManager.h"
 #import "CDVPlugin.h"
+#import "CDVCommandDelegateImpl.h"
 
 @implementation CDVPluginManager
 
-- (id)initWithMapping:(NSMutableDictionary*)mapping viewController:(UIViewController*)viewController
+- (id)initWithMapping:(NSMutableDictionary*)mapping viewController:(UIViewController*)viewController webView:(WKWebView *)webview
 {
   self = [super init];
   if (self != nil) {
     _pluginsMap = mapping;
     _viewController = viewController;
+    _webView = webview;
     _pluginObjects = [[NSMutableDictionary alloc] init];
   }
   return self;
@@ -51,6 +53,8 @@
 {
   [self.pluginObjects setObject:plugin forKey:className];
   plugin.viewController = self.viewController;
+  plugin.webView = self.webView;
+  plugin.commandDelegate = [[CDVCommandDelegateImpl alloc] initWithWebView:self.webView pluginManager:self];
   [plugin pluginInitialize];
 }
 
