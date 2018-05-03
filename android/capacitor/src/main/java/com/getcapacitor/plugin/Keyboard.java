@@ -25,8 +25,7 @@ public class Keyboard extends Plugin {
   private ViewTreeObserver.OnGlobalLayoutListener list;
   private View rootView;
 
-  @PluginMethod()
-  public void subscribe(final PluginCall call) {
+  public void load() {
     execute(new Runnable() {
       @Override
       public void run() {
@@ -67,29 +66,18 @@ public class Keyboard extends Plugin {
 
             int pixelHeightDiff = (int)(heightDiff / density);
             if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
-              String msg = Integer.toString(pixelHeightDiff);
-
-              JSObject ret = new JSObject();
-              ret.put("show", msg);
-              call.success(ret);
-              /*
-              result = new PluginResult(PluginResult.Status.OK, ret);
-              result.setKeepCallback(true);
-              callbackContext.sendPluginResult(result);
-              */
+              String data = "{ 'keyboardHeight': " + pixelHeightDiff + " }";
+              bridge.triggerWindowJSEvent("keyboardWillShow", data);
+              bridge.triggerWindowJSEvent("keyboardDidShow", data);
             }
             else if ( pixelHeightDiff != previousHeightDiff && ( previousHeightDiff - pixelHeightDiff ) > 100 ){
-              JSObject ret = new JSObject();
-              ret.put("hide", true);
-              call.success(ret);
+              bridge.triggerWindowJSEvent("keyboardWillHide");
+              bridge.triggerWindowJSEvent("keyboardDidHide");
             }
             previousHeightDiff = pixelHeightDiff;
           }
         };
-
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(list);
-
-        call.success();
       }
     });
   }
