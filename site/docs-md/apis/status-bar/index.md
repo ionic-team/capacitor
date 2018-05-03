@@ -10,9 +10,19 @@ The StatusBar API Provides methods for configuring the sytle of the Status Bar, 
 
 This plugin requires "View controller-based status bar appearance" (`UIViewControllerBasedStatusBarAppearance`) set to `YES` in `Info.plist`. Read about [Configuring iOS](../../ios/configuration) for help.
 
+## Events
+
+* statusTap
+
 ## Example
 
 ```typescript
+// Events (iOS only)
+window.addEventListener('statusTap', function () {
+  console.log("statusbar tapped");
+});
+
+//API
 import {
   Plugins,
   StatusBarStyle,
