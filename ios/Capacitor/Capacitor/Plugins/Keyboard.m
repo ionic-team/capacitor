@@ -218,9 +218,8 @@ static IMP WKOriginalImp;
 
 - (void)setAccessoryBarVisible:(CAPPluginCall *)call
 {
-  BOOL value = [self getBool:call field:@"visible" defaultValue:FALSE];
+  BOOL value = [self getBool:call field:@"isVisible" defaultValue:FALSE];
 
-  //NSNumber* value = [call getBool:@"visible" defaultValue:nil];
   NSLog(@"Accessory bar visible change %d", value);
   self.hideFormAccessoryBar = !value;
   [call successHandler];
