@@ -482,6 +482,30 @@ public class Bridge {
     });
   }
 
+  public void triggerJSEvent(final String eventName, final String target, final String data) {
+    eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", new ValueCallback<String>() {
+      @Override
+      public void onReceiveValue(String s) {
+      }
+    });
+  }
+
+  public void triggerWindowJSEvent(final String eventName) {
+    this.triggerJSEvent(eventName, "window");
+  }
+
+  public void triggerWindowJSEvent(final String eventName, final String data) {
+    this.triggerJSEvent(eventName, "window", data);
+  }
+
+  public void triggerDocumentJSEvent(final String eventName) {
+    this.triggerJSEvent(eventName, "document");
+  }
+
+  public void triggerDocumentJSEvent(final String eventName, final String data) {
+    this.triggerJSEvent(eventName, "document", data);
+  }
+
   public void execute(Runnable runnable) {
     taskHandler.post(runnable);
   }
