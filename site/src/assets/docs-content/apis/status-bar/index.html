@@ -4,8 +4,18 @@
 <p><plugin-api index="true" name="status-bar"></plugin-api></p>
 <h2 id="ios-note">iOS Note</h2>
 <p>This plugin requires &quot;View controller-based status bar appearance&quot; (<code>UIViewControllerBasedStatusBarAppearance</code>) set to <code>YES</code> in <code>Info.plist</code>. Read about <a href="../../ios/configuration">Configuring iOS</a> for help.</p>
+<h2 id="events">Events</h2>
+<ul>
+<li>statusTap</li>
+</ul>
 <h2 id="example">Example</h2>
-<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> {
+<pre><code class="lang-typescript"><span class="hljs-comment">// Events (iOS only)</span>
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'statusTap'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"statusbar tapped"</span>);
+});
+
+<span class="hljs-comment">//API</span>
+<span class="hljs-keyword">import</span> {
   Plugins,
   StatusBarStyle,
 } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
