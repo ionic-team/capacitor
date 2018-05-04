@@ -1,6 +1,11 @@
 $link-color: #5EB6FC;
 
 document-component {
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+
   plugin-platforms {
     display: block;
     float: right;

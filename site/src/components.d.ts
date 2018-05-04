@@ -52,6 +52,36 @@ declare global {
 
 
 import {
+  AppIcon as AppIcon
+} from './components/app-icon/app-icon';
+
+declare global {
+  interface HTMLAppIconElement extends AppIcon, HTMLStencilElement {
+  }
+  var HTMLAppIconElement: {
+    prototype: HTMLAppIconElement;
+    new (): HTMLAppIconElement;
+  };
+  interface HTMLElementTagNameMap {
+    "app-icon": HTMLAppIconElement;
+  }
+  interface ElementTagNameMap {
+    "app-icon": HTMLAppIconElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "app-icon": JSXElements.AppIconAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppIconAttributes extends HTMLAttributes {
+      name?: string;
+    }
+  }
+}
+
+
+import {
   AppMarked as AppMarked
 } from './components/app-marked/app-marked';
 
@@ -292,31 +322,30 @@ declare global {
 
 
 import {
-  LazyIframe as LazyIframe
-} from './components/lazy-iframe/lazy-iframe';
+  NewsletterSignup as NewsletterSignup
+} from './components/newsletter-signup/newsletter-signup';
 
 declare global {
-  interface HTMLLazyIframeElement extends LazyIframe, HTMLStencilElement {
+  interface HTMLNewsletterSignupElement extends NewsletterSignup, HTMLStencilElement {
   }
-  var HTMLLazyIframeElement: {
-    prototype: HTMLLazyIframeElement;
-    new (): HTMLLazyIframeElement;
+  var HTMLNewsletterSignupElement: {
+    prototype: HTMLNewsletterSignupElement;
+    new (): HTMLNewsletterSignupElement;
   };
   interface HTMLElementTagNameMap {
-    "lazy-iframe": HTMLLazyIframeElement;
+    "newsletter-signup": HTMLNewsletterSignupElement;
   }
   interface ElementTagNameMap {
-    "lazy-iframe": HTMLLazyIframeElement;
+    "newsletter-signup": HTMLNewsletterSignupElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      "lazy-iframe": JSXElements.LazyIframeAttributes;
+      "newsletter-signup": JSXElements.NewsletterSignupAttributes;
     }
   }
   namespace JSXElements {
-    export interface LazyIframeAttributes extends HTMLAttributes {
-      src?: string;
-      title?: string;
+    export interface NewsletterSignupAttributes extends HTMLAttributes {
+      
     }
   }
 }
@@ -378,66 +407,6 @@ declare global {
   namespace JSXElements {
     export interface PluginPlatformsAttributes extends HTMLAttributes {
       platforms?: string;
-    }
-  }
-}
-
-
-import {
-  pwasPage as PwasPage
-} from './components/pwas-page/pwas-page';
-
-declare global {
-  interface HTMLPwasPageElement extends PwasPage, HTMLStencilElement {
-  }
-  var HTMLPwasPageElement: {
-    prototype: HTMLPwasPageElement;
-    new (): HTMLPwasPageElement;
-  };
-  interface HTMLElementTagNameMap {
-    "pwas-page": HTMLPwasPageElement;
-  }
-  interface ElementTagNameMap {
-    "pwas-page": HTMLPwasPageElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "pwas-page": JSXElements.PwasPageAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface PwasPageAttributes extends HTMLAttributes {
-      
-    }
-  }
-}
-
-
-import {
-  ResourcesPage as ResourcesPage
-} from './components/resources-page/resources-page';
-
-declare global {
-  interface HTMLResourcesPageElement extends ResourcesPage, HTMLStencilElement {
-  }
-  var HTMLResourcesPageElement: {
-    prototype: HTMLResourcesPageElement;
-    new (): HTMLResourcesPageElement;
-  };
-  interface HTMLElementTagNameMap {
-    "resources-page": HTMLResourcesPageElement;
-  }
-  interface ElementTagNameMap {
-    "resources-page": HTMLResourcesPageElement;
-  }
-  namespace JSX {
-    interface IntrinsicElements {
-      "resources-page": JSXElements.ResourcesPageAttributes;
-    }
-  }
-  namespace JSXElements {
-    export interface ResourcesPageAttributes extends HTMLAttributes {
-      
     }
   }
 }
