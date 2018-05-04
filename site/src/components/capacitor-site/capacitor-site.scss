@@ -1,11 +1,14 @@
+@import '../../global/variables';
+
 * {
   box-sizing: border-box;
 }
 
 capacitor-site {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-flow: column;
+  overflow: hidden;
 }
 
 .row {
@@ -17,8 +20,11 @@ capacitor-site {
 
 .container {
   max-width: 1080px;
+  width: 100%;
   margin: auto;
+  padding: 0 24px;
 }
+
 .container-flex {
   display: flex;
 }
@@ -26,6 +32,9 @@ capacitor-site {
 .input-with-button {
   display: flex;
   height: 50px;
+  max-width: 460px;
+  flex: 1;
+
   input {
     flex: 1;
     height: 100%;
@@ -43,6 +52,10 @@ capacitor-site {
   }
 }
 
+.measure-lg {
+  max-width: 670px;
+}
+
 .app {
   height: 100%;
   //max-width: 1080px;
@@ -52,12 +65,6 @@ capacitor-site {
 #main-div {
   flex-grow: 1;
   flex-shrink: 0;
-
-  site-header {
-    stencil-route-link a {
-      color: #fff;
-    }
-  }
 }
 
 ::selection {
@@ -86,8 +93,9 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 body {
-  background-color: black;
+  background-color: #fff;
 }
+
 
 h1, h2, h3, h4 {
   color: #16161d;
@@ -98,6 +106,7 @@ h1, h2, h3, h4 {
 
 h1 {
   font-size: 28px;
+  letter-spacing: -0.015em;
 }
 
 h2 {
@@ -111,7 +120,7 @@ h2, h3 {
 
 p, ul {
   color: #2d2d4c;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 2em;
   margin: 24px 0px;
 }
@@ -120,11 +129,29 @@ stencil-route-link:hover {
   cursor: pointer;
 }
 
+
+button {
+  transition: all .15s ease;
+  font-size: 17px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -0.5px;
+  text-align: center;
+  border: none;
+  padding: 16px 20px;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
 .wrapper {
   line-height: 32px;
   min-height: 100%;
-  padding-top: 60px;
-  margin: 15px;
+  padding-top: 100px;
 
   display: flex;
   flex-direction: row;
@@ -132,7 +159,7 @@ stencil-route-link:hover {
   justify-content: flex-start;
   align-content: stretch;
   align-items: flex-start;
-} 
+}
 
 .nextButton {
   background: #5851ff;
@@ -298,7 +325,6 @@ footer {
   background: #f8f8fc;
   height: 8em;
   display: flex;
-  margin-top: 32px;
   flex: 0 0 8em;
 
   .ionic-oss-logo {
@@ -318,10 +344,26 @@ footer {
   .svg-button {
     margin-left: 16px;
     transition: all .15s ease;
+    opacity: 0.5;
+
   }
 
   .svg-button:hover {
-    opacity:0.5;
+    opacity: 1;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    .container {
+      text-align: center;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #open-source {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+    }
   }
 }
 
