@@ -20,13 +20,13 @@ enable your web app to proxy network requests and perform background tasks neede
 provide common Service Worker recipes that you can easily incorporate into your app.</p>
 <p>Read more about using Service Workers, including how to register them, on the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers">Using Service Workers</a> page on MDN.</p>
 <h2 id="progressive-web-app-performance">Progressive Web App Performance</h2>
-<p>Progressive Web Apps are judged by serveral performance standards, including <a href="https://developers.google.com/web/tools/lighthouse/audits/time-to-interactive">Time to Interactive</a> and <a href="https://developers.google.com/web/tools/lighthouse/audits/first-meaningful-paint">First Meaningful Paint</a>. </p>
+<p>Progressive Web Apps are judged by several performance standards, including <a href="https://developers.google.com/web/tools/lighthouse/audits/time-to-interactive">Time to Interactive</a> and <a href="https://developers.google.com/web/tools/lighthouse/audits/first-meaningful-paint">First Meaningful Paint</a>. </p>
 <p>Follow the <a href="https://developers.google.com/web/progressive-web-apps/checklist">Progressive Web App Checklist</a> before going live, and use <a href="https://developers.google.com/web/tools/lighthouse/">Lighthouse</a> to audit and test your app.</p>
 <p>If you&#39;re struggling to meet Progressive Web App performance standards with your existing frontend stack, take a look at <a href="http://ionicframework.com/">Ionic Framework</a> version 4 (in beta at the time of this writing) or greater as an option for getting fast PWA support with nearly zero configuration. Ionic 4.x or above is a web component library that works in several popular frontend frameworks, not just Angular.</p>
 <h2 id="running-natively-and-on-the-web">Running Natively and on the Web</h2>
 <p>One of the key features of Capacitor is the ability to build one app that runs both natively (in the app stores), <em>and</em> on the web. Capacitor does this by providing a layer between the underlying platform and the APIs/Plugins you&#39;d like to use. </p>
 <p>If your app makes native plugin calls that don&#39;t have a web substitute, such as <code>SplashScreen.show()</code>, the app will allow those calls without crashing. Calls that return a promise will return a rejected promise, which you should be handling in your app anyways.</p>
-<p>Additionally, Capacitor&#39;s JavaScript API has a number of utilities that make it possible to programatically check whether certain APIs are available. </p>
+<p>Additionally, Capacitor&#39;s JavaScript API has a number of utilities that make it possible to programmatically check whether certain APIs are available. </p>
 <p>For example, if your app would normally rely on the Camera app being used to take a photo, you could check if the Camera is available, and if not, ask the user to upload a file instead:</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Capacitor } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
 
