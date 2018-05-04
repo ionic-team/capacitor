@@ -2,6 +2,7 @@ import { Config } from '../config';
 import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
 import { emoji } from '../util/emoji';
 import { existsAsync, mkdirAsync, writeFileAsync, readFileAsync } from '../util/fs';
+import { fixName } from '../plugin'
 
 import { copy, move, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
@@ -127,7 +128,7 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
   const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
 
-  await writeFileAsync(join(pluginPath, `${answers.className}.podspec`), generatePodspec(config, answers), 'utf8');
+  await writeFileAsync(join(pluginPath, `${fixName(answers.name)}.podspec`), generatePodspec(config, answers), 'utf8');
   await writeFileAsync(join(newPluginPath, `Plugin/Plugin.swift`), pluginSwift, 'utf8');
   await writeFileAsync(join(newPluginPath, `Plugin/Plugin.m`), pluginObjc, 'utf8');
 }
@@ -135,7 +136,7 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
 function generatePodspec(config: Config, answers: any) {
   return `
   Pod::Spec.new do |s|
-    s.name = '${answers.className}'
+    s.name = '${fixName(answers.name)}'
     s.version = '0.0.1'
     s.summary = '${answers.description}'
     s.license = '${answers.license}'
@@ -207,7 +208,8 @@ function generatePackageJSON(answers: any) {
     files: [
       'dist/',
       'ios/',
-      'android/'
+      'android/',
+      `${fixName(answers.name)}.podspec`
     ],
     keywords: [
       'capacitor',
@@ -221,6 +223,12 @@ function generatePackageJSON(answers: any) {
       android: {
         src: 'android'
       }
+    }, "repository": {
+      "type": "git",
+      "url": answers.git
+    },
+    "bugs": {
+      "url": `${answers.git}/issues`
     }
   };
 }
