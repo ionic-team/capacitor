@@ -8,7 +8,7 @@ The StatusBar API Provides methods for configuring the sytle of the Status Bar, 
 
 ## iOS Note
 
-This plugin requires "View controller-based status bar appearance" (`UIViewControllerBasedStatusBarAppearance`) set to `YES` in `Info.plist`. Read about [Configuring iOS](../../ios/configuration) for help.
+This plugin requires "View controller-based status bar appearance" (`UIViewControllerBasedStatusBarAppearance`) set to `YES` in `Info.plist`. Read about [Configuring iOS](../ios/configuration) for help.
 
 ## Events
 
