@@ -36,7 +36,7 @@ export class AppMarked {
 
         const headerEl = el.querySelector('h1');
         document.title = (headerEl && headerEl.textContent + ' - Capacitor') || 'Capacitor';
-        
+
         // requestAnimationFrame is not available for preRendering
         // or SSR, so only run this in the browser
         if (!this.isServer) {
@@ -74,7 +74,7 @@ export class AppMarked {
 
   render() {
     return (
-      <div innerHTML={this.content}></div>
+      <div class="measure-lg" innerHTML={this.content}></div>
     )
   }
 }

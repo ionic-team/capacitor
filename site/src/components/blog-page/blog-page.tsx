@@ -10,10 +10,10 @@ export class BlogPage {
   }
 
   render() {
-    return (
+    return [
       <div id="blog" class="wrapper">
-        <div class="post">
-          <h2>Announcing Capacitor</h2>
+        <div class="post container">
+          <h1>Announcing Capacitor</h1>
           <div>By <a href="http://twitter.com/maxlynch">Max Lynch</a> on <time>December 12th, 2017</time></div>
           <p>
             Today the <a href="http://ionicframework.com/">Ionic</a> team is excited excited to announce a new Private Preview open source project called Capacitor that makes
@@ -23,12 +23,12 @@ export class BlogPage {
           <p>
             Over the last few years, we've seen web technology proliferate on mobile like never before. Increasingly,
             teams are building apps using web technologies, and Progressive Web Apps are poised to bring the web
-            to mobile in a huge way. As a 
+            to mobile in a huge way. As a
             company focused 100% on bringing the web to mobile, we're excited that teams are far more willing
             to build apps with web technology today than in years past.
           </p>
           <p>
-            We think it could be even easier for web developers to use web standards to target all the platforms they care about, making 
+            We think it could be even easier for web developers to use web standards to target all the platforms they care about, making
             it easy to build apps that run great in a native app
             environment on iOS, Android, and Electron, <i>and</i> on the web as a Progressive Web App.
           </p>
@@ -59,20 +59,12 @@ export class BlogPage {
             we continue to build and improve the project. We expect to have a public preview early 2018.
           </p>
           <p>
-            Please enter your email to join the mailing list to stay updated on our progress.
-          </p>
-          <form id="cta-form" action="https://codiqa.createsend.com/t/t/s/flhuhj/" method="post">
-            <div>
-              <input type="email" placeholder="Email address" id="fieldEmail" name="cm-flhuhj-flhuhj" required style={{padding: '5px', width: '150px'}}/>
-            </div>
-            <button type="submit">Submit</button>
-          </form>
-          <p>
             Thanks,<br />
             The <a href="http://ionicframework.com/">Ionic</a> Team
           </p>
         </div>
-      </div>
-    );
+      </div>,
+      <newsletter-signup></newsletter-signup>
+    ];
   }
 }
