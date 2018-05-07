@@ -11,6 +11,46 @@ capacitor-site {
   overflow: hidden;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
+.left-sidebar-in {
+  animation-name: slideIn;
+  animation-duration: 0.7s;
+  animation-timing-function: $easeOutExpo;
+  animation-fill-mode: forwards;
+}
+@keyframes slideIn {
+  from {
+    left: 0;
+  }
+
+  to {
+    left: calc(100vw - 56px);
+  }
+}
+
+.left-sidebar-out {
+  animation-name: slideOut;
+  animation-duration: 0.7s;
+  animation-timing-function: $easeOutExpo;
+  animation-fill-mode: forwards;
+}
+@keyframes slideOut {
+  from {
+    left: calc(100vw - 56px);
+  }
+
+  to {
+    left: 0;
+  }
+}
+
+.root {
+  position: relative;
+}
+
 .row {
   display: flex;
 }
@@ -123,6 +163,16 @@ p, ul {
   font-size: 16px;
   line-height: 2em;
   margin: 24px 0px;
+}
+
+a {
+  transition: border 0.3s;
+  color: $link-color;
+  border-bottom: 1px solid transparent;
+
+  &:hover {
+    border-bottom-color: rgba($link-color, 0.5);
+  }
 }
 
 stencil-route-link:hover {
@@ -345,7 +395,7 @@ footer {
     margin-left: 16px;
     transition: all .15s ease;
     opacity: 0.5;
-
+    border: 0;
   }
 
   .svg-button:hover {
