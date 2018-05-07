@@ -8,6 +8,7 @@ export class SiteHeader {
   @Element() el: Element;
 
   @State() isMobileMenuShown: boolean;
+  @State() isDropdownShown: boolean;
 
   @Listen('window:resize')
   handleResize() {
@@ -52,6 +53,14 @@ export class SiteHeader {
     }, 300)
   }
 
+  handleDropdownEnter () {
+    this.isDropdownShown = true;
+  }
+
+  handleDropdownLeave () {
+    this.isDropdownShown = false;
+  }
+
   render() {
     return (
       <div class="site-header container">
@@ -68,14 +77,30 @@ export class SiteHeader {
           <stencil-route-link urlMatch="/blog" url="/blog/" onClick={() => { this.hideNav() }}>
             Blog
           </stencil-route-link>
-          <a class="link link--external" href="https://forum.getcapacitor.com/">
-            Forum
-            <app-icon name="targetblank"></app-icon>
-          </a>
-          <a class="link link--external" href="https://getcapacitor.herokuapp.com/">
-            Slack
-            <app-icon name="targetblank"></app-icon>
-          </a>
+
+          <span
+            class={{
+              'link': true,
+              'dropdown': true,
+              'dropdown--visible': this.isDropdownShown
+            }}
+            onMouseEnter={this.handleDropdownEnter.bind(this)}
+            onMouseLeave={this.handleDropdownLeave.bind(this)}>
+            <span class="dropdown__label">Community</span>
+            <ul class="dropdown__menu">
+              <div class="dropdown__arrow"></div>
+              <li class="dropdown__item">
+                <a href="https://forum.getcapacitor.com/">Forum</a>
+              </li>
+              <li class="dropdown__item">
+                <a href="https://getcapacitor.herokuapp.com/">Slack</a>
+              </li>
+              <li class="dropdown__item">
+                <a href="https://twitter.com/getcapacitor">Twitter</a>
+              </li>
+            </ul>
+          </span>
+
           <a class="link link--external" href="https://github.com/ionic-team/capacitor">
             GitHub
             <app-icon name="targetblank"></app-icon>
