@@ -1,10 +1,16 @@
-import { Component } from '@stencil/core';
+import { Component, Event, EventEmitter } from '@stencil/core';
 
 @Component({
   tag: 'site-menu',
   styleUrl: 'site-menu.scss'
 })
 export class SiteMenu {
+
+  @Event() leftSidebarClick: EventEmitter;
+  toggleMenu() {
+    this.leftSidebarClick.emit();
+  }
+
   MENU = [
     {
       title: 'Getting Started',
@@ -220,7 +226,7 @@ export class SiteMenu {
                 {s.items.map(i => {
                   return (
                   <li>
-                    <stencil-route-link url={i.url} exact={true}>
+                    <stencil-route-link url={i.url} exact={true} onClick={() => this.toggleMenu()}>
                       {i.title}
                     </stencil-route-link>
                   </li>
