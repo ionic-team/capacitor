@@ -105,21 +105,23 @@ landing-page {
 
     hgroup {
       max-width: 520px;
-      padding: 130px 40px 140px 0;
+      padding: 160px 60px 200px 0;
 
       h1 {
-        font-size: 47px;
+        font-size: 36px;
         color: #FFFFFF;
-        letter-spacing: -1.5px;
-        line-height: 52px;
+        letter-spacing: -0.01em;
+        line-height: 48px;
+        font-weight: 600;
       }
 
       h3 {
         font-size: 20px;
-        color: #85ADCE;
-        letter-spacing: -0.3px;
+        color: rgba(229, 238, 255, 0.8);
+        letter-spacing: -0.01em;
         line-height: 29px;
-        margin-top: 24px;
+        margin-top: 18px;
+        font-weight: 400;
       }
 
       button {
@@ -216,16 +218,17 @@ landing-page {
     }
 
     h2 {
-      margin-top: 8px;
+      margin-top: 20px;
       font-size: 16px;
     }
 
     p {
       margin-top: 10px;
-      font-weight: 400;
-      font-size: 15px;
-      letter-spacing: -0.02em;
-      line-height: 30px;
+     font-weight: 400;
+     font-size: 15px;
+     letter-spacing: -0.02em;
+     line-height: 28px;
+     color: rgba(225, 241, 255,0.8);
     }
 
     &:before {
