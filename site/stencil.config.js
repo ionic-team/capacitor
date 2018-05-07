@@ -4,10 +4,12 @@ exports.config = {
   plugins: [
     sass()
   ],
-  serviceWorker: false,
-  collections: [{ name: '@stencil/router' }],
-  globalStyle: 'src/global/style.scss'
-
+  globalStyle: 'src/global/style.scss',
+  outputTargets: [
+    {
+      type: 'www'
+    }
+  ]
   /*
   plugins: [{
     name: 'version-replace',
