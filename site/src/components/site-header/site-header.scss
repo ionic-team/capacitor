@@ -288,9 +288,8 @@ site-header {
     display: block;
     visibility: 0;
     opacity: 0;
-    transform: translate(-50%, -10px);
+    transform: translate(-50%, -5px);
     pointer-events: none;
-    // transform-origin: top;
     transition: transform .3s ease, opacity .3s;
 
     &:before {
@@ -341,11 +340,11 @@ site-header {
 
   .dropdown__item a {
     color: $link-color !important;
-    font-weight: 600;
+    font-weight: 500;
     border: 0;
 
     &:hover {
-      color: darken($link-color, 10%) !important;
+      color: darken($link-color, 15%) !important;
     }
   }
 }
@@ -358,7 +357,7 @@ site-header {
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: rgba(#fff, 0.4) !important;
-    font-weight: 700;
+    font-weight: 600;
     vertical-align: baseline;
   }
 

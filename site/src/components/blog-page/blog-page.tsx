@@ -14,7 +14,7 @@ export class BlogPage {
       <div id="blog" class="wrapper">
         <div class="post container">
           <h1>Announcing Capacitor</h1>
-          <div>By <a href="http://twitter.com/maxlynch">Max Lynch</a> on <time>December 12th, 2017</time></div>
+          <div>By <strong><a href="http://twitter.com/maxlynch">Max Lynch</a></strong> on <time>December 12th, 2017</time></div>
           <p>
             Today the <a href="http://ionicframework.com/">Ionic</a> team is excited excited to announce a new Private Preview open source project called Capacitor that makes
             it easier to build and deploy web apps on iOS, Android, Electron, and the web as a Progressive Web App,

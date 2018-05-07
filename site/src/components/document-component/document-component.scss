@@ -37,11 +37,15 @@ document-component {
     text-decoration: none;
   }
 
-  p code {
-    font-weight: 600;
-    font-family: "Source Code Pro",monospace;
-    font-size: 14px;
-    letter-spacing: -0.02em;
+  p,
+  ul,
+  ol {
+    code {
+      padding: 0 4px 3px;
+      background-color: #ecf4fb;
+      color: #16161D;
+      border-radius: 3px;
+    }
   }
 
   #introButton {
@@ -51,7 +55,7 @@ document-component {
 
     border: none;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     padding: 16px 20px;
     border-radius: 2px;

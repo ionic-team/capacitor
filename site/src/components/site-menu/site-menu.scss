@@ -2,10 +2,11 @@
 
 site-menu {
     flex: 0 0 200px;
-
+    padding-bottom: 100px;
+    
     h4 {
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 0;
     }
 
@@ -30,7 +31,6 @@ site-menu {
         font-size: 14px;
         font-weight: 400;
       }
-
     }
 
     a {
@@ -49,7 +49,7 @@ site-menu {
     }
 
     stencil-route-link .link-active {
-      font-weight: bold;
+      font-weight: 600;
       color: $link-color;
       letter-spacing: -0.013em;
       pointer-events: none;
