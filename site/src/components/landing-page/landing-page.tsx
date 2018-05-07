@@ -26,7 +26,7 @@ export class LandingPage {
         <stencil-route-link url="/blog/" >
           <span class="pill">New</span>
           <span class="message">
-            Introducing Capacitor: Start building with our Beta release
+            Announcing Capacitor 1.0.0 Beta
           </span>
           <span class="cta">
             Read Post
