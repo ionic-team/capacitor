@@ -1,4 +1,6 @@
+import '@stencil/router';
 import { Component, Prop, Element, Listen, State } from '@stencil/core';
+import { RouterSwitch } from '@stencil/router';
 
 @Component({
   tag: 'capacitor-site',
@@ -75,112 +77,113 @@ export class App {
         <site-header />
         <div class="app root">
           <stencil-router>
+            <RouterSwitch scrollTopOffset={0}>
 
-            <stencil-route
-              url="/"
-              component="landing-page"
-              exact={true}
-            />
-
-            <stencil-route
-              url="/blog"
-              component="blog-page"
-            />
-
-            <stencil-route
-              url="/docs/"
-              exact={true}
-              routeRender={(_props: { [key: string]: any }) => {
-                return (
-                  <document-component pages={['index.html']} />
-                );
-               }}
+              <stencil-route
+                url="/"
+                component="landing-page"
+                exact={true}
               />
 
-            <stencil-route
-              url="/docs/getting-started/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                const page = props.match.params.pageName || 'index';
-                return (
-                  <document-component pages={[`getting-started/${page}.html`]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/blog"
+                component="blog-page"
+              />
 
-            <stencil-route
-              url="/docs/basics/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                const page = props.match.params.pageName || 'index';
-                return (
-                  <document-component pages={[`basics/${page}.html`]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/docs/"
+                exact={true}
+                routeRender={(_props: { [key: string]: any }) => {
+                  return (
+                    <document-component pages={['index.html']} />
+                  );
+                 }}
+                />
 
-            <stencil-route
-              url="/docs/ios/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                const page = props.match.params.pageName || 'index';
-                return (
-                  <document-component pages={[`ios/${page}.html`]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/docs/getting-started/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`getting-started/${page}.html`]} />
+                  );
+                }}
+              />
 
-            <stencil-route
-              url="/docs/android/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                const page = props.match.params.pageName || 'index';
-                return (
-                  <document-component pages={[`android/${page}.html`]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/docs/basics/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`basics/${page}.html`]} />
+                  );
+                }}
+              />
 
-            <stencil-route
-              url="/docs/electron/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                const page = props.match.params.pageName || 'index';
-                return (
-                  <document-component pages={[`electron/${page}.html`]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/docs/ios/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`ios/${page}.html`]} />
+                  );
+                }}
+              />
 
-            <stencil-route
-              url="/docs/web/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                const page = props.match.params.pageName || 'index';
-                return (
-                  <document-component pages={[`web/${page}.html`]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/docs/android/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`android/${page}.html`]} />
+                  );
+                }}
+              />
 
-            <stencil-route
-              url="/docs/plugins/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                const page = props.match.params.pageName || 'index';
-                return (
-                  <document-component pages={[`plugins/${page}.html`]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/docs/electron/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`electron/${page}.html`]} />
+                  );
+                }}
+              />
 
-            <stencil-route
-              url="/docs/apis/:pageName?"
-              routeRender={(props: { [key: string]: any }) => {
-                let page = 'apis/index.html';
-                const pageName = props.match.params.pageName;
-                if(pageName) {
-                  page = `apis/${pageName}/index.html`
-                }
-                return (
-                  <document-component pages={[page]} />
-                );
-              }}
-            />
+              <stencil-route
+                url="/docs/web/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`web/${page}.html`]} />
+                  );
+                }}
+              />
 
+              <stencil-route
+                url="/docs/plugins/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`plugins/${page}.html`]} />
+                  );
+                }}
+              />
+
+              <stencil-route
+                url="/docs/apis/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  let page = 'apis/index.html';
+                  const pageName = props.match.params.pageName;
+                  if(pageName) {
+                    page = `apis/${pageName}/index.html`
+                  }
+                  return (
+                    <document-component pages={[page]} />
+                  );
+                }}
+              />
+            </RouterSwitch>
           </stencil-router>
         </div>
       </div>,
