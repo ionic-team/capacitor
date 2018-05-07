@@ -1,4 +1,5 @@
 @import '../../global/variables';
+@import '../../global/webfont';
 
 * {
   box-sizing: border-box;
@@ -116,7 +117,8 @@ capacitor-site {
 }
 
 html, body {
-  font-family: -apple-system,
+  font-family: 'Graphik',
+    -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     Helvetica,
@@ -140,13 +142,13 @@ body {
 h1, h2, h3, h4 {
   color: #16161d;
   letter-spacing: 0px;
-  font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 600;
 }
 
 h1 {
   font-size: 28px;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
+  font-weight: 600;
 }
 
 h2 {
@@ -165,14 +167,22 @@ p, ul {
   margin: 24px 0px;
 }
 
+strong, b {
+  font-weight: 500;
+}
+
 a {
   transition: border 0.3s;
   color: $link-color;
   border-bottom: 1px solid transparent;
 
   &:hover {
-    border-bottom-color: rgba($link-color, 0.5);
+    border-bottom-color: rgba($link-color, 0.3);
   }
+}
+
+p a {
+  font-weight: 500;
 }
 
 stencil-route-link:hover {
@@ -183,7 +193,7 @@ stencil-route-link:hover {
 button {
   transition: all .15s ease;
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 600;
   color: #FFFFFF;
   letter-spacing: -0.5px;
   text-align: center;
@@ -218,7 +228,7 @@ button:hover {
 
   border: none;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   padding: 16px 20px;
   border-radius: 2px;
@@ -246,7 +256,7 @@ button:hover {
 
   border: none;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   padding: 16px 20px;
   border-radius: 2px;
@@ -274,7 +284,7 @@ pre {
   margin: 24px 0px 28px;
   padding: 16px 24px;
   border-radius: 4px;
-  color: #525252;
+  color: #16161D;
   background-color: #f8f8f8;
   code {
     font-weight: 500;
@@ -290,7 +300,7 @@ pre {
 
 code {
   font-weight: 400;
-  font-family: "Source Code Pro", monospace;
+  font-family: 'Roboto Mono', 'Source Code Pro', monospace;
   font-size: 14px;
 }
 .hljs-comment, .hljs-quote {

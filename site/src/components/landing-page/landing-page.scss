@@ -55,7 +55,7 @@ landing-page {
       text-align: center;
     }
     .message {
-      font-weight: 600;
+      font-weight: 500;
       opacity: 0.8;
       font-size: 13px;
       margin: 0 14px;
@@ -105,20 +105,24 @@ landing-page {
 
     hgroup {
       max-width: 520px;
-      padding: 160px 60px 200px 0;
+      padding-right: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 
       h1 {
         font-size: 36px;
         color: #FFFFFF;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.03em;
         line-height: 48px;
-        font-weight: 600;
+        font-weight: 500;
+        margin-top: -10px;
       }
 
       h3 {
         font-size: 20px;
         color: rgba(229, 238, 255, 0.8);
-        letter-spacing: -0.01em;
+        letter-spacing: -0.02em;
         line-height: 29px;
         margin-top: 18px;
         font-weight: 400;
@@ -151,8 +155,12 @@ landing-page {
       img {
         width: 100%;
         max-width: 520px;
+        min-width: 420px;
         margin-right: -42px;
         margin-top: -20px;
+        @media screen and (max-width: 1120px) {
+          margin-right: 0;
+        }
       }
     }
 
@@ -162,6 +170,7 @@ landing-page {
         margin: 0 auto;
         padding: 60px 0;
         flex: 0 0 100%;
+        align-items: center;
       }
       .hero-illustration {
         display: none;
@@ -169,7 +178,7 @@ landing-page {
     }
     @media screen and (max-width: $breakpoint-sm) {
       hgroup h1 {
-        font-size: 38px;
+        font-size: 32px;
         line-height: 43px;
       }
 
