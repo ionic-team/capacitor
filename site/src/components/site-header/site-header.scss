@@ -29,6 +29,7 @@ site-header {
     display: flex;
     align-items: center;
     text-decoration: none;
+    border: 0;
   }
 
   .version {
@@ -82,6 +83,7 @@ site-header {
 
   .link,
   .link--external  {
+    border: 0;
     transition: color .3s;
   }
 

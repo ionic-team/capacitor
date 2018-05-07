@@ -52,6 +52,36 @@ declare global {
 
 
 import {
+  AppBurger as AppBurger
+} from './components/app-burger/app-burger';
+
+declare global {
+  interface HTMLAppBurgerElement extends AppBurger, HTMLStencilElement {
+  }
+  var HTMLAppBurgerElement: {
+    prototype: HTMLAppBurgerElement;
+    new (): HTMLAppBurgerElement;
+  };
+  interface HTMLElementTagNameMap {
+    "app-burger": HTMLAppBurgerElement;
+  }
+  interface ElementTagNameMap {
+    "app-burger": HTMLAppBurgerElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "app-burger": JSXElements.AppBurgerAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppBurgerAttributes extends HTMLAttributes {
+      
+    }
+  }
+}
+
+
+import {
   AppIcon as AppIcon
 } from './components/app-icon/app-icon';
 
