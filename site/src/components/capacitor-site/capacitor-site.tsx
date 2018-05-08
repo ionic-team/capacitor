@@ -85,10 +85,10 @@ export class App {
                 exact={true}
               />
 
-              <stencil-route
+              {/* <stencil-route
                 url="/blog"
                 component="blog-page"
-              />
+              /> */}
 
               <stencil-route
                 url="/docs/"

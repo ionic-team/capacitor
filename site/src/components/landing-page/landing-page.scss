@@ -116,7 +116,7 @@ landing-page {
         letter-spacing: -0.03em;
         line-height: 48px;
         font-weight: 500;
-        margin-top: -10px;
+        margin-top: -40px;
       }
 
       h3 {
@@ -171,6 +171,9 @@ landing-page {
         padding: 60px 0;
         flex: 0 0 100%;
         align-items: center;
+      }
+      hgroup h1 {
+        margin-top: 0;
       }
       .hero-illustration {
         display: none;

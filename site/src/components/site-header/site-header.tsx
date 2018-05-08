@@ -67,16 +67,16 @@ export class SiteHeader {
 
         <stencil-route-link url="/" class="logo-link">
           <div class="logo"></div>
-          <b class="version">Beta</b>
+          <b class="version">Alpha</b>
         </stencil-route-link>
 
         <div class="header-menu">
           <stencil-route-link urlMatch="/docs" url="/docs/" onClick={() => { this.hideNav() }}>
             Docs
           </stencil-route-link>
-          <stencil-route-link urlMatch="/blog" url="/blog/" onClick={() => { this.hideNav() }}>
+          {/* <stencil-route-link urlMatch="/blog" url="/blog/" onClick={() => { this.hideNav() }}>
             Blog
-          </stencil-route-link>
+          </stencil-route-link> */}
 
           <span
             class={{
