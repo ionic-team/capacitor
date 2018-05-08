@@ -385,6 +385,8 @@ footer {
   background: #f8f8fc;
   height: 8em;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   flex: 0 0 8em;
 
   .ionic-oss-logo {
@@ -503,5 +505,77 @@ footer {
       overflow: auto;
       min-height: 100vh;
     }
+  }
+}
+
+.document {
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  plugin-platforms {
+    display: block;
+    float: right;
+    .platform {
+      margin-left: 8px;
+    }
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  h1:first-child {
+    anchor-link {
+      display: none;
+    }
+  }
+
+  ul {
+    -webkit-padding-start: 0px;
+    li, code {
+      font-size: 16px;
+      margin-left: 18px;
+    }
+  }
+
+  p a {
+    color: $link-color;
+    text-decoration: none;
+  }
+
+  p,
+  ul,
+  ol {
+    code {
+      padding: 0 4px 3px;
+      background-color: #ecf4fb;
+      color: #16161D;
+      border-radius: 3px;
+    }
+  }
+
+  #introButton {
+    background: $link-color;
+    color: white;
+    text-decoration: none;
+
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 16px 20px;
+    border-radius: 2px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    outline: none;
+    letter-spacing: 0.04em;
+    transition: all .15s ease;
+    cursor: pointer;
+  }
+
+  #introButton:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.1);
+    transform: translateY(1px);
   }
 }
