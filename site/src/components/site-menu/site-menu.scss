@@ -1,16 +1,12 @@
-$link-color: #5EB6FC;
+@import '../../global/variables';
 
 site-menu {
-  
-    .star-button {
-      margin-bottom: -2px;
-      width: 120px;
-      margin-top: 26px;
-    }
-  
+    flex: 0 0 200px;
+    padding-bottom: 100px;
+    
     h4 {
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 0;
     }
 
@@ -35,32 +31,59 @@ site-menu {
         font-size: 14px;
         font-weight: 400;
       }
-  
     }
 
     a {
       color: #484854;
       text-decoration: none;
+      border: 0;
     }
 
-    stencil-route-link a{
+    a:hover {
+      border: 0;
+    }
+
+    stencil-route-link a {
       color: #484854;
       text-decoration: none;
     }
 
     stencil-route-link .link-active {
-      font-weight: bold;
+      font-weight: 600;
       color: $link-color;
       letter-spacing: -0.013em;
+      pointer-events: none;
     }
-  
-    stencil-route-link:hover a {
-      color: #2f2f35 !important;
-      /*
-      color: #2f2f35 !important;
-      font-weight: 500;
-      letter-spacing: -0.013em;
-      */
+
+    stencil-route-link:hover a:not(.link-active) {
+      color: #2f2f35;
     }
-  
+
+    @media screen and (max-width: $breakpoint-md) {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #000;
+      z-index: 999;
+      padding: 20px;
+      width: calc(100vw - 56px);
+      transform: translateX(calc(-100vw + 56px));
+      height: 100%;
+      overflow-y: scroll;
+
+      h4,
+      ul {
+        color: $color-white;
+      }
+
+      stencil-route-link a {
+        color: rgba($color-white, 0.6);
+      }
+      stencil-route-link:hover a:not(.link-active) {
+        color: rgba($color-white, 1);
+      }
+
+
+    }
+
   }
