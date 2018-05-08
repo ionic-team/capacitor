@@ -21,43 +21,42 @@ export class LandingPage {
   }
 
   render() {
-    return (
-      <div>
+    return [
+      // <div class="announcement container">
+      //   <stencil-route-link url="/blog/" >
+      //     <span class="pill">New</span>
+      //     <span class="message">
+      //       Announcing Capacitor 1.0.0 Beta
+      //     </span>
+      //     <span class="cta">
+      //       Read Post
+      //       <app-icon name="caret-right"></app-icon>
+      //     </span>
+      //   </stencil-route-link>
+      // </div>,
 
-        <main>
-          <h1 id="action-call">Build cross platform mobile apps with JavaScript and the Web</h1>
-          <div id="action-more">
-            Native Progressive Web Apps with HTML, CSS, and JavaScript
-            <br />
-            <br />
-            <b>Coming early 2018. Sign up below for updates</b>
-          </div>
-          <section id="buttons">
-            <form id="cta-form" action="https://codiqa.createsend.com/t/t/s/flhuhj/" method="post">
-              <div class="input-with-button">
-                <input type="email" placeholder="Email address" id="fieldEmail" name="cm-flhuhj-flhuhj" required />
-                <button type="submit">Notify me</button>
-              </div>
-            </form>
-            {/*
-            <stencil-route-link url="/docs/getting-started">
+      <div class="container">
+        <section class="hero">
+          <hgroup>
+            <h1 id="action-call">Build native mobile and desktop apps with the web</h1>
+            <h3>
+              Cross-platform runtime that makes it easy to build apps that run natively on iOS, Android, Electron, and the web - using HTML, JS, and CSS.
+            </h3>
+            <stencil-route-link url="/docs/getting-started/">
               <button id="get-started">
                 Get Started
               </button>
             </stencil-route-link>
+            <h5>Supports</h5>
+            <img src="/assets/img/supported-env.png"></img>
+          </hgroup>
+          <div class="hero-illustration">
+            <img src="/assets/img/capacitor-hero.jpg"></img>
+          </div>
+        </section>
 
-            <stencil-route-link url="/docs/intro">
-              <button id="learn-more">
-                Learn More
-              </button>
-            </stencil-route-link>
-            */}
-          </section>
-        </main>
-
-        <section class="three-points">
-          <div class="container container-flex">
-            <div class="point-card">
+        <section class="points">
+            <div class="points__item points__item--crossplatform">
               <h2>Cross Platform</h2>
 
               <p>
@@ -65,7 +64,7 @@ export class LandingPage {
                 Electron, and as Progressive Web Apps
             </p>
           </div>
-          <div class="point-card">
+          <div class="points__item points__item--nativeaccess">
             <h2>Native Access</h2>
 
             <p>
@@ -73,7 +72,7 @@ export class LandingPage {
               easily deploy to App Stores (and the web!)
             </p>
           </div>
-          <div class="point-card">
+          <div class="points__item points__item--opensource">
             <h2>Open Source</h2>
 
             <p>
@@ -81,35 +80,30 @@ export class LandingPage {
               by <a href="http://ionicframework.com/">Ionic</a> and its community.
             </p>
           </div>
-        </div>
-      </section>
-      <section class="three-points">
-        <div class="container container-flex">
-          <div class="point-card">
+          <div class="points__item points__item--webnative">
             <h2>Web Native</h2>
             <p>
-              Build apps with standardized web technologies that will work for decades, and 
+              Build apps with standardized web technologies that will work for decades, and
               easily reach users on the app stores <i>and</i> the mobile web.
             </p>
           </div>
-          <div class="point-card">
+          <div class="points__item points__item--extensible">
             <h2>Extensible</h2>
 
             <p>
-              Easily add custom native functionality with a simple Plugin API, or 
+              Easily add custom native functionality with a simple Plugin API, or
               use existing Cordova plugins with our compatibility layer.
             </p>
           </div>
-          <div class="point-card">
+          <div class="points__item points__item--simple">
             <h2>Simple</h2>
             <p>
               Focus on what you want to do, not how. Capacitor turns complex, proprietary Native APIs into simple JS calls.
             </p>
           </div>
-        </div>
       </section>
-
-    </div>
-    );
+    </div>,
+    <newsletter-signup></newsletter-signup>
+    ];
   }
 }

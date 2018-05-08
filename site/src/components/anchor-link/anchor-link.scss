@@ -1,3 +1,5 @@
+@import '../../global/variables';
+
 anchor-link {
   cursor: pointer;
   user-select: none;
@@ -13,4 +15,11 @@ anchor-link {
 
 .anchor-link-relative {
   position: relative;
+}
+
+
+@media screen and (max-width: $breakpoint-md) {
+  anchor-link.hover-anchor {
+    margin-left: -18px;
+  }
 }

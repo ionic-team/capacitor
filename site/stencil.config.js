@@ -1,10 +1,14 @@
 const sass = require('@stencil/sass');
 
 exports.config = {
-  serviceWorker: false,
-  collections: [{ name: '@stencil/router' }],
   plugins: [
     sass()
+  ],
+  globalStyle: 'src/global/style.scss',
+  outputTargets: [
+    {
+      type: 'www'
+    }
   ]
   /*
   plugins: [{
