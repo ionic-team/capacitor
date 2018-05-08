@@ -16,38 +16,39 @@ export class AppMarked {
     return this.fetchNewContent();
   }
 
-  componentDidLoad() {
-    this.bindHeadings(this.el);
-  }
+  // componentDidLoad() {
+  //   this.bindHeadings(this.el);
+  // }
 
-  componentDidUpdate() {
-    this.bindHeadings(this.el);
-  }
+  // componentDidUpdate() {
+  //   this.bindHeadings(this.el);
+  // }
 
   @Watch('doc')
   fetchNewContent() {
-    return fetch(`/assets/docs-content/${this.doc}`)
-      .then(response => response.text())
-      .then(data => {
-        this.content = data;
+    if (this.doc !== undefined) {
+      return fetch(`/assets/docs-content/${this.doc}`)
+        .then(response => response.text())
+        .then(data => {
+          this.content = data;
 
-        const el = document.createElement('div');
-        el.innerHTML = data;
+          const el = document.createElement('div');
+          el.innerHTML = data;
 
-        const headerEl = el.querySelector('h1');
-        document.title = (headerEl && headerEl.textContent + ' - Capacitor') || 'Capacitor';
+          const headerEl = el.querySelector('h1');
+          document.title = (headerEl && headerEl.textContent + ' - Capacitor') || 'Capacitor';
 
-        // requestAnimationFrame is not available for preRendering
-        // or SSR, so only run this in the browser
-        if (!this.isServer) {
-          window.requestAnimationFrame(() => {
-            window.scrollTo(0, 0);
-          })
-        }
-
-      }).catch(err => {
-        console.error('UNABLE TO LOAD', err);
-      })
+          // requestAnimationFrame is not available for preRendering
+          // or SSR, so only run this in the browser
+          if (!this.isServer) {
+            window.requestAnimationFrame(() => {
+              window.scrollTo(0, 0);
+            })
+          }
+        }).catch(err => {
+          console.error('UNABLE TO LOAD', err);
+        })
+    }
   }
 
   bindHeadings(el: Element) {
@@ -69,7 +70,7 @@ export class AppMarked {
         window.location.hash = '';
         window.location.hash = hash;
       }
-    }, 50);
+    }, 100);
   }
 
   render() {

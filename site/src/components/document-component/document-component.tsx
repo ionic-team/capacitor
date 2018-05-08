@@ -6,10 +6,6 @@ import { Component, Prop } from '@stencil/core';
 export class DocumentComponent {
   @Prop() pages: string[] = [];
 
-  componentWillLoad() {
-    // document.body.style.backgroundColor = 'white';
-  }
-
   render() {
     return (
       <div class="wrapper">

@@ -183,6 +183,7 @@ export class App {
                   );
                 }}
               />
+
             </RouterSwitch>
           </stencil-router>
         </div>

@@ -35,7 +35,7 @@ export class LandingPage {
         </stencil-route-link>
       </div>,
 
-      <main class="container">
+      <div class="container">
         <section class="hero">
           <hgroup>
             <h1 id="action-call">Build native mobile and desktop apps with the web</h1>
@@ -102,7 +102,7 @@ export class LandingPage {
             </p>
           </div>
       </section>
-    </main>,
+    </div>,
     <newsletter-signup></newsletter-signup>
     ];
   }
