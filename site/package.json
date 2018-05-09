@@ -12,11 +12,11 @@
     "start": "rm -rf www && npm run build && npm run dev"
   },
   "dependencies": {
-    "@stencil/router": "^0.1.5",
+    "@stencil/router": "^0.1.6",
     "@stencil/sass": "0.0.5"
   },
   "devDependencies": {
-    "@stencil/core": "^0.8.0",
+    "@stencil/core": "^0.8.1",
     "@stencil/dev-server": "0.0.19-0",
     "@stencil/utils": "latest",
     "gh-pages": "^1.0.0",
