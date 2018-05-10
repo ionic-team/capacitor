@@ -9,6 +9,15 @@
     ],
     "headers": [
       {
+        "source": "/build/app/**",
+        "headers": [
+          {
+            "key": "Link",
+            "value": "public, max-age=31536000"
+          }
+        ]
+      },
+      {
         "source": "sw.js",
         "headers": [
           {
