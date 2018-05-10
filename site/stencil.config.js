@@ -9,7 +9,8 @@ exports.config = {
     {
       type: 'www'
     }
-  ]
+  ],
+  enableCache: false
   /*
   plugins: [{
     name: 'version-replace',
