@@ -7,7 +7,11 @@ exports.config = {
   globalStyle: 'src/global/style.scss',
   outputTargets: [
     {
-      type: 'www'
+      type: 'www',
+      serviceWorker: {
+        skipWaiting: false,
+        clientsClaim: true
+      }
     }
   ],
   enableCache: false
