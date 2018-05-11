@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
+import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON, logWarn } from '../common';
 import { emoji } from '../util/emoji';
 import { existsAsync, mkdirAsync, writeFileAsync, readFileAsync } from '../util/fs';
 import { fixName } from '../plugin'
@@ -127,6 +127,13 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
   const originalPluginObjc  = await readFileAsync(join(newPluginPath, 'Plugin/Plugin.m'), 'utf8');
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
   const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
+
+  if (!answers.git) {
+    logWarn('You will need to add a hompage and git repo to your generated podspec before installing or CocoaPods will complain');
+  }
+  if (!answers.description) {
+    logWarn('You will need to add a summary to your generated podspec before installing or CocoaPods will complain');
+  }
 
   await writeFileAsync(join(pluginPath, `${fixName(answers.name)}.podspec`), generatePodspec(config, answers), 'utf8');
   await writeFileAsync(join(newPluginPath, `Plugin/Plugin.swift`), pluginSwift, 'utf8');
