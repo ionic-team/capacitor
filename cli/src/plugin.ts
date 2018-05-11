@@ -100,9 +100,9 @@ export function printPlugins(plugins: Plugin[], platform: string, type: string =
   const plural = plugins.length === 1 ? '' : 's';
 
   if (type === 'cordova') {
-    log(`  Found ${plugins.length} Cordova plugin${plural} for ${platform}:`);
-  } else if (type === 'incompatible') {
-    log(`  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install:`);
+    log(`  Found ${plugins.length} Cordova plugin${plural} for ${platform}`);
+  } else if (type === 'incompatible' && plugins.length > 0) {
+    log(`  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install`);
   } else {
     log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
   }
