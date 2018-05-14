@@ -6,6 +6,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -19,6 +20,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
   public BridgeWebChromeClient(Bridge bridge) {
     this.bridge = bridge;
+  }
+
+  @Override
+  public void onPermissionRequest(final PermissionRequest request) {
+    request.grant(request.getResources());
   }
 
   /**
