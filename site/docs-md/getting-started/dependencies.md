@@ -4,6 +4,8 @@ Capacitor has a number of dependencies depending on which platforms you're targe
 
 The base requirements are **[Node v8.6.0](https://nodejs.org) or later**, and **NPM version 5.6.0 or later** (which is usually automatically installed with the required version of Node).
 
+Capacitor *does not* officially support yarn nor will we be able to fix or keep open any issues filed for it.
+
 For specific platforms, follow each guide below to ensure you have the correct dependencies installed.
 
 ## iOS Development
