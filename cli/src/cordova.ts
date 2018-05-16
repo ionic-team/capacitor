@@ -235,6 +235,7 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
     if (p.xml['dependency']) {
       allDependencies = allDependencies.concat(p.xml['dependency']);
     }
+    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins().includes(dep.$.id));
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
         if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
