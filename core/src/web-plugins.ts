@@ -9,6 +9,7 @@ export * from './web/device';
 export * from './web/share';
 export * from './web/modals';
 export * from './web/storage';
+export * from './web/toast';
 
 mergeWebPlugins(Plugins);
 
