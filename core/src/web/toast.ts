@@ -20,7 +20,7 @@ export class ToastPluginWeb extends WebPlugin implements ToastPlugin {
    
     let duration = 3000;
     if (options.duration) {
-      duration = options.duration.localeCompare('long') === 0 ? 5000 : 3000;
+      duration = options.duration === 'long' ? 5000 : 3000;
     }
     const toast = await controller.create({
       position: 'bottom',
