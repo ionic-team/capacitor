@@ -29,6 +29,7 @@ import com.getcapacitor.plugin.Filesystem;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.Haptics;
 import com.getcapacitor.plugin.Keyboard;
+import com.getcapacitor.plugin.LocalNotification;
 import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.Network;
 import com.getcapacitor.plugin.Photos;
@@ -332,6 +333,7 @@ public class Bridge {
     this.registerPlugin(Clipboard.class);
     this.registerPlugin(Console.class);
     this.registerPlugin(Device.class);
+    this.registerPlugin(LocalNotification.class);
     this.registerPlugin(Filesystem.class);
     this.registerPlugin(Geolocation.class);
     this.registerPlugin(Haptics.class);
