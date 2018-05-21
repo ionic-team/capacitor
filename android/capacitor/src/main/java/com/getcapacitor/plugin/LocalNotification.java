@@ -2,7 +2,13 @@ package com.getcapacitor.plugin;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -34,7 +40,6 @@ public class LocalNotification extends Plugin {
     createDefaultNotificationChannel();
   }
 
-  //
   private void createDefaultNotificationChannel() {
     // Create the NotificationChannel, but only on API 26+ because
     // the NotificationChannel class is new and not in the support library
@@ -52,8 +57,10 @@ public class LocalNotification extends Plugin {
   }
 
   // TODO unify input parameters for both IOS and Android
+
   /**
-   * Schedule a notification.
+   * Schedule a notification call from JavaScript
+   * Creates local notification in system.
    */
   @PluginMethod()
   public void schedule(PluginCall call) {
@@ -62,31 +69,90 @@ public class LocalNotification extends Plugin {
       return;
     }
     JSONArray ids = new JSONArray();
-
+    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.getContext());
+    boolean notificationsEnabled = notificationManager.areNotificationsEnabled();
+    if (!notificationsEnabled) {
+      call.error("Notifications not enabled on this device");
+      return;
+    }
     for (Notification notification : notifications) {
       if (notification.getId() == null) {
         call.error("Notification missing identifier");
         return;
       }
 
-      // TODO Schedule
-      // TODO ActionHandler
-      // TODO Attachments
-      // TODO Sound
-      NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-              .setContentTitle(notification.getTitle());
+      Intent intent = new Intent(getContext(), getActivity().getClass());
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+      PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
+
+      NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.getContext(), CHANNEL_ID)
+              .setContentTitle(notification.getTitle())
               .setContentText(notification.getBody())
               .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-              // Set the intent that will fire when the user taps the notification
+              .setContentIntent(pendingIntent)
               .setAutoCancel(true);
 
-      NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.getContext());
+
+      String sound = notification.getSound();
+      if (sound != null) {
+        mBuilder.setSound(Uri.parse(sound));
+
+      }
+
+      JSONObject extra = notification.getExtra();
+      if (extra != null) {
+        Bundle extras = new Bundle();
+        extras.putString("data", extra.toString());
+        mBuilder.addExtras(extras);
+        intent.putExtras(extras);
+      }
+
       // notificationId is a unique int for each notification that you must define
-      notificationManager.notify(notification.getId() , mBuilder.build());
+      notificationManager.notify(Integer.valueOf(notification.getId()), mBuilder.build());
       ids.put(notification.getId());
     }
     call.success(new JSObject().put("ids", ids));
   }
+
+  @PluginMethod()
+  public void cancel(PluginCall call) {
+    List<JSONObject> notifications = null;
+    try {
+      notifications = call.getArray("notifications").toList();
+    } catch (JSONException e) {
+    }
+    if (notifications == null || notifications.size() == 0) {
+      call.error("Must provide notifications array as notifications option");
+      return;
+    }
+    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.getContext());
+    for (JSONObject notificationToCancel : notifications) {
+      try {
+        Integer notificationId = notificationToCancel.getInt("id");
+        notificationManager.cancel(notificationId);
+      } catch (JSONException e) {
+        call.error("id field missing in Notification cancel method ");
+        return;
+      }
+    }
+    call.success();
+  }
+
+  @PluginMethod()
+  public void getPending(PluginCall call) {
+    // IOS specific
+    // Requires special permissions that may not be desired for a plugin.
+    // There is no need to implement this method for Android
+    // https://developer.android.com/reference/android/service/notification/NotificationListenerService#getActiveNotifications()
+    call.success();
+  }
+
+  @PluginMethod()
+  public void registerActionTypes(PluginCall call) {
+    // IOS specific call
+    call.success();
+  }
+
 
   // Parse input of the command
   private List<Notification> buildNotificationList(PluginCall call) {
