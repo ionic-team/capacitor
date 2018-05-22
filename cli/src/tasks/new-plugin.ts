@@ -196,8 +196,8 @@ function generatePackageJSON(answers: any) {
     name: answers.name,
     version: '0.0.1',
     description: answers.description,
-    main: 'dist/index.js',
-    types: 'dist/index.d.ts',
+    main: 'dist/esm/index.js',
+    types: 'dist/esm/index.d.ts',
     scripts: {
       'build': 'npm run clean && tsc',
       'clean': 'rm -rf ./dist',
