@@ -43,7 +43,7 @@ const { Geolocation } = Plugins;
 
 class GeolocationExample {
   async getCurrentPosition() {
-    const coordinates = await Geolocation.getCurrentPosition()
+    const coordinates = await Geolocation.getCurrentPosition();
     console.log('Current', coordinates);
   }
 
