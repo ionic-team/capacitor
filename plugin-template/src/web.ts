@@ -1,6 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
+import { MyPluginPlugin } from './definitions';
 
-export class MyPluginWeb extends WebPlugin {
+export class MyPluginWeb extends WebPlugin implements MyPluginPlugin {
   constructor() {
     super({
       name: 'MyPlugin',
@@ -8,9 +9,9 @@ export class MyPluginWeb extends WebPlugin {
     });
   }
 
-  async echo(options: { value: string }) {
+  async echo(options: { value: string }): Promise<{value: string}> {
     console.log('ECHO', options);
-    return Promise.resolve();
+    return Promise.resolve({ value: options.value });
   }
 }
 

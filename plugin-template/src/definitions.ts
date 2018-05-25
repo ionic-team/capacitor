@@ -1,6 +1,6 @@
 declare global {
   interface PluginRegistry {
-    EchoPlugin?: EchoPlugin;
+    Echo?: EchoPlugin;
   }
 }
 
