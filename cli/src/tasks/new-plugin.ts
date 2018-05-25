@@ -99,7 +99,7 @@ export async function newPlugin(config: Config) {
 
     await runTask('Adding plugin files', async () => {
       await copy(config.plugins.assets.templateDir, pluginPath);
-
+      await createTSPlugin(config, pluginPath, domain, className, answers);
       await createIosPlugin(config, pluginPath, domain, className, answers);
       await createAndroidPlugin(config, pluginPath, domain, className);
     });
@@ -118,6 +118,18 @@ export async function newPlugin(config: Config) {
   } else {
     logInfo('Aborted');
   }
+}
+
+async function createTSPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
+  const newPluginPath = join(pluginPath, 'src');
+
+  const originalDefinitions = await readFileAsync(join(newPluginPath, 'definitions.ts'), 'utf8');
+  const originalWeb  = await readFileAsync(join(newPluginPath, 'web.ts'), 'utf8');
+  let definitions = originalDefinitions.replace(/Echo/g, className);
+  const web  = originalWeb.replace(/MyPlugin/g, className);
+
+  await writeFileAsync(join(newPluginPath, `definitions.ts`), definitions, 'utf8');
+  await writeFileAsync(join(newPluginPath, `web.ts`), web, 'utf8');
 }
 
 async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
