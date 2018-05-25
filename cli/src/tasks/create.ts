@@ -69,6 +69,8 @@ export async function createCommand(config: Config, dir: string, name: string, i
     await create(config, appDir, appName, appId);
     // npm install
     await installDeps(config, appDir);
+    // Copy web and capacitor to web assets
+    await copy(config, config.web.name);
     // Say something nice
     printNextSteps(config, appDir);
   } catch (e) {
