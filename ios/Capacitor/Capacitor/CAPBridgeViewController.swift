@@ -10,16 +10,16 @@ import UIKit
 import WebKit
 import GCDWebServer
 
-class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
+public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
   private var webServer: GCDWebServer?
   
-  var bridgedWebView: WKWebView? {
+  public var bridgedWebView: WKWebView? {
     return webView
   }
   
-  var bridgedViewController: UIViewController? {
+  public var bridgedViewController: UIViewController? {
     return self
   }
   
@@ -33,7 +33,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
   public var bridge: CAPBridge?
   
   
-  override func loadView() {
+  override public func loadView() {
     let webViewConfiguration = WKWebViewConfiguration()
     
     let o = WKUserContentController()
@@ -57,7 +57,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     bridge = CAPBridge(self, o)
   }
   
-  override func viewDidLoad() {
+  override public func viewDidLoad() {
     super.viewDidLoad()
     self.becomeFirstResponder()
     
@@ -154,12 +154,12 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     //configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone
   }
   
-  func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+  public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
     // Reset the bridge on each navigation
     bridge!.reset()
   }
   
-  func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+  public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     if navigationAction.targetFrame == nil {
       UIApplication.shared.open(
         URL(string: navigationAction.request.url!.absoluteString)!,
@@ -183,16 +183,16 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     decisionHandler(.allow)
   }
   
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+  public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     print("⚡️  WebView loaded")
   }
   
-  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+  public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     print("⚡️  WebView failed to load")
     print("⚡️  Error: " + error.localizedDescription)
   }
   
-  func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+  public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
     print("⚡️  WebView failed provisional navigation")
     print("⚡️  Error: " + error.localizedDescription)
   }
@@ -259,12 +259,12 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     print("\n⚡️  See above for help with debugging blank-screen issues")
   }
   
-  override func didReceiveMemoryWarning() {
+  override public func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
   
-  override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+  override public func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
     if bridge != nil {
       if motion == .motionShake && bridge!.isDevMode() {
         bridge!.showDevMode()
@@ -273,25 +273,25 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
   }
   
   // We are willing to become first responder to get shake motion
-  override var canBecomeFirstResponder: Bool {
+  override public var canBecomeFirstResponder: Bool {
     get {
       return true
     }
   }
   
-  override var prefersStatusBarHidden: Bool {
+  override public var prefersStatusBarHidden: Bool {
     get {
       return !isStatusBarVisible
     }
   }
   
-  override var preferredStatusBarStyle: UIStatusBarStyle {
+  override public var preferredStatusBarStyle: UIStatusBarStyle {
     get {
       return statusBarStyle
     }
   }
   
-  override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+  override public var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
     get {
       return .slide
     }
@@ -309,7 +309,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     self.setNeedsStatusBarAppearanceUpdate()
   }
   
-  func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+  public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
     
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
     
@@ -320,7 +320,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     self.present(alertController, animated: true, completion: nil)
   }
   
-  func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+  public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
     
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
     
@@ -335,7 +335,7 @@ class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMess
     self.present(alertController, animated: true, completion: nil)
   }
   
-  func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+  public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
     
     let alertController = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
     
