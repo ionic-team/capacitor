@@ -72,6 +72,7 @@ export interface PluginConfig {
 export interface Capacitor {
   isNative?: boolean;
   platform?: string;
+  isPluginAvailable: (name: string) => boolean;
   toNative?: (pluginId: string, methodName: string, options: any, storedCallback?: StoredCallback) => void;
   fromNative?: (result: PluginResult) => void;
   withPlugin?: (pluginId: string, fn: Function) => void;
