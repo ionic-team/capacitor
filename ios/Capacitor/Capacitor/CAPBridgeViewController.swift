@@ -306,7 +306,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   
   public func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
     self.statusBarStyle = statusBarStyle
-    self.setNeedsStatusBarAppearanceUpdate()
+    UIView.animate(withDuration: 0.2, animations: {
+      self.setNeedsStatusBarAppearanceUpdate()
+    })
   }
   
   public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
