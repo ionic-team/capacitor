@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -101,7 +102,14 @@ public class WebViewLocalServer {
       this.charset = charset;
       this.statusCode = statusCode;
       this.reasonPhrase = reasonPhrase;
-      this.responseHeaders = responseHeaders;
+      Map<String, String> tempResponseHeaders;
+      if (responseHeaders == null) {
+        tempResponseHeaders = new HashMap<>();
+      } else {
+        tempResponseHeaders = responseHeaders;
+      }
+      tempResponseHeaders.put("Cache-Control", "no-cache");
+      this.responseHeaders = tempResponseHeaders;
     }
 
     public InputStream handle(WebResourceRequest request) {
