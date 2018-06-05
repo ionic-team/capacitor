@@ -19,11 +19,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
 
   async getInfo(): Promise<DeviceInfo> {
     const ua = navigator.userAgent;
-
-    console.log(ua);
-
     const uaFields = this.parseUa(ua);
-
     let battery: any = {};
 
     try {
