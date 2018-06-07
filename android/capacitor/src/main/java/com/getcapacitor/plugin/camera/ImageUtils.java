@@ -7,11 +7,11 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import java.io.FileNotFoundException;
+import com.getcapacitor.FileUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -117,4 +117,17 @@ public class ImageUtils {
     return result;
   }
 
+  public static ExifWrapper getExifData(final Context c, final Bitmap bitmap, final Uri imageUri) {
+    try {
+      String fu = FileUtils.getFileUrlForUri(c, imageUri);
+      Log.d("TAG", "Got file url for uri: " + fu + ", " + imageUri.toString());
+      final ExifInterface exifInterface = new ExifInterface(fu);
+
+      return new ExifWrapper(exifInterface);
+    } catch (IOException ex) {
+      Log.e("CapacitorImageUtils", "Error loading exif data from image", ex);
+    } finally {
+    }
+    return new ExifWrapper(null);
+  }
 }
