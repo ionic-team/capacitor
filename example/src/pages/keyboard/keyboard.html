@@ -13,9 +13,11 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content padding no-bounce>
   <button (click)="show()" ion-button>Show</button>
   <button (click)="hide()" ion-button>Hide</button>
   <button (click)="toggleAccessoryBar()" ion-button>Toggle Accessory Bar</button>
   <ion-input></ion-input>
+
+  <button ion-button style="position: fixed; bottom: 15px; left: 50%;">Fixed Button</button>
 </ion-content>
