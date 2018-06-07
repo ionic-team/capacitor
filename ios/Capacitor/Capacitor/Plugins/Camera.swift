@@ -164,7 +164,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   
   public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
     var image: UIImage?
-    
+
     if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
       // Use editedImage Here
       image = editedImage
@@ -172,6 +172,8 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       // Use originalImage Here
       image = originalImage
     }
+    
+    let imageMetadata = info[UIImagePickerControllerMediaMetadata] as? [AnyHashable: Any]
     
     if settings.shouldResize {
       guard let convertedImage = resizeImage(image!) else {
@@ -200,6 +202,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       
       self.call?.success([
         "base64Data": "data:image/jpeg;base64," + base64String,
+        "exif": makeExif(imageMetadata) ?? [:],
         "format": "jpeg"
       ])
     } else if settings.resultType == "uri" {
@@ -210,6 +213,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       }
       call?.success([
         "path": path,
+        "exif": makeExif(imageMetadata) ?? [:],
         "webPath": webPath,
         "format": "jpeg"
       ])
@@ -237,6 +241,10 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
     return scaledImage
+  }
+  
+  func makeExif(_ exif: [AnyHashable:Any]?) -> [AnyHashable:Any]? {
+    return exif?["{Exif}"] as? [AnyHashable:Any]
   }
   
   func correctOrientation(_ image: UIImage) -> UIImage? {
