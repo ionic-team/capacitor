@@ -39,7 +39,7 @@ export class CameraPage {
       allowEditing: true,
       resultType: CameraResultType.Base64,
     })
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
@@ -50,7 +50,7 @@ export class CameraPage {
       resultType: CameraResultType.Base64,
       source: CameraSource.Camera
     })
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
@@ -61,7 +61,7 @@ export class CameraPage {
       resultType: CameraResultType.Base64,
       source: CameraSource.Photos
     })
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
@@ -72,7 +72,7 @@ export class CameraPage {
       resultType: CameraResultType.Base64,
       width: 128
     })
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
@@ -84,7 +84,7 @@ export class CameraPage {
       width: 128,
       correctOrientation: true
     })
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
@@ -94,7 +94,7 @@ export class CameraPage {
       allowEditing: true,
       resultType: CameraResultType.Uri
     })
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
 
 
     const imageData = await Filesystem.readFile({
@@ -133,7 +133,7 @@ export class CameraPage {
       resultType: CameraResultType.Base64,
       saveToGallery: false
     });
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 
@@ -148,7 +148,7 @@ export class CameraPage {
       saveToGallery: false, 
       source: CameraSource.Photos
     });
-    console.log('Got image back', image);
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
   }
 }
