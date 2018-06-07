@@ -39,13 +39,10 @@ typedef enum : NSUInteger {
 
 @implementation CAPKeyboard
 
-// Define the plugin
-//AVOCADO_EXPORT_PLUGIN("com.avocadojs.plugin.keyboard")
-
-
-
 - (void)load
 {
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarDidChangeFrame:) name:UIApplicationDidChangeStatusBarFrameNotification object: nil];
+  
   self.keyboardResizes = ResizeNative;
   BOOL doesResize = YES;
   if (!doesResize) {
@@ -78,6 +75,10 @@ typedef enum : NSUInteger {
 
 
 #pragma mark Keyboard events
+
+-(void)statusBarDidChangeFrame:(NSNotification*)notification {
+  [self _updateFrame];
+}
 
 - (void)resetScrollView
 {
@@ -149,26 +150,34 @@ typedef enum : NSUInteger {
 
 - (void)_updateFrame
 {
-  NSLog(@"CDVIonicKeyboard: updating frame");
+  CGSize statusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
+  int statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
+  
+  int _paddingBottom = (int)self.paddingBottom;
+  
+  if (statusBarHeight == 40) {
+    _paddingBottom = _paddingBottom + 20;
+  }
   CGRect f = [[UIScreen mainScreen] bounds];
+  CGRect wf = self.webView.frame;
   switch (self.keyboardResizes) {
     case ResizeBody:
     {
       NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.body);",
-                      (int)self.paddingBottom, (int)f.size.height];
+                      _paddingBottom, (int)f.size.height];
       [self.bridge evalWithPlugin:self js:js];
       break;
     }
     case ResizeIonic:
     {
       NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.querySelector('ion-app'));",
-                      (int)self.paddingBottom, (int)f.size.height];
+                      _paddingBottom, (int)f.size.height];
       [self.bridge evalWithPlugin:self js:js];
       break;
     }
     case ResizeNative:
     {
-      [self.webView setFrame:CGRectMake(f.origin.x, f.origin.y, f.size.width, f.size.height - self.paddingBottom)];
+      [self.webView setFrame:CGRectMake(wf.origin.x, wf.origin.y, f.size.width - wf.origin.x, f.size.height - wf.origin.y - self.paddingBottom)];
       break;
     }
     default:
