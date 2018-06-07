@@ -120,7 +120,6 @@ public class ImageUtils {
   public static ExifWrapper getExifData(final Context c, final Bitmap bitmap, final Uri imageUri) {
     try {
       String fu = FileUtils.getFileUrlForUri(c, imageUri);
-      Log.d("TAG", "Got file url for uri: " + fu + ", " + imageUri.toString());
       final ExifInterface exifInterface = new ExifInterface(fu);
 
       return new ExifWrapper(exifInterface);
