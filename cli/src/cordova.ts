@@ -157,8 +157,8 @@ function getWebDir(config: Config, platform: string): string {
 }
 
 export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: Config, platform: string) {
+  printPlugins(cordovaPlugins, platform, 'cordova');
   if (cordovaPlugins.length > 0) {
-    printPlugins(cordovaPlugins, platform, 'cordova');
     await copyCordovaJS(config, platform);
     await copyPluginsJS(config, cordovaPlugins, platform);
   } else {

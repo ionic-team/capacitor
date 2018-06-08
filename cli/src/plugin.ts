@@ -104,7 +104,7 @@ export function printPlugins(plugins: Plugin[], platform: string, type: string =
   } else if (type === 'incompatible' && plugins.length > 0) {
     log(`  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install`);
   } else {
-    log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
+    log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}`);
   }
   const chalk = require('chalk');
   for (let p of plugins) {

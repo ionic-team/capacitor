@@ -25,8 +25,6 @@ export async function updateAndroid(config: Config) {
     }
   }
 
-  printPlugins(capacitorPlugins, 'android');
-
   removePluginsNativeFiles(config);
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
