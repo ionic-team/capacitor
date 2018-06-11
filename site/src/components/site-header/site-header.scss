@@ -273,7 +273,7 @@ site-header {
   border: 0 !important;
 }
 
-@media screen and (min-width: $breakpoint-md) {
+@media screen and (min-width: 769px) {
   .dropdown__menu {
     text-align: left;
     position: absolute;

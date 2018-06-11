@@ -36,7 +36,7 @@ export class App {
   @Listen('burgerClick')
   @Listen('leftSidebarClick')
   handleToggle() {
-    if (window.innerWidth < 768) this.toggleLeftSidebar();
+    if (window.innerWidth <= 768) this.toggleLeftSidebar();
   }
 
   componentDidLoad() {
