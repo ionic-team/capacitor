@@ -50,7 +50,7 @@ here's the default interface for our Plugin:
 ```typescript
 declare global {
   interface PluginRegistry {
-    EchoPlugin?: EchoPlugin;
+    Echo?: EchoPlugin;
   }
 }
 
