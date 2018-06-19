@@ -36,6 +36,8 @@ max@Maxs-iMac:~ $ npx @capacitor/cli plugin:generate
  - The Plugin NPM name is what will become the npm package, and should be a snake-case name of a package that is available on npm (not a strict requirement if your package will be on a private npm repo).
  - The Plugin ID is a domain-style identifier. Its primary use is the package name in Java.
  - Plugin Class Name is the initial name of the class used in Java and Swift. See the additional note about class names in the [iOS Plugin](ios/) section of this guide.
+ - The description is a brief introduction about the plugin.
+ - The git repository is the url to a git repository where the source code of the plugin will be hosted.
 
 The rest of the fields are optional and will fill out your initial `package.json`
 
