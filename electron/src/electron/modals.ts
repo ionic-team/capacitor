@@ -32,6 +32,19 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
         alert(options.message, options.title);
         return Promise.resolve();
   }
+  async confirm(options: ConfirmOptions): Promise<ConfirmResult> {
+
+    const confirm = (message: string, title: string='') =>
+    {
+      let buttons = [options.okButtonTitle || 'OK' , options.cancelButtonTitle || 'Cancel']
+      return !dialog.showMessageBox(getCurrentWindow(), {message, title, buttons});
+    }
+    //const val = window.confirm(options.message);
+    const val = confirm(options.message,options.title);
+    return Promise.resolve({
+      value: val
+    });
+  }
   async showActions(options: ActionSheetOptions): Promise<ActionSheetResult> {
     return new Promise<ActionSheetResult>(async (resolve, _reject) => {
       var controller: any = document.querySelector('ion-action-sheet-controller');
