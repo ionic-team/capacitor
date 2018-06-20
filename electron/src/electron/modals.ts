@@ -15,6 +15,7 @@ import {
 } from "@capacitor/core";
 
 export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
+  resolve: any;
   constructor() {
     super({
       name: 'Modals',
@@ -32,6 +33,62 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
         alert(options.message, options.title);
         return Promise.resolve();
   }
+  //window.prompt is and will not be supported in Electron. Not working with Ionic components?
+  async prompt(options: PromptOptions): Promise<PromptResult> {
+    //const val = window.prompt(options.message, options.inputPlaceholder || '');
+    var self = this;
+    return new Promise<PromptResult>( async (_) => {
+    this.resolve = _;
+    let modalController = document.querySelector('ion-modal-controller');
+    if (!modalController) {
+      modalController = document.createElement('ion-modal-controller');
+      document.body.appendChild(modalController);
+    }
+    let inputValue = '';
+    const elExists = !!customElements.get('modal-component');
+
+    if(!elExists)
+    {
+      customElements.define('modal-component',class  ModalComp  extends  HTMLElement {
+
+        async  connectedCallback() {
+            this.innerHTML  =  `<label for="txtInput">${options.message}</label>
+            <input id="txtInput" name="txtInput" />
+            <button id="okBtn">OK</button>
+            <button id="cancelBtn">Cancel</button>
+            `;
+            var  okBtn  =  document.querySelector("#okBtn");
+            var  cancelBtn  =  document.querySelector("#cancelBtn");
+            
+            inputValue = "";
+            okBtn.addEventListener('click',async () =>{
+              console.log("Button clicked!");
+              inputValue = (<HTMLInputElement>document.getElementById("txtInput")).value
+              console.log(inputValue);
+              await modalController.dismiss();
+              return self.resolve({value: inputValue,cancelled: false});
+
+            });
+            cancelBtn.addEventListener('click',async () =>{
+              console.log("Button clicked!");
+              await modalController.dismiss();
+              
+              return self.resolve({value: inputValue,cancelled: false});
+
+            });
+            
+      };
+    });
+  }
+  
+    await modalController.componentOnReady();
+    const modalElement = await modalController.create({
+        component:'modal-component'
+    });
+    await modalElement.present()
+    
+    });
+  } 
   async confirm(options: ConfirmOptions): Promise<ConfirmResult> {
 
     const confirm = (message: string, title: string='') =>
