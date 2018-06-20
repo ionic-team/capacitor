@@ -31,7 +31,40 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
     }
         alert(options.message, options.title);
         return Promise.resolve();
+  }
+  async showActions(options: ActionSheetOptions): Promise<ActionSheetResult> {
+    return new Promise<ActionSheetResult>(async (resolve, _reject) => {
+      var controller: any = document.querySelector('ion-action-sheet-controller');
+
+      if (!controller) {
+        controller = document.createElement('ion-action-sheet-controller');
+        document.body.appendChild(controller);
+      }
+
+      await controller.componentOnReady();
+
+      const items = options.options.map((o, i) => {
+        return {
+          text: o.title,
+          role: o.style && o.style.toLowerCase() || '',
+          icon: o.icon || '',
+          handler: () => {
+            resolve({
+              index: i
+            });
+          }
+        };
+      });
+
+      const actionSheetElement = await controller.create({
+        title: options.title,
+        buttons: items
+      });
+
+      await actionSheetElement.present();
+    });
   }  
+
 
 }
 
