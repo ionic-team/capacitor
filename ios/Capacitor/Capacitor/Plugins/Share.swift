@@ -46,6 +46,7 @@ public class CAPSharePlugin : CAPPlugin {
         ])
       }
       
+      self.setCenteredPopover(actionController)
       self.bridge.viewController.present(actionController, animated: true, completion: nil)
     }
   }

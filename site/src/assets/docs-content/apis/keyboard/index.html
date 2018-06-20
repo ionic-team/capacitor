@@ -1,6 +1,46 @@
 <p><plugin-platforms platforms="ios,android"></plugin-platforms></p>
 <h1 id="keyboard">Keyboard</h1>
 <p>The Keyboard API provides keyboard display and visibility control, along with event tracking when the keyboard shows and hides.</p>
+<p><plugin-api index="true" name="keyboard"></plugin-api></p>
+<h2 id="events">Events</h2>
+<ul>
+<li>keyboardWillShow</li>
+<li>keyboardDidShow</li>
+<li>keyboardWillHide</li>
+<li>keyboardDidHide</li>
+</ul>
 <h2 id="example">Example</h2>
+<pre><code class="lang-typescript">
+<span class="hljs-comment">// Events</span>
+
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'keyboardWillShow'</span>, <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"keyboard will show with height"</span>, (&lt;CustomEvent&gt;e).detail.keyboardHeight);
+});
+
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'keyboardDidShow'</span>, <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"keyboard did show with height"</span>, (&lt;CustomEvent&gt;e).detail.keyboardHeight);
+});
+
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'keyboardWillHide'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"keyboard will hide"</span>);
+});
+
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'keyboardDidHide'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"keyboard did hide"</span>);
+});
+
+<span class="hljs-comment">// API</span>
+
+<span class="hljs-keyword">import</span> { Plugins } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { Keyboard } = Plugins;
+
+
+Keyboard.setAccessoryBarVisible({isVisible: <span class="hljs-literal">false</span>});
+
+Keyboard.show();
+
+Keyboard.hide();
+</code></pre>
 <h2 id="api">API</h2>
 <p><plugin-api name="keyboard"></plugin-api></p>

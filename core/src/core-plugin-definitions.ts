@@ -314,6 +314,10 @@ export interface CameraPhoto {
    */
   webPath?: string;
   /**
+   * Exif data, if any, retrieved from the image
+   */
+  exif?: any;
+  /**
    * The format of the image. Currently, only "jpeg" is supported.
    */
   format: string;

@@ -10,69 +10,72 @@ export class BlogPage {
   }
 
   render() {
-    return (
+    return [
       <div id="blog" class="wrapper">
-        <div class="post">
-          <h2>Announcing Capacitor</h2>
-          <div>By <a href="http://twitter.com/maxlynch">Max Lynch</a> on <time>December 12th, 2017</time></div>
+        <div class="post container">
+          <h1>Announcing Capacitor 1.0.0 Beta</h1>
+          <div>By <strong><a href="http://twitter.com/maxlynch">Max Lynch</a></strong> on <time>May 8th, 2018</time></div>
           <p>
-            Today the <a href="http://ionicframework.com/">Ionic</a> team is excited excited to announce a new Private Preview open source project called Capacitor that makes
-            it easier to build and deploy web apps on iOS, Android, Electron, and the web as a Progressive Web App,
-            all while maximizing code reuse.
+            Today we are incredibly excited to announce the first beta release of Capacitor, a new project
+            by the team behind <a href="http://ionicframework.com/">Ionic Framework</a> to build a better future for
+            hybrid apps by helping them run on more platforms, access native functionality more easily, and
+            reduce the complexity of managing native projects.
           </p>
           <p>
-            Over the last few years, we've seen web technology proliferate on mobile like never before. Increasingly,
-            teams are building apps using web technologies, and Progressive Web Apps are poised to bring the web
-            to mobile in a huge way. As a 
-            company focused 100% on bringing the web to mobile, we're excited that teams are far more willing
-            to build apps with web technology today than in years past.
+            Capacitor is a simple but powerful native mobile web app runtime, helping developers build standards-compliant
+            web apps that run natively on iOS, Android, Desktop, and the web as a Progressive Web App, all with one shared code base.
           </p>
           <p>
-            We think it could be even easier for web developers to use web standards to target all the platforms they care about, making 
-            it easy to build apps that run great in a native app
-            environment on iOS, Android, and Electron, <i>and</i> on the web as a Progressive Web App.
+            At Ionic, we've worked with thousands of teams building mission critical apps with the web platform. That
+            experience has given us a fresh perspective on how to improve one of the most important pieces of
+            what makes an app an app: how it interfaces with the native platform it runs on.
+          </p>
+
+          <h2>How does Capacitor work?</h2>
+          <p>
+            At the core, Capacitor is a web-to-native "bridge" that lets JavaScript and web content access native functionality and UI (and vice versa). Capacitor comes
+            with tooling to help create projects for each platform you're targeting, along with a plugin API for extending and exposing native functionality to your web code. Finally,
+            Capacitor comes with a middleware layer that enables your code to run both on native platforms *and* on the web as a Progressive Web App, all with the same code.
           </p>
           <p>
-            Capacitor is our attempt at doing just that.
+            Capacitor solves a similar problem to Cordova, so Capacitor will replace Cordova in a typical hybrid app, while providing backwards compatibility with most
+            existing Cordova plugins. Capacitor and Ionic Framework work together, with Capacitor providing Native SDK access and basic native tooling, and Ionic Framework providing the
+            cross-platform UI you've come to know and love.
+          </p>
+
+          <h2>How does Capacitor compare to X?</h2>
+          <p>
+            Capacitor is most similar to Cordova, but has taken a few different approaches to hybrid app development. First, Capacitor
+            has much less tooling for native project management. Instead, Capacitor enables you to check your native projects into source
+            control and manage them as a source asset. This means fewer Capacitor-specific tools that can break in unexpected ways,
+            and an easier escape-hatch for adding native code or working with existing native development teams/libraries. For those used to
+            doing everything from the Cordova CLI, expect to change to spending more time in the platform-specific IDE for testing/running (such as Xcode, Android Studio, etc.)
           </p>
           <p>
-            Capacitor is a set of tools and a web-to-native bridge that makes it possible to build powerful mobile apps with seamless
-            native integration and Progressive Web App fallbacks. Capacitor features a simple Plugin API for building native functionality that is exposed through
-            JavaScript to a web layer, along with easily mixing Native UI controls with web content
-            to get the best of both worlds.
+            Compared to React Native, Native Script, Flutter, and the many other cross-platform options focused on Native UI, Capacitor is web-native, and enables
+            developers to build one app that runs just as well in the app stores as it does on Electron and on the web as a Progressive Web App. Perfect for teams
+            that continue to support multi-screen environments or want to use pure web standards to build their apps.
+          </p>
+
+          <h2>What's next?</h2>
+          <p>
+            With Capacitor entering beta, we are working hard towards 1.0, production-ready status. We will soon be integrating Capacitor into
+            the Ionic CLI, and encouraging Ionic developers to use it in place of Cordova.
+          </p>
+
+          <h2>What's next?</h2>
+          <p>
+            To get started, visit the <a href="https://capacitor.ionicframework.com/docs/getting-started/">Getting Started</a> portion of the <a href="https://capacitor.ionicframework.com/">Capacitor Docs</a>.
           </p>
           <p>
-            When targeting native iOS or Android, Capacitor lets you control your entire native project without modifying it, enabling you to
-            work in Xcode or Android Studio to easily add custom native code or Native UI if necessary. Exposing
-            that code or those views to the web layer is as easy as connecting them to Capacitor in your iOS or Android project.
+            If you need help as you try it out, join us on the <a href="http://forum.getcapacitor.com/">Capacitor Forum</a> or <a href="http://getcapacitor.herokuapp.com/">Slack Community</a>.
           </p>
           <p>
-            Capacitor also bundles a set of core Native features out of the box, including Camera, Geolocation,
-            Filesystem operations, and more. We want to provide 80% of what every app needs out of the box, while
-            making it easy for the community to fill in the rest of the pieces.
-          </p>
-          <p>
-            We are hopeful that Capacitor will enable teams with only web developers to build great apps, <i>and</i> teams with a mix of native developers and web developers will be able to work together to build truly cross-platform apps.
-          </p>
-          <p>
-            Capacitor is under active development and is currently in a Private Preview with a small set of users while
-            we continue to build and improve the project. We expect to have a public preview early 2018.
-          </p>
-          <p>
-            Please enter your email to join the mailing list to stay updated on our progress.
-          </p>
-          <form id="cta-form" action="https://codiqa.createsend.com/t/t/s/flhuhj/" method="post">
-            <div>
-              <input type="email" placeholder="Email address" id="fieldEmail" name="cm-flhuhj-flhuhj" required style={{padding: '5px', width: '150px'}}/>
-            </div>
-            <button type="submit">Submit</button>
-          </form>
-          <p>
-            Thanks,<br />
-            The <a href="http://ionicframework.com/">Ionic</a> Team
+            From all of us at <a href="http://ionicframework.com/">Ionic</a>, thanks for trying Capacitor!
           </p>
         </div>
-      </div>
-    );
+      </div>,
+      <newsletter-signup></newsletter-signup>
+    ];
   }
 }

@@ -298,11 +298,15 @@ public class Filesystem extends Plugin {
 
     File fileObject = getFileObject(path, directory);
 
-    String[] files = fileObject.list();
+    if (fileObject != null && fileObject.exists()) {
+      String[] files = fileObject.list();
 
-    JSObject ret = new JSObject();
-    ret.put("files", JSArray.from(files));
-    call.success(ret);
+      JSObject ret = new JSObject();
+      ret.put("files", JSArray.from(files));
+      call.success(ret);
+    } else {
+      call.error("Directory does not exist");
+    }
   }
 
   @PluginMethod()

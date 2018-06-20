@@ -1,11 +1,55 @@
+@import '../../global/variables';
+@import '../../global/webfont';
+
 * {
   box-sizing: border-box;
 }
 
 capacitor-site {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-flow: column;
+  overflow: hidden;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+.left-sidebar-in {
+  animation-name: slideIn;
+  animation-duration: 0.7s;
+  animation-timing-function: $easeOutExpo;
+  animation-fill-mode: forwards;
+}
+@keyframes slideIn {
+  from {
+    left: 0;
+  }
+
+  to {
+    left: calc(100vw - 56px);
+  }
+}
+
+.left-sidebar-out {
+  animation-name: slideOut;
+  animation-duration: 0.7s;
+  animation-timing-function: $easeOutExpo;
+  animation-fill-mode: forwards;
+}
+@keyframes slideOut {
+  from {
+    left: calc(100vw - 56px);
+  }
+
+  to {
+    left: 0;
+  }
+}
+
+.root {
+  position: relative;
 }
 
 .row {
@@ -17,8 +61,11 @@ capacitor-site {
 
 .container {
   max-width: 1080px;
+  width: 100%;
   margin: auto;
+  padding: 0 24px;
 }
+
 .container-flex {
   display: flex;
 }
@@ -26,6 +73,9 @@ capacitor-site {
 .input-with-button {
   display: flex;
   height: 50px;
+  max-width: 460px;
+  flex: 1;
+
   input {
     flex: 1;
     height: 100%;
@@ -43,6 +93,10 @@ capacitor-site {
   }
 }
 
+.measure-lg {
+  max-width: 670px;
+}
+
 .app {
   height: 100%;
   //max-width: 1080px;
@@ -52,12 +106,6 @@ capacitor-site {
 #main-div {
   flex-grow: 1;
   flex-shrink: 0;
-
-  site-header {
-    stencil-route-link a {
-      color: #fff;
-    }
-  }
 }
 
 ::selection {
@@ -69,7 +117,8 @@ capacitor-site {
 }
 
 html, body {
-  font-family: -apple-system,
+  font-family: 'Graphik',
+    -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     Helvetica,
@@ -86,18 +135,20 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 body {
-  background-color: black;
+  background-color: #fff;
 }
+
 
 h1, h2, h3, h4 {
   color: #16161d;
   letter-spacing: 0px;
-  font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 600;
 }
 
 h1 {
   font-size: 28px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
 }
 
 h2 {
@@ -111,20 +162,56 @@ h2, h3 {
 
 p, ul {
   color: #2d2d4c;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 2em;
   margin: 24px 0px;
+}
+
+strong, b {
+  font-weight: 500;
+}
+
+a {
+  transition: border 0.3s;
+  color: $link-color;
+  border-bottom: 1px solid transparent;
+
+  &:hover {
+    border-bottom-color: rgba($link-color, 0.3);
+  }
+}
+
+p a {
+  font-weight: 500;
 }
 
 stencil-route-link:hover {
   cursor: pointer;
 }
 
+
+button {
+  transition: all .15s ease;
+  font-size: 17px;
+  font-weight: 600;
+  color: #FFFFFF;
+  letter-spacing: -0.5px;
+  text-align: center;
+  border: none;
+  padding: 16px 20px;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
 .wrapper {
   line-height: 32px;
   min-height: 100%;
-  padding-top: 60px;
-  margin: 15px;
+  padding-top: 100px;
 
   display: flex;
   flex-direction: row;
@@ -132,7 +219,7 @@ stencil-route-link:hover {
   justify-content: flex-start;
   align-content: stretch;
   align-items: flex-start;
-} 
+}
 
 .nextButton {
   background: #5851ff;
@@ -141,7 +228,7 @@ stencil-route-link:hover {
 
   border: none;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   padding: 16px 20px;
   border-radius: 2px;
@@ -169,7 +256,7 @@ stencil-route-link:hover {
 
   border: none;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   padding: 16px 20px;
   border-radius: 2px;
@@ -197,7 +284,7 @@ pre {
   margin: 24px 0px 28px;
   padding: 16px 24px;
   border-radius: 4px;
-  color: #525252;
+  color: #16161D;
   background-color: #f8f8f8;
   code {
     font-weight: 500;
@@ -213,7 +300,7 @@ pre {
 
 code {
   font-weight: 400;
-  font-family: "Source Code Pro", monospace;
+  font-family: 'Roboto Mono', 'Source Code Pro', monospace;
   font-size: 14px;
 }
 .hljs-comment, .hljs-quote {
@@ -298,7 +385,8 @@ footer {
   background: #f8f8fc;
   height: 8em;
   display: flex;
-  margin-top: 32px;
+  flex-direction: column;
+  justify-content: center;
   flex: 0 0 8em;
 
   .ionic-oss-logo {
@@ -318,10 +406,26 @@ footer {
   .svg-button {
     margin-left: 16px;
     transition: all .15s ease;
+    opacity: 0.5;
+    border: 0;
   }
 
   .svg-button:hover {
-    opacity:0.5;
+    opacity: 1;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    .container {
+      text-align: center;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #open-source {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+    }
   }
 }
 
@@ -347,10 +451,6 @@ footer {
 @media screen and (max-width: 450px) {
   .wrapper {
     padding-top: 80px;
-  }
-
-  site-header a {
-    display: none;
   }
 
   site-header stencil-route-link a {
@@ -405,5 +505,77 @@ footer {
       overflow: auto;
       min-height: 100vh;
     }
+  }
+}
+
+.document {
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  plugin-platforms {
+    display: block;
+    float: right;
+    .platform {
+      margin-left: 8px;
+    }
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  h1:first-child {
+    anchor-link {
+      display: none;
+    }
+  }
+
+  ul {
+    -webkit-padding-start: 0px;
+    li, code {
+      font-size: 16px;
+      margin-left: 18px;
+    }
+  }
+
+  p a {
+    color: $link-color;
+    text-decoration: none;
+  }
+
+  p,
+  ul,
+  ol {
+    code {
+      padding: 0 4px 3px;
+      background-color: #ecf4fb;
+      color: #16161D;
+      border-radius: 3px;
+    }
+  }
+
+  #introButton {
+    background: $link-color;
+    color: white;
+    text-decoration: none;
+
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 16px 20px;
+    border-radius: 2px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    outline: none;
+    letter-spacing: 0.04em;
+    transition: all .15s ease;
+    cursor: pointer;
+  }
+
+  #introButton:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.1);
+    transform: translateY(1px);
   }
 }

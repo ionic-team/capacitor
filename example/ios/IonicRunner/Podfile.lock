@@ -1,8 +1,8 @@
 PODS:
-  - Capacitor (1.0.0-alpha.29):
-    - CapacitorCordova (= 1.0.0-alpha.29)
+  - Capacitor (1.0.0-alpha.39):
+    - CapacitorCordova (= 1.0.0-alpha.39)
     - GCDWebServer (~> 3.0)
-  - CapacitorCordova (1.0.0-alpha.29)
+  - CapacitorCordova (1.0.0-alpha.39)
   - GCDWebServer (3.4.2):
     - GCDWebServer/Core (= 3.4.2)
   - GCDWebServer/Core (3.4.2)
@@ -11,17 +11,21 @@ DEPENDENCIES:
   - Capacitor (from `../../../`)
   - CapacitorCordova (from `../../../`)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - GCDWebServer
+
 EXTERNAL SOURCES:
   Capacitor:
-    :path: ../../../
+    :path: "../../../"
   CapacitorCordova:
-    :path: ../../../
+    :path: "../../../"
 
 SPEC CHECKSUMS:
-  Capacitor: 8793f3161d8e1bbebfaecc4559ef2a5687f93969
-  CapacitorCordova: 3a72cb0700bdf8e022a042b1cb100263ba88f967
+  Capacitor: 694bd651f06ece975ddf33d78d012a0d0fbece57
+  CapacitorCordova: 1ce96e3c67c9b90e850e563798255268c5a8984b
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
 
 PODFILE CHECKSUM: cf3dd73a42bef0923c014a1179dc29d10aa5cae0
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

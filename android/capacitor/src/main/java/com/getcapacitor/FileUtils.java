@@ -56,7 +56,7 @@ public class FileUtils {
     return "_capacitor_" + path;
   }
 
-  static String getFileUrlForUri(final Context context, final Uri uri) {
+  public static String getFileUrlForUri(final Context context, final Uri uri) {
 
     // DocumentProvider
     if (DocumentsContract.isDocumentUri(context, uri)) {

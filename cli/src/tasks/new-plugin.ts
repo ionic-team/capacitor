@@ -1,7 +1,8 @@
 import { Config } from '../config';
-import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON } from '../common';
+import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON, logWarn } from '../common';
 import { emoji } from '../util/emoji';
 import { existsAsync, mkdirAsync, writeFileAsync, readFileAsync } from '../util/fs';
+import { fixName } from '../plugin'
 
 import { copy, move, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
@@ -58,12 +59,24 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'description',
-      message: 'description:'
+      message: 'description:',
+      validate: function(input) {
+        if (!input || input.trim() === '') {
+          return false;
+        }
+        return true;
+      }
     },
     {
       type: 'input',
       name: 'git',
-      message: 'git repository:'
+      message: 'git repository:',
+      validate: function(input) {
+        if (!input || input.trim() === '') {
+          return false;
+        }
+        return true;
+      }
     },
     {
       type: 'input',
@@ -98,7 +111,7 @@ export async function newPlugin(config: Config) {
 
     await runTask('Adding plugin files', async () => {
       await copy(config.plugins.assets.templateDir, pluginPath);
-
+      await createTSPlugin(config, pluginPath, domain, className, answers);
       await createIosPlugin(config, pluginPath, domain, className, answers);
       await createAndroidPlugin(config, pluginPath, domain, className);
     });
@@ -119,6 +132,18 @@ export async function newPlugin(config: Config) {
   }
 }
 
+async function createTSPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
+  const newPluginPath = join(pluginPath, 'src');
+
+  const originalDefinitions = await readFileAsync(join(newPluginPath, 'definitions.ts'), 'utf8');
+  const originalWeb  = await readFileAsync(join(newPluginPath, 'web.ts'), 'utf8');
+  let definitions = originalDefinitions.replace(/Echo/g, className);
+  const web  = originalWeb.replace(/MyPlugin/g, className);
+
+  await writeFileAsync(join(newPluginPath, `definitions.ts`), definitions, 'utf8');
+  await writeFileAsync(join(newPluginPath, `web.ts`), web, 'utf8');
+}
+
 async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
   const newPluginPath = join(pluginPath, 'ios/Plugin');
 
@@ -127,7 +152,14 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
   const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
 
-  await writeFileAsync(join(pluginPath, `${answers.className}.podspec`), generatePodspec(config, answers), 'utf8');
+  if (!answers.git) {
+    logWarn('You will need to add a hompage and git repo to your generated podspec before installing or CocoaPods will complain');
+  }
+  if (!answers.description) {
+    logWarn('You will need to add a summary to your generated podspec before installing or CocoaPods will complain');
+  }
+
+  await writeFileAsync(join(pluginPath, `${fixName(answers.name)}.podspec`), generatePodspec(config, answers), 'utf8');
   await writeFileAsync(join(newPluginPath, `Plugin/Plugin.swift`), pluginSwift, 'utf8');
   await writeFileAsync(join(newPluginPath, `Plugin/Plugin.m`), pluginObjc, 'utf8');
 }
@@ -135,7 +167,7 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
 function generatePodspec(config: Config, answers: any) {
   return `
   Pod::Spec.new do |s|
-    s.name = '${answers.className}'
+    s.name = '${fixName(answers.name)}'
     s.version = '0.0.1'
     s.summary = '${answers.description}'
     s.license = '${answers.license}'
@@ -188,8 +220,8 @@ function generatePackageJSON(answers: any) {
     name: answers.name,
     version: '0.0.1',
     description: answers.description,
-    main: 'dist/index.js',
-    types: 'dist/index.d.ts',
+    main: 'dist/esm/index.js',
+    types: 'dist/esm/index.d.ts',
     scripts: {
       'build': 'npm run clean && tsc',
       'clean': 'rm -rf ./dist',
@@ -207,7 +239,8 @@ function generatePackageJSON(answers: any) {
     files: [
       'dist/',
       'ios/',
-      'android/'
+      'android/',
+      `${fixName(answers.name)}.podspec`
     ],
     keywords: [
       'capacitor',
@@ -221,6 +254,12 @@ function generatePackageJSON(answers: any) {
       android: {
         src: 'android'
       }
+    }, "repository": {
+      "type": "git",
+      "url": answers.git
+    },
+    "bugs": {
+      "url": `${answers.git}/issues`
     }
   };
 }

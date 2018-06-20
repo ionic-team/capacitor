@@ -38,7 +38,7 @@ Read more about using Service Workers, including how to register them, on the [U
 
 ## Progressive Web App Performance
 
-Progressive Web Apps are judged by serveral performance standards, including [Time to Interactive](https://developers.google.com/web/tools/lighthouse/audits/time-to-interactive) and [First Meaningful Paint](https://developers.google.com/web/tools/lighthouse/audits/first-meaningful-paint). 
+Progressive Web Apps are judged by several performance standards, including [Time to Interactive](https://developers.google.com/web/tools/lighthouse/audits/time-to-interactive) and [First Meaningful Paint](https://developers.google.com/web/tools/lighthouse/audits/first-meaningful-paint). 
 
 Follow the [Progressive Web App Checklist](https://developers.google.com/web/progressive-web-apps/checklist) before going live, and use [Lighthouse](https://developers.google.com/web/tools/lighthouse/) to audit and test your app.
 
@@ -50,7 +50,7 @@ One of the key features of Capacitor is the ability to build one app that runs b
 
 If your app makes native plugin calls that don't have a web substitute, such as `SplashScreen.show()`, the app will allow those calls without crashing. Calls that return a promise will return a rejected promise, which you should be handling in your app anyways.
 
-Additionally, Capacitor's JavaScript API has a number of utilities that make it possible to programatically check whether certain APIs are available. 
+Additionally, Capacitor's JavaScript API has a number of utilities that make it possible to programmatically check whether certain APIs are available. 
 
 For example, if your app would normally rely on the Camera app being used to take a photo, you could check if the Camera is available, and if not, ask the user to upload a file instead:
 

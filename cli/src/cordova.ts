@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { buildXmlElement, log, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
+import { buildXmlElement, log, logError, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -235,6 +235,7 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
     if (p.xml['dependency']) {
       allDependencies = allDependencies.concat(p.xml['dependency']);
     }
+    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins().includes(dep.$.id));
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
         if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
@@ -242,9 +243,14 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
           if (dep.$.url && dep.$.url.startsWith('http')) {
             plugin = dep.$.url;
           }
-          console.log(`installing missing dependency plugin ${plugin}`);
-          await runCommand(`npm install ${plugin}`);
-          needsUpdate = true;
+          logInfo(`installing missing dependency plugin ${plugin}`);
+          try {
+            await runCommand(`cd "${config.app.rootDir}" && npm install ${plugin}`);
+            needsUpdate = true;
+          } catch (e) {
+            console.log("\n");
+            logError(`couldn't install dependency plugin ${plugin}`);
+          }
         }
       }));
     }

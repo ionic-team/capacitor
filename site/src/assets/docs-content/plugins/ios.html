@@ -25,10 +25,10 @@ has some exported methods that will be callable from JavaScript.</p>
   }
 }
 </code></pre>
-<h3 id="accesing-called-data">Accesing Called Data</h3>
+<h3 id="accessing-called-data">Accessing Called Data</h3>
 <p>Each plugin method receives an instance of <code>CAPPluginCall</code> containing all the information of the plugin method invocation from the client.</p>
 <p>A client can send any data that can be JSON serialized, such as numbers, text, booleans, objects, and arrays. This data
-is accessible on the <code>options</code> field of the call instance, or by using convience methods such as <code>getString</code> or <code>getObject</code>.</p>
+is accessible on the <code>options</code> field of the call instance, or by using convenience methods such as <code>getString</code> or <code>getObject</code>.</p>
 <p>For example, here is how you&#39;d get data passed to your method:</p>
 <pre><code class="lang-swift"><span class="hljs-meta">@objc</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">storeContact</span><span class="hljs-params">(<span class="hljs-number">_</span> call: CAPPluginCall)</span></span> {
   <span class="hljs-keyword">let</span> name = call.getString(<span class="hljs-string">"yourName"</span>) ?? <span class="hljs-string">"default name"</span>

@@ -1,23 +1,29 @@
-import { Component } from '@stencil/core';
+import { Component, Event, EventEmitter } from '@stencil/core';
 
 @Component({
   tag: 'site-menu',
   styleUrl: 'site-menu.scss'
 })
 export class SiteMenu {
+
+  @Event() leftSidebarClick: EventEmitter;
+  toggleMenu() {
+    this.leftSidebarClick.emit();
+  }
+
   MENU = [
     {
       title: 'Getting Started',
       items: [
-        { 
+        {
           title: 'Introduction',
           url: '/docs/'
         },
-        { 
+        {
           title: 'Required Dependencies',
           url: '/docs/getting-started/dependencies'
         },
-        { 
+        {
           title: 'Installation',
           url: '/docs/getting-started/'
         },
@@ -210,7 +216,6 @@ export class SiteMenu {
   render() {
     return (
       <div>
-        <iframe class="star-button" src="https://ghbtns.com/github-btn.html?user=ionic-team&repo=capacitor&type=star&count=true" frameBorder="0" scrolling="0" width="170px" height="20px"></iframe>
         <ul id="menu-list">
           {this.MENU.map(s => {
             return (
@@ -221,7 +226,7 @@ export class SiteMenu {
                 {s.items.map(i => {
                   return (
                   <li>
-                    <stencil-route-link url={i.url} exact={true}>
+                    <stencil-route-link url={i.url} exact={true} onClick={() => this.toggleMenu()}>
                       {i.title}
                     </stencil-route-link>
                   </li>

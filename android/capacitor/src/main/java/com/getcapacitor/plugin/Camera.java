@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import android.util.Log;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.FileUtils;
+import com.getcapacitor.plugin.camera.ExifWrapper;
 import com.getcapacitor.plugin.camera.ImageUtils;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -320,6 +322,8 @@ public class Camera extends Plugin {
       return;
     }
 
+    ExifWrapper exif = ImageUtils.getExifData(getContext(), bitmap, u);
+
     // Compress the final image and prepare for output to client
     ByteArrayOutputStream bitmapOutputStream = new ByteArrayOutputStream();
     bitmap.compress(Bitmap.CompressFormat.JPEG, settings.getQuality(), bitmapOutputStream);
@@ -330,21 +334,26 @@ public class Camera extends Plugin {
     }
 
     if (settings.getResultType() == CameraResultType.BASE64) {
-      returnBase64(call, bitmapOutputStream);
+      returnBase64(call, exif, bitmapOutputStream);
     } else if (settings.getResultType() == CameraResultType.URI) {
-      returnFileURI(call, bitmap, u, bitmapOutputStream);
+      returnFileURI(call, exif, bitmap, u, bitmapOutputStream);
     } else {
       call.reject(INVALID_RESULT_TYPE_ERROR);
     }
+
+    // Result returned, clear stored paths
+    imageFileSavePath = null;
+    imageFileUri = null;
   }
 
-  private void returnFileURI(PluginCall call, Bitmap bitmap, Uri u, ByteArrayOutputStream bitmapOutputStream) {
+  private void returnFileURI(PluginCall call, ExifWrapper exif, Bitmap bitmap, Uri u, ByteArrayOutputStream bitmapOutputStream) {
     ByteArrayInputStream bis = null;
 
     try {
       bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
       Uri newUri = saveTemporaryImage(bitmap, u, bis);
       JSObject ret = new JSObject();
+      ret.put("exif", exif.toJson());
       ret.put("path", newUri.toString());
       ret.put("webPath", FileUtils.getPortablePath(getContext(), newUri));
       call.resolve(ret);
@@ -389,12 +398,13 @@ public class Camera extends Plugin {
     return bitmap;
   }
 
-  private void returnBase64(PluginCall call, ByteArrayOutputStream bitmapOutputStream) {
+  private void returnBase64(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
     byte[] byteArray = bitmapOutputStream.toByteArray();
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
     JSObject data = new JSObject();
     data.put("base64Data", "data:image/jpeg;base64," + encoded);
+    data.put("exif", exif.toJson());
     call.resolve(data);
   }
 

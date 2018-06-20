@@ -19,7 +19,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
@@ -32,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -102,7 +102,14 @@ public class WebViewLocalServer {
       this.charset = charset;
       this.statusCode = statusCode;
       this.reasonPhrase = reasonPhrase;
-      this.responseHeaders = responseHeaders;
+      Map<String, String> tempResponseHeaders;
+      if (responseHeaders == null) {
+        tempResponseHeaders = new HashMap<>();
+      } else {
+        tempResponseHeaders = responseHeaders;
+      }
+      tempResponseHeaders.put("Cache-Control", "no-cache");
+      this.responseHeaders = tempResponseHeaders;
     }
 
     public InputStream handle(WebResourceRequest request) {
@@ -210,9 +217,6 @@ public class WebViewLocalServer {
       handler = (PathHandler) uriMatcher.match(request.getUrl());
     }
     if (handler == null) {
-      if ( request.getRequestHeaders().get("Origin") != null ) {
-        return handleProxyRequest(request, handler);
-      }
       return null;
     }
 
@@ -286,19 +290,6 @@ public class WebViewLocalServer {
       conn.setRequestMethod(method);
       conn.setReadTimeout(30 * 1000);
       conn.setConnectTimeout(30 * 1000);
-
-      if (handler == null) {
-        Map<String, String> headers = request.getRequestHeaders();
-        headers.put("Access-Control-Allow-Origin", "*");
-
-        String ext = MimeTypeMap.getFileExtensionFromUrl(url.toString());
-        String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-
-        conn.setDoInput(true);
-        conn.setUseCaches(false);
-
-        return new WebResourceResponse(mime, conn.getContentEncoding(), conn.getResponseCode(), conn.getResponseMessage(), headers, conn.getInputStream());
-      }
 
       InputStream stream = conn.getInputStream();
 
