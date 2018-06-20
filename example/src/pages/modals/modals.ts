@@ -37,7 +37,9 @@ export class ModalsPage {
   async showConfirm() {
     let confirmRet = await Plugins.Modals.confirm({
       title: 'Confirm',
-      message: 'Are you sure you\'d like to press the red button?'
+      message: 'Are you sure you\'d like to press the red button?',
+      okButtonTitle: 'Ok?',
+      cancelButtonTitle: 'Cancel?'      
     });
     console.log('Confirm ret', confirmRet);
   }
