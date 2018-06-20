@@ -29,7 +29,8 @@ export class ModalsPage {
   async showAlert() {
     let alertRet = await Plugins.Modals.alert({
       title: 'Stop',
-      message: 'this is an error'
+      message: 'this is an error',
+      buttonTitle: 'Okay!'
     });
   }
 
