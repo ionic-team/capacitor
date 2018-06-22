@@ -44,14 +44,26 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   parseUa(_ua: string) {
     let uaFields: any = {};
     const start = _ua.indexOf('(')+1;
-    const end = _ua.indexOf('Apple')-2;
+    let end = _ua.indexOf(') AppleWebKit');
+    if (_ua.indexOf(') Gecko') !== -1) {
+      end = _ua.indexOf(') Gecko');
+    }
     const fields = _ua.substring(start, end);
     if (_ua.indexOf('Android') !== -1) {
-      uaFields.model = fields.replace(" wv", "").split("; ").pop().split(' Build')[0];
+      uaFields.model = fields.replace("; wv", "").split("; ").pop().split(' Build')[0];
       uaFields.osVersion = fields.split('; ')[1];
     } else {
       uaFields.model = fields.split('; ')[0];
-      uaFields.osVersion = navigator.oscpu ? navigator.oscpu : fields.split('; ').pop().split(" ")[3].replace(/_/g, ".");
+      if (navigator.oscpu) {
+        uaFields.osVersion = navigator.oscpu;
+      } else {
+        if (_ua.indexOf('Windows') !== -1) {
+          uaFields.osVersion = fields;
+        } else {
+          let lastParts = fields.split('; ').pop().replace(" like Mac OS X", "").split(" ");
+          uaFields.osVersion = lastParts[lastParts.length-1].replace(/_/g, ".");
+        }
+      }
     }
 
     return uaFields;
