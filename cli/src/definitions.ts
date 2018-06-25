@@ -10,6 +10,7 @@ export enum OS {
 export interface PackageJson {
   name: string;
   version: string;
+  dependencies: any;
 }
 
 export interface ExternalConfig {
