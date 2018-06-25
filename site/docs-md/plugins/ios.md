@@ -92,6 +92,73 @@ call.reject(error.localizedDescription, error, [
 ])
 ```
 
+### Presenting Native Screens
+
+To present a Native Screen over the Capacitor screen we need to acces the Capacitor's View Controller.
+To access the Capacitor's View Controller, we have to use the `CAPBridge` object available on `CAPPlugin` class.
+
+We can use the `UIViewController` to present Native View Controllers over it like this:
+
+`self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)`
+
+On iPad devices you can also present `UIPopovers`, to do so, we provide a helper function to show it centered.
+
+```swift
+self.setCenteredPopover(ourCustomViewController)
+self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)
+```
+
+### Events
+
+Capacitor Plugins can emit App events and Plugin events
+
+#### App Events
+
+App Events are regular javascript events, like `window` or `document` events.
+
+Capacitor provides all this functions to fire events:
+
+```swift
+
+//If you want to provide the target
+self.bridge.triggerJSEvent(eventName: "myCustomEvent", target: "window")
+
+self.bridge.triggerJSEvent(eventName: "myCustomEvent", target: "document", data: "my custom data")
+
+// Window Events
+self.bridge.triggerWindowJSEvent(eventName: "myCustomEvent")
+
+self.bridge.triggerWindowJSEvent(eventName: "myCustomEvent", data: "my custom data")
+
+// Document events
+self.bridge.triggerDocumentJSEvent(eventName: "myCustomEvent")
+
+self.bridge.triggerDocumentJSEvent(eventName: "myCustomEvent", data: "my custom data")
+```
+
+And to listen for it, just use regular javascript:
+
+```javascript
+window.addEventListener("myCustomEvent", function() {
+  console.log("myCustomEvent was fired")
+});
+```
+
+#### Plugin Events
+
+Plugins can emit their own events that you can listen by attaching a listener to the plugin Object like this:
+
+```typescript
+Plugins.MyPlugin.addListener('myPluginEvent', (info: any) => {
+  console.log('myPluginEvent was fired');
+});
+```
+
+To emit the event from the Swift plugin class you can do it like this:
+
+`self.notifyListeners("myPluginEvent", data: [:])`
+
+
 ### Export to Capacitor
 
 To make sure Capacitor can see your plugin, you must do two things: export your Swift class to Objective-C, and register it
