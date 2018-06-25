@@ -1,6 +1,6 @@
 import { Config } from '../config';
-import { check, checkWebDir, logError, logFatal, logInfo, runTask } from '../common';
-import { existsAsync, symlinkAsync } from '../util/fs';
+import { checkWebDir, logError, logFatal, logInfo, runTask } from '../common';
+import { existsAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 import { copyElectron } from '../electron/copy';
