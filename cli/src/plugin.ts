@@ -53,11 +53,16 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
       return null;
     }
     if (meta.capacitor) {
+      let path = rootPath;
+      let dep = config.app.package.dependencies[name];
+      if (dep && dep.startsWith('file:')) {
+        path = config.app.package.dependencies[name].replace('file:', '../../');
+      }
       return {
         id: name,
         name: fixName(name),
         version: meta.version,
-        rootPath: rootPath,
+        rootPath: path,
         repository: meta.repository,
         manifest: meta.capacitor
       };
