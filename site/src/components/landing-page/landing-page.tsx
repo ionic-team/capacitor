@@ -40,7 +40,9 @@ export class LandingPage {
           <hgroup>
             <h1 id="action-call">Build native mobile and desktop apps with the web</h1>
             <h3>
-              Cross-platform runtime that makes it easy to build apps that run natively on iOS, Android, Electron, and the web - using HTML, JS, and CSS.
+              Cross-platform native layer for iOS, Android, Electron, and the web.
+              <br />
+              Build apps with HTML, JS, and CSS. Optimized for Ionic Framework.
             </h3>
             <stencil-route-link url="/docs/getting-started/">
               <button id="get-started">
@@ -72,12 +74,11 @@ export class LandingPage {
               easily deploy to App Stores (and the web!)
             </p>
           </div>
-          <div class="points__item points__item--opensource">
-            <h2>Open Source</h2>
-
+          <div class="points__item points__item--simple">
+            <h2>Use with Ionic</h2>
             <p>
-              Capacitor is completely open source (MIT) and maintained
-              by <a href="http://ionicframework.com/">Ionic</a> and its community.
+              Capacitor provides native functionality for web apps, and is optimized
+              for Ionic Framework
             </p>
           </div>
           <div class="points__item points__item--webnative">
@@ -95,10 +96,12 @@ export class LandingPage {
               use existing Cordova plugins with our compatibility layer.
             </p>
           </div>
-          <div class="points__item points__item--simple">
-            <h2>Simple</h2>
+          <div class="points__item points__item--opensource">
+            <h2>Open Source</h2>
+
             <p>
-              Focus on what you want to do, not how. Capacitor turns complex, proprietary Native APIs into simple JS calls.
+              Capacitor is completely open source (MIT) and maintained
+              by <a href="http://ionicframework.com/">Ionic</a> and its community.
             </p>
           </div>
       </section>
