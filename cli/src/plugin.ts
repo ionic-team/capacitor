@@ -39,7 +39,7 @@ export interface Plugin {
 }
 
 export async function getPlugins(config: Config): Promise<Plugin[]> {
-  const deps = await getDependencies(config);
+  const deps = getDependencies(config);
   const plugins = await Promise.all(deps.map(async p => resolvePlugin(config, p)));
   return plugins.filter(p => !!p) as Plugin[];
 }
@@ -81,9 +81,8 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
   return null;
 }
 
-export async function getDependencies(config: Config): Promise<string[]> {
-  const json = await readJSON(resolve(config.app.rootDir, 'package.json'));
-  const { dependencies } = json;
+export function getDependencies(config: Config): string[] {
+  const dependencies = config.app.package.dependencies;
   if (!dependencies) {
     return [];
   }
