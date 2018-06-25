@@ -1,0 +1,11 @@
+blog-page h2 {
+  margin-top: 0; }
+
+blog-page a {
+  text-decoration: none; }
+
+blog-page .post {
+  max-width: 670px;
+  padding-bottom: 100px; }
+  blog-page .post p {
+    color: #111; }

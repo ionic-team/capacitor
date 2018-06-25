@@ -1,0 +1,2 @@
+/*! Built with http://stenciljs.com */
+const{h:t}=window.App;class o{handleClick(t){if(document.location.hash!=="#"+this.to){document.location.hash=this.to;let t=document.querySelector("html").scrollTop;window.scrollTo(0,t-60)}else document.location.hash="",document.location.hash=this.to}render(){return t("div",{onClick:this.handleClick.bind(this)},t("slot",null))}static get is(){return"anchor-link"}static get properties(){return{to:{type:String,attr:"to"}}}static get style(){return"/**style-placeholder:anchor-link:**/"}}export{o as AnchorLink};

@@ -1,0 +1,229 @@
+/** @stencil/router global **/
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ *
+ */
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+/**
+ * inlined Object.is polyfill to avoid requiring consumers ship their own
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+ */
+function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+        // Steps 1-5, 7-10
+        // Steps 6.b-6.e: +0 != -0
+        // Added the nonzero y check to make Flow happy, but it is redundant
+        return x !== 0 || y !== 0 || 1 / x === 1 / y;
+    }
+    else {
+        // Step 6.a: NaN == NaN
+        return x !== x && y !== y;
+    }
+}
+/**
+ * Performs equality by iterating through keys on an object and returning false
+ * when any key has values which are not strictly equal between the arguments.
+ * Returns true when the values of all keys are strictly equal.
+ */
+function shallowEqual(objA, objB) {
+    if (is(objA, objB)) {
+        return true;
+    }
+    if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+        return false;
+    }
+    var keysA = Object.keys(objA);
+    var keysB = Object.keys(objB);
+    if (keysA.length !== keysB.length) {
+        return false;
+    }
+    // Test for A's keys different from B.
+    for (var i = 0; i < keysA.length; i++) {
+        if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
+            return false;
+        }
+    }
+    return true;
+}
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try {
+            step(generator.next(value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function rejected(value) { try {
+            step(generator["throw"](value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Context.activeRouter = (function () {
+    var state = {};
+    var nextListeners = [];
+    function getDefaultState() {
+        return {
+            location: {
+                pathname: Context.window.location.pathname,
+                search: Context.window.location.search
+            }
+        };
+    }
+    function set(value) {
+        state = Object.assign({}, state, value);
+        dispatch();
+    }
+    function get(attrName) {
+        if (Object.keys(state).length === 0) {
+            return getDefaultState();
+        }
+        if (!attrName) {
+            return state;
+        }
+        return state[attrName];
+    }
+    function dispatch() {
+        return __awaiter(this, void 0, void 0, function () {
+            var listeners, matchList, pathname, _loop_1, i, _i, matchList_1, _a, listenerIndex, matchResult, groupId;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        listeners = nextListeners;
+                        matchList = [];
+                        pathname = get('location').pathname;
+                        _loop_1 = function (i) {
+                            var match = null;
+                            var isGroupMatch = matchList.some(function (me) {
+                                return me[1] != null && me[2] != null && me[2] === listeners[i].groupId;
+                            });
+                            // If listener has a groupId and group already has a match then don't check
+                            if (!isGroupMatch) {
+                                match = listeners[i].isMatch(pathname);
+                                // If listener does not have a group then just check if it matches
+                            }
+                            else {
+                                match = null;
+                            }
+                            if (!shallowEqual(listeners[i].lastMatch, match)) {
+                                if (!isGroupMatch && listeners[i].groupId) {
+                                    matchList.unshift([i, match, listeners[i].groupId]);
+                                }
+                                else {
+                                    matchList.push([i, match, listeners[i].groupId]);
+                                }
+                            }
+                            listeners[i].lastMatch = match;
+                        };
+                        // Assume listeners are ordered by group and then groupIndex
+                        for (i = 0; i < listeners.length; i++) {
+                            _loop_1(i);
+                        }
+                        _i = 0, matchList_1 = matchList;
+                        _b.label = 1;
+                    case 1:
+                        if (!(_i < matchList_1.length)) return [3 /*break*/, 5];
+                        _a = matchList_1[_i], listenerIndex = _a[0], matchResult = _a[1], groupId = _a[2];
+                        if (!(groupId && matchResult != null)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, listeners[listenerIndex].listener(matchResult)];
+                    case 2:
+                        _b.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        listeners[listenerIndex].listener(matchResult);
+                        _b.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    }
+    function addListener(routeSubscription) {
+        var pathname = get('location').pathname;
+        var match = routeSubscription.isMatch(pathname);
+        routeSubscription.lastMatch = match;
+        routeSubscription.listener(match);
+        // If the new route does not have a group then add to the end of the list
+        // If this is the first item push it on the list.
+        if (routeSubscription.groupId == null || routeSubscription.groupIndex == null || nextListeners.length === 0) {
+            nextListeners.push(routeSubscription);
+        }
+        else {
+            for (var i = 0; i < nextListeners.length; i++) {
+                var _a = nextListeners[i], groupId = _a.groupId, groupIndex = _a.groupIndex;
+                if (groupId == null) {
+                    nextListeners.splice(i, 0, routeSubscription);
+                    break;
+                }
+                if (groupId === routeSubscription.groupId && groupIndex > routeSubscription.groupIndex) {
+                    nextListeners.splice(i, 0, routeSubscription);
+                    break;
+                }
+            }
+        }
+    }
+    function removeListener(routeSubscription) {
+        var index = nextListeners.indexOf(routeSubscription);
+        nextListeners.splice(index, 1);
+    }
+    /**
+     * Subscribe to the router for changes
+     * The callback that is returned should be used to unsubscribe.
+     */
+    function subscribe(routeSubscription) {
+        addListener(routeSubscription);
+        var isSubscribed = true;
+        return function unsubscribe() {
+            if (!isSubscribed) {
+                return;
+            }
+            removeListener(routeSubscription);
+            isSubscribed = false;
+        };
+    }
+    return {
+        set: set,
+        get: get,
+        subscribe: subscribe,
+        dispatch: dispatch
+    };
+})();

@@ -1,0 +1,1598 @@
+/*! Built with http://stenciljs.com */
+App.loadBundle('/**:bundle-id:**/', ['exports', './chunk-4440b782.js'], function (exports, __chunk_1) {
+    var h = window.App.h;
+    var AppBurger = /** @class */ (function () {
+        function AppBurger() {
+        }
+        AppBurger.prototype.handleBurgerClicked = function () {
+            this.burgerClick.emit();
+        };
+        AppBurger.prototype.render = function () {
+            var _this = this;
+            return (h("div", { class: "burger", onClick: function () { return _this.handleBurgerClicked(); } }, h("app-icon", { name: "menu" }), h("app-icon", { name: "close" })));
+        };
+        Object.defineProperty(AppBurger, "is", {
+            get: function () { return "app-burger"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AppBurger, "events", {
+            get: function () {
+                return [{
+                        "name": "burgerClick",
+                        "method": "burgerClick",
+                        "bubbles": true,
+                        "cancelable": true,
+                        "composed": true
+                    }];
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AppBurger, "style", {
+            get: function () { return "/**style-placeholder:app-burger:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return AppBurger;
+    }());
+    var AppMarked = /** @class */ (function () {
+        function AppMarked() {
+        }
+        AppMarked.prototype.componentWillLoad = function () {
+            return this.fetchNewContent();
+        };
+        // componentDidLoad() {
+        //   this.bindHeadings(this.el);
+        // }
+        // componentDidUpdate() {
+        //   this.bindHeadings(this.el);
+        // }
+        AppMarked.prototype.fetchNewContent = function () {
+            var _this = this;
+            if (this.doc !== undefined) {
+                return fetch("/assets/docs-content/" + this.doc)
+                    .then(function (response) { return response.text(); })
+                    .then(function (data) {
+                    _this.content = data;
+                    var el = document.createElement('div');
+                    el.innerHTML = data;
+                    var headerEl = el.querySelector('h1');
+                    document.title = (headerEl && headerEl.textContent + ' - Capacitor') || 'Capacitor';
+                    // requestAnimationFrame is not available for preRendering
+                    // or SSR, so only run this in the browser
+                    if (!_this.isServer) {
+                        window.requestAnimationFrame(function () {
+                            window.scrollTo(0, 0);
+                        });
+                    }
+                }).catch(function (err) {
+                    console.error('UNABLE TO LOAD', err);
+                });
+            }
+        };
+        AppMarked.prototype.bindHeadings = function (el) {
+            var headings = Array.from(el.querySelectorAll('h1,h2,h3,h4,h5'));
+            headings.forEach(function (h) {
+                h.classList.add('anchor-link-relative');
+                var link = document.createElement('anchor-link');
+                link.className = 'hover-anchor';
+                if (h.id) {
+                    link.to = h.id;
+                }
+                link.innerHTML = '#';
+                h.insertBefore(link, h.firstChild);
+            });
+            setTimeout(function () {
+                var hash = window.location.hash;
+                if (hash) {
+                    window.location.hash = '';
+                    window.location.hash = hash;
+                }
+            }, 100);
+        };
+        AppMarked.prototype.render = function () {
+            return [
+                h("app-burger", null),
+                h("div", { class: "measure-lg", innerHTML: this.content })
+            ];
+        };
+        Object.defineProperty(AppMarked, "is", {
+            get: function () { return "app-marked"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AppMarked, "properties", {
+            get: function () {
+                return {
+                    "content": {
+                        "state": true
+                    },
+                    "doc": {
+                        "type": String,
+                        "attr": "doc",
+                        "watchCallbacks": ["fetchNewContent"]
+                    },
+                    "el": {
+                        "elementRef": true
+                    },
+                    "isServer": {
+                        "context": "isServer"
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AppMarked, "style", {
+            get: function () { return "/**style-placeholder:app-marked:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return AppMarked;
+    }());
+    function uuidv4() {
+        return ([1e7].toString() + -1e3.toString() + -4e3.toString() + -8e3.toString() + -1e11.toString()).replace(/[018]/g, function (c) {
+            var random = window.crypto.getRandomValues(new Uint8Array(1));
+            return (c ^ random[0] & 15 >> c / 4).toString(16);
+        });
+    }
+    var RouterSwitch = function (_a, util) {
+        var children = _a.children, scrollTopOffset = _a.scrollTopOffset;
+        var group;
+        if (window.crypto) {
+            group = uuidv4();
+        }
+        else {
+            group = (Math.random() * 10e16).toString();
+        }
+        var chil = children
+            .map(function (child, groupIndex) {
+            var currentAttributes = util.getAttributes(child);
+            util.replaceAttributes(child, Object.assign({}, currentAttributes, { scrollTopOffset: scrollTopOffset,
+                group: group,
+                groupIndex: groupIndex }));
+            return child;
+        });
+        return (h("div", null, chil));
+    };
+    var App = /** @class */ (function () {
+        function App() {
+            this.elements = [
+                'site-header',
+                'site-menu',
+                'app-burger',
+                '.root'
+            ];
+            this.isLandingPage = false;
+        }
+        App.prototype.handleResize = function () {
+            var _this = this;
+            requestAnimationFrame(function () {
+                if (window.innerWidth > 768 && _this.isLeftSidebarIn) {
+                    _this.isLeftSidebarIn = false;
+                    document.body.classList.remove('no-scroll');
+                    _this.elements.forEach(function (el) {
+                        _this.el.querySelector(el).classList.remove('left-sidebar-in');
+                    });
+                }
+            });
+        };
+        App.prototype.handleToggle = function () {
+            if (window.innerWidth <= 768)
+                this.toggleLeftSidebar();
+        };
+        App.prototype.componentDidLoad = function () {
+            this.isLeftSidebarIn = false;
+        };
+        App.prototype.toggleLeftSidebar = function () {
+            var _this = this;
+            if (this.isLeftSidebarIn) {
+                this.isLeftSidebarIn = false;
+                document.body.classList.remove('no-scroll');
+                this.elements.forEach(function (el) {
+                    _this.el.querySelector(el).classList.remove('left-sidebar-in');
+                    _this.el.querySelector(el).classList.add('left-sidebar-out');
+                });
+            }
+            else {
+                this.isLeftSidebarIn = true;
+                document.body.classList.add('no-scroll');
+                this.elements.forEach(function (el) {
+                    _this.el.querySelector(el).classList.add('left-sidebar-in');
+                    _this.el.querySelector(el).classList.remove('left-sidebar-out');
+                });
+            }
+        };
+        App.prototype.hostData = function () {
+            return {
+                class: {
+                    'landing-page': this.isLandingPage
+                }
+            };
+        };
+        App.prototype.render = function () {
+            var footerClass = this.isLandingPage ? 'footer-landing' : '';
+            return [
+                h("div", { id: "main-div" }, h("site-header", null), h("div", { class: "app root" }, h("stencil-router", null, h(RouterSwitch, { scrollTopOffset: 0 }, h("stencil-route", { url: "/", component: "landing-page", exact: true }), h("stencil-route", { url: "/docs/", exact: true, routeRender: function (_props) {
+                        return (h("document-component", { pages: ['index.html'] }));
+                    } }), h("stencil-route", { url: "/docs/getting-started/:pageName?", routeRender: function (props) {
+                        var page = props.match.params.pageName || 'index';
+                        return (h("document-component", { pages: ["getting-started/" + page + ".html"] }));
+                    } }), h("stencil-route", { url: "/docs/basics/:pageName?", routeRender: function (props) {
+                        var page = props.match.params.pageName || 'index';
+                        return (h("document-component", { pages: ["basics/" + page + ".html"] }));
+                    } }), h("stencil-route", { url: "/docs/ios/:pageName?", routeRender: function (props) {
+                        var page = props.match.params.pageName || 'index';
+                        return (h("document-component", { pages: ["ios/" + page + ".html"] }));
+                    } }), h("stencil-route", { url: "/docs/android/:pageName?", routeRender: function (props) {
+                        var page = props.match.params.pageName || 'index';
+                        return (h("document-component", { pages: ["android/" + page + ".html"] }));
+                    } }), h("stencil-route", { url: "/docs/electron/:pageName?", routeRender: function (props) {
+                        var page = props.match.params.pageName || 'index';
+                        return (h("document-component", { pages: ["electron/" + page + ".html"] }));
+                    } }), h("stencil-route", { url: "/docs/web/:pageName?", routeRender: function (props) {
+                        var page = props.match.params.pageName || 'index';
+                        return (h("document-component", { pages: ["web/" + page + ".html"] }));
+                    } }), h("stencil-route", { url: "/docs/plugins/:pageName?", routeRender: function (props) {
+                        var page = props.match.params.pageName || 'index';
+                        return (h("document-component", { pages: ["plugins/" + page + ".html"] }));
+                    } }), h("stencil-route", { url: "/docs/apis/:pageName?", routeRender: function (props) {
+                        var page = 'apis/index.html';
+                        var pageName = props.match.params.pageName;
+                        if (pageName) {
+                            page = "apis/" + pageName + "/index.html";
+                        }
+                        return (h("document-component", { pages: [page] }));
+                    } }))))),
+                h("footer", { class: footerClass }, h("div", { class: "container" }, h("div", { id: "open-source" }, h("a", { href: "http://ionicframework.com/", title: "IonicFramework.com", rel: "noopener" }, h("div", { class: "ionic-oss-logo" })), h("p", null, "Released under ", h("span", { id: "mit" }, "MIT License"), " | Copyright @ ", (new Date()).getFullYear(), " Drifty Co.")), h("div", { id: "footer-icons" }, h("iframe", { class: "star-button", src: "https://ghbtns.com/github-btn.html?user=ionic-team&repo=capacitor&type=star&count=true", frameBorder: "0", scrolling: "0", width: "100px", height: "20px" }), h("a", { class: "svg-button", id: "capacitor-twitter", href: "https://twitter.com/getcapacitor", target: "_blank", rel: "noopener", title: "Open the Capacitor account on twitter", style: { fill: 'white' } }, h("app-icon", { name: "twitter" })), h("a", { class: "svg-button", id: "cap-forum", href: "https://getcapacitor.herokuapp.com/", target: "_blank", rel: "noopener", title: "Join the Capacitor slack" }, h("app-icon", { name: "slack" })))))
+            ];
+        };
+        Object.defineProperty(App, "is", {
+            get: function () { return "capacitor-site"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(App, "properties", {
+            get: function () {
+                return {
+                    "el": {
+                        "elementRef": true
+                    },
+                    "isLandingPage": {
+                        "type": Boolean,
+                        "attr": "is-landing-page"
+                    },
+                    "isLeftSidebarIn": {
+                        "state": true
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(App, "listeners", {
+            get: function () {
+                return [{
+                        "name": "window:resize",
+                        "method": "handleResize",
+                        "passive": true
+                    }, {
+                        "name": "burgerClick",
+                        "method": "handleToggle"
+                    }, {
+                        "name": "leftSidebarClick",
+                        "method": "handleToggle"
+                    }];
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(App, "style", {
+            get: function () { return "/**style-placeholder:capacitor-site:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return App;
+    }());
+    var DocumentComponent = /** @class */ (function () {
+        function DocumentComponent() {
+            this.pages = [];
+        }
+        DocumentComponent.prototype.render = function () {
+            return (h("div", { class: "wrapper" }, h("div", { class: "container" }, h("site-menu", null), this.pages.map(function (page) { return h("app-marked", { doc: page }); }))));
+        };
+        Object.defineProperty(DocumentComponent, "is", {
+            get: function () { return "document-component"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(DocumentComponent, "properties", {
+            get: function () {
+                return {
+                    "pages": {
+                        "type": "Any",
+                        "attr": "pages"
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(DocumentComponent, "style", {
+            get: function () { return "/**style-placeholder:document-component:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return DocumentComponent;
+    }());
+    var SiteHeader = /** @class */ (function () {
+        function SiteHeader() {
+        }
+        SiteHeader.prototype.handleResize = function () {
+            var _this = this;
+            requestAnimationFrame(function () {
+                if (window.innerWidth > 768) {
+                    var menu = _this.el.querySelector('.header-menu');
+                    menu.style.display = "";
+                    _this.el.classList.remove('show-mobile-menu');
+                    document.body.classList.remove('no-scroll');
+                    _this.isMobileMenuShown = false;
+                }
+            });
+        };
+        SiteHeader.prototype.componentDidLoad = function () {
+            this.isMobileMenuShown = false;
+        };
+        SiteHeader.prototype.showNav = function () {
+            var _this = this;
+            if (this.isMobileMenuShown)
+                return;
+            this.isMobileMenuShown = true;
+            var menu = this.el.querySelector('.header-menu');
+            menu.style.display = "flex";
+            setTimeout(function () {
+                _this.el.classList.add('show-mobile-menu');
+                document.body.classList.add('no-scroll');
+            }, 1);
+        };
+        SiteHeader.prototype.hideNav = function () {
+            if (!this.isMobileMenuShown)
+                return;
+            this.isMobileMenuShown = false;
+            var menu = this.el.querySelector('.header-menu');
+            this.el.classList.remove('show-mobile-menu');
+            setTimeout(function () {
+                menu.style.display = "none";
+                document.body.classList.remove('no-scroll');
+            }, 300);
+        };
+        SiteHeader.prototype.handleDropdownEnter = function () {
+            this.isDropdownShown = true;
+        };
+        SiteHeader.prototype.handleDropdownLeave = function () {
+            this.isDropdownShown = false;
+        };
+        SiteHeader.prototype.render = function () {
+            var _this = this;
+            return (h("div", { class: "site-header container" }, h("stencil-route-link", { url: "/", class: "logo-link" }, h("div", { class: "logo" }), h("b", { class: "version" }, "Beta")), h("div", { class: "header-menu" }, h("stencil-route-link", { urlMatch: "/docs", url: "/docs/", onClick: function () { _this.hideNav(); } }, "Docs"), h("span", { class: {
+                    'link': true,
+                    'dropdown': true,
+                    'dropdown--visible': this.isDropdownShown
+                }, onMouseEnter: this.handleDropdownEnter.bind(this), onMouseLeave: this.handleDropdownLeave.bind(this) }, h("span", { class: "dropdown__label" }, "Community"), h("ul", { class: "dropdown__menu" }, h("div", { class: "dropdown__arrow" }), h("li", { class: "dropdown__item" }, h("a", { href: "https://forum.getcapacitor.com/" }, "Forum")), h("li", { class: "dropdown__item" }, h("a", { href: "https://getcapacitor.herokuapp.com/" }, "Slack")), h("li", { class: "dropdown__item" }, h("a", { href: "https://twitter.com/getcapacitor" }, "Twitter")))), h("a", { class: "link link--external", href: "https://github.com/ionic-team/capacitor" }, "GitHub", h("app-icon", { name: "targetblank" })), h("div", { class: "header-close", onClick: function () { _this.hideNav(); } }, h("app-icon", { name: "close" }))), h("div", { class: "header-overflow", onClick: function () { _this.showNav(); } }, h("app-icon", { name: "more" }))));
+        };
+        Object.defineProperty(SiteHeader, "is", {
+            get: function () { return "site-header"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SiteHeader, "properties", {
+            get: function () {
+                return {
+                    "el": {
+                        "elementRef": true
+                    },
+                    "isDropdownShown": {
+                        "state": true
+                    },
+                    "isMobileMenuShown": {
+                        "state": true
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SiteHeader, "listeners", {
+            get: function () {
+                return [{
+                        "name": "window:resize",
+                        "method": "handleResize",
+                        "passive": true
+                    }];
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SiteHeader, "style", {
+            get: function () { return "/**style-placeholder:site-header:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return SiteHeader;
+    }());
+    /**
+      * @name Route
+      * @module ionic
+      * @description
+     */
+    var Route = /** @class */ (function () {
+        function Route() {
+            this.unsubscribe = function () { return; };
+            this.componentProps = {};
+            this.exact = false;
+            this.group = null;
+            this.groupIndex = null;
+            this.routeRender = null;
+            this.scrollTopOffset = null;
+            this.match = null;
+            this.activeInGroup = false;
+            this.scrollOnNextRender = false;
+        }
+        // Identify if the current route is a match.
+        Route.prototype.computeMatch = function (pathname) {
+            if (!pathname) {
+                var location = this.activeRouter.get('location');
+                pathname = location.pathname;
+            }
+            return __chunk_1.matchPath(pathname, {
+                path: this.url,
+                exact: this.exact,
+                strict: true
+            });
+        };
+        Route.prototype.componentWillLoad = function () {
+            var _this = this;
+            var thisRoute = this;
+            // subscribe the project's active router and listen
+            // for changes. Recompute the match if any updates get
+            // pushed
+            var listener = function (matchResults) {
+                _this.match = matchResults;
+                return new Promise(function (resolve) {
+                    thisRoute.componentDidRerender = resolve;
+                });
+            };
+            this.unsubscribe = this.activeRouter.subscribe({
+                isMatch: this.computeMatch.bind(this),
+                listener: listener,
+                groupId: this.group,
+                groupIndex: this.groupIndex
+            });
+        };
+        Route.prototype.componentDidUnload = function () {
+            // be sure to unsubscribe to the router so that we don't
+            // get any memory leaks
+            this.unsubscribe();
+        };
+        Route.prototype.componentDidUpdate = function () {
+            var _this = this;
+            if (this.componentDidRerender) {
+                // After route component has rendered then check if its child has.
+                var childElement = this.el.firstElementChild;
+                if (childElement && childElement.componentOnReady) {
+                    childElement.componentOnReady().then(function () {
+                        if (_this.componentDidRerender) {
+                            _this.componentDidRerender();
+                        }
+                        _this.componentDidRerender = undefined;
+                        _this.activeInGroup = !!_this.match;
+                        _this.scrollOnNextRender = _this.activeInGroup;
+                    });
+                }
+                else {
+                    // If there is no child then resolve the Promise immediately
+                    this.componentDidRerender();
+                    this.componentDidRerender = undefined;
+                    this.activeInGroup = !!this.match;
+                    this.scrollOnNextRender = this.activeInGroup;
+                }
+            }
+            else if (this.scrollOnNextRender) {
+                // If this is the new active route in a group and it is now active then scroll
+                this.scrollTo();
+                this.scrollOnNextRender = false;
+            }
+        };
+        Route.prototype.scrollTo = function () {
+            var _this = this;
+            var history = this.activeRouter.get('history');
+            if (this.scrollTopOffset == null || !history || this.isServer) {
+                return;
+            }
+            if (history.action === 'POP' && history.location.scrollPosition != null) {
+                return this.queue.write(function () {
+                    window.scrollTo(history.location.scrollPosition[0], history.location.scrollPosition[1]);
+                });
+            }
+            // read a frame to let things measure correctly
+            return this.queue.read(function () {
+                // okay, the frame has passed. Go ahead and render now
+                return _this.queue.write(function () {
+                    window.scrollTo(0, _this.scrollTopOffset);
+                });
+            });
+        };
+        Route.prototype.hostData = function () {
+            if (!this.activeRouter || !this.match || (this.group && !this.activeInGroup)) {
+                return {
+                    style: {
+                        display: 'none'
+                    }
+                };
+            }
+        };
+        Route.prototype.render = function () {
+            // If there is no activeRouter then do not render
+            // Check if this route is in the matching URL (for example, a parent route)
+            if (!this.activeRouter || !this.match) {
+                return null;
+            }
+            // component props defined in route
+            // the history api
+            // current match data including params
+            var childProps = Object.assign({}, this.componentProps, { history: this.activeRouter.get('history'), match: this.match });
+            // If there is a routerRender defined then use
+            // that and pass the component and component props with it.
+            if (this.routeRender) {
+                return this.routeRender(Object.assign({}, childProps, { component: this.component }));
+            }
+            if (this.component) {
+                var ChildComponent = this.component;
+                return (h(ChildComponent, Object.assign({}, childProps)));
+            }
+        };
+        Object.defineProperty(Route, "is", {
+            get: function () { return "stencil-route"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Route, "properties", {
+            get: function () {
+                return {
+                    "activeInGroup": {
+                        "state": true
+                    },
+                    "activeRouter": {
+                        "context": "activeRouter"
+                    },
+                    "component": {
+                        "type": String,
+                        "attr": "component"
+                    },
+                    "componentProps": {
+                        "type": "Any",
+                        "attr": "component-props"
+                    },
+                    "el": {
+                        "elementRef": true
+                    },
+                    "exact": {
+                        "type": Boolean,
+                        "attr": "exact"
+                    },
+                    "group": {
+                        "type": String,
+                        "attr": "group"
+                    },
+                    "groupIndex": {
+                        "type": Number,
+                        "attr": "group-index"
+                    },
+                    "isServer": {
+                        "context": "isServer"
+                    },
+                    "location": {
+                        "context": "location"
+                    },
+                    "match": {
+                        "state": true
+                    },
+                    "queue": {
+                        "context": "queue"
+                    },
+                    "routeRender": {
+                        "type": "Any",
+                        "attr": "route-render"
+                    },
+                    "scrollTopOffset": {
+                        "type": Number,
+                        "attr": "scroll-top-offset"
+                    },
+                    "url": {
+                        "type": String,
+                        "attr": "url"
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Route;
+    }());
+    function hasBasename(path, prefix) {
+        return (new RegExp('^' + prefix + '(\\/|\\?|#|$)', 'i')).test(path);
+    }
+    function stripBasename(path, prefix) {
+        return hasBasename(path, prefix) ? path.substr(prefix.length) : path;
+    }
+    function stripTrailingSlash(path) {
+        return path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
+    }
+    function addLeadingSlash(path) {
+        return path.charAt(0) === '/' ? path : '/' + path;
+    }
+    function stripLeadingSlash(path) {
+        return path.charAt(0) === '/' ? path.substr(1) : path;
+    }
+    function parsePath(path) {
+        var pathname = path || '/';
+        var search = '';
+        var hash = '';
+        var hashIndex = pathname.indexOf('#');
+        if (hashIndex !== -1) {
+            hash = pathname.substr(hashIndex);
+            pathname = pathname.substr(0, hashIndex);
+        }
+        var searchIndex = pathname.indexOf('?');
+        if (searchIndex !== -1) {
+            search = pathname.substr(searchIndex);
+            pathname = pathname.substr(0, searchIndex);
+        }
+        return {
+            pathname: pathname,
+            search: search === '?' ? '' : search,
+            hash: hash === '#' ? '' : hash
+        };
+    }
+    function createPath(location) {
+        var pathname = location.pathname, search = location.search, hash = location.hash;
+        var path = pathname || '/';
+        if (search && search !== '?') {
+            path += (search.charAt(0) === '?' ? search : "?" + search);
+        }
+        if (hash && hash !== '#') {
+            path += (hash.charAt(0) === '#' ? hash : "#" + hash);
+        }
+        return path;
+    }
+    function parseQueryString(query) {
+        if (!query) {
+            return {};
+        }
+        return (/^[?#]/.test(query) ? query.slice(1) : query)
+            .split('&')
+            .reduce(function (params, param) {
+            var _a = param.split('='), key = _a[0], value = _a[1];
+            params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+            return params;
+        }, {});
+    }
+    function isAbsolute(pathname) {
+        return pathname.charAt(0) === '/';
+    }
+    // About 1.5x faster than the two-arg version of Array#splice()
+    function spliceOne(list, index) {
+        for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1) {
+            list[i] = list[k];
+        }
+        list.pop();
+    }
+    // This implementation is based heavily on node's url.parse
+    function resolvePathname(to, from) {
+        if (from === void 0) { from = ''; }
+        var toParts = to && to.split('/') || [];
+        var fromParts = from && from.split('/') || [];
+        var isToAbs = to && isAbsolute(to);
+        var isFromAbs = from && isAbsolute(from);
+        var mustEndAbs = isToAbs || isFromAbs;
+        if (to && isAbsolute(to)) {
+            // to is absolute
+            fromParts = toParts;
+        }
+        else if (toParts.length) {
+            // to is relative, drop the filename
+            fromParts.pop();
+            fromParts = fromParts.concat(toParts);
+        }
+        if (!fromParts.length) {
+            return '/';
+        }
+        var hasTrailingSlash;
+        if (fromParts.length) {
+            var last = fromParts[fromParts.length - 1];
+            hasTrailingSlash = (last === '.' || last === '..' || last === '');
+        }
+        else {
+            hasTrailingSlash = false;
+        }
+        var up = 0;
+        for (var i = fromParts.length; i >= 0; i--) {
+            var part = fromParts[i];
+            if (part === '.') {
+                spliceOne(fromParts, i);
+            }
+            else if (part === '..') {
+                spliceOne(fromParts, i);
+                up++;
+            }
+            else if (up) {
+                spliceOne(fromParts, i);
+                up--;
+            }
+        }
+        if (!mustEndAbs) {
+            for (; up--; up) {
+                fromParts.unshift('..');
+            }
+        }
+        if (mustEndAbs && fromParts[0] !== '' && (!fromParts[0] || !isAbsolute(fromParts[0]))) {
+            fromParts.unshift('');
+        }
+        var result = fromParts.join('/');
+        if (hasTrailingSlash && result.substr(-1) !== '/') {
+            result += '/';
+        }
+        return result;
+    }
+    function valueEqual(a, b) {
+        if (a === b) {
+            return true;
+        }
+        if (a == null || b == null) {
+            return false;
+        }
+        if (Array.isArray(a)) {
+            return Array.isArray(b) && a.length === b.length && a.every(function (item, index) {
+                return valueEqual(item, b[index]);
+            });
+        }
+        var aType = typeof a;
+        var bType = typeof b;
+        if (aType !== bType) {
+            return false;
+        }
+        if (aType === 'object') {
+            var aValue = a.valueOf();
+            var bValue = b.valueOf();
+            if (aValue !== a || bValue !== b) {
+                return valueEqual(aValue, bValue);
+            }
+            var aKeys = Object.keys(a);
+            var bKeys = Object.keys(b);
+            if (aKeys.length !== bKeys.length) {
+                return false;
+            }
+            return aKeys.every(function (key) {
+                return valueEqual(a[key], b[key]);
+            });
+        }
+        return false;
+    }
+    function locationsAreEqual(a, b) {
+        return a.pathname === b.pathname &&
+            a.search === b.search &&
+            a.hash === b.hash &&
+            a.key === b.key &&
+            valueEqual(a.state, b.state);
+    }
+    function createLocation(path, state, key, currentLocation) {
+        var location;
+        if (typeof path === 'string') {
+            // Two-arg form: push(path, state)
+            location = parsePath(path);
+            location.state = state;
+        }
+        else {
+            // One-arg form: push(location)
+            location = Object.assign({}, path);
+            if (location.pathname === undefined) {
+                location.pathname = '';
+            }
+            if (location.search) {
+                if (location.search.charAt(0) !== '?') {
+                    location.search = '?' + location.search;
+                }
+            }
+            else {
+                location.search = '';
+            }
+            if (location.hash) {
+                if (location.hash.charAt(0) !== '#') {
+                    location.hash = '#' + location.hash;
+                }
+            }
+            else {
+                location.hash = '';
+            }
+            if (state !== undefined && location.state === undefined) {
+                location.state = state;
+            }
+        }
+        try {
+            location.pathname = decodeURI(location.pathname);
+        }
+        catch (e) {
+            if (e instanceof URIError) {
+                throw new URIError('Pathname "' + location.pathname + '" could not be decoded. ' +
+                    'This is likely caused by an invalid percent-encoding.');
+            }
+            else {
+                throw e;
+            }
+        }
+        if (key) {
+            location.key = key;
+        }
+        if (currentLocation) {
+            // Resolve incomplete/relative pathname relative to current location.
+            if (!location.pathname) {
+                location.pathname = currentLocation.pathname;
+            }
+            else if (location.pathname.charAt(0) !== '/') {
+                location.pathname = resolvePathname(location.pathname, currentLocation.pathname);
+            }
+        }
+        else {
+            // When there is no prior location and pathname is empty, set it to /
+            if (!location.pathname) {
+                location.pathname = '/';
+            }
+        }
+        location.query = parseQueryString(location.search);
+        return location;
+    }
+    function invariant(value) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        if (!value) {
+            console.error.apply(console, args);
+        }
+    }
+    function warning(value) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        if (!value) {
+            console.warn.apply(console, args);
+        }
+    }
+    var createTransitionManager = function () {
+        var prompt;
+        var setPrompt = function (nextPrompt) {
+            warning(prompt == null, 'A history supports only one prompt at a time');
+            prompt = nextPrompt;
+            return function () {
+                if (prompt === nextPrompt) {
+                    prompt = null;
+                }
+            };
+        };
+        var confirmTransitionTo = function (location, action, getUserConfirmation, callback) {
+            // TODO: If another transition starts while we're still confirming
+            // the previous one, we may end up in a weird state. Figure out the
+            // best way to handle this.
+            if (prompt != null) {
+                var result = typeof prompt === 'function' ? prompt(location, action) : prompt;
+                if (typeof result === 'string') {
+                    if (typeof getUserConfirmation === 'function') {
+                        getUserConfirmation(result, callback);
+                    }
+                    else {
+                        warning(false, 'A history needs a getUserConfirmation function in order to use a prompt message');
+                        callback(true);
+                    }
+                }
+                else {
+                    // Return false from a transition hook to cancel the transition.
+                    callback(result !== false);
+                }
+            }
+            else {
+                callback(true);
+            }
+        };
+        var listeners = [];
+        var appendListener = function (fn) {
+            var isActive = true;
+            var listener = function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                if (isActive) {
+                    fn.apply(void 0, args);
+                }
+            };
+            listeners.push(listener);
+            return function () {
+                isActive = false;
+                listeners = listeners.filter(function (item) { return item !== listener; });
+            };
+        };
+        var notifyListeners = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            listeners.forEach(function (listener) { return listener.apply(void 0, args); });
+        };
+        return {
+            setPrompt: setPrompt,
+            confirmTransitionTo: confirmTransitionTo,
+            appendListener: appendListener,
+            notifyListeners: notifyListeners
+        };
+    };
+    var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+    var addEventListener = function (node, event, listener) { return (node.addEventListener
+        ? node.addEventListener(event, listener, false)
+        : node.attachEvent('on' + event, listener)); };
+    var removeEventListener = function (node, event, listener) { return (node.removeEventListener
+        ? node.removeEventListener(event, listener, false)
+        : node.detachEvent('on' + event, listener)); };
+    var getConfirmation = function (message, callback) { return (callback(window.confirm(message))); };
+    /**
+     * Returns true if the HTML5 history API is supported. Taken from Modernizr.
+     *
+     * https://github.com/Modernizr/Modernizr/blob/master/LICENSE
+     * https://github.com/Modernizr/Modernizr/blob/master/feature-detects/history.js
+     * changed to avoid false negatives for Windows Phones: https://github.com/reactjs/react-router/issues/586
+     */
+    var supportsHistory = function () {
+        var ua = window.navigator.userAgent;
+        if ((ua.indexOf('Android 2.') !== -1 || ua.indexOf('Android 4.0') !== -1) &&
+            ua.indexOf('Mobile Safari') !== -1 &&
+            ua.indexOf('Chrome') === -1 &&
+            ua.indexOf('Windows Phone') === -1) {
+            return false;
+        }
+        return window.history && 'pushState' in window.history;
+    };
+    /**
+     * Returns true if browser fires popstate on hash change.
+     * IE10 and IE11 do not.
+     */
+    var supportsPopStateOnHashChange = function () { return (window.navigator.userAgent.indexOf('Trident') === -1); };
+    /**
+     * Returns false if using go(n) with hash history causes a full page reload.
+     */
+    var supportsGoWithoutReloadUsingHash = function () { return (window.navigator.userAgent.indexOf('Firefox') === -1); };
+    var isExtraneousPopstateEvent = function (event) { return (event.state === undefined &&
+        navigator.userAgent.indexOf('CriOS') === -1); };
+    var storageAvailable = function (type) {
+        try {
+            var storage = window[type], x = '__storage_test__';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        }
+        catch (e) {
+            return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+                // Firefox
+                e.code === 1014 ||
+                // test name field too, because code might not be present
+                // everything except Firefox
+                e.name === 'QuotaExceededError' ||
+                // Firefox
+                e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                // acknowledge QuotaExceededError only if there's something already stored
+                storage.length !== 0;
+        }
+    };
+    var createScrollHistory = function (applicationScrollKey) {
+        if (applicationScrollKey === void 0) { applicationScrollKey = 'scrollPositions'; }
+        var scrollPositions = new Map();
+        if (storageAvailable('sessionStorage')) {
+            scrollPositions = window.sessionStorage.getItem(applicationScrollKey) ?
+                new Map(JSON.parse(window.sessionStorage.getItem(applicationScrollKey))) :
+                scrollPositions;
+        }
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        function set(key, value) {
+            scrollPositions.set(key, value);
+            if (storageAvailable('sessionStorage')) {
+                var arrayData_1 = [];
+                scrollPositions.forEach(function (value, key) {
+                    arrayData_1.push([key, value]);
+                });
+                window.sessionStorage.setItem('scrollPositions', JSON.stringify(arrayData_1));
+            }
+        }
+        function get(key) {
+            return scrollPositions.get(key);
+        }
+        function has(key) {
+            return scrollPositions.has(key);
+        }
+        function capture(key) {
+            set(key, [window.scrollX, window.scrollY]);
+        }
+        return {
+            set: set,
+            get: get,
+            has: has,
+            capture: capture
+        };
+    };
+    var PopStateEvent = 'popstate';
+    var HashChangeEvent = 'hashchange';
+    var getHistoryState = function () {
+        try {
+            return window.history.state || {};
+        }
+        catch (e) {
+            // IE 11 sometimes throws when accessing window.history.state
+            // See https://github.com/ReactTraining/history/pull/289
+            return {};
+        }
+    };
+    /**
+     * Creates a history object that uses the HTML5 history API including
+     * pushState, replaceState, and the popstate event.
+     */
+    var createBrowserHistory = function (props) {
+        if (props === void 0) { props = {}; }
+        invariant(canUseDOM, 'Browser history needs a DOM');
+        var globalHistory = window.history;
+        var canUseHistory = supportsHistory();
+        var needsHashChangeListener = !supportsPopStateOnHashChange();
+        var scrollHistory = createScrollHistory();
+        var _a = props.forceRefresh, forceRefresh = _a === void 0 ? false : _a, _b = props.getUserConfirmation, getUserConfirmation = _b === void 0 ? getConfirmation : _b, _c = props.keyLength, keyLength = _c === void 0 ? 6 : _c;
+        var basename = props.basename ? stripTrailingSlash(addLeadingSlash(props.basename)) : '';
+        var getDOMLocation = function (historyState) {
+            historyState = historyState || {};
+            var key = historyState.key, state = historyState.state;
+            var _a = window.location, pathname = _a.pathname, search = _a.search, hash = _a.hash;
+            var path = pathname + search + hash;
+            warning((!basename || hasBasename(path, basename)), 'You are attempting to use a basename on a page whose URL path does not begin ' +
+                'with the basename. Expected path "' + path + '" to begin with "' + basename + '".');
+            if (basename) {
+                path = stripBasename(path, basename);
+            }
+            return createLocation(path, state, key);
+        };
+        var createKey = function () { return (Math.random().toString(36).substr(2, keyLength)); };
+        var transitionManager = createTransitionManager();
+        var setState = function (nextState) {
+            // Capture location for the view before changing history.
+            scrollHistory.capture(history.location.key);
+            Object.assign(history, nextState);
+            // Set scroll position based on its previous storage value
+            history.location.scrollPosition = scrollHistory.get(history.location.key);
+            history.length = globalHistory.length;
+            transitionManager.notifyListeners(history.location, history.action);
+        };
+        var handlePopState = function (event) {
+            // Ignore extraneous popstate events in WebKit.
+            if (isExtraneousPopstateEvent(event)) {
+                return;
+            }
+            handlePop(getDOMLocation(event.state));
+        };
+        var handleHashChange = function () {
+            handlePop(getDOMLocation(getHistoryState()));
+        };
+        var forceNextPop = false;
+        var handlePop = function (location) {
+            if (forceNextPop) {
+                forceNextPop = false;
+                setState();
+            }
+            else {
+                var action_1 = 'POP';
+                transitionManager.confirmTransitionTo(location, action_1, getUserConfirmation, function (ok) {
+                    if (ok) {
+                        setState({ action: action_1, location: location });
+                    }
+                    else {
+                        revertPop(location);
+                    }
+                });
+            }
+        };
+        var revertPop = function (fromLocation) {
+            var toLocation = history.location;
+            // TODO: We could probably make this more reliable by
+            // keeping a list of keys we've seen in sessionStorage.
+            // Instead, we just default to 0 for keys we don't know.
+            var toIndex = allKeys.indexOf(toLocation.key);
+            if (toIndex === -1) {
+                toIndex = 0;
+            }
+            var fromIndex = allKeys.indexOf(fromLocation.key);
+            if (fromIndex === -1) {
+                fromIndex = 0;
+            }
+            var delta = toIndex - fromIndex;
+            if (delta) {
+                forceNextPop = true;
+                go(delta);
+            }
+        };
+        var initialLocation = getDOMLocation(getHistoryState());
+        var allKeys = [initialLocation.key];
+        // Public interface
+        var createHref = function (location) {
+            return basename + createPath(location);
+        };
+        var push = function (path, state) {
+            warning(!(typeof path === 'object' && path.state !== undefined && state !== undefined), 'You should avoid providing a 2nd state argument to push when the 1st ' +
+                'argument is a location-like object that already has state; it is ignored');
+            var action = 'PUSH';
+            var location = createLocation(path, state, createKey(), history.location);
+            transitionManager.confirmTransitionTo(location, action, getUserConfirmation, function (ok) {
+                if (!ok) {
+                    return;
+                }
+                var href = createHref(location);
+                var key = location.key, state = location.state;
+                if (canUseHistory) {
+                    globalHistory.pushState({ key: key, state: state }, null, href);
+                    if (forceRefresh) {
+                        window.location.href = href;
+                    }
+                    else {
+                        var prevIndex = allKeys.indexOf(history.location.key);
+                        var nextKeys = allKeys.slice(0, prevIndex === -1 ? 0 : prevIndex + 1);
+                        nextKeys.push(location.key);
+                        allKeys = nextKeys;
+                        setState({ action: action, location: location });
+                    }
+                }
+                else {
+                    warning(state === undefined, 'Browser history cannot push state in browsers that do not support HTML5 history');
+                    window.location.href = href;
+                }
+            });
+        };
+        var replace = function (path, state) {
+            warning(!(typeof path === 'object' && path.state !== undefined && state !== undefined), 'You should avoid providing a 2nd state argument to replace when the 1st ' +
+                'argument is a location-like object that already has state; it is ignored');
+            var action = 'REPLACE';
+            var location = createLocation(path, state, createKey(), history.location);
+            transitionManager.confirmTransitionTo(location, action, getUserConfirmation, function (ok) {
+                if (!ok) {
+                    return;
+                }
+                var href = createHref(location);
+                var key = location.key, state = location.state;
+                if (canUseHistory) {
+                    globalHistory.replaceState({ key: key, state: state }, null, href);
+                    if (forceRefresh) {
+                        window.location.replace(href);
+                    }
+                    else {
+                        var prevIndex = allKeys.indexOf(history.location.key);
+                        if (prevIndex !== -1) {
+                            allKeys[prevIndex] = location.key;
+                        }
+                        setState({ action: action, location: location });
+                    }
+                }
+                else {
+                    warning(state === undefined, 'Browser history cannot replace state in browsers that do not support HTML5 history');
+                    window.location.replace(href);
+                }
+            });
+        };
+        var go = function (n) {
+            globalHistory.go(n);
+        };
+        var goBack = function () { return go(-1); };
+        var goForward = function () { return go(1); };
+        var listenerCount = 0;
+        var checkDOMListeners = function (delta) {
+            listenerCount += delta;
+            if (listenerCount === 1) {
+                addEventListener(window, PopStateEvent, handlePopState);
+                if (needsHashChangeListener) {
+                    addEventListener(window, HashChangeEvent, handleHashChange);
+                }
+            }
+            else if (listenerCount === 0) {
+                removeEventListener(window, PopStateEvent, handlePopState);
+                if (needsHashChangeListener) {
+                    removeEventListener(window, HashChangeEvent, handleHashChange);
+                }
+            }
+        };
+        var isBlocked = false;
+        var block = function (prompt) {
+            if (prompt === void 0) { prompt = ''; }
+            var unblock = transitionManager.setPrompt(prompt);
+            if (!isBlocked) {
+                checkDOMListeners(1);
+                isBlocked = true;
+            }
+            return function () {
+                if (isBlocked) {
+                    isBlocked = false;
+                    checkDOMListeners(-1);
+                }
+                return unblock();
+            };
+        };
+        var listen = function (listener) {
+            var unlisten = transitionManager.appendListener(listener);
+            checkDOMListeners(1);
+            return function () {
+                checkDOMListeners(-1);
+                unlisten();
+            };
+        };
+        var history = {
+            length: globalHistory.length,
+            action: 'POP',
+            location: initialLocation,
+            createHref: createHref,
+            push: push,
+            replace: replace,
+            go: go,
+            goBack: goBack,
+            goForward: goForward,
+            block: block,
+            listen: listen
+        };
+        return history;
+    };
+    var HashChangeEvent$1 = 'hashchange';
+    var HashPathCoders = {
+        hashbang: {
+            encodePath: function (path) { return path.charAt(0) === '!' ? path : '!/' + stripLeadingSlash(path); },
+            decodePath: function (path) { return path.charAt(0) === '!' ? path.substr(1) : path; }
+        },
+        noslash: {
+            encodePath: stripLeadingSlash,
+            decodePath: addLeadingSlash
+        },
+        slash: {
+            encodePath: addLeadingSlash,
+            decodePath: addLeadingSlash
+        }
+    };
+    var getHashPath = function () {
+        // We can't use window.location.hash here because it's not
+        // consistent across browsers - Firefox will pre-decode it!
+        var href = window.location.href;
+        var hashIndex = href.indexOf('#');
+        return hashIndex === -1 ? '' : href.substring(hashIndex + 1);
+    };
+    var pushHashPath = function (path) { return (window.location.hash = path); };
+    var replaceHashPath = function (path) {
+        var hashIndex = window.location.href.indexOf('#');
+        window.location.replace(window.location.href.slice(0, hashIndex >= 0 ? hashIndex : 0) + '#' + path);
+    };
+    var createHashHistory = function (props) {
+        if (props === void 0) { props = {}; }
+        invariant(canUseDOM, 'Hash history needs a DOM');
+        var globalHistory = window.history;
+        var canGoWithoutReload = supportsGoWithoutReloadUsingHash();
+        var _a = props.getUserConfirmation, getUserConfirmation = _a === void 0 ? getConfirmation : _a, _b = props.hashType, hashType = _b === void 0 ? 'slash' : _b;
+        var basename = props.basename ? stripTrailingSlash(addLeadingSlash(props.basename)) : '';
+        var _c = HashPathCoders[hashType], encodePath = _c.encodePath, decodePath = _c.decodePath;
+        var getDOMLocation = function () {
+            var path = decodePath(getHashPath());
+            warning((!basename || hasBasename(path, basename)), 'You are attempting to use a basename on a page whose URL path does not begin ' +
+                'with the basename. Expected path "' + path + '" to begin with "' + basename + '".');
+            if (basename) {
+                path = stripBasename(path, basename);
+            }
+            return createLocation(path);
+        };
+        var transitionManager = createTransitionManager();
+        var setState = function (nextState) {
+            Object.assign(history, nextState);
+            history.length = globalHistory.length;
+            transitionManager.notifyListeners(history.location, history.action);
+        };
+        var forceNextPop = false;
+        var ignorePath = null;
+        var handleHashChange = function () {
+            var path = getHashPath();
+            var encodedPath = encodePath(path);
+            if (path !== encodedPath) {
+                // Ensure we always have a properly-encoded hash.
+                replaceHashPath(encodedPath);
+            }
+            else {
+                var location = getDOMLocation();
+                var prevLocation = history.location;
+                if (!forceNextPop && locationsAreEqual(prevLocation, location)) {
+                    return; // A hashchange doesn't always == location change.
+                }
+                if (ignorePath === createPath(location)) {
+                    return; // Ignore this change; we already setState in push/replace.
+                }
+                ignorePath = null;
+                handlePop(location);
+            }
+        };
+        var handlePop = function (location) {
+            if (forceNextPop) {
+                forceNextPop = false;
+                setState();
+            }
+            else {
+                var action_2 = 'POP';
+                transitionManager.confirmTransitionTo(location, action_2, getUserConfirmation, function (ok) {
+                    if (ok) {
+                        setState({ action: action_2, location: location });
+                    }
+                    else {
+                        revertPop(location);
+                    }
+                });
+            }
+        };
+        var revertPop = function (fromLocation) {
+            var toLocation = history.location;
+            // TODO: We could probably make this more reliable by
+            // keeping a list of paths we've seen in sessionStorage.
+            // Instead, we just default to 0 for paths we don't know.
+            var toIndex = allPaths.lastIndexOf(createPath(toLocation));
+            if (toIndex === -1) {
+                toIndex = 0;
+            }
+            var fromIndex = allPaths.lastIndexOf(createPath(fromLocation));
+            if (fromIndex === -1) {
+                fromIndex = 0;
+            }
+            var delta = toIndex - fromIndex;
+            if (delta) {
+                forceNextPop = true;
+                go(delta);
+            }
+        };
+        // Ensure the hash is encoded properly before doing anything else.
+        var path = getHashPath();
+        var encodedPath = encodePath(path);
+        if (path !== encodedPath) {
+            replaceHashPath(encodedPath);
+        }
+        var initialLocation = getDOMLocation();
+        var allPaths = [createPath(initialLocation)];
+        // Public interface
+        var createHref = function (location) { return ('#' + encodePath(basename + createPath(location))); };
+        var push = function (path, state) {
+            warning(state === undefined, 'Hash history cannot push state; it is ignored');
+            var action = 'PUSH';
+            var location = createLocation(path, undefined, undefined, history.location);
+            transitionManager.confirmTransitionTo(location, action, getUserConfirmation, function (ok) {
+                if (!ok) {
+                    return;
+                }
+                var path = createPath(location);
+                var encodedPath = encodePath(basename + path);
+                var hashChanged = getHashPath() !== encodedPath;
+                if (hashChanged) {
+                    // We cannot tell if a hashchange was caused by a PUSH, so we'd
+                    // rather setState here and ignore the hashchange. The caveat here
+                    // is that other hash histories in the page will consider it a POP.
+                    ignorePath = path;
+                    pushHashPath(encodedPath);
+                    var prevIndex = allPaths.lastIndexOf(createPath(history.location));
+                    var nextPaths = allPaths.slice(0, prevIndex === -1 ? 0 : prevIndex + 1);
+                    nextPaths.push(path);
+                    allPaths = nextPaths;
+                    setState({ action: action, location: location });
+                }
+                else {
+                    warning(false, 'Hash history cannot PUSH the same path; a new entry will not be added to the history stack');
+                    setState();
+                }
+            });
+        };
+        var replace = function (path, state) {
+            warning(state === undefined, 'Hash history cannot replace state; it is ignored');
+            var action = 'REPLACE';
+            var location = createLocation(path, undefined, undefined, history.location);
+            transitionManager.confirmTransitionTo(location, action, getUserConfirmation, function (ok) {
+                if (!ok) {
+                    return;
+                }
+                var path = createPath(location);
+                var encodedPath = encodePath(basename + path);
+                var hashChanged = getHashPath() !== encodedPath;
+                if (hashChanged) {
+                    // We cannot tell if a hashchange was caused by a REPLACE, so we'd
+                    // rather setState here and ignore the hashchange. The caveat here
+                    // is that other hash histories in the page will consider it a POP.
+                    ignorePath = path;
+                    replaceHashPath(encodedPath);
+                }
+                var prevIndex = allPaths.indexOf(createPath(history.location));
+                if (prevIndex !== -1) {
+                    allPaths[prevIndex] = path;
+                }
+                setState({ action: action, location: location });
+            });
+        };
+        var go = function (n) {
+            warning(canGoWithoutReload, 'Hash history go(n) causes a full page reload in this browser');
+            globalHistory.go(n);
+        };
+        var goBack = function () { return go(-1); };
+        var goForward = function () { return go(1); };
+        var listenerCount = 0;
+        var checkDOMListeners = function (delta) {
+            listenerCount += delta;
+            if (listenerCount === 1) {
+                addEventListener(window, HashChangeEvent$1, handleHashChange);
+            }
+            else if (listenerCount === 0) {
+                removeEventListener(window, HashChangeEvent$1, handleHashChange);
+            }
+        };
+        var isBlocked = false;
+        var block = function (prompt) {
+            if (prompt === void 0) { prompt = ''; }
+            var unblock = transitionManager.setPrompt(prompt);
+            if (!isBlocked) {
+                checkDOMListeners(1);
+                isBlocked = true;
+            }
+            return function () {
+                if (isBlocked) {
+                    isBlocked = false;
+                    checkDOMListeners(-1);
+                }
+                return unblock();
+            };
+        };
+        var listen = function (listener) {
+            var unlisten = transitionManager.appendListener(listener);
+            checkDOMListeners(1);
+            return function () {
+                checkDOMListeners(-1);
+                unlisten();
+            };
+        };
+        var history = {
+            length: globalHistory.length,
+            action: 'POP',
+            location: initialLocation,
+            createHref: createHref,
+            push: push,
+            replace: replace,
+            go: go,
+            goBack: goBack,
+            goForward: goForward,
+            block: block,
+            listen: listen
+        };
+        return history;
+    };
+    var HISTORIES = {
+        'browser': createBrowserHistory,
+        'hash': createHashHistory
+    };
+    /**
+      * @name Router
+      * @module ionic
+      * @description
+     */
+    var Router = /** @class */ (function () {
+        function Router() {
+            this.root = '/';
+            this.historyType = 'browser';
+            // A suffix to append to the page title whenever
+            // it's updated through RouteTitle
+            this.titleSuffix = '';
+            this.unsubscribe = function () { };
+            this.match = null;
+        }
+        Router.prototype.titleSuffixChanged = function (newValue) {
+            this.activeRouter.set({
+                titleSuffix: newValue
+            });
+        };
+        Router.prototype.computeMatch = function (pathname) {
+            return {
+                path: this.root,
+                url: this.root,
+                isExact: pathname === this.root,
+                params: {}
+            };
+        };
+        Router.prototype.componentWillLoad = function () {
+            var _this = this;
+            var history = HISTORIES[this.historyType]();
+            history.listen(function (location) {
+                _this.activeRouter.set({ location: _this.getLocation(location) });
+            });
+            this.activeRouter.set({
+                location: this.getLocation(history.location),
+                titleSuffix: this.titleSuffix,
+                root: this.root,
+                history: history
+            });
+            // subscribe the project's active router and listen
+            // for changes. Recompute the match if any updates get
+            // pushed
+            this.unsubscribe = this.activeRouter.subscribe({
+                isMatch: this.computeMatch.bind(this),
+                listener: function (matchResult) {
+                    _this.match = matchResult;
+                },
+            });
+            this.match = this.computeMatch();
+        };
+        Router.prototype.componentDidLoad = function () {
+            this.activeRouter.dispatch();
+        };
+        Router.prototype.getLocation = function (location) {
+            // Remove the root URL if found at beginning of string
+            var pathname = location.pathname.indexOf(this.root) == 0 ?
+                '/' + location.pathname.slice(this.root.length) :
+                location.pathname;
+            return Object.assign({}, location, { pathname: pathname });
+        };
+        Router.prototype.componentDidUnload = function () {
+            // be sure to unsubscribe to the router so that we don't
+            // get any memory leaks
+            this.unsubscribe();
+        };
+        Router.prototype.render = function () {
+            return h("slot", null);
+        };
+        Object.defineProperty(Router, "is", {
+            get: function () { return "stencil-router"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Router, "properties", {
+            get: function () {
+                return {
+                    "activeRouter": {
+                        "context": "activeRouter"
+                    },
+                    "historyType": {
+                        "type": String,
+                        "attr": "history-type"
+                    },
+                    "match": {
+                        "state": true
+                    },
+                    "root": {
+                        "type": String,
+                        "attr": "root"
+                    },
+                    "titleSuffix": {
+                        "type": String,
+                        "attr": "title-suffix",
+                        "watchCallbacks": ["titleSuffixChanged"]
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Router;
+    }());
+    exports.AppBurger = AppBurger;
+    exports.AppMarked = AppMarked;
+    exports.CapacitorSite = App;
+    exports.DocumentComponent = DocumentComponent;
+    exports.SiteHeader = SiteHeader;
+    exports.StencilRoute = Route;
+    exports.StencilRouter = Router;
+    Object.defineProperty(exports, '__esModule', { value: true });
+});

@@ -1,0 +1,42 @@
+/*! Built with http://stenciljs.com */
+App.loadBundle('/**:bundle-id:**/', ['exports'], function (exports) {
+    var h = window.App.h;
+    var PluginPlatforms = /** @class */ (function () {
+        function PluginPlatforms() {
+            this.platforms = "";
+        }
+        PluginPlatforms.prototype.componentDidLoad = function () {
+        };
+        PluginPlatforms.prototype.render = function () {
+            var platforms = this.platforms.split(',');
+            return (h("div", { class: "platforms" }, platforms.map(function (platform) {
+                return (h("div", { class: "platform platform-icon-" + platform }, platform));
+            })));
+        };
+        Object.defineProperty(PluginPlatforms, "is", {
+            get: function () { return "plugin-platforms"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(PluginPlatforms, "properties", {
+            get: function () {
+                return {
+                    "platforms": {
+                        "type": String,
+                        "attr": "platforms"
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(PluginPlatforms, "style", {
+            get: function () { return "/**style-placeholder:plugin-platforms:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return PluginPlatforms;
+    }());
+    exports.PluginPlatforms = PluginPlatforms;
+    Object.defineProperty(exports, '__esModule', { value: true });
+});

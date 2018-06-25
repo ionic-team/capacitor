@@ -1,0 +1,12 @@
+site-bar {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: red;
+  background-color: #f54f4f;
+  text-align: center;
+  color: #fff;
+  font-size: 13px; }
+  site-bar a {
+    color: #000;
+    font-weight: 500; }

@@ -16,7 +16,7 @@
     "@stencil/sass": "0.0.5"
   },
   "devDependencies": {
-    "@stencil/core": "^0.9.11",
+    "@stencil/core": "^0.9.8",
     "@stencil/dev-server": "0.0.18",
     "@stencil/utils": "latest",
     "gh-pages": "^1.0.0",

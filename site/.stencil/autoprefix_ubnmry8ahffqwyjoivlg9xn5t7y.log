@@ -1,0 +1,39 @@
+app-burger {
+  display: none;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 999; }
+  app-burger > div {
+    padding: 18px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center; }
+    app-burger > div:hover app-icon {
+      opacity: 1; }
+  app-burger .icon-menu {
+    display: block; }
+  app-burger .icon-close {
+    display: none; }
+  app-burger app-icon {
+    -webkit-transition: opacity 0.3s;
+    transition: opacity 0.3s;
+    opacity: 0.7;
+    cursor: pointer; }
+  app-burger.left-sidebar-in > div {
+    height: 100vh;
+    padding-right: 50px; }
+  app-burger.left-sidebar-in .icon-menu {
+    display: none; }
+  app-burger.left-sidebar-in .icon-close {
+    display: block; }
+
+@media screen and (max-width: 768px) {
+  app-burger {
+    display: block; } }
