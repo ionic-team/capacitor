@@ -13,8 +13,6 @@ import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
 import { emoji as _e } from './util/emoji';
 
-import { compareIdentifiers } from 'semver';
-
 export function run(process: NodeJS.Process, cliBinDir: string) {
   const config = new Config(process.platform, process.cwd(), cliBinDir);
 

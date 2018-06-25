@@ -3,7 +3,6 @@ import { copyTemplate, log, runCommand, runTask } from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
 import { homedir } from 'os';
 import { join } from 'path';
-import { getDefaultSettings } from 'http2';
 
 export async function addAndroid(config: Config) {
 

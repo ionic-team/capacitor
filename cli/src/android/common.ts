@@ -3,7 +3,7 @@ import { Config } from '../config';
 import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 import { mkdirs } from 'fs-extra';
 import { copyAsync, existsAsync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
-import { dirname, join, resolve } from 'path';
+import { resolve } from 'path';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 
 export async function gradleClean(config: Config) {

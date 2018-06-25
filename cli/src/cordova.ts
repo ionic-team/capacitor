@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { buildXmlElement, log, logError, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
+import { buildXmlElement, logError, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';

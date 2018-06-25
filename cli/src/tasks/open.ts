@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { log, logFatal, logInfo, runTask } from '../common';
+import { logFatal, logInfo, runTask } from '../common';
 import { openAndroid } from '../android/open';
 import { openIOS } from '../ios/open';
 

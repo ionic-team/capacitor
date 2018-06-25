@@ -1,8 +1,5 @@
 import * as util from 'util';
 
-import chalk from 'chalk';
-import * as superagentType from 'superagent';
-
 import { readFileAsync } from './fs';
 
 const FORMAT_ERROR_BODY_MAX_LENGTH = 1000;

@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { logFatal, logInfo, runTask } from '../common';
+import { logFatal } from '../common';
 import { serveWeb } from '../web/serve';
 
 export async function serveCommand(config: Config) {
