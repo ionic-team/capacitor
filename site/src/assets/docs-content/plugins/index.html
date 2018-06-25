@@ -23,6 +23,8 @@ for a plugin is possible, and is just like providing a JavaScript npm package.</
 <li>The Plugin NPM name is what will become the npm package, and should be a snake-case name of a package that is available on npm (not a strict requirement if your package will be on a private npm repo).</li>
 <li>The Plugin ID is a domain-style identifier. Its primary use is the package name in Java.</li>
 <li>Plugin Class Name is the initial name of the class used in Java and Swift. See the additional note about class names in the <a href="ios/">iOS Plugin</a> section of this guide.</li>
+<li>The description is a brief introduction about the plugin.</li>
+<li>The git repository is the url to a git repository where the source code of the plugin will be hosted.</li>
 </ul>
 <p>The rest of the fields are optional and will fill out your initial <code>package.json</code></p>
 <h2 id="typescript-interface">TypeScript Interface</h2>
@@ -32,7 +34,7 @@ can provide typing to TypeScript consumers of your plugin. </p>
 here&#39;s the default interface for our Plugin:</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> global {
   <span class="hljs-keyword">interface</span> PluginRegistry {
-    EchoPlugin?: EchoPlugin;
+    Echo?: EchoPlugin;
   }
 }
 

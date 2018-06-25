@@ -41,8 +41,7 @@ export class LandingPage {
             <h1 id="action-call">Build native mobile and desktop apps with the web</h1>
             <h3>
               Cross-platform native layer for iOS, Android, Electron, and the web.
-              <br />
-              Build apps with HTML, JS, and CSS. Optimized for Ionic Framework.
+              Optimized for Ionic Framework apps, or use with any web app framework.
             </h3>
             <stencil-route-link url="/docs/getting-started/">
               <button id="get-started">
