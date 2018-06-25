@@ -1,0 +1,24 @@
+/*! Built with http://stenciljs.com */
+App.loadBundle('/**:bundle-id:**/', ['exports'], function (exports) {
+    var h = window.App.h;
+    var SiteBar = /** @class */ (function () {
+        function SiteBar() {
+        }
+        SiteBar.prototype.render = function () {
+            return (h("div", { class: "site-bar" }, "Capacitor is in Private Preview. Read the ", h("stencil-route-link", { url: "/blog" }, "announcement blog"), " for more info on the project"));
+        };
+        Object.defineProperty(SiteBar, "is", {
+            get: function () { return "site-bar"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SiteBar, "style", {
+            get: function () { return "/**style-placeholder:site-bar:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return SiteBar;
+    }());
+    exports.SiteBar = SiteBar;
+    Object.defineProperty(exports, '__esModule', { value: true });
+});

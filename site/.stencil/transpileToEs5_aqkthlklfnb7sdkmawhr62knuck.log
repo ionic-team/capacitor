@@ -1,0 +1,52 @@
+/*! Built with http://stenciljs.com */
+App.loadBundle('/**:bundle-id:**/', ['exports'], function (exports) {
+    var h = window.App.h;
+    /**
+     * Used in the generated doc markup as well as the site, so don't remve this
+     * even if it looks like no one is using it
+     */
+    var AnchorLink = /** @class */ (function () {
+        function AnchorLink() {
+        }
+        AnchorLink.prototype.handleClick = function (_e) {
+            if (document.location.hash !== '#' + this.to) {
+                document.location.hash = this.to;
+                var scrollTop = document.querySelector('html').scrollTop;
+                // Update scroll top to clear the header bar
+                window.scrollTo(0, scrollTop - 60);
+            }
+            else {
+                document.location.hash = '';
+                document.location.hash = this.to;
+            }
+        };
+        AnchorLink.prototype.render = function () {
+            return (h("div", { onClick: this.handleClick.bind(this) }, h("slot", null)));
+        };
+        Object.defineProperty(AnchorLink, "is", {
+            get: function () { return "anchor-link"; },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AnchorLink, "properties", {
+            get: function () {
+                return {
+                    "to": {
+                        "type": String,
+                        "attr": "to"
+                    }
+                };
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AnchorLink, "style", {
+            get: function () { return "/**style-placeholder:anchor-link:**/"; },
+            enumerable: true,
+            configurable: true
+        });
+        return AnchorLink;
+    }());
+    exports.AnchorLink = AnchorLink;
+    Object.defineProperty(exports, '__esModule', { value: true });
+});

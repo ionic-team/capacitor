@@ -13,7 +13,8 @@ exports.config = {
         clientsClaim: true
       }
     }
-  ]
+  ],
+  enableCache: false
   /*
   plugins: [{
     name: 'version-replace',

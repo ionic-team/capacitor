@@ -1,0 +1,1 @@
+anchor-link{cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}anchor-link.hover-anchor{position:absolute;margin-left:-25px;color:#d6d1d1}.anchor-link-relative{position:relative}@media screen and (max-width:768px){anchor-link.hover-anchor{margin-left:-18px}}

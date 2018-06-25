@@ -1,0 +1,2 @@
+/*! Built with http://stenciljs.com */
+const{h:s}=window.App;class t{render(){return s("div",{class:"snippet"})}static get is(){return"doc-snippet"}}export{t as DocSnippet};
