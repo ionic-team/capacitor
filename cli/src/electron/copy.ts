@@ -1,6 +1,6 @@
 import { copyTemplate, runTask } from '../common';
 import { Config } from '../config';
-import { basename, join, relative, resolve } from 'path';
+import { basename, relative } from 'path';
 import { removeAsync } from '../util/fs';
 
 export async function copyElectron(config: Config) {

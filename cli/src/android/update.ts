@@ -3,8 +3,7 @@ import { buildXmlElement, log, logInfo, parseXML, runTask } from '../common';
 import { getAllElements, getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
 import { checkAndInstallDependencies, handleCordovaPluginsJS } from '../cordova';
-import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
-import { allSerial } from '../util/promise';
+import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 
 const platform = 'android';

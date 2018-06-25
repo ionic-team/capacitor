@@ -5,7 +5,7 @@ import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
+import { check, checkAppConfig, checkPackage, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';

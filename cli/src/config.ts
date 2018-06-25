@@ -1,8 +1,7 @@
 import { accessSync, readFileSync } from 'fs';
-import { basename, isAbsolute, join, resolve } from 'path';
+import { basename, join, resolve } from 'path';
 import { logFatal } from './common';
-import { AppPluginsConfig, CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
-import { currentId } from 'async_hooks';
+import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 
 let Package: PackageJson;
 let ExtConfig: ExternalConfig;

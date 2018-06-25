@@ -1,20 +1,12 @@
 import { Config } from '../config';
-import { OS } from '../definitions';
-import { addAndroid } from '../android/add';
-import { addIOS, addIOSChecks } from '../ios/add';
-import { gradleClean } from '../android/common';
 import { copy } from './copy';
-import { editProjectSettingsAndroid } from '../android/common';
-import { editProjectSettingsIOS } from '../ios/common';
-import { sync } from './sync';
+
 
 import {
   check,
   checkAppDir,
   checkAppId,
   checkAppName,
-  checkPackage,
-  checkWebDir,
   getAppId,
   getName,
   getOrCreateConfig,
@@ -27,7 +19,6 @@ import {
 
 import { copyAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { emoji as _e } from '../util/emoji';
-import { basename, join } from 'path';
 
 import * as inquirer from 'inquirer';
 import chalk from 'chalk';

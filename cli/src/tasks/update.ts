@@ -3,7 +3,6 @@ import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
 import { CheckFunction, check, checkPackage, log, logFatal, logInfo, runTask, writeXML } from '../common';
-import { emoji as _e } from '../util/emoji';
 
 import chalk from 'chalk';
 
