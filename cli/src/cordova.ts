@@ -7,6 +7,7 @@ import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 
+const plist = require('plist');
 const chalk = require('chalk');
 
 /**
@@ -200,17 +201,35 @@ export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Co
 async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) {
   const plistPath = resolve(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName, 'Info.plist');
   const xmlMeta = await readXML(plistPath);
+  let data = await readFileAsync(plistPath, 'utf8');
+  var plistData = plist.parse(data);
   const dict = xmlMeta.plist.dict.pop();
   if (!dict.key.includes(configElement.$.parent)) {
     let xml = buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
     logInfo(`Plugin ${plugin.id} requires you to add \n  ${xml} to your Info.plist to work`);
   } else if (configElement.array || configElement.dict) {
-    let xml = buildConfigFileXml(configElement);
-    xml = getConfigFileTagContent(xml);
-    xml = removeOuterTags(xml);
-    logInfo(`Plugin ${plugin.id} might require you to add ${xml} in the existing ${chalk.bold(configElement.$.parent)} entry of your Info.plist to work`);
+    if (configElement.array && configElement.array[0] && configElement.array[0].string) {
+        var xml = "";
+        configElement.array[0].string.map((element : any) => {
+          if (!plistData[configElement.$.parent].includes(element)) {
+            xml = xml.concat(`<string>${element}</string>\n`);
+          }
+        });
+        if (xml.length > 0) {
+          logInfo(`Plugin ${plugin.id} require you to add \n${xml} in the existing ${chalk.bold(configElement.$.parent)} array of your Info.plist to work`);
+        }
+    } else {
+      logPossibleMissingItem(configElement, plugin);
+    }
   }
+}
+
+function logPossibleMissingItem (configElement: any, plugin: Plugin) {
+  let xml = buildConfigFileXml(configElement);
+  xml = getConfigFileTagContent(xml);
+  xml = removeOuterTags(xml);
+  logInfo(`Plugin ${plugin.id} might require you to add ${xml} in the existing ${chalk.bold(configElement.$.parent)} entry of your Info.plist to work`);
 }
 
 function buildConfigFileXml(configElement: any) {
