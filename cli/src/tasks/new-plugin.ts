@@ -6,7 +6,6 @@ import { fixName } from '../plugin'
 
 import { copy, move, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
-import { mkdir, writeFile } from 'fs';
 
 
 export async function newPluginCommand(config: Config) {

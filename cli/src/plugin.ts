@@ -1,7 +1,6 @@
 import { Config } from './config';
 import { join, resolve } from 'path';
-import { log, logInfo, readJSON, readXML } from './common';
-import { getIncompatibleCordovaPlugins } from './cordova';
+import { log, readJSON, readXML } from './common';
 
 
 export const enum PluginType {

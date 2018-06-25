@@ -1,28 +1,20 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
 import { addCommand } from '../tasks/add';
-import { copyCommand } from '../tasks/copy';
 import {
   check,
   checkAppId,
   checkAppName,
-  checkWebDir,
   getAppId,
   getName,
   getOrCreateConfig,
   log,
-  logError,
   logFatal,
   mergeConfig,
   printNextSteps,
-  runCommand,
   runTask
 } from '../common';
-import { copyAsync, existsAsync, mkdirAsync } from '../util/fs';
-import { download } from '../util/http';
-import { createTarExtraction } from '../util/archive';
 import { emoji as _e } from '../util/emoji';
-import { join, relative } from 'path';
 
 const chalk = require('chalk');
 

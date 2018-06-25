@@ -1,13 +1,12 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { CheckFunction, log, logInfo, logWarn, runCommand, runTask } from '../common';
+import { CheckFunction, runCommand, runTask } from '../common';
 import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join, resolve } from 'path';
-import { getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
+import { getFilePath, getPlatformElement, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
-import * as inquirer from 'inquirer';
-import { create } from 'domain';
+//import * as inquirer from 'inquirer';
 
 export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
 const platform = 'ios';
