@@ -62,6 +62,49 @@ options using <code>guard</code>.</p>
   <span class="hljs-string">"item1"</span>: <span class="hljs-literal">true</span>
 ])
 </code></pre>
+<h3 id="presenting-native-screens">Presenting Native Screens</h3>
+<p>To present a Native Screen over the Capacitor screen we need to acces the Capacitor&#39;s View Controller.
+To access the Capacitor&#39;s View Controller, we have to use the <code>CAPBridge</code> object available on <code>CAPPlugin</code> class.</p>
+<p>We can use the <code>UIViewController</code> to present Native View Controllers over it like this:</p>
+<p><code>self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)</code></p>
+<p>On iPad devices you can also present <code>UIPopovers</code>, to do so, we provide a helper function to show it centered.</p>
+<pre><code class="lang-swift"><span class="hljs-keyword">self</span>.setCenteredPopover(ourCustomViewController)
+<span class="hljs-keyword">self</span>.bridge.viewController.present(ourCustomViewController, animated: <span class="hljs-literal">true</span>, completion: <span class="hljs-literal">nil</span>)
+</code></pre>
+<h3 id="events">Events</h3>
+<p>Capacitor Plugins can emit App events and Plugin events</p>
+<h4 id="app-events">App Events</h4>
+<p>App Events are regular javascript events, like <code>window</code> or <code>document</code> events.</p>
+<p>Capacitor provides all this functions to fire events:</p>
+<pre><code class="lang-swift">
+<span class="hljs-comment">//If you want to provide the target</span>
+<span class="hljs-keyword">self</span>.bridge.triggerJSEvent(eventName: <span class="hljs-string">"myCustomEvent"</span>, target: <span class="hljs-string">"window"</span>)
+
+<span class="hljs-keyword">self</span>.bridge.triggerJSEvent(eventName: <span class="hljs-string">"myCustomEvent"</span>, target: <span class="hljs-string">"document"</span>, data: <span class="hljs-string">"my custom data"</span>)
+
+<span class="hljs-comment">// Window Events</span>
+<span class="hljs-keyword">self</span>.bridge.triggerWindowJSEvent(eventName: <span class="hljs-string">"myCustomEvent"</span>)
+
+<span class="hljs-keyword">self</span>.bridge.triggerWindowJSEvent(eventName: <span class="hljs-string">"myCustomEvent"</span>, data: <span class="hljs-string">"my custom data"</span>)
+
+<span class="hljs-comment">// Document events</span>
+<span class="hljs-keyword">self</span>.bridge.triggerDocumentJSEvent(eventName: <span class="hljs-string">"myCustomEvent"</span>)
+
+<span class="hljs-keyword">self</span>.bridge.triggerDocumentJSEvent(eventName: <span class="hljs-string">"myCustomEvent"</span>, data: <span class="hljs-string">"my custom data"</span>)
+</code></pre>
+<p>And to listen for it, just use regular javascript:</p>
+<pre><code class="lang-javascript"><span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"myCustomEvent was fired"</span>)
+});
+</code></pre>
+<h4 id="plugin-events">Plugin Events</h4>
+<p>Plugins can emit their own events that you can listen by attaching a listener to the plugin Object like this:</p>
+<pre><code class="lang-typescript">Plugins.MyPlugin.addListener(<span class="hljs-string">'myPluginEvent'</span>, <span class="hljs-function">(<span class="hljs-params">info: <span class="hljs-built_in">any</span></span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'myPluginEvent was fired'</span>);
+});
+</code></pre>
+<p>To emit the event from the Swift plugin class you can do it like this:</p>
+<p><code>self.notifyListeners(&quot;myPluginEvent&quot;, data: [:])</code></p>
 <h3 id="export-to-capacitor">Export to Capacitor</h3>
 <p>To make sure Capacitor can see your plugin, you must do two things: export your Swift class to Objective-C, and register it
 using the provided Capacitor Objective-C Macros.</p>
