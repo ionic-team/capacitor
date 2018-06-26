@@ -1,6 +1,6 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import { CheckFunction, runCommand, runTask } from '../common';
-import { copySync, readFileAsync, removeSync, writeFileAsync } from '../util/fs';
+import { copySync, readFileAsync, readFileSync, removeSync, writeFileAsync, writeFileSync } from '../util/fs';
 import { Config } from '../config';
 import { join, resolve } from 'path';
 import { getFilePath, getPlatformElement, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
@@ -244,11 +244,19 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
     codeFiles.map( (codeFile: any) => {
       const fileName = codeFile.$.src.split("/").pop();
+      const fileExt = codeFile.$.src.split(".").pop();
       let destFolder = sourcesFolderName;
       if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
         destFolder = 'noarc';
       }
-      copySync(getFilePath(config, p, codeFile.$.src), join(pluginsPath, destFolder, p.name, fileName));
+      const filePath = getFilePath(config, p, codeFile.$.src);
+      const fileDest = join(pluginsPath, destFolder, p.name, fileName);
+      copySync(filePath, fileDest);
+      if (fileExt === "swift") {
+        let fileContent = readFileSync(fileDest, 'utf8');
+        fileContent = 'import Cordova\n' + fileContent;
+        writeFileSync(fileDest, fileContent, 'utf8');
+      }
     });
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
     resourceFiles.map( (resourceFile: any) => {
