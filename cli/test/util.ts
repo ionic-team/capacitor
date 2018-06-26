@@ -42,6 +42,19 @@ export function mktmp() {
   });
 }
 
+const APP_INDEX = `
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Capacitor App</title>
+</head>
+<body>
+  <capacitor-welcome></capacitor-welcome>
+</body>
+</html>
+`
+
 const APP_PACKAGE_JSON = `
 {
   "name": "test-app",
@@ -58,6 +71,8 @@ export async function makeAppDir() {
   await mkdirAsync(appDir);
   // Make the web dir
   await mkdirAsync(join(appDir, 'www'));
+  // Make a fake index.html
+  await writeFileAsync(join(appDir, 'www', 'index.html'), APP_INDEX);
   // Make a fake package.json
   await writeFileAsync(join(appDir, 'package.json'), APP_PACKAGE_JSON);
   await mkdirAsync(join(appDir, 'node_modules'));
@@ -66,6 +81,7 @@ export async function makeAppDir() {
   await mkdirs(cliModulesPath);
   await mkdirs(coreModulesPath);
   await copyAsync(join(cwd, 'dist'), cliModulesPath);
+  await copyAsync(resolve(cwd, '../capacitor-android-plugins'), join(cliModulesPath, 'assets', 'capacitor-android-plugins'));
   await copyAsync(resolve(cwd, '../core/dist'), coreModulesPath);
   await copyAsync(resolve(cwd, '../core/native-bridge.js'), join(coreModulesPath, 'native-bridge.js'));
   await copyAsync(resolve(cwd, '../core/cordova.js'), join(coreModulesPath, 'cordova.js'));
