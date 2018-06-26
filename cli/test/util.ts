@@ -95,6 +95,16 @@ export async function makeAppDir() {
   };
 }
 
+const CODOVA_PLUGIN_JS = `
+var exec = require('cordova/exec');
+var CoolPlugin = {
+    doSomethingCool: function (doOverlay) {
+        exec(null, null, "CoolPlugin", "doSomethingCool", []);
+    }
+};
+module.exports = CoolPlugin;
+`;
+
 const CORDOVA_PLUGIN_XML = `
 <?xml version="1.0" encoding="UTF-8"?>
 
@@ -102,6 +112,9 @@ const CORDOVA_PLUGIN_XML = `
     id="${CORDOVA_PLUGIN_ID}"
     version="1.0.20">
     <name>Cool Cordova Plugin</name>
+    <js-module src="plugin.js" name="coolplugin">
+        <clobbers target="window.CoolPlugin" />
+    </js-module>
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="CoolPlugin">
@@ -120,16 +133,21 @@ const CORDOVA_PLUGIN_XML = `
     </platform>
 </plugin>
 `;
+
 const CORDOVA_PLUGIN_PACKAGE = `
 {
   "name": "${CORDOVA_PLUGIN_ID}",
+  "version": "0.0.1",
+  "description": "Cool Cordova plugin",
   "cordova": {
     "id": "${CORDOVA_PLUGIN_ID}",
     "platforms": [
       "android",
       "ios"
     ]
-  }
+  },
+  "author": "Cap tester",
+  "license": "MIT"
 }
 `;
 
@@ -162,12 +180,13 @@ Pod::Spec.new do |s|
 end`;
 
 async function makeCordovaPlugin(appDir: string) {
-  const cordovaPluginPath = join(appDir, `node_modules/${CORDOVA_PLUGIN_ID}`);
+  const cordovaPluginPath = join(appDir, 'node_modules', CORDOVA_PLUGIN_ID);
   const iosPath = join(cordovaPluginPath, 'src', 'ios');
-  const androidPath = join(cordovaPluginPath, 'android/com/getcapacitor/cordova');
+  const androidPath = join(cordovaPluginPath, 'android/com/getcapacitor');
   await mkdirs(cordovaPluginPath);
+  await writeFileAsync(join(cordovaPluginPath, 'plugin.js'), CODOVA_PLUGIN_JS);
   await writeFileAsync(join(cordovaPluginPath, 'plugin.xml'), CORDOVA_PLUGIN_XML);
-  await writeFileAsync(join(cordovaPluginPath, 'package.json'), CORDOVA_PLUGIN_PACKAGE);
+  await writeFileAsync(join(cordovaPluginPath, 'package.json'), JSON.stringify(CORDOVA_PLUGIN_PACKAGE));
   await mkdirs(iosPath);
   await mkdirs(androidPath);
   await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');
