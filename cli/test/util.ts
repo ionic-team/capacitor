@@ -1,4 +1,4 @@
-import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, cpAsync } from '../src/util/fs';
+import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, copyAsync } from '../src/util/fs';
 import { Config } from '../src/config';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
@@ -65,10 +65,10 @@ export async function makeAppDir() {
   const coreModulesPath = join(appDir, 'node_modules/@capacitor/core');
   await mkdirs(cliModulesPath);
   await mkdirs(coreModulesPath);
-  await cpAsync(join(cwd, 'dist'), cliModulesPath);
-  await cpAsync(resolve(cwd, '../core/dist'), coreModulesPath);
-  await cpAsync(resolve(cwd, '../core/native-bridge.js'), join(coreModulesPath, 'native-bridge.js'));
-  await cpAsync(resolve(cwd, '../core/cordova.js'), join(coreModulesPath, 'cordova.js'));
+  await copyAsync(join(cwd, 'dist'), cliModulesPath);
+  await copyAsync(resolve(cwd, '../core/dist'), coreModulesPath);
+  await copyAsync(resolve(cwd, '../core/native-bridge.js'), join(coreModulesPath, 'native-bridge.js'));
+  await copyAsync(resolve(cwd, '../core/cordova.js'), join(coreModulesPath, 'cordova.js'));
 
   // Make a fake cordova plugin
   await makeCordovaPlugin(appDir);
