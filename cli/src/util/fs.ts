@@ -20,6 +20,8 @@ export const removeAsync = fsExtra.remove;
 export const removeSync = fsExtra.removeSync;
 export const ensureDirSync = fsExtra.ensureDirSync;
 export const copySync = fsExtra.copySync;
+export const readFileSync = fsExtra.readFileSync;
+export const writeFileSync = fsExtra.writeFileSync;
 export const existsAsync = async (path: string) => {
   try {
     const stat = await statAsync(path);
