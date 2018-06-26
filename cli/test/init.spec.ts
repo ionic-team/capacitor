@@ -1,13 +1,11 @@
 import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';
 
-import { runCommand } from '../src/common';
 import { mkdirAsync } from '../src/util/fs';
 
 import { join } from 'path';
 
 describe('Init', () => {
   let appDirObj;
-  let tmpDirObj;
   let tmpDir;
   let appDir;
   let FS;

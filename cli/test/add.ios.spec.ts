@@ -1,9 +1,4 @@
-import { APP_ID, APP_NAME, run, makeAppDir, mktmp, MappedFS } from './util';
-
-import { runCommand } from '../src/common';
-import { mkdirAsync } from '../src/util/fs';
-
-import { join } from 'path';
+import { APP_ID, APP_NAME, run, makeAppDir, MappedFS } from './util';
 
 describe('Add: iOS', () => {
   let appDirObj;
