@@ -211,7 +211,6 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
     end`);
   }
   const frameworksString = frameworkDeps.join("\n    ");
-
   const content = `
   Pod::Spec.new do |s|
     s.name = '${name}'
@@ -224,6 +223,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
     s.source_files = '${sourcesFolderName}/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'CapacitorCordova'
+    s.swift_version  = '${config.ios.cordovaSwiftVersion}'
     ${frameworksString}
   end`;
   await writeFileAsync(join(pluginsPath, `${name}.podspec`), content);

@@ -16,6 +16,7 @@ export interface PackageJson {
 export interface ExternalConfig {
   webDir: string;
   startPage: string;
+  ios: any;
 }
 
 export interface AppPluginsConfig {
