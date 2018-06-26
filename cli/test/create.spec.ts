@@ -22,7 +22,9 @@ describe('Create', () => {
   it('Should create a project', async () => {
     await run(process.cwd(), `create "${appDir}" "${APP_NAME}" "${APP_ID}"`);
     expect(await FS.exists('capacitor.config.json')).toBe(true);
+    await run(appDir, 'add ios');
     expect(await FS.exists('ios')).toBe(true);
+    await run(appDir, 'add android');
     expect(await FS.exists('android')).toBe(true);
   });
 });
