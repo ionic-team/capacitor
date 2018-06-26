@@ -43,6 +43,7 @@ export class Config implements CliConfig {
   ios = {
     name: 'ios',
     minVersion: '10.0',
+    cordovaSwiftVersion: '4.0',
     platformDir: '',
     webDir: 'public',
     webDirAbs: '',
@@ -122,13 +123,13 @@ export class Config implements CliConfig {
     try {
       this.initAppConfig(resolve(currentWorkingDir));
       this.initAndroidConfig();
-      this.initIosConfig();
       this.initElectronConfig();
       this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
 
       // Post-merge
+      this.initIosConfig();
       this.initWindowsConfig();
       this.initLinuxConfig();
 
@@ -173,6 +174,12 @@ export class Config implements CliConfig {
     this.ios.platformDir = resolve(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = resolve(this.cli.assetsDir, this.ios.assets.templateName);
     this.ios.webDirAbs = resolve(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
+    if (this.app.extConfig.ios && this.app.extConfig.ios.cordovaSwiftVersion) {
+      this.ios.cordovaSwiftVersion = this.app.extConfig.ios.cordovaSwiftVersion;
+    }
+    if (this.app.extConfig.ios && this.app.extConfig.ios.minVersion) {
+      this.ios.minVersion = this.app.extConfig.ios.minVersion;
+    }
   }
 
   private initWindowsConfig() {
