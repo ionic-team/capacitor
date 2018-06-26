@@ -1,11 +1,5 @@
-import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, mktmp, run } from './util';
-
-import { runCommand } from '../src/common';
+import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run } from './util';
 import { updateCommand } from '../src/tasks/update';
-import { mkdirAsync, writeFileAsync } from '../src/util/fs';
-
-import { join } from 'path';
-
 
 describe('Update: iOS', () => {
   let appDirObj;
