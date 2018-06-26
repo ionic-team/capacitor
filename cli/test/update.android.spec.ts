@@ -1,10 +1,5 @@
-import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, mktmp, run, } from './util';
-
-import { runCommand } from '../src/common';
-import { mkdirAsync, writeFileAsync } from '../src/util/fs';
+import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run, } from './util';
 import { updateCommand } from '../src/tasks/update';
-
-import { join } from 'path';
 
 describe('Update: Android', () => {
   let appDirObj;
