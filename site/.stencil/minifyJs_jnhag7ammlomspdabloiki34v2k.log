@@ -1,2 +1,0 @@
-/*! Built with http://stenciljs.com */
-App.loadBundle("/**:bundle-id:**/",["exports"],function(e){var t=window.App.h,n=function(){function e(){}return e.prototype.render=function(){return this.typeId?t("anchor-link",{to:"type-"+this.typeId},t("slot",null)):t("slot",null)},Object.defineProperty(e,"is",{get:function(){return"avc-code-type"},enumerable:!0,configurable:!0}),Object.defineProperty(e,"properties",{get:function(){return{typeId:{type:String,attr:"type-id"}}},enumerable:!0,configurable:!0}),e}();e.AvcCodeType=n,Object.defineProperty(e,"__esModule",{value:!0})});
