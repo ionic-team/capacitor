@@ -1,2 +1,0 @@
-/*! Built with http://stenciljs.com */
-App.loadBundle("/**:bundle-id:**/",["exports"],function(e){var n=window.App.h,t=function(){function e(){}return e.prototype.render=function(){return n("div",{class:"snippet"})},Object.defineProperty(e,"is",{get:function(){return"doc-snippet"},enumerable:!0,configurable:!0}),e}();e.DocSnippet=t,Object.defineProperty(e,"__esModule",{value:!0})});

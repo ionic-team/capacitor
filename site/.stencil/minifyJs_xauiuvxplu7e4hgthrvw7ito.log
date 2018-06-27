@@ -1,2 +1,0 @@
-/*! Built with http://stenciljs.com */
-const{h:t}=window.App;class r{constructor(){this.platforms=""}componentDidLoad(){}render(){const r=this.platforms.split(",");return t("div",{class:"platforms"},r.map(r=>t("div",{class:`platform platform-icon-${r}`},r)))}static get is(){return"plugin-platforms"}static get properties(){return{platforms:{type:String,attr:"platforms"}}}static get style(){return"/**style-placeholder:plugin-platforms:**/"}}export{r as PluginPlatforms};

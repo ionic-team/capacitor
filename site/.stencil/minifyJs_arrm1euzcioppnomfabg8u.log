@@ -1,2 +1,0 @@
-/*! Built with http://stenciljs.com */
-const{h:e}=window.App;class t{render(){return e("div",{class:"site-bar"},"Capacitor is in Private Preview. Read the ",e("stencil-route-link",{url:"/blog"},"announcement blog")," for more info on the project")}static get is(){return"site-bar"}static get style(){return"/**style-placeholder:site-bar:**/"}}export{t as SiteBar};

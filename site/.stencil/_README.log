@@ -1,8 +1,0 @@
-# Stencil Cache Directory
-
-This directory contains files which the compiler has
-cached for faster builds. To disable caching, please set
-"enableCache: false" within the stencil.config.js file.
-
-To change the cache directory, please update the
-"cacheDir" property within the stencil.config.js file.

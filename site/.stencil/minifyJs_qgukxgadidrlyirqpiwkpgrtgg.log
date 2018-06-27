@@ -1,2 +1,0 @@
-/*! Built with http://stenciljs.com */
-const{h:t}=window.App;class e{render(){return this.typeId?t("anchor-link",{to:`type-${this.typeId}`},t("slot",null)):t("slot",null)}static get is(){return"avc-code-type"}static get properties(){return{typeId:{type:String,attr:"type-id"}}}}export{e as AvcCodeType};
