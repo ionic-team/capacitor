@@ -51,7 +51,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
     var ids = [String]()
     
     for notification in notifications {
-      guard let identifier = notification["id"] as? String else {
+      guard let identifier = notification["id"] as? Int else {
         call.error("Notification missing identifier")
         return
       }
@@ -79,7 +79,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       }
       
       // Schedule the request.
-      let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+      let request = UNNotificationRequest(identifier: "\(identifier)", content: content, trigger: trigger)
       
       notificationRequestLookup[request.identifier] = notification
       
