@@ -843,7 +843,7 @@ export interface LocalNotificationAttachmentOptions {
 export interface LocalNotification {
   title: string;
   body: string;
-  id: string;
+  id: number;
   schedule?: LocalNotificationSchedule;
   sound?: string;
   attachments?: LocalNotificationAttachment[];
