@@ -68,7 +68,7 @@ export class LocalNotificationsPage {
       notifications: [{
         title: 'Get 20% off!',
         body: 'Swipe to learn more',
-        id: 'special-deal',
+        id: 1,
         sound: 'beep.aiff',
         attachments: [
           { id: 'face', url: 'res://face.jpg' }
@@ -90,7 +90,7 @@ export class LocalNotificationsPage {
       notifications: [{
         title: 'Get 20% off!',
         body: 'Swipe to learn more',
-        id: 'special-deal',
+        id: 2,
         schedule: {
           on: {
             day: 1
@@ -99,7 +99,7 @@ export class LocalNotificationsPage {
       }, {
         title: 'Happy Holidays',
         body: 'Swipe to learn more',
-        id: 'holidays',
+        id: 3,
         schedule: {
           every: 'minute'
         }
