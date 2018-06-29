@@ -71,7 +71,7 @@ export class LocalNotificationsPage {
         id: 1,
         sound: 'beep.aiff',
         attachments: [
-          { id: 'face', url: 'res://face.jpg' }
+          { id: 'face', url: 'res://public/assets/ionitron.png' }
         ],
         schedule: {
           at: new Date(now.getTime() + (10 * 1000))
