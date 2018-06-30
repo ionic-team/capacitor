@@ -9,7 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 
+import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -30,7 +32,7 @@ import java.util.List;
  * Plugin for creating local notification
  */
 @NativePlugin()
-public class LocalNotification extends Plugin {
+public class LocalNotifications extends Plugin {
 
   public static final String CHANNEL_ID = "default";
 
@@ -38,6 +40,16 @@ public class LocalNotification extends Plugin {
   public void load() {
     super.load();
     createDefaultNotificationChannel();
+  }
+
+  @Override
+  protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
+    super.handleOnActivityResult(requestCode, resultCode, data);
+    Log.d(Bridge.TAG, "Notification received: " + data.getDataString());
+    JSObject dataJson = new JSObject();
+    dataJson.put("extras",  data.getExtras());
+    dataJson.put("id", data.getIntExtra("id",0));
+    notifyListeners("localNotificationReceived", dataJson, true);
   }
 
   private void createDefaultNotificationChannel() {
@@ -56,12 +68,11 @@ public class LocalNotification extends Plugin {
     }
   }
 
-  // TODO unify input parameters for both IOS and Android
-
   /**
    * Schedule a notification call from JavaScript
    * Creates local notification in system.
    */
+  // https://github.com/katzer/cordova-plugin-local-notifications/tree/master/src/android/notification/receiver
   @PluginMethod()
   public void schedule(PluginCall call) {
     List<Notification> notifications = this.buildNotificationList(call);
@@ -75,31 +86,32 @@ public class LocalNotification extends Plugin {
       call.error("Notifications not enabled on this device");
       return;
     }
-    for (Notification notification : notifications) {
-      if (notification.getId() == null) {
+    for (Notification notification2 : notifications) {
+      if (notification2.getId() == null) {
         call.error("Notification missing identifier");
         return;
       }
 
       Intent intent = new Intent(getContext(), getActivity().getClass());
+      // intent.setAction(notification2.getActionTypeId());
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
       PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
 
       NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.getContext(), CHANNEL_ID)
-              .setContentTitle(notification.getTitle())
-              .setContentText(notification.getBody())
+              .setContentTitle(notification2.getTitle())
+              .setContentText(notification2.getBody())
               .setPriority(NotificationCompat.PRIORITY_DEFAULT)
               .setContentIntent(pendingIntent)
               .setAutoCancel(true);
 
 
-      String sound = notification.getSound();
+
+      String sound = notification2.getSound();
       if (sound != null) {
         mBuilder.setSound(Uri.parse(sound));
-
       }
 
-      JSONObject extra = notification.getExtra();
+      JSONObject extra = notification2.getExtra();
       if (extra != null) {
         Bundle extras = new Bundle();
         extras.putString("data", extra.toString());
@@ -107,9 +119,9 @@ public class LocalNotification extends Plugin {
         intent.putExtras(extras);
       }
 
-      // notificationId is a unique int for each notification that you must define
-      notificationManager.notify(Integer.valueOf(notification.getId()), mBuilder.build());
-      ids.put(notification.getId());
+      // notificationId is a unique int for each notification2 that you must define
+      notificationManager.notify(Integer.valueOf(notification2.getId()), mBuilder.build());
+      ids.put(notification2.getId());
     }
     call.success(new JSObject().put("ids", ids));
   }
@@ -140,17 +152,12 @@ public class LocalNotification extends Plugin {
 
   @PluginMethod()
   public void getPending(PluginCall call) {
-    // IOS specific
-    // Requires special permissions that may not be desired for a plugin.
-    // There is no need to implement this method for Android
-    // https://developer.android.com/reference/android/service/notification/NotificationListenerService#getActiveNotifications()
-    call.success();
+    call.error("Not implemented");
   }
 
   @PluginMethod()
   public void registerActionTypes(PluginCall call) {
-    // IOS specific call
-    call.success();
+    call.error("Not implemented");
   }
 
 
@@ -161,7 +168,7 @@ public class LocalNotification extends Plugin {
       call.error("Must provide notifications array as notifications option");
       return null;
     }
-    List<Notification> resultNotifications = new ArrayList<Notification>(notificationArray.length());
+    List<Notification> resultNotification2s = new ArrayList<Notification>(notificationArray.length());
     List<JSONObject> notificationsJson = null;
     try {
       notificationsJson = notificationArray.toList();
@@ -170,22 +177,22 @@ public class LocalNotification extends Plugin {
       return null;
     }
     for (JSONObject jsonNotification : notificationsJson) {
-      Notification activeNotification = new Notification();
-      activeNotification.setId(getString("id", jsonNotification));
-      activeNotification.setBody(getString("body", jsonNotification));
-      activeNotification.setActionTypeId(getString("actionTypeId", jsonNotification));
-      activeNotification.setSound(getString("sound", jsonNotification));
-      activeNotification.setTitle(getString("title", jsonNotification));
+      Notification activeNotification2 = new Notification();
+      activeNotification2.setId(getString("id", jsonNotification));
+      activeNotification2.setBody(getString("body", jsonNotification));
+      activeNotification2.setActionTypeId(getString("actionTypeId", jsonNotification));
+      activeNotification2.setSound(getString("sound", jsonNotification));
+      activeNotification2.setTitle(getString("title", jsonNotification));
       // TODO Parsing for extra methods
-      // activeNotification.setSchedule();
-      // activeNotification.setAttachments();
+      // activeNotification2.setSchedule();
+      // activeNotification2.setAttachments();
       try {
-        activeNotification.setExtra(jsonNotification.getJSONObject("extra"));
+        activeNotification2.setExtra(jsonNotification.getJSONObject("extra"));
       } catch (JSONException e) {
       }
-      resultNotifications.add(activeNotification);
+      resultNotification2s.add(activeNotification2);
     }
-    return resultNotifications;
+    return resultNotification2s;
   }
 
   private String getString(String key, JSONObject jsonNotification) {
