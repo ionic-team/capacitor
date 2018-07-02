@@ -1,30 +1,35 @@
 package com.getcapacitor.plugin;
 
+import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.getcapacitor.Bridge;
-import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-import com.getcapacitor.plugin.notification.Notification;
+import com.getcapacitor.plugin.notification.LocalNotificationSchedule;
+import com.getcapacitor.plugin.notification.NotificationRequest;
+import com.getcapacitor.plugin.notification.TimedNotificationPublisher;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -36,6 +41,10 @@ public class LocalNotifications extends Plugin {
 
   public static final String CHANNEL_ID = "default";
 
+  // Action constants
+  public static final String NOTIFICATION_ID = "notificationId";
+  public static final String ACTION_TYPE_ID = "actionTypeId";
+
   @Override
   public void load() {
     super.load();
@@ -45,10 +54,11 @@ public class LocalNotifications extends Plugin {
   @Override
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
-    Log.d(Bridge.TAG, "Notification received: " + data.getDataString());
+    Log.d(Bridge.TAG, "NotificationRequest received: " + data.getDataString());
     JSObject dataJson = new JSObject();
-    dataJson.put("extras",  data.getExtras());
-    dataJson.put("id", data.getIntExtra("id",0));
+    dataJson.put("extras", data.getExtras());
+    dataJson.put("id", data.getIntExtra(NOTIFICATION_ID, 0));
+    dataJson.put(ACTION_TYPE_ID, data.getIntExtra(ACTION_TYPE_ID, 0));
     notifyListeners("localNotificationReceived", dataJson, true);
   }
 
@@ -72,58 +82,128 @@ public class LocalNotifications extends Plugin {
    * Schedule a notification call from JavaScript
    * Creates local notification in system.
    */
-  // https://github.com/katzer/cordova-plugin-local-notifications/tree/master/src/android/notification/receiver
   @PluginMethod()
   public void schedule(PluginCall call) {
-    List<Notification> notifications = this.buildNotificationList(call);
-    if (notifications == null) {
+    List<NotificationRequest> notificationRequests = NotificationRequest.buildNotificationList(call);
+    if (notificationRequests == null) {
       return;
     }
     JSONArray ids = new JSONArray();
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.getContext());
+
     boolean notificationsEnabled = notificationManager.areNotificationsEnabled();
     if (!notificationsEnabled) {
       call.error("Notifications not enabled on this device");
       return;
     }
-    for (Notification notification2 : notifications) {
-      if (notification2.getId() == null) {
-        call.error("Notification missing identifier");
+    for (NotificationRequest notificationRequest : notificationRequests) {
+      if (notificationRequest.getId() == null) {
+        call.error("NotificationRequest missing identifier");
         return;
       }
 
-      Intent intent = new Intent(getContext(), getActivity().getClass());
-      // intent.setAction(notification2.getActionTypeId());
-      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-      PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
-
-      NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.getContext(), CHANNEL_ID)
-              .setContentTitle(notification2.getTitle())
-              .setContentText(notification2.getBody())
-              .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-              .setContentIntent(pendingIntent)
-              .setAutoCancel(true);
-
-
-
-      String sound = notification2.getSound();
-      if (sound != null) {
-        mBuilder.setSound(Uri.parse(sound));
-      }
-
-      JSONObject extra = notification2.getExtra();
-      if (extra != null) {
-        Bundle extras = new Bundle();
-        extras.putString("data", extra.toString());
-        mBuilder.addExtras(extras);
-        intent.putExtras(extras);
-      }
-
-      // notificationId is a unique int for each notification2 that you must define
-      notificationManager.notify(Integer.valueOf(notification2.getId()), mBuilder.build());
-      ids.put(notification2.getId());
+      buildNotification(notificationManager, notificationRequest,call);
+      ids.put(notificationRequest.getId());
     }
     call.success(new JSObject().put("ids", ids));
+  }
+
+  private void buildNotification(NotificationManagerCompat notificationManager, NotificationRequest notificationRequest, PluginCall call) {
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.getContext(), CHANNEL_ID)
+            .setContentTitle(notificationRequest.getTitle())
+            .setContentText(notificationRequest.getBody())
+            .setOnlyAlertOnce(false)
+            .setAutoCancel(false)
+            .setOngoing(false)
+            .setVisibility(Notification.VISIBILITY_PRIVATE)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
+
+
+    String sound = notificationRequest.getSound();
+    if (sound != null) {
+      mBuilder.setSound(Uri.parse(sound));
+    }
+
+    // TODO Group notifications from js side
+    // mBuilder.setGroup("test");
+    // mBuilder.setGroupSummary("Grouped notifications");
+    // mBuilder.setNumber(1);
+
+    // TODO custom small/large icons
+    mBuilder.setSmallIcon(notificationRequest.getSmallIcon(getContext()));
+    createActionIntents(notificationRequest, mBuilder);
+    // notificationId is a unique int for each notificationRequest that you must define
+    Notification buildNotification = mBuilder.build();
+    if (notificationRequest.isScheduled()) {
+      handleScheduledNotification(buildNotification, notificationRequest);
+    } else {
+      notificationManager.notify(notificationRequest.getId(), buildNotification);
+    }
+
+  }
+
+  // Create intents for open/dissmis actions
+  private void createActionIntents(NotificationRequest notificationRequest, NotificationCompat.Builder mBuilder) {
+    // Open intent
+    int reqCode = ((int) Math.random());
+    Intent intent = new Intent(getContext(), getActivity().getClass());
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), reqCode, intent, 0);
+    mBuilder.setContentIntent(pendingIntent);
+
+    JSONObject extra = notificationRequest.getExtra();
+    if (extra != null) {
+      Bundle extras = new Bundle();
+      extras.putString("data", extra.toString());
+      extras.putInt(NOTIFICATION_ID, notificationRequest.getId());
+      extras.putString(ACTION_TYPE_ID, notificationRequest.getActionTypeId());
+      mBuilder.addExtras(extras);
+      intent.putExtras(extras);
+    }
+
+    // Dismiss intent
+    Intent dissmissIntent = new Intent(getContext(), getActivity().getClass())
+            .setAction(notificationRequest.getId().toString());
+
+    PendingIntent deleteIntent = PendingIntent.getBroadcast(
+            getContext(), reqCode, dissmissIntent, 0);
+    mBuilder.setDeleteIntent(deleteIntent);
+  }
+
+
+  /**
+   * Build a notification trigger, such as triggering each N seconds, or
+   * on a certain date "shape" (such as every first of the month)
+   */
+  private void handleScheduledNotification(Notification notification, NotificationRequest request) {
+    AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+    LocalNotificationSchedule schedule = request.getSchedule();
+    int reqCode = ((int) Math.random());
+    Intent notificationIntent = new Intent(getContext(), TimedNotificationPublisher.class);
+    notificationIntent.putExtra(NOTIFICATION_ID, request.getId());
+    notificationIntent.putExtra(TimedNotificationPublisher.NOTIFICATION, notification);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), reqCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    // TODO support different modes depending on priority
+    // TODO restore alarm on device shutdown (requires persistence)
+    if (schedule.isRepeating()) {
+      // Schedule at specific intervals
+      Long everyInterval = schedule.getEveryInterval();
+      if (everyInterval != null) {
+        long startTime = SystemClock.elapsedRealtime() + everyInterval;
+        alarmManager.setRepeating(AlarmManager.RTC, startTime, everyInterval, pendingIntent);
+      } else {
+        Log.e(Bridge.TAG, "Notification every interval is invalid.");
+      }
+    } else {
+      // Schedule once
+      Date at = schedule.getAt();
+      if (at == null) {
+        Log.e(Bridge.TAG, "Notification missing `at` field to schedule at specific date ");
+        return;
+      }
+      alarmManager.set(AlarmManager.RTC, at.getTime(), pendingIntent);
+    }
   }
 
   @PluginMethod()
@@ -143,7 +223,7 @@ public class LocalNotifications extends Plugin {
         Integer notificationId = notificationToCancel.getInt("id");
         notificationManager.cancel(notificationId);
       } catch (JSONException e) {
-        call.error("id field missing in Notification cancel method ");
+        call.error("id field missing in NotificationRequest cancel method ");
         return;
       }
     }
@@ -152,55 +232,15 @@ public class LocalNotifications extends Plugin {
 
   @PluginMethod()
   public void getPending(PluginCall call) {
+    // TODO save pendingPreferenceStore notifications in
     call.error("Not implemented");
   }
 
   @PluginMethod()
   public void registerActionTypes(PluginCall call) {
+    // TODO
     call.error("Not implemented");
   }
 
-
-  // Parse input of the command
-  private List<Notification> buildNotificationList(PluginCall call) {
-    JSArray notificationArray = call.getArray("notifications");
-    if (notificationArray == null) {
-      call.error("Must provide notifications array as notifications option");
-      return null;
-    }
-    List<Notification> resultNotification2s = new ArrayList<Notification>(notificationArray.length());
-    List<JSONObject> notificationsJson = null;
-    try {
-      notificationsJson = notificationArray.toList();
-    } catch (JSONException e) {
-      call.error("Provided notification format is invalid");
-      return null;
-    }
-    for (JSONObject jsonNotification : notificationsJson) {
-      Notification activeNotification2 = new Notification();
-      activeNotification2.setId(getString("id", jsonNotification));
-      activeNotification2.setBody(getString("body", jsonNotification));
-      activeNotification2.setActionTypeId(getString("actionTypeId", jsonNotification));
-      activeNotification2.setSound(getString("sound", jsonNotification));
-      activeNotification2.setTitle(getString("title", jsonNotification));
-      // TODO Parsing for extra methods
-      // activeNotification2.setSchedule();
-      // activeNotification2.setAttachments();
-      try {
-        activeNotification2.setExtra(jsonNotification.getJSONObject("extra"));
-      } catch (JSONException e) {
-      }
-      resultNotification2s.add(activeNotification2);
-    }
-    return resultNotification2s;
-  }
-
-  private String getString(String key, JSONObject jsonNotification) {
-    try {
-      return jsonNotification.getString(key);
-    } catch (JSONException e) {
-      return null;
-    }
-  }
 }
 
