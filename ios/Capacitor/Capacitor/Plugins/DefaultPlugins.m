@@ -92,6 +92,14 @@ CAP_PLUGIN(CAPNetworkPlugin, "Network",
   CAP_PLUGIN_METHOD(getStatus, CAPPluginReturnPromise);
 )
 
+
+CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
+  CAP_PLUGIN_METHOD(requestPermissions, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(getDeliveredNotifications, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(removeDeliveredNotifications, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(removeAllDeliveredNotifications, CAPPluginReturnPromise);
+)
+
 CAP_PLUGIN(CAPPhotosPlugin, "Photos",
   CAP_PLUGIN_METHOD(getPhotos, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(getAlbums, CAPPluginReturnPromise);
