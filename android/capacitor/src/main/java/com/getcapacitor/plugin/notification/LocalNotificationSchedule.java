@@ -29,7 +29,7 @@ public class LocalNotificationSchedule {
     this.every = JsonParserUtils.getString("every", schedule);
     String dateStr = JsonParserUtils.getString("at", schedule);
     if (dateStr != null) {
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+      SimpleDateFormat sdf = new SimpleDateFormat(JsonParserUtils.JS_DATE_FORMAT);
       this.at = sdf.parse(dateStr);
     }
   }

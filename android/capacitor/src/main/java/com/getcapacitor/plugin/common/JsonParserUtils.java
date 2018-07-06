@@ -9,6 +9,8 @@ import org.json.JSONObject;
  */
 public class JsonParserUtils {
 
+  public static String JS_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
+
   /**
    * Fetch string from jsonObject
    */

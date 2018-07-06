@@ -63,6 +63,7 @@ public class LocalNotifications extends Plugin {
   }
 
   private void createDefaultNotificationChannel() {
+    // TODO allow to create multiple channels
     // Create the NotificationChannel, but only on API 26+ because
     // the NotificationChannel class is new and not in the support library
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -232,7 +233,7 @@ public class LocalNotifications extends Plugin {
 
   @PluginMethod()
   public void getPending(PluginCall call) {
-    // TODO save pendingPreferenceStore notifications in
+    // TODO save pending notifications to store 
     call.error("Not implemented");
   }
 
