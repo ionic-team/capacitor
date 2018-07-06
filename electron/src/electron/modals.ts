@@ -23,7 +23,6 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
     });
   }
   async alert(options: AlertOptions): Promise<void> {
-    //window.alert(options.message); we can't set title and button title
     const alert = (message: string, title: string = '') =>
     {    
         
@@ -33,9 +32,7 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
         alert(options.message, options.title);
         return Promise.resolve();
   }
-  //window.prompt is and will not be supported in Electron. Not working with Ionic components?
   async prompt(options: PromptOptions): Promise<PromptResult> {
-    //const val = window.prompt(options.message, options.inputPlaceholder || '');
     var self = this;
     return new Promise<PromptResult>( async (_) => {
     this.resolve = _;
@@ -96,7 +93,6 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
       let buttons = [options.okButtonTitle || 'OK' , options.cancelButtonTitle || 'Cancel']
       return !dialog.showMessageBox(getCurrentWindow(), {message, title, buttons});
     }
-    //const val = window.confirm(options.message);
     const val = confirm(options.message,options.title);
     return Promise.resolve({
       value: val
