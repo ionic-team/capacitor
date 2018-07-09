@@ -29,14 +29,17 @@ export class ModalsPage {
   async showAlert() {
     let alertRet = await Plugins.Modals.alert({
       title: 'Stop',
-      message: 'this is an error'
+      message: 'this is an error',
+      buttonTitle: 'Okay!'
     });
   }
 
   async showConfirm() {
     let confirmRet = await Plugins.Modals.confirm({
       title: 'Confirm',
-      message: 'Are you sure you\'d like to press the red button?'
+      message: 'Are you sure you\'d like to press the red button?',
+      okButtonTitle: 'Ok?',
+      cancelButtonTitle: 'Cancel?'      
     });
     console.log('Confirm ret', confirmRet);
   }
