@@ -42,16 +42,7 @@ export async function updateAndroid(config: Config) {
 }
 
 function getGradlePackageName(id: string): string {
-  return id.replace(/[\@/]/g,function(e){
-      switch (id){
-          case '@':
-              return '';
-          case '/':
-              return '-';
-          default:
-              return e;
-      }
-  });
+    return id.replace('@','').replace('/', '-')
 }
 
 export async function installGradlePlugins(config: Config, capacitorPlugins: Plugin[], cordovaPlugins: Plugin[]) {
