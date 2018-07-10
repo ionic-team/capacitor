@@ -204,12 +204,15 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
     });
   });
   let content = `<?xml version='1.0' encoding='utf-8'?>
-<manifest package="capacitor.android.plugins" xmlns:android='http://schemas.android.com/apk/res/android'>
+<manifest package="capacitor.android.plugins"
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:amazon="http://schemas.amazon.com/apk/res/android">
 <application>
 ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
 </manifest>`;
+  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), config.app.appId);
   await writeFileAsync(manifestPath, content);
 }
 
