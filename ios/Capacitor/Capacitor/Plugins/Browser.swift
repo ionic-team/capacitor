@@ -17,7 +17,15 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
     DispatchQueue.main.async {
       self.vc = SFSafariViewController.init(url: url!)
       self.vc!.delegate = self
-      self.vc!.modalPresentationStyle = .popover
+
+      switch call.getString("presentationStyle") {
+      case "fullscreen":
+        self.vc!.modalPresentationStyle = .fullScreen
+      case "popover":
+        self.vc!.modalPresentationStyle = .popover
+      default:
+        self.vc!.modalPresentationStyle = .fullScreen
+      }
       
       if toolbarColor != nil {
         self.vc!.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
