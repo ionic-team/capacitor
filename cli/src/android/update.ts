@@ -212,6 +212,7 @@ ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
 </manifest>`;
+  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), config.app.appId);
   await writeFileAsync(manifestPath, content);
 }
 
