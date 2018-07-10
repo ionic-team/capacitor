@@ -237,6 +237,11 @@ export interface BrowserOpenOptions {
    * A hex color to set the toolbar color to.
    */
   toolbarColor?: string;
+
+   /**
+   * iOS only: The presentation style of the browser. Defaults to fullscreen.
+   */
+  presentationStyle?: 'fullscreen' | 'popover';
 }
 
 export interface BrowserPrefetchOptions {
