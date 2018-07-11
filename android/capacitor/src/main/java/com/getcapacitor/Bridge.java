@@ -16,6 +16,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.content.SharedPreferences;
 
 import com.getcapacitor.plugin.Accessibility;
 import com.getcapacitor.plugin.App;
@@ -52,6 +53,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 /**
@@ -70,6 +72,7 @@ import java.util.Map;
  *   BridgeActivity.java</a>
  */
 public class Bridge {
+  private static final String PREFS_NAME = "CapacitorSettings";
   private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
   private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
   private static final String BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY = "capacitorLastPluginCallOptions";
@@ -151,8 +154,10 @@ public class Bridge {
   private void loadWebView() {
     final String appUrlConfig = Config.getString("server.url");
 
-    String authority = "localhost";
+    String port = getPort();
+    String authority = "localhost" + ":" + port;
     boolean isLocal = true;
+
     if (appUrlConfig != null) {
       try {
         URL appUrlObject = new URL(appUrlConfig);
@@ -173,7 +178,7 @@ public class Bridge {
     // Load the index route from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
-    final String appUrl = appUrlConfig == null ? url : appUrlConfig;
+    final String appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
 
     log("Loading app at " + appUrl);
 
@@ -209,6 +214,32 @@ public class Bridge {
     // Get to work
     webView.loadUrl(appUrl);
   }
+
+
+  public String getPort() {
+    String port = Config.getString("server.port");
+    if (port != null) {
+      return port;
+    }
+
+    SharedPreferences prefs = getContext().getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+    port = prefs.getString("capacitorPort", null);
+    if (port != null) {
+      return port;
+    }
+
+    port = String.valueOf(getRandomPort());
+    SharedPreferences.Editor editor = prefs.edit();
+    editor.putString("capacitorPort", port);
+    editor.apply();
+
+    return port;
+  }
+
+  public int getRandomPort(){
+    return ThreadLocalRandom.current().nextInt(3000, 9000 + 1);
+  }
+
 
   public void handleAppUrlLoadError(Exception ex) {
     if (ex instanceof SocketTimeoutException) {
