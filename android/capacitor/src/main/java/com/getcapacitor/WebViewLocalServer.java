@@ -50,10 +50,6 @@ import java.util.UUID;
 public class WebViewLocalServer {
   private static String TAG = "WebViewAssetServer";
 
-  /**
-   * capacitorapp.net is reserved by the Ionic team for use in local capacitor apps.
-   */
-  public final static String knownUnusedAuthority = "capacitorapp.net";
   private final static String httpScheme = "http";
   private final static String httpsScheme = "https";
 
@@ -170,17 +166,12 @@ public class WebViewLocalServer {
     }
   }
 
-  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, String authority, boolean html5mode) {
+  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, String authority, boolean html5mode, boolean isLocal) {
     uriMatcher = new UriMatcher(null);
     this.html5mode = html5mode;
     this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
-    if (authority != null) {
-      this.authority = authority;
-      this.isLocal = false;
-    } else {
-      this.isLocal = true;
-      this.authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
-    }
+    this.authority = authority;
+    this.isLocal = isLocal;
     this.bridge = bridge;
     this.jsInjector = jsInjector;
   }
