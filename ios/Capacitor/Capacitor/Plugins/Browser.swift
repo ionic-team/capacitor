@@ -17,21 +17,18 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
     DispatchQueue.main.async {
       self.vc = SFSafariViewController.init(url: url!)
       self.vc!.delegate = self
-
-      switch call.getString("presentationStyle") {
-      case "fullscreen":
-        self.vc!.modalPresentationStyle = .fullScreen
-      case "popover":
+      let presentationStyle = call.getString("presentationStyle")
+      if presentationStyle != nil && presentationStyle == "popover" {
         self.vc!.modalPresentationStyle = .popover
-      default:
+        self.setCenteredPopover(self.vc)
+      } else {
         self.vc!.modalPresentationStyle = .fullScreen
       }
-      
+
       if toolbarColor != nil {
         self.vc!.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
       }
-      
-      self.setCenteredPopover(self.vc)
+
       self.bridge.viewController.present(self.vc!, animated: true, completion: {
         call.success()
       })
