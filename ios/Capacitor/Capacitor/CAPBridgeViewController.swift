@@ -80,7 +80,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     
     port = getPort()
-    hostname = CAPConfig.getValue("server.url") as? String ?? "http://localhost:\(port!)/"
+    hostname = CAPConfig.getString("server.url") ?? "http://localhost:\(port!)/"
     
     startWebServer(port: port!)
 
@@ -90,6 +90,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
   
   func getPort() -> Int {
+    let configPort = CAPConfig.getString("server.port")
+    if configPort != nil {
+      return Int(configPort!)!
+    }
     let defaults = UserDefaults.standard
     var port = defaults.integer(forKey: "capacitorPort")
     if port > 0 {
