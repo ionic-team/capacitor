@@ -151,11 +151,13 @@ public class Bridge {
   private void loadWebView() {
     final String appUrlConfig = Config.getString("server.url");
 
-    String authority = null;
+    String authority = "localhost";
+    boolean isLocal = true;
     if (appUrlConfig != null) {
       try {
         URL appUrlObject = new URL(appUrlConfig);
         authority = appUrlObject.getAuthority();
+        isLocal = false;
       } catch (Exception ex) {
       }
 
@@ -165,7 +167,7 @@ public class Bridge {
     final boolean html5mode = Config.getBoolean("server.html5mode", true);
 
     // Start the local web server
-    localServer = new WebViewLocalServer(context, this, getJSInjector(), authority, html5mode);
+    localServer = new WebViewLocalServer(context, this, getJSInjector(), authority, html5mode, isLocal);
     WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
     // Load the index route from our www folder
