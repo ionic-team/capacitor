@@ -1242,11 +1242,11 @@ export interface SplashScreenPlugin extends Plugin {
   /**
    * Show the splash screen
    */
-  show(options?: SplashScreenShowOptions, callback?: Function): void;
+  show(options?: SplashScreenShowOptions, callback?: Function): Promise<void>;
   /**
    * Hide the splash screen
    */
-  hide(options?: SplashScreenHideOptions, callback?: Function): void;
+  hide(options?: SplashScreenHideOptions, callback?: Function): Promise<void>;
 }
 
 export interface SplashScreenShowOptions {
