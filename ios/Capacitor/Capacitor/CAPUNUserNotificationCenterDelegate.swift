@@ -9,7 +9,6 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
 
   public override init(){
     super.init()
-    print("init notification center delegate")
     let center = UNUserNotificationCenter.current()
     center.delegate = self
   }
@@ -21,7 +20,6 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
    * Request permissions to send notifications
    */
   public func requestPermissions() {
-    print("native request permissions")
     // Override point for customization after application launch.
     let center = UNUserNotificationCenter.current()
     center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in

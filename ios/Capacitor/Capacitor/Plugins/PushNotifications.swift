@@ -27,15 +27,12 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    */
   @objc func getDeliveredNotifications(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().getDeliveredNotifications(completionHandler: { (notifications) in
-      print("num of delivered notifications \(notifications.count)")
-      print(notifications)
-
       let ret = notifications.map({ (notification) -> [String:Any] in
         return self.bridge.notificationsDelegate.makePushNotificationRequestJSObject(notification.request)
       })
       call.success([
         "notifications": ret
-        ])
+      ])
     })
   }
   
@@ -67,7 +64,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
     let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
     notifyListeners("didRegisterForRemoteNotificationsWithDeviceToken", data:[
       "value": deviceTokenString
-      ])
+    ])
 
   }
 
@@ -77,7 +74,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
     }
     notifyListeners("didFailToRegisterForRemoteNotificationsWithError", data:[
       "error": error.localizedDescription
-      ])
+    ])
   }
 
 }
