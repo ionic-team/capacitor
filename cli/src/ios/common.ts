@@ -90,7 +90,7 @@ export async function editProjectSettingsIOS(config: Config) {
 
   let pbxContent = await readFileAsync(pbxPath, 'utf8');
   pbxContent = pbxContent.replace(
-    /PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/,
+    /PRODUCT_BUNDLE_IDENTIFIER = ([^;]+)/g,
     `PRODUCT_BUNDLE_IDENTIFIER = ${appId}`);
 
   await writeFileAsync(plistPath, plistContent, 'utf8');
