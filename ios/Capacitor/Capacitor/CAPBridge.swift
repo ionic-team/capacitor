@@ -34,10 +34,14 @@ enum BridgeError: Error {
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
 
+  public var notificationsDelegate : CAPUNUserNotificationCenterDelegate
+
   public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController) {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
+    self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
     super.init()
+    self.notificationsDelegate.bridge = self;
     CAPConfig.loadConfig()
     exportCoreJS()
     setupCordovaCompatibility()

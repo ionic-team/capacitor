@@ -27,16 +27,8 @@ enum LocalNotificationError: LocalizedError {
  * Implement three common modal types: alert, confirm, and prompt
  */
 @objc(CAPLocalNotificationsPlugin)
-public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDelegate {
-  // Local list of notification id -> JSObject for storing options
-  // between notification requets
-  var notificationRequestLookup = [String:JSObject]()
-  
-  public override func load() {
-    let center = UNUserNotificationCenter.current()
-    center.delegate = self
-  }
-  
+public class CAPLocalNotificationsPlugin : CAPPlugin {
+
   /**
    * Schedule a notification.
    */
@@ -46,7 +38,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       return
     }
     
-    requestPermissions()
+    self.bridge.notificationsDelegate.requestPermissions()
     
     var ids = [String]()
     
@@ -81,7 +73,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       // Schedule the request.
       let request = UNNotificationRequest(identifier: "\(identifier)", content: content, trigger: trigger)
       
-      notificationRequestLookup[request.identifier] = notification
+      self.bridge.notificationsDelegate.notificationRequestLookup[request.identifier] = notification
       
       let center = UNUserNotificationCenter.current()
       center.add(request) { (error : Error?) in
@@ -122,7 +114,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       print(notifications)
       
       let ret = notifications.map({ (notification) -> [String:Any] in
-        return self.makeNotificationRequestJSObject(notification)
+        return self.bridge.notificationsDelegate.makeNotificationRequestJSObject(notification)
       })
       call.success([
         "notifications": ret
@@ -143,82 +135,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
     call.success()
   }
   
-  /**
-   * Request permissions to send notifications
-   */
-  func requestPermissions() {
-    // Override point for customization after application launch.
-    let center = UNUserNotificationCenter.current()
-    center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
-      // Enable or disable features based on authorization.
-    }
-    
-    DispatchQueue.main.async {
-      UIApplication.shared.registerForRemoteNotifications()
-    }
-  }
   
-  /**
-   * Handle delegate willPresent action when the app is in the foreground.
-   * This controls how a notification is presented when the app is running, such as
-   * whether it should stay silent, display a badge, play a sound, or show an alert.
-   */
-  public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                              willPresent notification: UNNotification,
-                              withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-    let request = notification.request
-    
-    notifyListeners("localNotificationReceived", data: makeNotificationRequestJSObject(request))
-    
-    if let options = notificationRequestLookup[request.identifier] {
-      let silent = options["silent"] as? Bool ?? false
-      if silent {
-        completionHandler(.init(rawValue:0))
-        return
-      }
-    }
-
-    if bridge.isAppActive() {
-      completionHandler([.badge, .sound, .alert])
-    } else {
-      completionHandler([.badge, .sound])
-    }
-  }
-  
-  /**
-   * Handle didReceive action, called when a notification opens or activates
-   * the app based on an action.
-   */
-  public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                              didReceive response: UNNotificationResponse,
-                              withCompletionHandler completionHandler: @escaping () -> Void) {
-    completionHandler()
-    
-    var data = JSObject()
-    
-    // Get the info for the original notification request
-    let originalNotificationRequest = response.notification.request
-
-    let actionId = response.actionIdentifier
-
-    // We turn the two default actions (open/dismiss) into generic strings
-    if actionId == UNNotificationDefaultActionIdentifier {
-      data["actionId"] = "tap"
-    } else if actionId == UNNotificationDismissActionIdentifier {
-      data["actionId"] = "dismiss"
-    } else {
-      data["actionId"] = actionId
-    }
-    
-    // If the type of action was for an input type, get the value
-    if let inputType = response as? UNTextInputNotificationResponse {
-      data["inputValue"] = inputType.userText
-    }
-    
-    data["notificationRequest"] = makeNotificationRequestJSObject(originalNotificationRequest)
-    
-    notifyListeners("localNotificationActionPerformed", data: data)
-  }
   
   /**
    * Build the content for a notification.
@@ -369,18 +286,6 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
     default:
       return nil
     }
-  }
-  
-  /**
-   * Turn a UNNotificationRequest into a JSObject to return back to the client.
-   */
-  func makeNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
-    let notificationRequest = notificationRequestLookup[request.identifier] ?? [:]
-    
-    return [
-      "id": request.identifier,
-      "extra": notificationRequest["extra"] ?? [:]
-    ]
   }
 
   /**

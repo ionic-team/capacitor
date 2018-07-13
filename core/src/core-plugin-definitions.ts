@@ -18,6 +18,7 @@ declare global {
     Motion?: MotionPlugin;
     Network?: NetworkPlugin;
     Photos?: PhotosPlugin;
+    PushNotifications?: PushNotificationsPlugin;
     Share?: SharePlugin;
     SplashScreen?: SplashScreenPlugin;
     StatusBar?: StatusBarPlugin;
@@ -1205,6 +1206,40 @@ export enum PhotosAlbumType {
    * Album is a user-created album
    */
   User = 'user'
+}
+
+//
+
+export interface PushNotification {
+  title: string;
+  subtitle: string;
+  body: string;
+  id: string;
+  badge: number;
+}
+
+export interface PushNotificationActionPerformed {
+  actionId: string;
+  inputValue?: string;
+  notificationRequest: any;
+}
+
+export interface PushNotificationToken {
+  value: string;
+}
+
+export interface PushNotificationDeliveredList {
+  notifications: PushNotification[];
+}
+
+export interface PushNotificationsPlugin extends Plugin {
+  register(): Promise<void>;
+  getDeliveredNotifications(): Promise<void>;
+  removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
+  removeAllDeliveredNotifications(): Promise<void>;
+  addListener(eventName: 'didRegisterForRemoteNotificationsWithDeviceToken', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
+  addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
+  addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
 }
 
 //
