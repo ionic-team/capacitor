@@ -103,7 +103,7 @@ public class LocalNotifications extends Plugin {
         return;
       }
 
-      buildNotification(notificationManager, notificationRequest,call);
+      buildNotification(notificationManager, notificationRequest, call);
       ids.put(notificationRequest.getId());
     }
     call.success(new JSObject().put("ids", ids));
@@ -114,7 +114,7 @@ public class LocalNotifications extends Plugin {
             .setContentTitle(notificationRequest.getTitle())
             .setContentText(notificationRequest.getBody())
             .setOnlyAlertOnce(false)
-            .setAutoCancel(false)
+            .setAutoCancel(true)
             .setOngoing(false)
             .setVisibility(Notification.VISIBILITY_PRIVATE)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -180,31 +180,42 @@ public class LocalNotifications extends Plugin {
   private void handleScheduledNotification(Notification notification, NotificationRequest request) {
     AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
     LocalNotificationSchedule schedule = request.getSchedule();
-    int reqCode = ((int) Math.random());
     Intent notificationIntent = new Intent(getContext(), TimedNotificationPublisher.class);
     notificationIntent.putExtra(NOTIFICATION_ID, request.getId());
     notificationIntent.putExtra(TimedNotificationPublisher.NOTIFICATION, notification);
-    PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), reqCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), request.getId(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     // TODO support different modes depending on priority
     // TODO restore alarm on device shutdown (requires persistence)
-    if (schedule.isRepeating()) {
-      // Schedule at specific intervals
-      Long everyInterval = schedule.getEveryInterval();
-      if (everyInterval != null) {
-        long startTime = SystemClock.elapsedRealtime() + everyInterval;
-        alarmManager.setRepeating(AlarmManager.RTC, startTime, everyInterval, pendingIntent);
-      } else {
-        Log.e(Bridge.TAG, "Notification every interval is invalid.");
-      }
-    } else {
-      // Schedule once
-      Date at = schedule.getAt();
-      if (at == null) {
-        Log.e(Bridge.TAG, "Notification missing `at` field to schedule at specific date ");
+
+    // Schedule at specific time (with repeating support)
+    Date at = schedule.getAt();
+    if (at != null) {
+      if (at.getTime() < new Date().getTime()) {
+        Log.e(Bridge.TAG, "Scheduled time must be *after* current time");
         return;
       }
-      alarmManager.set(AlarmManager.RTC, at.getTime(), pendingIntent);
+      if (schedule.isRepeating()) {
+        long interval = at.getTime() - new Date().getTime();
+        alarmManager.setRepeating(AlarmManager.RTC, at.getTime(), interval, pendingIntent);
+      } else {
+        alarmManager.set(AlarmManager.RTC, at.getTime(), pendingIntent);
+      }
     }
+
+    // Schedule at specific intervals
+    Long everyInterval = schedule.getEveryInterval();
+    if (everyInterval != null) {
+      long startTime = new Date().getTime() + everyInterval;
+      alarmManager.setRepeating(AlarmManager.RTC, startTime, everyInterval, pendingIntent);
+    }
+
+    // Cron like scheduler
+    Long on = schedule.getNextOnSchedule();
+    if (on != null) {
+      notificationIntent.putExtra(TimedNotificationPublisher.RESCHEDULE_TIME, schedule.getOn());
+      alarmManager.set(AlarmManager.RTC, on, pendingIntent);
+    }
+
   }
 
   @PluginMethod()
@@ -233,7 +244,7 @@ public class LocalNotifications extends Plugin {
 
   @PluginMethod()
   public void getPending(PluginCall call) {
-    // TODO save pending notifications to store 
+    // TODO save pending notifications to store
     call.error("Not implemented");
   }
 

@@ -14,6 +14,7 @@ import com.getcapacitor.plugin.LocalNotifications;
 public class TimedNotificationPublisher extends BroadcastReceiver {
 
     public static String NOTIFICATION = "notification";
+    public static String RESCHEDULE_TIME = "reschedule_time";
 
     /**
      * Restore and present notification
@@ -23,5 +24,6 @@ public class TimedNotificationPublisher extends BroadcastReceiver {
         Notification notification = intent.getParcelableExtra(NOTIFICATION);
         int id = intent.getIntExtra(LocalNotifications.NOTIFICATION_ID, 0);
         notificationManager.notify(id, notification);
+        // TODO Reschedule
     }
 }

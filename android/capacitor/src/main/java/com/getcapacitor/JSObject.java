@@ -54,6 +54,41 @@ public class JSObject extends JSONObject {
     return defaultValue;
   }
 
+  public Integer getInteger(String key, Integer defaultValue) {
+    try {
+      return super.getInt(key);
+    } catch (JSONException e) {
+    }
+    return defaultValue;
+  }
+
+  public Integer getInteger(String key) {
+    return getInteger(key, null);
+  }
+
+  public Boolean getBoolean(String key, Boolean defaultValue) {
+    try {
+      return super.getBoolean(key);
+    } catch (JSONException e) {
+    }
+    return defaultValue;
+  }
+
+  /**
+   * Fetch boolean from jsonObject
+   */
+  public Boolean getBool(String key) {
+    return getBoolean(key,null);
+  }
+
+  public JSObject getJSObject(String name) {
+    try {
+      return  getJSObject(name, null);
+    } catch (JSONException e) {
+    }
+    return null;
+  }
+
   public JSObject getJSObject(String name, JSObject defaultValue) throws JSONException {
     try {
       Object obj = get(name);
