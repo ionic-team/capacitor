@@ -2,7 +2,7 @@ package com.getcapacitor.plugin.notification;
 
 import android.text.format.DateUtils;
 
-import com.getcapacitor.plugin.common.JsonParserUtils;
+import com.getcapacitor.JSObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,26 +12,36 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LocalNotificationSchedule {
+
+  public static String JS_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
   private Date at;
   private Boolean repeats;
   private String every;
-  // TODO `on` field support
+  private Date on;
 
-  public LocalNotificationSchedule(JSONObject jsonNotification) throws ParseException {
-    JSONObject schedule = null;
-    try {
-      schedule = jsonNotification.getJSONObject("schedule");
-    } catch (JSONException e) {
-      return;
+
+  public LocalNotificationSchedule(JSObject jsonNotification) throws ParseException {
+    JSObject schedule = jsonNotification.getJSObject("schedule");
+    if(schedule !=null){
+
     }
-    this.repeats = JsonParserUtils.getBoolean("repeats", schedule);
+    this.repeats = schedule.getBool("repeats");
     // 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
-    this.every = JsonParserUtils.getString("every", schedule);
-    String dateStr = JsonParserUtils.getString("at", schedule);
-    if (dateStr != null) {
-      SimpleDateFormat sdf = new SimpleDateFormat(JsonParserUtils.JS_DATE_FORMAT);
-      this.at = sdf.parse(dateStr);
+    this.every = schedule.getString("every");
+    String dateString = schedule.getString("at");
+    if (dateString != null) {
+      SimpleDateFormat sdf = new SimpleDateFormat(JS_DATE_FORMAT);
+      this.at = sdf.parse(dateString);
     }
+    // TODO
+    //    on?: {
+    //      year?: number;
+    //      month?: number;
+    //      day?: number;
+    //      hour?: number;
+    //      minute?: number;
+    //    };
   }
 
   public LocalNotificationSchedule() {
@@ -88,5 +98,18 @@ public class LocalNotificationSchedule {
         return null;
     }
 
+  }
+
+  public Date getOn() {
+    return on;
+  }
+
+  public void setOn(Date on) {
+    this.on = on;
+  }
+
+  public Long getNextOnSchedule() {
+    // TODO
+    return null;
   }
 }

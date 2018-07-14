@@ -3,6 +3,7 @@ package com.getcapacitor.plugin.notification;
 import android.content.Context;
 
 import com.getcapacitor.JSArray;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.plugin.notification.util.AssetUtil;
 
@@ -13,8 +14,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.getcapacitor.plugin.common.JsonParserUtils.getInt;
-import static com.getcapacitor.plugin.common.JsonParserUtils.getString;
 
 /**
  * Local notification object mapped from json plugin
@@ -31,7 +30,7 @@ public class NotificationRequest {
   private String sound;
   private LocalNotificationAttachment[] attachments;
   private String actionTypeId;
-  private JSONObject extra;
+  private JSObject extra;
 
   public String getTitle() {
     return title;
@@ -82,11 +81,11 @@ public class NotificationRequest {
     this.actionTypeId = actionTypeId;
   }
 
-  public JSONObject getExtra() {
+  public JSObject getExtra() {
     return extra;
   }
 
-  public void setExtra(JSONObject extra) {
+  public void setExtra(JSObject extra) {
     this.extra = extra;
   }
 
@@ -107,33 +106,36 @@ public class NotificationRequest {
       call.error("Must provide notifications array as notifications option");
       return null;
     }
-    List<NotificationRequest> resultNotificationRequests = new ArrayList<NotificationRequest>(notificationArray.length());
-    List<JSONObject> notificationsJson = null;
+    List<NotificationRequest> resultNotificationRequests = new ArrayList<>(notificationArray.length());
+    List<JSONObject> notificationsJson;
     try {
       notificationsJson = notificationArray.toList();
     } catch (JSONException e) {
       call.error("Provided notification format is invalid");
       return null;
     }
+
     for (JSONObject jsonNotification : notificationsJson) {
-      NotificationRequest activeNotificationRequest = new NotificationRequest();
-      activeNotificationRequest.setId(getInt("id", jsonNotification));
-      activeNotificationRequest.setBody(getString("body", jsonNotification));
-      activeNotificationRequest.setActionTypeId(getString("actionTypeId", jsonNotification));
-      activeNotificationRequest.setSound(getString("sound", jsonNotification));
-      activeNotificationRequest.setTitle(getString("title", jsonNotification));
+      JSObject notification = null;
       try {
-        activeNotificationRequest.setSchedule(new LocalNotificationSchedule(jsonNotification));
-      } catch (ParseException e) {
-        call.error("Invalid date format sent to Notification plugin");
+        notification = JSObject.fromJSONObject(jsonNotification);
+      } catch (JSONException e) {
+        call.error("Invalid JSON object sent to NotificationPlugin", e);
         return null;
       }
-      // TODO attachment support
-      // activeNotificationRequest.setAttachments();
+      NotificationRequest activeNotificationRequest = new NotificationRequest();
+      activeNotificationRequest.setId(notification.getInteger("id"));
+      activeNotificationRequest.setBody(notification.getString("body"));
+      activeNotificationRequest.setActionTypeId(notification.getString("actionTypeId"));
+      activeNotificationRequest.setSound(notification.getString("sound"));
+      activeNotificationRequest.setTitle(notification.getString("title"));
       try {
-        activeNotificationRequest.setExtra(jsonNotification.getJSONObject("extra"));
-      } catch (JSONException e) {
+        activeNotificationRequest.setSchedule(new LocalNotificationSchedule(notification));
+      } catch (ParseException e) {
+        call.error("Invalid date format sent to Notification plugin", e);
+        return null;
       }
+      activeNotificationRequest.setExtra(notification.getJSObject("extra"));
       resultNotificationRequests.add(activeNotificationRequest);
     }
     return resultNotificationRequests;
@@ -144,7 +146,7 @@ public class NotificationRequest {
     int resId = AssetUtil.getInstance(context).getResId(DEFAULT_ICON);
 
     if (resId == 0) {
-      resId = android.R.drawable.ic_popup_reminder;
+      resId = android.R.drawable.ic_dialog_alert;
     }
 
     return resId;
