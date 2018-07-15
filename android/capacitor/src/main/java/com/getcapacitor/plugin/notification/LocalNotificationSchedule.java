@@ -4,12 +4,10 @@ import android.text.format.DateUtils;
 
 import com.getcapacitor.JSObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class LocalNotificationSchedule {
 
@@ -18,33 +16,58 @@ public class LocalNotificationSchedule {
   private Date at;
   private Boolean repeats;
   private String every;
-  private Date on;
+
+  private DateMatch on;
 
 
   public LocalNotificationSchedule(JSObject jsonNotification) throws ParseException {
     JSObject schedule = jsonNotification.getJSObject("schedule");
-    if(schedule !=null){
-
+    if (schedule != null) {
+      // Every specific unit of time (always constant)
+      buildEveryElement(schedule);
+      // At specific moment of time (with repeating option)
+      buildAtElement(schedule);
+      // Build on - recurring times. For e.g. every 1st day of the month at 8:30.
+      buildOnElement(schedule);
     }
-    this.repeats = schedule.getBool("repeats");
+  }
+
+  public LocalNotificationSchedule() {
+  }
+
+  private void buildEveryElement(JSObject schedule) {
     // 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
     this.every = schedule.getString("every");
+  }
+
+  private void buildAtElement(JSObject schedule) throws ParseException {
+    this.repeats = schedule.getBool("repeats");
     String dateString = schedule.getString("at");
     if (dateString != null) {
       SimpleDateFormat sdf = new SimpleDateFormat(JS_DATE_FORMAT);
       this.at = sdf.parse(dateString);
     }
-    // TODO
-    //    on?: {
-    //      year?: number;
-    //      month?: number;
-    //      day?: number;
-    //      hour?: number;
-    //      minute?: number;
-    //    };
   }
 
-  public LocalNotificationSchedule() {
+  private void buildOnElement(JSObject schedule) {
+    JSObject onJson = schedule.getJSObject("on");
+    if (onJson != null) {
+      this.on = new DateMatch();
+      on.setYear(onJson.getInteger("year"));
+      on.setMonth(onJson.getInteger("month"));
+      on.setDay(onJson.getInteger("day"));
+      on.setHour(onJson.getInteger("hour"));
+      on.setMinute(onJson.getInteger("minute"));
+    }
+
+  }
+
+  public DateMatch getOn() {
+    return on;
+  }
+
+  public void setOn(DateMatch on) {
+    this.on = on;
   }
 
   public Date getAt() {
@@ -72,9 +95,12 @@ public class LocalNotificationSchedule {
   }
 
   public boolean isRepeating() {
-    return Boolean.TRUE.equals(this.repeats) || this.every != null;
+    return Boolean.TRUE.equals(this.repeats);
   }
 
+  /**
+   * Get constant long value representing specific interval of time (weeks, days etc.)
+   */
   public Long getEveryInterval() {
     switch (every) {
       case "year":
@@ -97,19 +123,16 @@ public class LocalNotificationSchedule {
       default:
         return null;
     }
-
   }
 
-  public Date getOn() {
-    return on;
+  /**
+   * Get next trigger time based on calendar and current time
+   *
+   * @param currentTime - current time that will be used to calculate next trigger
+   * @return millisecond trigger
+   */
+  public Long getNextOnSchedule(Date currentTime) {
+    return this.on.nextTrigger(currentTime);
   }
 
-  public void setOn(Date on) {
-    this.on = on;
-  }
-
-  public Long getNextOnSchedule() {
-    // TODO
-    return null;
-  }
 }

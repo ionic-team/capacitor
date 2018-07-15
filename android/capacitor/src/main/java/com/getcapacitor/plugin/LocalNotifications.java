@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -21,8 +20,10 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.plugin.notification.DateMatch;
 import com.getcapacitor.plugin.notification.LocalNotificationSchedule;
 import com.getcapacitor.plugin.notification.NotificationRequest;
+import com.getcapacitor.plugin.notification.NotificationStorage;
 import com.getcapacitor.plugin.notification.TimedNotificationPublisher;
 
 import org.json.JSONArray;
@@ -44,10 +45,14 @@ public class LocalNotifications extends Plugin {
   // Action constants
   public static final String NOTIFICATION_ID = "notificationId";
   public static final String ACTION_TYPE_ID = "actionTypeId";
+  public static final String ACTION_PREFIX = "Notification";
+
+  private NotificationStorage notificationStorage;
 
   @Override
   public void load() {
     super.load();
+    notificationStorage = new NotificationStorage(getContext());
     createDefaultNotificationChannel();
   }
 
@@ -60,6 +65,7 @@ public class LocalNotifications extends Plugin {
     dataJson.put("id", data.getIntExtra(NOTIFICATION_ID, 0));
     dataJson.put(ACTION_TYPE_ID, data.getIntExtra(ACTION_TYPE_ID, 0));
     notifyListeners("localNotificationReceived", dataJson, true);
+
   }
 
   private void createDefaultNotificationChannel() {
@@ -123,9 +129,14 @@ public class LocalNotifications extends Plugin {
 
     String sound = notificationRequest.getSound();
     if (sound != null) {
-      mBuilder.setSound(Uri.parse(sound));
-    }
+      Uri soundUri = Uri.parse(sound);
+      // Grant permission to use sound
+      getContext().grantUriPermission(
+              "com.android.systemui", soundUri,
+              Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      mBuilder.setSound(soundUri);
 
+    }
     // TODO Group notifications from js side
     // mBuilder.setGroup("test");
     // mBuilder.setGroupSummary("Grouped notifications");
@@ -149,6 +160,7 @@ public class LocalNotifications extends Plugin {
     // Open intent
     int reqCode = ((int) Math.random());
     Intent intent = new Intent(getContext(), getActivity().getClass());
+    intent.setAction(ACTION_PREFIX + notificationRequest.getId());
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), reqCode, intent, 0);
     mBuilder.setContentIntent(pendingIntent);
@@ -186,7 +198,6 @@ public class LocalNotifications extends Plugin {
     PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), request.getId(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     // TODO support different modes depending on priority
     // TODO restore alarm on device shutdown (requires persistence)
-
     // Schedule at specific time (with repeating support)
     Date at = schedule.getAt();
     if (at != null) {
@@ -210,16 +221,17 @@ public class LocalNotifications extends Plugin {
     }
 
     // Cron like scheduler
-    Long on = schedule.getNextOnSchedule();
+    DateMatch on = schedule.getOn();
     if (on != null) {
-      notificationIntent.putExtra(TimedNotificationPublisher.RESCHEDULE_TIME, schedule.getOn());
-      alarmManager.set(AlarmManager.RTC, on, pendingIntent);
+      notificationIntent.putExtra(TimedNotificationPublisher.RESCHEDULE_DATA, on);
+      alarmManager.set(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
     }
-
   }
 
   @PluginMethod()
   public void cancel(PluginCall call) {
+
+
     List<JSONObject> notifications = null;
     try {
       notifications = call.getArray("notifications").toList();
@@ -229,17 +241,33 @@ public class LocalNotifications extends Plugin {
       call.error("Must provide notifications array as notifications option");
       return;
     }
-    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.getContext());
+
     for (JSONObject notificationToCancel : notifications) {
-      try {
-        Integer notificationId = notificationToCancel.getInt("id");
-        notificationManager.cancel(notificationId);
-      } catch (JSONException e) {
-        call.error("id field missing in NotificationRequest cancel method ");
-        return;
-      }
+      dismissCurrentNotification(call, notificationToCancel);
     }
     call.success();
+  }
+
+  private void cancelTimerNotification(Integer notificationId) {
+    Intent intent = new Intent(getContext(), TimedNotificationPublisher.class);
+    intent.setAction(ACTION_PREFIX + notificationId);
+    PendingIntent pi = PendingIntent.getBroadcast(
+            getContext(), 0, intent, 0);
+    if (pi != null) {
+      AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+      alarmManager.cancel(pi);
+    }
+  }
+
+  private void dismissCurrentNotification(PluginCall call, JSONObject notificationToCancel) {
+    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.getContext());
+    try {
+      Integer notificationId = notificationToCancel.getInt("id");
+      cancelTimerNotification(notificationId);
+      notificationManager.cancel(notificationId);
+    } catch (JSONException e) {
+      call.error("id field missing in NotificationRequest cancel method ");
+    }
   }
 
   @PluginMethod()

@@ -5,7 +5,7 @@ import android.content.Context;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
-import com.getcapacitor.plugin.notification.util.AssetUtil;
+import com.getcapacitor.plugin.util.AssetUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +31,9 @@ public class NotificationRequest {
   private LocalNotificationAttachment[] attachments;
   private String actionTypeId;
   private JSObject extra;
+
+  // Unparsed object
+  private JSObject source;
 
   public String getTitle() {
     return title;
@@ -124,6 +127,7 @@ public class NotificationRequest {
         return null;
       }
       NotificationRequest activeNotificationRequest = new NotificationRequest();
+      activeNotificationRequest.setSource(notification);
       activeNotificationRequest.setId(notification.getInteger("id"));
       activeNotificationRequest.setBody(notification.getString("body"));
       activeNotificationRequest.setActionTypeId(notification.getString("actionTypeId"));
@@ -154,5 +158,13 @@ public class NotificationRequest {
 
   public boolean isScheduled() {
     return this.schedule != null;
+  }
+
+  public void setSource(JSObject source) {
+    this.source = source;
+  }
+
+  public JSObject getSource() {
+    return source;
   }
 }

@@ -3,9 +3,9 @@ package com.getcapacitor.plugin.notification;
 import org.json.JSONObject;
 
 class LocalNotificationAttachment {
-  String id;
-  String url;
-  JSONObject options;
+  private String id;
+  private String url;
+  private JSONObject options;
 
   public String getId() {
     return id;
