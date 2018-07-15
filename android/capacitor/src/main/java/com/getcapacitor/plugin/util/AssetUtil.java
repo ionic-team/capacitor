@@ -1,4 +1,4 @@
-package com.getcapacitor.plugin.notification.util;
+package com.getcapacitor.plugin.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -19,13 +19,15 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Security;
 import java.util.UUID;
 
+/**
+ * Manager for assets.
+ */
 public final class AssetUtil {
 
     // Name of the storage folder
-    private static final String STORAGE_FOLDER = "/localnotification";
+    private static final String STORAGE_FOLDER = "/capacitorassets";
 
     // Ref to the context passed through the constructor to access the
     // resources and app directory.
@@ -291,8 +293,6 @@ public final class AssetUtil {
      * @return File with a random UUID name.
      */
     private File getTmpFile () {
-        // If random UUID is not be enough see
-        // https://github.com/LukePulverenti/cordova-plugin-local-notifications/blob/267170db14044cbeff6f4c3c62d9b766b7a1dd62/src/android/notification/AssetUtil.java#L255
         return getTmpFile(UUID.randomUUID().toString());
     }
 
