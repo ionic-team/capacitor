@@ -214,10 +214,13 @@ public class LocalNotifications extends Plugin {
     }
 
     // Schedule at specific intervals
-    Long everyInterval = schedule.getEveryInterval();
-    if (everyInterval != null) {
-      long startTime = new Date().getTime() + everyInterval;
-      alarmManager.setRepeating(AlarmManager.RTC, startTime, everyInterval, pendingIntent);
+    String every = schedule.getEvery();
+    if (every != null) {
+      Long everyInterval = schedule.getEveryInterval();
+      if(everyInterval!=null){
+        long startTime = new Date().getTime() + everyInterval;
+        alarmManager.setRepeating(AlarmManager.RTC, startTime, everyInterval, pendingIntent);
+      }
     }
 
     // Cron like scheduler
