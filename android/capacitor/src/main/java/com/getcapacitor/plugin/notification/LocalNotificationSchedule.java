@@ -45,6 +45,7 @@ public class LocalNotificationSchedule {
     String dateString = schedule.getString("at");
     if (dateString != null) {
       SimpleDateFormat sdf = new SimpleDateFormat(JS_DATE_FORMAT);
+      sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
       this.at = sdf.parse(dateString);
     }
   }
