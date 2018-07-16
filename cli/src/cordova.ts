@@ -278,5 +278,5 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
 }
 
 export function getIncompatibleCordovaPlugins(){
-  return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview"];
+  return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview", "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine"];
 }
