@@ -385,8 +385,8 @@ public class Plugin {
   @PluginMethod(returnType=PluginMethod.RETURN_NONE)
   public void addListener(PluginCall call) {
     String eventName = call.getString("eventName");
-    addEventListener(eventName, call);
     call.save();
+    addEventListener(eventName, call);
   }
 
   /**
