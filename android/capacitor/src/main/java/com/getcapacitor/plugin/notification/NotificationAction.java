@@ -20,13 +20,16 @@ public class NotificationAction {
 
   private String id;
   private String title;
+  private boolean input;
 
   public NotificationAction() {
+
   }
 
-  public NotificationAction(String id, String title) {
+  public NotificationAction(String id, String title, Boolean input) {
     this.id = id;
     this.title = title;
+    this.input = input;
   }
 
   public static Map<String, NotificationAction[]> buildTypes(JSArray types) {
@@ -48,6 +51,7 @@ public class NotificationAction {
               JSONObject action = actions.getJSONObject(i);
               notificationAction.setId(action.getString("id"));
               notificationAction.setTitle(action.getString("title"));
+              notificationAction.setInput(action.getBoolean("input"));
               typesArray[i] = notificationAction;
             }
             actionTypeMap.put(actionGroupId, typesArray);
@@ -76,4 +80,11 @@ public class NotificationAction {
     this.title = title;
   }
 
+  public boolean isInput() {
+    return input;
+  }
+
+  public void setInput(boolean input) {
+    this.input = input;
+  }
 }

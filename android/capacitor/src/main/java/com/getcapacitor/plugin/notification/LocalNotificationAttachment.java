@@ -5,6 +5,7 @@ import android.util.Log;
 import com.getcapacitor.JSObject;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -41,24 +42,37 @@ public class LocalNotificationAttachment {
 
   public static List<LocalNotificationAttachment> getAttachments(JSObject notification) {
     List<LocalNotificationAttachment> attachmentsList = new ArrayList<>();
+    JSONArray attachments = null;
     try {
-      JSONArray attachments = notification.getJSONArray("attachments");
-      if (attachments != null) {
-        for (int i = 0; i < attachments.length(); i++) {
-          LocalNotificationAttachment newAttachment = new LocalNotificationAttachment();
-          JSONObject jsonObject = attachments.getJSONObject(i);
-          if (jsonObject != null) {
-            JSObject jsObject = JSObject.fromJSONObject(jsonObject);
-            newAttachment.setId(jsObject.getString("id"));
-            newAttachment.setUrl(jsObject.getString("url"));
-            newAttachment.setOptions(jsObject.getJSONObject("options"));
-            attachmentsList.add(newAttachment);
-          }
-        }
-      }
+      attachments = notification.getJSONArray("attachments");
     } catch (Exception e) {
       Log.e("LNAttachment", "Error when parsing attachments", e);
     }
+    if (attachments != null) {
+      for (int i = 0; i < attachments.length(); i++) {
+        LocalNotificationAttachment newAttachment = new LocalNotificationAttachment();
+        JSONObject jsonObject = null;
+        try {
+          jsonObject = attachments.getJSONObject(i);
+        } catch (JSONException e) {
+        }
+        if (jsonObject != null) {
+          JSObject jsObject = null;
+          try {
+            jsObject = JSObject.fromJSONObject(jsonObject);
+          } catch (JSONException e) {
+          }
+          newAttachment.setId(jsObject.getString("id"));
+          newAttachment.setUrl(jsObject.getString("url"));
+          try {
+            newAttachment.setOptions(jsObject.getJSONObject("options"));
+          } catch (JSONException e) {
+          }
+          attachmentsList.add(newAttachment);
+        }
+      }
+    }
+
     return attachmentsList;
   }
 }
