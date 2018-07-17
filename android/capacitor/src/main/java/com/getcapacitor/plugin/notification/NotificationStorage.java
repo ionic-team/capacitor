@@ -85,6 +85,7 @@ public class NotificationStorage {
       for (int i = 0; i < notificationActions.length; i++) {
         editor.putString("id" + i, notificationActions[i].getId());
         editor.putString("title" + i, notificationActions[i].getTitle());
+        editor.putBoolean("input" + i, notificationActions[i].isInput());
       }
       editor.apply();
     }
@@ -102,7 +103,8 @@ public class NotificationStorage {
     for (int i = 0; i < count; i++) {
       String id = storage.getString("id" + i, "");
       String title = storage.getString("title" + i, "");
-      actions[i] = new NotificationAction(id, title);
+      Boolean input = storage.getBoolean("input" + i, false);
+      actions[i] = new NotificationAction(id, title, input);
     }
     return actions;
   }

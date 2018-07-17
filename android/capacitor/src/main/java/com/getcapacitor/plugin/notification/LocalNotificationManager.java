@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.RemoteInput;
 import android.util.Log;
 
 import com.getcapacitor.Bridge;
@@ -33,6 +34,7 @@ public class LocalNotificationManager {
   // Action constants
   public static final String NOTIFICATION_ID = "notificationId";
   public static final String ACTION_PREFIX = "Notification";
+  public static final String REMOTE_INPUT_KEY = "NotificationInput";
 
   public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "default";
 
@@ -129,11 +131,7 @@ public class LocalNotificationManager {
 
   // Create intents for open/dissmis actions
   private void createActionIntents(LocalNotification localNotification, NotificationCompat.Builder mBuilder) {
-    String actionTypeId = localNotification.getActionTypeId();
-    if (actionTypeId != null) {
-      NotificationAction[] actionGroup = storage.getActionGroup(actionTypeId);
-      // TODO build actiongroup
-    }
+
     // Open intent
     int reqCode = ((int) Math.random());
     Intent intent = new Intent(context, activity.getClass());
@@ -141,6 +139,24 @@ public class LocalNotificationManager {
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
     PendingIntent pendingIntent = PendingIntent.getActivity(context, reqCode, intent, 0);
     mBuilder.setContentIntent(pendingIntent);
+
+    String actionTypeId = localNotification.getActionTypeId();
+    if (actionTypeId != null) {
+      NotificationAction[] actionGroup = storage.getActionGroup(actionTypeId);
+      for (int i = 0; i < actionGroup.length; i++) {
+        NotificationAction notificationAction = actionGroup[i];
+        NotificationCompat.Action.Builder actionBuilder = new NotificationCompat.Action.Builder(0, notificationAction.getTitle(), pendingIntent);
+        // TODO build separate pending intents for actions
+        if (notificationAction.isInput()) {
+          // TODO only single input is possible on Android. Throw error? Reject other actions?
+          RemoteInput remoteInput = new RemoteInput.Builder(REMOTE_INPUT_KEY)
+                  .setLabel(notificationAction.getTitle())
+                  .build();
+          actionBuilder.addRemoteInput(remoteInput);
+        }
+        mBuilder.addAction(actionBuilder.build());
+      }
+    }
 
     JSONObject extra = localNotification.getExtra();
     if (extra != null) {
@@ -152,8 +168,7 @@ public class LocalNotificationManager {
     }
 
     // Dismiss intent
-    Intent dissmissIntent = new Intent(context, activity.getClass())
-            .setAction(localNotification.getId().toString());
+    Intent dissmissIntent = new Intent(context, activity.getClass());
 
     PendingIntent deleteIntent = PendingIntent.getBroadcast(
             context, reqCode, dissmissIntent, 0);
