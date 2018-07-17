@@ -141,7 +141,7 @@ public class Camera extends Plugin {
   }
 
   private boolean checkPermissions(PluginCall call) {
-    // If we want to save to the gallery, we need two permissions
+    // If we want to appendNotificationIds to the gallery, we need two permissions
     if(settings.isSaveToGallery() && !(hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
       pluginRequestPermissions(new String[] {
         Manifest.permission.CAMERA,
@@ -150,7 +150,7 @@ public class Camera extends Plugin {
       }, REQUEST_IMAGE_CAPTURE);
       return false;
     }
-    // If we don't need to save to the gallery, we can just ask for camera permissions
+    // If we don't need to appendNotificationIds to the gallery, we can just ask for camera permissions
     else if(!hasPermission(Manifest.permission.CAMERA)) {
       pluginRequestPermission(Manifest.permission.CAMERA, REQUEST_IMAGE_CAPTURE);
       return false;
@@ -414,7 +414,7 @@ public class Camera extends Plugin {
     String imageFileName = "JPEG_" + timeStamp + "_";
     File storageDir;
     if(saveToGallery) {
-      log("Trying to save image to public external directory");
+      log("Trying to appendNotificationIds image to public external directory");
       storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
     }  else {
       storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
