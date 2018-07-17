@@ -23,14 +23,18 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.SequenceInputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -236,11 +240,20 @@ public class WebViewLocalServer {
         return null;
       }
 
+      String html = this.readAssetStream(stream);
+
       stream = jsInjector.getInjectedStream(stream);
+
+      String assetHtml = this.readAssetStream(stream);
+
+      html = html.replace("<head>", "<head>\n" + assetHtml + "\n");
+
+      InputStream responseStream = new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
+
       bridge.reset();
 
       return new WebResourceResponse("text/html", handler.getEncoding(),
-          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
     }
 
     int periodIndex = path.lastIndexOf(".");
@@ -263,6 +276,26 @@ public class WebViewLocalServer {
     }
 
     return null;
+  }
+
+  private String readAssetStream(InputStream stream) {
+    try {
+      final int bufferSize = 1024;
+      final char[] buffer = new char[bufferSize];
+      final StringBuilder out = new StringBuilder();
+      Reader in = new InputStreamReader(stream, "UTF-8");
+      for (; ; ) {
+        int rsz = in.read(buffer, 0, buffer.length);
+        if (rsz < 0)
+          break;
+        out.append(buffer, 0, rsz);
+      }
+      return out.toString();
+    } catch (Exception e) {
+      Log.e(Bridge.TAG, "Unable to process HTML asset file. This is a fatal error", e);
+    }
+
+    return "";
   }
 
   /**
