@@ -1,11 +1,11 @@
 package com.getcapacitor.plugin.notification;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
-import com.getcapacitor.plugin.util.AssetUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Local notification object mapped from json plugin
  */
-public class NotificationRequest {
+public class LocalNotification {
 
   // Default icon path
   private static final String DEFAULT_ICON = "res://icon";
@@ -26,14 +26,11 @@ public class NotificationRequest {
   private String title;
   private String body;
   private Integer id;
-  private LocalNotificationSchedule schedule;
   private String sound;
-  private LocalNotificationAttachment[] attachments;
   private String actionTypeId;
   private JSObject extra;
-
-  // Unparsed object
-  private JSObject source;
+  private List<LocalNotificationAttachment> attachments;
+  private LocalNotificationSchedule schedule;
 
   public String getTitle() {
     return title;
@@ -68,11 +65,12 @@ public class NotificationRequest {
     this.sound = sound;
   }
 
-  public LocalNotificationAttachment[] getAttachments() {
+
+  public List<LocalNotificationAttachment> getAttachments() {
     return attachments;
   }
 
-  public void setAttachments(LocalNotificationAttachment[] attachments) {
+  public void setAttachments(List<LocalNotificationAttachment> attachments) {
     this.attachments = attachments;
   }
 
@@ -103,13 +101,13 @@ public class NotificationRequest {
   /**
    * Build list of the notifications from remote plugin call
    */
-  public static List<NotificationRequest> buildNotificationList(PluginCall call) {
+  public static List<LocalNotification> buildNotificationList(PluginCall call) {
     JSArray notificationArray = call.getArray("notifications");
     if (notificationArray == null) {
       call.error("Must provide notifications array as notifications option");
       return null;
     }
-    List<NotificationRequest> resultNotificationRequests = new ArrayList<>(notificationArray.length());
+    List<LocalNotification> resultLocalNotifications = new ArrayList<>(notificationArray.length());
     List<JSONObject> notificationsJson;
     try {
       notificationsJson = notificationArray.toList();
@@ -126,33 +124,41 @@ public class NotificationRequest {
         call.error("Invalid JSON object sent to NotificationPlugin", e);
         return null;
       }
-      NotificationRequest activeNotificationRequest = new NotificationRequest();
-      activeNotificationRequest.setSource(notification);
-      activeNotificationRequest.setId(notification.getInteger("id"));
-      activeNotificationRequest.setBody(notification.getString("body"));
-      activeNotificationRequest.setActionTypeId(notification.getString("actionTypeId"));
-      activeNotificationRequest.setSound(notification.getString("sound"));
-      activeNotificationRequest.setTitle(notification.getString("title"));
+      LocalNotification activeLocalNotification = new LocalNotification();
+      activeLocalNotification.setId(notification.getInteger("id"));
+      activeLocalNotification.setBody(notification.getString("body"));
+      activeLocalNotification.setActionTypeId(notification.getString("actionTypeId"));
+      activeLocalNotification.setSound(notification.getString("sound"));
+      activeLocalNotification.setTitle(notification.getString("title"));
+      activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
       try {
-        activeNotificationRequest.setSchedule(new LocalNotificationSchedule(notification));
+        activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
       } catch (ParseException e) {
         call.error("Invalid date format sent to Notification plugin", e);
         return null;
       }
-      activeNotificationRequest.setExtra(notification.getJSObject("extra"));
-      resultNotificationRequests.add(activeNotificationRequest);
+      activeLocalNotification.setExtra(notification.getJSObject("extra"));
+      resultLocalNotifications.add(activeLocalNotification);
     }
-    return resultNotificationRequests;
+    return resultLocalNotifications;
+  }
+
+
+  public static JSObject buildLocalNotificationPendingList(List<String> ids) {
+    JSObject result = new JSObject();
+    JSArray jsArray = new JSArray();
+    for (String id : ids) {
+      JSObject notification = new JSObject();
+      notification.put("id", id);
+      jsArray.put(notification);
+    }
+    result.put("notifications", jsArray);
+    return result;
   }
 
   public int getSmallIcon(Context context) {
-    // TODO support custom icons in JS schema
-    int resId = AssetUtil.getInstance(context).getResId(DEFAULT_ICON);
-
-    if (resId == 0) {
-      resId = android.R.drawable.ic_dialog_alert;
-    }
-
+    // TODO support custom icons
+    int resId = android.R.drawable.ic_dialog_alert;
     return resId;
   }
 
@@ -160,11 +166,4 @@ public class NotificationRequest {
     return this.schedule != null;
   }
 
-  public void setSource(JSObject source) {
-    this.source = source;
-  }
-
-  public JSObject getSource() {
-    return source;
-  }
 }

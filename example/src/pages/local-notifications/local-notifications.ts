@@ -93,9 +93,10 @@ export class LocalNotificationsPage {
         id: 2,
         schedule: {
           on: {
-            day: 1
+            hour:  15,
+            minute: 40
           }
-        }//.toISOString(),
+        }
       }, {
         title: 'Happy Holidays',
         body: 'Swipe to learn more',
