@@ -1,7 +1,6 @@
 package com.getcapacitor.plugin;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.getcapacitor.Bridge;
@@ -17,7 +16,6 @@ import com.getcapacitor.plugin.notification.NotificationAction;
 import com.getcapacitor.plugin.notification.NotificationStorage;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -52,7 +50,9 @@ public class LocalNotifications extends Plugin {
     // TODO verify what JS expects
     JSObject dataJson = new JSObject();
     dataJson.put("extras", data.getExtras());
-    dataJson.put("id", data.getIntExtra(LocalNotificationManager.NOTIFICATION_ID, 0));
+    int notificationId = data.getIntExtra(LocalNotificationManager.NOTIFICATION_ID, 0);
+    dataJson.put("id", notificationId);
+    notificationStorage.deleteNotification(Integer.toString(notificationId));
     notifyListeners("localNotificationReceived", dataJson, true);
   }
 

@@ -239,6 +239,7 @@ public class LocalNotificationManager {
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.context);
     try {
       Integer notificationId = notificationToCancel.getInt("id");
+      storage.deleteNotification(Integer.toString(notificationId));
       cancelTimerNotification(notificationId);
       notificationManager.cancel(notificationId);
     } catch (JSONException e) {

@@ -55,7 +55,7 @@ public class NotificationStorage {
   /**
    * Remove the stored notifications
    */
-  public void delete(String id) {
+  public void deleteNotification(String id) {
     SharedPreferences.Editor editor = getStorage(NOTIFICATION_STORE_ID).edit();
     editor.remove(id);
     editor.apply();
