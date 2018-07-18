@@ -68,7 +68,8 @@ export class LocalNotificationsPage {
       notifications: [{
         title: 'Get 20% off!',
         body: 'Swipe to learn more',
-        id: 1,
+        // Get random id to test cancel
+        id: Math.floor(Math.random()*10),
         sound: 'beep.aiff',
         attachments: [
           { id: 'face', url: 'res://public/assets/ionitron.png' }
@@ -93,8 +94,7 @@ export class LocalNotificationsPage {
         id: 2,
         schedule: {
           on: {
-            hour:  15,
-            minute: 40
+            minute: new Date().getUTCMinutes()+1
           }
         }
       }, {
