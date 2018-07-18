@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.getcapacitor.Bridge;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.plugin.LocalNotifications;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,9 +32,10 @@ import java.util.List;
 public class LocalNotificationManager {
 
   // Action constants
-  public static final String NOTIFICATION_ID = "notificationId";
-  public static final String ACTION_PREFIX = "Notification";
+  public static final String NOTIFICATION_ID_INTENT_KEY = "notificationId";
+  public static final String ACTION_INTENT_KEY = "NotificationUserAction";
   public static final String REMOTE_INPUT_KEY = "NotificationInput";
+
 
   public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "default";
 
@@ -88,17 +90,22 @@ public class LocalNotificationManager {
     return ids;
   }
 
+  // TODO Progressbar support
+  // TODO System categories (DO_NOT_DISTURB etc.)
+  // TODO control visibility Notification.VISIBILITY_PRIVATE
+  // TODO Group notifications (setGroup, setGroupSummary, setNumber)
+  // TODO use NotificationCompat.MessagingStyle for latest API
+  // TODO expandable notification NotificationCompat.MessagingStyle
+  // TODO media style notification support NotificationCompat.MediaStyle
+  // TODO custom small/large icons
   private void buildNotification(NotificationManagerCompat notificationManager, LocalNotification localNotification, PluginCall call) {
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.context, DEFAULT_NOTIFICATION_CHANNEL_ID)
             .setContentTitle(localNotification.getTitle())
             .setContentText(localNotification.getBody())
-            .setOnlyAlertOnce(false)
             .setAutoCancel(true)
             .setOngoing(false)
-            .setVisibility(Notification.VISIBILITY_PRIVATE)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
-
 
     String sound = localNotification.getSound();
     if (sound != null) {
@@ -108,32 +115,28 @@ public class LocalNotificationManager {
               "com.android.systemui", soundUri,
               Intent.FLAG_GRANT_READ_URI_PERMISSION);
       mBuilder.setSound(soundUri);
-
     }
-    // TODO Group notifications from js side
-    // mBuilder.setGroup("test");
-    // mBuilder.setGroupSummary("Grouped notifications");
-    // mBuilder.setNumber(1);
 
-    // TODO custom small/large icons
+    mBuilder.setVisibility(Notification.VISIBILITY_PRIVATE);
+    mBuilder.setOnlyAlertOnce(true);
+
     mBuilder.setSmallIcon(localNotification.getSmallIcon(context));
     createActionIntents(localNotification, mBuilder);
     // notificationId is a unique int for each localNotification that you must define
     Notification buildNotification = mBuilder.build();
     if (localNotification.isScheduled()) {
-      handleScheduledNotification(buildNotification, localNotification);
+      triggerScheduledNotification(buildNotification, localNotification);
     } else {
       notificationManager.notify(localNotification.getId(), buildNotification);
     }
-
   }
 
   // Create intents for open/dissmis actions
   private void createActionIntents(LocalNotification localNotification, NotificationCompat.Builder mBuilder) {
     // Open intent
     Intent intent = new Intent(context, activity.getClass());
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    PendingIntent pendingIntent = PendingIntent.getActivity(context, localNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    intent.setAction(LocalNotifications.OPEN_NOTIFICATION_ACTION);
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, localNotification.getId(), intent, 0);
     mBuilder.setContentIntent(pendingIntent);
 
     String actionTypeId = localNotification.getActionTypeId();
@@ -141,10 +144,11 @@ public class LocalNotificationManager {
       NotificationAction[] actionGroup = storage.getActionGroup(actionTypeId);
       for (int i = 0; i < actionGroup.length; i++) {
         NotificationAction notificationAction = actionGroup[i];
-        NotificationCompat.Action.Builder actionBuilder = new NotificationCompat.Action.Builder(0, notificationAction.getTitle(), pendingIntent);
+        // TODO Add custom icons to actions
         // TODO build separate pending intents for actions
+        NotificationCompat.Action.Builder actionBuilder = new NotificationCompat.Action.Builder(0, notificationAction.getTitle(), pendingIntent);
+        intent.putExtra(ACTION_INTENT_KEY, notificationAction.getId());
         if (notificationAction.isInput()) {
-          // TODO only single input is possible on Android. Throw error? Reject other actions?
           RemoteInput remoteInput = new RemoteInput.Builder(REMOTE_INPUT_KEY)
                   .setLabel(notificationAction.getTitle())
                   .build();
@@ -158,7 +162,7 @@ public class LocalNotificationManager {
     if (extra != null) {
       Bundle extras = new Bundle();
       extras.putString("data", extra.toString());
-      extras.putInt(NOTIFICATION_ID, localNotification.getId());
+      extras.putInt(NOTIFICATION_ID_INTENT_KEY, localNotification.getId());
       mBuilder.addExtras(extras);
       intent.putExtras(extras);
     }
@@ -175,11 +179,11 @@ public class LocalNotificationManager {
    * Build a notification trigger, such as triggering each N seconds, or
    * on a certain date "shape" (such as every first of the month)
    */
-  private void handleScheduledNotification(Notification notification, LocalNotification request) {
+  private void triggerScheduledNotification(Notification notification, LocalNotification request) {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     LocalNotificationSchedule schedule = request.getSchedule();
     Intent notificationIntent = new Intent(context, TimedNotificationPublisher.class);
-    notificationIntent.putExtra(NOTIFICATION_ID, request.getId());
+    notificationIntent.putExtra(NOTIFICATION_ID_INTENT_KEY, request.getId());
     notificationIntent.putExtra(TimedNotificationPublisher.NOTIFICATION, notification);
     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     // TODO support different modes depending on priority

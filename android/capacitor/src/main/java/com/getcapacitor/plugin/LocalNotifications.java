@@ -10,6 +10,7 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.PluginRequestCodes;
 import com.getcapacitor.plugin.notification.LocalNotification;
 import com.getcapacitor.plugin.notification.LocalNotificationManager;
 import com.getcapacitor.plugin.notification.NotificationAction;
@@ -26,8 +27,11 @@ import java.util.Map;
  * Plugins allows to create and trigger various types of notifications an specific times
  * Please refer to individual documentation for reference
  */
-@NativePlugin()
+@NativePlugin(requestCodes = PluginRequestCodes.NOTIFICATION_OPEN)
 public class LocalNotifications extends Plugin {
+
+  // Action that is being used to determine if activity was launched from notification
+  public static final String OPEN_NOTIFICATION_ACTION = "OpenNotification";
 
   private LocalNotificationManager manager;
   private NotificationStorage notificationStorage;
@@ -41,17 +45,24 @@ public class LocalNotifications extends Plugin {
     notificationStorage = new NotificationStorage(getContext());
     manager = new LocalNotificationManager(notificationStorage, getActivity());
     manager.createNotificationChannel();
+
+    // FIXME workaround for handleOnActivityResult not being called on start
+    if (getActivity().getIntent().getAction() == OPEN_NOTIFICATION_ACTION) {
+      handleOnActivityResult(0, 0, getActivity().getIntent());
+    }
   }
 
   @Override
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
     Log.d(Bridge.TAG, "LocalNotification received: " + data.getDataString());
-    // TODO verify what JS expects
+    // FIXME verify what JS expects
     JSObject dataJson = new JSObject();
     dataJson.put("extras", data.getExtras());
-    int notificationId = data.getIntExtra(LocalNotificationManager.NOTIFICATION_ID, 0);
+    int notificationId = data.getIntExtra(LocalNotificationManager.NOTIFICATION_ID_INTENT_KEY, 0);
+    String menuAction = data.getStringExtra(LocalNotificationManager.ACTION_INTENT_KEY);
     dataJson.put("id", notificationId);
+    dataJson.put("action", menuAction);
     notificationStorage.deleteNotification(Integer.toString(notificationId));
     notifyListeners("localNotificationReceived", dataJson, true);
   }

@@ -27,7 +27,7 @@ public class TimedNotificationPublisher extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     Notification notification = intent.getParcelableExtra(NOTIFICATION);
-    int id = intent.getIntExtra(LocalNotificationManager.NOTIFICATION_ID, 0);
+    int id = intent.getIntExtra(LocalNotificationManager.NOTIFICATION_ID_INTENT_KEY, 0);
     notificationManager.notify(id, notification);
 
     rescheduleNotificationIfNeeded(context, intent, id);

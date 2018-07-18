@@ -20,7 +20,7 @@ public class NotificationAction {
 
   private String id;
   private String title;
-  private boolean input;
+  private Boolean input;
 
   public NotificationAction() {
 
@@ -36,26 +36,24 @@ public class NotificationAction {
     Map<String, NotificationAction[]> actionTypeMap = new HashMap<>();
     try {
       List<JSONObject> objects = types.toList();
-      if (objects != null) {
-        for (JSONObject obj : objects) {
-          JSObject jsObject = JSObject.fromJSONObject(obj);
-          String actionGroupId = jsObject.getString("id");
-          if (actionGroupId == null) {
-            return null;
+      for (JSONObject obj : objects) {
+        JSObject jsObject = JSObject.fromJSONObject(obj);
+        String actionGroupId = jsObject.getString("id");
+        if (actionGroupId == null) {
+          return null;
+        }
+        JSONArray actions = jsObject.getJSONArray("actions");
+        if (actions != null) {
+          NotificationAction[] typesArray = new NotificationAction[actions.length()];
+          for (int i = 0; i < typesArray.length; i++) {
+            NotificationAction notificationAction = new NotificationAction();
+            JSObject action = JSObject.fromJSONObject(actions.getJSONObject(i));
+            notificationAction.setId(action.getString("id"));
+            notificationAction.setTitle(action.getString("title"));
+            notificationAction.setInput(action.getBool("input"));
+            typesArray[i] = notificationAction;
           }
-          JSONArray actions = jsObject.getJSONArray("actions");
-          if (actions != null) {
-            NotificationAction[] typesArray = new NotificationAction[actions.length()];
-            for (int i = 0; i < typesArray.length; i++) {
-              NotificationAction notificationAction = new NotificationAction();
-              JSONObject action = actions.getJSONObject(i);
-              notificationAction.setId(action.getString("id"));
-              notificationAction.setTitle(action.getString("title"));
-              notificationAction.setInput(action.getBoolean("input"));
-              typesArray[i] = notificationAction;
-            }
-            actionTypeMap.put(actionGroupId, typesArray);
-          }
+          actionTypeMap.put(actionGroupId, typesArray);
         }
       }
     } catch (Exception e) {
@@ -81,10 +79,10 @@ public class NotificationAction {
   }
 
   public boolean isInput() {
-    return input;
+    return Boolean.TRUE.equals(input);
   }
 
-  public void setInput(boolean input) {
+  public void setInput(Boolean input) {
     this.input = input;
   }
 }
