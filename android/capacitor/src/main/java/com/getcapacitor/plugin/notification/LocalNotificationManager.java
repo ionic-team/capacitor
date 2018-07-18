@@ -20,7 +20,6 @@ import com.getcapacitor.Bridge;
 import com.getcapacitor.PluginCall;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -131,13 +130,10 @@ public class LocalNotificationManager {
 
   // Create intents for open/dissmis actions
   private void createActionIntents(LocalNotification localNotification, NotificationCompat.Builder mBuilder) {
-
     // Open intent
-    int reqCode = ((int) Math.random());
     Intent intent = new Intent(context, activity.getClass());
-    //intent.setAction(ACTION_PREFIX + localNotification.getId());
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    PendingIntent pendingIntent = PendingIntent.getActivity(context, reqCode, intent, 0);
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, localNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     mBuilder.setContentIntent(pendingIntent);
 
     String actionTypeId = localNotification.getActionTypeId();
@@ -171,10 +167,9 @@ public class LocalNotificationManager {
     Intent dissmissIntent = new Intent(context, activity.getClass());
 
     PendingIntent deleteIntent = PendingIntent.getBroadcast(
-            context, reqCode, dissmissIntent, 0);
+            context, localNotification.getId(), dissmissIntent, 0);
     mBuilder.setDeleteIntent(deleteIntent);
   }
-
 
   /**
    * Build a notification trigger, such as triggering each N seconds, or
@@ -223,43 +218,29 @@ public class LocalNotificationManager {
   }
 
   public void cancel(PluginCall call) {
-    List<JSONObject> notifications = null;
-    try {
-      notifications = call.getArray("notifications").toList();
-    } catch (JSONException e) {
-    }
-    if (notifications == null || notifications.size() == 0) {
-      call.error("Must provide notifications array as notifications option");
-      return;
-    }
-
-    for (JSONObject notificationToCancel : notifications) {
-      dismissCurrentNotification(call, notificationToCancel);
+    List<Integer> notificationsToCancel = LocalNotification.getLocalNotificationPendingList(call);
+    if (notificationsToCancel != null) {
+      for (Integer id : notificationsToCancel) {
+        dismissVisibleNotification(call, id);
+        cancelTimerForNotification(id);
+        storage.deleteNotification(Integer.toString(id));
+      }
     }
     call.success();
   }
 
-  private void cancelTimerNotification(Integer notificationId) {
+  private void cancelTimerForNotification(Integer notificationId) {
     Intent intent = new Intent(context, TimedNotificationPublisher.class);
-    intent.setAction(ACTION_PREFIX + notificationId);
     PendingIntent pi = PendingIntent.getBroadcast(
-            context, 0, intent, 0);
+            context, notificationId, intent, 0);
     if (pi != null) {
       AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
       alarmManager.cancel(pi);
     }
   }
 
-  private void dismissCurrentNotification(PluginCall call, JSONObject notificationToCancel) {
+  private void dismissVisibleNotification(PluginCall call, int notificationId) {
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.context);
-    try {
-      Integer notificationId = notificationToCancel.getInt("id");
-      storage.deleteNotification(Integer.toString(notificationId));
-      cancelTimerNotification(notificationId);
-      notificationManager.cancel(notificationId);
-    } catch (JSONException e) {
-      call.error("id field missing in LocalNotification cancel method ");
-    }
+    notificationManager.cancel(notificationId);
   }
-
 }

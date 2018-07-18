@@ -144,6 +144,26 @@ public class LocalNotification {
   }
 
 
+  public static List<Integer> getLocalNotificationPendingList(PluginCall call) {
+    List<JSONObject> notifications = null;
+    try {
+      notifications = call.getArray("notifications").toList();
+    } catch (JSONException e) {
+    }
+    if (notifications == null || notifications.size() == 0) {
+      call.error("Must provide notifications array as notifications option");
+      return null;
+    }
+    List<Integer> notificationsList = new ArrayList<>(notifications.size());
+    for (JSONObject notificationToCancel : notifications) {
+      try {
+        notificationsList.add(notificationToCancel.getInt("id"));
+      } catch (JSONException e) {
+      }
+    }
+    return notificationsList;
+  }
+
   public static JSObject buildLocalNotificationPendingList(List<String> ids) {
     JSObject result = new JSObject();
     JSArray jsArray = new JSArray();
