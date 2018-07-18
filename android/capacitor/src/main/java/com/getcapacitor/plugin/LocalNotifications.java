@@ -30,7 +30,7 @@ import java.util.Map;
 @NativePlugin(requestCodes = PluginRequestCodes.NOTIFICATION_OPEN)
 public class LocalNotifications extends Plugin {
 
-  // Action that is being used to determine if activity was launched from notification
+  // FIXME WORKAROUND Action that is being used to determine if activity was launched from notification
   public static final String OPEN_NOTIFICATION_ACTION = "OpenNotification";
 
   private LocalNotificationManager manager;
