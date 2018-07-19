@@ -92,7 +92,7 @@ public class LocalNotificationManager {
 
   // TODO Progressbar support
   // TODO System categories (DO_NOT_DISTURB etc.)
-  // TODO control visibility Notification.VISIBILITY_PRIVATE
+  // TODO control visibility by flag Notification.VISIBILITY_PRIVATE
   // TODO Group notifications (setGroup, setGroupSummary, setNumber)
   // TODO use NotificationCompat.MessagingStyle for latest API
   // TODO expandable notification NotificationCompat.MessagingStyle
@@ -136,7 +136,7 @@ public class LocalNotificationManager {
     // Open intent
     Intent intent = new Intent(context, activity.getClass());
     intent.setAction(LocalNotifications.OPEN_NOTIFICATION_ACTION);
-    PendingIntent pendingIntent = PendingIntent.getActivity(context, localNotification.getId(), intent, 0);
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, localNotification.getId(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
     mBuilder.setContentIntent(pendingIntent);
 
     String actionTypeId = localNotification.getActionTypeId();
@@ -179,15 +179,16 @@ public class LocalNotificationManager {
    * Build a notification trigger, such as triggering each N seconds, or
    * on a certain date "shape" (such as every first of the month)
    */
+  // TODO support different AlarmManager.RTC modes depending on priority
+  // TODO restore alarm on device shutdown (requires persistence)
   private void triggerScheduledNotification(Notification notification, LocalNotification request) {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     LocalNotificationSchedule schedule = request.getSchedule();
     Intent notificationIntent = new Intent(context, TimedNotificationPublisher.class);
     notificationIntent.putExtra(NOTIFICATION_ID_INTENT_KEY, request.getId());
-    notificationIntent.putExtra(TimedNotificationPublisher.NOTIFICATION, notification);
-    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-    // TODO support different modes depending on priority
-    // TODO restore alarm on device shutdown (requires persistence)
+    notificationIntent.putExtra(TimedNotificationPublisher.NOTIFICATION_KEY, notification);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
     // Schedule at specific time (with repeating support)
     Date at = schedule.getAt();
     if (at != null) {
@@ -199,8 +200,9 @@ public class LocalNotificationManager {
         long interval = at.getTime() - new Date().getTime();
         alarmManager.setRepeating(AlarmManager.RTC, at.getTime(), interval, pendingIntent);
       } else {
-        alarmManager.set(AlarmManager.RTC, at.getTime(), pendingIntent);
+        alarmManager.setExact(AlarmManager.RTC, at.getTime(), pendingIntent);
       }
+      return;
     }
 
     // Schedule at specific intervals
@@ -211,13 +213,15 @@ public class LocalNotificationManager {
         long startTime = new Date().getTime() + everyInterval;
         alarmManager.setRepeating(AlarmManager.RTC, startTime, everyInterval, pendingIntent);
       }
+      return;
     }
 
     // Cron like scheduler
     DateMatch on = schedule.getOn();
     if (on != null) {
-      notificationIntent.putExtra(TimedNotificationPublisher.RESCHEDULE_DATA, on);
-      alarmManager.set(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
+      notificationIntent.putExtra(TimedNotificationPublisher.CRON_KEY, on.toMatchString());
+      pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+      alarmManager.setExact(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
     }
   }
 

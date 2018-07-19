@@ -183,7 +183,57 @@ public class LocalNotification {
   }
 
   public boolean isScheduled() {
-    return this.schedule != null;
+    return this.schedule != null &&
+            (this.schedule.getOn() != null ||
+                    this.schedule.getAt() != null ||
+                    this.schedule.getEvery() != null);
   }
+
+  @Override
+  public String toString() {
+    return "LocalNotification{" +
+            "title='" + title + '\'' +
+            ", body='" + body + '\'' +
+            ", id=" + id +
+            ", sound='" + sound + '\'' +
+            ", actionTypeId='" + actionTypeId + '\'' +
+            ", extra=" + extra +
+            ", attachments=" + attachments +
+            ", schedule=" + schedule +
+            '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    LocalNotification that = (LocalNotification) o;
+
+    if (title != null ? !title.equals(that.title) : that.title != null) return false;
+    if (body != null ? !body.equals(that.body) : that.body != null) return false;
+    if (id != null ? !id.equals(that.id) : that.id != null) return false;
+    if (sound != null ? !sound.equals(that.sound) : that.sound != null) return false;
+    if (actionTypeId != null ? !actionTypeId.equals(that.actionTypeId) : that.actionTypeId != null)
+      return false;
+    if (extra != null ? !extra.equals(that.extra) : that.extra != null) return false;
+    if (attachments != null ? !attachments.equals(that.attachments) : that.attachments != null)
+      return false;
+    return schedule != null ? schedule.equals(that.schedule) : that.schedule == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = title != null ? title.hashCode() : 0;
+    result = 31 * result + (body != null ? body.hashCode() : 0);
+    result = 31 * result + (id != null ? id.hashCode() : 0);
+    result = 31 * result + (sound != null ? sound.hashCode() : 0);
+    result = 31 * result + (actionTypeId != null ? actionTypeId.hashCode() : 0);
+    result = 31 * result + (extra != null ? extra.hashCode() : 0);
+    result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
+    result = 31 * result + (schedule != null ? schedule.hashCode() : 0);
+    return result;
+  }
+
 
 }
