@@ -46,7 +46,6 @@ public class LocalNotificationAttachment {
     try {
       attachments = notification.getJSONArray("attachments");
     } catch (Exception e) {
-      Log.e("LNAttachment", "Error when parsing attachments", e);
     }
     if (attachments != null) {
       for (int i = 0; i < attachments.length(); i++) {

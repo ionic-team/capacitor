@@ -62,6 +62,25 @@ export class LocalNotificationsPage {
     console.log('ionViewDidLoad LocalNotificationsPage');
   }
 
+  async scheduleNow() {
+    this.notifs = await Plugins.LocalNotifications.schedule({
+      notifications: [{
+        title: 'Get 10% off!',
+        body: 'Swipe now to learn more',
+        // Get random id to test cancel
+        id: Math.floor(Math.random()*10),
+        sound: 'beep.aiff',
+        attachments: [
+          { id: 'face', url: 'res://public/assets/ionitron.png' }
+        ],
+        actionTypeId: 'OPEN_PRODUCT',
+        extra: {
+          productId: 'PRODUCT-1'
+        }
+      }]
+    });
+  }
+
   async scheduleOnce() {
     var now = new Date();
     this.notifs = await Plugins.LocalNotifications.schedule({
@@ -85,11 +104,11 @@ export class LocalNotificationsPage {
     });
   }
 
-  async scheduleRepeating() {
+  async scheduleRepeatingOn() {
     var now = new Date();
     this.notifs = await Plugins.LocalNotifications.schedule({
       notifications: [{
-        title: 'Get 20% off!',
+        title: 'Get 20% off daily',
         body: 'Swipe to learn more',
         id: 2,
         schedule: {
@@ -97,8 +116,15 @@ export class LocalNotificationsPage {
             minute: new Date().getUTCMinutes()+1
           }
         }
-      }, {
-        title: 'Happy Holidays',
+      }]
+    });
+  }
+
+  async scheduleRepeatingEvery() {
+    var now = new Date();
+    this.notifs = await Plugins.LocalNotifications.schedule({
+      notifications: [{
+        title: 'Happy Holidays! Last minute.',
         body: 'Swipe to learn more',
         id: 3,
         schedule: {

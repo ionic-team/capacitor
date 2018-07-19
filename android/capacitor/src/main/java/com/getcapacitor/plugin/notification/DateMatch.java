@@ -1,9 +1,6 @@
 package com.getcapacitor.plugin.notification;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -11,17 +8,9 @@ import java.util.Date;
  * Class that holds logic for on triggers
  * (Specific time)
  */
-public class DateMatch implements Parcelable {
+public class DateMatch {
 
-  public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-    public DateMatch createFromParcel(Parcel in) {
-      return new DateMatch(in);
-    }
-
-    public DateMatch[] newArray(int size) {
-      return new DateMatch[size];
-    }
-  };
+  private final static String separator = " ";
 
   private Integer year;
   private Integer month;
@@ -32,28 +21,40 @@ public class DateMatch implements Parcelable {
   public DateMatch() {
   }
 
-  public DateMatch(Parcel in) {
-    this.year = in.readInt();
-    this.month = in.readInt();
-    this.day = in.readInt();
-    this.hour = in.readInt();
-    this.minute = in.readInt();
+  public Integer getYear() {
+    return year;
   }
 
   public void setYear(Integer year) {
     this.year = year;
   }
 
+  public Integer getMonth() {
+    return month;
+  }
+
   public void setMonth(Integer month) {
     this.month = month;
+  }
+
+  public Integer getDay() {
+    return day;
   }
 
   public void setDay(Integer day) {
     this.day = day;
   }
 
+  public Integer getHour() {
+    return hour;
+  }
+
   public void setHour(Integer hour) {
     this.hour = hour;
+  }
+
+  public Integer getMinute() {
+    return minute;
   }
 
   public void setMinute(Integer minute) {
@@ -68,7 +69,6 @@ public class DateMatch implements Parcelable {
   private Calendar buildCalendar(Date date) {
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
-
     return cal;
   }
 
@@ -125,16 +125,74 @@ public class DateMatch implements Parcelable {
   }
 
   @Override
-  public int describeContents() {
-    return 0;
+  public String toString() {
+    return "DateMatch{" +
+            "year=" + year +
+            ", month=" + month +
+            ", day=" + day +
+            ", hour=" + hour +
+            ", minute=" + minute +
+            '}';
   }
 
   @Override
-  public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(year);
-    dest.writeInt(month);
-    dest.writeInt(day);
-    dest.writeInt(hour);
-    dest.writeInt(minute);
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DateMatch dateMatch = (DateMatch) o;
+
+    if (year != null ? !year.equals(dateMatch.year) : dateMatch.year != null) return false;
+    if (month != null ? !month.equals(dateMatch.month) : dateMatch.month != null) return false;
+    if (day != null ? !day.equals(dateMatch.day) : dateMatch.day != null) return false;
+    if (hour != null ? !hour.equals(dateMatch.hour) : dateMatch.hour != null) return false;
+    return minute != null ? minute.equals(dateMatch.minute) : dateMatch.minute == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = year != null ? year.hashCode() : 0;
+    result = 31 * result + (month != null ? month.hashCode() : 0);
+    result = 31 * result + (day != null ? day.hashCode() : 0);
+    result = 31 * result + (hour != null ? hour.hashCode() : 0);
+    result = 31 * result + (minute != null ? minute.hashCode() : 0);
+    return result;
+  }
+
+  /**
+   * Transform DateMatch object to CronString
+   *
+   * @return
+   */
+  public String toMatchString() {
+    String matchString = year + separator + month + separator + day + separator + hour + separator + minute;
+    return matchString.replace("null", "*");
+  }
+
+  /**
+   * Create DateMatch object from stored string
+   *
+   * @param matchString
+   * @return
+   */
+  public static DateMatch fromMatchString(String matchString) {
+    DateMatch date = new DateMatch();
+    String[] split = matchString.split(separator);
+    if (split != null && split.length == 5) {
+      date.setYear(getValueFromCronElement(split[0]));
+      date.setMonth(getValueFromCronElement(split[1]));
+      date.setDay(getValueFromCronElement(split[2]));
+      date.setHour(getValueFromCronElement(split[3]));
+      date.setMinute(getValueFromCronElement(split[4]));
+    }
+    return date;
+  }
+
+  public static Integer getValueFromCronElement(String token) {
+    try {
+      return Integer.parseInt(token);
+    } catch (NumberFormatException e) {
+      return null;
+    }
   }
 }

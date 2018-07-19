@@ -60,7 +60,6 @@ public class LocalNotificationSchedule {
       on.setHour(onJson.getInteger("hour"));
       on.setMinute(onJson.getInteger("minute"));
     }
-
   }
 
   public DateMatch getOn() {
