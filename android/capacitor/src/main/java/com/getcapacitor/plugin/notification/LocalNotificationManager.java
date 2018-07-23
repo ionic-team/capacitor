@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -17,8 +16,8 @@ import android.support.v4.app.RemoteInput;
 import android.util.Log;
 
 import com.getcapacitor.Bridge;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
-import com.getcapacitor.plugin.LocalNotifications;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,10 +31,10 @@ import java.util.List;
 public class LocalNotificationManager {
 
   // Action constants
-  public static final String NOTIFICATION_ID_INTENT_KEY = "notificationId";
+  public static final String NOTIFICATION_INTENT_KEY = "notificationId";
   public static final String ACTION_INTENT_KEY = "NotificationUserAction";
   public static final String REMOTE_INPUT_KEY = "NotificationInput";
-
+  public static final String EXTRAS_INTENT_KEY = "NotificationExtras";
 
   public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "default";
 
@@ -47,6 +46,35 @@ public class LocalNotificationManager {
     storage = notificationStorage;
     this.activity = activity;
     this.context = activity;
+  }
+
+  /**
+   * Method extecuted when notification is launched by user from the notification bar.
+   */
+  public JSObject handleNotificationActionPerformed(Intent data, NotificationStorage notificationStorage) {
+    Log.d(Bridge.TAG, "LocalNotification received: " + data.getDataString());
+    int notificationId = data.getIntExtra(LocalNotificationManager.NOTIFICATION_INTENT_KEY, Integer.MIN_VALUE);
+    if (notificationId == Integer.MIN_VALUE) {
+      Log.d("LocalNotification", "Activity started without notification attached");
+      return null;
+    }
+    notificationStorage.deleteNotification(Integer.toString(notificationId));
+    JSObject dataJson = new JSObject();
+    dataJson.put("notificationRequest", data.getExtras());
+    String input = data.getStringExtra(LocalNotificationManager.REMOTE_INPUT_KEY);
+    if (input != null) {
+      dataJson.put("inputValue", input);
+    }
+    String menuAction = data.getStringExtra(LocalNotificationManager.ACTION_INTENT_KEY);
+    dataJson.put("actionId", menuAction);
+    LocalNotification notification = new LocalNotification();
+    notification.setId(notificationId);
+    String extraJson = data.getStringExtra(LocalNotificationManager.EXTRAS_INTENT_KEY);
+    if (extraJson != null) {
+      notification.setExtraFromString(extraJson);
+    }
+    dataJson.put("notificationRequest", notification);
+    return dataJson;
   }
 
   /**
@@ -135,10 +163,20 @@ public class LocalNotificationManager {
   private void createActionIntents(LocalNotification localNotification, NotificationCompat.Builder mBuilder) {
     // Open intent
     Intent intent = new Intent(context, activity.getClass());
-    intent.setAction(LocalNotifications.OPEN_NOTIFICATION_ACTION);
+    intent.setAction(Intent.ACTION_MAIN);
+    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    JSONObject extra = localNotification.getExtra();
+    intent.putExtra(NOTIFICATION_INTENT_KEY, localNotification.getId());
+    intent.putExtra(ACTION_INTENT_KEY, "tap");
+    if (extra != null) {
+      intent.putExtra(EXTRAS_INTENT_KEY, extra.toString());
+    }
+
     PendingIntent pendingIntent = PendingIntent.getActivity(context, localNotification.getId(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
     mBuilder.setContentIntent(pendingIntent);
 
+    // Build action types
     String actionTypeId = localNotification.getActionTypeId();
     if (actionTypeId != null) {
       NotificationAction[] actionGroup = storage.getActionGroup(actionTypeId);
@@ -147,7 +185,8 @@ public class LocalNotificationManager {
         // TODO Add custom icons to actions
         // TODO build separate pending intents for actions
         NotificationCompat.Action.Builder actionBuilder = new NotificationCompat.Action.Builder(0, notificationAction.getTitle(), pendingIntent);
-        intent.putExtra(ACTION_INTENT_KEY, notificationAction.getId());
+        Intent actionIntent = new Intent(intent);
+        actionIntent.putExtra(ACTION_INTENT_KEY, notificationAction.getId());
         if (notificationAction.isInput()) {
           RemoteInput remoteInput = new RemoteInput.Builder(REMOTE_INPUT_KEY)
                   .setLabel(notificationAction.getTitle())
@@ -158,18 +197,11 @@ public class LocalNotificationManager {
       }
     }
 
-    JSONObject extra = localNotification.getExtra();
-    if (extra != null) {
-      Bundle extras = new Bundle();
-      extras.putString("data", extra.toString());
-      extras.putInt(NOTIFICATION_ID_INTENT_KEY, localNotification.getId());
-      mBuilder.addExtras(extras);
-      intent.putExtras(extras);
-    }
-
     // Dismiss intent
-    Intent dissmissIntent = new Intent(context, activity.getClass());
-
+    Intent dissmissIntent = new Intent(context, NotificationDismissReceiver.class);
+    dissmissIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    dissmissIntent.putExtra(NOTIFICATION_INTENT_KEY, localNotification.getId());
+    dissmissIntent.putExtra(ACTION_INTENT_KEY, "dismiss");
     PendingIntent deleteIntent = PendingIntent.getBroadcast(
             context, localNotification.getId(), dissmissIntent, 0);
     mBuilder.setDeleteIntent(deleteIntent);
@@ -185,7 +217,7 @@ public class LocalNotificationManager {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     LocalNotificationSchedule schedule = request.getSchedule();
     Intent notificationIntent = new Intent(context, TimedNotificationPublisher.class);
-    notificationIntent.putExtra(NOTIFICATION_ID_INTENT_KEY, request.getId());
+    notificationIntent.putExtra(NOTIFICATION_INTENT_KEY, request.getId());
     notificationIntent.putExtra(TimedNotificationPublisher.NOTIFICATION_KEY, notification);
     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
