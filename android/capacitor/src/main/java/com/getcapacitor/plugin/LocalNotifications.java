@@ -31,7 +31,6 @@ import java.util.Map;
 public class LocalNotifications extends Plugin {
 
   // FIXME WORKAROUND Action that is being used to determine if activity was launched from notification
-  public static final String OPEN_NOTIFICATION_ACTION = "OpenNotification";
 
   private LocalNotificationManager manager;
   private NotificationStorage notificationStorage;
@@ -45,26 +44,19 @@ public class LocalNotifications extends Plugin {
     notificationStorage = new NotificationStorage(getContext());
     manager = new LocalNotificationManager(notificationStorage, getActivity());
     manager.createNotificationChannel();
+  }
 
-    // FIXME workaround for handleOnActivityResult not being called on start
-    if (getActivity().getIntent().getAction() == OPEN_NOTIFICATION_ACTION) {
-      handleOnActivityResult(0, 0, getActivity().getIntent());
-    }
+  @Override
+  protected void handleOnNewIntent(Intent data) {
+    super.handleOnNewIntent(data);
+    JSObject dataJson = manager.handleNotificationActionPerformed(data, notificationStorage);
+    notifyListeners("localNotificationActionPerformed", dataJson, true);
   }
 
   @Override
   protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
     super.handleOnActivityResult(requestCode, resultCode, data);
-    Log.d(Bridge.TAG, "LocalNotification received: " + data.getDataString());
-    // FIXME verify what JS expects
-    JSObject dataJson = new JSObject();
-    dataJson.put("extras", data.getExtras());
-    int notificationId = data.getIntExtra(LocalNotificationManager.NOTIFICATION_ID_INTENT_KEY, 0);
-    String menuAction = data.getStringExtra(LocalNotificationManager.ACTION_INTENT_KEY);
-    dataJson.put("id", notificationId);
-    dataJson.put("action", menuAction);
-    notificationStorage.deleteNotification(Integer.toString(notificationId));
-    notifyListeners("localNotificationReceived", dataJson, true);
+    this.handleOnNewIntent(data);
   }
 
   /**

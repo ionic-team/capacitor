@@ -2,6 +2,7 @@ package com.getcapacitor.plugin.notification;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -236,4 +237,12 @@ public class LocalNotification {
   }
 
 
+  public void setExtraFromString(String extraFromString) {
+    try {
+      JSONObject jsonObject = new JSONObject(extraFromString);
+      this.extra = JSObject.fromJSONObject(jsonObject);
+    } catch (JSONException e) {
+      Log.e("LNParser", "Cannot rebuild extra data", e);
+    }
+  }
 }
