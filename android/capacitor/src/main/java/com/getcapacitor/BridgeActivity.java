@@ -23,6 +23,7 @@ import java.util.List;
 
 public class BridgeActivity extends AppCompatActivity {
   protected Bridge bridge;
+  private WebView webView;
   public CordovaInterfaceImpl cordovaInterface;
   private ArrayList<PluginEntry> pluginEntries;
   PluginManager pluginManager;
@@ -60,7 +61,7 @@ public class BridgeActivity extends AppCompatActivity {
   protected void load(Bundle savedInstanceState) {
     Log.d(Bridge.TAG, "Starting BridgeActivity");
 
-    WebView webView = findViewById(R.id.webview);
+    webView = findViewById(R.id.webview);
     cordovaInterface = new CordovaInterfaceImpl(this);
     if (savedInstanceState != null) {
       cordovaInterface.restoreInstanceState(savedInstanceState);
@@ -162,6 +163,15 @@ public class BridgeActivity extends AppCompatActivity {
   public void onDestroy() {
     super.onDestroy();
     Log.d(Bridge.TAG, "App destroyed");
+  }
+
+  @Override
+  public void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    if (webView != null) {
+      webView.removeAllViews();
+      webView.destroy();
+    }
   }
 
   @Override
