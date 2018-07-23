@@ -13,5 +13,6 @@
 
         <service android:name="com.getcapacitor.plugin.background.BackgroundTaskService" android:exported="false" />
         <receiver android:name="com.getcapacitor.plugin.notification.TimedNotificationPublisher" />
+        <receiver android:name="com.getcapacitor.plugin.notification.NotificationDismissReceiver" />
     </application>
 </manifest>
