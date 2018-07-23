@@ -30,13 +30,13 @@ const position = await Plugins.Geolocation.getCurrentPosition();
 ### Without a Build System
 
 To use Capacitor core in a web app that is not using a build system or bundler/module loader,
-you must set `bundleWebRuntime` to `true` in your `capacitor.config.json`, tell capacitor to
+you must set `bundledWebRuntime` to `true` in your `capacitor.config.json`, tell capacitor to
 copy the specified version of Capacitor Core into your project,
 and then import `capacitor.js` into your `index.html`:
 
 ```json
 {
-  "bundleWebRuntime": true
+  "bundledWebRuntime": true
 }
 ```
 
