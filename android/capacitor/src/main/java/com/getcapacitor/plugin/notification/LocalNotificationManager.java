@@ -108,12 +108,15 @@ public class LocalNotificationManager {
       return null;
     }
     for (LocalNotification localNotification : localNotifications) {
+      Integer id = localNotification.getId();
       if (localNotification.getId() == null) {
         call.error("LocalNotification missing identifier");
         return null;
       }
+      dismissVisibleNotification(call, id);
+      cancelTimerForNotification(id);
       buildNotification(notificationManager, localNotification, call);
-      ids.put(localNotification.getId());
+      ids.put(id);
     }
     return ids;
   }
