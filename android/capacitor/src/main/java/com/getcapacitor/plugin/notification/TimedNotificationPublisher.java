@@ -27,12 +27,12 @@ public class TimedNotificationPublisher extends BroadcastReceiver {
     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     Notification notification = intent.getParcelableExtra(NOTIFICATION_KEY);
     int id = intent.getIntExtra(LocalNotificationManager.NOTIFICATION_INTENT_KEY, Integer.MIN_VALUE);
-    if(id == Integer.MIN_VALUE){
-    Log.e("LNPublisher", "No valid id supplied");
-  }
+    if (id == Integer.MIN_VALUE) {
+      Log.e("LNPublisher", "No valid id supplied");
+    }
     notificationManager.notify(id, notification);
-  rescheduleNotificationIfNeeded(context, intent, id);
-}
+    rescheduleNotificationIfNeeded(context, intent, id);
+  }
 
   private void rescheduleNotificationIfNeeded(Context context, Intent intent, int id) {
     String dateString = intent.getStringExtra(CRON_KEY);

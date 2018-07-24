@@ -1,7 +1,5 @@
 package com.getcapacitor.plugin.notification;
 
-import android.util.Log;
-
 import com.getcapacitor.JSObject;
 
 import org.json.JSONArray;
