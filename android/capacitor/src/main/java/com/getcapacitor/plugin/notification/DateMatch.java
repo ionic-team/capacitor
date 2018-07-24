@@ -113,7 +113,7 @@ public class DateMatch {
   }
 
   private boolean matchesUnit(Integer unit, Calendar current, Calendar next) {
-    return next.get(unit) < current.get(unit) && this.unit != unit;
+    return next.get(unit) <= current.get(unit) && this.unit != unit;
   }
 
   private Calendar buildNextTriggerTime(Date date) {
