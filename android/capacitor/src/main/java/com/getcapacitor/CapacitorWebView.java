@@ -23,6 +23,10 @@ public class CapacitorWebView extends WebView {
 
   @Override
   public boolean dispatchKeyEvent(KeyEvent event) {
+    if (event.getAction() == KeyEvent.ACTION_MULTIPLE) {
+      evaluateJavascript("document.activeElement.value = document.activeElement.value + '" + event.getCharacters() + "';", null);
+      return false;
+    }
     return super.dispatchKeyEvent(event);
   }
 }
