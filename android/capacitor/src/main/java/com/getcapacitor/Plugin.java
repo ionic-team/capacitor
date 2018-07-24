@@ -39,7 +39,7 @@ public class Plugin {
   // Reference to the PluginHandle wrapper for this Plugin
   protected PluginHandle handle;
 
-  // A way for plugins to quickly appendNotificationIds a call that they will
+  // A way for plugins to quickly save a call that they will
   // need to reference between activity/permissions starts/requests
   protected PluginCall savedLastCall;
 
@@ -114,7 +114,7 @@ public class Plugin {
   }
 
   /**
-   * Called to appendNotificationIds a {@link PluginCall} in order to reference it
+   * Called to save a {@link PluginCall} in order to reference it
    * later, such as in an activity or permissions result handler
    * @param lastCall
    */
@@ -450,7 +450,7 @@ public class Plugin {
 
   /**
    * Called before the app is destroyed to give a plugin the chance to
-   * appendNotificationIds the last call options for a saved plugin. By default, this
+   * save the last call options for a saved plugin. By default, this
    * method saves the full JSON blob of the options call. Since Bundle sizes
    * may be limited, plugins that expect to be called with large data
    * objects (such as a file), should override this method and selectively
@@ -548,7 +548,7 @@ public class Plugin {
   /**
    * Tired of supplying the first argument to Log.d? Well with log() you don't have to!
    * Simply pass in the String like you do in literally every other programming language
-   * and appendNotificationIds your wrists the RSI.
+   * and save your wrists the RSI.
    * @param args
    */
   protected void log(String... args) {

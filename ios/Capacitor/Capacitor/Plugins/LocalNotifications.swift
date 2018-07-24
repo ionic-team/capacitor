@@ -271,9 +271,6 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     case "day":
       let newDate = cal.date(byAdding: .day, value: 1, to: now)!
       return DateInterval(start: now, end: newDate)
-    case "day":
-      let newDate = cal.date(byAdding: .day, value: 1, to: now)!
-      return DateInterval(start: now, end: newDate)
     case "hour":
       let newDate = cal.date(byAdding: .hour, value: 1, to: now)!
       return DateInterval(start: now, end: newDate)

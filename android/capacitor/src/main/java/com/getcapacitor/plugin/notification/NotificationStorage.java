@@ -18,7 +18,7 @@ public class NotificationStorage {
   // Key for private preferences
   private static final String NOTIFICATION_STORE_ID = "NOTIFICATION_STORE";
 
-  // Key used to appendNotificationIds action types
+  // Key used to save action types
   private static final String ACTION_TYPES_ID = "ACTION_TYPE_STORE";
 
   private static final String ID_KEY = "notificationIds";
