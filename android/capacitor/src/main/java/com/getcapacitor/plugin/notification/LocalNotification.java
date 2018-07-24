@@ -32,6 +32,8 @@ public class LocalNotification {
   private List<LocalNotificationAttachment> attachments;
   private LocalNotificationSchedule schedule;
 
+  private String source;
+
   public String getTitle() {
     return title;
   }
@@ -125,6 +127,7 @@ public class LocalNotification {
         return null;
       }
       LocalNotification activeLocalNotification = new LocalNotification();
+      activeLocalNotification.setSource(notification.toString());
       activeLocalNotification.setId(notification.getInteger("id"));
       activeLocalNotification.setBody(notification.getString("body"));
       activeLocalNotification.setActionTypeId(notification.getString("actionTypeId"));
@@ -243,5 +246,13 @@ public class LocalNotification {
     } catch (JSONException e) {
       Log.e("LNParser", "Cannot rebuild extra data", e);
     }
+  }
+
+  public String getSource() {
+    return source;
+  }
+
+  public void setSource(String source) {
+    this.source = source;
   }
 }
