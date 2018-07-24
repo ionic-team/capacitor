@@ -1,9 +1,7 @@
 package com.getcapacitor.plugin;
 
 import android.content.Intent;
-import android.util.Log;
 
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;

@@ -1,8 +1,6 @@
 package com.getcapacitor.plugin.notification;
 
 
-import android.telecom.Call;
-
 import java.util.Calendar;
 import java.util.Date;
 

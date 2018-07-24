@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 
 
-
 /**
  * Receiver called when notification is dismissed by user
  */

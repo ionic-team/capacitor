@@ -1,7 +1,6 @@
 package com.getcapacitor.plugin.notification;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.getcapacitor.JSArray;
