@@ -1,6 +1,8 @@
 package com.getcapacitor.plugin.notification;
 
 
+import android.telecom.Call;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -17,6 +19,10 @@ public class DateMatch {
   private Integer day;
   private Integer hour;
   private Integer minute;
+
+  // Unit used to save the last used unit for a trigger.
+  // One of the Calendar constants values
+  private Integer unit = -1;
 
   public DateMatch() {
   }
@@ -85,23 +91,31 @@ public class DateMatch {
   }
 
   /**
-   * Postpone trigger if first schedule matches the past.
+   * Postpone trigger if first schedule matches the past
    */
   private long postponeTriggerIfNeeded(Calendar current, Calendar next) {
     int currentYear = current.get(Calendar.YEAR);
-    if (next.get(Calendar.YEAR) < currentYear) {
+    if (matchesUnit(Calendar.YEAR, current, next)) {
       next.set(Calendar.YEAR, currentYear + 1);
-      return next.getTimeInMillis();
-    } else if (next.get(Calendar.MONTH) < current.get(Calendar.MONTH)) {
+      this.unit = Calendar.YEAR;
+    } else if (matchesUnit(Calendar.MONTH, current, next)) {
       next.set(Calendar.YEAR, currentYear + 1);
-    } else if (next.get(Calendar.DAY_OF_MONTH) < current.get(Calendar.DAY_OF_MONTH)) {
+      this.unit = Calendar.MONTH;
+    } else if (matchesUnit(Calendar.DAY_OF_MONTH, current, next)) {
       next.set(Calendar.MONTH, current.get(Calendar.MONTH) + 1);
-    } else if (next.get(Calendar.HOUR_OF_DAY) < current.get(Calendar.HOUR_OF_DAY)) {
+      this.unit = Calendar.DAY_OF_MONTH;
+    } else if (matchesUnit(Calendar.HOUR_OF_DAY, current, next)) {
       next.set(Calendar.DAY_OF_MONTH, current.get(Calendar.DAY_OF_MONTH) + 1);
-    } else if (next.get(Calendar.MINUTE) < current.get(Calendar.MINUTE)) {
+      this.unit = Calendar.DAY_OF_MONTH;
+    } else if (matchesUnit(Calendar.MINUTE, current, next)) {
       next.set(Calendar.HOUR_OF_DAY, current.get(Calendar.HOUR_OF_DAY) + 1);
+      this.unit = Calendar.MINUTE;
     }
     return next.getTimeInMillis();
+  }
+
+  private boolean matchesUnit(Integer unit, Calendar current, Calendar next) {
+    return next.get(unit) < current.get(unit) && this.unit != unit;
   }
 
   private Calendar buildNextTriggerTime(Date date) {
@@ -165,7 +179,7 @@ public class DateMatch {
    * @return
    */
   public String toMatchString() {
-    String matchString = year + separator + month + separator + day + separator + hour + separator + minute;
+    String matchString = year + separator + month + separator + day + separator + hour + separator + minute + separator + unit;
     return matchString.replace("null", "*");
   }
 
@@ -178,12 +192,13 @@ public class DateMatch {
   public static DateMatch fromMatchString(String matchString) {
     DateMatch date = new DateMatch();
     String[] split = matchString.split(separator);
-    if (split != null && split.length == 5) {
+    if (split != null && split.length == 6) {
       date.setYear(getValueFromCronElement(split[0]));
       date.setMonth(getValueFromCronElement(split[1]));
       date.setDay(getValueFromCronElement(split[2]));
       date.setHour(getValueFromCronElement(split[3]));
       date.setMinute(getValueFromCronElement(split[4]));
+      date.setUnit(getValueFromCronElement(split[5]));
     }
     return date;
   }
@@ -194,5 +209,13 @@ public class DateMatch {
     } catch (NumberFormatException e) {
       return null;
     }
+  }
+
+  public Integer getUnit() {
+    return unit;
+  }
+
+  public void setUnit(Integer unit) {
+    this.unit = unit;
   }
 }
