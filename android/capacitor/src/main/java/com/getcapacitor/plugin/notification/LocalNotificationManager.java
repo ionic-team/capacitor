@@ -22,6 +22,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.android.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -33,10 +34,10 @@ import java.util.List;
 public class LocalNotificationManager {
 
   // Action constants
-  public static final String NOTIFICATION_INTENT_KEY = "notificationId";
-  public static final String ACTION_INTENT_KEY = "NotificationUserAction";
-  public static final String REMOTE_INPUT_KEY = "NotificationRemoteInput";
-  public static final String EXTRAS_INTENT_KEY = "NotificationExtras";
+  public static final String NOTIFICATION_INTENT_KEY = "LocalNotificationId";
+  public static final String NOTIFICATION_OBJ_INTENT_KEY = "LocalNotficationObject";
+  public static final String ACTION_INTENT_KEY = "LocalNotificationUserAction";
+  public static final String REMOTE_INPUT_KEY = "LocalNotificationRemoteInput";
 
   public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "default";
   private static final String DEFAULT_PRESS_ACTION = "tap";
@@ -63,7 +64,6 @@ public class LocalNotificationManager {
     }
     notificationStorage.deleteNotification(Integer.toString(notificationId));
     JSObject dataJson = new JSObject();
-    dataJson.put("notificationRequest", data.getExtras());
     CharSequence input = data.getCharSequenceExtra(LocalNotificationManager.REMOTE_INPUT_KEY);
     if (input != null) {
       dataJson.put("inputValue", input.toString());
@@ -73,13 +73,15 @@ public class LocalNotificationManager {
       dismissVisibleNotification(notificationId);
     }
     dataJson.put("actionId", menuAction);
-    LocalNotification notification = new LocalNotification();
-    notification.setId(notificationId);
-    String extraJson = data.getStringExtra(LocalNotificationManager.EXTRAS_INTENT_KEY);
-    if (extraJson != null) {
-      notification.setExtraFromString(extraJson);
+    JSONObject request = null;
+    try {
+      String notificationJsonString = data.getStringExtra(LocalNotificationManager.NOTIFICATION_OBJ_INTENT_KEY);
+      if (notificationJsonString != null) {
+        request = new JSObject(notificationJsonString);
+      }
+    } catch (JSONException e) {
     }
-    dataJson.put("notificationRequest", notification);
+    dataJson.put("notificationRequest", request);
     return dataJson;
   }
 
@@ -215,9 +217,7 @@ public class LocalNotificationManager {
     JSONObject extra = localNotification.getExtra();
     intent.putExtra(NOTIFICATION_INTENT_KEY, localNotification.getId());
     intent.putExtra(ACTION_INTENT_KEY, action);
-    if (extra != null) {
-      intent.putExtra(EXTRAS_INTENT_KEY, extra.toString());
-    }
+    intent.putExtra(NOTIFICATION_OBJ_INTENT_KEY, localNotification.getSource());
     return intent;
   }
 
