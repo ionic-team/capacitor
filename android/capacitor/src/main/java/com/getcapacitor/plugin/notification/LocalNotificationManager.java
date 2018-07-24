@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -64,8 +65,10 @@ public class LocalNotificationManager {
     }
     notificationStorage.deleteNotification(Integer.toString(notificationId));
     JSObject dataJson = new JSObject();
-    CharSequence input = data.getCharSequenceExtra(LocalNotificationManager.REMOTE_INPUT_KEY);
-    if (input != null) {
+
+    Bundle results = RemoteInput.getResultsFromIntent(data);
+    if (results != null) {
+      CharSequence input = results.getCharSequence(LocalNotificationManager.REMOTE_INPUT_KEY);
       dataJson.put("inputValue", input.toString());
     }
     String menuAction = data.getStringExtra(LocalNotificationManager.ACTION_INTENT_KEY);
