@@ -98,6 +98,17 @@ public class LocalNotificationSchedule {
     return Boolean.TRUE.equals(this.repeats);
   }
 
+  public boolean isRemovable() {
+    if (every == null && on == null) {
+      if (at != null) {
+        return !isRepeating();
+      } else {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Get constant long value representing specific interval of time (weeks, days etc.)
    */

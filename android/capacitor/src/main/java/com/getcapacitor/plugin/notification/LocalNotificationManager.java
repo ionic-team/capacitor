@@ -38,6 +38,7 @@ public class LocalNotificationManager {
   public static final String NOTIFICATION_INTENT_KEY = "LocalNotificationId";
   public static final String NOTIFICATION_OBJ_INTENT_KEY = "LocalNotficationObject";
   public static final String ACTION_INTENT_KEY = "LocalNotificationUserAction";
+  public static final String NOTIFICATION_IS_REMOVABLE_KEY = "LocalNotificationRepeating";
   public static final String REMOTE_INPUT_KEY = "LocalNotificationRemoteInput";
 
   public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "default";
@@ -63,7 +64,10 @@ public class LocalNotificationManager {
       Log.d("LocalNotification", "Activity started without notification attached");
       return null;
     }
-    notificationStorage.deleteNotification(Integer.toString(notificationId));
+    boolean isRemovable = data.getBooleanExtra(LocalNotificationManager.NOTIFICATION_IS_REMOVABLE_KEY, true);
+    if (isRemovable) {
+      notificationStorage.deleteNotification(Integer.toString(notificationId));
+    }
     JSObject dataJson = new JSObject();
 
     Bundle results = RemoteInput.getResultsFromIntent(data);
@@ -217,10 +221,11 @@ public class LocalNotificationManager {
     intent.setAction(Intent.ACTION_MAIN);
     intent.addCategory(Intent.CATEGORY_LAUNCHER);
     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    JSONObject extra = localNotification.getExtra();
     intent.putExtra(NOTIFICATION_INTENT_KEY, localNotification.getId());
     intent.putExtra(ACTION_INTENT_KEY, action);
     intent.putExtra(NOTIFICATION_OBJ_INTENT_KEY, localNotification.getSource());
+    LocalNotificationSchedule schedule = localNotification.getSchedule();
+    intent.putExtra(NOTIFICATION_IS_REMOVABLE_KEY, schedule == null || schedule.isRemovable());
     return intent;
   }
 

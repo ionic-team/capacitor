@@ -19,7 +19,11 @@ public class NotificationDismissReceiver extends BroadcastReceiver {
       Log.e("LNotificationDismiss", "Invalid notification dismiss operation");
       return;
     }
-    NotificationStorage notificationStorage = new NotificationStorage(context);
-    notificationStorage.deleteNotification(Integer.toString(intExtra));
+    boolean isRemovable = intent.getBooleanExtra(LocalNotificationManager.NOTIFICATION_IS_REMOVABLE_KEY, true);
+    if (isRemovable) {
+      NotificationStorage notificationStorage = new NotificationStorage(context);
+      notificationStorage.deleteNotification(Integer.toString(intExtra));
+    }
+
   }
 }
