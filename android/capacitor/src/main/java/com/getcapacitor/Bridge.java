@@ -29,6 +29,7 @@ import com.getcapacitor.plugin.Filesystem;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.Haptics;
 import com.getcapacitor.plugin.Keyboard;
+import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.Network;
 import com.getcapacitor.plugin.Photos;
@@ -44,10 +45,6 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
@@ -332,6 +329,7 @@ public class Bridge {
     this.registerPlugin(Clipboard.class);
     this.registerPlugin(Console.class);
     this.registerPlugin(Device.class);
+    this.registerPlugin(LocalNotifications.class);
     this.registerPlugin(Filesystem.class);
     this.registerPlugin(Geolocation.class);
     this.registerPlugin(Haptics.class);

@@ -32,7 +32,7 @@ public class JSArray extends JSONArray {
   }
 
   /**
-   * Create a new JSArray without throwing a fit
+   * Create a new JSArray without throwing a error
    */
   public static JSArray from(Object array) {
     try {
