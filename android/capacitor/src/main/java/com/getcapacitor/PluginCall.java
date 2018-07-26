@@ -41,7 +41,7 @@ public class PluginCall {
   }
 
   public void successCallback(PluginResult successResult) {
-    if(this.callbackId == "-1") {
+    if (CALLBACK_ID_DANGLING.equals(this.callbackId)) {
       // don't send back response if the callbackId was "-1"
       return;
     }
