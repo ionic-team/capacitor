@@ -20,9 +20,6 @@ import java.util.List;
  */
 public class LocalNotification {
 
-  // Default icon path
-  private static final String DEFAULT_ICON = "res://icon";
-
   private String title;
   private String body;
   private Integer id;
