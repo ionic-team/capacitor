@@ -19,7 +19,7 @@ public class Toast extends Plugin {
     String durationType = call.getString("durationType", "short");
 
     int duration = android.widget.Toast.LENGTH_SHORT;
-    if(durationType == "long") {
+    if("long".equals(durationType)) {
       duration = android.widget.Toast.LENGTH_LONG;
     }
 

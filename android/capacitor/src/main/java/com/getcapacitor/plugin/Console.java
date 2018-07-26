@@ -11,22 +11,21 @@ import com.getcapacitor.PluginMethod;
 @NativePlugin()
 public class Console extends Plugin {
 
-  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
+  private static final String TAG_CONSOLE = "console";
+
+  @PluginMethod(returnType = PluginMethod.RETURN_NONE)
   public void log(PluginCall call) {
-    String level = call.getString("level", "log").toLowerCase();
+    String level = call.getString("level");
     String message = call.getString("message", "");
 
-    if (level == "error'") {
-      Log.e("console", message);
-
-    } else if (level == "warn'") {
-      Log.w("console", message);
-
-    } else if (level == "debug'") {
-      Log.d("console", message);
-
+    if ("error".equalsIgnoreCase(level)) {
+      Log.e(TAG_CONSOLE, message);
+    } else if ("warn".equalsIgnoreCase(level)) {
+      Log.w(TAG_CONSOLE, message);
+    } else if ("debug".equalsIgnoreCase(level)) {
+      Log.d(TAG_CONSOLE, message);
     } else {
-      Log.i("console", message);
+      Log.i(TAG_CONSOLE, message);
     }
   }
 
