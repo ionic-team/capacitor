@@ -5,4 +5,8 @@
     android:viewportHeight="108"
     android:viewportWidth="108">
 
+    <path
+        android:width="1dp"
+        android:color="@android:color/transparent" />
+
 </vector>
