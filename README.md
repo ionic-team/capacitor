@@ -1,4 +1,4 @@
-*Capacitor is currently in alpha and is not production ready. We'd love your help testing!*
+*Capacitor is currently in beta and is not production ready. We'd love your help testing!*
 
 # ⚡️ Create cross-platform apps with JavaScript and the Web ⚡️
 
