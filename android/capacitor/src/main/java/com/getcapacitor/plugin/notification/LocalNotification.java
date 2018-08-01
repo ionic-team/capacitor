@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.LogUtils;
 import com.getcapacitor.PluginCall;
 
 import org.json.JSONException;
@@ -241,7 +242,7 @@ public class LocalNotification {
       JSONObject jsonObject = new JSONObject(extraFromString);
       this.extra = JSObject.fromJSONObject(jsonObject);
     } catch (JSONException e) {
-      Log.e("LNParser", "Cannot rebuild extra data", e);
+      Log.e(LogUtils.getPluginTag("LN"), "Cannot rebuild extra data", e);
     }
   }
 

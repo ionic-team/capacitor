@@ -12,11 +12,9 @@ import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
-
+import com.getcapacitor.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -95,7 +93,7 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         tv.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.d(Bridge.TAG, "CliCKED: " + optionIndex);
+            Log.d(LogUtils.getCoreTag(), "CliCKED: " + optionIndex);
 
             if (listener != null) {
               listener.onSelected(optionIndex);
@@ -118,7 +116,7 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
       }
     } catch (JSONException ex) {
-      Log.e(Bridge.TAG, "JSON error processing an option for showActions", ex);
+      Log.e(LogUtils.getCoreTag(), "JSON error processing an option for showActions", ex);
     }
   }
 }
