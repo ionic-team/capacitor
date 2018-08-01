@@ -175,7 +175,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
     
     if let scheme = navUrl.scheme {
-      let validSchemes = ["tel", "mailto", "facetime", "sms", "maps", "itms-services", "http", "https"]
+      let validSchemes = ["tel", "mailto", "facetime", "sms", "maps", "itms-services"]
       if validSchemes.contains(scheme) && navUrl.absoluteString.range(of: hostname!) == nil  {
         UIApplication.shared.open(navUrl, options: [:], completionHandler: nil)
         decisionHandler(.cancel)
