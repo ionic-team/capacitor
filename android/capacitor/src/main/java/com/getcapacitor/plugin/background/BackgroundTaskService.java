@@ -4,8 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
+import com.getcapacitor.LogUtils;
 
 public class BackgroundTaskService extends IntentService {
   public BackgroundTaskService() {
@@ -16,7 +15,7 @@ public class BackgroundTaskService extends IntentService {
   protected void onHandleIntent(Intent intent) {
     // Gets data from the incoming Intent
     String taskId = intent.getStringExtra("taskId");
-    Log.d(Bridge.TAG, "Doing background task: " + taskId);
+    Log.d(LogUtils.getCoreTag(), "Doing background task: " + taskId);
 
     Intent localIntent = new Intent(BackgroundTask.TASK_BROADCAST_ACTION)
         .putExtra("taskId", taskId);

@@ -74,7 +74,7 @@ public class PluginCall {
     try {
       errorResult.put("message", msg);
     } catch (Exception jsonEx) {
-      Log.e(Bridge.TAG, jsonEx.toString());
+      Log.e(LogUtils.getPluginTag(), jsonEx.toString());
     }
 
     this.msgHandler.sendResponseMessage(this, null, errorResult);
@@ -90,7 +90,7 @@ public class PluginCall {
     try {
       errorResult.put("message", msg);
     } catch (Exception jsonEx) {
-      Log.e(Bridge.TAG, jsonEx.toString());
+      Log.e(LogUtils.getPluginTag(), jsonEx.toString());
     }
 
     this.msgHandler.sendResponseMessage(this, null, errorResult);

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.StrictMode;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import com.getcapacitor.LogUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -87,7 +88,7 @@ public final class AssetUtil {
         File file      = new File(absPath);
 
         if (!file.exists()) {
-            Log.e("Asset", "File not found: " + file.getAbsolutePath());
+            Log.e(LogUtils.getCoreTag(), "File not found: " + file.getAbsolutePath());
             return Uri.EMPTY;
         }
 
@@ -116,8 +117,7 @@ public final class AssetUtil {
             FileOutputStream out = new FileOutputStream(file);
             copyFile(in, out);
         } catch (Exception e) {
-            Log.e("Asset", "File not found: assets/" + resPath);
-            e.printStackTrace();
+            Log.e(LogUtils.getCoreTag(), "File not found: assets/" + resPath);
             return Uri.EMPTY;
         }
 
@@ -137,7 +137,7 @@ public final class AssetUtil {
         int resId      = getResId(resPath);
 
         if (resId == 0) {
-            Log.e("Asset", "File not found: " + resPath);
+            Log.e(LogUtils.getCoreTag(), "File not found: " + resPath);
             return Uri.EMPTY;
         }
 
@@ -181,14 +181,11 @@ public final class AssetUtil {
             copyFile(in, out);
             return getUriFromFile(file);
         } catch (MalformedURLException e) {
-            Log.e("Asset", "Incorrect URL");
-            e.printStackTrace();
+            Log.e("Asset", "Incorrect URL", e);
         } catch (FileNotFoundException e) {
-            Log.e("Asset", "Failed to create new File from HTTP Content");
-            e.printStackTrace();
+            Log.e("Asset", "Failed to create new File from HTTP Content", e);
         } catch (IOException e) {
-            Log.e("Asset", "No Input can be created from http Stream");
-            e.printStackTrace();
+            Log.e("Asset", "No Input can be created from http Stream", e);
         }
 
         return Uri.EMPTY;
@@ -211,7 +208,7 @@ public final class AssetUtil {
             out.flush();
             out.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(LogUtils.getCoreTag(), "Error copiing", e);
         }
     }
 
@@ -335,7 +332,7 @@ public final class AssetUtil {
             String authority = context.getPackageName() + ".provider";
             return FileProvider.getUriForFile(context, authority, file);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            Log.e(LogUtils.getCoreTag(), "File not supported by provider", e);
             return Uri.EMPTY;
         }
     }

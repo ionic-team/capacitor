@@ -54,7 +54,7 @@ class JSInjector {
       InputStream jsInputStream = new ByteArrayInputStream(js.getBytes(StandardCharsets.UTF_8.name()));
       return new SequenceInputStream(jsInputStream, responseStream);
     } catch(UnsupportedEncodingException ex) {
-      Log.e(Bridge.TAG, "Unable to get encoding! Serious internal error, please file an issue", ex);
+      Log.e(LogUtils.getCoreTag(), "Unable to get encoding! Serious internal error, please file an issue", ex);
     }
     return null;
   }

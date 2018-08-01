@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
@@ -69,13 +68,13 @@ import java.util.concurrent.ThreadLocalRandom;
  *   BridgeActivity.java</a>
  */
 public class Bridge {
+
+  private static final String LOG_TAG = LogUtils.getCoreTag();
   private static final String PREFS_NAME = "CapacitorSettings";
   private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
   private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
   private static final String BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY = "capacitorLastPluginCallOptions";
   private static final String BUNDLE_PLUGIN_CALL_BUNDLE_KEY = "capacitorLastPluginCallBundle";
-
-  public static final String TAG = "Capacitor";
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
@@ -177,7 +176,7 @@ public class Bridge {
 
     final String appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
 
-    log("Loading app at " + appUrl);
+    Log.d(LOG_TAG, "Loading app at " + appUrl);
 
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
@@ -241,7 +240,7 @@ public class Bridge {
   public void handleAppUrlLoadError(Exception ex) {
     if (ex instanceof SocketTimeoutException) {
       Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + localServer.getAuthority() + "?");
-      Log.e(TAG, "Unable to load app. Ensure the server is running at " + localServer.getAuthority() + ", or modify the " +
+      Log.e(LOG_TAG, "Unable to load app. Ensure the server is running at " + localServer.getAuthority() + ", or modify the " +
           "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
     }
   }
@@ -283,16 +282,16 @@ public class Bridge {
 
   /*
   public void registerPlugins() {
-    Log.d(TAG, "Finding plugins");
+    Log.d(LOG_TAG, "Finding plugins");
     try {
       Enumeration<URL> roots = getClass().getClassLoader().getResources("");
       while (roots.hasMoreElements()) {
         URL url = roots.nextElement();
-        Log.d(TAG, "CLASSAPTH ROOT: " + url.getPath());
+        Log.d(LOG_TAG, "CLASSAPTH ROOT: " + url.getPath());
         //File root = new File(url.getPath());
       }
     } catch(Exception ex) {
-      Log.e(TAG, "Unable to query for plugin classes", ex);
+      Log.e(LOG_TAG, "Unable to query for plugin classes", ex);
     }
   }
   */
@@ -366,7 +365,7 @@ public class Bridge {
     NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
 
     if (pluginAnnotation == null) {
-      Log.e(Bridge.TAG, "NativePlugin doesn't have the @NativePlugin annotation. Please add it");
+      Log.e(LOG_TAG, "NativePlugin doesn't have the @NativePlugin annotation. Please add it");
       return;
     }
 
@@ -377,16 +376,16 @@ public class Bridge {
       pluginId = pluginAnnotation.name();
     }
 
-    Log.d(Bridge.TAG, "Registering plugin: " + pluginId);
+    Log.d(LOG_TAG, "Registering plugin: " + pluginId);
 
     try {
       this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
     } catch (InvalidPluginException ex) {
-      Log.e(TAG, "NativePlugin " + pluginClass.getName() +
+      Log.e(LOG_TAG, "NativePlugin " + pluginClass.getName() +
           " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
           " the class extends Plugin");
     } catch (PluginLoadException ex) {
-      Log.e(TAG, "NativePlugin " + pluginClass.getName() + " failed to load", ex);
+      Log.e(LOG_TAG, "NativePlugin " + pluginClass.getName() + " failed to load", ex);
     }
   }
 
@@ -433,12 +432,12 @@ public class Bridge {
       final PluginHandle plugin = this.getPlugin(pluginId);
 
       if (plugin == null) {
-        Log.e(Bridge.TAG, "unable to find plugin : " + pluginId);
+        Log.e(LOG_TAG, "unable to find plugin : " + pluginId);
         call.errorCallback("unable to find plugin : " + pluginId);
         return;
       }
 
-      Log.d(Bridge.TAG, "callback: " + call.getCallbackId() +
+      Log.v(LOG_TAG, "callback: " + call.getCallbackId() +
           ", pluginId: " + plugin.getId() +
           ", methodName: " + methodName + ", methodData: " + call.getData().toString());
 
@@ -452,9 +451,9 @@ public class Bridge {
               saveCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
-            Log.e(Bridge.TAG, "Unable to execute plugin method", ex);
+            Log.e(LOG_TAG, "Unable to execute plugin method", ex);
           } catch(Exception ex) {
-            Log.e(Bridge.TAG, "Serious error executing plugin", ex);
+            Log.e(LOG_TAG, "Serious error executing plugin", ex);
           }
         }
       };
@@ -465,19 +464,6 @@ public class Bridge {
       Log.e("callPluginMethod", "error : " + ex);
       call.errorCallback(ex.toString());
     }
-  }
-
-  public void error(String... args) {
-    Log.e(TAG, "⚡️ " + TextUtils.join(" ", args));
-  }
-
-  public void fatalError(String... args) {
-    Log.e(TAG, "⚡️ FATAL ERROR ⚡️");
-    error(args);
-  }
-
-  public void log(String... args) {
-    Log.d(TAG, TextUtils.join(" ", args));
   }
 
   /**
@@ -587,7 +573,7 @@ public class Bridge {
 
       return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS);
     } catch(JSExportException ex) {
-      Log.e(TAG, "Unable to export Capacitor JS. App will not function!", ex);
+      Log.e(LOG_TAG, "Unable to export Capacitor JS. App will not function!", ex);
     }
     return null;
   }
@@ -618,7 +604,7 @@ public class Bridge {
               lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
 
         } catch (JSONException ex) {
-          Log.e(TAG, "Unable to restore plugin call, unable to parse persisted JSON object", ex);
+          Log.e(LOG_TAG, "Unable to restore plugin call, unable to parse persisted JSON object", ex);
         }
       }
 
@@ -632,7 +618,7 @@ public class Bridge {
   }
 
   public void saveInstanceState(Bundle outState) {
-    Log.d(TAG, "Saving instance state!");
+    Log.d(LOG_TAG, "Saving instance state!");
 
     // If there was a last PluginCall for a started activity, we need to
     // persist it so we can load it again in case our app gets terminated
@@ -650,7 +636,7 @@ public class Bridge {
   }
 
   public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
-    Log.d(TAG, "Starting activity for result");
+    Log.d(LOG_TAG, "Starting activity for result");
 
     pluginCallForLastActivity = call;
 
@@ -669,11 +655,11 @@ public class Bridge {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if (plugin == null) {
-      Log.d(Bridge.TAG, "Unable to find a Capacitor plugin to handle requestCode, try with Cordova plugins " + requestCode);
+      Log.d(LOG_TAG, "Unable to find a Capacitor plugin to handle requestCode, try with Cordova plugins " + requestCode);
       try {
         cordovaInterface.onRequestPermissionResult(requestCode, permissions, grantResults);
       } catch (JSONException e) {
-        Log.d(Bridge.TAG, "Error on Cordova plugin permissions request " + e.getMessage());
+        Log.d(LOG_TAG, "Error on Cordova plugin permissions request " + e.getMessage());
       }
       return;
     }
@@ -692,7 +678,7 @@ public class Bridge {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if (plugin == null || plugin.getInstance() == null) {
-      Log.d(Bridge.TAG, "Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
+      Log.d(LOG_TAG, "Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
       cordovaInterface.onActivityResult(requestCode, resultCode, data);
       return;
     }

@@ -18,7 +18,6 @@ import java.util.List;
 
 
 public class AndroidProtocolHandler {
-  private static final String TAG = "AndroidProtocolHandler";
 
   private Context context;
 
@@ -62,19 +61,12 @@ public class AndroidProtocolHandler {
       if (valueType == TypedValue.TYPE_STRING) {
         return context.getResources().openRawResource(fieldId);
       } else {
-        Log.e(TAG, "Asset not of type string: " + uri);
-        return null;
+        Log.e(LogUtils.getCoreTag(), "Asset not of type string: " + uri);
       }
-    } catch (ClassNotFoundException e) {
-      Log.e(TAG, "Unable to open resource URL: " + uri, e);
-      return null;
-    } catch (NoSuchFieldException e) {
-      Log.e(TAG, "Unable to open resource URL: " + uri, e);
-      return null;
-    } catch (IllegalAccessException e) {
-      Log.e(TAG, "Unable to open resource URL: " + uri, e);
-      return null;
+    } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+      Log.e(LogUtils.getCoreTag(), "Unable to open resource URL: " + uri, e);
     }
+    return null;
   }
 
   private static int getFieldId(Context context, String assetType, String assetName)

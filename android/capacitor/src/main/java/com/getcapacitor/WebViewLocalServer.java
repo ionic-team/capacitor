@@ -186,12 +186,12 @@ public class WebViewLocalServer {
     }
     Uri uri = Uri.parse(url);
     if (uri == null) {
-      Log.e(TAG, "Malformed URL: " + url);
+      Log.e(LogUtils.getCoreTag(), "Malformed URL: " + url);
       return null;
     }
     String path = uri.getPath();
     if (path == null || path.length() == 0) {
-      Log.e(TAG, "URL does not have a path: " + url);
+      Log.e(LogUtils.getCoreTag(), "URL does not have a path: " + url);
       return null;
     }
     return uri;
@@ -216,7 +216,7 @@ public class WebViewLocalServer {
     }
 
     if (this.isLocal) {
-      Log.d("SERVER", "Handling local request: " + request.getUrl().toString());
+      Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
       return handleProxyRequest(request, handler);
@@ -236,7 +236,7 @@ public class WebViewLocalServer {
       try {
         stream = protocolHandler.openAsset("public/index.html", "");
       } catch (IOException e) {
-        Log.e(TAG, "Unable to open index.html", e);
+        Log.e(LogUtils.getCoreTag(), "Unable to open index.html", e);
         return null;
       }
 
@@ -292,7 +292,7 @@ public class WebViewLocalServer {
       }
       return out.toString();
     } catch (Exception e) {
-      Log.e(Bridge.TAG, "Unable to process HTML asset file. This is a fatal error", e);
+      Log.e(LogUtils.getCoreTag(), "Unable to process HTML asset file. This is a fatal error", e);
     }
 
     return "";
@@ -358,7 +358,7 @@ public class WebViewLocalServer {
     try {
       mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
       if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
-        Log.d(Bridge.TAG, "We shouldn't be here");
+        Log.d(LogUtils.getCoreTag(), "We shouldn't be here");
       }
       if (mimeType == null) {
         if (path.endsWith(".js")) {
@@ -369,7 +369,7 @@ public class WebViewLocalServer {
         }
       }
     } catch (Exception ex) {
-      Log.e(TAG, "Unable to get mime type" + path, ex);
+      Log.e(LogUtils.getCoreTag(), "Unable to get mime type" + path, ex);
     }
     return mimeType;
   }
@@ -464,7 +464,7 @@ public class WebViewLocalServer {
         try {
           stream = protocolHandler.openAsset(path, assetPath);
         } catch (IOException e) {
-          Log.e(TAG, "Unable to open asset URL: " + url);
+          Log.e(LogUtils.getCoreTag(), "Unable to open asset URL: " + url);
           return null;
         }
 
@@ -548,7 +548,7 @@ public class WebViewLocalServer {
         try {
           mimeType = URLConnection.guessContentTypeFromStream(stream);
         } catch (Exception ex) {
-          Log.e(TAG, "Unable to get mime type" + url);
+          Log.e(LogUtils.getPluginTag("LN"), "Unable to get mime type" + url);
         }
 
         return stream;
