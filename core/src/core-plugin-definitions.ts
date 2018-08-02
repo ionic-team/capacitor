@@ -1232,12 +1232,27 @@ export interface PushNotificationDeliveredList {
   notifications: PushNotification[];
 }
 
+export interface PushNotificationChannel {
+  id: string;
+  name: string;
+  description: string;
+  importance: 1 | 2 | 3 | 4 | 5;
+  visibility?: -1 | 0 | 1 ;
+}
+
+export interface PushNotificationChannelList {
+  channels: PushNotificationChannel[];
+}
+
 export interface PushNotificationsPlugin extends Plugin {
   register(): Promise<void>;
   getDeliveredNotifications(): Promise<void>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;
-  addListener(eventName: 'didRegisterForRemoteNotificationsWithDeviceToken', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
+  createChannel(channel: PushNotificationChannel): Promise<void>;
+  deleteChannel(channel: PushNotificationChannel): Promise<void>;
+  listChannels(): Promise<PushNotificationChannelList>;
+  addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
 }
