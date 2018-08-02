@@ -84,13 +84,13 @@ public class PluginCall {
     PluginResult errorResult = new PluginResult();
 
     if(ex != null) {
-      ex.printStackTrace();
+      Log.e(LogUtils.getPluginTag(), msg, ex);
     }
 
     try {
       errorResult.put("message", msg);
     } catch (Exception jsonEx) {
-      Log.e(LogUtils.getPluginTag(), jsonEx.toString());
+      Log.e(LogUtils.getPluginTag(), jsonEx.getMessage());
     }
 
     this.msgHandler.sendResponseMessage(this, null, errorResult);

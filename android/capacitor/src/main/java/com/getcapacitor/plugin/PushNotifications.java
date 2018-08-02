@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 
 
+import android.util.Log;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -116,8 +117,8 @@ public class PushNotifications extends Plugin {
         channel.put(CHANNEL_DESCRIPTION, notificationChannel.getDescription());
         channel.put(CHANNEL_IMPORTANCE, notificationChannel.getImportance());
         channel.put(CHANNEL_VISIBILITY, notificationChannel.getLockscreenVisibility());
-        System.out.println("visibility " + notificationChannel.getLockscreenVisibility());
-        System.out.println("importance " + notificationChannel.getImportance());
+        Log.d(getLogTag(), "visibility " + notificationChannel.getLockscreenVisibility());
+        Log.d(getLogTag(), "importance " + notificationChannel.getImportance());
         channels.put(channel);
       }
       JSObject result = new JSObject();

@@ -41,7 +41,7 @@ public class MessageHandler {
         String service = postData.getString("service");
         String action = postData.getString("action");
         String actionArgs = postData.getString("actionArgs");
-        Log.v(LogUtils.getPluginTag(), "To native (Cordova): callbackId: " + callbackId + ", service: " + service +
+        Log.v(LogUtils.getPluginTag(), "To native (Cordova plugin): callbackId: " + callbackId + ", service: " + service +
           ", action: " + action + ", actionArgs: " + actionArgs);
         this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
       } else if (type != null && type.equals("js.error")) {
@@ -52,7 +52,7 @@ public class MessageHandler {
         String methodName = postData.getString("methodName");
         JSObject methodData = postData.getJSObject("options", new JSObject());
         if (!pluginId.equals("Console")) {
-          Log.v(LogUtils.getPluginTag(), "To native (Capacitor): callbackId: " + callbackId + ", pluginId: " + pluginId +
+          Log.v(LogUtils.getPluginTag(), "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId +
               ", methodName: " + methodName);
         }
         this.callPluginMethod(callbackId, pluginId, methodName, methodData);
