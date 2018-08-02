@@ -17,19 +17,15 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.SequenceInputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -37,7 +33,6 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Helper class meant to be used with the android.webkit.WebView class to enable hosting assets,
@@ -52,7 +47,6 @@ import java.util.UUID;
  * methods.
  */
 public class WebViewLocalServer {
-  private static String TAG = "WebViewAssetServer";
 
   private final static String httpScheme = "http";
   private final static String httpsScheme = "https";
