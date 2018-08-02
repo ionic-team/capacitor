@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
  * Management interface for accessing values in capacitor.config.json
  */
 public class Config {
-  public static final String CAPACITOR_CONFIG_JSON = "capacitor.config.json";
+
   private JSONObject config = new JSONObject();
 
   private static Config instance;
@@ -32,9 +32,9 @@ public class Config {
   }
 
   private void loadConfig(Activity activity) {
-
-    try (BufferedReader reader =
-           new BufferedReader(new InputStreamReader(activity.getAssets().open(CAPACITOR_CONFIG_JSON)))) {
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new InputStreamReader(activity.getAssets().open("capacitor.config.json")));
 
       // do reading, usually loop until end of file reading
       StringBuilder b = new StringBuilder();
@@ -50,6 +50,13 @@ public class Config {
       Log.e(LogUtils.getCoreTag(), "Unable to load capacitor.config.json. Run npx cap copy first", ex);
     } catch (JSONException ex) {
       Log.e(LogUtils.getCoreTag(), "Unable to parse capacitor.config.json. Make sure it's valid json", ex);
+    } finally {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (IOException e) {
+        }
+      }
     }
   }
 
