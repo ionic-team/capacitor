@@ -199,6 +199,7 @@ export class SiteMenu {
         { title: 'Geolocation', url: '/docs/apis/geolocation' },
         { title: 'Haptics', url: '/docs/apis/haptics' },
         { title: 'Keyboard', url: '/docs/apis/keyboard' },
+        { title: 'Local Notifications', url: '/docs/apis/local-notifications' },
         { title: 'Modals', url: '/docs/apis/modals' },
         { title: 'Motion', url: '/docs/apis/motion' },
         { title: 'Network', url: '/docs/apis/network' },
