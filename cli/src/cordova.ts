@@ -17,6 +17,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
   let pluginModules: Array<string> = [];
   let pluginExports: Array<string> = [];
   plugins.map((p) => {
+    const pluginId = p.xml.$.id;
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
@@ -42,13 +43,13 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
         ]`;
       }
       pluginModules.push(`{
-        "id": "${p.id}.${jsModule.$.name}",
-        "file": "plugins/${p.id}/${jsModule.$.src}",
-        "pluginId": "${p.id}"${clobbersModule}${mergesModule}
+        "id": "${pluginId}.${jsModule.$.name}",
+        "file": "plugins/${pluginId}/${jsModule.$.src}",
+        "pluginId": "${pluginId}"${clobbersModule}${mergesModule}
       }`
       );
     });
-    pluginExports.push(`"${p.id}": "${p.xml.$.version}"`);
+    pluginExports.push(`"${pluginId}": "${p.xml.$.version}"`);
   });
   return `
   cordova.define('cordova/plugin_list', function(require, exports, module) {
@@ -74,14 +75,15 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removePluginFiles(config, platform);
   await Promise.all(cordovaPlugins.map(async p => {
-    const pluginDir = join(pluginsDir, p.id, 'www');
+    const pluginId = p.xml.$.id;
+    const pluginDir = join(pluginsDir, pluginId, 'www');
     ensureDirSync(pluginDir);
     const jsModules = getJSModules(p, platform);
     jsModules.map(async (jsModule: any) => {
-      const filePath = join(webDir, 'plugins', p.id, jsModule.$.src);
+      const filePath = join(webDir, 'plugins', pluginId, jsModule.$.src);
       copySync(join(p.rootPath, jsModule.$.src), filePath);
       let data = await readFileAsync(filePath, 'utf8');
-      data = `cordova.define("${p.id}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
+      data = `cordova.define("${pluginId}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
       await writeFileAsync(filePath, data, 'utf8');
     });
   }));
