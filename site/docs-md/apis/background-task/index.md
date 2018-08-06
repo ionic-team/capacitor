@@ -28,7 +28,7 @@ import { Plugins } from '@capacitor/core';
 
 const { App, BackgroundTask } = Plugins;
 
-App.addEventListener('appStateChange', (state) => {
+App.addListener('appStateChange', (state) => {
 
   if (!state.isActive) {
     // The app has become inactive. We should check if we have some work left to do, and, if so,
