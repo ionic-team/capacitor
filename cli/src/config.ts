@@ -1,6 +1,6 @@
 import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
-import { logFatal } from './common';
+import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 
 let Package: PackageJson;
@@ -151,6 +151,10 @@ export class Config implements CliConfig {
     this.app.rootDir = currentWorkingDir;
     this.app.package = loadPackageJson(currentWorkingDir);
     this.app.assets.templateDir = join(this.cli.assetsDir, this.app.assets.templateName);
+  }
+
+  async updateAppPackage() {
+    this.app.package = await readJSON(resolve(this.app.rootDir, 'package.json'));
   }
 
   private initElectronConfig() {

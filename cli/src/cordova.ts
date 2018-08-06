@@ -267,6 +267,7 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
           logInfo(`installing missing dependency plugin ${plugin}`);
           try {
             await runCommand(`cd "${config.app.rootDir}" && npm install ${plugin}`);
+            await config.updateAppPackage();
             needsUpdate = true;
           } catch (e) {
             console.log("\n");
