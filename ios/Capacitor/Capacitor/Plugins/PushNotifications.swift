@@ -18,8 +18,9 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   /**
    * Register for push notifications
    */
-  @objc func requestPermissions(_ call: CAPPluginCall) {
+  @objc func register(_ call: CAPPluginCall) {
     self.bridge.notificationsDelegate.requestPermissions()
+    call.success()
   }
 
   /**
@@ -48,6 +49,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
     let ids = notifications.map { $0["id"] as? String ?? "" }
 
     UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ids)
+    call.success()
   }
 
   /**
@@ -55,6 +57,19 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    */
   @objc func removeAllDeliveredNotifications(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+    call.success()
+  }
+
+  @objc func createChannel(_ call: CAPPluginCall) {
+    call.error("not available")
+  }
+
+  @objc func deleteChannel(_ call: CAPPluginCall) {
+    call.error("not available")
+  }
+
+  @objc func listChannels(_ call: CAPPluginCall) {
+    call.error("not available")
   }
 
   @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification){
@@ -62,7 +77,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
       return
     }
     let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
-    notifyListeners("didRegisterForRemoteNotificationsWithDeviceToken", data:[
+    notifyListeners("registration", data:[
       "value": deviceTokenString
     ])
 
@@ -72,7 +87,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
     guard let error = notification.object as? Error else {
       return
     }
-    notifyListeners("didFailToRegisterForRemoteNotificationsWithError", data:[
+    notifyListeners("registrationError", data:[
       "error": error.localizedDescription
     ])
   }
