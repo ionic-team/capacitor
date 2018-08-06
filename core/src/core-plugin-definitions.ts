@@ -1211,11 +1211,13 @@ export enum PhotosAlbumType {
 //
 
 export interface PushNotification {
-  title: string;
-  subtitle: string;
-  body: string;
-  id: string;
-  badge: number;
+  title?: string;
+  subtitle?: string;
+  body?: string;
+  id?: string;
+  badge?: number;
+  notification?: any;
+  data?: any;
 }
 
 export interface PushNotificationActionPerformed {
@@ -1246,13 +1248,14 @@ export interface PushNotificationChannelList {
 
 export interface PushNotificationsPlugin extends Plugin {
   register(): Promise<void>;
-  getDeliveredNotifications(): Promise<void>;
+  getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;
   createChannel(channel: PushNotificationChannel): Promise<void>;
   deleteChannel(channel: PushNotificationChannel): Promise<void>;
   listChannels(): Promise<PushNotificationChannelList>;
   addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
+  addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
 }
