@@ -84,13 +84,15 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.querySelector('#take-photo').addEventListener('click', async function(e) {
+    const self = this;
+
+    self.shadowRoot.querySelector('#take-photo').addEventListener('click', async function(e) {
       const { Camera } = Capacitor.Plugins;
       const photo = await Camera.getPhoto({
         resultType: "uri"
       });
 
-      const image = this.shadowRoot.querySelector('#image');
+      const image = self.shadowRoot.querySelector('#image');
       if (!image) {
         return;
       }
@@ -124,4 +126,4 @@ window.customElements.define('capacitor-welcome-titlebar', class extends HTMLEle
     <slot></slot>
     `;
   }
-})
+});
