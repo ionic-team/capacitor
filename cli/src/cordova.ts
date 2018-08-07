@@ -24,6 +24,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
       let merges: Array<string> = [];
       let clobbersModule = '';
       let mergesModule = '';
+      let runsModule = '';
       if (jsModule.clobbers) {
         jsModule.clobbers.map((clobber: any) => {
           clobbers.push(clobber.$.target);
@@ -42,10 +43,13 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
           "${merges.join('",\n          "')}"
         ]`;
       }
+      if (jsModule.runs) {
+        runsModule = ',\n        "runs": true';
+      }
       pluginModules.push(`{
         "id": "${pluginId}.${jsModule.$.name}",
         "file": "plugins/${pluginId}/${jsModule.$.src}",
-        "pluginId": "${pluginId}"${clobbersModule}${mergesModule}
+        "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
       }`
       );
     });
