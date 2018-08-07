@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -16,20 +14,21 @@ import com.getcapacitor.PluginResult;
 
 @NativePlugin()
 public class App extends Plugin {
+
   private static final String EVENT_BACK_BUTTON = "backButton";
   private static final String EVENT_URL_OPEN = "appUrlOpen";
   private static final String EVENT_STATE_CHANGE = "appStateChange";
   private static final String EVENT_RESTORED_RESULT = "appRestoredResult";
 
   public void fireChange(boolean isActive) {
-    Log.d(Bridge.TAG, "Firing change: " + isActive);
+    Log.d(getLogTag(), "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
     notifyListeners(EVENT_STATE_CHANGE, data, true);
   }
 
   public void fireRestoredResult(PluginResult result) {
-    Log.d(Bridge.TAG, "Firing restored result");
+    Log.d(getLogTag(), "Firing restored result");
     notifyListeners(EVENT_RESTORED_RESULT, result.getData(), true);
   }
 
@@ -78,7 +77,9 @@ public class App extends Plugin {
       ret.put("value", true);
       call.success(ret);
       return;
-    } catch(PackageManager.NameNotFoundException e) {}
+    } catch(PackageManager.NameNotFoundException e) {
+      Log.e(getLogTag(), "Package name '"+url+"' not found!");
+    }
 
     ret.put("value", false);
     call.success(ret);

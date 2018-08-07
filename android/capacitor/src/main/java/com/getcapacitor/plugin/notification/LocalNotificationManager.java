@@ -16,12 +16,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.RemoteInput;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.LogUtils;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.android.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,10 +56,10 @@ public class LocalNotificationManager {
    * Method extecuted when notification is launched by user from the notification bar.
    */
   public JSObject handleNotificationActionPerformed(Intent data, NotificationStorage notificationStorage) {
-    Log.d(Bridge.TAG, "LocalNotification received: " + data.getDataString());
+    Log.d(LogUtils.getPluginTag("LN"), "LocalNotification received: " + data.getDataString());
     int notificationId = data.getIntExtra(LocalNotificationManager.NOTIFICATION_INTENT_KEY, Integer.MIN_VALUE);
     if (notificationId == Integer.MIN_VALUE) {
-      Log.d("LocalNotification", "Activity started without notification attached");
+      Log.d(LogUtils.getPluginTag("LN"), "Activity started without notification attached");
       return null;
     }
     boolean isRemovable = data.getBooleanExtra(LocalNotificationManager.NOTIFICATION_IS_REMOVABLE_KEY, true);
@@ -247,7 +245,7 @@ public class LocalNotificationManager {
     Date at = schedule.getAt();
     if (at != null) {
       if (at.getTime() < new Date().getTime()) {
-        Log.e(Bridge.TAG, "Scheduled time must be *after* current time");
+        Log.e(LogUtils.getPluginTag("LN"), "Scheduled time must be *after* current time");
         return;
       }
       if (schedule.isRepeating()) {

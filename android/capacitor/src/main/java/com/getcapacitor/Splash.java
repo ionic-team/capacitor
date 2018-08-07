@@ -193,7 +193,7 @@ public class Splash {
     // Warn the user if the splash was hidden automatically, which means they could be experiencing an app
     // that feels slower than it actually is.
     if(isLaunchSplash && isVisible) {
-      Log.d("Splash hide", "SplashScreen was automatically hidden after the launch timeout. " +
+      Log.d(LogUtils.getCoreTag(), "SplashScreen was automatically hidden after the launch timeout. " +
               "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
               "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
     }

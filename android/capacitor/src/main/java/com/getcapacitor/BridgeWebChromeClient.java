@@ -120,7 +120,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
   @Override
   public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
     super.onGeolocationPermissionsShowPrompt(origin, callback);
-    Log.d(Bridge.TAG, "onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
+    Log.d(LogUtils.getCoreTag(), "onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
 
     // Set that we want geolocation perms for this origin
     callback.invoke(origin, true, false);
@@ -129,7 +129,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     if (!geo.hasRequiredPermissions()) {
       geo.pluginRequestAllPermissions();
     } else {
-      Log.d(bridge.TAG, "onGeolocationPermissionsShowPrompt: has required permis");
+      Log.d(LogUtils.getCoreTag(), "onGeolocationPermissionsShowPrompt: has required permis");
     }
   }
 

@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
-
 import com.getcapacitor.android.R;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.plugin.App;
-
 import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPreferences;
@@ -59,7 +57,7 @@ public class BridgeActivity extends AppCompatActivity {
    * Load the WebView and create the Bridge
    */
   protected void load(Bundle savedInstanceState) {
-    Log.d(Bridge.TAG, "Starting BridgeActivity");
+    Log.d(LogUtils.getCoreTag(), "Starting BridgeActivity");
 
     webView = findViewById(R.id.webview);
     cordovaInterface = new CordovaInterfaceImpl(this);
@@ -115,14 +113,14 @@ public class BridgeActivity extends AppCompatActivity {
 
     this.bridge.onStart();
 
-    Log.d(Bridge.TAG, "App started");
+    Log.d(LogUtils.getCoreTag(), "App started");
   }
 
   @Override
   public void onRestart() {
     super.onRestart();
     this.bridge.onRestart();
-    Log.d(Bridge.TAG, "App restarted");
+    Log.d(LogUtils.getCoreTag(), "App restarted");
   }
 
   @Override
@@ -133,7 +131,7 @@ public class BridgeActivity extends AppCompatActivity {
 
     this.bridge.onResume();
 
-    Log.d(Bridge.TAG, "App resumed");
+    Log.d(LogUtils.getCoreTag(), "App resumed");
   }
 
   @Override
@@ -142,7 +140,7 @@ public class BridgeActivity extends AppCompatActivity {
 
     this.bridge.onPause();
 
-    Log.d(Bridge.TAG, "App paused");
+    Log.d(LogUtils.getCoreTag(), "App paused");
   }
 
   @Override
@@ -156,13 +154,13 @@ public class BridgeActivity extends AppCompatActivity {
 
     this.bridge.onStop();
 
-    Log.d(Bridge.TAG, "App stopped");
+    Log.d(LogUtils.getCoreTag(), "App stopped");
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    Log.d(Bridge.TAG, "App destroyed");
+    Log.d(LogUtils.getCoreTag(), "App destroyed");
   }
 
   @Override

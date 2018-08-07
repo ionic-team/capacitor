@@ -62,7 +62,7 @@ public class PluginResult {
     try {
       this.json.put(name, value);
     } catch (Exception ex) {
-      Log.e("PluginResultPut", ex.toString());
+      Log.e(LogUtils.getPluginTag(), "", ex);
     }
     return this;
   }
