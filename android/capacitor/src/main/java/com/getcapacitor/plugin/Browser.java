@@ -9,15 +9,12 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
-
 import org.json.JSONException;
 
 /**
@@ -50,7 +47,7 @@ public class Browser extends Plugin {
       try {
         builder.setToolbarColor(Color.parseColor(toolbarColor));
       } catch (IllegalArgumentException ex) {
-        Log.e(Bridge.TAG, "Browser: Invalid color provided for toolbarColor. Using default");
+        Log.e(getLogTag(), "Invalid color provided for toolbarColor. Using default");
       }
     }
 
@@ -110,7 +107,7 @@ public class Browser extends Plugin {
   protected void handleOnResume() {
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
     if (!ok) {
-      Log.e(Bridge.TAG, "Error binding to custom tabs service");
+      Log.e(getLogTag(), "Error binding to custom tabs service");
     }
   }
 

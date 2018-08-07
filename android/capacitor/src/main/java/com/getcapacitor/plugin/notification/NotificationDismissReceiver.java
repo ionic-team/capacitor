@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import com.getcapacitor.LogUtils;
 
 
 /**
@@ -16,7 +17,7 @@ public class NotificationDismissReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     int intExtra = intent.getIntExtra(LocalNotificationManager.NOTIFICATION_INTENT_KEY, Integer.MIN_VALUE);
     if (intExtra == Integer.MIN_VALUE) {
-      Log.e("LNotificationDismiss", "Invalid notification dismiss operation");
+      Log.e(LogUtils.getPluginTag("LN"), "Invalid notification dismiss operation");
       return;
     }
     boolean isRemovable = intent.getBooleanExtra(LocalNotificationManager.NOTIFICATION_IS_REMOVABLE_KEY, true);

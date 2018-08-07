@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -324,10 +323,10 @@ public class Plugin {
    * @param data
    */
   protected void notifyListeners(String eventName, JSObject data, boolean retainUntilConsumed) {
-    Log.d(Bridge.TAG, "Notifying listeners for event " + eventName);
+    Log.v(getLogTag(), "Notifying listeners for event " + eventName);
     List<PluginCall> listeners = eventListeners.get(eventName);
     if (listeners == null) {
-      Log.d(Bridge.TAG, "No listeners found for event " + eventName);
+      Log.d(getLogTag(), "No listeners found for event " + eventName);
       if (retainUntilConsumed) {
         retainedEventArguments.put(eventName, data);
       }
@@ -546,23 +545,17 @@ public class Plugin {
   }
 
   /**
-   * Tired of supplying the first argument to Log.d? Well with log() you don't have to!
-   * Simply pass in the String like you do in literally every other programming language
-   * and save your wrists the RSI.
-   * @param args
+   * Shortcut for getting the plugin log tag
+   * @param subTags
    */
-  protected void log(String... args) {
-    StringBuffer b = new StringBuffer();
-    int i = 0;
-    int l = args.length;
-    for(String s : args) {
-      b.append(s);
-      if(i++ < l) b.append(" ");
-    }
-    Log.d(Bridge.TAG, b.toString());
+  protected String getLogTag(String... subTags) {
+    return LogUtils.getPluginTag(subTags);
   }
 
-  protected void logError(final String msg, final Throwable t) {
-    Log.e(Bridge.TAG, msg, t);
+  /**
+   * Gets a plugin log tag with the child's class name as subTag.
+   */
+  protected String getLogTag() {
+    return LogUtils.getPluginTag(this.getClass().getSimpleName());
   }
 }

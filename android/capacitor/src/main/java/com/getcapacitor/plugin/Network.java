@@ -8,8 +8,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -47,7 +45,7 @@ public class Network extends Plugin {
         if (hasRequiredPermissions()) {
           notifyListeners(NETWORK_CHANGE_EVENT, getStatusJSObject(cm.getActiveNetworkInfo()));
         } else {
-          Log.e(Bridge.TAG, PERMISSION_NOT_SET);
+          Log.e(getLogTag(), PERMISSION_NOT_SET);
         }
       }
     };

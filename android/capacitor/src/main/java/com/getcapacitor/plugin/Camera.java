@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,12 +12,8 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.FileUtils;
-import com.getcapacitor.plugin.camera.ExifWrapper;
-import com.getcapacitor.plugin.camera.ImageUtils;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -28,6 +23,8 @@ import com.getcapacitor.PluginRequestCodes;
 import com.getcapacitor.plugin.camera.CameraResultType;
 import com.getcapacitor.plugin.camera.CameraSettings;
 import com.getcapacitor.plugin.camera.CameraSource;
+import com.getcapacitor.plugin.camera.ExifWrapper;
+import com.getcapacitor.plugin.camera.ImageUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -182,7 +179,7 @@ public class Camera extends Plugin {
     try {
       return CameraResultType.valueOf(resultType.toUpperCase());
     } catch (IllegalArgumentException ex) {
-      log("Invalid result type \"" + resultType + "\", defaulting to base64");
+      Log.d(getLogTag(), "Invalid result type \"" + resultType + "\", defaulting to base64");
       return CameraResultType.BASE64;
     }
   }
@@ -276,7 +273,7 @@ public class Camera extends Plugin {
         try {
           imageStream.close();
         } catch (IOException e) {
-          logError(UNABLE_TO_PROCESS_IMAGE, e);
+          Log.e(getLogTag(), UNABLE_TO_PROCESS_IMAGE, e);
         }
       }
     }
@@ -364,7 +361,7 @@ public class Camera extends Plugin {
         try {
           bis.close();
         } catch (IOException e) {
-          logError(UNABLE_TO_PROCESS_IMAGE, e);
+          Log.e(getLogTag(), UNABLE_TO_PROCESS_IMAGE, e);
         }
       }
     }
@@ -414,7 +411,7 @@ public class Camera extends Plugin {
     String imageFileName = "JPEG_" + timeStamp + "_";
     File storageDir;
     if(saveToGallery) {
-      log("Trying to save image to public external directory");
+      Log.d(getLogTag(), "Trying to save image to public external directory");
       storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
     }  else {
       storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -433,10 +430,10 @@ public class Camera extends Plugin {
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    log("handling request perms result");
+    Log.d(getLogTag(),"handling request perms result");
 
     if (getSavedCall() == null) {
-      log("No stored plugin call for permissions request result");
+      Log.d(getLogTag(),"No stored plugin call for permissions request result");
       return;
     }
 
@@ -446,7 +443,7 @@ public class Camera extends Plugin {
       int result = grantResults[i];
       String perm = permissions[i];
       if(result == PackageManager.PERMISSION_DENIED) {
-        Log.d(Bridge.TAG, "User denied camera permission: " + perm);
+        Log.d(getLogTag(), "User denied camera permission: " + perm);
         savedCall.error(PERMISSION_DENIED_ERROR);
         return;
       }
