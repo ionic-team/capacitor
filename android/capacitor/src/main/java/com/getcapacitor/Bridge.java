@@ -88,7 +88,7 @@ public class Bridge {
   private WebViewLocalServer localServer;
   // A reference to the main WebView for the app
   private final WebView webView;
-  private final CordovaInterfaceImpl cordovaInterface;
+  public final CordovaInterfaceImpl cordovaInterface;
 
   // Our MessageHandler for sending and receiving data to the WebView
   private final MessageHandler msgHandler;

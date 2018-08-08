@@ -7,4 +7,5 @@ public class PluginRequestCodes {
   public static final int GEOLOCATION_REQUEST_PERMISSIONS = 9004;
   public static final int CAMERA_IMAGE_EDIT = 9005;
   public static final int NOTIFICATION_OPEN = 9006;
+  public static final int FILE_CHOOSER = 9007;
 }
