@@ -17,16 +17,16 @@ export class SplashScreenPluginElectron extends WebPlugin implements SplashScree
 
   }
 
-  show(options?: SplashScreenShowOptions, callback?: Function): void {
+  async show(options?: SplashScreenShowOptions, callback?: Function) {
     this.ipc.send('showCapacitorSplashScreen', {...options});
-    if(callback) {
+    if (callback) {
       callback();
     }
   }
 
-  hide(options?: SplashScreenHideOptions, callback?: Function): void {
+  async hide(options?: SplashScreenHideOptions, callback?: Function) {
     this.ipc.send('hideCapacitorSplashScreen', {...options});
-    if(callback) {
+    if (callback) {
       callback();
     }
   }
