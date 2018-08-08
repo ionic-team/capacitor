@@ -1,72 +1,158 @@
 buildscript {
-    repositories {
-        jcenter()
-        google()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
-        classpath 'com.novoda:bintray-release:0.8.0'
-    }
-}
-
-
-apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
-
-android {
-    compileSdkVersion 27
-    defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    lintOptions {
-        abortOnError false
-    }
-}
-
-repositories {
+  repositories {
     google()
     jcenter()
-    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.1.1'
+    classpath "digital.wup:android-maven-publish:3.2.0"
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+//    classpath 'com.novoda:bintray-release:0.8.0'
+  }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'digital.wup.android-maven-publish'
+apply plugin: "com.jfrog.bintray"
+//apply plugin: 'com.novoda.bintray-release' // this bintray lib conflicts with local maven publishing
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+  google()
+  jcenter()
+  mavenCentral()
+  mavenLocal()
+}
+
+android {
+  compileSdkVersion 27
+  defaultConfig {
+    minSdkVersion 21
+    targetSdkVersion 27
+    versionCode 1
+    versionName project.version
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+  lintOptions {
+    abortOnError false
+  }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:support-compat:27.1.1'
+//  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  implementation 'com.android.support:appcompat-v7:27.1.1'
+  implementation 'com.android.support:support-compat:27.1.1'
 
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:customtabs:27.1.1'
-    implementation 'com.google.firebase:firebase-messaging:17.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation 'org.apache.cordova:framework:7.0.0'
+  implementation 'com.android.support:design:27.1.1'
+  implementation 'com.android.support:customtabs:27.1.1'
+  implementation 'com.google.firebase:firebase-messaging:17.1.0'
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.1'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+  implementation 'org.apache.cordova:framework:7.0.0'
 }
 
-def version = System.getenv("BINTRAY_PKG_VERSION")
+// ###################################
+// ### Publish to local maven repo ###
+// ###################################
 
-publish {
-    userOrg = 'ionic-team'
-    repoName = 'capacitor'
-    groupId = 'ionic-team'
-    artifactId = 'capacitor-android'
-    if (version != null) {
-        publishVersion = System.getenv("BINTRAY_PKG_VERSION")
-    } else {
-        publishVersion = '0.0.0'
+task androidJavadocs(type: Javadoc) {
+  source = android.sourceSets.main.java.srcDirs
+  classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+  android.libraryVariants.all { variant ->
+    if (variant.name == 'release') {
+      owner.classpath += variant.javaCompile.classpath
     }
-    desc = 'Capacitor Android Runtime'
-    website = 'https://github.com/ionic-team/capacitor'
+  }
+  exclude '**/R.html', '**/R.*.html', '**/index.html'
 }
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+  classifier = 'javadoc'
+  from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+  classifier = 'sources'
+  from android.sourceSets.main.java.srcDirs
+}
+
+publishing {
+  publications {
+    mavenAar(MavenPublication) {
+      artifactId project.artifactId
+      from components.android
+      artifact androidSourcesJar
+      artifact androidJavadocsJar
+    }
+  }
+}
+
+// ##########################
+// ### Publish to bintray ###
+// ##########################
+
+//def version = System.getenv("BINTRAY_PKG_VERSION")
+//
+//publish {
+//  userOrg = 'ionic-team'
+//  repoName = 'capacitor'
+//  groupId = project.group
+//  artifactId = project.artifactId
+//  if (version != null) {
+//    publishVersion = System.getenv("BINTRAY_PKG_VERSION")
+//  } else {
+//    publishVersion = '0.0.0'
+//  }
+//  desc = 'Capacitor Android Runtime'
+//  website = 'https://github.com/ionic-team/capacitor'
+//}
+
+// for publishToMavenLocal to work we have to use bintray's gradle plugin instead of novoda
+
+bintray {
+  user = project.hasProperty('bintrayUser') ? bintrayUser : null //this usually comes from gradle.properties file in ~/.gradle
+  key = project.hasProperty('bintrayKey') ? bintrayKey : null //this usually comes from gradle.properties file in ~/.gradle
+
+  // configurations = ['archives'] //When uploading configuration files
+  // - OR -
+  publications = ['mavenAar'] //When uploading Maven-based publication files
+
+  dryRun = true //Whether to run this as dry-run, without deploying
+  publish = false //If version should be auto published after an upload
+
+  // Package configuration. The plugin will use the repo and name properties to check if the package already exists.
+  // In that case, there's no need to configure the other package properties (like userOrg, desc, etc).
+  pkg {
+    repo = 'capacitor'
+    name = project.artifactId
+    userOrg = 'ionic-team' //An optional organization name when the repo belongs to one of the user's orgs
+    desc = 'Capacitor Android Runtime'
+    websiteUrl = 'https://capacitor.ionicframework.com/'
+    issueTrackerUrl = 'https://github.com/ionic-team/capacitor/issues'
+    vcsUrl = 'https://github.com/ionic-team/capacitor.git'
+    licenses = ['MIT']
+    labels = ['ionic', 'html5', 'hybrid', 'native', 'android', 'capacitor', 'cordova' ]
+
+    version {
+      name = (project.hasProperty('BINTRAY_PKG_VERSION') ? BINTRAY_PKG_VERSION : project.version) //Bintray logical version name
+      // desc = 'optional'
+      vcsTag = (project.hasProperty('BINTRAY_PKG_VERSION') ? BINTRAY_PKG_VERSION : project.version)
+    }
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.4'
+}
+
 
 
