@@ -35,11 +35,6 @@ The current ones you might configure are:
   // Android Studio install path, but you may change it manually.
   "windowsAndroidStudioPath": 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
 
-  // On Android, Capacitor loads your local assets using https
-  // Chrome by default prevents loading files from a different scheme (i.e. from http)
-  // This setting allows to mix content from different schemes
-  "allowMixedContent": true,
-
   // Server object contains port and url configurations 
   "server": {
     // Capacitor runs a local web server, you can configure what port to use.
@@ -47,6 +42,16 @@ The current ones you might configure are:
     "port": "8787",
     // You can make the app to load an external url (i.e. to live reload)
     "url": "http://192.168.1.33:8100"
+  },
+  "android": {
+    // On Android, Capacitor loads your local assets using https
+    // Chrome by default prevents loading files from a different scheme (i.e. from http)
+    // This setting allows to mix content from different schemes
+    "allowMixedContent": true,
+    // Android's default keyboard doesn't allow proper JS key capture
+    // You can use a simpler keyboard enabling this preference
+    // Be aware that this keyboard has some problems and limitations
+    "captureInput": true
   }
 }
 ```
