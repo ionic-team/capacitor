@@ -49,7 +49,7 @@ export class LandingPage {
               </button>
             </stencil-route-link>
             <h5>Supports</h5>
-            <img src="/assets/img/supported-env.png"></img>
+            <img alt="Apple, Android, Electron, PWA" src="/assets/img/supported-env.png"></img>
           </hgroup>
           <div class="hero-illustration">
             <img src="/assets/img/capacitor-hero.jpg"></img>
