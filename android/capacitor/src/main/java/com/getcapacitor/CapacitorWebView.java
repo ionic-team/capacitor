@@ -12,13 +12,22 @@ import android.webkit.WebView;
 import java.util.Date;
 
 public class CapacitorWebView extends WebView {
+  private BaseInputConnection capInputConnection;
+
   public CapacitorWebView(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
   @Override
   public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-    return new BaseInputConnection(this, false);
+    boolean captureInput = Config.getBoolean("android.captureInput", false);
+    if (captureInput) {
+      if (capInputConnection == null) {
+        capInputConnection = new BaseInputConnection(this, false);
+      }
+      return capInputConnection;
+    }
+    return super.onCreateInputConnection(outAttrs);
   }
 
   @Override
