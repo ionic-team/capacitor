@@ -14,7 +14,10 @@ exports.config = {
       }
     }
   ],
-  enableCache: false
+  enableCache: false,
+  copy: [
+    { src: 'robots.txt' }
+  ]
   /*
   plugins: [{
     name: 'version-replace',
