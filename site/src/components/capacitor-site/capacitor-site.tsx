@@ -199,7 +199,15 @@ export class App {
           </div>
 
           <div id="footer-icons">
-            <iframe class="star-button" src="https://ghbtns.com/github-btn.html?user=ionic-team&repo=capacitor&type=star&count=true" frameBorder="0" scrolling="0" width="100px" height="20px"></iframe>
+            <iframe
+              title="Github Star Count" 
+              class="star-button"
+              src="https://ghbtns.com/github-btn.html?user=ionic-team&repo=capacitor&type=star&count=true"
+              frameBorder="0"
+              scrolling="0"
+              width="100px"
+              height="20px"
+            ></iframe>
 
             <a class="svg-button"
               id="capacitor-twitter"
