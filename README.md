@@ -7,8 +7,6 @@ Capacitor is a cross-platform API and code execution layer that makes it easy to
 Capacitor is being designed by the Ionic Framework team as an eventual alternative to Cordova, though backwards compatibility with Cordova plugins is a priority and is actively being worked on. Capacitor can be used without Ionic Framework, but soon it'll become a core part of the Ionic developer experience.
 
 Capacitor also comes with a Plugin API for building native plugins. On iOS, first-class Swift support is available, and much of the iOS Capacitor runtime is written in Swift. Plugins may also be written in Objective-C. On Android, support for writing plugins with Java and Kotlin is supported.
-
-Capacitor is still a work in progress and is not quite ready for use. Stay tuned for a public release in early 2018.
  
 ## Roadmap
 
