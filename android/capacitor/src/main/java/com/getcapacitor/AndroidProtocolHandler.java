@@ -78,6 +78,11 @@ public class AndroidProtocolHandler {
     return id;
   }
 
+  public InputStream openFile(String filePath) throws IOException  {
+    File localFile = new File(filePath);
+    return new FileInputStream(localFile);
+  }
+
   private static int getValueType(Context context, int fieldId) {
     TypedValue value = new TypedValue();
     context.getResources().getValue(fieldId, value, true);
