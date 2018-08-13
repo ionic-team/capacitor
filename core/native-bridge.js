@@ -582,5 +582,19 @@
       return line;
     });
   }
+
+  win.Ionic = win.Ionic || {};
+  win.Ionic.WebView = win.Ionic.WebView || {};
+
+  win.Ionic.WebView.getServerBasePath = function(callback) {
+    Capacitor.Plugins.WebView.getServerBasePath().then(function(result) {
+      callback(result.path);
+    });
+  }
+
+  win.Ionic.WebView.setServerBasePath = function (path) {
+    Capacitor.Plugins.WebView.setServerBasePath({"path": path});
+  }
+
 })(window);
 
