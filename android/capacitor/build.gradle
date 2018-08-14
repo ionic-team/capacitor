@@ -13,11 +13,20 @@ buildscript {
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
+ext {
+    buildToolsVersion = "27.0.3"
+    minSdkVersion = 21
+    compileSdkVersion = 27
+    targetSdkVersion = 27
+    supportLibVersion = "27.1.1"
+    googlePlayServicesVersion = "15.0.1"
+}
+
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 27
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
