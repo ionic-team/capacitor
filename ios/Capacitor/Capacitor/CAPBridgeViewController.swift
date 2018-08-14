@@ -26,6 +26,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var port: Int?
   private var hostname: String?
   private var basePath: String = ""
+  private var localUrl: String = ""
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
@@ -54,8 +55,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     view = webView
     
     setKeyboardRequiresUserInteraction(false)
+
+    port = getPort()
+    localUrl = "http://localhost:\(port!)"
+    hostname = CAPConfig.getString("server.url") ?? "\(localUrl)/"
     
-    bridge = CAPBridge(self, o)
+    bridge = CAPBridge(self, o, localUrl)
   }
   
   override public func viewDidLoad() {
@@ -78,9 +83,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       
       exit(1)
     }
-
-    port = getPort()
-    hostname = CAPConfig.getString("server.url") ?? "http://localhost:\(port!)/"
 
     initWebServer()
 
@@ -145,7 +147,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webServer.addGETHandler(forBasePath: "/", directoryPath: path, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
 
     webServer.addHandler(forMethod: "GET", pathRegex: "_capacitor_/", request: GCDWebServerFileRequest.self) { (request, block) in
-      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "http://localhost:\(self.port!)/_capacitor_/", with: ""), byteRange: request.byteRange))
+      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "\(self.localUrl)/_capacitor_/", with: ""), byteRange: request.byteRange))
         // TODO ignore what's after ?
     }
 
