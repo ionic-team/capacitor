@@ -50,6 +50,7 @@ public class WebViewLocalServer {
 
   private final static String httpScheme = "http";
   private final static String httpsScheme = "https";
+  private String basePath;
 
   private final UriMatcher uriMatcher;
   private final AndroidProtocolHandler protocolHandler;
@@ -57,6 +58,7 @@ public class WebViewLocalServer {
   // Whether we're serving local files or proxying (for example, when doing livereload on a
   // non-local endpoint (will be false in that case)
   private final boolean isLocal;
+  private boolean isAsset;
   // Whether to route all requests to paths without extensions back to `index.html`
   private final boolean html5mode;
   private final JSInjector jsInjector;
@@ -228,7 +230,12 @@ public class WebViewLocalServer {
     if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
       InputStream stream;
       try {
-        stream = protocolHandler.openAsset("public/index.html", "");
+        String startPath = this.basePath + "/index.html";
+        if (isAsset) {
+          stream = protocolHandler.openAsset(startPath, "");
+        } else {
+          stream = protocolHandler.openFile(startPath);
+        }
       } catch (IOException e) {
         Log.e(LogUtils.getCoreTag(), "Unable to open index.html", e);
         return null;
@@ -434,6 +441,8 @@ public class WebViewLocalServer {
   public AssetHostingDetails hostAssets(final String domain,
                                         final String assetPath, final String virtualAssetPath,
                                         boolean enableHttp, boolean enableHttps) {
+    this.isAsset = true;
+    this.basePath = assetPath;
     Uri.Builder uriBuilder = new Uri.Builder();
     uriBuilder.scheme(httpScheme);
     uriBuilder.authority(domain);
@@ -562,6 +571,62 @@ public class WebViewLocalServer {
   }
 
   /**
+   * Hosts the application's files on an http(s):// URL. Files from the basePath
+   * <code>basePath/...</code> will be available under
+   * <code>http(s)://{uuid}.androidplatform.net/...</code>.
+   *
+   * @param basePath the local path in the application's data folder which will be made
+   *                  available by the server (for example "/www").
+   * @return prefixes under which the assets are hosted.
+   */
+  public AssetHostingDetails hostFiles(String basePath) {
+    return hostFiles(basePath, true, true);
+  }
+
+  public AssetHostingDetails hostFiles(final String basePath, boolean enableHttp,
+                                       boolean enableHttps) {
+    this.isAsset = false;
+    this.basePath = basePath;
+    Uri.Builder uriBuilder = new Uri.Builder();
+    uriBuilder.scheme(httpScheme);
+    uriBuilder.authority(authority);
+    uriBuilder.path("");
+    Uri httpPrefix = null;
+    Uri httpsPrefix = null;
+    PathHandler handler = new PathHandler() {
+      @Override
+      public InputStream handle(Uri url) {
+        InputStream stream;
+        try {
+          stream = protocolHandler.openFile(basePath + url.getPath());
+        } catch (IOException e) {
+          Log.e(LogUtils.getCoreTag(), "Unable to open asset URL: " + url);
+          return null;
+        }
+        String mimeType = null;
+        try {
+          mimeType = URLConnection.guessContentTypeFromStream(stream);
+        } catch (Exception ex) {
+          Log.e(LogUtils.getCoreTag(), "Unable to get mime type" + url);
+        }
+        return stream;
+      }
+    };
+    if (enableHttp) {
+      httpPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpPrefix, "/"), handler);
+      register(Uri.withAppendedPath(httpPrefix, "**"), handler);
+    }
+    if (enableHttps) {
+      uriBuilder.scheme(httpsScheme);
+      httpsPrefix = uriBuilder.build();
+      register(Uri.withAppendedPath(httpsPrefix, "/"), handler);
+      register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
+    }
+    return new AssetHostingDetails(httpPrefix, httpsPrefix);
+  }
+
+  /**
    * The KitKat WebView reads the InputStream on a separate threadpool. We can use that to
    * parallelize loading.
    */
@@ -627,5 +692,9 @@ public class WebViewLocalServer {
     protected InputStream handle() {
       return handler.handle(request);
     }
+  }
+
+  public String getBasePath(){
+    return this.basePath;
   }
 }
