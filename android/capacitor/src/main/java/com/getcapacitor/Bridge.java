@@ -86,7 +86,8 @@ public class Bridge {
   // A reference to the main activity for the app
   private final Activity context;
   private WebViewLocalServer localServer;
-  private String CAP_LOCAL_SERVER;
+  private String localUrl;
+  private String appUrl;
   // A reference to the main WebView for the app
   private final WebView webView;
   public final CordovaInterfaceImpl cordovaInterface;
@@ -154,6 +155,8 @@ public class Bridge {
 
     String port = getPort();
     String authority = "localhost" + ":" + port;
+    localUrl = "https://" + authority;
+
     boolean isLocal = true;
 
     if (appUrlConfig != null) {
@@ -176,7 +179,7 @@ public class Bridge {
     // Load the index route from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
-    final String appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
+    appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
 
     Log.d(LOG_TAG, "Loading app at " + appUrl);
 
@@ -208,7 +211,6 @@ public class Bridge {
       }
     });
 
-    CAP_LOCAL_SERVER = appUrl;
     // Get to work
     webView.loadUrl(appUrl);
   }
@@ -574,8 +576,9 @@ public class Bridge {
       String cordovaJS = JSExport.getCordovaJS(context);
       String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
       String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
+      String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
 
-      return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS);
+      return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
     } catch(JSExportException ex) {
       Log.e(LOG_TAG, "Unable to export Capacitor JS. App will not function!", ex);
     }
@@ -787,9 +790,8 @@ public class Bridge {
     webView.post(new Runnable() {
       @Override
       public void run() {
-        webView.loadUrl(CAP_LOCAL_SERVER);
+        webView.loadUrl(appUrl);
       }
     });
-
   }
 }
