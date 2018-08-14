@@ -20,6 +20,7 @@ class JSInjector {
   private String cordovaJS;
   private String cordovaPluginsJS;
   private String cordovaPluginsFileJS;
+  private String localUrlJS;
 
   public JSInjector(String globalJS, String coreJS, String pluginJS) {
     this.globalJS = globalJS;
@@ -28,15 +29,17 @@ class JSInjector {
     this.cordovaJS = "";
     this.cordovaPluginsJS = "";
     this.cordovaPluginsFileJS = "";
+    this.localUrlJS = "";
   }
 
-  public JSInjector(String globalJS, String coreJS, String pluginJS, String cordovaJS, String cordovaPluginsJS, String cordovaPluginsFileJS) {
+  public JSInjector(String globalJS, String coreJS, String pluginJS, String cordovaJS, String cordovaPluginsJS, String cordovaPluginsFileJS, String localUrlJS) {
     this.globalJS = globalJS;
     this.coreJS = coreJS;
     this.pluginJS = pluginJS;
     this.cordovaJS = cordovaJS;
     this.cordovaPluginsJS = cordovaPluginsJS;
     this.cordovaPluginsFileJS = cordovaPluginsFileJS;
+    this.localUrlJS = localUrlJS;
   }
 
 
@@ -50,7 +53,8 @@ class JSInjector {
     try {
       String js = "<script type=\"text/javascript\">" + globalJS + "\n\n" +
               coreJS + "\n\n" + pluginJS + "\n\n" + cordovaJS + "\n\n" +
-              cordovaPluginsFileJS + "\n\n" + cordovaPluginsJS + "</script>";
+              cordovaPluginsFileJS + "\n\n" + cordovaPluginsJS + "\n\n" +
+              localUrlJS + "</script>";
       InputStream jsInputStream = new ByteArrayInputStream(js.getBytes(StandardCharsets.UTF_8.name()));
       return new SequenceInputStream(jsInputStream, responseStream);
     } catch(UnsupportedEncodingException ex) {
