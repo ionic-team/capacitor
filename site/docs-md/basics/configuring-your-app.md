@@ -52,6 +52,14 @@ The current ones you might configure are:
     // You can use a simpler keyboard enabling this preference
     // Be aware that this keyboard has some problems and limitations
     "captureInput": true
+  },
+  "ios": {
+    // Configure the Swift version to be used for Cordova plugins.
+    // Default is 4.0
+    "cordovaSwiftVersion": "3.2",
+    // Minimum iOS version supported by the project.
+    // Default is 10.0
+    "minVersion": "10.3"
   }
 }
 ```
