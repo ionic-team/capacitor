@@ -86,6 +86,7 @@ public class Bridge {
   // A reference to the main activity for the app
   private final Activity context;
   private WebViewLocalServer localServer;
+  private String CAP_LOCAL_SERVER;
   // A reference to the main WebView for the app
   private final WebView webView;
   public final CordovaInterfaceImpl cordovaInterface;
@@ -207,7 +208,7 @@ public class Bridge {
       }
     });
 
-
+    CAP_LOCAL_SERVER = appUrl;
     // Get to work
     webView.loadUrl(appUrl);
   }
@@ -343,6 +344,7 @@ public class Bridge {
     this.registerPlugin(StatusBar.class);
     this.registerPlugin(Storage.class);
     this.registerPlugin(com.getcapacitor.plugin.Toast.class);
+    this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 
     for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
       this.registerPlugin(pluginClass);
@@ -773,6 +775,21 @@ public class Bridge {
         }
       }
     }
+
+  }
+
+  public String getServerBasePath() {
+    return this.localServer.getBasePath();
+  }
+
+  public void setServerBasePath(String path){
+    localServer.hostFiles(path);
+    webView.post(new Runnable() {
+      @Override
+      public void run() {
+        webView.loadUrl(CAP_LOCAL_SERVER);
+      }
+    });
 
   }
 }
