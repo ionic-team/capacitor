@@ -41,4 +41,12 @@ dependencies {
 }
 
 apply from: 'capacitor.build.gradle'
-apply plugin: 'com.google.gms.google-services'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.warn("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
