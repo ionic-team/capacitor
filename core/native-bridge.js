@@ -56,7 +56,7 @@
 
   // patch window.console and store original console fns
   var orgConsole = {};
-  Object.keys(win.console).forEach(level => {
+  Object.keys(win.console).forEach(function (level) {
     if (typeof win.console[level] === 'function') {
       // loop through all the console functions and keep references to the original
       orgConsole[level] = win.console[level];
@@ -71,7 +71,7 @@
           // send log to native to print
           try {
             // convert all args to strings
-            msgs = msgs.map(arg => {
+            msgs = msgs.map(function (arg) {
               if (typeof arg === 'object') {
                 try {
                   arg = JSON.stringify(arg);
@@ -81,7 +81,7 @@
               return arg + '';
           });
             capacitor.toNative('Console', 'log', {
-              level,
+              level: level,
               message: msgs.join(' ')
             });
 
@@ -100,7 +100,7 @@
         capacitor.toNative("App", "exitApp", {}, null);
       }
     }
-    let documentAddEventListener = document.addEventListener;
+    var documentAddEventListener = document.addEventListener;
     document.addEventListener = function() {
       var name = arguments[0];
       var handler = arguments[1];
@@ -132,9 +132,9 @@
         }
 
         var call = {
-          callbackId,
-          pluginId,
-          methodName,
+          callbackId: callbackId,
+          pluginId: pluginId,
+          methodName: methodName,
           options: options || {}
         };
 
@@ -150,7 +150,7 @@
         return callbackId;
 
       } else {
-        orgConsole.warn.call(win.console, `browser implementation unavailable for: ${pluginId}`);
+        orgConsole.warn.call(win.console, 'browser implementation unavailable for: ' + pluginId);
       }
 
     } catch (e) {
@@ -171,7 +171,7 @@
     }
     // get the stored call, if it exists
     try {
-      const storedCall = calls[result.callbackId];
+      var storedCall = calls[result.callbackId];
 
       if (storedCall) {
         // looks like we've got a stored call
@@ -241,15 +241,15 @@
       options = null;
     }
     return capacitor.toNative(pluginId, methodName, options, {
-      callback
+      callback: callback
     });
   };
 
   capacitor.nativePromise = function (pluginId, methodName, options) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       capacitor.toNative(pluginId, methodName, options, {
-        resolve,
-        reject
+        resolve: resolve,
+        reject: reject
       });
     });
   };
@@ -257,7 +257,7 @@
 
   capacitor.addListener = function(pluginId, eventName, callback) {
     var callbackId = capacitor.nativeCallback(pluginId, 'addListener', {
-      eventName
+      eventName: eventName
     }, callback);
     return {
       remove: function() {
@@ -269,8 +269,8 @@
 
   capacitor.removeListener = function(pluginId, callbackId, eventName, callback) {
     capacitor.nativeCallback(pluginId, 'removeListener', {
-      callbackId,
-      eventName
+      callbackId: callbackId,
+      eventName: eventName
     }, callback);
   }
 
@@ -281,7 +281,7 @@
     } else if (target === "window") {
       window.dispatchEvent(event);
     } else {
-      const targetEl = document.querySelector(target);
+      var targetEl = document.querySelector(target);
       targetEl && targetEl.dispatchEvent(event);
     }
   }
@@ -335,8 +335,7 @@
   capacitor.logToNative = function(call) {
     if(!useFallbackLogging) {
         var c = orgConsole;
-        c.groupCollapsed(`%cnative %c${call.pluginId}.${call.methodName} (#${call.callbackId})`,
-            `font-weight: lighter; color: gray`, `font-weight: bold; color: #000`);
+        c.groupCollapsed('%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
         c.dir(call);
         c.groupEnd();
         //orgConsole.log('LOG TO NATIVE', call);
@@ -391,105 +390,7 @@
   }
 
   function injectCSS() {
-    var css = `
-    ._avc-modal {
-      ${capacitor.isIOS ? `
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-      ` : `
-      font-family: "Roboto", "Helvetica Neue", sans-serif;
-      `}
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 9999;
-    }
-    ._avc-modal-wrap {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    ._avc-modal-header {
-      font-size: 16px;
-      position: relative;
-      ${capacitor.isIOS ? `
-      padding: 32px 15px;
-      -webkit-backdrop-filter: blur(10px);
-      background-color: rgba(255, 255, 255, 0.5);
-      ` : `
-      background-color: #eee;
-      height: 60px;
-      padding: 15px;
-      `}
-    }
-    ._avc-modal-content {
-      width: 100%;
-      height: 100%;
-      padding: 15px;
-      -webkit-backdrop-filter: blur(10px);
-      ${capacitor.isIOS ? `
-      background-color: rgba(255, 255, 255, 0.5);
-      ` : `
-      background-color: white;
-      `}
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    ._avc-modal-header-button {
-      position: absolute;
-      font-size: 16px;
-      right: 15px;
-      padding: 0px 10px;
-      ${capacitor.isIOS ? `
-      top: 30px;
-      ` : `
-      top: 10px;
-      height: 40px;
-      `}
-    }
-    ._avc-modal-title {
-      ${capacitor.isIOS ? `
-      position: absolute;
-      text-align: center;
-      width: 100px;
-      left: 50%;
-      margin-left: -50px;
-      ` : `
-      margin-top: 7px;
-      `}
-      font-weight: 600;
-    }
-    ._avc-error-content {
-      font-size: 14px;
-      margin-bottom: 50px;
-    }
-    ._avc-error-message {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    ._avc-button {
-      padding: 15px;
-      font-size: 14px;
-      border-radius: 3px;
-      background-color: #222;
-    }
-    #_avc-copy-error {
-      position: absolute;
-      bottom: 0;
-      left: 15px;
-      right: 15px;
-      ${capacitor.isAndroid ? `
-      bottom: 15px;
-      width: calc(100% - 30px);
-      ` : ``}
-      background-color: #e83d3d;
-      color: #fff;
-      font-weight: bold;
-      margin-top: 15px;
-    }
-    `
+    var css = '\n    ._avc-modal {\n      ' + (capacitor.isIOS ? '\n      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";\n      ' : '\n      font-family: "Roboto", "Helvetica Neue", sans-serif;\n      ') + '\n      position: fixed;\n      top: 0;\n      right: 0;\n      bottom: 0;\n      left: 0;\n      z-index: 9999;\n    }\n    ._avc-modal-wrap {\n      position: relative;\n      width: 100%;\n      height: 100%;\n    }\n    ._avc-modal-header {\n      font-size: 16px;\n      position: relative;\n      ' + (capacitor.isIOS ? '\n      padding: 32px 15px;\n      -webkit-backdrop-filter: blur(10px);\n      background-color: rgba(255, 255, 255, 0.5);\n      ' : '\n      background-color: #eee;\n      height: 60px;\n      padding: 15px;\n      ') + '\n    }\n    ._avc-modal-content {\n      width: 100%;\n      height: 100%;\n      padding: 15px;\n      -webkit-backdrop-filter: blur(10px);\n      ' + (capacitor.isIOS ? '\n      background-color: rgba(255, 255, 255, 0.5);\n      ' : '\n      background-color: white;\n      ') + '\n      overflow: auto;\n      -webkit-overflow-scrolling: touch;\n    }\n    ._avc-modal-header-button {\n      position: absolute;\n      font-size: 16px;\n      right: 15px;\n      padding: 0px 10px;\n      ' + (capacitor.isIOS ? '\n      top: 30px;\n      ' : '\n      top: 10px;\n      height: 40px;\n      ') + '\n    }\n    ._avc-modal-title {\n      ' + (capacitor.isIOS ? '\n      position: absolute;\n      text-align: center;\n      width: 100px;\n      left: 50%;\n      margin-left: -50px;\n      ' : '\n      margin-top: 7px;\n      ') + '\n      font-weight: 600;\n    }\n    ._avc-error-content {\n      font-size: 14px;\n      margin-bottom: 50px;\n    }\n    ._avc-error-message {\n      font-size: 16px;\n      font-weight: 600;\n      margin-bottom: 10px;\n    }\n    ._avc-button {\n      padding: 15px;\n      font-size: 14px;\n      border-radius: 3px;\n      background-color: #222;\n    }\n    #_avc-copy-error {\n      position: absolute;\n      bottom: 0;\n      left: 15px;\n      right: 15px;\n      ' + (capacitor.isAndroid ? '\n      bottom: 15px;\n      width: calc(100% - 30px);\n      ' : '') + '\n      background-color: #e83d3d;\n      color: #fff;\n      font-weight: bold;\n      margin-top: 15px;\n    }\n    ';
     var style = document.createElement('style');
     style.innerHTML = css;
     document.head.appendChild(style);
@@ -497,18 +398,7 @@
 
   function makeModal() {
     injectCSS();
-    var html = `
-      <div class="_avc-modal-wrap">
-        <div class="_avc-modal-header">
-          <div class="_avc-modal-title">Error</div>
-          <button type="button" id="_avc-modal-close" class="_avc-modal-header-button">Close</button>
-        </div>
-        <div class="_avc-modal-content">
-          <div class="_avc-error-output"></div>
-        </div>
-        <button type="button" class="_avc-button" id="_avc-copy-error">Copy Error</button>
-      </div>
-    `
+    var html = '\n      <div class="_avc-modal-wrap">\n        <div class="_avc-modal-header">\n          <div class="_avc-modal-title">Error</div>\n          <button type="button" id="_avc-modal-close" class="_avc-modal-header-button">Close</button>\n        </div>\n        <div class="_avc-modal-content">\n          <div class="_avc-error-output"></div>\n        </div>\n        <button type="button" class="_avc-button" id="_avc-copy-error">Copy Error</button>\n      </div>\n    ';
     var el = document.createElement('div');
     el.innerHTML = html;
     el.className ="_avc-modal";
@@ -548,7 +438,7 @@
 
     var message = error.message;
     if(error.rejection) {
-      message = `Promise rejected: ${error.rejection.message}` + "<br />" + message;
+      message = 'Promise rejected: ' + error.rejection.message + "<br />" + message;
     }
 
     var stack = error.stack;
@@ -556,12 +446,7 @@
     var stackHTML = stackLines.join('<br />');
 
     var content = errorModal.querySelector('._avc-error-output');
-    content.innerHTML = `
-    <div class="_avc-error-content">
-      <div class="_avc-error-message"></div>
-      <div class="_avc-error-stack"></div>
-    </div>
-    `;
+    content.innerHTML = '\n    <div class="_avc-error-content">\n      <div class="_avc-error-message"></div>\n      <div class="_avc-error-stack"></div>\n    </div>\n    ';
     var messageEl = content.querySelector('._avc-error-message');
     var stackEl = content.querySelector('._avc-error-stack');
     messageEl.innerHTML = message;
@@ -570,7 +455,7 @@
 
   function cleanStack(stack) {
     var lines = stack.split('\n');
-    return lines.map((line) => {
+    return lines.map(function (line) {
       var atIndex = line.indexOf('@');
       var appIndex = line.indexOf('.app');
 
