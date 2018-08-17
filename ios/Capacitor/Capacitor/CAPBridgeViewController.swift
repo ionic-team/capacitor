@@ -61,6 +61,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     hostname = CAPConfig.getString("server.url") ?? "\(localUrl)/"
     
     bridge = CAPBridge(self, o, localUrl)
+    self.view.scrollView.contentInset = .zero
   }
   
   override public func viewDidLoad() {
@@ -191,6 +192,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     print("⚡️  WebView loaded")
+    webView.frame = self.view.bounds
+    webView.scrollView.frame = webView.frame
+    webView.scrollView.contentInset = .zero
   }
 
   public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
