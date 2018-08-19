@@ -24,6 +24,7 @@ declare global {
     StatusBar?: StatusBarPlugin;
     Storage?: StoragePlugin;
     Toast?: ToastPlugin;
+    WebView?: WebViewPlugin;
   }
 }
 
@@ -1393,4 +1394,13 @@ export interface ToastPlugin extends Plugin {
 export interface ToastShowOptions {
   text: string;
   duration?: 'short' | 'long';
+}
+
+export interface WebViewPlugin extends Plugin {
+  setServerBasePath(options: WebViewPath): Promise<void>;
+  getServerBasePath(): Promise<WebViewPath>;
+}
+
+export interface WebViewPath {
+  path: string;
 }

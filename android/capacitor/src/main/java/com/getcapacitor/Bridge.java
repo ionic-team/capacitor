@@ -86,9 +86,11 @@ public class Bridge {
   // A reference to the main activity for the app
   private final Activity context;
   private WebViewLocalServer localServer;
+  private String localUrl;
+  private String appUrl;
   // A reference to the main WebView for the app
   private final WebView webView;
-  private final CordovaInterfaceImpl cordovaInterface;
+  public final CordovaInterfaceImpl cordovaInterface;
 
   // Our MessageHandler for sending and receiving data to the WebView
   private final MessageHandler msgHandler;
@@ -153,6 +155,8 @@ public class Bridge {
 
     String port = getPort();
     String authority = "localhost" + ":" + port;
+    localUrl = "https://" + authority;
+
     boolean isLocal = true;
 
     if (appUrlConfig != null) {
@@ -175,7 +179,7 @@ public class Bridge {
     // Load the index route from our www folder
     String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
-    final String appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
+    appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
 
     Log.d(LOG_TAG, "Loading app at " + appUrl);
 
@@ -206,7 +210,6 @@ public class Bridge {
         return false;
       }
     });
-
 
     // Get to work
     webView.loadUrl(appUrl);
@@ -312,7 +315,7 @@ public class Bridge {
     settings.setGeolocationEnabled(true);
     settings.setDatabaseEnabled(true);
     settings.setAppCacheEnabled(true);
-    if (Config.getBoolean("allowMixedContent", false)) {
+    if (Config.getBoolean("android.allowMixedContent", false)) {
       settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
   }
@@ -343,6 +346,7 @@ public class Bridge {
     this.registerPlugin(StatusBar.class);
     this.registerPlugin(Storage.class);
     this.registerPlugin(com.getcapacitor.plugin.Toast.class);
+    this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 
     for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
       this.registerPlugin(pluginClass);
@@ -572,8 +576,9 @@ public class Bridge {
       String cordovaJS = JSExport.getCordovaJS(context);
       String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
       String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
+      String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
 
-      return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS);
+      return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
     } catch(JSExportException ex) {
       Log.e(LOG_TAG, "Unable to export Capacitor JS. App will not function!", ex);
     }
@@ -774,5 +779,19 @@ public class Bridge {
       }
     }
 
+  }
+
+  public String getServerBasePath() {
+    return this.localServer.getBasePath();
+  }
+
+  public void setServerBasePath(String path){
+    localServer.hostFiles(path);
+    webView.post(new Runnable() {
+      @Override
+      public void run() {
+        webView.loadUrl(appUrl);
+      }
+    });
   }
 }

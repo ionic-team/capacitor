@@ -36,14 +36,14 @@ enum BridgeError: Error {
 
   public var notificationsDelegate : CAPUNUserNotificationCenterDelegate
 
-  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController) {
+  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ localUrl: String) {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
     self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
     super.init()
     self.notificationsDelegate.bridge = self;
     CAPConfig.loadConfig()
-    exportCoreJS()
+    exportCoreJS(localUrl: localUrl)
     setupCordovaCompatibility()
     registerPlugins()
     bindObservers()
@@ -157,9 +157,9 @@ enum BridgeError: Error {
   /**
    * Export core JavaScript to the webview
    */
-  func exportCoreJS() {
+  func exportCoreJS(localUrl: String) {
     do {
-      try JSExport.exportCapacitorGlobalJS(userContentController: self.userContentController, isDebug: isDevMode())
+      try JSExport.exportCapacitorGlobalJS(userContentController: self.userContentController, isDebug: isDevMode(), localUrl: localUrl)
       try JSExport.exportCapacitorJS(userContentController: self.userContentController)
     } catch {
       CAPBridge.fatalError(error, error)
