@@ -1,6 +1,4 @@
 # Capacitor Android runtime [![Download](https://img.shields.io/bintray/v/ionic-team/capacitor/capacitor-android.svg)](https://bintray.com/ionic-team/capacitor/capacitor-android/_latestVersion) [![Twitter Follow](https://img.shields.io/twitter/follow/getcapacitor.svg?style=social&label=Follow&style=flat-square)](https://twitter.com/getcapacitor)
-
-This is the Android runtime for Capacitor.
  
 > Capacitor is a cross-platform app runtime that makes it easy to build web apps that run natively on iOS, Android, Electron, and the web.
 
@@ -27,19 +25,13 @@ which builds the log tag using a prefix and the class name of the sub class.
 Using this simple approach you are able to use the filter string `/Capacitor` in LogCat and get only log statements 
 belonging to Capacitor or search by `/Capacitor/Plugin` to get everything related to plugins.
 
-### Local testing
+### Testing
 
 If you want to integration test your runtime changes in your own Capacitor project there are two ways to do so.
 
-#### Change path
+*Change path*
 
-**Runtime**
-
-Do your changes.
-
-**Your project**
-
-Open `/yourproject/android/settings.gradle`, which should look like
+In your project open `/android/settings.gradle`, which should look like
 
 ```
 include ':app'
@@ -50,37 +42,32 @@ project(':capacitor-android-plugins').projectDir = new File('../node_modules/@ca
 
 apply from: 'capacitor.settings.gradle'
 ```
-
-comment line 2-3 and - this is very important - sync your project now!
+and comment line 2-3. 
 ```
 //include ':capacitor-android'
 //project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor/')
 ```
+**Important** Sync your project now!
 
-After the sync finished and change the path in the 3rd line so it points to local android runtime
+After the sync has finished, uncomment the 2 lines and change the path in the 3rd line so it points toy your local android runtime
 ```
 project(':capacitor-android').projectDir = new File('../../capacitor/android/capacitor/')
 ```
-and sync again. You should now be able to debug the project either on the emulator or on device.
+and sync again! You should now be able to debug the project either on the emulator or on device.
 
-**Important** If you just change the path Gradle will do strange things and will propably break your project. No idea why!
+**Important note** If you would have just changed the path (without syncing in between) Gradle would most propably have done strange things, which causes your build to fail. No idea why!
 
-#### Publish to maven local
+*Publish to maven local*
 
-**Runtime**
-
-Do your changes and when your ready to test run the below command
+To publish the runtime lib to your local maven repository run the below command
 ```
 ./gradlew publishToMavenLocal -PbintrayVersion=1.0.0-beta.xx
 ```
-to publish the runtime library to your local maven repository. You can run the command multiple times using the same 
+Replace the `1.0.0-beta.xx` with your actual version number. You can run the command multiple times using the same 
 version. There is no need to use different version numbers. Android Studio will recognize the change to the dependency 
 almost immediately.
 
-**Your project**
-
-Open `/yourproject/android/settings.gradle`, which should look like
-
+Then change to your capacitor project and open `android/settings.gradle`, which should look like
 ```
 include ':app'
 include ':capacitor-android'
@@ -93,6 +80,7 @@ apply from: 'capacitor.settings.gradle'
 and comment or remove line 2 and 3 because we're going to use a dependency instead of including a subproject.
 ```
 include ':app'
+// while contributing to capacitor comment the next two lines. We use locally published maven dependencies.
 //include ':capacitor-android'
 //project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor/')
 include ':capacitor-android-plugins'
@@ -101,7 +89,7 @@ project(':capacitor-android-plugins').projectDir = new File('../node_modules/@ca
 apply from: 'capacitor.settings.gradle'
 ```
 
-Next open `/yourproject/android/app/build.gradle` 
+Next open `android/app/build.gradle` 
  
 comment or remove
 
@@ -114,5 +102,5 @@ implementation 'com.ionicframework.capacitor:capacitor-android:1.0.0-beta.xx'
 ```
 Please replace the `1.0.0-beta.xx` with your current version.
 
-Finally check if add `mavenLocal()` as Gradle repository somewhere in your project.
+Finally add `mavenLocal()` as Gradle repository somewhere in your project and sync your project in Android Studio.
 
