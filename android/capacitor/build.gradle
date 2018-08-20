@@ -7,14 +7,13 @@ buildscript {
     classpath 'com.android.tools.build:gradle:3.1.1'
     classpath "digital.wup:android-maven-publish:3.2.0"
     classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-//    classpath 'com.novoda:bintray-release:0.8.0'
   }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'digital.wup.android-maven-publish'
+// use the official bintray gradle plugin because novoda conflicts with local maven publishing
 apply plugin: "com.jfrog.bintray"
-//apply plugin: 'com.novoda.bintray-release' // this bintray lib conflicts with local maven publishing
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -100,24 +99,9 @@ publishing {
 // ### Publish to bintray ###
 // ##########################
 
-//def version = System.getenv("BINTRAY_PKG_VERSION")
-//
-//publish {
-//  userOrg = 'ionic-team'
-//  repoName = 'capacitor'
-//  groupId = project.group
-//  artifactId = project.artifactId
-//  if (version != null) {
-//    publishVersion = System.getenv("BINTRAY_PKG_VERSION")
-//  } else {
-//    publishVersion = '0.0.0'
-//  }
-//  desc = 'Capacitor Android Runtime'
-//  website = 'https://github.com/ionic-team/capacitor'
-//}
+// ./gradlew clean build bintrayUpload -PbintrayUser=$BINTRAY_USER -PbintrayKey=$BINTRAY_KEY -PbintrayVersion=$LERNA_VERSION -PdryRun=true
 
 // for publishToMavenLocal to work we have to use bintray's gradle plugin instead of novoda
-
 bintray {
   user = project.hasProperty('bintrayUser') ? bintrayUser : null //this usually comes from gradle.properties file in ~/.gradle
   key = project.hasProperty('bintrayKey') ? bintrayKey : null //this usually comes from gradle.properties file in ~/.gradle
@@ -143,9 +127,9 @@ bintray {
     labels = ['ionic', 'html5', 'hybrid', 'native', 'android', 'capacitor', 'cordova' ]
 
     version {
-      name = (project.hasProperty('BINTRAY_PKG_VERSION') ? BINTRAY_PKG_VERSION : project.version) //Bintray logical version name
+      name = (project.hasProperty('bintrayVersion') ? bintrayVersion : project.version) //Bintray logical version name
       // desc = 'optional'
-      vcsTag = (project.hasProperty('BINTRAY_PKG_VERSION') ? BINTRAY_PKG_VERSION : project.version)
+      vcsTag = (project.hasProperty('bintrayVersion') ? bintrayVersion : project.version)
     }
   }
 }

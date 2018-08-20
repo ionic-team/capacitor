@@ -2,8 +2,6 @@
 
 echo "Deploying android v$LERNA_VERSION"
 
-cd android
+cd android/capacitor
 
-export BINTRAY_PKG_VERSION=$LERNA_VERSION
-
-./gradlew clean build -b capacitor/build.gradle bintrayUpload -PbintrayUser=$BINTRAY_USER -PbintrayKey=$BINTRAY_KEY -PdryRun=false
+./gradlew clean build bintrayUpload -PbintrayUser=$BINTRAY_USER -PbintrayKey=$BINTRAY_KEY -PbintrayVersion=$LERNA_VERSION -PdryRun=false
