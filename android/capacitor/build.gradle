@@ -59,6 +59,11 @@ dependencies {
   implementation 'org.apache.cordova:framework:7.0.0'
 }
 
+// ##########################
+// ### Prepare publishing ###
+// ##########################
+
+project.version = (project.hasProperty('bintrayVersion') ? bintrayVersion : project.version)
 // ###################################
 // ### Publish to local maven repo ###
 // ###################################
@@ -83,6 +88,7 @@ task androidSourcesJar(type: Jar) {
   classifier = 'sources'
   from android.sourceSets.main.java.srcDirs
 }
+
 
 publishing {
   publications {
@@ -127,9 +133,9 @@ bintray {
     labels = ['ionic', 'html5', 'hybrid', 'native', 'android', 'capacitor', 'cordova' ]
 
     version {
-      name = (project.hasProperty('bintrayVersion') ? bintrayVersion : project.version) //Bintray logical version name
+      name = project.version //Bintray logical version name
       // desc = 'optional'
-      vcsTag = (project.hasProperty('bintrayVersion') ? bintrayVersion : project.version)
+      vcsTag = project.version
     }
   }
 }
