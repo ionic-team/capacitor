@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -149,7 +150,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent intent) {
           Uri[] result;
-          if (intent.getClipData() != null && intent.getClipData().getItemCount() > 1) {
+          if (resultCode == Activity.RESULT_OK && intent.getClipData() != null && intent.getClipData().getItemCount() > 1) {
             final int numFiles = intent.getClipData().getItemCount();
             result = new Uri[numFiles];
             for (int i = 0; i < numFiles; i++) {
