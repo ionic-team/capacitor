@@ -29,7 +29,7 @@ belonging to Capacitor or search by `/Capacitor/Plugin` to get everything relate
 
 If you want to integration test your runtime changes in your own Capacitor project there are two ways to do so.
 
-*Change path*
+**1) Change path**
 
 In your project open `/android/settings.gradle`, which should look like
 
@@ -57,7 +57,7 @@ and sync again! You should now be able to debug the project either on the emulat
 
 **Important note** If you would have just changed the path (without syncing in between) Gradle would most propably have done strange things, which causes your build to fail. No idea why!
 
-*Publish to maven local*
+**2) Publish to maven local**
 
 To publish the runtime lib to your local maven repository run the below command
 ```
