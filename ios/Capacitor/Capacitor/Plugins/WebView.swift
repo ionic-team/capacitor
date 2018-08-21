@@ -17,4 +17,12 @@ public class CAPWebViewPlugin : CAPPlugin {
       "path": path
     ])
   }
+
+  @objc func persistServerBasePath(_ call: CAPPluginCall) {
+    let vc = bridge.viewController as! CAPBridgeViewController
+    let path = vc.getServerBasePath()
+    let defaults = UserDefaults.standard
+    defaults.set(path, forKey: "serverBasePath")
+    call.success()
+  }
 }

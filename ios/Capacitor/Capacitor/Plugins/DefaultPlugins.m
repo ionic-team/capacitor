@@ -141,4 +141,5 @@ CAP_PLUGIN(CAPToastPlugin, "Toast",
 CAP_PLUGIN(CAPWebViewPlugin, "WebView",
   CAP_PLUGIN_METHOD(setServerBasePath, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(getServerBasePath, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(persistServerBasePath, CAPPluginReturnPromise);
 )
