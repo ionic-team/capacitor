@@ -481,6 +481,10 @@
     Capacitor.Plugins.WebView.setServerBasePath({"path": path});
   }
 
+  win.Ionic.WebView.persistServerBasePath = function () {
+    Capacitor.Plugins.WebView.persistServerBasePath();
+  }
+
   win.Ionic.WebView.convertFileSrc = function(url) {
     if (!url) {
       return url;

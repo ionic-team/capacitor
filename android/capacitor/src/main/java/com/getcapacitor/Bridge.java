@@ -211,6 +211,11 @@ public class Bridge {
       }
     });
 
+    SharedPreferences prefs = getContext().getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+    String path = prefs.getString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, null);
+    if (path != null) {
+      setServerBasePath(path);
+    }
     // Get to work
     webView.loadUrl(appUrl);
   }
