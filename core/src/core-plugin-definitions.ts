@@ -1399,6 +1399,7 @@ export interface ToastShowOptions {
 export interface WebViewPlugin extends Plugin {
   setServerBasePath(options: WebViewPath): Promise<void>;
   getServerBasePath(): Promise<WebViewPath>;
+  persistServerBasePath(): Promise<void>;
 }
 
 export interface WebViewPath {

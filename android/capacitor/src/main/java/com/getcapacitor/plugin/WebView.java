@@ -1,5 +1,8 @@
 package com.getcapacitor.plugin;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -8,6 +11,8 @@ import com.getcapacitor.PluginMethod;
 
 @NativePlugin()
 public class WebView extends Plugin {
+  public static final String WEBVIEW_PREFS_NAME = "WebViewSettings";
+  public static final String CAP_SERVER_PATH = "serverBasePath";
 
   @PluginMethod()
   public void setServerBasePath(PluginCall call) {
@@ -22,5 +27,15 @@ public class WebView extends Plugin {
     JSObject ret = new JSObject();
     ret.put("path", path);
     call.success(ret);
+  }
+
+  @PluginMethod()
+  public void persistServerBasePath(PluginCall call) {
+    String path = bridge.getServerBasePath();
+    SharedPreferences prefs = getContext().getSharedPreferences(WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+    SharedPreferences.Editor editor = prefs.edit();
+    editor.putString(CAP_SERVER_PATH, path);
+    editor.apply();
+    call.success();
   }
 }

@@ -95,9 +95,15 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     GCDWebServer.setLogLevel(3)
     self.webServer = GCDWebServer.init()
 
-    let publicPath = Bundle.main.path(forResource: "public", ofType: nil)
+    var startPath = Bundle.main.path(forResource: "public", ofType: nil)
 
-    setServerPath(path: publicPath!)
+    let defaults = UserDefaults.standard
+    let persistedPath = defaults.string(forKey: "serverBasePath")
+    if (persistedPath != nil && !persistedPath!.isEmpty) {
+      startPath = persistedPath
+    }
+
+    setServerPath(path: startPath!)
 
     startServer()
   }
