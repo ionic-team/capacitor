@@ -42,6 +42,17 @@ class JSInjector {
     this.localUrlJS = localUrlJS;
   }
 
+  /**
+   * Generates injectable JS content.
+   * This may be used in other forms of injecting that aren't using an InputStream.
+   * @return
+   */
+  public String getScriptString() {
+    return globalJS + "\n\n" +
+            coreJS + "\n\n" + pluginJS + "\n\n" + cordovaJS + "\n\n" +
+            cordovaPluginsFileJS + "\n\n" + cordovaPluginsJS + "\n\n" +
+            localUrlJS;
+  }
 
   /**
    * Given an InputStream from the web server, prepend it with
@@ -51,10 +62,7 @@ class JSInjector {
    */
   public InputStream getInjectedStream(InputStream responseStream) {
     try {
-      String js = "<script type=\"text/javascript\">" + globalJS + "\n\n" +
-              coreJS + "\n\n" + pluginJS + "\n\n" + cordovaJS + "\n\n" +
-              cordovaPluginsFileJS + "\n\n" + cordovaPluginsJS + "\n\n" +
-              localUrlJS + "</script>";
+      String js = "<script type=\"text/javascript\">" + getScriptString() + "</script>";
       InputStream jsInputStream = new ByteArrayInputStream(js.getBytes(StandardCharsets.UTF_8.name()));
       return new SequenceInputStream(jsInputStream, responseStream);
     } catch(UnsupportedEncodingException ex) {
