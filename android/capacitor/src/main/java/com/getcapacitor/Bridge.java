@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
@@ -88,6 +89,7 @@ public class Bridge {
   private WebViewLocalServer localServer;
   private String localUrl;
   private String appUrl;
+  private String appUrlConfig;
   // A reference to the main WebView for the app
   private final WebView webView;
   public final CordovaInterfaceImpl cordovaInterface;
@@ -151,7 +153,7 @@ public class Bridge {
   }
 
   private void loadWebView() {
-    final String appUrlConfig = Config.getString("server.url");
+    appUrlConfig = Config.getString("server.url");
 
     String port = getPort();
     String authority = "localhost" + ":" + port;
@@ -188,6 +190,13 @@ public class Bridge {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         return localServer.shouldInterceptRequest(request);
+      }
+
+      @Override
+      public void onPageFinished(WebView view, final String location) {
+        if (appUrlConfig != null) {
+          injectScriptFile(view, getJSInjector().getScriptString());
+        }
       }
 
       @Override
@@ -798,5 +807,19 @@ public class Bridge {
         webView.loadUrl(appUrl);
       }
     });
+  }
+
+  private void injectScriptFile(WebView view, String script) {
+
+    // Base64 encode string before injecting as innerHTML
+    String encoded = Base64.encodeToString(script.getBytes(), Base64.NO_WRAP);
+    view.loadUrl("javascript:(function() {" +
+            "var parent = document.getElementsByTagName('head').item(0);" +
+            "var script = document.createElement('script');" +
+            "script.type = 'text/javascript';" +
+            // Base64 decode injected javascript
+            "script.innerHTML = window.atob('" + encoded + "');" +
+            "parent.appendChild(script)" +
+            "})()");
   }
 }
