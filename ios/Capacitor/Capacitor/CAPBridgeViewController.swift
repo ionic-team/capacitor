@@ -23,10 +23,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return self
   }
   
-  private var port: Int?
   private var hostname: String?
   private var basePath: String = ""
-  private var localUrl: String = ""
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
@@ -55,12 +53,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     view = webView
     
     setKeyboardRequiresUserInteraction(false)
-
-    port = getPort()
-    localUrl = "http://localhost:\(port!)"
-    hostname = CAPConfig.getString("server.url") ?? "\(localUrl)/"
     
-    bridge = CAPBridge(self, o, localUrl)
+    bridge = CAPBridge(self, o)
   }
   
   override public func viewDidLoad() {
@@ -83,6 +77,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       
       exit(1)
     }
+
+    hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())/"
 
     initWebServer()
 
@@ -111,7 +107,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   func startServer() {
     do {
       let options = [
-        GCDWebServerOption_Port: port!,
+        GCDWebServerOption_Port: bridge!.getPort(),
         GCDWebServerOption_BindToLocalhost: true,
         GCDWebServerOption_ServerName: "Capacitor"
         ] as [String : Any]
@@ -119,26 +115,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     } catch {
       print(error)
     }
-  }
-
-  func getPort() -> Int {
-    let configPort = CAPConfig.getString("server.port")
-    if configPort != nil {
-      return Int(configPort!)!
-    }
-    let defaults = UserDefaults.standard
-    var port = defaults.integer(forKey: "capacitorPort")
-    if port > 0 {
-      return port
-    }
-    port = getRandomPort()
-    defaults.set(port, forKey: "capacitorPort")
-    return port
-  }
-
-  func getRandomPort() -> Int {
-    let range: [Int] = [3000, 9000]
-    return range[0] + Int(arc4random_uniform(UInt32(range[1]-range[0])))
   }
 
   func setServerPath(path: String) {
@@ -153,7 +129,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webServer.addGETHandler(forBasePath: "/", directoryPath: path, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
 
     webServer.addHandler(forMethod: "GET", pathRegex: "_capacitor_/", request: GCDWebServerFileRequest.self) { (request, block) in
-      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "\(self.localUrl)/_capacitor_/", with: ""), byteRange: request.byteRange))
+      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "\(self.bridge!.getLocalUrl())/_capacitor_/", with: ""), byteRange: request.byteRange))
         // TODO ignore what's after ?
     }
 
