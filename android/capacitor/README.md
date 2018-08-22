@@ -58,11 +58,10 @@ to
 project(':capacitor-android').projectDir = new File('../../CLONED_CAP_REPO_DIR/android/capacitor/')
 ```
 
-The path now points to your local android runtime clone. If you clone Capacitor `CLONED_CAP_REPO_DIR` is `capacitor` 
-and the full path would be `'../../capacitor/android/capacitor/'`
+The path now points to your local android runtime clone. If you simply cloned Capacitor the placeholder `CLONED_CAP_REPO_DIR` is `capacitor` 
+and the full path would be `'../../capacitor/android/capacitor/'`.
 
-
-The result should look like this.
+The result should look like
 ```
 include ':app'
 include ':capacitor-android'
@@ -129,7 +128,7 @@ implementation 'com.ionicframework.capacitor:capacitor-android:1.0.0-beta.xx'
 
 Once again please replace the `1.0.0-beta.xx` with your current version.
 
-After that open `android/build.gradle` and find the `allprojects` section and add `mavenLocal()` so it looks like
+After that open `android/build.gradle`, find the `allprojects` section and add `mavenLocal()` so it looks like
 ```
 allprojects {
   repositories {
@@ -140,7 +139,7 @@ allprojects {
 }
 ```
 
-If you added the Android to your project (`npx cap add android`) starting with Capacitor version `beta.7` it should already be there.
+If you added the Android platform (`npx cap add android`) with Capacitor version `beta.7` or later it should already be there.
 
 Finally sync your project in Android Studio and start testing your changes.
 
