@@ -83,7 +83,7 @@ done strange things, which causes your build to fail. No idea why!
 
 To publish the runtime lib to your local maven repository run the below command in `CLONED_CAP_REPO_DIR/android/capacitor`.
 ```
-./gradlew publishToMavenLocal -PbintrayVersion=1.0.0-beta.xx
+./gradlew publishToMavenLocal -PcapacitorVersion=1.0.0-beta.xx
 ```
 You might have to manually grant execute permissions if you running this command on macOS or Linux.
 
