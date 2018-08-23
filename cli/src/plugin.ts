@@ -121,7 +121,7 @@ export function getPluginPlatform(p: Plugin, platform: string) {
     const platforms = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
     return platforms[0];
   }
-  return null;
+  return [];
 }
 
 export function getPlatformElement(p: Plugin, platform: string, elementName: string) {
