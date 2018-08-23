@@ -4,14 +4,11 @@ Occasionally, you'll need to make Capacitor updates to your Android app, includi
 
 ## Updating Capacitor Library
 
-To update the version of Capacitor used in your app, open the `build.gradle` file for your `Module: app` (available in `android/app/build.gradle`), and update the line:
+To update the version of Capacitor used in your app, just npm install latest version:
 
-```gradle
-implementation 'ionic-team:capacitor-android:0.0.+
 ```
-
-To use the version of Capacitor Android you'd like.
-
+npm install --save @capacitor/android@latest
+```
 
 ## Updating Android Project
 
