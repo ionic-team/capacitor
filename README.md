@@ -1,6 +1,6 @@
 *Capacitor is currently in beta and is not production ready. We'd love your help testing!*
 
-# ⚡️ Create cross-platform apps with JavaScript and the Web ⚡️
+# ⚡️ Cross-platform apps with JavaScript and the Web ⚡️
 
 Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom Native plugins that your app might need.  Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores, _and_ the mobile web.
 
