@@ -12,10 +12,6 @@ import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import com.getcapacitor.plugin.SplashScreen;
-
-import org.json.JSONObject;
-
 /**
  * A Splash Screen service for showing and hiding a splash screen in the app.
  */
@@ -25,10 +21,9 @@ public class Splash {
     void error();
   }
 
-  private static final String SPLASH_DRAWABLE = "splash";
+  public static final String CONFIG_KEY_PREFIX = "plugins.SplashScreen.";
 
-  public static final int LAUNCH_SHOW_DURATION = 3000;
-
+  public static final int DEFAULT_LAUNCH_SHOW_DURATION = 3000;
   public static final int DEFAULT_FADE_IN_DURATION = 200;
   public static final int DEFAULT_FADE_OUT_DURATION = 200;
   public static final int DEFAULT_SHOW_DURATION = 3000;
@@ -41,8 +36,10 @@ public class Splash {
 
   private static void buildViews(Context c) {
 
-    int splashId = c.getResources().getIdentifier("splash", "drawable", c.getPackageName());
-    Drawable splash = c.getResources().getDrawable(splashId);
+    String splashResourceName = Config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
+
+    int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
+    Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
 
     splashImage = new ImageView(c);
 
@@ -59,25 +56,7 @@ public class Splash {
    * @param a
    */
   public static void showOnLaunch(final BridgeActivity a) {
-    Bridge b = a.getBridge();
-    if (b == null) {
-      return;
-    }
-
-    PluginHandle splashPluginHandle = b.getPlugin("SplashScreen");
-    if (splashPluginHandle == null) {
-      return;
-    }
-
-    SplashScreen splashPlugin = (SplashScreen) splashPluginHandle.getInstance();
-
-    Integer durationValue = (Integer) splashPlugin.getConfigValue("launchShowDuration");
-
-    int duration = LAUNCH_SHOW_DURATION;
-    if (durationValue != null) {
-      duration = durationValue.intValue();
-    }
-
+    Integer duration = Config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
     show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, true, null, true);
   }
 
@@ -86,7 +65,7 @@ public class Splash {
    * @param a
    */
   public static void show(final Activity a) {
-    show(a, LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
+    show(a, DEFAULT_LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
   }
 
   /**
