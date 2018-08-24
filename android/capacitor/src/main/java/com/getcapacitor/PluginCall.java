@@ -18,6 +18,8 @@ public class PluginCall {
    * in the case of an app resuming with saved instance data, for example.
    */
   public static final String CALLBACK_ID_DANGLING = "-1";
+  private static final String UNIMPLEMENTED = "not implemented";
+  private static final String UNAVAILABLE = "not available";
 
   private final MessageHandler msgHandler;
   private final String pluginId;
@@ -108,6 +110,13 @@ public class PluginCall {
     error(msg, null);
   }
 
+  public void unimplemented() {
+    error(UNIMPLEMENTED, null);
+  }
+
+  public void unavailable() {
+    error(UNAVAILABLE, null);
+  }
 
   public String getPluginId() { return this.pluginId; }
 
