@@ -47,8 +47,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
   }
   
   @objc func prefetch(_ call: CAPPluginCall) {
-    // no-op
-    call.success()
+    call.unimplemented()
   }
   
   public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {

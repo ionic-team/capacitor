@@ -28,8 +28,7 @@ public class CAPStatusBarPlugin: CAPPlugin {
   }
   
   @objc func setBackgroundColor(_ call: CAPPluginCall) {
-    // noop on iOS
-    call.success()
+    call.unimplemented()
   }
   
   @objc func hide(_ call: CAPPluginCall) {

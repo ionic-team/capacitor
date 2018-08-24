@@ -65,17 +65,17 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void getDeliveredNotifications(PluginCall call) {
-    call.error("not implemented");
+    call.unimplemented();
   }
 
   @PluginMethod()
   public void removeDeliveredNotifications(PluginCall call) {
-    call.error("not implemented");
+    call.unimplemented();
   }
 
   @PluginMethod()
   public void removeAllDeliveredNotifications(PluginCall call) {
-    call.error("not implemented");
+    call.unimplemented();
   }
 
   @PluginMethod()
@@ -90,7 +90,7 @@ public class PushNotifications extends Plugin {
       createChannel(channel);
       call.success();
     } else {
-      call.error("not available");
+      call.unavailable();
     }
   }
 
@@ -101,7 +101,7 @@ public class PushNotifications extends Plugin {
       notificationManager.deleteNotificationChannel(channelId);
       call.success();
     } else {
-      call.error("not available");
+      call.unavailable();
     }
   }
 
@@ -125,7 +125,7 @@ public class PushNotifications extends Plugin {
       result.put("channels", channels);
       call.success(result);
     } else {
-      call.error("not available");
+      call.unavailable();
     }
   }
 
