@@ -76,7 +76,7 @@ public class Config {
     // Search until the second to last part of the key
     for (int i = 0; i < parts.length-1; i++) {
       String k = parts[i];
-      o = this.config.getJSONObject(k);
+      o = o.getJSONObject(k);
     }
     return o;
   }
@@ -106,6 +106,17 @@ public class Config {
 
       return o.getBoolean(k);
     } catch (Exception ex) {}
+    return defaultValue;
+  }
+
+  public static int getInt(String key, int defaultValue) {
+    String k = getConfigKey(key);
+    try {
+      JSONObject o = getInstance().getConfigObjectDeepest(key);
+      return o.getInt(k);
+    } catch (Exception ignore) {
+      // value was not found
+    }
     return defaultValue;
   }
 
