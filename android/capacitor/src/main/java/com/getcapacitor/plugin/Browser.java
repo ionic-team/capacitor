@@ -59,8 +59,7 @@ public class Browser extends Plugin {
 
   @PluginMethod()
   public void close(PluginCall call) {
-    // Not supported
-    call.success();
+    call.unimplemented();
   }
 
 
