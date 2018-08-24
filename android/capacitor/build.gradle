@@ -4,15 +4,13 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.1.1'
-    classpath "digital.wup:android-maven-publish:3.2.0"
+    classpath 'com.android.tools.build:gradle:3.1.4'
     classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
   }
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'digital.wup.android-maven-publish'
-// use the official bintray gradle plugin because novoda conflicts with local maven publishing
+apply plugin: 'maven-publish'
 apply plugin: "com.jfrog.bintray"
 
 sourceCompatibility = 1.7
@@ -92,11 +90,48 @@ task androidSourcesJar(type: Jar) {
 
 publishing {
   publications {
-    mavenAar(MavenPublication) {
+    maven(MavenPublication) {
       artifactId project.artifactId
-      from components.android
+
+      artifact bundleRelease
       artifact androidSourcesJar
       artifact androidJavadocsJar
+
+      pom.withXml {
+        final dependenciesNode = asNode().appendNode('dependencies')
+
+        ext.addDependency = { Dependency dep, String scope ->
+          if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+            return // ignore invalid dependencies
+
+          final dependencyNode = dependenciesNode.appendNode('dependency')
+          dependencyNode.appendNode('groupId', dep.group)
+          dependencyNode.appendNode('artifactId', dep.name)
+          dependencyNode.appendNode('version', dep.version)
+          dependencyNode.appendNode('scope', scope)
+
+          if (!dep.transitive) {
+            // If this dependency is transitive, we should force exclude all its dependencies them from the POM
+            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+            exclusionNode.appendNode('groupId', '*')
+            exclusionNode.appendNode('artifactId', '*')
+          } else if (!dep.properties.excludeRules.empty) {
+            // Otherwise add specified exclude rules
+            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+            dep.properties.excludeRules.each { ExcludeRule rule ->
+              exclusionNode.appendNode('groupId', rule.group ?: '*')
+              exclusionNode.appendNode('artifactId', rule.module ?: '*')
+            }
+          }
+        }
+
+        // List all "compile" dependencies (for old Gradle)
+        configurations.compile.getAllDependencies().each { dep -> addDependency(dep, "compile") }
+        // List all "api" dependencies (for new Gradle) as "compile" dependencies
+        configurations.api.getAllDependencies().each { dep -> addDependency(dep, "compile") }
+        // List all "implementation" dependencies (for new Gradle) as "runtime" dependencies
+        configurations.implementation.getAllDependencies().each { dep -> addDependency(dep, "runtime") }
+      }
     }
   }
 }
@@ -114,7 +149,7 @@ bintray {
 
   // configurations = ['archives'] //When uploading configuration files
   // - OR -
-  publications = ['mavenAar'] //When uploading Maven-based publication files
+  publications = ['maven'] //When uploading Maven-based publication files
 
   dryRun = true //Whether to run this as dry-run, without deploying
   publish = false //If version should be auto published after an upload
