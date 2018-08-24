@@ -51,11 +51,11 @@ public class CAPAppPlugin : CAPPlugin {
   }
   
   @objc func exitApp(_ call: CAPPluginCall) {
-    // No-op, this isn't allowed by Apple
+    call.unimplemented()
   }
   
   @objc func getLaunchUrl(_ call: CAPPluginCall) {
-    call.success()
+    call.unimplemented()
   }
   
   @objc func canOpenUrl(_ call: CAPPluginCall) {

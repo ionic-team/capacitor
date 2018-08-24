@@ -61,15 +61,15 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   }
 
   @objc func createChannel(_ call: CAPPluginCall) {
-    call.error("not available")
+    call.unimplemented()
   }
 
   @objc func deleteChannel(_ call: CAPPluginCall) {
-    call.error("not available")
+    call.unimplemented()
   }
 
   @objc func listChannels(_ call: CAPPluginCall) {
-    call.error("not available")
+    call.unimplemented()
   }
 
   @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification){
