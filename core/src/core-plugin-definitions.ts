@@ -522,7 +522,7 @@ export enum FilesystemDirectory {
 export enum FilesystemEncoding {
   UTF8 = 'utf8',
   ASCII = 'ascii',
-  UTF16 = 'utf18'
+  UTF16 = 'utf16'
 }
 
 export interface FileWriteOptions {
