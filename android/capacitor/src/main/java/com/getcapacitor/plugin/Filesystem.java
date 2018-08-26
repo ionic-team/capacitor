@@ -266,6 +266,7 @@ public class Filesystem extends Plugin {
       if (isExternalDirectory(getDirectoryParameter(call))) {
         MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
+      Log.d(getLogTag(), "File '"+file.getAbsolutePath()+"' saved!");
       call.success();
     } else {
       call.error("FILE_NOTCREATED");
