@@ -208,11 +208,11 @@ public class Filesystem extends Plugin {
               saveFile(call, fileObject, data);
             }
           } else {
-            Log.e(getLogTag(), "Not able to create '"+directory+"'!");
+            Log.e(getLogTag(), "Not able to create '" + directory + "'!");
             call.error("NOT_CREATED_DIR");
           }
         } else {
-          Log.e(getLogTag(), "Directory ID '"+directory+"' is not supported by plugin");
+          Log.e(getLogTag(), "Directory ID '" + directory + "' is not supported by plugin");
           call.error("INVALID_DIR");
         }
       }
@@ -250,14 +250,14 @@ public class Filesystem extends Plugin {
         writer.write(data);
         success = true;
       } catch (IOException e) {
-        Log.e(getLogTag(), "Creating text file '"+file.getPath()+"' with charset '"+charset+"' failed. Error: "+e.getMessage(), e);
+        Log.e(getLogTag(), "Creating text file '" + file.getPath() + "' with charset '" + charset + "' failed. Error: " + e.getMessage(), e);
       }
     } else {
       try (FileOutputStream fos = new FileOutputStream(file, append)) {
         fos.write(Base64.decode(data, Base64.NO_WRAP));
         success = true;
       } catch (IOException e) {
-        Log.e(getLogTag(), "Creating binary file '"+file.getPath()+"' failed. Error: "+e.getMessage(), e);
+        Log.e(getLogTag(), "Creating binary file '" + file.getPath() + "' failed. Error: " + e.getMessage(), e);
       }
     }
 
@@ -266,7 +266,7 @@ public class Filesystem extends Plugin {
       if (isExternalDirectory(getDirectoryParameter(call))) {
         MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
-      Log.d(getLogTag(), "File '"+file.getAbsolutePath()+"' saved!");
+      Log.d(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
       call.success();
     } else {
       call.error("FILE_NOTCREATED");
@@ -425,15 +425,15 @@ public class Filesystem extends Plugin {
   private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
     if (Build.VERSION.SDK_INT >= 23) {
       if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
-        Log.v(getLogTag(),"Permission '"+permission+"' is granted");
+        Log.v(getLogTag(),"Permission '" + permission + "' is granted");
         return true;
       } else {
-        Log.v(getLogTag(),"Permission '"+permission+"' denied. Asking user for it.");
+        Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
         ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, permissionRequestCode);
         return false;
       }
     } else { //permission is automatically granted on sdk<23 upon installation
-      Log.v(getLogTag(),"Permission '"+permission+"' is granted");
+      Log.v(getLogTag(),"Permission '" + permission + "' is granted");
       return true;
     }
   }
