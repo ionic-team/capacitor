@@ -245,6 +245,66 @@ public class Filesystem extends Plugin {
   }
 
   @PluginMethod()
+  public void moveFile(PluginCall call) {
+    String file = call.getString("path");
+    String directory = call.getString("directory");
+    String destination = call.getString("destination");
+
+    try {
+      InputStream is = getInputStream(file, directory);
+      FileOutputStream fos = new FileOutputStream(getFileObject(file, destination));
+
+      byte[] buffer = new byte[1024];
+      int read;
+      while ((read = is.read(buffer)) != -1) {
+        fos.write(buffer, 0, read);
+      }
+      is.close();
+      is = null;
+
+      fos.flush();
+      fos.close();
+      fos = null;
+
+      getFileObject(file, directory).delete();
+
+      call.success();
+
+    } catch (IOException ex) {
+      call.error("Unable to move file", ex);
+    }
+  }
+
+  @PluginMethod()
+  public void copyFile(PluginCall call) {
+    String file = call.getString("path");
+    String directory = call.getString("directory");
+    String destination = call.getString("destination");
+
+    try {
+      InputStream is = getInputStream(file, directory);
+      FileOutputStream fos = new FileOutputStream(getFileObject(file, destination));
+
+      byte[] buffer = new byte[1024];
+      int read;
+      while ((read = is.read(buffer)) != -1) {
+        fos.write(buffer, 0, read);
+      }
+      is.close();
+      is = null;
+
+      fos.flush();
+      fos.close();
+      fos = null;
+
+      call.success();
+
+    } catch (IOException ex) {
+      call.error("Unable to move file", ex);
+    }
+  }
+
+  @PluginMethod()
   public void mkdir(PluginCall call) {
     String path = call.getString("path");
     String directory = call.getString("directory");

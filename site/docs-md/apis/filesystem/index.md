@@ -58,6 +58,22 @@ async fileDelete() {
   });
 }
 
+async fileMove() {
+  await Filesystem.moveFile({
+    path: 'secrets/text.txt',
+    directory: FilesystemDirectory.Documents,
+    destination: FilesystemDirectory.Data
+  });
+}
+
+async fileCopy() {
+  await Filesystem.copyFile({
+    path: 'secrets/text.txt',
+    directory: FilesystemDirectory.Documents,
+    destination: FilesystemDirectory.Data
+  });
+}
+
 async mkdir() {
   try {
     let ret = await Filesystem.mkdir({

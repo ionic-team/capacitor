@@ -85,19 +85,19 @@ export interface AppPlugin extends Plugin {
   /**
    * Force exit the app. This should only be used in conjunction with the `backButton` handler for Android to
    * exit the app when navigation is complete.
-   * 
+   *
    * Ionic handles this itself so you shouldn't need to call this if using Ionic
    */
   exitApp(): never;
   /**
    * Check if an app can be opened with the given URL
    */
-  canOpenUrl(options: { url: string }): Promise<{value: boolean}>;
+  canOpenUrl(options: { url: string }): Promise<{ value: boolean }>;
 
   /**
    * Open an app with the given URL
    */
-  openUrl(options: { url: string }): Promise<{completed: boolean}>;
+  openUrl(options: { url: string }): Promise<{ completed: boolean }>;
 
   /**
    * Get the URL the app was launched with, if any
@@ -180,10 +180,10 @@ export interface BackgroundTaskPlugin extends Plugin {
    * can finish any work your app needs to do (such as finishing an upload
    * or network request). This is especially important on iOS as any operations
    * would normally be suspended without initiating a background task.
-   * 
+   *
    * This method should finish in less than 3 minutes or your app risks
    * being terminated by the OS.
-   * 
+   *
    * When you are finished, this callback _must_ call `BackgroundTask.finish({ taskId })`
    * where `taskId` is the value returned from `BackgroundTask.beforeExit()`
    * @param cb the task to run when the app is backgrounded but before it is terminated
@@ -194,7 +194,7 @@ export interface BackgroundTaskPlugin extends Plugin {
    * Notify the OS that the given task is finished and the OS can continue
    * backgrounding the app.
    */
-  finish(options: {taskId: CallbackID}): void;
+  finish(options: { taskId: CallbackID }): void;
 }
 
 //
@@ -240,9 +240,9 @@ export interface BrowserOpenOptions {
    */
   toolbarColor?: string;
 
-   /**
-   * iOS only: The presentation style of the browser. Defaults to fullscreen.
-   */
+  /**
+  * iOS only: The presentation style of the browser. Defaults to fullscreen.
+  */
   presentationStyle?: 'fullscreen' | 'popover';
 }
 
@@ -458,6 +458,20 @@ export interface FilesystemPlugin extends Plugin {
   deleteFile(options: FileDeleteOptions): Promise<FileDeleteResult>;
 
   /**
+   * Moves a file from a specific location on device to another location
+   * @param options options for the file move
+   * @return a promise that resolves with the moved file data result
+   */
+  moveFile(options: FileMoveOptions): Promise<FileMoveResult>;
+
+  /**
+   * Copies a file from a specific location on device to another location
+   * @param options options for the file copy
+   * @return a promise that resolves with the copied file data result
+   */
+  copyFile(options: FileCopyOptions): Promise<FileCopyResult>;
+
+  /**
    * Create a directory.
    * @param options options for the mkdir
    * @return a promise that resolves with the mkdir result
@@ -592,6 +606,36 @@ export interface FileDeleteOptions {
   directory?: FilesystemDirectory;
 }
 
+export interface FileMoveOptions {
+  /**
+   * the filename to move
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to move the file from
+   */
+  directory?: FilesystemDirectory;
+  /**
+   * The FilesystemDirectory to move the file to
+   */
+  destination: FilesystemDirectory
+}
+
+export interface FileCopyOptions {
+  /**
+   * the filename to copy
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to copy the file from
+   */
+  directory?: FilesystemDirectory;
+  /**
+   * The FilesystemDirectory to copy the file to
+   */
+  destination: FilesystemDirectory
+}
+
 export interface MkdirOptions {
   /**
    * The path of the new directory
@@ -659,6 +703,10 @@ export interface FileDeleteResult {
 export interface FileWriteResult {
 }
 export interface FileAppendResult {
+}
+export interface FileMoveResult {
+}
+export interface FileCopyResult {
 }
 export interface MkdirResult {
 }
@@ -842,7 +890,7 @@ export interface LocalNotificationAttachment {
 
 export interface LocalNotificationAttachmentOptions {
   iosUNNotificationAttachmentOptionsTypeHintKey?: string;
-  iosUNNotificationAttachmentOptionsThumbnailHiddenKey?: string; 
+  iosUNNotificationAttachmentOptionsThumbnailHiddenKey?: string;
   iosUNNotificationAttachmentOptionsThumbnailClippingRectKey?: string;
   iosUNNotificationAttachmentOptionsThumbnailTimeKey?: string;
 }
@@ -861,7 +909,7 @@ export interface LocalNotification {
 export interface LocalNotificationSchedule {
   at?: Date;
   repeats?: boolean;
-  every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
+  every?: 'year' | 'month' | 'two-weeks' | 'week' | 'day' | 'hour' | 'minute' | 'second';
   on?: {
     year?: number;
     month?: number;
@@ -1239,8 +1287,8 @@ export interface PushNotificationChannel {
   id: string;
   name: string;
   description: string;
-  importance: 1 | 2 | 3 | 4 | 5;
-  visibility?: -1 | 0 | 1 ;
+  importance: 1 | 2 | 3 |  4 | 5;
+  visibility?: -1 | 0 | 1;
 }
 
 export interface PushNotificationChannelList {

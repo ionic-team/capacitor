@@ -49,6 +49,22 @@ fileWrite() {
   });
 }
 
+<span class="hljs-keyword">async</span> fileMove() {
+  <span class="hljs-keyword">await</span> Filesystem.moveFile({
+    path: <span class="hljs-string">'secrets/text.txt'</span>,
+    directory: FilesystemDirectory.Documents,
+    destination: FilesystemDirectory.Data
+  });
+}
+
+<span class="hljs-keyword">async</span> fileCopy() {
+  <span class="hljs-keyword">await</span> Filesystem.copyFile({
+    path: <span class="hljs-string">'secrets/text.txt'</span>,
+    directory: FilesystemDirectory.Documents,
+    destination: FilesystemDirectory.Data
+  });
+}
+
 <span class="hljs-keyword">async</span> mkdir() {
   <span class="hljs-keyword">try</span> {
     <span class="hljs-keyword">let</span> ret = <span class="hljs-keyword">await</span> Filesystem.mkdir({

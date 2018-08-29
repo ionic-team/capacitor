@@ -190,6 +190,57 @@ public class CAPFilesystemPlugin : CAPPlugin {
   }
   
   /**
+   * Moves the file or directory at the specified path to a new location synchronously.
+   */
+  @objc func moveItem(_ call: CAPPluginCall) {
+    guard let path = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
+    guard let inputFileUrl = getFileUrl(file, directoryOption) else {
+      handleError(call, "Invalid path")
+      return
+    }
+  
+    guard let destination = call.get("destination", String.self) else {
+      handleError(call, "destination must be provided and must be a string.")
+      return
+    }
+    guard let outputFileUrl = getFileUrl(file, destination) else {
+      handleError(call, "Invalid destination file path")
+      return
+    }
+  
+    do {
+      try FileManager.default.moveItem(atPath: inputFileUrl.path, toPath: outputFileUrl.path)
+      call.success()
+    } catch let error as NSError {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
+  
+  /**
+   * Copies the item at the specified path to a new location synchronously.
+   */
+  @objc funct copyItem(_ call: CAPPluginCall) {
+    guard let path = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
+      return
+    }
+    guard let destination = call.get("destination", Stirng.self) else {
+      handleError(call, "destination must be provided and must be a string.")
+      return
+    }
+    do {
+      try FileManager.default.copyItem(atPath: path, toPath: destination)
+    } catch let error as NSError {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
+  
+  /**
    * Make a new directory, optionally creating parent folders first.
    */
   @objc func mkdir(_ call: CAPPluginCall) {
