@@ -129,7 +129,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webServer.addGETHandler(forBasePath: "/", directoryPath: path, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
 
     webServer.addHandler(forMethod: "GET", pathRegex: "_capacitor_/", request: GCDWebServerFileRequest.self) { (request, block) in
-      block(GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "\(self.bridge!.getLocalUrl())/_capacitor_/", with: ""), byteRange: request.byteRange))
+      var fileResponse = GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "\(self.bridge!.getLocalUrl())/_capacitor_/", with: ""), byteRange: request.byteRange)
+      fileResponse?.setValue("bytes", forAdditionalHeader: "Accept-Ranges")
+      block(fileResponse)
         // TODO ignore what's after ?
     }
 
