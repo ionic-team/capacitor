@@ -934,10 +934,10 @@
             actionArgs = JSON.parse(JSON.stringify(actionArgs));
             var command = {
                 type: 'cordova',
-                callbackId,
-                service,
-                action,
-                actionArgs
+                callbackId: callbackId,
+                service: service,
+                action: action,
+                actionArgs: actionArgs
             };
             if (window.androidBridge) {
                 window.androidBridge.postMessage(JSON.stringify(command));
