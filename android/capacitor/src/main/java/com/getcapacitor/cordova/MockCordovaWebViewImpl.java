@@ -42,8 +42,8 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
     this.cordova = cordova;
     this.preferences = preferences;
     this.pluginManager = new PluginManager(this, this.cordova, pluginEntries);
-    this.pluginManager.init();
     this.resourceApi = new CordovaResourceApi(this.context, this.pluginManager);
+    this.pluginManager.init();
   }
 
   public void init(CordovaInterface cordova, List<PluginEntry> pluginEntries, CordovaPreferences preferences, WebView webView) {
@@ -51,12 +51,12 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
     this.webView = webView;
     this.preferences = preferences;
     this.pluginManager = new PluginManager(this, this.cordova, pluginEntries);
-    this.pluginManager.init();
     this.resourceApi = new CordovaResourceApi(this.context, this.pluginManager);
     nativeToJsMessageQueue = new NativeToJsMessageQueue();
     nativeToJsMessageQueue.addBridgeMode(new CapacitorEvalBridgeMode(webView, this.cordova));
     nativeToJsMessageQueue.setBridgeMode(0);
     this.cookieManager = new CapacitorCordovaCookieManager(webView);
+    this.pluginManager.init();
   }
 
   public static class CapacitorEvalBridgeMode extends NativeToJsMessageQueue.BridgeMode {
