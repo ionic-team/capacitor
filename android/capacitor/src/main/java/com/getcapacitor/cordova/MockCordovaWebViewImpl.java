@@ -83,7 +83,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public boolean isInitialized() {
-    return false;
+    return cordova != null;
   }
 
   @Override
@@ -128,32 +128,56 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public void handlePause(boolean keepRunning) {
+    if (!isInitialized()) {
+      return;
+    }
+    pluginManager.onPause(keepRunning);
 
+    // If app doesn't want to run in background
+    if (!keepRunning) {
+      // Pause JavaScript timers. This affects all webviews within the app!
+      this.setPaused(true);
+    }
   }
 
   @Override
   public void onNewIntent(Intent intent) {
-
+    if (this.pluginManager != null) {
+      this.pluginManager.onNewIntent(intent);
+    }
   }
 
   @Override
   public void handleResume(boolean keepRunning) {
-
+    if (!isInitialized()) {
+      return;
+    }
+    this.setPaused(false);
+    this.pluginManager.onResume(keepRunning);
   }
 
   @Override
   public void handleStart() {
-
+    if (!isInitialized()) {
+      return;
+    }
+    pluginManager.onStart();
   }
 
   @Override
   public void handleStop() {
-
+    if (!isInitialized()) {
+      return;
+    }
+    pluginManager.onStop();
   }
 
   @Override
   public void handleDestroy() {
-
+    if (!isInitialized()) {
+      return;
+    }
+    this.pluginManager.onDestroy();
   }
 
   @Override
@@ -239,5 +263,15 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
   @Override
   public Object postMessage(String id, Object data) {
     return pluginManager.postMessage(id, data);
+  }
+
+  public void setPaused(boolean value) {
+    if (value) {
+      webView.onPause();
+      webView.pauseTimers();
+    } else {
+      webView.onResume();
+      webView.resumeTimers();
+    }
   }
 }
