@@ -41,6 +41,10 @@ public class Splash {
     int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
     Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
 
+    if (splash instanceof Animatable) {
+      ((Animatable) splash).start();
+    }
+
     splashImage = new ImageView(c);
 
     // Stops flickers dead in their tracks
