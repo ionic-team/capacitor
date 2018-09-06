@@ -129,10 +129,22 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webServer.addGETHandler(forBasePath: "/", directoryPath: path, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
 
     webServer.addHandler(forMethod: "GET", pathRegex: "_capacitor_/", request: GCDWebServerFileRequest.self) { (request, block) in
-      var fileResponse = GCDWebServerFileResponse(file: request.url.absoluteString.replacingOccurrences(of: "\(self.bridge!.getLocalUrl())/_capacitor_/", with: ""), byteRange: request.byteRange)
-      fileResponse?.setValue("bytes", forAdditionalHeader: "Accept-Ranges")
-      block(fileResponse)
-        // TODO ignore what's after ?
+      let urlToRemove = "\(self.bridge!.getLocalUrl())/_capacitor_/"
+      var absUrl = request.url.absoluteString.replacingOccurrences(of: urlToRemove, with: "")
+
+      if let range = absUrl.range(of: "?") {
+        absUrl.removeSubrange(range.lowerBound..<absUrl.endIndex)
+      }
+
+      let fileManager = FileManager.default
+      if !fileManager.fileExists(atPath: absUrl) {
+        let response = GCDWebServerResponse(statusCode: 404)
+        block(response)
+      } else {
+        var fileResponse = GCDWebServerFileResponse(file: absUrl, byteRange: request.byteRange)
+        fileResponse?.setValue("bytes", forAdditionalHeader: "Accept-Ranges")
+        block(fileResponse)
+      }
     }
 
     webServer.addHandler(forMethod: "GET", pathRegex: "cordova.js", request: GCDWebServerFileRequest.self) { (request, block) in
