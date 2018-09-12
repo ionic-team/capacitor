@@ -217,7 +217,7 @@ public class Bridge {
             Intent openIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             getContext().startActivity(openIntent);
           } catch (ActivityNotFoundException e) {
-            // Should probably trigger an event of some sort?
+            // TODO - trigger an event
           }
           return true;
         }
