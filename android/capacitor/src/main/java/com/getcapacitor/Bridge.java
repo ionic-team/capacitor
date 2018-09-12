@@ -1,6 +1,7 @@
 package com.getcapacitor;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -212,8 +213,12 @@ public class Bridge {
 
       private boolean launchIntent(String url) {
         if (!url.contains(appUrl)) {
-          Intent openIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-          getContext().startActivity(openIntent);
+          try {
+            Intent openIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            getContext().startActivity(openIntent);
+          } catch (ActivityNotFoundException e) {
+            // TODO - trigger an event
+          }
           return true;
         }
         return false;
