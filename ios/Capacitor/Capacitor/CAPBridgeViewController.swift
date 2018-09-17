@@ -365,6 +365,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     self.present(alertController, animated: true, completion: nil)
   }
 
+  public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+    if (navigationAction.request.url != nil) {
+      UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
+    }
+    return nil
+  }
+
   public func getWebView() -> WKWebView {
     return self.webView!
   }
