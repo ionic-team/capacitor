@@ -32,9 +32,9 @@ public class StatusBar extends Plugin {
         int visibilityFlags = decorView.getSystemUiVisibility();
 
         if (style.equals("DARK")) {
-           decorView.setSystemUiVisibility(visibilityFlags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        } else {
           decorView.setSystemUiVisibility(visibilityFlags & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        } else {
+          decorView.setSystemUiVisibility(visibilityFlags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         call.success();
       }
