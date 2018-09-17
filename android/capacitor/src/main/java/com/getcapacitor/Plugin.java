@@ -399,8 +399,8 @@ public class Plugin {
     String callbackId = call.getString("callbackId");
     PluginCall savedCall = bridge.getSavedCall(callbackId);
     if (savedCall != null) {
-      removeEventListener(eventName, call);
-      bridge.releaseCall(call);
+      removeEventListener(eventName, savedCall);
+      bridge.releaseCall(savedCall);
     }
   }
 
