@@ -3,8 +3,8 @@ declare global {
 }
 
 export interface Plugin {
-  addListener?: (eventName: string, listenerFunc: Function) => PluginListenerHandle;
-  removeListener?: (eventName: string, listenerFunc: Function) => void;
+  addListener(eventName: string, listenerFunc: Function): PluginListenerHandle;
+  removeListener(eventName: string, listenerFunc: Function): void;
   requestPermissions?: () => Promise<PermissionsRequestResult>;
 }
 
