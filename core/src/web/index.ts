@@ -130,7 +130,9 @@ export class WebPlugin {
 
   notifyListeners(eventName: string, data: any): void {
     let listeners = this.listeners[eventName];
-    listeners.forEach(listener => listener(data));
+    if (listeners) {
+      listeners.forEach(listener => listener(data));
+    }
   }
 
   hasListeners(eventName: string): boolean {
