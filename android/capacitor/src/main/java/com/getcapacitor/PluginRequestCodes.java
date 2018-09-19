@@ -8,4 +8,6 @@ public class PluginRequestCodes {
   public static final int CAMERA_IMAGE_EDIT = 9005;
   public static final int NOTIFICATION_OPEN = 9006;
   public static final int FILE_CHOOSER = 9007;
+  public static final int FILE_CHOOSER_IMAGE_CAPTURE = 9008;
+  public static final int FILE_CHOOSER_VIDEO_CAPTURE = 9009;
 }

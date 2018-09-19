@@ -23,6 +23,7 @@ import com.getcapacitor.PluginRequestCodes;
 import com.getcapacitor.plugin.camera.CameraResultType;
 import com.getcapacitor.plugin.camera.CameraSettings;
 import com.getcapacitor.plugin.camera.CameraSource;
+import com.getcapacitor.plugin.camera.CameraUtils;
 import com.getcapacitor.plugin.camera.ExifWrapper;
 import com.getcapacitor.plugin.camera.ImageUtils;
 
@@ -192,7 +193,7 @@ public class Camera extends Plugin {
       // If we will be saving the photo, send the target file along
       try {
         String appId = getAppId();
-        File photoFile = createImageFile(saveToGallery);
+        File photoFile = CameraUtils.createImageFile(getActivity(), saveToGallery);
         imageFileSavePath = photoFile.getAbsolutePath();
         // TODO: Verify provider config exists
         imageFileUri = FileProvider.getUriForFile(getActivity(), appId + ".fileprovider", photoFile);
@@ -405,27 +406,6 @@ public class Camera extends Plugin {
     call.resolve(data);
   }
 
-  private File createImageFile(boolean saveToGallery) throws IOException {
-    // Create an image file name
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-    String imageFileName = "JPEG_" + timeStamp + "_";
-    File storageDir;
-    if(saveToGallery) {
-      Log.d(getLogTag(), "Trying to save image to public external directory");
-      storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-    }  else {
-      storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-    }
-
-    File image = File.createTempFile(
-        imageFileName,  /* prefix */
-        ".jpg",         /* suffix */
-        storageDir      /* directory */
-    );
-
-    return image;
-  }
-
   @Override
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -482,7 +462,7 @@ public class Camera extends Plugin {
       }
       Intent editIntent = new Intent(Intent.ACTION_EDIT);
       editIntent.setDataAndType(origPhotoUri, "image/*");
-      File editedFile = createImageFile(false);
+      File editedFile = CameraUtils.createImageFile(getActivity(), false);
       Uri editedUri = Uri.fromFile(editedFile);
       editIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
       editIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
