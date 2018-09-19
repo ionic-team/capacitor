@@ -160,6 +160,11 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   
   public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
     picker.dismiss(animated: true)
+    self.call?.error("User cancelled photos app")
+  }
+
+  public func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+    self.call?.error("User cancelled photos app")
   }
   
   public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -192,7 +197,6 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
     
     guard let jpeg = UIImageJPEGRepresentation(image!, CGFloat(settings.quality/100)) else {
-      print("Unable to convert image to jpeg")
       self.call?.error("Unable to convert image to jpeg")
       return
     }
