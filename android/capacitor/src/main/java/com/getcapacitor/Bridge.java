@@ -680,7 +680,7 @@ public class Bridge {
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
-    if (plugin == null) {
+    if (plugin == null || requestCode == 0) {
       Log.d(LOG_TAG, "Unable to find a Capacitor plugin to handle requestCode, try with Cordova plugins " + requestCode);
       try {
         cordovaInterface.onRequestPermissionResult(requestCode, permissions, grantResults);
