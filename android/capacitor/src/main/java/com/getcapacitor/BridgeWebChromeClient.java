@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.webkit.WebView;
 import com.getcapacitor.plugin.camera.CameraUtils;
 
 import org.apache.cordova.CordovaPlugin;
+import org.json.JSONException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +34,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
   static final int FILE_CHOOSER = PluginRequestCodes.FILE_CHOOSER;
   static final int FILE_CHOOSER_IMAGE_CAPTURE = PluginRequestCodes.FILE_CHOOSER_IMAGE_CAPTURE;
   static final int FILE_CHOOSER_VIDEO_CAPTURE = PluginRequestCodes.FILE_CHOOSER_VIDEO_CAPTURE;
+  static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
 
   public BridgeWebChromeClient(Bridge bridge) {
     this.bridge = bridge;
@@ -149,17 +152,28 @@ public class BridgeWebChromeClient extends WebChromeClient {
   }
 
   @Override
-  public boolean onShowFileChooser(WebView webView, final ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+  public boolean onShowFileChooser(WebView webView, final ValueCallback<Uri[]> filePathCallback, final FileChooserParams fileChooserParams) {
     List<String> acceptTypes = Arrays.asList(fileChooserParams.getAcceptTypes());
     boolean captureEnabled = fileChooserParams.isCaptureEnabled();
     boolean capturePhoto = captureEnabled && acceptTypes.contains("image/*");
-    boolean captureVideo = captureEnabled && acceptTypes.contains("video/*");
-
-    if ((capturePhoto || captureVideo) && isMediaCaptureSupported()) {
-      boolean didShowMediaCapturePicker = showMediaCapturePicker(filePathCallback, captureVideo);
-      if (!didShowMediaCapturePicker) {
-        Log.w(LogUtils.getCoreTag("FileChooser"), "Media capture intent could not be launched. Falling back to default file picker.");
-        showFilePicker(filePathCallback, fileChooserParams);
+    final boolean captureVideo = captureEnabled && acceptTypes.contains("video/*");
+    if ((capturePhoto || captureVideo)) {
+      if(isMediaCaptureSupported()) {
+        showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
+      } else {
+        this.bridge.cordovaInterface.requestPermission(new CordovaPlugin(){
+          @Override
+          public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+            if (FILE_CHOOSER_CAMERA_PERMISSION == requestCode) {
+              if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showMediaCaptureOrFilePicker(filePathCallback, fileChooserParams, captureVideo);
+              } else {
+                Log.w(LogUtils.getCoreTag("FileChooser"), "Camera permission not granted");
+                filePathCallback.onReceiveValue(null);
+              }
+            }
+          }
+        }, FILE_CHOOSER_CAMERA_PERMISSION, Manifest.permission.CAMERA);
       }
     } else {
       showFilePicker(filePathCallback, fileChooserParams);
@@ -169,30 +183,26 @@ public class BridgeWebChromeClient extends WebChromeClient {
   }
 
   private boolean isMediaCaptureSupported() {
-    // Launching the camera while the app has defined the "android.permission.CAMERA" in the
-    // manifest file will crash the app if the permission hasn't been granted.
-    //
-    // More info: https://developer.android.com/reference/android/provider/MediaStore#ACTION_IMAGE_CAPTURE
-    //            https://stackoverflow.com/q/32789027
     Plugin camera = bridge.getPlugin("Camera").getInstance();
     boolean isSupported = camera.hasPermission(Manifest.permission.CAMERA) || !camera.hasDefinedPermission(Manifest.permission.CAMERA);
-    if (!isSupported) {
-      Log.w(LogUtils.getCoreTag("FileChooser"), "Unable to launch media capture: android.permission.CAMERA was defined in the manifest but hasn't been granted.");
-    }
     return isSupported;
   }
 
-  private boolean showMediaCapturePicker(ValueCallback<Uri[]> filePathCallback, boolean isVideo) {
+  private void showMediaCaptureOrFilePicker(ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams, boolean isVideo) {
     // TODO: add support for video capture on Android M and older
     // On Android M and lower the VIDEO_CAPTURE_INTENT (e.g.: intent.getData())
     // returns a file:// URI instead of the expected content:// URI.
     // So we disable it for now because it requires a bit more work
     boolean isVideoCaptureSupported = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N;
-
+    boolean shown = false;
     if (isVideo && isVideoCaptureSupported) {
-      return showVideoCapturePicker(filePathCallback);
+      shown = showVideoCapturePicker(filePathCallback);
     } else {
-      return showImageCapturePicker(filePathCallback);
+      shown = showImageCapturePicker(filePathCallback);
+    }
+    if (!shown) {
+      Log.w(LogUtils.getCoreTag("FileChooser"), "Media capture intent could not be launched. Falling back to default file picker.");
+      showFilePicker(filePathCallback, fileChooserParams);
     }
   }
 
