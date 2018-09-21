@@ -11,4 +11,5 @@ public class PluginRequestCodes {
   public static final int FILE_CHOOSER_IMAGE_CAPTURE = 9008;
   public static final int FILE_CHOOSER_VIDEO_CAPTURE = 9009;
   public static final int FILE_CHOOSER_CAMERA_PERMISSION = 9010;
+  public static final int GET_USER_MEDIA_PERMISSIONS = 9011;
 }
