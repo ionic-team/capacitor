@@ -22,6 +22,7 @@ import com.getcapacitor.plugin.camera.CameraUtils;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
   static final int FILE_CHOOSER_IMAGE_CAPTURE = PluginRequestCodes.FILE_CHOOSER_IMAGE_CAPTURE;
   static final int FILE_CHOOSER_VIDEO_CAPTURE = PluginRequestCodes.FILE_CHOOSER_VIDEO_CAPTURE;
   static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
+  static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
 
   public BridgeWebChromeClient(Bridge bridge) {
     this.bridge = bridge;
@@ -42,7 +44,33 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
   @Override
   public void onPermissionRequest(final PermissionRequest request) {
-    request.grant(request.getResources());
+    List<String> permissionList = new ArrayList<String>();
+    if (Arrays.asList(request.getResources()).contains("android.webkit.resource.VIDEO_CAPTURE")) {
+      permissionList.add(Manifest.permission.CAMERA);
+    }
+    if (Arrays.asList(request.getResources()).contains("android.webkit.resource.AUDIO_CAPTURE")) {
+      permissionList.add(Manifest.permission.MODIFY_AUDIO_SETTINGS);
+      permissionList.add(Manifest.permission.RECORD_AUDIO);
+    }
+    if (!permissionList.isEmpty()) {
+      String [] permissions = permissionList.toArray(new String[0]);;
+      bridge.cordovaInterface.requestPermissions(new CordovaPlugin(){
+        @Override
+        public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+          if (GET_USER_MEDIA_PERMISSIONS == requestCode) {
+            for (int r : grantResults) {
+              if (r == PackageManager.PERMISSION_DENIED) {
+                request.deny();
+                return;
+              }
+            }
+            request.grant(request.getResources());
+          }
+        }
+      }, GET_USER_MEDIA_PERMISSIONS, permissions);
+    } else {
+      request.grant(request.getResources());
+    }
   }
 
   /**
