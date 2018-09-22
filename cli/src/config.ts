@@ -191,7 +191,9 @@ export class Config implements CliConfig {
   }
 
   private initLinuxConfig() {
-    this.linux.androidStudioPath = this.app.linuxAndroidStudioPath && this.app.linuxAndroidStudioPath;
+    if (this.app.linuxAndroidStudioPath) {
+      this.linux.androidStudioPath = this.app.linuxAndroidStudioPath;
+    }
   }
 
   private initPluginsConfig() {

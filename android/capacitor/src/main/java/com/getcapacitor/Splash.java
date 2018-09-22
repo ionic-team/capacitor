@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.Log;
@@ -40,6 +41,10 @@ public class Splash {
 
     int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
     Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
+
+    if (splash instanceof Animatable) {
+      ((Animatable) splash).start();
+    }
 
     splashImage = new ImageView(c);
 

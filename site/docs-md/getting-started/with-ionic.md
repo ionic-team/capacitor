@@ -76,4 +76,4 @@ npm install your-cordova-plugin
 npx cap update
 ```
 
-See the [Cordova](../basics/cordova/) guide for more information.
+See the [Cordova](/docs/basics/cordova) guide for more information.
