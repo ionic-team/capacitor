@@ -2,13 +2,9 @@ package com.getcapacitor.plugin;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import com.getcapacitor.JSArray;
@@ -196,7 +192,7 @@ public class Filesystem extends Plugin {
 
     String directory = getDirectoryParameter(call);
     if (directory != null) {
-      if (!isExternalDirectory(directory)
+      if (!isPublicDirectory(directory)
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
         // create directory because it might not exist
         File androidDir = getDirectory(directory);
@@ -263,24 +259,13 @@ public class Filesystem extends Plugin {
 
     if (success) {
       // update mediaStore index only if file was written to external storage
-      if (isExternalDirectory(getDirectoryParameter(call))) {
+      if (isPublicDirectory(getDirectoryParameter(call))) {
         MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
       Log.d(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
       call.success();
     } else {
       call.error("FILE_NOTCREATED");
-    }
-  }
-
-  @Override
-  protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    switch (requestCode) {
-      case PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS: {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-          Log.d(getLogTag(), "User granted write permission.");
-        }
-      }
     }
   }
 
@@ -423,18 +408,13 @@ public class Filesystem extends Plugin {
    * @return Returns true if the permission is granted and false if it is denied.
    */
   private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
-    if (Build.VERSION.SDK_INT >= 23) {
-      if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
-        Log.v(getLogTag(),"Permission '" + permission + "' is granted");
-        return true;
-      } else {
-        Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
-        ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, permissionRequestCode);
-        return false;
-      }
-    } else { //permission is automatically granted on sdk<23 upon installation
+    if (hasPermission(permission)) {
       Log.v(getLogTag(),"Permission '" + permission + "' is granted");
       return true;
+    } else {
+      Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
+      pluginRequestPermissions(new String[] {permission}, permissionRequestCode);
+      return false;
     }
   }
 
@@ -447,10 +427,10 @@ public class Filesystem extends Plugin {
   }
 
   /**
-   * True if the given directory string is a (public) external storage
+   * True if the given directory string is a public storage directory, which is accessible by the user or other apps.
    * @param directory the directory string.
    */
-  private boolean isExternalDirectory(String directory) {
+  private boolean isPublicDirectory(String directory) {
     return "DOCUMENTS".equals(directory) || "EXTERNAL_STORAGE".equals(directory);
   }
 
