@@ -6,6 +6,9 @@ The Local Notification API provides a way to schedule "local" notifications - no
 
 Local Notifications are great for reminding the user about a change in the app since they last visited, providing reminder features, and delivering offline information with the app being in the foreground.
 
+<plugin-api index="true" name="local-notifications"></plugin-api>
+
+
 ## Example
 
 ## API
