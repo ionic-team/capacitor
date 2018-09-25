@@ -170,7 +170,7 @@ export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: C
     await copyPluginsJS(config, cordovaPlugins, platform);
   } else {
     removePluginFiles(config, platform);
-    createEmptyCordovaJS(config, platform);
+    await createEmptyCordovaJS(config, platform);
   }
   await autoGenerateConfig(config, cordovaPlugins, platform);
 }
