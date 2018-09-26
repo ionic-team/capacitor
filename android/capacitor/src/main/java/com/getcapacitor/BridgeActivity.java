@@ -76,7 +76,9 @@ public class BridgeActivity extends AppCompatActivity {
     cordovaInterface.onCordovaInit(pluginManager);
     bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, pluginManager);
 
-    Splash.showOnLaunch(this);
+    if (Config.getBoolean("plugins.SplashScreen.enabled", true)) {
+      Splash.showOnLaunch(this);
+    }
 
     if (savedInstanceState != null) {
       bridge.restoreInstanceState(savedInstanceState);
