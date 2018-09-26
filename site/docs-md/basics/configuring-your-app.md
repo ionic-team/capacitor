@@ -51,7 +51,12 @@ The current ones you might configure are:
     // Android's default keyboard doesn't allow proper JS key capture
     // You can use a simpler keyboard enabling this preference
     // Be aware that this keyboard has some problems and limitations
-    "captureInput": true
+    "captureInput": true,
+    // Enables debugging of web contents (HTML / CSS / JavaScript) loaded into
+    // any WebViews of this application.
+    // This flag can be enabled in order to facilitate debugging of web layouts
+    // and JavaScript code running inside WebViews.
+    "webContentsDebuggingEnabled": true
   },
   "ios": {
     // Configure the Swift version to be used for Cordova plugins.

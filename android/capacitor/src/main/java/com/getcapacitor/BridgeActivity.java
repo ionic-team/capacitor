@@ -50,7 +50,7 @@ public class BridgeActivity extends AppCompatActivity {
     getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(R.style.AppTheme_NoActionBar);
-    WebView.setWebContentsDebuggingEnabled(true);
+    WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", true));
 
     setContentView(R.layout.bridge_layout_main);
 

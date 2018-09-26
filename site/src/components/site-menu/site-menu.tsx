@@ -204,7 +204,7 @@ export class SiteMenu {
         { title: 'Motion', url: '/docs/apis/motion' },
         { title: 'Network', url: '/docs/apis/network' },
         // { title: 'Photos', url: '/docs/apis/photos' },
-        // { title: 'Push Notifications', url: '/docs/apis/push-notifications' },
+        { title: 'Push Notifications', url: '/docs/apis/push-notifications' },
         { title: 'Share', url: '/docs/apis/share' },
         { title: 'Splash Screen', url: '/docs/apis/splash-screen' },
         { title: 'Status Bar', url: '/docs/apis/status-bar' },
