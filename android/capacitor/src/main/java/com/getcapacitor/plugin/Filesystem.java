@@ -1,19 +1,19 @@
 package com.getcapacitor.plugin;
 
+import android.Manifest;
 import android.content.Context;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-
+import com.getcapacitor.PluginRequestCodes;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -30,7 +30,9 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-@NativePlugin()
+@NativePlugin(requestCodes = {
+  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS
+})
 public class Filesystem extends Plugin {
   private Charset getEncoding(String encoding) {
     if (encoding == null) {
@@ -54,7 +56,7 @@ public class Filesystem extends Plugin {
       case "APPLICATION":
         return c.getFilesDir();
       case "DOCUMENTS":
-        return c.getFilesDir();
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
       case "DATA":
         return c.getFilesDir();
       case "CACHE":
@@ -173,45 +175,97 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void writeFile(PluginCall call) {
-    String file = call.getString("path");
+    String path = call.getString("path");
     String data = call.getString("data");
-    String directory = call.getString("directory");
-    String encoding = call.getString("encoding");
-    boolean append = call.getBoolean("append", false).booleanValue();
 
-    File fileObject = getFileObject(file, directory);
+    if (path == null) {
+      Log.e(getLogTag(), "No path or filename retrieved from call");
+      call.error("NO_PATH");
+      return;
+    }
+
+    if (data == null) {
+      Log.e(getLogTag(), "No data retrieved from call");
+      call.error("NO_DATA");
+      return;
+    }
+
+    String directory = getDirectoryParameter(call);
+    if (directory != null) {
+      if (!isPublicDirectory(directory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        // create directory because it might not exist
+        File androidDir = getDirectory(directory);
+        if (androidDir != null) {
+          if (androidDir.exists() || androidDir.mkdirs()) {
+            // path might include directories as well
+            File fileObject = new File(androidDir, path);
+            if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
+              saveFile(call, fileObject, data);
+            }
+          } else {
+            Log.e(getLogTag(), "Not able to create '" + directory + "'!");
+            call.error("NOT_CREATED_DIR");
+          }
+        } else {
+          Log.e(getLogTag(), "Directory ID '" + directory + "' is not supported by plugin");
+          call.error("INVALID_DIR");
+        }
+      }
+    } else {
+      // check if file://
+      Uri u = Uri.parse(path);
+      if ("file".equals(u.getScheme())) {
+        File fileObject = new File(u.getPath());
+        // do not know where the file is being store so checking the permission to be secure
+        // TODO to prevent permission checking we need a property from the call
+        if (isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+          if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
+            saveFile(call, fileObject, data);
+          }
+        }
+      }
+    }
+  }
+
+  private void saveFile(PluginCall call, File file, String data) {
+    String encoding = call.getString("encoding");
+    boolean append = call.getBoolean("append", false);
 
     Charset charset = this.getEncoding(encoding);
-    if(encoding != null && charset == null) {
+    if (encoding != null && charset == null) {
       call.error("Unsupported encoding provided: " + encoding);
       return;
     }
-    if(fileObject == null) {
-      call.error("Invalid file path");
-      return;
+
+    // if charset is not null assume its a plain text file the user wants to save
+    boolean success = false;
+    if (charset != null) {
+      try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+        new FileOutputStream(file, append), charset))) {
+        writer.write(data);
+        success = true;
+      } catch (IOException e) {
+        Log.e(getLogTag(), "Creating text file '" + file.getPath() + "' with charset '" + charset + "' failed. Error: " + e.getMessage(), e);
+      }
+    } else {
+      try (FileOutputStream fos = new FileOutputStream(file, append)) {
+        fos.write(Base64.decode(data, Base64.NO_WRAP));
+        success = true;
+      } catch (IOException e) {
+        Log.e(getLogTag(), "Creating binary file '" + file.getPath() + "' failed. Error: " + e.getMessage(), e);
+      }
     }
 
-    try {
-      if (charset != null) {
-        BufferedWriter bw = new BufferedWriter(
-            new OutputStreamWriter(
-                new FileOutputStream(fileObject, append),
-                charset
-            )
-        );
-
-        bw.write(data);
-
-        bw.close();
-      } else {
-        FileOutputStream fos = new FileOutputStream(fileObject);
-        fos.write(Base64.decode(data, Base64.NO_WRAP));
-        fos.close();
+    if (success) {
+      // update mediaStore index only if file was written to external storage
+      if (isPublicDirectory(getDirectoryParameter(call))) {
+        MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
-
+      Log.d(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
       call.success();
-    } catch (IOException ex) {
-      call.error("Unable to write file", ex);
+    } else {
+      call.error("FILE_NOTCREATED");
     }
   }
 
@@ -346,5 +400,39 @@ public class Filesystem extends Plugin {
     data.put("uri", Uri.fromFile(fileObject).toString());
     call.success(data);
   }
+
+  /**
+   * Checks the the given permission and requests them if they are not already granted.
+   * @param permissionRequestCode the request code see {@link PluginRequestCodes}
+   * @param permission the permission string
+   * @return Returns true if the permission is granted and false if it is denied.
+   */
+  private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
+    if (hasPermission(permission)) {
+      Log.v(getLogTag(),"Permission '" + permission + "' is granted");
+      return true;
+    } else {
+      Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
+      pluginRequestPermissions(new String[] {permission}, permissionRequestCode);
+      return false;
+    }
+  }
+
+  /**
+   * Reads the directory parameter from the plugin call
+   * @param call the plugin call
+   */
+  private String getDirectoryParameter(PluginCall call) {
+    return call.getString("directory");
+  }
+
+  /**
+   * True if the given directory string is a public storage directory, which is accessible by the user or other apps.
+   * @param directory the directory string.
+   */
+  private boolean isPublicDirectory(String directory) {
+    return "DOCUMENTS".equals(directory) || "EXTERNAL_STORAGE".equals(directory);
+  }
+
 
 }
