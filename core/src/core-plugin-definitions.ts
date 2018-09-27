@@ -297,6 +297,11 @@ export interface CameraOptions {
    * Default: CameraSource.Prompt
    */
   source?: CameraSource;
+
+  /**
+   * iOS only: The presentation style of the Camera. Defaults to fullscreen.
+   */
+  presentationStyle?: 'fullscreen' | 'popover';
 }
 
 export enum CameraSource {
