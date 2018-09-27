@@ -10,7 +10,12 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
       call.error("Must provide a URL to open")
       return
     }
-    
+
+    if urlString.isEmpty {
+      call.error("URL must not be empty")
+      return
+    }
+
     let toolbarColor = call.getString("toolbarColor")
     let url = URL(string: urlString)
     
