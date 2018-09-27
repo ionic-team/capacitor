@@ -38,8 +38,6 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     self.call = call
     self.settings = getSettings(call)
 
-    let sourceType = getSourceType(settings.source)
-    
     // Make sure they have all the necessary info.plist settings
     if let missingUsageDescription = checkUsageDescriptions() {
       bridge.modulePrint(self, missingUsageDescription)
@@ -47,20 +45,10 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       bridge.alert("Camera Error", "Missing required usage description. See console for more information")
       return
     }
-    
-    if !UIImagePickerController.isSourceTypeAvailable(sourceType) {
-      call.error("Camera is not available. Are you running in the simulator?")
-      return
-    }
-    
+
     imagePicker = UIImagePickerController()
     imagePicker!.delegate = self
-    imagePicker!.sourceType = sourceType
-    imagePicker!.modalPresentationStyle = .popover
-    imagePicker!.popoverPresentationController?.delegate = self
-    self.setCenteredPopover(self.imagePicker!)
-    //imagePicker!.popoverPresentationController?.sourceView = view
-    
+
     doShow(call: call, settings: settings)
   }
   
@@ -123,17 +111,19 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       call.error("Camera not available while running in Simulator")
       return
     }
-    
-    guard let imagePicker = self.imagePicker else {
-      call.error("Internal error, please file an issue")
-      return
+
+    let presentationStyle = call.getString("presentationStyle")
+    if presentationStyle != nil && presentationStyle == "popover" {
+      self.configurePicker()
+    } else {
+        self.imagePicker!.modalPresentationStyle = .fullScreen
     }
+
+    self.imagePicker!.sourceType = .camera
     
-    imagePicker.sourceType = .camera
-    
-    self.bridge.viewController.present(imagePicker, animated: true, completion: nil)
+    self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
   }
-  
+
   func showPhotos(_ call: CAPPluginCall) {
     let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
     if photoAuthorizationStatus == .restricted || photoAuthorizationStatus == .denied {
@@ -141,23 +131,20 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       return
     }
     
+    self.configurePicker()
+    
     self.imagePicker!.sourceType = .photoLibrary
     self.imagePicker!.allowsEditing = settings.allowEditing
     
     self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
   }
-  
-  func getSourceType(_ source: CameraSource) -> UIImagePickerControllerSourceType {
-    switch source {
-    case CameraSource.prompt:
-      return .photoLibrary
-    case CameraSource.camera:
-      return .camera
-    case CameraSource.photos:
-      return .savedPhotosAlbum
-    }
+    
+  private func configurePicker() {
+    self.imagePicker!.modalPresentationStyle = .popover
+    self.imagePicker!.popoverPresentationController?.delegate = self
+    self.setCenteredPopover(self.imagePicker!)
   }
-  
+
   public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
     picker.dismiss(animated: true)
     self.call?.error("User cancelled photos app")
