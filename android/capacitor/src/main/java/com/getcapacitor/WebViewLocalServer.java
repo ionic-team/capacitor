@@ -257,6 +257,14 @@ public class WebViewLocalServer {
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
     }
 
+    if ("/favicon.ico".equalsIgnoreCase(path)) {
+      try {
+        return new WebResourceResponse("image/png", null, null);
+      } catch (Exception e) {
+        Log.e(LogUtils.getCoreTag(), "favicon handling failed", e);
+      }
+    }
+
     int periodIndex = path.lastIndexOf(".");
     if (periodIndex >= 0) {
       String ext = path.substring(path.lastIndexOf("."), path.length());
