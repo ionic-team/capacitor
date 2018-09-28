@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { CheckFunction, runCommand, runTask } from '../common';
+import { CheckFunction, checkPlatformVersions, runCommand, runTask } from '../common';
 import { copySync, readFileAsync, readFileSync, removeSync, writeFileAsync, writeFileSync } from '../util/fs';
 import { Config } from '../config';
 import { join, resolve } from 'path';
@@ -12,8 +12,8 @@ export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject
 const platform = 'ios';
 
 export async function updateIOS(config: Config) {
-  var chalk = require('chalk');
   /*
+  var chalk = require('chalk');
   log(`\n${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
           `local Pod repo is up to date and can find new Pod releases.\n`);
   */
@@ -63,7 +63,7 @@ export async function updateIOS(config: Config) {
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
-
+  await checkPlatformVersions(platform);
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[]) {

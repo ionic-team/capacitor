@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { buildXmlElement, log, logInfo, parseXML, runTask } from '../common';
+import { buildXmlElement, checkPlatformVersions, logInfo, parseXML, runTask } from '../common';
 import { getAllElements, getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { getAndroidPlugins } from './common';
 import { checkAndInstallDependencies, handleCordovaPluginsJS } from '../cordova';
@@ -38,7 +38,7 @@ export async function updateAndroid(config: Config) {
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
-
+  await checkPlatformVersions(platform);
 }
 
 function getGradlePackageName(id: string): string {

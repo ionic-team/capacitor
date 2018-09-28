@@ -5,6 +5,7 @@ import { basename, join, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
 import { readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
+import * as semver from 'semver';
 
 import * as inquirer from 'inquirer';
 
@@ -25,7 +26,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
     Please create it, and make sure it has an index.html file. You can change
     the path of this directory in capacitor.config.json.
-    More info: https://capacitor.ionicframework.com/docs/basics/configuration`;
+    More info: https://capacitor.ionicframework.com/docs/basics/configuring-your-app`;
   }
 
   if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
@@ -321,4 +322,17 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add electron`);
   log('');
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
+}
+
+export async function checkPlatformVersions(platform: string) {
+  var cliInfo = await runCommand(`npm list @capacitor/cli --json`);
+  var cliVersion = JSON.parse(cliInfo).dependencies["@capacitor/cli"].version;
+  var localInfo = await runCommand(`npm list @capacitor/${platform} --json`);
+  var lovalVersion = JSON.parse(localInfo).dependencies[`@capacitor/${platform}`].version;
+
+  if (semver.gt(cliVersion, lovalVersion)) {
+    log('\n');
+    logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
+    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
+  }
 }
