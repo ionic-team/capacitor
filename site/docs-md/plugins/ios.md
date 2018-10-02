@@ -99,7 +99,13 @@ To access the Capacitor's View Controller, we have to use the `CAPBridge` object
 
 We can use the `UIViewController` to present Native View Controllers over it like this:
 
-`self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)`
+```swift
+DispatchQueue.main.async {
+  self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)
+}
+```
+
+Using `DispatchQueue.main.async` makes your view render from the main thread instead of a background thread. Removing this can cause unexpected results.
 
 On iPad devices you can also present `UIPopovers`, to do so, we provide a helper function to show it centered.
 
