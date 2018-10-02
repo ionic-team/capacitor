@@ -66,7 +66,11 @@ options using <code>guard</code>.</p>
 <p>To present a Native Screen over the Capacitor screen we need to acces the Capacitor&#39;s View Controller.
 To access the Capacitor&#39;s View Controller, we have to use the <code>CAPBridge</code> object available on <code>CAPPlugin</code> class.</p>
 <p>We can use the <code>UIViewController</code> to present Native View Controllers over it like this:</p>
-<p><code>self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)</code></p>
+<pre><code class="lang-swift"><span class="hljs-type">DispatchQueue</span>.main.async {
+  <span class="hljs-keyword">self</span>.bridge.viewController.present(ourCustomViewController, animated: <span class="hljs-literal">true</span>, completion: <span class="hljs-literal">nil</span>)
+}
+</code></pre>
+<p>Using <code>DispatchQueue.main.async</code> makes your view render from the main thread instead of a background thread. Removing this can cause unexpected results.</p>
 <p>On iPad devices you can also present <code>UIPopovers</code>, to do so, we provide a helper function to show it centered.</p>
 <pre><code class="lang-swift"><span class="hljs-keyword">self</span>.setCenteredPopover(ourCustomViewController)
 <span class="hljs-keyword">self</span>.bridge.viewController.present(ourCustomViewController, animated: <span class="hljs-literal">true</span>, completion: <span class="hljs-literal">nil</span>)
