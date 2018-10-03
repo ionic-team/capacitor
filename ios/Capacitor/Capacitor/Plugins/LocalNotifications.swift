@@ -95,7 +95,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
    * Cancel notifications by id
    */
   @objc func cancel(_ call: CAPPluginCall) {
-    guard let notifications = call.getArray("notifications", JSObject.self, []) else {
+    guard let notifications = call.getArray("notifications", JSObject.self, []), notifications.count > 0 else {
       call.error("Must supply notifications to cancel")
       return
     }
@@ -103,6 +103,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     let ids = notifications.map { $0["id"] as? String ?? "" }
     
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+    call.success()
   }
   
   /**
