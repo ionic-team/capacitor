@@ -14,6 +14,29 @@
   addLegacyHandlers(win);
 
   capacitor.Plugins = capacitor.Plugins || {};
+
+  capacitor.Plugins.Motion = capacitor.Plugins.Motion || {};
+  capacitor.Plugins.Motion.addListener = function(eventName, callback) {
+    var event = getMotionEventFromNativeEvent(eventName);
+    if (event !== '') {
+      win.addEventListener(event, callback, true);
+    }
+  }
+  capacitor.Plugins.Motion.removeListener = function(eventName, callback) {
+    var event = getMotionEventFromNativeEvent(eventName);
+    if (event !== '') {
+      win.removeEventListener(event, callback, false);
+    }
+  }
+
+  function getMotionEventFromNativeEvent(nativeEvent) {
+    if (nativeEvent === 'accel') {
+      return 'devicemotion';
+    } else if (nativeEvent === 'orientation') {
+      return 'deviceorientation';
+    }
+    return '';
+  }
   
   capacitor.DEBUG = typeof capacitor.DEBUG === 'undefined' ? true : capacitor.DEBUG;
 
