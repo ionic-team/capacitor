@@ -29,12 +29,6 @@ As of January 2018, 5.0 or greater represents over 75% of the Android market, an
 
 Also, Capacitor requires an Android WebView with Chrome version 50 or later.
 
-## Progressive Web App Development
-
-For building Progressive Web Apps, Capacitor currently requires a JavaScript project with module loading support. For example, using Webpack or Rollup.
-
-This is a limitation that will be resolved soon.
-
 ## Electron Development
 
-*Coming soon.* Electron support isn't ready just yet.
+No specific dependencies are needed to use Capacitor with Electron
