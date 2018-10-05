@@ -18,7 +18,7 @@ in order to be a good actor on all platforms.</p>
 
 <span class="hljs-keyword">const</span> { App, BackgroundTask } = Plugins;
 
-App.addEventListener(<span class="hljs-string">'appStateChange'</span>, <span class="hljs-function">(<span class="hljs-params">state</span>) =&gt;</span> {
+App.addListener(<span class="hljs-string">'appStateChange'</span>, <span class="hljs-function">(<span class="hljs-params">state</span>) =&gt;</span> {
 
   <span class="hljs-keyword">if</span> (!state.isActive) {
     <span class="hljs-comment">// The app has become inactive. We should check if we have some work left to do, and, if so,</span>
