@@ -45,6 +45,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
+    if #available(iOS 11.0, *) {
+        webView?.scrollView.contentInsetAdjustmentBehavior = .never
+    }
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
     //If you want to implement the delegate
