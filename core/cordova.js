@@ -849,21 +849,30 @@
             failSafeTimerId = 0;
 
         function massageArgsJsToNative(args) {
-            if (!args || utils.typeName(args) !== 'Array') {
-                return args;
-            }
-            var ret = [];
-            args.forEach(function (arg, i) {
-                if (utils.typeName(arg) === 'ArrayBuffer') {
-                    ret.push({
-                        'CDVType': 'ArrayBuffer',
-                        'data': base64.fromArrayBuffer(arg)
-                    });
-                } else {
-                    ret.push(arg);
+            if (window.androidBridge) {
+                for (var i = 0; i < args.length; i++) {
+                    if (utils.typeName(args[i]) == 'ArrayBuffer') {
+                        args[i] = base64.fromArrayBuffer(args[i]);
+                    }
                 }
-            });
-            return ret;
+                return args;
+            } else {
+                if (!args || utils.typeName(args) !== 'Array') {
+                    return args;
+                }
+                var ret = [];
+                args.forEach(function (arg, i) {
+                    if (utils.typeName(arg) === 'ArrayBuffer') {
+                        ret.push({
+                            'CDVType': 'ArrayBuffer',
+                            'data': base64.fromArrayBuffer(arg)
+                        });
+                    } else {
+                        ret.push(arg);
+                    }
+                });
+                return ret;
+            }
         }
 
         function massageMessageNativeToJs(message) {
@@ -931,7 +940,7 @@
                     { success: successCallback, fail: failCallback };
             }
 
-            // Properly encode ArrayBuf action arguments
+            // Properly encode ArrayBuffer action arguments
             actionArgs = massageArgsJsToNative(actionArgs);
             actionArgs = JSON.parse(JSON.stringify(actionArgs));
             var command = {
