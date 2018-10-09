@@ -931,6 +931,8 @@
                     { success: successCallback, fail: failCallback };
             }
 
+            // Properly encode ArrayBuf action arguments
+            actionArgs = massageArgsJsToNative(actionArgs);
             actionArgs = JSON.parse(JSON.stringify(actionArgs));
             var command = {
                 type: 'cordova',
