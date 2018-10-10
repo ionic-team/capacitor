@@ -882,11 +882,19 @@ export interface LocalNotificationActionPerformed {
   notificationRequest: any;
 }
 
+export interface LocalNotificationEnabledResult {
+  /**
+   * Whether the device has Local Notifications enabled or not
+   */
+  value: boolean;
+}
+
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
+  areEnabled(): Promise<LocalNotificationEnabledResult>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notification: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 }
