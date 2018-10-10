@@ -20,7 +20,7 @@ Once your plugin is generated, you can start editing it by opening `Plugin.swift
 ### Simple Example
 
  In the generated example, there is a simple echo plugin with an `echo` function that simply returns a value that it was given.
- 
+
  This example demonstrates a few core components of Capacitor plugins: receiving data from a Plugin Call, and returning
  data back to the caller:
 
@@ -66,7 +66,7 @@ For example, here is how you'd get data passed to your method:
 }
 ```
 
-Notice the various ways data can be accessed on the `CAPPluginCall` instance, including how to require 
+Notice the various ways data can be accessed on the `CAPPluginCall` instance, including how to require
 options using `guard`.
 
 ### Returning Data Back
@@ -164,6 +164,16 @@ To emit the event from the Swift plugin class you can do it like this:
 
 `self.notifyListeners("myPluginEvent", data: [:])`
 
+To remove a listener from the plugin object:
+
+```javascript
+const myPluginEventListener = Plugins.MyPlugin.addListener("myPluginEvent", (info: any) => {
+  console.log("myPluginEvent was fired");
+});
+
+myPluginEventListener.remove();
+```
+
 
 ### Export to Capacitor
 
@@ -185,4 +195,3 @@ CAP_PLUGIN(MyPlugin, "MyPlugin",
 ```
 
 This makes `MyPlugin`, and the `echo` method available to the Capacitor web runtime, indicating to Capacitor that the echo method will return a Promise.
-
