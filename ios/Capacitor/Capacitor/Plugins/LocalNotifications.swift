@@ -122,7 +122,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       ])
     })
   }
-  
+
   /**
    * Register allowed action types that a notification may present.
    */
@@ -135,8 +135,20 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     
     call.success()
   }
-  
-  
+
+  /**
+   * Check if Local Notifications are authorized and enabled
+   */
+  @objc func areEnabled(_ call: CAPPluginCall) {
+    let center = UNUserNotificationCenter.current()
+    center.getNotificationSettings { (settings) in
+      let authorized = settings.authorizationStatus == UNAuthorizationStatus.authorized
+      let enabled = settings.notificationCenterSetting == UNNotificationSetting.enabled
+      call.success([
+        "value": enabled && authorized
+      ])
+    }
+  }
   
   /**
    * Build the content for a notification.
