@@ -13,12 +13,9 @@ export async function updateAndroid(config: Config) {
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
 
-  let cordovaPlugins: Array<Plugin> = [];
   let needsPluginUpdate = true;
   while (needsPluginUpdate) {
-    cordovaPlugins = plugins
-      .filter(p => getPluginType(p, platform) === PluginType.Cordova);
-    needsPluginUpdate = await checkAndInstallDependencies(config, cordovaPlugins, platform);
+    needsPluginUpdate = await checkAndInstallDependencies(config, plugins, platform);
     if (needsPluginUpdate) {
       plugins = await getPluginsTask(config);
     }
@@ -27,6 +24,8 @@ export async function updateAndroid(config: Config) {
   printPlugins(capacitorPlugins, 'android');
 
   removePluginsNativeFiles(config);
+  const cordovaPlugins = plugins
+      .filter(p => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
   }
