@@ -48,7 +48,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
     if (!plugin.manifest.ios.src) {
       iosPath = 'ios';
     }
-  } else if (plugin.xml && getPluginPlatform(plugin, 'ios')) {
+  } else if (plugin.xml) {
     iosPath = 'src/ios';
   } else {
     return null;
@@ -60,7 +60,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
       type: PluginType.Core,
       path: iosPath
     };
-    if(getIncompatibleCordovaPlugins().includes(plugin.id)) {
+    if(getIncompatibleCordovaPlugins().includes(plugin.id) || !getPluginPlatform(plugin, 'ios')) {
       plugin.ios.type = PluginType.Incompatible;
     } else if (plugin.xml) {
       plugin.ios.type = PluginType.Cordova;

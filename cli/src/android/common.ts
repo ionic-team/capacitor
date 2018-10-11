@@ -22,7 +22,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
       throw 'capacitor.android.src is missing';
     }
     androidPath = plugin.manifest.android.src;
-  } else if (plugin.xml && getPluginPlatform(plugin, 'android')) {
+  } else if (plugin.xml) {
     androidPath = 'src/android';
   } else {
     return null;
@@ -32,7 +32,7 @@ export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plu
     type: PluginType.Core,
     path: androidPath
   };
-  if(getIncompatibleCordovaPlugins().includes(plugin.id)) {
+  if(getIncompatibleCordovaPlugins().includes(plugin.id) || !getPluginPlatform(plugin, 'android')) {
     plugin.android.type = PluginType.Incompatible;
   } else if (plugin.xml) {
     plugin.android.type = PluginType.Cordova;
