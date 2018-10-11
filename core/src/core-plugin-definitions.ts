@@ -297,6 +297,11 @@ export interface CameraOptions {
    * Default: CameraSource.Prompt
    */
   source?: CameraSource;
+  /**
+   * iOS only: The default camera direction. By default the rear camera.
+   * Default: CameraDirection.Rear
+   */
+  direction?: CameraDirection;
 
   /**
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
@@ -308,6 +313,11 @@ export enum CameraSource {
   Prompt = 'PROMPT',
   Camera = 'CAMERA',
   Photos = 'PHOTOS'
+}
+
+export enum CameraDirection {
+  Rear = 'REAR',
+  Front = 'FRONT',
 }
 
 export interface CameraPhoto {
