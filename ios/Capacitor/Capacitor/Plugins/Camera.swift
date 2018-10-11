@@ -7,6 +7,11 @@ enum CameraSource: String {
   case photos = "PHOTOS"
 }
 
+enum CameraDirection: String {
+  case rear = "REAR"
+  case front = "FRONT"
+}
+
 enum CameraResultType: String {
   case base64 = "base64"
   case uri = "uri"
@@ -14,6 +19,7 @@ enum CameraResultType: String {
 
 struct CameraSettings {
   var source: CameraSource = CameraSource.prompt
+  var direction: CameraDirection = CameraDirection.rear
   var allowEditing = false
   var shouldResize = false
   var shouldCorrectOrientation = false
@@ -26,7 +32,8 @@ struct CameraSettings {
 @objc(CAPCameraPlugin)
 public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
   let DEFAULT_SOURCE = CameraSource.prompt
-  
+  let DEFAULT_DIRECTION = CameraDirection.rear
+
   var imagePicker: UIImagePickerController?
   var call: CAPPluginCall?
   
@@ -57,6 +64,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     settings.quality = call.get("quality", Float.self, 100)!
     settings.allowEditing = call.get("allowEditing", Bool.self, false)!
     settings.source = CameraSource(rawValue: call.getString("source") ?? DEFAULT_SOURCE.rawValue) ?? DEFAULT_SOURCE
+    settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
     settings.resultType = call.get("resultType", String.self, "base64")!
     // Get the new image dimensions if provided
     settings.width = Float(call.get("width", Int.self, 0)!)
@@ -120,6 +128,16 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
 
     self.imagePicker!.sourceType = .camera
+
+    if settings.direction.rawValue == "REAR" {
+      if UIImagePickerController.isCameraDeviceAvailable(.rear) {
+        imagePicker.cameraDevice = .rear
+      }
+    } else if settings.direction.rawValue == "FRONT" {
+      if UIImagePickerController.isCameraDeviceAvailable(.front) {
+        imagePicker.cameraDevice = .front
+      }
+    }
     
     self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
   }
