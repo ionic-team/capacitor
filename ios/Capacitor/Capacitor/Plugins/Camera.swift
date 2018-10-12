@@ -131,11 +131,11 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     if settings.direction.rawValue == "REAR" {
       if UIImagePickerController.isCameraDeviceAvailable(.rear) {
-        imagePicker.cameraDevice = .rear
+        self.imagePicker!.cameraDevice = .rear
       }
     } else if settings.direction.rawValue == "FRONT" {
       if UIImagePickerController.isCameraDeviceAvailable(.front) {
-        imagePicker.cameraDevice = .front
+        self.imagePicker!.cameraDevice = .front
       }
     }
     
