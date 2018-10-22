@@ -34,6 +34,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   
   
   override public func loadView() {
+    setStatusBarDefaults()
+    
     let webViewConfiguration = WKWebViewConfiguration()
     
     let o = WKUserContentController()
@@ -158,6 +160,24 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
      startServer()
     }
 
+  }
+
+  public func setStatusBarDefaults() {
+    if let url = Bundle.main.url(forResource:"Info", withExtension: "plist"),
+      let plist = NSDictionary(contentsOf: url) as? [String:Any] {
+        
+      if let statusBarHidden = plist["UIStatusBarHidden"] as? Bool {
+        if (statusBarHidden) {
+          self.isStatusBarVisible = false
+        }
+      }
+        
+      if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
+        if (statusBarStyle != "UIStatusBarStyleDefault") {
+          self.statusBarStyle = .lightContent
+        }
+      }
+    }
   }
 
   public func configureWebView(configuration: WKWebViewConfiguration) {
