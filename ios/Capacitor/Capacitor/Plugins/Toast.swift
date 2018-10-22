@@ -16,16 +16,15 @@ public class CAPToastPlugin : CAPPlugin {
     DispatchQueue.main.async {
       let vc = self.bridge!.viewController
       
-      let maxSizeTitle : CGSize = CGSize(width: vc.view.bounds.size.width-16, height: vc.view.bounds.size.height)
+      let maxSizeTitle : CGSize = CGSize(width: vc.view.bounds.size.width-32, height: vc.view.bounds.size.height)
       
       let lb = UILabel()
       lb.backgroundColor = UIColor.black.withAlphaComponent(0.6)
       lb.textColor = UIColor.white
-      lb.textAlignment = .center;
-      //lb.font = UIFont(name: "Montserrat-Light", size: 12.0)
+      lb.textAlignment = .center
       lb.text = text
       lb.alpha = 0
-      lb.layer.cornerRadius = 18;
+      lb.layer.cornerRadius = 18
       lb.clipsToBounds  =  true
       
       var expectedSizeTitle : CGSize = lb.sizeThatFits(maxSizeTitle)
@@ -52,12 +51,10 @@ public class CAPToastPlugin : CAPPlugin {
           self.toast!.alpha = 0.0
         }, completion: {(isCompleted) in
           self.toast!.removeFromSuperview()
+          call.success()
         })
 
       })
     }
   }
 }
-
-
-
