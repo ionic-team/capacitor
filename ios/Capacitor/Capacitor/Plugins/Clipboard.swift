@@ -3,22 +3,13 @@ import Foundation
 @objc(CAPClipboardPlugin)
 public class CAPClipboardPlugin : CAPPlugin {
   @objc func write(_ call: CAPPluginCall) {
-    guard let options = call.getObject("options") else {
-      call.error("No options provided")
-      return
-    }
-    
-    if let string = options["string"] as? String {
+    if let string = call.options["string"] as? String {
       UIPasteboard.general.string = string
-      return
-    }
-    if let urlString = options["url"] as? String {
+    } else if let urlString = call.options["url"] as? String {
       if let url = URL(string: urlString) {
         UIPasteboard.general.url = url
       }
-    }
-    if let imageBase64 = options["image"] as? String {
-      print(imageBase64)
+    } else if let imageBase64 = call.options["image"] as? String {
       if let data = Data(base64Encoded: imageBase64) {
         let image = UIImage(data: data)
         print("Loaded image", image!.size.width, image!.size.height)
@@ -27,17 +18,11 @@ public class CAPClipboardPlugin : CAPPlugin {
         print("Unable to encode image")
       }
     }
-
     call.success()
   }
   
   @objc func read(_ call: CAPPluginCall) {
-    guard let options = call.getObject("options") else {
-      call.error("No options provided")
-      return
-    }
-    
-    let type = options["type"] as? String ?? "string"
+    let type = call.options["type"] as? String ?? "string"
     
     if type == "string" && UIPasteboard.general.hasStrings {
       call.success([
