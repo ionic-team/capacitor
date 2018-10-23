@@ -17,11 +17,11 @@
  under the License.
  */
 
+#import <Foundation/Foundation.h>
 #import "CDVAvailability.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVCommandDelegate.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVViewController.h"
-#import "CDVURLProtocol.h"
 
+@class CDVViewController;
+
+@interface CDVURLProtocol : NSURLProtocol {}
+
+@end
