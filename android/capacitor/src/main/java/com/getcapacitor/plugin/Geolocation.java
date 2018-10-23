@@ -72,7 +72,7 @@ public class Geolocation extends Plugin {
     String provider = getBestProviderForCall(call);
     Location lastLocation = getBestLocation(provider);
     if (lastLocation == null) {
-      call.success();
+      call.error("location unavailable");
     } else {
       call.success(getJSObjectForLocation(lastLocation));
     }
