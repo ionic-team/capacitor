@@ -91,7 +91,7 @@ if (hasProperty('postBuildExtras')) {
 }
 
 export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
-  const pluginsFolder = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsFolder = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
   const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
   let frameworksArray: Array<any> = [];
   let prefsArray: Array<any> = [];
@@ -121,7 +121,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
-  const pluginsRoot = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsRoot = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
   const pluginsPath = join(pluginsRoot, 'src', 'main');
   cordovaPlugins.map(p => {
     const androidPlatform = getPluginPlatform(p, platform);
@@ -154,11 +154,9 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 }
 
 function removePluginsNativeFiles(config: Config) {
-  const pluginsRoot = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
-  const pluginsPath = join(pluginsRoot, 'src', 'main');
-  removeSync(join(pluginsPath, 'java'));
-  removeSync(join(pluginsPath, 'res'));
-  removeSync(join(pluginsPath, 'libs'));
+  const pluginsRoot = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
+  removeSync(pluginsRoot);
+  copySync(config.android.assets.pluginsDir, pluginsRoot);
 }
 
 async function getPluginsTask(config: Config) {
@@ -170,7 +168,7 @@ async function getPluginsTask(config: Config) {
 }
 
 async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Config) {
-  const pluginsFolder = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsFolder = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
   const manifestPath = join(pluginsFolder, 'src', 'main', 'AndroidManifest.xml');
   let rootXMLEntries: Array<any> = [];
   let applicationXMLEntries: Array<any> = [];
