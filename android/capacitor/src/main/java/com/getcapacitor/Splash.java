@@ -52,7 +52,7 @@ public class Splash {
     // https://stackoverflow.com/a/21847579/32140
     splashImage.setDrawingCacheEnabled(true);
 
-    splashImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+    splashImage.setScaleType(ImageView.ScaleType.FIT_XY);
     splashImage.setImageDrawable(splash);
   }
 
