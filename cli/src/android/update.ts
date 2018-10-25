@@ -37,7 +37,7 @@ export async function updateAndroid(config: Config) {
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
-  await checkPlatformVersions(platform);
+  await checkPlatformVersions(config, platform);
 }
 
 function getGradlePackageName(id: string): string {

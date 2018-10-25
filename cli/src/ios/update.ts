@@ -62,7 +62,7 @@ export async function updateIOS(config: Config) {
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
-  await checkPlatformVersions(platform);
+  await checkPlatformVersions(config, platform);
 }
 
 export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[]) {

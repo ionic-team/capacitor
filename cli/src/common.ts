@@ -324,13 +324,25 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
 }
 
-export async function checkPlatformVersions(platform: string) {
-  var cliInfo = await runCommand(`npm list @capacitor/cli --json`);
-  var cliVersion = JSON.parse(cliInfo).dependencies["@capacitor/cli"].version;
-  var localInfo = await runCommand(`npm list @capacitor/${platform} --json`);
-  var lovalVersion = JSON.parse(localInfo).dependencies[`@capacitor/${platform}`].version;
+export async function checkPlatformVersions(config: Config, platform: string) {
+  const cliPackagePath = resolveNode(config, '@capacitor/cli', 'package.json');
+  if (!cliPackagePath) {
+    logFatal('Unable to find node_modules/@capacitor/cli/package.json. Are you sure',
+      '@capacitor/cli is installed? This file is currently required for Capacitor to function.');
+    return;
+  }
 
-  if (semver.gt(cliVersion, lovalVersion)) {
+  const platformPackagePath = resolveNode(config, `@capacitor/${platform}`, 'package.json');
+  if (!platformPackagePath) {
+    logFatal(`Unable to find node_modules/@capacitor/${platform}/package.json. Are you sure`,
+      `@capacitor/${platform} is installed? This file is currently required for Capacitor to function.`);
+    return;
+  }
+
+  const cliVersion = (await readJSON(cliPackagePath)).version;
+  const platformVersion = (await readJSON(platformPackagePath)).version;
+
+  if (semver.gt(cliVersion, platformVersion)) {
     log('\n');
     logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
     log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
