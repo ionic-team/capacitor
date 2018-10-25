@@ -36,7 +36,9 @@ export class Config implements CliConfig {
     resDirAbs: '',
     assets: {
       templateName: 'android-template',
-      templateDir: ''
+      pluginsFolderName: 'capacitor-cordova-android-plugins',
+      templateDir: '',
+      pluginsDir: '',
     }
   };
 
@@ -52,7 +54,9 @@ export class Config implements CliConfig {
     nativeProjectName: 'App',
     assets: {
       templateName: 'ios-template',
-      templateDir: ''
+      pluginsFolderName: 'capacitor-cordova-ios-plugins',
+      templateDir: '',
+      pluginsDir: '',
     }
   };
 
@@ -85,7 +89,8 @@ export class Config implements CliConfig {
     plugins: {},
     assets: {
       templateName: 'app-template',
-      templateDir: ''
+      templateDir: '',
+      pluginsTemplateDir: ''
     }
   };
 
@@ -168,6 +173,7 @@ export class Config implements CliConfig {
     this.platforms.push(this.android.name);
     this.android.platformDir = resolve(this.app.rootDir, this.android.name);
     this.android.assets.templateDir = resolve(this.cli.assetsDir, this.android.assets.templateName);
+    this.android.assets.pluginsDir = resolve(this.cli.assetsDir, this.android.assets.pluginsFolderName);
     this.android.webDirAbs = resolve(this.android.platformDir, this.android.webDir);
     this.android.resDirAbs = resolve(this.android.platformDir, this.android.resDir);
   }
@@ -177,6 +183,7 @@ export class Config implements CliConfig {
     this.platforms.push(this.ios.name);
     this.ios.platformDir = resolve(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = resolve(this.cli.assetsDir, this.ios.assets.templateName);
+    this.ios.assets.pluginsDir = resolve(this.cli.assetsDir, this.ios.assets.pluginsFolderName);
     this.ios.webDirAbs = resolve(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
     if (this.app.extConfig && this.app.extConfig.ios && this.app.extConfig.ios.cordovaSwiftVersion) {
       this.ios.cordovaSwiftVersion = this.app.extConfig.ios.cordovaSwiftVersion;
