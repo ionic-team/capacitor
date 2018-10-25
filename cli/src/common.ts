@@ -239,16 +239,23 @@ export function runCommand(command: string): Promise<string> {
   });
 }
 
-export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T> {
+export type TaskInfoProvider = (messsage: string) => void
+
+export async function runTask<T>(title: string, fn: (info: TaskInfoProvider) => Promise<T>): Promise<T> {
   const ora = require('ora');
   const spinner = ora(title).start();
 
   try {
     const start = process.hrtime();
-    const value = await fn();
+    let taskInfoMessage;
+    const value = await fn((message: string) => taskInfoMessage = message);
     const elapsed = process.hrtime(start);
     const chalk = require('chalk');
-    spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
+    if (taskInfoMessage) {
+      spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`)
+    } else {
+      spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
+    }
     return value;
 
   } catch (e) {
