@@ -68,5 +68,8 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 
+# Cordova plugins for Capacitor
+capacitor-cordova-android-plugins
+
 # Copied web assets
 app/src/main/assets/public
