@@ -1,9 +1,9 @@
 import { Config } from './config';
 import { exec } from 'child_process';
 import { setTimeout } from 'timers';
-import { basename, join, resolve } from 'path';
+import { basename, dirname, join, relative, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
-import { readFile } from 'fs';
+import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
 import * as semver from 'semver';
 
@@ -334,5 +334,39 @@ export async function checkPlatformVersions(platform: string) {
     log('\n');
     logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
     log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
+  }
+}
+
+export function resolveNode(config: Config, ...pathSegments: any[]): string | null {
+  const id = pathSegments[0];
+  const path = pathSegments.slice(1);
+
+  let modulePath;
+  const starts = [config.app.rootDir];
+  for (let start of starts) {
+    modulePath = resolveNodeFrom(start, id);
+    if (modulePath) {
+      break;
+    }
+  }
+  if (!modulePath) {
+    return null;
+  }
+
+  return join(modulePath, ...path);
+}
+
+function resolveNodeFrom(start: string, id: string): string | null {
+  let basePath = resolve(start);
+  let modulePath;
+  while (true) {
+    modulePath = join(basePath, 'node_modules', id);
+    if (existsSync(modulePath)) {
+      return modulePath;
+    }
+    if (basePath === '/') {
+      return null;
+    }
+    basePath = dirname(basePath);
   }
 }
