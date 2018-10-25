@@ -1,8 +1,8 @@
 import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
-import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
+import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { buildXmlElement, log, logError, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
+import { buildXmlElement, log, logError, logFatal, logInfo, readXML, resolveNode, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -96,8 +96,8 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
 }
 
 export async function copyCordovaJS(config: Config, platform: string) {
-  const cordovaPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/core', 'cordova.js');
-  if (!await existsAsync(cordovaPath)) {
+  const cordovaPath = resolveNode(config, '@capacitor/core', 'cordova.js');
+  if (!cordovaPath) {
     logFatal(`Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
     '@capacitor/core is installed? This file is currently required for Capacitor to function.');
     return;

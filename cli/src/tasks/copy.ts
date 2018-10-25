@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { checkWebDir, logError, logFatal, logInfo, runTask } from '../common';
+import { checkWebDir, logError, logFatal, logInfo, resolveNode, runTask } from '../common';
 import { existsAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
@@ -52,15 +52,15 @@ export async function copy(config: Config, platformName: string) {
 }
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
-  const bridgePath = resolve(config.app.rootDir, 'node_modules', '@capacitor/core', 'native-bridge.js');
-  if (!await existsAsync(bridgePath)) {
+  let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
+  if (!bridgePath) {
     logFatal(`Unable to find node_modules/@capacitor/core/native-bridge.js. Are you sure`,
     '@capacitor/core is installed? This file is required for Capacitor to function');
     return;
   }
 
   await runTask('Copying native bridge', async () => {
-    return fsCopy(bridgePath, join(nativeAbsDir, 'native-bridge.js'));
+    return fsCopy(bridgePath!, join(nativeAbsDir, 'native-bridge.js'));
   });
 }
 
