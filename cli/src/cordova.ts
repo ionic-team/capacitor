@@ -180,9 +180,9 @@ export async function copyCordovaJSFiles(config: Config, platform: string) {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
-    plugins = await getIOSPlugins(config, allPlugins);
+    plugins = getIOSPlugins(allPlugins);
   } else if (platform === config.android.name) { 
-    plugins = await getAndroidPlugins(config, allPlugins);
+    plugins = getAndroidPlugins(allPlugins);
   }
   const cordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Cordova);
