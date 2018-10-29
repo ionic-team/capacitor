@@ -41,6 +41,7 @@ class CapacitorSplashScreen {
  * @param {number} splashOptions.textPercentageFromTop Relative distance of the loading text from top of the window
  * @param {boolean} splashOptions.transparentWindow If the window should of transparent
  * @param {boolean} splashOptions.autoHideLaunchSplash If auto hide the splash screen
+ * @param {string} splashOptions.customHtml Custom html string, if used all most of customization options will be ignored
  */
   constructor(mainWindow, splashOptions) {
     this.mainWindowRef = null;
@@ -58,7 +59,8 @@ class CapacitorSplashScreen {
       loadingText: splashOptions.loadingText || 'Loading...',
       textPercentageFromTop: splashOptions.textPercentageFromTop || 75,
       transparentWindow: splashOptions.transparentWindow || false,
-      autoHideLaunchSplash: splashOptions.autoHideLaunchSplash || true
+      autoHideLaunchSplash: splashOptions.autoHideLaunchSplash || true,
+      customHtml: splashOptions.customHtml || false
     };
 
     this.mainWindowRef = mainWindow;
@@ -102,7 +104,7 @@ class CapacitorSplashScreen {
       transparent: this.splashOptions.transparentWindow,
     });
 
-    let splashHtml = `
+    let splashHtml = this.splashOptions.customHtml || `
       <html style="width: 100%; height: 100%; margin: 0; overflow: hidden;">
         <body style="background-image: url('./${this.splashOptions.imageFileName}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">
           <div style="color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw; text-shadow: -0.6px -0.6px 0 #f4f4f4, 0.6px -0.6px 0 #f4f4f4, -0.6px 0.6px 0 #f4f4f4, 0.8px 0.6px 0 #f4f4f4">
