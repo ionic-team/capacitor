@@ -36,37 +36,28 @@ export async function checkIOSProject(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function getIOSPlugins(config: Config, allPlugins: Plugin[]): Promise<Plugin[]> {
-  const resolved = await Promise.all(allPlugins.map(p => resolvePlugin(config, p)));
+export function getIOSPlugins(allPlugins: Plugin[]): Plugin[] {
+  const resolved = allPlugins.map(plugin => resolvePlugin(plugin));
   return resolved.filter(plugin => !!plugin) as Plugin[];
 }
 
-export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plugin|null> {
-  let iosPath = '';
+export function resolvePlugin(plugin: Plugin): Plugin | null {
   if (plugin.manifest && plugin.manifest.ios) {
-    iosPath = plugin.manifest.ios.src;
-    if (!plugin.manifest.ios.src) {
-      iosPath = 'ios';
-    }
-  } else if (plugin.xml) {
-    iosPath = 'src/ios';
-  } else {
-    return null;
-  }
-
-  try {
     plugin.ios = {
       name: plugin.name,
       type: PluginType.Core,
-      path: iosPath
+      path: plugin.manifest.ios.src ? plugin.manifest.ios.src : 'ios'
+    };
+  } else if (plugin.xml) {
+    plugin.ios = {
+      name: plugin.name,
+      type: PluginType.Cordova,
+      path: 'src/ios'
     };
     if(getIncompatibleCordovaPlugins().includes(plugin.id) || !getPluginPlatform(plugin, 'ios')) {
       plugin.ios.type = PluginType.Incompatible;
-    } else if (plugin.xml) {
-      plugin.ios.type = PluginType.Cordova;
     }
-  } catch (e) {
-    console.error('Unable to resolve plugin', e);
+  } else {
     return null;
   }
   return plugin;

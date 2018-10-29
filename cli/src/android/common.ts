@@ -10,34 +10,28 @@ export async function gradleClean(config: Config) {
   await runCommand(`cd ${config.android.platformDir} && ./gradlew clean`);
 }
 
-export async function getAndroidPlugins(config: Config, allPlugins: Plugin[]): Promise<Plugin[]> {
-  const resolved = await Promise.all(allPlugins.map(async plugin => resolvePlugin(config, plugin)));
+export function getAndroidPlugins(allPlugins: Plugin[]): Plugin[] {
+  const resolved = allPlugins.map(plugin => resolvePlugin(plugin));
   return resolved.filter(plugin => !!plugin) as Plugin[];
 }
 
-export async function resolvePlugin(config: Config, plugin: Plugin): Promise<Plugin|null> {
-  let androidPath = '';
+export function resolvePlugin(plugin: Plugin): Plugin | null {
   if (plugin.manifest && plugin.manifest.android) {
-    if (!plugin.manifest.android.src) {
-      throw 'capacitor.android.src is missing';
-    }
-    androidPath = plugin.manifest.android.src;
+    plugin.android = {
+      type: PluginType.Core,
+      path: plugin.manifest.android.src ? plugin.manifest.android.src : 'android'
+    };
   } else if (plugin.xml) {
-    androidPath = 'src/android';
+    plugin.android = {
+      type: PluginType.Cordova,
+      path: 'src/android'
+    };
+    if(getIncompatibleCordovaPlugins().includes(plugin.id) || !getPluginPlatform(plugin, 'android')) {
+      plugin.android.type = PluginType.Incompatible;
+    }
   } else {
     return null;
   }
-
-  plugin.android = {
-    type: PluginType.Core,
-    path: androidPath
-  };
-  if(getIncompatibleCordovaPlugins().includes(plugin.id) || !getPluginPlatform(plugin, 'android')) {
-    plugin.android.type = PluginType.Incompatible;
-  } else if (plugin.xml) {
-    plugin.android.type = PluginType.Cordova;
-  }
-
   return plugin;
 }
 
