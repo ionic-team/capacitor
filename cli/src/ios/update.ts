@@ -296,7 +296,7 @@ function filterARCFiles(plugin: Plugin) {
 async function getPluginsTask(config: Config) {
   return await runTask('Updating iOS plugins', async () => {
     const allPlugins = await getPlugins(config);
-    const iosPlugins = await getIOSPlugins(config, allPlugins);
+    const iosPlugins = getIOSPlugins(allPlugins);
     return iosPlugins;
   });
 }
