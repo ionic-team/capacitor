@@ -12,6 +12,18 @@ That will add the push capabilites to your app and will create an entitlements f
 
 ![Enabling Push Notifications Capabilities](./img/enable-push-capabilities.png)
 
+## Push Notifications icon
+
+On Android, the Push Notifications icon with the appropriate name should be added to the `AndroidManifest.xml` file:
+
+```
+<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/push_icon_name" />
+```
+
+If no icon is specified Android will use the application icon, but push icon should be white pixels on a transparent backdrop. As the application icon is not usually like that, it will show a white square or circle. So it's recommended to provide the separate icon for Push Notifications.
+
+Android Studio has an icon generator you can use to create your Push Notifications icon.
+
 ## Disabling Push Notifications plugin
 
 If you are not using Push Notifications in your project, when you submit the app to iTunes Connect, Apple will send you an email saying it has issues because of `Missing Push Notification Entitlement`. That happens because Capacitor includes the code for registering for push notifications and getting the token.
