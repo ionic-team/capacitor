@@ -20,7 +20,9 @@ On Android, the Push Notifications icon with the appropriate name should be adde
 <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/push_icon_name" />
 ```
 
-If no icon is specified Android will try to use the application icon, but this only works if the icon is white pixels on a transparent backdrop. As this is usually not the case, it's recommended to provide the separate icon for Push Notifications.
+If no icon is specified Android will use the application icon, but push icon should be white pixels on a transparent backdrop. As the application icon is not usually like that, it will show a white square or circle. So it's recommended to provide the separate icon for Push Notifications.
+
+Android Studio has an icon generator you can use to create your Push Notifications icon.
 
 ## Disabling Push Notifications plugin
 
