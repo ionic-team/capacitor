@@ -52,6 +52,7 @@ CAP_PLUGIN(CAPFilesystemPlugin, "Filesystem",
   CAP_PLUGIN_METHOD(readdir, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(getUri, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(stat, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(fileExists, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",

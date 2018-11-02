@@ -317,7 +317,29 @@ public class CAPFilesystemPlugin : CAPPlugin {
     call.success([
       "uri": fileUrl.absoluteString
     ])
+  }
+
+  @objc func fileExists(_ call: CAPPluginCall) {
+    guard let file = call.get("path", String.self) else {
+      handleError(call, "path must be provided and must be a string.")
+      return
+    }
     
+    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
+    guard let fileUrl = getFileUrl(file, directoryOption) else {
+      handleError(call, "Invalid path")
+      return
+    }
+    
+    if FileManager.default.fileExists(atPath: fileUrl.path) {
+      call.success([
+        "exists": true
+      ])
+    } else {
+      call.success([
+        "exists": false
+      ])
+    }
   }
 
 }
