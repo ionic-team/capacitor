@@ -401,6 +401,24 @@ public class Filesystem extends Plugin {
     call.success(data);
   }
 
+  @PluginMethod()
+  public void fileExists(PluginCall call) {
+    String path = call.getString("path");
+    String directory = call.getString("directory");
+
+    File fileObject = getFileObject(path, directory);
+
+    JSObject data = new JSObject();
+
+    if (fileObject.exists()) {
+      data.put("exists", true);
+    } else {
+      data.put("exists", false);
+    }
+
+    call.success(data);
+  }
+
   /**
    * Checks the the given permission and requests them if they are not already granted.
    * @param permissionRequestCode the request code see {@link PluginRequestCodes}
