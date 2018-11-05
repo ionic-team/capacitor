@@ -1,7 +1,7 @@
 import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run, copyAndroidCordovaAssets } from './util';
 import { updateCommand } from '../src/tasks/update';
 
-describe('Update: Android', () => {
+describe.each([false, true])('Update: Android (monoRepoLike: %p)', (monoRepoLike) => {
   let appDirObj;
   let appDir;
   let FS;
@@ -9,7 +9,7 @@ describe('Update: Android', () => {
   beforeAll(async () => {
     // These commands are slowww...
     jest.setTimeout(50000);
-    appDirObj = await makeAppDir();
+    appDirObj = await makeAppDir(monoRepoLike);
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);

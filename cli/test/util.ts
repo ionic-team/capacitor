@@ -65,10 +65,14 @@ const APP_PACKAGE_JSON = `
 }
 `
 
-export async function makeAppDir() {
+export async function makeAppDir(monoRepoLike: boolean = false) {
   const appDirObj: any = await mktmp();
   const tmpDir = appDirObj.path;
-  const appDir = join(tmpDir, 'test-app');
+  const rootDir = monoRepoLike ? join(tmpDir, 'test-root') : join(tmpDir, 'test-app');
+  if (monoRepoLike) {
+    await mkdirAsync(rootDir);
+  }
+  const appDir = monoRepoLike ? join(rootDir, 'test-app') : rootDir;
   await mkdirAsync(appDir);
   // Make the web dir
   await mkdirAsync(join(appDir, 'www'));
@@ -81,7 +85,7 @@ export async function makeAppDir() {
   // Otherwise later use of 'npm install --save @capacitor/android|ios' will wipe 'node_modules/@capacitor/'
   const corePath = resolve(cwd, '../core');
   const cliPath = resolve(cwd, '../cli');
-  await runCommand(`cd "${appDir}" && npm install --save ${corePath} ${cliPath}`);
+  await runCommand(`cd "${rootDir}" && npm install --save ${corePath} ${cliPath}`);
 
   // Make a fake cordova plugin
   await makeCordovaPlugin(appDir);
