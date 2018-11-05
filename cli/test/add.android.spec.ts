@@ -6,7 +6,7 @@ describe('Add: Android', () => {
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(20000);
+    jest.setTimeout(50000);
     appDirObj = await makeAppDir();
     const appDir = appDirObj.appDir;
     // Init in this directory so we can test add

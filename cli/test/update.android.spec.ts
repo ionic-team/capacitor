@@ -1,4 +1,4 @@
-import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run, } from './util';
+import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run, copyAndroidCordovaAssets } from './util';
 import { updateCommand } from '../src/tasks/update';
 
 describe('Update: Android', () => {
@@ -8,12 +8,14 @@ describe('Update: Android', () => {
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(20000);
+    jest.setTimeout(50000);
     appDirObj = await makeAppDir();
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await run(appDir, `add android`);
+    // Copy Android Cordova assets after 'add android', or it will fail
+    await copyAndroidCordovaAssets(appDir);
     // Redundant, because add does this, but called explicitly for thoroughness
     await updateCommand(makeConfig(appDir), 'android');
     FS = new MappedFS(appDir);

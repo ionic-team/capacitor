@@ -1,4 +1,5 @@
 import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, copyAsync } from '../src/util/fs';
+import { runCommand } from '../src/common';
 import { Config } from '../src/config';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
@@ -75,16 +76,12 @@ export async function makeAppDir() {
   await writeFileAsync(join(appDir, 'www', 'index.html'), APP_INDEX);
   // Make a fake package.json
   await writeFileAsync(join(appDir, 'package.json'), APP_PACKAGE_JSON);
-  await mkdirAsync(join(appDir, 'node_modules'));
-  const cliModulesPath = join(appDir, 'node_modules/@capacitor/cli');
-  const coreModulesPath = join(appDir, 'node_modules/@capacitor/core');
-  await mkdirs(cliModulesPath);
-  await mkdirs(coreModulesPath);
-  await copyAsync(join(cwd, 'dist'), cliModulesPath);
-  await copyAsync(resolve(cwd, '../capacitor-cordova-android-plugins'), join(appDir, 'android', 'capacitor-cordova-android-plugins'));
-  await copyAsync(resolve(cwd, '../core/dist'), coreModulesPath);
-  await copyAsync(resolve(cwd, '../core/native-bridge.js'), join(coreModulesPath, 'native-bridge.js'));
-  await copyAsync(resolve(cwd, '../core/cordova.js'), join(coreModulesPath, 'cordova.js'));
+
+  // We use 'npm install' to install @capacitor/core and @capacitor/cli
+  // Otherwise later use of 'npm install --save @capacitor/android|ios' will wipe 'node_modules/@capacitor/'
+  const corePath = resolve(cwd, '../core');
+  const cliPath = resolve(cwd, '../cli');
+  await runCommand(`cd "${appDir}" && npm install --save ${corePath} ${cliPath}`);
 
   // Make a fake cordova plugin
   await makeCordovaPlugin(appDir);
@@ -93,6 +90,10 @@ export async function makeAppDir() {
     ...appDirObj,
      appDir
   };
+}
+
+export async function copyAndroidCordovaAssets(appDir: string) {
+  await copyAsync(resolve(cwd, '../capacitor-cordova-android-plugins'), join(appDir, 'android', 'capacitor-cordova-android-plugins'));
 }
 
 const CODOVA_PLUGIN_JS = `
