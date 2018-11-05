@@ -1,7 +1,7 @@
 import { Config } from './config';
 import { exec } from 'child_process';
 import { setTimeout } from 'timers';
-import { basename, dirname, join, relative, resolve } from 'path';
+import { basename, dirname, join, parse, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
@@ -376,6 +376,7 @@ export function resolveNode(config: Config, ...pathSegments: any[]): string | nu
 }
 
 function resolveNodeFrom(start: string, id: string): string | null {
+  const rootPath = parse(start).root;
   let basePath = resolve(start);
   let modulePath;
   while (true) {
@@ -383,7 +384,7 @@ function resolveNodeFrom(start: string, id: string): string | null {
     if (existsSync(modulePath)) {
       return modulePath;
     }
-    if (basePath === '/') {
+    if (basePath === rootPath) {
       return null;
     }
     basePath = dirname(basePath);
