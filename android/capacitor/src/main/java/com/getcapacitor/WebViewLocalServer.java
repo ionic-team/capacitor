@@ -319,7 +319,11 @@ public class WebViewLocalServer {
       final String method = request.getMethod();
       String path = request.getUrl().getPath();
       URL url = new URL(request.getUrl().toString());
+      Map<String, String> headers = request.getRequestHeaders();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      for (Map.Entry<String, String> header : headers.entrySet()) {
+        conn.setRequestProperty(header.getKey(), header.getValue());
+      }
       conn.setRequestMethod(method);
       conn.setReadTimeout(30 * 1000);
       conn.setConnectTimeout(30 * 1000);
