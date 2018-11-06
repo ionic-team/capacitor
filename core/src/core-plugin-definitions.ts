@@ -505,6 +505,13 @@ export interface FilesystemPlugin extends Plugin {
    * @return a promise that resolves with the file stat result
    */
   stat(options: StatOptions): Promise<StatResult>;
+
+  /**
+   * Return boolean representing file existence
+   * @param options the options for the fileExists operation
+   * @return a promise that resolves with the fileExists result
+   */
+  fileExists(options: FileExistsOptions): Promise<FileExistsResult>;
 }
 
 export enum FilesystemDirectory {
@@ -666,6 +673,17 @@ export interface StatOptions {
   directory?: FilesystemDirectory;
 }
 
+export interface FileExistsOptions {
+  /**
+   * The path of the file to check for existence
+   */
+  path: string;
+  /**
+   * The FilesystemDirectory to check for the file under
+   */
+  directory?: FilesystemDirectory;
+}
+
 export interface FileReadResult {
   data: string;
 }
@@ -691,6 +709,9 @@ export interface StatResult {
   ctime: number;
   mtime: number;
   uri: string;
+}
+export interface FileExistsResult {
+  exists: boolean;
 }
 
 //
