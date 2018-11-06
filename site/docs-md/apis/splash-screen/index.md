@@ -67,6 +67,7 @@ These config parameters are availiable in `capacitor.config.json`:
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 3000,
+      "launchAutoHide": true,
       "androidSplashResourceName": "splash"
     }
   }
