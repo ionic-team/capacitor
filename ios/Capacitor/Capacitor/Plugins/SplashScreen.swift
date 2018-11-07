@@ -10,6 +10,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   var isVisible: Bool = false
   
   let launchShowDuration = 3000
+  let launchAutoHide = true
   
   let defaultFadeInDuration = 200
   let defaultFadeOutDuration = 200
@@ -95,7 +96,8 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   
   func showOnLaunch() {
     let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
-    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: true, completion: {
+    let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? launchAutoHide
+    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, completion: {
       
     }, isLaunchSplash: true)
   }
