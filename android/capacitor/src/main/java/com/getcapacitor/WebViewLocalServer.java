@@ -315,8 +315,8 @@ public class WebViewLocalServer {
    * @return
    */
   private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
-    try {
-      final String method = request.getMethod();
+    final String method = request.getMethod();
+    if (method.equals("GET")) try {
       String path = request.getUrl().getPath();
       URL url = new URL(request.getUrl().toString());
       Map<String, String> headers = request.getRequestHeaders();
