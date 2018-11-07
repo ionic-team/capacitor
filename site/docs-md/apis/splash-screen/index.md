@@ -44,6 +44,18 @@ If your app needs longer than 3 seconds to load, configure the default duration 
 }
 ```
 
+If you want to be sure the splash never hides before the app is fully loaded, set `launchAutoHide` to `false` in your `capacitor.config.json`:
+
+```json
+{
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
+```
+
 Then run `npx cap copy` to apply these changes.
 
 ## Configuration
@@ -55,6 +67,7 @@ These config parameters are availiable in `capacitor.config.json`:
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 3000,
+      "launchAutoHide": true,
       "androidSplashResourceName": "splash"
     }
   }
