@@ -315,53 +315,55 @@ public class WebViewLocalServer {
    * @return
    */
   private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
-    try {
-      final String method = request.getMethod();
-      String path = request.getUrl().getPath();
-      URL url = new URL(request.getUrl().toString());
-      Map<String, String> headers = request.getRequestHeaders();
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      for (Map.Entry<String, String> header : headers.entrySet()) {
-        conn.setRequestProperty(header.getKey(), header.getValue());
-      }
-      conn.setRequestMethod(method);
-      conn.setReadTimeout(30 * 1000);
-      conn.setConnectTimeout(30 * 1000);
+    final String method = request.getMethod();
+    if (method.equals("GET")) {
+      try {
+        String path = request.getUrl().getPath();
+        URL url = new URL(request.getUrl().toString());
+        Map<String, String> headers = request.getRequestHeaders();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+          conn.setRequestProperty(header.getKey(), header.getValue());
+        }
+        conn.setRequestMethod(method);
+        conn.setReadTimeout(30 * 1000);
+        conn.setConnectTimeout(30 * 1000);
 
-      InputStream stream = conn.getInputStream();
+        InputStream stream = conn.getInputStream();
 
-      if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
-        stream = jsInjector.getInjectedStream(stream);
-
-        bridge.reset();
-
-        return new WebResourceResponse("text/html", handler.getEncoding(),
-            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
-      }
-
-      int periodIndex = path.lastIndexOf(".");
-      if (periodIndex >= 0) {
-        String ext = path.substring(path.lastIndexOf("."), path.length());
-
-        // TODO: Conjure up a bit more subtlety than this
-        if (ext.equals(".html")) {
+        if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
           stream = jsInjector.getInjectedStream(stream);
+
           bridge.reset();
+
+          return new WebResourceResponse("text/html", handler.getEncoding(),
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
         }
 
-        String mimeType = getMimeType(path, stream);
+        int periodIndex = path.lastIndexOf(".");
+        if (periodIndex >= 0) {
+          String ext = path.substring(path.lastIndexOf("."), path.length());
 
-        return new WebResourceResponse(mimeType, handler.getEncoding(),
-            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+          // TODO: Conjure up a bit more subtlety than this
+          if (ext.equals(".html")) {
+            stream = jsInjector.getInjectedStream(stream);
+            bridge.reset();
+          }
+
+          String mimeType = getMimeType(path, stream);
+
+          return new WebResourceResponse(mimeType, handler.getEncoding(),
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+        }
+
+        return new WebResourceResponse("", handler.getEncoding(),
+            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
+
+      } catch (SocketTimeoutException ex) {
+        bridge.handleAppUrlLoadError(ex);
+      } catch (Exception ex) {
+        bridge.handleAppUrlLoadError(ex);
       }
-
-      return new WebResourceResponse("", handler.getEncoding(),
-          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
-
-    } catch (SocketTimeoutException ex) {
-      bridge.handleAppUrlLoadError(ex);
-    } catch (Exception ex) {
-      bridge.handleAppUrlLoadError(ex);
     }
     return null;
   }
