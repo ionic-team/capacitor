@@ -79,6 +79,7 @@ CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",
   CAP_PLUGIN_METHOD(cancel, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(getPending, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(registerActionTypes, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(areEnabled, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPModalsPlugin, "Modals",

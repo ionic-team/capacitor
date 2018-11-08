@@ -81,7 +81,7 @@ export async function makeAppDir() {
   await mkdirs(cliModulesPath);
   await mkdirs(coreModulesPath);
   await copyAsync(join(cwd, 'dist'), cliModulesPath);
-  await copyAsync(resolve(cwd, '../capacitor-android-plugins'), join(cliModulesPath, 'assets', 'capacitor-android-plugins'));
+  await copyAsync(resolve(cwd, '../capacitor-cordova-android-plugins'), join(appDir, 'android', 'capacitor-cordova-android-plugins'));
   await copyAsync(resolve(cwd, '../core/dist'), coreModulesPath);
   await copyAsync(resolve(cwd, '../core/native-bridge.js'), join(coreModulesPath, 'native-bridge.js'));
   await copyAsync(resolve(cwd, '../core/cordova.js'), join(coreModulesPath, 'cordova.js'));
@@ -191,7 +191,7 @@ async function makeCordovaPlugin(appDir: string) {
   await mkdirs(androidPath);
   await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');
   await writeFileAsync(join(androidPath, 'CoolPlugin.java'), '');
-  const cliAssetsCordova = join(appDir, 'node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins');
+  const cliAssetsCordova = join(appDir, 'ios', 'capacitor-cordova-ios-plugins');
   await mkdirs(cliAssetsCordova);
   await writeFileAsync(join(cliAssetsCordova, 'CordovaPlugins.podspec'), CORDOVA_PLUGINS_PODSPEC);
   await writeFileAsync(join(cliAssetsCordova, 'CordovaPluginsResources.podspec'), CORDOVA_PLUGINS_RESOURCES_PODSPEC);

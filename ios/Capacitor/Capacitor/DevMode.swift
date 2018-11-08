@@ -12,22 +12,20 @@ class DevMode {
   
   func show() {
     let alert = UIAlertController(title: "Capacitor Dev Menu", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-    
+
     alert.addAction(UIAlertAction(title: "Reload", style: .destructive, handler: { (action: UIAlertAction) in
       print("Reloading")
       self.bridge.reload()
     }))
-    
-    /*
-    alert.addAction(UIAlertAction(title: "Toggle Dev Logging", style: .default, handler: { (action: UIAlertAction) in
-      print("Toggline dev logging")
-    }))
-     */
-    
+
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
       alert.dismiss(animated: true, completion: nil)
     }))
-    
+
+    alert.popoverPresentationController?.sourceRect = CGRect(x: self.bridge.viewController.view.center.x, y: self.bridge.viewController.view.center.y, width: 0, height: 0)
+    alert.popoverPresentationController?.sourceView = self.bridge.viewController.view
+    alert.popoverPresentationController?.permittedArrowDirections = .init(rawValue: 0)
+
     UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
   }
 }

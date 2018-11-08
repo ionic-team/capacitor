@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { buildXmlElement, logError, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
+import { buildXmlElement, log, logError, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -87,6 +87,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       const filePath = join(webDir, 'plugins', pluginId, jsModule.$.src);
       copySync(join(p.rootPath, jsModule.$.src), filePath);
       let data = await readFileAsync(filePath, 'utf8');
+      data = data.trim();
       data = `cordova.define("${pluginId}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
       await writeFileAsync(filePath, data, 'utf8');
     });
@@ -179,9 +180,9 @@ export async function copyCordovaJSFiles(config: Config, platform: string) {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
-    plugins = await getIOSPlugins(config, allPlugins);
+    plugins = getIOSPlugins(allPlugins);
   } else if (platform === config.android.name) { 
-    plugins = await getAndroidPlugins(config, allPlugins);
+    plugins = getAndroidPlugins(allPlugins);
   }
   const cordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Cordova);
@@ -252,15 +253,18 @@ function removeOuterTags(str: string) {
   return str.substring(start, end);
 }
 
-export async function checkAndInstallDependencies(config: Config, cordovaPlugins: Plugin[], platform: string) {
+export async function checkAndInstallDependencies(config: Config, plugins: Plugin[], platform: string) {
   let needsUpdate = false;
+  const cordovaPlugins = plugins
+      .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  const incompatible = plugins.filter(p => getPluginType(p, platform) === PluginType.Incompatible);
   await Promise.all(cordovaPlugins.map(async (p) => {
     let allDependencies: Array<string> = [];
     allDependencies = allDependencies.concat(getPlatformElement(p, platform, 'dependency'));
     if (p.xml['dependency']) {
       allDependencies = allDependencies.concat(p.xml['dependency']);
     }
-    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins().includes(dep.$.id));
+    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins().includes(dep.$.id) && incompatible.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0);
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
         if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
@@ -274,7 +278,7 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
             await config.updateAppPackage();
             needsUpdate = true;
           } catch (e) {
-            console.log("\n");
+            log("\n");
             logError(`couldn't install dependency plugin ${plugin}`);
           }
         }
@@ -285,5 +289,7 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
 }
 
 export function getIncompatibleCordovaPlugins(){
-  return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview", "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console", "cordova-plugin-compat"];
+  return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
+  "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
+  "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support"];
 }

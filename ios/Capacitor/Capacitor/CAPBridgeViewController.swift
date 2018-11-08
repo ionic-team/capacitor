@@ -34,6 +34,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   
   
   override public func loadView() {
+    setStatusBarDefaults()
+    
     let webViewConfiguration = WKWebViewConfiguration()
     
     let o = WKUserContentController()
@@ -45,6 +47,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
+    if #available(iOS 11.0, *) {
+        webView?.scrollView.contentInsetAdjustmentBehavior = .never
+    }
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
     //If you want to implement the delegate
@@ -155,6 +160,22 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
      startServer()
     }
 
+  }
+
+  public func setStatusBarDefaults() {
+    if let plist = Bundle.main.infoDictionary {
+      if let statusBarHidden = plist["UIStatusBarHidden"] as? Bool {
+        if (statusBarHidden) {
+          self.isStatusBarVisible = false
+        }
+      }
+        
+      if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
+        if (statusBarStyle != "UIStatusBarStyleDefault") {
+          self.statusBarStyle = .lightContent
+        }
+      }
+    }
   }
 
   public func configureWebView(configuration: WKWebViewConfiguration) {

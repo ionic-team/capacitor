@@ -303,4 +303,9 @@ public class LocalNotificationManager {
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.context);
     notificationManager.cancel(notificationId);
   }
+
+  public boolean areNotificationsEnabled(){
+    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+    return notificationManager.areNotificationsEnabled();
+  }
 }

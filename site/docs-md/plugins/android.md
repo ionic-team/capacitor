@@ -197,12 +197,22 @@ Plugins.MyPlugin.addListener("myPluginEvent", (info: any) => {
 });
 ```
 
-To emit the event from the Swift plugin class you can do it like this:
+To emit the event from the Java plugin class you can do it like this:
 
 ```java
 JSObject ret = new JSObject();
 ret.put("value", "some value");
 notifyListeners("myPluginEvent", ret);
+```
+
+To remove a listener from the plugin object:
+
+```javascript
+const myPluginEventListener = Plugins.MyPlugin.addListener("myPluginEvent", (info: any) => {
+  console.log("myPluginEvent was fired");
+});
+
+myPluginEventListener.remove();
 ```
 
 ### Permissions

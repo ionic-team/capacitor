@@ -52,7 +52,7 @@ public class Splash {
     // https://stackoverflow.com/a/21847579/32140
     splashImage.setDrawingCacheEnabled(true);
 
-    splashImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+    splashImage.setScaleType(ImageView.ScaleType.FIT_XY);
     splashImage.setImageDrawable(splash);
   }
 
@@ -62,7 +62,8 @@ public class Splash {
    */
   public static void showOnLaunch(final BridgeActivity a) {
     Integer duration = Config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
-    show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, true, null, true);
+    Boolean autohide = Config.getBoolean(CONFIG_KEY_PREFIX + "launchAutoHide", DEFAULT_AUTO_HIDE);
+    show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, autohide, null, true);
   }
 
   /**

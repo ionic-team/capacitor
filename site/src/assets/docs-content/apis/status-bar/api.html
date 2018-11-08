@@ -18,7 +18,7 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-setBackgroundColor-0">setBackgroundColor</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">setBackgroundColor</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="930">StatusBarBackgroundColorOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">setBackgroundColor</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="973">StatusBarBackgroundColorOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment"> Set the background color of the status bar</div>
   </div>
@@ -26,7 +26,7 @@
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="930">StatusBarBackgroundColorOptions</avc-code-type>
+<avc-code-type type-id="973">StatusBarBackgroundColorOptions</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -37,7 +37,7 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-setStyle-0">setStyle</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">setStyle</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="925">StatusBarStyleOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">setStyle</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="968">StatusBarStyleOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment"> Set the current style of the status bar</div>
   </div>
@@ -45,7 +45,7 @@
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="925">StatusBarStyleOptions</avc-code-type>
+<avc-code-type type-id="968">StatusBarStyleOptions</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -67,9 +67,57 @@
   </div>
   
 </div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-addListener-0">addListener</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <avc-code-type>string</avc-code-type>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>Function</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="16">PluginListenerHandle</avc-code-type>
+    </div>
+    
+  </div>
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">eventName</span>
+                
+<avc-code-type>string</avc-code-type>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">listenerFunc</span>
+                
+<avc-code-type>Function</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> <avc-code-type type-id="16">PluginListenerHandle</avc-code-type>
+  </div>
+  
+</div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-removeListener-0">removeListener</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">removeListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <avc-code-type>string</avc-code-type>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>Function</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+    </div>
+    
+  </div>
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">eventName</span>
+                
+<avc-code-type>string</avc-code-type>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">listenerFunc</span>
+                
+<avc-code-type>Function</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> void
+  </div>
+  
+</div>
 <h3 id="interfaces">Interfaces</h3>
 
-    <div class="avc-code-interface" id="type-930">
+    <div class="avc-code-interface" id="type-973">
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">StatusBarBackgroundColorOptions</span>
         <span class="avc-code-brace">{</span>
@@ -85,7 +133,7 @@
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-    <div class="avc-code-interface" id="type-925">
+    <div class="avc-code-interface" id="type-968">
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">StatusBarStyleOptions</span>
         <span class="avc-code-brace">{</span>
@@ -96,7 +144,7 @@
             <div class="avc-code-param-comment"></div>
             <div class="avc-code-line"><span class="avc-code-param-name">style</span>
               :
-              <avc-code-type type-id="927">StatusBarStyle</avc-code-type>
+              <avc-code-type type-id="970">StatusBarStyle</avc-code-type>
             </div>
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>

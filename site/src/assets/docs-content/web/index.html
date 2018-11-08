@@ -17,11 +17,11 @@ with web support will actually provide useful functionality:</p>
 </code></pre>
 <h3 id="without-a-build-system">Without a Build System</h3>
 <p>To use Capacitor core in a web app that is not using a build system or bundler/module loader,
-you must set <code>bundleWebRuntime</code> to <code>true</code> in your <code>capacitor.config.json</code>, tell capacitor to
+you must set <code>bundledWebRuntime</code> to <code>true</code> in your <code>capacitor.config.json</code>, tell capacitor to
 copy the specified version of Capacitor Core into your project,
 and then import <code>capacitor.js</code> into your <code>index.html</code>:</p>
 <pre><code class="lang-json">{
-  <span class="hljs-attr">"bundleWebRuntime"</span>: <span class="hljs-literal">true</span>
+  <span class="hljs-attr">"bundledWebRuntime"</span>: <span class="hljs-literal">true</span>
 }
 </code></pre>
 <p>Copy to your project:</p>

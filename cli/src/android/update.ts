@@ -13,12 +13,9 @@ export async function updateAndroid(config: Config) {
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
 
-  let cordovaPlugins: Array<Plugin> = [];
   let needsPluginUpdate = true;
   while (needsPluginUpdate) {
-    cordovaPlugins = plugins
-      .filter(p => getPluginType(p, platform) === PluginType.Cordova);
-    needsPluginUpdate = await checkAndInstallDependencies(config, cordovaPlugins, platform);
+    needsPluginUpdate = await checkAndInstallDependencies(config, plugins, platform);
     if (needsPluginUpdate) {
       plugins = await getPluginsTask(config);
     }
@@ -27,6 +24,8 @@ export async function updateAndroid(config: Config) {
   printPlugins(capacitorPlugins, 'android');
 
   removePluginsNativeFiles(config);
+  const cordovaPlugins = plugins
+      .filter(p => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
   }
@@ -92,7 +91,7 @@ if (hasProperty('postBuildExtras')) {
 }
 
 export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins: Plugin[]) {
-  const pluginsFolder = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsFolder = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
   const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
   let frameworksArray: Array<any> = [];
   let prefsArray: Array<any> = [];
@@ -122,7 +121,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
-  const pluginsRoot = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsRoot = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
   const pluginsPath = join(pluginsRoot, 'src', 'main');
   cordovaPlugins.map(p => {
     const androidPlatform = getPluginPlatform(p, platform);
@@ -155,23 +154,21 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 }
 
 function removePluginsNativeFiles(config: Config) {
-  const pluginsRoot = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
-  const pluginsPath = join(pluginsRoot, 'src', 'main');
-  removeSync(join(pluginsPath, 'java'));
-  removeSync(join(pluginsPath, 'res'));
-  removeSync(join(pluginsPath, 'libs'));
+  const pluginsRoot = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
+  removeSync(pluginsRoot);
+  copySync(config.android.assets.pluginsDir, pluginsRoot);
 }
 
 async function getPluginsTask(config: Config) {
   return await runTask('Updating Android plugins', async () => {
     const allPlugins = await getPlugins(config);
-    const androidPlugins = await getAndroidPlugins(config, allPlugins);
+    const androidPlugins = getAndroidPlugins(allPlugins);
     return androidPlugins;
   });
 }
 
 async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Config) {
-  const pluginsFolder = resolve(config.app.rootDir, 'node_modules', '@capacitor/cli', 'assets', 'capacitor-android-plugins');
+  const pluginsFolder = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
   const manifestPath = join(pluginsFolder, 'src', 'main', 'AndroidManifest.xml');
   let rootXMLEntries: Array<any> = [];
   let applicationXMLEntries: Array<any> = [];

@@ -117,6 +117,13 @@
     }
   }
 
+  /*
+   * Check if a Plugin is available
+   */
+  capacitor.isPluginAvailable = function isPluginAvailable(name) {
+    return this.Plugins.hasOwnProperty(name);
+  }
+
   /**
    * Send a plugin method call to the native layer
    */

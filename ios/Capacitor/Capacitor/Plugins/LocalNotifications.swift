@@ -95,7 +95,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
    * Cancel notifications by id
    */
   @objc func cancel(_ call: CAPPluginCall) {
-    guard let notifications = call.getArray("notifications", JSObject.self, []) else {
+    guard let notifications = call.getArray("notifications", JSObject.self, []), notifications.count > 0 else {
       call.error("Must supply notifications to cancel")
       return
     }
@@ -103,6 +103,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     let ids = notifications.map { $0["id"] as? String ?? "" }
     
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+    call.success()
   }
   
   /**
@@ -121,7 +122,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       ])
     })
   }
-  
+
   /**
    * Register allowed action types that a notification may present.
    */
@@ -134,8 +135,20 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     
     call.success()
   }
-  
-  
+
+  /**
+   * Check if Local Notifications are authorized and enabled
+   */
+  @objc func areEnabled(_ call: CAPPluginCall) {
+    let center = UNUserNotificationCenter.current()
+    center.getNotificationSettings { (settings) in
+      let authorized = settings.authorizationStatus == UNAuthorizationStatus.authorized
+      let enabled = settings.notificationCenterSetting == UNNotificationSetting.enabled
+      call.success([
+        "value": enabled && authorized
+      ])
+    }
+  }
   
   /**
    * Build the content for a notification.

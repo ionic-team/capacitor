@@ -27,10 +27,37 @@ the Capacitor documentation exists to help web developers do just that.</p>
   <span class="hljs-comment">// Android Studio install path, but you may change it manually.</span>
   <span class="hljs-string">"windowsAndroidStudioPath"</span>: <span class="hljs-string">'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe'</span>,
 
-  <span class="hljs-comment">// On Android, Capacitor loads your local assets using https</span>
-  <span class="hljs-comment">// Chrome by default prevents loading files from a different scheme (i.e. from http)</span>
-  <span class="hljs-comment">// This setting allows to mix content from different schemes</span>
-  <span class="hljs-string">"allowMixedContent"</span>: <span class="hljs-literal">true</span>
+  <span class="hljs-comment">// Server object contains port and url configurations </span>
+  <span class="hljs-string">"server"</span>: {
+    <span class="hljs-comment">// Capacitor runs a local web server, you can configure what port to use.</span>
+    <span class="hljs-comment">// If you don't configure it, a random port will be assigned and persisted.</span>
+    <span class="hljs-string">"port"</span>: <span class="hljs-string">"8787"</span>,
+    <span class="hljs-comment">// You can make the app to load an external url (i.e. to live reload)</span>
+    <span class="hljs-string">"url"</span>: <span class="hljs-string">"http://192.168.1.33:8100"</span>
+  },
+  <span class="hljs-string">"android"</span>: {
+    <span class="hljs-comment">// On Android, Capacitor loads your local assets using https</span>
+    <span class="hljs-comment">// Chrome by default prevents loading files from a different scheme (i.e. from http)</span>
+    <span class="hljs-comment">// This setting allows to mix content from different schemes</span>
+    <span class="hljs-string">"allowMixedContent"</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-comment">// Android's default keyboard doesn't allow proper JS key capture</span>
+    <span class="hljs-comment">// You can use a simpler keyboard enabling this preference</span>
+    <span class="hljs-comment">// Be aware that this keyboard has some problems and limitations</span>
+    <span class="hljs-string">"captureInput"</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-comment">// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into</span>
+    <span class="hljs-comment">// any WebViews of this application.</span>
+    <span class="hljs-comment">// This flag can be enabled in order to facilitate debugging of web layouts</span>
+    <span class="hljs-comment">// and JavaScript code running inside WebViews.</span>
+    <span class="hljs-string">"webContentsDebuggingEnabled"</span>: <span class="hljs-literal">true</span>
+  },
+  <span class="hljs-string">"ios"</span>: {
+    <span class="hljs-comment">// Configure the Swift version to be used for Cordova plugins.</span>
+    <span class="hljs-comment">// Default is 4.0</span>
+    <span class="hljs-string">"cordovaSwiftVersion"</span>: <span class="hljs-string">"3.2"</span>,
+    <span class="hljs-comment">// Minimum iOS version supported by the project.</span>
+    <span class="hljs-comment">// Default is 10.0</span>
+    <span class="hljs-string">"minVersion"</span>: <span class="hljs-string">"10.3"</span>
+  }
 }
 </code></pre>
 <h2 id="native-configuration">Native Configuration</h2>

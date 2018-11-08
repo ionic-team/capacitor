@@ -89,5 +89,12 @@ public class LocalNotifications extends Plugin {
     call.success();
   }
 
+  @PluginMethod()
+  public void areEnabled(PluginCall call) {
+    JSObject data = new JSObject();
+    data.put("areEnabled", manager.areNotificationsEnabled());
+    call.success(data);
+  }
+
 }
 

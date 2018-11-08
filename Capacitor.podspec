@@ -11,4 +11,5 @@ Pod::Spec.new do |s|
   s.source_files = 'ios/Capacitor/Capacitor/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/**/*.{swift,h,m}'
   s.dependency 'CapacitorCordova', '1.0.0-beta.8'
   s.dependency 'GCDWebServer', '~> 3.0'
+  s.swift_version = '4.0'
 end
