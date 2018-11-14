@@ -87,7 +87,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       exit(1)
     }
 
-    hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())/"
+    hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())"
 
 
     print("⚡️  Loading app at \(hostname!)...")

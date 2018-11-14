@@ -45,7 +45,7 @@ enum BridgeError: Error {
     CAPConfig.loadConfig()
     super.init()
     self.notificationsDelegate.bridge = self;
-    localUrl = "capacitor://localhost"
+    localUrl = "capacitor://app"
     exportCoreJS(localUrl: localUrl!)
     setupCordovaCompatibility()
     registerPlugins()

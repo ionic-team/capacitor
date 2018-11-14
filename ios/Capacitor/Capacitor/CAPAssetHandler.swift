@@ -5,24 +5,24 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
     
     func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         var startPath = ""
-        var stringToLoad = urlSchemeTask.request.url!.absoluteString
-        let scheme = urlSchemeTask.request.url?.scheme
+        let url = urlSchemeTask.request.url!
+        let stringToLoad = url.path
+        let scheme = url.scheme
+
         if scheme == "capacitor" {
             startPath = Bundle.main.path(forResource: "public", ofType: nil)!
-            stringToLoad = stringToLoad.replacingOccurrences(of: "capacitor://localhost/", with: "")
-            if stringToLoad.isEmpty {
+            if stringToLoad.isEmpty || url.pathExtension.isEmpty {
                 startPath.append("/index.html")
             } else {
-                startPath.append("/\(stringToLoad)")
+                startPath.append(stringToLoad)
             }
         } else {
-            stringToLoad = stringToLoad.replacingOccurrences(of: "\(scheme!)://", with: "")
             if !stringToLoad.isEmpty {
                 startPath = stringToLoad
             }
         }
 
-        let localUrl = URL.init(string: "https://localhost:8080/")!
+        let localUrl = URL.init(string: url.absoluteString)!
         let fileUrl = URL.init(fileURLWithPath: startPath)
         var mimeType = "text/html"
         var expectedContentLength = -1
@@ -32,10 +32,13 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
             if !stringToLoad.contains("cordova.js") {
                 data = try Data(contentsOf: fileUrl)
             }
-            if stringToLoad.contains(".mp4") {
+            if url.pathExtension == "mp4" {
                 mimeType = "video/mp4"
-                expectedContentLength = data.count
             }
+            if url.pathExtension == "svg" {
+                mimeType = "image/svg+xml"
+            }
+            expectedContentLength = data.count
             let urlResponse = URLResponse(url: localUrl, mimeType: mimeType,
                                           expectedContentLength: expectedContentLength, textEncodingName: nil)
             urlSchemeTask.didReceive(urlResponse)
