@@ -1,6 +1,5 @@
 import Foundation
 
-@available(iOS 11.0, *)
 class CAPAssetHandler: NSObject, WKURLSchemeHandler {
     
     func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {

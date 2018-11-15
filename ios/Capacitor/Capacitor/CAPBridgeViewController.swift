@@ -35,12 +35,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     setStatusBarDefaults()
     
     let webViewConfiguration = WKWebViewConfiguration()
-    if #available(iOS 11.0, *) {
-        webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor")
-        webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor-asset")
-    } else {
-        print("url schemses not available here")
-    }
+
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor")
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor-asset")
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
@@ -51,9 +48,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
-    if #available(iOS 11.0, *) {
-        webView?.scrollView.contentInsetAdjustmentBehavior = .never
-    }
+    
+    webView?.scrollView.contentInsetAdjustmentBehavior = .never
+    
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
     //If you want to implement the delegate
