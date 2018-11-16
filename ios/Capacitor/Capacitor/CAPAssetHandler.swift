@@ -37,7 +37,7 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
             ]
             let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: nil)
             let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
-            if url.pathExtension == "mp4" {
+            if isMediaExtension(pathExtension: url.pathExtension) {
                 urlSchemeTask.didReceive(urlResponse)
             } else {
                 urlSchemeTask.didReceive(httpResponse!)
@@ -64,5 +64,14 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
             return "application/octet-stream"
         }
         return "text/html"
+    }
+
+    func isMediaExtension(pathExtension: String) -> Bool {
+        let mediaExtensions = ["m4v", "mov", "mp4",
+                               "aac", "ac3", "aiff", "au", "flac", "m4a", "mp3", "wav"]
+        if mediaExtensions.contains(pathExtension) {
+            return true
+        }
+        return false
     }
 }
