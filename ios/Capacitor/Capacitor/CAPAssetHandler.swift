@@ -1,4 +1,5 @@
 import Foundation
+import MobileCoreServices
 
 class CAPAssetHandler: NSObject, WKURLSchemeHandler {
     
@@ -23,32 +24,45 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
 
         let localUrl = URL.init(string: url.absoluteString)!
         let fileUrl = URL.init(fileURLWithPath: startPath)
-        var mimeType = "text/html"
-        var expectedContentLength = -1
 
         do {
             var data = Data()
             if !stringToLoad.contains("cordova.js") {
                 data = try Data(contentsOf: fileUrl)
             }
+            let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
+            let expectedContentLength = data.count
+            let headers =  [
+            "Content-Type": mimeType
+            ]
+            let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: nil)
+            let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
             if url.pathExtension == "mp4" {
-                mimeType = "video/mp4"
+                urlSchemeTask.didReceive(urlResponse)
+            } else {
+                urlSchemeTask.didReceive(httpResponse!)
             }
-            if url.pathExtension == "svg" {
-                mimeType = "image/svg+xml"
-            }
-            expectedContentLength = data.count
-            let urlResponse = URLResponse(url: localUrl, mimeType: mimeType,
-                                          expectedContentLength: expectedContentLength, textEncodingName: nil)
-            urlSchemeTask.didReceive(urlResponse)
             urlSchemeTask.didReceive(data)
-        } catch {
-            print("error getting data")
+        } catch let error as NSError {
+            urlSchemeTask.didFailWithError(error)
+            return
         }
         urlSchemeTask.didFinish()
     }
 
     func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
         print("scheme stop")
+    }
+
+    func mimeTypeForExtension(pathExtension: String) -> String {
+        if !pathExtension.isEmpty {
+            if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as NSString, nil)?.takeRetainedValue() {
+                if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() {
+                    return mimetype as String
+                }
+            }
+            return "application/octet-stream"
+        }
+        return "text/html"
     }
 }
