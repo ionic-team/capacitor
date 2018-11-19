@@ -1,16 +1,16 @@
 PODS:
-  - CapacitorCordova (1.0.0-beta.8)
+  - CapacitorCordova (1.0.0-beta.9)
 
 DEPENDENCIES:
   - CapacitorCordova (from `../../`)
 
 EXTERNAL SOURCES:
   CapacitorCordova:
-    :path: ../../
+    :path: "../../"
 
 SPEC CHECKSUMS:
-  CapacitorCordova: 12c6f15620d601a2c14a7390abba06acce7ca3eb
+  CapacitorCordova: f9af242364a4e66b2f472bda727e6becd9072ab7
 
 PODFILE CHECKSUM: dde0b7cf2ee7affd4ef5a207f54bd6e4021ab7b7
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

@@ -148,7 +148,6 @@
 				50503EDB1FC08594003606DC /* Frameworks */,
 				50503EDC1FC08594003606DC /* Headers */,
 				50503EDD1FC08594003606DC /* Resources */,
-				3AD48072265E699C32C7224D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -168,7 +167,6 @@
 				50503EE51FC08595003606DC /* Frameworks */,
 				50503EE61FC08595003606DC /* Resources */,
 				E163225B0E98190034E8EB69 /* [CP] Embed Pods Frameworks */,
-				641F43B9AF146A018706FDEB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -238,21 +236,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3AD48072265E699C32C7224D /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Capacitor/Pods-Capacitor-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		4F9B8D131D6355067982814A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -269,21 +252,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		641F43B9AF146A018706FDEB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CapacitorTests/Pods-CapacitorTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		93213D04BDB3366A679E5DB2 /* [CP] Check Pods Manifest.lock */ = {
