@@ -11,6 +11,8 @@ enum BridgeError: Error {
 
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://getcapacitor.com/"
+  // The last URL that caused the app to open
+  private static var lastUrl: URL?
   
   public var userContentController: WKUserContentController
   public var bridgeDelegate: CAPBridgeDelegate
@@ -33,6 +35,7 @@ enum BridgeError: Error {
   public var storedCalls = [String:CAPPluginCall]()
   // Whether the app is active
   private var isActive = true
+
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
 
@@ -80,6 +83,13 @@ enum BridgeError: Error {
   }
   
   /**
+   * Get the last URL that triggered an open or continue activity event.
+   */
+  public static func getLastUrl() -> URL? {
+    return lastUrl
+  }
+  
+  /**
    * Handle an openUrl action and dispatch a notification.
    */
   public static func handleOpenUrl(_ url: URL, _ options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
@@ -87,6 +97,7 @@ enum BridgeError: Error {
       "url": url,
       "options": options
     ])
+    CAPBridge.lastUrl = url
     return true
   }
   
@@ -100,7 +111,7 @@ enum BridgeError: Error {
     }
     
     let url = userActivity.webpageURL
-    
+    CAPBridge.lastUrl = url
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.UniversalLinkOpen.name()), object: [
       "url": url
     ])
@@ -328,7 +339,6 @@ enum BridgeError: Error {
   public func reload() {
     self.getWebView()?.reload()
   }
-
   
   public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
     let output = items.map { "\($0)" }.joined(separator: " ")
