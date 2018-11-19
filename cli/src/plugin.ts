@@ -1,6 +1,6 @@
 import { Config } from './config';
-import { join, resolve } from 'path';
-import { log, readJSON, readXML } from './common';
+import { join, sep } from 'path';
+import { log, logFatal, readJSON, readXML, resolveNode } from './common';
 
 
 export const enum PluginType {
@@ -45,7 +45,12 @@ export async function getPlugins(config: Config): Promise<Plugin[]> {
 
 export async function resolvePlugin(config: Config, name: string): Promise<Plugin | null> {
   try {
-    const rootPath = resolve(config.app.rootDir, 'node_modules', name);
+    const rootPath = resolveNode(config, name);
+    if (!rootPath) {
+      logFatal(`Unable to find node_modules/${name}. Are you sure ${name} is installed?`);
+      return null;
+    }
+
     const packagePath = join(rootPath, 'package.json');
     const meta = await readJSON(packagePath);
     if (!meta) {
@@ -154,7 +159,17 @@ export function getJSModules(p: Plugin, platform: string) {
 
 export function getFilePath(config: Config, plugin: Plugin, path: string) {
   if (path.startsWith("node_modules")) {
-    return join(config.app.rootDir, path);
+    let pathSegments = path.split(sep).slice(1);
+    if (pathSegments[0].startsWith('@')) {
+      pathSegments = [pathSegments[0] + '/' + pathSegments[1], ...pathSegments.slice(2)]
+    }
+
+    let filePath = resolveNode(config, ...pathSegments);
+    if (!filePath) {
+      throw new Error(`Can't resolve module ${pathSegments[0]}`)
+    }
+
+    return filePath;
   }
   return join(plugin.rootPath, path);
 }
