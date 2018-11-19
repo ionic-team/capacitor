@@ -44,7 +44,7 @@ export class Config implements CliConfig {
 
   ios = {
     name: 'ios',
-    minVersion: '10.0',
+    minVersion: '11.0',
     cordovaSwiftVersion: '4.0',
     platformDir: '',
     webDir: 'public',

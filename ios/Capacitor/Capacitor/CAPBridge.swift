@@ -45,7 +45,7 @@ enum BridgeError: Error {
     CAPConfig.loadConfig()
     super.init()
     self.notificationsDelegate.bridge = self;
-    localUrl = "http://localhost:\(getPort())"
+    localUrl = "capacitor://app"
     exportCoreJS(localUrl: localUrl!)
     setupCordovaCompatibility()
     registerPlugins()
@@ -549,26 +549,6 @@ enum BridgeError: Error {
   
   func getWebView() -> WKWebView? {
     return self.bridgeDelegate.bridgedWebView
-  }
-
-  func getPort() -> Int {
-    let configPort = CAPConfig.getString("server.port")
-    if configPort != nil {
-      return Int(configPort!)!
-    }
-    let defaults = UserDefaults.standard
-    var port = defaults.integer(forKey: "capacitorPort")
-    if port > 0 {
-      return port
-    }
-    port = getRandomPort()
-    defaults.set(port, forKey: "capacitorPort")
-    return port
-  }
-
-  func getRandomPort() -> Int {
-    let range: [Int] = [3000, 9000]
-    return range[0] + Int(arc4random_uniform(UInt32(range[1]-range[0])))
   }
 
   public func getLocalUrl() -> String {

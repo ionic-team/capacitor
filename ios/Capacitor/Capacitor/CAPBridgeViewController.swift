@@ -8,12 +8,10 @@
 
 import UIKit
 import WebKit
-import GCDWebServer
 
 public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
-  private var webServer: GCDWebServer?
   
   public var bridgedWebView: WKWebView? {
     return webView
@@ -37,6 +35,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     setStatusBarDefaults()
     
     let webViewConfiguration = WKWebViewConfiguration()
+
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor")
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor-asset")
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
@@ -47,9 +48,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
-    if #available(iOS 11.0, *) {
-        webView?.scrollView.contentInsetAdjustmentBehavior = .never
-    }
+    
+    webView?.scrollView.contentInsetAdjustmentBehavior = .never
+    
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
     //If you want to implement the delegate
@@ -83,82 +84,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       exit(1)
     }
 
-    hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())/"
+    hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())"
 
-    initWebServer()
 
     print("⚡️  Loading app at \(hostname!)...")
     let request = URLRequest(url: URL(string: hostname!)!)
     _ = webView?.load(request)
   }
-  
-  func initWebServer() {
-    GCDWebServer.setLogLevel(3)
-    self.webServer = GCDWebServer.init()
-
-    var startPath = Bundle.main.path(forResource: "public", ofType: nil)
-
-    let defaults = UserDefaults.standard
-    let persistedPath = defaults.string(forKey: "serverBasePath")
-    if (persistedPath != nil && !persistedPath!.isEmpty) {
-      startPath = persistedPath
-    }
-
-    setServerPath(path: startPath!)
-
-    startServer()
-  }
-
-  func startServer() {
-    do {
-      let options = [
-        GCDWebServerOption_Port: bridge!.getPort(),
-        GCDWebServerOption_BindToLocalhost: true,
-        GCDWebServerOption_ServerName: "Capacitor"
-        ] as [String : Any]
-      try self.getWebServer().start(options: options)
-    } catch {
-      print(error)
-    }
-  }
 
   func setServerPath(path: String) {
-    let webServer = getWebServer()
+
     self.basePath = path
-    let restart = webServer.isRunning
-
-    if (restart) {
-      webServer.stop()
-    }
-
-    webServer.addGETHandler(forBasePath: "/", directoryPath: path, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
-
-    webServer.addHandler(forMethod: "GET", pathRegex: "_capacitor_/", request: GCDWebServerFileRequest.self) { (request, block) in
-      let urlToRemove = "\(self.bridge!.getLocalUrl())/_capacitor_/"
-      var absUrl = request.url.absoluteString.replacingOccurrences(of: urlToRemove, with: "")
-
-      if let range = absUrl.range(of: "?") {
-        absUrl.removeSubrange(range.lowerBound..<absUrl.endIndex)
-      }
-
-      let fileManager = FileManager.default
-      if !fileManager.fileExists(atPath: absUrl) {
-        let response = GCDWebServerResponse(statusCode: 404)
-        block(response)
-      } else {
-        var fileResponse = GCDWebServerFileResponse(file: absUrl, byteRange: request.byteRange)
-        fileResponse?.setValue("bytes", forAdditionalHeader: "Accept-Ranges")
-        block(fileResponse)
-      }
-    }
-
-    webServer.addHandler(forMethod: "GET", pathRegex: "cordova.js", request: GCDWebServerFileRequest.self) { (request, block) in
-      block(GCDWebServerResponse())
-    }
-
-    if (restart) {
-     startServer()
-    }
 
   }
 
@@ -397,9 +333,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return self.webView!
   }
 
-  public func getWebServer() -> GCDWebServer {
-    return self.webServer!
-  }
 
   public func getServerBasePath() -> String {
     return self.basePath

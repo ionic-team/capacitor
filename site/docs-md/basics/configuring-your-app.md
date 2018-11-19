@@ -63,8 +63,8 @@ The current ones you might configure are:
     // Default is 4.0
     "cordovaSwiftVersion": "3.2",
     // Minimum iOS version supported by the project.
-    // Default is 10.0
-    "minVersion": "10.3"
+    // Default is 11.0
+    "minVersion": "11.3"
   }
 }
 ```

@@ -323,18 +323,12 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       // Create the custom actions for the TIMER_EXPIRED category.
       var newCategory: UNNotificationCategory?
       
-      if #available(iOS 11.0, *) {
-        newCategory = UNNotificationCategory(identifier: id,
+      newCategory = UNNotificationCategory(identifier: id,
                                                actions: newActions,
                                                intentIdentifiers: [],
                                                hiddenPreviewsBodyPlaceholder: hiddenBodyPlaceholder,
                                                options: makeCategoryOptions(type))
-      } else {
-        newCategory = UNNotificationCategory(identifier: id,
-                                             actions: newActions,
-                                             intentIdentifiers: [],
-                                             options: makeCategoryOptions(type))
-      }
+      
       
       createdCategories.append(newCategory!)
     }
@@ -420,15 +414,11 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       return .allowInCarPlay
     }
     
-    // New iOS 11 features
-    if #available(iOS 11.0, *) {
-      // Running iOS 11 OR NEWER
-      if hiddenPreviewsShowTitle {
-        return .hiddenPreviewsShowTitle
-      }
-      if hiddenPreviewsShowSubtitle {
-        return .hiddenPreviewsShowSubtitle
-      }
+    if hiddenPreviewsShowTitle {
+      return .hiddenPreviewsShowTitle
+    }
+    if hiddenPreviewsShowSubtitle {
+      return .hiddenPreviewsShowSubtitle
     }
     
     return UNNotificationCategoryOptions(rawValue: 0)
