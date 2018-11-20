@@ -7,13 +7,13 @@ import {
   checkAppDir,
   checkAppId,
   checkAppName,
+  installDeps,
   getAppId,
   getName,
   getOrCreateConfig,
   log,
   logFatal,
   printNextSteps,
-  runCommand,
   runTask
 } from '../common';
 
@@ -59,7 +59,9 @@ export async function createCommand(config: Config, dir: string, name: string, i
     // Copy the starter project
     await create(config, appDir, appName, appId);
     // npm install
-    await installDeps(config, appDir);
+    await runTask(chalk`Installing dependencies`, () => {
+      return installDeps(appDir, ['@capacitor/cli', '@capacitor/core'])
+    });
     // Copy web and capacitor to web assets
     await copy(config, config.web.name);
     // Say something nice
@@ -109,8 +111,3 @@ export async function create(config: Config, dir: string, appName: string, appId
   });
 }
 
-async function installDeps(config: Config, dir: string) {
-  await runTask(chalk`Installing dependencies`, async () => {
-    return runCommand(`cd "${dir}" && npm install --save @capacitor/cli @capacitor/core`);
-  });
-}

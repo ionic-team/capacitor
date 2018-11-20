@@ -390,3 +390,11 @@ function resolveNodeFrom(start: string, id: string): string | null {
     basePath = dirname(basePath);
   }
 }
+
+// Does the current project use yarn?
+export const hasYarn = existsSync(join(process.cwd(), 'yarn.lock'));
+
+// Install deps with NPM or Yarn
+export function installDeps(projectDir: string, deps: string[]) {
+  return runCommand(`cd "${projectDir}" && ${hasYarn ? 'yarn add' : 'npm install --save'} ${deps.join(' ')}`);
+}

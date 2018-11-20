@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 import { Config } from '../config';
-import { copyTemplate, runTask } from '../common';
+import { copyTemplate, hasYarn, runTask } from '../common';
 
 export async function addElectron(config: Config) {
 
@@ -16,7 +16,7 @@ export async function addElectron(config: Config) {
 function installNpmDeps(pathToElectronPackageJson: string) {
   return new Promise((resolve, reject) => {
     console.log('Installing NPM Dependencies...');
-    exec('npm install', {cwd: pathToElectronPackageJson}, (error, stdout, stderr) => {
+    exec(`${hasYarn ? 'yarn': 'npm'} install`, {cwd: pathToElectronPackageJson}, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       }
