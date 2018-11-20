@@ -41,7 +41,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin  
   }
 
   static async errorHandler(error: DOMException): Promise<never> {
-    return Promise.reject(error);
+    return Promise.reject(error.toString());
   }
 
   static validateParam(fn: string, options: any, key: any): Promise<void> {
@@ -85,16 +85,21 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin  
     if (!window.requestFileSystem) {
       throw new Error('Filesystem plugin is only supported by Chrome.');
     }
-    return new Promise<FileSystem>((resolve, reject) => {
-      window.webkitRequestFileSystem(window.PERSISTENT, this.GRANTED_MBS * 1024 * 1024, resolve, reject);
-    }).then((fs: FileSystem) => {
-      this._persistent = fs;
+    return new Promise<number>((resolve, reject) => {
+      (<any>navigator).webkitPersistentStorage.requestQuota(this.GRANTED_MBS * 1024 * 1024, resolve, reject);
+    }).then((bytes) => {
+        return new Promise<FileSystem>((resolve, reject) => {
+            window.webkitRequestFileSystem(window.PERSISTENT, bytes, resolve, reject);
+        });
+    }).then((fs) => {
+        this._persistent = fs;
     });
+
   }
 
   private async getFsRoot(directory: FilesystemDirectory|undefined, path: string|undefined): Promise<DirectoryEntry> {
     directory = directory || this.DEFAULT_DIRECTORY;
-    if (path.startsWith('filesystem')) {
+    if (path !== undefined && path.startsWith('filesystem')) {
       const filestorage: string = path.split('/')[3];
       if (filestorage === 'temporary') {
         directory = FilesystemDirectory.Cache;
@@ -297,11 +302,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin  
     const path = FilesystemPluginWeb.getEntryPath(options.path);
     const createIntermediateDirectories = options.createIntermediateDirectories;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
-
-    /*if (cleanedpath === '') {
-      return Promise.resolve({});
-    }*/
-
 
     if (!createIntermediateDirectories || parentPath === '') {
       return new Promise<DirectoryEntry>((resolve, reject) => {
