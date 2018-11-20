@@ -5,7 +5,7 @@ import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
+import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON, log } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';
@@ -40,6 +40,10 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
 
     if (shouldSync(config, platformName)) {
       await sync(config, platformName);
+    }
+
+    if (platformName === config.ios.name || platformName === config.android.name) {
+      log(chalk`\nNow you can run {green {bold npx cap open ${platformName}}} to launch ${platformName === config.ios.name ? 'Xcode' : 'Android Studio'}`);
     }
   } catch (e) {
     logFatal(e);
