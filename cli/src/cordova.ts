@@ -134,7 +134,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     if (currentPlatform) {
       const configFiles = currentPlatform['config-file'];
       if (configFiles) {
-        const configXMLEntries = configFiles.filter(function(item: any) { return item.$.target.includes(fileName); });
+        const configXMLEntries = configFiles.filter(function(item: any) { return item.$ && item.$.target.includes(fileName); });
         configXMLEntries.map(  (entry: any)  => {
           const feature = { feature: entry.feature };
           pluginEntries.push(feature);
