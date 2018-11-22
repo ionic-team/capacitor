@@ -22,6 +22,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
   
   private var hostname: String?
+  private var allowNavigationConfig: [String]?
   private var basePath: String = ""
   
   private var isStatusBarVisible = true
@@ -85,6 +86,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
 
     hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())"
+    allowNavigationConfig = CAPConfig.getValue("server.allowNavigation") as? Array<String>
 
 
     print("⚡️  Loading app at \(hostname!)...")
@@ -128,6 +130,14 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     let navUrl = navigationAction.request.url!
+    if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
+      for pattern in allowNavigation {
+        if matchHost(host: requestHost, pattern: pattern) {
+          decisionHandler(.allow)
+          return
+        }
+      }
+    }
     if let scheme = navUrl.scheme {
       let validSchemes = ["tel", "mailto", "facetime", "sms", "maps", "itms-services", "http", "https"]
       if validSchemes.contains(scheme) && navUrl.absoluteString.range(of: hostname!) == nil && (navigationAction.targetFrame == nil || (navigationAction.targetFrame?.isMainFrame)!) {
@@ -216,6 +226,27 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     print("⚡️  URL: \(url)")
     print("⚡️  \(filename):\(line):\(col)")
     print("\n⚡️  See above for help with debugging blank-screen issues")
+  }
+
+  func matchHost(host: String, pattern: String) -> Bool {
+    var host = host.split(separator: ".")
+    var pattern = pattern.split(separator: ".")
+
+    if host.count != pattern.count {
+      return false
+    }
+
+    if host == pattern {
+      return true
+    }
+
+    let wildcards = pattern.enumerated().filter { $0.element == "*" }
+    for wildcard in wildcards.reversed() {
+      host.remove(at: wildcard.offset)
+      pattern.remove(at: wildcard.offset)
+    }
+
+    return host == pattern
   }
 
   override public func didReceiveMemoryWarning() {

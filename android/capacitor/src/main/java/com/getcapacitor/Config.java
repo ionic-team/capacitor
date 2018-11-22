@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -128,5 +129,29 @@ public class Config {
     return null;
   }
 
+  public static String[] getArray(String key) {
+    return getArray(key, null);
+  }
 
+  public static String[] getArray(String key, String[] defaultValue) {
+    String k = getConfigKey(key);
+    try {
+      JSONObject o = getInstance().getConfigObjectDeepest(key);
+
+      JSONArray a = o.getJSONArray(k);
+      if (a == null) {
+        return defaultValue;
+      }
+
+      int l = a.length();
+      String[] value = new String[l];
+
+      for(int i=0; i<l; i++) {
+        value[i] = (String) a.get(i);
+      }
+
+      return value;
+    } catch (Exception ex) {}
+    return defaultValue;
+  }
 }
