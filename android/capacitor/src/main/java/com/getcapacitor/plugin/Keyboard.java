@@ -118,7 +118,7 @@ public class Keyboard extends Plugin {
   }
 
   @PluginMethod()
-  public void hideKeyboardAccessoryBar(PluginCall call) {
+  public void setAccessoryBarVisible(PluginCall call) {
     call.unimplemented();
   }
 }
