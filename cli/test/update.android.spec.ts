@@ -1,4 +1,4 @@
-import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run, copyAndroidCordovaAssets } from './util';
+import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run } from './util';
 import { updateCommand } from '../src/tasks/update';
 
 describe.each([false, true])('Update: Android (monoRepoLike: %p)', (monoRepoLike) => {
@@ -14,8 +14,6 @@ describe.each([false, true])('Update: Android (monoRepoLike: %p)', (monoRepoLike
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
     await run(appDir, `add android`);
-    // Copy Android Cordova assets after 'add android', or it will fail
-    await copyAndroidCordovaAssets(appDir);
     // Redundant, because add does this, but called explicitly for thoroughness
     await updateCommand(makeConfig(appDir), 'android');
     FS = new MappedFS(appDir);

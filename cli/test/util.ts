@@ -96,10 +96,6 @@ export async function makeAppDir(monoRepoLike: boolean = false) {
   };
 }
 
-export async function copyAndroidCordovaAssets(appDir: string) {
-  await copyAsync(resolve(cwd, '../capacitor-cordova-android-plugins'), join(appDir, 'android', 'capacitor-cordova-android-plugins'));
-}
-
 const CODOVA_PLUGIN_JS = `
 var exec = require('cordova/exec');
 var CoolPlugin = {
