@@ -19,7 +19,7 @@
     "lint": "tslint --project tsconfig.json",
     "assets": "node scripts/copy-assets.js",
     "prepublishOnly": "npm run build",
-    "test": "jest",
+    "test": "jest -i",
     "watch": "npm run assets && tsc -w"
   },
   "files": [
