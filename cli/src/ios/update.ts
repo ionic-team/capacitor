@@ -1,8 +1,8 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
-import { CheckFunction, checkPlatformVersions, runCommand, runTask } from '../common';
+import { CheckFunction, checkPlatformVersions, logFatal, resolveNode, runCommand, runTask } from '../common';
 import { copySync, readFileAsync, readFileSync, removeSync, writeFileAsync, writeFileSync } from '../util/fs';
 import { Config } from '../config';
-import { join, resolve } from 'path';
+import { join, relative, resolve } from 'path';
 import { getFilePath, getPlatformElement, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
@@ -86,9 +86,19 @@ export async function updatePodfile(config: Config, plugins: Plugin[]) {
 }
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
+  const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
+  if (!capacitoriOSPath) {
+    logFatal(`Unable to find node_modules/@capacitor/ios. Are you sure`,
+      `@capacitor/ios is installed? This file is currently required for Capacitor to function.`);
+    return;
+  }
+
+  const podfilePath = join(config.app.rootDir, 'ios', 'App');
+  const relativeCapacitoriOSPath = relative(podfilePath, capacitoriOSPath).replace(/\\/g, '/');
+
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   const pods = capacitorPlugins
-    .map((p) => `pod '${p.ios!.name}', :path => '${p.rootPath}'`);
+    .map((p) => `pod '${p.ios!.name}', :path => '${relative(podfilePath, p.rootPath)}'`);
   const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   if (noPodPlugins.length > 0) {
@@ -106,9 +116,9 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
     `);
   }
     return `
-  ${config.ios.capacitorRuntimePod}
-  ${config.ios.capacitorCordovaRuntimePod}
-  ${pods.join('\n      ')}`;
+  pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
+  pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
+  ${pods.join('\n  ')}`;
 }
 
 function getFrameworkName(framework: any) {
