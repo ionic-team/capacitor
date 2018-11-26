@@ -53,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 
 /**
@@ -91,6 +93,7 @@ public class Bridge {
   private String localUrl;
   private String appUrl;
   private String appUrlConfig;
+  private String[] appAllowNavigationConfig;
   // A reference to the main WebView for the app
   private final WebView webView;
   public final CordovaInterfaceImpl cordovaInterface;
@@ -155,6 +158,7 @@ public class Bridge {
 
   private void loadWebView() {
     appUrlConfig = Config.getString("server.url");
+    appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
     String port = getPort();
     String authority = "localhost" + ":" + port;
@@ -195,26 +199,26 @@ public class Bridge {
 
       @Override
       public void onPageFinished(WebView view, final String location) {
-        if (appUrlConfig != null) {
+        if (appUrlConfig != null || appAllowNavigationConfig != null) {
           injectScriptFile(view, getJSInjector().getScriptString());
         }
       }
 
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-        String url = request.getUrl().toString();
+        Uri url = request.getUrl();
         return launchIntent(url);
       }
 
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        return launchIntent(url);
+        return launchIntent(Uri.parse(url));
       }
 
-      private boolean launchIntent(String url) {
-        if (!url.contains(appUrl)) {
+      private boolean launchIntent(Uri url) {
+        if (!url.toString().contains(appUrl) && !matchHosts(url.getHost(), appAllowNavigationConfig)) {
           try {
-            Intent openIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
             getContext().startActivity(openIntent);
           } catch (ActivityNotFoundException e) {
             // TODO - trigger an event
@@ -826,5 +830,31 @@ public class Bridge {
             "script.innerHTML = window.atob('" + encoded + "');" +
             "parent.appendChild(script)" +
             "})()");
+  }
+
+  private boolean matchHost(String host, String pattern) {
+    int offset;
+
+    ArrayList hostParts = new ArrayList<String>(Arrays.asList(host.split("\\.")));
+    ArrayList patternParts = new ArrayList<String>(Arrays.asList(pattern.split("\\.")));
+
+    if (hostParts.size() != patternParts.size()) return false;
+    if (hostParts.equals(patternParts)) return true;
+
+    while ((offset = patternParts.indexOf("*")) != -1) {
+      patternParts.remove(offset);
+      hostParts.remove(offset);
+    }
+
+    return hostParts.equals(patternParts);
+  }
+
+  private boolean matchHosts(String host, String[] patterns) {
+    for (String pattern: patterns) {
+      if (matchHost(host, pattern)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
