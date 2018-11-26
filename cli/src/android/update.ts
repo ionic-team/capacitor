@@ -59,9 +59,10 @@ export async function installGradlePlugins(config: Config, capacitorPlugins: Plu
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('${relativeCapcitorAndroidPath}')
 ${capacitorPlugins.map(p => {
-  return `
+    const relativePluginPath = relative(settingsPath, p.rootPath).replace(/\\/g, '/');
+    return `
 include ':${getGradlePackageName(p.id)}'
-project(':${getGradlePackageName(p.id)}').projectDir = new File('${relative(settingsPath, p.rootPath)}/android/${p.id}')
+project(':${getGradlePackageName(p.id)}').projectDir = new File('${relativePluginPath}/android/${p.id}')
 `;
 }).join('')}`;
 
