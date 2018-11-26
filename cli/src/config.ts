@@ -49,8 +49,6 @@ export class Config implements CliConfig {
     platformDir: '',
     webDir: 'public',
     webDirAbs: '',
-    capacitorRuntimePod: `pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'`,
-    capacitorCordovaRuntimePod: `pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'`,
     nativeProjectName: 'App',
     assets: {
       templateName: 'ios-template',
