@@ -194,7 +194,7 @@ export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Co
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
     editConfig.concat(configFile).map(async (configElement: any) => {
-      if (!configElement.$.target.includes('config.xml')) {
+      if (configElement.$ && !configElement.$.target.includes('config.xml')) {
         if (platform === config.ios.name) {
           if (configElement.$.target.includes('Info.plist')) {
             logiOSPlist(configElement, config, p);
