@@ -1,13 +1,13 @@
 import { APP_ID, APP_NAME, run, makeAppDir, MappedFS } from './util';
 
-describe('Add: iOS', () => {
+describe.each([false, true])('Add: iOS (monoRepoLike: %p)', (monoRepoLike) => {
   let appDirObj;
   let FS;
 
   beforeAll(async () => {
     // These commands are slowww...
     jest.setTimeout(20000);
-    appDirObj = await makeAppDir();
+    appDirObj = await makeAppDir(monoRepoLike);
     const appDir = appDirObj.appDir;
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
