@@ -192,10 +192,6 @@ async function makeCordovaPlugin(appDir: string) {
   await mkdirs(androidPath);
   await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');
   await writeFileAsync(join(androidPath, 'CoolPlugin.java'), '');
-  const cliAssetsCordova = join(appDir, 'ios', 'capacitor-cordova-ios-plugins');
-  await mkdirs(cliAssetsCordova);
-  await writeFileAsync(join(cliAssetsCordova, 'CordovaPlugins.podspec'), CORDOVA_PLUGINS_PODSPEC);
-  await writeFileAsync(join(cliAssetsCordova, 'CordovaPluginsResources.podspec'), CORDOVA_PLUGINS_RESOURCES_PODSPEC);
 }
 
 class MappedFS {
