@@ -89,6 +89,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       let data = await readFileAsync(filePath, 'utf8');
       data = data.trim();
       data = `cordova.define("${pluginId}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
+      data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, "")
       await writeFileAsync(filePath, data, 'utf8');
     });
   }));
