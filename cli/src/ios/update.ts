@@ -102,18 +102,15 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   if (noPodPlugins.length > 0) {
-    pods.push(`pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'
-    `);
+    pods.push(`pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'`);
   }
   const podPlugins = cordovaPlugins.filter((el) => !noPodPlugins.includes(el));
   if (podPlugins.length > 0) {
-    pods.push(`pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'
-    `);
+    pods.push(`pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'`);
   }
   const resourcesPlugins = cordovaPlugins.filter(filterResources);
   if (resourcesPlugins.length > 0) {
-    pods.push(`pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'
-    `);
+    pods.push(`pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'`);
   }
     return `
   pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
