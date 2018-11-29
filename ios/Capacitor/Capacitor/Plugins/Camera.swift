@@ -120,26 +120,33 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       return
     }
 
-    let presentationStyle = call.getString("presentationStyle")
-    if presentationStyle != nil && presentationStyle == "popover" {
-      self.configurePicker()
-    } else {
-        self.imagePicker!.modalPresentationStyle = .fullScreen
-    }
+    AVCaptureDevice.requestAccess(for: .video) { granted in
+        if granted {
+          let presentationStyle = call.getString("presentationStyle")
+          if presentationStyle != nil && presentationStyle == "popover" {
+            self.configurePicker()
+          } else {
+            self.imagePicker!.modalPresentationStyle = .fullScreen
+          }
 
-    self.imagePicker!.sourceType = .camera
+          self.imagePicker!.sourceType = .camera
 
-    if settings.direction.rawValue == "REAR" {
-      if UIImagePickerController.isCameraDeviceAvailable(.rear) {
-        self.imagePicker!.cameraDevice = .rear
-      }
-    } else if settings.direction.rawValue == "FRONT" {
-      if UIImagePickerController.isCameraDeviceAvailable(.front) {
-        self.imagePicker!.cameraDevice = .front
-      }
+          if self.settings.direction.rawValue == "REAR" {
+            if UIImagePickerController.isCameraDeviceAvailable(.rear) {
+              self.imagePicker!.cameraDevice = .rear
+            }
+          } else if self.settings.direction.rawValue == "FRONT" {
+            if UIImagePickerController.isCameraDeviceAvailable(.front) {
+              self.imagePicker!.cameraDevice = .front
+            }
+          }
+          DispatchQueue.main.async {
+            self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+          }
+        } else {
+            call.error("User denied access to camera")
+        }
     }
-    
-    self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
   }
 
   func showPhotos(_ call: CAPPluginCall) {
