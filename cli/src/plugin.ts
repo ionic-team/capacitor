@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { join, sep } from 'path';
+import { join } from 'path';
 import { log, logFatal, readJSON, readXML, resolveNode } from './common';
 
 
@@ -159,7 +159,7 @@ export function getJSModules(p: Plugin, platform: string) {
 
 export function getFilePath(config: Config, plugin: Plugin, path: string) {
   if (path.startsWith("node_modules")) {
-    let pathSegments = path.split(sep).slice(1);
+    let pathSegments = path.split("/").slice(1);
     if (pathSegments[0].startsWith('@')) {
       pathSegments = [pathSegments[0] + '/' + pathSegments[1], ...pathSegments.slice(2)]
     }
