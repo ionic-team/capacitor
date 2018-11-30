@@ -2,6 +2,7 @@ package com.getcapacitor.plugin;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
@@ -31,9 +32,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 @NativePlugin(requestCodes = {
-  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS
+  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS,
+        PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS
 })
 public class Filesystem extends Plugin {
+
+  private static final String PERMISSION_DENIED_ERROR = "Unable to do file operation, user denied permission request";
+
   private Charset getEncoding(String encoding) {
     if (encoding == null) {
       return null;
@@ -81,6 +86,10 @@ public class Filesystem extends Plugin {
 
     if (androidDirectory == null) {
       return null;
+    } else {
+      if(!androidDirectory.exists()) {
+        androidDirectory.mkdir();
+      }
     }
 
     return new File(androidDirectory, path);
@@ -143,7 +152,7 @@ public class Filesystem extends Plugin {
   public void readFile(PluginCall call) {
     String file = call.getString("path");
     String data = call.getString("data");
-    String directory = call.getString("directory");
+    String directory = getDirectoryParameter(call);
     String encoding = call.getString("encoding");
 
     Charset charset = this.getEncoding(encoding);
@@ -175,6 +184,7 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void writeFile(PluginCall call) {
+    saveCall(call);
     String path = call.getString("path");
     String data = call.getString("data");
 
@@ -193,7 +203,7 @@ public class Filesystem extends Plugin {
     String directory = getDirectoryParameter(call);
     if (directory != null) {
       if (!isPublicDirectory(directory)
-        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
         // create directory because it might not exist
         File androidDir = getDirectory(directory);
         if (androidDir != null) {
@@ -219,7 +229,7 @@ public class Filesystem extends Plugin {
         File fileObject = new File(u.getPath());
         // do not know where the file is being store so checking the permission to be secure
         // TODO to prevent permission checking we need a property from the call
-        if (isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
           if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
             saveFile(call, fileObject, data);
           }
@@ -281,7 +291,7 @@ public class Filesystem extends Plugin {
   @PluginMethod()
   public void deleteFile(PluginCall call) {
     String file = call.getString("path");
-    String directory = call.getString("directory");
+    String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(file, directory);
 
@@ -300,8 +310,9 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void mkdir(PluginCall call) {
+    saveCall(call);
     String path = call.getString("path");
-    String directory = call.getString("directory");
+    String directory = getDirectoryParameter(call);
     boolean intermediate = call.getBoolean("createIntermediateDirectories", false).booleanValue();
 
     File fileObject = getFileObject(path, directory);
@@ -311,23 +322,26 @@ public class Filesystem extends Plugin {
       return;
     }
 
-    boolean created = false;
-    if (intermediate) {
-      created = fileObject.mkdirs();
-    } else {
-      created = fileObject.mkdir();
-    }
-    if(created == false) {
-      call.error("Unable to create directory, unknown reason");
-    } else {
-      call.success();
+    if (!isPublicDirectory(directory)
+            || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+      boolean created = false;
+      if (intermediate) {
+        created = fileObject.mkdirs();
+      } else {
+        created = fileObject.mkdir();
+      }
+      if(created == false) {
+        call.error("Unable to create directory, unknown reason");
+      } else {
+        call.success();
+      }
     }
   }
 
   @PluginMethod()
   public void rmdir(PluginCall call) {
     String path = call.getString("path");
-    String directory = call.getString("directory");
+    String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
@@ -348,7 +362,7 @@ public class Filesystem extends Plugin {
   @PluginMethod()
   public void readdir(PluginCall call) {
     String path = call.getString("path");
-    String directory = call.getString("directory");
+    String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
@@ -366,7 +380,7 @@ public class Filesystem extends Plugin {
   @PluginMethod()
   public void getUri(PluginCall call) {
     String path = call.getString("path");
-    String directory = call.getString("directory");
+    String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
@@ -383,7 +397,7 @@ public class Filesystem extends Plugin {
   @PluginMethod()
   public void stat(PluginCall call) {
     String path = call.getString("path");
-    String directory = call.getString("directory");
+    String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
@@ -432,6 +446,36 @@ public class Filesystem extends Plugin {
    */
   private boolean isPublicDirectory(String directory) {
     return "DOCUMENTS".equals(directory) || "EXTERNAL_STORAGE".equals(directory);
+  }
+
+  @Override
+  protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    Log.d(getLogTag(),"handling request perms result");
+
+    if (getSavedCall() == null) {
+      Log.d(getLogTag(),"No stored plugin call for permissions request result");
+      return;
+    }
+
+    PluginCall savedCall = getSavedCall();
+
+    for (int i = 0; i < grantResults.length; i++) {
+      int result = grantResults[i];
+      String perm = permissions[i];
+      if(result == PackageManager.PERMISSION_DENIED) {
+        Log.d(getLogTag(), "User denied storage permission: " + perm);
+        savedCall.error(PERMISSION_DENIED_ERROR);
+        return;
+      }
+    }
+
+    if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS) {
+      writeFile(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS) {
+      mkdir(savedCall);
+    }
   }
 
 
