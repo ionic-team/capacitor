@@ -4,6 +4,7 @@ import {
   FilesystemPlugin, FileWriteOptions,
   FileWriteResult, FileDeleteResult,
   FileAppendOptions, FileAppendResult,
+  FilesystemDirectory,
   ReaddirOptions, ReaddirResult,
   MkdirOptions, MkdirResult, GetUriOptions,
   RmdirOptions, RmdirResult, GetUriResult,
@@ -26,11 +27,10 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     let os = require("os");
     if(os.platform == "win32" ) {
       this.fileLocations["DRIVE_ROOT"] = process.cwd().split(path.sep)[0];
-      this.fileLocations["DOCUMENTS"] = os.homedir() + `\\Documents\\`;
     } else {
       this.fileLocations["DRIVE_ROOT"] = '/';
-      this.fileLocations["DOCUMENTS"] = os.homedir() + `\\Documents\\`;
     }
+    this.fileLocations[FilesystemDirectory.Documents] = path.join(os.homedir(), `Documents`) + path.sep;
 
     this.NodeFS = require('fs');
   }
