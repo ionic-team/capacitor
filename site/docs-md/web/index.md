@@ -68,5 +68,5 @@ npx cap serve
 ## Going Live
 
 When you're ready to publish your Progressive Web App and share it with the world,
-just upload the contents of your web directory (default: `public/`). That will contain
+just upload the contents of your web directory (default: `www/`). That will contain
 everything you need to run your app!
