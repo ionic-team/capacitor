@@ -41,7 +41,7 @@ The fix is simple: run `npx cap copy android` to copy this file.
 This error is often due to Gradle needing to be synced, something you'll need to do
 periodically after updating dependencies and changing project settings.
 
-To manually sync Gradle, open Tools -> Android -> Sync Project with Gradle Files from the main menu bar:
+To manually sync Gradle, open File -> Sync Project with Gradle Files from the main menu bar:
 
 ![Sync Gradle](/assets/img/docs/android/sync-gradle.png)
 

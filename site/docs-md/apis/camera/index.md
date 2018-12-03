@@ -14,7 +14,7 @@ iOS requires the following usage description be added and filled out for your ap
 Name: `Privacy - Camera Usage Description`
 Key: 	`NSCameraUsageDescription`
 
-Read about [Setting iOS Permissions](../ios/permissions/) in the [iOS Guide](../ios/) for more information on setting iOS permissions in Xcode
+Read about [Setting iOS Permissions](../../ios/configuration/) in the [iOS Guide](../../ios/) for more information on setting iOS permissions in Xcode
 
 ## Android Notes
 
@@ -28,7 +28,7 @@ This API requires the following permissions be added to your `AndroidManifest.xm
 
 The first permission is for Camera access, and the storage permissions are for reading/saving photo files.
 
-Read about [Setting Android Permissions](../android/permissions/) in the [Android Guide](../android/) for more information on setting Android permissions.
+Read about [Setting Android Permissions](../../android/configuration/) in the [Android Guide](../../android/) for more information on setting Android permissions.
 
 Additionally, because the Camera API launches a separate Activity to handle taking the photo, you should listen for `appRestoredResult` in the `App` plugin
 to handle any camera data that was sent in the case your app was terminated by the operating system while the Activity was running.

@@ -8,7 +8,7 @@ Capacitor iOS apps are configured and managed through Xcode, with dependencies m
 
 Building iOS apps requires some iOS development dependencies to be installed, including Xcode 9 and the Xcode command line tools.
 
-Note: It's possible to develop and build iOS apps without a mac, such as by using Ionic Pro's Package service. Consult your service of choice for more information.
+Note: It's possible to develop and build iOS apps without a mac, such as by using Ionic Appflow's Package service. Consult your service of choice for more information.
 
 ### Creating iOS App
 
