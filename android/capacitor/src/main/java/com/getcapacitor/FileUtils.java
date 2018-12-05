@@ -42,6 +42,8 @@ import java.io.File;
  */
 public class FileUtils {
 
+  private static String CapacitorAssetScheme = Bridge.CAPACITOR_ASSET_SCHEME_NAME + "://";
+
   public enum Type {
     IMAGE("image");
     private String type;
@@ -52,8 +54,12 @@ public class FileUtils {
 
   public static String getPortablePath(Context c, Uri u) {
     String path = getFileUrlForUri(c, u);
-    path = path.replace("file://", "");
-    return "_capacitor_" + path;
+    if (path.startsWith("file://")) {
+      path = path.replace("file://", CapacitorAssetScheme);
+    } else if (path.startsWith("/")) {
+      path = CapacitorAssetScheme + path;
+    }
+    return path;
   }
 
   public static String getFileUrlForUri(final Context context, final Uri uri) {

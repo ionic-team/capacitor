@@ -496,17 +496,13 @@
     if (!url) {
       return url;
     }
-    if (!url.startsWith('file://')) {
-      return url;
-    }
-    if (capacitor.isIOS) {
+    if (url.startsWith('file://')) {
       return url.replace('file', 'capacitor-asset');
     }
-    url = url.substr(7); // len("file://") == 7
-    if (url.length === 0 || url[0] !== '/') { // ensure the new URL starts with /
-      url = '/' + url;
+    if (url.startsWith('content:')) {
+      return url.replace('content:', 'capacitor-content:/');
     }
-    return window.WEBVIEW_SERVER_URL + '/_capacitor_' + url;
+    return url;
   }
 
 })(window);

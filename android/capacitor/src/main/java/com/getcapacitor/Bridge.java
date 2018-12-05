@@ -83,6 +83,9 @@ public class Bridge {
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
+  public static final String CAPACITOR_SCHEME_NAME = "capacitor";
+  public static final String CAPACITOR_ASSET_SCHEME_NAME = "capacitor-asset";
+  public static final String CAPACITOR_CONTENT_SCHEME_NAME = "capacitor-content";
 
   // Loaded Capacitor config
   private JSONObject config = new JSONObject();
@@ -160,9 +163,8 @@ public class Bridge {
     appUrlConfig = Config.getString("server.url");
     appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
-    String port = getPort();
-    String authority = "localhost" + ":" + port;
-    localUrl = "https://" + authority;
+    String authority = Config.getString("server.hostName", "app");
+    localUrl = CAPACITOR_SCHEME_NAME + "://" + authority + "/";
 
     boolean isLocal = true;
 
@@ -181,12 +183,10 @@ public class Bridge {
 
     // Start the local web server
     localServer = new WebViewLocalServer(context, this, getJSInjector(), authority, html5mode, isLocal);
-    WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
+    localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
-    // Load the index route from our www folder
-    String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
-    appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
+    appUrl = appUrlConfig == null ? localUrl : appUrlConfig;
 
     Log.d(LOG_TAG, "Loading app at " + appUrl);
 
@@ -236,31 +236,6 @@ public class Bridge {
     }
     // Get to work
     webView.loadUrl(appUrl);
-  }
-
-
-  public String getPort() {
-    String port = Config.getString("server.port");
-    if (port != null) {
-      return port;
-    }
-
-    SharedPreferences prefs = getContext().getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
-    port = prefs.getString("capacitorPort", null);
-    if (port != null) {
-      return port;
-    }
-
-    port = String.valueOf(getRandomPort());
-    SharedPreferences.Editor editor = prefs.edit();
-    editor.putString("capacitorPort", port);
-    editor.apply();
-
-    return port;
-  }
-
-  public int getRandomPort(){
-    return ThreadLocalRandom.current().nextInt(3000, 9000 + 1);
   }
 
 

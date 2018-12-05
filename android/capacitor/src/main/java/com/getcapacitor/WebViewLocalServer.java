@@ -36,8 +36,8 @@ import java.util.Map;
 
 /**
  * Helper class meant to be used with the android.webkit.WebView class to enable hosting assets,
- * resources and other data on 'virtual' http(s):// URL.
- * Hosting assets and resources on http(s):// URLs is desirable as it is compatible with the
+ * resources and other data on 'virtual' capacitor:// URL.
+ * Hosting assets and resources on capacitor:// URLs is desirable as it is compatible with the
  * Same-Origin policy.
  * <p>
  * This class is intended to be used from within the
@@ -48,8 +48,9 @@ import java.util.Map;
  */
 public class WebViewLocalServer {
 
-  private final static String httpScheme = "http";
-  private final static String httpsScheme = "https";
+  private final static String capacitorScheme = Bridge.CAPACITOR_SCHEME_NAME;
+  private final static String capacitorAssetsScheme = Bridge.CAPACITOR_ASSET_SCHEME_NAME;
+  private final static String capacitorContentScheme = Bridge.CAPACITOR_CONTENT_SCHEME_NAME;
   private String basePath;
 
   private final UriMatcher uriMatcher;
@@ -135,37 +136,6 @@ public class WebViewLocalServer {
     }
   }
 
-  /**
-   * Information about the URLs used to host the assets in the WebView.
-   */
-  public static class AssetHostingDetails {
-    private Uri httpPrefix;
-    private Uri httpsPrefix;
-
-    /*package*/ AssetHostingDetails(Uri httpPrefix, Uri httpsPrefix) {
-      this.httpPrefix = httpPrefix;
-      this.httpsPrefix = httpsPrefix;
-    }
-
-    /**
-     * Gets the http: scheme prefix at which assets are hosted.
-     *
-     * @return the http: scheme prefix at which assets are hosted. Can return null.
-     */
-    public Uri getHttpPrefix() {
-      return httpPrefix;
-    }
-
-    /**
-     * Gets the https: scheme prefix at which assets are hosted.
-     *
-     * @return the https: scheme prefix at which assets are hosted. Can return null.
-     */
-    public Uri getHttpsPrefix() {
-      return httpsPrefix;
-    }
-  }
-
   WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, String authority, boolean html5mode, boolean isLocal) {
     uriMatcher = new UriMatcher(null);
     this.html5mode = html5mode;
@@ -227,12 +197,21 @@ public class WebViewLocalServer {
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
     }
 
+    if (request.getUrl().getScheme().equals(capacitorContentScheme)) {
+      InputStream responseStream = new LollipopLazyInputStream(handler, request);
+      InputStream stream = responseStream;
+      String mimeType = getMimeType(path, stream);
+      return new WebResourceResponse(mimeType, handler.getEncoding(),
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+    }
+
+
     if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
       InputStream stream;
       try {
         String startPath = this.basePath + "/index.html";
         if (isAsset) {
-          stream = protocolHandler.openAsset(startPath, "");
+          stream = protocolHandler.openAsset(startPath);
         } else {
           stream = protocolHandler.openFile(startPath);
         }
@@ -408,154 +387,50 @@ public class WebViewLocalServer {
   }
 
   /**
-   * Hosts the application's assets on an http(s):// URL. Assets from the local path
+   * Hosts the application's assets on an capacitor:// URL. Assets from the local path
    * <code>assetPath/...</code> will be available under
-   * <code>http(s)://{uuid}.androidplatform.net/assets/...</code>.
+   * <code>capacitor://{uuid}.androidplatform.net/assets/...</code>.
    *
    * @param assetPath the local path in the application's asset folder which will be made
    *                  available by the server (for example "/www").
    * @return prefixes under which the assets are hosted.
    */
-  public AssetHostingDetails hostAssets(String assetPath) {
-    return hostAssets(authority, assetPath, "", true, true);
-  }
-
-
-  /**
-   * Hosts the application's assets on an http(s):// URL. Assets from the local path
-   * <code>assetPath/...</code> will be available under
-   * <code>http(s)://{uuid}.androidplatform.net/{virtualAssetPath}/...</code>.
-   *
-   * @param assetPath        the local path in the application's asset folder which will be made
-   *                         available by the server (for example "/www").
-   * @param virtualAssetPath the path on the local server under which the assets should be hosted.
-   * @param enableHttp       whether to enable hosting using the http scheme.
-   * @param enableHttps      whether to enable hosting using the https scheme.
-   * @return prefixes under which the assets are hosted.
-   */
-  public AssetHostingDetails hostAssets(final String assetPath, final String virtualAssetPath,
-                                        boolean enableHttp, boolean enableHttps) {
-    return hostAssets(authority, assetPath, virtualAssetPath, enableHttp,
-        enableHttps);
-  }
-
-  /**
-   * Hosts the application's assets on an http(s):// URL. Assets from the local path
-   * <code>assetPath/...</code> will be available under
-   * <code>http(s)://{domain}/{virtualAssetPath}/...</code>.
-   *
-   * @param domain           custom domain on which the assets should be hosted (for example "example.com").
-   * @param assetPath        the local path in the application's asset folder which will be made
-   *                         available by the server (for example "/www").
-   * @param virtualAssetPath the path on the local server under which the assets should be hosted.
-   * @param enableHttp       whether to enable hosting using the http scheme.
-   * @param enableHttps      whether to enable hosting using the https scheme.
-   * @return prefixes under which the assets are hosted.
-   */
-  public AssetHostingDetails hostAssets(final String domain,
-                                        final String assetPath, final String virtualAssetPath,
-                                        boolean enableHttp, boolean enableHttps) {
+  public void hostAssets(String assetPath) {
     this.isAsset = true;
     this.basePath = assetPath;
-    Uri.Builder uriBuilder = new Uri.Builder();
-    uriBuilder.scheme(httpScheme);
-    uriBuilder.authority(domain);
-    uriBuilder.path(virtualAssetPath);
-
-    if (assetPath.indexOf('*') != -1) {
-      throw new IllegalArgumentException("assetPath cannot contain the '*' character.");
-    }
-    if (virtualAssetPath.indexOf('*') != -1) {
-      throw new IllegalArgumentException(
-          "virtualAssetPath cannot contain the '*' character.");
-    }
-
-    Uri httpPrefix = null;
-    Uri httpsPrefix = null;
-
-    PathHandler handler = new PathHandler() {
-      @Override
-      public InputStream handle(Uri url) {
-        InputStream stream;
-        String path = url.getPath().replaceFirst(virtualAssetPath, assetPath);
-        try {
-          stream = protocolHandler.openAsset(path, assetPath);
-        } catch (IOException e) {
-          Log.e(LogUtils.getCoreTag(), "Unable to open asset URL: " + url);
-          return null;
-        }
-
-        return stream;
-      }
-    };
-
-    if (enableHttp) {
-      httpPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpPrefix, "/"), handler);
-      register(Uri.withAppendedPath(httpPrefix, "**"), handler);
-    }
-    if (enableHttps) {
-      uriBuilder.scheme(httpsScheme);
-      httpsPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpsPrefix, "/"), handler);
-      register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
-    }
-    return new AssetHostingDetails(httpPrefix, httpsPrefix);
+    createHostingDetails();
   }
 
+
   /**
-   * Hosts the application's resources on an http(s):// URL. Resources
-   * <code>http(s)://{uuid}.androidplatform.net/res/{resource_type}/{resource_name}</code>.
+   * Hosts the application's resources on an capacitor:// URL. Resources
+   * <code>capacitor://{uuid}.androidplatform.net/res/{resource_type}/{resource_name}</code>.
    *
    * @return prefixes under which the resources are hosted.
    */
-  public AssetHostingDetails hostResources() {
-    return hostResources(authority, "/res", true, true);
+  public void hostResources() {
+    hostResources("/res");
   }
 
   /**
-   * Hosts the application's resources on an http(s):// URL. Resources
-   * <code>http(s)://{uuid}.androidplatform.net/{virtualResourcesPath}/{resource_type}/{resource_name}</code>.
+   * Hosts the application's resources on an capacitor:// URL. Resources
+   * <code>capacitor://{domain}/{virtualResourcesPath}/{resource_type}/{resource_name}</code>.
    *
    * @param virtualResourcesPath the path on the local server under which the resources
    *                             should be hosted.
-   * @param enableHttp           whether to enable hosting using the http scheme.
-   * @param enableHttps          whether to enable hosting using the https scheme.
    * @return prefixes under which the resources are hosted.
    */
-  public AssetHostingDetails hostResources(final String virtualResourcesPath, boolean enableHttp,
-                                           boolean enableHttps) {
-    return hostResources(authority, virtualResourcesPath, enableHttp, enableHttps);
-  }
-
-  /**
-   * Hosts the application's resources on an http(s):// URL. Resources
-   * <code>http(s)://{domain}/{virtualResourcesPath}/{resource_type}/{resource_name}</code>.
-   *
-   * @param domain               custom domain on which the assets should be hosted (for example "example.com").
-   *                             If untrusted content is to be loaded into the WebView it is advised to make
-   *                             this random.
-   * @param virtualResourcesPath the path on the local server under which the resources
-   *                             should be hosted.
-   * @param enableHttp           whether to enable hosting using the http scheme.
-   * @param enableHttps          whether to enable hosting using the https scheme.
-   * @return prefixes under which the resources are hosted.
-   */
-  public AssetHostingDetails hostResources(final String domain,
-                                           final String virtualResourcesPath, boolean enableHttp,
-                                           boolean enableHttps) {
+  public void hostResources(final String virtualResourcesPath) {
     if (virtualResourcesPath.indexOf('*') != -1) {
       throw new IllegalArgumentException(
           "virtualResourcesPath cannot contain the '*' character.");
     }
 
     Uri.Builder uriBuilder = new Uri.Builder();
-    uriBuilder.scheme(httpScheme);
-    uriBuilder.authority(domain);
+    uriBuilder.scheme(capacitorScheme);
+    uriBuilder.authority(authority);
     uriBuilder.path(virtualResourcesPath);
-
-    Uri httpPrefix = null;
-    Uri httpsPrefix = null;
+    Uri capacitorPrefix = null;
 
     PathHandler handler = new PathHandler() {
       @Override
@@ -572,72 +447,76 @@ public class WebViewLocalServer {
       }
     };
 
-    if (enableHttp) {
-      httpPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpPrefix, "**"), handler);
-    }
-    if (enableHttps) {
-      uriBuilder.scheme(httpsScheme);
-      httpsPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
-    }
-    return new AssetHostingDetails(httpPrefix, httpsPrefix);
+    uriBuilder.scheme(capacitorScheme);
+    capacitorPrefix = uriBuilder.build();
+    register(Uri.withAppendedPath(capacitorPrefix, "**"), handler);
+
   }
 
   /**
-   * Hosts the application's files on an http(s):// URL. Files from the basePath
+   * Hosts the application's files on an capacitor:// URL. Files from the basePath
    * <code>basePath/...</code> will be available under
-   * <code>http(s)://{uuid}.androidplatform.net/...</code>.
+   * <code>capacitor://{uuid}.androidplatform.net/...</code>.
    *
    * @param basePath the local path in the application's data folder which will be made
    *                  available by the server (for example "/www").
    * @return prefixes under which the assets are hosted.
    */
-  public AssetHostingDetails hostFiles(String basePath) {
-    return hostFiles(basePath, true, true);
-  }
-
-  public AssetHostingDetails hostFiles(final String basePath, boolean enableHttp,
-                                       boolean enableHttps) {
+  public void hostFiles(final String basePath) {
     this.isAsset = false;
     this.basePath = basePath;
-    Uri.Builder uriBuilder = new Uri.Builder();
-    uriBuilder.scheme(httpScheme);
-    uriBuilder.authority(authority);
-    uriBuilder.path("");
-    Uri httpPrefix = null;
-    Uri httpsPrefix = null;
+    createHostingDetails();
+  }
+
+  private void createHostingDetails() {
+    final String assetPath = this.basePath;
+
+    if (assetPath.indexOf('*') != -1) {
+      throw new IllegalArgumentException("assetPath cannot contain the '*' character.");
+    }
+
+    Uri capacitorPrefix = null;
+
     PathHandler handler = new PathHandler() {
       @Override
       public InputStream handle(Uri url) {
-        InputStream stream;
+        InputStream stream = null;
+        String path = url.getPath();
+        if (!isAsset) {
+          path = basePath + url.getPath();
+        }
         try {
-          stream = protocolHandler.openFile(basePath + url.getPath());
+          if (url.getScheme().equals(capacitorScheme) && isAsset) {
+            stream = protocolHandler.openAsset(assetPath + path);
+          } else if (url.getScheme().equals(capacitorAssetsScheme) || !isAsset) {
+            stream = protocolHandler.openFile(path);
+          } else if (url.getScheme().equals(capacitorContentScheme)) {
+            stream = protocolHandler.openContentUrl(path);
+          }
         } catch (IOException e) {
           Log.e(LogUtils.getCoreTag(), "Unable to open asset URL: " + url);
           return null;
         }
-        String mimeType = null;
-        try {
-          mimeType = URLConnection.guessContentTypeFromStream(stream);
-        } catch (Exception ex) {
-          Log.e(LogUtils.getCoreTag(), "Unable to get mime type" + url);
-        }
+
         return stream;
       }
     };
-    if (enableHttp) {
-      httpPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpPrefix, "/"), handler);
-      register(Uri.withAppendedPath(httpPrefix, "**"), handler);
-    }
-    if (enableHttps) {
-      uriBuilder.scheme(httpsScheme);
-      httpsPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpsPrefix, "/"), handler);
-      register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
-    }
-    return new AssetHostingDetails(httpPrefix, httpsPrefix);
+
+    registerUriForScheme(capacitorScheme, handler, authority);
+    registerUriForScheme(capacitorAssetsScheme, handler, "");
+    registerUriForScheme(capacitorContentScheme, handler, "");
+
+  }
+
+  private void registerUriForScheme(String scheme, PathHandler handler, String authority) {
+    Uri.Builder uriBuilder = new Uri.Builder();
+    uriBuilder.scheme(scheme);
+    uriBuilder.authority(authority);
+    uriBuilder.path("");
+    Uri uriPrefix = uriBuilder.build();
+
+    register(Uri.withAppendedPath(uriPrefix, "/"), handler);
+    register(Uri.withAppendedPath(uriPrefix, "**"), handler);
   }
 
   /**
