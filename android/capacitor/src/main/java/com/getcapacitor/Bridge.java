@@ -83,6 +83,9 @@ public class Bridge {
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
+  public static final String CAPACITOR_SCHEME_NAME = "capacitor";
+  public static final String CAPACITOR_ASSET_SCHEME_NAME = "capacitor-asset";
+  public static final String CAPACITOR_CONTENT_SCHEME_NAME = "capacitor-content";
 
   // Loaded Capacitor config
   private JSONObject config = new JSONObject();
@@ -160,8 +163,8 @@ public class Bridge {
     appUrlConfig = Config.getString("server.url");
     appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
-    String authority = "app";
-    localUrl = "capacitor://" + authority + "/";
+    String authority = Config.getString("server.hostName", "app");
+    localUrl = CAPACITOR_SCHEME_NAME + "://" + authority + "/";
 
     boolean isLocal = true;
 

@@ -48,9 +48,9 @@ import java.util.Map;
  */
 public class WebViewLocalServer {
 
-  private final static String capacitorScheme = "capacitor";
-  private final static String capacitorAssetsScheme = "capacitor-asset";
-  private final static String capacitorContentScheme = "capacitor-content";
+  private final static String capacitorScheme = Bridge.CAPACITOR_SCHEME_NAME;
+  private final static String capacitorAssetsScheme = Bridge.CAPACITOR_ASSET_SCHEME_NAME;
+  private final static String capacitorContentScheme = Bridge.CAPACITOR_CONTENT_SCHEME_NAME;
   private String basePath;
 
   private final UriMatcher uriMatcher;
