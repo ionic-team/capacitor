@@ -33,7 +33,8 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
             let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
             let expectedContentLength = data.count
             let headers =  [
-            "Content-Type": mimeType
+              "Content-Type": mimeType,
+              "Cache-Control": "no-cache"
             ]
             let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: nil)
             let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
