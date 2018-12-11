@@ -83,8 +83,8 @@ public class Bridge {
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
-  public static final String CAPACITOR_SCHEME_NAME = "capacitor";
-  public static final String CAPACITOR_ASSET_SCHEME_NAME = "capacitor-asset";
+  public static final String CAPACITOR_SCHEME_NAME = "https";
+  public static final String CAPACITOR_FILE_SCHEME_NAME = "capacitor-file";
   public static final String CAPACITOR_CONTENT_SCHEME_NAME = "capacitor-content";
 
   // Loaded Capacitor config
