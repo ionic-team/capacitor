@@ -9,14 +9,14 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
         let stringToLoad = url.path
         let scheme = url.scheme
 
-        if scheme == "capacitor" {
+        if scheme == CAPBridge.CAP_SCHEME {
             startPath = Bundle.main.path(forResource: "public", ofType: nil)!
             if stringToLoad.isEmpty || url.pathExtension.isEmpty {
                 startPath.append("/index.html")
             } else {
                 startPath.append(stringToLoad)
             }
-        } else {
+        } else if scheme == CAPBridge.CAP_FILE_SCHEME {
             if !stringToLoad.isEmpty {
                 startPath = stringToLoad
             }
