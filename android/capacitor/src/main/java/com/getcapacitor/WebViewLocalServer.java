@@ -199,10 +199,10 @@ public class WebViewLocalServer {
 
     if (request.getUrl().getScheme().equals(capacitorContentScheme) || request.getUrl().getScheme().equals(capacitorFileScheme)) {
       InputStream responseStream = new LollipopLazyInputStream(handler, request);
-      InputStream stream = responseStream;
-      String mimeType = getMimeType(path, stream);
+      String mimeType = getMimeType(path, responseStream);
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
       return new WebResourceResponse(mimeType, handler.getEncoding(),
-              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
     }
 
 
@@ -231,9 +231,9 @@ public class WebViewLocalServer {
       InputStream responseStream = new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
 
       bridge.reset();
-
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
       return new WebResourceResponse("text/html", handler.getEncoding(),
-          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
     }
 
     if ("/favicon.ico".equalsIgnoreCase(path)) {
@@ -258,9 +258,9 @@ public class WebViewLocalServer {
       }
 
       String mimeType = getMimeType(path, stream);
-
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
       return new WebResourceResponse(mimeType, handler.getEncoding(),
-          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
     }
 
     return null;
@@ -366,6 +366,18 @@ public class WebViewLocalServer {
       Log.e(LogUtils.getCoreTag(), "Unable to get mime type" + path, ex);
     }
     return mimeType;
+  }
+
+  private int getStatusCode(InputStream stream, int defaultCode) {
+    int finalStatusCode = defaultCode;
+    try {
+      if (stream.available() == 0) {
+        finalStatusCode = 404;
+      }
+    } catch (IOException e) {
+      finalStatusCode = 500;
+    }
+    return finalStatusCode;
   }
 
   /**
