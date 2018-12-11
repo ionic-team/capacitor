@@ -11,6 +11,9 @@ enum BridgeError: Error {
 
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://getcapacitor.com/"
+  public static var CAP_SCHEME = "capacitor"
+  public static var CAP_FILE_SCHEME = "capacitor-file"
+
   // The last URL that caused the app to open
   private static var lastUrl: URL?
   
@@ -48,7 +51,7 @@ enum BridgeError: Error {
     CAPConfig.loadConfig()
     super.init()
     self.notificationsDelegate.bridge = self;
-    localUrl = "capacitor://app"
+    localUrl = "\(CAPBridge.CAP_SCHEME)://\(CAPConfig.getString("server.hostName") ?? "app")"
     exportCoreJS(localUrl: localUrl!)
     setupCordovaCompatibility()
     registerPlugins()

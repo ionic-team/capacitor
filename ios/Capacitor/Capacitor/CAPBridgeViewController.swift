@@ -37,8 +37,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     let webViewConfiguration = WKWebViewConfiguration()
 
-    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor")
-    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: "capacitor-asset")
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_SCHEME)
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_FILE_SCHEME)
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
