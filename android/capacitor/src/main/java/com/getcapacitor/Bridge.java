@@ -313,7 +313,7 @@ public class Bridge {
     settings.setGeolocationEnabled(true);
     settings.setDatabaseEnabled(true);
     settings.setAppCacheEnabled(true);
-    if (Config.getBoolean("android.allowMixedContent", false)) {
+    if (Config.getBoolean("android.allowMixedContent", true)) {
       settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
   }

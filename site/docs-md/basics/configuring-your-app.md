@@ -51,10 +51,11 @@ The current ones you might configure are:
     ]
   },
   "android": {
-    // On Android, Capacitor loads your local assets using https
-    // Chrome by default prevents loading files from a different scheme (i.e. from http)
-    // This setting allows to mix content from different schemes
-    "allowMixedContent": true,
+    // On Android, Capacitor enables mixed content mode
+    // to allow the WebView to load  files from schemes different
+    // than https://  (such as http:// or capacitor-file://)
+    // You can disable mixed content mode with this setting
+    "allowMixedContent": false,
     // Android's default keyboard doesn't allow proper JS key capture
     // You can use a simpler keyboard enabling this preference
     // Be aware that this keyboard has some problems and limitations
