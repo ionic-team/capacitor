@@ -20,6 +20,7 @@ export interface ExternalConfig {
     cordovaSwiftVersion?: string;
     minVersion?: string;
   };
+  npmClient?: string;
 }
 
 export interface AppPluginsConfig {

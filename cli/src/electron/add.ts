@@ -9,14 +9,15 @@ export async function addElectron(config: Config) {
   });
 
   await runTask(`Installing NPM Dependencies`, async () => {
-    return installNpmDeps(config.electron.platformDir);
+    return installNpmDeps(config);
   });
 }
 
-function installNpmDeps(pathToElectronPackageJson: string) {
-  return new Promise((resolve, reject) => {
+function installNpmDeps(config: Config) {
+  const pathToElectronPackageJson = config.electron.platformDir;
+  return new Promise(async (resolve, reject) => {
     console.log('Installing NPM Dependencies...');
-    exec(`${hasYarn ? 'yarn': 'npm'} install`, {cwd: pathToElectronPackageJson}, (error, stdout, stderr) => {
+    exec(`${await hasYarn(config) ? 'yarn' : 'npm'} install`, {cwd: pathToElectronPackageJson}, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       }
