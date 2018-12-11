@@ -497,7 +497,7 @@
       return url;
     }
     if (url.startsWith('file://')) {
-      return url.replace('file', 'capacitor-asset');
+      return url.replace('file', 'capacitor-file');
     }
     if (url.startsWith('content:')) {
       return url.replace('content:', 'capacitor-content:/');
