@@ -105,27 +105,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       });
   }
 
-  static validateParams(fn: string, options: any, keys: any): void {
-    if (FilesystemPluginWeb._debug) {
-      try {
-        // noinspection ExceptionCaughtLocallyJS
-        throw Error();
-      } catch (err) {
-        console.debug(err.stack.split('\n')[2].substring(27));
-      }
-    }
-
-    if (options === undefined)
-      throw new ValidationError(`${fn}: Function call has no options.`);
-
-    for (let k of keys) {
-      switch (options[k]) {
-        case undefined:
-          throw new ValidationError(`${fn}: Option ${k} must have a valid value.`);
-      }
-    }
-  }
-
   private getPath(directory: FilesystemDirectory | undefined, uriPath: string | undefined): string {
     directory = directory || this.DEFAULT_DIRECTORY;
     let cleanedUriPath = uriPath !== undefined ? uriPath.replace(/^[/]+|[/]+$/g, '') : '';
@@ -146,7 +125,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the read file data result
    */
   async readFile(options: FileReadOptions): Promise<FileReadResult> {
-    FilesystemPluginWeb.validateParams('readFile', options, ['directory', 'path']);
     const path: string = this.getPath(options.directory, options.path);
     // const encoding = options.encoding;
 
@@ -162,7 +140,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the file write result
    */
   async writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
-    FilesystemPluginWeb.validateParams('writeFile', options, ['directory', 'path', 'data']);
     const path: string = this.getPath(options.directory, options.path);
     const data = options.data;
     // const encoding = options.encoding;
@@ -193,7 +170,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the file write result
    */
   async appendFile(options: FileAppendOptions): Promise<FileAppendResult> {
-    FilesystemPluginWeb.validateParams('appendFile', options, ['directory', 'path', 'data']);
     const path: string = this.getPath(options.directory, options.path);
     let data = options.data;
     // const encoding = options.encoding;
@@ -230,7 +206,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the deleted file data result
    */
   async deleteFile(options: FileDeleteOptions): Promise<FileDeleteResult> {
-    FilesystemPluginWeb.validateParams('deleteFile', options, ['directory', 'path']);
     const path: string = this.getPath(options.directory, options.path);
 
     let entry = await this.dbRequest('get', [path]) as EntryObj;
@@ -250,7 +225,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the mkdir result
    */
   async mkdir(options: MkdirOptions): Promise<MkdirResult> {
-    FilesystemPluginWeb.validateParams('mkdir', options, ['directory', 'path']);
     const path: string = this.getPath(options.directory, options.path);
     const createIntermediateDirectories = options.createIntermediateDirectories;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
@@ -284,7 +258,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @param options the options for the directory remove
    */
   async rmdir(options: RmdirOptions): Promise<RmdirResult> {
-    FilesystemPluginWeb.validateParams('rmdir', options, ['directory', 'path']);
     const path: string = this.getPath(options.directory, options.path);
 
     let entry = await this.dbRequest('get', [path]) as EntryObj;
@@ -304,7 +277,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the readdir directory listing result
    */
   async readdir(options: ReaddirOptions): Promise<ReaddirResult> {
-    FilesystemPluginWeb.validateParams('readdir', options, ['directory', 'path']);
     const path: string = this.getPath(options.directory, options.path);
 
     let entry = await this.dbRequest('get', [path]) as EntryObj;
@@ -324,7 +296,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the file stat result
    */
   async getUri(options: GetUriOptions): Promise<GetUriResult> {
-    FilesystemPluginWeb.validateParams('getUri', options, ['directory', 'path']);
     let path: string = this.getPath(options.directory, options.path);
 
     let entry = await this.dbRequest('get', [path]) as EntryObj;
@@ -345,7 +316,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the file stat result
    */
   async stat(options: StatOptions): Promise<StatResult> {
-    FilesystemPluginWeb.validateParams('stat', options, ['directory', 'path']);
     let path: string = this.getPath(options.directory, options.path);
 
     let entry = await this.dbRequest('get', [path]) as EntryObj;
@@ -362,12 +332,6 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       mtime: entry.mtime,
       uri: entry.path
     };
-  }
-}
-
-class ValidationError extends Error {
-  constructor(message?: string) {
-    super(message);
   }
 }
 
