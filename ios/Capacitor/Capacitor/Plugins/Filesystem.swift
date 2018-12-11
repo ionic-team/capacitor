@@ -91,7 +91,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       return
     }
     
-    guard let data = call.get("data", String.self) else {
+    guard let data = call.get("data", String.self), !data.isEmpty else {
       handleError(call, "Data must be provided and must be a string.")
       return
     }
@@ -107,7 +107,6 @@ public class CAPFilesystemPlugin : CAPPlugin {
       if encoding != nil {
         try data.write(to: fileUrl, atomically: false, encoding: .utf8)
       } else {
-        try Data(base64Encoded: data)?.write(to: fileUrl)
         let dataParts = data.split(separator: ",")
         if let base64Data = Data(base64Encoded: String(dataParts.last!)) {
           try base64Data.write(to: fileUrl)
