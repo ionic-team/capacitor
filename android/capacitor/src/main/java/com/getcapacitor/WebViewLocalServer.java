@@ -503,7 +503,7 @@ public class WebViewLocalServer {
           } else if (url.getScheme().equals(capacitorFileScheme) || !isAsset) {
             stream = protocolHandler.openFile(path);
           } else if (url.getScheme().equals(capacitorContentScheme)) {
-            stream = protocolHandler.openContentUrl(path);
+            stream = protocolHandler.openContentUrl(url);
           }
         } catch (IOException e) {
           Log.e(LogUtils.getCoreTag(), "Unable to open asset URL: " + url);
