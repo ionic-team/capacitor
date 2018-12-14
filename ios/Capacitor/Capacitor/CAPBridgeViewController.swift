@@ -62,6 +62,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     setKeyboardRequiresUserInteraction(false)
     
     bridge = CAPBridge(self, o)
+    if let scrollEnabled = CAPConfig.getValue("ios.scrollEnabled") as? Bool {
+        webView?.scrollView.isScrollEnabled = scrollEnabled
+    }
   }
   
   override public func viewDidLoad() {
