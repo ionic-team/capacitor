@@ -27,6 +27,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
+  @objc public var supportedOrientations: Array<Int> = []
   
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
@@ -34,7 +35,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   
   override public func loadView() {
     setStatusBarDefaults()
-    
+    setScreenOrientationDefaults()
+
     let webViewConfiguration = WKWebViewConfiguration()
 
     webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_SCHEME)
@@ -111,6 +113,30 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
         if (statusBarStyle != "UIStatusBarStyleDefault") {
           self.statusBarStyle = .lightContent
+        }
+      }
+    }
+  }
+
+  public func setScreenOrientationDefaults() {
+    if let plist = Bundle.main.infoDictionary {
+      if let orientations = plist["UISupportedInterfaceOrientations"] as? Array<String> {
+        for orientation in orientations {
+          if orientation == "UIInterfaceOrientationPortrait" {
+            self.supportedOrientations.append(UIInterfaceOrientation.portrait.rawValue)
+          }
+          if orientation == "UIInterfaceOrientationPortraitUpsideDown" {
+            self.supportedOrientations.append(UIInterfaceOrientation.portraitUpsideDown.rawValue)
+          }
+          if orientation == "UIInterfaceOrientationLandscapeLeft" {
+            self.supportedOrientations.append(UIInterfaceOrientation.landscapeLeft.rawValue)
+          }
+          if orientation == "UIInterfaceOrientationLandscapeRight" {
+            self.supportedOrientations.append(UIInterfaceOrientation.landscapeRight.rawValue)
+          }
+        }
+        if self.supportedOrientations.count == 0 {
+          self.supportedOrientations.append(UIInterfaceOrientation.portrait.rawValue)
         }
       }
     }
@@ -373,6 +399,27 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     setServerPath(path: path)
     let request = URLRequest(url: URL(string: hostname!)!)
     _ = getWebView().load(request)
+  }
+
+  override open var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+    return UIApplication.shared.statusBarOrientation
+  }
+
+  override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    var ret = 0
+    if self.supportedOrientations.contains(UIInterfaceOrientation.portrait.rawValue) {
+      ret = ret | (1 << UIInterfaceOrientation.portrait.rawValue)
+    }
+    if self.supportedOrientations.contains(UIInterfaceOrientation.portraitUpsideDown.rawValue) {
+      ret = ret | (1 << UIInterfaceOrientation.portraitUpsideDown.rawValue)
+    }
+    if self.supportedOrientations.contains(UIInterfaceOrientation.landscapeRight.rawValue) {
+      ret = ret | (1 << UIInterfaceOrientation.landscapeRight.rawValue)
+    }
+    if self.supportedOrientations.contains(UIInterfaceOrientation.landscapeLeft.rawValue) {
+      ret = ret | (1 << UIInterfaceOrientation.landscapeLeft.rawValue)
+    }
+    return UIInterfaceOrientationMask.init(rawValue: UInt(ret))
   }
 
   /**
