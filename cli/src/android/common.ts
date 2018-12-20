@@ -91,7 +91,7 @@ export async function editProjectSettingsAndroid(config: Config) {
   const stringsPath = resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/res/values/strings.xml');
   let stringsContent = await readFileAsync(stringsPath, 'utf8');
   stringsContent = stringsContent.replace(/com.getcapacitor.myapp/g, appId);
-  stringsContent = stringsContent.replace(/My App/g, appName);
+  stringsContent = stringsContent.replace(/My App/g, appName.replace(/'/g, "\\'"));
 
   await writeFileAsync(stringsPath, stringsContent);
 }
