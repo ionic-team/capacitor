@@ -14,6 +14,8 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import java.util.Locale;
+
 
 @NativePlugin()
 public class Device extends Plugin {
@@ -36,6 +38,13 @@ public class Device extends Plugin {
     r.put("isVirtual", isVirtual());
 
     call.success(r);
+  }
+
+  @PluginMethod()
+  public void getLanguageCode(PluginCall call) {
+    JSObject ret = new JSObject();
+    ret.put("value", Locale.getDefault().getLanguage());
+    call.success(ret);
   }
 
   private long getMemUsed() {

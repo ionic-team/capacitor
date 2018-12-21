@@ -2,7 +2,8 @@ import { WebPlugin } from './index';
 
 import {
   DeviceInfo,
-  DevicePlugin
+  DevicePlugin,
+  DeviceLanguageCodeResult
 } from '../core-plugin-definitions';
 
 import { uuid4 } from '../util';
@@ -39,6 +40,12 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
       isCharging: battery.charging,
       uuid: this.getUid()
     });
+  }
+
+  async getLanguageCode(): Promise<DeviceLanguageCodeResult> {
+    return {
+      value: navigator.language
+    }
   }
 
   parseUa(_ua: string) {
