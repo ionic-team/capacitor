@@ -10,7 +10,7 @@ export * from '@capacitor/core/dist/esm/web/storage';
 export * from './electron/filesystem';
 export * from './electron/network';
 export * from './electron/splashscreen';
-export * from './electron/toast';
+export * from '@capacitor/core/dist/esm/web/toast';
 export * from './electron/clipboard';
 export * from './electron/modals';
 
