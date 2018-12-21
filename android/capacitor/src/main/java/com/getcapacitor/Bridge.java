@@ -83,7 +83,7 @@ public class Bridge {
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
-  public static final String CAPACITOR_SCHEME_NAME = "https";
+  public static final String CAPACITOR_SCHEME_NAME = "http";
   public static final String CAPACITOR_FILE_SCHEME_NAME = "capacitor-file";
   public static final String CAPACITOR_CONTENT_SCHEME_NAME = "capacitor-content";
 
@@ -163,7 +163,7 @@ public class Bridge {
     appUrlConfig = Config.getString("server.url");
     appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
-    String authority = Config.getString("server.hostName", "app");
+    String authority = Config.getString("server.hostname", "localhost");
     localUrl = CAPACITOR_SCHEME_NAME + "://" + authority + "/";
 
     boolean isLocal = true;
@@ -313,7 +313,7 @@ public class Bridge {
     settings.setGeolocationEnabled(true);
     settings.setDatabaseEnabled(true);
     settings.setAppCacheEnabled(true);
-    if (Config.getBoolean("android.allowMixedContent", true)) {
+    if (Config.getBoolean("android.allowMixedContent", false)) {
       settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
   }

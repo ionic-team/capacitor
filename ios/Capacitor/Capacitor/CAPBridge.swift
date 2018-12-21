@@ -51,7 +51,7 @@ enum BridgeError: Error {
     CAPConfig.loadConfig()
     super.init()
     self.notificationsDelegate.bridge = self;
-    localUrl = "\(CAPBridge.CAP_SCHEME)://\(CAPConfig.getString("server.hostName") ?? "app")"
+    localUrl = "\(CAPBridge.CAP_SCHEME)://\(CAPConfig.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
     setupCordovaCompatibility()
     registerPlugins()
