@@ -10,7 +10,7 @@
     "@capacitor/electron": "^1.0.0-alpha.28"
   },
   "devDependencies": {
-    "electron": "^1.8.2"
+    "electron": "^4.0.0"
   },
   "keywords": [
     "capacitor",
