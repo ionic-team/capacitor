@@ -9,6 +9,7 @@ buildscript {
     }
 }
 
+tasks.withType(Javadoc).all { enabled = false }
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
