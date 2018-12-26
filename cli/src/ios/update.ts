@@ -3,6 +3,7 @@ import { CheckFunction, checkPlatformVersions, logFatal, resolveNode, runCommand
 import { copySync, readFileAsync, readFileSync, removeSync, writeFileAsync, writeFileSync } from '../util/fs';
 import { Config } from '../config';
 import { join, relative, resolve } from 'path';
+import { realpathSync } from 'fs';
 import { getFilePath, getPlatformElement, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
@@ -98,7 +99,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   const pods = capacitorPlugins
-    .map((p) => `pod '${p.ios!.name}', :path => '${relative(podfilePath, p.rootPath)}'`);
+    .map((p) => `pod '${p.ios!.name}', :path => '${relative(podfilePath, realpathSync(p.rootPath))}'`);
   const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   if (noPodPlugins.length > 0) {
