@@ -47,7 +47,7 @@ const generateIndexForPlugin = (plugin) => {
   let methodChildren = plugin.children.filter(m => m.name != 'addListener' && m.name != 'removeListener');
   let listenerChildren = plugin.children.filter(m => m.name == 'addListener' || m.name == 'removeListener');
   var html = [
-    '<div class="avc-code-plugin-index">'
+    '<div class="avc-code-plugin-index"><h3>Table of Contents</h3><ul>'
   ]
 
   methodChildren.forEach(method => {
@@ -55,7 +55,7 @@ const generateIndexForPlugin = (plugin) => {
       return;
     }
     method.signatures.forEach((signature, index) => {
-      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}()</anchor-link></div>`);
+      html.push(`<li><div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}()</anchor-link></div></li>`);
     })
   })
   listenerChildren.forEach(method => {
@@ -68,9 +68,11 @@ const generateIndexForPlugin = (plugin) => {
       if (eventNameParam && eventNameParam.type.type == 'stringLiteral') {
         paramString = `'${eventNameParam.type.value}'`;
       }
-      html.push(`<div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}(${paramString})</anchor-link></div>`);
+      html.push(`<li><div class="avc-code-method-name"><anchor-link to="method-${method.name}-${index}">${method.name}(${paramString})</anchor-link></div></li>`);
     })
   });
+
+  html.push('</ul></avc-code-plugin-index>');
 
   return html.join('\n');
 }
@@ -108,7 +110,7 @@ const generateDocumentationForPlugin = (plugin) => {
   methodChildren.forEach(method => methodBuild(method));
   listenerChildren.forEach(method => methodBuild(method));
 
-  html.push('<h3 id="interfaces">Interfaces</h3>');
+  html.push('<h3 id="interfaces">Interfaces Used</h3>');
 
   interfacesUsed.forEach(interface => {
     const interfaceDecl = typeLookup[interface.id];
@@ -142,7 +144,7 @@ const generateDocumentationForPlugin = (plugin) => {
             <div class="avc-code-param-comment">${c.comment && `// ${c.comment.shortText}` || ''}</div>
             <div class="avc-code-line"><span class="avc-code-param-name">${c.name}</span>
               ${c.flags && c.flags.isOptional ? '<span class="avc-code-param-optional">?</span>' : ''}${kindString !== 'Enum' && `:
-              ${c.type.id && `<avc-code-type type-id="${c.type.id}">${nameString}</avc-code-type>` || `<avc-code-type>${nameString}</avc-code-type>`}` || ''}
+              ${c.type.id && `<avc-code-type type-id="${c.type.id}">${nameString}</avc-code-type>` || `<avc-code-type>${nameString}</avc-code-type>`}` || ''};
             </div>
           </div>`;
       }));
@@ -160,15 +162,13 @@ const getInterfacesUsedByMethod = (method) => {
 
   const interfaces = method.signatures.map(signature => {
     // Build the params portion of the method
-    const params = signature.parameters;
+    const params = signature.parameters || [];
 
     const returnTypes = [];
     returnTypes.push(signature.type);
     signature.type.typeArguments && signature.type.typeArguments.forEach(arg => {
       returnTypes.push(arg);
     })
-
-    if(!params) { return []; }
 
     return params.map(param => {
       const t = param.type.type;
@@ -195,7 +195,7 @@ const generateMethod = (method) => {
   return method.signatures.map((signature, index) => {
     const signatureString = generateMethodSignature(method, signature, index);
     const params = generateMethodParamDocs(signature);
-    return signatureString + params;
+    return `<div class="avc-code-method">${signatureString + params}</div>`;
   });
 };
 
@@ -243,7 +243,7 @@ const generateMethodParamDocs = (signature) => {
 
 const generateMethodSignature = (method, signature, signatureIndex) => {
   //console.log(util.inspect(signature, {showHidden: false, depth: 20}))
-  const parts = [`<div class="avc-code-method">
+  const parts = [`
                     <h3 class="avc-code-method-header" id="method-${method.name}-${signatureIndex}">${method.name}</h3>
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">${method.name}</span>`, '<span class="avc-code-paren">(</span>'];
@@ -273,7 +273,6 @@ const generateMethodSignature = (method, signature, signatureIndex) => {
   parts.push(`
     </div>
     ${signature.comment && `<div class="avc-code-method-comment">${signature.comment.shortText}</div>` || ''}
-  </div>
   `);
 
   return parts.join('');
