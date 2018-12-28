@@ -321,8 +321,11 @@ const generateReflectionType = (t) => {
     return parts.join('');
   } else if(c) {
     var parts = ['{ '];
-    c.forEach(child => {
+    c.forEach((child, index) => {
       parts.push(`${child.name}: ${getParamTypeName(child)}`);
+      if (index < c.length - 1) {
+        parts.push(', ');
+      }
     });
     parts.push(' }');
     return parts.join('');
