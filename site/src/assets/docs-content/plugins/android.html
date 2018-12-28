@@ -134,10 +134,17 @@ bridge.triggerDocumentJSEvent(<span class="hljs-string">"myCustomEvent"</span>, 
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"myPluginEvent was fired"</span>);
 });
 </code></pre>
-<p>To emit the event from the Swift plugin class you can do it like this:</p>
+<p>To emit the event from the Java plugin class you can do it like this:</p>
 <pre><code class="lang-java">JSObject ret = <span class="hljs-keyword">new</span> JSObject();
 ret.put(<span class="hljs-string">"value"</span>, <span class="hljs-string">"some value"</span>);
 notifyListeners(<span class="hljs-string">"myPluginEvent"</span>, ret);
+</code></pre>
+<p>To remove a listener from the plugin object:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> myPluginEventListener = Plugins.MyPlugin.addListener(<span class="hljs-string">"myPluginEvent"</span>, (info: any) =&gt; {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"myPluginEvent was fired"</span>);
+});
+
+myPluginEventListener.remove();
 </code></pre>
 <h3 id="permissions">Permissions</h3>
 <p>Some Plugins will require you to request permissions.
