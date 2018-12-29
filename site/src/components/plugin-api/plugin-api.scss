@@ -1,5 +1,5 @@
 $link-color: #5EB6FC;
-$code-font: Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace;
+$code-font: monospace;/*Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace;*/
 
 plugin-api {
   .avc-code-plugin-index {
@@ -61,9 +61,15 @@ plugin-api {
   .avc-code-interface {
     margin-top: 25px;
     font-family: $code-font;
+    line-height: 18px;
   }
 
   .avc-code-interface-param {
     margin-left: 25px;
+    margin: 8px 0 8px 25px;
+  }
+
+  .avc-code-param-comment {
+    color: #8b94a5;
   }
 }
