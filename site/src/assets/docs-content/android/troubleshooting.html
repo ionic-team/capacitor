@@ -17,12 +17,12 @@
 <h2 id="error-unable-to-load-native-bridge-js-capacitor-will-not-function-">Error: &quot;Unable to load native-bridge.js. Capacitor will not function!&quot;</h2>
 <p>This error occurs when Capacitor&#39;s <code>native-bridge.js</code> file was not copied to the native project.</p>
 <p>The fix is simple: run <code>npx cap copy android</code> to copy this file.</p>
-<h2 id="error-please-select-android-sdk-">Error: &quot;Please select Android SDK&quot;</h2>
+<h2 id="error-please-select-android-sdk">Error: &quot;Please select Android SDK&quot;</h2>
 <p>This error is often due to Gradle needing to be synced, something you&#39;ll need to do
 periodically after updating dependencies and changing project settings.</p>
 <p>To manually sync Gradle, open File -&gt; Sync Project with Gradle Files from the main menu bar:</p>
 <p><img src="/assets/img/docs/android/sync-gradle.png" alt="Sync Gradle"></p>
-<h2 id="error-apk-can-t-be-installed-">Error: &quot;APK Can&#39;t be installed&quot;</h2>
+<h2 id="error-apk-can-t-be-installed">Error: &quot;APK Can&#39;t be installed&quot;</h2>
 <p>An APK not installing to an Emulator or Device is often due to having an existing app with the same package name. You may see an error like this when trying to run your app:</p>
 <p><img src="/assets/img/docs/android/apk-failed.png" alt="Android APK Failed"></p>
 <p>The solution is to remove any old apps and make sure your package name is up to date in <code>AndroidManifest.xml</code> and not conflicting with other apps you are developing.</p>
