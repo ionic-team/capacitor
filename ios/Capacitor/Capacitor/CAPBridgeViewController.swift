@@ -56,8 +56,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
-    //If you want to implement the delegate
-    //webView?.navigationDelegate = self
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
@@ -149,7 +147,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     configuration.allowsInlineMediaPlayback = true
     configuration.suppressesIncrementalRendering = false
     configuration.allowsAirPlayForMediaPlayback = true
-    //configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone
+    configuration.mediaTypesRequiringUserActionForPlayback = []
   }
 
   public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
