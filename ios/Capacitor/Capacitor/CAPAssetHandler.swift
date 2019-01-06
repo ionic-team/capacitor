@@ -9,14 +9,14 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
         let stringToLoad = url.path
         let scheme = url.scheme
 
-        if scheme == "capacitor" {
+        if scheme == CAPBridge.CAP_SCHEME {
             startPath = Bundle.main.path(forResource: "public", ofType: nil)!
             if stringToLoad.isEmpty || url.pathExtension.isEmpty {
                 startPath.append("/index.html")
             } else {
                 startPath.append(stringToLoad)
             }
-        } else {
+        } else if scheme == CAPBridge.CAP_FILE_SCHEME {
             if !stringToLoad.isEmpty {
                 startPath = stringToLoad
             }
@@ -33,7 +33,8 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
             let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
             let expectedContentLength = data.count
             let headers =  [
-            "Content-Type": mimeType
+              "Content-Type": mimeType,
+              "Cache-Control": "no-cache"
             ]
             let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: nil)
             let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)

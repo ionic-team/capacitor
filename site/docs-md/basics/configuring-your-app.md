@@ -37,16 +37,24 @@ The current ones you might configure are:
 
   // Server object contains port and url configurations 
   "server": {
-    // Capacitor runs a local web server, you can configure what port to use.
-    // If you don't configure it, a random port will be assigned and persisted.
-    "port": "8787",
     // You can make the app to load an external url (i.e. to live reload)
-    "url": "http://192.168.1.33:8100"
+    "url": "http://192.168.1.33:8100",
+    // You can configure the local hostname, but it's recommended to keep localhost
+    // as it allows to run web APIs that require a secure context such as
+    // navigator.geolocation and MediaDevices.getUserMedia
+    "hostname": "app",
+    // Normally all external URLs are opened in the browser. By setting this option, you tell
+    // Capacitor to open URLs belonging to these hosts inside its WebView.
+    "allowNavigation": [
+      "example.org",
+      "*.example.org",
+      "192.0.2.1"
+    ]
   },
   "android": {
-    // On Android, Capacitor loads your local assets using https
-    // Chrome by default prevents loading files from a different scheme (i.e. from http)
-    // This setting allows to mix content from different schemes
+    // On Android, if you are loading the app from a remote/testing server from https
+    // protocol, you need to enable mixed content mode to allow the WebView to load
+    // files from different schemes such as capacitor-content:// or capacitor-file://
     "allowMixedContent": true,
     // Android's default keyboard doesn't allow proper JS key capture
     // You can use a simpler keyboard enabling this preference
@@ -61,7 +69,7 @@ The current ones you might configure are:
   "ios": {
     // Configure the Swift version to be used for Cordova plugins.
     // Default is 4.0
-    "cordovaSwiftVersion": "3.2",
+    "cordovaSwiftVersion": "3.0",
     // Minimum iOS version supported by the project.
     // Default is 11.0
     "minVersion": "11.3"

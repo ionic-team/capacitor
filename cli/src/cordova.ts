@@ -89,6 +89,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       let data = await readFileAsync(filePath, 'utf8');
       data = data.trim();
       data = `cordova.define("${pluginId}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
+      data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, "")
       await writeFileAsync(filePath, data, 'utf8');
     });
   }));
@@ -134,7 +135,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     if (currentPlatform) {
       const configFiles = currentPlatform['config-file'];
       if (configFiles) {
-        const configXMLEntries = configFiles.filter(function(item: any) { return item.$.target.includes(fileName); });
+        const configXMLEntries = configFiles.filter(function(item: any) { return item.$ && item.$.target.includes(fileName); });
         configXMLEntries.map(  (entry: any)  => {
           const feature = { feature: entry.feature };
           pluginEntries.push(feature);
@@ -194,7 +195,7 @@ export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Co
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
     editConfig.concat(configFile).map(async (configElement: any) => {
-      if (!configElement.$.target.includes('config.xml')) {
+      if (configElement.$ && !configElement.$.target.includes('config.xml')) {
         if (platform === config.ios.name) {
           if (configElement.$.target.includes('Info.plist')) {
             logiOSPlist(configElement, config, p);

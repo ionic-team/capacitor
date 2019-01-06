@@ -9,8 +9,5 @@ npx <span class="hljs-built_in">cap</span> sync
 <p>Capacitor does not support Cordova install variables, auto configuration, or hooks, due to our philosophy of letting you control your native project source code (meaning things like hooks are unnecessary). If your plugin requires variables or settings to be set, you&#39;ll need to apply those configuration settings manually by mapping between the plugin&#39;s <code>plugin.xml</code> and required settings on iOS and Android.</p>
 <p>Consult the <a href="../ios/configuration">iOS</a> and <a href="../android/configuration">Android</a> configuration guides for info on how to configure each platform.</p>
 <h2 id="compatibility-issues">Compatibility Issues</h2>
-<p>The following plugins don&#39;t work with Capacitor, or Capacitor provides a conflicting alternative. These plugins should be removed for your app:</p>
-<ul>
-<li>cordova-plugin-splashscreen: Capacitor provides its own API</li>
-</ul>
+<p>Some Cordova plugins don&#39;t work with Capacitor, or Capacitor provides a conflicting alternative. If it&#39;s known that the plugin is conflicting or causes build issues, it will be skipped when running <code>npx cap update</code>.</p>
 <p>While we&#39;ve tested a number of popular Cordova plugins, it&#39;s possible Capacitor doesn&#39;t support every Cordova plugin. If you find an issue with an existing Cordova plugin, please <a href="https://github.com/ionic-team/capacitor/issues/new">file an issue</a> with the issue you&#39;ve found and the plugin information.</p>

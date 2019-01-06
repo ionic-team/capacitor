@@ -32,6 +32,15 @@ app should boot much faster than this!</p>
   }
 }
 </code></pre>
+<p>If you want to be sure the splash never hides before the app is fully loaded, set <code>launchAutoHide</code> to <code>false</code> in your <code>capacitor.config.json</code>:</p>
+<pre><code class="lang-json">{
+  <span class="hljs-attr">"plugins"</span>: {
+    <span class="hljs-attr">"SplashScreen"</span>: {
+      <span class="hljs-attr">"launchAutoHide"</span>: <span class="hljs-literal">false</span>
+    }
+  }
+}
+</code></pre>
 <p>Then run <code>npx cap copy</code> to apply these changes.</p>
 <h2 id="configuration">Configuration</h2>
 <p>These config parameters are availiable in <code>capacitor.config.json</code>:</p>
@@ -39,6 +48,7 @@ app should boot much faster than this!</p>
   <span class="hljs-attr">"plugins"</span>: {
     <span class="hljs-attr">"SplashScreen"</span>: {
       <span class="hljs-attr">"launchShowDuration"</span>: <span class="hljs-number">3000</span>,
+      <span class="hljs-attr">"launchAutoHide"</span>: <span class="hljs-literal">true</span>,
       <span class="hljs-attr">"androidSplashResourceName"</span>: <span class="hljs-string">"splash"</span>
     }
   }

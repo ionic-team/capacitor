@@ -1,7 +1,7 @@
 import { APP_ID, APP_NAME, CORDOVA_PLUGIN_ID, MappedFS, makeAppDir, makeConfig, run } from './util';
 import { updateCommand } from '../src/tasks/update';
 
-describe('Update: iOS', () => {
+describe.each([false, true])('Update: iOS (monoRepoLike: %p)', (monoRepoLike) => {
   let appDirObj;
   let appDir;
   let FS;
@@ -9,7 +9,7 @@ describe('Update: iOS', () => {
   beforeAll(async () => {
     // These commands are slowww...
     jest.setTimeout(120000);
-    appDirObj = await makeAppDir();
+    appDirObj = await makeAppDir(monoRepoLike);
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);

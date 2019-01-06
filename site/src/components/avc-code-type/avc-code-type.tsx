@@ -1,7 +1,16 @@
 import { Component, Prop } from '@stencil/core';
 
 @Component({
-  tag: 'avc-code-type'
+  tag: 'avc-code-type',
+  styles: `
+  :host {
+    color: #5EB6FC;
+    display: inline-block;
+    color: $link-color;
+    font-weight: 500;
+  }
+  `,
+  shadow: true
 })
 export class AvcCodeType {
 

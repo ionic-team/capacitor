@@ -1,5 +1,4 @@
-// Platform: ios
-// 4450a4cea50616e080a82e8ede9e3d6a1fe3c3ec
+// Platform: Capacitor
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file

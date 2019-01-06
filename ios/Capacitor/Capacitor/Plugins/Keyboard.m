@@ -42,6 +42,10 @@ typedef enum : NSUInteger {
 - (void)load
 {
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarDidChangeFrame:) name:UIApplicationDidChangeStatusBarFrameNotification object: nil];
+  NSString * style = [self getConfigValue:@"style"];
+  if ([style isEqualToString:@"dark"]) {
+    [self setKeyboardAppearanceDark];
+  }
   
   self.keyboardResizes = ResizeNative;
   BOOL doesResize = YES;
@@ -242,6 +246,22 @@ static IMP WKOriginalImp;
 - (void)show:(CAPPluginCall *)call
 {
   [call successHandler];
+}
+
+- (void)setKeyboardAppearanceDark
+{
+  IMP darkImp = imp_implementationWithBlock(^(id _s) {
+    return UIKeyboardAppearanceDark;
+  });
+  for (NSString* classString in @[@"WKContentView", @"UITextInputTraits"]) {
+    Class c = NSClassFromString(classString);
+    Method m = class_getInstanceMethod(c, @selector(keyboardAppearance));
+    if (m != NULL) {
+      method_setImplementation(m, darkImp);
+    } else {
+      class_addMethod(c, @selector(keyboardAppearance), darkImp, "l@:");
+    }
+  }
 }
 
 #pragma mark dealloc

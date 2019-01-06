@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { join, sep } from 'path';
+import { join } from 'path';
 import { log, logFatal, readJSON, readXML, resolveNode } from './common';
 
 
@@ -57,16 +57,11 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
       return null;
     }
     if (meta.capacitor) {
-      let path = rootPath;
-      let dep = config.app.package.dependencies[name];
-      if (dep && dep.startsWith('file:')) {
-        path = config.app.package.dependencies[name].replace('file:', '../../');
-      }
       return {
         id: name,
         name: fixName(name),
         version: meta.version,
-        rootPath: path,
+        rootPath: rootPath,
         repository: meta.repository,
         manifest: meta.capacitor
       };
@@ -159,7 +154,7 @@ export function getJSModules(p: Plugin, platform: string) {
 
 export function getFilePath(config: Config, plugin: Plugin, path: string) {
   if (path.startsWith("node_modules")) {
-    let pathSegments = path.split(sep).slice(1);
+    let pathSegments = path.split("/").slice(1);
     if (pathSegments[0].startsWith('@')) {
       pathSegments = [pathSegments[0] + '/' + pathSegments[1], ...pathSegments.slice(2)]
     }

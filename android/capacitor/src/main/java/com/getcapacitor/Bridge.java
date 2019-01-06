@@ -53,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 
 /**
@@ -81,6 +83,9 @@ public class Bridge {
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
+  public static final String CAPACITOR_SCHEME_NAME = "http";
+  public static final String CAPACITOR_FILE_SCHEME_NAME = "capacitor-file";
+  public static final String CAPACITOR_CONTENT_SCHEME_NAME = "capacitor-content";
 
   // Loaded Capacitor config
   private JSONObject config = new JSONObject();
@@ -91,6 +96,7 @@ public class Bridge {
   private String localUrl;
   private String appUrl;
   private String appUrlConfig;
+  private String[] appAllowNavigationConfig;
   // A reference to the main WebView for the app
   private final WebView webView;
   public final CordovaInterfaceImpl cordovaInterface;
@@ -155,10 +161,10 @@ public class Bridge {
 
   private void loadWebView() {
     appUrlConfig = Config.getString("server.url");
+    appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
-    String port = getPort();
-    String authority = "localhost" + ":" + port;
-    localUrl = "https://" + authority;
+    String authority = Config.getString("server.hostname", "localhost");
+    localUrl = CAPACITOR_SCHEME_NAME + "://" + authority + "/";
 
     boolean isLocal = true;
 
@@ -177,12 +183,10 @@ public class Bridge {
 
     // Start the local web server
     localServer = new WebViewLocalServer(context, this, getJSInjector(), authority, html5mode, isLocal);
-    WebViewLocalServer.AssetHostingDetails ahd = localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
+    localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
-    // Load the index route from our www folder
-    String url = ahd.getHttpsPrefix().buildUpon().build().toString();
 
-    appUrl = appUrlConfig == null ? url.replace("%3A", ":") : appUrlConfig;
+    appUrl = appUrlConfig == null ? localUrl : appUrlConfig;
 
     Log.d(LOG_TAG, "Loading app at " + appUrl);
 
@@ -195,26 +199,26 @@ public class Bridge {
 
       @Override
       public void onPageFinished(WebView view, final String location) {
-        if (appUrlConfig != null) {
+        if (appUrlConfig != null || appAllowNavigationConfig != null) {
           injectScriptFile(view, getJSInjector().getScriptString());
         }
       }
 
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-        String url = request.getUrl().toString();
+        Uri url = request.getUrl();
         return launchIntent(url);
       }
 
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        return launchIntent(url);
+        return launchIntent(Uri.parse(url));
       }
 
-      private boolean launchIntent(String url) {
-        if (!url.contains(appUrl)) {
+      private boolean launchIntent(Uri url) {
+        if (!url.toString().contains(appUrl) && !matchHosts(url.getHost(), appAllowNavigationConfig)) {
           try {
-            Intent openIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
             getContext().startActivity(openIntent);
           } catch (ActivityNotFoundException e) {
             // TODO - trigger an event
@@ -232,31 +236,6 @@ public class Bridge {
     }
     // Get to work
     webView.loadUrl(appUrl);
-  }
-
-
-  public String getPort() {
-    String port = Config.getString("server.port");
-    if (port != null) {
-      return port;
-    }
-
-    SharedPreferences prefs = getContext().getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
-    port = prefs.getString("capacitorPort", null);
-    if (port != null) {
-      return port;
-    }
-
-    port = String.valueOf(getRandomPort());
-    SharedPreferences.Editor editor = prefs.edit();
-    editor.putString("capacitorPort", port);
-    editor.apply();
-
-    return port;
-  }
-
-  public int getRandomPort(){
-    return ThreadLocalRandom.current().nextInt(3000, 9000 + 1);
   }
 
 
@@ -826,5 +805,31 @@ public class Bridge {
             "script.innerHTML = window.atob('" + encoded + "');" +
             "parent.appendChild(script)" +
             "})()");
+  }
+
+  private boolean matchHost(String host, String pattern) {
+    int offset;
+
+    ArrayList hostParts = new ArrayList<String>(Arrays.asList(host.split("\\.")));
+    ArrayList patternParts = new ArrayList<String>(Arrays.asList(pattern.split("\\.")));
+
+    if (hostParts.size() != patternParts.size()) return false;
+    if (hostParts.equals(patternParts)) return true;
+
+    while ((offset = patternParts.indexOf("*")) != -1) {
+      patternParts.remove(offset);
+      hostParts.remove(offset);
+    }
+
+    return hostParts.equals(patternParts);
+  }
+
+  private boolean matchHosts(String host, String[] patterns) {
+    for (String pattern: patterns) {
+      if (matchHost(host, pattern)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

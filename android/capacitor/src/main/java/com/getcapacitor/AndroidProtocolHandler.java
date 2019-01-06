@@ -25,18 +25,8 @@ public class AndroidProtocolHandler {
     this.context = context;
   }
 
-  public InputStream openAsset(String path, String assetPath) throws IOException {
-    if (path.startsWith(assetPath + "/_capacitor_")) {
-      if (path.contains("content://")) {
-        String contentPath = path.replace(assetPath + "/_capacitor_/", "content://");
-        return context.getContentResolver().openInputStream(Uri.parse(contentPath));
-      } else {
-        String filePath = path.replace(assetPath + "/_capacitor_/", "");
-        return new FileInputStream(new File(filePath));
-      }
-    } else {
-      return context.getAssets().open(path, AssetManager.ACCESS_STREAMING);
-    }
+  public InputStream openAsset(String path) throws IOException {
+    return context.getAssets().open(path, AssetManager.ACCESS_STREAMING);
   }
 
   public InputStream openResource(Uri uri) {
@@ -81,6 +71,16 @@ public class AndroidProtocolHandler {
   public InputStream openFile(String filePath) throws IOException  {
     File localFile = new File(filePath);
     return new FileInputStream(localFile);
+  }
+
+  public InputStream openContentUrl(Uri uri)  throws IOException {
+    InputStream stream = null;
+    try {
+      stream = context.getContentResolver().openInputStream(Uri.parse(uri.toString().replace(Bridge.CAPACITOR_CONTENT_SCHEME_NAME + ":///", "content://")));
+    } catch (SecurityException e) {
+      Log.e(LogUtils.getCoreTag(), "Unable to open content URL: " + uri, e);
+    }
+    return stream;
   }
 
   private static int getValueType(Context context, int fieldId) {

@@ -385,6 +385,10 @@ export interface DevicePlugin extends Plugin {
    * Return information about the underlying device/os/platform
    */
   getInfo(): Promise<DeviceInfo>;
+  /**
+   * Get the device's current language locale code
+   */
+  getLanguageCode(): Promise<DeviceLanguageCodeResult>;
 }
 
 export interface DeviceInfo {
@@ -441,6 +445,9 @@ export interface DeviceInfo {
   isCharging?: boolean;
 }
 
+export interface DeviceLanguageCodeResult {
+  value: string;
+}
 //
 
 export interface FilesystemPlugin extends Plugin {

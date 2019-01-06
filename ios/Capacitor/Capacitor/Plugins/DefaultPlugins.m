@@ -40,6 +40,7 @@ CAP_PLUGIN(CAPConsolePlugin, "Console",
 
 CAP_PLUGIN(CAPDevicePlugin, "Device",
   CAP_PLUGIN_METHOD(getInfo, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(getLanguageCode, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPFilesystemPlugin, "Filesystem",
