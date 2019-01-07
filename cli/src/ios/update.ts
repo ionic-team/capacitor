@@ -181,7 +181,13 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
           }
         }
       } else if (framework.$.type && framework.$.type === 'podspec') {
-        frameworkDeps.push(`s.dependency '${framework.$.src}', '${framework.$.spec}'`);
+        let depString = `s.dependency '${framework.$.src}'`;
+        if (framework.$.spec && framework.$.spec !== '') {
+          depString += `, '${framework.$.spec}'`;
+        }
+        if (!frameworkDeps.includes(depString)) {
+          frameworkDeps.push(depString);
+        }
       }
     });
     const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
