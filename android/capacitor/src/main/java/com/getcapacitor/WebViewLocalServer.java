@@ -181,6 +181,14 @@ public class WebViewLocalServer {
       return null;
     }
 
+    if (request.getUrl().getScheme().equals(capacitorContentScheme) || request.getUrl().getScheme().equals(capacitorFileScheme)) {
+      InputStream responseStream = new LollipopLazyInputStream(handler, request);
+      String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
+      return new WebResourceResponse(mimeType, handler.getEncoding(),
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
+    }
+
     if (this.isLocal) {
       Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
@@ -196,15 +204,6 @@ public class WebViewLocalServer {
       return new WebResourceResponse("application/javascript", handler.getEncoding(),
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
     }
-
-    if (request.getUrl().getScheme().equals(capacitorContentScheme) || request.getUrl().getScheme().equals(capacitorFileScheme)) {
-      InputStream responseStream = new LollipopLazyInputStream(handler, request);
-      String mimeType = getMimeType(path, responseStream);
-      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
-      return new WebResourceResponse(mimeType, handler.getEncoding(),
-              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
-    }
-
 
     if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
       InputStream stream;
