@@ -21,16 +21,12 @@ import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -206,28 +202,20 @@ public class WebViewLocalServer {
     }
 
     if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
-      InputStream stream;
+      InputStream responseStream;
       try {
         String startPath = this.basePath + "/index.html";
         if (isAsset) {
-          stream = protocolHandler.openAsset(startPath);
+          responseStream = protocolHandler.openAsset(startPath);
         } else {
-          stream = protocolHandler.openFile(startPath);
+          responseStream = protocolHandler.openFile(startPath);
         }
       } catch (IOException e) {
         Log.e(LogUtils.getCoreTag(), "Unable to open index.html", e);
         return null;
       }
 
-      String html = this.readAssetStream(stream);
-
-      stream = jsInjector.getInjectedStream(stream);
-
-      String assetHtml = this.readAssetStream(stream);
-
-      html = html.replace("<head>", "<head>\n" + assetHtml + "\n");
-
-      InputStream responseStream = new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
+      responseStream = jsInjector.getInjectedStream(responseStream);
 
       bridge.reset();
       int statusCode = getStatusCode(responseStream, handler.getStatusCode());
@@ -248,41 +236,20 @@ public class WebViewLocalServer {
       String ext = path.substring(path.lastIndexOf("."), path.length());
 
       InputStream responseStream = new LollipopLazyInputStream(handler, request);
-      InputStream stream = responseStream;
 
       // TODO: Conjure up a bit more subtlety than this
       if (ext.equals(".html")) {
-        stream = jsInjector.getInjectedStream(responseStream);
+        responseStream = jsInjector.getInjectedStream(responseStream);
         bridge.reset();
       }
 
-      String mimeType = getMimeType(path, stream);
+      String mimeType = getMimeType(path, responseStream);
       int statusCode = getStatusCode(responseStream, handler.getStatusCode());
       return new WebResourceResponse(mimeType, handler.getEncoding(),
-              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
     }
 
     return null;
-  }
-
-  private String readAssetStream(InputStream stream) {
-    try {
-      final int bufferSize = 1024;
-      final char[] buffer = new char[bufferSize];
-      final StringBuilder out = new StringBuilder();
-      Reader in = new InputStreamReader(stream, "UTF-8");
-      for (; ; ) {
-        int rsz = in.read(buffer, 0, buffer.length);
-        if (rsz < 0)
-          break;
-        out.append(buffer, 0, rsz);
-      }
-      return out.toString();
-    } catch (Exception e) {
-      Log.e(LogUtils.getCoreTag(), "Unable to process HTML asset file. This is a fatal error", e);
-    }
-
-    return "";
   }
 
   /**
@@ -307,15 +274,15 @@ public class WebViewLocalServer {
         conn.setReadTimeout(30 * 1000);
         conn.setConnectTimeout(30 * 1000);
 
-        InputStream stream = conn.getInputStream();
+        InputStream responseStream = conn.getInputStream();
 
         if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
-          stream = jsInjector.getInjectedStream(stream);
+          responseStream = jsInjector.getInjectedStream(responseStream);
 
           bridge.reset();
 
           return new WebResourceResponse("text/html", handler.getEncoding(),
-              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
 
         int periodIndex = path.lastIndexOf(".");
@@ -324,14 +291,14 @@ public class WebViewLocalServer {
 
           // TODO: Conjure up a bit more subtlety than this
           if (ext.equals(".html")) {
-            stream = jsInjector.getInjectedStream(stream);
+            responseStream = jsInjector.getInjectedStream(responseStream);
             bridge.reset();
           }
 
-          String mimeType = getMimeType(path, stream);
+          String mimeType = getMimeType(path, responseStream);
 
           return new WebResourceResponse(mimeType, handler.getEncoding(),
-              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
 
         return new WebResourceResponse("", handler.getEncoding(),
