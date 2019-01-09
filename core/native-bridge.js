@@ -63,6 +63,7 @@
     error: true,
     info: true,
     log: true,
+    trace: true,
     warn: true,
   };
   

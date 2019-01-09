@@ -2,7 +2,7 @@
 
 # Console
 
-The Console API automatically sends `console.log` calls to the native log system on each respective platform. This enables, for example,
+The Console API automatically sends `console.debug`, `console.error`, `console.info`, `console.log`, `console.trace` and `console.warn` calls to the native log system on each respective platform. This enables, for example,
 `console.log` calls to be rendered in the Xcode and Android Studio log windows.
 
 Currently it's not possible to disable it, but that feature is coming.
