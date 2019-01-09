@@ -56,6 +56,16 @@
 
   // patch window.console and store original console fns
   var orgConsole = {};
+  
+  // list log functions bridged to native log
+  var bridgedLevels = {
+    debug: true,
+    error: true,
+    info: true,
+    log: true,
+    warn: true,
+  };
+  
   Object.keys(win.console).forEach(function (level) {
     if (typeof win.console[level] === 'function') {
       // loop through all the console functions and keep references to the original
@@ -67,7 +77,7 @@
         // console log to browser
         orgConsole[level].apply(win.console, msgs);
 
-        if (capacitor.isNative) {
+        if (capacitor.isNative && bridgedLevels[level]) {
           // send log to native to print
           try {
             // convert all args to strings
