@@ -506,6 +506,9 @@
     if (!url) {
       return url;
     }
+    if (url.startsWith('/')) {
+      return 'capacitor-file:///' + url;
+    }
     if (url.startsWith('file://')) {
       return url.replace('file', 'capacitor-file');
     }
