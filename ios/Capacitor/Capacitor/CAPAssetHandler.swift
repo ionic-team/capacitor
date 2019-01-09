@@ -70,7 +70,7 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
     func isMediaExtension(pathExtension: String) -> Bool {
         let mediaExtensions = ["m4v", "mov", "mp4",
                                "aac", "ac3", "aiff", "au", "flac", "m4a", "mp3", "wav"]
-        if mediaExtensions.contains(pathExtension) {
+        if mediaExtensions.contains(pathExtension.lowercased()) {
             return true
         }
         return false
