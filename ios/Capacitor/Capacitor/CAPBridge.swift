@@ -53,18 +53,9 @@ enum BridgeError: Error {
     self.notificationsDelegate.bridge = self;
     localUrl = "\(CAPBridge.CAP_SCHEME)://\(CAPConfig.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
-    setupCordovaCompatibility()
     registerPlugins()
+    setupCordovaCompatibility()
     bindObservers()
-  }
-  
-  public func willAppear() {
-  }
-
-  public func didLoad() {
-    if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
-      splash.showOnLaunch()
-    }
   }
   
   public func setStatusBarVisible(_ isStatusBarVisible: Bool) {

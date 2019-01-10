@@ -70,13 +70,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   override public func viewDidLoad() {
     super.viewDidLoad()
     self.becomeFirstResponder()
-    
     loadWebView()
-    bridge!.didLoad()
-  }
-  
-  public override func viewWillAppear(_ animated: Bool) {
-    bridge!.willAppear()
   }
   
   func loadWebView() {
