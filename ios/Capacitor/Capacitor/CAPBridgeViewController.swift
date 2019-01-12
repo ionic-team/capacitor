@@ -45,18 +45,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   override public func loadView() {
-    view = UIView(frame: .zero)
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
-    webView?.translatesAutoresizingMaskIntoConstraints = false
-    self.view.addSubview(webView!)
+    view = webView
     imageView = UIImageView(frame: .zero)
     imageView?.translatesAutoresizingMaskIntoConstraints = false
     self.view.addSubview(imageView!)
     NSLayoutConstraint.activate([
-      (webView?.widthAnchor.constraint(equalTo: self.view.widthAnchor))!,
-      (webView?.heightAnchor.constraint(equalTo: self.view.heightAnchor))!,
-      (webView?.centerXAnchor.constraint(equalTo: self.view.centerXAnchor))!,
-      (webView?.centerYAnchor.constraint(equalTo: self.view.centerYAnchor))!,
       (imageView?.widthAnchor.constraint(equalTo: self.view.widthAnchor))!,
       (imageView?.heightAnchor.constraint(equalTo: self.view.heightAnchor))!,
       (imageView?.centerXAnchor.constraint(equalTo: self.view.centerXAnchor))!,
