@@ -24,32 +24,60 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var hostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
-  
+  var image: UIImage?
+  var imageView : UIImageView?
+
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
   @objc public var supportedOrientations: Array<Int> = []
-  
+  let o = WKUserContentController()
+  let webViewConfiguration = WKWebViewConfiguration()
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
-  
-  
+
+  required public init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_SCHEME)
+    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_FILE_SCHEME)
+    o.add(self, name: "bridge")
+    webViewConfiguration.userContentController = o
+    configureWebView(configuration: webViewConfiguration)
+  }
+
   override public func loadView() {
+    view = UIView(frame: .zero)
+    webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
+    webView?.translatesAutoresizingMaskIntoConstraints = false
+    self.view.addSubview(webView!)
+    imageView = UIImageView(frame: .zero)
+    imageView?.translatesAutoresizingMaskIntoConstraints = false
+    self.view.addSubview(imageView!)
+    NSLayoutConstraint.activate([
+      (webView?.widthAnchor.constraint(equalTo: self.view.widthAnchor))!,
+      (webView?.heightAnchor.constraint(equalTo: self.view.heightAnchor))!,
+      (webView?.centerXAnchor.constraint(equalTo: self.view.centerXAnchor))!,
+      (webView?.centerYAnchor.constraint(equalTo: self.view.centerYAnchor))!,
+      (imageView?.widthAnchor.constraint(equalTo: self.view.widthAnchor))!,
+      (imageView?.heightAnchor.constraint(equalTo: self.view.heightAnchor))!,
+      (imageView?.centerXAnchor.constraint(equalTo: self.view.centerXAnchor))!,
+      (imageView?.centerYAnchor.constraint(equalTo: self.view.centerYAnchor))!,
+    ])
+    bridge = CAPBridge(self, o)
+  }
+
+  override public func viewDidLoad() {
+    super.viewDidLoad()
+    self.becomeFirstResponder()
+    self.image = UIImage.init(named: "Splash")
+    imageView?.image = image
+    imageView?.contentMode = .scaleAspectFill
+
+    if image == nil {
+        print("Unable to find splash screen image. Make sure an image called Splash exists in your assets")
+    }
     setStatusBarDefaults()
     setScreenOrientationDefaults()
 
-    let webViewConfiguration = WKWebViewConfiguration()
-
-    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_SCHEME)
-    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_FILE_SCHEME)
-    
-    let o = WKUserContentController()
-    o.add(self, name: "bridge")
-
-    webViewConfiguration.userContentController = o
-    
-    configureWebView(configuration: webViewConfiguration)
-    
-    webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
     
     webView?.scrollView.contentInsetAdjustmentBehavior = .never
@@ -57,20 +85,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-    view = webView
     
     setKeyboardRequiresUserInteraction(false)
-    
-    bridge = CAPBridge(self, o)
+
     if let scrollEnabled = CAPConfig.getValue("ios.scrollEnabled") as? Bool {
         webView?.scrollView.isScrollEnabled = scrollEnabled
     }
-  }
-  
-  override public func viewDidLoad() {
-    super.viewDidLoad()
-    self.becomeFirstResponder()
     loadWebView()
+  }
+  override public func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    imageView?.isHidden = true
   }
   
   func loadWebView() {
