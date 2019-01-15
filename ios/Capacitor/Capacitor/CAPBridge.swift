@@ -12,7 +12,7 @@ enum BridgeError: Error {
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://getcapacitor.com/"
   public static var CAP_SCHEME = "capacitor"
-  public static var CAP_FILE_SCHEME = "capacitor-file"
+  public static var CAP_FILE_START = "/_capacitor_file_"
 
   // The last URL that caused the app to open
   private static var lastUrl: URL?

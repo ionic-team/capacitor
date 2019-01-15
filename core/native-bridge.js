@@ -508,13 +508,13 @@
       return url;
     }
     if (url.startsWith('/')) {
-      return 'capacitor-file://' + url;
+      return window.WEBVIEW_SERVER_URL + '/_capacitor_file_' + url;
     }
     if (url.startsWith('file://')) {
-      return url.replace('file', 'capacitor-file');
+      return window.WEBVIEW_SERVER_URL + url.replace('file://', '/_capacitor_file_');
     }
-    if (url.startsWith('content:')) {
-      return url.replace('content:', 'capacitor-content:/');
+    if (url.startsWith('content://')) {
+      return window.WEBVIEW_SERVER_URL + url.replace('content:/', '/_capacitor_content_');
     }
     return url;
   }
