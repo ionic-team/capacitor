@@ -58,7 +58,6 @@ typedef enum : NSUInteger {
   if (doesResize) {
     self.keyboardResizes = ResizeNative;
     NSString * resizeMode = [self getConfigValue:@"resizeMode"];
-    NSLog(@"Resize mode %@", resizeMode);
     
     if (resizeMode) {
       if ([resizeMode isEqualToString:@"ionic"]) {
@@ -68,6 +67,10 @@ typedef enum : NSUInteger {
         self.keyboardResizes = ResizeBody;
           NSLog(@"CAPKeyboard: resize mode body");
       }
+    }
+      
+    if (self.keyboardResize == ResizeNative) {
+      NSLog(@"CAPKeyboard: resize mode native");
     }
   }
 
