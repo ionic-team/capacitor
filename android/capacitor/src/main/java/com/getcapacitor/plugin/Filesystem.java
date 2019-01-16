@@ -247,6 +247,9 @@ public class Filesystem extends Plugin {
       call.error("Unsupported encoding provided: " + encoding);
       return;
     }
+    //remove header
+    const split = data.split(',')[1];
+    data = split[1] || data;
 
     // if charset is not null assume its a plain text file the user wants to save
     boolean success = false;
