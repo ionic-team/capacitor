@@ -69,14 +69,17 @@ public class AndroidProtocolHandler {
   }
 
   public InputStream openFile(String filePath) throws IOException  {
-    File localFile = new File(filePath);
+    String realPath = filePath.replace(Bridge.CAPACITOR_FILE_START, "");
+    File localFile = new File(realPath);
     return new FileInputStream(localFile);
   }
 
   public InputStream openContentUrl(Uri uri)  throws IOException {
+    String realPath = uri.toString().replace(uri.getScheme() + "://" + uri.getHost() + Bridge.CAPACITOR_CONTENT_START, "content:/");
+
     InputStream stream = null;
     try {
-      stream = context.getContentResolver().openInputStream(Uri.parse(uri.toString().replace(Bridge.CAPACITOR_CONTENT_SCHEME_NAME + ":///", "content://")));
+      stream = context.getContentResolver().openInputStream(Uri.parse(realPath));
     } catch (SecurityException e) {
       Log.e(LogUtils.getCoreTag(), "Unable to open content URL: " + uri, e);
     }

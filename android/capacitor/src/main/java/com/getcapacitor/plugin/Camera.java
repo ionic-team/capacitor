@@ -353,7 +353,7 @@ public class Camera extends Plugin {
       JSObject ret = new JSObject();
       ret.put("exif", exif.toJson());
       ret.put("path", newUri.toString());
-      ret.put("webPath", FileUtils.getPortablePath(getContext(), newUri));
+      ret.put("webPath", FileUtils.getPortablePath(getContext(), bridge.getLocalUrl(), newUri));
       call.resolve(ret);
     } catch (IOException ex) {
       call.reject(UNABLE_TO_PROCESS_IMAGE, ex);
