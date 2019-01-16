@@ -27,4 +27,14 @@ public class Photos extends Plugin {
   public void savePhoto(PluginCall call) {
     call.unimplemented();
   }
+
+  @PluginMethod()
+  public void saveVideo(PluginCall call) {
+    call.unimplemented();
+  }
+
+  @PluginMethod()
+  public void saveGif(PluginCall call) {
+    call.unimplemented();
+  }
 }

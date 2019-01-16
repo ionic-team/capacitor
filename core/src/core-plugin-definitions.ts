@@ -1070,9 +1070,17 @@ export interface PhotosPlugin extends Plugin {
    */
   getAlbums(options?: PhotosAlbumsFetchOptions): Promise<PhotosAlbumsResult>;
   /**
-   * Save a photo the the user's photo library
+   * Save a photo to the user's photo library
    */
   savePhoto(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
+  /**
+   * Save a video to the user's photo library
+   */
+  saveVideo(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
+  /**
+   * Save a gif to the user's photo library
+   */
+  saveGif(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
   /**
    * Create an album in the user's photo library
    */

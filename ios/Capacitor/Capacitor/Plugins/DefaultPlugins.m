@@ -110,6 +110,8 @@ CAP_PLUGIN(CAPPhotosPlugin, "Photos",
   CAP_PLUGIN_METHOD(getAlbums, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(createAlbum, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(savePhoto, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(saveVideo, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(saveGif, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPSharePlugin, "Share",
