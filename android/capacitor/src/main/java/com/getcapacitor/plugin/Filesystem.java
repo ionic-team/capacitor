@@ -212,7 +212,10 @@ public class Filesystem extends Plugin {
             File fileObject = new File(androidDir, path);
             if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
               saveFile(call, fileObject, data);
-            }
+            } else{
+              Log.e(getLogTag(), "Not able to create '" + directory + "'!");
+              call.error("PERMISSION_DENIED_OR_INVALID_DIR");              
+            }  
           } else {
             Log.e(getLogTag(), "Not able to create '" + directory + "'!");
             call.error("NOT_CREATED_DIR");
@@ -232,8 +235,14 @@ public class Filesystem extends Plugin {
         if (isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
           if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
             saveFile(call, fileObject, data);
+          } else{
+            Log.e(getLogTag(), "Not able to create '" + directory + "'!");
+            call.error("PERMISSION_DENIED_OR_INVALID_DIR");              
           }
         }
+      } else {
+        let error = u.getScheme() == null?"SCHEME IS NULL":"SCHEME INVALID";
+        call.error(error);
       }
     }
   }
