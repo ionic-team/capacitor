@@ -202,8 +202,7 @@ public class Filesystem extends Plugin {
 
     String directory = getDirectoryParameter(call);
     if (directory != null) {
-      if (!isPublicDirectory(directory)
-        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+      if (!isPublicDirectory(directory) || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
         // create directory because it might not exist
         File androidDir = getDirectory(directory);
         if (androidDir != null) {
@@ -257,8 +256,9 @@ public class Filesystem extends Plugin {
       return;
     }
     //remove header
-    const split = data.split(',')[1];
-    data = split[1] || data;
+    if(data.indexOf(',') != -1){
+      data = data.split(',')[1]; 
+    }
 
     // if charset is not null assume its a plain text file the user wants to save
     boolean success = false;
