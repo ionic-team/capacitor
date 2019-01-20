@@ -13,12 +13,10 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
             startPath = Bundle.main.path(forResource: "public", ofType: nil)!
             if stringToLoad.isEmpty || url.pathExtension.isEmpty {
                 startPath.append("/index.html")
+            } else if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
+                startPath = stringToLoad.replacingOccurrences(of: CAPBridge.CAP_FILE_START, with: "")
             } else {
                 startPath.append(stringToLoad)
-            }
-        } else if scheme == CAPBridge.CAP_FILE_SCHEME {
-            if !stringToLoad.isEmpty {
-                startPath = stringToLoad
             }
         }
 
