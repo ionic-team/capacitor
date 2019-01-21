@@ -77,7 +77,7 @@ public class Filesystem extends Plugin {
   private File getFileObject(String path, String directory) {
     if (directory == null) {
       Uri u = Uri.parse(path);
-      if (u.getScheme().equals("file")) {
+      if (u.getScheme() == null || u.getScheme().equals("file")) {
         return new File(u.getPath());
       }
     }

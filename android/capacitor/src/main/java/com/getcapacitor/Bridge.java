@@ -84,8 +84,8 @@ public class Bridge {
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
   public static final String CAPACITOR_SCHEME_NAME = "http";
-  public static final String CAPACITOR_FILE_SCHEME_NAME = "capacitor-file";
-  public static final String CAPACITOR_CONTENT_SCHEME_NAME = "capacitor-content";
+  public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
+  public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
 
   // Loaded Capacitor config
   private JSONObject config = new JSONObject();
@@ -163,16 +163,18 @@ public class Bridge {
     appUrlConfig = Config.getString("server.url");
     appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
+    ArrayList authorities = new ArrayList<String>();
+    if (appAllowNavigationConfig != null) {
+      authorities.addAll(Arrays.asList(appAllowNavigationConfig));
+    }
     String authority = Config.getString("server.hostname", "localhost");
-    localUrl = CAPACITOR_SCHEME_NAME + "://" + authority + "/";
-
-    boolean isLocal = true;
+    authorities.add(authority);
+    localUrl = CAPACITOR_SCHEME_NAME + "://" + authority;
 
     if (appUrlConfig != null) {
       try {
         URL appUrlObject = new URL(appUrlConfig);
-        authority = appUrlObject.getAuthority();
-        isLocal = false;
+        authorities.add(appUrlObject.getAuthority());
       } catch (Exception ex) {
       }
 
@@ -182,7 +184,7 @@ public class Bridge {
     final boolean html5mode = Config.getBoolean("server.html5mode", true);
 
     // Start the local web server
-    localServer = new WebViewLocalServer(context, this, getJSInjector(), authority, html5mode, isLocal);
+    localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
     localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
 
@@ -195,13 +197,6 @@ public class Bridge {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         return localServer.shouldInterceptRequest(request);
-      }
-
-      @Override
-      public void onPageFinished(WebView view, final String location) {
-        if (appUrlConfig != null || appAllowNavigationConfig != null) {
-          injectScriptFile(view, getJSInjector().getScriptString());
-        }
       }
 
       @Override
@@ -241,8 +236,8 @@ public class Bridge {
 
   public void handleAppUrlLoadError(Exception ex) {
     if (ex instanceof SocketTimeoutException) {
-      Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + localServer.getAuthority() + "?");
-      Log.e(LOG_TAG, "Unable to load app. Ensure the server is running at " + localServer.getAuthority() + ", or modify the " +
+      Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + appUrl + "?");
+      Log.e(LOG_TAG, "Unable to load app. Ensure the server is running at " + appUrl + ", or modify the " +
           "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
     }
   }
@@ -794,20 +789,6 @@ public class Bridge {
     });
   }
 
-  private void injectScriptFile(WebView view, String script) {
-
-    // Base64 encode string before injecting as innerHTML
-    String encoded = Base64.encodeToString(script.getBytes(), Base64.NO_WRAP);
-    view.loadUrl("javascript:(function() {" +
-            "var parent = document.getElementsByTagName('head').item(0);" +
-            "var script = document.createElement('script');" +
-            "script.type = 'text/javascript';" +
-            // Base64 decode injected javascript
-            "script.innerHTML = window.atob('" + encoded + "');" +
-            "parent.appendChild(script)" +
-            "})()");
-  }
-
   private boolean matchHost(String host, String pattern) {
     int offset;
 
@@ -826,11 +807,17 @@ public class Bridge {
   }
 
   private boolean matchHosts(String host, String[] patterns) {
-    for (String pattern: patterns) {
-      if (matchHost(host, pattern)) {
-        return true;
+    if (patterns != null) {
+      for (String pattern: patterns) {
+        if (matchHost(host, pattern)) {
+          return true;
+        }
       }
     }
     return false;
+  }
+
+  public String getLocalUrl() {
+    return localUrl;
   }
 }
