@@ -211,7 +211,7 @@ public class Bridge {
       }
 
       private boolean launchIntent(Uri url) {
-        if (!url.toString().contains(appUrl) && !matchHosts(url.getHost(), appAllowNavigationConfig)) {
+        if (!url.toString().contains(appUrl) && (appAllowNavigationConfig == null || !matchHosts(url.getHost(), appAllowNavigationConfig))) {
           try {
             Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
             getContext().startActivity(openIntent);
