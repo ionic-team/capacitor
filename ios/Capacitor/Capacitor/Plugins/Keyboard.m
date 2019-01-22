@@ -69,7 +69,7 @@ typedef enum : NSUInteger {
       }
     }
       
-    if (self.keyboardResize == ResizeNative) {
+    if (self.keyboardResizes == ResizeNative) {
       NSLog(@"CAPKeyboard: resize mode - native");
     }
   }
