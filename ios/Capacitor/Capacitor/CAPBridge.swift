@@ -296,7 +296,7 @@ enum BridgeError: Error {
     let configParser = XMLParser(contentsOf: configUrl!)!;
     configParser.delegate = cordovaParser
     configParser.parse()
-    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController, webView: self.getWebView())
+    cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
     if cordovaParser.startupPluginNames.count > 0 {
       for pluginName in cordovaParser.startupPluginNames {
         _ = cordovaPluginManager?.getCommandInstance(pluginName as! String)

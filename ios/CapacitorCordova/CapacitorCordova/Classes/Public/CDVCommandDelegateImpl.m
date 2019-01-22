@@ -143,7 +143,7 @@
 
 - (NSDictionary*)settings
 {
-    return nil;
+    return _manager.settings;
 }
 
 @end
