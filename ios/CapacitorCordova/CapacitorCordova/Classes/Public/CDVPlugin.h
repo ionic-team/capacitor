@@ -57,7 +57,7 @@ extern NSString* const CDVViewWillTransitionToSizeNotification;
 @property (nonatomic, strong) NSString * className;
 
 @property (nonatomic, weak) UIViewController* viewController;
-@property (nonatomic, strong) id <CDVCommandDelegate> commandDelegate;
+@property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
 
 - (void)pluginInitialize;
 
