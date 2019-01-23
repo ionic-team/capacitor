@@ -125,13 +125,13 @@ export class Config implements CliConfig {
   setCurrentWorkingDir(currentWorkingDir: string) {
     try {
       this.initAppConfig(resolve(currentWorkingDir));
-      this.initAndroidConfig();
-      this.initElectronConfig();
       this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
 
       // Post-merge
+      this.initAndroidConfig();
+      this.initElectronConfig();
       this.initIosConfig();
       this.initWindowsConfig();
       this.initLinuxConfig();
