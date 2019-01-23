@@ -292,5 +292,6 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
 export function getIncompatibleCordovaPlugins(){
   return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
   "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
-  "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support"];
+  "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support",
+  "cordova-plugin-ionic-keyboard"];
 }
