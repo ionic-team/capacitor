@@ -23,7 +23,7 @@
   },
   "main": "index.js",
   "devDependencies": {
-    "@ionic/pwa-elements": "0.0.9",
+    "@ionic/pwa-elements": "1.0.1",
     "@types/jest": "^21.1.8",
     "@types/lodash": "^4.14.104",
     "jest": "^22.0.0",
