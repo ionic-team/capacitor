@@ -6,9 +6,13 @@ However, chances are your app will need to access more native functionality than
 
 If you are willing and able to write a small amount of native code, you can quickly add your own native functionality and expose it as a Capacitor plugin by following the [Plugin Guide](/docs/plugins/).
 
-Thankfully, the community has built a number of plugins for various native functionality, and you can easily add them to your app.
+## Finding Plugins
 
-Capacitor also supports a wide range of Cordova plugins, so there are a lot to choose from.
+The community has built a number of plugins for various native functionality, and you can easily add them to your app.
+
+See our [Community Plugins](/docs/community/plugins/) list for some options.
+
+Capacitor also supports a wide range of [Cordova plugins](/docs/basics/cordova), so there are a lot to choose from.
 
 ## Installing Plugins
 

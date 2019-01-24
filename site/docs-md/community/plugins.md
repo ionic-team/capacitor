@@ -8,6 +8,8 @@ on how to install and configure plugins for each platform.
 Building your own Capacitor plugins is easy! Check out the [Plugin Introduction](/docs/plugins/) to learn how to extend Capacitor
 and, optionally, share functionality with other Capacitor developers.
 
+Finally, the Ionic team offers native plugin support for Enterprises. [Learn more](https://ionicframework.com/enterprise-engine)
+
 ## Authentication
 
 | Name                    | NPM package | GitHub | Notes |
