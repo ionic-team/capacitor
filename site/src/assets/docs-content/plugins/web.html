@@ -21,7 +21,7 @@ more explanation:</p>
 
   <span class="hljs-keyword">async</span> echo(options: { value: <span class="hljs-built_in">string</span> }) {
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'ECHO'</span>, options);
-    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve();
+    <span class="hljs-keyword">return</span> options;
   }
 }
 
