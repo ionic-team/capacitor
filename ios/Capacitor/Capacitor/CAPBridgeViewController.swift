@@ -2,9 +2,6 @@
 //  ViewController.swift
 //  IonicRunner
 //
-//  Created by Max Lynch on 3/22/17.
-//  Copyright © 2017 Max Lynch. All rights reserved.
-//
 
 import UIKit
 import WebKit
