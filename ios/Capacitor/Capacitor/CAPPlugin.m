@@ -7,6 +7,7 @@
 
 -(instancetype) initWithBridge:(CAPBridge *)bridge pluginId:(NSString *)pluginId pluginName:(NSString *)pluginName {
   self.bridge = bridge;
+  self.webView = bridge.getWebView;
   self.pluginId = pluginId;
   self.pluginName = pluginName;
   self.eventListeners = [[NSMutableDictionary alloc] init];
