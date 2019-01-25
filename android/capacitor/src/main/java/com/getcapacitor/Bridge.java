@@ -163,7 +163,7 @@ public class Bridge {
     appUrlConfig = Config.getString("server.url");
     appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
-    ArrayList authorities = new ArrayList<String>();
+    ArrayList<String> authorities = new ArrayList<String>();
     if (appAllowNavigationConfig != null) {
       authorities.addAll(Arrays.asList(appAllowNavigationConfig));
     }
@@ -792,8 +792,8 @@ public class Bridge {
   private boolean matchHost(String host, String pattern) {
     int offset;
 
-    ArrayList hostParts = new ArrayList<String>(Arrays.asList(host.split("\\.")));
-    ArrayList patternParts = new ArrayList<String>(Arrays.asList(pattern.split("\\.")));
+    ArrayList<String> hostParts = new ArrayList<String>(Arrays.asList(host.split("\\.")));
+    ArrayList<String> patternParts = new ArrayList<String>(Arrays.asList(pattern.split("\\.")));
 
     if (hostParts.size() != patternParts.size()) return false;
     if (hostParts.equals(patternParts)) return true;
