@@ -34,7 +34,7 @@
     "tslint": "^5.6.0",
     "tslint-ionic-rules": "0.0.8",
     "typedoc": "^0.9.0",
-    "typescript": "^2.6.2",
+    "typescript": "^3.2.4",
     "uglify-js": "^3.2.0"
   },
   "repository": {
@@ -61,6 +61,7 @@
     ]
   },
   "dependencies": {
+    "@types/lodash": "^4.14.120",
     "tslib": "^1.9.0"
   }
 }
