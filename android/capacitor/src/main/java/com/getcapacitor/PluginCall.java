@@ -205,7 +205,11 @@ public class PluginCall {
     if(value == null) { return defaultValue; }
 
     if(value instanceof JSONObject) {
-      return (JSObject) value;
+      try {
+        return JSObject.fromJSONObject((JSONObject) value);
+      } catch (JSONException ex) {
+        return defaultValue;
+      }
     }
     return defaultValue;
   }
