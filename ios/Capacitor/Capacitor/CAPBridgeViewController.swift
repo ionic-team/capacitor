@@ -271,7 +271,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     // Dispose of any resources that can be recreated.
   }
 
-  override public func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+  override public func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
     if bridge != nil {
       if motion == .motionShake && bridge!.isDevMode() {
         bridge!.showDevMode()

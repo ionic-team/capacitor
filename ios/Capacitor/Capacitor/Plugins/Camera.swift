@@ -95,7 +95,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   
   func showPrompt(_ call: CAPPluginCall) {
     // Build the action sheet
-    let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+    let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
     alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
       self.showPhotos(call)
     }))
@@ -113,7 +113,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   }
   
   func showCamera(_ call: CAPPluginCall) {
-    if self.bridge.isSimulator() || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) {
+    if self.bridge.isSimulator() || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
       self.bridge.modulePrint(self, "Camera not available in simulator")
       self.bridge.alert("Camera Error", "Camera not available in Simulator")
       call.error("Camera not available while running in Simulator")
@@ -179,18 +179,19 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     self.call?.error("User cancelled photos app")
   }
   
-  public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+  public func imagePickerController(_ picker: UIImagePickerController,
+                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     var image: UIImage?
 
-    if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+    if let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
       // Use editedImage Here
       image = editedImage
-    } else if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+    } else if let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
       // Use originalImage Here
       image = originalImage
     }
     
-    let imageMetadata = info[UIImagePickerControllerMediaMetadata] as? [AnyHashable: Any]
+    let imageMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any]
     
     if settings.shouldResize {
       guard let convertedImage = resizeImage(image!) else {
@@ -208,7 +209,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       image = convertedImage
     }
     
-    guard let jpeg = UIImageJPEGRepresentation(image!, CGFloat(settings.quality/100)) else {
+    guard let jpeg = image!.jpegData(compressionQuality: CGFloat(settings.quality/100)) else {
       self.call?.error("Unable to convert image to jpeg")
       return
     }

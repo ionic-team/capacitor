@@ -11,7 +11,7 @@ class DevMode {
   }
   
   func show() {
-    let alert = UIAlertController(title: "Capacitor Dev Menu", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+    let alert = UIAlertController(title: "Capacitor Dev Menu", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
     alert.addAction(UIAlertAction(title: "Reload", style: .destructive, handler: { (action: UIAlertAction) in
       print("Reloading")

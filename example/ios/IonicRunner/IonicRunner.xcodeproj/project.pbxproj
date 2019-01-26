@@ -17,13 +17,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2FCFC5701FFED9BE007F0C74 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 157267DD0C6C10F8D86FEEAE81888E4E;
-			remoteInfo = GCDWebServer;
-		};
 		5057E1772003EC3F003545B8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C2BF9B261E874A960050F782 /* Pods.xcodeproj */;
@@ -144,7 +137,6 @@
 			children = (
 				5057E1782003EC3F003545B8 /* Capacitor.framework */,
 				5057E17A2003EC3F003545B8 /* Cordova.framework */,
-				2FCFC5711FFED9BE007F0C74 /* GCDWebServer.framework */,
 				C2BF9B2C1E874A960050F782 /* Pods_IonicRunner.framework */,
 			);
 			name = Products;
@@ -215,13 +207,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		2FCFC5711FFED9BE007F0C74 /* GCDWebServer.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = GCDWebServer.framework;
-			remoteRef = 2FCFC5701FFED9BE007F0C74 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		5057E1782003EC3F003545B8 /* Capacitor.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -443,7 +428,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = Ionic.CapacitorTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -460,7 +445,7 @@
 				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = Ionic.CapacitorTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

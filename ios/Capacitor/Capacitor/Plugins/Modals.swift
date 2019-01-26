@@ -13,8 +13,8 @@ public class CAPModalsPlugin : CAPPlugin {
     let message = call.options["message"] as? String
     let buttonTitle = call.options["buttonTitle"] as? String ?? "OK"
     
-    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
-    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: nil))
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
     
     DispatchQueue.main.async {
       self.bridge.viewController.present(alert, animated: true, completion: nil)
@@ -33,13 +33,13 @@ public class CAPModalsPlugin : CAPPlugin {
     let okButtonTitle = call.options["okButtonTitle"] as? String ?? "OK"
     let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? "Cancel"
     
-    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
-    alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+    alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in
       call.success([
         "value": true
       ])
     }))
-    alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+    alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in
       call.success([
         "value": false
       ])
@@ -60,7 +60,7 @@ public class CAPModalsPlugin : CAPPlugin {
     let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? "Cancel"
     let inputPlaceholder = call.options["inputPlaceholder"] as? String ?? ""
     
-    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
     
     DispatchQueue.main.async {
       
@@ -68,14 +68,14 @@ public class CAPModalsPlugin : CAPPlugin {
         textField.text = inputPlaceholder
       }
       
-      alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+      alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in
         let textField = alert.textFields![0] as UITextField
         call.success([
           "value": textField.text ?? "",
           "cancelled": false
         ])
       }))
-      alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertActionStyle.default, handler: { (action) -> Void in
+      alert.addAction(UIAlertAction(title: cancelButtonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in
         call.success([
           "value": "",
           "cancelled": true

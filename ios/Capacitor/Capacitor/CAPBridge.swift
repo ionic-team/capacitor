@@ -86,7 +86,7 @@ enum BridgeError: Error {
   /**
    * Handle an openUrl action and dispatch a notification.
    */
-  public static func handleOpenUrl(_ url: URL, _ options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+  public static func handleOpenUrl(_ url: URL, _ options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.URLOpen.name()), object: [
       "url": url,
       "options": options
@@ -143,12 +143,12 @@ enum BridgeError: Error {
   func bindObservers() {
     let appStatePlugin = getOrLoadPlugin(pluginName: "App") as? CAPAppPlugin
     
-    NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { (notification) in
+    NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { (notification) in
       print("APP ACTIVE")
       self.isActive = true
       appStatePlugin?.fireChange(isActive: self.isActive)
     }
-    NotificationCenter.default.addObserver(forName: .UIApplicationDidEnterBackground, object: nil, queue: OperationQueue.main) { (notification) in
+    NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { (notification) in
       print("APP INACTIVE")
       self.isActive = false
       appStatePlugin?.fireChange(isActive: self.isActive)
@@ -299,7 +299,7 @@ enum BridgeError: Error {
     cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
     if cordovaParser.startupPluginNames.count > 0 {
       for pluginName in cordovaParser.startupPluginNames {
-        _ = cordovaPluginManager?.getCommandInstance(pluginName as! String)
+        _ = cordovaPluginManager?.getCommandInstance(pluginName as? String)
       }
     }
     do {
@@ -340,8 +340,8 @@ enum BridgeError: Error {
   }
   
   public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
-    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
-    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertActionStyle.default, handler: nil))
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
     self.viewController.present(alert, animated: true, completion: nil)
   }
 
@@ -421,7 +421,7 @@ enum BridgeError: Error {
     if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
       let selector = NSSelectorFromString("\(call.method):")
       if !plugin.responds(to: selector) {
-        print("Error: Plugin \(plugin.className) does not respond to method call \(selector).")
+        print("Error: Plugin \(plugin.className!) does not respond to method call \(selector).")
         print("Ensure plugin method exists and uses @objc in its declaration")
         return
       }
@@ -489,8 +489,8 @@ enum BridgeError: Error {
    */
   @objc public func evalWithPlugin(_ plugin: CAPPlugin, js: String) {
     let wrappedJs = """
-    window.Capacitor.withPlugin('\(plugin.getId())', function(plugin) {
-      if(!plugin) { console.error('Unable to execute JS in plugin, no such plugin found for id \(plugin.getId())'); }
+    window.Capacitor.withPlugin('\(plugin.getId()!)', function(plugin) {
+      if(!plugin) { console.error('Unable to execute JS in plugin, no such plugin found for id \(plugin.getId()!)'); }
       \(js)
     });
     """

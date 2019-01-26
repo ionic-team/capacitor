@@ -1,7 +1,7 @@
 public final class CAPAppDelegate {
   public static let shared = CAPAppDelegate()
   
-  public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+  public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
     return CAPBridge.handleOpenUrl(url, options)
   }
   
