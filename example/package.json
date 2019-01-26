@@ -14,7 +14,7 @@
     "copy.android": "cp -R www/* android/app/src/main/assets/public/",
     "copy.electron": "cp -R www electron/",
     "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve"    
+    "ionic:serve": "ionic-app-scripts serve"
   },
   "dependencies": {
     "@angular/common": "5.0.1",

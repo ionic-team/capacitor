@@ -1,6 +1,5 @@
 import '@stencil/router';
 import { Component, Prop, Element, Listen, State } from '@stencil/core';
-import { RouterSwitch } from '@stencil/router';
 
 @Component({
   tag: 'capacitor-site',
@@ -77,7 +76,7 @@ export class App {
         <site-header />
         <div class="app root">
           <stencil-router>
-            <RouterSwitch scrollTopOffset={0}>
+            <stencil-route-switch scrollTopOffset={0}>
 
               <stencil-route
                 url="/"
@@ -184,7 +183,17 @@ export class App {
                 }}
               />
 
-            </RouterSwitch>
+              <stencil-route
+                url="/docs/community/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`community/${page}.html`]} />
+                  );
+                }}
+              />
+
+            </stencil-route-switch>
           </stencil-router>
         </div>
       </div>,
@@ -199,7 +208,15 @@ export class App {
           </div>
 
           <div id="footer-icons">
-            <iframe class="star-button" src="https://ghbtns.com/github-btn.html?user=ionic-team&repo=capacitor&type=star&count=true" frameBorder="0" scrolling="0" width="100px" height="20px"></iframe>
+            <iframe
+              title="Github Star Count" 
+              class="star-button"
+              src="https://ghbtns.com/github-btn.html?user=ionic-team&repo=capacitor&type=star&count=true"
+              frameBorder="0"
+              scrolling="0"
+              width="100px"
+              height="20px"
+            ></iframe>
 
             <a class="svg-button"
               id="capacitor-twitter"

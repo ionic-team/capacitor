@@ -1,8 +1,8 @@
 import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
-import { copySync, ensureDirSync, existsAsync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
+import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { buildXmlElement, logError, logFatal, logInfo, readXML, runCommand, writeXML } from './common';
+import { buildXmlElement, log, logError, logFatal, logInfo, readXML, resolveNode, runCommand, writeXML } from './common';
 import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -17,12 +17,14 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
   let pluginModules: Array<string> = [];
   let pluginExports: Array<string> = [];
   plugins.map((p) => {
+    const pluginId = p.xml.$.id;
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
       let clobbers: Array<string> = [];
       let merges: Array<string> = [];
       let clobbersModule = '';
       let mergesModule = '';
+      let runsModule = '';
       if (jsModule.clobbers) {
         jsModule.clobbers.map((clobber: any) => {
           clobbers.push(clobber.$.target);
@@ -41,14 +43,17 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
           "${merges.join('",\n          "')}"
         ]`;
       }
+      if (jsModule.runs) {
+        runsModule = ',\n        "runs": true';
+      }
       pluginModules.push(`{
-        "id": "${p.id}.${jsModule.$.name}",
-        "file": "plugins/${p.id}/${jsModule.$.src}",
-        "pluginId": "${p.id}"${clobbersModule}${mergesModule}
+        "id": "${pluginId}.${jsModule.$.name}",
+        "file": "plugins/${pluginId}/${jsModule.$.src}",
+        "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
       }`
       );
     });
-    pluginExports.push(`"${p.id}": "${p.xml.$.version}"`);
+    pluginExports.push(`"${pluginId}": "${p.xml.$.version}"`);
   });
   return `
   cordova.define('cordova/plugin_list', function(require, exports, module) {
@@ -74,14 +79,17 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
   removePluginFiles(config, platform);
   await Promise.all(cordovaPlugins.map(async p => {
-    const pluginDir = join(pluginsDir, p.id, 'www');
+    const pluginId = p.xml.$.id;
+    const pluginDir = join(pluginsDir, pluginId, 'www');
     ensureDirSync(pluginDir);
     const jsModules = getJSModules(p, platform);
     jsModules.map(async (jsModule: any) => {
-      const filePath = join(webDir, 'plugins', p.id, jsModule.$.src);
+      const filePath = join(webDir, 'plugins', pluginId, jsModule.$.src);
       copySync(join(p.rootPath, jsModule.$.src), filePath);
       let data = await readFileAsync(filePath, 'utf8');
-      data = `cordova.define("${p.id}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
+      data = data.trim();
+      data = `cordova.define("${pluginId}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
+      data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, "")
       await writeFileAsync(filePath, data, 'utf8');
     });
   }));
@@ -89,8 +97,8 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
 }
 
 export async function copyCordovaJS(config: Config, platform: string) {
-  const cordovaPath = resolve(config.app.rootDir, 'node_modules', '@capacitor/core', 'cordova.js');
-  if (!await existsAsync(cordovaPath)) {
+  const cordovaPath = resolveNode(config, '@capacitor/core', 'cordova.js');
+  if (!cordovaPath) {
     logFatal(`Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
     '@capacitor/core is installed? This file is currently required for Capacitor to function.');
     return;
@@ -127,7 +135,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     if (currentPlatform) {
       const configFiles = currentPlatform['config-file'];
       if (configFiles) {
-        const configXMLEntries = configFiles.filter(function(item: any) { return item.$.target.includes(fileName); });
+        const configXMLEntries = configFiles.filter(function(item: any) { return item.$ && item.$.target.includes(fileName); });
         configXMLEntries.map(  (entry: any)  => {
           const feature = { feature: entry.feature };
           pluginEntries.push(feature);
@@ -164,7 +172,7 @@ export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: C
     await copyPluginsJS(config, cordovaPlugins, platform);
   } else {
     removePluginFiles(config, platform);
-    createEmptyCordovaJS(config, platform);
+    await createEmptyCordovaJS(config, platform);
   }
   await autoGenerateConfig(config, cordovaPlugins, platform);
 }
@@ -173,9 +181,9 @@ export async function copyCordovaJSFiles(config: Config, platform: string) {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
-    plugins = await getIOSPlugins(config, allPlugins);
+    plugins = getIOSPlugins(allPlugins);
   } else if (platform === config.android.name) { 
-    plugins = await getAndroidPlugins(config, allPlugins);
+    plugins = getAndroidPlugins(allPlugins);
   }
   const cordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Cordova);
@@ -187,7 +195,7 @@ export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Co
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
     editConfig.concat(configFile).map(async (configElement: any) => {
-      if (!configElement.$.target.includes('config.xml')) {
+      if (configElement.$ && !configElement.$.target.includes('config.xml')) {
         if (platform === config.ios.name) {
           if (configElement.$.target.includes('Info.plist')) {
             logiOSPlist(configElement, config, p);
@@ -246,15 +254,18 @@ function removeOuterTags(str: string) {
   return str.substring(start, end);
 }
 
-export async function checkAndInstallDependencies(config: Config, cordovaPlugins: Plugin[], platform: string) {
+export async function checkAndInstallDependencies(config: Config, plugins: Plugin[], platform: string) {
   let needsUpdate = false;
+  const cordovaPlugins = plugins
+      .filter(p => getPluginType(p, platform) === PluginType.Cordova);
+  const incompatible = plugins.filter(p => getPluginType(p, platform) === PluginType.Incompatible);
   await Promise.all(cordovaPlugins.map(async (p) => {
     let allDependencies: Array<string> = [];
     allDependencies = allDependencies.concat(getPlatformElement(p, platform, 'dependency'));
     if (p.xml['dependency']) {
       allDependencies = allDependencies.concat(p.xml['dependency']);
     }
-    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins().includes(dep.$.id));
+    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins().includes(dep.$.id) && incompatible.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0);
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
         if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
@@ -265,9 +276,10 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
           logInfo(`installing missing dependency plugin ${plugin}`);
           try {
             await runCommand(`cd "${config.app.rootDir}" && npm install ${plugin}`);
+            await config.updateAppPackage();
             needsUpdate = true;
           } catch (e) {
-            console.log("\n");
+            log("\n");
             logError(`couldn't install dependency plugin ${plugin}`);
           }
         }
@@ -278,5 +290,8 @@ export async function checkAndInstallDependencies(config: Config, cordovaPlugins
 }
 
 export function getIncompatibleCordovaPlugins(){
-  return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview"];
+  return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
+  "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
+  "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support",
+  "cordova-plugin-ionic-keyboard"];
 }

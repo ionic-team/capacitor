@@ -33,4 +33,9 @@ export class DevicePage {
       this.deviceInfoJson = JSON.stringify(info, null, 2);
     });
   }
+
+  async getDeviceLanguageCode() {
+    const code = await Plugins.Device.getLanguageCode();
+    alert('Language: ' + code.value);
+  }
 }

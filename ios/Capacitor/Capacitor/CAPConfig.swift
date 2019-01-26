@@ -71,12 +71,11 @@
   }
   
   @objc public static func getString(_ key: String) -> String? {
-    let k = CAPConfig.getConfigKey(key)
-    let o = getInstance().getConfigObjectDeepest(key: key)
-    if o == nil {
+    let value = getValue(key)
+    if value == nil {
       return nil
     }
-    return getValue(k) as? String
+    return value as? String
   }
   
 }

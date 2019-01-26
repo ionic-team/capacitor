@@ -36,9 +36,14 @@ public class CAPDevicePlugin: CAPPlugin {
     UIDevice.current.isBatteryMonitoringEnabled = false
   }
   
+  @objc func getLanguageCode(_ call: CAPPluginCall) {
+    let code = Locale.current.languageCode ?? ""
+    call.success([
+      "value": code
+    ])
+  }
   
   @objc func getAdvertisingIdentifier(_ call: CAPPluginCall) {
-
   }
   
   @objc func getMemoryUsage(_ call: CAPPluginCall) {

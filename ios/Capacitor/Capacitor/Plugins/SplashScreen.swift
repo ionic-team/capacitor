@@ -10,6 +10,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   var isVisible: Bool = false
   
   let launchShowDuration = 3000
+  let launchAutoHide = true
   
   let defaultFadeInDuration = 200
   let defaultFadeOutDuration = 200
@@ -18,6 +19,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   
   public override func load() {
     buildViews()
+    showOnLaunch()
   }
   
   // Show the splash screen
@@ -82,8 +84,6 @@ public class CAPSplashScreenPlugin : CAPPlugin {
       bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
-    
-    imageView.alpha = 0
     imageView.image = image
     imageView.frame = CGRect.init(origin: CGPoint.init(x: 0, y: 0), size: window.bounds.size)
     imageView.contentMode = .scaleAspectFill
@@ -95,8 +95,8 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   
   func showOnLaunch() {
     let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
-    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: true, completion: {
-      
+    let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? launchAutoHide
+    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, completion: {
     }, isLaunchSplash: true)
   }
   

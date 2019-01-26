@@ -42,24 +42,38 @@ typedef enum : NSUInteger {
 - (void)load
 {
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarDidChangeFrame:) name:UIApplicationDidChangeStatusBarFrameNotification object: nil];
-  
-  self.keyboardResizes = ResizeNative;
-  BOOL doesResize = YES;
-  if (!doesResize) {
-    self.keyboardResizes = ResizeNone;
-    NSLog(@"CAPIonicKeyboard: no resize");
     
-  } else {
-    NSString *resizeMode = @"ionic";
+  NSString * style = [self getConfigValue:@"style"];
+  if ([style isEqualToString:@"dark"]) {
+    [self setKeyboardAppearanceDark];
+  }
+    
+  BOOL doesResize = YES;
+  if ([[self getConfigValue:@"resize"] isEqualToString:@"none"]) {
+    doesResize = NO;
+    self.keyboardResizes = ResizeNone;
+    NSLog(@"CAPKeyboard: no resize");
+  }
+
+  if (doesResize) {
+    self.keyboardResizes = ResizeNative;
+    NSString * resizeMode = [self getConfigValue:@"resize"];
+    
     if (resizeMode) {
       if ([resizeMode isEqualToString:@"ionic"]) {
         self.keyboardResizes = ResizeIonic;
+        NSLog(@"CAPKeyboard: resize mode - ionic");
       } else if ([resizeMode isEqualToString:@"body"]) {
         self.keyboardResizes = ResizeBody;
+          NSLog(@"CAPKeyboard: resize mode - body");
       }
     }
-    // NSLog(@"CAPIonicKeyboard: resize mode %d", self.keyboardResizes);
+      
+    if (self.keyboardResizes == ResizeNative) {
+      NSLog(@"CAPKeyboard: resize mode - native");
+    }
   }
+
   self.hideFormAccessoryBar = YES;
   
   NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -148,6 +162,16 @@ typedef enum : NSUInteger {
   }
 }
 
+- (void)resizeElement:(NSString *)element withPaddingBottom:(int)paddingBottom withScreenHeight:(int)screenHeight
+{
+    int height = -1;
+    if (paddingBottom > 0) {
+        height = screenHeight - paddingBottom;
+    }
+    
+    [self.bridge evalWithJs: [NSString stringWithFormat:@"(function() { var el = %@; var height = %d; if (el) { el.style.height = height > -1 ? height + 'px' : null; } })()", element, height]];
+}
+
 - (void)_updateFrame
 {
   CGSize statusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
@@ -163,16 +187,12 @@ typedef enum : NSUInteger {
   switch (self.keyboardResizes) {
     case ResizeBody:
     {
-      NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.body);",
-                      _paddingBottom, (int)f.size.height];
-      [self.bridge evalWithPlugin:self js:js];
+      [self resizeElement:@"document.body" withPaddingBottom:_paddingBottom withScreenHeight:(int)f.size.height];
       break;
     }
     case ResizeIonic:
     {
-      NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.querySelector('ion-app'));",
-                      _paddingBottom, (int)f.size.height];
-      [self.bridge evalWithPlugin:self js:js];
+      [self resizeElement:@"document.querySelector('ion-app')" withPaddingBottom:_paddingBottom withScreenHeight:(int)f.size.height];
       break;
     }
     case ResizeNative:
@@ -242,6 +262,22 @@ static IMP WKOriginalImp;
 - (void)show:(CAPPluginCall *)call
 {
   [call successHandler];
+}
+
+- (void)setKeyboardAppearanceDark
+{
+  IMP darkImp = imp_implementationWithBlock(^(id _s) {
+    return UIKeyboardAppearanceDark;
+  });
+  for (NSString* classString in @[@"WKContentView", @"UITextInputTraits"]) {
+    Class c = NSClassFromString(classString);
+    Method m = class_getInstanceMethod(c, @selector(keyboardAppearance));
+    if (m != NULL) {
+      method_setImplementation(m, darkImp);
+    } else {
+      class_addMethod(c, @selector(keyboardAppearance), darkImp, "l@:");
+    }
+  }
 }
 
 #pragma mark dealloc

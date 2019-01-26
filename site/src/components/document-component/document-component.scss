@@ -14,6 +14,31 @@ document-component {
     }
   }
 
+  table, td, th {
+    border: 1px solid #eee;
+    border-collapse: collapse;
+  }
+  table {
+    width: 100%;
+
+    th {
+      text-align: left;
+      padding: 4px;
+    }
+    td {
+      font-size: 12px;
+      line-height: 18px;
+      vertical-align: top;
+      padding: 4px;
+      min-width: 150px;
+
+
+      code {
+        font-size: 12px;
+      }
+    }
+  }
+
   img {
     max-width: 100%;
   }

@@ -3,12 +3,13 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
-
 import com.getcapacitor.android.R;
+import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.plugin.App;
 
@@ -23,10 +24,13 @@ import java.util.List;
 
 public class BridgeActivity extends AppCompatActivity {
   protected Bridge bridge;
-  public CordovaInterfaceImpl cordovaInterface;
+  private WebView webView;
+  protected MockCordovaInterfaceImpl cordovaInterface;
+  protected boolean keepRunning = true;
   private ArrayList<PluginEntry> pluginEntries;
-  PluginManager pluginManager;
+  private PluginManager pluginManager;
   private CordovaPreferences preferences;
+  private MockCordovaWebViewImpl mockWebView;
 
   private int activityDepth = 0;
 
@@ -47,7 +51,13 @@ public class BridgeActivity extends AppCompatActivity {
     getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(R.style.AppTheme_NoActionBar);
-    WebView.setWebContentsDebuggingEnabled(true);
+
+    boolean defaultDebuggable = false;
+    if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+      defaultDebuggable = true;
+    }
+
+    WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
 
     setContentView(R.layout.bridge_layout_main);
 
@@ -58,26 +68,27 @@ public class BridgeActivity extends AppCompatActivity {
    * Load the WebView and create the Bridge
    */
   protected void load(Bundle savedInstanceState) {
-    Log.d(Bridge.TAG, "Starting BridgeActivity");
+    Log.d(LogUtils.getCoreTag(), "Starting BridgeActivity");
 
-    WebView webView = findViewById(R.id.webview);
-    cordovaInterface = new CordovaInterfaceImpl(this);
+    webView = findViewById(R.id.webview);
+    cordovaInterface = new MockCordovaInterfaceImpl(this);
     if (savedInstanceState != null) {
       cordovaInterface.restoreInstanceState(savedInstanceState);
     }
 
-    MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(this.getApplicationContext());
+    mockWebView = new MockCordovaWebViewImpl(this.getApplicationContext());
     mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
 
-    this.pluginManager = mockWebView.getPluginManager();
-    cordovaInterface.onCordovaInit(this.pluginManager);
-    bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, this.pluginManager);
+    pluginManager = mockWebView.getPluginManager();
+    cordovaInterface.onCordovaInit(pluginManager);
+    bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, pluginManager);
 
     Splash.showOnLaunch(this);
 
     if (savedInstanceState != null) {
       bridge.restoreInstanceState(savedInstanceState);
     }
+    this.keepRunning = preferences.getBoolean("KeepRunning", true);
   }
 
   public Bridge getBridge() {
@@ -113,15 +124,16 @@ public class BridgeActivity extends AppCompatActivity {
     activityDepth++;
 
     this.bridge.onStart();
+    mockWebView.handleStart();
 
-    Log.d(Bridge.TAG, "App started");
+    Log.d(LogUtils.getCoreTag(), "App started");
   }
 
   @Override
   public void onRestart() {
     super.onRestart();
     this.bridge.onRestart();
-    Log.d(Bridge.TAG, "App restarted");
+    Log.d(LogUtils.getCoreTag(), "App restarted");
   }
 
   @Override
@@ -132,7 +144,9 @@ public class BridgeActivity extends AppCompatActivity {
 
     this.bridge.onResume();
 
-    Log.d(Bridge.TAG, "App resumed");
+    mockWebView.handleResume(this.keepRunning);
+
+    Log.d(LogUtils.getCoreTag(), "App resumed");
   }
 
   @Override
@@ -140,8 +154,12 @@ public class BridgeActivity extends AppCompatActivity {
     super.onPause();
 
     this.bridge.onPause();
+    if (this.mockWebView != null) {
+      boolean keepRunning = this.keepRunning || this.cordovaInterface.getActivityResultCallback() != null;
+      this.mockWebView.handlePause(keepRunning);
+    }
 
-    Log.d(Bridge.TAG, "App paused");
+    Log.d(LogUtils.getCoreTag(), "App paused");
   }
 
   @Override
@@ -155,13 +173,29 @@ public class BridgeActivity extends AppCompatActivity {
 
     this.bridge.onStop();
 
-    Log.d(Bridge.TAG, "App stopped");
+    if (mockWebView != null) {
+      mockWebView.handleStop();
+    }
+
+    Log.d(LogUtils.getCoreTag(), "App stopped");
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    Log.d(Bridge.TAG, "App destroyed");
+    if (this.mockWebView != null) {
+      mockWebView.handleDestroy();
+    }
+    Log.d(LogUtils.getCoreTag(), "App destroyed");
+  }
+
+  @Override
+  public void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    if (webView != null) {
+      webView.removeAllViews();
+      webView.destroy();
+    }
   }
 
   @Override
@@ -188,6 +222,7 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     this.bridge.onNewIntent(intent);
+    mockWebView.onNewIntent(intent);
   }
 
   @Override

@@ -1,4 +1,5 @@
 $link-color: #5EB6FC;
+$code-font: monospace;/*Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace;*/
 
 plugin-api {
   .avc-code-plugin-index {
@@ -14,6 +15,7 @@ plugin-api {
   }
 
   .avc-code-method {
+    margin-bottom: 25px;
     .avc-code-method-header {
       margin-top: 15px;
     }
@@ -23,7 +25,7 @@ plugin-api {
   }
 
   .avc-code-method-signature {
-    font-family: monospace;
+    font-family: $code-font;
     padding: 8px;
     background-color: #eee;
     border-radius: 3px;
@@ -52,21 +54,22 @@ plugin-api {
     }
   }
 
-  avc-code-type {
-    display: inline-block;
-    color: $link-color;
-    font-weight: 500;
-  }
-
   .avc-code-string {
     color: $link-color;
   }
   
   .avc-code-interface {
     margin-top: 25px;
+    font-family: $code-font;
+    line-height: 18px;
   }
 
   .avc-code-interface-param {
     margin-left: 25px;
+    margin: 8px 0 8px 25px;
+  }
+
+  .avc-code-param-comment {
+    color: #8b94a5;
   }
 }

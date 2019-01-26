@@ -14,9 +14,12 @@ export interface PackageJson {
 }
 
 export interface ExternalConfig {
-  webDir: string;
-  startPage: string;
-  ios: any;
+  webDir?: string;
+  startPage?: string;
+  ios?: {
+    cordovaSwiftVersion?: string;
+    minVersion?: string;
+  };
 }
 
 export interface AppPluginsConfig {

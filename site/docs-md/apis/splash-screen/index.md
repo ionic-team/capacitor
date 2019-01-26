@@ -44,7 +44,75 @@ If your app needs longer than 3 seconds to load, configure the default duration 
 }
 ```
 
+If you want to be sure the splash never hides before the app is fully loaded, set `launchAutoHide` to `false` in your `capacitor.config.json`:
+
+```json
+{
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
+```
+
 Then run `npx cap copy` to apply these changes.
+
+## Configuration
+
+These config parameters are availiable in `capacitor.config.json`:
+
+```json
+{
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "androidSplashResourceName": "splash"
+    }
+  }
+}
+```
+
+## Add your own splash screen images
+
+See [Josh Morony's blog post](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/) on how to change it. 
+
+### Android
+
+If your splash screen images aren't named "splash.png" but for example "screen.png" you have to change `"androidSplashResourceName": "screen"` in `capacitor.config.json` and change the following files in you're Android app as well:
+
+`android/app/src/main/res/drawable/launch_splash.xml` 
+
+replace
+```
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/splash"
+    android:scaleType="centerCrop"
+    />
+```
+with
+```
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/screen"
+    android:scaleType="centerCrop"
+    />
+```
+
+`android/app/src/main/res/values/styles.xml` 
+
+replace
+```
+    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
+        <item name="android:background">@drawable/splash</item>
+    </style>
+```
+with
+```
+    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
+        <item name="android:background">@drawable/screen</item>
+    </style>
+```
 
 ## API
 

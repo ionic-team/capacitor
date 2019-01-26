@@ -107,7 +107,17 @@ public class CAPFilesystemPlugin : CAPPlugin {
       if encoding != nil {
         try data.write(to: fileUrl, atomically: false, encoding: .utf8)
       } else {
-        try Data(base64Encoded: data)?.write(to: fileUrl)
+        let dataParts = data.split(separator: ",")
+        var cleanData = data
+        if dataParts.count > 0 {
+            cleanData = String(dataParts.last!)
+        }
+        if let base64Data = Data(base64Encoded: cleanData) {
+          try base64Data.write(to: fileUrl)
+        } else {
+          handleError(call, "Unable to save file")
+          return
+        }
       }
       call.success()
     } catch let error as NSError {

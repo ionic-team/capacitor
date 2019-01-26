@@ -17,28 +17,24 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.SequenceInputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Helper class meant to be used with the android.webkit.WebView class to enable hosting assets,
- * resources and other data on 'virtual' http(s):// URL.
- * Hosting assets and resources on http(s):// URLs is desirable as it is compatible with the
+ * resources and other data on 'virtual' https:// URL.
+ * Hosting assets and resources on https:// URLs is desirable as it is compatible with the
  * Same-Origin policy.
  * <p>
  * This class is intended to be used from within the
@@ -48,27 +44,20 @@ import java.util.UUID;
  * methods.
  */
 public class WebViewLocalServer {
-  private static String TAG = "WebViewAssetServer";
 
-  /**
-   * capacitorapp.net is reserved by the Ionic team for use in local capacitor apps.
-   */
-  public final static String knownUnusedAuthority = "capacitorapp.net";
-  private final static String httpScheme = "http";
-  private final static String httpsScheme = "https";
+  private final static String capacitorScheme = Bridge.CAPACITOR_SCHEME_NAME;
+  private final static String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
+  private final static String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
+  private String basePath;
 
   private final UriMatcher uriMatcher;
   private final AndroidProtocolHandler protocolHandler;
-  private final String authority;
-  // Whether we're serving local files or proxying (for example, when doing livereload on a
-  // non-local endpoint (will be false in that case)
-  private final boolean isLocal;
+  private final ArrayList<String> authorities;
+  private boolean isAsset;
   // Whether to route all requests to paths without extensions back to `index.html`
   private final boolean html5mode;
   private final JSInjector jsInjector;
   private final Bridge bridge;
-
-  public String getAuthority() { return authority; }
 
   /**
    * A handler that produces responses for paths on the virtual asset server.
@@ -139,48 +128,11 @@ public class WebViewLocalServer {
     }
   }
 
-  /**
-   * Information about the URLs used to host the assets in the WebView.
-   */
-  public static class AssetHostingDetails {
-    private Uri httpPrefix;
-    private Uri httpsPrefix;
-
-    /*package*/ AssetHostingDetails(Uri httpPrefix, Uri httpsPrefix) {
-      this.httpPrefix = httpPrefix;
-      this.httpsPrefix = httpsPrefix;
-    }
-
-    /**
-     * Gets the http: scheme prefix at which assets are hosted.
-     *
-     * @return the http: scheme prefix at which assets are hosted. Can return null.
-     */
-    public Uri getHttpPrefix() {
-      return httpPrefix;
-    }
-
-    /**
-     * Gets the https: scheme prefix at which assets are hosted.
-     *
-     * @return the https: scheme prefix at which assets are hosted. Can return null.
-     */
-    public Uri getHttpsPrefix() {
-      return httpsPrefix;
-    }
-  }
-
-  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, String authority, boolean html5mode) {
+  WebViewLocalServer(Context context, Bridge bridge, JSInjector jsInjector, ArrayList<String> authorities, boolean html5mode) {
     uriMatcher = new UriMatcher(null);
     this.html5mode = html5mode;
     this.protocolHandler = new AndroidProtocolHandler(context.getApplicationContext());
-    if (authority != null) {
-      this.authority = authority;
-      this.isLocal = false;
-    } else {
-      this.isLocal = true;
-      this.authority = UUID.randomUUID().toString() + "" + knownUnusedAuthority;
-    }
+    this.authorities = authorities;
     this.bridge = bridge;
     this.jsInjector = jsInjector;
   }
@@ -191,12 +143,12 @@ public class WebViewLocalServer {
     }
     Uri uri = Uri.parse(url);
     if (uri == null) {
-      Log.e(TAG, "Malformed URL: " + url);
+      Log.e(LogUtils.getCoreTag(), "Malformed URL: " + url);
       return null;
     }
     String path = uri.getPath();
     if (path == null || path.length() == 0) {
-      Log.e(TAG, "URL does not have a path: " + url);
+      Log.e(LogUtils.getCoreTag(), "URL does not have a path: " + url);
       return null;
     }
     return uri;
@@ -212,6 +164,7 @@ public class WebViewLocalServer {
    * @return a response if the request URL had a matching handler, null if no handler was found.
    */
   public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+    Uri loadingUrl = request.getUrl();
     PathHandler handler;
     synchronized (uriMatcher) {
       handler = (PathHandler) uriMatcher.match(request.getUrl());
@@ -220,12 +173,28 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (this.isLocal) {
-      Log.d("SERVER", "Handling local request: " + request.getUrl().toString());
+    if (isLocalFile(loadingUrl)) {
+      InputStream responseStream = new LollipopLazyInputStream(handler, request);
+      String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
+      return new WebResourceResponse(mimeType, handler.getEncoding(),
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
+    }
+
+    if (loadingUrl.toString().startsWith(bridge.getLocalUrl())) {
+      Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
       return handleProxyRequest(request, handler);
     }
+  }
+
+  private boolean isLocalFile(Uri uri) {
+    String path = uri.getPath();
+    if (path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart)) {
+      return true;
+    }
+    return false;
   }
 
   private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
@@ -237,19 +206,33 @@ public class WebViewLocalServer {
     }
 
     if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
-      InputStream stream;
+      InputStream responseStream;
       try {
-        stream = protocolHandler.openAsset("public/index.html", "");
+        String startPath = this.basePath + "/index.html";
+        if (isAsset) {
+          responseStream = protocolHandler.openAsset(startPath);
+        } else {
+          responseStream = protocolHandler.openFile(startPath);
+        }
       } catch (IOException e) {
-        Log.e(TAG, "Unable to open index.html", e);
+        Log.e(LogUtils.getCoreTag(), "Unable to open index.html", e);
         return null;
       }
 
-      stream = jsInjector.getInjectedStream(stream);
-      bridge.reset();
+      responseStream = jsInjector.getInjectedStream(responseStream);
 
+      bridge.reset();
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
       return new WebResourceResponse("text/html", handler.getEncoding(),
-          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
+    }
+
+    if ("/favicon.ico".equalsIgnoreCase(path)) {
+      try {
+        return new WebResourceResponse("image/png", null, null);
+      } catch (Exception e) {
+        Log.e(LogUtils.getCoreTag(), "favicon handling failed", e);
+      }
     }
 
     int periodIndex = path.lastIndexOf(".");
@@ -257,18 +240,17 @@ public class WebViewLocalServer {
       String ext = path.substring(path.lastIndexOf("."), path.length());
 
       InputStream responseStream = new LollipopLazyInputStream(handler, request);
-      InputStream stream = responseStream;
 
       // TODO: Conjure up a bit more subtlety than this
       if (ext.equals(".html")) {
-        stream = jsInjector.getInjectedStream(responseStream);
+        responseStream = jsInjector.getInjectedStream(responseStream);
         bridge.reset();
       }
 
-      String mimeType = getMimeType(path, stream);
-
+      String mimeType = getMimeType(path, responseStream);
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
       return new WebResourceResponse(mimeType, handler.getEncoding(),
-          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
     }
 
     return null;
@@ -282,49 +264,55 @@ public class WebViewLocalServer {
    * @return
    */
   private WebResourceResponse handleProxyRequest(WebResourceRequest request, PathHandler handler) {
-    try {
-      final String method = request.getMethod();
-      String path = request.getUrl().getPath();
-      URL url = new URL(request.getUrl().toString());
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setRequestMethod(method);
-      conn.setReadTimeout(30 * 1000);
-      conn.setConnectTimeout(30 * 1000);
+    final String method = request.getMethod();
+    if (method.equals("GET")) {
+      try {
+        String path = request.getUrl().getPath();
+        URL url = new URL(request.getUrl().toString());
+        Map<String, String> headers = request.getRequestHeaders();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+          conn.setRequestProperty(header.getKey(), header.getValue());
+        }
+        conn.setRequestMethod(method);
+        conn.setReadTimeout(30 * 1000);
+        conn.setConnectTimeout(30 * 1000);
 
-      InputStream stream = conn.getInputStream();
+        InputStream responseStream = conn.getInputStream();
 
-      if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
-        stream = jsInjector.getInjectedStream(stream);
+        if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
+          responseStream = jsInjector.getInjectedStream(responseStream);
 
-        bridge.reset();
-
-        return new WebResourceResponse("text/html", handler.getEncoding(),
-            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
-      }
-
-      int periodIndex = path.lastIndexOf(".");
-      if (periodIndex >= 0) {
-        String ext = path.substring(path.lastIndexOf("."), path.length());
-
-        // TODO: Conjure up a bit more subtlety than this
-        if (ext.equals(".html")) {
-          stream = jsInjector.getInjectedStream(stream);
           bridge.reset();
+
+          return new WebResourceResponse("text/html", handler.getEncoding(),
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
 
-        String mimeType = getMimeType(path, stream);
+        int periodIndex = path.lastIndexOf(".");
+        if (periodIndex >= 0) {
+          String ext = path.substring(path.lastIndexOf("."), path.length());
 
-        return new WebResourceResponse(mimeType, handler.getEncoding(),
-            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), stream);
+          // TODO: Conjure up a bit more subtlety than this
+          if (ext.equals(".html")) {
+            responseStream = jsInjector.getInjectedStream(responseStream);
+            bridge.reset();
+          }
+
+          String mimeType = getMimeType(path, responseStream);
+
+          return new WebResourceResponse(mimeType, handler.getEncoding(),
+              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
+        }
+
+        return new WebResourceResponse("", handler.getEncoding(),
+            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
+
+      } catch (SocketTimeoutException ex) {
+        bridge.handleAppUrlLoadError(ex);
+      } catch (Exception ex) {
+        bridge.handleAppUrlLoadError(ex);
       }
-
-      return new WebResourceResponse("", handler.getEncoding(),
-          handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
-
-    } catch (SocketTimeoutException ex) {
-      bridge.handleAppUrlLoadError(ex);
-    } catch (Exception ex) {
-      bridge.handleAppUrlLoadError(ex);
     }
     return null;
   }
@@ -334,7 +322,7 @@ public class WebViewLocalServer {
     try {
       mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
       if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
-        Log.d(Bridge.TAG, "We shouldn't be here");
+        Log.d(LogUtils.getCoreTag(), "We shouldn't be here");
       }
       if (mimeType == null) {
         if (path.endsWith(".js")) {
@@ -345,9 +333,21 @@ public class WebViewLocalServer {
         }
       }
     } catch (Exception ex) {
-      Log.e(TAG, "Unable to get mime type" + path, ex);
+      Log.e(LogUtils.getCoreTag(), "Unable to get mime type" + path, ex);
     }
     return mimeType;
+  }
+
+  private int getStatusCode(InputStream stream, int defaultCode) {
+    int finalStatusCode = defaultCode;
+    try {
+      if (stream.available() == 0) {
+        finalStatusCode = 404;
+      }
+    } catch (IOException e) {
+      finalStatusCode = 500;
+    }
+    return finalStatusCode;
   }
 
   /**
@@ -369,78 +369,61 @@ public class WebViewLocalServer {
   }
 
   /**
-   * Hosts the application's assets on an http(s):// URL. Assets from the local path
+   * Hosts the application's assets on an https:// URL. Assets from the local path
    * <code>assetPath/...</code> will be available under
-   * <code>http(s)://{uuid}.androidplatform.net/assets/...</code>.
+   * <code>https://{uuid}.androidplatform.net/assets/...</code>.
    *
    * @param assetPath the local path in the application's asset folder which will be made
    *                  available by the server (for example "/www").
    * @return prefixes under which the assets are hosted.
    */
-  public AssetHostingDetails hostAssets(String assetPath) {
-    return hostAssets(authority, assetPath, "", true, true);
-  }
-
-
-  /**
-   * Hosts the application's assets on an http(s):// URL. Assets from the local path
-   * <code>assetPath/...</code> will be available under
-   * <code>http(s)://{uuid}.androidplatform.net/{virtualAssetPath}/...</code>.
-   *
-   * @param assetPath        the local path in the application's asset folder which will be made
-   *                         available by the server (for example "/www").
-   * @param virtualAssetPath the path on the local server under which the assets should be hosted.
-   * @param enableHttp       whether to enable hosting using the http scheme.
-   * @param enableHttps      whether to enable hosting using the https scheme.
-   * @return prefixes under which the assets are hosted.
-   */
-  public AssetHostingDetails hostAssets(final String assetPath, final String virtualAssetPath,
-                                        boolean enableHttp, boolean enableHttps) {
-    return hostAssets(authority, assetPath, virtualAssetPath, enableHttp,
-        enableHttps);
+  public void hostAssets(String assetPath) {
+    this.isAsset = true;
+    this.basePath = assetPath;
+    createHostingDetails();
   }
 
   /**
-   * Hosts the application's assets on an http(s):// URL. Assets from the local path
-   * <code>assetPath/...</code> will be available under
-   * <code>http(s)://{domain}/{virtualAssetPath}/...</code>.
+   * Hosts the application's files on an https:// URL. Files from the basePath
+   * <code>basePath/...</code> will be available under
+   * <code>https://{uuid}.androidplatform.net/...</code>.
    *
-   * @param domain           custom domain on which the assets should be hosted (for example "example.com").
-   * @param assetPath        the local path in the application's asset folder which will be made
-   *                         available by the server (for example "/www").
-   * @param virtualAssetPath the path on the local server under which the assets should be hosted.
-   * @param enableHttp       whether to enable hosting using the http scheme.
-   * @param enableHttps      whether to enable hosting using the https scheme.
+   * @param basePath the local path in the application's data folder which will be made
+   *                  available by the server (for example "/www").
    * @return prefixes under which the assets are hosted.
    */
-  public AssetHostingDetails hostAssets(final String domain,
-                                        final String assetPath, final String virtualAssetPath,
-                                        boolean enableHttp, boolean enableHttps) {
-    Uri.Builder uriBuilder = new Uri.Builder();
-    uriBuilder.scheme(httpScheme);
-    uriBuilder.authority(domain);
-    uriBuilder.path(virtualAssetPath);
+  public void hostFiles(final String basePath) {
+    this.isAsset = false;
+    this.basePath = basePath;
+    createHostingDetails();
+  }
+
+  private void createHostingDetails() {
+    final String assetPath = this.basePath;
 
     if (assetPath.indexOf('*') != -1) {
       throw new IllegalArgumentException("assetPath cannot contain the '*' character.");
     }
-    if (virtualAssetPath.indexOf('*') != -1) {
-      throw new IllegalArgumentException(
-          "virtualAssetPath cannot contain the '*' character.");
-    }
-
-    Uri httpPrefix = null;
-    Uri httpsPrefix = null;
 
     PathHandler handler = new PathHandler() {
       @Override
       public InputStream handle(Uri url) {
-        InputStream stream;
-        String path = url.getPath().replaceFirst(virtualAssetPath, assetPath);
+        InputStream stream = null;
+        String path = url.getPath();
         try {
-          stream = protocolHandler.openAsset(path, assetPath);
+          if (path.startsWith(capacitorContentStart)) {
+            stream = protocolHandler.openContentUrl(url);
+          } else if (path.startsWith(capacitorFileStart) || !isAsset) {
+            if (!path.startsWith(capacitorFileStart)) {
+              path = basePath + url.getPath();
+            }
+            System.out.println("path "+path);
+            stream = protocolHandler.openFile(path);
+          } else {
+            stream = protocolHandler.openAsset(assetPath + path);
+          }
         } catch (IOException e) {
-          Log.e(TAG, "Unable to open asset URL: " + url);
+          Log.e(LogUtils.getCoreTag(), "Unable to open asset URL: " + url);
           return null;
         }
 
@@ -448,99 +431,21 @@ public class WebViewLocalServer {
       }
     };
 
-    if (enableHttp) {
-      httpPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpPrefix, "/"), handler);
-      register(Uri.withAppendedPath(httpPrefix, "**"), handler);
-    }
-    if (enableHttps) {
-      uriBuilder.scheme(httpsScheme);
-      httpsPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpsPrefix, "/"), handler);
-      register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
-    }
-    return new AssetHostingDetails(httpPrefix, httpsPrefix);
-  }
-
-  /**
-   * Hosts the application's resources on an http(s):// URL. Resources
-   * <code>http(s)://{uuid}.androidplatform.net/res/{resource_type}/{resource_name}</code>.
-   *
-   * @return prefixes under which the resources are hosted.
-   */
-  public AssetHostingDetails hostResources() {
-    return hostResources(authority, "/res", true, true);
-  }
-
-  /**
-   * Hosts the application's resources on an http(s):// URL. Resources
-   * <code>http(s)://{uuid}.androidplatform.net/{virtualResourcesPath}/{resource_type}/{resource_name}</code>.
-   *
-   * @param virtualResourcesPath the path on the local server under which the resources
-   *                             should be hosted.
-   * @param enableHttp           whether to enable hosting using the http scheme.
-   * @param enableHttps          whether to enable hosting using the https scheme.
-   * @return prefixes under which the resources are hosted.
-   */
-  public AssetHostingDetails hostResources(final String virtualResourcesPath, boolean enableHttp,
-                                           boolean enableHttps) {
-    return hostResources(authority, virtualResourcesPath, enableHttp, enableHttps);
-  }
-
-  /**
-   * Hosts the application's resources on an http(s):// URL. Resources
-   * <code>http(s)://{domain}/{virtualResourcesPath}/{resource_type}/{resource_name}</code>.
-   *
-   * @param domain               custom domain on which the assets should be hosted (for example "example.com").
-   *                             If untrusted content is to be loaded into the WebView it is advised to make
-   *                             this random.
-   * @param virtualResourcesPath the path on the local server under which the resources
-   *                             should be hosted.
-   * @param enableHttp           whether to enable hosting using the http scheme.
-   * @param enableHttps          whether to enable hosting using the https scheme.
-   * @return prefixes under which the resources are hosted.
-   */
-  public AssetHostingDetails hostResources(final String domain,
-                                           final String virtualResourcesPath, boolean enableHttp,
-                                           boolean enableHttps) {
-    if (virtualResourcesPath.indexOf('*') != -1) {
-      throw new IllegalArgumentException(
-          "virtualResourcesPath cannot contain the '*' character.");
+    for (String authority: authorities) {
+      registerUriForScheme(capacitorScheme, handler, authority);
     }
 
+  }
+
+  private void registerUriForScheme(String scheme, PathHandler handler, String authority) {
     Uri.Builder uriBuilder = new Uri.Builder();
-    uriBuilder.scheme(httpScheme);
-    uriBuilder.authority(domain);
-    uriBuilder.path(virtualResourcesPath);
+    uriBuilder.scheme(scheme);
+    uriBuilder.authority(authority);
+    uriBuilder.path("");
+    Uri uriPrefix = uriBuilder.build();
 
-    Uri httpPrefix = null;
-    Uri httpsPrefix = null;
-
-    PathHandler handler = new PathHandler() {
-      @Override
-      public InputStream handle(Uri url) {
-        InputStream stream = protocolHandler.openResource(url);
-        String mimeType = null;
-        try {
-          mimeType = URLConnection.guessContentTypeFromStream(stream);
-        } catch (Exception ex) {
-          Log.e(TAG, "Unable to get mime type" + url);
-        }
-
-        return stream;
-      }
-    };
-
-    if (enableHttp) {
-      httpPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpPrefix, "**"), handler);
-    }
-    if (enableHttps) {
-      uriBuilder.scheme(httpsScheme);
-      httpsPrefix = uriBuilder.build();
-      register(Uri.withAppendedPath(httpsPrefix, "**"), handler);
-    }
-    return new AssetHostingDetails(httpPrefix, httpsPrefix);
+    register(Uri.withAppendedPath(uriPrefix, "/"), handler);
+    register(Uri.withAppendedPath(uriPrefix, "**"), handler);
   }
 
   /**
@@ -609,5 +514,9 @@ public class WebViewLocalServer {
     protected InputStream handle() {
       return handler.handle(request);
     }
+  }
+
+  public String getBasePath(){
+    return this.basePath;
   }
 }

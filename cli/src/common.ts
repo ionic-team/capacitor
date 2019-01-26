@@ -1,10 +1,11 @@
 import { Config } from './config';
 import { exec } from 'child_process';
 import { setTimeout } from 'timers';
-import { basename, join, resolve } from 'path';
+import { basename, dirname, join, parse, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
-import { readFile } from 'fs';
+import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
+import * as semver from 'semver';
 
 import * as inquirer from 'inquirer';
 
@@ -25,7 +26,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
     Please create it, and make sure it has an index.html file. You can change
     the path of this directory in capacitor.config.json.
-    More info: https://capacitor.ionicframework.com/docs/basics/configuration`;
+    More info: https://capacitor.ionicframework.com/docs/basics/configuring-your-app`;
   }
 
   if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
@@ -74,12 +75,12 @@ export async function checkAppDir(config: Config, dir: string): Promise<string |
 
 export async function checkAppId(config: Config, id: string): Promise<string | null> {
   if (!id) {
-    return `Invalid App ID. Must be in package form (ex: com.example.app)`;
+    return `Invalid App ID. Must be in Java package form with no dashes (ex: com.example.app)`;
   }
   if (/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(id.toLowerCase())) {
     return null;
   }
-  return `Invalid App ID "${id}". Must be in package form (ex: com.example.app)`;
+  return `Invalid App ID "${id}". Must be in Java package form with no dashes (ex: com.example.app)`;
 }
 
 export async function checkAppName(config: Config, name: string): Promise<string | null> {
@@ -238,16 +239,23 @@ export function runCommand(command: string): Promise<string> {
   });
 }
 
-export async function runTask<T>(title: string, fn: () => Promise<T>): Promise<T> {
+export type TaskInfoProvider = (messsage: string) => void
+
+export async function runTask<T>(title: string, fn: (info: TaskInfoProvider) => Promise<T>): Promise<T> {
   const ora = require('ora');
   const spinner = ora(title).start();
 
   try {
     const start = process.hrtime();
-    const value = await fn();
+    let taskInfoMessage;
+    const value = await fn((message: string) => taskInfoMessage = message);
     const elapsed = process.hrtime(start);
     const chalk = require('chalk');
-    spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
+    if (taskInfoMessage) {
+      spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`)
+    } else {
+      spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
+    }
     return value;
 
   } catch (e) {
@@ -288,7 +296,7 @@ export async function getAppId(config: Config, id: string) {
       type: 'input',
       name: 'id',
       default: 'com.example.app',
-      message: 'App Package ID (must be a valid Java package)'
+      message: 'App Package ID (in Java package format, no dashes)'
     }]);
     return answers.id;
   }
@@ -321,4 +329,64 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add electron`);
   log('');
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
+}
+
+export async function checkPlatformVersions(config: Config, platform: string) {
+  const cliPackagePath = resolveNode(config, '@capacitor/cli', 'package.json');
+  if (!cliPackagePath) {
+    logFatal('Unable to find node_modules/@capacitor/cli/package.json. Are you sure',
+      '@capacitor/cli is installed? This file is currently required for Capacitor to function.');
+    return;
+  }
+
+  const platformPackagePath = resolveNode(config, `@capacitor/${platform}`, 'package.json');
+  if (!platformPackagePath) {
+    logFatal(`Unable to find node_modules/@capacitor/${platform}/package.json. Are you sure`,
+      `@capacitor/${platform} is installed? This file is currently required for Capacitor to function.`);
+    return;
+  }
+
+  const cliVersion = (await readJSON(cliPackagePath)).version;
+  const platformVersion = (await readJSON(platformPackagePath)).version;
+
+  if (semver.gt(cliVersion, platformVersion)) {
+    log('\n');
+    logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
+    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
+  }
+}
+
+export function resolveNode(config: Config, ...pathSegments: any[]): string | null {
+  const id = pathSegments[0];
+  const path = pathSegments.slice(1);
+
+  let modulePath;
+  const starts = [config.app.rootDir];
+  for (let start of starts) {
+    modulePath = resolveNodeFrom(start, id);
+    if (modulePath) {
+      break;
+    }
+  }
+  if (!modulePath) {
+    return null;
+  }
+
+  return join(modulePath, ...path);
+}
+
+function resolveNodeFrom(start: string, id: string): string | null {
+  const rootPath = parse(start).root;
+  let basePath = resolve(start);
+  let modulePath;
+  while (true) {
+    modulePath = join(basePath, 'node_modules', id);
+    if (existsSync(modulePath)) {
+      return modulePath;
+    }
+    if (basePath === rootPath) {
+      return null;
+    }
+    basePath = dirname(basePath);
+  }
 }

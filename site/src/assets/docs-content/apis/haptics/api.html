@@ -4,22 +4,21 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-impact-0">impact</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">impact</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="531">HapticsImpactOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+                      <span class="avc-code-method-name">impact</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="523">HapticsImpactOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
     </div>
     <div class="avc-code-method-comment">Trigger a haptics "impact" feedback</div>
-  </div>
   <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="531">HapticsImpactOptions</avc-code-type>
+<avc-code-type type-id="523">HapticsImpactOptions</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
     <span class="avc-code-method-returns-label">Returns:</span> void
   </div>
   
-</div>
+</div></div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-selectionChanged-0">selectionChanged</h3>
                     <div class="avc-code-method-signature">
@@ -28,14 +27,13 @@
     <div class="avc-code-method-comment">Trigger a selection changed haptic hint. If a selection was
 started already, this will cause the device to provide haptic
 feedback (on iOS at least)</div>
-  </div>
   <div class="avc-code-method-params">
 
   <div class="avc-code-method-returns-info">
     <span class="avc-code-method-returns-label">Returns:</span> void
   </div>
   
-</div>
+</div></div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-selectionEnd-0">selectionEnd</h3>
                     <div class="avc-code-method-signature">
@@ -43,45 +41,89 @@ feedback (on iOS at least)</div>
     </div>
     <div class="avc-code-method-comment">If selectionStart() was called, selectionEnd() ends the selection.
 For example, call this when a user has lifted their finger from a control</div>
-  </div>
   <div class="avc-code-method-params">
 
   <div class="avc-code-method-returns-info">
     <span class="avc-code-method-returns-label">Returns:</span> void
   </div>
   
-</div>
+</div></div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-selectionStart-0">selectionStart</h3>
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">selectionStart</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
     </div>
     <div class="avc-code-method-comment">Trigger a selection started haptic hint</div>
-  </div>
   <div class="avc-code-method-params">
 
   <div class="avc-code-method-returns-info">
     <span class="avc-code-method-returns-label">Returns:</span> void
   </div>
   
-</div>
+</div></div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-vibrate-0">vibrate</h3>
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">vibrate</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
     </div>
     <div class="avc-code-method-comment">Vibrate the device</div>
-  </div>
   <div class="avc-code-method-params">
 
   <div class="avc-code-method-returns-info">
     <span class="avc-code-method-returns-label">Returns:</span> void
   </div>
   
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-addListener-0">addListener</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <avc-code-type>string</avc-code-type>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>Function</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="16">PluginListenerHandle</avc-code-type>
+    </div>
+    
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">eventName</span>
+                
+<avc-code-type>string</avc-code-type>
 </div>
-<h3 id="interfaces">Interfaces</h3>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">listenerFunc</span>
+                
+<avc-code-type>Function</avc-code-type>
+</div>
 
-    <div class="avc-code-interface" id="type-531">
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> <avc-code-type type-id="16">PluginListenerHandle</avc-code-type>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-removeListener-0">removeListener</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">removeListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <avc-code-type>string</avc-code-type>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>Function</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+    </div>
+    
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">eventName</span>
+                
+<avc-code-type>string</avc-code-type>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">listenerFunc</span>
+                
+<avc-code-type>Function</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> void
+  </div>
+  
+</div></div>
+<h3 id="interfaces">Interfaces Used</h3>
+
+    <div class="avc-code-interface" id="type-523">
+      <h4 class="avc-code-interface-name">HapticsImpactOptions</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">HapticsImpactOptions</span>
         <span class="avc-code-brace">{</span>
@@ -92,7 +134,7 @@ For example, call this when a user has lifted their finger from a control</div>
             <div class="avc-code-param-comment"></div>
             <div class="avc-code-line"><span class="avc-code-param-name">style</span>
               :
-              <avc-code-type type-id="533">HapticsImpactStyle</avc-code-type>
+              <avc-code-type type-id="525">HapticsImpactStyle</avc-code-type>;
             </div>
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>

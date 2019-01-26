@@ -24,7 +24,7 @@ const PLUGIN_TEMPLATE = 'plugin-template';
 const PLUGIN_TEMPLATE_SRC = path.join(MONOREPO_ROOT, PLUGIN_TEMPLATE);
 const PLUGIN_TEMPLATE_DST = path.join(ASSETS_DIST, PLUGIN_TEMPLATE);
 
-const ANDROID_PLUGINS_FOLDER = 'capacitor-android-plugins';
+const ANDROID_PLUGINS_FOLDER = 'capacitor-cordova-android-plugins';
 const ANDROID_PLUGINS_FOLDER_SRC = path.join(MONOREPO_ROOT, ANDROID_PLUGINS_FOLDER);
 const ANDROID_PLUGINS_FOLDER_DST = path.join(ASSETS_DIST, ANDROID_PLUGINS_FOLDER);
 

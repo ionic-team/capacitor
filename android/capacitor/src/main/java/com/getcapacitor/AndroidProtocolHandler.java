@@ -18,7 +18,6 @@ import java.util.List;
 
 
 public class AndroidProtocolHandler {
-  private static final String TAG = "AndroidProtocolHandler";
 
   private Context context;
 
@@ -26,18 +25,8 @@ public class AndroidProtocolHandler {
     this.context = context;
   }
 
-  public InputStream openAsset(String path, String assetPath) throws IOException {
-    if (path.startsWith(assetPath + "/_capacitor_")) {
-      if (path.contains("content://")) {
-        String contentPath = path.replace(assetPath + "/_capacitor_/", "content://");
-        return context.getContentResolver().openInputStream(Uri.parse(contentPath));
-      } else {
-        String filePath = path.replace(assetPath + "/_capacitor_/", "");
-        return new FileInputStream(new File(filePath));
-      }
-    } else {
-      return context.getAssets().open(path, AssetManager.ACCESS_STREAMING);
-    }
+  public InputStream openAsset(String path) throws IOException {
+    return context.getAssets().open(path, AssetManager.ACCESS_STREAMING);
   }
 
   public InputStream openResource(Uri uri) {
@@ -62,19 +51,12 @@ public class AndroidProtocolHandler {
       if (valueType == TypedValue.TYPE_STRING) {
         return context.getResources().openRawResource(fieldId);
       } else {
-        Log.e(TAG, "Asset not of type string: " + uri);
-        return null;
+        Log.e(LogUtils.getCoreTag(), "Asset not of type string: " + uri);
       }
-    } catch (ClassNotFoundException e) {
-      Log.e(TAG, "Unable to open resource URL: " + uri, e);
-      return null;
-    } catch (NoSuchFieldException e) {
-      Log.e(TAG, "Unable to open resource URL: " + uri, e);
-      return null;
-    } catch (IllegalAccessException e) {
-      Log.e(TAG, "Unable to open resource URL: " + uri, e);
-      return null;
+    } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+      Log.e(LogUtils.getCoreTag(), "Unable to open resource URL: " + uri, e);
     }
+    return null;
   }
 
   private static int getFieldId(Context context, String assetType, String assetName)
@@ -84,6 +66,24 @@ public class AndroidProtocolHandler {
     java.lang.reflect.Field field = d.getField(assetName);
     int id = field.getInt(null);
     return id;
+  }
+
+  public InputStream openFile(String filePath) throws IOException  {
+    String realPath = filePath.replace(Bridge.CAPACITOR_FILE_START, "");
+    File localFile = new File(realPath);
+    return new FileInputStream(localFile);
+  }
+
+  public InputStream openContentUrl(Uri uri)  throws IOException {
+    String realPath = uri.toString().replace(uri.getScheme() + "://" + uri.getHost() + Bridge.CAPACITOR_CONTENT_START, "content:/");
+
+    InputStream stream = null;
+    try {
+      stream = context.getContentResolver().openInputStream(Uri.parse(realPath));
+    } catch (SecurityException e) {
+      Log.e(LogUtils.getCoreTag(), "Unable to open content URL: " + uri, e);
+    }
+    return stream;
   }
 
   private static int getValueType(Context context, int fieldId) {

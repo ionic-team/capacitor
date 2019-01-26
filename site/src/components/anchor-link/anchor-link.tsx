@@ -16,7 +16,7 @@ export class AnchorLink {
       document.location.hash = this.to;
       let scrollTop = document.querySelector('html').scrollTop;
       // Update scroll top to clear the header bar
-      window.scrollTo(0, scrollTop - 60);
+      window.scrollTo(0, scrollTop - 80);
     } else {
       document.location.hash = '';
       document.location.hash = this.to;

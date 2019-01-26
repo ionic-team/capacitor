@@ -64,5 +64,5 @@ starting your own app.
 
 ## Where to go next
 
-Make sure you have the [Required Dependencies](/docs/getting-started/dependencies) installed, then proceed to the
+Make sure you have the [Required Dependencies](/docs/getting-started/dependencies) installed, including [PWA Elements](/docs/getting-started/pwa-elements), then proceed to the
 [Developer Workflow Guide](/docs/basics/workflow) to learn how Capacitor apps are built.

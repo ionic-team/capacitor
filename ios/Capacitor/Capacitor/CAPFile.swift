@@ -27,10 +27,10 @@ public class CAPFile {
     return nil
   }
   
-  public static func getPortablePath(uri: URL?) -> String? {
+  public static func getPortablePath(host: String, uri: URL?) -> String? {
     if uri != nil {
-      let uriWithoutFile = uri!.absoluteString.replacingOccurrences(of: "file://", with: "")
-      return "_capacitor_" + uriWithoutFile
+        let uriWithoutFile = uri!.absoluteString.replacingOccurrences(of: "file://", with: "")
+        return host + CAPBridge.CAP_FILE_START + uriWithoutFile
     }
     return nil
   }

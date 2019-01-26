@@ -10,20 +10,30 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
       call.error("Must provide a URL to open")
       return
     }
-    
+
+    if urlString.isEmpty {
+      call.error("URL must not be empty")
+      return
+    }
+
     let toolbarColor = call.getString("toolbarColor")
     let url = URL(string: urlString)
     
     DispatchQueue.main.async {
       self.vc = SFSafariViewController.init(url: url!)
       self.vc!.delegate = self
-      self.vc!.modalPresentationStyle = .popover
-      
+      let presentationStyle = call.getString("presentationStyle")
+      if presentationStyle != nil && presentationStyle == "popover" {
+        self.vc!.modalPresentationStyle = .popover
+        self.setCenteredPopover(self.vc)
+      } else {
+        self.vc!.modalPresentationStyle = .fullScreen
+      }
+
       if toolbarColor != nil {
         self.vc!.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
       }
-      
-      self.setCenteredPopover(self.vc)
+
       self.bridge.viewController.present(self.vc!, animated: true, completion: {
         call.success()
       })
@@ -42,8 +52,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
   }
   
   @objc func prefetch(_ call: CAPPluginCall) {
-    // no-op
-    call.success()
+    call.unimplemented()
   }
   
   public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {

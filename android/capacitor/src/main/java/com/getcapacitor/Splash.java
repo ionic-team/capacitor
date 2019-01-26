@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.Log;
@@ -11,10 +12,6 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
-
-import com.getcapacitor.plugin.SplashScreen;
-
-import org.json.JSONObject;
 
 /**
  * A Splash Screen service for showing and hiding a splash screen in the app.
@@ -25,10 +22,9 @@ public class Splash {
     void error();
   }
 
-  private static final String SPLASH_DRAWABLE = "splash";
+  public static final String CONFIG_KEY_PREFIX = "plugins.SplashScreen.";
 
-  public static final int LAUNCH_SHOW_DURATION = 3000;
-
+  public static final int DEFAULT_LAUNCH_SHOW_DURATION = 3000;
   public static final int DEFAULT_FADE_IN_DURATION = 200;
   public static final int DEFAULT_FADE_OUT_DURATION = 200;
   public static final int DEFAULT_SHOW_DURATION = 3000;
@@ -41,8 +37,14 @@ public class Splash {
 
   private static void buildViews(Context c) {
 
-    int splashId = c.getResources().getIdentifier("splash", "drawable", c.getPackageName());
-    Drawable splash = c.getResources().getDrawable(splashId);
+    String splashResourceName = Config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
+
+    int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
+    Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
+
+    if (splash instanceof Animatable) {
+      ((Animatable) splash).start();
+    }
 
     splashImage = new ImageView(c);
 
@@ -50,7 +52,7 @@ public class Splash {
     // https://stackoverflow.com/a/21847579/32140
     splashImage.setDrawingCacheEnabled(true);
 
-    splashImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+    splashImage.setScaleType(ImageView.ScaleType.FIT_XY);
     splashImage.setImageDrawable(splash);
   }
 
@@ -59,26 +61,9 @@ public class Splash {
    * @param a
    */
   public static void showOnLaunch(final BridgeActivity a) {
-    Bridge b = a.getBridge();
-    if (b == null) {
-      return;
-    }
-
-    PluginHandle splashPluginHandle = b.getPlugin("SplashScreen");
-    if (splashPluginHandle == null) {
-      return;
-    }
-
-    SplashScreen splashPlugin = (SplashScreen) splashPluginHandle.getInstance();
-
-    Integer durationValue = (Integer) splashPlugin.getConfigValue("launchShowDuration");
-
-    int duration = LAUNCH_SHOW_DURATION;
-    if (durationValue != null) {
-      duration = durationValue.intValue();
-    }
-
-    show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, true, null, true);
+    Integer duration = Config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
+    Boolean autohide = Config.getBoolean(CONFIG_KEY_PREFIX + "launchAutoHide", DEFAULT_AUTO_HIDE);
+    show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, autohide, null, true);
   }
 
   /**
@@ -86,7 +71,7 @@ public class Splash {
    * @param a
    */
   public static void show(final Activity a) {
-    show(a, LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
+    show(a, DEFAULT_LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
   }
 
   /**
@@ -193,7 +178,7 @@ public class Splash {
     // Warn the user if the splash was hidden automatically, which means they could be experiencing an app
     // that feels slower than it actually is.
     if(isLaunchSplash && isVisible) {
-      Log.d("Splash hide", "SplashScreen was automatically hidden after the launch timeout. " +
+      Log.d(LogUtils.getCoreTag(), "SplashScreen was automatically hidden after the launch timeout. " +
               "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
               "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
     }

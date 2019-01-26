@@ -1,12 +1,16 @@
 import { Config } from '../config';
-import { copyTemplate, log, runCommand, runTask } from '../common';
+import { copyTemplate, resolveNode, runCommand, runTask, TaskInfoProvider } from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
 import { homedir } from 'os';
 import { join } from 'path';
 
 export async function addAndroid(config: Config) {
 
-  await runTask(`Installing android dependencies`, async () => {
+  await runTask(`Installing android dependencies`, async (info: TaskInfoProvider) => {
+    if (resolveNode(config, '@capacitor/android')) {
+      info('Skipping: already installed');
+      return;
+    }
     return runCommand(`cd "${config.app.rootDir}" && npm install --save @capacitor/android`);
   });
   await runTask(`Adding native android project in: ${config.android.platformDir}`, async () => {

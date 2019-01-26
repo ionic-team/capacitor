@@ -9,15 +9,12 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.util.Log;
-
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
-
 import org.json.JSONException;
 
 /**
@@ -38,7 +35,12 @@ public class Browser extends Plugin {
     String toolbarColor = call.getString("toolbarColor");
 
     if (url == null) {
-      call.error("Must provide a URL");
+      call.error("Must provide a URL to open");
+      return;
+    }
+
+    if (url.isEmpty()) {
+      call.error("URL must not be empty");
       return;
     }
 
@@ -50,7 +52,7 @@ public class Browser extends Plugin {
       try {
         builder.setToolbarColor(Color.parseColor(toolbarColor));
       } catch (IllegalArgumentException ex) {
-        Log.e(Bridge.TAG, "Browser: Invalid color provided for toolbarColor. Using default");
+        Log.e(getLogTag(), "Invalid color provided for toolbarColor. Using default");
       }
     }
 
@@ -62,8 +64,7 @@ public class Browser extends Plugin {
 
   @PluginMethod()
   public void close(PluginCall call) {
-    // Not supported
-    call.success();
+    call.unimplemented();
   }
 
 
@@ -110,7 +111,7 @@ public class Browser extends Plugin {
   protected void handleOnResume() {
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
     if (!ok) {
-      Log.e(Bridge.TAG, "Error binding to custom tabs service");
+      Log.e(getLogTag(), "Error binding to custom tabs service");
     }
   }
 

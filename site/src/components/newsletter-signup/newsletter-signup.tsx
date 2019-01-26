@@ -15,7 +15,7 @@ export class NewsletterSignup {
           </hgroup>
           <form action="https://codiqa.createsend.com/t/t/s/flhuhj/" method="post">
             <div class="input-with-button">
-              <input type="email" placeholder="Email address" id="fieldEmail" name="cm-flhuhj-flhuhj" required />
+              <input aria-label="Email address" type="email" placeholder="Email address" id="fieldEmail" name="cm-flhuhj-flhuhj" required />
               <button type="submit">Subscribe</button>
             </div>
           </form>

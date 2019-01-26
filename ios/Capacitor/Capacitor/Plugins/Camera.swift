@@ -7,6 +7,11 @@ enum CameraSource: String {
   case photos = "PHOTOS"
 }
 
+enum CameraDirection: String {
+  case rear = "REAR"
+  case front = "FRONT"
+}
+
 enum CameraResultType: String {
   case base64 = "base64"
   case uri = "uri"
@@ -14,6 +19,7 @@ enum CameraResultType: String {
 
 struct CameraSettings {
   var source: CameraSource = CameraSource.prompt
+  var direction: CameraDirection = CameraDirection.rear
   var allowEditing = false
   var shouldResize = false
   var shouldCorrectOrientation = false
@@ -26,7 +32,8 @@ struct CameraSettings {
 @objc(CAPCameraPlugin)
 public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
   let DEFAULT_SOURCE = CameraSource.prompt
-  
+  let DEFAULT_DIRECTION = CameraDirection.rear
+
   var imagePicker: UIImagePickerController?
   var call: CAPPluginCall?
   
@@ -38,8 +45,6 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     self.call = call
     self.settings = getSettings(call)
 
-    let sourceType = getSourceType(settings.source)
-    
     // Make sure they have all the necessary info.plist settings
     if let missingUsageDescription = checkUsageDescriptions() {
       bridge.modulePrint(self, missingUsageDescription)
@@ -47,20 +52,10 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       bridge.alert("Camera Error", "Missing required usage description. See console for more information")
       return
     }
-    
-    if !UIImagePickerController.isSourceTypeAvailable(sourceType) {
-      call.error("Camera is not available. Are you running in the simulator?")
-      return
-    }
-    
+
     imagePicker = UIImagePickerController()
     imagePicker!.delegate = self
-    imagePicker!.sourceType = sourceType
-    imagePicker!.modalPresentationStyle = .popover
-    imagePicker!.popoverPresentationController?.delegate = self
-    self.setCenteredPopover(self.imagePicker!)
-    //imagePicker!.popoverPresentationController?.sourceView = view
-    
+
     doShow(call: call, settings: settings)
   }
   
@@ -69,6 +64,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     settings.quality = call.get("quality", Float.self, 100)!
     settings.allowEditing = call.get("allowEditing", Bool.self, false)!
     settings.source = CameraSource(rawValue: call.getString("source") ?? DEFAULT_SOURCE.rawValue) ?? DEFAULT_SOURCE
+    settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
     settings.resultType = call.get("resultType", String.self, "base64")!
     // Get the new image dimensions if provided
     settings.width = Float(call.get("width", Int.self, 0)!)
@@ -123,17 +119,36 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       call.error("Camera not available while running in Simulator")
       return
     }
-    
-    guard let imagePicker = self.imagePicker else {
-      call.error("Internal error, please file an issue")
-      return
+
+    AVCaptureDevice.requestAccess(for: .video) { granted in
+        if granted {
+          let presentationStyle = call.getString("presentationStyle")
+          if presentationStyle != nil && presentationStyle == "popover" {
+            self.configurePicker()
+          } else {
+            self.imagePicker!.modalPresentationStyle = .fullScreen
+          }
+
+          self.imagePicker!.sourceType = .camera
+
+          if self.settings.direction.rawValue == "REAR" {
+            if UIImagePickerController.isCameraDeviceAvailable(.rear) {
+              self.imagePicker!.cameraDevice = .rear
+            }
+          } else if self.settings.direction.rawValue == "FRONT" {
+            if UIImagePickerController.isCameraDeviceAvailable(.front) {
+              self.imagePicker!.cameraDevice = .front
+            }
+          }
+          DispatchQueue.main.async {
+            self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+          }
+        } else {
+            call.error("User denied access to camera")
+        }
     }
-    
-    imagePicker.sourceType = .camera
-    
-    self.bridge.viewController.present(imagePicker, animated: true, completion: nil)
   }
-  
+
   func showPhotos(_ call: CAPPluginCall) {
     let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
     if photoAuthorizationStatus == .restricted || photoAuthorizationStatus == .denied {
@@ -141,25 +156,27 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       return
     }
     
+    self.configurePicker()
+    
     self.imagePicker!.sourceType = .photoLibrary
     self.imagePicker!.allowsEditing = settings.allowEditing
     
     self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
   }
-  
-  func getSourceType(_ source: CameraSource) -> UIImagePickerControllerSourceType {
-    switch source {
-    case CameraSource.prompt:
-      return .photoLibrary
-    case CameraSource.camera:
-      return .camera
-    case CameraSource.photos:
-      return .savedPhotosAlbum
-    }
+    
+  private func configurePicker() {
+    self.imagePicker!.modalPresentationStyle = .popover
+    self.imagePicker!.popoverPresentationController?.delegate = self
+    self.setCenteredPopover(self.imagePicker!)
   }
-  
+
   public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
     picker.dismiss(animated: true)
+    self.call?.error("User cancelled photos app")
+  }
+
+  public func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+    self.call?.error("User cancelled photos app")
   }
   
   public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -192,7 +209,6 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
     
     guard let jpeg = UIImageJPEGRepresentation(image!, CGFloat(settings.quality/100)) else {
-      print("Unable to convert image to jpeg")
       self.call?.error("Unable to convert image to jpeg")
       return
     }
@@ -207,7 +223,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       ])
     } else if settings.resultType == "uri" {
       let path = try! saveTemporaryImage(jpeg)
-      guard let webPath = CAPFileManager.getPortablePath(uri: URL(string: path)) else {
+      guard let webPath = CAPFileManager.getPortablePath(host: bridge.getLocalUrl(), uri: URL(string: path)) else {
         call?.reject("Unable to get portable path to file")
         return
       }

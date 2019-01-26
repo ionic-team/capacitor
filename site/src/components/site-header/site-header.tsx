@@ -90,6 +90,9 @@ export class SiteHeader {
             <ul class="dropdown__menu">
               <div class="dropdown__arrow"></div>
               <li class="dropdown__item">
+                <a href="/docs/community/plugins/">Plugins</a>
+              </li>
+              <li class="dropdown__item">
                 <a href="https://forum.getcapacitor.com/">Forum</a>
               </li>
               <li class="dropdown__item">

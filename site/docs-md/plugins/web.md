@@ -29,7 +29,7 @@ export class MyPluginWeb extends WebPlugin {
 
   async echo(options: { value: string }) {
     console.log('ECHO', options);
-    return Promise.resolve();
+    return options;
   }
 }
 

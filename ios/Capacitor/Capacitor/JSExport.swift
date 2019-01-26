@@ -6,8 +6,8 @@ public class JSExport {
   static let CATCHALL_OPTIONS_PARAM = "_options"
   static let CALLBACK_PARAM = "_callback"
   
-  public static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool) throws {
-    let data = "window.Capacitor = { DEBUG: \(isDebug), Plugins: {} }"
+  public static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, localUrl: String) throws {
+    let data = "window.Capacitor = { DEBUG: \(isDebug), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)';"
     let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
     userContentController.addUserScript(userScript)
   }

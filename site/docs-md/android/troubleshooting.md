@@ -14,7 +14,7 @@ Any time you encounter an issue with Android, or Gradle, or Emulators, your firs
 
 Capacitor uses the standard Android toolkit, so chances are if you run into something, many Android developers have as well, and there's a solution out there.
 
-It could be as simple as updating a dependency, running Gradle sync, or invalidating caches
+It could be as simple as updating a dependency, running Gradle sync, or invalidating caches.
 
 ### Clean/Rebuild
 
@@ -41,7 +41,7 @@ The fix is simple: run `npx cap copy android` to copy this file.
 This error is often due to Gradle needing to be synced, something you'll need to do
 periodically after updating dependencies and changing project settings.
 
-To manually sync Gradle, open Tools -> Android -> Sync Project with Gradle Files from the main menu bar:
+To manually sync Gradle, open File -> Sync Project with Gradle Files from the main menu bar:
 
 ![Sync Gradle](/assets/img/docs/android/sync-gradle.png)
 

@@ -11,6 +11,11 @@ enum BridgeError: Error {
 
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://getcapacitor.com/"
+  public static var CAP_SCHEME = "capacitor"
+  public static var CAP_FILE_START = "/_capacitor_file_"
+
+  // The last URL that caused the app to open
+  private static var lastUrl: URL?
   
   public var userContentController: WKUserContentController
   public var bridgeDelegate: CAPBridgeDelegate
@@ -18,6 +23,8 @@ enum BridgeError: Error {
     return bridgeDelegate.bridgedViewController!
   }
   
+  private var localUrl: String?
+
   public var lastPlugin: CAPPlugin?
   
   public var config = [String:Any]()
@@ -31,27 +38,24 @@ enum BridgeError: Error {
   public var storedCalls = [String:CAPPluginCall]()
   // Whether the app is active
   private var isActive = true
+
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
+
+  public var notificationsDelegate : CAPUNUserNotificationCenterDelegate
 
   public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController) {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
-    super.init()
+    self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
     CAPConfig.loadConfig()
-    exportCoreJS()
-    setupCordovaCompatibility()
+    super.init()
+    self.notificationsDelegate.bridge = self;
+    localUrl = "\(CAPBridge.CAP_SCHEME)://\(CAPConfig.getString("server.hostname") ?? "localhost")"
+    exportCoreJS(localUrl: localUrl!)
     registerPlugins()
+    setupCordovaCompatibility()
     bindObservers()
-  }
-  
-  public func willAppear() {
-  }
-
-  public func didLoad() {
-    if let splash = getOrLoadPlugin(pluginName: "SplashScreen") as? CAPSplashScreenPlugin {
-      splash.showOnLaunch()
-    }
   }
   
   public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
@@ -73,6 +77,13 @@ enum BridgeError: Error {
   }
   
   /**
+   * Get the last URL that triggered an open or continue activity event.
+   */
+  public static func getLastUrl() -> URL? {
+    return lastUrl
+  }
+  
+  /**
    * Handle an openUrl action and dispatch a notification.
    */
   public static func handleOpenUrl(_ url: URL, _ options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
@@ -80,6 +91,7 @@ enum BridgeError: Error {
       "url": url,
       "options": options
     ])
+    CAPBridge.lastUrl = url
     return true
   }
   
@@ -93,7 +105,7 @@ enum BridgeError: Error {
     }
     
     let url = userActivity.webpageURL
-    
+    CAPBridge.lastUrl = url
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.UniversalLinkOpen.name()), object: [
       "url": url
     ])
@@ -153,9 +165,9 @@ enum BridgeError: Error {
   /**
    * Export core JavaScript to the webview
    */
-  func exportCoreJS() {
+  func exportCoreJS(localUrl: String) {
     do {
-      try JSExport.exportCapacitorGlobalJS(userContentController: self.userContentController, isDebug: isDevMode())
+      try JSExport.exportCapacitorGlobalJS(userContentController: self.userContentController, isDebug: isDevMode(), localUrl: localUrl)
       try JSExport.exportCapacitorJS(userContentController: self.userContentController)
     } catch {
       CAPBridge.fatalError(error, error)
@@ -284,7 +296,7 @@ enum BridgeError: Error {
     let configParser = XMLParser(contentsOf: configUrl!)!;
     configParser.delegate = cordovaParser
     configParser.parse()
-    cordovaPluginManager = CDVPluginManager.init(mapping: cordovaParser.pluginsDict, viewController: self.viewController, webView: self.getWebView())
+    cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
     if cordovaParser.startupPluginNames.count > 0 {
       for pluginName in cordovaParser.startupPluginNames {
         _ = cordovaPluginManager?.getCommandInstance(pluginName as! String)
@@ -321,7 +333,6 @@ enum BridgeError: Error {
   public func reload() {
     self.getWebView()?.reload()
   }
-
   
   public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
     let output = items.map { "\($0)" }.joined(separator: " ")
@@ -543,5 +554,10 @@ enum BridgeError: Error {
   func getWebView() -> WKWebView? {
     return self.bridgeDelegate.bridgedWebView
   }
+
+  public func getLocalUrl() -> String {
+    return localUrl!
+  }
+
 }
 

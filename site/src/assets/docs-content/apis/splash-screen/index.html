@@ -32,6 +32,51 @@ app should boot much faster than this!</p>
   }
 }
 </code></pre>
+<p>If you want to be sure the splash never hides before the app is fully loaded, set <code>launchAutoHide</code> to <code>false</code> in your <code>capacitor.config.json</code>:</p>
+<pre><code class="lang-json">{
+  <span class="hljs-attr">"plugins"</span>: {
+    <span class="hljs-attr">"SplashScreen"</span>: {
+      <span class="hljs-attr">"launchAutoHide"</span>: <span class="hljs-literal">false</span>
+    }
+  }
+}
+</code></pre>
 <p>Then run <code>npx cap copy</code> to apply these changes.</p>
-<h2 id="api">API</h2>
+<h2 id="configuration">Configuration</h2>
+<p>These config parameters are availiable in <code>capacitor.config.json</code>:</p>
+<pre><code class="lang-json">{
+  <span class="hljs-attr">"plugins"</span>: {
+    <span class="hljs-attr">"SplashScreen"</span>: {
+      <span class="hljs-attr">"launchShowDuration"</span>: <span class="hljs-number">3000</span>,
+      <span class="hljs-attr">"launchAutoHide"</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">"androidSplashResourceName"</span>: <span class="hljs-string">"splash"</span>
+    }
+  }
+}
+</code></pre>
+<h2 id="add-your-own-splash-screen-images">Add your own splash screen images</h2>
+<p>See <a href="https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/">Josh Morony&#39;s blog post</a> on how to change it. </p>
+<h3 id="android">Android</h3>
+<p>If your splash screen images aren&#39;t named &quot;splash.png&quot; but for example &quot;screen.png&quot; you have to change <code>&quot;androidSplashResourceName&quot;: &quot;screen&quot;</code> in <code>capacitor.config.json</code> and change the following files in you&#39;re Android app as well:</p>
+<p><code>android/app/src/main/res/drawable/launch_splash.xml</code> </p>
+<p>replace</p>
+<pre><code>&lt;bitmap xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:src=&quot;@drawable/splash&quot;
+    android:scaleType=&quot;centerCrop&quot;
+    /&gt;
+</code></pre><p>with</p>
+<pre><code>&lt;bitmap xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:src=&quot;@drawable/screen&quot;
+    android:scaleType=&quot;centerCrop&quot;
+    /&gt;
+</code></pre><p><code>android/app/src/main/res/values/styles.xml</code> </p>
+<p>replace</p>
+<pre><code>    &lt;style name=&quot;AppTheme.NoActionBarLaunch&quot; parent=&quot;AppTheme.NoActionBar&quot;&gt;
+        &lt;item name=&quot;android:background&quot;&gt;@drawable/splash&lt;/item&gt;
+    &lt;/style&gt;
+</code></pre><p>with</p>
+<pre><code>    &lt;style name=&quot;AppTheme.NoActionBarLaunch&quot; parent=&quot;AppTheme.NoActionBar&quot;&gt;
+        &lt;item name=&quot;android:background&quot;&gt;@drawable/screen&lt;/item&gt;
+    &lt;/style&gt;
+</code></pre><h2 id="api">API</h2>
 <p><plugin-api name="splash-screen"></plugin-api></p>

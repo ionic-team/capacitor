@@ -29,14 +29,6 @@ Next, install capacitor into your project:
 npm install --save @capacitor/cli @capacitor/core
 ```
 
-### Remove Cordova Splash
-
-Capacitor conflicts with Cordova's Splashscreen Plugin. It needs to be removed:
-
-```bash
-npm uninstall --save cordova-plugin-splashscreen
-```
-
 ### Init Capacitor with your app information
 
 ```
@@ -76,4 +68,4 @@ npm install your-cordova-plugin
 npx cap update
 ```
 
-See the [Cordova](../basics/cordova/) guide for more information.
+See the [Cordova](/docs/basics/cordova) guide for more information.

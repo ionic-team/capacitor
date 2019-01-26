@@ -32,9 +32,9 @@ public class StatusBar extends Plugin {
         int visibilityFlags = decorView.getSystemUiVisibility();
 
         if (style.equals("DARK")) {
-           decorView.setSystemUiVisibility(visibilityFlags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        } else {
           decorView.setSystemUiVisibility(visibilityFlags & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        } else {
+          decorView.setSystemUiVisibility(visibilityFlags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         call.success();
       }
@@ -72,7 +72,9 @@ public class StatusBar extends Plugin {
       @Override
       public void run() {
         View decorView = getActivity().getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        int uiOptions = decorView.getSystemUiVisibility();
+        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_VISIBLE;
         decorView.setSystemUiVisibility(uiOptions);
         call.success();
       }
@@ -81,14 +83,14 @@ public class StatusBar extends Plugin {
 
   @PluginMethod()
   public void show(final PluginCall call) {
-    // Hide the status bar.
+    // Show the status bar.
     getBridge().executeOnMainThread(new Runnable() {
       @Override
       public void run() {
         View decorView = getActivity().getWindow().getDecorView();
-
-        // Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+        int uiOptions = decorView.getSystemUiVisibility();
+        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_VISIBLE;
+        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
         call.success();
       }

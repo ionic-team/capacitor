@@ -7,3 +7,6 @@ App/Pods
 App/public
 xcuserdata
 
+# Cordova plugins for Capacitor
+capacitor-cordova-ios-plugins
+

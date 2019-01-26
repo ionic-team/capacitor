@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, log, logFatal, logInfo, runTask, writeXML } from '../common';
+import { CheckFunction, check, checkPackage, log, logFatal, logInfo, runTask, writeXML, logError } from '../common';
 
 import chalk from 'chalk';
 
@@ -47,11 +47,15 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
 }
 
 export async function update(config: Config, platformName: string) {
-  await runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
-    if (platformName === config.ios.name) {
-      await updateIOS(config);
-    } else if (platformName === config.android.name) {
-      await updateAndroid(config);
-    }
-  });
+  try {
+    await runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
+      if (platformName === config.ios.name) {
+        await updateIOS(config);
+      } else if (platformName === config.android.name) {
+        await updateAndroid(config);
+      }
+    });
+  } catch (e) {
+    logError('Error running update:', e);
+  }
 }

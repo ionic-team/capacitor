@@ -1,6 +1,6 @@
 import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
-import { logFatal } from './common';
+import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 
 let Package: PackageJson;
@@ -36,23 +36,25 @@ export class Config implements CliConfig {
     resDirAbs: '',
     assets: {
       templateName: 'android-template',
-      templateDir: ''
+      pluginsFolderName: 'capacitor-cordova-android-plugins',
+      templateDir: '',
+      pluginsDir: '',
     }
   };
 
   ios = {
     name: 'ios',
-    minVersion: '10.0',
+    minVersion: '11.0',
     cordovaSwiftVersion: '4.0',
     platformDir: '',
     webDir: 'public',
     webDirAbs: '',
-    capacitorRuntimePod: `pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'`,
-    capacitorCordovaRuntimePod: `pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'`,
     nativeProjectName: 'App',
     assets: {
       templateName: 'ios-template',
-      templateDir: ''
+      pluginsFolderName: 'capacitor-cordova-ios-plugins',
+      templateDir: '',
+      pluginsDir: '',
     }
   };
 
@@ -85,7 +87,8 @@ export class Config implements CliConfig {
     plugins: {},
     assets: {
       templateName: 'app-template',
-      templateDir: ''
+      templateDir: '',
+      pluginsTemplateDir: ''
     }
   };
 
@@ -122,13 +125,13 @@ export class Config implements CliConfig {
   setCurrentWorkingDir(currentWorkingDir: string) {
     try {
       this.initAppConfig(resolve(currentWorkingDir));
-      this.initAndroidConfig();
-      this.initElectronConfig();
       this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
 
       // Post-merge
+      this.initAndroidConfig();
+      this.initElectronConfig();
       this.initIosConfig();
       this.initWindowsConfig();
       this.initLinuxConfig();
@@ -153,6 +156,10 @@ export class Config implements CliConfig {
     this.app.assets.templateDir = join(this.cli.assetsDir, this.app.assets.templateName);
   }
 
+  async updateAppPackage() {
+    this.app.package = await readJSON(resolve(this.app.rootDir, 'package.json'));
+  }
+
   private initElectronConfig() {
     this.platforms.push(this.electron.name);
     this.electron.platformDir = resolve(this.app.rootDir, this.electron.name);
@@ -164,6 +171,7 @@ export class Config implements CliConfig {
     this.platforms.push(this.android.name);
     this.android.platformDir = resolve(this.app.rootDir, this.android.name);
     this.android.assets.templateDir = resolve(this.cli.assetsDir, this.android.assets.templateName);
+    this.android.assets.pluginsDir = resolve(this.cli.assetsDir, this.android.assets.pluginsFolderName);
     this.android.webDirAbs = resolve(this.android.platformDir, this.android.webDir);
     this.android.resDirAbs = resolve(this.android.platformDir, this.android.resDir);
   }
@@ -173,6 +181,7 @@ export class Config implements CliConfig {
     this.platforms.push(this.ios.name);
     this.ios.platformDir = resolve(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = resolve(this.cli.assetsDir, this.ios.assets.templateName);
+    this.ios.assets.pluginsDir = resolve(this.cli.assetsDir, this.ios.assets.pluginsFolderName);
     this.ios.webDirAbs = resolve(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
     if (this.app.extConfig && this.app.extConfig.ios && this.app.extConfig.ios.cordovaSwiftVersion) {
       this.ios.cordovaSwiftVersion = this.app.extConfig.ios.cordovaSwiftVersion;
@@ -187,7 +196,9 @@ export class Config implements CliConfig {
   }
 
   private initLinuxConfig() {
-    this.linux.androidStudioPath = this.app.linuxAndroidStudioPath && this.app.linuxAndroidStudioPath;
+    if (this.app.linuxAndroidStudioPath) {
+      this.linux.androidStudioPath = this.app.linuxAndroidStudioPath;
+    }
   }
 
   private initPluginsConfig() {

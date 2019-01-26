@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,8 @@ public class PluginCall {
    * in the case of an app resuming with saved instance data, for example.
    */
   public static final String CALLBACK_ID_DANGLING = "-1";
+  private static final String UNIMPLEMENTED = "not implemented";
+  private static final String UNAVAILABLE = "not available";
 
   private final MessageHandler msgHandler;
   private final String pluginId;
@@ -41,7 +44,7 @@ public class PluginCall {
   }
 
   public void successCallback(PluginResult successResult) {
-    if(this.callbackId == "-1") {
+    if (CALLBACK_ID_DANGLING.equals(this.callbackId)) {
       // don't send back response if the callbackId was "-1"
       return;
     }
@@ -74,7 +77,7 @@ public class PluginCall {
     try {
       errorResult.put("message", msg);
     } catch (Exception jsonEx) {
-      Log.e(Bridge.TAG, jsonEx.toString());
+      Log.e(LogUtils.getPluginTag(), jsonEx.toString());
     }
 
     this.msgHandler.sendResponseMessage(this, null, errorResult);
@@ -84,13 +87,13 @@ public class PluginCall {
     PluginResult errorResult = new PluginResult();
 
     if(ex != null) {
-      ex.printStackTrace();
+      Log.e(LogUtils.getPluginTag(), msg, ex);
     }
 
     try {
       errorResult.put("message", msg);
     } catch (Exception jsonEx) {
-      Log.e(Bridge.TAG, jsonEx.toString());
+      Log.e(LogUtils.getPluginTag(), jsonEx.getMessage());
     }
 
     this.msgHandler.sendResponseMessage(this, null, errorResult);
@@ -108,6 +111,13 @@ public class PluginCall {
     error(msg, null);
   }
 
+  public void unimplemented() {
+    error(UNIMPLEMENTED, null);
+  }
+
+  public void unavailable() {
+    error(UNAVAILABLE, null);
+  }
 
   public String getPluginId() { return this.pluginId; }
 
@@ -194,7 +204,7 @@ public class PluginCall {
     Object value = this.data.opt(name);
     if(value == null) { return defaultValue; }
 
-    if(value instanceof JSObject) {
+    if(value instanceof JSONObject) {
       return (JSObject) value;
     }
     return defaultValue;

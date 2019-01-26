@@ -27,16 +27,8 @@ enum LocalNotificationError: LocalizedError {
  * Implement three common modal types: alert, confirm, and prompt
  */
 @objc(CAPLocalNotificationsPlugin)
-public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDelegate {
-  // Local list of notification id -> JSObject for storing options
-  // between notification requets
-  var notificationRequestLookup = [String:JSObject]()
-  
-  public override func load() {
-    let center = UNUserNotificationCenter.current()
-    center.delegate = self
-  }
-  
+public class CAPLocalNotificationsPlugin : CAPPlugin {
+
   /**
    * Schedule a notification.
    */
@@ -46,7 +38,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       return
     }
     
-    requestPermissions()
+    self.bridge.notificationsDelegate.requestPermissions()
     
     var ids = [String]()
     
@@ -81,7 +73,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       // Schedule the request.
       let request = UNNotificationRequest(identifier: "\(identifier)", content: content, trigger: trigger)
       
-      notificationRequestLookup[request.identifier] = notification
+      self.bridge.notificationsDelegate.notificationRequestLookup[request.identifier] = notification
       
       let center = UNUserNotificationCenter.current()
       center.add(request) { (error : Error?) in
@@ -103,7 +95,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
    * Cancel notifications by id
    */
   @objc func cancel(_ call: CAPPluginCall) {
-    guard let notifications = call.getArray("notifications", JSObject.self, []) else {
+    guard let notifications = call.getArray("notifications", JSObject.self, []), notifications.count > 0 else {
       call.error("Must supply notifications to cancel")
       return
     }
@@ -111,6 +103,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
     let ids = notifications.map { $0["id"] as? String ?? "" }
     
     UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+    call.success()
   }
   
   /**
@@ -122,14 +115,14 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       print(notifications)
       
       let ret = notifications.map({ (notification) -> [String:Any] in
-        return self.makeNotificationRequestJSObject(notification)
+        return self.bridge.notificationsDelegate.makeNotificationRequestJSObject(notification)
       })
       call.success([
         "notifications": ret
       ])
     })
   }
-  
+
   /**
    * Register allowed action types that a notification may present.
    */
@@ -142,82 +135,19 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
     
     call.success()
   }
-  
+
   /**
-   * Request permissions to send notifications
+   * Check if Local Notifications are authorized and enabled
    */
-  func requestPermissions() {
-    // Override point for customization after application launch.
+  @objc func areEnabled(_ call: CAPPluginCall) {
     let center = UNUserNotificationCenter.current()
-    center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
-      // Enable or disable features based on authorization.
+    center.getNotificationSettings { (settings) in
+      let authorized = settings.authorizationStatus == UNAuthorizationStatus.authorized
+      let enabled = settings.notificationCenterSetting == UNNotificationSetting.enabled
+      call.success([
+        "value": enabled && authorized
+      ])
     }
-    
-    DispatchQueue.main.async {
-      UIApplication.shared.registerForRemoteNotifications()
-    }
-  }
-  
-  /**
-   * Handle delegate willPresent action when the app is in the foreground.
-   * This controls how a notification is presented when the app is running, such as
-   * whether it should stay silent, display a badge, play a sound, or show an alert.
-   */
-  public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                              willPresent notification: UNNotification,
-                              withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-    let request = notification.request
-    
-    notifyListeners("localNotificationReceived", data: makeNotificationRequestJSObject(request))
-    
-    if let options = notificationRequestLookup[request.identifier] {
-      let silent = options["silent"] as? Bool ?? false
-      if silent {
-        completionHandler(.init(rawValue:0))
-        return
-      }
-    }
-
-    if bridge.isAppActive() {
-      completionHandler([.badge, .sound, .alert])
-    } else {
-      completionHandler([.badge, .sound])
-    }
-  }
-  
-  /**
-   * Handle didReceive action, called when a notification opens or activates
-   * the app based on an action.
-   */
-  public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                              didReceive response: UNNotificationResponse,
-                              withCompletionHandler completionHandler: @escaping () -> Void) {
-    completionHandler()
-    
-    var data = JSObject()
-    
-    // Get the info for the original notification request
-    let originalNotificationRequest = response.notification.request
-
-    let actionId = response.actionIdentifier
-
-    // We turn the two default actions (open/dismiss) into generic strings
-    if actionId == UNNotificationDefaultActionIdentifier {
-      data["actionId"] = "tap"
-    } else if actionId == UNNotificationDismissActionIdentifier {
-      data["actionId"] = "dismiss"
-    } else {
-      data["actionId"] = actionId
-    }
-    
-    // If the type of action was for an input type, get the value
-    if let inputType = response as? UNTextInputNotificationResponse {
-      data["inputValue"] = inputType.userText
-    }
-    
-    data["notificationRequest"] = makeNotificationRequestJSObject(originalNotificationRequest)
-    
-    notifyListeners("localNotificationActionPerformed", data: data)
   }
   
   /**
@@ -354,9 +284,6 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
     case "day":
       let newDate = cal.date(byAdding: .day, value: 1, to: now)!
       return DateInterval(start: now, end: newDate)
-    case "day":
-      let newDate = cal.date(byAdding: .day, value: 1, to: now)!
-      return DateInterval(start: now, end: newDate)
     case "hour":
       let newDate = cal.date(byAdding: .hour, value: 1, to: now)!
       return DateInterval(start: now, end: newDate)
@@ -369,18 +296,6 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
     default:
       return nil
     }
-  }
-  
-  /**
-   * Turn a UNNotificationRequest into a JSObject to return back to the client.
-   */
-  func makeNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
-    let notificationRequest = notificationRequestLookup[request.identifier] ?? [:]
-    
-    return [
-      "id": request.identifier,
-      "extra": notificationRequest["extra"] ?? [:]
-    ]
   }
 
   /**
@@ -408,18 +323,12 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       // Create the custom actions for the TIMER_EXPIRED category.
       var newCategory: UNNotificationCategory?
       
-      if #available(iOS 11.0, *) {
-        newCategory = UNNotificationCategory(identifier: id,
+      newCategory = UNNotificationCategory(identifier: id,
                                                actions: newActions,
                                                intentIdentifiers: [],
                                                hiddenPreviewsBodyPlaceholder: hiddenBodyPlaceholder,
                                                options: makeCategoryOptions(type))
-      } else {
-        newCategory = UNNotificationCategory(identifier: id,
-                                             actions: newActions,
-                                             intentIdentifiers: [],
-                                             options: makeCategoryOptions(type))
-      }
+      
       
       createdCategories.append(newCategory!)
     }
@@ -505,15 +414,11 @@ public class CAPLocalNotificationsPlugin : CAPPlugin, UNUserNotificationCenterDe
       return .allowInCarPlay
     }
     
-    // New iOS 11 features
-    if #available(iOS 11.0, *) {
-      // Running iOS 11 OR NEWER
-      if hiddenPreviewsShowTitle {
-        return .hiddenPreviewsShowTitle
-      }
-      if hiddenPreviewsShowSubtitle {
-        return .hiddenPreviewsShowSubtitle
-      }
+    if hiddenPreviewsShowTitle {
+      return .hiddenPreviewsShowTitle
+    }
+    if hiddenPreviewsShowSubtitle {
+      return .hiddenPreviewsShowSubtitle
     }
     
     return UNNotificationCategoryOptions(rawValue: 0)

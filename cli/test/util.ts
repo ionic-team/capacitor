@@ -1,4 +1,5 @@
 import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, copyAsync } from '../src/util/fs';
+import { runCommand } from '../src/common';
 import { Config } from '../src/config';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
@@ -64,10 +65,14 @@ const APP_PACKAGE_JSON = `
 }
 `
 
-export async function makeAppDir() {
+export async function makeAppDir(monoRepoLike: boolean = false) {
   const appDirObj: any = await mktmp();
   const tmpDir = appDirObj.path;
-  const appDir = join(tmpDir, 'test-app');
+  const rootDir = monoRepoLike ? join(tmpDir, 'test-root') : join(tmpDir, 'test-app');
+  if (monoRepoLike) {
+    await mkdirAsync(rootDir);
+  }
+  const appDir = monoRepoLike ? join(rootDir, 'test-app') : rootDir;
   await mkdirAsync(appDir);
   // Make the web dir
   await mkdirAsync(join(appDir, 'www'));
@@ -75,16 +80,12 @@ export async function makeAppDir() {
   await writeFileAsync(join(appDir, 'www', 'index.html'), APP_INDEX);
   // Make a fake package.json
   await writeFileAsync(join(appDir, 'package.json'), APP_PACKAGE_JSON);
-  await mkdirAsync(join(appDir, 'node_modules'));
-  const cliModulesPath = join(appDir, 'node_modules/@capacitor/cli');
-  const coreModulesPath = join(appDir, 'node_modules/@capacitor/core');
-  await mkdirs(cliModulesPath);
-  await mkdirs(coreModulesPath);
-  await copyAsync(join(cwd, 'dist'), cliModulesPath);
-  await copyAsync(resolve(cwd, '../capacitor-android-plugins'), join(cliModulesPath, 'assets', 'capacitor-android-plugins'));
-  await copyAsync(resolve(cwd, '../core/dist'), coreModulesPath);
-  await copyAsync(resolve(cwd, '../core/native-bridge.js'), join(coreModulesPath, 'native-bridge.js'));
-  await copyAsync(resolve(cwd, '../core/cordova.js'), join(coreModulesPath, 'cordova.js'));
+
+  // We use 'npm install' to install @capacitor/core and @capacitor/cli
+  // Otherwise later use of 'npm install --save @capacitor/android|ios' will wipe 'node_modules/@capacitor/'
+  const corePath = resolve(cwd, '../core');
+  const cliPath = resolve(cwd, '../cli');
+  await runCommand(`cd "${rootDir}" && npm install --save ${corePath} ${cliPath}`);
 
   // Make a fake cordova plugin
   await makeCordovaPlugin(appDir);
@@ -191,10 +192,6 @@ async function makeCordovaPlugin(appDir: string) {
   await mkdirs(androidPath);
   await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');
   await writeFileAsync(join(androidPath, 'CoolPlugin.java'), '');
-  const cliAssetsCordova = join(appDir, 'node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins');
-  await mkdirs(cliAssetsCordova);
-  await writeFileAsync(join(cliAssetsCordova, 'CordovaPlugins.podspec'), CORDOVA_PLUGINS_PODSPEC);
-  await writeFileAsync(join(cliAssetsCordova, 'CordovaPluginsResources.podspec'), CORDOVA_PLUGINS_RESOURCES_PODSPEC);
 }
 
 class MappedFS {

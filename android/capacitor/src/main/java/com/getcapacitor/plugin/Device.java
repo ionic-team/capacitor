@@ -14,6 +14,8 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import java.util.Locale;
+
 
 @NativePlugin()
 public class Device extends Plugin {
@@ -36,6 +38,13 @@ public class Device extends Plugin {
     r.put("isVirtual", isVirtual());
 
     call.success(r);
+  }
+
+  @PluginMethod()
+  public void getLanguageCode(PluginCall call) {
+    JSObject ret = new JSObject();
+    ret.put("value", Locale.getDefault().getLanguage());
+    call.success(ret);
   }
 
   private long getMemUsed() {
@@ -64,10 +73,10 @@ public class Device extends Plugin {
   }
 
   private String getPlatform() {
-    if (android.os.Build.MANUFACTURER.equals("Amazon")) {
+    if (android.os.Build.MANUFACTURER.equalsIgnoreCase("Amazon")) {
       return "amazon-fireos";
     }
-    return "Android";
+    return "android";
   }
 
   private String getUuid() {
@@ -78,18 +87,26 @@ public class Device extends Plugin {
     IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
     Intent batteryStatus = getContext().registerReceiver(null, ifilter);
 
-    int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-    int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+    int level = -1;
+    int scale = -1;
 
-    return level / (float)scale;
+    if (batteryStatus != null) {
+      level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+      scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+    }
+
+    return level / (float) scale;
   }
 
   private boolean isCharging() {
     IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
     Intent batteryStatus = getContext().registerReceiver(null, ifilter);
 
-    int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-    return status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL;
+    if (batteryStatus != null) {
+      int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+      return status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL;
+    }
+    return false;
   }
 
   private boolean isVirtual() {

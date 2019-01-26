@@ -6,4 +6,12 @@ public class PluginRequestCodes {
   public static final int CAMERA_IMAGE_PICK = 9003;
   public static final int GEOLOCATION_REQUEST_PERMISSIONS = 9004;
   public static final int CAMERA_IMAGE_EDIT = 9005;
+  public static final int NOTIFICATION_OPEN = 9006;
+  public static final int FILE_CHOOSER = 9007;
+  public static final int FILE_CHOOSER_IMAGE_CAPTURE = 9008;
+  public static final int FILE_CHOOSER_VIDEO_CAPTURE = 9009;
+  public static final int FILE_CHOOSER_CAMERA_PERMISSION = 9010;
+  public static final int GET_USER_MEDIA_PERMISSIONS = 9011;
+  public static final int FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS = 9012;
+  public static final int FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS = 9013;
 }

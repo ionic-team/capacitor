@@ -5,9 +5,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.1'
-        classpath 'com.novoda:bintray-release:0.8.0'
+        classpath 'com.novoda:bintray-release:0.9'
     }
 }
+
+tasks.withType(Javadoc).all { enabled = false }
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
@@ -41,8 +43,11 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-compat:27.1.1'
+
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:customtabs:27.1.1'
+    implementation 'com.google.firebase:firebase-messaging:17.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -56,7 +61,7 @@ publish {
     repoName = 'capacitor'
     groupId = 'ionic-team'
     artifactId = 'capacitor-android'
-    if(version != null) {
+    if (version != null) {
         publishVersion = System.getenv("BINTRAY_PKG_VERSION")
     } else {
         publishVersion = '0.0.0'
@@ -64,4 +69,5 @@ publish {
     desc = 'Capacitor Android Runtime'
     website = 'https://github.com/ionic-team/capacitor'
 }
+
 

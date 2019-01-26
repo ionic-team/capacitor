@@ -1,4 +1,4 @@
-#import <foundation/foundation.h>
+#import <Foundation/Foundation.h>
 #import <Capacitor/Capacitor-Swift.h>
 
 static NSMutableArray<Class> *CapacitorPluginClasses;
