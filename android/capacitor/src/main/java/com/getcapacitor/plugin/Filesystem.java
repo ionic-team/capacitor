@@ -384,11 +384,6 @@ public class Filesystem extends Plugin {
 
     File fileObject = getFileObject(path, directory);
 
-    if (!fileObject.exists()) {
-      call.error("File does not exist");
-      return;
-    }
-
     JSObject data = new JSObject();
     data.put("uri", Uri.fromFile(fileObject).toString());
     call.success(data);
