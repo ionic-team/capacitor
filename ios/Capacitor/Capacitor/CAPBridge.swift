@@ -551,7 +551,7 @@ enum BridgeError: Error {
     }
   }
   
-  func getWebView() -> WKWebView? {
+  @objc public func getWebView() -> WKWebView? {
     return self.bridgeDelegate.bridgedWebView
   }
 
