@@ -1,3 +1,5 @@
+set -e
+
 echo "Deploying iOS Pods v$POD_VERSION"
 
 # Publish CapacitorCordova first
