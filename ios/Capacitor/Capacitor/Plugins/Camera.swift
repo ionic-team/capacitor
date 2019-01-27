@@ -15,6 +15,7 @@ enum CameraDirection: String {
 enum CameraResultType: String {
   case base64 = "base64"
   case uri = "uri"
+  case base64NoMetadata = "base64NoMetadata"
 }
 
 struct CameraSettings {
@@ -219,7 +220,14 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
       self.call?.success([
         "base64Data": "data:image/jpeg;base64," + base64String,
-        "base64String": base64String,
+        "exif": makeExif(imageMetadata) ?? [:],
+        "format": "jpeg"
+      ])
+    } else if settings.resultType == "base64NoMetadata" {
+      let base64String = jpeg.base64EncodedString()
+
+      self.call?.success([
+        "base64Data": base64String,
         "exif": makeExif(imageMetadata) ?? [:],
         "format": "jpeg"
       ])
