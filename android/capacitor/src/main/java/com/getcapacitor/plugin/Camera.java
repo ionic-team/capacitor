@@ -402,6 +402,7 @@ public class Camera extends Plugin {
 
     JSObject data = new JSObject();
     data.put("base64Data", "data:image/jpeg;base64," + encoded);
+    data.put("base64String", encoded);
     data.put("exif", exif.toJson());
     call.resolve(data);
   }
