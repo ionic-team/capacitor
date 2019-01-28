@@ -104,8 +104,11 @@ typedef enum : NSUInteger {
   CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
   
-  double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-  [self setKeyboardHeight:height delay:duration/2.0];
+  double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue]/2.0;
+  if (self.keyboardResizes == ResizeNone) {
+    duration = 0.15;
+  }
+  [self setKeyboardHeight:height delay:duration];
   [self resetScrollView];
   
   NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
@@ -131,18 +134,11 @@ typedef enum : NSUInteger {
 
 - (void)setKeyboardHeight:(int)height delay:(NSTimeInterval)delay
 {
-  if (self.keyboardResizes != ResizeNone) {
-    [self setPaddingBottom: height delay:delay];
-  }
-}
-
-- (void)setPaddingBottom:(int)paddingBottom delay:(NSTimeInterval)delay
-{
-  if (self.paddingBottom == paddingBottom) {
+  if (self.paddingBottom == height) {
     return;
   }
   
-  self.paddingBottom = paddingBottom;
+  self.paddingBottom = height;
   
   __weak CAPKeyboard* weakSelf = self;
   SEL action = @selector(_updateFrame);
@@ -187,12 +183,13 @@ typedef enum : NSUInteger {
       [self resizeElement:@"document.querySelector('ion-app')" withPaddingBottom:_paddingBottom withScreenHeight:(int)f.size.height];
       break;
     }
-    case ResizeNative:
+    case ResizeNone:
     {
-      [self.webView setFrame:CGRectMake(wf.origin.x, wf.origin.y, f.size.width - wf.origin.x, f.size.height - wf.origin.y - self.paddingBottom)];
+      [self.webView.scrollView setContentOffset:CGPointZero];
       break;
     }
     default:
+      [self.webView setFrame:CGRectMake(wf.origin.x, wf.origin.y, f.size.width - wf.origin.x, f.size.height - wf.origin.y - self.paddingBottom)];
       break;
   }
   [self resetScrollView];
