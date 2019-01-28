@@ -75,6 +75,20 @@ enum BridgeError: Error {
       bridgeVC.setStatusBarStyle(statusBarStyle)
     }
   }
+
+  public func getStatusBarVisible() -> Bool {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return false
+    }
+    return !bridgeVC.prefersStatusBarHidden
+  }
+    
+  public func getStatusBarStyle() -> UIStatusBarStyle {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return UIStatusBarStyle.default
+    }
+    return bridgeVC.preferredStatusBarStyle
+  }
   
   /**
    * Get the last URL that triggered an open or continue activity event.
