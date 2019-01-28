@@ -47,31 +47,23 @@ typedef enum : NSUInteger {
   if ([style isEqualToString:@"dark"]) {
     [self setKeyboardAppearanceDark];
   }
-    
-  BOOL doesResize = YES;
-  if ([[self getConfigValue:@"resize"] isEqualToString:@"none"]) {
-    doesResize = NO;
+
+  self.keyboardResizes = ResizeNative;
+  NSString * resizeMode = [self getConfigValue:@"resize"];
+
+  if ([resizeMode isEqualToString:@"none"]) {
     self.keyboardResizes = ResizeNone;
     NSLog(@"CAPKeyboard: no resize");
+  } else if ([resizeMode isEqualToString:@"ionic"]) {
+    self.keyboardResizes = ResizeIonic;
+    NSLog(@"CAPKeyboard: resize mode - ionic");
+  } else if ([resizeMode isEqualToString:@"body"]) {
+    self.keyboardResizes = ResizeBody;
+    NSLog(@"CAPKeyboard: resize mode - body");
   }
 
-  if (doesResize) {
-    self.keyboardResizes = ResizeNative;
-    NSString * resizeMode = [self getConfigValue:@"resize"];
-    
-    if (resizeMode) {
-      if ([resizeMode isEqualToString:@"ionic"]) {
-        self.keyboardResizes = ResizeIonic;
-        NSLog(@"CAPKeyboard: resize mode - ionic");
-      } else if ([resizeMode isEqualToString:@"body"]) {
-        self.keyboardResizes = ResizeBody;
-          NSLog(@"CAPKeyboard: resize mode - body");
-      }
-    }
-      
-    if (self.keyboardResizes == ResizeNative) {
-      NSLog(@"CAPKeyboard: resize mode - native");
-    }
+  if (self.keyboardResizes == ResizeNative) {
+    NSLog(@"CAPKeyboard: resize mode - native");
   }
 
   self.hideFormAccessoryBar = YES;
@@ -90,7 +82,7 @@ typedef enum : NSUInteger {
 
 #pragma mark Keyboard events
 
--(void)statusBarDidChangeFrame:(NSNotification*)notification {
+-(void)statusBarDidChangeFrame:(NSNotification *)notification {
   [self _updateFrame];
 }
 
@@ -100,19 +92,19 @@ typedef enum : NSUInteger {
   [scrollView setContentInset:UIEdgeInsetsZero];
 }
 
-- (void)onKeyboardWillHide:(NSNotification *)sender
+- (void)onKeyboardWillHide:(NSNotification *)notification
 {
   [self setKeyboardHeight:0 delay:0.01];
   [self resetScrollView];
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
 }
 
-- (void)onKeyboardWillShow:(NSNotification *)note
+- (void)onKeyboardWillShow:(NSNotification *)notification
 {
-  CGRect rect = [[note.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+  CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
   
-  double duration = [[note.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+  double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
   [self setKeyboardHeight:height delay:duration/2.0];
   [self resetScrollView];
   
@@ -120,9 +112,9 @@ typedef enum : NSUInteger {
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillShow" data:data];
 }
 
-- (void)onKeyboardDidShow:(NSNotification *)note
+- (void)onKeyboardDidShow:(NSNotification *)notification
 {
-  CGRect rect = [[note.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+  CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
   
   [self resetScrollView];
@@ -131,7 +123,7 @@ typedef enum : NSUInteger {
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidShow" data:data];
 }
 
-- (void)onKeyboardDidHide:(NSNotification *)sender
+- (void)onKeyboardDidHide:(NSNotification *)notification
 {
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidHide"];
   [self resetScrollView];
