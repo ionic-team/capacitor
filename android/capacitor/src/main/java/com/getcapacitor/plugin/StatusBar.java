@@ -7,6 +7,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.getcapacitor.Bridge;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
