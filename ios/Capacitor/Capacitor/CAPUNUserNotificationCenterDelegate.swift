@@ -135,6 +135,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       "id": request.identifier,
       "title": content.title,
       "subtitle": content.subtitle,
+      "userInfo":  content.userInfo,
       "body": content.body,
       "badge": content.badge ?? 1
     ]
