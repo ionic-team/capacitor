@@ -39,6 +39,8 @@ typedef enum : NSUInteger {
 
 @implementation CAPKeyboard
 
+NSTimer *hideTimer;
+
 - (void)load
 {
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarDidChangeFrame:) name:UIApplicationDidChangeStatusBarFrameNotification object: nil];
@@ -98,11 +100,16 @@ typedef enum : NSUInteger {
 {
   [self setKeyboardHeight:0 delay:0.01];
   [self resetScrollView];
-  [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
+  hideTimer = [NSTimer scheduledTimerWithTimeInterval:0 repeats:NO block:^(NSTimer * _Nonnull timer) {
+    [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
+  }];
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)notification
 {
+  if (hideTimer != nil) {
+    [hideTimer invalidate];
+  }
   CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
   
