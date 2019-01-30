@@ -75,6 +75,8 @@ typedef enum : NSUInteger {
   [nc addObserver:self selector:@selector(onKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
   [nc addObserver:self selector:@selector(onKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
   
+  [nc removeObserver:self.webView name:UIKeyboardWillHideNotification object:nil];
+  [nc removeObserver:self.webView name:UIKeyboardWillShowNotification object:nil];
   [nc removeObserver:self.webView name:UIKeyboardWillChangeFrameNotification object:nil];
   [nc removeObserver:self.webView name:UIKeyboardDidChangeFrameNotification object:nil];
 }
@@ -105,9 +107,6 @@ typedef enum : NSUInteger {
   double height = rect.size.height;
   
   double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue]/2.0;
-  if (self.keyboardResizes == ResizeNone) {
-    duration = 0.15;
-  }
   [self setKeyboardHeight:height delay:duration];
   [self resetScrollView];
   
@@ -170,7 +169,7 @@ typedef enum : NSUInteger {
   if (statusBarHeight == 40) {
     _paddingBottom = _paddingBottom + 20;
   }
-  CGRect f = [[UIScreen mainScreen] bounds];
+  CGRect f = [[[[UIApplication sharedApplication] delegate] window] bounds];
   CGRect wf = self.webView.frame;
   switch (self.keyboardResizes) {
     case ResizeBody:
@@ -183,13 +182,12 @@ typedef enum : NSUInteger {
       [self resizeElement:@"document.querySelector('ion-app')" withPaddingBottom:_paddingBottom withScreenHeight:(int)f.size.height];
       break;
     }
-    case ResizeNone:
+    case ResizeNative:
     {
-      [self.webView.scrollView setContentOffset:CGPointZero];
+      [self.webView setFrame:CGRectMake(wf.origin.x, wf.origin.y, f.size.width - wf.origin.x, f.size.height - wf.origin.y - self.paddingBottom)];
       break;
     }
     default:
-      [self.webView setFrame:CGRectMake(wf.origin.x, wf.origin.y, f.size.width - wf.origin.x, f.size.height - wf.origin.y - self.paddingBottom)];
       break;
   }
   [self resetScrollView];
