@@ -1379,6 +1379,10 @@ export interface StatusBarPlugin extends Plugin {
    *  Hide the status bar
    */
   hide(): Promise<void>;
+  /**
+   *  Get info about the current state of the status bar
+   */
+  getInfo(): Promise<StatusBarInfoResult>;
 }
 
 export interface StatusBarStyleOptions {
@@ -1392,6 +1396,12 @@ export enum StatusBarStyle {
 
 export interface StatusBarBackgroundColorOptions {
   color: string;
+}
+
+export interface StatusBarInfoResult {
+  visible: boolean;
+  style: StatusBarStyle;
+  color?: string;
 }
 
 export interface StoragePlugin extends Plugin {
