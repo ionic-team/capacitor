@@ -72,7 +72,9 @@ The current ones you might configure are:
     "cordovaSwiftVersion": "3.0",
     // Minimum iOS version supported by the project.
     // Default is 11.0
-    "minVersion": "11.3"
+    "minVersion": "11.3",
+    // Some Cordova plugins require to configure the linker flags
+    "cordovaLinkerFlags": ["-ObjC"]
   }
 }
 ```
