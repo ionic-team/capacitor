@@ -112,7 +112,7 @@ enum BridgeError: Error {
   /**
    * Handle continueUserActivity, for now this just provides universal link responding support.
    */
-  public static func handleContinueActivity(_ userActivity: NSUserActivity, _ restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+  public static func handleContinueActivity(_ userActivity: NSUserActivity, _ restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     // TODO: Support other types, emit to rest of plugins
     if userActivity.activityType != NSUserActivityTypeBrowsingWeb || userActivity.webpageURL == nil {
       return false
