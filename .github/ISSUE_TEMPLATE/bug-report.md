@@ -10,23 +10,30 @@ assignees: ''
 Description of the problem:
 
 Affected platform
-Android []
-iOS []
-electron []
-web []
+Android [ ]
+iOS [ ]
+electron [ ]
+web [ ]
 
 OS of de development machine
-Windows []
-macOS []
-linux []
+Windows [ ]
+macOS [ ]
+linux [ ]
 
 Other information:
+
 Capacitor version:
+
 node version:
+
 npm version:
+
 CocoaPods version:
 
+
 Steps to reproduce:
+
+
 
 
 Link to sample project:
