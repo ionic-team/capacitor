@@ -10,15 +10,15 @@ assignees: ''
 Description of the problem:
 
 Affected platform
-Android [ ]
-iOS [ ]
-electron [ ]
-web [ ]
+- [ ] Android
+- [ ] iOS
+- [ ] electron
+- [ ] web
 
-OS of de development machine
-Windows [ ]
-macOS [ ]
-linux [ ]
+OS of the development machine
+- [ ]Windows
+- [ ]macOS
+- [ ]linux
 
 Other information:
 
