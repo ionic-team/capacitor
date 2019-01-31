@@ -16,9 +16,9 @@ Affected platform
 - [ ] web
 
 OS of the development machine
-- [ ]Windows
-- [ ]macOS
-- [ ]linux
+- [ ] Windows
+- [ ] macOS
+- [ ] linux
 
 Other information:
 
