@@ -825,7 +825,6 @@ export interface KeyboardPlugin extends Plugin {
 
 export interface LocalNotificationRequest {
   id: string;
-  options: any;
 }
 
 export interface LocalNotificationPendingList {
