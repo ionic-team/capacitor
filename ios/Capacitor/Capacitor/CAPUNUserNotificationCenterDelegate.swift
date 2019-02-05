@@ -118,11 +118,8 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
    * Turn a UNNotificationRequest into a JSObject to return back to the client.
    */
   func makeNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
-    let notificationRequest = notificationRequestLookup[request.identifier] ?? [:]
-
     return [
-      "id": request.identifier,
-      "extra": notificationRequest["extra"] ?? [:]
+      "id": request.identifier
     ]
   }
 
