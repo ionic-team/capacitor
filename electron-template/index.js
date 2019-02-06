@@ -2,6 +2,9 @@ const { app, BrowserWindow, Menu } = require('electron');
 const isDevMode = require('electron-is-dev');
 const { injectCapacitor, CapacitorSplashScreen } = require('@capacitor/electron');
 
+const path = require('path');
+global.__basedir = path.resolve(__dirname);
+
 // Place holders for our windows so they don't get garbage collected.
 let mainWindow = null;
 
