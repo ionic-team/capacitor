@@ -164,7 +164,7 @@ public class PushNotifications extends Plugin {
   public void fireNotification(RemoteMessage remoteMessage) {
     JSObject remoteMessageData = new JSObject();
 
-    Map<String, Object> data = new HashMap<String, Object>();
+    JSObject data = new JSObject();
     for (String key : remoteMessage.getData().keySet()) {
       Object value = remoteMessage.getData().get(key);
       data.put(key, value);
