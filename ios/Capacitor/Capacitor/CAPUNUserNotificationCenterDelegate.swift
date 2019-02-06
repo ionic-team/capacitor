@@ -133,7 +133,9 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       "title": content.title,
       "subtitle": content.subtitle,
       "body": content.body,
-      "badge": content.badge ?? 1
+      "badge": content.badge ?? 1,
+      "data": content.userInfo["custom_data"],
+      "aps": content.userInfo["aps"],
     ]
   }
 
