@@ -62,11 +62,9 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       }
     }
 
-    if (self.bridge?.isAppActive())! {
-      completionHandler([.badge, .sound, .alert])
-    } else {
-      completionHandler([.badge, .sound])
-    }
+    // This method is only run when the app is in the foreground, therefore
+    // always suppress the alert notification
+    completionHandler([.badge, .sound])
   }
 
   /**
