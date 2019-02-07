@@ -3,7 +3,7 @@ public typealias PluginResultData = [String:Any]
 public typealias PluginEventListener = CAPPluginCall
 
 /**
- * Swift niceities for CAPPluginCall
+ * Swift niceties for CAPPluginCall
  */
 @objc public extension CAPPluginCall {
 
