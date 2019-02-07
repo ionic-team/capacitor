@@ -3,9 +3,10 @@ import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPlu
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
 import { buildXmlElement, log, logError, logFatal, logInfo, readXML, resolveNode, runCommand, writeXML } from './common';
-import { copy as fsCopy } from 'fs-extra';
+import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
+import { copy } from './tasks/copy';
 
 const plist = require('plist');
 const chalk = require('chalk');
@@ -166,6 +167,9 @@ function getWebDir(config: Config, platform: string): string {
 }
 
 export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: Config, platform: string) {
+  if (!existsSync(getWebDir(config, platform))) {
+    await copy(config, platform);
+  }
   if (cordovaPlugins.length > 0) {
     printPlugins(cordovaPlugins, platform, 'cordova');
     await copyCordovaJS(config, platform);
