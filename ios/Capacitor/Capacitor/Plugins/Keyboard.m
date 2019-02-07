@@ -250,7 +250,9 @@ static IMP WKOriginalImp;
 
 - (void)hide:(CAPPluginCall *)call
 {
-  [self.webView endEditing:YES];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.webView endEditing:YES];
+  });
 }
 
 - (void)show:(CAPPluginCall *)call
