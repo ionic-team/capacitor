@@ -245,7 +245,7 @@ static IMP WKOriginalImp;
 
   NSLog(@"Accessory bar visible change %d", value);
   self.hideFormAccessoryBar = !value;
-  [call successHandler];
+  [call success];
 }
 
 - (void)hide:(CAPPluginCall *)call
@@ -253,11 +253,12 @@ static IMP WKOriginalImp;
   dispatch_async(dispatch_get_main_queue(), ^{
     [self.webView endEditing:YES];
   });
+  [call success];
 }
 
 - (void)show:(CAPPluginCall *)call
 {
-  [call successHandler];
+  [call unimplemented];
 }
 
 - (void)setKeyboardAppearanceDark

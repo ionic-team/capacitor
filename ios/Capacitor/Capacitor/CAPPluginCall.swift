@@ -3,33 +3,33 @@ public typealias PluginResultData = [String:Any]
 public typealias PluginEventListener = CAPPluginCall
 
 /**
- * Swift niceities for CAPPluginCall
+ * Swift niceties for CAPPluginCall
  */
-public extension CAPPluginCall {
+@objc public extension CAPPluginCall {
 
   private static var UNIMPLEMENTED = "not implemented"
 
-  public func get<T>(_ key: String, _ ofType: T.Type, _ defaultValue: T? = nil) -> T? {
+  @nonobjc public func get<T>(_ key: String, _ ofType: T.Type, _ defaultValue: T? = nil) -> T? {
     return self.options[key] as? T ?? defaultValue
   }
   
-  public func getArray<T>(_ key: String, _ ofType: T.Type, _ defaultValue: [T]? = nil) -> [T]? {
+  @nonobjc public func getArray<T>(_ key: String, _ ofType: T.Type, _ defaultValue: [T]? = nil) -> [T]? {
     return self.options[key] as? [T] ?? defaultValue
   }
   
-  public func getBool(_ key: String, _ defaultValue: Bool? = nil) -> Bool? {
+  @nonobjc public func getBool(_ key: String, _ defaultValue: Bool? = nil) -> Bool? {
     return self.options[key] as? Bool ?? defaultValue
   }
   
-  public func getInt(_ key: String, _ defaultValue: Int? = nil) -> Int? {
+  @nonobjc public func getInt(_ key: String, _ defaultValue: Int? = nil) -> Int? {
     return self.options[key] as? Int ?? defaultValue
   }
   
-  public func getFloat(_ key: String, _ defaultValue: Float? = nil) -> Float? {
+  @nonobjc public func getFloat(_ key: String, _ defaultValue: Float? = nil) -> Float? {
     return self.options[key] as? Float ?? defaultValue
   }
   
-  public func getDouble(_ key: String, _ defaultValue: Double? = nil) -> Double? {
+  @nonobjc public func getDouble(_ key: String, _ defaultValue: Double? = nil) -> Double? {
     return self.options[key] as? Double ?? defaultValue
   }
   
