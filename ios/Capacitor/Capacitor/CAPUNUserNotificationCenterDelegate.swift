@@ -111,7 +111,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "LocalNotifications"))!
     }
 
-    plugin.notifyListeners(action, data: data)
+    plugin.notifyListeners(action, data: data, retainUntilConsumed: true)
   }
 
   /**
