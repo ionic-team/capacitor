@@ -1248,9 +1248,8 @@ export interface PushNotification {
   badge?: number;
   notification?: any;
   data?: any;
-  aps?: any;
-  click_action?: any;
-  link?: any;
+  click_action?: string;
+  link?: string;
 }
 
 export interface PushNotificationActionPerformed {

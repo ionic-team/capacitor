@@ -173,13 +173,13 @@ public class PushNotifications extends Plugin {
 
     RemoteMessage.Notification notification = remoteMessage.getNotification();
     if (notification != null) {
-      Uri link = notification.getLink();
       remoteMessageData.put("title", notification.getTitle());
       remoteMessageData.put("body", notification.getBody());
       remoteMessageData.put("click_action", notification.getClickAction());
 
+      Uri link = notification.getLink();
       if (link != null) {
-        remoteMessageData.put("link", notification.getLink().toString());
+        remoteMessageData.put("link", link.toString());
       }
     }
 
