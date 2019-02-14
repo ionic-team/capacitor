@@ -42,23 +42,23 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
     let request = notification.request
     var plugin: CAPPlugin
     var action = "localNotificationReceived"
-    var presentation_options: UNNotificationPresentationOptions = [];
+    var presentationOptions: UNNotificationPresentationOptions = [];
 
     var notificationData = makeNotificationRequestJSObject(request)
     if (request.trigger?.isKind(of: UNPushNotificationTrigger.self))! {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
       action = "pushNotificationReceived"
       notificationData = makePushNotificationRequestJSObject(request)
-      presentation_options = [
-        UNNotificationPresentationOptions.badge,
-        UNNotificationPresentationOptions.sound
+      presentationOptions = [
+        .badge,
+        .sound
       ]
     } else {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "LocalNotifications"))!
-      presentation_options = [
-        UNNotificationPresentationOptions.badge,
-        UNNotificationPresentationOptions.sound,
-        UNNotificationPresentationOptions.alert
+      presentationOptions = [
+        .badge,
+        .sound,
+        .alert
       ]
     }
 
@@ -72,7 +72,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       }
     }
 
-    completionHandler(presentation_options)
+    completionHandler(presentationOptions)
   }
 
   /**
