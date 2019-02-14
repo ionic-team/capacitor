@@ -7,6 +7,7 @@ import { copy as fsCopy } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
+import { existsSync } from 'fs';
 
 const plist = require('plist');
 const chalk = require('chalk');
@@ -280,7 +281,7 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
           }
           logInfo(`installing missing dependency plugin ${plugin}`);
           try {
-            await installDeps(config.app.rootDir, [plugin])
+            await installDeps(config.app.rootDir, [plugin], config);
             await config.updateAppPackage();
             needsUpdate = true;
           } catch (e) {
