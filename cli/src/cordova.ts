@@ -3,11 +3,10 @@ import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPlu
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
 import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, readXML, resolveNode, writeXML } from './common';
-import { copy as fsCopy } from 'fs-extra';
+import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
-import { existsSync } from 'fs';
 
 const plist = require('plist');
 const chalk = require('chalk');
