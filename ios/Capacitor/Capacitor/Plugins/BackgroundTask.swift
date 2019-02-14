@@ -18,10 +18,7 @@ public class CAPBackgroundTaskPlugin : CAPPlugin {
     }
     
     self.tasks[call.callbackId] = taskId
-    
-    call.success([
-      "taskId": taskId
-    ])
+    call.success()
   }
   
   @objc func finish(_ call: CAPPluginCall) {
