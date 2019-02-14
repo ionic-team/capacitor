@@ -56,6 +56,17 @@
 
   // patch window.console and store original console fns
   var orgConsole = {};
+  
+  // list log functions bridged to native log
+  var bridgedLevels = {
+    debug: true,
+    error: true,
+    info: true,
+    log: true,
+    trace: true,
+    warn: true,
+  };
+  
   Object.keys(win.console).forEach(function (level) {
     if (typeof win.console[level] === 'function') {
       // loop through all the console functions and keep references to the original
@@ -67,7 +78,7 @@
         // console log to browser
         orgConsole[level].apply(win.console, msgs);
 
-        if (capacitor.isNative) {
+        if (capacitor.isNative && bridgedLevels[level]) {
           // send log to native to print
           try {
             // convert all args to strings
@@ -496,11 +507,14 @@
     if (!url) {
       return url;
     }
-    if (url.startsWith('file://')) {
-      return url.replace('file', 'capacitor-file');
+    if (url.startsWith('/')) {
+      return window.WEBVIEW_SERVER_URL + '/_capacitor_file_' + url;
     }
-    if (url.startsWith('content:')) {
-      return url.replace('content:', 'capacitor-content:/');
+    if (url.startsWith('file://')) {
+      return window.WEBVIEW_SERVER_URL + url.replace('file://', '/_capacitor_file_');
+    }
+    if (url.startsWith('content://')) {
+      return window.WEBVIEW_SERVER_URL + url.replace('content:/', '/_capacitor_content_');
     }
     return url;
   }

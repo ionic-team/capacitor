@@ -126,6 +126,7 @@ CAP_PLUGIN(CAPStatusBarPlugin, "StatusBar",
   CAP_PLUGIN_METHOD(setBackgroundColor, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(getInfo, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPStoragePlugin, "Storage",

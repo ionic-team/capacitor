@@ -41,7 +41,7 @@ public class CAPClipboardPlugin : CAPPlugin {
     
     if type == "image" && UIPasteboard.general.hasImages {
       let image = UIPasteboard.general.image!
-      let data = UIImagePNGRepresentation(image)
+      let data = image.pngData()
       if let base64 = data?.base64EncodedString() {
         call.success([
           "value": base64

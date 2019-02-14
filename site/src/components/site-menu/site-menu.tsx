@@ -64,7 +64,11 @@ export class SiteMenu {
           url: '/docs/basics/running-your-app'
         },
         {
-          title: 'Using Cordova Plugins',
+          title: 'Using Plugins',
+          url: '/docs/basics/using-plugins'
+        },
+        {
+          title: 'Cordova Plugins',
           url: '/docs/basics/cordova'
         },
         {
@@ -151,6 +155,10 @@ export class SiteMenu {
         {
           title: 'Introduction',
           url: '/docs/plugins/'
+        },
+        {
+          title: 'Community Plugins',
+          url: '/docs/community/plugins/'
         },
         {
           title: 'iOS Guide',

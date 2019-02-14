@@ -215,7 +215,7 @@ public class CAPPhotosPlugin : CAPPlugin {
         a["identifier"] = asset.localIdentifier
         
         // TODO: We need to know original type
-        a["data"] = UIImageJPEGRepresentation(image, CGFloat(thumbnailQuality) / 100.0)?.base64EncodedString()
+        a["data"] = image.jpegData(compressionQuality: CGFloat(thumbnailQuality) / 100.0)?.base64EncodedString()
         
         if asset.creationDate != nil {
           a["creationDate"] = JSDate.toString(asset.creationDate!)

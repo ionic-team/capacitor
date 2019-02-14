@@ -11,6 +11,13 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700" rel="stylesheet">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+  <script>
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) {
+        registration.unregister()
+      }
+    });
+  </script>
   <script src="/build/app.js"></script>
 </head>
 <body>

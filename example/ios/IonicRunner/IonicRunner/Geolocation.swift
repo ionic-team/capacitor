@@ -2,9 +2,6 @@
 //  Geolocation.swift
 //  IonicRunner
 //
-//  Created by Perry Govier on 3/25/17.
-//  Copyright © 2017 Max Lynch. All rights reserved.
-//
 
 import Foundation
 import UIKit

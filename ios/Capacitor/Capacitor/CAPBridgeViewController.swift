@@ -2,9 +2,6 @@
 //  ViewController.swift
 //  IonicRunner
 //
-//  Created by Max Lynch on 3/22/17.
-//  Copyright © 2017 Max Lynch. All rights reserved.
-//
 
 import UIKit
 import WebKit
@@ -40,7 +37,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     let webViewConfiguration = WKWebViewConfiguration()
 
     webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_SCHEME)
-    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_FILE_SCHEME)
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
@@ -56,8 +52,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
-    //If you want to implement the delegate
-    //webView?.navigationDelegate = self
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
@@ -72,13 +66,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   override public func viewDidLoad() {
     super.viewDidLoad()
     self.becomeFirstResponder()
-    
     loadWebView()
-    bridge!.didLoad()
-  }
-  
-  public override func viewWillAppear(_ animated: Bool) {
-    bridge!.willAppear()
   }
   
   func loadWebView() {
@@ -149,7 +137,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     configuration.allowsInlineMediaPlayback = true
     configuration.suppressesIncrementalRendering = false
     configuration.allowsAirPlayForMediaPlayback = true
-    //configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone
+    configuration.mediaTypesRequiringUserActionForPlayback = []
   }
 
   public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -283,7 +271,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     // Dispose of any resources that can be recreated.
   }
 
-  override public func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+  override public func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
     if bridge != nil {
       if motion == .motionShake && bridge!.isDevMode() {
         bridge!.showDevMode()

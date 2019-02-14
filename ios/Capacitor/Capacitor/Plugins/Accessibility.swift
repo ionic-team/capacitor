@@ -7,18 +7,18 @@ public class CAPAccessibilityPlugin : CAPPlugin {
   public override func load() {
     NotificationCenter.default.addObserver(self,
                                            selector: #selector(self.onScreenReaderStateChanged(notification:)),
-                                           name: Notification.Name(UIAccessibilityVoiceOverStatusChanged),
+                                           name: UIAccessibility.voiceOverStatusDidChangeNotification,
                                            object: nil)
   }
   
   @objc func onScreenReaderStateChanged(notification: NSNotification) {
     notifyListeners(CAPAccessibilityPlugin.SCREEN_READER_STATE_CHANGE_EVENT, data: [
-      "value": UIAccessibilityIsVoiceOverRunning()
+      "value": UIAccessibility.isVoiceOverRunning
     ])
   }
   
   @objc func isScreenReaderEnabled(_ call: CAPPluginCall) {
-    let voEnabled = UIAccessibilityIsVoiceOverRunning()
+    let voEnabled = UIAccessibility.isVoiceOverRunning
     call.success([
       "value": voEnabled
     ])
@@ -30,7 +30,7 @@ public class CAPAccessibilityPlugin : CAPPlugin {
       return
     }
     
-    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, value)
+    UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: value)
     
     call.success()
   }

@@ -1,3 +1,5 @@
+set -e
+
 LERNA_JSON=`cat lerna.json`;
 export LERNA_VERSION="$(node -pe "JSON.parse(\`$LERNA_JSON\`)['version']")"
 

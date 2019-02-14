@@ -33,8 +33,8 @@ public class CAPAppPlugin : CAPPlugin {
     let options = object["options"] as? [String:Any?] ?? [:]
     return [
       "url": url.absoluteString ?? "",
-      "iosSourceApplication": options[UIApplicationOpenURLOptionsKey.sourceApplication.rawValue] as? String ?? "",
-      "iosOpenInPlace": options[UIApplicationOpenURLOptionsKey.openInPlace.rawValue] as? String ?? ""
+      "iosSourceApplication": options[UIApplication.OpenURLOptionsKey.sourceApplication.rawValue] as? String ?? "",
+      "iosOpenInPlace": options[UIApplication.OpenURLOptionsKey.openInPlace.rawValue] as? String ?? ""
     ]
   }
   

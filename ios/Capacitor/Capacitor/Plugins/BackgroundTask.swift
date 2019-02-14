@@ -5,16 +5,16 @@ public class CAPBackgroundTaskPlugin : CAPPlugin {
   var tasks: [String:UIBackgroundTaskIdentifier] = [:]
   
   public override func load() {
-    NotificationCenter.default.addObserver(self, selector: #selector(self.onAppTerminate), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(self.onAppTerminate), name: UIApplication.willTerminateNotification, object: nil)
     //NotificationCenter.default.addObserver(self, selector: #selector(self.onAppBackgrounded), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
   }
   
   @objc func beforeExit(_ call: CAPPluginCall) {
-    var taskId: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
+    var taskId: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
     
     taskId = UIApplication.shared.beginBackgroundTask {
       UIApplication.shared.endBackgroundTask(taskId)
-      self.tasks[call.callbackId] = UIBackgroundTaskInvalid
+      self.tasks[call.callbackId] = UIBackgroundTaskIdentifier.invalid
     }
     
     self.tasks[call.callbackId] = taskId

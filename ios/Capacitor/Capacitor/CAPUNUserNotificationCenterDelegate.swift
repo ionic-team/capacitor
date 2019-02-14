@@ -111,18 +111,15 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "LocalNotifications"))!
     }
 
-    plugin.notifyListeners(action, data: data)
+    plugin.notifyListeners(action, data: data, retainUntilConsumed: true)
   }
 
   /**
    * Turn a UNNotificationRequest into a JSObject to return back to the client.
    */
   func makeNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
-    let notificationRequest = notificationRequestLookup[request.identifier] ?? [:]
-
     return [
-      "id": request.identifier,
-      "extra": notificationRequest["extra"] ?? [:]
+      "id": request.identifier
     ]
   }
 
@@ -136,7 +133,8 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       "title": content.title,
       "subtitle": content.subtitle,
       "body": content.body,
-      "badge": content.badge ?? 1
+      "badge": content.badge ?? 1,
+      "data": content.userInfo,
     ]
   }
 

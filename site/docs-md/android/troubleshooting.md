@@ -14,7 +14,7 @@ Any time you encounter an issue with Android, or Gradle, or Emulators, your firs
 
 Capacitor uses the standard Android toolkit, so chances are if you run into something, many Android developers have as well, and there's a solution out there.
 
-It could be as simple as updating a dependency, running Gradle sync, or invalidating caches
+It could be as simple as updating a dependency, running Gradle sync, or invalidating caches.
 
 ### Clean/Rebuild
 

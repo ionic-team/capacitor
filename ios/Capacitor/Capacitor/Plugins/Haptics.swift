@@ -8,11 +8,11 @@ public class CAPHapticsPlugin: CAPPlugin {
   @objc public func impact(_ call: CAPPluginCall) {
     DispatchQueue.main.async {
       if let style = call.options["style"] as? String {
-        var impactStyle = UIImpactFeedbackStyle.heavy
+        var impactStyle = UIImpactFeedbackGenerator.FeedbackStyle.heavy
         if style == "MEDIUM" {
-          impactStyle = UIImpactFeedbackStyle.medium
+          impactStyle = UIImpactFeedbackGenerator.FeedbackStyle.medium
         } else if style == "LIGHT" {
-          impactStyle = UIImpactFeedbackStyle.light
+          impactStyle = UIImpactFeedbackGenerator.FeedbackStyle.light
         }
         
         let generator = UIImpactFeedbackGenerator(style: impactStyle)

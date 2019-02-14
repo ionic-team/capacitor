@@ -12,6 +12,8 @@ Capacitor also comes with a Plugin API for building native plugins. On iOS, firs
 
 _Disclaimer: Our roadmap is subject to change at any time and has no specific date guarantees_
 
+[2019](https://blog.ionicframework.com/capacitor-in-2019-native-progressive-web-apps-for-all/)
+
 2018
 
  - __Cordova Plugin Integration__
