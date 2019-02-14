@@ -85,7 +85,7 @@ export interface AppPlugin extends Plugin {
   /**
    * Force exit the app. This should only be used in conjunction with the `backButton` handler for Android to
    * exit the app when navigation is complete.
-   * 
+   *
    * Ionic handles this itself so you shouldn't need to call this if using Ionic
    */
   exitApp(): never;
@@ -180,10 +180,10 @@ export interface BackgroundTaskPlugin extends Plugin {
    * can finish any work your app needs to do (such as finishing an upload
    * or network request). This is especially important on iOS as any operations
    * would normally be suspended without initiating a background task.
-   * 
+   *
    * This method should finish in less than 3 minutes or your app risks
    * being terminated by the OS.
-   * 
+   *
    * When you are finished, this callback _must_ call `BackgroundTask.finish({ taskId })`
    * where `taskId` is the value returned from `BackgroundTask.beforeExit()`
    * @param cb the task to run when the app is backgrounded but before it is terminated
@@ -863,7 +863,7 @@ export interface LocalNotificationAttachment {
 
 export interface LocalNotificationAttachmentOptions {
   iosUNNotificationAttachmentOptionsTypeHintKey?: string;
-  iosUNNotificationAttachmentOptionsThumbnailHiddenKey?: string; 
+  iosUNNotificationAttachmentOptionsThumbnailHiddenKey?: string;
   iosUNNotificationAttachmentOptionsThumbnailClippingRectKey?: string;
   iosUNNotificationAttachmentOptionsThumbnailTimeKey?: string;
 }
@@ -1248,6 +1248,8 @@ export interface PushNotification {
   badge?: number;
   notification?: any;
   data?: any;
+  click_action?: string;
+  link?: string;
 }
 
 export interface PushNotificationActionPerformed {
