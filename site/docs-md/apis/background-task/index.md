@@ -21,6 +21,8 @@ Plugins that claim to offer infinite background operation outside of those core 
 Generally, Android is less strict about background tasks, but your app should code to the lowest common denominator
 in order to be a good actor on all platforms.
 
+NOTE: On iOS `setTimeout` and `setInterval` won't work once your app is in background, so don't use them inside `beforeExit`.
+
 ## Example
 
 ```typescript
@@ -39,15 +41,19 @@ App.addListener('appStateChange', (state) => {
       // In this function We might finish an upload, let a network request
       // finish, persist some data, or perform some other task
 
-      // Example
-      setTimeout(() => {
-        // Must call in order to end our task otherwise
-        // we risk our app being terminated, and possibly
-        // being labled as impacting battery life
-        BackgroundTask.finish({
-          taskId
-        });
-      }, 30000); // Set a long timeout as an example
+      // Example of long task
+      var start = new Date().getTime();
+      for (var i = 0; i < 1e18; i++) {
+        if ((new Date().getTime() - start) > 20000){
+          break;
+        }
+      }
+      // Must call in order to end our task otherwise
+      // we risk our app being terminated, and possibly
+      // being labeled as impacting battery life
+      BackgroundTask.finish({
+        taskId
+      });
     });
   }
 })
