@@ -18,9 +18,9 @@ public class CAPStatusBarPlugin: CAPPlugin {
 
     if let style = options["style"] as? String {
       if style == "DARK" {
-        bridge.setStatusBarStyle(.lightContent)
-      } else if style == "LIGHT" {
         bridge.setStatusBarStyle(.default)
+      } else if style == "LIGHT" {
+        bridge.setStatusBarStyle(.lightContent)
       }
     }
     
