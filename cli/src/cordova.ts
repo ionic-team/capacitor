@@ -3,9 +3,10 @@ import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPlu
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
 import { buildXmlElement, log, logError, logFatal, logInfo, readXML, resolveNode, runCommand, writeXML } from './common';
-import { copy as fsCopy } from 'fs-extra';
+import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
+import { copy } from './tasks/copy';
 
 const plist = require('plist');
 const chalk = require('chalk');
@@ -150,6 +151,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
   }));
   const content = `<?xml version='1.0' encoding='utf-8'?>
   <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <access origin="*" />
   ${pluginEntriesString.join('\n')}
   </widget>`;
   await writeFileAsync(cordovaConfigXMLFile, content);
@@ -166,6 +168,9 @@ function getWebDir(config: Config, platform: string): string {
 }
 
 export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: Config, platform: string) {
+  if (!existsSync(getWebDir(config, platform))) {
+    await copy(config, platform);
+  }
   if (cordovaPlugins.length > 0) {
     printPlugins(cordovaPlugins, platform, 'cordova');
     await copyCordovaJS(config, platform);
@@ -292,5 +297,6 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
 export function getIncompatibleCordovaPlugins(){
   return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
   "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
-  "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support"];
+  "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support",
+  "cordova-plugin-ionic-keyboard"];
 }

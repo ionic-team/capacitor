@@ -4,6 +4,7 @@
 <p><plugin-api index="true" name="status-bar"></plugin-api></p>
 <h2 id="ios-note">iOS Note</h2>
 <p>This plugin requires &quot;View controller-based status bar appearance&quot; (<code>UIViewControllerBasedStatusBarAppearance</code>) set to <code>YES</code> in <code>Info.plist</code>. Read about <a href="../ios/configuration">Configuring iOS</a> for help.</p>
+<p>The status bar visibility defaults to visible and the style defaults to <code>StatusBarStyle.Light</code>. You can change these defaults by adding <code>UIStatusBarHidden</code> and or <code>UIStatusBarStyle</code> in the <code>Info.plist</code>.</p>
 <h2 id="events">Events</h2>
 <ul>
 <li>statusTap</li>
@@ -28,7 +29,7 @@
   changeStatusBar() {
     StatusBar.setStyle({
       style: <span class="hljs-keyword">this</span>.isStatusBarLight ? StatusBarStyle.Dark : StatusBarStyle.Light
-    }, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {});
+    });
     <span class="hljs-keyword">this</span>.isStatusBarLight = !<span class="hljs-keyword">this</span>.isStatusBarLight;
   }
 

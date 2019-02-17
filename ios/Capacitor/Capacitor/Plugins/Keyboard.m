@@ -39,31 +39,35 @@ typedef enum : NSUInteger {
 
 @implementation CAPKeyboard
 
+NSTimer *hideTimer;
+
 - (void)load
 {
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarDidChangeFrame:) name:UIApplicationDidChangeStatusBarFrameNotification object: nil];
+    
   NSString * style = [self getConfigValue:@"style"];
   if ([style isEqualToString:@"dark"]) {
     [self setKeyboardAppearanceDark];
   }
-  
+
   self.keyboardResizes = ResizeNative;
-  BOOL doesResize = YES;
-  if (!doesResize) {
+  NSString * resizeMode = [self getConfigValue:@"resize"];
+
+  if ([resizeMode isEqualToString:@"none"]) {
     self.keyboardResizes = ResizeNone;
-    NSLog(@"CAPIonicKeyboard: no resize");
-    
-  } else {
-    NSString *resizeMode = @"ionic";
-    if (resizeMode) {
-      if ([resizeMode isEqualToString:@"ionic"]) {
-        self.keyboardResizes = ResizeIonic;
-      } else if ([resizeMode isEqualToString:@"body"]) {
-        self.keyboardResizes = ResizeBody;
-      }
-    }
-    // NSLog(@"CAPIonicKeyboard: resize mode %d", self.keyboardResizes);
+    NSLog(@"CAPKeyboard: no resize");
+  } else if ([resizeMode isEqualToString:@"ionic"]) {
+    self.keyboardResizes = ResizeIonic;
+    NSLog(@"CAPKeyboard: resize mode - ionic");
+  } else if ([resizeMode isEqualToString:@"body"]) {
+    self.keyboardResizes = ResizeBody;
+    NSLog(@"CAPKeyboard: resize mode - body");
   }
+
+  if (self.keyboardResizes == ResizeNative) {
+    NSLog(@"CAPKeyboard: resize mode - native");
+  }
+
   self.hideFormAccessoryBar = YES;
   
   NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -73,6 +77,8 @@ typedef enum : NSUInteger {
   [nc addObserver:self selector:@selector(onKeyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
   [nc addObserver:self selector:@selector(onKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
   
+  [nc removeObserver:self.webView name:UIKeyboardWillHideNotification object:nil];
+  [nc removeObserver:self.webView name:UIKeyboardWillShowNotification object:nil];
   [nc removeObserver:self.webView name:UIKeyboardWillChangeFrameNotification object:nil];
   [nc removeObserver:self.webView name:UIKeyboardDidChangeFrameNotification object:nil];
 }
@@ -80,7 +86,7 @@ typedef enum : NSUInteger {
 
 #pragma mark Keyboard events
 
--(void)statusBarDidChangeFrame:(NSNotification*)notification {
+-(void)statusBarDidChangeFrame:(NSNotification *)notification {
   [self _updateFrame];
 }
 
@@ -90,29 +96,34 @@ typedef enum : NSUInteger {
   [scrollView setContentInset:UIEdgeInsetsZero];
 }
 
-- (void)onKeyboardWillHide:(NSNotification *)sender
+- (void)onKeyboardWillHide:(NSNotification *)notification
 {
   [self setKeyboardHeight:0 delay:0.01];
   [self resetScrollView];
-  [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
+  hideTimer = [NSTimer scheduledTimerWithTimeInterval:0 repeats:NO block:^(NSTimer * _Nonnull timer) {
+    [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
+  }];
 }
 
-- (void)onKeyboardWillShow:(NSNotification *)note
+- (void)onKeyboardWillShow:(NSNotification *)notification
 {
-  CGRect rect = [[note.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+  if (hideTimer != nil) {
+    [hideTimer invalidate];
+  }
+  CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
   
-  double duration = [[note.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-  [self setKeyboardHeight:height delay:duration/2.0];
+  double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue]/2.0;
+  [self setKeyboardHeight:height delay:duration];
   [self resetScrollView];
   
   NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillShow" data:data];
 }
 
-- (void)onKeyboardDidShow:(NSNotification *)note
+- (void)onKeyboardDidShow:(NSNotification *)notification
 {
-  CGRect rect = [[note.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+  CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
   
   [self resetScrollView];
@@ -121,7 +132,7 @@ typedef enum : NSUInteger {
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidShow" data:data];
 }
 
-- (void)onKeyboardDidHide:(NSNotification *)sender
+- (void)onKeyboardDidHide:(NSNotification *)notification
 {
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidHide"];
   [self resetScrollView];
@@ -129,18 +140,11 @@ typedef enum : NSUInteger {
 
 - (void)setKeyboardHeight:(int)height delay:(NSTimeInterval)delay
 {
-  if (self.keyboardResizes != ResizeNone) {
-    [self setPaddingBottom: height delay:delay];
-  }
-}
-
-- (void)setPaddingBottom:(int)paddingBottom delay:(NSTimeInterval)delay
-{
-  if (self.paddingBottom == paddingBottom) {
+  if (self.paddingBottom == height) {
     return;
   }
   
-  self.paddingBottom = paddingBottom;
+  self.paddingBottom = height;
   
   __weak CAPKeyboard* weakSelf = self;
   SEL action = @selector(_updateFrame);
@@ -150,6 +154,16 @@ typedef enum : NSUInteger {
   } else {
     [weakSelf performSelector:action withObject:nil afterDelay:delay];
   }
+}
+
+- (void)resizeElement:(NSString *)element withPaddingBottom:(int)paddingBottom withScreenHeight:(int)screenHeight
+{
+    int height = -1;
+    if (paddingBottom > 0) {
+        height = screenHeight - paddingBottom;
+    }
+    
+    [self.bridge evalWithJs: [NSString stringWithFormat:@"(function() { var el = %@; var height = %d; if (el) { el.style.height = height > -1 ? height + 'px' : null; } })()", element, height]];
 }
 
 - (void)_updateFrame
@@ -162,21 +176,17 @@ typedef enum : NSUInteger {
   if (statusBarHeight == 40) {
     _paddingBottom = _paddingBottom + 20;
   }
-  CGRect f = [[UIScreen mainScreen] bounds];
+  CGRect f = [[[[UIApplication sharedApplication] delegate] window] bounds];
   CGRect wf = self.webView.frame;
   switch (self.keyboardResizes) {
     case ResizeBody:
     {
-      NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.body);",
-                      _paddingBottom, (int)f.size.height];
-      [self.bridge evalWithPlugin:self js:js];
+      [self resizeElement:@"document.body" withPaddingBottom:_paddingBottom withScreenHeight:(int)f.size.height];
       break;
     }
     case ResizeIonic:
     {
-      NSString *js = [NSString stringWithFormat:@"plugin.fireOnResize(%d, %d, document.querySelector('ion-app'));",
-                      _paddingBottom, (int)f.size.height];
-      [self.bridge evalWithPlugin:self js:js];
+      [self resizeElement:@"document.querySelector('ion-app')" withPaddingBottom:_paddingBottom withScreenHeight:(int)f.size.height];
       break;
     }
     case ResizeNative:
@@ -235,17 +245,20 @@ static IMP WKOriginalImp;
 
   NSLog(@"Accessory bar visible change %d", value);
   self.hideFormAccessoryBar = !value;
-  [call successHandler];
+  [call success];
 }
 
 - (void)hide:(CAPPluginCall *)call
 {
-  [self.webView endEditing:YES];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.webView endEditing:YES];
+  });
+  [call success];
 }
 
 - (void)show:(CAPPluginCall *)call
 {
-  [call successHandler];
+  [call unimplemented];
 }
 
 - (void)setKeyboardAppearanceDark

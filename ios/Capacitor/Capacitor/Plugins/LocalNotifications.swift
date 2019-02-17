@@ -175,7 +175,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     }
     
     if sound != nil {
-      content.sound = UNNotificationSound(named: sound!)
+      content.sound = UNNotificationSound(named: UNNotificationSoundName(sound!))
     }
     
     if attachments != nil {

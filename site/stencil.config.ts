@@ -1,6 +1,7 @@
-const sass = require('@stencil/sass');
+import { Config } from '@stencil/core';
+import { sass } from '@stencil/sass';
 
-exports.config = {
+export const config:Config = {
   plugins: [
     sass()
   ],
@@ -8,10 +9,13 @@ exports.config = {
   outputTargets: [
     {
       type: 'www',
+      serviceWorker: null
+      /*
       serviceWorker: {
         skipWaiting: false,
         clientsClaim: true
       }
+      */
     }
   ],
   enableCache: false,
@@ -38,9 +42,4 @@ exports.config = {
     }
   }]
   */
-};
-
-exports.devServer = {
-  root: 'www',
-  watchGlob: '**/**'
 };

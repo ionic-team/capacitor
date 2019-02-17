@@ -41,6 +41,31 @@ Keyboard.setAccessoryBarVisible({isVisible: <span class="hljs-literal">false</sp
 Keyboard.show();
 
 Keyboard.hide();
+
+</code></pre>
+<h2 id="keyboard-configuration-ios-only-">Keyboard configuration (iOS only)</h2>
+<p>Keyboard plugin allow this configurations for iOS</p>
+<ul>
+<li><p><code>resize</code>: It configures the way the app is resized when the Keyboard appears.
+Allowed values are</p>
+<ul>
+<li><code>none</code>: Not the app, nor the webview are resized</li>
+<li><code>native</code>: The whole native webview will be resized when the keyboard shows/hides, it will affect the <code>vh</code> relative unit.</li>
+<li><code>body</code>: Only the html <code>&lt;body&gt;</code> element will be resized. Relative units are not affected, because the viewport does not change.</li>
+<li><code>ionic</code>: Only the html ion-app element will be resized. Use it only for ionic apps.</li>
+</ul>
+</li>
+<li><p><code>style</code>: If set to <code>dark</code> it will use Dark style keyboard instead of the regular one.</p>
+</li>
+</ul>
+<pre><code class="lang-json">{
+  <span class="hljs-attr">"plugins"</span>: {
+    <span class="hljs-attr">"Keyboard"</span>: {
+      <span class="hljs-attr">"resize"</span>: <span class="hljs-string">"body"</span>,
+      <span class="hljs-attr">"style"</span>: <span class="hljs-string">"dark"</span>
+    }
+  }
+}
 </code></pre>
 <h2 id="api">API</h2>
 <p><plugin-api name="keyboard"></plugin-api></p>

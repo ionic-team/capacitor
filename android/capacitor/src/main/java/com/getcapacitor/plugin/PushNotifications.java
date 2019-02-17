@@ -4,6 +4,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
+import android.net.Uri;
 
 
 import android.util.Log;
@@ -161,13 +162,27 @@ public class PushNotifications extends Plugin {
   }
 
   public void fireNotification(RemoteMessage remoteMessage) {
-    Map<String, Object> data = new HashMap<String, Object>();
+    JSObject remoteMessageData = new JSObject();
+
+    JSObject data = new JSObject();
     for (String key : remoteMessage.getData().keySet()) {
       Object value = remoteMessage.getData().get(key);
       data.put(key, value);
     }
-    JSObject remoteMessageData = new JSObject();
     remoteMessageData.put("data", data);
+
+    RemoteMessage.Notification notification = remoteMessage.getNotification();
+    if (notification != null) {
+      remoteMessageData.put("title", notification.getTitle());
+      remoteMessageData.put("body", notification.getBody());
+      remoteMessageData.put("click_action", notification.getClickAction());
+
+      Uri link = notification.getLink();
+      if (link != null) {
+        remoteMessageData.put("link", link.toString());
+      }
+    }
+
     notifyListeners("pushNotificationReceived", remoteMessageData, true);
   }
 

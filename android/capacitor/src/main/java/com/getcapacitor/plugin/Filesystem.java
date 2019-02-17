@@ -77,7 +77,7 @@ public class Filesystem extends Plugin {
   private File getFileObject(String path, String directory) {
     if (directory == null) {
       Uri u = Uri.parse(path);
-      if (u.getScheme().equals("file")) {
+      if (u.getScheme() == null || u.getScheme().equals("file")) {
         return new File(u.getPath());
       }
     }
@@ -247,6 +247,10 @@ public class Filesystem extends Plugin {
       call.error("Unsupported encoding provided: " + encoding);
       return;
     }
+    //remove header from dataURL
+    if(data.indexOf(",") != -1) {
+      data = data.split(",")[1]; 
+    }    
 
     // if charset is not null assume its a plain text file the user wants to save
     boolean success = false;
@@ -383,11 +387,6 @@ public class Filesystem extends Plugin {
     String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
-
-    if (!fileObject.exists()) {
-      call.error("File does not exist");
-      return;
-    }
 
     JSObject data = new JSObject();
     data.put("uri", Uri.fromFile(fileObject).toString());

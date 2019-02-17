@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -203,8 +204,12 @@ public class PluginCall {
     Object value = this.data.opt(name);
     if(value == null) { return defaultValue; }
 
-    if(value instanceof JSObject) {
-      return (JSObject) value;
+    if(value instanceof JSONObject) {
+      try {
+        return JSObject.fromJSONObject((JSONObject) value);
+      } catch (JSONException ex) {
+        return defaultValue;
+      }
     }
     return defaultValue;
   }

@@ -7,6 +7,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.getcapacitor.Bridge;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -72,7 +73,9 @@ public class StatusBar extends Plugin {
       @Override
       public void run() {
         View decorView = getActivity().getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        int uiOptions = decorView.getSystemUiVisibility();
+        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_VISIBLE;
         decorView.setSystemUiVisibility(uiOptions);
         call.success();
       }
@@ -81,17 +84,36 @@ public class StatusBar extends Plugin {
 
   @PluginMethod()
   public void show(final PluginCall call) {
-    // Hide the status bar.
+    // Show the status bar.
     getBridge().executeOnMainThread(new Runnable() {
       @Override
       public void run() {
         View decorView = getActivity().getWindow().getDecorView();
-
-        // Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+        int uiOptions = decorView.getSystemUiVisibility();
+        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_VISIBLE;
+        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
         call.success();
       }
     });
+  }
+
+  @PluginMethod()
+  public void getInfo(final PluginCall call) {
+    View decorView = getActivity().getWindow().getDecorView();
+    Window window = getActivity().getWindow();
+
+    String style;
+    if ((decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) == View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
+      style = "LIGHT";
+    } else {
+      style = "DARK";
+    }
+
+    JSObject data = new JSObject();
+    data.put("visible", (decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != View.SYSTEM_UI_FLAG_FULLSCREEN);
+    data.put("style", style);
+    data.put("color", String.format("#%06X", (0xFFFFFF & window.getStatusBarColor())));
+    call.resolve(data);
   }
 }
