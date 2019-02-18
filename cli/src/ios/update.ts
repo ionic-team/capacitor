@@ -165,7 +165,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
             if (!weakFrameworks.includes(name)) {
               weakFrameworks.push(name);
             }
-          } if (framework.$.custom && framework.$.custom === 'true') {
+          } else if (framework.$.custom && framework.$.custom === 'true') {
             const frameworktPath = join(sourcesFolderName, plugin.name, name);
             if (!customFrameworks.includes(frameworktPath)) {
               customFrameworks.push(frameworktPath);
