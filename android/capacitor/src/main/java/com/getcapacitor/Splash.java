@@ -52,12 +52,12 @@ public class Splash {
     // https://stackoverflow.com/a/21847579/32140
     splashImage.setDrawingCacheEnabled(true);
 
-    String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "scaleType", "FIT_XY");
+    String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
     ImageView.ScaleType scaleType = null;
     try {
-        scaleType = ImageView.ScaleType.valueOf(scaleTypeName);
+      scaleType = ImageView.ScaleType.valueOf(scaleTypeName);
     } catch (IllegalArgumentException ex) {
-        scaleType = ImageView.ScaleType.FIT_XY;
+      scaleType = ImageView.ScaleType.FIT_XY;
     }
 
     splashImage.setScaleType(scaleType);

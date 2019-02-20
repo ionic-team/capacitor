@@ -69,7 +69,7 @@ These config parameters are availiable in `capacitor.config.json`:
       "launchShowDuration": 3000,
       "launchAutoHide": true,
       "androidSplashResourceName": "splash",
-      "scaleType": "FIT_XY"
+      "androidScaleType": "CENTER_CROP"
     }
   }
 }
