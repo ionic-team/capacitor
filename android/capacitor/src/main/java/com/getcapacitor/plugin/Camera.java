@@ -444,6 +444,8 @@ public class Camera extends Plugin {
       return;
     }
 
+    settings = getSettings(savedCall);
+
     if (requestCode == REQUEST_IMAGE_CAPTURE) {
       processCameraImage(savedCall, data);
     } else if (requestCode == REQUEST_IMAGE_PICK) {
