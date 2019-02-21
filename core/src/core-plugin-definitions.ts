@@ -1391,7 +1391,13 @@ export interface StatusBarStyleOptions {
 }
 
 export enum StatusBarStyle {
+  /**
+   * Light text for dark backgrounds.
+   */
   Dark = 'DARK',
+  /**
+   * Dark text for light backgrounds.
+   */
   Light = 'LIGHT'
 }
 
