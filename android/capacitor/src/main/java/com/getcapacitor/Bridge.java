@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Base64;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
@@ -47,12 +46,12 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.Arrays;
 import java.util.ArrayList;
 
@@ -226,7 +225,7 @@ public class Bridge {
 
     SharedPreferences prefs = getContext().getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
     String path = prefs.getString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, null);
-    if (path != null) {
+    if (path != null && !path.isEmpty() && new File(path).exists()) {
       setServerBasePath(path);
     }
     // Get to work
