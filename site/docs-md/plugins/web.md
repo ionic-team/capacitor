@@ -14,7 +14,7 @@ The basic structure of a Web plugin looks like this, follow the comments inline 
 more explanation:
 
 ```typescript
-import { WebPlugin } from '@capacitor/core'
+import { WebPlugin } from '@capacitor/core';
 
 export class MyPluginWeb extends WebPlugin {
   constructor() {
@@ -28,13 +28,13 @@ export class MyPluginWeb extends WebPlugin {
   }
 
   async echo(options: { value: string }) {
-    console.log('ECHO', options)
-    return options
+    console.log('ECHO', options);
+    return options;
   }
 }
 
 // Instantiate the plugin
-const MyPlugin = new MyPluginWeb()
+const MyPlugin = new MyPluginWeb();
 
 // Export the plugin
 export { MyPlugin }
@@ -43,5 +43,5 @@ export { MyPlugin }
 Finally, make sure your `src/index.ts` has this line:
 
 ```typescript
-export * from './web'
+export * from './web';
 ```
