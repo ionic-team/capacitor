@@ -24,7 +24,7 @@ export class MyPluginWeb extends WebPlugin {
     super({
       name: 'MyPlugin',
       platforms: ['web']
-    })
+    });
   }
 
   async echo(options: { value: string }) {
@@ -37,7 +37,7 @@ export class MyPluginWeb extends WebPlugin {
 const MyPlugin = new MyPluginWeb();
 
 // Export the plugin
-export { MyPlugin }
+export { MyPlugin };
 ```
 
 Finally, make sure your `src/index.ts` has this line:
