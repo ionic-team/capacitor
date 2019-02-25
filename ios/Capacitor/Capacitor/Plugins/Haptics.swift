@@ -27,17 +27,17 @@ public class CAPHapticsPlugin: CAPPlugin {
   @objc public func notification(_ call: CAPPluginCall) {
       DispatchQueue.main.async {
           if let type = call.options["type"] as? String {
-              var notificationStyle = UINotificationFeedbackGenerator.FeedbackType.success
+              var notificationType = UINotificationFeedbackGenerator.FeedbackType.success
                 
               if type == "SUCCESS" {
-                  notificationStyle = UINotificationFeedbackGenerator.FeedbackType.success
+                  notificationType = UINotificationFeedbackGenerator.FeedbackType.success
               } else if type == "WARNING" {
-                  notificationStyle = UINotificationFeedbackGenerator.FeedbackType.warning
+                  notificationType = UINotificationFeedbackGenerator.FeedbackType.warning
               } else if type == "ERROR" {
-                  notificationStyle = UINotificationFeedbackGenerator.FeedbackType.error
+                  notificationType = UINotificationFeedbackGenerator.FeedbackType.error
               }
               let generator = UINotificationFeedbackGenerator()
-              generator.notificationOccurred(notificationStyle)
+              generator.notificationOccurred(notificationType)
           } else {
               let generator = UINotificationFeedbackGenerator()
               generator.notificationOccurred(.success)
