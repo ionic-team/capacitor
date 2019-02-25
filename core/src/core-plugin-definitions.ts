@@ -804,10 +804,10 @@ export enum HapticsImpactStyle {
 }
 
 export interface HapticsNotificationOptions {
-  style: HapticsNotificationStyle;
+  type: HapticsNotificationType;
 }
 
-export enum HapticsNotificationStyle {
+export enum HapticsNotificationType {
   SUCCESS = 'SUCCESS',
   WARNING = 'WARNING',
   ERROR = 'ERROR'
