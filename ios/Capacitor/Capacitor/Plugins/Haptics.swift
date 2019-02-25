@@ -23,6 +23,27 @@ public class CAPHapticsPlugin: CAPPlugin {
       }
     }
   }
+ 
+  @objc public func notification(_ call: CAPPluginCall) {
+      DispatchQueue.main.async {
+          if let type = call.options["type"] as? String {
+              var notificationStyle = UINotificationFeedbackGenerator.FeedbackType.success
+                
+              if type == "SUCCESS" {
+                  notificationStyle = UINotificationFeedbackGenerator.FeedbackType.success
+              } else if type == "WARNING" {
+                  notificationStyle = UINotificationFeedbackGenerator.FeedbackType.warning
+              } else if type == "ERROR" {
+                  notificationStyle = UINotificationFeedbackGenerator.FeedbackType.error
+              }
+              let generator = UINotificationFeedbackGenerator()
+              generator.notificationOccurred(notificationStyle)
+          } else {
+              let generator = UINotificationFeedbackGenerator()
+              generator.notificationOccurred(.success)
+          }
+      }
+  }
   
   @objc public func selectionStart(_ call: CAPPluginCall) {
     DispatchQueue.main.async {
