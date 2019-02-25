@@ -6,8 +6,6 @@ FOUNDATION_EXPORT double CapacitorVersionNumber;
 //! Project version string for bridge.
 FOUNDATION_EXPORT const unsigned char CapacitorVersionString[];
 
-extern NSArray<Class> *CapacitorGetPluginClasses(void);
-
 #import "CAPPlugin.h"
 #import "CAPPluginCall.h"
 #import "CAPBridgedPlugin.h"
