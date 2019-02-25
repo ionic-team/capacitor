@@ -37,7 +37,7 @@ public class CAPDevicePlugin: CAPPlugin {
   }
   
   @objc func getLanguageCode(_ call: CAPPluginCall) {
-    let code = Locale.current.languageCode ?? ""
+    let code = Locale.preferredLanguages[0]
     call.success([
       "value": code
     ])
