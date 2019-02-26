@@ -99,46 +99,41 @@ public class Camera extends Plugin {
   }
 
   private void showPrompt(final PluginCall call) {
-    if (checkPermissions (call)) {
+    // We have all necessary permissions, open the camera
+    JSObject fromPhotos = new JSObject();
+    fromPhotos.put("title", "From Photos");
+    JSObject takePicture = new JSObject();
+    takePicture.put("title", "Take Picture");
+    Object[] options = new Object[] {
+      fromPhotos,
+      takePicture
+    };
 
-      // We have all necessary permissions, open the camera
-      JSObject fromPhotos = new JSObject();
-      fromPhotos.put("title", "From Photos");
-      JSObject takePicture = new JSObject();
-      takePicture.put("title", "Take Picture");
-      Object[] options = new Object[] {
-        fromPhotos,
-        takePicture
-      };
-
-      Dialogs.actions(getActivity(), options, new Dialogs.OnSelectListener() {
-        @Override
-        public void onSelect(int index) {
-          if (index == 0) {
-            openPhotos(call);
-          } else if (index == 1) {
-            openCamera(call);
-          }
+    Dialogs.actions(getActivity(), options, new Dialogs.OnSelectListener() {
+      @Override
+      public void onSelect(int index) {
+        if (index == 0) {
+          openPhotos(call);
+        } else if (index == 1) {
+          openCamera(call);
         }
-      });
-    }
+      }
+    });
   }
 
   private void showCamera(final PluginCall call) {
-    if (checkPermissions (call)) {
-      if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-        call.error(NO_CAMERA_ERROR);
-        return;
-      }
-      openCamera(call);
+    if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+      call.error(NO_CAMERA_ERROR);
+      return;
     }
+    openCamera(call);
   }
 
   private void showPhotos(final PluginCall call) {
     openPhotos(call);
   }
 
-  private boolean checkPermissions(PluginCall call) {
+  private boolean checkCameraPermissions(PluginCall call) {
     // If we want to save to the gallery, we need two permissions
     if(settings.isSaveToGallery() && !(hasPermission(Manifest.permission.CAMERA) && hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
       pluginRequestPermissions(new String[] {
@@ -153,7 +148,14 @@ public class Camera extends Plugin {
       pluginRequestPermission(Manifest.permission.CAMERA, REQUEST_IMAGE_CAPTURE);
       return false;
     }
+    return true;
+  }
 
+  private boolean checkPhotosPermissions(PluginCall call) {
+    if(!hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      pluginRequestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_IMAGE_CAPTURE);
+      return false;
+    }
     return true;
   }
 
@@ -186,33 +188,37 @@ public class Camera extends Plugin {
   }
 
   public void openCamera(final PluginCall call) {
-    boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
+    if (checkCameraPermissions(call)) {
+      boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
 
-    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-      // If we will be saving the photo, send the target file along
-      try {
-        String appId = getAppId();
-        File photoFile = CameraUtils.createImageFile(getActivity(), saveToGallery);
-        imageFileSavePath = photoFile.getAbsolutePath();
-        // TODO: Verify provider config exists
-        imageFileUri = FileProvider.getUriForFile(getActivity(), appId + ".fileprovider", photoFile);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
-      } catch (Exception ex) {
-        call.error(IMAGE_FILE_SAVE_ERROR, ex);
-        return;
+      Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+      if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+        // If we will be saving the photo, send the target file along
+        try {
+          String appId = getAppId();
+          File photoFile = CameraUtils.createImageFile(getActivity(), saveToGallery);
+          imageFileSavePath = photoFile.getAbsolutePath();
+          // TODO: Verify provider config exists
+          imageFileUri = FileProvider.getUriForFile(getActivity(), appId + ".fileprovider", photoFile);
+          takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
+        } catch (Exception ex) {
+          call.error(IMAGE_FILE_SAVE_ERROR, ex);
+          return;
+        }
+
+        startActivityForResult(call, takePictureIntent, REQUEST_IMAGE_CAPTURE);
+      } else {
+        call.error(NO_CAMERA_ACTIVITY_ERROR);
       }
-
-      startActivityForResult(call, takePictureIntent, REQUEST_IMAGE_CAPTURE);
-    } else {
-      call.error(NO_CAMERA_ACTIVITY_ERROR);
     }
   }
 
   public void openPhotos(final PluginCall call) {
-    Intent intent = new Intent(Intent.ACTION_PICK);
-    intent.setType("image/*");
-    startActivityForResult(call, intent, REQUEST_IMAGE_PICK);
+    if (checkPhotosPermissions(call)) {
+      Intent intent = new Intent(Intent.ACTION_PICK);
+      intent.setType("image/*");
+      startActivityForResult(call, intent, REQUEST_IMAGE_PICK);
+    }
   }
 
   public void processCameraImage(PluginCall call, Intent data) {
