@@ -61,7 +61,6 @@
     ]
   },
   "dependencies": {
-    "@types/lodash": "^4.14.120",
     "tslib": "^1.9.0"
   }
 }
