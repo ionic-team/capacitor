@@ -96,12 +96,12 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-  	.arguments('<command>')
-  	.action((cmd) => {
-    program.outputHelp();
-    console.log(`  ` + chalk.red(`\n  Unknown command ${chalk.yellow(cmd)}.`));
-    console.log();
-	});
+    .arguments('<command>')
+    .action((cmd) => {
+      program.outputHelp();
+      console.log(`  ` + chalk.red(`\n  Unknown command ${chalk.yellow(cmd)}.`));
+      console.log();
+    });
 
   program.parse(process.argv);
 
