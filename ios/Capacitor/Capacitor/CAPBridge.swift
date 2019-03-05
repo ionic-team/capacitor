@@ -75,6 +75,20 @@ enum BridgeError: Error {
       bridgeVC.setStatusBarStyle(statusBarStyle)
     }
   }
+
+  public func getStatusBarVisible() -> Bool {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return false
+    }
+    return !bridgeVC.prefersStatusBarHidden
+  }
+    
+  public func getStatusBarStyle() -> UIStatusBarStyle {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return UIStatusBarStyle.default
+    }
+    return bridgeVC.preferredStatusBarStyle
+  }
   
   /**
    * Get the last URL that triggered an open or continue activity event.
@@ -98,7 +112,7 @@ enum BridgeError: Error {
   /**
    * Handle continueUserActivity, for now this just provides universal link responding support.
    */
-  public static func handleContinueActivity(_ userActivity: NSUserActivity, _ restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+  public static func handleContinueActivity(_ userActivity: NSUserActivity, _ restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     // TODO: Support other types, emit to rest of plugins
     if userActivity.activityType != NSUserActivityTypeBrowsingWeb || userActivity.webpageURL == nil {
       return false

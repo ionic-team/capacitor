@@ -7,6 +7,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.getcapacitor.Bridge;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -95,5 +96,24 @@ public class StatusBar extends Plugin {
         call.success();
       }
     });
+  }
+
+  @PluginMethod()
+  public void getInfo(final PluginCall call) {
+    View decorView = getActivity().getWindow().getDecorView();
+    Window window = getActivity().getWindow();
+
+    String style;
+    if ((decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) == View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) {
+      style = "LIGHT";
+    } else {
+      style = "DARK";
+    }
+
+    JSObject data = new JSObject();
+    data.put("visible", (decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != View.SYSTEM_UI_FLAG_FULLSCREEN);
+    data.put("style", style);
+    data.put("color", String.format("#%06X", (0xFFFFFF & window.getStatusBarColor())));
+    call.resolve(data);
   }
 }

@@ -34,6 +34,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     setStatusBarDefaults()
     setScreenOrientationDefaults()
 
+    HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
     let webViewConfiguration = WKWebViewConfiguration()
 
     webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_SCHEME)

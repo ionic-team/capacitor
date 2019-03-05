@@ -165,7 +165,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
             if (!weakFrameworks.includes(name)) {
               weakFrameworks.push(name);
             }
-          } if (framework.$.custom && framework.$.custom === 'true') {
+          } else if (framework.$.custom && framework.$.custom === 'true') {
             const frameworktPath = join(sourcesFolderName, plugin.name, name);
             if (!customFrameworks.includes(frameworktPath)) {
               customFrameworks.push(frameworktPath);
@@ -235,11 +235,18 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
     s.source = { :git => 'https://github.com/ionic-team/does-not-exist.git', :tag => '${config.cli.package.version}' }
     s.source_files = '${sourcesFolderName}/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
-    s.dependency 'CapacitorCordova'
+    s.dependency 'CapacitorCordova'${getLinkerFlags(config)}
     s.swift_version  = '${config.ios.cordovaSwiftVersion}'
     ${frameworksString}
   end`;
   await writeFileAsync(join(pluginsPath, `${name}.podspec`), content);
+}
+
+function getLinkerFlags(config: Config) {
+  if (config.app.extConfig.ios && config.app.extConfig.ios.cordovaLinkerFlags) {
+    return `\n    s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '${config.app.extConfig.ios.cordovaLinkerFlags.join(' ')}' }`;
+  }
+  return '';
 }
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {

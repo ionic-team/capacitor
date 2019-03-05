@@ -23,7 +23,7 @@ struct CameraSettings {
   var direction: CameraDirection = CameraDirection.rear
   var allowEditing = false
   var shouldResize = false
-  var shouldCorrectOrientation = false
+  var shouldCorrectOrientation = true
   var quality: Float = 1.0
   var width: Float = 0
   var height: Float = 0
@@ -74,8 +74,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       // We resize only if a dimension was provided
       settings.shouldResize = true
     }
-
-    settings.shouldCorrectOrientation = call.get("correctOrientation", Bool.self, false)!
+    settings.shouldCorrectOrientation = call.get("correctOrientation", Bool.self, true)!
 
     return settings
   }

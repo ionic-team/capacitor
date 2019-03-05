@@ -6,10 +6,15 @@ import { fixName } from '../plugin'
 
 import { copy, move, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
+import { isInteractive } from '../util/term';
 
 
 export async function newPluginCommand(config: Config) {
   try {
+    if (!isInteractive()) {
+      return;
+    }
+
     await newPlugin(config);
   } catch (e) {
     logFatal(e);

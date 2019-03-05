@@ -200,6 +200,29 @@ public class WebViewLocalServer {
   private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
     String path = request.getUrl().getPath();
 
+    if (request.getRequestHeaders().get("Range") != null) {
+      InputStream responseStream = new LollipopLazyInputStream(handler, request);
+      String mimeType = getMimeType(path, responseStream);
+      Map<String, String> tempResponseHeaders = handler.getResponseHeaders();
+      int statusCode = 206;
+      try {
+        int totalRange = responseStream.available();
+        String rangeString = request.getRequestHeaders().get("Range");
+        String[] parts = rangeString.split("=");
+        String[] streamParts = parts[1].split("-");
+        String fromRange = streamParts[0];
+        int range = totalRange-1;
+        if (streamParts.length > 1) {
+          range = Integer.parseInt(streamParts[1]);
+        }
+        tempResponseHeaders.put("Accept-Ranges", "bytes");
+        tempResponseHeaders.put("Content-Range", "bytes " + fromRange + "-" + range + "/" + totalRange);
+      } catch (IOException e) {
+        statusCode = 404;
+      }
+      return new WebResourceResponse(mimeType, handler.getEncoding(),
+              statusCode, handler.getReasonPhrase(), tempResponseHeaders, responseStream);
+    }
     if (path.equals("/cordova.js")) {
       return new WebResourceResponse("application/javascript", handler.getEncoding(),
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);

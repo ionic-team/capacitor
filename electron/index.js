@@ -94,7 +94,7 @@ class CapacitorSplashScreen {
 
   init() {
 
-    let rootPath = process.cwd();
+    let rootPath = global.__basedir;
 
     this.splashWindow = new BrowserWindow({
       width: this.splashOptions.windowWidth,

@@ -826,7 +826,6 @@ export interface KeyboardPlugin extends Plugin {
 
 export interface LocalNotificationRequest {
   id: string;
-  options: any;
 }
 
 export interface LocalNotificationPendingList {
@@ -1250,6 +1249,8 @@ export interface PushNotification {
   badge?: number;
   notification?: any;
   data?: any;
+  click_action?: string;
+  link?: string;
 }
 
 export interface PushNotificationActionPerformed {
@@ -1380,6 +1381,10 @@ export interface StatusBarPlugin extends Plugin {
    *  Hide the status bar
    */
   hide(): Promise<void>;
+  /**
+   *  Get info about the current state of the status bar
+   */
+  getInfo(): Promise<StatusBarInfoResult>;
 }
 
 export interface StatusBarStyleOptions {
@@ -1387,12 +1392,24 @@ export interface StatusBarStyleOptions {
 }
 
 export enum StatusBarStyle {
+  /**
+   * Light text for dark backgrounds.
+   */
   Dark = 'DARK',
+  /**
+   * Dark text for light backgrounds.
+   */
   Light = 'LIGHT'
 }
 
 export interface StatusBarBackgroundColorOptions {
   color: string;
+}
+
+export interface StatusBarInfoResult {
+  visible: boolean;
+  style: StatusBarStyle;
+  color?: string;
 }
 
 export interface StoragePlugin extends Plugin {

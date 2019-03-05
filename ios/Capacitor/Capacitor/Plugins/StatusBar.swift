@@ -40,5 +40,18 @@ public class CAPStatusBarPlugin: CAPPlugin {
     bridge.setStatusBarVisible(true)
     call.success()
   }
+
+  @objc func getInfo(_ call: CAPPluginCall) {
+    let style: String
+    if bridge.getStatusBarStyle() == .default {
+      style = "LIGHT"
+    } else {
+      style = "DARK"
+    }
+    call.success([
+      "visible": bridge.getStatusBarVisible(),
+      "style": style
+    ])
+  }
 }
 

@@ -5,7 +5,7 @@ public final class CAPAppDelegate {
     return CAPBridge.handleOpenUrl(url, options)
   }
   
-  public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+  public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     return CAPBridge.handleContinueActivity(userActivity, restorationHandler)
   }
   
