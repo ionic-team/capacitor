@@ -16,7 +16,7 @@ import { emoji as _e } from '../util/emoji';
 
 const chalk = require('chalk');
 
-export async function initCommand(config: Config, name: string, id: string, webDir = 'www') {
+export async function initCommand(config: Config, name: string, id: string, webDir: string) {
   if (webDir === '') {
     webDir = 'www';
   }
