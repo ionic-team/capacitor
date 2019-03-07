@@ -2,7 +2,7 @@
 
 Capacitor uses the native IDE for each platform in order to provide required configuration, and to build, test, and deploy apps.
 
-For iOS development, that means you must have Xcode 9 or above installed. For Android, [Android Studio](https://developer.android.com/studio/index.html) 3 or above.
+For iOS development, that means you must have Xcode 10 or above installed. For Android, [Android Studio](https://developer.android.com/studio/index.html) 3 or above.
 
 Both IDEs can be opened manually or using the `npx cap open` command:
 
