@@ -34,8 +34,9 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('init [appName] [appId]')
     .description('Initializes a new Capacitor project in the current directory')
-    .action((appName, appId) => {
-      return initCommand(config, appName, appId);
+    .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', 'www')
+    .action((appName, appId, cmd) => {
+      return initCommand(config, appName, appId, cmd.webDir);
     });
 
   program

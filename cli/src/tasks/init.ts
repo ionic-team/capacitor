@@ -1,6 +1,4 @@
 import { Config } from '../config';
-import { OS } from '../definitions';
-import { addCommand } from '../tasks/add';
 import {
   check,
   checkAppId,
@@ -12,13 +10,16 @@ import {
   logFatal,
   mergeConfig,
   printNextSteps,
-  runTask
+  runTask,
 } from '../common';
 import { emoji as _e } from '../util/emoji';
 
 const chalk = require('chalk');
 
-export async function initCommand(config: Config, name: string, id: string) {
+export async function initCommand(config: Config, name: string, id: string, webDir: string) {
+  if (webDir === '') {
+    webDir = 'www';
+  }
   try {
     // Get app name
     const appName = await getName(config, name);
@@ -36,12 +37,14 @@ export async function initCommand(config: Config, name: string, id: string) {
     await runTask(`Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`, async () => {
       config.app.appId = appId;
       config.app.appName = appName;
+      config.app.webDir = webDir;
 
       // Get or create our config
       await getOrCreateConfig(config);
       await mergeConfig(config, {
         appId,
-        appName
+        appName,
+        webDir
       });
     });
 
