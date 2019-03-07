@@ -23,7 +23,7 @@ export async function doctorIOS(config: Config) {
     );
     const plugins = await getPlugins(config);
     printPlugins(plugins, 'ios');
-    logSuccess('Everything looking great! 👌');
+    logSuccess('iOS looking great! 👌');
   } catch (e) {
     logFatal(e);
   }
