@@ -1,4 +1,5 @@
 import * as program from 'commander';
+import chalk from 'chalk';
 
 import { createCommand } from './tasks/create';
 import { initCommand } from './tasks/init';
@@ -95,10 +96,17 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
       return newPluginCommand(config);
     });
 
+  program
+    .arguments('<command>')
+    .action((cmd) => {
+      program.outputHelp();
+      console.log(`  ` + chalk.red(`\n  Unknown command ${chalk.yellow(cmd)}.`));
+      console.log();
+    });
+
   program.parse(process.argv);
 
   if (!program.args.length) {
-    const chalk = require('chalk');
     console.log(`\n  ${_e('⚡️', '--')}  ${chalk.bold('Capacitor - Cross-Platform apps with JavaScript and the Web')}  ${_e('⚡️', '--')}`);
     program.help();
   }
