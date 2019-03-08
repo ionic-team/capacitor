@@ -147,6 +147,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
     let navUrl = navigationAction.request.url!
     if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
       for pattern in allowNavigation {
