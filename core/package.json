@@ -24,7 +24,7 @@
   "typings": "dist/esm/index.d.ts",
   "devDependencies": {
     "@ionic/core": "0.0.2-59",
-    "@ionic/pwa-elements": "1.0.1",
+    "@ionic/pwa-elements": "1.0.2",
     "@types/jest": "^21.1.8",
     "jest": "^22.0.0",
     "rimraf": "^2.6.1",
