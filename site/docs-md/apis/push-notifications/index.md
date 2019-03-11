@@ -12,6 +12,8 @@ That will add the push capabilites to your app and will create an entitlements f
 
 ![Enabling Push Notifications Capabilities](/assets/img/docs/ios/enable-push-capabilities.png)
 
+On Android just download your app's `google-services.json` file from Firebase console and put it in `projectName/android/app` folder.
+
 ## Push Notifications icon
 
 On Android, the Push Notifications icon with the appropriate name should be added to the `AndroidManifest.xml` file:
