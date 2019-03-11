@@ -10,7 +10,7 @@ On iOS it's required to enable Push Notifications Capabilities in your project t
 
 That will add the push capabilites to your app and will create an entitlements file.
 
-![Enabling Push Notifications Capabilities](./img/enable-push-capabilities.png)
+![Enabling Push Notifications Capabilities](/assets/img/docs/ios/enable-push-capabilities.png)
 
 ## Push Notifications icon
 
@@ -32,7 +32,7 @@ Apple sends that mail just to make sure you didn't make a mistake and forgot to 
 
 In case you don't want to receive the mail, you can disable the Push Notifications plugin by removing `USE_PUSH` from `Active Compilation Conditions` in your project's Build Settings section.
 
-![Disable Push Notifications](./img/disable-push-plugin.png)
+![Disable Push Notifications](/assets/img/docs/ios/disable-push-plugin.png)
 
 
 <plugin-api index="true" name="push-notifications"></plugin-api>
