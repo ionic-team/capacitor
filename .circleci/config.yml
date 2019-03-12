@@ -9,7 +9,7 @@ jobs:
 
   ios:
     macos:
-      xcode: "11.0"
+      xcode: "10.0"
     working_directory: /tmp/workspace
 
     steps:
