@@ -1,5 +1,12 @@
 version: 2.1
 jobs:
+  node:
+    working_directory: /tmp/workspace
+    docker:
+      - image: circleci/node:10.13.0
+    steps:
+      - checkout
+
   ios:
     macos:
       xcode: "11.0"
@@ -22,8 +29,9 @@ jobs:
 
 workflows:
   version: 2.1
-  ios:
+  node-ios:
     jobs:
+      - node
       - ios:
           requires:
             - node
