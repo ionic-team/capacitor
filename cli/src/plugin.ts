@@ -111,7 +111,7 @@ export function printPlugins(plugins: Plugin[], platform: string, type: string =
   }
   const chalk = require('chalk');
   for (let p of plugins) {
-    log(`    ${chalk.bold(`${p.name}`)} (${chalk.green(p.version)})`);
+    log(`    ${chalk.bold(`${p.id}`)} (${chalk.green(p.version)})`);
   }
 }
 
