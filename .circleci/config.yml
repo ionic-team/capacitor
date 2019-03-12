@@ -1,0 +1,29 @@
+version: 2.1
+jobs:
+  ios:
+    macos:
+      xcode: "11.0"
+    working_directory: /tmp/workspace
+
+    steps:
+      - checkout
+
+      - run:
+          command: npm install
+          working_directory: /tmp/workspace/cli
+
+      - run:
+          command: npm run build
+          working_directory: /tmp/workspace/cli
+
+      - run:
+          command: npm run test
+          working_directory: /tmp/workspace/cli
+
+workflows:
+  version: 2.1
+  ios:
+    jobs:
+      - ios:
+          requires:
+            - node
