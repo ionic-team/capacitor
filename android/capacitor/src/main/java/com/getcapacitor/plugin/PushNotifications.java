@@ -52,6 +52,21 @@ public class PushNotifications extends Plugin {
     }
   }
 
+  @Override
+  protected void handleOnNewIntent(Intent data) {
+    super.handleOnNewIntent(data);
+    Bundle bundle = data.getExtras();
+    if(bundle != null && bundle.containsKey("google.message_id")) {
+      JSObject dataJson = new JSObject();
+      for (String key : bundle.keySet()) {
+        Object value = bundle.get(key);
+        dataJson.put(key, value.toString());
+      }
+      notifyListeners("pushNotificationActionPerformed", dataJson, true);
+    }
+  }
+
+
   @PluginMethod()
   public void register(PluginCall call) {
     FirebaseMessaging.getInstance().setAutoInitEnabled(true);
