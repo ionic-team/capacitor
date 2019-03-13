@@ -1,3 +1,6 @@
+[![Build Status][circle-badge]][circle-badge-url]
+
+
 *Capacitor is currently in beta and is not production ready. We'd love your help testing!*
 
 # ⚡️ Cross-platform apps with JavaScript and the Web ⚡️
@@ -32,3 +35,6 @@ _Disclaimer: Our roadmap is subject to change at any time and has no specific da
 Contributing to Capacitor may involve writing TypeScript, Swift/Objective-C, Java, or Markdown depending on the component you are working on. We are looking for help in any of these areas!
 
 Please read the [Contributing](.github/CONTRIBUTING.md) guide for more information.
+
+[circle-badge]: https://circleci.com/gh/ionic-team/capacitor.svg?style=shield
+[circle-badge-url]: https://circleci.com/gh/ionic-team/capacitor
