@@ -19,6 +19,7 @@ export const checkInteractive = (...args: string[]) => {
     logError('Non-interactive shell detected. Run the command with --help to see a list of arguments that must be provided.');
     return false;
   }
+  return true;
 }
 
 export const isInteractive = () => {
