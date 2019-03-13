@@ -16,6 +16,11 @@ jobs:
       - checkout
 
       - run:
+          name: Install CocoaPods
+          command: |
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+
+      - run:
           command: npm install
           working_directory: /tmp/workspace/cli
 
