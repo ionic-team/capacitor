@@ -18,6 +18,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.content.SharedPreferences;
 
+import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.Accessibility;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Browser;
@@ -177,7 +178,9 @@ public class Bridge {
       } catch (Exception ex) {
       }
 
-      Toast.show(getContext(), "Using app server " + appUrlConfig.toString());
+      if (BuildConfig.DEBUG) {
+        Toast.show(getContext(), "Using app server " + appUrlConfig.toString());
+      }
     }
 
     final boolean html5mode = Config.getBoolean("server.html5mode", true);
@@ -210,7 +213,7 @@ public class Bridge {
       }
 
       private boolean launchIntent(Uri url) {
-        if (!url.toString().contains(appUrl) && !matchHosts(url.getHost(), appAllowNavigationConfig)) {
+        if (isSystemHandledUrl(url) || (!url.toString().contains(appUrl) && !matchHosts(url.getHost(), appAllowNavigationConfig))) {
           try {
             Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
             getContext().startActivity(openIntent);
@@ -786,6 +789,18 @@ public class Bridge {
         webView.loadUrl(appUrl);
       }
     });
+  }
+
+  private boolean isSystemHandledUrl(Uri url) {
+    String scheme = url.getScheme();
+
+    if (scheme != null) {
+      return scheme.equalsIgnoreCase("mailto") ||
+              scheme.equalsIgnoreCase("tel") ||
+              scheme.equalsIgnoreCase("sms");
+    }
+
+    return false;
   }
 
   private boolean matchHost(String host, String pattern) {
