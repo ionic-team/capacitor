@@ -134,7 +134,7 @@ public class PushNotifications extends Plugin {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       NotificationChannel notificationChannelChannel = new NotificationChannel(channel.getString(CHANNEL_ID), channel.getString(CHANNEL_NAME), channel.getInteger(CHANNEL_IMPORTANCE));
       notificationChannelChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION, ""));
-      notificationChannelChannel.setLockscreenVisibility(0);
+      notificationChannelChannel.setLockscreenVisibility(channel.getInteger(CHANNEL_VISIBILITY, 0));
       notificationManager.createNotificationChannel(notificationChannelChannel);
     }
   }
