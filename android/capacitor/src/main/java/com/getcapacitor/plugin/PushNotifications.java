@@ -65,7 +65,6 @@ public class PushNotifications extends Plugin {
       }
       JSObject dataJson = new JSObject();
       dataJson.put("actionId", "tap");
-      dataJson.put("inputValue", null);
       dataJson.put("notificationRequest", notificationJson);
       notifyListeners("pushNotificationActionPerformed", dataJson, true);
     }
