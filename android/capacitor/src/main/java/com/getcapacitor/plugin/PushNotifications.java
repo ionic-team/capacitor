@@ -77,6 +77,7 @@ public class PushNotifications extends Plugin {
   @PluginMethod()
   public void removeAllDeliveredNotifications(PluginCall call) {
     notificationManager.cancelAll();
+    call.success();
   }
 
   @PluginMethod()
