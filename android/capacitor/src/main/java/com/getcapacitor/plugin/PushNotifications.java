@@ -57,15 +57,17 @@ public class PushNotifications extends Plugin {
     super.handleOnNewIntent(data);
     Bundle bundle = data.getExtras();
     if(bundle != null && bundle.containsKey("google.message_id")) {
-      JSObject dataJson = new JSObject();
+      JSObject notificationJson = new JSObject();
       for (String key : bundle.keySet()) {
         Object value = bundle.get(key);
-        dataJson.put(key, value.toString());
+        notificationJson.put(key, value.toString());
       }
+      JSObject dataJson = new JSObject();
+      dataJson.put("actionId", "tap");
+      dataJson.put("notificationRequest", notificationJson);
       notifyListeners("pushNotificationActionPerformed", dataJson, true);
     }
   }
-
 
   @PluginMethod()
   public void register(PluginCall call) {
