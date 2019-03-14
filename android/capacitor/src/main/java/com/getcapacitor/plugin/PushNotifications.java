@@ -60,10 +60,12 @@ public class PushNotifications extends Plugin {
       JSObject notificationJson = new JSObject();
       for (String key : bundle.keySet()) {
         Object value = bundle.get(key);
-        notificationJson.put(key, value.toString());
+        String valueStr = (value != null) ? value.toString() : null;
+        notificationJson.put(key, valueStr);
       }
       JSObject dataJson = new JSObject();
       dataJson.put("actionId", "tap");
+      dataJson.put("inputValue", null);
       dataJson.put("notificationRequest", notificationJson);
       notifyListeners("pushNotificationActionPerformed", dataJson, true);
     }
