@@ -308,6 +308,7 @@ public class Bridge {
     settings.setDatabaseEnabled(true);
     settings.setAppCacheEnabled(true);
     settings.setMediaPlaybackRequiresUserGesture(false);
+    settings.setJavaScriptCanOpenWindowsAutomatically(true);
     if (Config.getBoolean("android.allowMixedContent", false)) {
       settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
