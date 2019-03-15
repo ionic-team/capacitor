@@ -111,7 +111,7 @@ const generateDocumentationForPlugin = (plugin) => {
   listenerChildren.forEach(method => methodBuild(method));
 
   html.push('<h3 id="interfaces">Interfaces Used</h3>');
-
+  let childrenReferences = [];
   interfacesUsed.forEach(interface => {
     const interfaceDecl = typeLookup[interface.id];
     if(!interfaceDecl) {
@@ -140,6 +140,12 @@ const generateDocumentationForPlugin = (plugin) => {
         if (!c.type.name && !c.type.value) {
           console.log(c);
         }
+        if (c.type.type === 'reference') {
+          const childRef = typeLookup[c.type.id];
+          if (!childrenReferences.includes(childRef)) {
+            childrenReferences.push(childRef);
+          }
+        }
         return `
           <div class="avc-code-interface-param">
             <div class="avc-code-param-comment">${c.comment && `// ${c.comment.shortText}` || ''}</div>
@@ -153,6 +159,35 @@ const generateDocumentationForPlugin = (plugin) => {
     html.push(`<span class="avc-code-line"><span class="avc-code-brace">}</span></span>`);
   });
 
+  if(childrenReferences.length>0) {
+    childrenReferences.map(child => {
+      let kindString = child.kindString;
+      if(!kindString) {
+        kindString = 'Enum';
+      } else if(kindString == 'Enumeration') {
+        kindString = 'Enum';
+      }
+      html.push(`
+      <div class="avc-code-interface" id="type-${child.id}">
+        <h4 class="avc-code-interface-name">${child.name}</h4>
+        <div class="avc-code-line">
+          <span class="avc-code-keyword">${kindString.toLowerCase()}</span> <span class="avc-code-type-name">${child.name}</span>
+          <span class="avc-code-brace">{</span>
+        </div>`);
+      if(child.children) {
+        html.push(...child.children.map(c => {
+          return `
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment">${c.comment && `// ${c.comment.shortText}` || ''}</div>
+              <div class="avc-code-line"><span class="avc-code-param-name">${c.name}</span>:
+                <avc-code-type">${c.defaultValue}</avc-code-type>
+              </div>
+            </div>`;
+        }));
+      }
+      html.push(`<span class="avc-code-line"><span class="avc-code-brace">}</span></span>`);
+    });
+  }
   html.push(`</div>`);
 
   return html.join('\n');

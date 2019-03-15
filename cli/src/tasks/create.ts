@@ -22,6 +22,7 @@ import {
 
 import { copyAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { emoji as _e } from '../util/emoji';
+import { checkInteractive } from '../util/term';
 
 import * as inquirer from 'inquirer';
 import chalk from 'chalk';
@@ -29,6 +30,10 @@ import chalk from 'chalk';
 export async function createCommand(config: Config, dir: string, name: string, id: string, client: string) {
 
   try {
+    if (!checkInteractive(dir, name, id)) {
+      return;
+    }
+
     // Get app name
     const appName = await getName(config, name);
     // Get app identifier

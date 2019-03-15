@@ -11,7 +11,7 @@ import com.getcapacitor.PluginMethod;
 
 @NativePlugin()
 public class WebView extends Plugin {
-  public static final String WEBVIEW_PREFS_NAME = "WebViewSettings";
+  public static final String WEBVIEW_PREFS_NAME = "CapWebViewSettings";
   public static final String CAP_SERVER_PATH = "serverBasePath";
 
   @PluginMethod()

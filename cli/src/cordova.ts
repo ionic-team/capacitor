@@ -84,7 +84,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
     const pluginDir = join(pluginsDir, pluginId, 'www');
     ensureDirSync(pluginDir);
     const jsModules = getJSModules(p, platform);
-    jsModules.map(async (jsModule: any) => {
+    await Promise.all(jsModules.map(async (jsModule: any) => {
       const filePath = join(webDir, 'plugins', pluginId, jsModule.$.src);
       copySync(join(p.rootPath, jsModule.$.src), filePath);
       let data = await readFileAsync(filePath, 'utf8');
@@ -92,7 +92,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       data = `cordova.define("${pluginId}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
       data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, "")
       await writeFileAsync(filePath, data, 'utf8');
-    });
+    }));
   }));
   writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }

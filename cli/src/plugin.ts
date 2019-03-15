@@ -98,6 +98,13 @@ export function fixName(name: string): string {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
+export function removeScope(name: string): string {
+  var parts = name.split("/");
+  if (parts.length > 1) {
+    name = parts[parts.length-1];
+  }
+  return name;
+}
 
 export function printPlugins(plugins: Plugin[], platform: string, type: string = 'capacitor') {
   const plural = plugins.length === 1 ? '' : 's';
@@ -111,7 +118,7 @@ export function printPlugins(plugins: Plugin[], platform: string, type: string =
   }
   const chalk = require('chalk');
   for (let p of plugins) {
-    log(`    ${chalk.bold(`${p.name}`)} (${chalk.green(p.version)})`);
+    log(`    ${chalk.bold(`${p.id}`)} (${chalk.green(p.version)})`);
   }
 }
 

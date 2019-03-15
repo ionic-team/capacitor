@@ -24,10 +24,8 @@
 @end
 
 #define CAP_PLUGIN_CONFIG(plugin_id, js_name) \
-CAP_EXTERN void CapacitorRegisterPlugin(Class); \
 + (NSString *)pluginId { return @#plugin_id; } \
-+ (NSString *)jsName { return @js_name; } \
-+ (void)load { CapacitorRegisterPlugin(self); }
++ (NSString *)jsName { return @js_name; }
 #define CAP_PLUGIN_METHOD(method_name, method_return_type) \
 [methods addObject:[[CAPPluginMethod alloc] initWithName:@#method_name returnType:method_return_type]]
 

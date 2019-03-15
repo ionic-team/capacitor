@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "1.0.0-beta.17",
+  "version": "1.0.0-beta.19",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -44,7 +44,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@stencil/dev-server": "0.0.18-1",
     "@types/tar": "^4.0.0",
     "chalk": "^2.3.0",
     "commander": "^2.12.2",

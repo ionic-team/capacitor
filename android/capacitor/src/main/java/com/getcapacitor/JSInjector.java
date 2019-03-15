@@ -23,13 +23,7 @@ class JSInjector {
   private String localUrlJS;
 
   public JSInjector(String globalJS, String coreJS, String pluginJS) {
-    this.globalJS = globalJS;
-    this.coreJS = coreJS;
-    this.pluginJS = pluginJS;
-    this.cordovaJS = "";
-    this.cordovaPluginsJS = "";
-    this.cordovaPluginsFileJS = "";
-    this.localUrlJS = "";
+    this(globalJS, coreJS, pluginJS, "" /* cordovaJS */, "" /* cordovaPluginsJS */, "" /* cordovaPluginsFileJS */, "" /* localUrlJS */);
   }
 
   public JSInjector(String globalJS, String coreJS, String pluginJS, String cordovaJS, String cordovaPluginsJS, String cordovaPluginsFileJS, String localUrlJS) {

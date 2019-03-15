@@ -1,0 +1,42 @@
+version: 2.1
+jobs:
+  node:
+    working_directory: /tmp/workspace
+    docker:
+      - image: circleci/node:10.13.0
+    steps:
+      - checkout
+
+  ios:
+    macos:
+      xcode: "10.0"
+    working_directory: /tmp/workspace
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install CocoaPods
+          command: |
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+
+      - run:
+          command: npm install
+          working_directory: /tmp/workspace/cli
+
+      - run:
+          command: npm run build
+          working_directory: /tmp/workspace/cli
+
+      - run:
+          command: npm run test
+          working_directory: /tmp/workspace/cli
+
+workflows:
+  version: 2.1
+  node-ios:
+    jobs:
+      - node
+      - ios:
+          requires:
+            - node

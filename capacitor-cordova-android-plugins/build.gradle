@@ -43,3 +43,7 @@ dependencies {
 // PLUGIN GRADLE EXTENSIONS START
 
 // PLUGIN GRADLE EXTENSIONS END
+
+for (def func : cdvPluginPostBuildExtras) {
+    func()
+}

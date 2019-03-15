@@ -2,14 +2,19 @@ import { Config } from '../config';
 import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON, logWarn } from '../common';
 import { emoji } from '../util/emoji';
 import { existsAsync, mkdirAsync, writeFileAsync, readFileAsync } from '../util/fs';
-import { fixName } from '../plugin'
+import { fixName, removeScope } from '../plugin'
 
 import { copy, move, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
+import { isInteractive } from '../util/term';
 
 
 export async function newPluginCommand(config: Config) {
   try {
+    if (!isInteractive()) {
+      return;
+    }
+
     await newPlugin(config);
   } catch (e) {
     logFatal(e);
@@ -98,7 +103,7 @@ export async function newPlugin(config: Config) {
   console.log('\n');
 
   if (answers.confirm) {
-    const pluginPath = answers.name;
+    const pluginPath = removeScope(answers.name);
     const domain = answers.domain;
     const className = answers.className;
 

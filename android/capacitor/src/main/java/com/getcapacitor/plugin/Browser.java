@@ -4,12 +4,15 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.util.Log;
 import com.getcapacitor.JSArray;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -60,6 +63,7 @@ public class Browser extends Plugin {
     tabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
         Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + getContext().getPackageName()));
     tabsIntent.launchUrl(getContext(), Uri.parse(url));
+    call.success();
   }
 
   @PluginMethod()
@@ -125,7 +129,16 @@ public class Browser extends Plugin {
     }
 
     if (currentSession == null) {
-      currentSession = customTabsClient.newSession(null);
+      currentSession = customTabsClient.newSession(new CustomTabsCallback(){
+        @Override
+        public void onNavigationEvent(int navigationEvent, Bundle extras) {
+          switch (navigationEvent) {
+            case NAVIGATION_FINISHED:
+              notifyListeners("browserPageLoaded", new JSObject());
+              break;
+          }
+        }
+      });
     }
 
     return currentSession;

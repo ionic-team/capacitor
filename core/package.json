@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/core",
-  "version": "1.0.0-beta.17",
+  "version": "1.0.0-beta.19",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "http://getcapacitor.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -24,7 +24,7 @@
   "typings": "dist/esm/index.d.ts",
   "devDependencies": {
     "@ionic/core": "0.0.2-59",
-    "@ionic/pwa-elements": "1.0.1",
+    "@ionic/pwa-elements": "1.0.2",
     "@types/jest": "^21.1.8",
     "jest": "^22.0.0",
     "rimraf": "^2.6.1",
@@ -61,7 +61,6 @@
     ]
   },
   "dependencies": {
-    "@types/lodash": "^4.14.120",
     "tslib": "^1.9.0"
   }
 }
