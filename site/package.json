@@ -8,7 +8,7 @@
     "build": "gulp && bash scripts/docs.sh && stencil build --prerender",
     "dev": "gulp && sd concurrent \"stencil build --dev --watch --serve\"",
     "deploy": "bash scripts/deploy.sh",
-    "serve": "stencil-dev-server",
+    "serve": "stencil build --dev --watch",
     "start": "rm -rf www && npm run build && npm run dev"
   },
   "dependencies": {
