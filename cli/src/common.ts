@@ -328,7 +328,6 @@ export function getNpmClient(config: Config, npmClient: string): Promise<string>
           const answers = await inquirer.prompt([{
             type: 'list',
             name: 'npmClient',
-            default: 'npm',
             message: 'Which npm client would you like to use?',
             choices: ['yarn', 'npm']
           }]);
