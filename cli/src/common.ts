@@ -330,7 +330,7 @@ export function getNpmClient(config: Config, npmClient: string): Promise<string>
             name: 'npmClient',
             default: 'npm',
             message: 'Which npm client would you like to use?',
-            choices: ['npm', 'yarn']
+            choices: ['yarn', 'npm']
           }]);
           resolve(answers.npmClient);
         }
