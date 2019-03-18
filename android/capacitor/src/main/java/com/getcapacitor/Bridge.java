@@ -18,6 +18,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.content.SharedPreferences;
 
+import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.Accessibility;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Browser;
@@ -177,7 +178,9 @@ public class Bridge {
       } catch (Exception ex) {
       }
 
-      Toast.show(getContext(), "Using app server " + appUrlConfig.toString());
+      if (BuildConfig.DEBUG) {
+        Toast.show(getContext(), "Using app server " + appUrlConfig.toString());
+      }
     }
 
     final boolean html5mode = Config.getBoolean("server.html5mode", true);
