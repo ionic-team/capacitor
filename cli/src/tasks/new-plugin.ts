@@ -149,10 +149,10 @@ async function createTSPlugin(config: Config, pluginPath: string, domain: string
 }
 
 async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
-  const newPluginPath = join(pluginPath, 'ios/Plugin');
+  const newPluginPath = join(pluginPath, 'ios', 'Plugin');
 
-  const originalPluginSwift = await readFileAsync(join(newPluginPath, 'Plugin/Plugin.swift'), 'utf8');
-  const originalPluginObjc  = await readFileAsync(join(newPluginPath, 'Plugin/Plugin.m'), 'utf8');
+  const originalPluginSwift = await readFileAsync(join(newPluginPath, 'Plugin.swift'), 'utf8');
+  const originalPluginObjc  = await readFileAsync(join(newPluginPath, 'Plugin.m'), 'utf8');
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
   const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
 
@@ -164,8 +164,8 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
   }
 
   await writeFileAsync(join(pluginPath, `${fixName(answers.name)}.podspec`), generatePodspec(config, answers), 'utf8');
-  await writeFileAsync(join(newPluginPath, `Plugin/Plugin.swift`), pluginSwift, 'utf8');
-  await writeFileAsync(join(newPluginPath, `Plugin/Plugin.m`), pluginObjc, 'utf8');
+  await writeFileAsync(join(newPluginPath, 'Plugin.swift'), pluginSwift, 'utf8');
+  await writeFileAsync(join(newPluginPath, 'Plugin.m'), pluginObjc, 'utf8');
 }
 
 function generatePodspec(config: Config, answers: any) {
@@ -178,7 +178,7 @@ function generatePodspec(config: Config, answers: any) {
     s.homepage = '${answers.git}'
     s.author = '${answers.author}'
     s.source = { :git => '${answers.git}', :tag => s.version.to_s }
-    s.source_files = 'ios/Plugin/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
+    s.source_files = 'ios/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'Capacitor'
   end`;
@@ -188,7 +188,7 @@ async function createAndroidPlugin(config: Config, pluginPath: string, domain: s
   const domainPath = domain.split('.').join('/');
 
   // Android specific stuff
-  const newPluginPath = join(pluginPath, 'android/', pluginPath);
+  const newPluginPath = join(pluginPath, 'android');
   // Move the 'plugin' folder inside $pluginPath/android/plugin to be the same name as the plugin
   const gradleProjectPath = join(pluginPath, 'android/plugin');
   await move(gradleProjectPath, newPluginPath);
