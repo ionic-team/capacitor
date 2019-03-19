@@ -2,8 +2,8 @@ import { runCommand } from '../common';
 import { Config } from '../config';
 import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 import { mkdirs } from 'fs-extra';
-import { copyAsync, existsAsync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
-import { resolve } from 'path';
+import { copyAsync, existsAsync, existsSync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
+import { resolve, join } from 'path';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 
 export async function gradleClean(config: Config) {
@@ -17,9 +17,15 @@ export function getAndroidPlugins(allPlugins: Plugin[]): Plugin[] {
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
   if (plugin.manifest && plugin.manifest.android) {
+    let pluginFilesPath = plugin.manifest.android.src ? plugin.manifest.android.src : 'android';
+    const absolutePath = join(plugin.rootPath, pluginFilesPath, plugin.id);
+    // Android folder shouldn't have subfolders, but they used to, so search for them for compatibility reasons
+    if (existsSync(absolutePath)) {
+      pluginFilesPath = join('android', plugin.id);
+    }
     plugin.android = {
       type: PluginType.Core,
-      path: plugin.manifest.android.src ? plugin.manifest.android.src : 'android'
+      path: pluginFilesPath
     };
   } else if (plugin.xml) {
     plugin.android = {
