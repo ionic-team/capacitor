@@ -812,7 +812,7 @@ public class Bridge {
   }
 
   private boolean matchHosts(String host, String[] patterns) {
-    if (patterns != null) {
+    if (host != null && patterns != null) {
       for (String pattern: patterns) {
         if (matchHost(host, pattern)) {
           return true;
