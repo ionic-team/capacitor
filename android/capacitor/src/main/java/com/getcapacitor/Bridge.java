@@ -238,7 +238,9 @@ public class Bridge {
 
   public void handleAppUrlLoadError(Exception ex) {
     if (ex instanceof SocketTimeoutException) {
-      Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + appUrl + "?");
+      if (BuildConfig.DEBUG) {
+        Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + appUrl + "?");
+      }
       Log.e(LOG_TAG, "Unable to load app. Ensure the server is running at " + appUrl + ", or modify the " +
           "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
     }
