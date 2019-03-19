@@ -792,15 +792,8 @@ public class Bridge {
   private boolean matchHost(String host, String pattern) {
     int offset;
 
-    ArrayList<String> hostParts = new ArrayList<>();
-    ArrayList<String> patternParts = new ArrayList<>();
-
-    if (host != null) {
-      hostParts.addAll(Arrays.asList(host.split("\\.")));
-    }
-    if (pattern != null) {
-      patternParts.addAll(Arrays.asList(pattern.split("\\.")));
-    }
+    ArrayList<String> hostParts = new ArrayList<String>(Arrays.asList(host.split("\\.")));
+    ArrayList<String> patternParts = new ArrayList<String>(Arrays.asList(pattern.split("\\.")));
 
     if (hostParts.size() != patternParts.size()) return false;
     if (hostParts.equals(patternParts)) return true;
@@ -814,7 +807,7 @@ public class Bridge {
   }
 
   private boolean matchHosts(String host, String[] patterns) {
-    if (patterns != null) {
+    if (host != null && patterns != null) {
       for (String pattern: patterns) {
         if (matchHost(host, pattern)) {
           return true;
