@@ -62,7 +62,7 @@ ${capacitorPlugins.map(p => {
     const relativePluginPath = relative(settingsPath, p.rootPath).replace(/\\/g, '/');
     return `
 include ':${getGradlePackageName(p.id)}'
-project(':${getGradlePackageName(p.id)}').projectDir = new File('${relativePluginPath}/android/${p.id}')
+project(':${getGradlePackageName(p.id)}').projectDir = new File('${relativePluginPath}/${p.android!.path}')
 `;
 }).join('')}`;
 
