@@ -185,6 +185,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     print("⚡️  Error: " + error.localizedDescription)
   }
 
+  public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    webView.reload()
+  }
+
   public override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
     return false
   }
