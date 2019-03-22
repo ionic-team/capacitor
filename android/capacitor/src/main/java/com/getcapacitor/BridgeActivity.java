@@ -89,6 +89,7 @@ public class BridgeActivity extends AppCompatActivity {
       bridge.restoreInstanceState(savedInstanceState);
     }
     this.keepRunning = preferences.getBoolean("KeepRunning", true);
+    this.onNewIntent(getIntent());
   }
 
   public Bridge getBridge() {
@@ -217,7 +218,7 @@ public class BridgeActivity extends AppCompatActivity {
 
   @Override
   protected void onNewIntent(Intent intent) {
-    if (this.bridge == null) {
+    if (this.bridge == null || intent == null) {
       return;
     }
 
