@@ -124,7 +124,7 @@ public class App extends Plugin {
 
     JSObject ret = new JSObject();
     ret.put("url", url.toString());
-    notifyListeners(EVENT_URL_OPEN, ret);
+    notifyListeners(EVENT_URL_OPEN, ret, true);
   }
 
 }
