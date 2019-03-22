@@ -41,7 +41,6 @@ public class BridgeActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
   }
 
   protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
