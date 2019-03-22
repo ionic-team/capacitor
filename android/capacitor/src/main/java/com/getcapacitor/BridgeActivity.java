@@ -218,7 +218,7 @@ public class BridgeActivity extends AppCompatActivity {
 
   @Override
   protected void onNewIntent(Intent intent) {
-    if (this.bridge == null) {
+    if (this.bridge == null || intent == null) {
       return;
     }
 
