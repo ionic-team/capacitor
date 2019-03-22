@@ -20,6 +20,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Facebook Login | `@rdlabo/capacitor-facebook-login` | <https://github.com/rdlabo/capacitor-facebook-login> | |
 | oAuth2 | `@byteowls/capacitor-oauth2` | <https://github.com/moberwasserlechner/capacitor-oauth2> | |
 | Fingerprint Auth | `capacitor-fingerprint-auth` | <https://github.com/triniwiz/capacitor-fingerprint-auth> | |
+| Firebase Auth | `capacitor-firebase-auth` | <https://github.com/baumblatt/capacitor-firebase-auth> | |
 
 ## Storage
 
