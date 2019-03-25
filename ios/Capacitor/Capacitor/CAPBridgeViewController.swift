@@ -211,6 +211,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     let oldSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
     let newSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
+    let newerSelector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
 
     if let method = class_getInstanceMethod(wkc, oldSelector) {
       let originalImp: IMP = method_getImplementation(method)
@@ -223,14 +224,22 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
 
     if let method = class_getInstanceMethod(wkc, newSelector) {
-      let originalImp: IMP = method_getImplementation(method)
-      let original: NewClosureType = unsafeBitCast(originalImp, to: NewClosureType.self)
-      let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3, arg4) in
-        original(me, newSelector, arg0, !value, arg2, arg3, arg4)
-      }
-      let imp: IMP = imp_implementationWithBlock(block)
-      method_setImplementation(method, imp)
+      self.swizzleAutofocusMethod(method, newSelector, value)
     }
+
+    if let method = class_getInstanceMethod(wkc, newerSelector) {
+      self.swizzleAutofocusMethod(method, newerSelector, value)
+    }
+  }
+
+  func swizzleAutofocusMethod(_ method: Method, _ selector: Selector, _ value: Bool) {
+    let originalImp: IMP = method_getImplementation(method)
+    let original: NewClosureType = unsafeBitCast(originalImp, to: NewClosureType.self)
+    let block : @convention(block) (Any, UnsafeRawPointer, Bool, Bool, Bool, Any?) -> Void = { (me, arg0, arg1, arg2, arg3, arg4) in
+      original(me, selector, arg0, !value, arg2, arg3, arg4)
+    }
+    let imp: IMP = imp_implementationWithBlock(block)
+    method_setImplementation(method, imp)
   }
 
   func handleJSStartupError(_ error: [String:Any]) {
