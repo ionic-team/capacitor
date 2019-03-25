@@ -21,6 +21,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | oAuth2 | `@byteowls/capacitor-oauth2` | <https://github.com/moberwasserlechner/capacitor-oauth2> | |
 | Fingerprint Auth | `capacitor-fingerprint-auth` | <https://github.com/triniwiz/capacitor-fingerprint-auth> | |
 | Firebase Auth | `capacitor-firebase-auth` | <https://github.com/baumblatt/capacitor-firebase-auth> | |
+| Twitter Auth | `capacitor-twitter` | <https://github.com/stewwan/capacitor-twitter> | |
 
 ## Storage
 
