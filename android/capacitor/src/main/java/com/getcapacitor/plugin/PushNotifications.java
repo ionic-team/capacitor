@@ -3,6 +3,8 @@ package com.getcapacitor.plugin;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.net.Uri;
 
@@ -49,6 +51,24 @@ public class PushNotifications extends Plugin {
     if (lastMessage != null) {
       fireNotification(lastMessage);
       lastMessage = null;
+    }
+  }
+
+  @Override
+  protected void handleOnNewIntent(Intent data) {
+    super.handleOnNewIntent(data);
+    Bundle bundle = data.getExtras();
+    if(bundle != null && bundle.containsKey("google.message_id")) {
+      JSObject notificationJson = new JSObject();
+      for (String key : bundle.keySet()) {
+        Object value = bundle.get(key);
+        String valueStr = (value != null) ? value.toString() : null;
+        notificationJson.put(key, valueStr);
+      }
+      JSObject dataJson = new JSObject();
+      dataJson.put("actionId", "tap");
+      dataJson.put("notificationRequest", notificationJson);
+      notifyListeners("pushNotificationActionPerformed", dataJson, true);
     }
   }
 
