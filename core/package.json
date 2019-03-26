@@ -20,7 +20,8 @@
     "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
     "test": "jest"
   },
-  "main": "dist/esm/index.js",
+  "main": "dist/capacitor.js",
+  "module": "dist/esm/index.js",
   "typings": "dist/esm/index.d.ts",
   "devDependencies": {
     "@ionic/core": "0.0.2-59",
