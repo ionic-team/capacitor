@@ -721,12 +721,29 @@ export interface GeolocationPlugin extends Plugin {
 
 export interface GeolocationPosition {
   /**
+   * Creation timestamp for coords
+   */
+  timestamp: number;
+  /**
    * The GPS coordinates along with the accuracy of the data
    */
   coords: {
+    /**
+     * Latitude in decimal degrees
+     */
     latitude: number;
+    /**
+     * longitude in decimal degrees
+     */
     longitude: number;
+    /**
+     * Accuracy level of the latitude and longitude coordinates in meters
+     */
     accuracy: number;
+    /**
+     * Accuracy level of the altitude coordinate in meters (if available)
+     */
+    altitudeAccuracy?: number;
     /**
      * The altitude the user is at (if available)
      */

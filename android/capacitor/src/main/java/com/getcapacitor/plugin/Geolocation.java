@@ -7,6 +7,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.getcapacitor.JSObject;
@@ -216,10 +217,14 @@ public class Geolocation extends Plugin {
     JSObject ret = new JSObject();
     JSObject coords = new JSObject();
     ret.put("coords", coords);
+    ret.put("timestamp", location.getTime());
     coords.put("latitude", location.getLatitude());
     coords.put("longitude", location.getLongitude());
     coords.put("accuracy", location.getAccuracy());
     coords.put("altitude", location.getAltitude());
+    if (Build.VERSION.SDK_INT >= 26) {
+      coords.put("altitudeAccuracy", location.getVerticalAccuracyMeters());
+    }
     coords.put("speed", location.getSpeed());
     coords.put("heading", location.getBearing());
     return ret;
