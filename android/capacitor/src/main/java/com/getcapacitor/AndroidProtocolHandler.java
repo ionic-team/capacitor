@@ -75,7 +75,12 @@ public class AndroidProtocolHandler {
   }
 
   public InputStream openContentUrl(Uri uri)  throws IOException {
-    String realPath = uri.toString().replace(uri.getScheme() + "://" + uri.getHost() + Bridge.CAPACITOR_CONTENT_START, "content:/");
+    Integer port = uri.getPort();
+    String baseUrl = uri.getScheme() + "://" + uri.getHost();
+    if (port != -1) {
+      baseUrl += ":" + port;
+    }
+    String realPath = uri.toString().replace(baseUrl + Bridge.CAPACITOR_CONTENT_START, "content:/");
 
     InputStream stream = null;
     try {
