@@ -173,15 +173,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl)) {
-      InputStream responseStream = new LollipopLazyInputStream(handler, request);
-      String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
-      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
-      return new WebResourceResponse(mimeType, handler.getEncoding(),
-              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
-    }
-
-    if (loadingUrl.toString().startsWith(bridge.getLocalUrl())) {
+    if (isLocalFile(loadingUrl) || loadingUrl.toString().startsWith(bridge.getLocalUrl())) {
       Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
@@ -223,6 +215,15 @@ public class WebViewLocalServer {
       return new WebResourceResponse(mimeType, handler.getEncoding(),
               statusCode, handler.getReasonPhrase(), tempResponseHeaders, responseStream);
     }
+
+    if (isLocalFile(request.getUrl())) {
+      InputStream responseStream = new LollipopLazyInputStream(handler, request);
+      String mimeType = getMimeType(request.getUrl().getPath(), responseStream);
+      int statusCode = getStatusCode(responseStream, handler.getStatusCode());
+      return new WebResourceResponse(mimeType, handler.getEncoding(),
+              statusCode, handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
+    }
+
     if (path.equals("/cordova.js")) {
       return new WebResourceResponse("application/javascript", handler.getEncoding(),
           handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), null);
