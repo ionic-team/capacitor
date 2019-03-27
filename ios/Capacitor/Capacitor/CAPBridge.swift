@@ -10,7 +10,7 @@ enum BridgeError: Error {
 @objc public class CAPBridge : NSObject {
 
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
-  public static var CAP_SITE = "https://getcapacitor.com/"
+  public static var CAP_SITE = "https://capacitor.ionicframework.com/"
   public static var CAP_SCHEME = "capacitor"
   public static var CAP_FILE_START = "/_capacitor_file_"
 
@@ -360,7 +360,7 @@ enum BridgeError: Error {
   }
 
   func docLink(_ url: String) -> String {
-    return "\(CAPBridge.CAP_SITE)/docs/\(url)"
+    return "\(CAPBridge.CAP_SITE)docs/\(url)"
   }
   
   /**

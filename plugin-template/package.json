@@ -2,7 +2,7 @@
   "name": "my-capacitor-plugin",
   "version": "0.0.1",
   "description": "Capacitor plugin",
-  "homepage": "http://getcapacitor.com/",
+  "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "scripts": {

@@ -2,7 +2,7 @@
   "name": "@capacitor/core",
   "version": "1.0.0-beta.19",
   "description": "Capacitor: cross-platform mobile apps with the web",
-  "homepage": "http://getcapacitor.com/",
+  "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "files": [
