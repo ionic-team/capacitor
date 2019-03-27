@@ -43,7 +43,6 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Firebase Analytics | `capacitor-firebase-analytics` | <https://github.com/philmerrell/capacitor-firebase-analytics> | |
-| FCM | `capacitor-fcm` | <https://github.com/stewwan/capacitor-fcm> | |
 
 ## Messaging/SMS/Email
 
