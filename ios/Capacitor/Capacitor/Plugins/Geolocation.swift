@@ -63,7 +63,7 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
     coords["altitudeAccuracy"] = location.verticalAccuracy
     coords["speed"] = location.speed
     coords["heading"] = location.course
-    ret["timestamp"] = NSNumber(value: Double((location.timestamp.timeIntervalSince1970 * 1000)))
+    ret["timestamp"] = NSNumber(value: Int((location.timestamp.timeIntervalSince1970 * 1000)))
     ret["coords"] = coords
     return ret
   }
