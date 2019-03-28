@@ -93,7 +93,10 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public void loadUrlIntoView(String url, boolean recreatePlugins) {
-
+    if (url.equals("about:blank") || url.startsWith("javascript:")) {
+      webView.loadUrl(url);
+      return;
+    }
   }
 
   @Override
@@ -257,7 +260,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public void loadUrl(String url) {
-
+    loadUrlIntoView(url, true);
   }
 
   @Override
