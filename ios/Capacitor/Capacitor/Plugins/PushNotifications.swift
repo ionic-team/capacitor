@@ -57,6 +57,9 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    */
   @objc func removeAllDeliveredNotifications(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+    DispatchQueue.main.async(execute: {
+      UIApplication.shared.applicationIconBadgeNumber = 0
+    })
     call.success()
   }
 
