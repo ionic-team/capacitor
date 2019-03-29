@@ -1261,10 +1261,10 @@ export interface PushNotification {
   title?: string;
   subtitle?: string;
   body?: string;
-  id?: string;
+  id: string;
   badge?: number;
   notification?: any;
-  data?: any;
+  data: any;
   click_action?: string;
   link?: string;
 }
@@ -1272,7 +1272,7 @@ export interface PushNotification {
 export interface PushNotificationActionPerformed {
   actionId: string;
   inputValue?: string;
-  notificationRequest: any;
+  notification: PushNotification;
 }
 
 export interface PushNotificationToken {
