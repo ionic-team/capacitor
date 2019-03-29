@@ -50,8 +50,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       action = "pushNotificationReceived"
       notificationData = makePushNotificationRequestJSObject(request)
       presentationOptions = [
-        .badge,
-        .sound
+        .badge
       ]
     } else {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "LocalNotifications"))!
