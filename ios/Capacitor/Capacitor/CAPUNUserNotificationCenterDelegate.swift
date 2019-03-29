@@ -110,7 +110,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
 
     if (originalNotificationRequest.trigger?.isKind(of: UNPushNotificationTrigger.self))! {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
-      data["notificationRequest"] = makePushNotificationRequestJSObject(originalNotificationRequest)
+      data["notification"] = makePushNotificationRequestJSObject(originalNotificationRequest)
       action = "pushNotificationActionPerformed"
     } else {
       data["notificationRequest"] = makeNotificationRequestJSObject(originalNotificationRequest)

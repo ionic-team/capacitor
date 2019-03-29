@@ -60,15 +60,21 @@ public class PushNotifications extends Plugin {
     Bundle bundle = data.getExtras();
     if(bundle != null && bundle.containsKey("google.message_id")) {
       JSObject notificationJson = new JSObject();
+      JSObject dataObject = new JSObject();
       for (String key : bundle.keySet()) {
-        Object value = bundle.get(key);
-        String valueStr = (value != null) ? value.toString() : null;
-        notificationJson.put(key, valueStr);
+        if (key.equals("google.message_id")) {
+          notificationJson.put("id", bundle.get(key));
+        } else {
+          Object value = bundle.get(key);
+          String valueStr = (value != null) ? value.toString() : null;
+          dataObject.put(key, valueStr);
+        }
       }
-      JSObject dataJson = new JSObject();
-      dataJson.put("actionId", "tap");
-      dataJson.put("notificationRequest", notificationJson);
-      notifyListeners("pushNotificationActionPerformed", dataJson, true);
+      notificationJson.put("data", dataObject);
+      JSObject actionJson = new JSObject();
+      actionJson.put("actionId", "tap");
+      actionJson.put("notification", notificationJson);
+      notifyListeners("pushNotificationActionPerformed", actionJson, true);
     }
   }
 
@@ -186,6 +192,7 @@ public class PushNotifications extends Plugin {
     JSObject remoteMessageData = new JSObject();
 
     JSObject data = new JSObject();
+    remoteMessageData.put("id", remoteMessage.getMessageId());
     for (String key : remoteMessage.getData().keySet()) {
       Object value = remoteMessage.getData().get(key);
       data.put(key, value);
