@@ -47,12 +47,20 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
     var notificationData = makeNotificationRequestJSObject(request)
     if (request.trigger?.isKind(of: UNPushNotificationTrigger.self))! {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
+      let options = plugin.getConfigValue("presentationOptions") as? [String] ?? ["badge"]
+
       action = "pushNotificationReceived"
+      if options.contains("alert") {
+        presentationOptions.update(with: .alert)
+      }
+      if options.contains("badge") {
+        presentationOptions.update(with: .badge)
+      }
+      if options.contains("sound") {
+        presentationOptions.update(with: .sound)
+      }
       notificationData = makePushNotificationRequestJSObject(request)
-      presentationOptions = [
-        .badge,
-        .sound
-      ]
+
     } else {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "LocalNotifications"))!
       presentationOptions = [
