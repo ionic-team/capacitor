@@ -14,4 +14,10 @@ public class PluginRequestCodes {
   public static final int GET_USER_MEDIA_PERMISSIONS = 9011;
   public static final int FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS = 9012;
   public static final int FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS = 9013;
+  public static final int FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS = 9014;
+  public static final int FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS = 9015;
+  public static final int FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS = 9016;
+  public static final int FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS = 9017;
+  public static final int FILESYSTEM_REQUEST_URI_PERMISSIONS = 9018;
+  public static final int FILESYSTEM_REQUEST_STAT_PERMISSIONS = 9019;
 }

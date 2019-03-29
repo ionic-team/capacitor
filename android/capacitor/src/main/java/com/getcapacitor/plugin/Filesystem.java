@@ -33,7 +33,13 @@ import java.nio.charset.StandardCharsets;
 
 @NativePlugin(requestCodes = {
   PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS,
-        PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS
+  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS
 })
 public class Filesystem extends Plugin {
 
@@ -150,6 +156,7 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void readFile(PluginCall call) {
+    saveCall(call);
     String file = call.getString("path");
     String data = call.getString("data");
     String directory = getDirectoryParameter(call);
@@ -161,24 +168,27 @@ public class Filesystem extends Plugin {
       return;
     }
 
-    try {
-      InputStream is = getInputStream(file, directory);
-      String dataStr;
-      if (charset != null) {
-        dataStr = readFileAsString(is, charset);
-      } else {
-        dataStr = readFileAsBase64EncodedData(is);
-      }
+    if (!isPublicDirectory(directory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        try {
+          InputStream is = getInputStream(file, directory);
+          String dataStr;
+          if (charset != null) {
+            dataStr = readFileAsString(is, charset);
+          } else {
+            dataStr = readFileAsBase64EncodedData(is);
+          }
 
-      JSObject ret = new JSObject();
-      ret.putOpt("data", dataStr);
-      call.success(ret);
-    } catch (FileNotFoundException ex) {
-      call.error("File does not exist", ex);
-    } catch (IOException ex) {
-      call.error("Unable to read file", ex);
-    } catch(JSONException ex) {
-      call.error("Unable to return value for reading file", ex);
+          JSObject ret = new JSObject();
+          ret.putOpt("data", dataStr);
+          call.success(ret);
+        } catch (FileNotFoundException ex) {
+          call.error("File does not exist", ex);
+        } catch (IOException ex) {
+          call.error("Unable to read file", ex);
+        } catch(JSONException ex) {
+          call.error("Unable to return value for reading file", ex);
+        }
     }
   }
 
@@ -249,8 +259,8 @@ public class Filesystem extends Plugin {
     }
     //remove header from dataURL
     if(data.indexOf(",") != -1) {
-      data = data.split(",")[1]; 
-    }    
+      data = data.split(",")[1];
+    }
 
     // if charset is not null assume its a plain text file the user wants to save
     boolean success = false;
@@ -294,21 +304,25 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void deleteFile(PluginCall call) {
+    saveCall(call);
     String file = call.getString("path");
     String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(file, directory);
 
-    if (!fileObject.exists()) {
-      call.error("File does not exist");
-      return;
-    }
+    if (!isPublicDirectory(directory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+      if (!fileObject.exists()) {
+        call.error("File does not exist");
+        return;
+      }
 
-    boolean deleted = fileObject.delete();
-    if(deleted == false) {
-      call.error("Unable to delete file");
-    } else {
-      call.success();
+      boolean deleted = fileObject.delete();
+      if(deleted == false) {
+        call.error("Unable to delete file");
+      } else {
+        call.success();
+      }
     }
   }
 
@@ -344,74 +358,90 @@ public class Filesystem extends Plugin {
 
   @PluginMethod()
   public void rmdir(PluginCall call) {
+    saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
-    if (!fileObject.exists()) {
-      call.error("Directory does not exist");
-      return;
-    }
+    if (!isPublicDirectory(directory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+      if (!fileObject.exists()) {
+        call.error("Directory does not exist");
+        return;
+      }
 
-    boolean deleted = fileObject.delete();
+      boolean deleted = fileObject.delete();
 
-    if(deleted == false) {
-      call.error("Unable to delete directory, unknown reason");
-    } else {
-      call.success();
+      if(deleted == false) {
+        call.error("Unable to delete directory, unknown reason");
+      } else {
+        call.success();
+      }
     }
   }
 
   @PluginMethod()
   public void readdir(PluginCall call) {
+    saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
-    if (fileObject != null && fileObject.exists()) {
-      String[] files = fileObject.list();
+     if (!isPublicDirectory(directory)
+         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      if (fileObject != null && fileObject.exists()) {
+        String[] files = fileObject.list();
 
-      JSObject ret = new JSObject();
-      ret.put("files", JSArray.from(files));
-      call.success(ret);
-    } else {
+        JSObject ret = new JSObject();
+        ret.put("files", JSArray.from(files));
+        call.success(ret);
+      } else {
       call.error("Directory does not exist");
+      }
     }
   }
 
   @PluginMethod()
   public void getUri(PluginCall call) {
+    saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
-    JSObject data = new JSObject();
-    data.put("uri", Uri.fromFile(fileObject).toString());
-    call.success(data);
+    if (!isPublicDirectory(directory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      JSObject data = new JSObject();
+      data.put("uri", Uri.fromFile(fileObject).toString());
+      call.success(data);
+    }
   }
 
   @PluginMethod()
   public void stat(PluginCall call) {
+    saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
 
     File fileObject = getFileObject(path, directory);
 
-    if (!fileObject.exists()) {
-      call.error("File does not exist");
-      return;
-    }
+    if (!isPublicDirectory(directory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      if (!fileObject.exists()) {
+        call.error("File does not exist");
+        return;
+      }
 
-    JSObject data = new JSObject();
-    data.put("type", fileObject.isDirectory() ? "directory" : "file");
-    data.put("size", fileObject.length());
-    data.put("ctime", null);
-    data.put("mtime", fileObject.lastModified());
-    data.put("uri", Uri.fromFile(fileObject).toString());
-    call.success(data);
+      JSObject data = new JSObject();
+      data.put("type", fileObject.isDirectory() ? "directory" : "file");
+      data.put("size", fileObject.length());
+      data.put("ctime", null);
+      data.put("mtime", fileObject.lastModified());
+      data.put("uri", Uri.fromFile(fileObject).toString());
+      call.success(data);
+    }
   }
 
   /**
@@ -471,11 +501,22 @@ public class Filesystem extends Plugin {
     }
 
     if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS) {
-      writeFile(savedCall);
+      this.writeFile(savedCall);
     } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS) {
-      mkdir(savedCall);
+      this.mkdir(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS) {
+      this.readFile(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS) {
+      this.readdir(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS) {
+      this.deleteFile(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS) {
+      this.rmdir(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS) {
+      this.getUri(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS) {
+      this.stat(savedCall);
     }
   }
-
 
 }
