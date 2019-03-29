@@ -8,7 +8,7 @@ export default {
     name: 'capacitorExports'
   },
   sourcemap: true,
-  banner: '/*! Capacitor: https://ionic-team.github.io/capacitor/ - MIT License */',
+  banner: '/*! Capacitor: https://capacitor.ionicframework.com/ - MIT License */',
   plugins: [
     nodeResolve()
   ]

@@ -36,7 +36,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':capacitor-cordova-android-plugins')
-    implementation 'com.google.firebase:firebase-messaging:17.1.0'
+    implementation 'com.google.firebase:firebase-messaging:17.4.0'
     implementation 'com.android.support:support-v4:27.1.1'
 }
 

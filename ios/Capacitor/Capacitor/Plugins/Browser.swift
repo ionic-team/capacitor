@@ -57,6 +57,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
   
   public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
     self.notifyListeners("browserFinished", data: [:])
+    vc = nil
   }
   
   public func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {

@@ -33,7 +33,8 @@ async setObject() {
 
 // JSON "get" example
 async getObject() {
-  const user = JSON.parse(await Storage.get({ key: 'user' }));
+  const ret = await Storage.get({ key: 'user' });
+  const user = JSON.parse(ret.value);
 }
 
 async setItem() {
