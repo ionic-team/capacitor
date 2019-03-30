@@ -439,7 +439,6 @@ export const hasYarn = async (config: Config, projectDir?: string) => {
   }
   // yarn.lock
   return existsSync(join(projectDir || process.cwd(), 'yarn.lock'));
-    // process.argv.includes('--npm-client') ? process.argv[process.argv.indexOf('--npm-client') + 1] : process.argv.includes('--yarn') || existsSync(join(process.cwd(), 'yarn.lock'));
 };
 
 // Install deps with NPM or Yarn
