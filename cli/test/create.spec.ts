@@ -18,7 +18,7 @@ describe('Create', () => {
   it.each(['npm', 'yarn'])('Should create a project with %s', async (npmClient) => {
     const appDir = join(appDirObj.path, `test-app-${npmClient}`);
     const FS = new MappedFS(appDir);
-    await run(process.cwd(), `create "${appDir}" "${APP_NAME}" "${APP_ID}" ${npmClient}`);
+    await run(process.cwd(), `create "${appDir}" "${APP_NAME}" "${APP_ID}" --npm-client ${npmClient}`);
     expect(await FS.exists('capacitor.config.json')).toBe(true);
     await run(appDir, 'add ios');
     expect(await FS.exists('ios')).toBe(true);
