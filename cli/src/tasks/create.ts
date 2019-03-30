@@ -1,7 +1,5 @@
 import { Config } from '../config';
 import { copy } from './copy';
-import { exec } from 'child_process';
-
 
 import {
   check,
