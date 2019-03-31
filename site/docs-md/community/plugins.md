@@ -51,6 +51,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | SMS | `@byteowls/capacitor-sms` | <https://github.com/moberwasserlechner/capacitor-sms> | |
 | Email | `@teamhive/capacitor-email` | <https://github.com/TeamHive/capacitor-email> | |
 | SMS | `capacitor-sms` | <https://github.com/abritopach/capacitor-sms> | |
+| Intercom | `capacitor-intercom` | <https://github.com/stewwan/capacitor-intercom> | |
 
 
 ## Payments/NFC
