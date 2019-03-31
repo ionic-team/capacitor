@@ -341,8 +341,8 @@ public class Camera extends Plugin {
       returnBase64(call, exif, bitmapOutputStream);
     } else if (settings.getResultType() == CameraResultType.URI) {
       returnFileURI(call, exif, bitmap, u, bitmapOutputStream);
-    } else if (settings.getResultType() == CameraResultType.BASE64NOMETADATA) {
-      returnBase64NoMetadata(call, exif, bitmapOutputStream);
+    } else if (settings.getResultType() == CameraResultType.DATA_URL) {
+      returnDATA_URL(call, exif, bitmapOutputStream);
     } else {
       call.reject(INVALID_RESULT_TYPE_ERROR);
     }
@@ -404,7 +404,7 @@ public class Camera extends Plugin {
     return bitmap;
   }
 
-  private void returnBase64(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
+  private void returnDATA_URL(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
     byte[] byteArray = bitmapOutputStream.toByteArray();
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
@@ -414,7 +414,7 @@ public class Camera extends Plugin {
     call.resolve(data);
   }
 
-  private void returnBase64NoMetadata(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
+  private void returnBase64(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
     byte[] byteArray = bitmapOutputStream.toByteArray();
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 

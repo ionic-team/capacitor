@@ -348,7 +348,7 @@ export interface CameraPhoto {
 export enum CameraResultType {
   Uri = 'uri',
   Base64 = 'base64',
-  Base64NoMetadata = 'base64nometadata'
+  DATA_URL = 'DATA_URL'
 }
 
 //

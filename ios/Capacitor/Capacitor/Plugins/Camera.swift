@@ -218,15 +218,15 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       let base64String = jpeg.base64EncodedString()
 
       self.call?.success([
-        "base64Data": "data:image/jpeg;base64," + base64String,
+        "base64Data": base64String,
         "exif": makeExif(imageMetadata) ?? [:],
         "format": "jpeg"
       ])
-    } else if settings.resultType == "base64NoMetadata" {
+    } else if settings.resultType == "DATA_URL" {
       let base64String = jpeg.base64EncodedString()
 
       self.call?.success([
-        "base64Data": base64String,
+        "base64Data": "data:image/jpeg;base64," + base64String,
         "exif": makeExif(imageMetadata) ?? [:],
         "format": "jpeg"
       ])
