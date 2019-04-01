@@ -37,6 +37,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | YouTube | `capacitor-youtube-player` | <https://github.com/abritopach/capacitor-youtube-player> | |
 | Twilio iOS | `twilio-ios-capacitor` | <https://github.com/MCanhisares/twilio-ios-capacitor> | Video calls with Twilio |
 | Video Recorder | `@teamhive/capacitor-video-recorder` | <https://github.com/TeamHive/capacitor-video-recorder> | |
+| Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
 
 ## Analytics
 
@@ -106,6 +107,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Image Cache | `capacitor-image-cache` | <https://github.com/triniwiz/capacitor-image-cache> | |
 | Image Crop | `capacitor-image-crop` | <https://github.com/triniwiz/capacitor-image-crop> | | 
+| Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
 
 
 ## Printers
