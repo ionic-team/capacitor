@@ -37,55 +37,55 @@ export class CameraPage {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 
   async takePicture() {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 
   async getFromPhotos() {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Photos
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 
   async takePictureScaled() {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       width: 128
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 
   async takePictureCorrected() {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       width: 128,
       correctOrientation: true
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 
   async takePictureFile() {
@@ -130,11 +130,11 @@ export class CameraPage {
       height: 1080,
       width: 1080,
       quality: 90,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       saveToGallery: false
     });
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 
   async testAndroidBreak() {
@@ -144,11 +144,11 @@ export class CameraPage {
       height: 1080,
       width: 1080,
       quality: 90,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       saveToGallery: false, 
       source: CameraSource.Photos
     });
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 }
