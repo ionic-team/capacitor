@@ -441,7 +441,6 @@ public class WebViewLocalServer {
             if (!path.startsWith(capacitorFileStart)) {
               path = basePath + url.getPath();
             }
-            System.out.println("path "+path);
             stream = protocolHandler.openFile(path);
           } else {
             stream = protocolHandler.openAsset(assetPath + path);
@@ -457,6 +456,7 @@ public class WebViewLocalServer {
 
     for (String authority: authorities) {
       registerUriForScheme(capacitorScheme, handler, authority);
+      registerUriForScheme("https", handler, authority);
     }
 
   }
