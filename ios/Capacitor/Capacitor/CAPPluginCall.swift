@@ -84,4 +84,3 @@ public typealias PluginEventListener = CAPPluginCall
     errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, error: nil, data: [:]))
   }
 }
-
