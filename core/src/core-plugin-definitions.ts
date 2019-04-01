@@ -270,7 +270,7 @@ export interface CameraOptions {
    */
   allowEditing?: boolean;
   /**
-   * How the data should be returned. Currently, only 'base64' or 'uri' is supported
+   * How the data should be returned. Currently, only 'Base64', 'DataUrl' or 'Uri' is supported
    */
   resultType: CameraResultType;
   /**
@@ -322,9 +322,13 @@ export enum CameraDirection {
 
 export interface CameraPhoto {
   /**
-   * The base64 encoded data of the image, if using CameraResultType.Base64.
+   * The base64 encoded string representation of the image, if using CameraResultType.Base64.
    */
-  base64Data?: string;
+  base64String?: string;
+  /**
+   * The url starting with 'data:image/jpeg;base64,' and the base64 encoded string representation of the image, if using CameraResultType.DataUrl.
+   */
+  dataUrl?: string;
   /**
    * If using CameraResultType.Uri, the path will contain a full,
    * platform-specific file URL that can be read later using the Filsystem API.
@@ -348,7 +352,7 @@ export interface CameraPhoto {
 export enum CameraResultType {
   Uri = 'uri',
   Base64 = 'base64',
-  DATA_URL = 'DATA_URL'
+  DataUrl = 'dataUrl'
 }
 
 //

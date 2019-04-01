@@ -15,7 +15,7 @@ enum CameraDirection: String {
 enum CameraResultType: String {
   case base64 = "base64"
   case uri = "uri"
-  case base64NoMetadata = "base64NoMetadata"
+  case DATA_URL = "dataUrl"
 }
 
 struct CameraSettings {
@@ -214,23 +214,23 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       return
     }
 
-    if settings.resultType == "base64" {
+    if settings.resultType == CameraResultType.base64.rawValue {
       let base64String = jpeg.base64EncodedString()
 
       self.call?.success([
-        "base64Data": base64String,
+        "base64String": base64String,
         "exif": makeExif(imageMetadata) ?? [:],
         "format": "jpeg"
       ])
-    } else if settings.resultType == "DATA_URL" {
+    } else if settings.resultType == CameraResultType.DATA_URL.rawValue {
       let base64String = jpeg.base64EncodedString()
 
       self.call?.success([
-        "base64Data": "data:image/jpeg;base64," + base64String,
+        "dataUrl": "data:image/jpeg;base64," + base64String,
         "exif": makeExif(imageMetadata) ?? [:],
         "format": "jpeg"
       ])
-    } else if settings.resultType == "uri" {
+    } else if settings.resultType == CameraResultType.uri.rawValue {
       let path = try! saveTemporaryImage(jpeg)
       guard let webPath = CAPFileManager.getPortablePath(host: bridge.getLocalUrl(), uri: URL(string: path)) else {
         call?.reject("Unable to get portable path to file")

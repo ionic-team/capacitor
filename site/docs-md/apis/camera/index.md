@@ -85,13 +85,13 @@ export class CameraPage {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera
     });
     
     // Example of using the Base64 return type. It's recommended to use CameraResultType.Uri
     // instead for performance reasons when showing large, or a large amount of images.
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 }
 ```
