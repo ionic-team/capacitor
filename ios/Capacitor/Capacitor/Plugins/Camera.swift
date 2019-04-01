@@ -56,6 +56,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     imagePicker = UIImagePickerController()
     imagePicker!.delegate = self
+    imagePicker!.allowsEditing = settings.allowEditing
 
     doShow(call: call, settings: settings)
   }
@@ -159,7 +160,6 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     self.configurePicker()
 
     self.imagePicker!.sourceType = .photoLibrary
-    self.imagePicker!.allowsEditing = settings.allowEditing
 
     self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
   }
