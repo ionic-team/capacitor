@@ -175,6 +175,7 @@ export async function getOrCreateConfig(config: Config) {
     appId: config.app.appId,
     appName: config.app.appName,
     bundledWebRuntime: config.app.bundledWebRuntime,
+    npmClient: config.cli.npmClient,
     webDir: basename(resolve(config.app.rootDir, config.app.webDir))
   });
 
