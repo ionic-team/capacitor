@@ -24,5 +24,10 @@ describe('Create', () => {
     expect(await FS.exists('ios')).toBe(true);
     await run(appDir, 'add android');
     expect(await FS.exists('android')).toBe(true);
+    const lockFileMap = {
+      npm: 'package-lock.json',
+      yarn: 'yarn.lock'
+    };
+    expect(await FS.exists(lockFileMap[npmClient])).toBe(true);
   });
 });
