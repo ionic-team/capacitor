@@ -29,7 +29,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .command('create [directory] [name] [id]')
     .description('Creates a new Capacitor project')
     .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
-    .action((directory, name, id, {npmClient}) => {
+    .action((directory, name, id, { npmClient }) => {
       return createCommand(config, directory, name, id, npmClient);
     });
 
@@ -37,8 +37,9 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .command('init [appName] [appId]')
     .description('Initializes a new Capacitor project in the current directory')
     .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', 'www')
-    .action((appName, appId, { webDir }) => {
-      return initCommand(config, appName, appId, webDir);
+    .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
+    .action((appName, appId, { webDir, npmClient }) => {
+      return initCommand(config, appName, appId, webDir, npmClient);
     });
 
   program
@@ -79,9 +80,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('add [platform]')
     .description('add a native platform project')
-    .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
-    .action((platform, { npmClient }) => {
-      if (npmClient) config.cli.npmClient = npmClient;
+    .action((platform) => {
       return addCommand(config, platform);
     });
 

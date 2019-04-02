@@ -3,8 +3,10 @@ import {
   check,
   checkAppId,
   checkAppName,
+  checkNpmClient,
   getAppId,
   getName,
+  getNpmClient,
   getOrCreateConfig,
   log,
   logFatal,
@@ -16,7 +18,7 @@ import { emoji as _e } from '../util/emoji';
 
 const chalk = require('chalk');
 
-export async function initCommand(config: Config, name: string, id: string, webDir: string) {
+export async function initCommand(config: Config, name: string, id: string, webDir: string, client: string) {
   if (webDir === '') {
     webDir = 'www';
   }
@@ -25,12 +27,15 @@ export async function initCommand(config: Config, name: string, id: string, webD
     const appName = await getName(config, name);
     // Get app identifier
     const appId = await getAppId(config, id);
+    // Get npm client
+    const npmClient = await getNpmClient(config, client);
 
     await check(
       config,
       [
         (config) => checkAppName(config, appName),
-        (config) => checkAppId(config, appId)
+        (config) => checkAppId(config, appId),
+        (config) => checkNpmClient(config, npmClient)
       ]
     );
 
@@ -38,13 +43,15 @@ export async function initCommand(config: Config, name: string, id: string, webD
       config.app.appId = appId;
       config.app.appName = appName;
       config.app.webDir = webDir;
+      config.cli.npmClient = npmClient;
 
       // Get or create our config
       await getOrCreateConfig(config);
       await mergeConfig(config, {
         appId,
         appName,
-        webDir
+        webDir,
+        npmClient
       });
     });
 
