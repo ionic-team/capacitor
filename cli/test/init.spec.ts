@@ -78,7 +78,6 @@ describe('Init', () => {
 
     const fileContents = await FS.read('capacitor.config.json');
     const jsonContents = JSON.parse(fileContents);
-    console.log(jsonContents)
     expect(jsonContents.npmClient).toEqual(npmClient);
   });
 });

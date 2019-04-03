@@ -10,7 +10,7 @@ describe.each([false, true])('Add: iOS (monoRepoLike: %p)', (monoRepoLike) => {
     appDirObj = await makeAppDir(monoRepoLike);
     const appDir = appDirObj.appDir;
     // Init in this directory so we can test add
-    await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
+    await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm`);
     await run(appDir, `add ios`);
     FS = new MappedFS(appDir);
   });

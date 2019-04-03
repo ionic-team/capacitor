@@ -12,7 +12,7 @@ describe.each([false, true])('Update: iOS (monoRepoLike: %p)', (monoRepoLike) =>
     appDirObj = await makeAppDir(monoRepoLike);
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add
-    await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
+    await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm`);
     await run(appDir, `add ios`);
     // Redundant, because add does this, but called explicitly for thoroughness
     await updateCommand(makeConfig(appDir), 'ios');
