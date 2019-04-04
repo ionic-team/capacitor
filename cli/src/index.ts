@@ -28,16 +28,18 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('create [directory] [name] [id]')
     .description('Creates a new Capacitor project')
-    .action((directory, name, id) => {
-      return createCommand(config, directory, name, id);
+    .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
+    .action((directory, name, id, { npmClient }) => {
+      return createCommand(config, directory, name, id, npmClient);
     });
 
   program
     .command('init [appName] [appId]')
     .description('Initializes a new Capacitor project in the current directory')
     .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', 'www')
-    .action((appName, appId, cmd) => {
-      return initCommand(config, appName, appId, cmd.webDir);
+    .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
+    .action((appName, appId, { webDir, npmClient }) => {
+      return initCommand(config, appName, appId, webDir, npmClient);
     });
 
   program
@@ -78,7 +80,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('add [platform]')
     .description('add a native platform project')
-    .action(platform => {
+    .action((platform) => {
       return addCommand(config, platform);
     });
 

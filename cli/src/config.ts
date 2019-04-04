@@ -69,6 +69,7 @@ export class Config implements CliConfig {
     assetsDir: '',
     package: Package,
     os: OS.Unknown,
+    npmClient: ''
   };
 
   app = {
@@ -223,6 +224,7 @@ export class Config implements CliConfig {
       try {
         // we've got an capacitor.json file, let's parse it
         this.app.extConfig = JSON.parse(extConfigStr);
+        this.cli.npmClient = this.app.extConfig.npmClient || '';
       } catch (e) {
         logFatal(`error parsing: ${basename(this.app.extConfigFilePath)}\n`, e);
       }

@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { copyTemplate, resolveNode, runCommand, runTask, TaskInfoProvider } from '../common';
+import { TaskInfoProvider, copyTemplate, installDeps, resolveNode, runCommand, runTask } from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
 import { homedir } from 'os';
 import { join } from 'path';
@@ -11,7 +11,7 @@ export async function addAndroid(config: Config) {
       info('Skipping: already installed');
       return;
     }
-    return runCommand(`cd "${config.app.rootDir}" && npm install --save @capacitor/android`);
+    return installDeps(config.app.rootDir, ['@capacitor/android'], config);
   });
   await runTask(`Adding native android project in: ${config.android.platformDir}`, async () => {
     return copyTemplate(config.android.assets.templateDir, config.android.platformDir);

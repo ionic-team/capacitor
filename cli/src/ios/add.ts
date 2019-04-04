@@ -1,5 +1,5 @@
 import { checkCocoaPods } from './common';
-import { CheckFunction, copyTemplate, resolveNode, runCommand, runTask, TaskInfoProvider } from '../common';
+import { CheckFunction, copyTemplate, installDeps, resolveNode, runTask, TaskInfoProvider } from '../common';
 import { Config } from '../config';
 
 export const addIOSChecks: CheckFunction[] = [checkCocoaPods];
@@ -11,7 +11,7 @@ export async function addIOS(config: Config) {
       return;
     }
 
-    return runCommand(`cd "${config.app.rootDir}" && npm install --save @capacitor/ios`);
+    return installDeps(config.app.rootDir, ['@capacitor/ios'], config);
   });
   await runTask(`Adding native xcode project in: ${config.ios.platformDir}`, () => {
     return copyTemplate(config.ios.assets.templateDir, config.ios.platformDir);

@@ -21,6 +21,7 @@ export interface ExternalConfig {
     minVersion?: string;
     cordovaLinkerFlags?: string[];
   };
+  npmClient?: string;
 }
 
 export interface AppPluginsConfig {

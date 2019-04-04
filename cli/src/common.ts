@@ -63,6 +63,11 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
     return appNameError;
   }
 
+  const npmClientError = await checkNpmClient(config, config.cli.npmClient);
+  if (npmClientError) {
+    return npmClientError;
+  }
+
   return null;
 }
 
@@ -87,6 +92,14 @@ export async function checkAppName(config: Config, name: string): Promise<string
   // We allow pretty much anything right now, have fun
   if (!name || !name.length) {
     return `Must provide an app name. For example: 'Spacebook'`;
+  }
+  return null;
+}
+
+export async function checkNpmClient(config: Config, client: string): Promise<string | null> {
+  // npm client must be npm, yarn, or undefined
+  if (client && client !== 'npm' && client !== 'yarn') {
+    return `npm client must be "npm" or "yarn". If you are not sure, choose "npm"`;
   }
   return null;
 }
@@ -162,6 +175,7 @@ export async function getOrCreateConfig(config: Config) {
     appId: config.app.appId,
     appName: config.app.appName,
     bundledWebRuntime: config.app.bundledWebRuntime,
+    npmClient: config.cli.npmClient,
     webDir: basename(resolve(config.app.rootDir, config.app.webDir))
   });
 
@@ -239,7 +253,7 @@ export function runCommand(command: string): Promise<string> {
   });
 }
 
-export type TaskInfoProvider = (messsage: string) => void
+export type TaskInfoProvider = (messsage: string) => void;
 
 export async function runTask<T>(title: string, fn: (info: TaskInfoProvider) => Promise<T>): Promise<T> {
   const ora = require('ora');
@@ -252,7 +266,7 @@ export async function runTask<T>(title: string, fn: (info: TaskInfoProvider) => 
     const elapsed = process.hrtime(start);
     const chalk = require('chalk');
     if (taskInfoMessage) {
-      spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`)
+      spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`);
     } else {
       spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
     }
@@ -303,6 +317,30 @@ export async function getAppId(config: Config, id: string) {
   return id;
 }
 
+export function getNpmClient(config: Config, npmClient: string): Promise<string> {
+  return new Promise(async (resolve) => {
+    if (!npmClient) {
+      // const isYarnInstalled
+      exec('yarn --version', async (err, stdout) => {
+        // Don't show prompt if yarn is not installed
+        if (err) {
+          resolve('npm');
+        } else {
+          const answers = await inquirer.prompt([{
+            type: 'list',
+            name: 'npmClient',
+            message: 'Which npm client would you like to use?',
+            choices: ['yarn', 'npm']
+          }]);
+          resolve(answers.npmClient);
+        }
+      });
+    } else {
+      resolve(npmClient);
+    }
+  });
+}
+
 export async function copyTemplate(src: string, dst: string) {
   await copyAsync(src, dst);
 
@@ -317,7 +355,7 @@ export async function copyTemplate(src: string, dst: string) {
 export async function printNextSteps(config: Config, appDir: string) {
   log('\n');
   log(`${chalk.bold(`${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e('🎉', '*')}`)}\n`);
-  if (appDir !== "") {
+  if (appDir !== '') {
     log(`Next steps:`);
     log('');
     log(chalk`cd {bold ./${appDir}}`);
@@ -389,4 +427,22 @@ function resolveNodeFrom(start: string, id: string): string | null {
     }
     basePath = dirname(basePath);
   }
+}
+
+// Does the current project use yarn?
+export const hasYarn = async (config: Config, projectDir?: string) => {
+  // npmClient in config
+  const npmClient = config.cli.npmClient;
+  if (npmClient === 'yarn') {
+    return true;
+  } else if (npmClient === 'npm') {
+    return false;
+  }
+  // yarn.lock
+  return existsSync(join(projectDir || process.cwd(), 'yarn.lock'));
+};
+
+// Install deps with NPM or Yarn
+export async function installDeps(projectDir: string, deps: string[], config: Config) {
+  return runCommand(`cd "${projectDir}" && ${await hasYarn(config, projectDir) ? 'yarn add' : 'npm install --save'} ${deps.join(' ')}`);
 }

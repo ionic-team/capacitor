@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { buildXmlElement, log, logError, logFatal, logInfo, readXML, resolveNode, runCommand, writeXML } from './common';
+import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, readXML, resolveNode, writeXML } from './common';
 import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -280,7 +280,7 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
           }
           logInfo(`installing missing dependency plugin ${plugin}`);
           try {
-            await runCommand(`cd "${config.app.rootDir}" && npm install ${plugin}`);
+            await installDeps(config.app.rootDir, [plugin], config);
             await config.updateAppPackage();
             needsUpdate = true;
           } catch (e) {
