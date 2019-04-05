@@ -7,7 +7,7 @@ describe('Create', () => {
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(60000);
+    jest.setTimeout(150000);
     appDirObj = await mktmp();
   });
 
