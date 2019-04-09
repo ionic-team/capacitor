@@ -164,12 +164,14 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     let actionTypeId = notification["actionTypeId"] as? String
     let sound = notification["sound"] as? String
     let attachments = notification["attachments"] as? JSArray
+    let extra = notification["extra"] as? JSObject ?? [:]
     
     let content = UNMutableNotificationContent()
     content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
     content.body = NSString.localizedUserNotificationString(forKey: body,
                                                             arguments: nil)
     
+    content.userInfo = extra
     if actionTypeId != nil {
       content.categoryIdentifier = actionTypeId!
     }

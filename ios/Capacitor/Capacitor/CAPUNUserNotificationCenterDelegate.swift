@@ -45,7 +45,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
     var presentationOptions: UNNotificationPresentationOptions = [];
 
     var notificationData = makeNotificationRequestJSObject(request)
-    if (request.trigger?.isKind(of: UNPushNotificationTrigger.self))! {
+    if (request.trigger?.isKind(of: UNPushNotificationTrigger.self) ?? false) {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
       let options = plugin.getConfigValue("presentationOptions") as? [String] ?? ["badge"]
 
@@ -116,7 +116,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
     var plugin: CAPPlugin
     var action = "localNotificationActionPerformed"
 
-    if (originalNotificationRequest.trigger?.isKind(of: UNPushNotificationTrigger.self))! {
+    if (originalNotificationRequest.trigger?.isKind(of: UNPushNotificationTrigger.self) ?? false) {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
       data["notification"] = makePushNotificationRequestJSObject(originalNotificationRequest)
       action = "pushNotificationActionPerformed"
@@ -133,7 +133,8 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
    */
   func makeNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
     return [
-      "id": request.identifier
+      "id": request.identifier,
+      "extra": request.content.userInfo
     ]
   }
 
