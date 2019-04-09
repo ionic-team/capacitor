@@ -43,7 +43,7 @@ npx cap open android
 ```
 
 ### Running Your App
-> __Note:__ Currently to use an Android Emulator you must use a system image of at least Android version 7.0 on API 24. This is due to the System WebView version not being able to be updated on emulators. Physical devices should work as low as Android 5.1 so long as they are kept updated.
+> __Note:__ Currently to use an Android Emulator you must use a system image of at least Android version 7.0 on API 24. This is due to the System WebView version not being able to be updated on emulators. Physical devices should work as low as Android 5.0 (API 21) as long as their System WebView is updated.
 
 Once Android Studio is open, you should be able to run your app on a device or emulator. Go to Run or Debug in the Run menu:
 
