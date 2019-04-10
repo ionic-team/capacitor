@@ -86,7 +86,7 @@ public class LocalNotificationManager {
       }
     } catch (JSONException e) {
     }
-    dataJson.put("notificationRequest", request);
+    dataJson.put("notification", request);
     return dataJson;
   }
 

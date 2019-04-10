@@ -121,7 +121,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       data["notification"] = makePushNotificationRequestJSObject(originalNotificationRequest)
       action = "pushNotificationActionPerformed"
     } else {
-      data["notificationRequest"] = makeNotificationRequestJSObject(originalNotificationRequest)
+      data["notification"] = makeNotificationRequestJSObject(originalNotificationRequest)
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "LocalNotifications"))!
     }
 
@@ -129,12 +129,27 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
   }
 
   /**
+   * Make a JSObject of pending notifications.
+   */
+  func makePendingNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
+    return [
+      "id": request.identifier,
+    ]
+  }
+
+  /**
    * Turn a UNNotificationRequest into a JSObject to return back to the client.
    */
   func makeNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
+    let notificationRequest = notificationRequestLookup[request.identifier] ?? [:]
     return [
       "id": request.identifier,
-      "extra": request.content.userInfo
+      "title": request.content.title,
+      "sound": notificationRequest["sound"]  ?? "",
+      "body": request.content.body,
+      "extra": request.content.userInfo,
+      "actionTypeId": request.content.categoryIdentifier,
+      "attachments": notificationRequest["attachments"]  ?? [],
     ]
   }
 
