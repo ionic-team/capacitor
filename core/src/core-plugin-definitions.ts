@@ -917,7 +917,7 @@ export interface LocalNotificationSchedule {
 export interface LocalNotificationActionPerformed {
   actionId: string;
   inputValue?: string;
-  notificationRequest: any;
+  notification: LocalNotification;
 }
 
 export interface LocalNotificationEnabledResult {
@@ -934,7 +934,7 @@ export interface LocalNotificationsPlugin extends Plugin {
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notification: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 }
 
 

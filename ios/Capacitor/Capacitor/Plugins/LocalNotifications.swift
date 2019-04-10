@@ -115,7 +115,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       print(notifications)
       
       let ret = notifications.map({ (notification) -> [String:Any] in
-        return self.bridge.notificationsDelegate.makeNotificationRequestJSObject(notification)
+        return self.bridge.notificationsDelegate.makePendingNotificationRequestJSObject(notification)
       })
       call.success([
         "notifications": ret
