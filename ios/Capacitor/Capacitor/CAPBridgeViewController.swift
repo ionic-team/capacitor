@@ -28,7 +28,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
-  
+  private var handler: CAPAssetHandler?
   
   override public func loadView() {
     setStatusBarDefaults()
@@ -36,8 +36,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
     let webViewConfiguration = WKWebViewConfiguration()
-
-    webViewConfiguration.setURLSchemeHandler(CAPAssetHandler(), forURLScheme: CAPBridge.CAP_SCHEME)
+    self.handler = CAPAssetHandler()
+    self.handler!.setAssetPath(self.getStartPath())
+    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: CAPBridge.CAP_SCHEME)
     
     let o = WKUserContentController()
     o.add(self, name: "bridge")
@@ -64,6 +65,20 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
   }
   
+  private func getStartPath() -> String {
+    var startPath = Bundle.main.path(forResource: "public", ofType: nil)!
+    let defaults = UserDefaults.standard
+    let persistedPath = defaults.string(forKey: "serverBasePath")
+    if (persistedPath != nil && !persistedPath!.isEmpty) {
+      let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
+      let cordovaDataDirectory = (libPath as NSString).appendingPathComponent("NoCloud")
+      let snapshots = (cordovaDataDirectory as NSString).appendingPathComponent("ionic_built_snapshots")
+      startPath = (snapshots as NSString).appendingPathComponent((persistedPath! as NSString).lastPathComponent)
+    }
+    self.basePath = startPath
+    return startPath
+  }
+
   override public func viewDidLoad() {
     super.viewDidLoad()
     self.becomeFirstResponder()
@@ -89,9 +104,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func setServerPath(path: String) {
-
     self.basePath = path
-
+    self.handler?.setAssetPath(path)
   }
 
   public func setStatusBarDefaults() {
