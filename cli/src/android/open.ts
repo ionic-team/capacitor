@@ -11,7 +11,7 @@ export async function openAndroid(config: Config) {
     throw new Error('Android project does not exist. Create one with "npx cap add android"');
   }
 
-  const opn = await import('opn');
+  const opn = await import('open');
 
   const dir = config.android.platformDir;
 
