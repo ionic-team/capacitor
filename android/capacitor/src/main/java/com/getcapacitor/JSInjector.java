@@ -6,7 +6,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 
 /**
  * JSInject is responsible for returning Capacitor's core
@@ -58,7 +57,7 @@ class JSInjector {
     String js = "<script type=\"text/javascript\">" + getScriptString() + "</script>";
     String html = this.readAssetStream(responseStream);
     html = html.replace("<head>", "<head>\n" + js + "\n");
-    return new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
+    return new ByteArrayInputStream(html.getBytes(CompatUtils.UTF_8));
   }
 
   private String readAssetStream(InputStream stream) {

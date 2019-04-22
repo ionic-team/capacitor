@@ -40,7 +40,12 @@ public class Splash {
     String splashResourceName = Config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
 
     int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
-    Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
+    Drawable splash = null;
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      splash = c.getResources().getDrawable(splashId, c.getTheme());
+    } else {
+      splash = c.getResources().getDrawable(splashId);
+    }
 
     if (splash instanceof Animatable) {
       ((Animatable) splash).start();

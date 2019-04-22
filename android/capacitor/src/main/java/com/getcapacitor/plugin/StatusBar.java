@@ -25,7 +25,7 @@ public class StatusBar extends Plugin {
     }
 
     getBridge().executeOnMainThread(new Runnable() {
-      @Override
+      @android.annotation.TargetApi(android.os.Build.VERSION_CODES.M) @Override
       public void run() {
         Window window = getActivity().getWindow();
         View decorView = window.getDecorView();
@@ -51,7 +51,7 @@ public class StatusBar extends Plugin {
     }
 
     getBridge().executeOnMainThread(new Runnable() {
-      @Override
+      @android.annotation.TargetApi(android.os.Build.VERSION_CODES.LOLLIPOP) @Override
       public void run() {
         Window window = getActivity().getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);

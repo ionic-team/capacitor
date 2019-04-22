@@ -3,6 +3,7 @@ package com.getcapacitor;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,12 @@ public class JSArray extends JSONArray {
   }
 
   public JSArray(Object array) throws JSONException {
-    super(array);
+    super();
+
+    final int length = Array.getLength(array);
+    for (int i = 0; i < length; ++i) {
+      put(JSObject.wrap(Array.get(array, i)));
+    }
   }
 
   @SuppressWarnings("unchecked")

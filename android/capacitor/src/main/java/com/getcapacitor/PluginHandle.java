@@ -71,7 +71,7 @@ public class PluginHandle {
       this.instance.setBridge(this.bridge);
       this.instance.load();
       return this.instance;
-    } catch(InstantiationException | IllegalAccessException ex) {
+    } catch(/* InstantiationException | IllegalAccessException */ Exception ex) {
       throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
     }
   }
@@ -97,7 +97,7 @@ public class PluginHandle {
 
     try {
       methodMeta.getMethod().invoke(this.instance, call);
-    } catch(InvocationTargetException | IllegalAccessException ex) {
+    } catch(/* InvocationTargetException | IllegalAccessException */ Exception ex) {
       throw new PluginInvocationException("Unable to invoke method " + methodName + " on plugin " + pluginClass.getName(), ex);
     }
   }

@@ -17,7 +17,7 @@ apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion 27
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -53,6 +53,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'org.apache.cordova:framework:7.0.0'
     implementation project.properties['capacitorXWalkModule'] ?: 'org.xwalk:xwalk_shared_library:23.53.589.4'
+    implementation 'androidx.exifinterface:exifinterface:1.1.0-alpha01'
 }
 
 def version = System.getenv("BINTRAY_PKG_VERSION")

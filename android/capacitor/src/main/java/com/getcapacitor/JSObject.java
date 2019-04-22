@@ -25,6 +25,15 @@ public class JSObject extends JSONObject {
     super(obj, names);
   }
 
+  public static Object wrap(Object o) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+      return JSONObject.wrap(o);
+    }
+    else {
+      return CompatUtils.wrapJSONObject(o);
+    }
+  }
+
   /**
    * Convert a pathetic JSONObject into a JSObject
    * @param obj

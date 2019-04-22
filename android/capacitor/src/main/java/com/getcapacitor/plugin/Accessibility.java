@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin;
 
+import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
@@ -23,14 +24,16 @@ public class Accessibility extends Plugin {
   public void load() {
     am = (AccessibilityManager) getContext().getSystemService(ACCESSIBILITY_SERVICE);
 
-    am.addTouchExplorationStateChangeListener(new AccessibilityManager.TouchExplorationStateChangeListener() {
-      @Override
-      public void onTouchExplorationStateChanged(boolean b) {
-        JSObject ret = new JSObject();
-        ret.put("value", b);
-        notifyListeners(EVENT_SCREEN_READER_STATE_CHANGE, ret);
-      }
-    });
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      am.addTouchExplorationStateChangeListener(new AccessibilityManager.TouchExplorationStateChangeListener() {
+        @Override
+        public void onTouchExplorationStateChanged(boolean b) {
+          JSObject ret = new JSObject();
+          ret.put("value", b);
+          notifyListeners(EVENT_SCREEN_READER_STATE_CHANGE, ret);
+        }
+      });
+    }
   }
 
   @PluginMethod()
@@ -58,7 +61,11 @@ public class Accessibility extends Plugin {
       @Override
       public void onInit(int i) {
         tts.setLanguage(locale);
-        tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, "capacitoraccessibility" + System.currentTimeMillis());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, "capacitoraccessibility" + System.currentTimeMillis());
+        } else {
+          tts.speak(value, TextToSpeech.QUEUE_FLUSH, null);
+        }
       }
     });
 

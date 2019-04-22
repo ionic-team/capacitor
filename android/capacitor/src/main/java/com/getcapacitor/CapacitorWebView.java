@@ -30,7 +30,7 @@ public class CapacitorWebView extends WebView {
     return super.onCreateInputConnection(outAttrs);
   }
 
-  @Override
+  @android.annotation.TargetApi(android.os.Build.VERSION_CODES.KITKAT) @Override
   public boolean dispatchKeyEvent(KeyEvent event) {
     if (event.getAction() == KeyEvent.ACTION_MULTIPLE) {
       evaluateJavascript("document.activeElement.value = document.activeElement.value + '" + event.getCharacters() + "';", null);

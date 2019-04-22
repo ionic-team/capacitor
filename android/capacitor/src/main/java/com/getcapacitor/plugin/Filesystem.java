@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
+import com.getcapacitor.CompatUtils;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -29,7 +30,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 @NativePlugin(requestCodes = {
   PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS,
@@ -52,11 +52,11 @@ public class Filesystem extends Plugin {
 
     switch(encoding) {
       case "utf8":
-        return StandardCharsets.UTF_8;
+        return CompatUtils.UTF_8;
       case "utf16":
-        return StandardCharsets.UTF_16;
+        return CompatUtils.UTF_16;
       case "ascii":
-        return StandardCharsets.US_ASCII;
+        return CompatUtils.US_ASCII;
     }
     return null;
   }

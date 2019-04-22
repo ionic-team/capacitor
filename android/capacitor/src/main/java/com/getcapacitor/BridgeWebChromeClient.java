@@ -41,7 +41,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     this.bridge = bridge;
   }
 
-  @Override
+  @android.annotation.TargetApi(android.os.Build.VERSION_CODES.LOLLIPOP) @Override
   public void onPermissionRequest(final PermissionRequest request) {
     boolean isRequestPermissionRequired = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M;
 
@@ -284,7 +284,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     return true;
   }
 
-  private void showFilePicker(final ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+  @android.annotation.TargetApi(android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) private void showFilePicker(final ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
     Intent intent = fileChooserParams.createIntent();
     if (fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
       intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);

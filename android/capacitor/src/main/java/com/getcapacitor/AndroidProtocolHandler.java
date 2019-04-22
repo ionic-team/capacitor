@@ -53,7 +53,7 @@ public class AndroidProtocolHandler {
       } else {
         Log.e(LogUtils.getCoreTag(), "Asset not of type string: " + uri);
       }
-    } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+    } catch (/* ClassNotFoundException | IllegalAccessException | NoSuchFieldException */ Exception e) {
       Log.e(LogUtils.getCoreTag(), "Unable to open resource URL: " + uri, e);
     }
     return null;
