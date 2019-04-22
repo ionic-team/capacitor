@@ -11,11 +11,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.webkit.ValueCallback;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.content.SharedPreferences;
 
 import com.getcapacitor.android.BuildConfig;
@@ -41,6 +36,10 @@ import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.Storage;
 import com.getcapacitor.plugin.background.BackgroundTask;
 import com.getcapacitor.ui.Toast;
+import com.getcapacitor.WebView.WebResourceRequest;
+import com.getcapacitor.WebView.WebResourceResponse;
+import com.getcapacitor.WebView.WebSettings;
+import com.getcapacitor.WebView.WebViewClient;
 
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.PluginManager;

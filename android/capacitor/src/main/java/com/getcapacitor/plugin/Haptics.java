@@ -47,7 +47,7 @@ public class Haptics extends Plugin {
 
   @PluginMethod()
   public void impact(PluginCall call) {
-    this.bridge.getWebView().performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+    this.bridge.getWebView().getView().performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
     call.success();
   }
 

@@ -2,7 +2,6 @@ package com.getcapacitor;
 
 import android.util.Log;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
 
 import org.apache.cordova.PluginManager;
 
@@ -28,7 +27,7 @@ public class MessageHandler {
    * to send a message to the native bridge.
    * @param jsonStr
    */
-  @JavascriptInterface
+  @JavascriptInterface @org.xwalk.core.JavascriptInterface
   @SuppressWarnings("unused")
   public void postMessage(String jsonStr) {
     try {

@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.webkit.WebChromeClient;
-import android.webkit.WebView;
+
+import com.getcapacitor.WebView;
 
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPreferences;
@@ -88,7 +89,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public View getView() {
-    return this.webView;
+    return this.webView.getView();
   }
 
   @Override

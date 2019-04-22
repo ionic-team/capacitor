@@ -7,7 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.webkit.WebView;
+import android.view.View;
 import com.getcapacitor.android.R;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
@@ -18,9 +18,11 @@ import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
+import org.xwalk.core.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BridgeActivity extends AppCompatActivity {
   protected Bridge bridge;
@@ -31,6 +33,13 @@ public class BridgeActivity extends AppCompatActivity {
   private PluginManager pluginManager;
   private CordovaPreferences preferences;
   private MockCordovaWebViewImpl mockWebView;
+
+  private boolean useXWalk;
+  private XWalkInitializer xwalkInitializer;
+  private XWalkUpdater xwalkUpdater;
+  private XWalkUpdater.XWalkBackgroundUpdateListener xwalkBackgroundUpdateListener;
+  private String xwalkApkUrl;
+  private ArrayList<Runnable> xwalkReadyQueue;
 
   private int activityDepth = 0;
 
@@ -43,7 +52,7 @@ public class BridgeActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
   }
 
-  protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
+  protected void init(final Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
     this.initialPlugins = plugins;
 
     loadConfig(this.getApplicationContext(),this);
@@ -57,11 +66,64 @@ public class BridgeActivity extends AppCompatActivity {
       defaultDebuggable = true;
     }
 
-    WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+    if (useXWalk) {
+      xwalkInitializer = new XWalkInitializer(new XWalkInitializer.XWalkInitListener() {
+        @Override public void onXWalkInitStarted() {
+          Log.i(LogUtils.getCoreTag(), "XWalk initialization started");
+        }
 
-    setContentView(R.layout.bridge_layout_main);
+        @Override public void onXWalkInitCancelled() {
+          Log.w(LogUtils.getCoreTag(), "XWalk initialization cancelled");
+          finish();
+        }
 
-    this.load(savedInstanceState);
+        @Override public void onXWalkInitFailed() {
+          Log.w(LogUtils.getCoreTag(), "XWalk initialization failed");
+
+          if (xwalkUpdater == null) {
+            if (xwalkBackgroundUpdateListener != null) {
+              xwalkUpdater = new XWalkUpdater(xwalkBackgroundUpdateListener, BridgeActivity.this);
+            } else {
+              xwalkUpdater = new XWalkUpdater(new XWalkUpdater.XWalkUpdateListener() {
+                @Override public void onXWalkUpdateCancelled() {
+                  Log.w(LogUtils.getCoreTag(), "XWalk update cancelled");
+                  finish();
+                }
+              }, BridgeActivity.this);
+            }
+
+            xwalkUpdater.setXWalkApkUrl(xwalkApkUrl);
+          }
+
+          xwalkUpdater.updateXWalkRuntime();
+        }
+
+        @Override public void onXWalkInitCompleted() {
+          Log.i(LogUtils.getCoreTag(), "XWalk initialization completed");
+
+          BridgeActivity.this.load(savedInstanceState);
+
+          synchronized (BridgeActivity.class) {
+            for (Runnable runnable: xwalkReadyQueue) {
+              runnable.run();
+            }
+
+            xwalkReadyQueue = null;
+          }
+        }
+      }, this);
+
+      if (xwalkInitializer.initAsync()) {
+        xwalkReadyQueue = new ArrayList<>();
+      }
+
+      WebView.setXWalkWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+      setContentView(R.layout.bridge_layout_xwalk);
+    } else {
+      WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+      setContentView(R.layout.bridge_layout_main);
+      this.load(savedInstanceState);
+    }
   }
 
   /**
@@ -70,7 +132,15 @@ public class BridgeActivity extends AppCompatActivity {
   protected void load(Bundle savedInstanceState) {
     Log.d(LogUtils.getCoreTag(), "Starting BridgeActivity");
 
-    webView = findViewById(R.id.webview);
+    View view = findViewById(R.id.webview);
+
+    if (view instanceof android.webkit.WebView) {
+      webView = new WebView((android.webkit.WebView) view);
+    }
+    else {
+      webView = new WebView((XWalkView) view);
+    }
+
     cordovaInterface = new MockCordovaInterfaceImpl(this);
     if (savedInstanceState != null) {
       cordovaInterface.restoreInstanceState(savedInstanceState);
@@ -113,7 +183,7 @@ public class BridgeActivity extends AppCompatActivity {
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
+  public void onSaveInstanceState(final Bundle outState) {
     super.onSaveInstanceState(outState);
     bridge.saveInstanceState(outState);
   }
@@ -124,16 +194,24 @@ public class BridgeActivity extends AppCompatActivity {
 
     activityDepth++;
 
-    this.bridge.onStart();
-    mockWebView.handleStart();
+    whenXWalkReady(new Runnable() {
+      @Override public void run() {
+        bridge.onStart();
+        mockWebView.handleStart();
 
-    Log.d(LogUtils.getCoreTag(), "App started");
+        Log.d(LogUtils.getCoreTag(), "App started");
+      }
+    });
   }
 
   @Override
   public void onRestart() {
     super.onRestart();
-    this.bridge.onRestart();
+
+    if (this.bridge != null) {
+      this.bridge.onRestart();
+    }
+
     Log.d(LogUtils.getCoreTag(), "App restarted");
   }
 
@@ -141,20 +219,33 @@ public class BridgeActivity extends AppCompatActivity {
   public void onResume() {
     super.onResume();
 
-    fireAppStateChanged(true);
+    if (xwalkInitializer != null && xwalkInitializer.initAsync()) {
+      synchronized (BridgeActivity.class) {
+        xwalkReadyQueue = xwalkReadyQueue != null ? xwalkReadyQueue : new ArrayList<Runnable>();
+      }
+    }
 
-    this.bridge.onResume();
+    whenXWalkReady(new Runnable() {
+      @Override public void run() {
+        fireAppStateChanged(true);
 
-    mockWebView.handleResume(this.keepRunning);
+        bridge.onResume();
 
-    Log.d(LogUtils.getCoreTag(), "App resumed");
+        mockWebView.handleResume(keepRunning);
+
+        Log.d(LogUtils.getCoreTag(), "App resumed");
+      }
+    });
   }
 
   @Override
   public void onPause() {
     super.onPause();
 
-    this.bridge.onPause();
+    if (this.bridge != null) {
+      this.bridge.onPause();
+    }
+
     if (this.mockWebView != null) {
       boolean keepRunning = this.keepRunning || this.cordovaInterface.getActivityResultCallback() != null;
       this.mockWebView.handlePause(keepRunning);
@@ -168,11 +259,14 @@ public class BridgeActivity extends AppCompatActivity {
     super.onStop();
 
     activityDepth = Math.max(0, activityDepth - 1);
-    if (activityDepth == 0) {
-      fireAppStateChanged(false);
-    }
 
-    this.bridge.onStop();
+    if (this.bridge != null) {
+      if (activityDepth == 0) {
+        fireAppStateChanged(false);
+      }
+
+      this.bridge.onStop();
+    }
 
     if (mockWebView != null) {
       mockWebView.handleStop();
@@ -241,5 +335,41 @@ public class BridgeActivity extends AppCompatActivity {
     preferences = parser.getPreferences();
     preferences.setPreferencesBundle(activity.getIntent().getExtras());
     pluginEntries = parser.getPluginEntries();
+  }
+
+  protected void useXWalk(boolean yes) {
+    useXWalk = yes;
+  }
+
+  protected void setXWalkApkUrl(String url) {
+    xwalkApkUrl = url;
+  }
+
+  protected void setXWalkBackgroundUpdateListener(XWalkUpdater.XWalkBackgroundUpdateListener listener) {
+    xwalkBackgroundUpdateListener = listener;
+  }
+
+  protected void whenXWalkReady(Runnable runnable) {
+    synchronized (BridgeActivity.class) {
+      if (xwalkReadyQueue == null) {
+        runnable.run();
+      } else {
+        xwalkReadyQueue.add(runnable);
+      }
+    }
+  }
+
+  protected boolean isSystemWebViewOlderThan(String version) {
+    try {
+      String xv = "", cv = "", webView = WebView.getWebViewVersion(new android.webkit.WebView(this));
+
+      for (String num : version.split("\\.")) xv += String.format(Locale.ROOT, "%010d", Integer.parseInt(num));
+      for (String num : webView.split("\\.")) cv += String.format(Locale.ROOT, "%010d", Integer.parseInt(num));
+
+      return cv.compareTo(xv) < 0;
+    }
+    catch (NumberFormatException ignored) {
+      return true;
+    }
   }
 }

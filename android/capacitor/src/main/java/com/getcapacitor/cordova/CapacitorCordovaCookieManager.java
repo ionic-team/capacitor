@@ -1,7 +1,8 @@
 package com.getcapacitor.cordova;
 
-import android.webkit.CookieManager;
-import android.webkit.WebView;
+import com.getcapacitor.WebView;
+import com.getcapacitor.WebView.CookieManager;
+
 import org.apache.cordova.ICordovaCookieManager;
 
 class CapacitorCordovaCookieManager implements ICordovaCookieManager {
@@ -11,7 +12,7 @@ class CapacitorCordovaCookieManager implements ICordovaCookieManager {
 
   public CapacitorCordovaCookieManager(WebView webview) {
     webView = webview;
-    cookieManager = CookieManager.getInstance();
+    cookieManager = webview.getCookieManager();
     cookieManager.setAcceptFileSchemeCookies(true);
     cookieManager.setAcceptThirdPartyCookies(webView, true);
   }

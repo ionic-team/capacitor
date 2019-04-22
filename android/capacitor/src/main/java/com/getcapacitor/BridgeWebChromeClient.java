@@ -10,14 +10,13 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
-import android.webkit.JsPromptResult;
-import android.webkit.JsResult;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 
 import com.getcapacitor.plugin.camera.CameraUtils;
+import com.getcapacitor.WebView.JsPromptResult;
+import com.getcapacitor.WebView.JsResult;
+import com.getcapacitor.WebView.WebChromeClient;
 
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
