@@ -120,6 +120,16 @@ export class App {
               />
 
               <stencil-route
+                url="/docs/guides/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`guides/${page}.html`]} />
+                  );
+                }}
+              />
+
+              <stencil-route
                 url="/docs/ios/:pageName?"
                 routeRender={(props: { [key: string]: any }) => {
                   const page = props.match.params.pageName || 'index';
