@@ -14,6 +14,10 @@
     _webView = webview;
     _pluginObjects = [[NSMutableDictionary alloc] init];
     _commandDelegate = [[CDVCommandDelegateImpl alloc] initWithWebView:_webView pluginManager:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppDidEnterBackground:)
+                                                 name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppWillEnterForeground:)
+                                                 name:UIApplicationWillEnterForegroundNotification object:nil];
   }
   return self;
 }
@@ -58,6 +62,16 @@
   plugin.webView = self.webView;
   plugin.commandDelegate = self.commandDelegate;
   [plugin pluginInitialize];
+}
+
+- (void)onAppDidEnterBackground:(NSNotification*)notification
+{
+  [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
+}
+
+- (void)onAppWillEnterForeground:(NSNotification*)notification
+{
+  [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
 }
 
 @end
