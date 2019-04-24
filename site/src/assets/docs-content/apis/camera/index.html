@@ -63,13 +63,13 @@ image URL to be trusted.</p>
     <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Camera.getPhoto({
       quality: <span class="hljs-number">90</span>,
       allowEditing: <span class="hljs-literal">true</span>,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera
     });
 
     <span class="hljs-comment">// Example of using the Base64 return type. It's recommended to use CameraResultType.Uri</span>
     <span class="hljs-comment">// instead for performance reasons when showing large, or a large amount of images.</span>
-    <span class="hljs-keyword">this</span>.image = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (image.base64Data));
+    <span class="hljs-keyword">this</span>.image = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (image.dataUrl));
   }
 }
 </code></pre>

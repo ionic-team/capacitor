@@ -1,20 +1,21 @@
-# Using Capacitor in an Ionic Angular 4 App
+# Using Capacitor in an Ionic Framework App
 
-Platforms: Web, iOS, Android
+**Web Framework**: Ionic 4 + Angular  
+**Platforms**: Web, iOS, Android
 
-Capacitor makes it easy to build web apps that run natively on iOS, Android, desktop, and the web. In this guide, we'll add Camera functionality to an Ionic Angular 4 app that works on the web, iOS, and Android. Ready to capture photos using just one JavaScript method call?  Let's get started.
+Capacitor makes it easy to build web apps that run natively on iOS, Android, desktop, and the web. In this guide, we'll add Camera functionality to an Ionic Angular app that works on the web, iOS, and Android. Ready to capture photos using just one JavaScript method call?  Let's get started.
 
 ## Required Dependencies
 Building and deploying iOS and Android apps require additional dependencies, including an iOS and Android device. Please [follow the instructions here](../getting-started/dependencies) before continuing.
 
-## Prepare an Ionic 4 App
-If you have an existing Ionic 4 app, skip this section. If not, let's create an Ionic app first. In a Terminal, install Ionic (this also updates to the latest version of Ionic):
+## Prepare an Ionic App
+If you have an existing Ionic app, skip this section. If not, let's create an Ionic app first. In a Terminal, install Ionic (this also updates to the latest version of Ionic):
 
 ```bash
 npm install -g ionic
 ```
 
-Next, create a new Ionic 4 app based on the "tabs" starter project:
+Next, create a new Ionic app based on the "tabs" starter project:
 
 ```bash
 ionic start capApp tabs
@@ -34,17 +35,17 @@ Next, initialize Capacitor with your app information.
 npx cap init
 ```
 
-App name: CapApp
-App Package ID: com.example.capapp
+**App name:** CapApp  
+**App Package ID:** com.example.capapp
 
 ## Build the App Once
-Before adding any native platforms to this project, the app must be built at least once. A web build creates the web assets directory that Capacitor needs (`www` folder in Ionic projects).
+Before adding any native platforms to this project, the app must be built at least once. A web build creates the web assets directory that Capacitor needs (`www` folder in Ionic projects):
 
 ```bash
 ionic build
 ```
 
-Next, add any platforms (besides the web, of course) that you'd like to build for.
+Next, add any platforms (besides the web, of course) that you'd like to build for:
 
 ```bash
 npx cap add ios
@@ -95,7 +96,7 @@ export class Tab2Page {
 
 Notice the magic here: there's no mention of iOS or Android! There's just one method call - `Camera.getPhoto()` - that will open up the device's camera and allow us to take photos.
 
-Next, we need to tell Angular to trust the dynamic image data. To do this, inject `DomSanitizer` via the Constructor and use `sanitizer.bypassSecurityTrustResourceUrl( )` to allow the image data to be displayed in our app:
+Next, we need to tell Angular to trust the dynamic image data. To do this, inject `DomSanitizer` via the Constructor and use `sanitizer.bypassSecurityTrustResourceUrl()` to allow the image data to be displayed in our app:
 
 ```typescript
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -153,19 +154,27 @@ Some Capacitor plugins, including the Camera, provide the web-based functionalit
 npm install @ionic/pwa-elements
 ```
 
-BROKEN - see evernote. using script tag in index.html for now!
-<script src="https://unpkg.com/@ionic/pwa-elements@1.0.0/dist/ionicpwaelements.js"></script>
+**Note:** There's currently an issue with importing the Ionic PWA elements library in an Ionic Angular app. In the meantime, include this script tag in `src/index.html`: 
+
+```html
+<head>
+  <!-- Other tags -->
+
+  <script src="https://unpkg.com/@ionic/pwa-elements@1.0.2/dist/ionicpwaelements.js"></script>
+</head>
+```
 
 With that appropriately configured now, re-run `ionic serve` and click the Camera fab button. If your computer has a webcam of any sort, a modal window displays and you can take a photo!
 
-[insert photo]
+![Camera API on the web](/assets/img/docs/guides/ionic-framework/camera-web.png)
+*"I'm pretty handsome." - The Author*
 
 Next up, let's run this app on iOS and Android.
 
 ## iOS
 Capacitor iOS apps are configured and managed through Xcode, with dependencies managed by CocoaPods. Before running this app on an iOS device, there's a couple of steps to complete.
 
-From the Terminal, run the Capacitor `sync` command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) into the native iOS project.
+From the Terminal, run the Capacitor `sync` command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) into the native iOS project:
 
 ```shell
 npx cap sync
@@ -179,26 +188,28 @@ npx cap open ios
 
 Within Xcode, click on `App` in the Project Navigator on the left-hand side, then within the `Signing` section, select your Development Team. 
 
-[IMAGE]
+![Xcode - Selecting Development Team](/assets/img/docs/guides/ionic-framework/xcode-signing.png)
 
-Next, for the Camera plugin to work, we must configure the "Privacy - Camera Usage" permission. A modal dialog displays automatically after the first time that `Camera.getPhoto( )` is called, prompting the user to allow the app to use the Camera. To set this, the `Info.plist` file must be modified ([more details here](../ios/configuration/)). To access it, click "Info," then expand "Custom iOS Target Properties."
+Next, for the Camera plugin to work, we must configure the "Privacy - Camera Usage" permission. iOS displays a modal dialog automatically after the first time that `Camera.getPhoto()` is called, prompting the user to allow the app to use the Camera. To set this, the `Info.plist` file must be modified ([more details here](../ios/configuration/)). To access it, click "Info," then expand "Custom iOS Target Properties."
+
+![Xcode Custom iOS Target Properties](/assets/img/docs/guides/ionic-framework/xcode-info-plist.png)
 
 Each setting in `Info.plist` has a low-level parameter name and a high-level name. By default, the property list editor shows the high-level names, but it's often useful to switch to showing the raw, low-level names. To do this, right-click anywhere in the property list editor and toggle "Show Raw Keys/Values."
 
 Locate the `NSCameraUsageDescription` Key (or add it) and set the Value to something that describes why the app needs to use the camera, such as "To Take Photos." The Value will be displayed to the app user when the permission prompt opens.
 
-With permissions in place, we are ready to try out the app on a real device! Connect an iOS device to your Mac computer, then within Xcode click the "Build" button to build, install, and launch the app on your device.
+With permissions in place, we are ready to try out the app on a real device! Connect an iOS device to your Mac computer, then within Xcode click the "Build" button to build, install, and launch the app on your device:
 
-[IMAGE - build button]
+![Xcode build button](/assets/img/docs/guides/ionic-framework/xcode-build-button.png)
 
-Upon tapping the Camera button on Tab Two, the permission prompt will display. Tap OK, then take a picture with the Camera. Afterward, the photo shows in the app.
+Upon tapping the Camera button on Tab Two, the permission prompt will display. Tap OK, then take a picture with the Camera. Afterward, the photo shows in the app:
 
-[IMAGE - permissions + photo]
+![iOS Camera permissions](/assets/img/docs/guides/ionic-framework/ios-permissions-photo.png)
 
 ## Android
 Capacitor Android apps are configured and managed through Android Studio. Before running this app on an Android device, there's a couple of steps to complete.
 
-From the Terminal, run the Capacitor `sync` command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) to the native Android project.
+From the Terminal, run the Capacitor `sync` command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) to the native Android project:
 
 ```shell
 npx cap sync
@@ -212,7 +223,7 @@ npx cap open android
 
 Similar to iOS, we must enable the correct permissions to use the Camera. Configure these in the `AndroidManifest.xml` file. Android Studio will likely open this file automatically, but in case it doesn't, locate it under `android/app/src/main/`.
 
-[IMAGE - android manifest]
+![Android Manifest location](/assets/img/docs/guides/ionic-framework/android-manifest.png)
 
 Scroll to the `Permissions` section and ensure these entries are included:
 
@@ -224,15 +235,15 @@ Scroll to the `Permissions` section and ensure these entries are included:
 
 Save the file. With permissions in place, we are ready to try out the app on a real device! Connect an Android device to your computer. Within Android Studio, click the "Run" button, select the attached Android device, then click OK to build, install, and launch the app on your device.
 
-[IMAGE - android device]
+![Launching app on Android](/assets/img/docs/guides/ionic-framework/android-device.png)
 
 Once again, upon tapping the Camera button on Tab Two, the permission prompt should be displayed. Tap OK, then take a picture with the Camera. Afterward, the photo should appear in the app.
 
-[image - android perms]
+![Android Camera permissions](/assets/img/docs/guides/ionic-framework/android-permissions-photo.png)
 
 ## What's Next?
 
-We created a cross-platform Ionic Angular 4 app that runs on the web, Android, and iOS. Using the Capacitor Camera API, we added the ability to use the device's camera with just a few lines of code.
+We created a cross-platform Ionic Angular app that runs on the web, Android, and iOS. Using the Capacitor Camera API, we added the ability to use the device's camera with just a few lines of code.
 
 What's next? Try adding another API, such as [Toasts](../apis/toast) or [Push Notifications](../apis/push-notifications). Looking to create custom native functionality? Create a [Capacitor plugin](../plugins/). This is just the beginning of your Capacitor journey. 
 

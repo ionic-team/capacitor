@@ -85,8 +85,8 @@ export class SiteMenu {
       title: "Guides",
       items: [
         {
-          title: 'Ionic Angular 4 App',
-          url: '/docs/guides/ionic-angular-4'
+          title: 'Ionic Framework App',
+          url: '/docs/guides/ionic-framework-app'
         }
       ]
     },
