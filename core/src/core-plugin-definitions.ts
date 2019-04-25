@@ -402,9 +402,9 @@ export interface DeviceInfo {
    */
   model: string;
   /**
-   * The device platform (lowercase). For example, "ios", "android", or "web"
+   * The device platform (lowercase).
    */
-  platform: string;
+  platform: 'ios' | 'android' | 'electron' | 'web';
   /**
    * The UUID of the device as available to the app. This identifier may change
    * on modern mobile platforms that only allow per-app install UUIDs.
