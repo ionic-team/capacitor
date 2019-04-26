@@ -15,18 +15,27 @@ If you have an existing Ionic app, skip this section. If not, let's create an Io
 npm install -g ionic
 ```
 
-Next, create a new Ionic app based on the "tabs" starter project:
+Next, create a new Ionic app based on the "tabs" starter project and install Capacitor too:
 
 ```bash
-ionic start capApp tabs
+ionic start capApp tabs --capacitor
 ```
 
-## Add Capacitor
-Capacitor was designed to drop into any existing modern JavaScript web app - Ionic included!
+Next, initialize Capacitor with your app information.
+
+```bash
+npx cap init
+```
+
+**App name:** CapApp  
+**App Package ID:** com.example.capapp
+
+## Adding Capacitor: Existing Ionic Project
+Capacitor was designed to drop into any existing modern JavaScript web app - Ionic included! If you didn't add the `--capacitor` flag when creating the Ionic project above, or have an existing Ionic project, no problem. Run the following:
 
 ```bash
 cd capApp
-npm install @capacitor/core @capacitor/cli
+ionic integrations enable capacitor
 ```
 
 Next, initialize Capacitor with your app information.
@@ -160,7 +169,7 @@ npm install @ionic/pwa-elements
 <head>
   <!-- Other tags -->
 
-  <script src="https://unpkg.com/@ionic/pwa-elements@1.0.2/dist/ionicpwaelements.js"></script>
+  <script src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements.js"></script>
 </head>
 ```
 
@@ -178,6 +187,12 @@ From the Terminal, run the Capacitor `sync` command, which updates all native co
 
 ```shell
 npx cap sync
+```
+
+**Note:** If you're just making updates to the web portion of the code, use the `copy` command, which runs much faster:
+
+```shell
+npx cap copy
 ```
 
 Next, run the Capacitor `open` command, which opens the native iOS project in Xcode:
@@ -215,6 +230,12 @@ From the Terminal, run the Capacitor `sync` command, which updates all native co
 npx cap sync
 ```
 
+**Note:** If you're just making updates to the web portion of the code, use the `copy` command, which runs much faster:
+
+```shell
+npx cap copy
+```
+
 Next, run the Capacitor `open` command, which opens the native Android project in Android Studio:
 
 ```shell
@@ -228,7 +249,6 @@ Similar to iOS, we must enable the correct permissions to use the Camera. Config
 Scroll to the `Permissions` section and ensure these entries are included:
 
 ```xml
-<uses-permission android:name="android.permission.CAMERA" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 ```

@@ -7,13 +7,17 @@
 <p>If you have an existing Ionic app, skip this section. If not, let&#39;s create an Ionic app first. In a Terminal, install Ionic (this also updates to the latest version of Ionic):</p>
 <pre><code class="lang-bash">npm install -g ionic
 </code></pre>
-<p>Next, create a new Ionic app based on the &quot;tabs&quot; starter project:</p>
-<pre><code class="lang-bash">ionic start capApp tabs
+<p>Next, create a new Ionic app based on the &quot;tabs&quot; starter project and install Capacitor too:</p>
+<pre><code class="lang-bash">ionic start capApp tabs --capacitor
 </code></pre>
-<h2 id="add-capacitor">Add Capacitor</h2>
-<p>Capacitor was designed to drop into any existing modern JavaScript web app - Ionic included!</p>
+<p>Next, initialize Capacitor with your app information.</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> init
+</code></pre>
+<p><strong>App name:</strong> CapApp<br><strong>App Package ID:</strong> com.example.capapp</p>
+<h2 id="adding-capacitor-existing-ionic-project">Adding Capacitor: Existing Ionic Project</h2>
+<p>Capacitor was designed to drop into any existing modern JavaScript web app - Ionic included! If you didn&#39;t add the <code>--capacitor</code> flag when creating the Ionic project above, or have an existing Ionic project, no problem. Run the following:</p>
 <pre><code class="lang-bash"><span class="hljs-built_in">cd</span> capApp
-npm install @capacitor/core @capacitor/cli
+ionic integrations <span class="hljs-built_in">enable</span> capacitor
 </code></pre>
 <p>Next, initialize Capacitor with your app information.</p>
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> init
@@ -107,7 +111,7 @@ npx <span class="hljs-built_in">cap</span> add android
 <pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
   <span class="hljs-comment">&lt;!-- Other tags --&gt;</span>
 
-  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/@ionic/pwa-elements@1.0.2/dist/ionicpwaelements.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
 </code></pre>
 <p>With that appropriately configured now, re-run <code>ionic serve</code> and click the Camera fab button. If your computer has a webcam of any sort, a modal window displays and you can take a photo!</p>
@@ -118,6 +122,9 @@ npx <span class="hljs-built_in">cap</span> add android
 <p>Capacitor iOS apps are configured and managed through Xcode, with dependencies managed by CocoaPods. Before running this app on an iOS device, there&#39;s a couple of steps to complete.</p>
 <p>From the Terminal, run the Capacitor <code>sync</code> command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) into the native iOS project:</p>
 <pre><code class="lang-shell">npx cap sync
+</code></pre>
+<p><strong>Note:</strong> If you&#39;re just making updates to the web portion of the code, use the <code>copy</code> command, which runs much faster:</p>
+<pre><code class="lang-shell">npx cap copy
 </code></pre>
 <p>Next, run the Capacitor <code>open</code> command, which opens the native iOS project in Xcode:</p>
 <pre><code class="lang-shell">npx cap open ios
@@ -137,14 +144,16 @@ npx <span class="hljs-built_in">cap</span> add android
 <p>From the Terminal, run the Capacitor <code>sync</code> command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) to the native Android project:</p>
 <pre><code class="lang-shell">npx cap sync
 </code></pre>
+<p><strong>Note:</strong> If you&#39;re just making updates to the web portion of the code, use the <code>copy</code> command, which runs much faster:</p>
+<pre><code class="lang-shell">npx cap copy
+</code></pre>
 <p>Next, run the Capacitor <code>open</code> command, which opens the native Android project in Android Studio:</p>
 <pre><code class="lang-shell">npx cap open android
 </code></pre>
 <p>Similar to iOS, we must enable the correct permissions to use the Camera. Configure these in the <code>AndroidManifest.xml</code> file. Android Studio will likely open this file automatically, but in case it doesn&#39;t, locate it under <code>android/app/src/main/</code>.</p>
 <p><img src="/assets/img/docs/guides/ionic-framework/android-manifest.png" alt="Android Manifest location"></p>
 <p>Scroll to the <code>Permissions</code> section and ensure these entries are included:</p>
-<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.CAMERA"</span> /&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.READ_EXTERNAL_STORAGE"</span>/&gt;</span>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.READ_EXTERNAL_STORAGE"</span>/&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"android.permission.WRITE_EXTERNAL_STORAGE"</span> /&gt;</span>
 </code></pre>
 <p>Save the file. With permissions in place, we are ready to try out the app on a real device! Connect an Android device to your computer. Within Android Studio, click the &quot;Run&quot; button, select the attached Android device, then click OK to build, install, and launch the app on your device.</p>
