@@ -238,7 +238,7 @@ function generatePackageJSON(answers: any) {
       '@capacitor/core': 'latest'
     },
     devDependencies: {
-      'typescript': '^2.6.2'
+      'typescript': '^3.2.4'
     },
     files: [
       'dist/',
