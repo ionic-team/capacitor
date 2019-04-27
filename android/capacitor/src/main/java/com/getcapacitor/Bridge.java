@@ -40,6 +40,7 @@ import com.getcapacitor.WebView.WebResourceRequest;
 import com.getcapacitor.WebView.WebResourceResponse;
 import com.getcapacitor.WebView.WebSettings;
 import com.getcapacitor.WebView.WebViewClient;
+import com.getcapacitor.util.HostMask;
 
 import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.PluginManager;
@@ -95,7 +96,7 @@ public class Bridge {
   private String localUrl;
   private String appUrl;
   private String appUrlConfig;
-  private String[] appAllowNavigationConfig;
+  private HostMask appAllowNavigationMask;
   // A reference to the main WebView for the app
   private final WebView webView;
   public final CordovaInterfaceImpl cordovaInterface;
@@ -160,12 +161,14 @@ public class Bridge {
 
   private void loadWebView() {
     appUrlConfig = Config.getString("server.url");
-    appAllowNavigationConfig = Config.getArray("server.allowNavigation");
+    String[] appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
     ArrayList<String> authorities = new ArrayList<String>();
     if (appAllowNavigationConfig != null) {
       authorities.addAll(Arrays.asList(appAllowNavigationConfig));
     }
+    this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
+
     String authority = Config.getString("server.hostname", "localhost");
     authorities.add(authority);
     localUrl = CAPACITOR_SCHEME_NAME + "://" + authority;
@@ -212,7 +215,7 @@ public class Bridge {
       }
 
       private boolean launchIntent(Uri url) {
-        if (!url.toString().contains(appUrl) && !matchHosts(url.getHost(), appAllowNavigationConfig)) {
+        if (!url.toString().contains(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
           try {
             Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
             getContext().startActivity(openIntent);
@@ -793,33 +796,6 @@ public class Bridge {
     });
   }
 
-  private boolean matchHost(String host, String pattern) {
-    int offset;
-
-    ArrayList<String> hostParts = new ArrayList<String>(Arrays.asList(host.split("\\.")));
-    ArrayList<String> patternParts = new ArrayList<String>(Arrays.asList(pattern.split("\\.")));
-
-    if (hostParts.size() != patternParts.size()) return false;
-    if (hostParts.equals(patternParts)) return true;
-
-    while ((offset = patternParts.indexOf("*")) != -1) {
-      patternParts.remove(offset);
-      hostParts.remove(offset);
-    }
-
-    return hostParts.equals(patternParts);
-  }
-
-  private boolean matchHosts(String host, String[] patterns) {
-    if (host != null && patterns != null) {
-      for (String pattern: patterns) {
-        if (matchHost(host, pattern)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 
   public String getLocalUrl() {
     return localUrl;

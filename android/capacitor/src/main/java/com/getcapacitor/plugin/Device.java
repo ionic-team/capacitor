@@ -73,9 +73,6 @@ public class Device extends Plugin {
   }
 
   private String getPlatform() {
-    if (android.os.Build.MANUFACTURER.equalsIgnoreCase("Amazon")) {
-      return "amazon-fireos";
-    }
     return "android";
   }
 

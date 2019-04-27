@@ -31,7 +31,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
 
     return Promise.resolve({
       model: uaFields.model,
-      platform: "web",
+      platform: <'web'> 'web',
       appVersion: '',
       osVersion: uaFields.osVersion,
       manufacturer: navigator.vendor,

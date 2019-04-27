@@ -18,6 +18,8 @@ package com.getcapacitor;
 
 import android.net.Uri;
 
+import com.getcapacitor.util.HostMask;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -96,7 +98,9 @@ public class UriMatcher {
       if (j == numChildren) {
         // Child not found, create it
         child = new UriMatcher();
-        if (token.equals("**")) {
+        if(i == -1 && token.contains("*")) {
+          child.mWhich = MASK;
+        } else if (token.equals("**")) {
           child.mWhich = REST;
         } else if (token.equals("*")) {
           child.mWhich = TEXT;
@@ -148,6 +152,11 @@ public class UriMatcher {
         UriMatcher n = list.get(j);
         which_switch:
         switch (n.mWhich) {
+          case MASK:
+            if(HostMask.Parser.parse(n.mText).matches(u)) {
+              node = n;
+            }
+          break;
           case EXACT:
             if (n.mText.equals(u)) {
               node = n;
@@ -174,6 +183,7 @@ public class UriMatcher {
   private static final int EXACT = 0;
   private static final int TEXT = 1;
   private static final int REST = 2;
+  private static final int MASK = 3;
 
   private Object mCode;
   private int mWhich;

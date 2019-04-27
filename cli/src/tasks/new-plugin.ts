@@ -125,8 +125,7 @@ export async function newPlugin(config: Config) {
     });
 
     await runTask('Installing NPM dependencies', async () => {
-      await runCommand(`cd "${pluginPath}"`);
-      return runCommand('npm install');
+      return  runCommand(`cd "${pluginPath}" && npm install`);
     });
 
     logInfo(`Your Capacitor plugin was created at ${pluginPath}`);
@@ -238,7 +237,9 @@ function generatePackageJSON(answers: any) {
       '@capacitor/core': 'latest'
     },
     devDependencies: {
-      'typescript': '^2.6.2'
+      'typescript': '^3.2.4',
+      '@capacitor/ios': 'latest',
+      '@capacitor/android': 'latest'
     },
     files: [
       'dist/',

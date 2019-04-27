@@ -135,6 +135,22 @@
     return this.Plugins.hasOwnProperty(name);
   }
 
+  capacitor.convertFileSrc = function convertFileSrc(url) {
+    if (!url) {
+      return url;
+    }
+    if (url.startsWith('/')) {
+      return window.WEBVIEW_SERVER_URL + '/_capacitor_file_' + url;
+    }
+    if (url.startsWith('file://')) {
+      return window.WEBVIEW_SERVER_URL + url.replace('file://', '/_capacitor_file_');
+    }
+    if (url.startsWith('content://')) {
+      return window.WEBVIEW_SERVER_URL + url.replace('content:/', '/_capacitor_content_');
+    }
+    return url;
+  }
+
   /**
    * Send a plugin method call to the native layer
    */
@@ -504,19 +520,7 @@
   }
 
   win.Ionic.WebView.convertFileSrc = function(url) {
-    if (!url) {
-      return url;
-    }
-    if (url.startsWith('/')) {
-      return window.WEBVIEW_SERVER_URL + '/_capacitor_file_' + url;
-    }
-    if (url.startsWith('file://')) {
-      return window.WEBVIEW_SERVER_URL + url.replace('file://', '/_capacitor_file_');
-    }
-    if (url.startsWith('content://')) {
-      return window.WEBVIEW_SERVER_URL + url.replace('content:/', '/_capacitor_content_');
-    }
-    return url;
+    return Capacitor.convertFileSrc(url);
   }
 
 })(window);

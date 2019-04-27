@@ -38,6 +38,10 @@ export class CapacitorElectron {
     return this.Plugins.hasOwnProperty(name);
   }
 
+  convertFileSrc(filePath: string) {
+    return filePath;
+  }
+
   handleError(e: Error) {
     console.error(e);
   }
