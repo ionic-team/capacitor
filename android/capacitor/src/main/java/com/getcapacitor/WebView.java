@@ -286,6 +286,25 @@ public class WebView {
         }
     }
 
+    // Some old Android devices crashes when a method is annotated with
+    // @android.webkit.JavascriptInterface, so we use a special method to add the MessageHandler.
+    @SuppressLint("AddJavascriptInterface") public void addMessageHandler(final MessageHandler messageHandler, String name) {
+        if (webView != null) {
+            webView.addJavascriptInterface(new Object() {
+                  @android.webkit.JavascriptInterface public void postMessage(String jsonStr) {
+                      messageHandler.postMessage(jsonStr);
+                  }
+            }, name);
+        }
+        else {
+            xwalkView.addJavascriptInterface(new Object() {
+                @org.xwalk.core.JavascriptInterface public void postMessage(String jsonStr) {
+                    messageHandler.postMessage(jsonStr);
+                }
+            }, name);
+        }
+    }
+
     public CookieManager getCookieManager() {
         return new CookieManager();
     }
@@ -483,10 +502,10 @@ public class WebView {
         String method;
         Map<String, String> requestHeaders;
 
-        @TargetApi(Build.VERSION_CODES.N) private WebResourceRequest(android.webkit.WebResourceRequest request) {
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP) private WebResourceRequest(android.webkit.WebResourceRequest request) {
             uri            = request.getUrl();
             isForMainFrame = request.isForMainFrame();
-            isRedirect     = request.isRedirect();
+            isRedirect     = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? request.isRedirect() : false;
             hasGesture     = request.hasGesture();
             method         = request.getMethod();
             requestHeaders = request.getRequestHeaders();

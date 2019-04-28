@@ -19,7 +19,7 @@ public class MessageHandler {
     this.webView = webView;
     this.cordovaPluginManager = cordovaPluginManager;
 
-    webView.addJavascriptInterface(this, "androidBridge");
+    webView.addMessageHandler(this, "androidBridge");
   }
 
   /**
@@ -27,7 +27,6 @@ public class MessageHandler {
    * to send a message to the native bridge.
    * @param jsonStr
    */
-  @JavascriptInterface @org.xwalk.core.JavascriptInterface
   @SuppressWarnings("unused")
   public void postMessage(String jsonStr) {
     try {

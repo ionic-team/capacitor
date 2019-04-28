@@ -361,7 +361,23 @@ public class BridgeActivity extends AppCompatActivity {
 
   protected boolean isSystemWebViewOlderThan(String version) {
     try {
-      String xv = "", cv = "", webView = WebView.getWebViewVersion(new android.webkit.WebView(this));
+      String xv = "", cv = "", webView;
+
+      if (android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.M) {
+        // On Android 6.0 (only, apparently), creating a system WebView before Crosswalk has been
+        // initialized will cause the Crosswalk-provided WebView to crash with the following error
+        // when certain (all?) localization methods are invoked, like "new Date().toLocaleString()":
+        //
+        // E/v8: Failed to create ICU date format, are ICU data files missing?
+        // A/libc: Fatal signal 4 (SIGILL), code 2, fault addr 0x9e5b2019 in tid 4248 (Chrome_InProcRe)
+        //
+        // So we just assume the system WebView is ancient on Android 6.0 (the factory version is
+        // 44.0.2403.119 and the last Crosswalk version was 53.0.2785.14) without actually checking.
+        webView = "0.0.0.0";
+      }
+      else {
+        webView = WebView.getWebViewVersion(new android.webkit.WebView(this));
+      }
 
       for (String num : version.split("\\.")) xv += String.format(Locale.ROOT, "%010d", Integer.parseInt(num));
       for (String num : webView.split("\\.")) cv += String.format(Locale.ROOT, "%010d", Integer.parseInt(num));
