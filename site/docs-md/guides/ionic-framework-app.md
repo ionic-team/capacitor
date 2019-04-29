@@ -94,11 +94,11 @@ export class Tab2Page {
     const image = await Plugins.Camera.getPhoto({
       quality: 100,
       allowEditing: false,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera
     });
 
-    this.photo = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.photo = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 }
 ```
@@ -138,11 +138,11 @@ export class Tab2Page {
     const image = await Plugins.Camera.getPhoto({
       quality: 100,
       allowEditing: false,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera
     });
 
-    this.photo = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.base64Data));
+    this.photo = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
 }
 ```

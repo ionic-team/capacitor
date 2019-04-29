@@ -54,11 +54,11 @@ npx <span class="hljs-built_in">cap</span> add android
     <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Plugins.Camera.getPhoto({
       quality: <span class="hljs-number">100</span>,
       allowEditing: <span class="hljs-literal">false</span>,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera
     });
 
-    <span class="hljs-keyword">this</span>.photo = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (image.base64Data));
+    <span class="hljs-keyword">this</span>.photo = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (image.dataUrl));
   }
 }
 </code></pre>
@@ -91,11 +91,11 @@ npx <span class="hljs-built_in">cap</span> add android
     <span class="hljs-keyword">const</span> image = <span class="hljs-keyword">await</span> Plugins.Camera.getPhoto({
       quality: <span class="hljs-number">100</span>,
       allowEditing: <span class="hljs-literal">false</span>,
-      resultType: CameraResultType.Base64,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera
     });
 
-    <span class="hljs-keyword">this</span>.photo = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (image.base64Data));
+    <span class="hljs-keyword">this</span>.photo = <span class="hljs-keyword">this</span>.sanitizer.bypassSecurityTrustResourceUrl(image &amp;&amp; (image.dataUrl));
   }
 }
 </code></pre>
