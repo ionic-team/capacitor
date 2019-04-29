@@ -45,7 +45,7 @@ npx <span class="hljs-built_in">cap</span> add android
   <span class="hljs-tag">&lt;/<span class="hljs-name">ion-fab</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">ion-content</span>&gt;</span>
 </code></pre>
-<p>Next, we need to add the logic that will power the camera functionality. Open <code>src/app/tab2/tab2.page.ts</code>  and import the Capacitor Plugins and Camera classes:</p>
+<p>Next, we need to add the logic that will power the camera functionality. Open <code>src/app/tab2/tab2.page.ts</code> and import the Capacitor Plugins and Camera classes:</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Plugins, CameraResultType, CameraSource } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
 </code></pre>
 <p>Next, implement the <code>takePicture()</code> method:</p>
@@ -120,11 +120,11 @@ npx <span class="hljs-built_in">cap</span> add android
 <p>Next up, let&#39;s run this app on iOS and Android.</p>
 <h2 id="ios">iOS</h2>
 <p>Capacitor iOS apps are configured and managed through Xcode, with dependencies managed by CocoaPods. Before running this app on an iOS device, there&#39;s a couple of steps to complete.</p>
-<p>From the Terminal, run the Capacitor <code>sync</code> command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) into the native iOS project:</p>
-<pre><code class="lang-shell">npx cap sync
-</code></pre>
-<p><strong>Note:</strong> If you&#39;re just making updates to the web portion of the code, use the <code>copy</code> command, which runs much faster:</p>
+<p>From the Terminal, run the Capacitor <code>copy</code> command, which copies all web assets (the Ionic Angular app in this case) into the native iOS project:</p>
 <pre><code class="lang-shell">npx cap copy
+</code></pre>
+<p><strong>Note:</strong> After making updates to the native portion of the code (such as adding a new plugin), use the <code>sync</code> command:</p>
+<pre><code class="lang-shell">npx cap sync
 </code></pre>
 <p>Next, run the Capacitor <code>open</code> command, which opens the native iOS project in Xcode:</p>
 <pre><code class="lang-shell">npx cap open ios
@@ -141,11 +141,11 @@ npx <span class="hljs-built_in">cap</span> add android
 <p><img src="/assets/img/docs/guides/ionic-framework/ios-permissions-photo.png" alt="iOS Camera permissions"></p>
 <h2 id="android">Android</h2>
 <p>Capacitor Android apps are configured and managed through Android Studio. Before running this app on an Android device, there&#39;s a couple of steps to complete.</p>
-<p>From the Terminal, run the Capacitor <code>sync</code> command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) to the native Android project:</p>
-<pre><code class="lang-shell">npx cap sync
-</code></pre>
-<p><strong>Note:</strong> If you&#39;re just making updates to the web portion of the code, use the <code>copy</code> command, which runs much faster:</p>
+<p>From the Terminal, run the Capacitor <code>copy</code> command, which copies all web assets (the Ionic Angular app in this case) into the native Android project:</p>
 <pre><code class="lang-shell">npx cap copy
+</code></pre>
+<p><strong>Note:</strong> After making updates to the native portion of the code (such as adding a new plugin), use the <code>sync</code> command:</p>
+<pre><code class="lang-shell">npx cap sync
 </code></pre>
 <p>Next, run the Capacitor <code>open</code> command, which opens the native Android project in Android Studio:</p>
 <pre><code class="lang-shell">npx cap open android

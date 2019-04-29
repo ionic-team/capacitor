@@ -80,7 +80,7 @@ To begin, open the Tab2 HTML page under the `src/app/tab2` folder. Add an image 
 </ion-content>
 ```
 
-Next, we need to add the logic that will power the camera functionality. Open `src/app/tab2/tab2.page.ts`  and import the Capacitor Plugins and Camera classes:
+Next, we need to add the logic that will power the camera functionality. Open `src/app/tab2/tab2.page.ts` and import the Capacitor Plugins and Camera classes:
 
 ```typescript
 import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
@@ -183,16 +183,16 @@ Next up, let's run this app on iOS and Android.
 ## iOS
 Capacitor iOS apps are configured and managed through Xcode, with dependencies managed by CocoaPods. Before running this app on an iOS device, there's a couple of steps to complete.
 
-From the Terminal, run the Capacitor `sync` command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) into the native iOS project:
-
-```shell
-npx cap sync
-```
-
-**Note:** If you're just making updates to the web portion of the code, use the `copy` command, which runs much faster:
+From the Terminal, run the Capacitor `copy` command, which copies all web assets (the Ionic Angular app in this case) into the native iOS project:
 
 ```shell
 npx cap copy
+```
+
+**Note:** After making updates to the native portion of the code (such as adding a new plugin), use the `sync` command:
+
+```shell
+npx cap sync
 ```
 
 Next, run the Capacitor `open` command, which opens the native iOS project in Xcode:
@@ -224,16 +224,16 @@ Upon tapping the Camera button on Tab Two, the permission prompt will display. T
 ## Android
 Capacitor Android apps are configured and managed through Android Studio. Before running this app on an Android device, there's a couple of steps to complete.
 
-From the Terminal, run the Capacitor `sync` command, which updates all native code dependencies as well as copies all web assets (the Ionic Angular app in this case) to the native Android project:
-
-```shell
-npx cap sync
-```
-
-**Note:** If you're just making updates to the web portion of the code, use the `copy` command, which runs much faster:
+From the Terminal, run the Capacitor `copy` command, which copies all web assets (the Ionic Angular app in this case) into the native Android project:
 
 ```shell
 npx cap copy
+```
+
+**Note:** After making updates to the native portion of the code (such as adding a new plugin), use the `sync` command:
+
+```shell
+npx cap sync
 ```
 
 Next, run the Capacitor `open` command, which opens the native Android project in Android Studio:
