@@ -789,7 +789,11 @@ export interface HapticsPlugin extends Plugin {
   /**
    * Trigger a haptics "impact" feedback
    */
-  impact(options: HapticsImpactOptions): void;
+  impact ( options: HapticsImpactOptions ): void;
+  /**
+   * Trigger a haptics "notification" feedback
+   */
+  notification(options: HapticsNotificationOptions): void;
   /**
    * Vibrate the device
    */
@@ -819,6 +823,16 @@ export enum HapticsImpactStyle {
   Heavy = 'HEAVY',
   Medium = 'MEDIUM',
   Light = 'LIGHT'
+}
+
+export interface HapticsNotificationOptions {
+  type: HapticsNotificationType;
+}
+
+export enum HapticsNotificationType {
+  SUCCESS = 'SUCCESS',
+  WARNING = 'WARNING',
+  ERROR = 'ERROR'
 }
 
 export interface VibrateOptions {
