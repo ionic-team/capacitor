@@ -82,6 +82,15 @@ export class SiteMenu {
       ]
     },
     {
+      title: "Guides",
+      items: [
+        {
+          title: 'Ionic Framework App',
+          url: '/docs/guides/ionic-framework-app'
+        }
+      ]
+    },
+    {
       title: 'iOS',
       items: [
         {
