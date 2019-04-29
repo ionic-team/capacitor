@@ -789,7 +789,7 @@ export interface HapticsPlugin extends Plugin {
   /**
    * Trigger a haptics "impact" feedback
    */
-  impact ( options: HapticsImpactOptions ): void;
+  impact(options: HapticsImpactOptions): void;
   /**
    * Trigger a haptics "notification" feedback
    */
