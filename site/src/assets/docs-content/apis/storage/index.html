@@ -22,7 +22,8 @@ example below for more details.</p>
 
 <span class="hljs-comment">// JSON "get" example</span>
 <span class="hljs-keyword">async</span> getObject() {
-  <span class="hljs-keyword">const</span> user = <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-keyword">await</span> Storage.get({ key: <span class="hljs-string">'user'</span> }));
+  <span class="hljs-keyword">const</span> ret = <span class="hljs-keyword">await</span> Storage.get({ key: <span class="hljs-string">'user'</span> });
+  <span class="hljs-keyword">const</span> user = <span class="hljs-built_in">JSON</span>.parse(ret.value);
 }
 
 <span class="hljs-keyword">async</span> setItem() {
