@@ -21,7 +21,6 @@ Read about [Setting iOS Permissions](../../ios/configuration/) in the [iOS Guide
 This API requires the following permissions be added to your `AndroidManifest.xml`:
 
 ```xml
-<uses-permission android:name="android.permission.CAMERA" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 ```
