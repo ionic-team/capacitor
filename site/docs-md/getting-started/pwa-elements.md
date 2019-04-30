@@ -15,7 +15,7 @@ To enable these controls, you must add `@ionic/pwa-elements` to your app.
 A typical installation involves either adding the following script tag to the `<head>` of the `index.html` for your app:
 
 ```
-<script src="https://unpkg.com/@ionic/pwa-elements@1.0.2/dist/ionicpwaelements.js"></script>
+<script src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements.js"></script>
 ```
 
 Or by installing and then importing from `@ionic/pwa-elements`:
@@ -28,4 +28,3 @@ npm install @ionic/pwa-elements
 import '@ionic/pwa-elements';
 ```
 
-Note: Please replace `1.0.2` with the latest version of the package on NPM: [@ionic/pwa-elements](https://www.npmjs.com/package/@ionic/pwa-elements).
