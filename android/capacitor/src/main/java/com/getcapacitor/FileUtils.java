@@ -32,9 +32,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 /**
  * Common File utilities, such as resolve content URIs and
@@ -165,11 +168,40 @@ public class FileUtils {
         final int index = cursor.getColumnIndexOrThrow(column);
         return cursor.getString(index);
       }
+    } catch (IllegalArgumentException ex) {
+      return getCopyFilePath(uri, context);
     } finally {
       if (cursor != null)
         cursor.close();
     }
     return null;
+  }
+
+  private static String getCopyFilePath(Uri uri, Context context) {
+    Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+    cursor.moveToFirst();
+    String name = (cursor.getString(nameIndex));
+    File file = new File(context.getFilesDir(), name);
+    try {
+      InputStream inputStream = context.getContentResolver().openInputStream(uri);
+      FileOutputStream outputStream = new FileOutputStream(file);
+      int read = 0;
+      int maxBufferSize = 1024 * 1024;
+      int bufferSize = Math.min(inputStream.available(), maxBufferSize);
+      final byte[] buffers = new byte[bufferSize];
+      while ((read = inputStream.read(buffers)) != -1) {
+        outputStream.write(buffers, 0, read);
+      }
+      inputStream.close();
+      outputStream.close();
+    } catch (Exception e) {
+      return null;
+    } finally {
+      if (cursor != null)
+        cursor.close();
+    }
+    return file.getPath();
   }
 
 
