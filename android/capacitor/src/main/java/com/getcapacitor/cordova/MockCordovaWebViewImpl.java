@@ -206,7 +206,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
   }
 
   public void triggerDocumentEvent(final String eventName) {
-    eval("cordova.fireDocumentEvent('"+ eventName + "');", new ValueCallback<String>() {
+    eval("window.Capacitor.triggerEvent('" + eventName + "', 'document');", new ValueCallback<String>() {
       @Override
       public void onReceiveValue(String s) {
       }

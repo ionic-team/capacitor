@@ -66,12 +66,12 @@
 
 - (void)onAppDidEnterBackground:(NSNotification*)notification
 {
-  [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('pause', null, true);" scheduledOnRunLoop:NO];
+  [self.commandDelegate evalJsHelper2:@"window.Capacitor.triggerEvent('pause', 'document');"];
 }
 
 - (void)onAppWillEnterForeground:(NSNotification*)notification
 {
-  [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('resume');"];
+  [self.commandDelegate evalJsHelper2:@"window.Capacitor.triggerEvent('resume', 'document');"];
 }
 
 @end
