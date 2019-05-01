@@ -22,6 +22,10 @@ export async function check(config: Config, checks: CheckFunction[]): Promise<vo
 }
 
 export async function checkWebDir(config: Config): Promise<string | null> {
+  const invalidFolders = ["", ".", "..", "../", "./"];
+  if (invalidFolders.includes(config.app.webDir)) {
+    return `"${config.app.webDir}" is not a valid value for webDir`;
+  }
   if (!await existsAsync(config.app.webDirAbs)) {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
     Please create it, and make sure it has an index.html file. You can change
