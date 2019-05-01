@@ -3,7 +3,8 @@ import { WebPlugin } from './index';
 import {
   CameraPlugin,
   CameraPhoto,
-  CameraOptions
+  CameraOptions,
+  CameraResultType
 } from '../core-plugin-definitions';
 
 //import '@ionic/pwa-elements';
@@ -29,7 +30,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         if (photo === null) {
           reject();
         } else {
-          resolve(await this._getCameraPhoto(photo));
+          resolve(await this._getCameraPhoto(photo, options));
         }
 
         cameraModal.dismiss();
@@ -39,21 +40,35 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     });
   }
 
-  private _getCameraPhoto(photo: Blob) {
+  private _getCameraPhoto(photo: Blob, options: CameraOptions) {
     return new Promise<CameraPhoto>((resolve, reject) => {
       var reader = new FileReader();
-      reader.readAsDataURL(photo);
-      reader.onloadend = () => {
-        const r = reader.result as string;
+      var format = photo.type.split('/')[1]
+      if (options.resultType == CameraResultType.Uri) {
         resolve({
-          dataUrl: r,
-          webPath: r,
-          format: 'jpeg'
+          webPath: URL.createObjectURL(photo),
+          format: format
         });
-      };
-      reader.onerror = (e) => {
-        reject(e);
-      };
+      } else {
+        reader.readAsDataURL(photo);
+        reader.onloadend = () => {
+          const r = reader.result as string;
+          if (options.resultType == CameraResultType.DataUrl) {
+            resolve({
+              dataUrl: r,
+              format: format
+            });
+          } else {
+            resolve({
+              base64String: r.split(',')[1],
+              format: format
+            });
+          }
+        };
+        reader.onerror = (e) => {
+          reject(e);
+        };
+      }
     });
   }
 }
