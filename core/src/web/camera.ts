@@ -28,7 +28,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         const photo = e.detail;
 
         if (photo === null) {
-          reject();
+          reject('User cancelled photos app');
         } else {
           resolve(await this._getCameraPhoto(photo, options));
         }
