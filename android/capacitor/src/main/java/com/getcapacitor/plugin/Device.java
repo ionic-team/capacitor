@@ -55,12 +55,20 @@ public class Device extends Plugin {
 
   private long getDiskFree() {
     StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-    return statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong();
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      return statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong();
+    } else {
+      return statFs.getAvailableBlocks() * statFs.getBlockSize();
+    }
   }
 
   private long getDiskTotal() {
     StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-    return statFs.getBlockCountLong() * statFs.getBlockSizeLong();
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      return statFs.getBlockCountLong() * statFs.getBlockSizeLong();
+    } else {
+      return statFs.getBlockCount() * statFs.getBlockSize();
+    }
   }
 
   private String getAppVersion() {

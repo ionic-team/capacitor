@@ -265,19 +265,26 @@ public class Filesystem extends Plugin {
     // if charset is not null assume its a plain text file the user wants to save
     boolean success = false;
     if (charset != null) {
-      try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-        new FileOutputStream(file, append), charset))) {
+      BufferedWriter writer = null;
+      try {
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), charset));
         writer.write(data);
         success = true;
       } catch (IOException e) {
         Log.e(getLogTag(), "Creating text file '" + file.getPath() + "' with charset '" + charset + "' failed. Error: " + e.getMessage(), e);
+      } finally {
+        try { if (writer != null) { writer.close(); } } catch (IOException ignored) {}
       }
     } else {
-      try (FileOutputStream fos = new FileOutputStream(file, append)) {
+      FileOutputStream fos = null;
+      try {
+        fos = new FileOutputStream(file, append);
         fos.write(Base64.decode(data, Base64.NO_WRAP));
         success = true;
       } catch (IOException e) {
         Log.e(getLogTag(), "Creating binary file '" + file.getPath() + "' failed. Error: " + e.getMessage(), e);
+      } finally {
+        try { if (fos != null) { fos.close(); } } catch (IOException ignored) {}
       }
     }
 

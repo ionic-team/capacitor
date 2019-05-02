@@ -118,10 +118,13 @@ public class BridgeActivity extends AppCompatActivity {
       }
 
       WebView.setXWalkWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+
       setContentView(R.layout.bridge_layout_xwalk);
     } else {
       WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+
       setContentView(R.layout.bridge_layout_main);
+
       this.load(savedInstanceState);
     }
   }

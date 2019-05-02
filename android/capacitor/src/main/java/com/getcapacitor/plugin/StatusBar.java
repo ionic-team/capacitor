@@ -50,20 +50,22 @@ public class StatusBar extends Plugin {
       return;
     }
 
-    getBridge().executeOnMainThread(new Runnable() {
-      @android.annotation.TargetApi(android.os.Build.VERSION_CODES.LOLLIPOP) @Override
-      public void run() {
-        Window window = getActivity().getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        try {
-          window.setStatusBarColor(Color.parseColor(color.toUpperCase()));
-          call.success();
-        } catch (IllegalArgumentException ex) {
-          call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      getBridge().executeOnMainThread(new Runnable() {
+        @Override
+        public void run() {
+          Window window = getActivity().getWindow();
+          window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+          window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+          try {
+            window.setStatusBarColor(Color.parseColor(color.toUpperCase()));
+            call.success();
+          } catch (IllegalArgumentException ex) {
+            call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   @PluginMethod()
@@ -113,7 +115,11 @@ public class StatusBar extends Plugin {
     JSObject data = new JSObject();
     data.put("visible", (decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != View.SYSTEM_UI_FLAG_FULLSCREEN);
     data.put("style", style);
-    data.put("color", String.format("#%06X", (0xFFFFFF & window.getStatusBarColor())));
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      data.put("color", String.format("#%06X", (0xFFFFFF & window.getStatusBarColor())));
+    } else {
+      data.put("color", "#000000#");
+    }
     call.resolve(data);
   }
 }

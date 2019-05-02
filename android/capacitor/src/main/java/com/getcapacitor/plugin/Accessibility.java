@@ -1,9 +1,9 @@
 package com.getcapacitor.plugin;
 
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
+import com.getcapacitor.CompatUtils;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -24,7 +24,7 @@ public class Accessibility extends Plugin {
   public void load() {
     am = (AccessibilityManager) getContext().getSystemService(ACCESSIBILITY_SERVICE);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
       am.addTouchExplorationStateChangeListener(new AccessibilityManager.TouchExplorationStateChangeListener() {
         @Override
         public void onTouchExplorationStateChanged(boolean b) {
@@ -50,7 +50,7 @@ public class Accessibility extends Plugin {
   public void speak(PluginCall call) {
     final String value = call.getString("value");
     final String language = call.getString("language", "en");
-    final Locale locale = Locale.forLanguageTag(language);
+    final Locale locale = CompatUtils.forLanguageTag(language);
 
     if (locale == null) {
       call.error("Language was not a valid language tag.");
@@ -61,7 +61,7 @@ public class Accessibility extends Plugin {
       @Override
       public void onInit(int i) {
         tts.setLanguage(locale);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
           tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, "capacitoraccessibility" + System.currentTimeMillis());
         } else {
           tts.speak(value, TextToSpeech.QUEUE_FLUSH, null);

@@ -1,11 +1,12 @@
 package com.getcapacitor;
 
+import android.os.Build;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 import static org.json.JSONObject.NULL;
 
@@ -50,5 +51,13 @@ public abstract class CompatUtils {
         } catch (Exception ignored) {
         }
         return null;
+    }
+
+    public static Locale forLanguageTag(String language) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return Locale.forLanguageTag(language);
+        } else {
+            return new Locale(language.split("-")[0]);
+        }
     }
 }

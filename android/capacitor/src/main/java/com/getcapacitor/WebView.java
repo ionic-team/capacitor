@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -668,9 +669,18 @@ public class WebView {
             public static final int MODE_OPEN_FOLDER = 2;
             public static final int MODE_SAVE = 3;
 
+            private static boolean isSystemWebViewIntent;
+
             public static Uri[] parseResult(int resultCode, Intent data) {
-                // FIXME: Don't delegate if Intent was from createIntent()!
-                return android.webkit.WebChromeClient.FileChooserParams.parseResult(resultCode, data);
+                if (isSystemWebViewIntent) {
+                    return android.webkit.WebChromeClient.FileChooserParams.parseResult(resultCode, data);
+                } else {
+                    if (resultCode != Activity.RESULT_OK || data == null || data.getData() == null) {
+                        return null;
+                    } else {
+                        return new Uri[] { data.getData() };
+                    }
+                }
             }
 
             public int getMode() {
@@ -715,8 +725,10 @@ public class WebView {
 
             public Intent createIntent() {
                 if (fileChooserParams != null) {
+                    isSystemWebViewIntent = true;
                     return fileChooserParams.createIntent();
                 } else {
+                    isSystemWebViewIntent = false;
                     return Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
                                                         .addCategory(Intent.CATEGORY_OPENABLE)
                                                         .setType("*/*"), getTitle());

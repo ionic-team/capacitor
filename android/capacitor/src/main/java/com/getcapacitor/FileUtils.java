@@ -65,7 +65,8 @@ public class FileUtils {
   public static String getFileUrlForUri(final Context context, final Uri uri) {
 
     // DocumentProvider
-    if (DocumentsContract.isDocumentUri(context, uri)) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT &&
+        DocumentsContract.isDocumentUri(context, uri)) {
       // ExternalStorageProvider
       if (isExternalStorageDocument(uri)) {
         final String docId = DocumentsContract.getDocumentId(uri);
@@ -206,7 +207,9 @@ public class FileUtils {
   }
 
   private static String getPathToNonPrimaryVolume(Context context, String tag) {
-    File[] volumes = context.getExternalCacheDirs();
+    File[] volumes = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT
+            ? context.getExternalCacheDirs()
+            : new File[] { context.getExternalCacheDir() };
     if (volumes != null) {
       for (File volume : volumes) {
         if (volume != null) {

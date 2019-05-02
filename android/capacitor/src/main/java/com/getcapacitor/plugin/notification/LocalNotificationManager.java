@@ -252,7 +252,11 @@ public class LocalNotificationManager {
         long interval = at.getTime() - new Date().getTime();
         alarmManager.setRepeating(AlarmManager.RTC, at.getTime(), interval, pendingIntent);
       } else {
-        alarmManager.setExact(AlarmManager.RTC, at.getTime(), pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          alarmManager.setExact(AlarmManager.RTC, at.getTime(), pendingIntent);
+        } else {
+          alarmManager.set(AlarmManager.RTC, at.getTime(), pendingIntent);
+        }
       }
       return;
     }
@@ -273,7 +277,11 @@ public class LocalNotificationManager {
     if (on != null) {
       notificationIntent.putExtra(TimedNotificationPublisher.CRON_KEY, on.toMatchString());
       pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-      alarmManager.setExact(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        alarmManager.setExact(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
+      } else {
+        alarmManager.set(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
+      }
     }
   }
 
