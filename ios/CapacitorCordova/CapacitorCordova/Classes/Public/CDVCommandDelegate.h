@@ -41,6 +41,8 @@ typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
 // without reason. Without the run-loop delay, alerts used in JS callbacks may result
 // in dead-lock. This method must be called from the UI thread.
 - (void)evalJs:(NSString*)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop;
+// Run the javascript
+- (void)evalJsHelper2:(NSString*)js;
 // Runs the given block on a background thread using a shared thread-pool.
 - (void)runInBackground:(void (^)())block;
 // Returns the User-Agent of the associated UIWebView.

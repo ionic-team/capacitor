@@ -300,21 +300,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     // Dispose of any resources that can be recreated.
   }
 
-  override public func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-    if bridge != nil {
-      if motion == .motionShake && bridge!.isDevMode() {
-        bridge!.showDevMode()
-      }
-    }
-  }
-
-  // We are willing to become first responder to get shake motion
-  override public var canBecomeFirstResponder: Bool {
-    get {
-      return true
-    }
-  }
-
   override public var prefersStatusBarHidden: Bool {
     get {
       return !isStatusBarVisible

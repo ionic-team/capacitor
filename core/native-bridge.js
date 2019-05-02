@@ -309,9 +309,14 @@
   }
 
   capacitor.triggerEvent = function(eventName, target, data) {
-    var event = new CustomEvent(eventName, { detail: data || {} });
+    var eventData = data || {};
+    var event = new CustomEvent(eventName, { detail: eventData });
     if (target === "document") {
-      document.dispatchEvent(event);
+      if (cordova.fireDocumentEvent) {
+        cordova.fireDocumentEvent(eventName, eventData);
+      } else {
+        document.dispatchEvent(event);
+      }
     } else if (target === "window") {
       window.dispatchEvent(event);
     } else {

@@ -52,6 +52,11 @@ public class Haptics extends Plugin {
   }
 
   @PluginMethod()
+  public void notification(PluginCall call) {
+    call.unimplemented();
+  }
+
+  @PluginMethod()
   public void selectionStart(PluginCall call) {
     call.unimplemented();
   }

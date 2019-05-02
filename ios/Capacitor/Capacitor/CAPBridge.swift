@@ -338,12 +338,7 @@ enum BridgeError: Error {
       return false
     #endif
   }
-  
-  public func showDevMode() {
-    let devMode = DevMode(self)
-    devMode.show()
-  }
-  
+
   public func reload() {
     self.getWebView()?.reload()
   }

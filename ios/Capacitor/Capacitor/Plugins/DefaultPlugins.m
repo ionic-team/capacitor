@@ -63,6 +63,7 @@ CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
 
 CAP_PLUGIN(CAPHapticsPlugin, "Haptics",
   CAP_PLUGIN_METHOD(impact, CAPPluginReturnNone);
+  CAP_PLUGIN_METHOD(notification, CAPPluginReturnNone);
   CAP_PLUGIN_METHOD(selectionStart, CAPPluginReturnNone);
   CAP_PLUGIN_METHOD(selectionChanged, CAPPluginReturnNone);
   CAP_PLUGIN_METHOD(selectionEnd, CAPPluginReturnNone);

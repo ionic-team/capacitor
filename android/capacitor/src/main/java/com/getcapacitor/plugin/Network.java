@@ -106,7 +106,7 @@ public class Network extends Plugin {
   }
 
   /**
-   * Convert the Android-specific naming for netowrk types into our cross-platform type
+   * Convert the Android-specific naming for network types into our cross-platform type
    * @param info
    * @return
    */

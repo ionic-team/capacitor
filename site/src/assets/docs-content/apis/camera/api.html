@@ -128,10 +128,10 @@ Default: CameraDirection.Rear</div>
           </div>
 
           <div class="avc-code-interface-param">
-            <div class="avc-code-param-comment">// How the data should be returned. Currently, only 'base64' or 'uri' is supported</div>
+            <div class="avc-code-param-comment">// How the data should be returned. Currently, only 'Base64', 'DataUrl' or 'Uri' is supported</div>
             <div class="avc-code-line"><span class="avc-code-param-name">resultType</span>
               :
-              <avc-code-type type-id="301">CameraResultType</avc-code-type>;
+              <avc-code-type type-id="302">CameraResultType</avc-code-type>;
             </div>
           </div>
 
@@ -171,8 +171,16 @@ Default: CameraSource.Prompt</div>
     
 
           <div class="avc-code-interface-param">
-            <div class="avc-code-param-comment">// The base64 encoded data of the image, if using CameraResultType.Base64.</div>
-            <div class="avc-code-line"><span class="avc-code-param-name">base64Data</span>
+            <div class="avc-code-param-comment">// The base64 encoded string representation of the image, if using CameraResultType.Base64.</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">base64String</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type>string</avc-code-type>;
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The url starting with 'data:image/jpeg;base64,' and the base64 encoded string representation of the image, if using CameraResultType.DataUrl.</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">dataUrl</span>
               <span class="avc-code-param-optional">?</span>:
               <avc-code-type>string</avc-code-type>;
             </div>
@@ -235,7 +243,7 @@ loading and rendering.</div>
             </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-      <div class="avc-code-interface" id="type-301">
+      <div class="avc-code-interface" id="type-302">
         <h4 class="avc-code-interface-name">CameraResultType</h4>
         <div class="avc-code-line">
           <span class="avc-code-keyword">enum</span> <span class="avc-code-type-name">CameraResultType</span>
@@ -246,6 +254,13 @@ loading and rendering.</div>
               <div class="avc-code-param-comment"></div>
               <div class="avc-code-line"><span class="avc-code-param-name">Base64</span>:
                 <avc-code-type">"base64"</avc-code-type>
+              </div>
+            </div>
+
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment"></div>
+              <div class="avc-code-line"><span class="avc-code-param-name">DataUrl</span>:
+                <avc-code-type">"dataUrl"</avc-code-type>
               </div>
             </div>
 
