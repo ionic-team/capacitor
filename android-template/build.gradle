@@ -15,10 +15,17 @@ buildscript {
     }
 }
 
+ext {
+    capacitorXWalkModule = 'org.xwalk:xwalk_shared_library:23.53.589.4'
+}
+
 allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
+        }
     }
 }
 
