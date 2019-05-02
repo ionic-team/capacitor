@@ -41,7 +41,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     this.bridge = bridge;
   }
 
-  @Override
+  @android.annotation.TargetApi(android.os.Build.VERSION_CODES.LOLLIPOP) @Override
   public void onPermissionRequest(final PermissionRequest request) {
     boolean isRequestPermissionRequired = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M;
 
