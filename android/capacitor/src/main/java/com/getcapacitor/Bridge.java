@@ -801,4 +801,8 @@ public class Bridge {
   public String getLocalUrl() {
     return localUrl;
   }
+
+  public WebViewLocalServer getLocalServer() {
+    return localServer;
+  }
 }
