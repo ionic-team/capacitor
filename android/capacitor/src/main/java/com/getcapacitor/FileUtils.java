@@ -131,7 +131,6 @@ public class FileUtils {
       // Return the remote address
       if (isGooglePhotosUri(uri))
         return uri.getLastPathSegment();
-
       return getDataColumn(context, uri, null, null);
     }
     // File
@@ -154,7 +153,7 @@ public class FileUtils {
    */
   private static String getDataColumn(Context context, Uri uri, String selection,
                                       String[] selectionArgs) {
-
+    String path = null;
     Cursor cursor = null;
     final String column = "_data";
     final String[] projection = {
@@ -166,7 +165,7 @@ public class FileUtils {
           null);
       if (cursor != null && cursor.moveToFirst()) {
         final int index = cursor.getColumnIndexOrThrow(column);
-        return cursor.getString(index);
+        path = cursor.getString(index);
       }
     } catch (IllegalArgumentException ex) {
       return getCopyFilePath(uri, context);
@@ -174,7 +173,10 @@ public class FileUtils {
       if (cursor != null)
         cursor.close();
     }
-    return null;
+    if (path == null) {
+      return getCopyFilePath(uri, context);
+    }
+    return path;
   }
 
   private static String getCopyFilePath(Uri uri, Context context) {
