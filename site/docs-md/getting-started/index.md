@@ -5,7 +5,7 @@ There are two ways to start using Capacitor: adding Capacitor to an existing fro
 Capacitor provides a native mobile runtime and API layer for web apps. It does _not_ come with any specific
 set of UI controls which you will most likely need unless you're building a game or something similar.
 
-We strongly recommend starting a Capacitor project with your mobile frontend framework of choice (such as Ionic),
+We strongly recommend starting a Capacitor project with your mobile frontend framework of choice (such as [Ionic](https://ionicframework.com)),
 though we also provide a blank starter for apps that aren't using a frontend UI framework, and a starter that uses Ionic and
 is ready for building a production-ready native app and Progressive Web App.
 
@@ -14,10 +14,13 @@ is ready for building a production-ready native app and Progressive Web App.
 Make sure you have all the required [Dependencies](./dependencies) installed for the platforms you will be building for. Most importantly,
 make sure you update CocoaPods using `pod repo update` before starting a new project, if you plan on building for iOS using a Mac.
 
+## Adding Capacitor to an existing Ionic App
+
+[See here.](/docs/getting-started/with-ionic)
 
 ## Adding Capacitor to an existing web app
 
-Capacitor was designed to drop-in to any existing modern JS web app.
+Capacitor was designed to drop-in to any existing modern JS web app. Only a valid `package.json` file is required to get started.
 
 To add Capacitor to your web app, run the following commands:
 
@@ -26,18 +29,25 @@ cd my-app
 npm install --save @capacitor/core @capacitor/cli
 ```
 
-Then, init Capacitor with your app information. This will also install the default
-native platforms.
+Then, initialize Capacitor with your app information:
 
 ```
 npx cap init
 ```
 
-This command will prompt you to enter the name of your app, the app id (used primarily as the package for android), and the directory of your app.
+*Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
+
+This command will prompt you to enter the name of your app and the app id (used primarily as the package name for Android).
+
+Next, install any of the desired native platforms:
+
+```
+npx cap add android
+npx cap add ios
+npx cap add electron
+```
 
 Capacitor is now installed in your project 🎉
-
-*Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
 
 ## Using Capacitor Starter with Ionic Framework
 
