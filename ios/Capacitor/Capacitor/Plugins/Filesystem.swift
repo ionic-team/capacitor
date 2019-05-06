@@ -107,11 +107,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       if encoding != nil {
         try data.write(to: fileUrl, atomically: false, encoding: .utf8)
       } else {
-        let dataParts = data.split(separator: ",")
-        var cleanData = data
-        if dataParts.count > 0 {
-            cleanData = String(dataParts.last!)
-        }
+        let cleanData = getCleanData(data)
         if let base64Data = Data(base64Encoded: cleanData) {
           try base64Data.write(to: fileUrl)
         } else {
@@ -125,12 +121,11 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
   }
 
-
   /**
    * Append to a file.
    */
   @objc func appendFile(_ call: CAPPluginCall) {
-    //let encoding = call.get("encoding") as? String ?? "utf8"
+    let encoding = call.getString("encoding")
     // TODO: Allow them to switch encoding
     guard let file = call.get("path", String.self) else {
       handleError(call, "path must be provided and must be a string.")
@@ -147,32 +142,51 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "Invalid path")
       return
     }
-    
+
     do {
       if FileManager.default.fileExists(atPath: fileUrl.path) {
         let fileHandle = try FileHandle.init(forWritingTo: fileUrl)
-        
-        guard let writeData = data.data(using: .utf8) else {
-          handleError(call, "Unable to encode data to utf-8")
-          return
+        var writeData: Data? = nil
+        if encoding != nil {
+          guard let userData = data.data(using: .utf8) else {
+            handleError(call, "Unable to encode data to utf-8")
+            return
+          }
+          writeData = userData
+        } else {
+          let cleanData = getCleanData(data)
+          if let base64Data = Data(base64Encoded: cleanData) {
+            writeData = base64Data
+          } else {
+            handleError(call, "Unable to append file")
+            return
+          }
         }
-        
         defer {
           fileHandle.closeFile()
         }
         fileHandle.seekToEndOfFile()
-        fileHandle.write(writeData)
+        fileHandle.write(writeData!)
+        call.success()
       } else {
-        try data.write(to: fileUrl, atomically: false, encoding: .utf8)
+        self.writeFile(call)
       }
-      call.success()
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
+
+  func getCleanData(_ data: String) -> String {
+    let dataParts = data.split(separator: ",")
+    var cleanData = data
+    if dataParts.count > 0 {
+      cleanData = String(dataParts.last!)
+    }
+    return cleanData
+  }
+
   /**
-   * Append to a file.
+   * Delete a file.
    */
   @objc func deleteFile(_ call: CAPPluginCall) {
     //let encoding = call.get("encoding") as? String ?? "utf8"
