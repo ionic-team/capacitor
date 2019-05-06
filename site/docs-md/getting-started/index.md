@@ -5,9 +5,7 @@ There are two ways to start using Capacitor: adding Capacitor to an existing fro
 Capacitor provides a native mobile runtime and API layer for web apps. It does _not_ come with any specific
 set of UI controls which you will most likely need unless you're building a game or something similar.
 
-We strongly recommend starting a Capacitor project with your mobile frontend framework of choice (such as [Ionic](https://ionicframework.com)),
-though we also provide a blank starter for apps that aren't using a frontend UI framework, and a starter that uses Ionic and
-is ready for building a production-ready native app and Progressive Web App.
+We strongly recommend starting a Capacitor project with your mobile frontend framework of choice (such as [Ionic](https://ionicframework.com)).
 
 ## Before you start
 
@@ -47,15 +45,7 @@ npx cap add ios
 npx cap add electron
 ```
 
-Capacitor is now installed in your project 🎉
-
-## Using Capacitor Starter with Ionic Framework
-
-Integration into the Ionic CLI is coming soon.
-
-For now, create a new ionic app using `ionic start`, then follow the steps above to add
-Capacitor to an existing web app (in this case, your new Ionic app).
-
+🎉 Capacitor is now installed in your project. 🎉
 
 ## Optional: Starting a fresh project
 
@@ -69,8 +59,7 @@ npx @capacitor/cli create
 
 This command will prompt you to enter the name of your app, the app id (used primarily as the package for android), and the directory of your app.
 
-This will create a very simple starting app with no UI library that you should nuke before
-starting your own app.
+This will create a very simple starting app with no UI library.
 
 ## Where to go next
 
