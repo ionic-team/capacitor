@@ -27,15 +27,15 @@ cd my-app
 npm install --save @capacitor/core @capacitor/cli
 ```
 
-Then, initialize Capacitor with your app information:
+Then, initialize Capacitor with your app information.
+
+*Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
 
 ```
 npx cap init
 ```
 
-*Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
-
-This command will prompt you to enter the name of your app and the app id (used primarily as the package name for Android).
+This command will prompt you to enter the name of your app, the app id (the package name for Android), and the bundle identifier (for iOS).
 
 Next, install any of the desired native platforms:
 

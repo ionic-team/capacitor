@@ -27,7 +27,7 @@ npx cap init [appName] [appId]
 
 where `appName` is the name of your app, and `appId` is the domain identifier of your app (ex: `com.example.app`).
 
-*Note: This can be ran any time you would like to update the app information.*
+*Note: Use the native IDEs to change these properties after initial configuration.*
 
 ### Build your Ionic App
 
@@ -55,7 +55,7 @@ npx cap open ios
 npx cap open android
 ```
 
-The native iOS and Android projects are opened in their standard IDEs (Xcode and Android Studio, respectively).
+The native iOS and Android projects are opened in their standard IDEs (Xcode and Android Studio, respectively). Use the IDEs to run and deploy your app.
 
 ## Syncing your app with Capacitor
 

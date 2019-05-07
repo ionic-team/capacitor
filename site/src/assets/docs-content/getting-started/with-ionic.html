@@ -13,7 +13,7 @@ ionic integrations <span class="hljs-built_in">enable</span> capacitor
 <p><em>Note: <code>npx</code> is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.</em></p>
 <pre><code>npx cap init [appName] [appId]
 </code></pre><p>where <code>appName</code> is the name of your app, and <code>appId</code> is the domain identifier of your app (ex: <code>com.example.app</code>).</p>
-<p><em>Note: This can be ran any time you would like to update the app information.</em></p>
+<p><em>Note: Use the native IDEs to change these properties after initial configuration.</em></p>
 <h3 id="build-your-ionic-app">Build your Ionic App</h3>
 <p>You must build your Ionic project at least once before adding any native platforms.</p>
 <pre><code class="lang-bash">ionic build
@@ -28,7 +28,7 @@ npx <span class="hljs-built_in">cap</span> add android
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> open ios
 npx <span class="hljs-built_in">cap</span> open android
 </code></pre>
-<p>The native iOS and Android projects are opened in their standard IDEs (Xcode and Android Studio, respectively).</p>
+<p>The native iOS and Android projects are opened in their standard IDEs (Xcode and Android Studio, respectively). Use the IDEs to run and deploy your app.</p>
 <h2 id="syncing-your-app-with-capacitor">Syncing your app with Capacitor</h2>
 <p>Every time you perform a build (e.g. <code>ionic build</code>) that changes your web directory (default: <code>www</code>), you&#39;ll need to copy those changes down to your native projects:</p>
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> copy

@@ -13,10 +13,10 @@ make sure you update CocoaPods using <code>pod repo update</code> before startin
 <p>To add Capacitor to your web app, run the following commands:</p>
 <pre><code>cd my-app
 npm install --save @capacitor/core @capacitor/cli
-</code></pre><p>Then, initialize Capacitor with your app information:</p>
+</code></pre><p>Then, initialize Capacitor with your app information.</p>
+<p><em>Note: <code>npx</code> is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.</em></p>
 <pre><code>npx cap init
-</code></pre><p><em>Note: <code>npx</code> is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.</em></p>
-<p>This command will prompt you to enter the name of your app and the app id (used primarily as the package name for Android).</p>
+</code></pre><p>This command will prompt you to enter the name of your app, the app id (the package name for Android), and the bundle identifier (for iOS).</p>
 <p>Next, install any of the desired native platforms:</p>
 <pre><code>npx cap add android
 npx cap add ios
