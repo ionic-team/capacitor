@@ -14,5 +14,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <activity android:exported="true" android:name="com.getcapacitor.CapacitorFirebaseMessagingActivity" android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="CAPACITOR_FIREBASE_MESSAGING_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

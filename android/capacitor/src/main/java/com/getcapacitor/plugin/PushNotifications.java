@@ -39,6 +39,7 @@ public class PushNotifications extends Plugin {
 
   public static Bridge staticBridge = null;
   public static RemoteMessage lastMessage = null;
+  public static Intent lastIntent = null;
   public NotificationManager notificationManager;
 
 
@@ -51,6 +52,10 @@ public class PushNotifications extends Plugin {
     if (lastMessage != null) {
       fireNotification(lastMessage);
       lastMessage = null;
+    }
+    if (lastIntent != null) {
+      handleOnNewIntent(lastIntent);
+      lastIntent = null;
     }
   }
 
@@ -65,9 +70,7 @@ public class PushNotifications extends Plugin {
         if (key.equals("google.message_id")) {
           notificationJson.put("id", bundle.get(key));
         } else {
-          Object value = bundle.get(key);
-          String valueStr = (value != null) ? value.toString() : null;
-          dataObject.put(key, valueStr);
+          dataObject.put(key, bundle.get(key));
         }
       }
       notificationJson.put("data", dataObject);
@@ -176,6 +179,15 @@ public class PushNotifications extends Plugin {
     PushNotifications pushPlugin = PushNotifications.getPushNotificationsInstance();
     if (pushPlugin != null) {
       pushPlugin.sendToken(newToken);
+    }
+  }
+
+  public static void sendNewIntent(Intent intent) {
+    PushNotifications pushPlugin = PushNotifications.getPushNotificationsInstance();
+    if (pushPlugin != null) {
+      pushPlugin.handleOnNewIntent(intent);
+    } else {
+      lastIntent = intent;
     }
   }
 

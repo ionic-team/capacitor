@@ -14,6 +14,29 @@ That will add the push capabilites to your app and will create an entitlements f
 
 On Android just download your app's `google-services.json` file from Firebase console and put it in `projectName/android/app` folder.
 
+Also on Android, to have your notification sent to the `pushNotificationActionPerformed` handler when tapped in Android's notifications panel, make sure to specify `CAPACITOR_FIREBASE_MESSAGING_ACTIVITY` as the `click_action` in your Firebase Cloud Message payload. Slightly modifying the examples from https://firebase.google.com/docs/cloud-messaging/concept-options, your payload to Firebase would look something like this:
+
+```
+{
+  "message":{
+     "token":"bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...",
+     "notification":{
+       "title":"Match update",
+       "body":"Arsenal goal in added time, score is now 3-0"
+     },
+     "android":{
+       "ttl":"86400s",
+       "notification"{
+         "click_action":"CAPACITOR_FIREBASE_MESSAGING_ACTIVITY"
+       }
+     },
+     "data" : {
+        "Nick" : "Mario",
+        "Room" : "PortugalVSDenmark"
+      }
+   }
+```
+
 ## Push Notifications icon
 
 On Android, the Push Notifications icon with the appropriate name should be added to the `AndroidManifest.xml` file:
