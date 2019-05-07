@@ -25,7 +25,7 @@ This API requires the following permissions be added to your `AndroidManifest.xm
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 ```
 
-The storage permissions are for reading/saving photo files. Note that `android.permission.CAMERA` is not required.
+The storage permissions are for reading/saving photo files.
 
 Read about [Setting Android Permissions](../../android/configuration/) in the [Android Guide](../../android/) for more information on setting Android permissions.
 
@@ -57,51 +57,7 @@ async takePicture() {
 
 ## Angular example
 
-By default, Angular (>= 2.x) won't trust dynamic image urls. To trust the URL, inject `DomSanitizer` and make sure to allow the 
-image URL to be trusted.
-
-This example also demonstrates how to set the default source of the image. By default, `getPhoto` will prompt the user to take a picture or select a photo from their existing photos. 
-
 [Follow this guide](../../guides/ionic-framework-app) to implement the Camera API in an Ionic Angular app.
-
-```typescript
-import { Component } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
-
-@Component({
-  selector: 'page-camera',
-  templateUrl: 'camera.page.html',
-  styleUrls: ['camera.page.scss']
-})
-export class CameraPage {
-  image: SafeResourceUrl;
-
-  constructor(private sanitizer: DomSanitizer) { }
-
-  async takePicture() {
-    const { Camera } = Plugins;
-
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: true,
-      resultType: CameraResultType.DataUrl,
-      source: CameraSource.Camera
-    });
-    
-    // Recommended to use CameraResultType.DataUrl instead of Base64 for 
-    // performance reasons when showing large or a large amount of images.
-    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
-  }
-}
-```
-
-Component template:
-
-```html
-  <img [src]="image" />
-  <button (click)="takePicture()" ion-button color="primary">Take Picture</button>
-```
 
 ## API
 
