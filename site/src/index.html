@@ -18,7 +18,7 @@
       }
     });
   </script>
-  <script src="/build/app.js" data-resources-url="/build/app/" data-namespace="app"></script>
+  <script src="/build/app.js"></script>
 </head>
 <body>
   <svg style="display:none;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -34,15 +34,14 @@
 
   <capacitor-site></capacitor-site>
 
-  <!--
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44023830-42"></script>
   <script>
-    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-    ga('create', 'UA-44023830-34', 'auto');
-    ga('send', 'pageview');
-  </script>
-  -->
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  <script async defer src='https://www.google-analytics.com/analytics.js'></script>
+    gtag('config', 'UA-44023830-42');
+  </script>
 
   <script async defer src="https://buttons.github.io/buttons.js"></script>
 
