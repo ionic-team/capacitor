@@ -4,7 +4,7 @@ Platforms: iOS, Android
 
 One of the most common features provided by application developers to their users is push notifications. In this tutorial, we'll walk through all the steps needed to get [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) working on iOS and Android.
 
-For creating and sending our notifications, we'll make use of the [Push Notification API for Capacitor](https://capacitor.ionicframework.com/docs/apis/push-notifications/) in an Ionic Angular 4 application. 
+For the purposes of registering and monitoring for push notifications from Firebase, we'll make use of the [Push Notification API for Capacitor](https://capacitor.ionicframework.com/docs/apis/push-notifications/) in an Ionic Angular 4 application. 
 
 ## Environment Reference
 
@@ -190,7 +190,7 @@ The next prompt will ask you to download a `google-services.json` file. This fil
 
 Download the `google-services.json` file to your local machine. Then move the file into your Capacitor Android project directory, specifically under `android/app/`.
 
-<< Screenshot >>
+![Google Services JSON Location for Android](/assets/img/docs/guides/firebase-push-notifications/google-services-location-android.png)
 
 We don't need to *add* any permissions to our project because Capacitor projects automatically include a version of `firebase-messaging` in our `app/build.gradle` file:
 
@@ -215,9 +215,7 @@ iOS push notifications are significantly more complicated to set up than Android
 
 This part is very similar to the Android section above, with a few key differences.
 
-First, go to the **Project Overview** page for your Firebase project. If you've been following this guide, you'll already have an Android application listed at the top of the page:
-
-<<screenshot>>
+First, go to the **Project Overview** page for your Firebase project. If you've been following this guide, you'll already have an Android application listed at the top of the page.
 
 To add iOS to your Firebase project, click the **Add App** button and select the **iOS** platform.
 
@@ -235,7 +233,7 @@ Then click the **Register app** button.
 
 Download the `GoogleService-Info.plist` provided to your local machine and move it into your Xcode project as instructed, ensuring to add it to all targets. 
 
-<<screenshot>>
+![Google Service Info Plist Location for iOS](/assets/img/docs/guides/firebase-push-notifications/google-plist-location-ios.png)
 
 **Note**: It is recommended to use Xcode to move the `.plist` file into your project.
 
@@ -245,7 +243,7 @@ The Push Notification API on iOS makes use of CocoaPods - an iOS dependencies ma
 
 To do this, we need to modify the `Podfile`, which is located in your `ios/App` directory:
 
-<<screenshot>>
+![Podfile Location iOS](/assets/img/docs/guides/firebase-push-notifications/podfile-location-ios.png)
 
 We need to modify the App target pods to include Firebase. To do that, add `pod Firebase/Messaging` to your `target 'App'` section, like so:
 
@@ -329,8 +327,6 @@ To upload your certificate or auth key, from the **Project Overview** page:
 2. On the Settings page, click on the **Cloud Messaging** tab.
 3. Under the **iOS app configuration** header, upload your Auth Key or Certificate(s) using the provided **Upload** button.
 
-<<screenshot>>
-
 ## Sending a Test Notification
 
 Now for the fun part - let's verify that push notifications from Firebase are working on Android and iOS!
@@ -347,9 +343,9 @@ To open your iOS project in Xcode:
 npx cap open ios
 ```
 
-Once the project is open, side-load the application on your device using the Run feature of either Android Studio or Xcode. The app should start up on the home page:
+Once the project is open, side-load the application on your device using the Run feature of either Android Studio or Xcode. The app should start up on the home page.
 
-<<screenshot>>
+**Note**: You may be asked to allow the application to receive notifications if this is the first time starting it up (this is the Push Notification API registering with Apple / Google). Make sure you choose to **Allow notifications**, or the next step won't work!
 
 Now we'll test to see if the notifications are received by our device. To send a notification, in Firebase, go to the **Cloud Messaging** section under the Grow header in the project pane. 
 
@@ -361,13 +357,14 @@ When creating the notification, you only need to specify the following informati
 2. The title (Android only, optional for iOS)
 3. The Target (either a user segment or topic; I recommend just targeting the iOS or Android app itself, see below)
 
-<<screenshot>>
+![Change Push Target Firebase](/assets/img/docs/guides/firebase-push-notifications/google-plist-location-ios.png)
+
 4. The Scheduling (leave this to "Now")
 
 At that point, you can **Review** the notification you've put together and select **Publish** to send the notification out.
 
 If you've setup your application correctly, you'll see an alert pop up on your home screen with the push notification you composed in Firebase!
 
-<<android_push_screenshot>>
+![Push Test Android](/assets/img/docs/guides/firebase-push-notifications/push-test-android.png)
 
-<<ios_push_screenshot>>
+![Push Test iOS](/assets/img/docs/guides/firebase-push-notifications/push-test-ios.png)
