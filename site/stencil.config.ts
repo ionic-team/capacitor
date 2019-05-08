@@ -9,8 +9,7 @@ export const config:Config = {
   outputTargets: [
     {
       type: 'www',
-      serviceWorker: null,
-      inlineLoaderScript: false
+      serviceWorker: null
       /*
       serviceWorker: {
         skipWaiting: false,
