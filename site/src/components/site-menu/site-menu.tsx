@@ -28,12 +28,12 @@ export class SiteMenu {
           url: '/docs/getting-started/'
         },
         {
-          title: 'PWA Elements',
-          url: '/docs/getting-started/pwa-elements/'
-        },
-        {
           title: 'Using with Ionic',
           url: '/docs/getting-started/with-ionic'
+        },
+        {
+          title: 'PWA Elements',
+          url: '/docs/getting-started/pwa-elements/'
         }
         /*
         ,
