@@ -9,14 +9,14 @@ make sure you update CocoaPods using <code>pod repo update</code> before startin
 <h2 id="adding-capacitor-to-an-existing-ionic-app">Adding Capacitor to an existing Ionic App</h2>
 <p><a href="/docs/getting-started/with-ionic">See here.</a></p>
 <h2 id="adding-capacitor-to-an-existing-web-app">Adding Capacitor to an existing web app</h2>
-<p>Capacitor was designed to drop-in to any existing modern JS web app. Only a valid <code>package.json</code> file is required to get started.</p>
+<p>Capacitor was designed to drop-in to any existing modern JS web app. A valid <code>package.json</code> file and a folder containing all web assets are required to get started.</p>
 <p>To add Capacitor to your web app, run the following commands:</p>
 <pre><code>cd my-app
 npm install --save @capacitor/core @capacitor/cli
 </code></pre><p>Then, initialize Capacitor with your app information.</p>
 <p><em>Note: <code>npx</code> is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.</em></p>
 <pre><code>npx cap init
-</code></pre><p>This command will prompt you to enter the name of your app, the app id (the package name for Android), and the bundle identifier (for iOS).</p>
+</code></pre><p>This command will prompt you to enter the name of your app and the app id (the package name for Android and the bundle identifier for iOS). Use the <code>--web-dir</code> flag to set the web assets folder (the default is <code>www</code>).</p>
 <p>Next, install any of the desired native platforms:</p>
 <pre><code>npx cap add android
 npx cap add ios
@@ -26,7 +26,7 @@ npx cap add electron
 <p>Capacitor comes with a stock project structure if you&#39;d rather start fresh and plan to add a UI/frontend framework separately.</p>
 <p>To create it, run:</p>
 <pre><code>npx @capacitor/cli create
-</code></pre><p>This command will prompt you to enter the name of your app, the app id (used primarily as the package for android), and the directory of your app.</p>
+</code></pre><p>This command will prompt you to enter the name of your app and the app id (the package name for Android and the bundle identifier for iOS).</p>
 <p>This will create a very simple starting app with no UI library.</p>
 <h2 id="where-to-go-next">Where to go next</h2>
 <p>Make sure you have the <a href="/docs/getting-started/dependencies">Required Dependencies</a> installed, including <a href="/docs/getting-started/pwa-elements">PWA Elements</a>, then proceed to the

@@ -18,7 +18,7 @@ make sure you update CocoaPods using `pod repo update` before starting a new pro
 
 ## Adding Capacitor to an existing web app
 
-Capacitor was designed to drop-in to any existing modern JS web app. Only a valid `package.json` file is required to get started.
+Capacitor was designed to drop-in to any existing modern JS web app. A valid `package.json` file and a folder containing all web assets are required to get started.
 
 To add Capacitor to your web app, run the following commands:
 
@@ -35,7 +35,7 @@ Then, initialize Capacitor with your app information.
 npx cap init
 ```
 
-This command will prompt you to enter the name of your app, the app id (the package name for Android), and the bundle identifier (for iOS).
+This command will prompt you to enter the name of your app and the app id (the package name for Android and the bundle identifier for iOS). Use the `--web-dir` flag to set the web assets folder (the default is `www`).
 
 Next, install any of the desired native platforms:
 
@@ -57,7 +57,7 @@ To create it, run:
 npx @capacitor/cli create
 ```
 
-This command will prompt you to enter the name of your app, the app id (used primarily as the package for android), and the directory of your app.
+This command will prompt you to enter the name of your app and the app id (the package name for Android and the bundle identifier for iOS).
 
 This will create a very simple starting app with no UI library.
 
