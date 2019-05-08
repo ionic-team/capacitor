@@ -345,7 +345,7 @@ When creating the notification, you only need to specify the following informati
 2. The title (Android only, optional for iOS)
 3. The Target (either a user segment or topic; I recommend just targeting the iOS or Android app itself, see below)
 
-![Change Push Target Firebase](/assets/img/docs/guides/firebase-push-notifications/google-plist-location-ios.png)
+![Change Push Target Firebase](/assets/img/docs/guides/firebase-push-notifications/change-push-target-firebase.png)
 
 4. The Scheduling (leave this to "Now")
 
