@@ -24,23 +24,23 @@ describe('Web Plugin', () => {
     plugin = new MockPlugin();
   })
 
-  it('Should add event listeners', () => {
+  it('Should add event listeners', async () => {
     let lf = (event) => {};
 
-    let handle = plugin.addListener('test', lf);
+    let handle = await plugin.addListener('test', lf);
 
     const listener = plugin.listeners['test'];
     expect(listener).not.toBe(undefined);
     expect(listener.length).toEqual(1);
   });
 
-  it('Should manage multiple event listeners', () => {
+  it('Should manage multiple event listeners', async () => {
     let lf1 = (event) => {};
     let lf2 = (event) => {};
     let lf3 = (event) => {};
-    let handle1 = plugin.addListener('test', lf1);
-    let handle2 = plugin.addListener('test', lf2);
-    let handle3 = plugin.addListener('test', lf3);
+    let handle1 = await plugin.addListener('test', lf1);
+    let handle2 = await plugin.addListener('test', lf2);
+    let handle3 = await plugin.addListener('test', lf3);
 
     const listener = plugin.listeners['test'];
     expect(listener.length).toEqual(3);
@@ -52,18 +52,18 @@ describe('Web Plugin', () => {
     expect(listener.length).toEqual(0);
   });
 
-  it('Should remove event listeners', () => {
+  it('Should remove event listeners', async () => {
     let lf = (event) => {};
-    let handle = plugin.addListener('test', lf);
+    let handle = await plugin.addListener('test', lf);
     handle.remove();
 
     const listener = plugin.listeners['test'];
     expect(listener).toEqual([]);
   });
 
-  it('Should notify listeners', () => {
+  it('Should notify listeners', async () => {
     let lf = jest.fn();
-    let handle = plugin.addListener('test', lf);
+    let handle = await plugin.addListener('test', lf);
 
     plugin.trigger();
 
@@ -71,12 +71,12 @@ describe('Web Plugin', () => {
     expect(lf.mock.calls[0][0]).toEqual({ value: 'Capacitors on top of toast!' })
   });
 
-  it('Should register and remove window listeners', () => {
+  it('Should register and remove window listeners', async () => {
     let pluginAddWindowListener = jest.spyOn(plugin, 'addWindowListener');
     plugin.registerWindowListener('fake', 'test');
 
     let lf = jest.fn();
-    let handle = plugin.addListener('test', lf);
+    let handle = await plugin.addListener('test', lf);
 
     // Make sure the window listener was added
     let windowListener = plugin.windowListeners['test'];

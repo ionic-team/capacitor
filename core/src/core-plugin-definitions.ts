@@ -61,7 +61,7 @@ export interface AccessibilityPlugin {
   /**
    * Listen for screen reader state change (on/off)
    */
-  addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): PluginListenerHandle;
+  addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): Promise<PluginListenerHandle>;
 }
 
 export interface AccessibilitySpeakOptions {
@@ -109,25 +109,25 @@ export interface AppPlugin extends Plugin {
   /**
    * Listen for changes in the App's active state (whether the app is in the foreground or background)
    */
-  addListener(eventName: 'appStateChange', listenerFunc: (state: AppState) => void): PluginListenerHandle;
+  addListener(eventName: 'appStateChange', listenerFunc: (state: AppState) => void): Promise<PluginListenerHandle>;
 
   /**
    * Listen for url open events for the app. This handles both custom URL scheme links as well
    * as URLs your app handles (Universal Links on iOS and App Links on Android)
    */
-  addListener(eventName: 'appUrlOpen', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+  addListener(eventName: 'appUrlOpen', listenerFunc: (data: AppUrlOpen) => void): Promise<PluginListenerHandle>;
 
   /**
    * If the app was launched with previously persisted plugin call data, such as on Android
    * when an activity returns to an app that was closed, this call will return any data
    * the app was launched with, converted into the form of a result from a plugin call.
    */
-  addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
+  addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): Promise<PluginListenerHandle>;
 
   /**
    * Listen for the hardware back button event (Android only). If you want to close the app, call `App.exitApp()`
    */
-  addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+  addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): Promise<PluginListenerHandle>;
 }
 
 export interface AppState {
@@ -190,13 +190,13 @@ export interface BackgroundTaskPlugin extends Plugin {
    * where `taskId` is the value returned from `BackgroundTask.beforeExit()`
    * @param cb the task to run when the app is backgrounded but before it is terminated
    */
-  beforeExit(cb: Function): CallbackID;
+  beforeExit(cb: Function): Promise<CallbackID>;
 
   /**
    * Notify the OS that the given task is finished and the OS can continue
    * backgrounding the app.
    */
-  finish(options: {taskId: CallbackID}): void;
+  finish(options: {taskId: CallbackID}): Promise<void>;
 }
 
 //
@@ -220,8 +220,8 @@ export interface BrowserPlugin extends Plugin {
    */
   close(): Promise<void>;
 
-  addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): PluginListenerHandle;
-  addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): PluginListenerHandle;
+  addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): Promise<PluginListenerHandle>;
 }
 
 export interface BrowserOpenOptions {
@@ -718,7 +718,7 @@ export interface GeolocationPlugin extends Plugin {
    * Set up a watch for location changes. Note that watching for location changes
    * can consume a large amount of energy. Be smart about listening only when you need to.
    */
-  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): CallbackID;
+  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): Promise<CallbackID>;
 
   /**
    * Clear a given watch
@@ -791,30 +791,30 @@ export interface HapticsPlugin extends Plugin {
   /**
    * Trigger a haptics "impact" feedback
    */
-  impact(options: HapticsImpactOptions): void;
+  impact(options: HapticsImpactOptions): Promise<void>;
   /**
    * Trigger a haptics "notification" feedback
    */
-  notification(options: HapticsNotificationOptions): void;
+  notification(options: HapticsNotificationOptions): Promise<void>;
   /**
    * Vibrate the device
    */
-  vibrate(): void;
+  vibrate(): Promise<void>;
   /**
    * Trigger a selection started haptic hint
    */
-  selectionStart(): void;
+  selectionStart(): Promise<void>;
   /**
    * Trigger a selection changed haptic hint. If a selection was
    * started already, this will cause the device to provide haptic
    * feedback (on iOS at least)
    */
-  selectionChanged(): void;
+  selectionChanged(): Promise<void>;
   /**
    * If selectionStart() was called, selectionEnd() ends the selection.
    * For example, call this when a user has lifted their finger from a control
    */
-  selectionEnd(): void;
+  selectionEnd(): Promise<void>;
 }
 
 export interface HapticsImpactOptions {
@@ -949,8 +949,8 @@ export interface LocalNotificationsPlugin extends Plugin {
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
-  addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+  addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): Promise<PluginListenerHandle>;
 }
 
 
@@ -1038,11 +1038,11 @@ export interface MotionPlugin extends Plugin {
   /**
    * Listen for accelerometer data
    */
-  addListener(eventName: 'accel', listenerFunc: (event: MotionEventResult) => void): PluginListenerHandle;
+  addListener(eventName: 'accel', listenerFunc: (event: MotionEventResult) => void): Promise<PluginListenerHandle>;
   /**
    * Listen for device orientation change (compass heading, etc.)
    */
-  addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
+  addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): Promise<PluginListenerHandle>;
 }
 
 export type MotionWatchOrientationCallback = (accel: MotionOrientationEventResult) => void;
@@ -1085,7 +1085,7 @@ export interface NetworkPlugin extends Plugin {
   /**
    * Listen for network status change events
    */
-  addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle;
+  addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): Promise<PluginListenerHandle>;
 }
 
 export interface NetworkStatus {
@@ -1324,10 +1324,10 @@ export interface PushNotificationsPlugin extends Plugin {
   createChannel(channel: PushNotificationChannel): Promise<void>;
   deleteChannel(channel: PushNotificationChannel): Promise<void>;
   listChannels(): Promise<PushNotificationChannelList>;
-  addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
-  addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+  addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): Promise<PluginListenerHandle>;
 }
 
 //

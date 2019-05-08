@@ -133,15 +133,11 @@ public class JSExport {
     lines.add("t['" + method.getName() + "'] = function(" + TextUtils.join(", ", args) + ") {");
 
     switch(returnType) {
-      case PluginMethod.RETURN_NONE:
-        lines.add("return w.Capacitor.nativeCallback('" + plugin.getId() + "', '" + method.getName() + "', " + CATCHALL_OPTIONS_PARAM + ")");
-        break;
       case PluginMethod.RETURN_PROMISE:
         lines.add("return w.Capacitor.nativePromise('" + plugin.getId() + "', '" + method.getName() + "', " + CATCHALL_OPTIONS_PARAM + ")");
         break;
       case PluginMethod.RETURN_CALLBACK:
-        lines.add("return w.Capacitor.nativeCallback('" + plugin.getId() + "', '" +
-            method.getName() + "', " + CATCHALL_OPTIONS_PARAM + ", " + CALLBACK_PARAM + ")");
+        lines.add("return w.Capacitor.nativeCallback('" + plugin.getId() + "', '" + method.getName() + "', " + CATCHALL_OPTIONS_PARAM + ", " + CALLBACK_PARAM + ")");
         break;
       default:
         // TODO: Do something here?

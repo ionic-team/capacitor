@@ -381,7 +381,7 @@ public class Plugin {
    * @param call
    */
   @SuppressWarnings("unused")
-  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
+  @PluginMethod()
   public void addListener(PluginCall call) {
     String eventName = call.getString("eventName");
     call.save();
@@ -393,7 +393,7 @@ public class Plugin {
    * @param call
    */
   @SuppressWarnings("unused")
-  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
+  @PluginMethod()
   public void removeListener(PluginCall call) {
     String eventName = call.getString("eventName");
     String callbackId = call.getString("callbackId");

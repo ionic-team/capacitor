@@ -13,7 +13,7 @@ import { Plugins } from '@capacitor/core';
 
 const { Network } = Plugins;
 
-let handler = Network.addListener('networkStatusChange', (status) => {
+let handler = await Network.addListener('networkStatusChange', (status) => {
   console.log("Network status changed", status);
 });
 // To stop listening:

@@ -10,7 +10,7 @@ import com.getcapacitor.PluginMethod;
 @NativePlugin()
 public class Console extends Plugin {
 
-  @PluginMethod(returnType = PluginMethod.RETURN_NONE)
+  @PluginMethod()
   public void log(PluginCall call) {
     String level = call.getString("level");
     String message = call.getString("message", "");

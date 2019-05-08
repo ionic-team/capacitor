@@ -14,7 +14,7 @@
   addLegacyHandlers(win);
 
   capacitor.Plugins = capacitor.Plugins || {};
-  
+
   capacitor.DEBUG = typeof capacitor.DEBUG === 'undefined' ? true : capacitor.DEBUG;
 
   // keep a collection of callbacks for native response data
@@ -56,7 +56,7 @@
 
   // patch window.console and store original console fns
   var orgConsole = {};
-  
+
   // list log functions bridged to native log
   var bridgedLevels = {
     debug: true,
@@ -66,7 +66,7 @@
     trace: true,
     warn: true,
   };
-  
+
   Object.keys(win.console).forEach(function (level) {
     if (typeof win.console[level] === 'function') {
       // loop through all the console functions and keep references to the original
@@ -293,12 +293,12 @@
     var callbackId = capacitor.nativeCallback(pluginId, 'addListener', {
       eventName: eventName
     }, callback);
-    return {
+    return Promise.resolve({
       remove: function() {
         console.log('Removing listener', pluginId, eventName);
         capacitor.removeListener(pluginId, callbackId, eventName, callback);
       }
-    }
+    });
   };
 
   capacitor.removeListener = function(pluginId, callbackId, eventName, callback) {
@@ -335,12 +335,12 @@
     if(!errorModal) {
       errorModal = makeErrorModal(error);
     }
-      
+
     errorModal.style.display = 'block';
     updateErrorModal(error);
   }
- 
- 
+
+
   capacitor.handleWindowError = function (msg, url, lineNo, columnNo, error) {
     var string = msg.toLowerCase();
     var substring = "script error";

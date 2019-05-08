@@ -6,7 +6,6 @@
 #define CAP_EXTERN extern __attribute__((visibility("default")))
 #endif
 
-#define CAPPluginReturnNone @"none"
 #define CAPPluginReturnCallback @"callback"
 #define CAPPluginReturnPromise @"promise"
 #define CAPPluginReturnWatch @"watch"

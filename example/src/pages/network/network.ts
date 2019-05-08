@@ -26,8 +26,8 @@ export class NetworkPage {
     this.getStatus();
   }
 
-  startListen() {
-    this.handler = Network.addListener('networkStatusChange', (status) => {
+  async startListen() {
+    this.handler = await Network.addListener('networkStatusChange', (status) => {
       console.log("Network status changed", status);
     });
   }

@@ -8,7 +8,7 @@ CAP_PLUGIN(CAPAccessibilityPlugin, "Accessibility",
 )
 
 CAP_PLUGIN(CAPAppPlugin, "App",
-  CAP_PLUGIN_METHOD(exitApp, CAPPluginReturnNone);
+  CAP_PLUGIN_METHOD(exitApp, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(canOpenUrl, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(openUrl, CAPPluginReturnPromise);
@@ -16,7 +16,7 @@ CAP_PLUGIN(CAPAppPlugin, "App",
 
 CAP_PLUGIN(CAPBackgroundTaskPlugin, "BackgroundTask",
   CAP_PLUGIN_METHOD(beforeExit, CAPPluginReturnCallback);
-  CAP_PLUGIN_METHOD(finish, CAPPluginReturnNone);
+  CAP_PLUGIN_METHOD(finish, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPBrowserPlugin, "Browser",
@@ -35,7 +35,7 @@ CAP_PLUGIN(CAPClipboardPlugin, "Clipboard",
 )
 
 CAP_PLUGIN(CAPConsolePlugin, "Console",
-  CAP_PLUGIN_METHOD(log, CAPPluginReturnNone);
+  CAP_PLUGIN_METHOD(log, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPDevicePlugin, "Device",
@@ -62,12 +62,12 @@ CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
 )
 
 CAP_PLUGIN(CAPHapticsPlugin, "Haptics",
-  CAP_PLUGIN_METHOD(impact, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(notification, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionStart, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionChanged, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionEnd, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(vibrate, CAPPluginReturnNone);
+  CAP_PLUGIN_METHOD(impact, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(notification, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(selectionStart, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(selectionChanged, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(selectionEnd, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(vibrate, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPKeyboard, "Keyboard",

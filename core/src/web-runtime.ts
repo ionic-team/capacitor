@@ -13,14 +13,14 @@ export class CapacitorWeb {
           return new Proxy<any>({}, {
             get: (_target, _prop) => {
               if (typeof _target[_prop] === 'undefined') {
-                return thisRef.pluginMethodNoop.bind(thisRef, _target, _prop,  prop);
+                return Promise.resolve(thisRef.pluginMethodNoop.bind(thisRef, _target, _prop,  prop));
               } else {
-                return _target[_prop];
+                return Promise.resolve(_target[_prop]);
               }
             }
           });
         } else {
-          return target[prop];
+          return Promise.resolve(target[prop]);
         }
       }
     })
