@@ -50,7 +50,6 @@ Starting with the TypeScript interface can be a good way to build out the API fo
 here's the default interface for our Plugin:
 
 ```typescript
-module
 declare module "@capacitor/core" {
   interface PluginRegistry {
     Echo?: EchoPlugin;
