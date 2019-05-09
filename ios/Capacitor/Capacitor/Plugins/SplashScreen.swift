@@ -94,6 +94,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   }
   
   func showOnLaunch() {
+    self.bridge.viewController.view.addSubview(self.imageView)
     let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
     let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? launchAutoHide
     showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, completion: {
@@ -104,7 +105,9 @@ public class CAPSplashScreenPlugin : CAPPlugin {
     
     DispatchQueue.main.async {
       
-      self.bridge.viewController.view.addSubview(self.imageView)
+      if !isLaunchSplash {
+        self.bridge.viewController.view.addSubview(self.imageView)
+      }
 
       self.bridge.viewController.view.isUserInteractionEnabled = false
 
