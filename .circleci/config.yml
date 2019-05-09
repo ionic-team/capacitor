@@ -11,7 +11,8 @@ jobs:
     macos:
       xcode: "10.0"
     working_directory: /tmp/workspace
-    - run:
+    steps:
+      - run:
           name: Install CocoaPods
           command: |
             curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
