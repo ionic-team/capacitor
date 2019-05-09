@@ -44,13 +44,13 @@ The rest of the fields are optional and will fill out your initial `package.json
 ## TypeScript Interface
 
 Each plugin comes with some typescript files that simply export TypeScript interfaces. These interfaces
-can provide typing to TypeScript consumers of your plugin. 
+can provide typing to TypeScript consumers of your plugin.
 
 Starting with the TypeScript interface can be a good way to build out the API for your plugin. For example,
 here's the default interface for our Plugin:
 
 ```typescript
-declare global {
+declare module "@capacitor/core" {
   interface PluginRegistry {
     Echo?: EchoPlugin;
   }
@@ -69,7 +69,7 @@ Whenever you are ready to publish your plugin, just use:
 npm publish
 ```
 
-This will build the JS portion of your plugin and publish the rest of your plugin files to NPM. 
+This will build the JS portion of your plugin and publish the rest of your plugin files to NPM.
 
 Your package can now be installed using `npm install your-plugin` in any Capacitor app.
 
