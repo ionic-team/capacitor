@@ -54,6 +54,7 @@ workflows:
   node-ios:
     jobs:
       - get-cli
+      - install-cocoapods
       - run-cli-tests:
           requires:
             - get-cli
