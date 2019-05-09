@@ -1,7 +1,7 @@
 import Foundation
 
 @objc(CAPClipboardPlugin)
-public class CAPClipboardPlugin : CAPPlugin {
+public class CAPClipboardPlugin : CAPPlugins {
   @objc func write(_ call: CAPPluginCall) {
     if let string = call.options["string"] as? String {
       UIPasteboard.general.string = string
