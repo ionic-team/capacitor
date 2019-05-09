@@ -45,9 +45,9 @@ jobs:
     steps:
       - checkout
       - run:
-          command: pod spec lint --allow-warnings Capacitor.podspec
+          command: pod lib lint --allow-warnings Capacitor.podspec
       - run:
-          command: pod spec lint --allow-warnings CapacitorCordova.podspec
+          command: pod lib lint --allow-warnings CapacitorCordova.podspec
 
 workflows:
   version: 2.1
