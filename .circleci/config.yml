@@ -62,6 +62,6 @@ jobs:
 
 workflows:
   version: 2.1
-    android-build:
-      jobs:
-        - build-android
+  android-build:
+    jobs:
+      - build-android
