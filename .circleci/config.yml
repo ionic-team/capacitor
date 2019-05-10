@@ -49,9 +49,20 @@ jobs:
       - run:
           command: pod lib lint --allow-warnings CapacitorCordova.podspec
 
+  build-android:
+    docker:
+      - image: circleci/android:api-27-node8-alpha
+    working_directory: /tmp/workspace
+
+    steps:
+      - checkout
+      - run:
+          command: ./gradlew clean build -b capacitor/build.gradle
+          working_directory: /tmp/workspace/android
+
 workflows:
   version: 2.1
-  node-ios:
+  node-ios-android:
     jobs:
       - get-cli
       - install-cocoapods
@@ -62,3 +73,4 @@ workflows:
       - build-ios:
           requires:
             - install-cocoapods
+      - build-android
