@@ -49,16 +49,29 @@ jobs:
       - run:
           command: pod lib lint --allow-warnings CapacitorCordova.podspec
 
+  build-android:
+    macos:
+      xcode: "10.0"
+    working_directory: /tmp/workspace/android
+
+    steps:
+      - checkout
+      - run:
+        command: ./gradlew clean build -b capacitor/build.gradle
+
 workflows:
   version: 2.1
-  node-ios:
-    jobs:
-      - get-cli
-      - install-cocoapods
-      - run-cli-tests:
-          requires:
-            - get-cli
-            - install-cocoapods
-      - build-ios:
-          requires:
-            - install-cocoapods
+  # node-ios:
+  #  jobs:
+  #    - get-cli
+   #   - install-cocoapods
+    #  - run-cli-tests:
+     #     requires:
+      #      - get-cli
+       #     - install-cocoapods
+  #    - build-ios:
+   #       requires:
+    #        - install-cocoapods
+    android:
+      jobs:
+        - build-android
