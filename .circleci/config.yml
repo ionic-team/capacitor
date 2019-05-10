@@ -62,6 +62,15 @@ jobs:
 
 workflows:
   version: 2.1
-  android-build:
+   node-ios-android:
     jobs:
+      - get-cli
+      - install-cocoapods
+      - run-cli-tests:
+          requires:
+            - get-cli
+            - install-cocoapods
+      - build-ios:
+          requires:
+            - install-cocoapods
       - build-android
