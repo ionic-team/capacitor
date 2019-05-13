@@ -114,37 +114,37 @@ Here is the full implementation of `home.page.ts`:
 import { Component, OnInit } from '@angular/core';
 
 import {
-Plugins,
-PushNotification,
-PushNotificationToken } from '@capacitor/core';
+  Plugins,
+  PushNotification,
+  PushNotificationToken } from '@capacitor/core';
 
 const { PushNotifications } = Plugins;
 
 @Component({
-selector: 'app-home',
-templateUrl: 'home.page.html',
-styleUrls: ['home.page.scss'],
+  selector: 'app-home',
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
 })
 
 export class HomePage implements OnInit {
 
-ngOnInit() {
-console.log('Initializing HomePage');
+  ngOnInit() {
+    console.log('Initializing HomePage');
 
-PushNotifications.register();
+    PushNotifications.register();
 
-PushNotifications.addListener('registration', (token: PushNotificationToken) => {
-alert('Push notification registration successful. Token: ' + token.value);
-});
+    PushNotifications.addListener('registration', (token: PushNotificationToken) => {
+      alert('Push notification registration successful. Token: ' + token.value);
+    });
 
-PushNotifications.addListener('registrationError', (error: any) => {
-alert('Error on push notification registration: ' + JSON.stringify(error));
-});
+    PushNotifications.addListener('registrationError', (error: any) => {
+      alert('Error on push notification registration: ' + JSON.stringify(error));
+    });
 
-PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
-alert('Push notification received: ' + JSON.stringify(notification));
-});
-}
+    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
+      alert('Push notification received: ' + JSON.stringify(notification));
+    });
+  }
 }
 ```
 
