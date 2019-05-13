@@ -28,7 +28,9 @@ export class ClipboardPage {
     .then(blob => new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onloadend = () => {
-        this.base64Image = reader.result.replace('data:;base64,', '');
+        if (typeof reader.result === 'string' || reader.result instanceof String) {
+          this.base64Image = reader.result.replace('data:;base64,', '');
+        }
       }
       reader.onerror = reject
       reader.readAsDataURL(blob)
