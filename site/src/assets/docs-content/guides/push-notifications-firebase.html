@@ -1,0 +1,258 @@
+<h1 id="using-push-notifications-with-firebase-in-an-ionic-angular-app">Using Push Notifications with Firebase in an Ionic + Angular App</h1>
+<p><strong>Web Framework</strong>: Ionic 4 + Angular<br><strong>Platforms</strong>: iOS, Android</p>
+<p>One of the most common features provided by application developers to their users is push notifications. In this tutorial, we&#39;ll walk through all the steps needed to get <a href="https://firebase.google.com/docs/cloud-messaging">Firebase Cloud Messaging</a> working on iOS and Android.</p>
+<p>For the purposes of registering and monitoring for push notifications from Firebase, we&#39;ll make use of the <a href="https://capacitor.ionicframework.com/docs/apis/push-notifications/">Push Notification API for Capacitor</a> in an Ionic + Angular application.</p>
+<h2 id="required-dependencies">Required Dependencies</h2>
+<p>Building and deploying iOS and Android applications using Capacitor requires a bit of setup. Please <a href="../getting-started/dependencies">follow the instructions to install the necessary Capacitor dependencies here</a> before continuing.</p>
+<p>To test push notifications on iOS, Apple requires that you have <a href="https://developer.apple.com/">a paid Apple Developer account</a> and a <em>physical</em> iOS device.</p>
+<h2 id="prepare-an-ionic-app">Prepare an Ionic App</h2>
+<p>If you have an existing Ionic 4 app, skip this section. If not, let&#39;s create an Ionic app first. </p>
+<p>In your preferred terminal, install the latest version of the Ionic CLI:</p>
+<pre><code class="lang-bash">npm install -g ionic
+</code></pre>
+<p>Next, let&#39;s use the CLI to create a new Ionic 4 app based on the <strong>blank</strong> starter project and call it <strong>capApp</strong>:</p>
+<pre><code class="lang-bash">ionic start capApp blank
+</code></pre>
+<h2 id="add-capacitor">Add Capacitor</h2>
+<p>Once the application has been created successfully, switch to the newly created project directory:</p>
+<pre><code class="lang-bash"><span class="hljs-built_in">cd</span> capApp/
+</code></pre>
+<p>Next, let&#39;s add Capacitor and the Capacitor CLI to our new application...</p>
+<pre><code class="lang-bash">ionic integrations <span class="hljs-built_in">enable</span> capacitor
+</code></pre>
+<p>... and finish up by running <code>npx cap init</code>, which will allow us to fill out our app information.</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> init
+? App name: CapApp
+? App Package ID: com.mydomain.myappname
+</code></pre>
+<h2 id="building-the-app-adding-platforms">Building the App &amp; Adding Platforms</h2>
+<p>Before adding any native platforms to this project, the app must be built at least once. A web build creates the web assets directory that Capacitor needs (<code>www</code> folder in Ionic projects).</p>
+<pre><code class="lang-bash">ionic build
+</code></pre>
+<p>Next, let&#39;s add the iOS and Android platforms to our app.</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> add ios
+npx <span class="hljs-built_in">cap</span> add android
+</code></pre>
+<p>Upon running these commands, both <code>android</code> and <code>ios</code> folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your Ionic app (i.e., check them into source control).</p>
+<h2 id="using-the-capacitor-push-notification-api">Using the Capacitor Push Notification API</h2>
+<p>Before we get to Firebase, we&#39;ll need to ensure that our application can register for push notifications by making use of the Capacitor Push Notification API. We&#39;ll also add an <code>alert</code> (you could use <code>console.log</code> statements instead) to show us the payload for a notification when it arrives and the app is open on our device.</p>
+<p>In your app, head to the <code>home.page.ts</code> file and add an <code>import</code> statement and a <code>const</code> to make use of the Capacitor Push API:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> {
+  Plugins,
+  PushNotification,
+  PushNotificationToken } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { PushNotifications } = Plugins;
+</code></pre>
+<p>Then, update the <code>ngOnInit()</code> method to register for push notifications. We can <code>alert()</code> a few of the events to monitor what is happening, such as the <code>registration</code> / <code>registrationError</code> and <code>pushNotificationReceived</code> events:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> HomePage <span class="hljs-keyword">implements</span> OnInit {
+
+ngOnInit() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Initializing HomePage'</span>);
+
+    <span class="hljs-comment">// Register with Apple / Google to receive push via APNS/FCM</span>
+    PushNotifications.register();
+
+    <span class="hljs-comment">// On succcess, we should be able to receive notifications</span>
+    PushNotifications.addListener(<span class="hljs-string">'registration'</span>, 
+      <span class="hljs-function">(<span class="hljs-params">token: PushNotificationToken</span>) =&gt;</span> {
+        alert(<span class="hljs-string">'Push registration success, token: '</span> + token.value);
+      }
+    );
+
+    <span class="hljs-comment">// Some issue with our setup and push will not work</span>
+    PushNotifications.addListener(<span class="hljs-string">'registrationError'</span>, 
+      <span class="hljs-function">(<span class="hljs-params">error: <span class="hljs-built_in">any</span></span>) =&gt;</span> {
+        alert(<span class="hljs-string">'Error on registration: '</span> + <span class="hljs-built_in">JSON</span>.stringify(error));
+      }
+    );
+
+    <span class="hljs-comment">// Show us the notification payload if the app is open on our device</span>
+    PushNotifications.addListener(<span class="hljs-string">'pushNotificationReceived'</span>, 
+      <span class="hljs-function">(<span class="hljs-params">notification: PushNotification</span>) =&gt;</span> {
+        alert(<span class="hljs-string">'Push received: '</span> + <span class="hljs-built_in">JSON</span>.stringify(notification));
+      }
+    );
+}
+</code></pre>
+<p>Here is the full implementation of <code>home.page.ts</code>:</p>
+<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+
+<span class="hljs-keyword">import</span> {
+  Plugins,
+  PushNotification,
+  PushNotificationToken } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
+
+<span class="hljs-keyword">const</span> { PushNotifications } = Plugins;
+
+<span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'app-home'</span>,
+  templateUrl: <span class="hljs-string">'home.page.html'</span>,
+  styleUrls: [<span class="hljs-string">'home.page.scss'</span>],
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> HomePage <span class="hljs-keyword">implements</span> OnInit {
+
+  ngOnInit() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Initializing HomePage'</span>);
+
+    PushNotifications.register();
+
+    PushNotifications.addListener(<span class="hljs-string">'registration'</span>, 
+      <span class="hljs-function">(<span class="hljs-params">token: PushNotificationToken</span>) =&gt;</span> {
+        alert(<span class="hljs-string">'Push registration success, token: '</span> + token.value);
+      }
+    );
+
+    PushNotifications.addListener(<span class="hljs-string">'registrationError'</span>, 
+      <span class="hljs-function">(<span class="hljs-params">error: <span class="hljs-built_in">any</span></span>) =&gt;</span> {
+        alert(<span class="hljs-string">'Error on registration: '</span> + <span class="hljs-built_in">JSON</span>.stringify(error));
+      }
+    );
+
+    PushNotifications.addListener(<span class="hljs-string">'pushNotificationReceived'</span>, 
+      <span class="hljs-function">(<span class="hljs-params">notification: PushNotification</span>) =&gt;</span> {
+        alert(<span class="hljs-string">'Push received: '</span> + <span class="hljs-built_in">JSON</span>.stringify(notification));
+      }
+    );
+}
+</code></pre>
+<h2 id="creating-a-project-for-your-app-on-firebase">Creating a Project for your App on Firebase</h2>
+<p>Before we can connect Firebase Cloud Messaging to your application and send push notifications, you&#39;ll need to start a project in Firebase.</p>
+<p>Go to the <a href="https://console.firebase.google.com/">Firebase Console</a> and click the <strong>Add project</strong> button.</p>
+<p>Name the project, accept the Firebase ToS and click <strong>Create project</strong> to continue. A Project ID should be automatically generated for you.</p>
+<h2 id="android">Android</h2>
+<h3 id="integrating-firebase-with-the-android-app">Integrating Firebase with the Android app</h3>
+<p>This section more-or-less mirrors the <a href="https://firebase.google.com/docs/android/setup?authuser=0">setting up Firebase using the Firebase console documentation</a>. See below for specific Capacitor-related notes.</p>
+<p>Go to the Project Overview page for your Firebase project and, under the <strong>Grow</strong> section, click the <strong>Cloud Messaging</strong> option. At the top, click on the <strong>Android</strong> icon.</p>
+<p>The next screen will ask you for some information about your application.</p>
+<ul>
+<li>Your <strong>Android package name</strong> should match the <strong>appId</strong> from your <code>capacitor.config.json</code> file</li>
+<li>We used <code>com.mydomain.myappname</code> for this Capacitor app ID, so that is what we&#39;ll use for this entry.</li>
+<li>Nickname and Debug Signing Certificate are optional</li>
+</ul>
+<p>Then click the <strong>Register app</strong> button.</p>
+<h3 id="download-and-use-the-google-services-json-file">Download and Use the <code>google-services.json</code> file</h3>
+<p>The next prompt will ask you to download a <code>google-services.json</code> file. This file contains the information your Capacitor app needs to connect to Firebase from Android.</p>
+<p>Download the <code>google-services.json</code> file to your local machine. Then move the file into your Capacitor Android project directory, specifically under <code>android/app/</code>.</p>
+<p><img src="/assets/img/docs/guides/firebase-push-notifications/google-services-location-android.png" alt="Google Services JSON Location for Android"></p>
+<p>We don&#39;t need to <em>add</em> any permissions to our project because Capacitor projects automatically include a version of <code>firebase-messaging</code> in our <code>app/build.gradle</code> file:</p>
+<pre><code>implementation &#39;com.google.firebase:firebase-messaging:17.4.0&#39;
+</code></pre><p><strong>Note</strong>: Make sure that the file is added to source control. You may need to modify the <code>.gitignore</code> file under <code>android/</code> to add the file.</p>
+<h2 id="ios">iOS</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>iOS push notifications are significantly more complicated to set up than Android. You must have a <a href="https://developer.apple.com/">paid Apple Developer account</a> <em>and</em> take care of the following items prior to being able to test push notifications with your iOS application:</p>
+<ol>
+<li><a href="https://help.apple.com/xcode/mac/current/#/dev60b6fbbc7">Setup the proper Development or Production certificates &amp; provisioning profiles</a> for your iOS application in the Apple Developer Portal</li>
+<li><a href="https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_certificate-based_connection_to_apns">Create an APNS certificate or key</a> for either Development or Production in the Apple Developer Portal</li>
+<li><a href="https://help.apple.com/xcode/mac/current/#/dev88ff319e7">Ensure Push Notification capabilities have been enabled</a> in your application in Xcode</li>
+<li>Have a physical iOS device running one of the two latest iOS versions (push notification functionality does not work in the iOS simulators)</li>
+</ol>
+<h3 id="integrating-firebase-with-our-native-ios-app">Integrating Firebase with our native iOS app</h3>
+<p>This part is very similar to the Android section above, with a few key differences.</p>
+<p>First, go to the <strong>Project Overview</strong> page for your Firebase project. If you&#39;ve been following this guide, you&#39;ll already have an Android application listed at the top of the page.</p>
+<p>To add iOS to your Firebase project, click the <strong>Add App</strong> button and select the <strong>iOS</strong> platform.</p>
+<p>The next screen will ask you for some information about your application.</p>
+<ul>
+<li>Your <strong>iOS bundle ID</strong> should match the <strong>appId</strong> from your <code>capacitor.config.json</code> file</li>
+<li>We used <code>com.mydomain.myappname</code> for this Capacitor app ID, so that is what we&#39;ll use for this entry.</li>
+<li>App Nickname and App Store ID are optional</li>
+</ul>
+<p>Then click the <strong>Register app</strong> button.</p>
+<h3 id="add-the-googleservice-info-plist-file-to-your-ios-app">Add the <code>GoogleService-Info.plist</code> file to your iOS app</h3>
+<p><strong>Note</strong>: This is <strong>not</strong> the same file used for your Android app.</p>
+<p>Download the <code>GoogleService-Info.plist</code> provided to your local machine and move it into your Xcode project as instructed, ensuring to add it to all targets. </p>
+<p><img src="/assets/img/docs/guides/firebase-push-notifications/google-plist-location-ios.png" alt="Google Service Info Plist Location for iOS"></p>
+<p><strong>Note</strong>: It is recommended to use Xcode to move the <code>.plist</code> file into your project.</p>
+<h3 id="add-the-firebase-sdk-via-cocoapods">Add the Firebase SDK via CocoaPods</h3>
+<p>The Push Notification API on iOS makes use of CocoaPods - an iOS dependency management system - and we need to tell CocoaPods to make use of Firebase.</p>
+<p>To do this, we need to modify the <code>Podfile</code>, which is located in your <code>ios/App</code> directory:</p>
+<p><img src="/assets/img/docs/guides/firebase-push-notifications/podfile-location-ios.png" alt="Podfile Location iOS"></p>
+<p>We need to modify the App target pods to include Firebase. To do that, add <code>pod Firebase/Messaging</code> to your <code>target &#39;App&#39;</code> section, like so:</p>
+<pre><code class="lang-ruby">import Capacitor
+import Firebase <span class="hljs-comment"># Add this line</span>
+
+...
+
+target <span class="hljs-string">'App'</span> <span class="hljs-keyword">do</span>
+capacitor_pods
+<span class="hljs-comment"># Add your Pods here</span>
+pod <span class="hljs-string">'Firebase/Messaging'</span> <span class="hljs-comment"># Add this line</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>Your <code>Podfile</code> should look something like this:</p>
+<pre><code class="lang-ruby">platform <span class="hljs-symbol">:ios</span>, <span class="hljs-string">'11.0'</span>
+use_frameworks!
+
+<span class="hljs-comment"># workaround to avoid Xcode 10 caching of Pods that requires</span>
+<span class="hljs-comment"># Product -&gt; Clean Build Folder after new Cordova plugins installed</span>
+<span class="hljs-comment"># Requires CocoaPods 1.6 or newer</span>
+install! <span class="hljs-string">'cocoapods'</span>, <span class="hljs-symbol">:disable_input_output_paths</span> =&gt; <span class="hljs-literal">true</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">capacitor_pods</span></span>
+  <span class="hljs-comment"># Automatic Capacitor Pod dependencies, do not delete</span>
+  pod <span class="hljs-string">'Capacitor'</span>, <span class="hljs-symbol">:path</span> =&gt; <span class="hljs-string">'../../node_modules/@capacitor/ios'</span>
+  pod <span class="hljs-string">'CapacitorCordova'</span>, <span class="hljs-symbol">:path</span> =&gt; <span class="hljs-string">'../../node_modules/@capacitor/ios'</span>
+
+  <span class="hljs-comment"># Do not delete</span>
+<span class="hljs-keyword">end</span>
+
+target <span class="hljs-string">'App'</span> <span class="hljs-keyword">do</span>
+  capacitor_pods
+  <span class="hljs-comment"># Add your Pods here</span>
+  pod <span class="hljs-string">'Firebase/Messaging'</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<h3 id="add-initialization-code">Add Initialization Code</h3>
+<p>To connect to Firebase when your iOS app starts up, you need to add the following initialization code to your <code>AppDelegate.swift</code> file, in the <code>application(didFinishLaunchingWithOptions)</code> method:</p>
+<pre><code class="lang-swift"><span class="hljs-type">FirebaseApp</span>.configure()
+</code></pre>
+<p>Your <code>AppDelegate.swift</code> file&#39;s <code>application(didFinishLaunching)</code> method should look something like this:</p>
+<pre><code class="lang-swift"><span class="hljs-keyword">var</span> window: <span class="hljs-type">UIWindow</span>?
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">application</span><span class="hljs-params">(<span class="hljs-number">_</span> application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?)</span></span> -&gt; <span class="hljs-type">Bool</span> {
+  <span class="hljs-type">FirebaseApp</span>.configure()
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+}
+</code></pre>
+<h3 id="update-the-project">Update the Project</h3>
+<p>Now we&#39;ll need to ensure that our iOS project is updated with the proper Firebase CocoaPod installed.</p>
+<p><em>Note</em>: This part can take awhile as CocoaPods needs to download all the appropriate files/dependencies.</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> update ios
+</code></pre>
+<h3 id="upload-the-apns-certificate-or-key-to-firebase">Upload the APNS Certificate or Key to Firebase</h3>
+<p>If you followed the instructions from the beginning, you&#39;ll have created an Apple APNS Certificate or an APNS Auth Key in the Apple Developer portal. You need to upload one of these to Firebase before Firebase can talk to APNS and send push notifications to your application.</p>
+<p>To upload your certificate or auth key, from the <strong>Project Overview</strong> page:</p>
+<ol>
+<li>Click on your iOS application and then the <strong>Settings</strong> gear icon.</li>
+<li>On the Settings page, click on the <strong>Cloud Messaging</strong> tab.</li>
+<li>Under the <strong>iOS app configuration</strong> header, upload your Auth Key or Certificate(s) using the provided <strong>Upload</strong> button.</li>
+</ol>
+<h2 id="sending-a-test-notification">Sending a Test Notification</h2>
+<p>Now for the fun part - let&#39;s verify that push notifications from Firebase are working on Android and iOS!</p>
+<p>We need to fire up our application on Android or iOS to see our code on <code>home.page.ts</code> receive the notifications.</p>
+<p>To open your Android project in Android Studio:</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> open android
+</code></pre>
+<p>To open your iOS project in Xcode:</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> open ios
+</code></pre>
+<p>Once the project is open, side-load the application on your device using the Run feature of either Android Studio or Xcode. The app should start up on the home page.</p>
+<p><strong>Note</strong>: You may be asked to allow the application to receive notifications if this is the first time starting it up (this is the Push Notification API registering with Apple / Google). Make sure you choose to <strong>Allow notifications</strong>, or the next step won&#39;t work!</p>
+<p>Now we&#39;ll test to see if the notifications are received by our device. To send a notification, in Firebase, go to the <strong>Cloud Messaging</strong> section under the Grow header in the project pane. </p>
+<p>Next, select the <strong>New Notification</strong> button. </p>
+<p>When creating the notification, you only need to specify the following information:</p>
+<ol>
+<li>The text of the notification</li>
+<li>The title (Android only, optional for iOS)</li>
+<li>The Target (either a user segment or topic; I recommend just targeting the iOS or Android app itself, see below)</li>
+</ol>
+<p><img src="/assets/img/docs/guides/firebase-push-notifications/change-push-target-firebase.png" alt="Change Push Target Firebase"></p>
+<ol start="4">
+<li>The Scheduling (leave this to &quot;Now&quot;)</li>
+</ol>
+<p>At that point, you can <strong>Review</strong> the notification you&#39;ve put together and select <strong>Publish</strong> to send the notification out.</p>
+<p>If you&#39;ve setup your application correctly, you&#39;ll see an alert pop up on your home screen with the push notification you composed in Firebase!</p>
+<p><img src="/assets/img/docs/guides/firebase-push-notifications/push-test-android.png" alt="Push Test Android"></p>
+<p><img src="/assets/img/docs/guides/firebase-push-notifications/push-test-ios.png" alt="Push Test iOS"></p>

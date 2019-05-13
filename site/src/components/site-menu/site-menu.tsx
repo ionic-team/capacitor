@@ -89,8 +89,8 @@ export class SiteMenu {
           url: '/docs/guides/ionic-framework-app'
         },
         {
-          title: 'Firebase Push Notifications',
-          url: '/docs/guides/firebase-push-notifications'
+          title: 'Push Notifications - Firebase',
+          url: '/docs/guides/push-notifications-firebase'
         }
       ]
     },

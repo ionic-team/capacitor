@@ -1,10 +1,11 @@
-# Using Push Notifications with Firebase in an Ionic Angular 4 App
+# Using Push Notifications with Firebase in an Ionic + Angular App
 
-Platforms: iOS, Android
+**Web Framework**: Ionic 4 + Angular  
+**Platforms**: iOS, Android
 
 One of the most common features provided by application developers to their users is push notifications. In this tutorial, we'll walk through all the steps needed to get [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) working on iOS and Android.
 
-For the purposes of registering and monitoring for push notifications from Firebase, we'll make use of the [Push Notification API for Capacitor](https://capacitor.ionicframework.com/docs/apis/push-notifications/) in an Ionic Angular 4 application.
+For the purposes of registering and monitoring for push notifications from Firebase, we'll make use of the [Push Notification API for Capacitor](https://capacitor.ionicframework.com/docs/apis/push-notifications/) in an Ionic + Angular application.
 
 ## Required Dependencies
 
@@ -12,7 +13,7 @@ Building and deploying iOS and Android applications using Capacitor requires a b
 
 To test push notifications on iOS, Apple requires that you have [a paid Apple Developer account](https://developer.apple.com/) and a *physical* iOS device.
 
-## Prepare an Ionic 4 App
+## Prepare an Ionic App
 If you have an existing Ionic 4 app, skip this section. If not, let's create an Ionic app first. 
 
 In your preferred terminal, install the latest version of the Ionic CLI:
@@ -29,7 +30,7 @@ ionic start capApp blank
 
 ## Add Capacitor
 
-Once the application has been created successfully, switch to the newly created project directory. For example, on a Mac:
+Once the application has been created successfully, switch to the newly created project directory:
 
 ```bash
 cd capApp/
@@ -80,7 +81,7 @@ import {
 const { PushNotifications } = Plugins;
 ```
 
-Then, update the `ngOnInit()` method to register for push and `console.log()` a few of the events to listen for related events. My setup uses the `registration` / `registrationError` and `pushNotificationReceived` events:
+Then, update the `ngOnInit()` method to register for push notifications. We can `alert()` a few of the events to monitor what is happening, such as the `registration` / `registrationError` and `pushNotificationReceived` events:
 
 ```typescript
 export class HomePage implements OnInit {
@@ -238,7 +239,7 @@ Download the `GoogleService-Info.plist` provided to your local machine and move 
 
 ### Add the Firebase SDK via CocoaPods
 
-The Push Notification API on iOS makes use of CocoaPods - an iOS dependencies management system - and we need to tell CocoaPods to make use of Firebase.
+The Push Notification API on iOS makes use of CocoaPods - an iOS dependency management system - and we need to tell CocoaPods to make use of Firebase.
 
 To do this, we need to modify the `Podfile`, which is located in your `ios/App` directory:
 
