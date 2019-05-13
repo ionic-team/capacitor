@@ -67,15 +67,15 @@ Upon running these commands, both `android` and `ios` folders at the root of the
 
 ## Using the Capacitor Push Notification API
 
-Before we set up Firebase, let's actually use the Capacitor Push Notification API. The OS (either Android or iOS) will present the notifications, so we don't need a fancy UI. For the purposes of debugging, simple `console.log` and/or `alert` statements will suit our needs. I'm also not going to bother breaking everything into separate functions; since this is purely a demo, I'm going to throw everything into `ngOnInit()`.
+Before we get to Firebase, we'll need to ensure that our application can register for push notifications by making use of the Capacitor Push Notification API. We'll also add an `alert` (you could use `console.log` statements instead) to show us the payload for a notification when it arrives and the app is open on our device.
 
 In your app, head to the `home.page.ts` file and add an `import` statement and a `const` to make use of the Capacitor Push API:
 
 ```typescript
 import {
-Plugins,
-PushNotification,
-PushNotificationToken } from '@capacitor/core';
+  Plugins,
+  PushNotification,
+  PushNotificationToken } from '@capacitor/core';
 
 const { PushNotifications } = Plugins;
 ```
@@ -86,25 +86,31 @@ Then, update the `ngOnInit()` method to register for push and `console.log()` a 
 export class HomePage implements OnInit {
 
 ngOnInit() {
-console.log('Initializing HomePage');
+    console.log('Initializing HomePage');
 
-// Register this application with Apple / Google in order to receive push notifications via APNS/FCM
-PushNotifications.register();
+    // Register with Apple / Google to receive push via APNS/FCM
+    PushNotifications.register();
 
-// Listen for registration success; if this succeeds, we should be able to receive notifications
-PushNotifications.addListener('registration', (token: PushNotificationToken) => {
-alert('Push notification registration successful. Token: ' + token.value);
-});
+    // On succcess, we should be able to receive notifications
+    PushNotifications.addListener('registration', 
+      (token: PushNotificationToken) => {
+        alert('Push registration success, token: ' + token.value);
+      }
+    );
 
-// Listen for registration error; if this occurs, we have some issue with our setup and push notifications will not work
-PushNotifications.addListener('registrationError', (error: any) => {
-alert('Error on push notification registration: ' + JSON.stringify(error));
-});
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError', 
+      (error: any) => {
+        alert('Error on registration: ' + JSON.stringify(error));
+      }
+    );
 
-// Listen for newly received notifications; this is what we ultimately want!
-PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
-alert('Push notification received: ' + JSON.stringify(notification));
-});
+    // Show us the notification payload if the app is open on our device
+    PushNotifications.addListener('pushNotificationReceived', 
+      (notification: PushNotification) => {
+        alert('Push received: ' + JSON.stringify(notification));
+      }
+    );
 }
 ```
 
@@ -133,18 +139,23 @@ export class HomePage implements OnInit {
 
     PushNotifications.register();
 
-    PushNotifications.addListener('registration', (token: PushNotificationToken) => {
-      alert('Push notification registration successful. Token: ' + token.value);
-    });
+    PushNotifications.addListener('registration', 
+      (token: PushNotificationToken) => {
+        alert('Push registration success, token: ' + token.value);
+      }
+    );
 
-    PushNotifications.addListener('registrationError', (error: any) => {
-      alert('Error on push notification registration: ' + JSON.stringify(error));
-    });
+    PushNotifications.addListener('registrationError', 
+      (error: any) => {
+        alert('Error on registration: ' + JSON.stringify(error));
+      }
+    );
 
-    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
-      alert('Push notification received: ' + JSON.stringify(notification));
-    });
-  }
+    PushNotifications.addListener('pushNotificationReceived', 
+      (notification: PushNotification) => {
+        alert('Push received: ' + JSON.stringify(notification));
+      }
+    );
 }
 ```
 
@@ -288,10 +299,9 @@ Your `AppDelegate.swift` file's `application(didFinishLaunching)` method should 
 var window: UIWindow?
 
 func application(_ application: UIApplication,
-didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?)
--> Bool {
-FirebaseApp.configure()
-return true
+  didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+  FirebaseApp.configure()
+  return true
 }
 ```
 
