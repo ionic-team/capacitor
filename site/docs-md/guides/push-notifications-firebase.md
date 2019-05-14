@@ -195,7 +195,7 @@ Download the `google-services.json` file to your local machine. Then move the fi
 We don't need to *add* any permissions to our project because Capacitor projects automatically include a version of `firebase-messaging` in our `app/build.gradle` file:
 
 ```
-implementation 'com.google.firebase:firebase-messaging:17.4.0'
+implementation 'com.google.firebase:firebase-messaging:18.0.0'
 ```
 
 **Note**: Make sure that the file is added to source control. You may need to modify the `.gitignore` file under `android/` to add the file.
