@@ -29,10 +29,10 @@ for a plugin is possible, and is just like providing a JavaScript npm package.</
 <p>The rest of the fields are optional and will fill out your initial <code>package.json</code></p>
 <h2 id="typescript-interface">TypeScript Interface</h2>
 <p>Each plugin comes with some typescript files that simply export TypeScript interfaces. These interfaces
-can provide typing to TypeScript consumers of your plugin. </p>
+can provide typing to TypeScript consumers of your plugin.</p>
 <p>Starting with the TypeScript interface can be a good way to build out the API for your plugin. For example,
 here&#39;s the default interface for our Plugin:</p>
-<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> global {
+<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">module</span> "@capacitor/core" {
   <span class="hljs-keyword">interface</span> PluginRegistry {
     Echo?: EchoPlugin;
   }
@@ -46,7 +46,7 @@ here&#39;s the default interface for our Plugin:</p>
 <p>Whenever you are ready to publish your plugin, just use:</p>
 <pre><code class="lang-bash">npm publish
 </code></pre>
-<p>This will build the JS portion of your plugin and publish the rest of your plugin files to NPM. </p>
+<p>This will build the JS portion of your plugin and publish the rest of your plugin files to NPM.</p>
 <p>Your package can now be installed using <code>npm install your-plugin</code> in any Capacitor app.</p>
 <h2 id="next-steps">Next steps</h2>
 <p>Now it&#39;s up to you to make your plugin do something truly awesome!</p>
