@@ -76,12 +76,13 @@ In your app, head to the `home.page.ts` file and add an `import` statement and a
 import {
   Plugins,
   PushNotification,
-  PushNotificationToken } from '@capacitor/core';
+  PushNotificationToken,
+  PushNotificationActionPerformed } from '@capacitor/core';
 
 const { PushNotifications } = Plugins;
 ```
 
-Then, update the `ngOnInit()` method to register for push notifications. We can `alert()` a few of the events to monitor what is happening, such as the `registration` / `registrationError` and `pushNotificationReceived` events:
+Then, add the `ngOnInit()` method with some API methods to register and monitor for push notifications. We will also add an `alert()` a few of the events to monitor what is happening:
 
 ```typescript
 export class HomePage implements OnInit {
@@ -112,6 +113,13 @@ ngOnInit() {
         alert('Push received: ' + JSON.stringify(notification));
       }
     );
+
+    // Method called when tapping on a notification
+    PushNotifications.addListener('pushNotificationActionPerformed', 
+      (notification: PushNotificationActionPerformed) => {
+        alert('Push action performed: ' + JSON.stringify(notification));
+      }
+    );
 }
 ```
 
@@ -123,7 +131,8 @@ import { Component, OnInit } from '@angular/core';
 import {
   Plugins,
   PushNotification,
-  PushNotificationToken } from '@capacitor/core';
+  PushNotificationToken,
+  PushNotificationActionPerformed } from '@capacitor/core';
 
 const { PushNotifications } = Plugins;
 
@@ -155,6 +164,12 @@ export class HomePage implements OnInit {
     PushNotifications.addListener('pushNotificationReceived', 
       (notification: PushNotification) => {
         alert('Push received: ' + JSON.stringify(notification));
+      }
+    );
+
+    PushNotifications.addListener('pushNotificationActionPerformed', 
+      (notification: PushNotificationActionPerformed) => {
+        alert('Push action performed: ' + JSON.stringify(notification));
       }
     );
 }
@@ -192,13 +207,7 @@ Download the `google-services.json` file to your local machine. Then move the fi
 
 ![Google Services JSON Location for Android](/assets/img/docs/guides/firebase-push-notifications/google-services-location-android.png)
 
-We don't need to *add* any permissions to our project because Capacitor projects automatically include a version of `firebase-messaging` in our `app/build.gradle` file:
-
-```
-implementation 'com.google.firebase:firebase-messaging:18.0.0'
-```
-
-**Note**: Make sure that the file is added to source control. You may need to modify the `.gitignore` file under `android/` to add the file.
+We don't need to *add* any dependencies to our project because Capacitor projects automatically include a version of `firebase-messaging` in our `app/build.gradle` file.
 
 ## iOS
 
@@ -209,7 +218,7 @@ iOS push notifications are significantly more complicated to set up than Android
 1. [Setup the proper Development or Production certificates & provisioning profiles](https://help.apple.com/xcode/mac/current/#/dev60b6fbbc7) for your iOS application in the Apple Developer Portal
 2. [Create an APNS certificate or key](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_certificate-based_connection_to_apns) for either Development or Production in the Apple Developer Portal
 3. [Ensure Push Notification capabilities have been enabled](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) in your application in Xcode
-4. Have a physical iOS device running one of the two latest iOS versions (push notification functionality does not work in the iOS simulators)
+4. Have a physical iOS device as per the guidelines in the [Dependencies](../getting-started/dependencies) documentation
 
 ### Integrating Firebase with our native iOS app
 
@@ -229,30 +238,31 @@ Then click the **Register app** button.
 
 ### Add the `GoogleService-Info.plist` file to your iOS app
 
-**Note**: This is **not** the same file used for your Android app.
+*Note: This is **not** the same file used for your Android app.*
 
-Download the `GoogleService-Info.plist` provided to your local machine and move it into your Xcode project as instructed, ensuring to add it to all targets. 
+Download the `GoogleService-Info.plist` provided to your local machine.
+
+You'll then want to open Xcode...
+
+```bash
+npx cap open ios
+```
+
+... and move the `.plist` file into your Xcode project as instructed by Firebase, ensuring to add it to all targets. 
 
 ![Google Service Info Plist Location for iOS](/assets/img/docs/guides/firebase-push-notifications/google-plist-location-ios.png)
-
-**Note**: It is recommended to use Xcode to move the `.plist` file into your project.
 
 ### Add the Firebase SDK via CocoaPods
 
 The Push Notification API on iOS makes use of CocoaPods - an iOS dependency management system - and we need to tell CocoaPods to make use of Firebase.
 
-To do this, we need to modify the `Podfile`, which is located in your `ios/App` directory:
+To do this, we need to modify the `Podfile`, which can be found in Xcode under `Pods`:
 
 ![Podfile Location iOS](/assets/img/docs/guides/firebase-push-notifications/podfile-location-ios.png)
 
-We need to modify the App target pods to include Firebase. To do that, add `pod Firebase/Messaging` to your `target 'App'` section, like so:
+We need to add Firebase to the CocoaPods provided for our App target. To do that, add `pod Firebase/Messaging` to your `target 'App'` section, like so:
 
 ```ruby
-import Capacitor
-import Firebase # Add this line
-
-...
-
 target 'App' do
 capacitor_pods
 # Add your Pods here
@@ -276,7 +286,7 @@ def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   
-  # Do not delete
+  # Do not delete
 end
 
 target 'App' do
@@ -286,34 +296,50 @@ target 'App' do
 end
 ```
 
+### Update the Project
+
+Now we'll need to ensure that our iOS project is updated with the proper Firebase CocoaPod installed.
+
+*Note: This part can take a while as CocoaPods needs to download all the appropriate files/dependencies.*
+
+```bash
+npx cap update ios
+```
+
 ### Add Initialization Code
 
-To connect to Firebase when your iOS app starts up, you need to add the following initialization code to your `AppDelegate.swift` file, in the `application(didFinishLaunchingWithOptions)` method:
+To connect to Firebase when your iOS app starts up, you need to add the following to your `AppDelegate.swift` file.
+
+First, add an `import` at the top of the file:
+
+```swift
+import Firebase
+```
+
+... and then add the configuration method for Firebase to initialization code to your `AppDelegate.swift` file, in the `application(didFinishLaunchingWithOptions)` method.
 
 ```swift
 FirebaseApp.configure()
 ```
 
-Your `AppDelegate.swift` file's `application(didFinishLaunching)` method should look something like this:
+Your completed `AppDelegate.swift` file should look something like this:
 
 ```swift
-var window: UIWindow?
+import UIKit
+import Capacitor
+import Firebase
 
-func application(_ application: UIApplication,
-  didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-  FirebaseApp.configure()
-  return true
-}
-```
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
-### Update the Project
+  var window: UIWindow?
 
-Now we'll need to ensure that our iOS project is updated with the proper Firebase CocoaPod installed.
 
-*Note*: This part can take awhile as CocoaPods needs to download all the appropriate files/dependencies.
-
-```bash
-npx cap update ios
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    // Override point for customization after application launch.
+    FirebaseApp.configure()
+    return true
+  }
 ```
 
 ### Upload the APNS Certificate or Key to Firebase
@@ -330,7 +356,7 @@ To upload your certificate or auth key, from the **Project Overview** page:
 
 Now for the fun part - let's verify that push notifications from Firebase are working on Android and iOS!
 
-We need to fire up our application on Android or iOS to see our code on `home.page.ts` receive the notifications.
+We need to fire up our application on Android or iOS so that our `home.page.ts` page can register and receive notifications.
 
 To open your Android project in Android Studio:
 ```bash
@@ -344,7 +370,9 @@ npx cap open ios
 
 Once the project is open, side-load the application on your device using the Run feature of either Android Studio or Xcode. The app should start up on the home page.
 
-**Note**: You may be asked to allow the application to receive notifications if this is the first time starting it up (this is the Push Notification API registering with Apple / Google). Make sure you choose to **Allow notifications**, or the next step won't work!
+*Note: On iOS, you will see a popup asking you to allow notifications for your app - make sure you choose to **Allow notifications**!*
+
+If your app successfully registers and you followed the code above, you should see an alert with a success message!
 
 Now we'll test to see if the notifications are received by our device. To send a notification, in Firebase, go to the **Cloud Messaging** section under the Grow header in the project pane. 
 
@@ -362,7 +390,7 @@ When creating the notification, you only need to specify the following informati
 
 At that point, you can **Review** the notification you've put together and select **Publish** to send the notification out.
 
-If you've setup your application correctly, you'll see an alert pop up on your home screen with the push notification you composed in Firebase!
+If you've setup your application correctly, you'll see an alert pop up on your home screen with the push notification you composed in Firebase. You can then tap on the notification and you should get an `alert` for the `pushActionPerformed` event, per our code above.
 
 ![Push Test Android](/assets/img/docs/guides/firebase-push-notifications/push-test-android.png)
 
