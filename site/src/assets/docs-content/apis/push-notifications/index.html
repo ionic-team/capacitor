@@ -8,8 +8,9 @@
 <p>On Android just download your app&#39;s <code>google-services.json</code> file from Firebase console and put it in <code>projectName/android/app</code> folder.</p>
 <h2 id="push-notifications-icon">Push Notifications icon</h2>
 <p>On Android, the Push Notifications icon with the appropriate name should be added to the <code>AndroidManifest.xml</code> file:</p>
-<pre><code>&lt;meta-data android:name=&quot;com.google.firebase.messaging.default_notification_icon&quot; android:resource=&quot;@mipmap/push_icon_name&quot; /&gt;
-</code></pre><p>If no icon is specified Android will use the application icon, but push icon should be white pixels on a transparent backdrop. As the application icon is not usually like that, it will show a white square or circle. So it&#39;s recommended to provide the separate icon for Push Notifications.</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">"com.google.firebase.messaging.default_notification_icon"</span> <span class="hljs-attr">android:resource</span>=<span class="hljs-string">"@mipmap/push_icon_name"</span> /&gt;</span>
+</code></pre>
+<p>If no icon is specified Android will use the application icon, but push icon should be white pixels on a transparent backdrop. As the application icon is not usually like that, it will show a white square or circle. So it&#39;s recommended to provide the separate icon for Push Notifications.</p>
 <p>Android Studio has an icon generator you can use to create your Push Notifications icon.</p>
 <h2 id="disabling-push-notifications-plugin">Disabling Push Notifications plugin</h2>
 <p>If you are not using Push Notifications in your project, when you submit the app to iTunes Connect, Apple will send you an email saying it has issues because of <code>Missing Push Notification Entitlement</code>. That happens because Capacitor includes the code for registering for push notifications and getting the token.</p>
