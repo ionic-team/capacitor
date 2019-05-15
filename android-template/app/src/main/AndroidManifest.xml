@@ -14,7 +14,8 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale"
             android:name="com.getcapacitor.myapp.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBarLaunch">
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:launchMode="singleTask">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
