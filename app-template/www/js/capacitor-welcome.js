@@ -26,6 +26,7 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
         border: 0;
         border-radius: 3px;
         text-decoration: none;
+        cursor: pointer;
       }
       main {
         padding: 15px;
@@ -88,16 +89,21 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
 
     self.shadowRoot.querySelector('#take-photo').addEventListener('click', async function(e) {
       const { Camera } = Capacitor.Plugins;
-      const photo = await Camera.getPhoto({
-        resultType: "uri"
-      });
 
-      const image = self.shadowRoot.querySelector('#image');
-      if (!image) {
-        return;
+      try {
+        const photo = await Camera.getPhoto({
+          resultType: "uri"
+        });
+
+        const image = self.shadowRoot.querySelector('#image');
+        if (!image) {
+          return;
+        }
+        
+        image.src = photo.webPath;
+      } catch (e) {
+        console.warn('User cancelled', e);
       }
-      
-      image.src = photo.webPath;
     })
   }
 });
