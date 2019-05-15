@@ -1,6 +1,4 @@
-declare global {
-  export interface PluginRegistry {}
-}
+import { PluginRegistry } from './core-plugin-definitions';
 
 export interface Plugin {
   addListener(eventName: string, listenerFunc: Function): PluginListenerHandle;
@@ -101,3 +99,5 @@ export interface WindowCapacitor {
   };
   window: any;
 }
+
+export { PluginRegistry };

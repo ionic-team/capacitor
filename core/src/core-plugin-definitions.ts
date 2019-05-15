@@ -1,30 +1,32 @@
 import { Plugin, PluginListenerHandle } from './definitions';
 
-declare global {
-  interface PluginRegistry {
-    Accessibility?: AccessibilityPlugin;
-    App?: AppPlugin;
-    BackgroundTask?: BackgroundTaskPlugin;
-    Browser?: BrowserPlugin;
-    Camera?: CameraPlugin;
-    Clipboard?: ClipboardPlugin;
-    Device?: DevicePlugin;
-    Filesystem?: FilesystemPlugin;
-    Geolocation?: GeolocationPlugin;
-    Haptics?: HapticsPlugin;
-    Keyboard?: KeyboardPlugin;
-    LocalNotifications?: LocalNotificationsPlugin;
-    Modals?: ModalsPlugin;
-    Motion?: MotionPlugin;
-    Network?: NetworkPlugin;
-    Photos?: PhotosPlugin;
-    PushNotifications?: PushNotificationsPlugin;
-    Share?: SharePlugin;
-    SplashScreen?: SplashScreenPlugin;
-    StatusBar?: StatusBarPlugin;
-    Storage?: StoragePlugin;
-    Toast?: ToastPlugin;
-    WebView?: WebViewPlugin;
+export interface PluginRegistry {
+  Accessibility?: AccessibilityPlugin;
+  App?: AppPlugin;
+  BackgroundTask?: BackgroundTaskPlugin;
+  Browser?: BrowserPlugin;
+  Camera?: CameraPlugin;
+  Clipboard?: ClipboardPlugin;
+  Device?: DevicePlugin;
+  Filesystem?: FilesystemPlugin;
+  Geolocation?: GeolocationPlugin;
+  Haptics?: HapticsPlugin;
+  Keyboard?: KeyboardPlugin;
+  LocalNotifications?: LocalNotificationsPlugin;
+  Modals?: ModalsPlugin;
+  Motion?: MotionPlugin;
+  Network?: NetworkPlugin;
+  Photos?: PhotosPlugin;
+  PushNotifications?: PushNotificationsPlugin;
+  Share?: SharePlugin;
+  SplashScreen?: SplashScreenPlugin;
+  StatusBar?: StatusBarPlugin;
+  Storage?: StoragePlugin;
+  Toast?: ToastPlugin;
+  WebView?: WebViewPlugin;
+
+  [pluginName: string]: {
+    [prop: string]: any;
   }
 }
 

@@ -1,32 +1,36 @@
 <h1 id="using-capacitor-with-ionic">Using Capacitor with Ionic</h1>
 <h2 id="install-capacitor-into-an-ionic-project">Install Capacitor into an Ionic project</h2>
-<p>Capacitor installs directly into any Ionic project (1.0-4.x+) with a simple <code>npm install</code>:</p>
-<h3 id="start-ionic-project">Start Ionic Project</h3>
-<pre><code class="lang-bash">ionic start myApp tabs
+<p>Capacitor is easily installed directly into any Ionic project (1.0-4.x+).</p>
+<h3 id="new-ionic-project">New Ionic Project</h3>
+<pre><code class="lang-bash">ionic start myApp tabs --capacitor
 <span class="hljs-built_in">cd</span> myApp
 </code></pre>
-<p>Select &quot;N&quot; when asked to add Cordova.</p>
-<h3 id="build-your-ionic-app">Build your Ionic App</h3>
-<p>You must run <code>npm run build</code> at least once to create the <code>www</code> folder:</p>
-<pre><code class="lang-bash">npm run build
+<h3 id="existing-ionic-project">Existing Ionic Project</h3>
+<pre><code class="lang-bash"><span class="hljs-built_in">cd</span> myApp
+ionic integrations <span class="hljs-built_in">enable</span> capacitor
 </code></pre>
-<h3 id="install-capacitor">Install Capacitor</h3>
-<p>Next, install capacitor into your project:</p>
-<pre><code class="lang-bash">npm install --save @capacitor/cli @capacitor/core
-</code></pre>
-<h3 id="init-capacitor-with-your-app-information">Init Capacitor with your app information</h3>
+<h3 id="initialize-capacitor-with-your-app-information">Initialize Capacitor with your app information</h3>
+<p><em>Note: <code>npx</code> is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.</em></p>
 <pre><code>npx cap init [appName] [appId]
 </code></pre><p>where <code>appName</code> is the name of your app, and <code>appId</code> is the domain identifier of your app (ex: <code>com.example.app</code>).</p>
+<p><em>Note: Use the native IDEs to change these properties after initial configuration.</em></p>
+<h3 id="build-your-ionic-app">Build your Ionic App</h3>
+<p>You must build your Ionic project at least once before adding any native platforms.</p>
+<pre><code class="lang-bash">ionic build
+</code></pre>
+<p>This creates the <code>www</code> folder that Capacitor has been <a href="/docs/basics/configuring-your-app">automatically configured</a> to use as the <code>webDir</code> in <code>capacitor.config.json</code>.</p>
 <h3 id="add-platforms">Add Platforms</h3>
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> add ios
 npx <span class="hljs-built_in">cap</span> add android
 </code></pre>
-<h3 id="open-ide-to-build">Open IDE to build</h3>
+<p>Both <code>android</code> and <code>ios</code> folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your Ionic app (i.e., check them into source control, edit them in their own IDEs, etc.).</p>
+<h3 id="open-ide-to-build-run-and-deploy">Open IDE to build, run, and deploy</h3>
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> open ios
 npx <span class="hljs-built_in">cap</span> open android
 </code></pre>
+<p>The native iOS and Android projects are opened in their standard IDEs (Xcode and Android Studio, respectively). Use the IDEs to run and deploy your app.</p>
 <h2 id="syncing-your-app-with-capacitor">Syncing your app with Capacitor</h2>
-<p>Every time you perform a build (e.g. <code>npm run build</code>) that changes your web directory (default: <code>www</code>), you&#39;ll need to copy those changes down to your native projects:</p>
+<p>Every time you perform a build (e.g. <code>ionic build</code>) that changes your web directory (default: <code>www</code>), you&#39;ll need to copy those changes down to your native projects:</p>
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> copy
 </code></pre>
 <h2 id="using-ionic-native">Using Ionic Native</h2>

@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/android",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.24",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -14,5 +14,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "538152392458f23ca276a9b1470d6a07d4118a3f"
 }

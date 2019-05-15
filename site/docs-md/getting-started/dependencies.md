@@ -16,7 +16,7 @@ Additionally, you'll need to install **[CocoaPods](https://cocoapods.org/)** (`s
 
 Once you have CocoaPods installed, update your local repo by running `pod repo update`. You should run this command periodically to ensure you have the latest versions of CocoaPods dependencies.
 
-As a rule, the latest version of Capacitor always supports the last two iOS versions. For example, iOS 11 and iOS 10. For support for older versions of iOS, use an older version of Capacitor (if available).
+As a rule, the latest version of Capacitor always supports the last two iOS versions. For example, iOS 12 and iOS 11. For support for older versions of iOS, use an older version of Capacitor (if available).
 
 ## Android Development
 

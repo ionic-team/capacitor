@@ -1,6 +1,5 @@
 {
 	"scripts": {
-		"prepublish": "bash scripts/setversion.sh",
 		"publish": "bash scripts/prerelease.sh && bash scripts/generate.sh && lerna run build && lerna publish --force-publish --skip-git && npm run publish-push",
 		"publish-push": "bash scripts/deploy.sh"
 	},
