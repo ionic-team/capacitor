@@ -27,3 +27,5 @@ capacitor-ios/
 local.properties
 contents.xcworkspacedata
 .stencil/
+android-template/.gradle/
+android-template/app/app.iml
