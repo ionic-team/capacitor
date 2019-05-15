@@ -21,7 +21,7 @@ ionic integrations enable capacitor
 
 *Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
 
-```
+```bash
 npx cap init [appName] [appId]
 ```
 

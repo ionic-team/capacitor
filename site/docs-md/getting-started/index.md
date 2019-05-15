@@ -22,7 +22,7 @@ Capacitor was designed to drop-in to any existing modern JS web app. A valid `pa
 
 To add Capacitor to your web app, run the following commands:
 
-```
+```bash
 cd my-app
 npm install --save @capacitor/core @capacitor/cli
 ```
@@ -31,7 +31,7 @@ Then, initialize Capacitor with your app information.
 
 *Note: `npx` is a new utility available in npm 5 or above that executes local binaries/scripts to avoid global installs.*
 
-```
+```bash
 npx cap init
 ```
 
@@ -39,7 +39,7 @@ This command will prompt you to enter the name of your app and the app id (the p
 
 Next, install any of the desired native platforms:
 
-```
+```bash
 npx cap add android
 npx cap add ios
 npx cap add electron
@@ -53,7 +53,7 @@ Capacitor comes with a stock project structure if you'd rather start fresh and p
 
 To create it, run:
 
-```
+```bash
 npx @capacitor/cli create
 ```
 
