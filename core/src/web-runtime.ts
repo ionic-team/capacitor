@@ -1,9 +1,15 @@
+import { PluginRegistry } from './definitions';
+
 export class CapacitorWeb {
-  Plugins = {};
+  Plugins: PluginRegistry;
   platform = 'web';
   isNative = false;
 
   constructor() {
+    // Need to assign here to avoid having to define every plugin but still 
+    // get the typed benefits of the provided plugins in PluginRegistry
+    this.Plugins = {} as any;
+
     // Build a proxy for the Plugins object that returns the "Noop Plugin"
     // if a plugin isn't available
     this.Plugins = new Proxy<any>(this.Plugins, {

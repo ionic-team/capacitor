@@ -34,6 +34,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         }
 
         cameraModal.dismiss();
+        document.body.removeChild(cameraModal);
       });
 
       cameraModal.present();
