@@ -179,7 +179,13 @@ public class LocalNotification {
 
   public int getSmallIcon(Context context) {
     // TODO support custom icons
-    int resId = android.R.drawable.ic_dialog_info;
+
+    int resId = context.getApplicationInfo().icon;
+
+    if (resId == 0) {
+      resId = android.R.drawable.ic_dialog_info;
+    }
+
     return resId;
   }
 
