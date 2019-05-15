@@ -1,3 +1,12 @@
+---
+title: Using Cordova Plugins
+description: Capacitor offers full Cordova plugin compatibility
+url: /docs/basics/cordova
+contributors:
+  - jcesarmobile
+  - dotnetkow
+---
+
 # Using Cordova Plugins
 
 Capacitor comes with full Cordova plugin compatibility, so using existing Cordova plugins in Capacitor is easy.

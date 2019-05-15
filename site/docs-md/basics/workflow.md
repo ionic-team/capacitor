@@ -1,3 +1,12 @@
+---
+title: Development Workflow 
+description: Capacitor Workflow
+url: /docs/basics/workflow
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # Capacitor Workflow
 
 The Capacitor workflow involves a few consistent tasks:

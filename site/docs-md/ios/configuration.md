@@ -1,3 +1,12 @@
+---
+title: Configuring iOS
+description: Configuring iOS
+url: /docs/ios/configuration
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # Configuring iOS
 
 ## Configuring `Info.plist`

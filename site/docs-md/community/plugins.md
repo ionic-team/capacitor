@@ -1,3 +1,10 @@
+---
+title: Capacitor Community Plugins
+description: Capacitor Community Plugins
+url: /docs/community/plugins
+contributors:
+---
+
 # Capacitor Community Plugins
 
 The community has built a number of Capacitor plugins to add functionality to your app.

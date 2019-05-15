@@ -1,3 +1,12 @@
+---
+title: Using Capacitor Plugins
+description: How to use Capacitor plugins, known as Capacitor APIs
+url: /docs/basics/using-plugins
+contributors:
+  - jcesarmobile
+  - dotnetkow
+---
+
 # Using Capacitor Plugins
 
 Capacitor ships with a number of built-in plugins, known as Capacitor APIs, such as [Camera](/docs/apis/camera) and [Filesystem](/docs/apis/filesystem).

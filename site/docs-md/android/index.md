@@ -1,3 +1,12 @@
+---
+title: Capacitor Android Documentation
+description: Capacitor Android Documentation
+url: /docs/android
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Capacitor Android Documentation
 
 Capacitor features a native Android runtime that enables developers to communicate between JavaScript and Native Java for Android code.

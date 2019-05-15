@@ -1,3 +1,12 @@
+---
+title: Configuring Android
+description: Configuring Android
+url: /docs/android/configuration
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Configuring Android
 
 Android apps manage permissions, device features, and other settings by modifying `AndroidManifest.xml`.

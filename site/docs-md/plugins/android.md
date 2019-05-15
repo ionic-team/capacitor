@@ -1,3 +1,12 @@
+---
+title: Capacitor Android Plugin Guide
+description: Capacitor Android Plugin Guide
+url: /docs/plugins/android
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Capacitor Android Plugin Guide
 
 Building Capacitor plugins for Android involves writing Java to interface with Android SDKs.

@@ -1,3 +1,12 @@
+---
+title: Configuring Your App
+description: Native Project Configuration
+url: /docs/basics/configuring-your-app
+contributors:
+  - jcesarmobile
+  - dotnetkow
+---
+
 # Configuring Your App
 
 Capacitor embraces the idea of "Code once, configure everywhere": configuration is
