@@ -166,6 +166,28 @@ public class LocalNotificationManager {
 
     mBuilder.setSmallIcon(localNotification.getSmallIcon(context));
     createActionIntents(localNotification, mBuilder);
+    
+    String text = localNotification.getBody();
+
+    if (text != null) {
+      if (text.contains("\n")) {
+
+        NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle((mBuilder));
+
+        for (String line : text.split("\n")) {
+          style.addLine(line);
+        }
+
+        mBuilder.setStyle(style);
+
+
+      } else {
+
+        mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(localNotification.getBigText()));
+
+      }
+    }
+    
     // notificationId is a unique int for each localNotification that you must define
     Notification buildNotification = mBuilder.build();
     if (localNotification.isScheduled()) {
