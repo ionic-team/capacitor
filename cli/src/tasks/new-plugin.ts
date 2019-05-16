@@ -63,12 +63,12 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'description',
-      message: 'description (optional):'
+      message: 'description:'
     },
     {
       type: 'input',
       name: 'git',
-      message: 'git repository (optional):',
+      message: 'git repository:',
     },
     {
       type: 'input',
