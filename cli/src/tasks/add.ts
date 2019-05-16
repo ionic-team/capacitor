@@ -5,7 +5,7 @@ import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON, log } from '../common';
+import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON, log, logError } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';
@@ -20,6 +20,11 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     selectedPlatformName,
     `Please choose a platform to add:`
   );
+
+  if (platformName === config.web.name) {
+    webWarning();
+    return;
+  }
 
   const existingPlatformDir = config.platformDirExists(platformName);
   if (existingPlatformDir) {
@@ -113,4 +118,11 @@ function shouldSync(config: Config, platformName: string) {
     return false;
   }
   return true;
+}
+
+function webWarning() {
+  logError(`Not adding platform ${chalk.bold('web')}`);
+  log(`\nIn Capacitor, the 'web' platform is just your web app!`);
+  log(`For example, if you have a React or Angular project, the 'web' platform is that project.`);
+  log(`To add Capacitor functionality to your web app, follow the Web Getting Started Guide: https://capacitor.ionicframework.com/docs/web/`);
 }

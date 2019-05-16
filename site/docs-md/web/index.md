@@ -1,15 +1,14 @@
-# Building Progressive Web Apps
+# Using Capacitor in a Web Project
 
-Progressive Web Apps (PWA's) represent the evolution of the standard web app web developers have come to know and love. If you're not
-familiar with them, that's okay! Think of them as browser apps that use some modern Web APIs to provide an app-like experience.
+Capacitor fully supports traditional web and Progressive Web Apps. In fact, using Capacitor makes it easy to ship a PWA version of your iOS and Android app store apps!
 
-Capacitor supports Progressive Web Apps, which means it supports any kind of web app whether or not it uses these APIs.
+### Installation
 
-## Using Capacitor Core
+Chances are, you already have Capacitor installed in your app if you're using Capacitor to build an iOS, Android, or Electron app. In capacitor, the `web` platform is just the web project that powers your app!
 
-Capacitor Core is a JavaScript library that runs on all platforms that Capacitor supports, and web is no different.
+If you don't have Capacitor installed yet, consult the [Installation](../getting-started) guide before continuing.
 
-### With a Build System
+#### Using Capacitor as a Module
 
 Generally, apps will be using a framework with a build system that supports importing JavaScript modules. In that case,
 simply import Capacitor at the top of your app and you're set:
@@ -27,7 +26,7 @@ import { Plugins } from '@capacitor/core';
 const position = await Plugins.Geolocation.getCurrentPosition();
 ```
 
-### Without a Build System
+### Using Capacitor as a Script Include
 
 To use Capacitor core in a web app that is not using a build system or bundler/module loader,
 you must set `bundledWebRuntime` to `true` in your `capacitor.config.json`, tell capacitor to
@@ -53,7 +52,7 @@ In `index.html`, import `capacitor.js` before your app's JS:
 <script src="your/app.js"></script>
 ```
 
-## Developing
+## Developing your App
 
 Chances are, you're using a framework like [Ionic](http://ionicframework.com/) for UI components and building. To develop
 your Capacitor web app, just use your framework!
@@ -68,5 +67,6 @@ npx cap serve
 ## Going Live
 
 When you're ready to publish your Progressive Web App and share it with the world,
-just upload the contents of your web directory (default: `www/`). That will contain
-everything you need to run your app!
+just upload the contents of your web directory (for example, the `www/` or `build/` folder).
+
+That will contain everything you need to run your app!
