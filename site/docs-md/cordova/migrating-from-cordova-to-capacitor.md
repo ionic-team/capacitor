@@ -28,6 +28,103 @@ Some plugins may not match functionality entirely, but based on the features you
 
 ### Continuing to use Cordova or Ionic Native
 
-Continue to use Cordova plugins as-is if no Capacitor replacement plugins exist. If there's a plugin you'd like to see supported, [please let us know.](https://github.com/ionic-team/capacitor/issues/new)
+If a replacement plugin doesn't exist, continue to use the Cordova plugin as-is. If there's a plugin you'd like to see supported, [please let us know.](https://github.com/ionic-team/capacitor/issues/new)
 
 To leverage Cordova and/or Ionic Native plugins in your Capacitor app, [see here.](/docs/cordova/using-cordova-plugins)
+
+## Guide: Migrating an Existing Ionic App Using Cordova to Capacitor
+
+There are several steps required to fully migrate an Ionic App using Cordova over to Capacitor. **Note:** It's recommended to work in a separate code branch when applying these changes.
+
+### Add Capacitor
+
+Begin by opening your Ionic project in a Terminal, then add Capacitor:
+
+```bash
+ionic integrations enable capacitor
+```
+
+Next, open `config.xml` and find the `id` field in the widget element. In this example, it's `io.ionic.myapp`.
+
+```xml
+<widget id="io.ionic.myapp" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+```
+
+Also find the `Name` of your app:
+
+```xml
+<name>MyApp</name>
+```
+
+Now, initialize Capacitor with this app information:
+
+```bash
+npx cap init [appName] [appId]
+```
+
+In this example, it would be `npx cap init MyApp io.ionic.myapp`. These values can be found in the newly created `capacitor.config.json` file.
+
+#### Build your Ionic App
+You must build your Ionic project at least once before adding any native platforms.
+
+```bash
+ionic build
+```
+
+This ensures that the `www` folder that Capacitor has been [automatically configured](/docs/basics/configuring-your-app/) to use as the `webDir` in `capacitor.config.json` actually exists.
+
+#### Add Platforms
+
+Capacitor native platforms exist in their own top-level folders, compared to Cordova's which are located under `platforms/ios` or `platforms/android`.
+
+```bash
+npx cap add ios
+npx cap add android
+```
+
+Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your Ionic app (i.e., check them into source control, edit them in their own IDEs, etc.).
+
+### Open questions
+
+<Author> tag used anywhere?
+
+<allow-intent href="http://*/*" />
+<allow-intent href="https://*/*" />
+<allow-intent href="tel:*" />
+<allow-intent href="sms:*" />
+<allow-intent href="mailto:*" />
+<allow-intent href="geo:*" />
+
+### Configurations
+
+
+
+### Platform Preferences
+
+???
+
+### Splash Screens and Icons
+
+Existing Resources folder...
+
+link to morony content?
+
+### Migrate Plugins
+
+Plugins that must be removed? cordova-plugin-ionic-webview? Link to incompatible list page
+
+link to /docs/cordova/using-cordova-plugins page
+
+### Set Permissions
+
+You'll need to apply permissions manually by mapping between `plugin.xml` and required settings on iOS and Android. Consult the [iOS](/docs/ios/configuration) and [Android](/docs/android/configuration) configuration guides for info on how to configure each platform.
+
+### Removing Cordova
+
+Once comfortable that app is fully working, Cordova can be removed.
+- Delete config.xml
+- Delete platforms and plugins folder
+
+### Next Steps
+
+This is just the beginning of your Capacitor journey. Continue on by learning about the Capacitor [development workflow](/docs/basics/workflow).
