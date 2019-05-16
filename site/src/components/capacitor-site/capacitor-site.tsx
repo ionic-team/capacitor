@@ -132,6 +132,16 @@ export class App {
               />
 
               <stencil-route
+                url="/docs/cordova/:pageName?"
+                routeRender={(props: { [key: string]: any }) => {
+                  const page = props.match.params.pageName || 'index';
+                  return (
+                    <document-component pages={[`cordova/${page}.html`]} />
+                  );
+                }}
+              />
+
+              <stencil-route
                 url="/docs/guides/:pageName?"
                 routeRender={(props: { [key: string]: any }) => {
                   const page = props.match.params.pageName || 'index';
