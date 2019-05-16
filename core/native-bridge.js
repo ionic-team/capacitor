@@ -308,9 +308,22 @@
     }, callback);
   }
 
+  capacitor.createEvent = function(type, data) {
+    var event = document.createEvent('Events');
+    event.initEvent(type, false, false);
+    if (data) {
+      for (var i in data) {
+        if (data.hasOwnProperty(i)) {
+          event[i] = data[i];
+        }
+      }
+    }
+    return event;
+  }
+
   capacitor.triggerEvent = function(eventName, target, data) {
     var eventData = data || {};
-    var event = new CustomEvent(eventName, { detail: eventData });
+    var event = this.createEvent(eventName, eventData);
     if (target === "document") {
       if (cordova.fireDocumentEvent) {
         cordova.fireDocumentEvent(eventName, eventData);

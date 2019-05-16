@@ -154,19 +154,6 @@
             }
         };
 
-        function createEvent(type, data) {
-            var event = document.createEvent('Events');
-            event.initEvent(type, false, false);
-            if (data) {
-                for (var i in data) {
-                    if (data.hasOwnProperty(i)) {
-                        event[i] = data[i];
-                    }
-                }
-            }
-            return event;
-        }
-
         /* eslint-disable no-undef */
         var cordova = {
             define: define,
@@ -211,7 +198,7 @@
              * bNoDetach is required for events which cause an exception which needs to be caught in native code
              */
             fireDocumentEvent: function (type, data, bNoDetach) {
-                var evt = createEvent(type, data);
+                var evt = Capacitor.createEvent(type, data);
                 if (typeof documentEventHandlers[type] !== 'undefined') {
                     if (bNoDetach) {
                         documentEventHandlers[type].fire(evt);
@@ -229,7 +216,7 @@
                 }
             },
             fireWindowEvent: function (type, data) {
-                var evt = createEvent(type, data);
+                var evt = Capacitor.createEvent(type, data);
                 if (typeof windowEventHandlers[type] !== 'undefined') {
                     setTimeout(function () {
                         windowEventHandlers[type].fire(evt);
