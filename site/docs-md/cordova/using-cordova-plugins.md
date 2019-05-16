@@ -1,4 +1,11 @@
-# Using Cordova Plugins
+# Using Cordova Plugins and Ionic Native
+
+## Using Ionic Native
+Ionic Native is supported in Capacitor. Currently, Ionic Native contains only Cordova plugins, so whenever you find an Ionic Native wrapper you'd like to use, install it and then install the corresponding Cordova plugin by running
+
+npm install your-cordova-plugin
+npx cap update
+
 
 ## Installing Cordova Plugins
 

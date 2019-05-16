@@ -39,4 +39,4 @@ Capacitor will detect the new version of the plugin and install it.
 ## Cordova Support
 
 Capacitor supports a wide variety of Cordova plugins, but there are some things to keep in mind. Follow
-the [Cordova Plugin Usage Guide](/docs/basics/cordova) for more information.
+the [Capacitor Plugin Migration Guide](/docs/cordova/migrating-from-cordova-to-capacitor) for more information.

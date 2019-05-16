@@ -1,33 +1,33 @@
 # Migrating from Cordova/PhoneGap to Capacitor
 
-Capacitor can be used as a replacement for Cordova/PhoneGap in many cases. The two projects provide a web environment with full access to native features and functionality, but with a few differences in their approach to tooling, native project management, and plugins. Capacitor also has support for existing Cordova plugins, providing a new runtime with access to the rich Cordova plugin ecosystem.
+Migrating from Cordova to Capacitor can occur over time or can be a full replacement in many cases.
 
-## Using Cordova Plugins in Capacitor
+## Why Migrate?
 
-Capacitor was designed from the start to support the rich Cordova plugin ecosystem out of the box. Thus, using Cordova plugins in Capacitor is easy. Follow the [Cordova Plugin]() guide for more information on how this works.
+Long-term stability and peace of mind. With the release of Capacitor, Ionic now controls almost all of its stack. When you build an Ionic app today, we now control the native runtime layer (Capacitor), the UI controls ([Ionic Framework](https://ionicframework.com)), and the “framework” used to build the controls (web components powered by [Stencil](https://stenciljs.com/)). This is significant: If there’s an issue in any part of the stack that we control, we can fix it right away. The only part we don’t control is the frontend framework you use on top (Angular, React, Vue, or nothing). 
 
-# Using Cordova Plugins
+It’s backward-compatible with Cordova, so you can comfortably switch your existing Ionic (or any web) apps to it whenever you’re ready. Capacitor was designed from the start to support the rich Cordova plugin ecosystem out of the box. Thus, using Cordova plugins in Capacitor is easy.
 
-Capacitor comes with Cordova plugin compatibility, so using existing Cordova plugins in Capacitor is easy.
+Using Ionic React, Ionic Vue, etc.? Capacitor is the officially supported native runtime.
 
-## Installing Cordova Plugins
+## Migration Process
 
-Simply `npm install` your plugin of choice, sync your project, finish configuration, and you're ready to go:
+The migration effort will depend on the complexity of the app. 
 
-```bash
-npm install cool-cordova-plugin
-npx cap sync
-```
+### Consider Updating Existing App to Ionic 4
 
-## Important: Configuration 
+Capacitor works with any Ionic project (1.0 to 4.x+), but in order to enjoy the best app development experience, Ionic 4 and above is recommended. If you have an existing Ionic 1 to 3 app, begin by following the [Ionic 4 migration guide](https://ionicframework.com/docs/building/migration). If you need further assistance, [Ionic can help.](https://ionicframework.com/enterprise-edition) Advisory Services are available, which includes Ionic 4 training, architecture reviews, and migration assistance.
 
-Capacitor does not support Cordova install variables, auto configuration, or hooks, due to our philosophy of letting you control your native project source code (meaning things like hooks are unnecessary). If your plugin requires variables or settings to be set, you'll need to apply those configuration settings manually by mapping between the plugin's `plugin.xml` and required settings on iOS and Android.
+### Audit Existing Cordova Plugins
 
-Consult the [iOS](../ios/configuration) and [Android](../android/configuration) configuration guides for info on how to configure each platform.
+Begin by auditing your existing Cordova plugins - it's possible that you may be able to remove ones that are no longer needed. 
 
-## Compatibility Issues
+Next, review all of Capacitor's [core plugins](/docs/apis) as well as [community plugins](/docs/community/plugins). You may be able to switch to the Capacitor-equivalent Cordova plugin. Also note that some Capacitor plugins extend beyond mobile, including [PWA](/docs/web) and [Desktop](/docs/electron/) functionality, which Cordova traditionally hasn't had support for. For example, compare the [Capacitor Camera](/docs/apis/camera) to the [Cordova Camera](https://github.com/apache/cordova-plugin-camera).
 
-Some Cordova plugins don't work with Capacitor, or Capacitor provides a conflicting alternative. If it's known that the plugin is conflicting or causes build issues, it will be skipped when running `npx cap update`.
+Some plugins may not match functionality entirely, but based on the features you need that may not matter.
 
+### Continuing to use Cordova or Ionic Native
 
-While we've tested a number of popular Cordova plugins, it's possible Capacitor doesn't support every Cordova plugin. If you find an issue with an existing Cordova plugin, please [file an issue](https://github.com/ionic-team/capacitor/issues/new) with the issue you've found and the plugin information.
+Continue to use Cordova plugins as-is if no Capacitor replacement plugins exist. If there's a plugin you'd like to see supported, [please let us know.](https://github.com/ionic-team/capacitor/issues/new)
+
+To leverage Cordova and/or Ionic Native plugins in your Capacitor app, [see here.](/docs/cordova/using-cordova-plugins)

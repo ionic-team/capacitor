@@ -86,7 +86,7 @@ export class SiteMenu {
           url: '/docs/cordova/migrating-from-cordova-to-capacitor'
         },
         {
-          title: 'Using Cordova Plugins or Ionic Native',
+          title: 'Cordova Plugins/Ionic Native',
           url: '/docs/cordova/using-cordova-plugins'
         },
         {
