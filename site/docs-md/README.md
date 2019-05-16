@@ -1,0 +1,69 @@
+# Table of Contents
+
+* Getting Started
+  * [Introduction](index.md)
+  * [Required Dependencies](getting-started/dependencies.md)
+  * [Installation](getting-started/index.md)
+  * [Using with Ionic](getting-started/with-ionic.md)
+  * [PWA Elements](getting-started/pwa-elements.md)
+* Basics
+  * [Development Workflow](basics/workflow.md)
+  * [Opening Native IDE](basics/opening-native-projects.md)
+  * [Building your App](basics/building-your-app.md)
+  * [Running your App](basics/running-your-app.md)
+  * [Using Plugins](basics/using-plugins.md)
+  * [Cordova Plugins](basics/cordova.md)
+  * [Native Project Configuration](basics/configuring-your-app.md)
+  * [Progressive Web Apps](basics/progressive-web-app.md)
+* Guides
+  * [Ionic Framework App](guides/ionic-framework-app.md)
+  * [Push Notifications - Firebase](guides/push-notifications-firebase.md)
+* iOS
+  * [Getting Started](ios/index.md)
+  * [Configuration](ios/configuration.md)
+  * [Updating](ios/updating.md)
+  * [Custom Native Code](ios/custom-code.md)
+  * [Troubleshooting](ios/troubleshooting.md)
+* Android
+  * [Getting Started](android/index.md)
+  * [Configuration](android/configuration.md)
+  * [Updating](android/updating.md)
+  * [Custom Native Code](android/custom-code.md)
+  * [Troubleshooting](android/troubleshooting.md)
+* Web/PWA
+  * [Getting Started](web/index.md)
+* Electron
+  * [Getting Started](electron/index.md)
+* Plugins
+  * [Introduction](plugins/index.md)
+  * [Community](community/plugins.md)
+  * [iOS Guide](plugins/ios.md)
+  * [Android Guide](plugins/android.md)
+  * [Web/PWA Guide](plugins/web.md)
+  * [JavaScript Guide](plugins/js.md)
+APIs
+  * [Introduction](apis/index.md)
+  * [Accessibility](apis/accessibility/index.md)
+  * [App](apis/app/index.md)
+  * [Background Task](apis/background-task/index.md)
+  * [Browser](apis/browser/index.md)
+  * [Camera](apis/camera/index.md)
+  * [Clipboard](apis/clipboard/index.md)
+  * [Console](apis/console/index.md)
+  * [Device](apis/device/index.md)
+  * [Filesystem](apis/filesystem/index.md)
+  * [Geolocation](apis/geolocation/index.md)
+  * [Haptics](apis/haptics/index.md)
+  * [Keyboard](apis/keyboard/index.md)
+  * [Local Notifications](apis/local-notifications/index.md)
+  * [Modals](apis/modals/index.md)
+  * [Motion](apis/motion/index.md)
+  * [Network](apis/network/index.md)
+  * [Push Notifications](apis/push-notifications/index.md)
+  * [Share](apis/share/index.md)
+  * [Splash Screen](apis/splash-screen/index.md)
+  * [Status Bar](apis/status-bar/index.md)
+  * [Storage](apis/storage/index.md)
+  * [Toast](apis/toast/index.md)
+
+
