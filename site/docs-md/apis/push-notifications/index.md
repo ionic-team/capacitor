@@ -18,7 +18,7 @@ On Android just download your app's `google-services.json` file from Firebase co
 
 On Android, the Push Notifications icon with the appropriate name should be added to the `AndroidManifest.xml` file:
 
-```
+```xml
 <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/push_icon_name" />
 ```
 

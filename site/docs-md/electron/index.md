@@ -31,7 +31,7 @@ Run this after making any modifications to your web app.
 
 To run your app, cd into it and use the npm script provided by Capacitor:
 
-```
+```bash
 cd electron/
 npm run electron:start
 ```

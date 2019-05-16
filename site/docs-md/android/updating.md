@@ -6,7 +6,7 @@ Occasionally, you'll need to make Capacitor updates to your Android app, includi
 
 To update the version of Capacitor used in your app, just npm install latest version:
 
-```
+```bash
 npm install --save @capacitor/android@latest
 ```
 

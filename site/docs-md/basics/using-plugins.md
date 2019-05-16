@@ -18,7 +18,7 @@ Capacitor also supports a wide range of [Cordova plugins](/docs/basics/cordova),
 
 To install a Capacitor or Cordova plugin, simply run
 
-```
+```bash
 npm install --save name-of-plugin
 npx cap update
 ```
@@ -29,7 +29,7 @@ Capacitor will detect the plugin and install it.
 
 To update a plugin, run
 
-```
+```bash
 npm install --save name-of-plugin
 npx cap update
 ```
