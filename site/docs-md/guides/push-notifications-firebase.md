@@ -207,7 +207,7 @@ Download the `google-services.json` file to your local machine. Then move the fi
 
 ![Google Services JSON Location for Android](/assets/img/docs/guides/firebase-push-notifications/google-services-location-android.png)
 
-We don't need to *add* any dependencies to our project because Capacitor projects automatically include a version of `firebase-messaging` in our `app/build.gradle` file.
+We don't need to *add* any dependencies to our project because Capacitor projects automatically include a version of `firebase-messaging` in it's `build.gradle` file.
 
 ## iOS
 
