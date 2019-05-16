@@ -1,3 +1,12 @@
+---
+title: Motion
+description: Motion API
+url: /docs/apis/motion
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Motion

@@ -1,3 +1,12 @@
+---
+title: Splash Screen
+description: Splash Screen API
+url: /docs/apis/splash-screen
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-api index="true" name="splash-screen"></plugin-api>
 
 # Splash Screen

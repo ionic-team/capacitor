@@ -1,3 +1,12 @@
+---
+title: Share
+description: Share API
+url: /docs/apis/share
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android"></plugin-platforms>
 
 # Share

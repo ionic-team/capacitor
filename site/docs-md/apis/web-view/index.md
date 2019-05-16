@@ -1,3 +1,12 @@
+---
+title: WebView
+description: WebView API
+url: /docs/apis/webview
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="ios,android"></plugin-platforms>
 
 # WebView

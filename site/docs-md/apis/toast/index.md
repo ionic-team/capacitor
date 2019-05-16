@@ -1,3 +1,12 @@
+---
+title: Toast
+description: Toast API
+url: /docs/apis/toast
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Toast

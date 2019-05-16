@@ -1,3 +1,12 @@
+---
+title: Modals
+description: Modals API
+url: /docs/apis/modals
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Modals
