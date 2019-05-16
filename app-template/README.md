@@ -9,9 +9,8 @@ to *that* project (using `npx @capacitor/cli init`).
 
 ### Running this example
 
-To run the provided example, you should host the `www` folder using a web server, such as the default python server:
+To run the provided example, can use serve command:
 
-```
-cd www/
-python -m SimpleHTTPServer
+```bash
+npx cap serve
 ```
