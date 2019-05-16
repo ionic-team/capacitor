@@ -857,6 +857,15 @@ export interface KeyboardPlugin extends Plugin {
    * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
    */
   setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
+
+  addListener(eventName: 'keyboardWillShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
+  addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
+  addListener(eventName: 'keyboardWillHide', listenerFunc: () => void): PluginListenerHandle;
+  addListener(eventName: 'keyboardDidHide', listenerFunc: () => void): PluginListenerHandle;
+}
+
+export interface KeyboardInfo {
+  keyboardHeight: number;
 }
 
 //
