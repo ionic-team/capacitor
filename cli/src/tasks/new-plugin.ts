@@ -63,12 +63,24 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'description',
-      message: 'description:'
+      message: 'description:',
+      validate: function(input) {
+        if (!input || input.trim() === '') {
+          return false;
+        }
+        return true;
+      }
     },
     {
       type: 'input',
       name: 'git',
       message: 'git repository:',
+      validate: function(input) {
+        if (!input || input.trim() === '') {
+          return false;
+        }
+        return true;
+      }
     },
     {
       type: 'input',
