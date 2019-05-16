@@ -21,7 +21,7 @@ npx @capacitor/cli plugin:generate
 This starts a wizard prompting you for information about your new plugin. For example:
 
 ```bash
-max@Maxs-iMac:~ $ npx @capacitor/cli plugin:generate
+npx @capacitor/cli plugin:generate
 ✏️  Creating new Capacitor plugin
 ? Plugin NPM name (snake-case): my-plugin
 ? Plugin id (domain-style syntax. ex: com.example.plugin) com.ionicframework.myplugin
@@ -33,13 +33,14 @@ max@Maxs-iMac:~ $ npx @capacitor/cli plugin:generate
 ? package.json will be created, do you want to continue? (Y/n)
 ```
 
- - The Plugin NPM name is what will become the npm package, and should be a snake-case name of a package that is available on npm (not a strict requirement if your package will be on a private npm repo).
- - The Plugin ID is a domain-style identifier. Its primary use is the package name in Java.
- - Plugin Class Name is the initial name of the class used in Java and Swift. See the additional note about class names in the [iOS Plugin](ios/) section of this guide.
- - The description is a brief introduction about the plugin.
- - The git repository is the url to a git repository where the source code of the plugin will be hosted.
-
-The rest of the fields are optional and will fill out your initial `package.json`
+ - `Plugin NPM name`: a snake-case name of a package that will be available on npm (not a strict requirement if your package will be on a private npm repo).
+ - `Plugin ID`: a domain-style identifier. It is primarily used for the package name in Java.
+ - `Plugin Class Name`: the initial name of the class used in Java and Swift. See the additional note about class names in the [iOS Plugin](ios/) section of this guide.
+ - `description`: a brief introduction about the plugin.
+ - `git repository`: the URL to a git repository where the source code of the plugin will be hosted.
+ - `author` (optional): the name of the plugin creator in `package.json`.
+ - `license` (optional): the license under which the plugin is bound. MIT license is the default.
+ - `package.json will be created`: enter "Y" and/or hit Enter/Return to finish plugin setup.
 
 ## TypeScript Interface
 

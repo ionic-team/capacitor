@@ -10,7 +10,7 @@ for a plugin is possible, and is just like providing a JavaScript npm package.</
 <pre><code class="lang-bash">npx @capacitor/cli plugin:generate
 </code></pre>
 <p>This starts a wizard prompting you for information about your new plugin. For example:</p>
-<pre><code class="lang-bash">max@Maxs-iMac:~ $ npx @capacitor/cli plugin:generate
+<pre><code class="lang-bash">npx @capacitor/cli plugin:generate
 ✏️  Creating new Capacitor plugin
 ? Plugin NPM name (snake-case): my-plugin
 ? Plugin id (domain-style syntax. ex: com.example.plugin) com.ionicframework.myplugin
@@ -22,13 +22,15 @@ for a plugin is possible, and is just like providing a JavaScript npm package.</
 ? package.json will be created, <span class="hljs-keyword">do</span> you want to <span class="hljs-built_in">continue</span>? (Y/n)
 </code></pre>
 <ul>
-<li>The Plugin NPM name is what will become the npm package, and should be a snake-case name of a package that is available on npm (not a strict requirement if your package will be on a private npm repo).</li>
-<li>The Plugin ID is a domain-style identifier. Its primary use is the package name in Java.</li>
-<li>Plugin Class Name is the initial name of the class used in Java and Swift. See the additional note about class names in the <a href="ios/">iOS Plugin</a> section of this guide.</li>
-<li>The description is a brief introduction about the plugin.</li>
-<li>The git repository is the url to a git repository where the source code of the plugin will be hosted.</li>
+<li><code>Plugin NPM name</code>: a snake-case name of a package that will be available on npm (not a strict requirement if your package will be on a private npm repo).</li>
+<li><code>Plugin ID</code>: a domain-style identifier. It is primarily used for the package name in Java.</li>
+<li><code>Plugin Class Name</code>: the initial name of the class used in Java and Swift. See the additional note about class names in the <a href="ios/">iOS Plugin</a> section of this guide.</li>
+<li><code>description</code>: a brief introduction about the plugin.</li>
+<li><code>git repository</code>: the URL to a git repository where the source code of the plugin will be hosted.</li>
+<li><code>author</code> (optional): the name of the plugin creator in <code>package.json</code>.</li>
+<li><code>license</code> (optional): the license under which the plugin is bound. MIT license is the default.</li>
+<li><code>package.json will be created</code>: enter &quot;Y&quot; and/or hit Enter/Return to finish plugin setup.</li>
 </ul>
-<p>The rest of the fields are optional and will fill out your initial <code>package.json</code></p>
 <h2 id="typescript-interface">TypeScript Interface</h2>
 <p>Each plugin comes with some typescript files that simply export TypeScript interfaces. These interfaces
 can provide typing to TypeScript consumers of your plugin.</p>
