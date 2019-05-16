@@ -3,11 +3,11 @@
 <p>Capacitor embraces standard iOS development tools for building iOS plugins. We believe that using Swift (or, Objective-C) directly will make it easier to use existing solutions on Stack Overflow, share work with existing native developers, and use platform features as soon as they are made available.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>To get started, first generate a plugin as shown in the <a href="./#getting-started">Getting Started</a> section of the Plugin guide.</p>
-<p>Next, open <code>your-plugin/ios/Plugin/Plugin.xcworkspace</code> in Xcode.</p>
+<p>Next, open <code>your-plugin/ios/Plugin.xcworkspace</code> in Xcode.</p>
 <h2 id="building-your-plugin-in-swift">Building your Plugin in Swift</h2>
 <p>A Capacitor plugin for iOS is a simple Swift class that extends <code>CAPPlugin</code> and
 has some exported methods that will be callable from JavaScript.</p>
-<p>Once your plugin is generated, you can start editing it by opening <code>Plugin.swift</code></p>
+<p>Once your plugin is generated, you can start editing it by opening <code>Plugin.swift</code>.</p>
 <h3 id="simple-example">Simple Example</h3>
 <p> In the generated example, there is a simple echo plugin with an <code>echo</code> function that simply returns a value that it was given.</p>
 <p> This example demonstrates a few core components of Capacitor plugins: receiving data from a Plugin Call, and returning

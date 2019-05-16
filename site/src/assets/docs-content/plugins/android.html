@@ -3,14 +3,15 @@
 <p>Capacitor embraces standard Android development tools for building Android plugins. We believe that using Java directly will make it easier to use existing solutions on Stack Overflow, share work with existing native developers, and use platform features as soon as they are made available.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>To get started, first generate a plugin as shown in the <a href="./#getting-started">Getting Started</a> section of the Plugin guide.</p>
-<p>Next, open <code>your-plugin/android/your-plugin</code> in Android Studio.</p>
+<p>Next, open <code>your-plugin/android/</code> in Android Studio. You then want to navigate to the <code>.java</code> file for your plugin, which changes depending on the Plugin ID and Plugin Class Name you used when creating the plugin.</p>
+<p>For example, for a plugin with the ID <code>com.domain.myplugin</code> and the Plugin Class Name <code>MyPlugin</code>, you would find the <code>.java</code> file at <code>android/src/main/java/com/domain/myplugin/MyPlugin.java</code>.</p>
 <h2 id="building-your-plugin">Building your Plugin</h2>
 <p>A Capacitor plugin for Android is a simple Java class that extends <code>com.getcapacitor.Plugin</code> and have a <code>@NativePlugin</code> annotation.
 It has some methods with <code>@PluginMethod()</code> annotation that will be callable from JavaScript.</p>
 <p>Once your plugin is generated, you can start editing it by opening the file with the Plugin class name you choose on the generator.</p>
 <h3 id="simple-example">Simple Example</h3>
 <p>In the generated example, there is a simple echo plugin with an <code>echo</code> function that simply returns a value that it was given.</p>
-<p>This example demonstrates a few core components of Capacitor plugins: receiving data from a Plugin Call, and returning data back to the caller:</p>
+<p>This example demonstrates a couple core components of Capacitor plugins: receiving data from a Plugin Call, and returning data back to the caller.</p>
 <p><code>EchoPlugin.java</code></p>
 <pre><code class="lang-java"><span class="hljs-keyword">package</span> android.plugin.test;
 

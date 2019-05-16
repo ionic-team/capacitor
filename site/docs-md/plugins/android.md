@@ -8,7 +8,9 @@ Capacitor embraces standard Android development tools for building Android plugi
 
 To get started, first generate a plugin as shown in the [Getting Started](./#getting-started) section of the Plugin guide.
 
-Next, open `your-plugin/android/your-plugin` in Android Studio.
+Next, open `your-plugin/android/` in Android Studio. You then want to navigate to the `.java` file for your plugin, which changes depending on the Plugin ID and Plugin Class Name you used when creating the plugin.
+
+For example, for a plugin with the ID `com.domain.myplugin` and the Plugin Class Name `MyPlugin`, you would find the `.java` file at `android/src/main/java/com/domain/myplugin/MyPlugin.java`.
 
 ## Building your Plugin
 
@@ -21,7 +23,7 @@ Once your plugin is generated, you can start editing it by opening the file with
 
 In the generated example, there is a simple echo plugin with an `echo` function that simply returns a value that it was given.
 
-This example demonstrates a few core components of Capacitor plugins: receiving data from a Plugin Call, and returning data back to the caller:
+This example demonstrates a couple core components of Capacitor plugins: receiving data from a Plugin Call, and returning data back to the caller.
 
 `EchoPlugin.java`
 
