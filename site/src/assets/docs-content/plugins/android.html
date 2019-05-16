@@ -112,17 +112,17 @@ startActivityForResult(call, intent, REQUEST_IMAGE_PICK);
 <pre><code class="lang-java"><span class="hljs-comment">//If you want to provide the target</span>
 bridge.triggerJSEvent(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-string">"window"</span>);
 
-bridge.triggerJSEvent(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-string">"document"</span>, <span class="hljs-string">"my custom data"</span>);
+bridge.triggerJSEvent(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-string">"document"</span>, <span class="hljs-string">"{ 'dataKey': 'dataValue' }"</span>);
 
 <span class="hljs-comment">// Window Events</span>
 bridge.triggerWindowJSEvent(<span class="hljs-string">"myCustomEvent"</span>);
 
-bridge.triggerWindowJSEvent(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-string">"my custom data"</span>);
+bridge.triggerWindowJSEvent(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-string">"{ 'dataKey': 'dataValue' }"</span>);
 
 <span class="hljs-comment">// Document events</span>
 bridge.triggerDocumentJSEvent(<span class="hljs-string">"myCustomEvent"</span>);
 
-bridge.triggerDocumentJSEvent(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-string">"my custom data"</span>);
+bridge.triggerDocumentJSEvent(<span class="hljs-string">"myCustomEvent"</span>,  <span class="hljs-string">"{ 'dataKey': 'dataValue' }"</span>);
 </code></pre>
 <p>And to listen for it, just use regular javascript:</p>
 <pre><code class="lang-javascript"><span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">"myCustomEvent"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{

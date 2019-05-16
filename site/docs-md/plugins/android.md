@@ -168,17 +168,17 @@ Capacitor provides all this functions to fire events:
 //If you want to provide the target
 bridge.triggerJSEvent("myCustomEvent", "window");
 
-bridge.triggerJSEvent("myCustomEvent", "document", "my custom data");
+bridge.triggerJSEvent("myCustomEvent", "document", "{ 'dataKey': 'dataValue' }");
 
 // Window Events
 bridge.triggerWindowJSEvent("myCustomEvent");
 
-bridge.triggerWindowJSEvent("myCustomEvent", "my custom data");
+bridge.triggerWindowJSEvent("myCustomEvent", "{ 'dataKey': 'dataValue' }");
 
 // Document events
 bridge.triggerDocumentJSEvent("myCustomEvent");
 
-bridge.triggerDocumentJSEvent("myCustomEvent", "my custom data");
+bridge.triggerDocumentJSEvent("myCustomEvent",  "{ 'dataKey': 'dataValue' }");
 ```
 
 And to listen for it, just use regular javascript:
