@@ -1,4 +1,13 @@
-# Capacitor Web Plugin Guide
+---
+title: Capacitor Web/PWA Plugin Guide
+description: Capacitor Web/PWA Plugin Guide
+url: /docs/plugins/web
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
+# Capacitor Web/PWA Plugin Guide
 
 Capacitor utilizes a web/native compatibility layer, making it easy to build plugins that have functionality when running natively, as well as when running in a PWA on the Web.
 

@@ -1,3 +1,12 @@
+---
+title: Accessibility
+description: Accessibility API
+url: /docs/apis/accessibility
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="ios,android"></plugin-platforms>
 
 # Accessibility

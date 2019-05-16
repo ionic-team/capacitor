@@ -1,3 +1,12 @@
+---
+title: Haptics
+description: Haptics API
+url: /docs/apis/haptics
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="ios,android"></plugin-platforms>
 
 # Haptics

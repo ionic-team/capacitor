@@ -1,3 +1,12 @@
+---
+title: Capacitor JavaScript Plugin Guide
+description: Capacitor JavaScript Plugin Guide
+url: /docs/plugins/js
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Capacitor JavaScript Plugin Guide
 
 In Capacitor, Native Plugins have all of their methods automatically made available to JavaScript at runtime, so the majority of plugins won't need any JavaScript for their plugin at all!

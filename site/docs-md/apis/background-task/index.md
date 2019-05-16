@@ -1,3 +1,12 @@
+---
+title: Background Tasks
+description: Background Task API
+url: /docs/apis/background-task
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="ios,android"></plugin-platforms>
 
 # Background Tasks
