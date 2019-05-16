@@ -18,3 +18,6 @@ export class MyPluginWeb extends WebPlugin implements MyPluginPlugin {
 const MyPlugin = new MyPluginWeb();
 
 export { MyPlugin };
+
+import { registerWebPlugin } from '@capacitor/core';
+registerWebPlugin(MyPlugin);
