@@ -102,6 +102,7 @@ NSTimer *hideTimer;
   [self resetScrollView];
   hideTimer = [NSTimer scheduledTimerWithTimeInterval:0 repeats:NO block:^(NSTimer * _Nonnull timer) {
     [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
+    [self notifyListeners:@"keyboardWillHide" data:nil];
   }];
 }
 
@@ -119,6 +120,8 @@ NSTimer *hideTimer;
   
   NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillShow" data:data];
+  NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
+  [self notifyListeners:@"keyboardWillShow" data:kbData];
 }
 
 - (void)onKeyboardDidShow:(NSNotification *)notification
@@ -130,11 +133,14 @@ NSTimer *hideTimer;
   
   NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidShow" data:data];
+  NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
+  [self notifyListeners:@"keyboardDidShow" data:kbData];
 }
 
 - (void)onKeyboardDidHide:(NSNotification *)notification
 {
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidHide"];
+  [self notifyListeners:@"keyboardDidHide" data:nil];
   [self resetScrollView];
 }
 

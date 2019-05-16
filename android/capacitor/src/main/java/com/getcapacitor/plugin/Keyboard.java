@@ -25,6 +25,12 @@ public class Keyboard extends Plugin {
   private ViewTreeObserver.OnGlobalLayoutListener list;
   private View rootView;
 
+  private static final String EVENT_KB_WILL_SHOW = "keyboardWillShow";
+  private static final String EVENT_KB_DID_SHOW = "keyboardDidShow";
+  private static final String EVENT_KB_WILL_HIDE = "keyboardWillHide";
+  private static final String EVENT_KB_DID_HIDE = "keyboardDidHide";
+
+
   public void load() {
     execute(new Runnable() {
       @Override
@@ -67,12 +73,19 @@ public class Keyboard extends Plugin {
             int pixelHeightDiff = (int)(heightDiff / density);
             if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
               String data = "{ 'keyboardHeight': " + pixelHeightDiff + " }";
-              bridge.triggerWindowJSEvent("keyboardWillShow", data);
-              bridge.triggerWindowJSEvent("keyboardDidShow", data);
+              bridge.triggerWindowJSEvent(EVENT_KB_WILL_SHOW, data);
+              bridge.triggerWindowJSEvent(EVENT_KB_DID_SHOW, data);
+              JSObject kbData = new JSObject();
+              kbData.put("keyboardHeight", pixelHeightDiff);
+              notifyListeners(EVENT_KB_WILL_SHOW, kbData);
+              notifyListeners(EVENT_KB_DID_SHOW, kbData);
             }
             else if ( pixelHeightDiff != previousHeightDiff && ( previousHeightDiff - pixelHeightDiff ) > 100 ){
-              bridge.triggerWindowJSEvent("keyboardWillHide");
-              bridge.triggerWindowJSEvent("keyboardDidHide");
+              bridge.triggerWindowJSEvent(EVENT_KB_WILL_HIDE);
+              bridge.triggerWindowJSEvent(EVENT_KB_DID_HIDE);
+              JSObject kbData = new JSObject();
+              notifyListeners(EVENT_KB_WILL_HIDE, kbData);
+              notifyListeners(EVENT_KB_DID_HIDE, kbData);
             }
             previousHeightDiff = pixelHeightDiff;
           }
