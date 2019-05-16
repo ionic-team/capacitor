@@ -40,7 +40,7 @@ npx @capacitor/cli plugin:generate
  - `git repository`: the URL to a git repository where the source code of the plugin will be hosted.
  - `author` (optional): the name of the plugin creator in `package.json`.
  - `license` (optional): the license under which the plugin is bound. MIT license is the default.
- - `package.json will be created`: enter "Y" to finish plugin setup.
+ - `package.json will be created`: enter "Y" and/or hit Enter/Return to finish plugin setup.
 
 ## TypeScript Interface
 
