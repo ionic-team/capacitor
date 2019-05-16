@@ -1,6 +1,7 @@
 import { Plugins } from './global';
 import { mergeWebPlugins, mergeWebPlugin, WebPlugin } from './web/index';
 
+export * from './web/accessibility';
 export * from './web/browser';
 export * from './web/camera';
 export * from './web/clipboard';
@@ -17,4 +18,4 @@ mergeWebPlugins(Plugins);
 
 export const registerWebPlugin = (plugin: WebPlugin) => {
   mergeWebPlugin(Plugins, plugin);
-}
+};

@@ -29,7 +29,7 @@ export class CapacitorWeb {
           return target[prop];
         }
       }
-    })
+    });
   }
 
   pluginMethodNoop(_target: any, _prop: PropertyKey, pluginName: string) {
