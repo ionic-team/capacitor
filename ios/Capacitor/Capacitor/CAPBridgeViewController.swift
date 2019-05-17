@@ -26,6 +26,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var statusBarStyle: UIStatusBarStyle = .default
   @objc public var supportedOrientations: Array<Int> = []
   
+  @objc public var startDir = ""
+
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
   private var handler: CAPAssetHandler?
@@ -66,7 +68,11 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
   
   private func getStartPath() -> String {
-    var startPath = Bundle.main.path(forResource: "public", ofType: nil)!
+    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
+    guard var startPath = Bundle.main.path(forResource: fullStartPath.relativePath, ofType: nil) else {
+      fatalLoadError()
+    }
+
     let defaults = UserDefaults.standard
     let persistedPath = defaults.string(forKey: "serverBasePath")
     if (persistedPath != nil && !persistedPath!.isEmpty) {
@@ -84,14 +90,21 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     self.becomeFirstResponder()
     loadWebView()
   }
-  
+
+  func fatalLoadError() -> Never {
+    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
+
+    print("⚡️  FATAL ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
+    print("⚡️  This file is the root of your web app and must exist before")
+    print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
+    print("⚡️  or, if embedding, that this directory exists as a resource directory.")
+    exit(1)
+  }
+
   func loadWebView() {
-    if Bundle.main.path(forResource: "public/index", ofType: "html") == nil {
-      print("⚡️  FATAL ERROR: Unable to load public/index.html")
-      print("⚡️  This file is the root of your web app and must exist before")
-      print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least once")
-      
-      exit(1)
+    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir).appendingPathComponent("index")
+    if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
+      fatalLoadError()
     }
 
     hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())"
