@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/core",
-  "version": "1.0.0-beta.24",
+  "version": "1.0.0-beta.25",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -62,5 +62,5 @@
   "dependencies": {
     "tslib": "^1.9.0"
   },
-  "gitHead": "538152392458f23ca276a9b1470d6a07d4118a3f"
+  "gitHead": "17f2124b487cbe216b3d6543a5d3fb86760110cd"
 }
