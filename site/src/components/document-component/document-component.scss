@@ -39,6 +39,31 @@ document-component {
     }
   }
 
+  .heading-link {
+    position: relative;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: #2d2d4c;
+
+    &:hover {
+      border-bottom: 1px solid transparent;
+    }
+  
+    app-icon {
+      transition: opacity 0.2s;
+      position: absolute;
+      left: -20px;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+    }
+  
+    &:hover app-icon {
+      opacity: 0.8;
+    }
+  }
+
   img {
     max-width: 100%;
   }
