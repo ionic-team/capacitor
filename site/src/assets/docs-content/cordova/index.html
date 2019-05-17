@@ -8,7 +8,7 @@
 <p>Capacitor has a few key differences that require web developers, previously used to Cordova&#39;s approach, to change app development workflows.</p>
 <h3 id="native-project-management">Native Project Management</h3>
 <p>Capacitor considers each platform project a <em>source asset</em> instead of a <em>build time asset</em>. That means you&#39;ll check your Xcode and Android Studio projects into source control, as well as use those IDEs when necessary for platform-specific configuration and running/testing.</p>
-<p>This change in approach has a few implications. First, Capacitor does not use <code>config.xml</code> or a similar custom configuration for platform settings. Instead, configuration changes are made by editing the appropriate platform-specific configuration files directly, such as <code>AndroidManifest.xml</code> for Android and <code>Info.plist</code> for Xcode.</p>
+<p>This change in approach has a few implications. First, Capacitor does not use <code>config.xml</code> or a similar custom configuration for platform settings. Instead, configuration changes are made by editing the appropriate platform-specific configuration files directly, such as <code>AndroidManifest.xml</code> for Android and <code>Info.plist</code> for Xcode. Capacitor does have some <a href="/docs/basics/configuring-your-app">high level configuration options</a> that are set in <code>capacitor.config.json</code>. These generally don&#39;t modify native functionality, but control Capacitor&#39;s tooling.</p>
 <p>Additionally, Capacitor does not &quot;run on device&quot; or emulate through the command line. Instead, such operations occur through the platform-specific IDE, which provides a faster, more typical experience that follows the standards of app development for that platform. For example, running iOS apps from the command line is not officially supported by Apple anyway, so Xcode is preferred.</p>
 <p>While these changes may be concerning to long-time Cordova users, there are worthwhile benefits:</p>
 <ol>
@@ -25,3 +25,5 @@
 <h3 id="cli-version-management">CLI/Version Management</h3>
 <p>Capacitor, unlike Cordova, does not use a global CLI. Instead, the Capacitor &quot;CLI&quot; is installed locally into each project as an npm script. This makes it easier to manage versions of Capacitor across many different apps.</p>
 <p>Thus, instead of running <code>capacitor</code> directly from the command line, Capacitor is invoked by calling <code>npx cap</code> in the directory of your app.</p>
+<h2 id="start-the-migration">Start the Migration</h2>
+<p>Learn more about the <a href="/docs/cordova/">migration process</a> or <a href="/docs/cordova/migrating-from-cordova-to-capacitor">get started migrating</a> right away.</p>

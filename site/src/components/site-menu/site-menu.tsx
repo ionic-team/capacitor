@@ -82,6 +82,10 @@ export class SiteMenu {
           url: '/docs/cordova'
         },
         {
+          title: 'Migration Strategy',
+          url: '/docs/cordova/migration-strategy'
+        },
+        {
           title: 'Migrating to Capacitor',
           url: '/docs/cordova/migrating-from-cordova-to-capacitor'
         },

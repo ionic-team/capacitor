@@ -18,7 +18,7 @@ Capacitor has a few key differences that require web developers, previously used
 
 Capacitor considers each platform project a _source asset_ instead of a _build time asset_. That means you'll check your Xcode and Android Studio projects into source control, as well as use those IDEs when necessary for platform-specific configuration and running/testing.
 
-This change in approach has a few implications. First, Capacitor does not use `config.xml` or a similar custom configuration for platform settings. Instead, configuration changes are made by editing the appropriate platform-specific configuration files directly, such as `AndroidManifest.xml` for Android and `Info.plist` for Xcode.
+This change in approach has a few implications. First, Capacitor does not use `config.xml` or a similar custom configuration for platform settings. Instead, configuration changes are made by editing the appropriate platform-specific configuration files directly, such as `AndroidManifest.xml` for Android and `Info.plist` for Xcode. Capacitor does have some [high level configuration options](/docs/basics/configuring-your-app) that are set in `capacitor.config.json`. These generally don't modify native functionality, but control Capacitor's tooling.
 
 Additionally, Capacitor does not "run on device" or emulate through the command line. Instead, such operations occur through the platform-specific IDE, which provides a faster, more typical experience that follows the standards of app development for that platform. For example, running iOS apps from the command line is not officially supported by Apple anyway, so Xcode is preferred.
 
@@ -44,3 +44,7 @@ Finally, Capacitor has implications for plugin authors. On iOS, Swift 4 is offic
 Capacitor, unlike Cordova, does not use a global CLI. Instead, the Capacitor "CLI" is installed locally into each project as an npm script. This makes it easier to manage versions of Capacitor across many different apps.
 
 Thus, instead of running `capacitor` directly from the command line, Capacitor is invoked by calling `npx cap` in the directory of your app.
+
+## Start the Migration
+
+Learn more about the [migration process](/docs/cordova/) or [get started migrating](/docs/cordova/migrating-from-cordova-to-capacitor) right away.
