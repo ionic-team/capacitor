@@ -15,7 +15,7 @@ const chalk = require('chalk');
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
  */
 export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], platform: string) {
-  let pluginModules: Array<string> = [];
+  let pluginModules: Array<any> = [];
   let pluginExports: Array<string> = [];
   plugins.map((p) => {
     const pluginId = p.xml.$.id;
@@ -26,9 +26,11 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
       let clobbersModule = '';
       let mergesModule = '';
       let runsModule = '';
+      let clobberKey = '';
       if (jsModule.clobbers) {
         jsModule.clobbers.map((clobber: any) => {
           clobbers.push(clobber.$.target);
+          clobberKey = clobber.$.target;
         });
         clobbersModule = `,
         "clobbers": [
@@ -47,19 +49,19 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
       if (jsModule.runs) {
         runsModule = ',\n        "runs": true';
       }
-      pluginModules.push(`{
+      const pluginModule = { clobber: clobberKey, pluginContent: `{
         "id": "${pluginId}.${jsModule.$.name}",
         "file": "plugins/${pluginId}/${jsModule.$.src}",
         "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
-      }`
-      );
+      }`};
+      pluginModules.push(pluginModule);
     });
     pluginExports.push(`"${pluginId}": "${p.xml.$.version}"`);
   });
   return `
   cordova.define('cordova/plugin_list', function(require, exports, module) {
     module.exports = [
-      ${pluginModules.join(',\n      ')}
+      ${pluginModules.sort((a, b) => a.clobber.localeCompare(b.clobber)).map(e => e.pluginContent).join(',\n      ')}
     ];
     module.exports.metadata =
     // TOP OF METADATA
