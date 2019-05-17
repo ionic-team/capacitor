@@ -1,21 +1,43 @@
 # Using Cordova Plugins and Ionic Native
 
-When developing an app that uses Capacitor, it's possible to add both Cordova and Ionic Native plugins to it.
-
-## Using Ionic Native
-Ionic Native is supported in Capacitor. Currently, Ionic Native contains only Cordova plugins, so whenever you find an Ionic Native wrapper you'd like to use, install it and then install the corresponding Cordova plugin by running
-
-npm install your-cordova-plugin
-npx cap update
-
+When developing an app that uses Capacitor, it's possible to use both Cordova and Ionic Native plugins.
 
 ## Installing Cordova Plugins
 
-Simply `npm install` your plugin of choice, sync your project, finish configuration, and you're ready to go:
+Simply install your plugin of choice, sync your project, finish any required native project configuration, and you're ready to go:
 
 ```bash
-npm install cool-cordova-plugin
+npm install cordova-plugin-name
 npx cap sync
+```
+
+## Updating Cordova Plugins
+
+Similar to the installation steps. Capacitor will detect the new version of the plugin and install it.
+
+```bash
+npm install cordova-plugin-name
+npx cap update
+```
+
+## Installing Ionic Native Plugins
+[Ionic Native](https://ionicframework.com/docs/native) provides TypeScript wrappers and a consistent API and naming convention for easier development with Cordova plugins. It's supported in Capacitor, so whenever you find an Ionic Native wrapper you'd like to use, install the JavaScript code, install the corresponding Cordova plugin, then sync your project:
+
+```bash
+npm install @ionic-native/javascript-package-name
+cordova plugin add cordova-plugin-name
+npx cap sync
+```
+
+## Updating Ionic Native Plugins
+
+Similiar to the installation steps. Update the Ionic Native JavaScript library, remove then re-add the Cordova plugin, then update your project:
+
+```bash
+npm install @ionic-native/javascript-package-name
+cordova plugin remove cordova-plugin-name
+cordova plugin add cordova-plugin-name
+npx cap update
 ```
 
 ## Important: Configuration 
@@ -26,7 +48,4 @@ Consult the [iOS](../ios/configuration) and [Android](../android/configuration) 
 
 ## Compatibility Issues
 
-Some Cordova plugins don't work with Capacitor, or Capacitor provides a conflicting alternative. If it's known that the plugin is conflicting or causes build issues, it will be skipped when running `npx cap update`.
-
-
-While we've tested a number of popular Cordova plugins, it's possible Capacitor doesn't support every Cordova plugin. If you find an issue with an existing Cordova plugin, please [file an issue](https://github.com/ionic-team/capacitor/issues/new) with the issue you've found and the plugin information.
+Some Cordova plugins don't work with Capacitor or Capacitor provides a conflicting alternative. [See here](/docs/cordova/known-incompatible-plugins) for details and a known incompatibility list.

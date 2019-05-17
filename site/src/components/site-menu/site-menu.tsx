@@ -61,10 +61,6 @@ export class SiteMenu {
           url: '/docs/basics/using-plugins'
         },
         {
-          title: 'Cordova Plugins',
-          url: '/docs/basics/cordova'
-        },
-        {
           title: 'Native Project Configuration',
           url: '/docs/basics/configuring-your-app'
         },

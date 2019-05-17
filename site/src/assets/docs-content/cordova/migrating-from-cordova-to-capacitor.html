@@ -31,7 +31,7 @@ npx <span class="hljs-built_in">cap</span> add android
 <h3 id="set-permissions">Set Permissions</h3>
 <p>By default, the entire initial permissions requested for the latest version of Capacitor are set for you in the default native projects for both iOS and Android. However, you may need to apply additional permissions manually by mapping between <code>plugin.xml</code> and required settings on iOS and Android. Consult the <a href="/docs/ios/configuration">iOS</a> and <a href="/docs/android/configuration">Android</a> configuration guides for info on how to configure each platform.</p>
 <h3 id="additional-config-xml-fields">Additional Config.xml Fields</h3>
-<p>You may be curious about how other elements in <code>config.xml</code> work with Capacitor apps.</p>
+<p>You may be curious about how other elements from <code>config.xml</code> work in Capacitor apps.</p>
 <p>The Author element can be configured in <code>package.json</code>, but is not used by Capacitor or within your app:</p>
 <pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">author</span> <span class="hljs-attr">email</span>=<span class="hljs-string">"email@test.com"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"http://ionicframework.com/"</span>&gt;</span>Ionic Framework Team<span class="hljs-tag">&lt;/<span class="hljs-name">author</span>&gt;</span>
 </code></pre>
@@ -50,6 +50,6 @@ npx <span class="hljs-built_in">cap</span> add android
 </code></pre>
 <p>It&#39;s impossible to cover every <code>config.xml</code> element available. However, most questions relating to &quot;How do I configure X in Capacitor?&quot; should be thought of as &quot;How do I configure X in [platform] (iOS/Android)?&quot; when searching online for answers.</p>
 <h3 id="removing-cordova">Removing Cordova</h3>
-<p>Once you&#39;ve tested that all migration changes have been applied and the app working well, Cordova can be removed from the project. Remove <code>config.xml</code> as well as the <code>platforms</code> and <code>plugins</code> folders. Note that you don&#39;t technically have to remove Cordova, since Capacitor works alongside it.</p>
+<p>Once you&#39;ve tested that all migration changes have been applied and the app is working well, Cordova can be removed from the project. Delete <code>config.xml</code> as well as the <code>platforms</code> and <code>plugins</code> folders. Note that you don&#39;t technically have to remove Cordova, since Capacitor works alongside it. In fact, if you plan to continue using Cordova plugins or think you may in the future, you can leave the Cordova assets where they are.</p>
 <h3 id="next-steps">Next Steps</h3>
-<p>This is just the beginning of your Capacitor journey. Continue on by learning about the Capacitor <a href="/docs/basics/workflow">development workflow</a>.</p>
+<p>This is just the beginning of your Capacitor journey. Learn more about <a href="/docs/cordova/using-cordova-plugins">using Cordova plugins</a> in a Capacitor project or more details on the Capacitor <a href="/docs/basics/workflow">development workflow</a>.</p>

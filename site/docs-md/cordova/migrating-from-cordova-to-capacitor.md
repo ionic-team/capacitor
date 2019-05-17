@@ -62,7 +62,7 @@ By default, the entire initial permissions requested for the latest version of C
 
 ### Additional Config.xml Fields
 
-You may be curious about how other elements in `config.xml` work with Capacitor apps.
+You may be curious about how other elements from `config.xml` work in Capacitor apps.
 
 The Author element can be configured in `package.json`, but is not used by Capacitor or within your app:
 
@@ -93,7 +93,7 @@ It's impossible to cover every `config.xml` element available. However, most que
 
 ### Removing Cordova
 
-Once you've tested that all migration changes have been applied and the app working well, Cordova can be removed from the project. Remove `config.xml` as well as the `platforms` and `plugins` folders. Note that you don't technically have to remove Cordova, since Capacitor works alongside it.
+Once you've tested that all migration changes have been applied and the app is working well, Cordova can be removed from the project. Delete `config.xml` as well as the `platforms` and `plugins` folders. Note that you don't technically have to remove Cordova, since Capacitor works alongside it. In fact, if you plan to continue using Cordova plugins or think you may in the future, you can leave the Cordova assets where they are.
 
 ### Next Steps
 
