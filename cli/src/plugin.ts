@@ -90,6 +90,7 @@ export function getDependencies(config: Config): string[] {
 
 export function fixName(name: string): string {
   name = name
+    .replace(/^@[^/]*\//g, '')
     .replace(/\//g, '_')
     .replace(/-/g, '_')
     .replace(/@/g, '')
