@@ -12,7 +12,7 @@ On the plus side, Ionic now controls almost all of its stack. When you build an 
 
 ## Differences between Capacitor and Cordova
 
-Capacitor has a few key differences that require web developers, previously used to Cordova's approach, to change app development workflows.
+In spirit, Capacitor and Cordova are very similar. Both manage a Web View and provide a structured way of exposing native functionality to your web code. However, Capacitor has a few key differences that require web developers, previously used to Cordova's approach, to change app development workflows.
 
 ### Native Project Management
 
