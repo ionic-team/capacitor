@@ -9,6 +9,7 @@ export * from './web/clipboard';
 export * from './web/filesystem';
 export * from './web/geolocation';
 export * from './web/device';
+export * from './web/local-notifications';
 export * from './web/share';
 export * from './web/modals';
 export * from './web/motion';
