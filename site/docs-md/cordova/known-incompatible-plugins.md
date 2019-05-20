@@ -15,7 +15,6 @@ If you find an issue with an existing Cordova plugin, please [let us know](https
 - cordova-plugin-crosswalk-webview
 - cordova-plugin-fcm
 - cordova-plugin-firebase
-- cordova-plugin-ionic
 - cordova-plugin-ionic-keyboard
 - cordova-plugin-ionic-webview
 - cordova-plugin-music-controls
