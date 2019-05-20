@@ -24,4 +24,5 @@
 #import "CDVInvokedUrlCommand.h"
 #import "CDVViewController.h"
 #import "CDVURLProtocol.h"
+#import "CDVScreenOrientationDelegate.h"
 
