@@ -40,7 +40,24 @@ npx cap add ios
 npx cap add android
 ```
 
-Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins already in `config.xml` are automatically installed by Capacitor into each new native project.
+Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins that were previously added to the project via `npm install` are automatically installed by Capacitor into each new native project (minus any [incompatible ones](/docs/cordova/known-incompatible-plugins)). The Cordova plugin list in `package.json` looks similar to this:
+
+```json
+"cordova": {
+    "plugins": {
+        "cordova-plugin-camera": {},
+        "cordova-sqlite-storage": {},
+        "cordova-plugin-ionic-webview": {
+            "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+        },
+        "cordova-plugin-file": {}
+    },
+    "platforms": [
+        "android",
+        "ios"
+    ]
+}
+```
 
 ### Splash Screens and Icons
 

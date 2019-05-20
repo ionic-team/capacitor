@@ -20,7 +20,22 @@
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> add ios
 npx <span class="hljs-built_in">cap</span> add android
 </code></pre>
-<p>Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins already in <code>config.xml</code> are automatically installed by Capacitor into each new native project.</p>
+<p>Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins that were previously added to the project via <code>npm install</code> are automatically installed by Capacitor into each new native project (minus any <a href="/docs/cordova/known-incompatible-plugins">incompatible ones</a>). The Cordova plugin list in <code>package.json</code> looks similar to this:</p>
+<pre><code class="lang-json">&quot;cordova&quot;: {
+    &quot;plugins&quot;: {
+        &quot;cordova-plugin-camera&quot;: {},
+        &quot;cordova-sqlite-storage&quot;: {},
+        &quot;cordova-plugin-ionic-webview&quot;: {
+            &quot;ANDROID_SUPPORT_ANNOTATIONS_VERSION&quot;: &quot;27.+&quot;
+        },
+        &quot;cordova-plugin-file&quot;: {}
+    },
+    &quot;platforms&quot;: [
+        &quot;android&quot;,
+        &quot;ios&quot;
+    ]
+}
+</code></pre>
 <h3 id="splash-screens-and-icons">Splash Screens and Icons</h3>
 <p>If you&#39;ve previously created icon and splash screen images, they can be found in the top-level <code>resources</code> folder of your project. <a href="https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/">Follow this guide</a> to move them over to each native project.</p>
 <h3 id="migrate-plugins">Migrate Plugins</h3>
