@@ -20,20 +20,15 @@
 <pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> add ios
 npx <span class="hljs-built_in">cap</span> add android
 </code></pre>
-<p>Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins that were previously added to the project via <code>npm install</code> are automatically installed by Capacitor into each new native project (minus any <a href="/docs/cordova/known-incompatible-plugins">incompatible ones</a>). The Cordova plugin list in <code>package.json</code> looks similar to this:</p>
-<pre><code class="lang-json">&quot;cordova&quot;: {
-    &quot;plugins&quot;: {
-        &quot;cordova-plugin-camera&quot;: {},
-        &quot;cordova-sqlite-storage&quot;: {},
-        &quot;cordova-plugin-ionic-webview&quot;: {
-            &quot;ANDROID_SUPPORT_ANNOTATIONS_VERSION&quot;: &quot;27.+&quot;
-        },
-        &quot;cordova-plugin-file&quot;: {}
-    },
-    &quot;platforms&quot;: [
-        &quot;android&quot;,
-        &quot;ios&quot;
-    ]
+<p>Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins that were previously added to the project via <code>npm install</code> (located under <code>dependencies</code> in <code>package.json</code>) are automatically installed by Capacitor into each new native project (minus any <a href="/docs/cordova/known-incompatible-plugins">incompatible ones</a>):</p>
+<pre><code class="lang-json">&quot;dependencies&quot;: {
+    &quot;@ionic-native/camera&quot;: &quot;^5.3.0&quot;,
+    &quot;@ionic-native/core&quot;: &quot;^5.3.0&quot;,
+    &quot;@ionic-native/file&quot;: &quot;^5.3.0&quot;,
+    &quot;cordova-android&quot;: &quot;8.0.0&quot;,
+    &quot;cordova-ios&quot;: &quot;5.0.0&quot;,
+    &quot;cordova-plugin-camera&quot;: &quot;4.0.3&quot;,
+    &quot;cordova-plugin-file&quot;: &quot;6.0.1&quot;,
 }
 </code></pre>
 <h3 id="splash-screens-and-icons">Splash Screens and Icons</h3>

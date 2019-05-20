@@ -13,14 +13,14 @@ npx cap sync
 
 ## Updating Cordova Plugins
 
-Similar to the installation steps. Capacitor will detect the new version of the plugin and install it.
+Similar to the installation steps. Simply update the cordova plugin to the latest version then Capacitor will pick up the changes:
 
 ```bash
 npm install cordova-plugin-name@latest
 npx cap update
 ```
 
-If you don't want to risk to introduce breaking changes, use `npm update cordova-plugin-name` instead of `@latest`.
+If you don't want to risk to introduce breaking changes, use `npm update cordova-plugin-name` instead of `@latest` as `update` respects semver.
 
 ## Installing Ionic Native Plugins
 [Ionic Native](https://ionicframework.com/docs/native) provides TypeScript wrappers and a consistent API and naming convention for easier development with Cordova plugins. It's supported in Capacitor, so whenever you find an Ionic Native wrapper you'd like to use, install the JavaScript code, install the corresponding Cordova plugin, then sync your project:

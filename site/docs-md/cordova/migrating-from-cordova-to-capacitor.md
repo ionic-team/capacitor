@@ -40,22 +40,17 @@ npx cap add ios
 npx cap add android
 ```
 
-Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins that were previously added to the project via `npm install` are automatically installed by Capacitor into each new native project (minus any [incompatible ones](/docs/cordova/known-incompatible-plugins)). The Cordova plugin list in `package.json` looks similar to this:
+Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins that were previously added to the project via `npm install` (located under `dependencies` in `package.json`) are automatically installed by Capacitor into each new native project (minus any [incompatible ones](/docs/cordova/known-incompatible-plugins)):
 
 ```json
-"cordova": {
-    "plugins": {
-        "cordova-plugin-camera": {},
-        "cordova-sqlite-storage": {},
-        "cordova-plugin-ionic-webview": {
-            "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
-        },
-        "cordova-plugin-file": {}
-    },
-    "platforms": [
-        "android",
-        "ios"
-    ]
+"dependencies": {
+    "@ionic-native/camera": "^5.3.0",
+    "@ionic-native/core": "^5.3.0",
+    "@ionic-native/file": "^5.3.0",
+    "cordova-android": "8.0.0",
+    "cordova-ios": "5.0.0",
+    "cordova-plugin-camera": "4.0.3",
+    "cordova-plugin-file": "6.0.1",
 }
 ```
 

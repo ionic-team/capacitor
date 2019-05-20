@@ -6,11 +6,11 @@
 npx <span class="hljs-built_in">cap</span> sync
 </code></pre>
 <h2 id="updating-cordova-plugins">Updating Cordova Plugins</h2>
-<p>Similar to the installation steps. Capacitor will detect the new version of the plugin and install it.</p>
+<p>Similar to the installation steps. Simply update the cordova plugin to the latest version then Capacitor will pick up the changes:</p>
 <pre><code class="lang-bash">npm install cordova-plugin-name@latest
 npx <span class="hljs-built_in">cap</span> update
 </code></pre>
-<p>If you don&#39;t want to risk to introduce breaking changes, use <code>npm update cordova-plugin-name</code> instead of <code>@latest</code>.</p>
+<p>If you don&#39;t want to risk to introduce breaking changes, use <code>npm update cordova-plugin-name</code> instead of <code>@latest</code> as <code>update</code> respects semver.</p>
 <h2 id="installing-ionic-native-plugins">Installing Ionic Native Plugins</h2>
 <p><a href="https://ionicframework.com/docs/native">Ionic Native</a> provides TypeScript wrappers and a consistent API and naming convention for easier development with Cordova plugins. It&#39;s supported in Capacitor, so whenever you find an Ionic Native wrapper you&#39;d like to use, install the JavaScript code, install the corresponding Cordova plugin, then sync your project:</p>
 <pre><code class="lang-bash">npm install @ionic-native/javascript-package-name
