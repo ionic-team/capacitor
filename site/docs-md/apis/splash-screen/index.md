@@ -1,3 +1,12 @@
+---
+title: Splash Screen
+description: Splash Screen API
+url: /docs/apis/splash-screen
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Splash Screen

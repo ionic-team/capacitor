@@ -5,19 +5,24 @@
   * [Required Dependencies](getting-started/dependencies.md)
   * [Installation](getting-started/index.md)
   * [Using with Ionic](getting-started/with-ionic.md)
-  * [PWA Elements](getting-started/pwa-elements.md)
 * Basics
   * [Development Workflow](basics/workflow.md)
   * [Opening Native IDE](basics/opening-native-projects.md)
   * [Building your App](basics/building-your-app.md)
   * [Running your App](basics/running-your-app.md)
   * [Using Plugins](basics/using-plugins.md)
-  * [Cordova Plugins](basics/cordova.md)
   * [Native Project Configuration](basics/configuring-your-app.md)
   * [Progressive Web Apps](basics/progressive-web-app.md)
+* Cordova/PhoneGap
+  * [Introduction](cordova/index.md)
+  * [Migration Strategy](cordova/migration-strategy.md)
+  * [Migrating From Cordova to Capacitor](cordova/migrating-from-cordova-to-capacitor.md)
+  * [Cordova/Ionic Native Plugins](cordova/using-cordova-plugins.md)
+  * [Known Incompatible Plugins](cordova/known-incompatible-plugins.md)
 * Guides
   * [Ionic Framework App](guides/ionic-framework-app.md)
   * [Push Notifications - Firebase](guides/push-notifications-firebase.md)
+  * [Community Guides](guides/community.md)
 * iOS
   * [Getting Started](ios/index.md)
   * [Configuration](ios/configuration.md)
@@ -32,17 +37,18 @@
   * [Troubleshooting](android/troubleshooting.md)
 * Web/PWA
   * [Getting Started](web/index.md)
+  * [PWA Elements](web/pwa-elements.md)
 * Electron
   * [Getting Started](electron/index.md)
-* Plugins
+* Creating Plugins
   * [Introduction](plugins/index.md)
-  * [Community](community/plugins.md)
   * [iOS Guide](plugins/ios.md)
   * [Android Guide](plugins/android.md)
   * [Web/PWA Guide](plugins/web.md)
   * [JavaScript Guide](plugins/js.md)
-APIs
+* APIs
   * [Introduction](apis/index.md)
+  * [Community Plugins](community/plugins.md)
   * [Accessibility](apis/accessibility/index.md)
   * [App](apis/app/index.md)
   * [Background Task](apis/background-task/index.md)

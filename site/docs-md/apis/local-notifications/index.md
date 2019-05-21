@@ -1,3 +1,12 @@
+---
+title: Local Notifications
+description: Local Notifications API
+url: /docs/apis/local-Notifications
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Local Notifications
