@@ -35,12 +35,12 @@ export class DocumentComponent implements ComponentInterface {
   }
 
   render() {
-    debugger;
+    // debugger;
     if (this.item == null) {
       return null;
     }
     return (
-      <div>
+      <div class="container">
         <app-burger />
         <site-menu selectedParent={this.parent} siteStructureList={siteStructure as SiteStructureItem[]} />
         <app-marked fetchPath={this.item.filePath} renderer={(docsContent) => [

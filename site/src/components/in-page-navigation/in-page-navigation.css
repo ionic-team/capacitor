@@ -1,6 +1,8 @@
 in-page-navigation {
   flex: 0 0 180px;
   height: 100%;
+  padding-top: 26px;
+  padding-left: 16px;
 }
 
 in-page-navigation h5 {
@@ -39,6 +41,8 @@ in-page-navigation .heading-links a {
   line-height: 18px;
   font-weight: 500;
   border: none;
+  text-decoration: none;
+  border: none !important;
 }
 
 in-page-navigation .heading-links a:hover {
@@ -47,6 +51,10 @@ in-page-navigation .heading-links a:hover {
 
 in-page-navigation .heading-links a:hover {
   border: none;
+}
+
+document-component in-page-navigation .heading-links .heading-link:hover {
+  border: none !important;
 }
 
 in-page-navigation li.heading-link {
@@ -96,6 +104,11 @@ in-page-navigation .submit-edit-link {
   display: flex;
 }
 
+in-page-navigation .submit-edit-link svg {
+  width: 16px;
+  fill: currentColor;
+}
+
 in-page-navigation .submit-edit-link span {
   transition: border 0.2s;
   height: 16px;
@@ -103,12 +116,13 @@ in-page-navigation .submit-edit-link span {
   border-bottom: 1px solid transparent;
 }
 
-in-page-navigation .submit-edit-link span:hover {
+in-page-navigation .submit-edit-link:hover span {
   border-bottom: 1px solid var(--color-cadet-blue);
 }
 
 in-page-navigation .heading-links + .submit-edit-link {
   margin-top: 28px;
+  border-bottom: none;
 }
 
 

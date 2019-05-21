@@ -1,6 +1,10 @@
 @import '../../global/variables';
 @import '../../global/webfont';
 
+@import '../../global/shared/utils';
+@import '../../global/shared/buttons';
+
+
 * {
   box-sizing: border-box;
 }
@@ -9,7 +13,7 @@ capacitor-site {
   min-height: 100%;
   display: flex;
   flex-flow: column;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 .no-scroll {
@@ -60,7 +64,7 @@ capacitor-site {
 }
 
 .container {
-  max-width: 1080px;
+  max-width: 1280px;
   width: 100%;
   margin: auto;
   padding: 0 24px;
@@ -70,6 +74,12 @@ capacitor-site {
   display: flex;
 }
 
+document-component {
+  > div {
+    display: flex;
+  }
+}
+doc-content
 .input-with-button {
   display: flex;
   height: 50px;
@@ -80,6 +90,7 @@ capacitor-site {
     flex: 1;
     height: 100%;
   }
+
   button {
     flex-grow: 0;
     flex-shrink: 1;
@@ -87,6 +98,7 @@ capacitor-site {
     border: 0;
     border-radius: 0px 3px 3px 0;
     height: 100%;
+
     &:hover {
       transform: none;
     }
