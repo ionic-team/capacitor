@@ -54,3 +54,22 @@ To install new plugins (including Cordova ones), run
 npm install really-cool-plugin
 npx cap update
 ```
+
+## 5. Updating Capacitor
+
+To check if there are any new updates to Capacitor itself, run `npx cap doctor` to print out the current installed dependencies as well view the latest available.
+
+To update Capacitor Core and CLI:
+
+```bash
+npm update @capacitor/cli
+npm update @capacitor/core
+```
+
+To update any or all of the platforms you are using:
+
+```bash
+npm update @capacitor/ios
+npm update @capacitor/android
+npm update @capacitor/electron
+```
