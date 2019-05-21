@@ -101,6 +101,10 @@ export class SiteMenu {
         {
           title: 'Push Notifications - Firebase',
           url: '/docs/guides/push-notifications-firebase'
+        },
+        {
+          title: 'Community Guides',
+          url: '/docs/guides/community'
         }
       ]
     },
@@ -151,7 +155,7 @@ export class SiteMenu {
         {
           title: 'Troubleshooting',
           url: '/docs/android/troubleshooting'
-        },
+        }
       ]
     },
     {
