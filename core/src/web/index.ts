@@ -112,7 +112,7 @@ export class WebPlugin {
     };
   }
 
-  removeListener(eventName: string, listenerFunc: ListenerCallback): void {
+  private removeListener(eventName: string, listenerFunc: ListenerCallback): void {
     let listeners = this.listeners[eventName];
     if (!listeners) {
       return;
