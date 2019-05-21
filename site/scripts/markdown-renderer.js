@@ -118,9 +118,7 @@ function changeCodeCreation(renderer) {
     function highlight(code, lang) {
         code = code.replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(/>/g, "&gt;");
         if (lang != null && languages.indexOf(lang) !== -1) {
             return prismjs_1.default.highlight(code, prismjs_1.default.languages[lang]);
         }
