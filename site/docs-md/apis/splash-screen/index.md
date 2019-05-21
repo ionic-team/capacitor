@@ -1,4 +1,4 @@
-<plugin-api index="true" name="splash-screen"></plugin-api>
+<plugin-platforms platforms="pwa,ios,android"></plugin-platforms>
 
 # Splash Screen
 
