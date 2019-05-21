@@ -102,7 +102,7 @@ export class App {
                   exact={true}
                 />
 
-                <stencil-route
+                {/* <stencil-route
                   url="/docs/getting-started/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
                     const page = props.match.params.pageName || 'index';
@@ -214,7 +214,7 @@ export class App {
                       <document-component pages={[`community/${page}.html`]} />
                     );
                   }}
-                />
+                /> */}
 
                 <stencil-route url="/docs/" exact={true} routeRender={() => (
                   <document-component page='/docs/'></document-component>

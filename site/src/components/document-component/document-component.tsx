@@ -10,7 +10,6 @@ import { SiteStructureItem } from '../../global/definitions';
 export class DocumentComponent implements ComponentInterface {
   @Prop() pages: string[] = [];
 
-
   @Prop() page: string = null;
 
   @State() item: SiteStructureItem;
@@ -37,7 +36,7 @@ export class DocumentComponent implements ComponentInterface {
   render() {
     // debugger;
     if (this.item == null) {
-      return null;
+      return <h1>Page not found</h1>;
     }
     return (
       <div class="container">

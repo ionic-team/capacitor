@@ -25,7 +25,7 @@
       {
         "text": "PWA Elements",
         "filePath": "/assets/docs-content/getting-started/pwa-elements.json",
-        "url": "/docs/pwa-elements"
+        "url": null
       }
     ]
   },
@@ -60,7 +60,7 @@
       {
         "text": "Cordova Plugins",
         "filePath": "/assets/docs-content/basics/cordova.json",
-        "url": "/docs/basics/cordova"
+        "url": null
       },
       {
         "text": "Native Project Configuration",
@@ -154,8 +154,7 @@
     "children": [
       {
         "text": "Getting Started",
-        "filePath": "/assets/docs-content/web/index.json",
-        "url": "/docs/web"
+        "filePath": "/assets/docs-content/web/index.json"
       }
     ]
   },
@@ -209,8 +208,7 @@
       },
       {
         "text": "Accessibility",
-        "filePath": "/assets/docs-content/apis/accessibility/index.json",
-        "url": "/docs/apis/accessibility"
+        "filePath": "/assets/docs-content/apis/accessibility/index.json"
       },
       {
         "text": "App",
@@ -269,8 +267,7 @@
       },
       {
         "text": "Local Notifications",
-        "filePath": "/assets/docs-content/apis/local-notifications/index.json",
-        "url": "/docs/apis/local-notifications"
+        "filePath": "/assets/docs-content/apis/local-notifications/index.json"
       },
       {
         "text": "Modals",
@@ -294,13 +291,11 @@
       },
       {
         "text": "Share",
-        "filePath": "/assets/docs-content/apis/share/index.json",
-        "url": "/docs/apis/share"
+        "filePath": "/assets/docs-content/apis/share/index.json"
       },
       {
         "text": "Splash Screen",
-        "filePath": "/assets/docs-content/apis/splash-screen/index.json",
-        "url": "/docs/apis/splash-screen"
+        "filePath": "/assets/docs-content/apis/splash-screen/index.json"
       },
       {
         "text": "Status Bar",
