@@ -57,7 +57,7 @@ npx cap update
 
 ## 5. Updating Capacitor
 
-To check if there are any new updates to Capacitor itself, run `npm outdated`, then look for packages that begin with `@capacitor`.
+To check if there are any new updates to Capacitor itself, run `npx cap doctor` to print out the current installed dependencies as well view the latest available.
 
 To update Capacitor Core and CLI:
 
