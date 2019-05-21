@@ -122,6 +122,13 @@ public class Plugin {
   }
 
   /**
+   * Set the last saved call to null to free memory
+   */
+  public void freeSavedCall() {
+    this.savedLastCall = null;
+  }
+
+  /**
    * Get the last saved call, if any
    * @return
    */

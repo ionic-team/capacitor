@@ -496,6 +496,7 @@ public class Filesystem extends Plugin {
       if(result == PackageManager.PERMISSION_DENIED) {
         Log.d(getLogTag(), "User denied storage permission: " + perm);
         savedCall.error(PERMISSION_DENIED_ERROR);
+        this.freeSavedCall();
         return;
       }
     }
@@ -517,6 +518,7 @@ public class Filesystem extends Plugin {
     } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS) {
       this.stat(savedCall);
     }
+    this.freeSavedCall();
   }
 
 }
