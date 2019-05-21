@@ -30,10 +30,6 @@ export class SiteMenu {
         {
           title: 'Using with Ionic',
           url: '/docs/getting-started/with-ionic'
-        },
-        {
-          title: 'PWA Elements',
-          url: '/docs/getting-started/pwa-elements/'
         }
       ]
     },
@@ -165,6 +161,10 @@ export class SiteMenu {
           title: 'Getting Started',
           url: '/docs/web/'
         },
+        {
+          title: 'PWA Elements',
+          url: '/docs/web/pwa-elements/'
+        }
       ]
     },
     {
