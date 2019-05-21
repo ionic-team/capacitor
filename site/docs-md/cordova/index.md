@@ -1,3 +1,11 @@
+---
+title: Cordova and PhoneGap
+description: Cordova and PhoneGap
+url: /docs/cordova
+contributors:
+  - dotnetkow
+---
+
 # Cordova and PhoneGap
 
 Apache Cordova (and Adobe PhoneGap), created in 2008, is an open source framework that enables web developers to use their HTML, CSS, and JavaScript content to create a native application for a variety of mobile and desktop platforms.
@@ -47,4 +55,4 @@ Thus, instead of running `capacitor` directly from the command line, Capacitor i
 
 ## Start the Migration
 
-Learn more about the [migration process](/docs/cordova/) or [get started migrating](/docs/cordova/migrating-from-cordova-to-capacitor) right away.
+Learn more about the [migration process](/docs/cordova/migration-strategy) or [get started migrating](/docs/cordova/migrating-from-cordova-to-capacitor) right away.

@@ -1,3 +1,11 @@
+---
+title: Migrating Strategy
+description: Migration Strategy
+url: /docs/cordova/migration-strategy
+contributors:
+  - dotnetkow
+---
+
 # Migration Strategy
 
 Migrating from Cordova to Capacitor can occur over time or can be fully replaced in many cases. The effort involved will largely depend on the complexity of the app. 

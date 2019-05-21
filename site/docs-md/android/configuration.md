@@ -20,8 +20,7 @@ This article covers the basic modifications you'll need to make to your app. Rea
 To modify the bundle/app id for your app, edit the top `<manifest>` line in `AndroidManifest.xml`:
 
 ```xml
-<manifest 
-package="com.getcapacitor.myapp">
+<manifest package="com.getcapacitor.myapp">
 ```
 
 ## Changing App Name
@@ -77,5 +76,4 @@ Generally, the plugin you choose to use will ask you to set a permission. Add it
 
 ## Default Permissions
 
-By default, the entire initial permissions requested for the latest version of Capacitor with the standard plugins can
-be found in the android-template's [AndroidManifest.xml](https://github.com/ionic-team/capacitor/blob/master/android-template/app/src/main/AndroidManifest.xml)
+By default, the entire initial permissions requested for the latest version of Capacitor with the standard plugins can be found in the android-template's [AndroidManifest.xml](https://github.com/ionic-team/capacitor/blob/master/android-template/app/src/main/AndroidManifest.xml)

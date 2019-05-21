@@ -1,3 +1,11 @@
+---
+title: Capacitor Web Documentation
+description: Web Getting Started
+url: /docs/web
+contributors:
+  - mlynch
+---
+
 # Using Capacitor in a Web Project
 
 Capacitor fully supports traditional web and Progressive Web Apps. In fact, using Capacitor makes it easy to ship a PWA version of your iOS and Android app store apps!

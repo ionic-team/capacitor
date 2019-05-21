@@ -21,11 +21,6 @@
         "text": "Using with Ionic",
         "filePath": "/assets/docs-content/getting-started/with-ionic.json",
         "url": "/docs/with-ionic"
-      },
-      {
-        "text": "PWA Elements",
-        "filePath": "/assets/docs-content/getting-started/pwa-elements.json",
-        "url": null
       }
     ]
   },
@@ -58,11 +53,6 @@
         "url": "/docs/basics/using-plugins"
       },
       {
-        "text": "Cordova Plugins",
-        "filePath": "/assets/docs-content/basics/cordova.json",
-        "url": null
-      },
-      {
         "text": "Native Project Configuration",
         "filePath": "/assets/docs-content/basics/configuring-your-app.json",
         "url": "/docs/basics/configuring-your-app"
@@ -71,6 +61,36 @@
         "text": "Progressive Web Apps",
         "filePath": "/assets/docs-content/basics/progressive-web-app.json",
         "url": "/docs/basics/progressive-web-app"
+      }
+    ]
+  },
+  {
+    "text": "Cordova/PhoneGap",
+    "children": [
+      {
+        "text": "Introduction",
+        "filePath": "/assets/docs-content/cordova/index.json",
+        "url": "/docs/cordova"
+      },
+      {
+        "text": "Migration Strategy",
+        "filePath": "/assets/docs-content/cordova/migration-strategy.json",
+        "url": "/docs/cordova/migration-strategy"
+      },
+      {
+        "text": "Migrating From Cordova to Capacitor",
+        "filePath": "/assets/docs-content/cordova/migrating-from-cordova-to-capacitor.json",
+        "url": "/docs/cordova/migrating-from-cordova-to-capacitor"
+      },
+      {
+        "text": "Cordova/Ionic Native Plugins",
+        "filePath": "/assets/docs-content/cordova/using-cordova-plugins.json",
+        "url": "/docs/cordova/using-cordova-plugins"
+      },
+      {
+        "text": "Known Incompatible Plugins",
+        "filePath": "/assets/docs-content/cordova/known-incompatible-plugins.json",
+        "url": "/docs/cordova/known-incompatible-plugins"
       }
     ]
   },
@@ -86,6 +106,11 @@
         "text": "Push Notifications - Firebase",
         "filePath": "/assets/docs-content/guides/push-notifications-firebase.json",
         "url": "/docs/guides/push-notifications-firebase"
+      },
+      {
+        "text": "Community Guides",
+        "filePath": "/assets/docs-content/guides/community.json",
+        "url": "/docs/guides/community"
       }
     ]
   },
@@ -154,7 +179,13 @@
     "children": [
       {
         "text": "Getting Started",
-        "filePath": "/assets/docs-content/web/index.json"
+        "filePath": "/assets/docs-content/web/index.json",
+        "url": "/docs/web"
+      },
+      {
+        "text": "PWA Elements",
+        "filePath": "/assets/docs-content/web/pwa-elements.json",
+        "url": "/docs/pwa-elements"
       }
     ]
   },
@@ -169,17 +200,12 @@
     ]
   },
   {
-    "text": "Plugins",
+    "text": "Creating Plugins",
     "children": [
       {
         "text": "Introduction",
         "filePath": "/assets/docs-content/plugins/index.json",
         "url": "/docs/plugins"
-      },
-      {
-        "text": "Community",
-        "filePath": "/assets/docs-content/community/plugins.json",
-        "url": "/docs/community/plugins"
       },
       {
         "text": "iOS Guide",
@@ -200,15 +226,26 @@
         "text": "JavaScript Guide",
         "filePath": "/assets/docs-content/plugins/js.json",
         "url": "/docs/plugins/js"
-      },
+      }
+    ]
+  },
+  {
+    "text": "APIs",
+    "children": [
       {
         "text": "Introduction",
         "filePath": "/assets/docs-content/apis/index.json",
         "url": "/docs/apis"
       },
       {
+        "text": "Community Plugins",
+        "filePath": "/assets/docs-content/community/plugins.json",
+        "url": "/docs/community/plugins"
+      },
+      {
         "text": "Accessibility",
-        "filePath": "/assets/docs-content/apis/accessibility/index.json"
+        "filePath": "/assets/docs-content/apis/accessibility/index.json",
+        "url": "/docs/apis/accessibility"
       },
       {
         "text": "App",
@@ -267,7 +304,8 @@
       },
       {
         "text": "Local Notifications",
-        "filePath": "/assets/docs-content/apis/local-notifications/index.json"
+        "filePath": "/assets/docs-content/apis/local-notifications/index.json",
+        "url": "/docs/apis/local-Notifications"
       },
       {
         "text": "Modals",
@@ -291,11 +329,13 @@
       },
       {
         "text": "Share",
-        "filePath": "/assets/docs-content/apis/share/index.json"
+        "filePath": "/assets/docs-content/apis/share/index.json",
+        "url": "/docs/apis/share"
       },
       {
         "text": "Splash Screen",
-        "filePath": "/assets/docs-content/apis/splash-screen/index.json"
+        "filePath": "/assets/docs-content/apis/splash-screen/index.json",
+        "url": "/docs/apis/splash-screen"
       },
       {
         "text": "Status Bar",

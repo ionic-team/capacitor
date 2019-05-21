@@ -1,3 +1,11 @@
+---
+title: Community Guides
+description: Community Guides
+url: /docs/guides/community
+contributors:
+  - dotnetkow
+---
+
 # Community Guides
 
 ## General

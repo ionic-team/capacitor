@@ -1,8 +1,16 @@
-## Migrating a Web App Using Cordova to Capacitor
+---
+title: Migrating from Cordova to Capacitor
+description: Migrating from Cordova to Capacitor
+url: /docs/cordova/migrating-from-cordova-to-capacitor
+contributors:
+  - dotnetkow
+---
+
+# Migrating a Web App Using Cordova to Capacitor
 
 There are several steps required to fully migrate a web app using Cordova over to Capacitor. **Note:** It's recommended to work in a separate code branch when applying these changes.
 
-### Add Capacitor
+## Add Capacitor
 
 Begin by opening your project in a Terminal, then add Capacitor to [a web app](/docs/getting-started) or [an Ionic app](/docs/with-ionic). 
 
@@ -26,12 +34,12 @@ npx cap init [appName] [appId]
 
 In this example, it would be `npx cap init MyApp io.ionic.myapp`. These values can be found in the newly created `capacitor.config.json` file.
 
-#### Build your Web App
+### Build your Web App
 You must build your web project at least once before adding any native platforms.
 
 This ensures that the `www` folder that Capacitor has been [automatically configured](/docs/basics/configuring-your-app/) to use as the `webDir` in `capacitor.config.json` actually exists.
 
-#### Add Platforms
+### Add Platforms
 
 Capacitor native platforms exist in their own top-level folders. Cordova's are located under `platforms/ios` or `platforms/android`.
 
@@ -54,11 +62,11 @@ Both android and ios folders at the root of the project are created. These are e
 }
 ```
 
-### Splash Screens and Icons
+## Splash Screens and Icons
 
 If you've previously created icon and splash screen images, they can be found in the top-level `resources` folder of your project. [Follow this guide](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/) to move them over to each native project.
 
-### Migrate Plugins
+## Migrate Plugins
 
 Begin by auditing your existing Cordova plugins - it's possible that you may be able to remove ones that are no longer needed. 
 
@@ -68,11 +76,11 @@ Some plugins may not match functionality entirely, but based on the features you
 
 Note that any plugins that are [incompatible or cause build issues](/docs/cordova/known-incompatible-plugins) are automatically skipped.
 
-### Set Permissions
+## Set Permissions
 
 By default, the entire initial permissions requested for the latest version of Capacitor are set for you in the default native projects for both iOS and Android. However, you may need to apply additional permissions manually by mapping between `plugin.xml` and required settings on iOS and Android. Consult the [iOS](/docs/ios/configuration) and [Android](/docs/android/configuration) configuration guides for info on how to configure each platform.
 
-### Additional Config.xml Fields
+## Additional Config.xml Fields
 
 You may be curious about how other elements from `config.xml` work in Capacitor apps.
 
@@ -103,10 +111,10 @@ iOS `edit-config` elements need to be [configured in Info.plist](/docs/ios/confi
 
 It's impossible to cover every `config.xml` element available. However, most questions relating to "How do I configure X in Capacitor?" should be thought of as "How do I configure X in [platform] (iOS/Android)?" when searching online for answers.
 
-### Removing Cordova
+## Removing Cordova
 
 Once you've tested that all migration changes have been applied and the app is working well, Cordova can be removed from the project. Delete `config.xml` as well as the `platforms` and `plugins` folders. Note that you don't technically have to remove Cordova, since Capacitor works alongside it. In fact, if you plan to continue using Cordova plugins or think you may in the future, you can leave the Cordova assets where they are.
 
-### Next Steps
+## Next Steps
 
 This is just the beginning of your Capacitor journey. Learn more about [using Cordova plugins](/docs/cordova/using-cordova-plugins) in a Capacitor project or more details on the Capacitor [development workflow](/docs/basics/workflow).
