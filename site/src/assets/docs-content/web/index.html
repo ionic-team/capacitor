@@ -1,9 +1,10 @@
-<h1 id="using-capacitor-in-a-web-project">Using Capacitor in a Web Project</h1>
-<p>Capacitor fully supports traditional web and Progressive Web Apps. In fact, using Capacitor makes it easy to ship a PWA version of your iOS and Android app store apps!</p>
-<h3 id="installation">Installation</h3>
-<p>Chances are, you already have Capacitor installed in your app if you&#39;re using Capacitor to build an iOS, Android, or Electron app. In capacitor, the <code>web</code> platform is just the web project that powers your app!</p>
-<p>If you don&#39;t have Capacitor installed yet, consult the <a href="../getting-started">Installation</a> guide before continuing.</p>
-<h4 id="using-capacitor-as-a-module">Using Capacitor as a Module</h4>
+<h1 id="building-progressive-web-apps">Building Progressive Web Apps</h1>
+<p>Progressive Web Apps (PWA&#39;s) represent the evolution of the standard web app web developers have come to know and love. If you&#39;re not
+familiar with them, that&#39;s okay! Think of them as browser apps that use some modern Web APIs to provide an app-like experience.</p>
+<p>Capacitor supports Progressive Web Apps, which means it supports any kind of web app whether or not it uses these APIs.</p>
+<h2 id="using-capacitor-core">Using Capacitor Core</h2>
+<p>Capacitor Core is a JavaScript library that runs on all platforms that Capacitor supports, and web is no different.</p>
+<h3 id="with-a-build-system">With a Build System</h3>
 <p>Generally, apps will be using a framework with a build system that supports importing JavaScript modules. In that case,
 simply import Capacitor at the top of your app and you&#39;re set:</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Capacitor } <span class="hljs-keyword">from</span> <span class="hljs-string">'@capacitor/core'</span>;
@@ -14,7 +15,7 @@ with web support will actually provide useful functionality:</p>
 
 <span class="hljs-keyword">const</span> position = <span class="hljs-keyword">await</span> Plugins.Geolocation.getCurrentPosition();
 </code></pre>
-<h3 id="using-capacitor-as-a-script-include">Using Capacitor as a Script Include</h3>
+<h3 id="without-a-build-system">Without a Build System</h3>
 <p>To use Capacitor core in a web app that is not using a build system or bundler/module loader,
 you must set <code>bundledWebRuntime</code> to <code>true</code> in your <code>capacitor.config.json</code>, tell capacitor to
 copy the specified version of Capacitor Core into your project,
@@ -30,7 +31,7 @@ and then import <code>capacitor.js</code> into your <code>index.html</code>:</p>
 <pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"capacitor.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"your/app.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
-<h2 id="developing-your-app">Developing your App</h2>
+<h2 id="developing">Developing</h2>
 <p>Chances are, you&#39;re using a framework like <a href="http://ionicframework.com/">Ionic</a> for UI components and building. To develop
 your Capacitor web app, just use your framework!</p>
 <p>If you&#39;re not using a framework, Capacitor comes with a small development service with HTML5 routing support. To use it,
@@ -39,5 +40,5 @@ run:</p>
 </code></pre>
 <h2 id="going-live">Going Live</h2>
 <p>When you&#39;re ready to publish your Progressive Web App and share it with the world,
-just upload the contents of your web directory (for example, the <code>www/</code> or <code>build/</code> folder).</p>
-<p>That will contain everything you need to run your app!</p>
+just upload the contents of your web directory (default: <code>www/</code>). That will contain
+everything you need to run your app!</p>
