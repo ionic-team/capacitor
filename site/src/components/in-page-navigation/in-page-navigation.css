@@ -7,12 +7,13 @@ in-page-navigation {
 
 in-page-navigation h5 {
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 0;
-  margin-bottom: 10px;
-  font-weight: 400;
-  color: #6c6c8b;
-  padding-left: 2px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #a0aec0;
+  letter-spacing: .05em;
+
 }
 
 in-page-navigation .heading-links {

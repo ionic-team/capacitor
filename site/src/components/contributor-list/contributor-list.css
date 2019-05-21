@@ -11,6 +11,10 @@ contributor-list ul.img-list {
   padding: 0;
 }
 
+contributor-list li:last-child {
+  margin-left:0 !important;
+}
+
 contributor-list li:not(:last-child) {
   margin-left: -10px;
 }

@@ -45,7 +45,7 @@ site-menu .menu-list li {
 }
 
 site-menu .menu-list > li + li {
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 site-menu .menu-list a {
@@ -64,7 +64,7 @@ site-menu .menu-list a:hover {
 }
 
 site-menu .menu-list .link-active {
-  font-weight: bold;
+  font-weight: 500;
   color: var(--color-dodger-blue);
 }
 

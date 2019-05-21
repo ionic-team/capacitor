@@ -121,11 +121,11 @@ doc-content
 }
 
 ::selection {
-  background: #e7e7f2;
+  background: #98d2ff;
 }
 
 ::-moz-selection {
-  background: #e7e7f2;
+  background: #98d2ff;
 }
 
 html, body {
@@ -154,29 +154,31 @@ body {
 h1, h2, h3, h4 {
   color: #16161d;
   letter-spacing: 0px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 h1 {
-  font-size: 28px;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 22px;
   letter-spacing: -0.02em;
   font-weight: 600;
 }
 
-h2 {
-  font-size: 20px;
-}
-
 h2, h3 {
-  margin-top: 48px;
+  margin-top: 64px;
   margin-bottom: 8px;
 }
 
 p, ul {
-  color: #2d2d4c;
-  font-size: 16px;
-  line-height: 2em;
-  margin: 24px 0px;
+  color: #4a5568;
+  font-size: 15px;
+  line-height: 1.8em;
+  margin: 16px 0px;
 }
 
 strong, b {
