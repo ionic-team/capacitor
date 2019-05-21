@@ -98,6 +98,11 @@ async function getGithubData(filePath: string, parsedMarkdown: any) {
       }
     }));
 
+    if (request.status === 403) {
+      console.warn(`Ignoring commit history for ${filePath} due to GH API limit. To resolve, add the GITHUB_TOKEN envar.`);
+      return parsedMarkdown;
+    }
+
     const commits = await request.json();
     const contributors = Array.from(new Set(commits.map(commit => commit.author.login)));
     const lastUpdated = commits.length ? commits[0].commit.author.date : since;
