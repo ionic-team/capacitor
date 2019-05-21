@@ -1,4 +1,4 @@
-<plugin-platforms platforms="pwa,ios,android"></plugin-platforms>
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Share
 
