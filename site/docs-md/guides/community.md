@@ -13,5 +13,3 @@
 [Create Native HTML5 Games with Phaser and Capacitor](https://www.joshmorony.com/create-native-html5-games-with-phaser-and-capacitor)
 
 [Integrating the Scanbot SDK in a Capacitor App with Ionic](https://scanbot.io/blog/capacitor-app/)
-
-[Sending Push Notifications with the PhoneGap Push Plugin in Capacitor](https://www.joshmorony.com/sending-push-notifications-with-the-phonegap-push-plugin-in-capacitor/)

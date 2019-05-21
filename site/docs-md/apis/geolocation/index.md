@@ -36,8 +36,6 @@ Read about [Setting Android Permissions](../android/configuration/) in the [Andr
 
 ## Example
 
-See also [Ionic 4 with Capacitor's Geolocation API](https://vimeo.com/288232683).
-
 ```typescript
 import { Plugins } from '@capacitor/core';
 

@@ -15,8 +15,6 @@ leave out the `directory` param to use a full file path.
 
 ## Example
 
-See also [Using the Capacitor Filesystem API to Store Photos](https://www.joshmorony.com/using-the-capacitor-filesystem-api-to-store-photos/).
-
 ```typescript
 import { Plugins, FilesystemDirectory, FilesystemEncoding } from '@capacitor/core';
 
