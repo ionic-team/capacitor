@@ -78,6 +78,11 @@ site-menu .menu-list ul li {
   height: 26px;
   display: block;
   overflow: hidden;
+  transition: .2s transform ease;
+}
+
+site-menu .menu-list ul li:hover {
+  transform: translateX(2px);
 }
 
 site-menu .menu-list ul.collapsed li {
