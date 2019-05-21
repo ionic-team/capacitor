@@ -54,7 +54,8 @@ in-page-navigation .heading-links a:hover {
   border: none;
 }
 
-in-page-navigation .heading-links .heading-link:hover {
+in-page-navigation .heading-links .heading-link:hover,
+in-page-navigation .heading-links .heading-link.selected {
   border-bottom: none !important;
   transform: translateX(calc(var(--indent-size) * 1 + 2px));
 }
@@ -99,11 +100,13 @@ in-page-navigation li.size-h4:hover a {
   color: var(--color-gunpowder);
 }
 
-in-page-navigation li.heading-link.size-h3:hover {
+in-page-navigation li.heading-link.size-h3:hover,
+in-page-navigation li.heading-link.size-h3.selected {
   transform: translateX(calc(var(--indent-size) * 2 + 2px));
 }
 
-in-page-navigation li.heading-link.size-h4:hover {
+in-page-navigation li.heading-link.size-h4:hover,
+in-page-navigation li.heading-link.size-h4.selected {
   transform: translateX(calc(var(--indent-size) * 3 + 2px));
 }
 

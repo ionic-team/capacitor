@@ -56,7 +56,7 @@ site-menu .menu-list a {
 }
 
 site-menu .menu-list a:not(.link-active) {
-  transition: color 0.2s;
+  // transition: color 0.2s;
 }
 
 site-menu .menu-list a:hover {
@@ -78,10 +78,15 @@ site-menu .menu-list ul li {
   height: 26px;
   display: block;
   overflow: hidden;
-  transition: .2s transform ease;
 }
 
-site-menu .menu-list ul li:hover {
+site-menu .menu-list ul li a {
+  display: block;
+  transition: .2s transform ease, .2s color ease;
+}
+
+site-menu .menu-list ul li:hover a,
+site-menu .menu-list ul li a.link-active {
   transform: translateX(2px);
 }
 
