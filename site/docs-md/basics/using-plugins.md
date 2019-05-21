@@ -8,35 +8,10 @@ If you are willing and able to write a small amount of native code, you can quic
 
 ## Finding Plugins
 
-The community has built a number of plugins for various native functionality, and you can easily add them to your app.
+The community has built a number of plugins for various native functionality and you can easily add them to your app.
 
 See our [Community Plugins](/docs/community/plugins/) list for some options.
 
-Capacitor also supports a wide range of [Cordova plugins](/docs/basics/cordova), so there are a lot to choose from.
+## Using Cordova and Ionic Native Plugins
 
-## Installing Plugins
-
-To install a Capacitor or Cordova plugin, simply run
-
-```bash
-npm install --save name-of-plugin
-npx cap update
-```
-
-Capacitor will detect the plugin and install it.
-
-## Updating Plugins
-
-To update a plugin, run
-
-```bash
-npm install --save name-of-plugin
-npx cap update
-```
-
-Capacitor will detect the new version of the plugin and install it.
-
-## Cordova Support
-
-Capacitor supports a wide variety of Cordova plugins, but there are some things to keep in mind. Follow
-the [Cordova Plugin Usage Guide](/docs/basics/cordova) for more information.
+Capacitor also supports a wide range of [Cordova plugins](/docs/cordova/using-cordova-plugins), so there are a lot to choose from.

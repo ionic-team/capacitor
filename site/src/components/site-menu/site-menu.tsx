@@ -35,13 +35,6 @@ export class SiteMenu {
           title: 'PWA Elements',
           url: '/docs/getting-started/pwa-elements/'
         }
-        /*
-        ,
-        {
-          title: 'Migrating from PhoneGap/Cordova',
-          url: '/docs/getting-started/migrating-from-phonegap-cordova'
-        }
-        */
       ]
     },
     {
@@ -68,10 +61,6 @@ export class SiteMenu {
           url: '/docs/basics/using-plugins'
         },
         {
-          title: 'Cordova Plugins',
-          url: '/docs/basics/cordova'
-        },
-        {
           title: 'Native Project Configuration',
           url: '/docs/basics/configuring-your-app'
         },
@@ -79,6 +68,31 @@ export class SiteMenu {
           title: 'Progressive Web Apps',
           url: '/docs/basics/progressive-web-app'
         },
+      ]
+    },
+    {
+      title: "Cordova/PhoneGap",
+      items: [
+        {
+          title: 'Introduction',
+          url: '/docs/cordova'
+        },
+        {
+          title: 'Migration Strategy',
+          url: '/docs/cordova/migration-strategy'
+        },
+        {
+          title: 'Migrating to Capacitor',
+          url: '/docs/cordova/migrating-from-cordova-to-capacitor'
+        },
+        {
+          title: 'Cordova Plugins/Ionic Native',
+          url: '/docs/cordova/using-cordova-plugins'
+        },
+        {
+          title: 'Known Incompatible Plugins',
+          url: '/docs/cordova/known-incompatible-plugins'
+        }
       ]
     },
     {
