@@ -1,3 +1,12 @@
+---
+title: Capacitor iOS Documentation 
+description: Communicate between JavaScript and Native Swift or Objective-C code
+url: /docs/ios
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # Capacitor iOS Documentation
 
 Capacitor features a native iOS bridge that enables developers to communicate between JavaScript and Native Swift or Objective-C code.

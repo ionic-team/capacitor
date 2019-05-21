@@ -1,3 +1,12 @@
+---
+title: Browser
+description: Browser API
+url: /docs/apis/browser 
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Browser

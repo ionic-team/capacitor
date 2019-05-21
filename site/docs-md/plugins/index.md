@@ -1,3 +1,12 @@
+---
+title: Capacitor Plugins
+description: Capacitor Plugins
+url: /docs/plugins
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Capacitor Plugins
 
 Plugins in Capacitor enable JavaScript to interface directly with Native APIs.

@@ -1,3 +1,12 @@
+---
+title: Photos
+description: Photos API
+url: /docs/apis/photos
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="ios,android"></plugin-platforms>
 
 # Photos

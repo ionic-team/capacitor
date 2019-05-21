@@ -1,3 +1,12 @@
+---
+title: Filesystem
+description: Filesystem API
+url: /docs/apis/filesystem
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Filesystem

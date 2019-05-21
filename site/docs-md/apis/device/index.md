@@ -1,3 +1,12 @@
+---
+title: Device
+description: Device API
+url: /docs/apis/device
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Device

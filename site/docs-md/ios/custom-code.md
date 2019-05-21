@@ -1,3 +1,12 @@
+---
+title: Custom Native iOS Code
+description: Custom Native iOS Code
+url: /docs/ios/custom-code
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # Custom Native iOS Code
 
 Many apps will want to add custom Swift (or Objective-C) code to implement native features, without the overhead of building and publishing a proper Capacitor plugin.

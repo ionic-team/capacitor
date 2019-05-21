@@ -1,3 +1,11 @@
+---
+title: Using Capacitor with Ionic
+description: Using Capacitor with Ionic
+url: /docs/with-ionic
+contributors:
+  - dotnetkow
+---
+
 # Using Capacitor with Ionic
 
 ## Install Capacitor into an Ionic project

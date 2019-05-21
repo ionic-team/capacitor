@@ -39,6 +39,31 @@ document-component {
     }
   }
 
+  .heading-link {
+    position: relative;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: #2d2d4c;
+
+    &:hover {
+      border-bottom: 1px solid transparent;
+    }
+  
+    app-icon {
+      transition: opacity 0.2s;
+      position: absolute;
+      left: -20px;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+    }
+  
+    &:hover app-icon {
+      opacity: 0.8;
+    }
+  }
+
   img {
     max-width: 100%;
   }
@@ -94,5 +119,10 @@ document-component {
   #introButton:hover {
     box-shadow: 0 3px 6px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.1);
     transform: translateY(1px);
+  }
+
+  .btn.pull-left,
+  .btn.pull-right {
+    margin: 52px 6px 15px;
   }
 }

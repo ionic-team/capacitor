@@ -1,3 +1,12 @@
+---
+title: PWA Elements
+description: Using PWA Elements
+url: /docs/pwa-elements
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # PWA Elements
 
 Some Capacitor plugins, such as `Camera`, have web-based UI available when not running natively. For example, calling `Camera.getPhoto()` will 

@@ -1,3 +1,12 @@
+---
+title: Running your App 
+description: Running your App
+url: /docs/basics/running-your-app
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # Running your App
 
 Capacitor relies on each platform's IDE of choice to run and test your app.

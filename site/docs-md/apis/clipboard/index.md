@@ -1,3 +1,13 @@
+---
+title: Clipboard
+description: Clipboard API
+url: /docs/apis/clipboard
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Clipboard

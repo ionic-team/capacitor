@@ -1,3 +1,12 @@
+---
+title: Installing Capacitor
+description: Installing Capacitor
+url: /docs/getting-started
+contributors:
+  - dotnetkow
+  - jcesarmobile
+---
+
 # Installing Capacitor
 
 There are two ways to start using Capacitor: adding Capacitor to an existing frontend project (recommended), or starting a fresh project. Capacitor was designed primarily to drop-in to existing frontend projects, but comes with a simple starting project structure if you'd like to start fresh.

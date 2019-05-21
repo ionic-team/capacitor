@@ -1,3 +1,11 @@
+---
+title: Building Electron Apps with Capacitor
+description: Building Electron Apps with Capacitor
+url: /docs/electron
+contributors:
+  - mlynch
+---
+
 # Building Electron Apps with Capacitor
 
 Capacitor has preliminary support for [Electron](https://electronjs.org), the popular tool used for building desktop apps

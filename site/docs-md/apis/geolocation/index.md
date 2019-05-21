@@ -1,3 +1,12 @@
+---
+title: Geolocation
+description: Geolocation API
+url: /docs/apis/geolocation
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Geolocation

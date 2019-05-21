@@ -1,3 +1,12 @@
+---
+title: App
+description: App API
+url: /docs/apis/app
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # App

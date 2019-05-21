@@ -13,6 +13,7 @@
     "target": "es2015",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "resolveJsonModule": true,
     "jsx": "react",
     "jsxFactory": "h"
   },

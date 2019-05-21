@@ -1,3 +1,11 @@
+---
+title: Push Notifications with Firebase in an Ionic/Angular App
+description: Learn how to get Firebase Cloud Messaging working on iOS and Android in an Ionic app
+url: /docs/guides/push-notifications-firebase
+contributors:
+  - bryplano
+---
+
 # Using Push Notifications with Firebase in an Ionic + Angular App
 
 **Web Framework**: Ionic 4 + Angular  

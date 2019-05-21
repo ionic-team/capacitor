@@ -1,3 +1,12 @@
+---
+title: Push Notifications
+description: Push Notifications API
+url: /docs/apis/push-notifications
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="ios,android"></plugin-platforms>
 
 # Push Notifications

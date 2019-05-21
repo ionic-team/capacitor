@@ -1,3 +1,12 @@
+---
+title: Camera
+description: Camera API
+url: /docs/apis/camera
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Camera

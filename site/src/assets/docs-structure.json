@@ -1,0 +1,322 @@
+[
+  {
+    "text": "Getting Started",
+    "children": [
+      {
+        "text": "Introduction",
+        "filePath": "/assets/docs-content/index.json",
+        "url": "/docs/"
+      },
+      {
+        "text": "Required Dependencies",
+        "filePath": "/assets/docs-content/getting-started/dependencies.json",
+        "url": "/docs/dependencies"
+      },
+      {
+        "text": "Installation",
+        "filePath": "/assets/docs-content/getting-started/index.json",
+        "url": "/docs/getting-started"
+      },
+      {
+        "text": "Using with Ionic",
+        "filePath": "/assets/docs-content/getting-started/with-ionic.json",
+        "url": "/docs/with-ionic"
+      },
+      {
+        "text": "PWA Elements",
+        "filePath": "/assets/docs-content/getting-started/pwa-elements.json",
+        "url": "/docs/pwa-elements"
+      }
+    ]
+  },
+  {
+    "text": "Basics",
+    "children": [
+      {
+        "text": "Development Workflow",
+        "filePath": "/assets/docs-content/basics/workflow.json",
+        "url": "/docs/basics/workflow"
+      },
+      {
+        "text": "Opening Native IDE",
+        "filePath": "/assets/docs-content/basics/opening-native-projects.json",
+        "url": "/docs/basics/opening-native-projects"
+      },
+      {
+        "text": "Building your App",
+        "filePath": "/assets/docs-content/basics/building-your-app.json",
+        "url": "/docs/basics/building-your-app"
+      },
+      {
+        "text": "Running your App",
+        "filePath": "/assets/docs-content/basics/running-your-app.json",
+        "url": "/docs/basics/running-your-app"
+      },
+      {
+        "text": "Using Plugins",
+        "filePath": "/assets/docs-content/basics/using-plugins.json",
+        "url": "/docs/basics/using-plugins"
+      },
+      {
+        "text": "Cordova Plugins",
+        "filePath": "/assets/docs-content/basics/cordova.json",
+        "url": "/docs/basics/cordova"
+      },
+      {
+        "text": "Native Project Configuration",
+        "filePath": "/assets/docs-content/basics/configuring-your-app.json",
+        "url": "/docs/basics/configuring-your-app"
+      },
+      {
+        "text": "Progressive Web Apps",
+        "filePath": "/assets/docs-content/basics/progressive-web-app.json",
+        "url": "/docs/basics/progressive-web-app"
+      }
+    ]
+  },
+  {
+    "text": "Guides",
+    "children": [
+      {
+        "text": "Ionic Framework App",
+        "filePath": "/assets/docs-content/guides/ionic-framework-app.json",
+        "url": "/docs/guides/ionic-framework-app"
+      },
+      {
+        "text": "Push Notifications - Firebase",
+        "filePath": "/assets/docs-content/guides/push-notifications-firebase.json",
+        "url": "/docs/guides/push-notifications-firebase"
+      }
+    ]
+  },
+  {
+    "text": "iOS",
+    "children": [
+      {
+        "text": "Getting Started",
+        "filePath": "/assets/docs-content/ios/index.json",
+        "url": "/docs/ios"
+      },
+      {
+        "text": "Configuration",
+        "filePath": "/assets/docs-content/ios/configuration.json",
+        "url": "/docs/ios/configuration"
+      },
+      {
+        "text": "Updating",
+        "filePath": "/assets/docs-content/ios/updating.json",
+        "url": "/docs/ios/updating"
+      },
+      {
+        "text": "Custom Native Code",
+        "filePath": "/assets/docs-content/ios/custom-code.json",
+        "url": "/docs/ios/custom-code"
+      },
+      {
+        "text": "Troubleshooting",
+        "filePath": "/assets/docs-content/ios/troubleshooting.json",
+        "url": "/docs/ios/troubleshooting"
+      }
+    ]
+  },
+  {
+    "text": "Android",
+    "children": [
+      {
+        "text": "Getting Started",
+        "filePath": "/assets/docs-content/android/index.json",
+        "url": "/docs/android"
+      },
+      {
+        "text": "Configuration",
+        "filePath": "/assets/docs-content/android/configuration.json",
+        "url": "/docs/android/configuration"
+      },
+      {
+        "text": "Updating",
+        "filePath": "/assets/docs-content/android/updating.json",
+        "url": "/docs/android/updating"
+      },
+      {
+        "text": "Custom Native Code",
+        "filePath": "/assets/docs-content/android/custom-code.json",
+        "url": "/docs/android/custom-code"
+      },
+      {
+        "text": "Troubleshooting",
+        "filePath": "/assets/docs-content/android/troubleshooting.json",
+        "url": "/docs/android/troubleshooting"
+      }
+    ]
+  },
+  {
+    "text": "Web/PWA",
+    "children": [
+      {
+        "text": "Getting Started",
+        "filePath": "/assets/docs-content/web/index.json",
+        "url": "/docs/web"
+      }
+    ]
+  },
+  {
+    "text": "Electron",
+    "children": [
+      {
+        "text": "Getting Started",
+        "filePath": "/assets/docs-content/electron/index.json",
+        "url": "/docs/electron"
+      }
+    ]
+  },
+  {
+    "text": "Plugins",
+    "children": [
+      {
+        "text": "Introduction",
+        "filePath": "/assets/docs-content/plugins/index.json",
+        "url": "/docs/plugins"
+      },
+      {
+        "text": "Community",
+        "filePath": "/assets/docs-content/community/plugins.json",
+        "url": "/docs/community/plugins"
+      },
+      {
+        "text": "iOS Guide",
+        "filePath": "/assets/docs-content/plugins/ios.json",
+        "url": "/docs/plugins/ios"
+      },
+      {
+        "text": "Android Guide",
+        "filePath": "/assets/docs-content/plugins/android.json",
+        "url": "/docs/plugins/android"
+      },
+      {
+        "text": "Web/PWA Guide",
+        "filePath": "/assets/docs-content/plugins/web.json",
+        "url": "/docs/plugins/web"
+      },
+      {
+        "text": "JavaScript Guide",
+        "filePath": "/assets/docs-content/plugins/js.json",
+        "url": "/docs/plugins/js"
+      },
+      {
+        "text": "Introduction",
+        "filePath": "/assets/docs-content/apis/index.json",
+        "url": "/docs/apis"
+      },
+      {
+        "text": "Accessibility",
+        "filePath": "/assets/docs-content/apis/accessibility/index.json",
+        "url": "/docs/apis/accessibility"
+      },
+      {
+        "text": "App",
+        "filePath": "/assets/docs-content/apis/app/index.json",
+        "url": "/docs/apis/app"
+      },
+      {
+        "text": "Background Task",
+        "filePath": "/assets/docs-content/apis/background-task/index.json",
+        "url": "/docs/apis/background-task"
+      },
+      {
+        "text": "Browser",
+        "filePath": "/assets/docs-content/apis/browser/index.json",
+        "url": "/docs/apis/browser"
+      },
+      {
+        "text": "Camera",
+        "filePath": "/assets/docs-content/apis/camera/index.json",
+        "url": "/docs/apis/camera"
+      },
+      {
+        "text": "Clipboard",
+        "filePath": "/assets/docs-content/apis/clipboard/index.json",
+        "url": "/docs/apis/clipboard"
+      },
+      {
+        "text": "Console",
+        "filePath": "/assets/docs-content/apis/console/index.json",
+        "url": "/docs/apis/console"
+      },
+      {
+        "text": "Device",
+        "filePath": "/assets/docs-content/apis/device/index.json",
+        "url": "/docs/apis/device"
+      },
+      {
+        "text": "Filesystem",
+        "filePath": "/assets/docs-content/apis/filesystem/index.json",
+        "url": "/docs/apis/filesystem"
+      },
+      {
+        "text": "Geolocation",
+        "filePath": "/assets/docs-content/apis/geolocation/index.json",
+        "url": "/docs/apis/geolocation"
+      },
+      {
+        "text": "Haptics",
+        "filePath": "/assets/docs-content/apis/haptics/index.json",
+        "url": "/docs/apis/haptics"
+      },
+      {
+        "text": "Keyboard",
+        "filePath": "/assets/docs-content/apis/keyboard/index.json",
+        "url": "/docs/apis/keyboard"
+      },
+      {
+        "text": "Local Notifications",
+        "filePath": "/assets/docs-content/apis/local-notifications/index.json",
+        "url": "/docs/apis/local-notifications"
+      },
+      {
+        "text": "Modals",
+        "filePath": "/assets/docs-content/apis/modals/index.json",
+        "url": "/docs/apis/modals"
+      },
+      {
+        "text": "Motion",
+        "filePath": "/assets/docs-content/apis/motion/index.json",
+        "url": "/docs/apis/motion"
+      },
+      {
+        "text": "Network",
+        "filePath": "/assets/docs-content/apis/network/index.json",
+        "url": "/docs/apis/network"
+      },
+      {
+        "text": "Push Notifications",
+        "filePath": "/assets/docs-content/apis/push-notifications/index.json",
+        "url": "/docs/apis/push-notifications"
+      },
+      {
+        "text": "Share",
+        "filePath": "/assets/docs-content/apis/share/index.json",
+        "url": "/docs/apis/share"
+      },
+      {
+        "text": "Splash Screen",
+        "filePath": "/assets/docs-content/apis/splash-screen/index.json",
+        "url": "/docs/apis/splash-screen"
+      },
+      {
+        "text": "Status Bar",
+        "filePath": "/assets/docs-content/apis/status-bar/index.json",
+        "url": "/docs/apis/status-bar"
+      },
+      {
+        "text": "Storage",
+        "filePath": "/assets/docs-content/apis/storage/index.json",
+        "url": "/docs/apis/storage"
+      },
+      {
+        "text": "Toast",
+        "filePath": "/assets/docs-content/apis/toast/index.json",
+        "url": "/docs/apis/toast"
+      }
+    ]
+  }
+]

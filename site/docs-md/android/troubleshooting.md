@@ -1,3 +1,12 @@
+---
+title: Troubleshooting Android Issues
+description: Troubleshooting Android Issues
+url: /docs/android/troubleshooting
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Troubleshooting Android Issues
 
 Creating a 100% perfect native management tool is nearly impossible, and sooner or later you'll run into various issues with some part of the Android workflow.

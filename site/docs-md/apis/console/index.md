@@ -1,3 +1,12 @@
+---
+title: Console
+description: Console API
+url: /docs/apis/console
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Console
