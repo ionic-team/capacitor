@@ -1,0 +1,65 @@
+<h2 id="migrating-a-web-app-using-cordova-to-capacitor">Migrating a Web App Using Cordova to Capacitor</h2>
+<p>There are several steps required to fully migrate a web app using Cordova over to Capacitor. <strong>Note:</strong> It&#39;s recommended to work in a separate code branch when applying these changes.</p>
+<h3 id="add-capacitor">Add Capacitor</h3>
+<p>Begin by opening your project in a Terminal, then add Capacitor to <a href="/docs/getting-started">a web app</a> or <a href="/docs/with-ionic">an Ionic app</a>. </p>
+<p>Next, open <code>config.xml</code> and find the <code>id</code> field in the widget element. In this example, it&#39;s <code>io.ionic.myapp</code>.</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">widget</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"io.ionic.myapp"</span> <span class="hljs-attr">version</span>=<span class="hljs-string">"0.0.1"</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/ns/widgets"</span> <span class="hljs-attr">xmlns:cdv</span>=<span class="hljs-string">"http://cordova.apache.org/ns/1.0"</span>&gt;</span>
+</code></pre>
+<p>Also find the <code>Name</code> of your app:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>MyApp<span class="hljs-tag">&lt;/<span class="hljs-name">name</span>&gt;</span>
+</code></pre>
+<p>Now, initialize Capacitor with this app information:</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> init [appName] [appId]
+</code></pre>
+<p>In this example, it would be <code>npx cap init MyApp io.ionic.myapp</code>. These values can be found in the newly created <code>capacitor.config.json</code> file.</p>
+<h4 id="build-your-web-app">Build your Web App</h4>
+<p>You must build your web project at least once before adding any native platforms.</p>
+<p>This ensures that the <code>www</code> folder that Capacitor has been <a href="/docs/basics/configuring-your-app/">automatically configured</a> to use as the <code>webDir</code> in <code>capacitor.config.json</code> actually exists.</p>
+<h4 id="add-platforms">Add Platforms</h4>
+<p>Capacitor native platforms exist in their own top-level folders. Cordova&#39;s are located under <code>platforms/ios</code> or <code>platforms/android</code>.</p>
+<pre><code class="lang-bash">npx <span class="hljs-built_in">cap</span> add ios
+npx <span class="hljs-built_in">cap</span> add android
+</code></pre>
+<p>Both android and ios folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your app (i.e., check them into source control, edit them in their own IDEs, etc.). Additionally, any Cordova plugins that were previously added to the project via <code>npm install</code> (located under <code>dependencies</code> in <code>package.json</code>) are automatically installed by Capacitor into each new native project (minus any <a href="/docs/cordova/known-incompatible-plugins">incompatible ones</a>):</p>
+<pre><code class="lang-json">&quot;dependencies&quot;: {
+    &quot;@ionic-native/camera&quot;: &quot;^5.3.0&quot;,
+    &quot;@ionic-native/core&quot;: &quot;^5.3.0&quot;,
+    &quot;@ionic-native/file&quot;: &quot;^5.3.0&quot;,
+    &quot;cordova-android&quot;: &quot;8.0.0&quot;,
+    &quot;cordova-ios&quot;: &quot;5.0.0&quot;,
+    &quot;cordova-plugin-camera&quot;: &quot;4.0.3&quot;,
+    &quot;cordova-plugin-file&quot;: &quot;6.0.1&quot;,
+}
+</code></pre>
+<h3 id="splash-screens-and-icons">Splash Screens and Icons</h3>
+<p>If you&#39;ve previously created icon and splash screen images, they can be found in the top-level <code>resources</code> folder of your project. <a href="https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/">Follow this guide</a> to move them over to each native project.</p>
+<h3 id="migrate-plugins">Migrate Plugins</h3>
+<p>Begin by auditing your existing Cordova plugins - it&#39;s possible that you may be able to remove ones that are no longer needed. </p>
+<p>Next, review all of Capacitor&#39;s <a href="/docs/apis">core plugins</a> as well as <a href="/docs/community/plugins">community plugins</a>. You may be able to switch to the Capacitor-equivalent Cordova plugin. Also note that some Capacitor plugins extend beyond mobile, including <a href="/docs/web">PWA</a> and <a href="/docs/electron/">Desktop</a> functionality, which Cordova traditionally hasn&#39;t had support for. For example, compare the <a href="/docs/apis/camera">Capacitor Camera</a> to the <a href="https://github.com/apache/cordova-plugin-camera">Cordova Camera</a>.</p>
+<p>Some plugins may not match functionality entirely, but based on the features you need that may not matter.</p>
+<p>Note that any plugins that are <a href="/docs/cordova/known-incompatible-plugins">incompatible or cause build issues</a> are automatically skipped.</p>
+<h3 id="set-permissions">Set Permissions</h3>
+<p>By default, the entire initial permissions requested for the latest version of Capacitor are set for you in the default native projects for both iOS and Android. However, you may need to apply additional permissions manually by mapping between <code>plugin.xml</code> and required settings on iOS and Android. Consult the <a href="/docs/ios/configuration">iOS</a> and <a href="/docs/android/configuration">Android</a> configuration guides for info on how to configure each platform.</p>
+<h3 id="additional-config-xml-fields">Additional Config.xml Fields</h3>
+<p>You may be curious about how other elements from <code>config.xml</code> work in Capacitor apps.</p>
+<p>The Author element can be configured in <code>package.json</code>, but is not used by Capacitor or within your app:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">author</span> <span class="hljs-attr">email</span>=<span class="hljs-string">"email@test.com"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"http://ionicframework.com/"</span>&gt;</span>Ionic Framework Team<span class="hljs-tag">&lt;/<span class="hljs-name">author</span>&gt;</span>
+</code></pre>
+<p>Most of the <code>allow-intent</code> values are either not used or there are <a href="/docs/basics/configuring-your-app/">configurable alternatives</a> in <code>capacitor.config.json</code>.</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">allow-intent</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"http://*/*"</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">allow-intent</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://*/*"</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">allow-intent</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"tel:*"</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">allow-intent</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"sms:*"</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">allow-intent</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"mailto:*"</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">allow-intent</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"geo:*"</span> /&gt;</span>
+</code></pre>
+<p>iOS <code>edit-config</code> elements need to be <a href="/docs/ios/configuration">configured in Info.plist</a>.</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">edit-config</span> <span class="hljs-attr">file</span>=<span class="hljs-string">"*-Info.plist"</span> <span class="hljs-attr">mode</span>=<span class="hljs-string">"merge"</span> <span class="hljs-attr">target</span>=<span class="hljs-string">"NSCameraUsageDescription"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">string</span>&gt;</span>Used to take photos<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">edit-config</span>&gt;</span>
+</code></pre>
+<p>It&#39;s impossible to cover every <code>config.xml</code> element available. However, most questions relating to &quot;How do I configure X in Capacitor?&quot; should be thought of as &quot;How do I configure X in [platform] (iOS/Android)?&quot; when searching online for answers.</p>
+<h3 id="removing-cordova">Removing Cordova</h3>
+<p>Once you&#39;ve tested that all migration changes have been applied and the app is working well, Cordova can be removed from the project. Delete <code>config.xml</code> as well as the <code>platforms</code> and <code>plugins</code> folders. Note that you don&#39;t technically have to remove Cordova, since Capacitor works alongside it. In fact, if you plan to continue using Cordova plugins or think you may in the future, you can leave the Cordova assets where they are.</p>
+<h3 id="next-steps">Next Steps</h3>
+<p>This is just the beginning of your Capacitor journey. Learn more about <a href="/docs/cordova/using-cordova-plugins">using Cordova plugins</a> in a Capacitor project or more details on the Capacitor <a href="/docs/basics/workflow">development workflow</a>.</p>

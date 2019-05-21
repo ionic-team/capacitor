@@ -65,13 +65,8 @@ Every time you perform a build (e.g. `ionic build`) that changes your web direct
 npx cap copy
 ```
 
-## Using Ionic Native
+## Using Cordova and Ionic Native Plugins
 
-[Ionic Native](https://ionicframework.com/docs/native/) is supported in Capacitor. Currently, Ionic Native contains only Cordova plugins, so whenever you find an Ionic Native wrapper you'd like to use, install it and then install the corresponding Cordova plugin by running
+Cordova and [Ionic Native](https://ionicframework.com/docs/native/) plugins are supported in Capacitor. See the [Using Cordova Plugins](/docs/cordova/using-cordova-plugins) guide for more information.
 
-```bash
-npm install your-cordova-plugin
-npx cap update
-```
-
-See the [Cordova](/docs/basics/cordova) guide for more information.
+Want to start using Capacitor in an Ionic app immediately? [Check out this guide](/docs/guides/ionic-framework-app).
