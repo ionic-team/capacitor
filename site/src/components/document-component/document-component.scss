@@ -50,16 +50,16 @@ document-component {
       border-bottom: 1px solid transparent;
     }
   
-    app-icon {
+    ion-icon {
       transition: opacity 0.2s;
       position: absolute;
-      left: -20px;
+      left: -24px;
       display: flex;
       align-items: center;
       opacity: 0;
     }
   
-    &:hover app-icon {
+    &:hover ion-icon {
       opacity: 0.8;
     }
   }
