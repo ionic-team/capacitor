@@ -8,12 +8,11 @@ contributors:
 
 # Building Electron Apps with Capacitor
 
-Capacitor has preliminary support for [Electron](https://electronjs.org), the popular tool used for building desktop apps
-with HTML, JavaScript, and CSS.
+<p class="intro">Capacitor has preliminary support for <a href="https://electronjs.org" target="_blank">Electron</a>, the popular tool used for building desktop apps with HTML, JavaScript, and CSS.</p>
 
-With Electron, Capacitor apps can run natively on Windows, Mac, and Linux!
+<p class="intro">With Electron, Capacitor apps can run natively on Windows, Mac, and Linux.</p>
 
-Note: Electron support for Capacitor is currently in preview, and lags behind iOS, Android, and Web support. 
+<blockquote>Electron support for Capacitor is currently in preview, and lags behind iOS, Android, and Web support.</blockquote>
 
 ## Getting Started
 

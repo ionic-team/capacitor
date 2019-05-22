@@ -9,7 +9,9 @@ contributors:
 
 # Capacitor Plugins
 
-Plugins in Capacitor enable JavaScript to interface directly with Native APIs.
+<p class="intro">Plugins in Capacitor enable JavaScript to interface directly with Native APIs.</p>
+
+## How Capacitor Plugins Work
 
 With Plugins, a web app can access the full power of the Native APIs, doing everything a traditional native app can. Plugins are especially great for wrapping common native operations that might use very different APIs across platforms, while exposing a consistent, cross-platform API to JavaScript.
 

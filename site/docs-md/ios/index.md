@@ -9,9 +9,9 @@ contributors:
 
 # Capacitor iOS Documentation
 
-Capacitor features a native iOS bridge that enables developers to communicate between JavaScript and Native Swift or Objective-C code.
+<p class="intro">Capacitor features a native iOS bridge that enables developers to communicate between JavaScript and Native Swift or Objective-C code.</p>
 
-Capacitor iOS apps are configured and managed through Xcode, with dependencies managed by CocoaPods.
+<p class="intro">Capacitor iOS apps are configured and managed through Xcode, with dependencies managed by CocoaPods.</p>
 
 ## Getting Started
 

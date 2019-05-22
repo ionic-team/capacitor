@@ -9,11 +9,11 @@ contributors:
 
 # Configuring Android
 
-Android apps manage permissions, device features, and other settings by modifying `AndroidManifest.xml`.
+<p class="intro">Android apps manage permissions, device features, and other settings by modifying <code>AndroidManifest.xml</code>.</p>
 
-This file references values from other files in `res/values/`, to make it easy to update them separately, including `styles.xml` and `strings.xml`.
+<p class="intro">This file references values from other files in <code>res/values/</code>, to make it easy to update them separately, including <code>styles.xml</code> and <code>strings.xml</code>.</p>
 
-This article covers the basic modifications you'll need to make to your app. Read the [Android Manifest](https://developer.android.com/guide/topics/manifest/manifest-intro.html) docs to learn a whole lot more.
+<p class="intro">This article covers the basic modifications you'll need to make to your app. Read the <a href="https://developer.android.com/guide/topics/manifest/manifest-intro.html" target="_blank">Android Manifest</a> docs to learn a whole lot more.</p>
 
 ## Changing App ID
 

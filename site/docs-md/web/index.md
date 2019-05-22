@@ -8,7 +8,7 @@ contributors:
 
 # Using Capacitor in a Web Project
 
-Capacitor fully supports traditional web and Progressive Web Apps. In fact, using Capacitor makes it easy to ship a PWA version of your iOS and Android app store apps!
+<p class="intro">Capacitor fully supports traditional web and Progressive Web Apps. In fact, using Capacitor makes it easy to ship a PWA version of your iOS and Android app store apps with minimal work.</p>
 
 ### Installation
 

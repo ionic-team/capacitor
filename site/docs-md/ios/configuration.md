@@ -31,7 +31,7 @@ Consult the [Cocoa Keys](https://developer.apple.com/library/content/documentati
 
 For more information, Apple has provided a guide to [Resolving the Privacy-Sensitive Data App Rejection](https://developer.apple.com/library/content/qa/qa1937/_index.html) which contains more information on APIs that require usage descriptions.
 
-# Setting Entitlements
+## Setting Entitlements
 
 Entitlements are used to enable key features that your app may need.
 
