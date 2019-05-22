@@ -92,7 +92,7 @@ export class App {
         <div id="main-div">
           <site-header />
           <div class="app root">
-            <stencil-router>
+            <stencil-router scrollTopOffset={0}>
               <stencil-route style={{ display: 'none' }} routeRender={this.setHistory}/>
               <stencil-route-switch scrollTopOffset={0}>
 
