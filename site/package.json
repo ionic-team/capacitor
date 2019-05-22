@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "Capacitor Site",
   "scripts": {
-    "docs": "tsc --p ./scripts && node ./scripts/markdown-to-html",
+    "docs": "tsc --p ./scripts && node ./scripts/markdown-to-html && cd ../core && npm run docs",
     "site-structure": "tsc --p ./scripts && node ./scripts/site-structure",
     "build-firebase-config": "node scripts/host-to-firebase.js",
     "build": "npm run site-structure && npm run docs && stencil build --prerender && npm run build-firebase-config",
