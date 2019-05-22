@@ -98,7 +98,7 @@
     "text": "Guides",
     "children": [
       {
-        "text": "Ionic Framework App",
+        "text": "Ionic Framework Camera App",
         "filePath": "/assets/docs-content/guides/ionic-framework-app.json",
         "url": "/docs/guides/ionic-framework-app"
       },
