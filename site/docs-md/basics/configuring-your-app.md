@@ -27,7 +27,7 @@ Capacitor has some high level configuration options that are set in `capacitor.c
 
 The current ones you might configure are:
 
-```javascript
+```json
 {
   // Sets the directory of your built web assets. This is the directory that will be
   // used to run your app in a native environment
