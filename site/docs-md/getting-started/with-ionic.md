@@ -1,7 +1,7 @@
 ---
 title: Using Capacitor with Ionic
 description: Using Capacitor with Ionic
-url: /docs/with-ionic
+url: /docs/getting-started/with-ionic
 contributors:
   - dotnetkow
 ---

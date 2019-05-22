@@ -1,7 +1,7 @@
 ---
 title: Capacitor Required Dependencies
 description: Required Dependencies for different platforms
-url: /docs/dependencies
+url: /docs/getting-started/dependencies
 contributors:
   - mlynch
   - dotnetkow
@@ -9,7 +9,9 @@ contributors:
 
 # Capacitor Required Dependencies
 
-Capacitor has a number of dependencies depending on which platforms you're targeting and which operating systems you are developing on.
+<p class="intro">Capacitor has a number of dependencies depending on which platforms you're targeting and which operating systems you are developing on.</p>
+
+## Requirements
 
 The base requirements are **[Node v8.6.0](https://nodejs.org) or later**, and **NPM version 5.6.0 or later** (which is usually automatically installed with the required version of Node).
 

@@ -8,9 +8,9 @@ contributors:
 
 # Known Incompatible Cordova Plugins
 
-While we've tested a number of popular Cordova plugins, it's possible Capacitor doesn't support every Cordova plugin. Some don't work with Capacitor or Capacitor provides a conflicting alternative. If it's known that the plugin is conflicting or causes build issues, it will be skipped when running `npx cap update`.
+<p class="intro">While we've tested a number of popular Cordova plugins, it's possible Capacitor doesn't support every Cordova plugin. Some don't work with Capacitor or Capacitor provides a conflicting alternative. If it's known that the plugin is conflicting or causes build issues, it will be skipped when running <code>npx cap update</code>.</p>
 
-If you find an issue with an existing Cordova plugin, please [let us know](https://github.com/ionic-team/capacitor/issues/new) by providing the issue's details and plugin information.
+<p class="intro">If you find an issue with an existing Cordova plugin, please <a href="https://github.com/ionic-team/capacitor/issues/new" target="_blank">let us know</a> by providing the issue's details and plugin information.<p class="intro">
 
 ## Known incompatible plugins (Subject to change)
 

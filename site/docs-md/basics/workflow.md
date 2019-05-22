@@ -9,7 +9,7 @@ contributors:
 
 # Capacitor Workflow
 
-The Capacitor workflow involves a few consistent tasks:
+<p class="intro">The Capacitor workflow involves a few consistent tasks:</p>
 
 ## 1. Develop and build your Web App
 

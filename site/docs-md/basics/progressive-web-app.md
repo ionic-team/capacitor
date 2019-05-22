@@ -9,7 +9,7 @@ contributors:
 
 # Building Progressive Web Apps
 
-Capacitor has first-class support for Progressive Web Apps, making it easy to build an app that runs natively on iOS and Android, but also on the web as a mobile web app or "Progressive Web App."
+<p class="intro">Capacitor has first-class support for Progressive Web Apps, making it easy to build an app that runs natively on iOS and Android, but also on the web as a mobile web app or "Progressive Web App."</p>
 
 ## What is a Progressive Web App?
 

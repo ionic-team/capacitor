@@ -108,8 +108,8 @@ document-component {
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    padding: 16px 20px;
-    border-radius: 2px;
+    padding: 12px 14px;
+    border-radius: 4px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
     outline: none;
     letter-spacing: 0.04em;
@@ -124,6 +124,6 @@ document-component {
 
   .btn.pull-left,
   .btn.pull-right {
-    margin: 52px 6px 15px;
+    margin: 64px 8px 20px;
   }
 }

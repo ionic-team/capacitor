@@ -10,7 +10,7 @@
       {
         "text": "Required Dependencies",
         "filePath": "/assets/docs-content/getting-started/dependencies.json",
-        "url": "/docs/dependencies"
+        "url": "/docs/getting-started/dependencies"
       },
       {
         "text": "Installation",
@@ -20,7 +20,7 @@
       {
         "text": "Using with Ionic",
         "filePath": "/assets/docs-content/getting-started/with-ionic.json",
-        "url": "/docs/with-ionic"
+        "url": "/docs/getting-started/with-ionic"
       }
     ]
   },

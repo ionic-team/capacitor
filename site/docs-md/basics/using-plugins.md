@@ -9,7 +9,7 @@ contributors:
 
 # Using Capacitor Plugins
 
-Capacitor ships with a number of built-in plugins, known as Capacitor APIs, such as [Camera](/docs/apis/camera) and [Filesystem](/docs/apis/filesystem).
+<p class="intro">Capacitor ships with a number of built-in plugins, known as Capacitor APIs, such as <a href="https://capacitor.ionicframework.com/docs/apis/camera">Camera</a> and <a href="https://capacitor.ionicframework.com/docs/apis/filesystem">Filesystem</a>.</p>
 
 However, chances are your app will need to access more native functionality than provided out of the box in Capacitor.
 

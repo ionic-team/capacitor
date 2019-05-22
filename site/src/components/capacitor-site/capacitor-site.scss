@@ -199,6 +199,27 @@ p a {
   font-weight: 500;
 }
 
+.intro {
+  font-size: 18px;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+
+.intro code {
+  font-size: 18px;
+}
+
+blockquote {
+  background: rgba(255, 250, 237, 0.8);
+  border-left: 4px solid #ffcc5f;
+  border-radius: 2px 4px 4px 2px;
+  color: #736545 !important;
+  font-size: 14px;
+  line-height: 1.8em;
+  margin: auto;
+  padding: 16px 20px;
+}
+
 stencil-route-link:hover {
   cursor: pointer;
 }
@@ -244,8 +265,8 @@ button:hover {
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  padding: 16px 20px;
-  border-radius: 2px;
+  padding: 12px 14px;
+  border-radius: 4px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
   outline: none;
   letter-spacing: 0.04em;
@@ -272,8 +293,8 @@ button:hover {
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  padding: 16px 20px;
-  border-radius: 2px;
+  padding: 12px 14px;
+  border-radius: 4px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
   outline: none;
   letter-spacing: 0.04em;
@@ -296,7 +317,7 @@ pre {
   display: block;
   white-space: pre-wrap;
   margin: 24px 0px 28px;
-  padding: 16px 24px;
+  /*padding: 16px 24px;*/
   border-radius: 4px;
   color: #16161D;
   background-color: #f8f8f8;

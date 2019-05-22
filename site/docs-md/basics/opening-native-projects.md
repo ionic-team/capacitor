@@ -9,7 +9,7 @@ contributors:
 
 # Opening Native Projects
 
-Capacitor uses the native IDE for each platform in order to provide required configuration, and to build, test, and deploy apps.
+<p class="intro">Capacitor uses the native IDE for each platform in order to provide required configuration, and to build, test, and deploy apps.</p>
 
 For iOS development, that means you must have Xcode 10 or above installed. For Android, [Android Studio](https://developer.android.com/studio/index.html) 3 or above.
 
