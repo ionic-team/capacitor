@@ -71,6 +71,6 @@ If your app ran you are now ready to continue developing and building your app. 
 Follow these Android-specific guides for more information on setting permissions for your app, updating dependencies, building
 plugins, and more:
 
-[Configuring and setting permissions for Android](./configuration)
+[Configuring and setting permissions for Android &#8250;](./configuration)
 
-[Building Native Plugins for Android](../plugins)
+[Building Native Plugins for Android &#8250;](../plugins)

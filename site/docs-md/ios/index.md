@@ -59,6 +59,6 @@ If your app ran you are now ready to continue developing and building your app. 
 
 Follow these guides for more information on each topic:
 
-[Configuring and setting permissions for iOS](./configuration)
+[Configuring and setting permissions for iOS &#8250;](./configuration)
 
-[Building Native Plugins for iOS](../plugins)
+[Building Native Plugins for iOS &#8250;](../plugins)
