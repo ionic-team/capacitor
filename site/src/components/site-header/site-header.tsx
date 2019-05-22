@@ -67,7 +67,6 @@ export class SiteHeader {
 
         <stencil-route-link url="/" class="logo-link">
           <div class="logo"></div>
-          <b class="version">Beta</b>
         </stencil-route-link>
 
         <div class="header-menu">
