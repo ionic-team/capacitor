@@ -11,9 +11,9 @@ contributors:
 
 <p class="intro">Capacitor ships with a number of built-in plugins, known as Capacitor APIs, such as <a href="https://capacitor.ionicframework.com/docs/apis/camera">Camera</a> and <a href="https://capacitor.ionicframework.com/docs/apis/filesystem">Filesystem</a>.</p>
 
-However, chances are your app will need to access more native functionality than provided out of the box in Capacitor.
+<p class="intro">However, chances are your app will need to access more native functionality than provided out of the box in Capacitor.</p>
 
-If you are willing and able to write a small amount of native code, you can quickly add your own native functionality and expose it as a Capacitor plugin by following the [Plugin Guide](/docs/plugins/).
+<p class="intro">If you are willing and able to write a small amount of native code, you can quickly add your own native functionality and expose it as a Capacitor plugin by following the <a href="/docs/plugins">Plugin Guide</a>.</p>
 
 ## Finding Plugins
 

@@ -12,7 +12,9 @@ contributors:
 <p class="intro">Capacitor embraces the idea of "Code once, configure everywhere": configuration is
 managed per-platform instead of in an abstracted system like a <code>config.xml</code> in Cordova, for example.</p>
 
-This is an important point, because it means that Capacitor requires you to be more involved in the native project configuration than with Cordova, for example. However,
+## Per-platform Management
+
+Capacitor requires you to be more involved in the native project configuration than with Cordova, for example. However,
 we think this is the right approach, because it makes it easy to follow existing Native iOS/Android guides, get help on Stack Overflow, and have full control over your project.
 
 Additionally, because configuring a Capacitor project is no different from configuring an iOS or Android project, existing native development teams can easily work alongside
