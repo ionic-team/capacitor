@@ -185,6 +185,15 @@ h2 code {
   border-radius: 4px;
 }
 
+ol {
+  li {
+    color: #4a5568;
+    font-size: 15px;
+    line-height: 1.8em;
+    margin: 16px 0;
+  }
+}
+
 p, ul {
   color: #4a5568;
   font-size: 15px;
@@ -554,6 +563,7 @@ footer {
   }
 }
 
+
 .document {
   .container {
     display: flex;
@@ -585,6 +595,7 @@ footer {
       margin-left: 18px;
     }
   }
+
 
   p a {
     color: $link-color;
