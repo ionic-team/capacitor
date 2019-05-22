@@ -1,12 +1,12 @@
 ---
-title: Using Capacitor in an Ionic Framework App 
+title: Building an Ionic Framework Camera App
 description: Learn how to add Camera functionality to an Ionic Angular app that works on the web, iOS, and Android
 url: /docs/guides/ionic-framework-app
 contributors:
   - dotnetkow
 ---
 
-# Using Capacitor in an Ionic Framework App
+# Building an Ionic Framework Camera App
 
 **Web Framework**: Ionic 4 + Angular  
 **Platforms**: Web, iOS, Android
