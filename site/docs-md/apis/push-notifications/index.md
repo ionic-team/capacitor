@@ -51,7 +51,7 @@ On iOS you can configure the way the push notifications are displayed when the a
 
 Possible values are:
 * `badge`: badge count on the app icon is updated (default value)
-* `sound`: the devide will ring/vibrate when the push notification is received
+* `sound`: the device will ring/vibrate when the push notification is received
 * `alert`: the push notification is displayed in a native dialog
 
 An empty Array can be provided if none of the previous options are desired. `pushNotificationReceived` event will still be fired with the push notification information.
