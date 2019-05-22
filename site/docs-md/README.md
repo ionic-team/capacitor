@@ -16,7 +16,7 @@
 * Cordova/PhoneGap
   * [Introduction](cordova/index.md)
   * [Migration Strategy](cordova/migration-strategy.md)
-  * [Migrating From Cordova to Capacitor](cordova/migrating-from-cordova-to-capacitor.md)
+  * [Cordova to Capacitor Migration](cordova/migrating-from-cordova-to-capacitor.md)
   * [Cordova/Ionic Native Plugins](cordova/using-cordova-plugins.md)
   * [Known Incompatible Plugins](cordova/known-incompatible-plugins.md)
 * Guides
