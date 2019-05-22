@@ -11,23 +11,14 @@ export class ToastPluginWeb extends WebPlugin implements ToastPlugin {
   }
 
   async show(options: ToastShowOptions) {
-    var controller: any = document.querySelector('ion-toast-controller');
-    if (!controller) {
-      controller = document.createElement('ion-toast-controller');
-      document.body.appendChild(controller);
-    }
-    await controller.componentOnReady();
-   
     let duration = 3000;
     if (options.duration) {
       duration = options.duration === 'long' ? 5000 : 3000;
     }
-    const toast = await controller.create({
-      position: 'bottom',
-      message: options.text,
-      duration: duration,
-    });
-    return await toast.present();
+    const toast = document.createElement('pwa-toast') as any;
+    toast.duration = duration;
+    toast.message = options.text;
+    document.body.appendChild(toast);
   }
 }
 

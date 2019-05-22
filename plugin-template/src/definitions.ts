@@ -1,6 +1,6 @@
-declare global {
+declare module "@capacitor/core" {
   interface PluginRegistry {
-    Echo?: EchoPlugin;
+    Echo: EchoPlugin;
   }
 }
 

@@ -61,23 +61,27 @@ app should boot much faster than this!</p>
 <p>If your splash screen images aren&#39;t named &quot;splash.png&quot; but for example &quot;screen.png&quot; you have to change <code>&quot;androidSplashResourceName&quot;: &quot;screen&quot;</code> in <code>capacitor.config.json</code> and change the following files in you&#39;re Android app as well:</p>
 <p><code>android/app/src/main/res/drawable/launch_splash.xml</code> </p>
 <p>replace</p>
-<pre><code>&lt;bitmap xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
-    android:src=&quot;@drawable/splash&quot;
-    android:scaleType=&quot;centerCrop&quot;
-    /&gt;
-</code></pre><p>with</p>
-<pre><code>&lt;bitmap xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
-    android:src=&quot;@drawable/screen&quot;
-    android:scaleType=&quot;centerCrop&quot;
-    /&gt;
-</code></pre><p><code>android/app/src/main/res/values/styles.xml</code> </p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">bitmap</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">"http://schemas.android.com/apk/res/android"</span>
+    <span class="hljs-attr">android:src</span>=<span class="hljs-string">"@drawable/splash"</span>
+    <span class="hljs-attr">android:scaleType</span>=<span class="hljs-string">"centerCrop"</span>
+    /&gt;</span>
+</code></pre>
+<p>with</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">bitmap</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">"http://schemas.android.com/apk/res/android"</span>
+    <span class="hljs-attr">android:src</span>=<span class="hljs-string">"@drawable/screen"</span>
+    <span class="hljs-attr">android:scaleType</span>=<span class="hljs-string">"centerCrop"</span>
+    /&gt;</span>
+</code></pre>
+<p><code>android/app/src/main/res/values/styles.xml</code> </p>
 <p>replace</p>
-<pre><code>    &lt;style name=&quot;AppTheme.NoActionBarLaunch&quot; parent=&quot;AppTheme.NoActionBar&quot;&gt;
-        &lt;item name=&quot;android:background&quot;&gt;@drawable/splash&lt;/item&gt;
-    &lt;/style&gt;
-</code></pre><p>with</p>
-<pre><code>    &lt;style name=&quot;AppTheme.NoActionBarLaunch&quot; parent=&quot;AppTheme.NoActionBar&quot;&gt;
-        &lt;item name=&quot;android:background&quot;&gt;@drawable/screen&lt;/item&gt;
-    &lt;/style&gt;
-</code></pre><h2 id="api">API</h2>
+<pre><code class="lang-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"AppTheme.NoActionBarLaunch"</span> <span class="hljs-attr">parent</span>=<span class="hljs-string">"AppTheme.NoActionBar"</span>&gt;</span><span class="xml">
+        <span class="hljs-tag">&lt;<span class="hljs-name">item</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"android:background"</span>&gt;</span>@drawable/splash<span class="hljs-tag">&lt;/<span class="hljs-name">item</span>&gt;</span>
+    </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+</code></pre>
+<p>with</p>
+<pre><code class="lang-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"AppTheme.NoActionBarLaunch"</span> <span class="hljs-attr">parent</span>=<span class="hljs-string">"AppTheme.NoActionBar"</span>&gt;</span><span class="xml">
+        <span class="hljs-tag">&lt;<span class="hljs-name">item</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"android:background"</span>&gt;</span>@drawable/screen<span class="hljs-tag">&lt;/<span class="hljs-name">item</span>&gt;</span>
+    </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+</code></pre>
+<h2 id="api">API</h2>
 <p><plugin-api name="splash-screen"></plugin-api></p>

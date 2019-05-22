@@ -7,9 +7,10 @@ a native Swift/Obj-C plugin for iOS, and/or a Java one for Android. Of course, a
 for a plugin is possible, and is just like providing a JavaScript npm package.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>Capacitor comes with a Plugin generator to start new plugins quickly. To use it, run</p>
-<pre><code>npx @capacitor/cli plugin:generate
-</code></pre><p>This starts a wizard prompting you for information about your new plugin. For example:</p>
-<pre><code>max@Maxs-iMac:~ $ npx @capacitor/cli plugin:generate
+<pre><code class="lang-bash">npx @capacitor/cli plugin:generate
+</code></pre>
+<p>This starts a wizard prompting you for information about your new plugin. For example:</p>
+<pre><code class="lang-bash">npx @capacitor/cli plugin:generate
 ✏️  Creating new Capacitor plugin
 ? Plugin NPM name (snake-case): my-plugin
 ? Plugin id (domain-style syntax. ex: com.example.plugin) com.ionicframework.myplugin
@@ -18,23 +19,26 @@ for a plugin is possible, and is just like providing a JavaScript npm package.</
 ? git repository:
 ? author:
 ? license: MIT
-? package.json will be created, do you want to continue? (Y/n)
-</code></pre><ul>
-<li>The Plugin NPM name is what will become the npm package, and should be a snake-case name of a package that is available on npm (not a strict requirement if your package will be on a private npm repo).</li>
-<li>The Plugin ID is a domain-style identifier. Its primary use is the package name in Java.</li>
-<li>Plugin Class Name is the initial name of the class used in Java and Swift. See the additional note about class names in the <a href="ios/">iOS Plugin</a> section of this guide.</li>
-<li>The description is a brief introduction about the plugin.</li>
-<li>The git repository is the url to a git repository where the source code of the plugin will be hosted.</li>
+? package.json will be created, <span class="hljs-keyword">do</span> you want to <span class="hljs-built_in">continue</span>? (Y/n)
+</code></pre>
+<ul>
+<li><code>Plugin NPM name</code>: a snake-case name of a package that will be available on npm (not a strict requirement if your package will be on a private npm repo).</li>
+<li><code>Plugin ID</code>: a domain-style identifier. It is primarily used for the package name in Java.</li>
+<li><code>Plugin Class Name</code>: the initial name of the class used in Java and Swift. See the additional note about class names in the <a href="ios/">iOS Plugin</a> section of this guide.</li>
+<li><code>description</code>: a brief introduction about the plugin.</li>
+<li><code>git repository</code>: the URL to a git repository where the source code of the plugin will be hosted.</li>
+<li><code>author</code> (optional): the name of the plugin creator in <code>package.json</code>.</li>
+<li><code>license</code> (optional): the license under which the plugin is bound. MIT license is the default.</li>
+<li><code>package.json will be created</code>: enter &quot;Y&quot; and/or hit Enter/Return to finish plugin setup.</li>
 </ul>
-<p>The rest of the fields are optional and will fill out your initial <code>package.json</code></p>
 <h2 id="typescript-interface">TypeScript Interface</h2>
 <p>Each plugin comes with some typescript files that simply export TypeScript interfaces. These interfaces
-can provide typing to TypeScript consumers of your plugin. </p>
+can provide typing to TypeScript consumers of your plugin.</p>
 <p>Starting with the TypeScript interface can be a good way to build out the API for your plugin. For example,
 here&#39;s the default interface for our Plugin:</p>
-<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> global {
+<pre><code class="lang-typescript"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">module</span> "@capacitor/core" {
   <span class="hljs-keyword">interface</span> PluginRegistry {
-    Echo?: EchoPlugin;
+    Echo: EchoPlugin;
   }
 }
 
@@ -46,7 +50,7 @@ here&#39;s the default interface for our Plugin:</p>
 <p>Whenever you are ready to publish your plugin, just use:</p>
 <pre><code class="lang-bash">npm publish
 </code></pre>
-<p>This will build the JS portion of your plugin and publish the rest of your plugin files to NPM. </p>
+<p>This will build the JS portion of your plugin and publish the rest of your plugin files to NPM.</p>
 <p>Your package can now be installed using <code>npm install your-plugin</code> in any Capacitor app.</p>
 <h2 id="next-steps">Next steps</h2>
 <p>Now it&#39;s up to you to make your plugin do something truly awesome!</p>

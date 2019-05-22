@@ -15,6 +15,7 @@ import {
   runTask,
 } from '../common';
 import { emoji as _e } from '../util/emoji';
+import { checkInteractive } from '../util/term';
 
 const chalk = require('chalk');
 
@@ -23,6 +24,9 @@ export async function initCommand(config: Config, name: string, id: string, webD
     webDir = 'www';
   }
   try {
+    if (!checkInteractive(name, id)) {
+      return;
+    }
     // Get app name
     const appName = await getName(config, name);
     // Get app identifier

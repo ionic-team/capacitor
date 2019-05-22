@@ -4,17 +4,17 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.3.2'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -40,7 +40,7 @@ dependencies {
     implementation fileTree(dir: 'src/main/libs', include: ['*.jar'])
     implementation 'org.apache.cordova:framework:7.0.0'
     // SUB-PROJECT DEPENDENCIES START
-    
+
     // SUB-PROJECT DEPENDENCIES END
 }
 

@@ -1,11 +1,13 @@
 import '@stencil/router';
 import { Component, Prop, Element, Listen, State } from '@stencil/core';
+import { LocationSegments, RouterHistory } from '@stencil/router';
 
 @Component({
   tag: 'capacitor-site',
   styleUrl: 'capacitor-site.scss'
 })
 export class App {
+  history: RouterHistory = null;
   elements = [
     'site-header',
     'site-menu',
@@ -36,6 +38,15 @@ export class App {
   @Listen('leftSidebarClick')
   handleToggle() {
     if (window.innerWidth <= 768) this.toggleLeftSidebar();
+  }
+
+  setHistory = ({ history }: { history: RouterHistory }) => {
+    if (!this.history) {
+      this.history = history;
+      this.history.listen((location: LocationSegments) => {
+        (window as any).gtag('config', 'UA-44023830-42', { 'page_path': location.pathname + location.search });
+      });
+    }
   }
 
   componentDidLoad() {
@@ -76,6 +87,7 @@ export class App {
         <site-header />
         <div class="app root">
           <stencil-router>
+            <stencil-route style={{ display: 'none' }} routeRender={this.setHistory}/>
             <stencil-route-switch scrollTopOffset={0}>
 
               <stencil-route

@@ -8,8 +8,8 @@ if [ -z $BINTRAY_USER ]; then
 fi
 
 # Verify pods are good
-pod spec lint --allow-warnings Capacitor.podspec
-pod spec lint --allow-warnings CapacitorCordova.podspec
+pod lib lint --allow-warnings Capacitor.podspec
+pod lib lint --allow-warnings CapacitorCordova.podspec
 
 # Do the gradle
 cd android

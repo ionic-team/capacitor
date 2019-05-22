@@ -156,7 +156,7 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
   const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
 
   if (!answers.git) {
-    logWarn('You will need to add a hompage and git repo to your generated podspec before installing or CocoaPods will complain');
+    logWarn('You will need to add a homepage and git repo to your generated podspec before installing or CocoaPods will complain');
   }
   if (!answers.description) {
     logWarn('You will need to add a summary to your generated podspec before installing or CocoaPods will complain');
@@ -188,9 +188,6 @@ async function createAndroidPlugin(config: Config, pluginPath: string, domain: s
 
   // Android specific stuff
   const newPluginPath = join(pluginPath, 'android');
-  // Move the 'plugin' folder inside $pluginPath/android/plugin to be the same name as the plugin
-  const gradleProjectPath = join(pluginPath, 'android/plugin');
-  await move(gradleProjectPath, newPluginPath);
   // Update the AndroidManifest to point to our new package
   await writeFileAsync(join(newPluginPath, 'src/main/AndroidManifest.xml'), generateAndroidManifest(domain, pluginPath));
 
@@ -210,12 +207,12 @@ async function createAndroidPlugin(config: Config, pluginPath: string, domain: s
 }
 
 function generateAndroidManifest(domain: string, pluginPath: string) {
-const pluginPackage = pluginPath.split('-').join('');
+  const pluginPackage = pluginPath.split('-').join('');
   return `
   <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="${domain}.${pluginPackage}">
-</manifest>
-`
+      package="${domain}.${pluginPackage}">
+  </manifest>
+  `;
 }
 
 function generatePackageJSON(answers: any) {
@@ -259,12 +256,13 @@ function generatePackageJSON(answers: any) {
       android: {
         src: 'android'
       }
-    }, "repository": {
-      "type": "git",
-      "url": answers.git
     },
-    "bugs": {
-      "url": `${answers.git}/issues`
+    'repository': {
+      'type': 'git',
+      'url': answers.git
+    },
+    'bugs': {
+      'url': `${answers.git}/issues`
     }
   };
 }

@@ -21,7 +21,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     options;
 
     return new Promise<CameraPhoto>(async (resolve, reject) => {
-      const cameraModal: any = document.createElement('ion-pwa-camera-modal');
+      const cameraModal: any = document.createElement('pwa-camera-modal');
       document.body.appendChild(cameraModal);
       await cameraModal.componentOnReady();
       cameraModal.addEventListener('onPhoto', async (e: any) => {
@@ -34,6 +34,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         }
 
         cameraModal.dismiss();
+        document.body.removeChild(cameraModal);
       });
 
       cameraModal.present();

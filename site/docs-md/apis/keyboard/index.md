@@ -7,7 +7,7 @@ The Keyboard API provides keyboard display and visibility control, along with ev
 <plugin-api index="true" name="keyboard"></plugin-api>
 
 
-## Events
+## Window Events for cordova-plugin-ionic-keyboard compatibility
 
 * keyboardWillShow
 * keyboardDidShow
@@ -18,22 +18,40 @@ The Keyboard API provides keyboard display and visibility control, along with ev
 
 ```typescript
 
-// Events
+// Keyboard Plugin Events
+
+Keyboard.addListener('keyboardWillShow', (info: KeyboardInfo) => {
+  console.log('keyboard will show with height', info.keyboardHeight);
+});
+
+Keyboard.addListener('keyboardDidShow', (info: KeyboardInfo) => {
+  console.log('keyboard did show with height', info.keyboardHeight);
+});
+
+Keyboard.addListener('keyboardWillHide', () => {
+  console.log('keyboard will hide');
+});
+
+Keyboard.addListener('keyboardDidHide', () => {
+  console.log('keyboard did hide');
+});
+
+// window events
 
 window.addEventListener('keyboardWillShow', (e) => {
-  console.log("keyboard will show with height", (<CustomEvent>e).detail.keyboardHeight);
+  console.log('keyboard will show with height', (<any>e).keyboardHeight);
 });
 
 window.addEventListener('keyboardDidShow', (e) => {
-  console.log("keyboard did show with height", (<CustomEvent>e).detail.keyboardHeight);
+  console.log("keyboard did show with height", (<any>e).keyboardHeight);
 });
 
 window.addEventListener('keyboardWillHide', () => {
-  console.log("keyboard will hide");
+  console.log('keyboard will hide');
 });
 
 window.addEventListener('keyboardDidHide', () => {
-  console.log("keyboard did hide");
+  console.log('keyboard did hide');
 });
 
 // API

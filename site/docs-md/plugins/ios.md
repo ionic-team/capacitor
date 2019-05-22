@@ -8,14 +8,14 @@ Capacitor embraces standard iOS development tools for building iOS plugins. We b
 
 To get started, first generate a plugin as shown in the [Getting Started](./#getting-started) section of the Plugin guide.
 
-Next, open `your-plugin/ios/Plugin/Plugin.xcworkspace` in Xcode.
+Next, open `your-plugin/ios/Plugin.xcworkspace` in Xcode.
 
 ## Building your Plugin in Swift
 
 A Capacitor plugin for iOS is a simple Swift class that extends `CAPPlugin` and
 has some exported methods that will be callable from JavaScript.
 
-Once your plugin is generated, you can start editing it by opening `Plugin.swift`
+Once your plugin is generated, you can start editing it by opening `Plugin.swift`.
 
 ### Simple Example
 

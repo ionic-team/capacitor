@@ -5,6 +5,7 @@ import { basename, dirname, join, parse, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
+import { isInteractive } from './util/term';
 import * as semver from 'semver';
 
 import * as inquirer from 'inquirer';
@@ -327,7 +328,7 @@ export function getNpmClient(config: Config, npmClient: string): Promise<string>
       // const isYarnInstalled
       exec('yarn --version', async (err, stdout) => {
         // Don't show prompt if yarn is not installed
-        if (err) {
+        if (err || !isInteractive()) {
           resolve('npm');
         } else {
           const answers = await inquirer.prompt([{

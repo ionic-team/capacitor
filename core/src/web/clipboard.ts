@@ -23,7 +23,7 @@ export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
     }
 
     if (options.string || options.url) {
-      await navigator.clipboard.writeText(options.string || options.label);
+      await navigator.clipboard.writeText(options.string || options.url);
     } else if (options.image) {
       return Promise.reject("Setting images not supported on the web");
     }
@@ -34,11 +34,15 @@ export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
     if (!navigator.clipboard) {
       return Promise.reject('Clipboard API not available in this browser');
     }
-
-    const data = await navigator.clipboard.read();
-    for (const item of data.items) {
-      if (item.type === 'text/plain') {
-        return Promise.resolve(item.getAs('text/plain'));
+    if (_options.type === 'string' || _options.type === 'url') {
+      const text = await navigator.clipboard.readText();
+      return Promise.resolve({ value: text});
+    } else {
+      const data = await navigator.clipboard.read();
+      for (const item of data.items) {
+        if (item.type === 'text/plain') {
+          return Promise.resolve({ value: item.getAs('text/plain')});
+        }
       }
     }
     return Promise.reject('Unable to get data from clipboard');

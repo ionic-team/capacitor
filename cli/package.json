@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -101,5 +101,6 @@
         "tsConfig": "test/tsconfig.json"
       }
     }
-  }
+  },
+  "gitHead": "17f2124b487cbe216b3d6543a5d3fb86760110cd"
 }

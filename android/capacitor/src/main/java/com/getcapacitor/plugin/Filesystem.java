@@ -257,10 +257,6 @@ public class Filesystem extends Plugin {
       call.error("Unsupported encoding provided: " + encoding);
       return;
     }
-    //remove header from dataURL
-    if(data.indexOf(",") != -1) {
-      data = data.split(",")[1];
-    }
 
     // if charset is not null assume its a plain text file the user wants to save
     boolean success = false;
@@ -276,6 +272,10 @@ public class Filesystem extends Plugin {
         try { if (writer != null) { writer.close(); } } catch (IOException ignored) {}
       }
     } else {
+      //remove header from dataURL
+      if(data.indexOf(",") != -1) {
+        data = data.split(",")[1];
+      }
       FileOutputStream fos = null;
       try {
         fos = new FileOutputStream(file, append);
