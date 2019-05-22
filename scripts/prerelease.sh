@@ -13,4 +13,4 @@ pod lib lint --allow-warnings CapacitorCordova.podspec
 
 # Do the gradle
 cd android
-./gradlew clean build -b capacitor/build.gradle
+./gradlew clean build -b capacitor/build.gradle -PcapacitorXWalkModule=org.xwalk:xwalk_shared_library:23.53.589.4
