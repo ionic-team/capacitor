@@ -185,6 +185,15 @@ h2 code {
   border-radius: 4px;
 }
 
+ul {
+  -webkit-padding-start: 16px!important;
+  li {
+    font-size: 14px;
+    margin-top:16px;
+
+  }
+}
+
 ol {
   li {
     color: #4a5568;

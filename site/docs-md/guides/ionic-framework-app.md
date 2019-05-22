@@ -184,7 +184,7 @@ npm install @ionic/pwa-elements
 With that appropriately configured now, re-run `ionic serve` and click the Camera fab button. If your computer has a webcam of any sort, a modal window displays and you can take a photo!
 
 ![Camera API on the web](/assets/img/docs/guides/ionic-framework/camera-web.png)
-*"I'm pretty handsome." - The Author*
+<em>"I'm pretty handsome."</em> - The Author
 
 Next up, let's run this app on iOS and Android.
 

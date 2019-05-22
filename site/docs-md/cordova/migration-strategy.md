@@ -12,7 +12,9 @@ contributors:
 
 ## Why Migrate?
 
-Long-term stability and peace of mind. Capacitor is [backed by Ionic](https://ionicframework.com/), a long-term contributor to Cordova and the larger open source ecosystem. Ionic still uses Cordova heavily and will continue to invest in the platform for a long time to come.
+Long-term stability and peace of mind. 
+
+Capacitor is [backed by Ionic](https://ionicframework.com/), a long-term contributor to Cordova and the larger open source ecosystem. Ionic still uses Cordova heavily and will continue to invest in the platform for a long time to come.
 
 It’s backward-compatible with Cordova, so you can comfortably switch your existing web apps to it whenever you’re ready. Capacitor was designed from the start to support the rich Cordova plugin ecosystem out of the box. Thus, using Cordova plugins in Capacitor is easy.
 
