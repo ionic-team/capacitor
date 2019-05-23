@@ -21,19 +21,58 @@ with your own UI whether you choose to use Ionic or not.
 
 To enable these controls, you must add `@ionic/pwa-elements` to your app. 
 
-A typical installation involves either adding the following script tag to the `<head>` of the `index.html` for your app:
+A typical installation involves importing the package and registering the elements, or adding a script tag to the `<head>` of the `index.html` for your app:
 
-```html
-<script src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements.js"></script>
-```
-
-Or by installing and then importing from `@ionic/pwa-elements`:
+#### Importing PWA Elements
 
 ```bash
 npm install @ionic/pwa-elements
 ```
 
+Then, depending on your framework of choice, import the element loader and call it at the correct time:
+
+_React_
+
+`index.tsx` or `index.js`:
+
 ```ts
-import '@ionic/pwa-elements';
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+// Call the element loader after the app has been rendered the first time
+defineCustomElements(window);
 ```
 
+_Angular_
+
+`main.ts`:
+
+```ts
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
+
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+
+if (environment.production) {
+  enableProdMode();
+}
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.log(err));
+
+// Call the element loader after the platform has been bootstrapped
+defineCustomElements(window);
+```
+
+#### Including through script tag
+
+PWA Elements can be included through a script tag in your `index.html`. However, keep in mind this will not work for offline scenarios:
+
+```html
+<script type="module" src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.esm.js"></script>
+<script nomodule src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.js"></script>
+```
