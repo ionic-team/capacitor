@@ -35,7 +35,7 @@ _React_
 
 `index.tsx` or `index.js`:
 
-```typescript
+```tsx
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
 ReactDOM.render(<App />, document.getElementById('root'));
