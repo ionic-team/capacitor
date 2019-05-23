@@ -45,7 +45,7 @@ site-menu .menu-list li {
 }
 
 site-menu .menu-list > li + li {
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 site-menu .menu-list a {
@@ -73,7 +73,7 @@ site-menu .menu-list a:hover:not(.link-active) {
 }
 
 site-menu .menu-list ul li {
-  padding-left: 12px;
+  padding-left: 8px;
   transition: 80ms height;
   height: 26px;
   display: block;
