@@ -1,4 +1,4 @@
-import { Component, Prop, ComponentInterface } from '@stencil/core';
+import { Component, Prop, ComponentInterface, State } from '@stencil/core';
 import SiteProviderConsumer, { SiteState } from '../../global/site-provider-consumer';
 import { SiteStructureItem } from '../../global/definitions';
 
@@ -10,10 +10,19 @@ export class SiteMenu implements ComponentInterface{
   @Prop() siteStructureList: SiteStructureItem[] = [];
   @Prop({ mutable: true }) selectedParent: SiteStructureItem = null;
 
-  toggleParent = (parentItem: SiteStructureItem) => {
+  @State() closeList = [];
+
+  toggleParent = (itemNumber) => {
     return (e: MouseEvent) => {
       e.preventDefault();
-      this.selectedParent = parentItem;
+      if (this.closeList.indexOf(itemNumber) !== -1) {
+        this.closeList.splice(this.closeList.indexOf(itemNumber), 1)
+        this.closeList = [...this.closeList];
+      } else {
+        this.closeList = [...this.closeList, itemNumber];
+      }
+
+      console.log(e, this.closeList)
     }
   }
 
@@ -24,14 +33,14 @@ export class SiteMenu implements ComponentInterface{
         {({ toggleLeftSidebar }: SiteState) => (
           <div>
             <ul class='menu-list'>
-              { this.siteStructureList.map((item) => (
+              { this.siteStructureList.map((item, i) => (
                 <li>
-                  <a href="#" onClick={this.toggleParent(item)}>
+                  <a href="#" onClick={this.toggleParent(i)}>
                     <span class="section-label">
                       {item.text}
                     </span>
                   </a>
-                  <ul class={{ 'collapsed': item !== this.selectedParent }}>
+                  <ul class={{ 'collapsed': this.closeList.indexOf(i) !== -1 }}>
                   { item.children.map((childItem) => (
                     <li>
                       { (childItem.url) ?
