@@ -1,6 +1,6 @@
-import { Path, join, terminal } from '@angular-devkit/core';
+import { Path, join } from '@angular-devkit/core';
 import { Rule, SchematicContext, SchematicsException, Tree, chain } from '@angular-devkit/schematics';
-import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
+import { NodePackageInstallTask, RunSchematicTask } from '@angular-devkit/schematics/tasks';
 import { ScriptTarget, SourceFile, createSourceFile } from 'typescript';
 
 import { insertImport, isImported } from '../utils/devkit-utils/ast-utils';
@@ -13,7 +13,7 @@ import { Schema as IonAddOptions } from './schema';
 function addCapacitorToPackageJson(): Rule {
   return (host: Tree) => {
     addPackageToPackageJson(host, 'dependencies', '@capacitor/core', 'latest');
-    addPackageToPackageJson(host,'devDependencies','@capacitor/cli','latest');
+    addPackageToPackageJson(host, 'devDependencies', '@capacitor/cli', 'latest');
     return host;
   };
 }
@@ -68,17 +68,9 @@ function installNodeDeps() {
   };
 }
 
-function printMessage() {
-  return () => {
-    process.stdout.write(`
-⚡️  Capacitor CLI was added to your Project ⚡️
-   What's next?
-   • ${terminal.blue(terminal.bold('npx cap init'))}
-   • ${terminal.blue(terminal.bold('npx cap add <ios,android,electron>'))}
-
-   If you get lost, always check out the docs
-   https://capacitor.ionicframework.com
-`);
+function capInit() {
+  return (_host: Tree, context: SchematicContext) => {
+    context.addTask(new RunSchematicTask('cap-init', { command: 'npx', args: ['cap', 'init'] }));
   };
 }
 
@@ -102,7 +94,7 @@ export default function ngAdd(options: IonAddOptions): Rule {
       addCapacitorToPackageJson(),
       addCapPluginsToAppComponent(sourcePath),
       installNodeDeps(),
-      printMessage(),
+      capInit(),
     ]);
   };
 }
