@@ -29,7 +29,7 @@ export class AppMarked implements ComponentInterface {
   }
 
   render() {
-    return this.renderer(this.docsContent);
+    return this.renderer ? this.renderer(this.docsContent) : null;
   }
 }
 
