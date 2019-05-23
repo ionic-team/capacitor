@@ -7,10 +7,15 @@ site-header {
   width: 100%;
   background-color: #fff;
   z-index: 99;
+  transition: .2s box-shadow ease-out;
+
+  &.scrolled {
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.06), 0px 1px 0px rgba(0,0,0,0.02);
+  }
 
   .container {
-    padding-top: 28px;
-    padding-bottom: 28px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     display: flex;
     justify-content: space-between;
   }

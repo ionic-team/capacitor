@@ -9,6 +9,7 @@ export class SiteHeader {
 
   @State() isMobileMenuShown: boolean;
   @State() isDropdownShown: boolean;
+  @State() isScrolled = false;
 
   @Listen('window:resize')
   handleResize() {
@@ -19,6 +20,19 @@ export class SiteHeader {
         this.el.classList.remove('show-mobile-menu');
         document.body.classList.remove('no-scroll');
         this.isMobileMenuShown = false;
+      }
+    });
+  }
+
+  @Listen('window:scroll')
+  handleScroll(event) {
+    requestAnimationFrame(() => {
+      if (event.target.documentElement.scrollTop !== 0 && !this.isScrolled) {
+        this.el.classList.add('scrolled');
+        this.isScrolled = true;
+      } else if (event.target.documentElement.scrollTop === 0 && this.isScrolled) {
+        this.el.classList.remove('scrolled');
+        this.isScrolled = false;
       }
     });
   }

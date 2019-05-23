@@ -10,6 +10,8 @@ import frontMatter from 'front-matter';
 import fetch from 'node-fetch';
 import { SiteStructureItem, MarkdownContent } from '../src/global/definitions';
 
+require('dotenv').config();
+
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const globAsync = promisify(glob);

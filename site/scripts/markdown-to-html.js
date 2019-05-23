@@ -13,6 +13,7 @@ const utils_1 = require("@stencil/utils");
 const markdown_renderer_1 = require("./markdown-renderer");
 const front_matter_1 = __importDefault(require("front-matter"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
+require('dotenv').config();
 const readFile = util_1.promisify(fs_1.default.readFile);
 const writeFile = util_1.promisify(fs_1.default.writeFile);
 const globAsync = util_1.promisify(glob_1.default);

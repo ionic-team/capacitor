@@ -43,5 +43,8 @@
   "resolutions": {
     "natives": "1.1.3"
   },
-  "homepage": "https://github.com/ionic-team/capacitor"
+  "homepage": "https://github.com/ionic-team/capacitor",
+  "dependencies": {
+    "dotenv": "^8.0.0"
+  }
 }
