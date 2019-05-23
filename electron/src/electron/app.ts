@@ -1,5 +1,4 @@
-import { WebPlugin, AppPlugin } from "@capacitor/core";
-
+import { WebPlugin, AppPlugin, AppLaunchUrl } from '@capacitor/core';
 
 const { remote, shell } = require('electron');
 
@@ -23,8 +22,8 @@ export class AppPluginElectron extends WebPlugin implements AppPlugin {
     shell.openExternal(options.url);
     return Promise.resolve({ completed: true });
   }
-  getLaunchUrl(): Promise<import("@capacitor/core").AppLaunchUrl> {
-    throw new Error("Method not implemented.");
+  getLaunchUrl(): Promise<AppLaunchUrl> {
+    throw new Error('Method not implemented.');
   }
 }
 
