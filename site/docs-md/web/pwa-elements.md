@@ -35,7 +35,7 @@ _React_
 
 `index.tsx` or `index.js`:
 
-```ts
+```typescript
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
 ReactDOM.render(<App />, document.getElementById('root'));
@@ -48,7 +48,7 @@ _Angular_
 
 `main.ts`:
 
-```ts
+```typescript
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
