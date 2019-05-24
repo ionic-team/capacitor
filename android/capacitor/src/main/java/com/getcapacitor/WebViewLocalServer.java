@@ -303,34 +303,15 @@ public class WebViewLocalServer {
         conn.setConnectTimeout(30 * 1000);
 
         InputStream responseStream = conn.getInputStream();
+        String mimeType = getMimeType(path, responseStream);
 
-        if (path.equals("/") || (!request.getUrl().getLastPathSegment().contains(".") && html5mode)) {
+        if (mimeType.equals("text/html")) {
           responseStream = jsInjector.getInjectedStream(responseStream);
-
           bridge.reset();
-
-          return new WebResourceResponse("text/html", handler.getEncoding(),
-              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
 
-        int periodIndex = path.lastIndexOf(".");
-        if (periodIndex >= 0) {
-          String ext = path.substring(path.lastIndexOf("."), path.length());
-
-          // TODO: Conjure up a bit more subtlety than this
-          if (ext.equals(".html")) {
-            responseStream = jsInjector.getInjectedStream(responseStream);
-            bridge.reset();
-          }
-
-          String mimeType = getMimeType(path, responseStream);
-
-          return new WebResourceResponse(mimeType, handler.getEncoding(),
-              handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
-        }
-
-        return new WebResourceResponse("", handler.getEncoding(),
-            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), conn.getInputStream());
+        return new WebResourceResponse(mimeType, handler.getEncoding(),
+                handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
 
       } catch (SocketTimeoutException ex) {
         bridge.handleAppUrlLoadError(ex);
