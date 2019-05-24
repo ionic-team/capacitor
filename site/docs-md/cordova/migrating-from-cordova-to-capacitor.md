@@ -16,7 +16,7 @@ Note that it's recommended to work in a separate code branch when applying these
 
 ## Add Capacitor
 
-Begin by opening your project in a Terminal, then add Capacitor to [a web app](/docs/getting-started) or [an Ionic app](/docs/with-ionic). 
+Begin by opening your project in a Terminal, then add Capacitor to [a web app](/docs/getting-started) or [an Ionic app](/docs/getting-started/with-ionic). 
 
 Next, open `config.xml` and find the `id` field in the widget element. In this example, it's `io.ionic.myapp`.
 
