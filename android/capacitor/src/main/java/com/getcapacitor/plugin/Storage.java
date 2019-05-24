@@ -87,5 +87,6 @@ public class Storage extends Plugin {
   public void clear(PluginCall call) {
     editor.clear();
     editor.apply();
+    call.resolve();
   }
 }
