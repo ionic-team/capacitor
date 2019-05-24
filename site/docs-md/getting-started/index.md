@@ -14,7 +14,7 @@ contributors:
 <p class="intro">Capacitor provides a native mobile runtime and API layer for web apps. It does <em>not</em> come with any specific
 set of UI controls which you will most likely need unless you're building a game or something similar.</p>
 
-<p class="intro">We strongly recommend starting a Capacitor project with your mobile frontend framework of choice (such as <a href="https://ionicframework.com" target="_blank">Ionic</a>.</p>
+<p class="intro">We strongly recommend starting a Capacitor project with your mobile frontend framework of choice (such as <a href="https://ionicframework.com" target="_blank">Ionic</a>).</p>
 
 ## Before you start
 
