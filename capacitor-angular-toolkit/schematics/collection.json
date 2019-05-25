@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+  "ng-add": {
+      "description": "Add Capacitor to your project",
+      "factory": "./add",
+      "schema": "./add/schema.json"
+    },
+  "cap-init": {
+      "description": "Run Cap init",
+      "factory": "./cap-init",
+      "schema": "./cap-init/schema.json"
+    }
+  }
+}

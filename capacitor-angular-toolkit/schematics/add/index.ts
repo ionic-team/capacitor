@@ -61,16 +61,11 @@ function addCapPluginsToAppComponent(projectSourceRoot: string): Rule {
   };
 }
 
-function installNodeDeps() {
+function capInit(): Rule {
   return (host: Tree, context: SchematicContext) => {
-    context.addTask(new NodePackageInstallTask());
+    const packageInstall = context.addTask(new NodePackageInstallTask());
+    context.addTask(new RunSchematicTask('cap-init', { command: 'npx', args: ['cap', 'init'] }), [packageInstall]);
     return host;
-  };
-}
-
-function capInit() {
-  return (_host: Tree, context: SchematicContext) => {
-    context.addTask(new RunSchematicTask('cap-init', { command: 'npx', args: ['cap', 'init'] }));
   };
 }
 
@@ -84,16 +79,13 @@ export default function ngAdd(options: IonAddOptions): Rule {
     const project = workspace.projects[options.project];
 
     if (project.projectType !== 'application') {
-      throw new SchematicsException(
-        `Capacitor Add requires a project type of "application".`
-      );
+      throw new SchematicsException(`Capacitor Add requires a project type of "application".`);
     }
     const sourcePath = join(project.root as Path, 'src');
 
     return chain([
       addCapacitorToPackageJson(),
       addCapPluginsToAppComponent(sourcePath),
-      installNodeDeps(),
       capInit(),
     ]);
   };

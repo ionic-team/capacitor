@@ -36,3 +36,5 @@ android-template/app/app.iml
 .gradle/
 .settings/
 .project
+!capacitor-angular-toolkit/**/*.js
+!capacitor-angular-toolkit/**/*.json
