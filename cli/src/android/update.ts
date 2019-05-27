@@ -211,7 +211,7 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
     editConfig.concat(configFile).map(async (configElement: any) => {
-      if (configElement.$.target.includes('AndroidManifest.xml')) {
+      if (configElement.$ && (configElement.$.target && configElement.$.target.includes('AndroidManifest.xml') || configElement.$.file && configElement.$.file.includes('AndroidManifest.xml'))) {
         const keys = Object.keys(configElement).filter(k  => k !== '$');
         keys.map(k => {
           configElement[k].map((e: any) => {
@@ -223,7 +223,7 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
                   applicationXMLEntries.push(xmlElement);
                 }
               } else {
-                logInfo(`plugin ${p.id} requires to add \n  ${xmlElement} to your Info.plist to work`);
+                logInfo(`plugin ${p.id} requires to add \n  ${xmlElement} to your AndroidManifest.xml to work`);
               }
             } else {
               if (!rootXMLEntries.includes(xmlElement) && !contains(rootXMLEntries, xmlElement, k)) {
