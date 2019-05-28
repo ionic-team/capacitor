@@ -18,7 +18,7 @@ well as Action Sheets.
 
 ## Example
 
-```javascript
+```typescript
 import { Plugins } from '@capacitor/core';
 
 const { Modals } = Plugins;
