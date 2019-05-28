@@ -171,18 +171,7 @@ Some Capacitor plugins, including the Camera, provide the web-based functionalit
 npm install @ionic/pwa-elements
 ```
 
-Include this script tags in `src/index.html`:
-
-```html
-<head>
-  <!-- Other tags -->
-
-  <script type="module" src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.esm.js"></script>
-  <script nomodule src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.js"></script>
-</head>
-```
-
-Or import `@ionic/pwa-elements` by editing `src/main.ts`:
+Import `@ionic/pwa-elements` by editing `src/main.ts`:
 
 ```typescript
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
