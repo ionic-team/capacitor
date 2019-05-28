@@ -29,6 +29,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Fingerprint Auth | `capacitor-fingerprint-auth` | <https://github.com/triniwiz/capacitor-fingerprint-auth> | |
 | Firebase Auth | `capacitor-firebase-auth` | <https://github.com/baumblatt/capacitor-firebase-auth> | |
 | Twitter Kit | `capacitor-twitter` | <https://github.com/stewwan/capacitor-twitter> | |
+| Google Sign-in | `@codetrix-studio/capacitor-google-auth` | <https://github.com/CodetrixStudio/CapacitorGoogleAuth> | Lightweight |
 
 ## Storage
 
