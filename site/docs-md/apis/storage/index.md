@@ -29,6 +29,11 @@ This method can also be used to store non-string values, such as numbers and boo
 ## Example
 
 ```typescript
+import { Plugins } from '@capacitor/core';
+
+const { Storage } = Plugins;
+
+
 // JSON "set" example
 async setObject() {
   await Storage.set({
