@@ -29,6 +29,8 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
         if (photo === null) {
           reject('User cancelled photos app');
+        } else if (photo instanceof Error) {
+          reject(photo.message);
         } else {
           resolve(await this._getCameraPhoto(photo, options));
         }
