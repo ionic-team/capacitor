@@ -67,7 +67,9 @@ An empty Array can be provided if none of the previous options are desired. `pus
 <plugin-api index="true" name="push-notifications"></plugin-api>
 
 
-## Example
+## Example Guides
+
+[Using Push Notifications with Firebase in an Ionic Angular App](/docs/guides/push-notifications-firebase)
 
 ## API
 

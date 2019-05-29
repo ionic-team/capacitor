@@ -64,9 +64,9 @@ async takePicture() {
 }
 ```
 
-## Angular example
+## Example Guides
 
-[Follow this guide](../../guides/ionic-framework-app) to implement the Camera API in an Ionic Angular app.
+[Building an Ionic Framework Camera App](/docs/guides/ionic-framework-app)
 
 ## API
 
