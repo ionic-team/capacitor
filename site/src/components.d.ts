@@ -7,8 +7,13 @@
 
 import '@stencil/core';
 
-import '@stencil/router';
 import '@stencil/state-tunnel';
+import '@stencil/router';
+import {
+  MarkdownContent,
+  MarkdownHeading,
+  SiteStructureItem,
+} from './global/definitions';
 
 
 export namespace Components {
@@ -33,10 +38,12 @@ export namespace Components {
   }
 
   interface AppMarked {
-    'doc': string;
+    'fetchPath'?: string;
+    'renderer'?: (doc: MarkdownContent) => JSX.Element;
   }
   interface AppMarkedAttributes extends StencilHTMLAttributes {
-    'doc'?: string;
+    'fetchPath'?: string;
+    'renderer'?: (doc: MarkdownContent) => JSX.Element;
   }
 
   interface AvcCodeType {
@@ -56,6 +63,15 @@ export namespace Components {
     'isLandingPage'?: boolean;
   }
 
+  interface ContributorList {
+    'contributors': string[];
+    'link': any;
+  }
+  interface ContributorListAttributes extends StencilHTMLAttributes {
+    'contributors'?: string[];
+    'link'?: any;
+  }
+
   interface DemosPage {}
   interface DemosPageAttributes extends StencilHTMLAttributes {}
 
@@ -63,14 +79,36 @@ export namespace Components {
   interface DocSnippetAttributes extends StencilHTMLAttributes {}
 
   interface DocumentComponent {
+    'page': string;
     'pages': string[];
   }
   interface DocumentComponentAttributes extends StencilHTMLAttributes {
+    'page'?: string;
     'pages'?: string[];
+  }
+
+  interface InPageNavigation {
+    'currentPageUrl': string;
+    'pageLinks': MarkdownHeading[];
+    'srcUrl': string;
+  }
+  interface InPageNavigationAttributes extends StencilHTMLAttributes {
+    'currentPageUrl'?: string;
+    'pageLinks'?: MarkdownHeading[];
+    'srcUrl'?: string;
   }
 
   interface LandingPage {}
   interface LandingPageAttributes extends StencilHTMLAttributes {}
+
+  interface LowerContentNav {
+    'next'?: SiteStructureItem;
+    'prev'?: SiteStructureItem;
+  }
+  interface LowerContentNavAttributes extends StencilHTMLAttributes {
+    'next'?: SiteStructureItem;
+    'prev'?: SiteStructureItem;
+  }
 
   interface NewsletterSignup {}
   interface NewsletterSignupAttributes extends StencilHTMLAttributes {}
@@ -97,9 +135,13 @@ export namespace Components {
   interface SiteHeader {}
   interface SiteHeaderAttributes extends StencilHTMLAttributes {}
 
-  interface SiteMenu {}
+  interface SiteMenu {
+    'selectedParent': SiteStructureItem;
+    'siteStructureList': SiteStructureItem[];
+  }
   interface SiteMenuAttributes extends StencilHTMLAttributes {
-    'onLeftSidebarClick'?: (event: CustomEvent) => void;
+    'selectedParent'?: SiteStructureItem;
+    'siteStructureList'?: SiteStructureItem[];
   }
 }
 
@@ -112,10 +154,13 @@ declare global {
     'AvcCodeType': Components.AvcCodeType;
     'BlogPage': Components.BlogPage;
     'CapacitorSite': Components.CapacitorSite;
+    'ContributorList': Components.ContributorList;
     'DemosPage': Components.DemosPage;
     'DocSnippet': Components.DocSnippet;
     'DocumentComponent': Components.DocumentComponent;
+    'InPageNavigation': Components.InPageNavigation;
     'LandingPage': Components.LandingPage;
+    'LowerContentNav': Components.LowerContentNav;
     'NewsletterSignup': Components.NewsletterSignup;
     'PluginApi': Components.PluginApi;
     'PluginPlatforms': Components.PluginPlatforms;
@@ -132,10 +177,13 @@ declare global {
     'avc-code-type': Components.AvcCodeTypeAttributes;
     'blog-page': Components.BlogPageAttributes;
     'capacitor-site': Components.CapacitorSiteAttributes;
+    'contributor-list': Components.ContributorListAttributes;
     'demos-page': Components.DemosPageAttributes;
     'doc-snippet': Components.DocSnippetAttributes;
     'document-component': Components.DocumentComponentAttributes;
+    'in-page-navigation': Components.InPageNavigationAttributes;
     'landing-page': Components.LandingPageAttributes;
+    'lower-content-nav': Components.LowerContentNavAttributes;
     'newsletter-signup': Components.NewsletterSignupAttributes;
     'plugin-api': Components.PluginApiAttributes;
     'plugin-platforms': Components.PluginPlatformsAttributes;
@@ -187,6 +235,12 @@ declare global {
     new (): HTMLCapacitorSiteElement;
   };
 
+  interface HTMLContributorListElement extends Components.ContributorList, HTMLStencilElement {}
+  var HTMLContributorListElement: {
+    prototype: HTMLContributorListElement;
+    new (): HTMLContributorListElement;
+  };
+
   interface HTMLDemosPageElement extends Components.DemosPage, HTMLStencilElement {}
   var HTMLDemosPageElement: {
     prototype: HTMLDemosPageElement;
@@ -205,10 +259,22 @@ declare global {
     new (): HTMLDocumentComponentElement;
   };
 
+  interface HTMLInPageNavigationElement extends Components.InPageNavigation, HTMLStencilElement {}
+  var HTMLInPageNavigationElement: {
+    prototype: HTMLInPageNavigationElement;
+    new (): HTMLInPageNavigationElement;
+  };
+
   interface HTMLLandingPageElement extends Components.LandingPage, HTMLStencilElement {}
   var HTMLLandingPageElement: {
     prototype: HTMLLandingPageElement;
     new (): HTMLLandingPageElement;
+  };
+
+  interface HTMLLowerContentNavElement extends Components.LowerContentNav, HTMLStencilElement {}
+  var HTMLLowerContentNavElement: {
+    prototype: HTMLLowerContentNavElement;
+    new (): HTMLLowerContentNavElement;
   };
 
   interface HTMLNewsletterSignupElement extends Components.NewsletterSignup, HTMLStencilElement {}
@@ -255,10 +321,13 @@ declare global {
     'avc-code-type': HTMLAvcCodeTypeElement
     'blog-page': HTMLBlogPageElement
     'capacitor-site': HTMLCapacitorSiteElement
+    'contributor-list': HTMLContributorListElement
     'demos-page': HTMLDemosPageElement
     'doc-snippet': HTMLDocSnippetElement
     'document-component': HTMLDocumentComponentElement
+    'in-page-navigation': HTMLInPageNavigationElement
     'landing-page': HTMLLandingPageElement
+    'lower-content-nav': HTMLLowerContentNavElement
     'newsletter-signup': HTMLNewsletterSignupElement
     'plugin-api': HTMLPluginApiElement
     'plugin-platforms': HTMLPluginPlatformsElement
@@ -275,10 +344,13 @@ declare global {
     'avc-code-type': HTMLAvcCodeTypeElement;
     'blog-page': HTMLBlogPageElement;
     'capacitor-site': HTMLCapacitorSiteElement;
+    'contributor-list': HTMLContributorListElement;
     'demos-page': HTMLDemosPageElement;
     'doc-snippet': HTMLDocSnippetElement;
     'document-component': HTMLDocumentComponentElement;
+    'in-page-navigation': HTMLInPageNavigationElement;
     'landing-page': HTMLLandingPageElement;
+    'lower-content-nav': HTMLLowerContentNavElement;
     'newsletter-signup': HTMLNewsletterSignupElement;
     'plugin-api': HTMLPluginApiElement;
     'plugin-platforms': HTMLPluginPlatformsElement;

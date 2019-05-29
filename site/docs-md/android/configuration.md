@@ -1,18 +1,26 @@
+---
+title: Configuring Android
+description: Configuring Android
+url: /docs/android/configuration
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Configuring Android
 
-Android apps manage permissions, device features, and other settings by modifying `AndroidManifest.xml`.
+<p class="intro">Android apps manage permissions, device features, and other settings by modifying <code>AndroidManifest.xml</code>.</p>
 
-This file references values from other files in `res/values/`, to make it easy to update them separately, including `styles.xml` and `strings.xml`.
+<p class="intro">This file references values from other files in <code>res/values/</code>, to make it easy to update them separately, including <code>styles.xml</code> and <code>strings.xml</code>.</p>
 
-This article covers the basic modifications you'll need to make to your app. Read the [Android Manifest](https://developer.android.com/guide/topics/manifest/manifest-intro.html) docs to learn a whole lot more.
+<p class="intro">This article covers the basic modifications you'll need to make to your app. Read the <a href="https://developer.android.com/guide/topics/manifest/manifest-intro.html" target="_blank">Android Manifest</a> docs to learn a whole lot more.</p>
 
 ## Changing App ID
 
 To modify the bundle/app id for your app, edit the top `<manifest>` line in `AndroidManifest.xml`:
 
 ```xml
-<manifest 
-package="com.getcapacitor.myapp">
+<manifest package="com.getcapacitor.myapp">
 ```
 
 ## Changing App Name
@@ -68,5 +76,4 @@ Generally, the plugin you choose to use will ask you to set a permission. Add it
 
 ## Default Permissions
 
-By default, the entire initial permissions requested for the latest version of Capacitor with the standard plugins can
-be found in the android-template's [AndroidManifest.xml](https://github.com/ionic-team/capacitor/blob/master/android-template/app/src/main/AndroidManifest.xml)
+By default, the entire initial permissions requested for the latest version of Capacitor with the standard plugins can be found in the android-template's [AndroidManifest.xml](https://github.com/ionic-team/capacitor/blob/master/android-template/app/src/main/AndroidManifest.xml)

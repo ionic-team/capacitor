@@ -344,6 +344,7 @@ const generateReflectionType = (t) => {
 
   if (s && s.kind == 4096) { // Call signature
     var parts = ['('];
+    s.parameters = s.parameters || [];
 
     s.parameters.forEach((param, index) => {
       parts.push(`${param.name}: ${getParamTypeName(param)}`);

@@ -1,8 +1,19 @@
-<plugin-api index="true" name="splash-screen"></plugin-api>
+---
+title: Splash Screen
+description: Splash Screen API
+url: /docs/apis/splash-screen
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Splash Screen
 
 The Splash Screen API provides methods for showing or hiding a Splash image.
+
+<plugin-api index="true" name="splash-screen"></plugin-api>
 
 ## Example
 

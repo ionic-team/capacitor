@@ -1,4 +1,13 @@
-<plugin-platforms platforms="ios,android"></plugin-platforms>
+---
+title: Accessibility
+description: Accessibility API
+url: /docs/apis/accessibility
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
+<plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Accessibility
 

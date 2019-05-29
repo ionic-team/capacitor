@@ -1,4 +1,12 @@
-# Using Capacitor in an Ionic Framework App
+---
+title: Building an Ionic Framework Camera App
+description: Learn how to add Camera functionality to an Ionic Angular app that works on the web, iOS, and Android
+url: /docs/guides/ionic-framework-app
+contributors:
+  - dotnetkow
+---
+
+# Building an Ionic Framework Camera App
 
 **Web Framework**: Ionic 4 + Angular  
 **Platforms**: Web, iOS, Android
@@ -169,14 +177,15 @@ npm install @ionic/pwa-elements
 <head>
   <!-- Other tags -->
 
-  <script src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements.js"></script>
+  <script type="module" src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.js"></script>
 </head>
 ```
 
 With that appropriately configured now, re-run `ionic serve` and click the Camera fab button. If your computer has a webcam of any sort, a modal window displays and you can take a photo!
 
 ![Camera API on the web](/assets/img/docs/guides/ionic-framework/camera-web.png)
-*"I'm pretty handsome." - The Author*
+<em>"I'm pretty handsome."</em> - The Author
 
 Next up, let's run this app on iOS and Android.
 

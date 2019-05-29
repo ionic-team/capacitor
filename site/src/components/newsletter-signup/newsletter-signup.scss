@@ -30,6 +30,7 @@
     input {
       padding: 5px 10px 5px 16px;
       width: 200px;
+      min-height: calc(100% - 1px);
       background-color: #fff;
       border: none;
       border-radius: 6px;

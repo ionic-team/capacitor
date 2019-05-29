@@ -1,3 +1,12 @@
+---
+title: Creating Capacitor Plugins
+description: Creating Capacitor Plugins
+url: /docs/plugins/creating-plugins
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Creating Capacitor Plugins
 
 An Capacitor plugin relies on a JavaScript layer that proxies calls to Capacitor's cross-platform runtime which runs

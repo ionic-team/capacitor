@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { createCommand } from './tasks/create';
 import { initCommand } from './tasks/init';
 import { copyCommand } from './tasks/copy';
+import { listCommand } from './tasks/list';
 import { updateCommand } from './tasks/update';
 import { openCommand } from './tasks/open';
 import { serveCommand } from './tasks/serve';
@@ -82,6 +83,13 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .description('add a native platform project')
     .action((platform) => {
       return addCommand(config, platform);
+    });
+
+  program
+    .command('ls [platform]')
+    .description('list installed Cordova and Capacitor plugins')
+    .action(platform => {
+      return listCommand(config, platform);
     });
 
   program

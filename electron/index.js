@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const { ipcMain, BrowserWindow } = require('electron');
+const { app, ipcMain, BrowserWindow } = require('electron');
 
 function getURLFileContents(path) {
+  console.trace();
   return new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
-      // console.error(err);
       if(err)
         reject(err);
       resolve(data.toString());
@@ -15,15 +15,12 @@ function getURLFileContents(path) {
 
 const injectCapacitor = async function(url) {
   try {
-    // console.log(url.substr(url.indexOf('://') + 3));
     let urlFileContents = await getURLFileContents(url.substr(url.indexOf('://') + 3));
     let pathing = path.join(url.substr(url.indexOf('://') + 3), '../../node_modules/@capacitor/electron/dist/electron-bridge.js');
-    // console.log(pathing);
     urlFileContents = urlFileContents.replace('<body>', `<body><script>window.require('${pathing.replace(/\\/g,'\\\\')}')</script>`);
-    // console.log(urlFileContents);
     return 'data:text/html;charset=UTF-8,' + urlFileContents;
   } catch(e) {
-    // console.error(e);
+    console.error(e);
     return url;
   }
 };
@@ -93,8 +90,8 @@ class CapacitorSplashScreen {
   }
 
   init() {
+    let rootPath = app.getAppPath();
 
-    let rootPath = global.__basedir;
 
     this.splashWindow = new BrowserWindow({
       width: this.splashOptions.windowWidth,
@@ -107,7 +104,7 @@ class CapacitorSplashScreen {
     let splashHtml = this.splashOptions.customHtml || `
       <html style="width: 100%; height: 100%; margin: 0; overflow: hidden;">
         <body style="background-image: url('./${this.splashOptions.imageFileName}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">
-          <div style="color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw; text-shadow: -0.6px -0.6px 0 #f4f4f4, 0.6px -0.6px 0 #f4f4f4, -0.6px 0.6px 0 #f4f4f4, 0.8px 0.6px 0 #f4f4f4">
+          <div style="font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;>
             ${this.splashOptions.loadingText}
           </div>
         </body>

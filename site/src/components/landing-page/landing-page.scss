@@ -11,6 +11,7 @@
 landing-page {
   display: block;
   color: #fff;
+  overflow: hidden;
 
   h1,
   h2,
@@ -104,7 +105,7 @@ landing-page {
     }
 
     hgroup {
-      max-width: 480px;
+      max-width: 490px;
       padding-right: 60px;
       display: flex;
       flex-direction: column;

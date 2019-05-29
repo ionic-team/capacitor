@@ -1,6 +1,15 @@
+---
+title: Building Progressive Web Apps
+description: How to build Progressive Web Apps with Capacitor
+url: /docs/basics/progressive-web-app
+contributors:
+  - jcesarmobile
+  - dotnetkow
+---
+
 # Building Progressive Web Apps
 
-Capacitor has first-class support for Progressive Web Apps, making it easy to build an app that runs natively on iOS and Android, but also on the web as a mobile web app or "Progressive Web App."
+<p class="intro">Capacitor has first-class support for Progressive Web Apps, making it easy to build an app that runs natively on iOS and Android, but also on the web as a mobile web app or "Progressive Web App."</p>
 
 ## What is a Progressive Web App?
 

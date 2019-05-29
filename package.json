@@ -7,7 +7,7 @@
 		"lerna": "^2.4.0",
 		"lerna-changelog": "^0.8.2"
 	},
-  "changelog": {
-    "repo": "https://github.com/ionic-team/capacitor"
-  }
+	"changelog": {
+		"repo": "https://github.com/ionic-team/capacitor"
+	}
 }

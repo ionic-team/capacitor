@@ -1,9 +1,20 @@
+---
+title: Configuring Your App
+description: Native Project Configuration
+url: /docs/basics/configuring-your-app
+contributors:
+  - jcesarmobile
+  - dotnetkow
+---
+
 # Configuring Your App
 
-Capacitor embraces the idea of "Code once, configure everywhere": configuration is
-managed per-platform instead of in an abstracted system like a `config.xml` in Cordova, for example.
+<p class="intro">Capacitor embraces the idea of "Code once, configure everywhere": configuration is
+managed per-platform instead of in an abstracted system like a <code>config.xml</code> in Cordova, for example.</p>
 
-This is an important point, because it means that Capacitor requires you to be more involved in the native project configuration than with Cordova, for example. However,
+## Per-platform Management
+
+Capacitor requires you to be more involved in the native project configuration than with Cordova, for example. However,
 we think this is the right approach, because it makes it easy to follow existing Native iOS/Android guides, get help on Stack Overflow, and have full control over your project.
 
 Additionally, because configuring a Capacitor project is no different from configuring an iOS or Android project, existing native development teams can easily work alongside
@@ -16,7 +27,7 @@ Capacitor has some high level configuration options that are set in `capacitor.c
 
 The current ones you might configure are:
 
-```javascript
+```json
 {
   // Sets the directory of your built web assets. This is the directory that will be
   // used to run your app in a native environment
@@ -83,6 +94,6 @@ The current ones you might configure are:
 
 iOS and Android each have configuration guides walking through making common changes to their behavior:
 
-[Configuring iOS](/docs/ios/configuration)
+[Configuring iOS &#8250;](/docs/ios/configuration)
 
-[Configuring Android](/docs/android/configuration)
+[Configuring Android &#8250;](/docs/android/configuration)

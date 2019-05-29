@@ -74,9 +74,6 @@ public class JSExport {
           "var t = p['" + plugin.getId() + "'] = {};\n" +
           "t.addListener = function(eventName, callback) {\n" +
           "  return w.Capacitor.addListener('" + plugin.getId() + "', eventName, callback);\n" +
-          "}\n" +
-          "t.removeListener = function(eventName, callback) {\n" +
-          "  return w.Capacitor.removeListener('" + plugin.getId() + "', eventName, callback);\n" +
           "}");
 
 

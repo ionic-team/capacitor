@@ -1,82 +1,45 @@
-import { Component, Prop, Element, Watch, State } from '@stencil/core';
+import { Component, Prop, State, Watch, ComponentInterface } from '@stencil/core';
+import { MarkdownContent } from '../../global/definitions';
 
 @Component({
   tag: 'app-marked',
   styleUrl: 'app-marked.scss'
 })
-export class AppMarked {
-  @Element() el: Element;
+export class AppMarked implements ComponentInterface {
 
-  @Prop() doc: string;
-  @Prop({ context: 'isServer' }) private isServer: boolean;
+  @Prop() fetchPath?: string;
+  @Prop() renderer?: (doc: MarkdownContent) => JSX.Element;
 
-  @State() content: string;
+  @State() docsContent: MarkdownContent = {};
 
   componentWillLoad() {
-    return this.fetchNewContent();
+    return this.fetchNewContent(this.fetchPath);
   }
 
-  // componentDidLoad() {
-  //   this.bindHeadings(this.el);
-  // }
-
-  // componentDidUpdate() {
-  //   this.bindHeadings(this.el);
-  // }
-
-  @Watch('doc')
-  fetchNewContent() {
-    if (this.doc !== undefined) {
-      return fetch(`/assets/docs-content/${this.doc}`)
-        .then(response => response.text())
-        .then(data => {
-          this.content = data;
-
-          const el = document.createElement('div');
-          el.innerHTML = data;
-
-          const headerEl = el.querySelector('h1');
-          document.title = (headerEl && headerEl.textContent + ' - Capacitor') || 'Capacitor';
-
-          // requestAnimationFrame is not available for preRendering
-          // or SSR, so only run this in the browser
-          if (!this.isServer) {
-            window.requestAnimationFrame(() => {
-              window.scrollTo(0, 0);
-            })
-          }
-        }).catch(err => {
-          console.error('UNABLE TO LOAD', err);
-        })
+  @Watch('fetchPath')
+  fetchNewContent(docPath: string, oldDocPath?: string) {
+    if (docPath == null || docPath === oldDocPath) {
+      return;
     }
-  }
-
-  bindHeadings(el: Element) {
-    const headings = Array.from(el.querySelectorAll('h1,h2,h3,h4,h5'));
-    headings.forEach(h => {
-      h.classList.add('anchor-link-relative');
-      var link = document.createElement('anchor-link');
-      link.className = 'hover-anchor';
-      if (h.id) {
-        link.to = h.id;
+    return fetchContent(this.fetchPath).then(data => {
+      if (data != null) {
+        this.docsContent = data;
       }
-      link.innerHTML = '#';
-      h.insertBefore(link, h.firstChild);
     });
-
-    setTimeout(() => {
-      const hash = window.location.hash;
-      if (hash) {
-        window.location.hash = '';
-        window.location.hash = hash;
-      }
-    }, 100);
   }
 
   render() {
-    return [
-      <app-burger></app-burger>,
-      <div class="measure-lg" innerHTML={this.content}></div>
-    ]
+    return this.renderer ? this.renderer(this.docsContent) : null;
   }
+}
+
+const localCache = new Map<string, Promise<MarkdownContent>>();
+
+function fetchContent(path: string) {
+  let promise = localCache.get(path);
+  if (!promise) {
+    promise = fetch(path, {cache: 'force-cache'}).then(response => response.json());
+    localCache.set(path, promise);
+  }
+  return promise;
 }

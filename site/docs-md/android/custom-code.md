@@ -1,8 +1,17 @@
+---
+title: Custom Native Android Code
+description: Custom Native Android Code
+url: /docs/android/custom-code
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Custom Native Android Code
 
-Many apps will want to add custom Java code to implement native features, without the overhead of building and publishing a proper Capacitor plugin.
+<p class="intro">Many apps will want to add custom Java code to implement native features, without the overhead of building and publishing a proper Capacitor plugin.</a>
 
-There are two ways to do this depending on whether or not you need to access that code from the WebView:
+<p class="intro">There are two ways to do this depending on whether or not you need to access that code from the WebView:</a>
 
 ## WebView Accessible Native Code
 

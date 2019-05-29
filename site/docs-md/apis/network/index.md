@@ -1,3 +1,12 @@
+---
+title: Network
+description: Network API
+url: /docs/apis/network
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Network

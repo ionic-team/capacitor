@@ -1,8 +1,17 @@
+---
+title: iOS Troubleshooting Guide
+description: iOS Troubleshooting Guide
+url: /docs/ios/troubleshooting
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # iOS Troubleshooting Guide
 
-Creating a 100% perfect native management tool is nearly impossible, and sooner or later you'll run into various issues with some part of the iOS workflow.
+<p class="intro">Creating a 100% perfect native management tool is nearly impossible, and sooner or later you'll run into various issues with some part of the iOS workflow.</p>
 
-This guide attempts to document common iOS/Xcode issues with possible solutions.
+<p class="intro">This guide attempts to document common iOS/Xcode issues with possible solutions.</p>
 
 ## iOS Toolbox
 

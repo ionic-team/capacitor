@@ -1,6 +1,15 @@
+---
+title: Building your App 
+description: Building your App
+url: /docs/basics/building-your-app
+contributors:
+  - dotnetkow
+  - mlynch
+---
+
 # Building your App
 
-Capacitor works on a three-step build process: First, your web code is built (if necessary). Next, the built web code is copied to each platform. Finally, the app is compiled using the platform-specific tooling.
+<p class="intro">Capacitor works on a three-step build process: First, your web code is built (if necessary). Next, the built web code is copied to each platform. Finally, the app is compiled using the platform-specific tooling.</p>
 
 ## 1. Building web code
 

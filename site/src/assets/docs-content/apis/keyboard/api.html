@@ -49,46 +49,92 @@ the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI<
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-0">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <avc-code-type>string</avc-code-type>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>Function</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="16">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardWillShow"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     
   <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">eventName</span>
                 
-<avc-code-type>string</avc-code-type>
+<span class="avc-code-string">"keyboardWillShow"</span>
 </div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>Function</avc-code-type>
+<avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
-    <span class="avc-code-method-returns-label">Returns:</span> <avc-code-type type-id="16">PluginListenerHandle</avc-code-type>
+    <span class="avc-code-method-returns-label">Returns:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
   </div>
   
 </div></div>
 <div class="avc-code-method">
-                    <h3 class="avc-code-method-header" id="method-removeListener-0">removeListener</h3>
+                    <h3 class="avc-code-method-header" id="method-addListener-1">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">removeListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <avc-code-type>string</avc-code-type>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>Function</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardDidShow"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     
   <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">eventName</span>
                 
-<avc-code-type>string</avc-code-type>
+<span class="avc-code-string">"keyboardDidShow"</span>
 </div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>Function</avc-code-type>
+<avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
-    <span class="avc-code-method-returns-label">Returns:</span> void
+    <span class="avc-code-method-returns-label">Returns:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-addListener-2">addListener</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardWillHide"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>() => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+    </div>
+    
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">eventName</span>
+                
+<span class="avc-code-string">"keyboardWillHide"</span>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">listenerFunc</span>
+                
+<avc-code-type>() => void</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-addListener-3">addListener</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardDidHide"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>() => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+    </div>
+    
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">eventName</span>
+                
+<span class="avc-code-string">"keyboardDidHide"</span>
+</div>
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">listenerFunc</span>
+                
+<avc-code-type>() => void</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
   </div>
   
 </div></div>

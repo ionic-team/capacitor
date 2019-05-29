@@ -2,7 +2,6 @@ import { PluginRegistry } from './core-plugin-definitions';
 
 export interface Plugin {
   addListener(eventName: string, listenerFunc: Function): PluginListenerHandle;
-  removeListener(eventName: string, listenerFunc: Function): void;
   requestPermissions?: () => Promise<PermissionsRequestResult>;
 }
 

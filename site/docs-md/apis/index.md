@@ -1,3 +1,12 @@
+---
+title: Capacitor APIs
+description: Capacitor APIs
+url: /docs/apis
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Capacitor APIs
 
 Capacitor includes a number of Native APIs that are available to all Capacitor apps. These can be thought of as Capacitor "core plugins," and they make it easy to access commonly needed functionality on each platform.

@@ -1,3 +1,12 @@
+---
+title: Keyboard
+description: Keyboard API
+url: /docs/apis/keyboard
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="ios,android"></plugin-platforms>
 
 # Keyboard

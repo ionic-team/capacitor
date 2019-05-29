@@ -1,3 +1,12 @@
+---
+title: Storage
+description: Storage API
+url: /docs/apis/storage
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
 
 # Storage

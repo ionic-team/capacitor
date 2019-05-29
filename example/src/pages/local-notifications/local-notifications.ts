@@ -22,6 +22,11 @@ export class LocalNotificationsPage {
   pendingNotifs: LocalNotificationScheduleResult;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+  }
+
+  async init() {
+    await Plugins.LocalNotifications.requestPermissions();
+
     try {
       Plugins.LocalNotifications.registerActionTypes({
         types: [

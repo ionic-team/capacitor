@@ -39,8 +39,34 @@ document-component {
     }
   }
 
+  .heading-link {
+    position: relative;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: #2d2d4c;
+
+    &:hover {
+      border-bottom: 1px solid transparent;
+    }
+  
+    ion-icon {
+      transition: opacity 0.2s;
+      position: absolute;
+      left: -24px;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+    }
+  
+    &:hover ion-icon {
+      opacity: 0.8;
+    }
+  }
+
   img {
     max-width: 100%;
+    margin: 8px 0;
   }
 
   h1:first-child {
@@ -50,10 +76,10 @@ document-component {
   }
 
   ul {
-    -webkit-padding-start: 0px;
+    -webkit-padding-start: 16px;
     li, code {
-      font-size: 16px;
-      margin-left: 18px;
+      font-size: 14px;
+      margin-top: 16px;
     }
   }
 
@@ -66,7 +92,7 @@ document-component {
   ul,
   ol {
     code {
-      padding: 0 4px 3px;
+      padding: 1px 4px 2px;
       background-color: #ecf4fb;
       color: #16161D;
       border-radius: 3px;
@@ -82,8 +108,8 @@ document-component {
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    padding: 16px 20px;
-    border-radius: 2px;
+    padding: 12px 14px;
+    border-radius: 4px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
     outline: none;
     letter-spacing: 0.04em;
@@ -94,5 +120,10 @@ document-component {
   #introButton:hover {
     box-shadow: 0 3px 6px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.1);
     transform: translateY(1px);
+  }
+
+  .btn.pull-left,
+  .btn.pull-right {
+    margin: 64px 8px 20px;
   }
 }

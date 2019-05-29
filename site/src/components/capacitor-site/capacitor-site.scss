@@ -1,6 +1,10 @@
 @import '../../global/variables';
 @import '../../global/webfont';
 
+@import '../../global/shared/utils';
+@import '../../global/shared/buttons';
+
+
 * {
   box-sizing: border-box;
 }
@@ -9,7 +13,7 @@ capacitor-site {
   min-height: 100%;
   display: flex;
   flex-flow: column;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 .no-scroll {
@@ -60,7 +64,7 @@ capacitor-site {
 }
 
 .container {
-  max-width: 1080px;
+  max-width: 1280px;
   width: 100%;
   margin: auto;
   padding: 0 24px;
@@ -70,6 +74,12 @@ capacitor-site {
   display: flex;
 }
 
+document-component {
+  > div {
+    display: flex;
+  }
+}
+doc-content
 .input-with-button {
   display: flex;
   height: 50px;
@@ -80,6 +90,7 @@ capacitor-site {
     flex: 1;
     height: 100%;
   }
+
   button {
     flex-grow: 0;
     flex-shrink: 1;
@@ -87,6 +98,7 @@ capacitor-site {
     border: 0;
     border-radius: 0px 3px 3px 0;
     height: 100%;
+
     &:hover {
       transform: none;
     }
@@ -109,15 +121,15 @@ capacitor-site {
 }
 
 ::selection {
-  background: #e7e7f2;
+  background: #98d2ff;
 }
 
 ::-moz-selection {
-  background: #e7e7f2;
+  background: #98d2ff;
 }
 
 html, body {
-  font-family: 'Graphik',
+  font-family: 'Inter',
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
@@ -142,29 +154,58 @@ body {
 h1, h2, h3, h4 {
   color: #16161d;
   letter-spacing: 0px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 h1 {
-  font-size: 28px;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 22px;
   letter-spacing: -0.02em;
   font-weight: 600;
 }
 
-h2 {
-  font-size: 20px;
-}
-
 h2, h3 {
-  margin-top: 48px;
+  margin-top: 64px;
   margin-bottom: 8px;
 }
 
+h2 code {
+  font-weight: 600;
+  font-family: 'Roboto Mono', 'Source Code Pro', monospace;
+  font-size: 20px;
+  color: #16161D;
+  background: #ecf4fb;
+  margin-left: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+ul {
+  li {
+    font-size: 14px;
+    margin-top:16px;
+  }
+}
+
+ol {
+  li {
+    color: #4a5568;
+    font-size: 15px;
+    line-height: 1.8em;
+    margin: 16px 0;
+  }
+}
+
 p, ul {
-  color: #2d2d4c;
-  font-size: 16px;
-  line-height: 2em;
-  margin: 24px 0px;
+  color: #4a5568;
+  font-size: 15px;
+  line-height: 1.8em;
+  margin: 16px 0px;
 }
 
 strong, b {
@@ -183,6 +224,27 @@ a {
 
 p a {
   font-weight: 500;
+}
+
+.intro {
+  font-size: 18px;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+
+.intro code {
+  font-size: 18px;
+}
+
+blockquote {
+  background: rgba(255, 250, 237, 0.8);
+  border-left: 4px solid #ffcc5f;
+  border-radius: 2px 4px 4px 2px;
+  color: #736545 !important;
+  font-size: 14px;
+  line-height: 1.8em;
+  margin: auto;
+  padding: 16px 20px;
 }
 
 stencil-route-link:hover {
@@ -230,8 +292,8 @@ button:hover {
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  padding: 16px 20px;
-  border-radius: 2px;
+  padding: 12px 14px;
+  border-radius: 4px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
   outline: none;
   letter-spacing: 0.04em;
@@ -258,8 +320,8 @@ button:hover {
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  padding: 16px 20px;
-  border-radius: 2px;
+  padding: 12px 14px;
+  border-radius: 4px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
   outline: none;
   letter-spacing: 0.04em;
@@ -282,7 +344,7 @@ pre {
   display: block;
   white-space: pre-wrap;
   margin: 24px 0px 28px;
-  padding: 16px 24px;
+  /*padding: 16px 24px;*/
   border-radius: 4px;
   color: #16161D;
   background-color: #f8f8f8;
@@ -508,6 +570,7 @@ footer {
   }
 }
 
+
 .document {
   .container {
     display: flex;
@@ -539,6 +602,7 @@ footer {
       margin-left: 18px;
     }
   }
+
 
   p a {
     color: $link-color;

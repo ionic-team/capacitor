@@ -1,3 +1,12 @@
+---
+title: Android Lifecycle
+description: Android Lifecycle
+url: /docs/android/lifecycle
+contributors:
+  - mlynch
+  - jcesarmobile
+---
+
 # Android Lifecycle
 
 Understanding the Android Activity Lifecycle is crucial for building apps that act the way Android users expect.
