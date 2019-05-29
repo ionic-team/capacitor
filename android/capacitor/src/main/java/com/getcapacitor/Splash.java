@@ -163,6 +163,9 @@ public class Splash {
         // Required to enable the view to actually fade
         params.format = PixelFormat.TRANSLUCENT;
 
+        if (params.width == -1) params.width = 0;
+        if (params.height == -1) params.height = 0;
+
         wm.addView(splashImage, params);
 
         splashImage.setAlpha(0f);
