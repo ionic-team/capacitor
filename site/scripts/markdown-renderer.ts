@@ -116,9 +116,11 @@ export function collectHeadingMetadata(renderer: marked.Renderer, metadata: Mark
 
 export function changeCodeCreation(renderer: marked.Renderer) {
   function highlight(code: string, lang?: string) {
-    code = code.replace(/&/g, "&amp;")
-               .replace(/</g, "&lt;")
-               .replace(/>/g, "&gt;");
+    if (lang === 'html' || lang === 'xml') {
+      code = code.replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    }
     if (lang != null && languages.indexOf(lang) !== -1) {
       return Prism.highlight(code, Prism.languages[lang]);
     }
