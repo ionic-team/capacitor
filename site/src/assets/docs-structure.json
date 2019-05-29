@@ -138,6 +138,10 @@
         "url": "/docs/ios/custom-code"
       },
       {
+        "text": "Deploying to App Store",
+        "filePath": "https://www.joshmorony.com/deploying-capacitor-applications-to-ios-development-distribution/"
+      },
+      {
         "text": "Troubleshooting",
         "filePath": "/assets/docs-content/ios/troubleshooting.json",
         "url": "/docs/ios/troubleshooting"
@@ -166,6 +170,10 @@
         "text": "Custom Native Code",
         "filePath": "/assets/docs-content/android/custom-code.json",
         "url": "/docs/android/custom-code"
+      },
+      {
+        "text": "Deploying to Google Play",
+        "filePath": "https://www.joshmorony.com/deploying-capacitor-applications-to-android-development-distribution/"
       },
       {
         "text": "Troubleshooting",

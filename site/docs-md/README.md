@@ -28,12 +28,14 @@
   * [Configuration](ios/configuration.md)
   * [Updating](ios/updating.md)
   * [Custom Native Code](ios/custom-code.md)
+  * [Deploying to App Store](https://www.joshmorony.com/deploying-capacitor-applications-to-ios-development-distribution/)
   * [Troubleshooting](ios/troubleshooting.md)
 * Android
   * [Getting Started](android/index.md)
   * [Configuration](android/configuration.md)
   * [Updating](android/updating.md)
   * [Custom Native Code](android/custom-code.md)
+  * [Deploying to Google Play](https://www.joshmorony.com/deploying-capacitor-applications-to-android-development-distribution/)
   * [Troubleshooting](android/troubleshooting.md)
 * Web/PWA
   * [Getting Started](web/index.md)
