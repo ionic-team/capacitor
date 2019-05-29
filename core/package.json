@@ -22,7 +22,6 @@
   },
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
-  "browser": "dist/capacitor.js",
   "unpkg": "dist/capacitor.js",
   "typings": "dist/esm/index.d.ts",
   "devDependencies": {
