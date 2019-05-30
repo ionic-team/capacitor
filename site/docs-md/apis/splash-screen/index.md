@@ -71,7 +71,7 @@ Then run `npx cap copy` to apply these changes.
 
 ## Configuration
 
-These config parameters are availiable in `capacitor.config.json`:
+These config parameters are available in `capacitor.config.json`:
 
 ```json
 {
@@ -85,10 +85,6 @@ These config parameters are availiable in `capacitor.config.json`:
   }
 }
 ```
-
-## Add your own splash screen images
-
-See [Josh Morony's blog post](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/) on how to change it. 
 
 ### Android
 
@@ -125,6 +121,12 @@ with
         <item name="android:background">@drawable/screen</item>
     </style>
 ```
+
+## Example Guides
+
+[Adding Your Own Icons and Splash Screen Images &#8250;](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/)
+
+[Creating a Dynamic/Adaptable Splash Screen for Capacitor (Android) &#8250;](https://www.joshmorony.com/creating-a-dynamic-universal-splash-screen-for-capacitor-android/)
 
 ## API
 
