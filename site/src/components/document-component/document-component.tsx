@@ -44,7 +44,7 @@ export class DocumentComponent implements ComponentInterface {
         <site-menu selectedParent={this.parent} siteStructureList={siteStructure as SiteStructureItem[]} />
         <app-marked fetchPath={this.item.filePath} renderer={(docsContent) => [
           <stencil-route-title
-            pageTitle={docsContent.title ? `${docsContent.title} - Stencil` : 'Stencil'}></stencil-route-title>,
+            pageTitle={docsContent.title ? `${docsContent.title} - Capacitor` : 'Capacitor'}></stencil-route-title>,
           <div class="doc-content">
             <div class="measure-lg">
               <div innerHTML={docsContent.content}></div>
