@@ -22,7 +22,7 @@ export async function findXcodePath(config: Config): Promise<string | null> {
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
   config;
-  if (!await isInstalled('pod')) {
+  if (!await isInstalled('pod') && config.cli.os === 'mac') {
     return 'cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation';
   }
   return null;
