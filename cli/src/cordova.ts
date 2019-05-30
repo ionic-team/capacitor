@@ -2,7 +2,7 @@ import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { join, resolve } from 'path';
-import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, readXML, resolveNode, writeXML } from './common';
+import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, readXML, resolveNode, writeXML } from './common';
 import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -222,7 +222,7 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
   if (!dict.key.includes(configElement.$.parent)) {
     let xml = buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
-    logInfo(`Plugin ${plugin.id} requires you to add \n  ${xml} to your Info.plist to work`);
+    logWarn(`Plugin ${plugin.id} requires you to add \n  ${xml} to your Info.plist to work`);
   } else if (configElement.array || configElement.dict) {
     if (configElement.array && configElement.array[0] && configElement.array[0].string) {
         var xml = "";
@@ -232,7 +232,7 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
           }
         });
         if (xml.length > 0) {
-          logInfo(`Plugin ${plugin.id} require you to add \n${xml} in the existing ${chalk.bold(configElement.$.parent)} array of your Info.plist to work`);
+          logWarn(`Plugin ${plugin.id} requires you to add \n${xml} in the existing ${chalk.bold(configElement.$.parent)} array of your Info.plist to work`);
         }
     } else {
       logPossibleMissingItem(configElement, plugin);
@@ -244,7 +244,7 @@ function logPossibleMissingItem (configElement: any, plugin: Plugin) {
   let xml = buildConfigFileXml(configElement);
   xml = getConfigFileTagContent(xml);
   xml = removeOuterTags(xml);
-  logInfo(`Plugin ${plugin.id} might require you to add ${xml} in the existing ${chalk.bold(configElement.$.parent)} entry of your Info.plist to work`);
+  logWarn(`Plugin ${plugin.id} might require you to add ${xml} in the existing ${chalk.bold(configElement.$.parent)} entry of your Info.plist to work`);
 }
 
 function buildConfigFileXml(configElement: any) {
