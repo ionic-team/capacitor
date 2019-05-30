@@ -12,9 +12,6 @@ import chalk from 'chalk';
 import { resolve } from 'path';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
-  if (selectedPlatformName === 'ios' && config.cli.os !== 'mac') {
-    logFatal('Not running Mac OS X, can\'t add ios platform');
-  }
 
   const platformName = await config.askPlatform(
     selectedPlatformName,
