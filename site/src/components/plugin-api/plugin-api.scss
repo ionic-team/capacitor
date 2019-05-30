@@ -3,6 +3,9 @@ $code-font: monospace;/*Consolas,Menlo,Monaco,source-code-pro,Courier New,monosp
 
 plugin-api {
   .avc-code-plugin-index {
+    ul anchor-link div {
+      display: inline-block
+    }
     anchor-link {
       color: $link-color;
       cursor: pointer;
