@@ -232,7 +232,7 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
           }
         });
         if (xml.length > 0) {
-          logWarn(`Plugin ${plugin.id} require you to add \n${xml} in the existing ${chalk.bold(configElement.$.parent)} array of your Info.plist to work`);
+          logWarn(`Plugin ${plugin.id} requires you to add \n${xml} in the existing ${chalk.bold(configElement.$.parent)} array of your Info.plist to work`);
         }
     } else {
       logPossibleMissingItem(configElement, plugin);
