@@ -28,7 +28,7 @@
     "marked": "^0.5.0",
     "natives": "^1.1.6",
     "node-fetch": "^2.3.0",
-    "prismjs": "1.15.0",
+    "prismjs": "1.16.0",
     "workbox-build": "3.4.1"
   },
   "author": "Ionic Team",

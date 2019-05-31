@@ -4,7 +4,7 @@ import path from 'path';
 import loadLanguages from 'prismjs/components/';
 import { SiteStructureItem, MarkdownContent } from '../src/global/definitions';
 
-const languages = ['tsx', 'bash', 'typescript', 'markup', 'css', 'json', 'diff'];
+const languages = ['tsx', 'bash', 'typescript', 'markup', 'css', 'json', 'java', 'diff', 'html', 'xml', 'swift', 'json5', 'shell'];
 loadLanguages(languages);
 
 export function findItem(siteStructureList: SiteStructureItem[], filePath: string): SiteStructureItem {
@@ -134,11 +134,6 @@ export function changeCodeCreation(renderer: marked.Renderer) {
         return line;
       })
       .join('\n');
-    
-    // markup type gets escaped properly
-    if (['html','xml'].indexOf(lang) !== -1) {
-      lang = 'markup';
-    }
 
     const out = highlight(code, lang);
 

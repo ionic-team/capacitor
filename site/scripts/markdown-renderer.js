@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prismjs_1 = __importDefault(require("prismjs"));
 const path_1 = __importDefault(require("path"));
 const components_1 = __importDefault(require("prismjs/components/"));
-const languages = ['tsx', 'bash', 'typescript', 'markup', 'css', 'json', 'diff'];
+const languages = ['tsx', 'bash', 'typescript', 'markup', 'css', 'json', 'java', 'diff', 'html', 'xml', 'swift', 'json5', 'shell'];
 components_1.default(languages);
 function findItem(siteStructureList, filePath) {
     for (const item of siteStructureList) {
@@ -133,8 +133,8 @@ function changeCodeCreation(renderer) {
             return line;
         })
             .join('\n');
-        if (['html', 'xml'].indexOf(lang) !== -1) {
-            lang = 'markup';
+        if (lang === 'json') {
+            // lang = 'json5';
         }
         const out = highlight(code, lang);
         if (out != null) {
