@@ -116,11 +116,6 @@ function collectHeadingMetadata(renderer, metadata) {
 exports.collectHeadingMetadata = collectHeadingMetadata;
 function changeCodeCreation(renderer) {
     function highlight(code, lang) {
-        if (lang === 'html' || lang === 'xml') {
-            code = code.replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-        }
         if (lang != null && languages.indexOf(lang) !== -1) {
             return prismjs_1.default.highlight(code, prismjs_1.default.languages[lang]);
         }
@@ -138,6 +133,9 @@ function changeCodeCreation(renderer) {
             return line;
         })
             .join('\n');
+        if (['html', 'xml'].indexOf(lang) !== -1) {
+            lang = 'markup';
+        }
         const out = highlight(code, lang);
         if (out != null) {
             escaped = true;
