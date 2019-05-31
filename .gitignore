@@ -32,3 +32,4 @@ android-template/app/app.iml
 *.js
 *.json
 /site/.env
+/site/.firebase

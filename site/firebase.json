@@ -26,6 +26,19 @@
           }
         ]
       }
+    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "redirects": [ 
+      {
+        "source": "/docs/basics/cordova",
+        "destination": "/cordova/using-cordova-plugins",
+        "type": 301
+      },
+      {
+        "source": "/docs/getting-started/pwa-elements/",
+        "destination": "/docs/web/pwa-elements/",
+        "type": 301
+      }
     ]
   }
 }

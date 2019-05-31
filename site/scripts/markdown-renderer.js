@@ -116,9 +116,11 @@ function collectHeadingMetadata(renderer, metadata) {
 exports.collectHeadingMetadata = collectHeadingMetadata;
 function changeCodeCreation(renderer) {
     function highlight(code, lang) {
-        code = code.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
+        if (lang === 'html' || lang === 'xml') {
+            code = code.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
         if (lang != null && languages.indexOf(lang) !== -1) {
             return prismjs_1.default.highlight(code, prismjs_1.default.languages[lang]);
         }
