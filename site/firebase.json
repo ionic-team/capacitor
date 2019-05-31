@@ -27,16 +27,20 @@
         ]
       }
     ],
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "redirects": [ 
       {
-        "source": "/docs/basics/cordova",
-        "destination": "/cordova/using-cordova-plugins",
+        "source": "/docs/basics/cordova{,/**}",
+        "destination": "/docs/cordova/using-cordova-plugins",
         "type": 301
       },
       {
-        "source": "/docs/getting-started/pwa-elements/",
-        "destination": "/docs/web/pwa-elements/",
+        "source": "/docs/getting-started/pwa-elements{,/**}",
+        "destination": "/docs/pwa-elements/",
         "type": 301
       }
     ]
