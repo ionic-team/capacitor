@@ -27,6 +27,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
       let mergesModule = '';
       let runsModule = '';
       let clobberKey = '';
+      let mergeKey = '';
       if (jsModule.clobbers) {
         jsModule.clobbers.map((clobber: any) => {
           clobbers.push(clobber.$.target);
@@ -40,6 +41,7 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
       if (jsModule.merges) {
         jsModule.merges.map((merge: any) => {
           merges.push(merge.$.target);
+          mergeKey = merge.$.target;
         });
         mergesModule = `,
         "merges": [
@@ -49,11 +51,15 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
       if (jsModule.runs) {
         runsModule = ',\n        "runs": true';
       }
-      const pluginModule = { clobber: clobberKey, pluginContent: `{
-        "id": "${pluginId}.${jsModule.$.name}",
-        "file": "plugins/${pluginId}/${jsModule.$.src}",
-        "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
-      }`};
+      const pluginModule = { 
+        clobber: clobberKey,
+        merge: mergeKey,
+        pluginContent: `{
+          "id": "${pluginId}.${jsModule.$.name}",
+          "file": "plugins/${pluginId}/${jsModule.$.src}",
+          "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
+        }`
+      };
       pluginModules.push(pluginModule);
     });
     pluginExports.push(`"${pluginId}": "${p.xml.$.version}"`);
@@ -61,7 +67,17 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
   return `
   cordova.define('cordova/plugin_list', function(require, exports, module) {
     module.exports = [
-      ${pluginModules.sort((a, b) => a.clobber.localeCompare(b.clobber)).map(e => e.pluginContent).join(',\n      ')}
+      ${pluginModules
+        .sort(
+          (a, b) => (a.clobber && b.clobber) // Clobbers in alpha order
+            ? a.clobber.localeCompare(b.clobber)
+            : ( (a.clobber || b.clobber) // Clobbers before anything else
+                  ? b.clobber.localeCompare(a.clobber)
+                  : a.merge.localeCompare(b.merge) // Merges in alpha order
+              )
+        )
+        .map(e => e.pluginContent)
+        .join(',\n      ')}
     ];
     module.exports.metadata =
     // TOP OF METADATA
