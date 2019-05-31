@@ -133,9 +133,6 @@ function changeCodeCreation(renderer) {
             return line;
         })
             .join('\n');
-        if (lang === 'json') {
-            // lang = 'json5';
-        }
         const out = highlight(code, lang);
         if (out != null) {
             escaped = true;

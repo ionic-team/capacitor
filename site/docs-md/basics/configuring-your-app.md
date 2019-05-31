@@ -27,7 +27,7 @@ Capacitor has some high level configuration options that are set in `capacitor.c
 
 The current ones you might configure are:
 
-```json
+```json5
 {
   // Sets the directory of your built web assets. This is the directory that will be
   // used to run your app in a native environment
@@ -44,7 +44,7 @@ The current ones you might configure are:
   // On Windows, we aren't able to automatically open Android Studio
   // without knowing the full path. The default is set to the default
   // Android Studio install path, but you may change it manually.
-  "windowsAndroidStudioPath": 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
+  "windowsAndroidStudioPath": "C:\Program Files\Android\Android Studio\bin\studio64.exe",
 
   // Server object contains port and url configurations 
   "server": {
