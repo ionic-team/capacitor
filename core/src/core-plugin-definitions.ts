@@ -519,6 +519,13 @@ export interface FilesystemPlugin extends Plugin {
    * @return a promise that resolves with the file stat result
    */
   stat(options: StatOptions): Promise<StatResult>;
+
+  /**
+   * Move a file or directory
+   * @param options the options for the move operation
+   * @return a promise that resolves with the move result
+   */
+  move(options: MoveOptions): Promise<MoveResult>;
 }
 
 export enum FilesystemDirectory {
@@ -680,6 +687,21 @@ export interface StatOptions {
   directory?: FilesystemDirectory;
 }
 
+export interface MoveOptions {
+  /**
+   * The existing file or directory to move
+   */
+  from: string;
+  /**
+   * The destination to move the file or directory to
+   */
+  to: string;
+  /**
+   * The FilesystemDirectory to move the file or directory within
+   */
+  directory?: FilesystemDirectory;
+}
+
 export interface FileReadResult {
   data: string;
 }
@@ -692,6 +714,8 @@ export interface FileAppendResult {
 export interface MkdirResult {
 }
 export interface RmdirResult {
+}
+export interface MoveResult {
 }
 export interface ReaddirResult {
   files: string[];
