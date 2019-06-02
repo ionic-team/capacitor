@@ -122,6 +122,18 @@ async readFilePath() {
     })
   }
 }
+
+async move() {
+  try {
+    let ret = await Filesystem.move({
+      from: 'text.txt',
+      to: 'text2.txt',
+      directory: FilesystemDirectory.Documents
+    });
+  } catch(e) {
+    console.error('Unable to move file', e);
+  }
+}
 ```
 
 ## API
