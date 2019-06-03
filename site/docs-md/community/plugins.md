@@ -106,7 +106,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-| DatePicker | `capacitor-datepicker | <https://github.com/triniwiz/capacitor-datepicker> | |
+| DatePicker | `capacitor-datepicker` | <https://github.com/triniwiz/capacitor-datepicker> | |
 
 ## Images
 
