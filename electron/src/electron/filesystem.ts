@@ -41,8 +41,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.readFile(lookupPath, options.encoding, (err:any, data:any) => {
-        if(err)
+        if(err) {
           reject(err);
+          return;
+        }
+
         resolve({data});
       });
     });
@@ -54,8 +57,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.writeFile(lookupPath, options.data, options.encoding, (err:any) => {
-        if (err)
+        if(err) {
           reject(err);
+          return;
+        }
+
         resolve();
       })
     });
@@ -67,8 +73,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.appendFile(lookupPath, options.encoding, options.data, (err:any) => {
-        if(err)
+        if(err) {
           reject(err);
+          return;
+        }
+
         resolve();
       });
     });
@@ -80,8 +89,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         reject(`${options.directory} directory is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.unlink(lookupPath, (err:any) => {
-        if(err)
+        if(err) {
           reject(err);
+          return;
+        }
+
         resolve();
       });
     });
@@ -93,8 +105,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.mkdir(lookupPath, (err:any) => {
-        if(err)
+        if(err) {
           reject(err);
+          return;
+        }
+
         resolve();
       });
     });
@@ -104,8 +119,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
   rmdir(options: RmdirOptions): Promise<RmdirResult> {
     return new Promise((resolve, reject) => {
       this.NodeFS.rmdir(options.path, (err:any) => {
-        if(err)
+        if(err) {
           reject(err);
+          return;
+        }
+
         resolve();
       });
     });
@@ -115,8 +133,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     return new Promise((resolve, reject) => {
       let opts = {path: options.path, encoding: 'utf-8'};
       this.NodeFS.readdir(opts.path, opts.encoding, (err:any, files: string[]) => {
-        if (err)
+        if (err) {
           reject(err);
+          return;
+        }
+
         resolve({files});
       })
     });
@@ -137,8 +158,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
       this.NodeFS.stat(options.path, (err:any, stats:any) => {
-        if(err)
+        if(err) {
           reject(err);
+          return;
+        }
+
         resolve({type: 'Not Available', size: stats.size, ctime: stats.ctimeMs, mtime: stats.mtimeMs, uri: lookupPath});
       });
     });
