@@ -29,7 +29,7 @@ The current ones you might configure are:
 
 ```json5
 {
-  // App domain identifier, typically in reverse-DNS notation.
+  // The package name for Android and the bundle identifier for iOS.
   "appId": "com.company.appname",
 
   // Your app's name.
