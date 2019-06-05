@@ -195,7 +195,7 @@ To register your plugin with Capacitor, you'll need to create a new Objective-C 
 
 Finally, register the plugin by adding the required Capacitor plugin macros into your new `.m` file:
 
-```objc
+```objectivec
 #import <Capacitor/Capacitor.h>
 
 CAP_PLUGIN(MyPlugin, "MyPlugin",
