@@ -37,7 +37,7 @@
 }
 
 -(id)getConfigValue:(NSString *)key {
-  return [CAPConfig getPluginConfigValue:self.pluginName :key];
+  return [self.bridge.config getPluginConfigValue:self.pluginName :key];
 }
 
 -(void)load {}

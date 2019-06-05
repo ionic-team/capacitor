@@ -27,6 +27,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   @objc public var supportedOrientations: Array<Int> = []
   
   @objc public var startDir = ""
+  @objc public var config: String?
 
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
@@ -65,8 +66,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     setKeyboardRequiresUserInteraction(false)
     
-    bridge = CAPBridge(self, o)
-    if let scrollEnabled = CAPConfig.getValue("ios.scrollEnabled") as? Bool {
+    bridge = CAPBridge(self, o, CAPConfig(self.config))
+    if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
         webView?.scrollView.isScrollEnabled = scrollEnabled
     }
   }
@@ -116,8 +117,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       fatalLoadError()
     }
 
-    hostname = CAPConfig.getString("server.url") ?? "\(bridge!.getLocalUrl())"
-    allowNavigationConfig = CAPConfig.getValue("server.allowNavigation") as? Array<String>
+    hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
+    allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? Array<String>
 
 
     print("⚡️  Loading app at \(hostname!)...")

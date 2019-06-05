@@ -4,33 +4,43 @@
   
   private var config: [String:Any?]? = [String:Any?]()
   
-  public static func getInstance() -> CAPConfig {
-    if instance == nil {
-      instance = CAPConfig()
+  public init(_ configText: String? = nil) {
+    super.init()
+    if let contents = configText {
+      guard let configData = contents.data(using: .utf8) else {
+        print("Unable to process config JSON string as UTF8")
+        return
+      }
+
+      parseAndSetConfig(configData)
+    } else {
+      loadGlobalConfig()
     }
-    return instance!
   }
-  
-  public static func loadConfig() {
-    CAPConfig.getInstance()._loadConfig()
-  }
-  
-  private func _loadConfig() {
+
+  private func loadGlobalConfig() {
     guard let configUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") else {
       print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy")
       return
     }
     do {
       let contents = try Data(contentsOf: configUrl)
-      guard let json = try JSONSerialization.jsonObject(with: contents) as? [String: Any] else {
-        return
-      }
-      self.config = json
+      parseAndSetConfig(contents)
     } catch {
       print("Unable to parse capacitor.config.json. Make sure it's valid JSON")
     }
   }
   
+  private func parseAndSetConfig(_ data: Data) {
+    do {
+      let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+      self.config = json
+    } catch {
+      print("Unable to parse config JSON")
+      print(error.localizedDescription)
+    }
+  }
+
   private func getConfigObjectDeepest(key: String) -> [String:Any?]? {
     let parts = key.split(separator: ".")
     
@@ -41,7 +51,7 @@
     return o
   }
   
-  private static func getConfigKey(_ key: String) -> String {
+  private func getConfigKey(_ key: String) -> String {
     let parts = key.split(separator: ".")
     if parts.last != nil {
       return String(parts.last!)
@@ -52,8 +62,8 @@
   /**
    * Get the value of a configuration option for a specific plugin.
    */
-  @objc public static func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
-    guard let plugins = getInstance().config!["plugins"] as? [String:Any] else {
+  @objc public func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
+    guard let plugins = config!["plugins"] as? [String:Any] else {
       return nil
     }
     
@@ -64,18 +74,17 @@
     return pluginOptions[configKey]
   }
   
-  @objc public static func getValue(_ key: String) -> Any? {
-    let k = CAPConfig.getConfigKey(key)
-    let o = getInstance().getConfigObjectDeepest(key: key)
+  @objc public func getValue(_ key: String) -> Any? {
+    let k = getConfigKey(key)
+    let o = getConfigObjectDeepest(key: key)
     return o?[k] ?? nil
   }
   
-  @objc public static func getString(_ key: String) -> String? {
+  @objc public func getString(_ key: String) -> String? {
     let value = getValue(key)
     if value == nil {
       return nil
     }
     return value as? String
   }
-  
 }
