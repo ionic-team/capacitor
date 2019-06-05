@@ -115,10 +115,12 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     });
   }
 
-  // TODO: continue bring to spec.
   rmdir(options: RmdirOptions): Promise<RmdirResult> {
     return new Promise((resolve, reject) => {
-      this.NodeFS.rmdir(options.path, (err:any) => {
+      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+        reject(`${options.directory} is currently not supported in the Electron implementation.`);
+      let lookupPath = this.fileLocations[options.directory] + options.path;
+      this.NodeFS.rmdir(lookupPath, (err:any) => {
         if(err) {
           reject(err);
           return;
