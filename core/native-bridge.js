@@ -370,10 +370,9 @@
           errorObject: JSON.stringify(error)
         }
       };
-
-      console.error(error);
-
-      win.Capacitor.handleError(error);
+      if (error !== null) {
+        win.Capacitor.handleError(error);
+      }
       if(capacitor.isAndroid) {
         win.androidBridge.postMessage(JSON.stringify(errObj));
       } else if(capacitor.isIOS) {
