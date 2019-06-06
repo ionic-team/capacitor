@@ -318,7 +318,7 @@ export function getIncompatibleCordovaPlugins(platform: string){
   let pluginList = ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
   "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
   "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support",
-  "cordova-plugin-ionic-keyboard", "cordova-plugin-braintree"]
+  "cordova-plugin-ionic-keyboard", "cordova-plugin-braintree"];
   if (platform === "ios") {
     pluginList.push("cordova-plugin-googlemaps");
   }
