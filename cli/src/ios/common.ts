@@ -42,19 +42,20 @@ export function getIOSPlugins(allPlugins: Plugin[]): Plugin[] {
 }
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
+  const platform = 'ios';
   if (plugin.manifest && plugin.manifest.ios) {
     plugin.ios = {
       name: plugin.name,
       type: PluginType.Core,
-      path: plugin.manifest.ios.src ? plugin.manifest.ios.src : 'ios'
+      path: plugin.manifest.ios.src ? plugin.manifest.ios.src : platform
     };
   } else if (plugin.xml) {
     plugin.ios = {
       name: plugin.name,
       type: PluginType.Cordova,
-      path: 'src/ios'
+      path: 'src/' + platform
     };
-    if(getIncompatibleCordovaPlugins().includes(plugin.id) || !getPluginPlatform(plugin, 'ios')) {
+    if(getIncompatibleCordovaPlugins(platform).includes(plugin.id) || !getPluginPlatform(plugin, platform)) {
       plugin.ios.type = PluginType.Incompatible;
     }
   } else {
