@@ -23,7 +23,9 @@ extension CAPBridgeDelegate {
         let options = dict["options"] as? [String:Any] ?? [:]
         
         if pluginId != "Console" {
-          print("⚡️  To Native -> ", pluginId, method, callbackId)
+          if (CAPConfig.useLog() as? Bool != false) {
+            print("⚡️  To Native -> ", pluginId, method, callbackId)
+          }
         }
         
         bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
@@ -35,7 +37,9 @@ extension CAPBridgeDelegate {
         let args = dict["actionArgs"] as? Array ?? []
         let options = ["options":args]
         
-        print("To Native Cordova -> ", pluginId, method, callbackId, options)
+        if (CAPConfig.useLog() as? Bool != false) {
+          print("To Native Cordova -> ", pluginId, method, callbackId, options)
+        }
         
         bridge.handleCordovaJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
       }
