@@ -290,7 +290,7 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
     if (p.xml['dependency']) {
       allDependencies = allDependencies.concat(p.xml['dependency']);
     }
-    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins().includes(dep.$.id) && incompatible.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0);
+    allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins(platform).includes(dep.$.id) && incompatible.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0);
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
         if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
@@ -314,9 +314,13 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
   return needsUpdate;
 }
 
-export function getIncompatibleCordovaPlugins(){
-  return ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
+export function getIncompatibleCordovaPlugins(platform: string){
+  let pluginList = ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
   "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
   "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support",
   "cordova-plugin-ionic-keyboard", "cordova-plugin-braintree"];
+  if (platform === "ios") {
+    pluginList.push("cordova-plugin-googlemaps");
+  }
+  return pluginList;
 }
