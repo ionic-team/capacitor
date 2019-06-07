@@ -455,9 +455,7 @@ enum BridgeError: Error {
     do {
       let resultJson = try result.toJson()
 
-      if (CAPConfig.useLog() as? Bool != false) {
-        print("⚡️  TO JS", resultJson.prefix(256))
-      }
+      CAPLog.add(message: "⚡️  TO JS \(resultJson.prefix(256))")
       
       DispatchQueue.main.async {
         self.getWebView()?.evaluateJavaScript("""

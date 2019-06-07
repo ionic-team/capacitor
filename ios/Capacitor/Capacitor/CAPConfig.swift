@@ -87,12 +87,4 @@
     }
     return value as? String
   }
-
-  @objc public static func useLog() -> Any? {
-    let shouldUseLog = CAPConfig.getValue("useLog") as? Bool
-    if (shouldUseLog != false) {
-        return true
-    }
-    return false;
-  }
 }
