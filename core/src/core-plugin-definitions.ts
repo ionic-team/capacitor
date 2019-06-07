@@ -400,9 +400,10 @@ export interface DevicePlugin extends Plugin {
 
 export interface DeviceInfo {
   /**
-   * The device model. For example, "iPhone"
+   * The device model. For example, "iPhone", "iPhone 6s"
    */
   model: string;
+  modelName: string;
   /**
    * The device platform (lowercase).
    */
