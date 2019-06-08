@@ -53,7 +53,7 @@ public class Splash {
     // https://stackoverflow.com/a/21847579/32140
     splashImage.setDrawingCacheEnabled(true);
 
-    String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "androidBackgroundColor");
+    String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
     try {
       splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
     } catch (IllegalArgumentException ex) {

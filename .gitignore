@@ -33,3 +33,6 @@ android-template/app/app.iml
 *.json
 /site/.env
 /site/.firebase
+.gradle/
+.settings/
+.project
