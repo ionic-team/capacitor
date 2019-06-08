@@ -3,6 +3,7 @@ package com.getcapacitor;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
@@ -51,6 +52,13 @@ public class Splash {
     // Stops flickers dead in their tracks
     // https://stackoverflow.com/a/21847579/32140
     splashImage.setDrawingCacheEnabled(true);
+
+    String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "androidBackgroundColor");
+    try {
+      splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+    } catch (IllegalArgumentException ex) {
+      // Do not apply any background color.
+    }
 
     String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
     ImageView.ScaleType scaleType = null;
