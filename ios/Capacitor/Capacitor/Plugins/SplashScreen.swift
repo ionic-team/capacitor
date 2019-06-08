@@ -5,17 +5,20 @@ import AudioToolbox
 public class CAPSplashScreenPlugin : CAPPlugin {
   var imageView = UIImageView()
   var image: UIImage?
+  var spinner = UIActivityIndicatorView(style: .gray)
   var call: CAPPluginCall?
   var hideTask: Any?
   var isVisible: Bool = false
   
   let launchShowDuration = 3000
   let launchAutoHide = true
+  let launchSpinnerStyle = "gray"
   
   let defaultFadeInDuration = 200
   let defaultFadeOutDuration = 200
   let defaultShowDuration = 3000
   let defaultAutoHide = true
+  let defaultSpinnerStyle = "gray"
   
   public override func load() {
     buildViews()
@@ -35,8 +38,9 @@ public class CAPSplashScreenPlugin : CAPPlugin {
     let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
     let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
     let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
+    let spinnerStyle = call.get("spinnerStyle", String.self, defaultSpinnerStyle)!
     
-    showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, completion: {
+    showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, spinnerStyle: spinnerStyle, completion: {
       call.success()
     }, isLaunchSplash: false)
   }
@@ -58,18 +62,22 @@ public class CAPSplashScreenPlugin : CAPPlugin {
       print("Unable to find splash screen image. Make sure an image called Splash exists in your assets")
     }
     
-    // Observe for changes on fram and bounds to handle rotation resizing
+    // Observe for changes on frame and bounds to handle rotation resizing
     let parentView = self.bridge.viewController.view
     parentView?.addObserver(self, forKeyPath: "frame", options: .new, context: nil)
     parentView?.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
     
     self.updateSplashImageBounds()
+    
+    self.spinner.translatesAutoresizingMaskIntoConstraints = false
+    self.spinner.startAnimating()
   }
   
   func tearDown() {
     self.isVisible = false
     bridge.viewController.view.isUserInteractionEnabled = true
     self.imageView.removeFromSuperview()
+    self.spinner.removeFromSuperview()
   }
   
   // Update the bounds for the splash image. This will also be called when
@@ -94,25 +102,45 @@ public class CAPSplashScreenPlugin : CAPPlugin {
   }
   
   func showOnLaunch() {
-    self.bridge.viewController.view.addSubview(self.imageView)
+    let view = self.bridge.viewController.view
+    view?.addSubview(self.imageView)
+    view?.addSubview(self.spinner)
+    self.spinner.centerXAnchor.constraint(equalTo: view!.centerXAnchor).isActive = true
+    self.spinner.centerYAnchor.constraint(equalTo: view!.centerYAnchor).isActive = true
     let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
     let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? launchAutoHide
-    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, completion: {
+    let launchSpinnerStyleConfig = getConfigValue("launchSpinnerStyle") as? String ?? launchSpinnerStyle
+    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, spinnerStyle: launchSpinnerStyleConfig, completion: {
     }, isLaunchSplash: true)
   }
   
-  func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, completion: @escaping () -> Void, isLaunchSplash: Bool) {
+    func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, spinnerStyle: String, completion: @escaping () -> Void, isLaunchSplash: Bool) {
     
     DispatchQueue.main.async {
-      
-      if !isLaunchSplash {
-        self.bridge.viewController.view.addSubview(self.imageView)
+      switch spinnerStyle {
+      case "whiteLarge":
+          self.spinner.style = .whiteLarge
+      case "white":
+          self.spinner.style = .white
+      //case "gray":
+      default:
+          self.spinner.style = .gray
       }
 
-      self.bridge.viewController.view.isUserInteractionEnabled = false
+      let view = self.bridge.viewController.view
+
+      if !isLaunchSplash {
+        view?.addSubview(self.imageView)
+        view?.addSubview(self.spinner)
+        self.spinner.centerXAnchor.constraint(equalTo: view!.centerXAnchor).isActive = true
+        self.spinner.centerYAnchor.constraint(equalTo: view!.centerYAnchor).isActive = true
+      }
+
+      view?.isUserInteractionEnabled = false
 
       UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
         self.imageView.alpha = 1
+        self.spinner.alpha = 1
       }) { (finished: Bool) in
         self.isVisible = true
 
@@ -140,6 +168,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
     DispatchQueue.main.async {
       UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeOutDuration) / 1000), options: .curveLinear, animations: {
         self.imageView.alpha = 0
+        self.spinner.alpha = 0
       }) { (finished: Bool) in
         self.tearDown()
       }
