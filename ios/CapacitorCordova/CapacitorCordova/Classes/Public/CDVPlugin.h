@@ -32,6 +32,7 @@
 
 extern NSString* const CDVPageDidLoadNotification;
 extern NSString* const CDVPluginHandleOpenURLNotification;
+extern NSString* const CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification;
 extern NSString* const CDVPluginResetNotification;
 extern NSString* const CDVViewWillAppearNotification;
 extern NSString* const CDVViewDidAppearNotification;
