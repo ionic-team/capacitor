@@ -340,19 +340,7 @@
 
   capacitor.handleError = function(error) {
     console.error(error);
-
-    if (!Capacitor.DEBUG) {
-      return;
-    }
-
-    if(!errorModal) {
-      errorModal = makeErrorModal(error);
-    }
-      
-    errorModal.style.display = 'block';
-    updateErrorModal(error);
   }
- 
  
   capacitor.handleWindowError = function (msg, url, lineNo, columnNo, error) {
     var string = msg.toLowerCase();
@@ -438,85 +426,6 @@
 
   if (Capacitor.DEBUG) {
     window.onerror = capacitor.handleWindowError;
-  }
-
-  function injectCSS() {
-    var css = '\n    ._avc-modal {\n      ' + (capacitor.isIOS ? '\n      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";\n      ' : '\n      font-family: "Roboto", "Helvetica Neue", sans-serif;\n      ') + '\n      position: fixed;\n      top: 0;\n      right: 0;\n      bottom: 0;\n      left: 0;\n      z-index: 9999;\n    }\n    ._avc-modal-wrap {\n      position: relative;\n      width: 100%;\n      height: 100%;\n    }\n    ._avc-modal-header {\n      font-size: 16px;\n      position: relative;\n      ' + (capacitor.isIOS ? '\n      padding: 32px 15px;\n      -webkit-backdrop-filter: blur(10px);\n      background-color: rgba(255, 255, 255, 0.5);\n      ' : '\n      background-color: #eee;\n      height: 60px;\n      padding: 15px;\n      ') + '\n    }\n    ._avc-modal-content {\n      width: 100%;\n      height: 100%;\n      padding: 15px;\n      -webkit-backdrop-filter: blur(10px);\n      ' + (capacitor.isIOS ? '\n      background-color: rgba(255, 255, 255, 0.5);\n      ' : '\n      background-color: white;\n      ') + '\n      overflow: auto;\n      -webkit-overflow-scrolling: touch;\n    }\n    ._avc-modal-header-button {\n      position: absolute;\n      font-size: 16px;\n      right: 15px;\n      padding: 0px 10px;\n      ' + (capacitor.isIOS ? '\n      top: 30px;\n      ' : '\n      top: 10px;\n      height: 40px;\n      ') + '\n    }\n    ._avc-modal-title {\n      ' + (capacitor.isIOS ? '\n      position: absolute;\n      text-align: center;\n      width: 100px;\n      left: 50%;\n      margin-left: -50px;\n      ' : '\n      margin-top: 7px;\n      ') + '\n      font-weight: 600;\n    }\n    ._avc-error-content {\n      font-size: 14px;\n      margin-bottom: 50px;\n    }\n    ._avc-error-message {\n      font-size: 16px;\n      font-weight: 600;\n      margin-bottom: 10px;\n    }\n    ._avc-button {\n      padding: 15px;\n      font-size: 14px;\n      border-radius: 3px;\n      background-color: #222;\n    }\n    #_avc-copy-error {\n      position: absolute;\n      bottom: 0;\n      left: 15px;\n      right: 15px;\n      ' + (capacitor.isAndroid ? '\n      bottom: 15px;\n      width: calc(100% - 30px);\n      ' : '') + '\n      background-color: #e83d3d;\n      color: #fff;\n      font-weight: bold;\n      margin-top: 15px;\n    }\n    ';
-    var style = document.createElement('style');
-    style.innerHTML = css;
-    document.head.appendChild(style);
-  }
-
-  function makeModal() {
-    injectCSS();
-    var html = '\n      <div class="_avc-modal-wrap">\n        <div class="_avc-modal-header">\n          <div class="_avc-modal-title">Error</div>\n          <button type="button" id="_avc-modal-close" class="_avc-modal-header-button">Close</button>\n        </div>\n        <div class="_avc-modal-content">\n          <div class="_avc-error-output"></div>\n        </div>\n        <button type="button" class="_avc-button" id="_avc-copy-error">Copy Error</button>\n      </div>\n    ';
-    var el = document.createElement('div');
-    el.innerHTML = html;
-    el.className ="_avc-modal";
-
-    var closeButton = el.querySelector('#_avc-modal-close');
-    closeButton.addEventListener('click', function(e) {
-      el.style.display = 'none';
-    })
-
-    var copyButton = el.querySelector('#_avc-copy-error');
-    copyButton.addEventListener('click', function(e) {
-      if(lastError) {
-        Capacitor.Plugins.Clipboard.write({
-          string: lastError.message + '\n' + lastError.stack
-        });
-      }
-    });
-
-    return el;
-  }
-
-  function makeErrorModal(error) {
-    var modalEl = makeModal();
-    modalEl.id = "_avc-error";
-    document.body.appendChild(modalEl);
-    return modalEl;
-  }
-
-  function updateErrorModal(error) {
-    if(!errorModal) { return; }
-
-    if (typeof error === 'string') {
-      return;
-    }
-
-    lastError = error;
-
-    var message = error.message;
-    if(error.rejection) {
-      message = 'Promise rejected: ' + error.rejection.message + "<br />" + message;
-    }
-
-    var stack = error.stack;
-    var stackLines = cleanStack(stack);
-    var stackHTML = stackLines.join('<br />');
-
-    var content = errorModal.querySelector('._avc-error-output');
-    content.innerHTML = '\n    <div class="_avc-error-content">\n      <div class="_avc-error-message"></div>\n      <div class="_avc-error-stack"></div>\n    </div>\n    ';
-    var messageEl = content.querySelector('._avc-error-message');
-    var stackEl = content.querySelector('._avc-error-stack');
-    messageEl.innerHTML = message;
-    stackEl.innerHTML = stackHTML;
-  }
-
-  function cleanStack(stack) {
-    var lines = stack.split('\n');
-    return lines.map(function (line) {
-      var atIndex = line.indexOf('@');
-      var appIndex = line.indexOf('.app');
-
-      // Remove the big long iOS path
-      if(atIndex >= 0 && appIndex >= 0) {
-        //var badSubstr = line.substring(atIndex, appIndex + 5);
-        line = '<b>' + line.substring(0, atIndex) + '</b>' + '@' + line.substring(appIndex + 5);
-      }
-      return line;
-    });
   }
 
   win.Ionic = win.Ionic || {};
