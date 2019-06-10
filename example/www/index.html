@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
   <script data-ionic="inject">
-    (function(w){var i=w.Ionic=w.Ionic||{};i.version='3.9.2';i.angular='5.0.1';i.staticDir='build/';})(window);
+    (function(w){var i=w.Ionic=w.Ionic||{};i.version='^3.9.6';i.angular='5.0.1';i.staticDir='build/';})(window);
   </script>
   <meta charset="UTF-8">
   <title>Ionic App</title>
@@ -14,7 +14,8 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4e8ef7">
 
-  <script src='https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements.js'></script>
+  <script type="module" src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/pwa-elements@latest/dist/ionicpwaelements/ionicpwaelements.js"></script>
   
   <!-- un-comment this code to enable service worker
   <script>
