@@ -309,6 +309,16 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * UI labels available thought the plugin
+   */
+  labels?: {
+    photo: string;
+    fromPhotos: string;
+    takePicture: string;
+    cancel: string;
+  };
 }
 
 export enum CameraSource {

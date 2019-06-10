@@ -52,7 +52,13 @@ async takePicture() {
   const image = await Camera.getPhoto({
     quality: 90,
     allowEditing: true,
-    resultType: CameraResultType.Uri
+    resultType: CameraResultType.Uri,
+    labels: { // not required, but available
+      photo: 'Photo', // Only iOS (action-sheet title)
+      fromPhotos: 'From my photo gallery',
+      takePicture: 'Take a Picture',
+      cancel: 'Cancel' // Only iOS (action-sheet cancel label)
+    }
   });
   // image.webPath will contain a path that can be set as an image src. 
   // You can access the original file using image.path, which can be 

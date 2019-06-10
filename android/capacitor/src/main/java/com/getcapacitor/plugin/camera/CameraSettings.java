@@ -7,6 +7,8 @@ public class CameraSettings {
     public static final boolean DEFAULT_CORRECT_ORIENTATION = true;
 
     private CameraResultType resultType = CameraResultType.BASE64;
+    private PromptSettings promptSettings = new PromptSettings();
+
     private int quality = DEFAULT_QUALITY;
     private boolean shouldResize = false;
     private boolean shouldCorrectOrientation = DEFAULT_CORRECT_ORIENTATION;
@@ -23,6 +25,10 @@ public class CameraSettings {
     public void setResultType(CameraResultType resultType) {
         this.resultType = resultType;
     }
+
+    public PromptSettings getPromptSettings() { return promptSettings; }
+
+    public void setPromptSettings(PromptSettings promptSettings) { this.promptSettings = promptSettings; }
 
     public int getQuality() {
         return quality;

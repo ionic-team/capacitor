@@ -26,6 +26,10 @@ import com.getcapacitor.plugin.camera.CameraSource;
 import com.getcapacitor.plugin.camera.CameraUtils;
 import com.getcapacitor.plugin.camera.ExifWrapper;
 import com.getcapacitor.plugin.camera.ImageUtils;
+import com.getcapacitor.plugin.camera.PromptSettings;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -84,7 +88,7 @@ public class Camera extends Plugin {
   private void doShow(PluginCall call) {
     switch (settings.getSource()) {
       case PROMPT:
-        showPrompt(call);
+        showPrompt(call, settings.getPromptSettings());
         break;
       case CAMERA:
         showCamera(call);
@@ -93,17 +97,17 @@ public class Camera extends Plugin {
         showPhotos(call);
         break;
       default:
-        showPrompt(call);
+        showPrompt(call, settings.getPromptSettings());
         break;
     }
   }
 
-  private void showPrompt(final PluginCall call) {
+  private void showPrompt(final PluginCall call, PromptSettings settings) {
     // We have all necessary permissions, open the camera
     JSObject fromPhotos = new JSObject();
-    fromPhotos.put("title", "From Photos");
+    fromPhotos.put("title", settings.getFromPhotos());
     JSObject takePicture = new JSObject();
-    takePicture.put("title", "Take Picture");
+    takePicture.put("title", settings.getTakePicture());
     Object[] options = new Object[] {
       fromPhotos,
       takePicture
@@ -173,6 +177,25 @@ public class Camera extends Plugin {
       settings.setSource(CameraSource.valueOf(call.getString("source", CameraSource.PROMPT.getSource())));
     } catch (IllegalArgumentException ex) {
       settings.setSource(CameraSource.PROMPT);
+    }
+    settings.setPromptSettings(getPromptSettings(call));
+
+    return settings;
+  }
+
+  private PromptSettings getPromptSettings(PluginCall call) {
+    PromptSettings settings = new  PromptSettings();
+    JSONObject labels = call.getObject("labels");
+    if (labels != null) {
+      try {
+        String fromPhotos = labels.getString("fromPhotos");
+        settings.setFromPhotos(fromPhotos);
+      } catch (JSONException e) {}
+
+      try {
+        String takePicture = labels.getString("takePicture");
+        settings.setTakePicture(takePicture);
+      } catch (JSONException e) {}
     }
     return settings;
   }

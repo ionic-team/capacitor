@@ -18,6 +18,13 @@ enum CameraResultType: String {
   case DATA_URL = "dataUrl"
 }
 
+struct PromptSetttings {
+  var photo = "Photo"
+  var fromPhotos = "From photos"
+  var takePicture = "Take Picture"
+  var cancel = "Cancel"
+}
+
 struct CameraSettings {
   var source: CameraSource = CameraSource.prompt
   var direction: CameraDirection = CameraDirection.rear
@@ -28,6 +35,7 @@ struct CameraSettings {
   var width: Float = 0
   var height: Float = 0
   var resultType = "base64"
+  var prompt = PromptSetttings()
 }
 
 @objc(CAPCameraPlugin)
@@ -76,7 +84,27 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       settings.shouldResize = true
     }
     settings.shouldCorrectOrientation = call.get("correctOrientation", Bool.self, true)!
+    settings.prompt = getPromptSettings(call)
+    
+    return settings
+  }
 
+  func getPromptSettings(_ call: CAPPluginCall) -> PromptSetttings {
+    var settings = PromptSetttings()
+    if let labels = call.get("labels", [String: String].self) {
+      if let photo = labels["photo"] {
+        settings.photo = photo
+      }
+      if let fromPhotos = labels["fromPhotos"] {
+        settings.fromPhotos = fromPhotos
+      }
+      if let takePicture = labels["takePicture"] {
+        settings.takePicture = takePicture
+      }
+      if let cancel = labels["cancel"] {
+        settings.cancel = cancel
+      }
+    }
     return settings
   }
 
@@ -85,7 +113,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     DispatchQueue.main.async {
       switch settings.source {
       case CameraSource.prompt:
-        self.showPrompt(call)
+        self.showPrompt(call, settings: settings.prompt)
       case CameraSource.camera:
         self.showCamera(call)
       case CameraSource.photos:
@@ -94,18 +122,18 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
   }
 
-  func showPrompt(_ call: CAPPluginCall) {
+  func showPrompt(_ call: CAPPluginCall, settings: PromptSetttings) {
     // Build the action sheet
-    let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-    alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
+    let alert = UIAlertController(title: settings.photo, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+    alert.addAction(UIAlertAction(title: settings.fromPhotos, style: .default, handler: { (action: UIAlertAction) in
       self.showPhotos(call)
     }))
 
-    alert.addAction(UIAlertAction(title: "Take Picture", style: .default, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: settings.takePicture, style: .default, handler: { (action: UIAlertAction) in
       self.showCamera(call)
     }))
 
-    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: settings.cancel, style: .cancel, handler: { (action: UIAlertAction) in
       alert.dismiss(animated: true, completion: nil)
     }))
 
