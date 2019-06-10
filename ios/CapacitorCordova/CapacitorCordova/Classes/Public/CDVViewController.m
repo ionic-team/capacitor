@@ -25,6 +25,7 @@
 }
 
 
+@property (nonatomic, readwrite, strong) NSMutableDictionary* pluginObjects;
 
 @end
 
