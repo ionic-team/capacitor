@@ -328,7 +328,7 @@ export class Config implements CliConfig {
     if (platformName === 'web') {
       logFatal(`Could not find the web platform directory. Make sure ${chalk.bold(this.app.webDir)} exists.`);
     }
-    logFatal(`${chalk.bold(platformName)}" platform has not been created. Use "capacitor add ${platformName}" to add the platform project.`);
+    logFatal(`${chalk.bold(platformName)}" platform has not been created. Use "npx cap add ${platformName}" to add the platform project.`);
   }
 }
 
