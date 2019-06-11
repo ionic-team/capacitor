@@ -40,7 +40,7 @@ import java.nio.charset.StandardCharsets;
   PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS,
   PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
   PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_MOVE_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS,
 })
 public class Filesystem extends Plugin {
 
@@ -446,7 +446,7 @@ public class Filesystem extends Plugin {
   }
 
   @PluginMethod()
-  public void move(PluginCall call) {
+  public void rename(PluginCall call) {
     saveCall(call);
     String from = call.getString("from");
     String to = call.getString("to");
@@ -466,7 +466,7 @@ public class Filesystem extends Plugin {
     File toObject = getFileObject(to, directory);
 
     if (!isPublicDirectory(directory)
-            || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_MOVE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
       assert toObject != null;
       if (toObject.isDirectory()) {
@@ -476,10 +476,10 @@ public class Filesystem extends Plugin {
       toObject.delete();
 
       assert fromObject != null;
-      boolean moved = fromObject.renameTo(toObject);
+      boolean renamed = fromObject.renameTo(toObject);
 
-      if (!moved) {
-        call.error("Unable to move, unknown reason");
+      if (!renamed) {
+        call.error("Unable to rename, unknown reason");
         return;
       }
 
@@ -560,8 +560,8 @@ public class Filesystem extends Plugin {
       this.getUri(savedCall);
     } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS) {
       this.stat(savedCall);
-    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_MOVE_PERMISSIONS) {
-      this.move(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS) {
+      this.rename(savedCall);
     }
     this.freeSavedCall();
   }

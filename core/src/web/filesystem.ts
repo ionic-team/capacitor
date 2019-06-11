@@ -15,8 +15,8 @@ import {
   GetUriResult,
   MkdirOptions,
   MkdirResult,
-  MoveOptions,
-  MoveResult,
+  RenameOptions,
+  RenameResult,
   ReaddirOptions,
   ReaddirResult,
   RmdirOptions,
@@ -340,11 +340,11 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   }
 
   /**
-   * Move a file or directory
-   * @param options the options for the move operation
-   * @return a promise that resolves with the move result
+   * Rename a file or directory
+   * @param options the options for the rename operation
+   * @return a promise that resolves with the rename result
    */
-  async move(options: MoveOptions): Promise<MoveResult> {
+  async rename(options: RenameOptions): Promise<RenameResult> {
     let {to, from, directory} = options;
 
     if (!to || !from) {
@@ -460,7 +460,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
 
         for (let filename of contents) {
           // Move item from the from directory to the to directory
-          await this.move({
+          await this.rename({
             from: `${from}/${filename}`,
             to: `${to}/${filename}`,
             directory,

@@ -521,11 +521,11 @@ export interface FilesystemPlugin extends Plugin {
   stat(options: StatOptions): Promise<StatResult>;
 
   /**
-   * Move a file or directory
-   * @param options the options for the move operation
-   * @return a promise that resolves with the move result
+   * Rename a file or directory
+   * @param options the options for the rename operation
+   * @return a promise that resolves with the rename result
    */
-  move(options: MoveOptions): Promise<MoveResult>;
+  rename(options: RenameOptions): Promise<RenameResult>;
 }
 
 export enum FilesystemDirectory {
@@ -687,17 +687,17 @@ export interface StatOptions {
   directory?: FilesystemDirectory;
 }
 
-export interface MoveOptions {
+export interface RenameOptions {
   /**
-   * The existing file or directory to move
+   * The existing file or directory to rename
    */
   from: string;
   /**
-   * The destination to move the file or directory to
+   * The destination to rename the file or directory to
    */
   to: string;
   /**
-   * The FilesystemDirectory to move the file or directory within
+   * The FilesystemDirectory containing the file or directory to rename
    */
   directory?: FilesystemDirectory;
 }
@@ -715,7 +715,7 @@ export interface MkdirResult {
 }
 export interface RmdirResult {
 }
-export interface MoveResult {
+export interface RenameResult {
 }
 export interface ReaddirResult {
   files: string[];

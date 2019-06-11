@@ -338,9 +338,9 @@ public class CAPFilesystemPlugin : CAPPlugin {
   }
 
   /**
-   * Move a file or directory.
+   * Rename a file or directory.
    */
-  @objc func move(_ call: CAPPluginCall) {
+  @objc func rename(_ call: CAPPluginCall) {
     guard let from = call.get("from", String.self) else {
       handleError(call, "from must be provided and must be a string.")
       return

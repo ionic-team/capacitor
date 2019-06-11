@@ -6,7 +6,7 @@ import {
   FileAppendOptions, FileAppendResult,
   FilesystemDirectory,
   ReaddirOptions, ReaddirResult,
-  MoveOptions, MoveResult,
+  RenameOptions, RenameResult,
   MkdirOptions, MkdirResult, GetUriOptions,
   RmdirOptions, RmdirResult, GetUriResult,
   StatOptions, StatResult,FileDeleteOptions,
@@ -169,7 +169,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     });
   }
 
-  move(options: MoveOptions): Promise<MoveResult> {
+  rename(options: RenameOptions): Promise<RenameResult> {
     return new Promise((resolve, reject) => {
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);

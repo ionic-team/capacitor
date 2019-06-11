@@ -123,15 +123,15 @@ async readFilePath() {
   }
 }
 
-async move() {
+async rename() {
   try {
-    let ret = await Filesystem.move({
+    let ret = await Filesystem.rename({
       from: 'text.txt',
       to: 'text2.txt',
       directory: FilesystemDirectory.Documents
     });
   } catch(e) {
-    console.error('Unable to move file', e);
+    console.error('Unable to rename file', e);
   }
 }
 ```
