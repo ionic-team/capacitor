@@ -166,7 +166,7 @@ public class Filesystem extends Plugin {
           InputStream is = getInputStream(file, directory);
           String dataStr;
           if (charset != null) {
-            dataStr = readFileAsString(is, encoding);
+            dataStr = readFileAsString(is, charset.name());
           } else {
             dataStr = readFileAsBase64EncodedData(is);
           }
