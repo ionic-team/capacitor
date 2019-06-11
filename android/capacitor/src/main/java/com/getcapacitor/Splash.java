@@ -55,7 +55,9 @@ public class Splash {
 
     String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
     try {
-      splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+      if (backgroundColor != null) {
+        splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+      }
     } catch (IllegalArgumentException ex) {
       // Do not apply any background color.
     }
