@@ -172,11 +172,11 @@ public class Splash {
         splashImage.setAlpha(0f);
 
         splashImage.animate()
-            .alpha(1f)
-            .setInterpolator(new LinearInterpolator())
-            .setDuration(fadeInDuration)
-            .setListener(listener)
-            .start();
+                .alpha(1f)
+                .setInterpolator(new LinearInterpolator())
+                .setDuration(fadeInDuration)
+                .setListener(listener)
+                .start();
 
         Boolean showSpinner = Config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
 
@@ -311,11 +311,11 @@ public class Splash {
         splashImage.setAlpha(1f);
 
         splashImage.animate()
-            .alpha(0)
-            .setInterpolator(new LinearInterpolator())
-            .setDuration(fadeOutDuration)
-            .setListener(listener)
-            .start();
+                .alpha(0)
+                .setInterpolator(new LinearInterpolator())
+                .setDuration(fadeOutDuration)
+                .setListener(listener)
+                .start();
       }
     });
   }
