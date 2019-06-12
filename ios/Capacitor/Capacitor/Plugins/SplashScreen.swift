@@ -178,7 +178,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
 
       if self.showSpinner {
         if spinnerStyle != nil {
-          switch spinnerStyle {
+          switch spinnerStyle!.lowercased() {
           case "whiteLarge":
             self.spinner.style = .whiteLarge
           case "white":
