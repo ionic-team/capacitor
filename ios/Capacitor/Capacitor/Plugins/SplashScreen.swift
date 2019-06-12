@@ -39,7 +39,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
     let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
     let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
-    let spinnerStyle = call.get("spinnerStyle", String.self)
+    let spinnerStyle = call.get("iosSpinnerStyle", String.self)
     let spinnerColor = call.get("spinnerColor", String.self)
     showSpinner = call.get("showSpinner", Bool.self, false)!
 
@@ -138,12 +138,9 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? getConfigValue(
       "autoHide"
     ) as? Bool ?? launchAutoHide
-    let launchSpinnerStyleConfig = getConfigValue("launchSpinnerStyle") as? String
-      ?? getConfigValue("spinnerStyle") as? String ?? nil
-    let launchSpinnerColorConfig = getConfigValue("launchSpinnerColor") as? String
-      ?? getConfigValue("spinnerColor") as? String ?? nil
-    showSpinner = getConfigValue("launchShowSpinner") as? Bool ?? getConfigValue("showSpinner")
-      as? Bool ?? false
+    let launchSpinnerStyleConfig = getConfigValue("iOSSpinnerStyle") as? String ?? nil
+    let launchSpinnerColorConfig = getConfigValue("spinnerColor") as? String ?? nil
+    showSpinner = getConfigValue("showSpinner") as? Bool ?? false
 
     let view = bridge.viewController.view
     view?.addSubview(imageView)
@@ -181,26 +178,14 @@ public class CAPSplashScreenPlugin: CAPPlugin {
 
       if self.showSpinner {
         if spinnerStyle != nil {
-          if #available(iOS 13.0, *) {
-            switch spinnerStyle {
-            case "large":
-              self.spinner.style = .large
-            case "medium":
-              self.spinner.style = .medium
-            default:
-              self.spinner.style = .medium
-            }
-          } else {
-            switch spinnerStyle {
-            case "whiteLarge":
-              self.spinner.style = .whiteLarge
-            case "white":
-              self.spinner.style = .white
-            case "gray":
-              self.spinner.style = .gray
-            default:
-              self.spinner.style = .gray
-            }
+          switch spinnerStyle {
+          case "whiteLarge":
+            self.spinner.style = .whiteLarge
+          case "white":
+            self.spinner.style = .white
+          //case "gray":
+          default:
+            self.spinner.style = .gray
           }
         }
 

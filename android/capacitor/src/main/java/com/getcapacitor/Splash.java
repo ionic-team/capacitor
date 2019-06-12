@@ -182,7 +182,7 @@ public class Splash {
 
         if (showSpinner) {
           if (spinnerBar == null) {
-            String spinnerStyle = Config.getString(CONFIG_KEY_PREFIX + "spinnerStyle");
+            String spinnerStyle = Config.getString(CONFIG_KEY_PREFIX + "androidSpinnerStyle");
             if (spinnerStyle != null) {
               int spinnerBarStyle = android.R.attr.progressBarStyleLarge;
 
