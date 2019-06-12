@@ -68,7 +68,7 @@ export class BlogPage {
             To get started, visit the <a href="https://capacitor.ionicframework.com/docs/getting-started/">Getting Started</a> portion of the <a href="https://capacitor.ionicframework.com/">Capacitor Docs</a>.
           </p>
           <p>
-            If you need help as you try it out, join us on the <a href="http://forum.getcapacitor.com/">Capacitor Forum</a> or <a href="http://getcapacitor.herokuapp.com/">Slack Community</a>.
+            If you need help as you try it out, join us on the <a href="https://forum.ionicframework.com">Capacitor Forum</a> or <a href="http://getcapacitor.herokuapp.com/">Slack Community</a>.
           </p>
           <p>
             From all of us at <a href="http://ionicframework.com/">Ionic</a>, thanks for trying Capacitor!

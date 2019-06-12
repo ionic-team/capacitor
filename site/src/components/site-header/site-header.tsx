@@ -106,7 +106,7 @@ export class SiteHeader {
                 <a href="/docs/community/plugins/">Plugins</a>
               </li>
               <li class="dropdown__item">
-                <a href="https://forum.getcapacitor.com/">Forum</a>
+                <a href="https://forum.ionicframework.com/">Forum</a>
               </li>
               <li class="dropdown__item">
                 <a href="https://getcapacitor.herokuapp.com/">Slack</a>
