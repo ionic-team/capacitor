@@ -29,9 +29,18 @@ The current ones you might configure are:
 
 ```json5
 {
+  // The package name for Android and the bundle identifier for iOS.
+  "appId": "com.company.appname",
+
+  // Your app's name.
+  "appName": "Capacitor Kitchen Sink",
+
   // Sets the directory of your built web assets. This is the directory that will be
-  // used to run your app in a native environment
-  "webDir": "public",
+  // used to run your app in a native environment.
+  "webDir": "www",
+
+  // The JavaScript package manager to use, either npm or yarn.
+  "npmClient": "npm",
 
   // Whether to use capacitor.js as a bundle that is copied to your web code,
   // or require it to be bundled/imported through a typical
@@ -52,7 +61,7 @@ The current ones you might configure are:
     "url": "http://192.168.1.33:8100",
     // You can configure the local hostname, but it's recommended to keep localhost
     // as it allows to run web APIs that require a secure context such as
-    // navigator.geolocation and MediaDevices.getUserMedia
+    // navigator.geolocation and MediaDevices.getUserMedia.
     "hostname": "app",
     // Normally all external URLs are opened in the browser. By setting this option, you tell
     // Capacitor to open URLs belonging to these hosts inside its WebView.

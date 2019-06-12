@@ -150,19 +150,6 @@ protected void handleOnActivityResult(int requestCode, int resultCode, Intent da
 }
 ```
 
-To access the Capacitor's View Controller, we have to use the `CAPBridge` object available on `CAPPlugin` class.
-
-We can use the `UIViewController` to present Native View Controllers over it like this:
-
-`self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)`
-
-On iPad devices you can also present `UIPopovers`, to do so, we provide a helper function to show it centered.
-
-```swift
-self.setCenteredPopover(ourCustomViewController)
-self.bridge.viewController.present(ourCustomViewController, animated: true, completion: nil)
-```
-
 ### Events
 
 Capacitor Plugins can emit App events and Plugin events
