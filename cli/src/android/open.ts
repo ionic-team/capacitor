@@ -20,17 +20,10 @@ export async function openAndroid(config: Config) {
       await opn(dir, { app: 'android studio', wait: false });
       break;
     case OS.Windows:
-      try {
-        await opn(dir, { app: config.windows.androidStudioPath, wait: false });
-      } catch (e) {
-        logError('Unable to launch Android Studio. Make sure the latest version of Android Studio is installed, or,' +
-                 'if you\'ve installed Android Studio in a custom location, configure "windowsAndroidStudioPath" ' +
-                 'your capacitor.config.json to point to the location of studio64.exe, using JavaScript-escaped paths:\n' +
-
-                 'Example:\n' +
-                 '{\n' +
-                    '  "windowsAndroidStudioPath": "H:\\\\Android Studio\\\\bin\\\\studio64.exe"\n' +
-                  '}');
+      if (config.windows.androidStudioPath) {
+        opn(dir, { app: config.windows.androidStudioPath, wait: false });
+      } else {
+        logError('Unable to launch Android Studio. Make sure the latest version of Android Studio is installed')
       }
       break;
     case OS.Linux:
