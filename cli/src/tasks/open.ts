@@ -1,6 +1,7 @@
 import { Config } from '../config';
 import { logFatal, logInfo, runTask } from '../common';
 import { openAndroid } from '../android/open';
+import { openElectron } from '../electron/open';
 import { openIOS } from '../ios/open';
 
 export async function openCommand(config: Config, selectedPlatform: string) {
@@ -33,6 +34,8 @@ export async function open(config: Config, platformName: string) {
     return openAndroid(config);
   } else if (platformName === config.web.name) {
     return Promise.resolve();
+  } else if (platformName === config.electron.name) {
+    return openElectron(config);
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
