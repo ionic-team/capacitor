@@ -1,58 +1,5 @@
-import Foundation
 import AudioToolbox
-
-// https://stackoverflow.com/questions/24263007/how-to-use-hex-color-values
-extension UIColor {
-    convenience init(r: Int, g: Int, b: Int, a: Int = 0xFF) {
-        self.init(
-            red: CGFloat(r) / 255.0,
-            green: CGFloat(g) / 255.0,
-            blue: CGFloat(b) / 255.0,
-            alpha: CGFloat(a) / 255.0
-        )
-    }
-
-    // let's suppose alpha is the first component (ARGB)
-    convenience init(argb: UInt32) {
-        self.init(
-            red: CGFloat((argb >> 16) & 0xFF),
-            green: CGFloat((argb >> 8) & 0xFF),
-            blue: CGFloat(argb & 0xFF),
-            alpha: CGFloat((argb >> 24) & 0xFF)
-        )
-    }
-
-    // https://cocoacasts.com/from-hex-to-uicolor-and-back-in-swift
-    convenience init?(hex: String) {
-        let hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "#", with: "")
-
-        var argb: UInt32 = 0
-
-        var r: CGFloat = 0.0
-        var g: CGFloat = 0.0
-        var b: CGFloat = 0.0
-        var a: CGFloat = 1.0
-
-        guard Scanner(string: hexSanitized).scanHexInt32(&argb) else { return nil }
-
-        if ((hexSanitized.count) == 6) {
-            r = CGFloat((argb & 0xFF0000) >> 16) / 255.0
-            g = CGFloat((argb & 0x00FF00) >> 8) / 255.0
-            b = CGFloat(argb & 0x0000FF) / 255.0
-
-        } else if ((hexSanitized.count) == 8) {
-            r = CGFloat((argb & 0xFF000000) >> 24) / 255.0
-            g = CGFloat((argb & 0x00FF0000) >> 16) / 255.0
-            b = CGFloat((argb & 0x0000FF00) >> 8) / 255.0
-            a = CGFloat(argb & 0x000000FF) / 255.0
-
-        } else {
-            return nil
-        }
-
-        self.init(red: r, green: g, blue: b, alpha: a)
-    }
-}
+import Foundation
 
 @objc(CAPSplashScreenPlugin)
 public class CAPSplashScreenPlugin : CAPPlugin {
@@ -151,7 +98,7 @@ public class CAPSplashScreenPlugin : CAPPlugin {
     self.bridge.viewController.view.addSubview(self.imageView)
     let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
     let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? launchAutoHide
-    let launchBackgroundColorConfig = getConfigValue("launchBackgroundColor") as? String ?? getConfigValue("backgroundColor") as? String ?? nil
+    let launchBackgroundColorConfig = getConfigValue("backgroundColor") as? String ?? nil
 
     showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, backgroundColor: launchBackgroundColorConfig, completion: {
     }, isLaunchSplash: true)
@@ -160,8 +107,8 @@ public class CAPSplashScreenPlugin : CAPPlugin {
     func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, backgroundColor: String?, completion: @escaping () -> Void, isLaunchSplash: Bool) {
 
     DispatchQueue.main.async {
-      if (backgroundColor != nil) {
-        self.imageView.backgroundColor = UIColor(hex: backgroundColor!)
+      if backgroundColor != nil {
+        self.imageView.backgroundColor = UIColor(fromHex: backgroundColor!)
       }
 
       if !isLaunchSplash {
