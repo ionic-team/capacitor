@@ -1,9 +1,8 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const isDevMode = require('electron-is-dev');
-const { injectCapacitor, CapacitorSplashScreen } = require('@capacitor/electron');
+const { CapacitorSplashScreen } = require('@capacitor/electron');
 
 const path = require('path');
-global.__basedir = path.resolve(__dirname);
 
 // Place holders for our windows so they don't get garbage collected.
 let mainWindow = null;
@@ -35,6 +34,10 @@ async function createWindow () {
     height: 920,
     width: 1600,
     show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
+    }
   });
 
   if (isDevMode) {
@@ -46,9 +49,9 @@ async function createWindow () {
 
   if(useSplashScreen) {
     splashScreen = new CapacitorSplashScreen(mainWindow);
-    splashScreen.init();
+    splashScreen.init(false);
   } else {
-    mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/app/index.html`), {baseURLForDataURL: `file://${__dirname}/app/`});
+    mainWindow.loadURL(`file://${__dirname}/app/index.html`);
     mainWindow.webContents.on('dom-ready', () => {
       mainWindow.show();
     });
