@@ -275,7 +275,7 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   @Override
   public String getUrl() {
-    return null;
+    return webView.getUrl();
   }
 
   @Override
