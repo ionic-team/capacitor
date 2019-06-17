@@ -14,6 +14,7 @@ function getURLFileContents(path) {
 }
 
 const injectCapacitor = async function(url) {
+  console.warn('\nWARNING: injectCapacitor method is deprecated and will be removed in next major release. Check release notes for migration instructions\n')
   try {
     let urlFileContents = await getURLFileContents(url.substr(url.indexOf('://') + 3));
     let pathing = path.join(url.substr(url.indexOf('://') + 3), '../../node_modules/@capacitor/electron/dist/electron-bridge.js');
@@ -89,7 +90,7 @@ class CapacitorSplashScreen {
     });
   }
 
-  init() {
+  init(inject = true) {
     let rootPath = app.getAppPath();
 
 
@@ -120,7 +121,11 @@ class CapacitorSplashScreen {
     this.splashWindow.webContents.on('dom-ready', async () => {
       this.splashWindow.show();
       setTimeout(async () => {
-        this.mainWindowRef.loadURL(await injectCapacitor(`file://${rootPath}/app/index.html`), {baseURLForDataURL: `file://${rootPath}/app/`});
+        if (inject) {
+          this.mainWindowRef.loadURL(await injectCapacitor(`file://${rootPath}/app/index.html`), {baseURLForDataURL: `file://${rootPath}/app/`});
+        } else {
+          this.mainWindowRef.loadURL(`file://${rootPath}/app/index.html`);
+        }
       }, 4500);
     });
 
