@@ -1,4 +1,3 @@
-// https://stackoverflow.com/questions/24263007/how-to-use-hex-color-values
 extension UIColor {
   convenience init(r: Int, g: Int, b: Int, a: Int = 0xFF) {
     self.init(
@@ -9,7 +8,6 @@ extension UIColor {
     )
   }
 
-  // let's suppose alpha is the first component (ARGB)
   convenience init(argb: UInt32) {
     self.init(
       red: CGFloat((argb >> 16) & 0xFF),
@@ -19,7 +17,6 @@ extension UIColor {
     )
   }
 
-  // https://cocoacasts.com/from-hex-to-uicolor-and-back-in-swift
   convenience init?(fromHex: String) {
     let hexString = fromHex.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(
       of: "#",

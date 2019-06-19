@@ -1,12 +1,12 @@
-import AudioToolbox
 import Foundation
+import AudioToolbox
 
 @objc(CAPSplashScreenPlugin)
 public class CAPSplashScreenPlugin: CAPPlugin {
   var imageView = UIImageView()
   var image: UIImage?
   var spinner = UIActivityIndicatorView()
-  var showSpinner: Bool = true
+  var showSpinner: Bool = false
   var call: CAPPluginCall?
   var hideTask: Any?
   var isVisible: Bool = false
@@ -29,9 +29,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     self.call = call
 
     if image == nil {
-      call.error(
-        "No image named \"Splash\" found. Please check your Assets.xcassets for a file named Splash"
-      )
+      call.error("No image named \"Splash\" found. Please check your Assets.xcassets for a file named Splash")
       return
     }
 
@@ -39,22 +37,13 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
     let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
     let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
-    let spinnerStyle = call.get("iosSpinnerStyle", String.self)
-    let spinnerColor = call.get("spinnerColor", String.self)
-    showSpinner = call.get("showSpinner", Bool.self, false)!
+    let spinnerStyle = getConfigValue("iosSpinnerStyle") as? String ?? nil
+    let spinnerColor = getConfigValue("spinnerColor") as? String ?? nil
+    showSpinner = getConfigValue("showSpinner") as? Bool ?? false
 
-    showSplash(
-      showDuration: showDuration,
-      fadeInDuration: fadeInDuration,
-      fadeOutDuration: fadeOutDuration,
-      autoHide: autoHide,
-      spinnerStyle: spinnerStyle,
-      spinnerColor: spinnerColor,
-      completion: {
+    showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, spinnerStyle: spinnerStyle, spinnerColor: spinnerColor, completion: {
         call.success()
-      },
-      isLaunchSplash: false
-    )
+      }, isLaunchSplash: false)
   }
 
   // Hide the splash screen
@@ -82,7 +71,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     parentView?.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
 
     updateSplashImageBounds()
-
+    showSpinner = getConfigValue("showSpinner") as? Bool ?? false
     if showSpinner {
       spinner.translatesAutoresizingMaskIntoConstraints = false
       spinner.startAnimating()
@@ -103,18 +92,12 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   // the parent view observers fire
   func updateSplashImageBounds() {
     guard let delegate = UIApplication.shared.delegate else {
-      bridge.modulePrint(
-        self,
-        "Unable to find root window object for SplashScreen bounds. Please file an issue"
-      )
+      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
 
     guard let window = delegate.window as? UIWindow else {
-      bridge.modulePrint(
-        self,
-        "Unable to find root window object for SplashScreen bounds. Please file an issue"
-      )
+      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
     imageView.image = image
@@ -122,25 +105,16 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     imageView.contentMode = .scaleAspectFill
   }
 
-  public override func observeValue(
-    forKeyPath keyPath: String?,
-    of object: Any?,
-    change _: [NSKeyValueChangeKey: Any]?,
-    context: UnsafeMutableRawPointer?
-  ) {
+  public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change _: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
     updateSplashImageBounds()
   }
 
   func showOnLaunch() {
-    let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? getConfigValue(
-      "showDuration"
-    ) as? Int ?? launchShowDuration
-    let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? getConfigValue(
-      "autoHide"
-    ) as? Bool ?? launchAutoHide
+    let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
+    let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? launchAutoHide
     let launchSpinnerStyleConfig = getConfigValue("iosSpinnerStyle") as? String ?? nil
     let launchSpinnerColorConfig = getConfigValue("spinnerColor") as? String ?? nil
-    showSpinner = getConfigValue("showSpinner") as? Bool ?? false
+    print("valor de showSpinner\(showSpinner)")
 
     let view = bridge.viewController.view
     view?.addSubview(imageView)
@@ -151,41 +125,21 @@ public class CAPSplashScreenPlugin: CAPPlugin {
       spinner.centerYAnchor.constraint(equalTo: view!.centerYAnchor).isActive = true
     }
 
-    showSplash(
-      showDuration: launchShowDurationConfig,
-      fadeInDuration: 0,
-      fadeOutDuration: defaultFadeOutDuration,
-      autoHide: launchAutoHideConfig,
-      spinnerStyle: launchSpinnerStyleConfig,
-      spinnerColor: launchSpinnerColorConfig,
-      completion: {},
-      isLaunchSplash: true
-    )
+    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, spinnerStyle: launchSpinnerStyleConfig, spinnerColor: launchSpinnerColorConfig, completion: {
+    }, isLaunchSplash: true)
   }
 
-  func showSplash(
-    showDuration: Int,
-    fadeInDuration: Int,
-    fadeOutDuration: Int,
-    autoHide: Bool,
-    spinnerStyle: String?,
-    spinnerColor: String?,
-    completion: @escaping () -> Void,
-    isLaunchSplash: Bool
-  ) {
+  func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, spinnerStyle: String?, spinnerColor: String?, completion: @escaping () -> Void, isLaunchSplash: Bool) {
     DispatchQueue.main.async {
       let view = self.bridge.viewController.view
 
       if self.showSpinner {
         if spinnerStyle != nil {
           switch spinnerStyle!.lowercased() {
-          case "whitelarge":
-            self.spinner.style = .whiteLarge
-          case "white":
+          case "small":
             self.spinner.style = .white
-          //case "gray":
           default:
-            self.spinner.style = .gray
+            self.spinner.style = .whiteLarge
           }
         }
 
@@ -206,18 +160,13 @@ public class CAPSplashScreenPlugin: CAPPlugin {
 
       view?.isUserInteractionEnabled = false
 
-      UIView.transition(
-        with: self.imageView,
-        duration: TimeInterval(Double(fadeInDuration) / 1000),
-        options: .curveLinear,
-        animations: {
+      UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
           self.imageView.alpha = 1
 
           if self.showSpinner {
             self.spinner.alpha = 1
           }
-        }
-      ) { (finished: Bool) in
+        }) { (finished: Bool) in
         self.isVisible = true
 
         if autoHide {
@@ -238,26 +187,19 @@ public class CAPSplashScreenPlugin: CAPPlugin {
 
   func hideSplash(fadeOutDuration: Int, isLaunchSplash: Bool) {
     if isLaunchSplash, isVisible {
-      print(
-        "SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. "
-          + "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). "
-          + "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen"
-      )
+      print("SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. " +
+            "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). " +
+            "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen")
     }
     if !isVisible { return }
     DispatchQueue.main.async {
-      UIView.transition(
-        with: self.imageView,
-        duration: TimeInterval(Double(fadeOutDuration) / 1000),
-        options: .curveLinear,
-        animations: {
+      UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeOutDuration) / 1000), options: .curveLinear, animations: {
           self.imageView.alpha = 0
 
           if self.showSpinner {
             self.spinner.alpha = 0
           }
-        }
-      ) { (finished: Bool) in
+        }) { (finished: Bool) in
         self.tearDown()
       }
     }

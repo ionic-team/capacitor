@@ -95,9 +95,8 @@ For Android, `androidSpinnerStyle` has the following options:
 - largeInverse
 
 For iOS, `iosSpinnerStyle` has the following options:
-- whiteLarge
-- large
-- gray (default)
+- large (default)
+- small 
 
 To set the color of the spinner use `spinnerColor`, values are either `#RGB` or `#ARGB`.
 
@@ -114,7 +113,7 @@ These config parameters are available in `capacitor.config.json`:
       "launchShowDuration": 3000,
       "launchAutoHide": true,
       "androidSpinnerStyle": "large",
-      "iosSpinnerStyle": "gray",
+      "iosSpinnerStyle": "small",
       "spinnerColor": "#999999",
       "showSpinner": true,
       "androidSplashResourceName": "splash",
