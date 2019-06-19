@@ -5,6 +5,7 @@ url: /docs/apis/splash-screen
 contributors:
   - mlynch
   - jcesarmobile
+  - trancee
 ---
 
 <plugin-platforms platforms="pwa,ios,android,electron"></plugin-platforms>
@@ -69,6 +70,38 @@ If you want to be sure the splash never hides before the app is fully loaded, se
 
 Then run `npx cap copy` to apply these changes.
 
+## Spinner
+
+If you want to show a spinner on top of the splash screen, set `showSpinner` to `true` in your `capacitor.config.json`:
+
+```json
+{
+  "plugins": {
+    "SplashScreen": {
+      "showSpinner": true
+    }
+  }
+}
+```
+
+You can customize the appearance of the spinner with the following configuration.
+
+For Android, `androidSpinnerStyle` has the following options:
+- horizontal
+- small
+- large (default)
+- inverse
+- smallInverse
+- largeInverse
+
+For iOS, `iosSpinnerStyle` has the following options:
+- large (default)
+- small 
+
+To set the color of the spinner use `spinnerColor`, values are either `#RGB` or `#ARGB`.
+
+Then run `npx cap copy` to apply these changes.
+
 ## Configuration
 
 These config parameters are available in `capacitor.config.json`:
@@ -79,6 +112,10 @@ These config parameters are available in `capacitor.config.json`:
     "SplashScreen": {
       "launchShowDuration": 3000,
       "launchAutoHide": true,
+      "androidSpinnerStyle": "large",
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#999999",
+      "showSpinner": true,
       "androidSplashResourceName": "splash",
       "androidScaleType": "CENTER_CROP"
     }
