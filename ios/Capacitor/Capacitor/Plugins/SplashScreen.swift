@@ -138,7 +138,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? getConfigValue(
       "autoHide"
     ) as? Bool ?? launchAutoHide
-    let launchSpinnerStyleConfig = getConfigValue("iOSSpinnerStyle") as? String ?? nil
+    let launchSpinnerStyleConfig = getConfigValue("iosSpinnerStyle") as? String ?? nil
     let launchSpinnerColorConfig = getConfigValue("spinnerColor") as? String ?? nil
     showSpinner = getConfigValue("showSpinner") as? Bool ?? false
 
@@ -179,7 +179,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
       if self.showSpinner {
         if spinnerStyle != nil {
           switch spinnerStyle!.lowercased() {
-          case "whiteLarge":
+          case "whitelarge":
             self.spinner.style = .whiteLarge
           case "white":
             self.spinner.style = .white
