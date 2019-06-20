@@ -134,8 +134,10 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
 
   readdir(options: ReaddirOptions): Promise<ReaddirResult> {
     return new Promise((resolve, reject) => {
-      let opts = {path: options.path, encoding: 'utf-8'};
-      this.NodeFS.readdir(opts.path, opts.encoding, (err:any, files: string[]) => {
+      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+        reject(`${options.directory} is currently not supported in the Electron implementation.`);
+      let lookupPath = this.fileLocations[options.directory] + options.path;
+      this.NodeFS.readdir(lookupPath, (err:any, files: string[]) => {
         if (err) {
           reject(err);
           return;
