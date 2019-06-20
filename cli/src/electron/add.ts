@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 import { Config } from '../config';
-import { copyTemplate, hasYarn, runTask } from '../common';
+import { copyTemplate, installDeps, hasYarn, runTask } from '../common';
 
 export async function addElectron(config: Config) {
 
@@ -16,14 +16,11 @@ export async function addElectron(config: Config) {
 function installNpmDeps(config: Config) {
   const pathToElectronPackageJson = config.electron.platformDir;
   return new Promise(async (resolve, reject) => {
-    console.log('Installing NPM Dependencies...');
-    exec(`${await hasYarn(config) ? 'yarn' : 'npm'} install`, {cwd: pathToElectronPackageJson}, (error, stdout, stderr) => {
+    exec(`${await hasYarn(config) ? 'yarn' : 'npm'} install`, {cwd: pathToElectronPackageJson}, async (error, stdout, stderr) => {
       if (error) {
         reject(error);
       }
-      console.log(`${stdout}`);
-      console.log(`${stderr}`);
-      console.log(`NPM Dependencies installed!`);
+      await installDeps(pathToElectronPackageJson, ['@capacitor/electron'], config);
       resolve();
     });
   });

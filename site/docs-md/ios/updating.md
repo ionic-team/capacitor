@@ -10,15 +10,13 @@ contributors:
 
 <p class="intro">Occasionally, you'll need to make Capacitor updates to your iOS app, including updating the version of Capacitor used in your app, or using new ways of interfacing with Capacitor inside of your iOS codebase (for example, with new iOS API changes).</p>
 
-## Updating Capacitor Library
+## Updating Capacitor iOS Library
 
-To update the version of Capacitor used in your app, just run
+To update the version of @capacitor/ios used in your app, just npm install latest version:
 
 ```bash
-npx cap update ios
+npm install @capacitor/ios@latest
 ```
-
-to update iOS, including any plugins and the core Capacitor libraries.
 
 ## Updating iOS Project
 

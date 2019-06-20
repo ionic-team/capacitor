@@ -252,7 +252,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-IonicRunner/Pods-IonicRunner-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Capacitor/Capacitor.framework",
 				"${BUILT_PRODUCTS_DIR}/CapacitorCordova/Cordova.framework",
 			);
@@ -263,7 +263,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-IonicRunner/Pods-IonicRunner-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-IonicRunner/Pods-IonicRunner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		62F96EECC323BD73A7ACF894 /* [CP] Check Pods Manifest.lock */ = {

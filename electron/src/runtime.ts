@@ -27,7 +27,7 @@ export class CapacitorElectron {
   }
 
   pluginMethodNoop(_target: any, _prop: PropertyKey, pluginName: string) {
-    return Promise.reject(`${pluginName} does not have web implementation.`);
+    return Promise.reject(`${pluginName} does not have electron implementation.`);
   }
 
   getPlatform() {

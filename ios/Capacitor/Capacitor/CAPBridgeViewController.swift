@@ -188,7 +188,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     let navUrl = navigationAction.request.url!
     if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
       for pattern in allowNavigation {
-        if matchHost(host: requestHost, pattern: pattern) {
+        if matchHost(host: requestHost, pattern: pattern.lowercased()) {
           decisionHandler(.allow)
           return
         }

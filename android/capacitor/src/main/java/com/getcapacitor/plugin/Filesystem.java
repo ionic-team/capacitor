@@ -17,7 +17,6 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
 import org.json.JSONException;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -114,29 +112,23 @@ public class Filesystem extends Plugin {
     File androidDirectory = this.getDirectory(directory);
 
     if (androidDirectory == null) {
-      return null;
+      throw new IOException("Directory not found");
     }
 
     return new FileInputStream(new File(androidDirectory, path));
   }
 
-  private String readFileAsString(InputStream is, Charset charset) throws IOException {
-    final StringBuilder text = new StringBuilder();
+  private String readFileAsString(InputStream is, String encoding) throws IOException {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-    BufferedReader br = new BufferedReader(
-        new InputStreamReader(
-            is,
-            charset
-        )
-    );
-    String line;
+    byte[] buffer = new byte[1024];
+    int length = 0;
 
-    while ((line = br.readLine()) != null) {
-      text.append(line);
-      text.append('\n');
-    }
-    br.close();
-    return text.toString();
+    while ((length = is.read(buffer)) != -1) {
+      outputStream.write(buffer, 0, length);
+    };
+
+    return outputStream.toString(encoding);
   }
 
   private String readFileAsBase64EncodedData(InputStream is) throws IOException {
@@ -174,7 +166,7 @@ public class Filesystem extends Plugin {
           InputStream is = getInputStream(file, directory);
           String dataStr;
           if (charset != null) {
-            dataStr = readFileAsString(is, charset);
+            dataStr = readFileAsString(is, charset.name());
           } else {
             dataStr = readFileAsBase64EncodedData(is);
           }

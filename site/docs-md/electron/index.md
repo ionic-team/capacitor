@@ -36,11 +36,10 @@ Run this after making any modifications to your web app.
 
 ## Running your App
 
-To run your app, cd into it and use the npm script provided by Capacitor:
+To run your app, use
 
 ```bash
-cd electron/
-npm run electron:start
+npx cap open electron
 ```
 
 This will launch an Electron instance running your app.

@@ -26,6 +26,8 @@ public class CAPToastPlugin : CAPPlugin {
       lb.alpha = 0
       lb.layer.cornerRadius = 18
       lb.clipsToBounds  =  true
+      lb.lineBreakMode = .byWordWrapping
+      lb.numberOfLines = 0
       
       var expectedSizeTitle : CGSize = lb.sizeThatFits(maxSizeTitle)
       // UILabel can return a size larger than the max size when the number of lines is 1
