@@ -56,6 +56,15 @@ public class Splash {
     // https://stackoverflow.com/a/21847579/32140
     splashImage.setDrawingCacheEnabled(true);
 
+    String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
+    try {
+      if (backgroundColor != null) {
+        splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+      }
+    } catch (IllegalArgumentException ex) {
+      Log.d(LogUtils.getCoreTag(), "Background color not applied");
+    }
+
     String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
     ImageView.ScaleType scaleType = null;
     try {
@@ -233,7 +242,7 @@ public class Splash {
                 spinnerBar.setIndeterminateTintList(colorStateList);
               }
             } catch (IllegalArgumentException ex) {
-              // Do not apply any spinner color.
+              Log.d(LogUtils.getCoreTag(), "Spinner color not applied");
             }
           }
 

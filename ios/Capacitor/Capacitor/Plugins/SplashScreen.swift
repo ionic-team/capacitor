@@ -37,11 +37,12 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
     let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
     let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
+    let backgroundColor = getConfigValue("backgroundColor") as? String ?? nil
     let spinnerStyle = getConfigValue("iosSpinnerStyle") as? String ?? nil
     let spinnerColor = getConfigValue("spinnerColor") as? String ?? nil
     showSpinner = getConfigValue("showSpinner") as? Bool ?? false
 
-    showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, spinnerStyle: spinnerStyle, spinnerColor: spinnerColor, completion: {
+    showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, backgroundColor: backgroundColor, spinnerStyle: spinnerStyle, spinnerColor: spinnerColor, completion: {
         call.success()
       }, isLaunchSplash: false)
   }
@@ -60,9 +61,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     image = UIImage(named: "Splash")
 
     if image == nil {
-      print(
-        "Unable to find splash screen image. Make sure an image called Splash exists in your assets"
-      )
+      print("Unable to find splash screen image. Make sure an image called Splash exists in your assets")
     }
 
     // Observe for changes on frame and bounds to handle rotation resizing
@@ -112,9 +111,9 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   func showOnLaunch() {
     let launchShowDurationConfig = getConfigValue("launchShowDuration") as? Int ?? launchShowDuration
     let launchAutoHideConfig = getConfigValue("launchAutoHide") as? Bool ?? launchAutoHide
+    let launchBackgroundColorConfig = getConfigValue("backgroundColor") as? String ?? nil
     let launchSpinnerStyleConfig = getConfigValue("iosSpinnerStyle") as? String ?? nil
     let launchSpinnerColorConfig = getConfigValue("spinnerColor") as? String ?? nil
-    print("valor de showSpinner\(showSpinner)")
 
     let view = bridge.viewController.view
     view?.addSubview(imageView)
@@ -125,12 +124,16 @@ public class CAPSplashScreenPlugin: CAPPlugin {
       spinner.centerYAnchor.constraint(equalTo: view!.centerYAnchor).isActive = true
     }
 
-    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, spinnerStyle: launchSpinnerStyleConfig, spinnerColor: launchSpinnerColorConfig, completion: {
+    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, backgroundColor: launchBackgroundColorConfig, spinnerStyle: launchSpinnerStyleConfig, spinnerColor: launchSpinnerColorConfig, completion: {
     }, isLaunchSplash: true)
   }
 
-  func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, spinnerStyle: String?, spinnerColor: String?, completion: @escaping () -> Void, isLaunchSplash: Bool) {
+  func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, backgroundColor: String?, spinnerStyle: String?, spinnerColor: String?, completion: @escaping () -> Void, isLaunchSplash: Bool) {
     DispatchQueue.main.async {
+      if backgroundColor != nil {
+        self.imageView.backgroundColor = UIColor(fromHex: backgroundColor!)
+      }
+
       let view = self.bridge.viewController.view
 
       if self.showSpinner {
