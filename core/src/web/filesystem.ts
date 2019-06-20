@@ -15,6 +15,8 @@ import {
   GetUriResult,
   MkdirOptions,
   MkdirResult,
+  RenameOptions,
+  RenameResult,
   ReaddirOptions,
   ReaddirResult,
   RmdirOptions,
@@ -335,6 +337,144 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       mtime: entry.mtime,
       uri: entry.path
     };
+  }
+
+  /**
+   * Rename a file or directory
+   * @param options the options for the rename operation
+   * @return a promise that resolves with the rename result
+   */
+  async rename(options: RenameOptions): Promise<RenameResult> {
+    let {to, from, directory} = options;
+
+    if (!to || !from) {
+      throw Error('Both to and from must be provided');
+    }
+
+    // Test that the "to" and "from" locations are different
+    if (from === to) {
+      return {};
+    }
+
+    if (to.startsWith(from)) {
+      throw Error('To path cannot contain the from path');
+    }
+
+    // Check the state of the "to" location
+    let toObj;
+    try {
+      toObj = await this.stat({
+        path: to,
+        directory
+      });
+    } catch (e) {
+      // To location does not exist, ensure the directory containing "to" location exists and is a directory
+      let toPathComponents = to.split('/');
+      toPathComponents.pop();
+      let toPath = toPathComponents.join('/');
+
+      // Check the containing directory of the "to" location exists
+      if (toPathComponents.length > 0) {
+        let toParentDirectory = await this.stat({
+          path: toPath,
+          directory,
+        });
+
+        if (toParentDirectory.type !== 'directory') {
+          throw new Error('Parent directory of the to path is a file');
+        }
+      }
+    }
+
+    // Cannot overwrite a directory
+    if (toObj && toObj.type === 'directory') {
+      throw new Error('Cannot overwrite a directory with a file');
+    }
+
+    // Ensure the "from" object exists
+    let fromObj = await this.stat({
+      path: from,
+      directory: directory
+    });
+
+    // Set the mtime/ctime of the supplied path
+    let updateTime = async (path: string, ctime: number, mtime: number) => {
+      let fullPath: string = this.getPath(directory, path);
+      let entry = await this.dbRequest('get', [fullPath]) as EntryObj;
+      entry.ctime = ctime;
+      entry.mtime = mtime;
+      await this.dbRequest('put', [entry]);
+    };
+
+    switch (fromObj.type) {
+      // The "from" object is a file
+      case 'file':
+        // Read the file
+        let file = await this.readFile({
+          path: from,
+          directory
+        });
+
+        // Remove the file
+        await this.deleteFile({
+          path: from,
+          directory
+        });
+
+        // Write the file to the new location
+        await this.writeFile({
+          path: to,
+          directory,
+          data: file.data
+        });
+
+        // Copy the mtime/ctime of the original file
+        await updateTime(to, fromObj.ctime, fromObj.mtime);
+
+        // Resolve promise
+        return {};
+
+      case 'directory':
+        if (toObj) {
+          throw Error('Cannot move a directory over an existing object');
+        }
+
+        try {
+          // Create the to directory
+          await this.mkdir({
+            path: to,
+            directory,
+            createIntermediateDirectories: false,
+          });
+
+          // Copy the mtime/ctime of the original directory
+          await updateTime(to, fromObj.ctime, fromObj.mtime);
+        } catch (e) {
+        }
+
+        // Iterate over the contents of the from location
+        let contents = (await this.readdir({
+          path: from,
+          directory
+        })).files;
+
+        for (let filename of contents) {
+          // Move item from the from directory to the to directory
+          await this.rename({
+            from: `${from}/${filename}`,
+            to: `${to}/${filename}`,
+            directory,
+          });
+        }
+
+        // Remove the original from directory
+        await this.rmdir({
+          path: from,
+          directory
+        });
+    }
+
+    return {};
   }
 }
 
