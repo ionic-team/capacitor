@@ -72,9 +72,41 @@ Then run `npx cap copy` to apply these changes.
 
 ## Background Color
 
-In certain conditions, especially if the splash screen does not fully cover the device screen, it might happen that the app screen is visible around the corners (due to transparency).
+In certain conditions, especially if the splash screen does not fully cover the device screen, it might happen that the app screen is visible around the corners (due to transparency). Instead of showing a transparent color, you can set a `backgroundColor` to cover those areas.
 
 Possible values for `backgroundColor` in your `capacitor.config.json` are either `#RGB` or `#ARGB`.
+
+## Spinner
+
+If you want to show a spinner on top of the splash screen, set `showSpinner` to `true` in your `capacitor.config.json`:
+
+```json
+{
+  "plugins": {
+    "SplashScreen": {
+      "showSpinner": true
+    }
+  }
+}
+```
+
+You can customize the appearance of the spinner with the following configuration.
+
+For Android, `androidSpinnerStyle` has the following options:
+- horizontal
+- small
+- large (default)
+- inverse
+- smallInverse
+- largeInverse
+
+For iOS, `iosSpinnerStyle` has the following options:
+- large (default)
+- small
+
+To set the color of the spinner use `spinnerColor`, values are either `#RGB` or `#ARGB`.
+
+Then run `npx cap copy` to apply these changes.
 
 ## Configuration
 
@@ -88,7 +120,11 @@ These config parameters are available in `capacitor.config.json`:
       "launchAutoHide": true,
       "backgroundColor": "#ffffffff",
       "androidSplashResourceName": "splash",
-      "androidScaleType": "CENTER_CROP"
+      "androidScaleType": "CENTER_CROP",
+      "androidSpinnerStyle": "large",
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#999999",
+      "showSpinner": true
     }
   }
 }
