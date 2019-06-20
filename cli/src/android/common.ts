@@ -26,7 +26,7 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
     }
     plugin.android = {
       type: PluginType.Core,
-      path: pluginFilesPath
+      path: pluginFilesPath.replace(/\\/g, '/')
     };
   } else if (plugin.xml) {
     plugin.android = {
