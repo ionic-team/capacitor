@@ -519,6 +519,13 @@ export interface FilesystemPlugin extends Plugin {
    * @return a promise that resolves with the file stat result
    */
   stat(options: StatOptions): Promise<StatResult>;
+
+  /**
+   * Rename a file or directory
+   * @param options the options for the rename operation
+   * @return a promise that resolves with the rename result
+   */
+  rename(options: RenameOptions): Promise<RenameResult>;
 }
 
 export enum FilesystemDirectory {
@@ -680,6 +687,21 @@ export interface StatOptions {
   directory?: FilesystemDirectory;
 }
 
+export interface RenameOptions {
+  /**
+   * The existing file or directory to rename
+   */
+  from: string;
+  /**
+   * The destination to rename the file or directory to
+   */
+  to: string;
+  /**
+   * The FilesystemDirectory containing the file or directory to rename
+   */
+  directory?: FilesystemDirectory;
+}
+
 export interface FileReadResult {
   data: string;
 }
@@ -692,6 +714,8 @@ export interface FileAppendResult {
 export interface MkdirResult {
 }
 export interface RmdirResult {
+}
+export interface RenameResult {
 }
 export interface ReaddirResult {
   files: string[];

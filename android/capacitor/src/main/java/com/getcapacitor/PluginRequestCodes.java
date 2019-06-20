@@ -21,4 +21,5 @@ public class PluginRequestCodes {
   public static final int FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS = 9017;
   public static final int FILESYSTEM_REQUEST_URI_PERMISSIONS = 9018;
   public static final int FILESYSTEM_REQUEST_STAT_PERMISSIONS = 9019;
+  public static final int FILESYSTEM_REQUEST_RENAME_PERMISSIONS = 9020;
 }

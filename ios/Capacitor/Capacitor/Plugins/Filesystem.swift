@@ -337,5 +337,50 @@ public class CAPFilesystemPlugin : CAPPlugin {
     
   }
 
+  /**
+   * Rename a file or directory.
+   */
+  @objc func rename(_ call: CAPPluginCall) {
+    guard let from = call.get("from", String.self) else {
+      handleError(call, "from must be provided and must be a string.")
+      return
+    }
+    
+    guard let to = call.get("to", String.self) else {
+      handleError(call, "to must be provided and must be a string.")
+      return
+    }
+    
+    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    
+    guard let fromUrl = getFileUrl(from, directoryOption) else {
+      handleError(call, "Invalid from path")
+      return
+    }
+    
+    guard let toUrl = getFileUrl(to, directoryOption) else {
+      handleError(call, "Invalid to path")
+      return
+    }
+    
+    if (fromUrl == toUrl) {
+      call.success()
+      return
+    }
+    
+    do {
+      var isDir : ObjCBool = false
+      if FileManager.default.fileExists(atPath: toUrl.path, isDirectory: &isDir) {
+        if (!isDir.boolValue) {
+          try? FileManager.default.removeItem(at: toUrl)
+        }
+      }
+      
+      try FileManager.default.moveItem(at: fromUrl, to: toUrl)
+      call.success()
+    } catch let error as NSError {
+      handleError(call, error.localizedDescription, error)
+    }
+  }
 }
 

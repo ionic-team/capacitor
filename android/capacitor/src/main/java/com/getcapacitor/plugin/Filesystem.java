@@ -37,7 +37,8 @@ import java.nio.charset.StandardCharsets;
   PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS,
   PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS,
   PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS
+  PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS,
 })
 public class Filesystem extends Plugin {
 
@@ -436,6 +437,48 @@ public class Filesystem extends Plugin {
     }
   }
 
+  @PluginMethod()
+  public void rename(PluginCall call) {
+    saveCall(call);
+    String from = call.getString("from");
+    String to = call.getString("to");
+    String directory = getDirectoryParameter(call);
+
+    if (from == null || from.isEmpty() || to == null || to.isEmpty()) {
+      call.error("Both to and from must be provided");
+      return;
+    }
+
+    if (to.equals(from)) {
+      call.success();
+      return;
+    }
+
+    File fromObject = getFileObject(from, directory);
+    File toObject = getFileObject(to, directory);
+
+    if (!isPublicDirectory(directory)
+            || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+      assert toObject != null;
+      if (toObject.isDirectory()) {
+        call.error("Cannot overwrite a directory");
+        return;
+      }
+      toObject.delete();
+
+      assert fromObject != null;
+      boolean renamed = fromObject.renameTo(toObject);
+
+      if (!renamed) {
+        call.error("Unable to rename, unknown reason");
+        return;
+      }
+
+      call.success();
+    }
+  }
+
   /**
    * Checks the the given permission and requests them if they are not already granted.
    * @param permissionRequestCode the request code see {@link PluginRequestCodes}
@@ -509,6 +552,8 @@ public class Filesystem extends Plugin {
       this.getUri(savedCall);
     } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS) {
       this.stat(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS) {
+      this.rename(savedCall);
     }
     this.freeSavedCall();
   }
