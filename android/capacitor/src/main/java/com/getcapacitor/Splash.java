@@ -62,7 +62,7 @@ public class Splash {
         splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
       }
     } catch (IllegalArgumentException ex) {
-      // Do not apply any background color.
+      Log.d(LogUtils.getCoreTag(), "Background color not applied");
     }
 
     String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
@@ -242,7 +242,7 @@ public class Splash {
                 spinnerBar.setIndeterminateTintList(colorStateList);
               }
             } catch (IllegalArgumentException ex) {
-              // Do not apply any spinner color.
+              Log.d(LogUtils.getCoreTag(), "Spinner color not applied");
             }
           }
 

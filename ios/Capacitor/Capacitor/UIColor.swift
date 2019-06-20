@@ -1,4 +1,3 @@
-// https://stackoverflow.com/questions/24263007/how-to-use-hex-color-values
 extension UIColor {
   convenience init(r: Int, g: Int, b: Int, a: Int = 0xFF) {
     self.init(

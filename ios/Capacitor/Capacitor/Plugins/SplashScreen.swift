@@ -1,5 +1,5 @@
-import AudioToolbox
 import Foundation
+import AudioToolbox
 
 @objc(CAPSplashScreenPlugin)
 public class CAPSplashScreenPlugin: CAPPlugin {
@@ -29,9 +29,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     self.call = call
 
     if image == nil {
-      call.error(
-        "No image named \"Splash\" found. Please check your Assets.xcassets for a file named Splash"
-      )
+      call.error("No image named \"Splash\" found. Please check your Assets.xcassets for a file named Splash")
       return
     }
 
@@ -63,9 +61,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     image = UIImage(named: "Splash")
 
     if image == nil {
-      print(
-        "Unable to find splash screen image. Make sure an image called Splash exists in your assets"
-      )
+      print("Unable to find splash screen image. Make sure an image called Splash exists in your assets")
     }
 
     // Observe for changes on frame and bounds to handle rotation resizing
@@ -95,18 +91,12 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   // the parent view observers fire
   func updateSplashImageBounds() {
     guard let delegate = UIApplication.shared.delegate else {
-      bridge.modulePrint(
-        self,
-        "Unable to find root window object for SplashScreen bounds. Please file an issue"
-      )
+      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
 
     guard let window = delegate.window as? UIWindow else {
-      bridge.modulePrint(
-        self,
-        "Unable to find root window object for SplashScreen bounds. Please file an issue"
-      )
+      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
     imageView.image = image
