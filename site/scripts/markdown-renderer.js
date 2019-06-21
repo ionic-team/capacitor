@@ -6,7 +6,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prismjs_1 = __importDefault(require("prismjs"));
 const path_1 = __importDefault(require("path"));
 const components_1 = __importDefault(require("prismjs/components/"));
-const languages = ['tsx', 'bash', 'typescript', 'markup', 'css', 'json', 'java', 'diff', 'html', 'xml', 'swift', 'json5', 'shell'];
+const languages = [
+    'bash',
+    'diff',
+    'css',
+    'html',
+    'java',
+    'json',
+    'json5',
+    'markup',
+    'objectivec',
+    'shell',
+    'swift',
+    'tsx',
+    'typescript',
+    'xml'
+];
 components_1.default(languages);
 function findItem(siteStructureList, filePath) {
     for (const item of siteStructureList) {
