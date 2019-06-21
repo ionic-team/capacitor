@@ -41,7 +41,7 @@ public class CAPBackgroundTaskPlugin : CAPPlugin {
   }
   
   @objc func onAppTerminate() {
-    print("APP TERMINATING IN BACKGROUND TASK")
+    CAPLog.print("APP TERMINATING IN BACKGROUND TASK")
   }
 }
 

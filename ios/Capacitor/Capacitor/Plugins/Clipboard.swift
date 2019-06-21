@@ -12,10 +12,10 @@ public class CAPClipboardPlugin : CAPPlugin {
     } else if let imageBase64 = call.options["image"] as? String {
       if let data = Data(base64Encoded: imageBase64) {
         let image = UIImage(data: data)
-        print("Loaded image", image!.size.width, image!.size.height)
+        CAPLog.print("Loaded image", image!.size.width, image!.size.height)
         UIPasteboard.general.image = image
       } else {
-        print("Unable to encode image")
+        CAPLog.print("Unable to encode image")
       }
     }
     call.success()

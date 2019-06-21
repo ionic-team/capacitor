@@ -8,7 +8,7 @@
     super.init()
     if let contents = configText {
       guard let configData = contents.data(using: .utf8) else {
-        print("Unable to process config JSON string as UTF8")
+        CAPLog.print("Unable to process config JSON string as UTF8")
         return
       }
 
@@ -20,14 +20,14 @@
 
   private func loadGlobalConfig() {
     guard let configUrl = Bundle.main.url(forResource: "capacitor.config", withExtension: "json") else {
-      print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy")
+      CAPLog.print("Unable to find capacitor.config.json, make sure it exists and run npx cap copy")
       return
     }
     do {
       let contents = try Data(contentsOf: configUrl)
       parseAndSetConfig(contents)
     } catch {
-      print("Unable to parse capacitor.config.json. Make sure it's valid JSON")
+      CAPLog.print("Unable to parse capacitor.config.json. Make sure it's valid JSON")
     }
   }
   
@@ -36,8 +36,8 @@
       let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
       self.config = json
     } catch {
-      print("Unable to parse config JSON")
-      print(error.localizedDescription)
+      CAPLog.print("Unable to parse config JSON")
+      CAPLog.print(error.localizedDescription)
     }
   }
 

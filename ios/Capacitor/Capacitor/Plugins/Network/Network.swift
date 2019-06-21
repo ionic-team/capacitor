@@ -5,25 +5,25 @@ public class CAPNetworkPlugin : CAPPlugin {
   let reachability = Reachability()!
   
   public override func load() {
-    print("Loading network plugin")
+    CAPLog.print("Loading network plugin")
     reachability.whenReachable = { reachability in
       if reachability.connection == .wifi {
-        print("Reachable via WiFi")
+        CAPLog.print("Reachable via WiFi")
         self.notifyStatusChangeListeners(connected: true, type: "wifi")
       } else {
-        print("Reachable via Cellular")
+        CAPLog.print("Reachable via Cellular")
         self.notifyStatusChangeListeners(connected: true, type: "cellular")
       }
     }
     reachability.whenUnreachable = { _ in
-      print("Not reachable")
+      CAPLog.print("Not reachable")
       self.notifyStatusChangeListeners(connected: false, type: "none")
     }
   
     do {
       try reachability.startNotifier()
     } catch {
-      print("Unable to start notifier")
+      CAPLog.print("Unable to start notifier")
     }
   }
   

@@ -23,7 +23,7 @@ extension CAPBridgeDelegate {
         let options = dict["options"] as? [String:Any] ?? [:]
         
         if pluginId != "Console" {
-          print("⚡️  To Native -> ", pluginId, method, callbackId)
+          CAPLog.print("⚡️  To Native -> ", pluginId, method, callbackId)
         }
         
         bridge.handleJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
@@ -35,7 +35,7 @@ extension CAPBridgeDelegate {
         let args = dict["actionArgs"] as? Array ?? []
         let options = ["options":args]
         
-        print("To Native Cordova -> ", pluginId, method, callbackId, options)
+        CAPLog.print("To Native Cordova -> ", pluginId, method, callbackId, options)
         
         bridge.handleCordovaJSCall(call: JSCall(options: options, pluginId: pluginId, method: method, callbackId: callbackId))
       }
@@ -53,10 +53,10 @@ extension CAPBridgeDelegate {
       filename = String(url[index...])
     }
     
-    print("\n⚡️  ------ STARTUP JS ERROR ------\n")
-    print("⚡️  \(message)")
-    print("⚡️  URL: \(url)")
-    print("⚡️  \(filename):\(line):\(col)")
-    print("\n⚡️  See above for help with debugging blank-screen issues")
+    CAPLog.print("\n⚡️  ------ STARTUP JS ERROR ------\n")
+    CAPLog.print("⚡️  \(message)")
+    CAPLog.print("⚡️  URL: \(url)")
+    CAPLog.print("⚡️  \(filename):\(line):\(col)")
+    CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
   }
 }

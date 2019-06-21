@@ -61,7 +61,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     image = UIImage(named: "Splash")
 
     if image == nil {
-      print("Unable to find splash screen image. Make sure an image called Splash exists in your assets")
+      CAPLog.print("Unable to find splash screen image. Make sure an image called Splash exists in your assets")
     }
 
     // Observe for changes on frame and bounds to handle rotation resizing
@@ -190,7 +190,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
 
   func hideSplash(fadeOutDuration: Int, isLaunchSplash: Bool) {
     if isLaunchSplash, isVisible {
-      print("SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. " +
+      CAPLog.print("SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. " +
             "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). " +
             "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen")
     }

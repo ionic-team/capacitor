@@ -54,7 +54,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       do {
         content = try makeNotificationContent(notification)
       } catch {
-        print(error.localizedDescription)
+        CAPLog.print(error.localizedDescription)
         call.error("Unable to make notification", error)
         return
       }
@@ -78,7 +78,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       let center = UNUserNotificationCenter.current()
       center.add(request) { (error : Error?) in
         if let theError = error {
-          print(theError.localizedDescription)
+          CAPLog.print(theError.localizedDescription)
           call.error(theError.localizedDescription)
         }
       }
@@ -111,8 +111,8 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
    */
   @objc func getPending(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (notifications) in
-      print("num of pending notifications \(notifications.count)")
-      print(notifications)
+      CAPLog.print("num of pending notifications \(notifications.count)")
+      CAPLog.print(notifications)
       
       let ret = notifications.map({ (notification) -> [String:Any] in
         return self.bridge.notificationsDelegate.makePendingNotificationRequestJSObject(notification)
