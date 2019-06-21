@@ -54,7 +54,7 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
   }
 
   func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-    print("scheme stop")
+    CAPLog.print("scheme stop")
   }
 
   func mimeTypeForExtension(pathExtension: String) -> String {

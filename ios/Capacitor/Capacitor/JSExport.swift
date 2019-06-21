@@ -14,32 +14,32 @@ public class JSExport {
   
   public static func exportCapacitorJS(userContentController: WKUserContentController) throws {
     guard let jsUrl = Bundle.main.url(forResource: "public/native-bridge", withExtension: "js") else {
-      print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
+      CAPLog.print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
     }
 
     do {
       try self.injectFile(fileURL: jsUrl, userContentController: userContentController)
     } catch {
-      print("ERROR: Unable to read required native-bridge.js file from the Capacitor framework. Bridge will not function!")
+      CAPLog.print("ERROR: Unable to read required native-bridge.js file from the Capacitor framework. Bridge will not function!")
       throw BridgeError.errorExportingCoreJS
     }
   }
   
   public static func exportCordovaJS(userContentController: WKUserContentController) throws {
     guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
-      print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
+      CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
       throw BridgeError.errorExportingCoreJS
     }
     guard let cordova_pluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
-      print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
+      CAPLog.print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
       throw BridgeError.errorExportingCoreJS
     }
     do {
       try self.injectFile(fileURL: cordovaUrl, userContentController: userContentController)
       try self.injectFile(fileURL: cordova_pluginsUrl, userContentController: userContentController)
     } catch {
-      print("ERROR: Unable to read required cordova files. Cordova plugins will not function!")
+      CAPLog.print("ERROR: Unable to read required cordova files. Cordova plugins will not function!")
       throw BridgeError.errorExportingCoreJS
     }
 
@@ -121,7 +121,7 @@ public class JSExport {
         return w.Capacitor.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(CALLBACK_PARAM));
         """)
     } else {
-      print("Error: plugin method return type \(returnType) is not supported!")
+      CAPLog.print("Error: plugin method return type \(returnType) is not supported!")
     }
     
     // Close the function
@@ -147,7 +147,7 @@ public class JSExport {
         }
       }
     } catch {
-      print("Error while enumerating files")
+      CAPLog.print("Error while enumerating files")
     }
   }
   
@@ -157,7 +157,7 @@ public class JSExport {
       let userScript = WKUserScript(source: data, injectionTime: .atDocumentStart, forMainFrameOnly: true)
       userContentController.addUserScript(userScript)
     } catch {
-      print("Unable to inject js file")
+      CAPLog.print("Unable to inject js file")
     }
   }
 }

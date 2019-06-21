@@ -105,10 +105,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   func printLoadError() {
     let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
     
-    print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
-    print("⚡️  This file is the root of your web app and must exist before")
-    print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
-    print("⚡️  or, if embedding, that this directory exists as a resource directory.")
+    CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
+    CAPLog.print("⚡️  This file is the root of your web app and must exist before")
+    CAPLog.print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
+    CAPLog.print("⚡️  or, if embedding, that this directory exists as a resource directory.")
   }
   
   func fatalLoadError() -> Never {
@@ -126,7 +126,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? Array<String>
 
 
-    print("⚡️  Loading app at \(hostname!)...")
+    CAPLog.print("⚡️  Loading app at \(hostname!)...")
     let request = URLRequest(url: URL(string: hostname!)!)
     _ = webView?.load(request)
   }
@@ -212,17 +212,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    print("⚡️  WebView loaded")
+    CAPLog.print("⚡️  WebView loaded")
   }
 
   public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-    print("⚡️  WebView failed to load")
-    print("⚡️  Error: " + error.localizedDescription)
+    CAPLog.print("⚡️  WebView failed to load")
+    CAPLog.print("⚡️  Error: " + error.localizedDescription)
   }
 
   public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-    print("⚡️  WebView failed provisional navigation")
-    print("⚡️  Error: " + error.localizedDescription)
+    CAPLog.print("⚡️  WebView failed provisional navigation")
+    CAPLog.print("⚡️  Error: " + error.localizedDescription)
   }
 
   public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
@@ -293,11 +293,11 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       filename = String(url[index...])
     }
 
-    print("\n⚡️  ------ STARTUP JS ERROR ------\n")
-    print("⚡️  \(message)")
-    print("⚡️  URL: \(url)")
-    print("⚡️  \(filename):\(line):\(col)")
-    print("\n⚡️  See above for help with debugging blank-screen issues")
+    CAPLog.print("\n⚡️  ------ STARTUP JS ERROR ------\n")
+    CAPLog.print("⚡️  \(message)")
+    CAPLog.print("⚡️  URL: \(url)")
+    CAPLog.print("⚡️  \(filename):\(line):\(col)")
+    CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
   }
 
   func matchHost(host: String, pattern: String) -> Bool {

@@ -6,7 +6,7 @@ public class CAPConsolePlugin : CAPPlugin {
   @objc public func log(_ call: CAPPluginCall) {
     let message = call.getString("message") ?? ""
     let level = call.getString("level") ?? "LOG"
-    print("⚡️  [\(level)] - \(message)")
+    CAPLog.print("⚡️  [\(level)] - \(message)")
   }
 }
 

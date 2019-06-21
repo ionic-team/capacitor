@@ -94,7 +94,7 @@ public class CAPGeolocationPlugin : CAPPlugin {
   
   @objc func clearWatch(_ call: CAPPluginCall) {
     guard let callbackId = call.getString("id") else {
-      print("Must supply id")
+      CAPLog.print("Must supply id")
       return
     }
     let savedCall = bridge.getSavedCall(callbackId)
