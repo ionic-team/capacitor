@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -320,6 +321,20 @@ public class Bridge {
     if (Config.getBoolean("android.allowMixedContent", false)) {
       settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
+    String backgroundColor = Config.getString("android.backgroundColor" , Config.getString("backgroundColor", null));
+    try {
+      if (backgroundColor != null) {
+        webView.setBackgroundColor(Color.parseColor(backgroundColor));
+      }
+    } catch (IllegalArgumentException ex) {
+      Log.d(LogUtils.getCoreTag(), "WebView background color not applied");
+    }
+    boolean defaultDebuggable = false;
+    if (isDevMode()) {
+      defaultDebuggable = true;
+    }
+
+    WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
   }
 
   /**
