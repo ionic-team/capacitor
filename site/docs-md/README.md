@@ -42,6 +42,7 @@
   * [PWA Elements](web/pwa-elements.md)
 * Electron
   * [Getting Started](electron/index.md)
+  * [Updating](electron/updating.md)
 * Creating Plugins
   * [Introduction](plugins/index.md)
   * [iOS Guide](plugins/ios.md)
