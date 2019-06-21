@@ -1,5 +1,6 @@
 assets/android-template/app/build/*
 !assets/android-template/app/build/.npmkeep
 assets/android-template/.gradle
+assets/android-template/local.properties
 assets/ios-template/App/Pods/
 Podfile.lock
