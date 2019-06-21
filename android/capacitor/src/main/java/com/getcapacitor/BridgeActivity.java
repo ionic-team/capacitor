@@ -3,7 +3,6 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,7 +13,6 @@ import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.plugin.App;
 
 import org.apache.cordova.ConfigXmlParser;
-import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
@@ -52,12 +50,6 @@ public class BridgeActivity extends AppCompatActivity {
     setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
     setTheme(R.style.AppTheme_NoActionBar);
 
-    boolean defaultDebuggable = false;
-    if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-      defaultDebuggable = true;
-    }
-
-    WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
 
     setContentView(R.layout.bridge_layout_main);
 
@@ -71,6 +63,7 @@ public class BridgeActivity extends AppCompatActivity {
     Log.d(LogUtils.getCoreTag(), "Starting BridgeActivity");
 
     webView = findViewById(R.id.webview);
+
     cordovaInterface = new MockCordovaInterfaceImpl(this);
     if (savedInstanceState != null) {
       cordovaInterface.restoreInstanceState(savedInstanceState);

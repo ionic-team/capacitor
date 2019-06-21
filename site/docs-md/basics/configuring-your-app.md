@@ -71,7 +71,11 @@ The current ones you might configure are:
       "192.0.2.1"
     ]
   },
+  // Background color of Capacitor WebView for both iOS and Android unless also declared inside ios or android objects
+  "backgroundColor": "#ffffffff",
   "android": {
+    // Background color of Capacitor WebView for Android only
+    "backgroundColor": "#ffffffff",
     // On Android, if you are loading the app from a remote/testing server from https
     // protocol, you need to enable mixed content mode to allow the WebView to load
     // files from different schemes such as capacitor-content:// or capacitor-file://
@@ -87,6 +91,8 @@ The current ones you might configure are:
     "webContentsDebuggingEnabled": true
   },
   "ios": {
+    // Background color of Capacitor WebView for iOS only
+    "backgroundColor": "#ffffffff",
     // Configure the Swift version to be used for Cordova plugins.
     // Default is 4.0
     "cordovaSwiftVersion": "3.0",

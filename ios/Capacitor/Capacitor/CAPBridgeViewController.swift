@@ -70,6 +70,11 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
         webView?.scrollView.isScrollEnabled = scrollEnabled
     }
+
+    if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
+        webView?.backgroundColor = UIColor(fromHex: backgroundColor)
+        webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+    }
   }
   
   private func getStartPath() -> String? {
