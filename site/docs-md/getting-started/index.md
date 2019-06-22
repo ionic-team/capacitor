@@ -33,7 +33,8 @@ To add Capacitor to your web app, run the following commands:
 
 ```bash
 cd my-app
-npm install --save @capacitor/core @capacitor/cli
+npm install --save-dev @capacitor/cli
+npm install --save @capacitor/core
 ```
 
 Then, initialize Capacitor with your app information.
