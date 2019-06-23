@@ -27,6 +27,10 @@ The Keyboard API provides keyboard display and visibility control, along with ev
 
 ```typescript
 
+import { Plugins } from '@capacitor/core';
+
+const { Keyboard } = Plugins;
+
 // Keyboard Plugin Events
 
 Keyboard.addListener('keyboardWillShow', (info: KeyboardInfo) => {
