@@ -26,7 +26,6 @@ The Keyboard API provides keyboard display and visibility control, along with ev
 ## Example
 
 ```typescript
-
 import { Plugins } from '@capacitor/core';
 
 const { Keyboard } = Plugins;
@@ -68,11 +67,6 @@ window.addEventListener('keyboardDidHide', () => {
 });
 
 // API
-
-import { Plugins } from '@capacitor/core';
-
-const { Keyboard } = Plugins;
-
 
 Keyboard.setAccessoryBarVisible({isVisible: false});
 
