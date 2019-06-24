@@ -30,3 +30,6 @@ export const existsAsync = async (path: string) => {
     return false;
   }
 };
+export const convertToUnixPath = (path: string) => {
+  return path.replace(/\\/g, '/');
+};

@@ -2,7 +2,7 @@ import { runCommand } from '../common';
 import { Config } from '../config';
 import { getPluginPlatform, Plugin, PluginType } from '../plugin';
 import { mkdirs } from 'fs-extra';
-import { copyAsync, existsAsync, existsSync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
+import { convertToUnixPath, copyAsync, existsAsync, existsSync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
 import { resolve, join } from 'path';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 
@@ -26,7 +26,7 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
     }
     plugin.android = {
       type: PluginType.Core,
-      path: pluginFilesPath.replace(/\\/g, '/')
+      path: convertToUnixPath(pluginFilesPath)
     };
   } else if (plugin.xml) {
     plugin.android = {

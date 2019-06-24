@@ -1,6 +1,6 @@
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import { CheckFunction, checkPlatformVersions, logFatal, resolveNode, runCommand, runTask } from '../common';
-import { copySync, readFileAsync, readFileSync, removeSync, writeFileAsync, writeFileSync } from '../util/fs';
+import { convertToUnixPath, copySync, readFileAsync, readFileSync, removeSync, writeFileAsync, writeFileSync } from '../util/fs';
 import { Config } from '../config';
 import { join, relative, resolve } from 'path';
 import { realpathSync } from 'fs';
@@ -95,7 +95,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   }
 
   const podfilePath = join(config.app.rootDir, 'ios', 'App');
-  const relativeCapacitoriOSPath = relative(podfilePath, capacitoriOSPath).replace(/\\/g, '/');
+  const relativeCapacitoriOSPath = convertToUnixPath(relative(podfilePath, capacitoriOSPath));
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   const pods = capacitorPlugins
