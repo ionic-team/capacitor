@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/angular",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Schematics for capacitor/angular apps.",
   "homepage": "https://capacitor.ionicframework.com",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com)",
@@ -32,20 +32,21 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@angular/core": "~7.2.1",
-    "rxjs": "~6.5.2"
+    "@angular-devkit/core": "~8.0.0",
+    "@angular-devkit/schematics": "~8.0.0",
+    "rxjs": "~6.4.0",
+    "typescript": "~3.4.3"
   },
   "devDependencies": {
+    "@angular-devkit/core": "~8.0.0",
+    "@angular-devkit/schematics": "~8.0.0",
+    "@angular/cli": "~8.0.0",
     "@types/node": "~10.12.0",
+    "rxjs": "~6.4.0",
     "tslint": "~5.12.1",
     "tslint-ionic-rules": "0.0.21",
+    "typescript": "~3.4.3",
     "typescript-tslint-plugin": "0.3.1"
   },
-  "schematics": "./schematics/collection.json",
-  "dependencies": {
-    "@angular-devkit/core": "^7.3.9",
-    "@angular-devkit/schematics": "^7.3.9",
-    "typescript": "~3.2.2",
-    "rxjs": "~6.5.2"
-  }
+  "schematics": "./schematics/collection.json"
 }

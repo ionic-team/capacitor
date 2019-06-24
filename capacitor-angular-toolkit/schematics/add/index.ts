@@ -1,12 +1,12 @@
-import { Path, join } from '@angular-devkit/core';
 import { Rule, SchematicContext, SchematicsException, Tree, chain } from '@angular-devkit/schematics';
 import { NodePackageInstallTask, RunSchematicTask } from '@angular-devkit/schematics/tasks';
+import { getPackageManager } from '@angular/cli/utilities/package-manager';
+import { getWorkspace } from '@schematics/angular/utility/workspace';
 import { ScriptTarget, SourceFile, createSourceFile } from 'typescript';
 
 import { insertImport, isImported } from '../utils/devkit-utils/ast-utils';
 import { InsertChange } from '../utils/devkit-utils/change';
 
-import { getWorkspace } from './../utils/config';
 import { addPackageToPackageJson } from './../utils/package';
 import { Schema as IonAddOptions } from './schema';
 
@@ -61,32 +61,36 @@ function addCapPluginsToAppComponent(projectSourceRoot: string): Rule {
   };
 }
 
-function capInit(): Rule {
+function capInit(projectName: string, npmTool: string, webDir: string): Rule {
   return (host: Tree, context: SchematicContext) => {
     const packageInstall = context.addTask(new NodePackageInstallTask());
-    context.addTask(new RunSchematicTask('cap-init', { command: 'npx', args: ['cap', 'init'] }), [packageInstall]);
+    context.addTask(new RunSchematicTask('cap-init', { command: 'npx', args: ['cap', 'init', projectName, '--npm-client', npmTool, '--web-dir', webDir] }), [packageInstall]);
     return host;
   };
 }
 
 export default function ngAdd(options: IonAddOptions): Rule {
-  return (host: Tree) => {
-    const workspace = getWorkspace(host);
+  return async (host: Tree) => {
+    const workspace = await getWorkspace(host);
 
     if (!options.project) {
-      options.project = Object.keys(workspace.projects)[0];
+      options.project = workspace.extensions.defaultProject as string;
     }
-    const project = workspace.projects[options.project];
 
-    if (project.projectType !== 'application') {
+    const projectTree = workspace.projects.get(options.project);
+
+    if (projectTree.extensions['projectType'] !== 'application') {
       throw new SchematicsException(`Capacitor Add requires a project type of "application".`);
     }
-    const sourcePath = join(project.root as Path, 'src');
+
+    const packageMgm = getPackageManager(projectTree.root);
+    const distTarget = projectTree.targets.get('build').options['outputPath'] as string;
+    const sourcePath = projectTree.sourceRoot;
 
     return chain([
       addCapacitorToPackageJson(),
       addCapPluginsToAppComponent(sourcePath),
-      capInit(),
+      capInit(options.project, packageMgm, distTarget),
     ]);
   };
 }
