@@ -1387,9 +1387,14 @@ export interface ShareOptions {
    */
   url?: string;
   /**
+   * Set files object array to share
+   */
+  files?: [File];
+  /**
    * Set a title for the share modal. Android only
    */
   dialogTitle?: string;
+
 }
 
 //

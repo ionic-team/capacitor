@@ -19,12 +19,23 @@ export class SharePluginWeb extends WebPlugin implements SharePlugin {
     if (!navigator.share) {
       return Promise.reject("Web Share API not available");
     }
-
+    if (!options.files) {
+      return navigator.share({
+        title: options.title,
+        text: options.text,
+        url: options.url
+      });
+    }
+    if (!(navigator.canShare && navigator.canShare({files: options.files}))) {
+      return Promise.reject("Web Share API Level 2 not available");
+    }
     return navigator.share({
       title: options.title,
       text: options.text,
-      url: options.url
+      url: options.url,
+      files: options.files
     });
+
   }
 }
 
