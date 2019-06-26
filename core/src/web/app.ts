@@ -8,10 +8,12 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
       name: 'App',
       platforms: ['web']
     });
+
+    document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this), false);
   }
 
   exitApp(): never {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   canOpenUrl(_options: { url: string; }): Promise<{ value: boolean; }> {
@@ -24,6 +26,14 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
 
   getLaunchUrl(): Promise<AppLaunchUrl> {
     return Promise.resolve({ url: '' });
+  }
+
+  handleVisibilityChange():void {
+    const data = {
+      isActive: document.hidden !== true
+    };
+
+    this.notifyListeners('appStateChange', data);
   }
 }
 
