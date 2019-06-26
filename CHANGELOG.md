@@ -17,14 +17,14 @@
 * fix(electron-template): update @capacitor/electron dependency to use final version ([#1630](https://github.com/ionic-team/capacitor/pull/1630))
 * fix(electron): incorrect path being used for Filesystem.stat ([#1619](https://github.com/ionic-team/capacitor/pull/1619))
 * fix(electron): Filesystem.rmdir not using directory ([#1623](https://github.com/ionic-team/capacitor/pull/1623))
-* fix(ios): print warning without exiting if index not found ([9778c4c](https://github.com/ionic-team/stencil/commit/9778c4c))
+* fix(ios): print warning without exiting if index not found ([9778c4c](https://github.com/ionic-team/capacitor/commit/9778c4c))
 * Fix(core): Avoid prompting empty error if null ([#1639](https://github.com/ionic-team/capacitor/pull/1639))
 * fix(ios): ignore Podfile.lock ([#1588](https://github.com/ionic-team/capacitor/pull/1588))
 * fix(cli): Avoid empty feature in config.xml ([#1643](https://github.com/ionic-team/capacitor/pull/1643))
 * fix(cli): Allow to filter incompatible plugins per platform ([#1645](https://github.com/ionic-team/capacitor/pull/1645))
 * fix(cordova): Add CDVHandleOpenURLWithAppSourceAndAnnotationNotification constant ([#1650](https://github.com/ionic-team/capacitor/pull/1650))
 * fix(cordova): Define pluginObjects in CDVViewController ([#1651](https://github.com/ionic-team/capacitor/pull/1651))
-* fix(ios): lower case test matching host ([ded8df8](https://github.com/ionic-team/stencil/commit/ded8df8))
+* fix(ios): lower case test matching host ([ded8df8](https://github.com/ionic-team/capacitor/commit/ded8df8))
 * fix(cli): improve npx cap open message if no platform present ([#1654](https://github.com/ionic-team/capacitor/pull/1654))
 * Fix(android): remove incorrect trailing newline in readFile when using encoding ([#1626](https://github.com/ionic-team/capacitor/pull/1626))
 * Fix(cli): Only open Android Studio if path is set ([#1656](https://github.com/ionic-team/capacitor/pull/1656))
@@ -40,8 +40,8 @@
 
 ### Features
 
-* feat(ios): move CAPConfig to be per-instance rather than a singleton ([e964068](https://github.com/ionic-team/stencil/commit/e964068))
-* feat(native-bridge): kill the error modal with 🔥 ([3ef2135](https://github.com/ionic-team/stencil/commit/3ef2135))
+* feat(ios): move CAPConfig to be per-instance rather than a singleton ([e964068](https://github.com/ionic-team/capacitor/commit/e964068))
+* feat(native-bridge): kill the error modal with 🔥 ([3ef2135](https://github.com/ionic-team/capacitor/commit/3ef2135))
 * feat(electron): deprecate injectCapacitor method ([#1671](https://github.com/ionic-team/capacitor/pull/1671))
 * feat(splashscreen): Add support for spinner on Android and iOS ([#1653](https://github.com/ionic-team/capacitor/pull/1653))
 * feat(Filesystem): Add move implementation ([#1624](https://github.com/ionic-team/capacitor/pull/1624))
@@ -52,7 +52,7 @@
 
 ### Docs
 
-* header box shadow on scroll ([fb118f7](https://github.com/ionic-team/stencil/commit/fb118f7))
+* header box shadow on scroll ([fb118f7](https://github.com/ionic-team/capacitor/commit/fb118f7))
 * Added missing parenthesis to README ([#1571](https://github.com/ionic-team/capacitor/pull/1571))
 * fix broken link ([#1565](https://github.com/ionic-team/capacitor/pull/1565))
 * Fix(docs): Avoid the special char replacement on code samples ([#1587](https://github.com/ionic-team/capacitor/pull/1587))
@@ -60,20 +60,20 @@
 * docs(storage): update example ([#1591](https://github.com/ionic-team/capacitor/pull/1591))
 * docs(modals): fix code highlighting ([#1592](https://github.com/ionic-team/capacitor/pull/1592))
 * Fix(docs): Remove note about pwa-elements import not working ([#1586](https://github.com/ionic-team/capacitor/pull/1586))
-* This is Capacitor!! - Meta title fix ([939c7af](https://github.com/ionic-team/stencil/commit/939c7af))
+* This is Capacitor!! - Meta title fix ([939c7af](https://github.com/ionic-team/capacitor/commit/939c7af))
 * Docs: added links to deploy to ios and android. ([#1593](https://github.com/ionic-team/capacitor/pull/1593))
 * Docs: Fixed API list issue ([#1602](https://github.com/ionic-team/capacitor/pull/1602))
 * Docs: Add more community guides to APIs and comm guides pages ([#1594](https://github.com/ionic-team/capacitor/pull/1594))
 * Unclosed code tag in markdown ([#1613](https://github.com/ionic-team/capacitor/pull/1613))
-* Docs(README): Remove beta note ([fefbdcc](https://github.com/ionic-team/stencil/commit/fefbdcc))
+* Docs(README): Remove beta note ([fefbdcc](https://github.com/ionic-team/capacitor/commit/fefbdcc))
 * [Docs] Added appId, appName and npmClient to Configuration ([#1614](https://github.com/ionic-team/capacitor/pull/1614)) 
-* fix(docs): use objectivec for syntax highlighting objc ([d467c9f](https://github.com/ionic-team/stencil/commit/d467c9f))
+* fix(docs): use objectivec for syntax highlighting objc ([d467c9f](https://github.com/ionic-team/capacitor/commit/d467c9f))
 * Docs: Remove iOS info from Android Plugin docs ([#1647](https://github.com/ionic-team/capacitor/pull/1647))
 * Docs: Update Forum link to point to Ionic Forum ([#1657](https://github.com/ionic-team/capacitor/pull/1657))
 * docs(electron): add updating markdown file ([#1668](https://github.com/ionic-team/capacitor/pull/1668))
 * docs: some improvements on updating guides ([#1675](https://github.com/ionic-team/capacitor/pull/1675))
-* fixing xml/html code example escaping ([f6e7152](https://github.com/ionic-team/stencil/commit/f6e7152))
-* adding objective C syntax highlighting support ([8c6b9f4](https://github.com/ionic-team/stencil/commit/8c6b9f4))
+* fixing xml/html code example escaping ([f6e7152](https://github.com/ionic-team/capacitor/commit/f6e7152))
+* adding objective C syntax highlighting support ([8c6b9f4](https://github.com/ionic-team/capacitor/commit/8c6b9f4))
 
 
 ### Chores
@@ -83,6 +83,6 @@
 * chore(cli): Autodetect Android Studio path on Windows ([#1633](https://github.com/ionic-team/capacitor/pull/1633)) 
 * chore(electron): improve template and dependency installation ([#1664](https://github.com/ionic-team/capacitor/pull/1664))
 * chore(electron): update electron template to not use injectCapacitor ([#1672](https://github.com/ionic-team/capacitor/pull/1672))
-* note about updating ios native deps taking forever first time ([f2090c3](https://github.com/ionic-team/stencil/commit/f2090c3))
+* note about updating ios native deps taking forever first time ([f2090c3](https://github.com/ionic-team/capacitor/commit/f2090c3))
 
 
