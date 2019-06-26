@@ -190,6 +190,20 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
         }
       }
     });
+    const podspecs = getPlatformElement(plugin, platform, 'podspec');
+    podspecs.map((podspec: any) => {
+      podspec.pods.map((pods: any) => {
+        pods.pod.map((pod: any) => {
+          let depString = `s.dependency '${pod.$.name}'`;
+          if (pod.$.spec && pod.$.spec !== '') {
+            depString += `, '${pod.$.spec}'`;
+          }
+          if (!frameworkDeps.includes(depString)) {
+            frameworkDeps.push(depString);
+          }
+        })
+      });
+    });
     const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
     sourceFiles.map((sourceFile: any) => {
       if (sourceFile.$.framework && sourceFile.$.framework === 'true') {
@@ -257,8 +271,9 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     const codeFiles = sourceFiles.concat(headerFiles);
     const frameworks = getPlatformElement(p, platform, 'framework');
     const podFrameworks = frameworks.filter((framework: any) => framework.$.type && framework.$.type === 'podspec');
+    const podspecs = getPlatformElement(p, platform, 'podspec');
     let sourcesFolderName = 'sources';
-    if (podFrameworks.length > 0) {
+    if (podFrameworks.length > 0 || podspecs.length > 0) {
       sourcesFolderName += 'static';
     }
     const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
@@ -300,7 +315,8 @@ function removePluginsNativeFiles(config: Config) {
 function filterNoPods(plugin: Plugin) {
   const frameworks = getPlatformElement(plugin, platform, 'framework');
   const podFrameworks = frameworks.filter((framework: any) => framework.$.type && framework.$.type === 'podspec');
-  return podFrameworks.length === 0;
+  const podspecs = getPlatformElement(plugin, platform, 'podspec');
+  return podFrameworks.length === 0 && podspecs.length === 0;
 }
 
 function filterResources(plugin: Plugin) {
