@@ -325,7 +325,7 @@ export async function getAppId(config: Config, id: string) {
 export function getNpmClient(config: Config, npmClient: string): Promise<string> {
   return new Promise(async (resolve) => {
     if (!npmClient) {
-      // const isYarnInstalled
+      if (await hasYarn(config)) return resolve('yarn')
       exec('yarn --version', async (err, stdout) => {
         // Don't show prompt if yarn is not installed
         if (err || !isInteractive()) {
