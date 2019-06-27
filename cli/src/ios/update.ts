@@ -13,27 +13,6 @@ export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject
 const platform = 'ios';
 
 export async function updateIOS(config: Config) {
-  /*
-  var chalk = require('chalk');
-  log(`\n${chalk.bold('iOS Note:')} you should periodically run "pod repo update" to make sure your ` +
-          `local Pod repo is up to date and can find new Pod releases.\n`);
-  */
-
-
-  /*
-  var answers = await inquirer.prompt([{
-    type: 'input',
-    name: 'updateRepo',
-    message: `Run "pod repo update" to make sure you have the latest Pods available before updating (takes a few minutes)?`,
-    default: 'n'
-  }]);
-
-  if (answers.updateRepo === 'y') {
-    await runTask(`Running pod repo update to update CocoaPods`, () => {
-      return runCommand(`pod repo update`);
-    });
-  }
-  */
 
   let plugins = await getPluginsTask(config);
 
@@ -287,10 +266,15 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const filePath = getFilePath(config, p, codeFile.$.src);
       const fileDest = join(pluginsPath, destFolder, p.name, fileName);
       copySync(filePath, fileDest);
+      let fileContent = readFileSync(fileDest, 'utf8');
       if (fileExt === "swift") {
-        let fileContent = readFileSync(fileDest, 'utf8');
         fileContent = 'import Cordova\n' + fileContent;
         writeFileSync(fileDest, fileContent, 'utf8');
+      } else {
+        if (fileContent.includes('@import Firebase;')){
+          fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
+          writeFileSync(fileDest, fileContent, 'utf8');
+        }
       }
     });
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
