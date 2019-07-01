@@ -307,14 +307,12 @@ enum BridgeError: Error {
   }
   
   func registerCordovaPlugins() {
-    let cordovaParser = CDVConfigParser.init();
-    let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
-    let configParser = XMLParser(contentsOf: configUrl!)!;
-    configParser.delegate = cordovaParser
-    configParser.parse()
-    cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
-    if cordovaParser.startupPluginNames.count > 0 {
-      for pluginName in cordovaParser.startupPluginNames {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+        return
+    }
+    cordovaPluginManager = CDVPluginManager.init(parser: bridgeVC.cordovaParser, viewController: self.viewController, webView: self.getWebView())
+    if bridgeVC.cordovaParser.startupPluginNames.count > 0 {
+      for pluginName in bridgeVC.cordovaParser.startupPluginNames {
         _ = cordovaPluginManager?.getCommandInstance(pluginName as? String)
       }
     }

@@ -5,6 +5,7 @@
 
 import UIKit
 import WebKit
+import Cordova
 
 public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
@@ -17,7 +18,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public var bridgedViewController: UIViewController? {
     return self
   }
-  
+  public let cordovaParser = CDVConfigParser.init();
   private var hostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
@@ -34,6 +35,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var handler: CAPAssetHandler?
   
   override public func loadView() {
+    let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
+    let configParser = XMLParser(contentsOf: configUrl!)!;
+    configParser.delegate = cordovaParser
+    configParser.parse()
     guard let startPath = self.getStartPath() else {
       return
     }
@@ -84,16 +89,24 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       return nil
     }
 
-    let defaults = UserDefaults.standard
-    let persistedPath = defaults.string(forKey: "serverBasePath")
-    if (persistedPath != nil && !persistedPath!.isEmpty) {
-      let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
-      let cordovaDataDirectory = (libPath as NSString).appendingPathComponent("NoCloud")
-      let snapshots = (cordovaDataDirectory as NSString).appendingPathComponent("ionic_built_snapshots")
-      startPath = (snapshots as NSString).appendingPathComponent((persistedPath! as NSString).lastPathComponent)
+    if !isDeployDisabled() {
+      let defaults = UserDefaults.standard
+      let persistedPath = defaults.string(forKey: "serverBasePath")
+      if (persistedPath != nil && !persistedPath!.isEmpty) {
+        let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
+        let cordovaDataDirectory = (libPath as NSString).appendingPathComponent("NoCloud")
+        let snapshots = (cordovaDataDirectory as NSString).appendingPathComponent("ionic_built_snapshots")
+        startPath = (snapshots as NSString).appendingPathComponent((persistedPath! as NSString).lastPathComponent)
+      }
     }
+
     self.basePath = startPath
     return startPath
+  }
+
+  func isDeployDisabled() -> Bool {
+    let val = cordovaParser.settings.object(forKey: "DisableDeploy".lowercased()) as? NSString
+    return val?.boolValue ?? false
   }
 
   override public func viewDidLoad() {
