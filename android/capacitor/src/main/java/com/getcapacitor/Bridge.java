@@ -45,6 +45,7 @@ import com.getcapacitor.ui.Toast;
 import com.getcapacitor.util.HostMask;
 
 import org.apache.cordova.CordovaInterfaceImpl;
+import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,6 +103,7 @@ public class Bridge {
   // A reference to the main WebView for the app
   private final WebView webView;
   public final CordovaInterfaceImpl cordovaInterface;
+  private CordovaPreferences preferences;
 
   // Our MessageHandler for sending and receiving data to the WebView
   private final MessageHandler msgHandler;
@@ -134,11 +136,12 @@ public class Bridge {
    * @param context
    * @param webView
    */
-  public Bridge(Activity context, WebView webView, List<Class<? extends Plugin>> initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager) {
+  public Bridge(Activity context, WebView webView, List<Class<? extends Plugin>> initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager, CordovaPreferences preferences) {
     this.context = context;
     this.webView = webView;
     this.initialPlugins = initialPlugins;
     this.cordovaInterface = cordovaInterface;
+    this.preferences = preferences;
 
     // Start our plugin execution threads and handlers
     handlerThread.start();
@@ -230,13 +233,19 @@ public class Bridge {
       }
     });
 
-    SharedPreferences prefs = getContext().getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
-    String path = prefs.getString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, null);
-    if (path != null && !path.isEmpty() && new File(path).exists()) {
-      setServerBasePath(path);
+    if (!isDeployDisabled()) {
+      SharedPreferences prefs = getContext().getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+      String path = prefs.getString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, null);
+      if (path != null && !path.isEmpty() && new File(path).exists()) {
+        setServerBasePath(path);
+      }
     }
     // Get to work
     webView.loadUrl(appUrl);
+  }
+
+  public boolean isDeployDisabled() {
+    return preferences.getBoolean("DisableDeploy", false);
   }
 
 
