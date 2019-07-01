@@ -18,6 +18,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginHandle;
 import com.getcapacitor.PluginMethod;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -43,6 +44,7 @@ public class PushNotifications extends Plugin {
 
 
   private static final String EVENT_TOKEN_CHANGE = "registration";
+  private static final String EVENT_TOKEN_ERROR = "registrationError";
 
   public void load() {
     notificationManager = (NotificationManager)getActivity()
@@ -85,6 +87,11 @@ public class PushNotifications extends Plugin {
       @Override
       public void onSuccess(InstanceIdResult instanceIdResult) {
         sendToken(instanceIdResult.getToken());
+      }
+    });
+    FirebaseInstanceId.getInstance().getInstanceId().addOnFailureListener(new OnFailureListener() {
+      public void onFailure(Exception e) {
+        sendError(e.getLocalizedMessage());
       }
     });
     call.success();
@@ -170,6 +177,12 @@ public class PushNotifications extends Plugin {
     JSObject data = new JSObject();
     data.put("value", token);
     notifyListeners(EVENT_TOKEN_CHANGE, data, true);
+  }
+
+  public void sendError(String error) {
+    JSObject data = new JSObject();
+    data.put("error", error);
+    notifyListeners(EVENT_TOKEN_ERROR, data, true);
   }
 
   public static void onNewToken(String newToken) {
