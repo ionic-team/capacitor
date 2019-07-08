@@ -13,24 +13,24 @@ class GeolocationPlugin:NSObject, CLLocationManagerDelegate {
 
   func getLocation(callback: @escaping (Double, Double) -> Void) {
     print("Getting location")
-    
+
     // For use in foreground
     self.locationManager.requestWhenInUseAuthorization()
     self.locationManager.delegate = self
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-    
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+
     self.locationManager.requestLocation()
     self.cb = callback
   }
-  
+
   func locationManager(_ manager: CLLocationManager, didFailWithError error: NSError) {
     print("Error while updating location " + error.localizedDescription)
   }
-  
+
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     let locValue:CLLocationCoordinate2D = manager.location!.coordinate
     //print("locations = \(locValue.latitude) \(locValue.longitude)")
-    
+
     if( self.cb != nil) {
       self.cb!(locValue.latitude, locValue.longitude)
     }
