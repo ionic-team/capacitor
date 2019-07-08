@@ -1,7 +1,10 @@
 package com.getcapacitor;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.util.Log;
+import android.content.pm.ApplicationInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,6 +13,8 @@ import org.json.JSONArray;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Management interface for accessing values in capacitor.config.json
@@ -17,6 +22,7 @@ import java.io.InputStreamReader;
 public class Config {
 
   private JSONObject config = new JSONObject();
+  private Context applicationContext = null;
 
   private static Config instance;
 
@@ -33,6 +39,8 @@ public class Config {
   }
 
   private void loadConfig(Activity activity) {
+    this.applicationContext = activity.getApplicationContext();
+
     BufferedReader reader = null;
     try {
       reader = new BufferedReader(new InputStreamReader(activity.getAssets().open("capacitor.config.json")));
@@ -90,11 +98,27 @@ public class Config {
     String k = getConfigKey(key);
     try {
       JSONObject o = getInstance().getConfigObjectDeepest(key);
+      ApplicationInfo appInfo = getInstance().applicationContext.getPackageManager().getApplicationInfo(getInstance().applicationContext.getPackageName(), PackageManager.GET_META_DATA);
 
       String value = o.getString(k);
+
       if (value == null) {
         return defaultValue;
       }
+
+      Pattern pattern = Pattern.compile("(?<=[^\\\\]|^)((?:\\\\\\\\)*)\\$\\((.+?)(?<=[^\\\\])(\\\\\\\\)*\\)");
+      Matcher matcher = pattern.matcher(value);
+      StringBuffer sb = new StringBuffer(value.length());
+      while (matcher.find()) {
+        String text = matcher.group(2);
+
+        String newValue = appInfo.metaData.get(text).toString();
+
+        matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(1) + newValue));
+      }
+      matcher.appendTail(sb);
+      value = sb.toString();
+
       return value;
     } catch (Exception ex) {}
     return defaultValue;
