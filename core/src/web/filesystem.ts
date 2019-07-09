@@ -26,7 +26,6 @@ import {
 } from '../core-plugin-definitions';
 
 export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
-  DEFAULT_DIRECTORY = FilesystemDirectory.Data;
   DB_VERSION = 1;
   DB_NAME = 'Disc';
 
@@ -108,9 +107,10 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   }
 
   private getPath(directory: FilesystemDirectory | undefined, uriPath: string | undefined): string {
-    directory = directory || this.DEFAULT_DIRECTORY;
     let cleanedUriPath = uriPath !== undefined ? uriPath.replace(/^[/]+|[/]+$/g, '') : '';
-    return '/' + directory + '/' + cleanedUriPath;
+    return directory
+      ? '/' + directory + '/' + cleanedUriPath
+      : '/' + cleanedUriPath;
   }
 
   async clear(): Promise<{}> {
