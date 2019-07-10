@@ -1,3 +1,4 @@
+import Foundation
 
 @objc public class CAPConfig : NSObject {
   private static var instance: CAPConfig?
@@ -81,10 +82,55 @@
   }
   
   @objc public func getString(_ key: String) -> String? {
-    let value = getValue(key)
-    if value == nil {
-      return nil
+    guard let value = getValue(key) as! String? else {
+        return nil
     }
-    return value as? String
+    
+    let _pattern = "(?<=[^\\\\]|^)((?:\\\\\\\\)*)\\$\\((.+?)(?<=[^\\\\])(\\\\\\\\)*\\)"
+    
+    let regex = try! NSRegularExpression(pattern: _pattern, options: NSRegularExpression.Options.caseInsensitive)
+    
+    let range = NSRange(value.startIndex..<value.endIndex, in: value)
+    
+    var newString = value + ""
+    
+    regex.enumerateMatches(in: value, options: [], range: range) { (match, flags, stop) in
+        guard let match = match else {
+            return
+        }
+        
+        guard let entireCaptureRange = Range(match.range(at: 0), in: description) else {
+            return
+        }
+        
+        guard let firstCaptureRange = Range(match.range(at: 1), in: description) else {
+            return
+        }
+        
+        guard let secondCaptureRange = Range(match.range(at: 2), in: description) else {
+            return
+        }
+        
+        var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml //Format of the Property List.
+        var plistData: [String: AnyObject] = [:] //Our data
+        let plistPath: String? = Bundle.main.path(forResource: "Info", ofType: "plist")! //the path of the data
+        let plistXML = FileManager.default.contents(atPath: plistPath!)!
+        do {//convert the data to a dictionary and handle errors.
+            plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String:AnyObject]
+        } catch {
+            print("Error reading plist: \(error), format: \(propertyListFormat)")
+        }
+        
+        let key = String(value[secondCaptureRange])
+        
+        guard let newValue = plistData[key] else {
+            CAPLog.print("Warning substitution not defined")
+            return
+        }
+        
+        newString = newString.replacingOccurrences(of: value[entireCaptureRange], with: "\(value[firstCaptureRange])\(newValue)")
+    }
+    
+    return newString
   }
 }
