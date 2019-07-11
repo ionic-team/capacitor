@@ -95,33 +95,45 @@ public class Config {
   }
 
   public static String getString(String key, String defaultValue) {
+    Config config = getInstance();
+
     String k = getConfigKey(key);
     try {
-      JSONObject o = getInstance().getConfigObjectDeepest(key);
-      ApplicationInfo appInfo = getInstance().applicationContext.getPackageManager().getApplicationInfo(getInstance().applicationContext.getPackageName(), PackageManager.GET_META_DATA);
-
-      String value = o.getString(k);
+      JSONObject o = config.getConfigObjectDeepest(key);
+      String value = config.substituteTemplateValue(o.getString(k));
 
       if (value == null) {
-        return defaultValue;
+          return defaultValue;
       }
-
-      Pattern pattern = Pattern.compile("(?<=[^\\\\]|^)((?:\\\\\\\\)*)\\$\\((.+?)(?<=[^\\\\])(\\\\\\\\)*\\)");
-      Matcher matcher = pattern.matcher(value);
-      StringBuffer sb = new StringBuffer(value.length());
-      while (matcher.find()) {
-        String text = matcher.group(2);
-
-        String newValue = appInfo.metaData.get(text).toString();
-
-        matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(1) + newValue));
-      }
-      matcher.appendTail(sb);
-      value = sb.toString();
 
       return value;
     } catch (Exception ex) {}
     return defaultValue;
+  }
+
+  private String substituteTemplateValue(String string) {
+    ApplicationInfo appInfo = getInstance().applicationContext.getPackageManager().getApplicationInfo(getInstance().applicationContext.getPackageName(), PackageManager.GET_META_DATA);
+
+    String value = string;
+
+    if (value == null) {
+      return null;
+    }
+
+    Pattern pattern = Pattern.compile("(?<=[^\\\\]|^)((?:\\\\\\\\)*)\\$\\((.+?)(?<=[^\\\\])(\\\\\\\\)*\\)");
+    Matcher matcher = pattern.matcher(value);
+    StringBuffer sb = new StringBuffer(value.length());
+    while (matcher.find()) {
+      String text = matcher.group(2);
+
+      String newValue = appInfo.metaData.get(text).toString();
+
+      matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(1) + newValue));
+    }
+    matcher.appendTail(sb);
+    value = sb.toString();
+
+    return value;
   }
 
   public static boolean getBoolean(String key, boolean defaultValue) {
@@ -158,9 +170,11 @@ public class Config {
   }
 
   public static String[] getArray(String key, String[] defaultValue) {
+    Config config = getInstance();
+
     String k = getConfigKey(key);
     try {
-      JSONObject o = getInstance().getConfigObjectDeepest(key);
+      JSONObject o = config.getConfigObjectDeepest(key);
 
       JSONArray a = o.getJSONArray(k);
       if (a == null) {
@@ -171,7 +185,7 @@ public class Config {
       String[] value = new String[l];
 
       for(int i=0; i<l; i++) {
-        value[i] = (String) a.get(i);
+        value[i] = config.substituteTemplateValue((String) a.get(i));
       }
 
       return value;

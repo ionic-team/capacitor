@@ -78,59 +78,69 @@ import Foundation
   @objc public func getValue(_ key: String) -> Any? {
     let k = getConfigKey(key)
     let o = getConfigObjectDeepest(key: key)
+    
+    if let stringArray = o?[k] as? [String] {
+      return stringArray.map({ substituteTemplateValue(string: $0) })
+    }
+    
     return o?[k] ?? nil
   }
-  
-  @objc public func getString(_ key: String) -> String? {
-    guard let value = getValue(key) as! String? else {
-        return nil
-    }
+    
+  public func substituteTemplateValue(string: String) -> String? {
     
     let _pattern = "(?<=[^\\\\]|^)((?:\\\\\\\\)*)\\$\\((.+?)(?<=[^\\\\])(\\\\\\\\)*\\)"
     
     let regex = try! NSRegularExpression(pattern: _pattern, options: NSRegularExpression.Options.caseInsensitive)
     
-    let range = NSRange(value.startIndex..<value.endIndex, in: value)
+    let range = NSRange(string.startIndex..<string.endIndex, in: string)
     
-    var newString = value + ""
+    var newString = string + ""
     
-    regex.enumerateMatches(in: value, options: [], range: range) { (match, flags, stop) in
-        guard let match = match else {
-            return
-        }
+    regex.enumerateMatches(in: string, options: [], range: range) { (match, flags, stop) in
+      guard let match = match else {
+        return
+      }
         
-        guard let entireCaptureRange = Range(match.range(at: 0), in: description) else {
-            return
-        }
+      guard let entireCaptureRange = Range(match.range(at: 0), in: description) else {
+        return
+      }
         
-        guard let firstCaptureRange = Range(match.range(at: 1), in: description) else {
-            return
-        }
+      guard let firstCaptureRange = Range(match.range(at: 1), in: description) else {
+        return
+      }
         
-        guard let secondCaptureRange = Range(match.range(at: 2), in: description) else {
-            return
-        }
+      guard let secondCaptureRange = Range(match.range(at: 2), in: description) else {
+        return
+      }
         
-        var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml //Format of the Property List.
-        var plistData: [String: AnyObject] = [:] //Our data
-        let plistPath: String? = Bundle.main.path(forResource: "Info", ofType: "plist")! //the path of the data
-        let plistXML = FileManager.default.contents(atPath: plistPath!)!
-        do {//convert the data to a dictionary and handle errors.
-            plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String:AnyObject]
-        } catch {
-            print("Error reading plist: \(error), format: \(propertyListFormat)")
-        }
+      var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml //Format of the Property List.
+      var plistData: [String: AnyObject] = [:] //Our data
+      let plistPath: String? = Bundle.main.path(forResource: "Info", ofType: "plist")! //the path of the data
+      let plistXML = FileManager.default.contents(atPath: plistPath!)!
+      do {//convert the data to a dictionary and handle errors.
+        plistData = try PropertyListSerialization.propertyList(from: plistXML, options: .mutableContainersAndLeaves, format: &propertyListFormat) as! [String:AnyObject]
+      } catch {
+        print("Error reading plist: \(error), format: \(propertyListFormat)")
+      }
         
-        let key = String(value[secondCaptureRange])
+      let key = String(string[secondCaptureRange])
         
-        guard let newValue = plistData[key] else {
-            CAPLog.print("Warning substitution not defined")
-            return
-        }
+      guard let newValue = plistData[key] else {
+        CAPLog.print("Warning substitution not defined")
+        return
+      }
         
-        newString = newString.replacingOccurrences(of: value[entireCaptureRange], with: "\(value[firstCaptureRange])\(newValue)")
+      newString = newString.replacingOccurrences(of: string[entireCaptureRange], with: "\(string[firstCaptureRange])\(newValue)")
     }
     
     return newString
+  }
+  
+  @objc public func getString(_ key: String) -> String? {
+    guard let value = getValue(key) as! String? else {
+      return nil
+    }
+    
+    return substituteTemplateValue(string: value)
   }
 }
