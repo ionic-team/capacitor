@@ -336,7 +336,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
     ])
     
   }
-  
+
   /**
    * Rename a file or directory.
    */

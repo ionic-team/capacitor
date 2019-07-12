@@ -1,4 +1,4 @@
-import {Plugin, PluginListenerHandle} from './definitions';
+import { Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
   Accessibility: AccessibilityPlugin;
