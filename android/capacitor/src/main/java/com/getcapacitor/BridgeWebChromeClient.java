@@ -16,6 +16,7 @@ import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.view.View;
 
 import com.getcapacitor.plugin.camera.CameraUtils;
 
