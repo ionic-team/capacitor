@@ -70,10 +70,11 @@ public class Config {
   }
 
   public static JSONObject getObject(String key) {
+    String k = getConfigKey(key);
     try {
-      return getInstance().config.getJSONObject(key);
-    } catch (Exception ex) {
-    }
+      JSONObject o = getInstance().getConfigObjectDeepest(key);
+      return o.getJSONObject(k);
+    } catch (Exception ex) {}
     return null;
   }
 
@@ -100,7 +101,7 @@ public class Config {
     String k = getConfigKey(key);
     try {
       JSONObject o = config.getConfigObjectDeepest(key);
-      String value = config.substituteTemplateValue(o.getString(k));
+      String value = substituteTemplateValue(o.getString(k));
 
       if (value == null) {
           return defaultValue;
@@ -111,8 +112,13 @@ public class Config {
     return defaultValue;
   }
 
-  private String substituteTemplateValue(String string) {
-    ApplicationInfo appInfo = getInstance().applicationContext.getPackageManager().getApplicationInfo(getInstance().applicationContext.getPackageName(), PackageManager.GET_META_DATA);
+  public static String substituteTemplateValue(String string) {
+    ApplicationInfo appInfo = null;
+    try {
+      appInfo = getInstance().applicationContext.getPackageManager().getApplicationInfo(getInstance().applicationContext.getPackageName(), PackageManager.GET_META_DATA);
+    } catch (PackageManager.NameNotFoundException ex) {
+      return null;
+    }
 
     String value = string;
 
@@ -126,7 +132,12 @@ public class Config {
     while (matcher.find()) {
       String text = matcher.group(2);
 
-      String newValue = appInfo.metaData.get(text).toString();
+      Object metaValue = appInfo.metaData.get(text);
+
+      String newValue = text;
+      if (metaValue != null) {
+        newValue = metaValue.toString();
+      }
 
       matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(1) + newValue));
     }
@@ -185,7 +196,7 @@ public class Config {
       String[] value = new String[l];
 
       for(int i=0; i<l; i++) {
-        value[i] = config.substituteTemplateValue((String) a.get(i));
+        value[i] = substituteTemplateValue((String) a.get(i));
       }
 
       return value;

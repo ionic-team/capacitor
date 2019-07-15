@@ -140,16 +140,34 @@ public class Plugin {
   }
 
   public Object getConfigValue(String key) {
+    String configKey = "plugins." + getPluginHandle().getId();
+
     try {
-      JSONObject plugins = Config.getObject("plugins");
-      if (plugins == null) {
-        return null;
+      JSONObject JSONObject = Config.getObject(configKey);
+      Object object = JSONObject.get(key);
+
+      if (object != null) {
+        if (object instanceof String) {
+          return Config.substituteTemplateValue((String) object);
+        }
+
+        if (object instanceof String[]) {
+          String[] stringArray = (String[]) object;
+
+          int l = stringArray.length;
+          String[] value = new String[l];
+
+          for(int i=0; i<l; i++) {
+            value[i] = Config.substituteTemplateValue(stringArray[i]);
+          }
+
+          return value;
+        }
+
+        return object;
       }
-      JSONObject pluginConfig = plugins.getJSONObject(getPluginHandle().getId());
-      return pluginConfig.get(key);
-    } catch (JSONException ex) {
-      return null;
-    }
+    } catch (JSONException eq) {}
+    return null;
   }
 
   /**

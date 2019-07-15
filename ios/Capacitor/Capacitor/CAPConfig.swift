@@ -72,6 +72,14 @@ import Foundation
       return nil
     }
     
+    if let string = pluginOptions[configKey] as? String {
+      return substituteTemplateValue(string: string)
+    }
+    
+    if let stringArray = pluginOptions[configKey] as? [String] {
+      return stringArray.map({ substituteTemplateValue(string: $0) })
+    }
+    
     return pluginOptions[configKey]
   }
   
