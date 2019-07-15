@@ -41,6 +41,12 @@ public class BridgeWebChromeClient extends WebChromeClient {
   public BridgeWebChromeClient(Bridge bridge) {
     this.bridge = bridge;
   }
+  
+  @Override
+  public void onShowCustomView(View view, CustomViewCallback callback) {
+    callback.onCustomViewHidden();
+    super.onShowCustomView(view, callback);
+  }
 
   @Override
   public void onPermissionRequest(final PermissionRequest request) {
