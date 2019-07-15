@@ -42,5 +42,6 @@ public class Share extends Plugin {
     chooser.addCategory(Intent.CATEGORY_DEFAULT);
 
     getActivity().startActivity(chooser);
+    call.success();
   }
 }
