@@ -151,6 +151,13 @@
     return url;
   }
 
+  /*
+   * Check running platform
+   */
+  capacitor.getPlatform = function getPlatform() {
+    return this.platform;
+  }
+
   /**
    * Send a plugin method call to the native layer
    */
