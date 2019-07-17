@@ -11,6 +11,7 @@ export interface PackageJson {
   name: string;
   version: string;
   dependencies: any;
+  devDependencies: any;
 }
 
 export interface ExternalConfig {
