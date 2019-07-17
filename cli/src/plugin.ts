@@ -81,11 +81,9 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
 }
 
 export function getDependencies(config: Config): string[] {
-  const dependencies = config.app.package.dependencies;
-  if (!dependencies) {
-    return [];
-  }
-  return Object.keys(dependencies);
+  const dependencies = config.app.package.dependencies ? config.app.package.dependencies : [];
+  const devDependencies = config.app.package.devDependencies ? config.app.package.devDependencies : [];
+  return Object.keys(dependencies).concat(Object.keys(devDependencies));
 }
 
 export function fixName(name: string): string {
