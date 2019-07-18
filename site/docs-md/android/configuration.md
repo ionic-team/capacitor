@@ -37,6 +37,12 @@ You probably also want to set the Activity name to match the App, for apps that 
 <string name="title_activity_main">MyApp</string>
 ```
 
+## Deeplinks (aka Android App Links)
+
+To enable deeplinking through Android App Links, follow the official Android guide on [Adding Android App Links](https://developer.android.com/studio/write/app-link-indexing). Android Studio comes with a handy wizard for configuring App Links.
+
+Once configured, the [getLaunchUrl in the App API](../../apis/app#method-getLaunchUrl-0) will provide any URL the app was launched with, and the [appUrlOpen event](../../apis/app#method-addListener-1) will fire any time the app receives a new App Link deeplink.
+
 ## Changing Custom URL
 
 Your app can respond to custom URLs on launch, making it possible to handle deeplinks and app interactions.
@@ -48,6 +54,8 @@ To change the URL, search for and modify this line in `strings.xml`. It's recomm
 ```
 
 In this example, the app will respond to URLs with the `com.getcapacitor.myapp://` scheme.
+
+To get any custom URL the app may have launched with, see the Deeplinks section above this one.
 
 ## Setting Permissions
 
