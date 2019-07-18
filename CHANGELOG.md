@@ -1,3 +1,38 @@
+## [1.1.1](https://github.com/ionic-team/capacitor/compare/1.1.0...1.1.1) (2019-07-18)
+
+
+### Bug Fixes
+
+* fix(cli): npmignore local.properties from android-template ([#1700](https://github.com/ionic-team/capacitor/pull/1700))
+* fix(cordova): handle new plugins podspec tag ([#1712](https://github.com/ionic-team/capacitor/pull/1712))
+* fix(cordova): replace Firebase import objective-c files ([#1716](https://github.com/ionic-team/capacitor/pull/1716))
+* fix(cli/init): check if project already uses yarn before prompting ([#1708](https://github.com/ionic-team/capacitor/pull/1708))
+* fix(web): support for App 'appStateChange' event ([#1715](https://github.com/ionic-team/capacitor/pull/1715))
+* fix(cordova): Read DisableDeploy preference before setting start path ([#1724](https://github.com/ionic-team/capacitor/pull/1724))
+* fix(push): registrationError not working on Android ([#1725](https://github.com/ionic-team/capacitor/pull/1725))
+* fix(android): resolve share call ([#1764](https://github.com/ionic-team/capacitor/pull/1764))
+* fix(android/ios): expose getPlatform method in Capacitor object ([#1766](https://github.com/ionic-team/capacitor/pull/1766))
+* fix(cli): check for plugins in devDependencies ([#1769](https://github.com/ionic-team/capacitor/pull/1769))
+* fix(android): enable full screen video ([#1763](https://github.com/ionic-team/capacitor/pull/1763))
+* fix(android): splash spinner bar not properly handled in view ([#1734](https://github.com/ionic-team/capacitor/pull/1734))
+* fix(ios): read enableHighAccuracy geolocation option ([#1773](https://github.com/ionic-team/capacitor/pull/1773))
+* fix(android): better proxy mimeType detection for Capacitor injection ([#1774](https://github.com/ionic-team/capacitor/pull/1774))
+
+
+### Docs
+
+* docs(keyboard): move import before usage in sample code ([#1702](https://github.com/ionic-team/capacitor/pull/1702))
+* docs: Add new community tutorials ([#1641](https://github.com/ionic-team/capacitor/pull/1641))
+* docs: Fix install link on web section ([#1721](https://github.com/ionic-team/capacitor/pull/1721))
+* docs: add cap-bluetooth-low-energy-client  ([#1768](https://github.com/ionic-team/capacitor/pull/1768))
+
+
+### Chores
+
+* chore(cli): Create 'convertToUnixPath' in fs-utils function ([#1699](https://github.com/ionic-team/capacitor/pull/1699))
+
+
+
 ## [1.1.0](https://github.com/ionic-team/capacitor/compare/1.0.0...1.1.0) (2019-06-21)
 
 
@@ -84,5 +119,3 @@
 * chore(electron): improve template and dependency installation ([#1664](https://github.com/ionic-team/capacitor/pull/1664))
 * chore(electron): update electron template to not use injectCapacitor ([#1672](https://github.com/ionic-team/capacitor/pull/1672))
 * note about updating ios native deps taking forever first time ([f2090c3](https://github.com/ionic-team/capacitor/commit/f2090c3))
-
-
