@@ -102,6 +102,13 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Downloader | `capacitor-downloader` | <https://github.com/triniwiz/capacitor-downloader> | |
 | Zip | `capacitor-zip` | <https://github.com/triniwiz/capacitor-zip> | |
 
+## Bluetooth
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Bluetooth Low Energy Client | `cap-bluetooth-low-energy-client` | <https://github.com/robmarti/cap-bluetooth-low-energy-client> | Web, Android|
+
+
 ## Date/Calendar
 
 | Name                    | NPM package | GitHub | Notes |
