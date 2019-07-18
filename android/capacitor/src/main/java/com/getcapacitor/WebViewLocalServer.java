@@ -302,16 +302,13 @@ public class WebViewLocalServer {
         conn.setReadTimeout(30 * 1000);
         conn.setConnectTimeout(30 * 1000);
 
-        InputStream responseStream = conn.getInputStream();
-        String mimeType = getMimeType(path, responseStream);
-
-        if (mimeType.equals("text/html")) {
+        if (conn.getContentType().contains("text/html")) {
+          InputStream responseStream = conn.getInputStream();
           responseStream = jsInjector.getInjectedStream(responseStream);
           bridge.reset();
+          return new WebResourceResponse("text/html", handler.getEncoding(),
+                  handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
-
-        return new WebResourceResponse(mimeType, handler.getEncoding(),
-                handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
 
       } catch (SocketTimeoutException ex) {
         bridge.handleAppUrlLoadError(ex);
