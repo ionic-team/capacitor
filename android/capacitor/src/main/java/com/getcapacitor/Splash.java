@@ -264,7 +264,6 @@ public class Splash {
                     .alpha(1f)
                     .setInterpolator(new LinearInterpolator())
                     .setDuration(fadeInDuration)
-                    //.setListener(listener)
                     .start();
 
             spinnerBar.setVisibility(View.VISIBLE);
@@ -323,7 +322,6 @@ public class Splash {
                   .alpha(0)
                   .setInterpolator(new LinearInterpolator())
                   .setDuration(fadeOutDuration)
-                  //.setListener(listener)
                   .start();
         }
 
