@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -40,41 +41,98 @@ public class Splash {
   private static boolean isHiding = false;
 
   private static void buildViews(Context c) {
+    if (splashImage == null) {
+      String splashResourceName = Config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
 
-    String splashResourceName = Config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
+      int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
+      Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
 
-    int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
-    Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
-
-    if (splash instanceof Animatable) {
-      ((Animatable) splash).start();
-    }
-
-    splashImage = new ImageView(c);
-
-    // Stops flickers dead in their tracks
-    // https://stackoverflow.com/a/21847579/32140
-    splashImage.setDrawingCacheEnabled(true);
-
-    String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
-    try {
-      if (backgroundColor != null) {
-        splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+      if (splash instanceof Animatable) {
+        ((Animatable) splash).start();
       }
-    } catch (IllegalArgumentException ex) {
-      Log.d(LogUtils.getCoreTag(), "Background color not applied");
+
+      splashImage = new ImageView(c);
+
+      // Stops flickers dead in their tracks
+      // https://stackoverflow.com/a/21847579/32140
+      splashImage.setDrawingCacheEnabled(true);
+
+      String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
+      try {
+        if (backgroundColor != null) {
+          splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+        }
+      } catch (IllegalArgumentException ex) {
+        Log.d(LogUtils.getCoreTag(), "Background color not applied");
+      }
+
+      String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
+      ImageView.ScaleType scaleType = null;
+      try {
+        scaleType = ImageView.ScaleType.valueOf(scaleTypeName);
+      } catch (IllegalArgumentException ex) {
+        scaleType = ImageView.ScaleType.FIT_XY;
+      }
+
+      splashImage.setScaleType(scaleType);
+      splashImage.setImageDrawable(splash);
     }
 
-    String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
-    ImageView.ScaleType scaleType = null;
-    try {
-      scaleType = ImageView.ScaleType.valueOf(scaleTypeName);
-    } catch (IllegalArgumentException ex) {
-      scaleType = ImageView.ScaleType.FIT_XY;
-    }
+    if (spinnerBar == null) {
+      String spinnerStyle = Config.getString(CONFIG_KEY_PREFIX + "androidSpinnerStyle");
+      if (spinnerStyle != null) {
+        int spinnerBarStyle = android.R.attr.progressBarStyleLarge;
 
-    splashImage.setScaleType(scaleType);
-    splashImage.setImageDrawable(splash);
+        switch (spinnerStyle.toLowerCase()) {
+          case "horizontal":
+            spinnerBarStyle = android.R.attr.progressBarStyleHorizontal;
+            break;
+          case "small":
+            spinnerBarStyle = android.R.attr.progressBarStyleSmall;
+            break;
+          case "large":
+            spinnerBarStyle = android.R.attr.progressBarStyleLarge;
+            break;
+          case "inverse":
+            spinnerBarStyle = android.R.attr.progressBarStyleInverse;
+            break;
+          case "smallinverse":
+            spinnerBarStyle = android.R.attr.progressBarStyleSmallInverse;
+            break;
+          case "largeinverse":
+            spinnerBarStyle = android.R.attr.progressBarStyleLargeInverse;
+            break;
+        }
+
+        spinnerBar = new ProgressBar(c, null, spinnerBarStyle);
+      } else {
+        spinnerBar = new ProgressBar(c);
+      }
+      spinnerBar.setIndeterminate(true);
+
+      String spinnerColor = Config.getString(CONFIG_KEY_PREFIX + "spinnerColor");
+      try {
+        if (spinnerColor != null) {
+          int[][] states = new int[][]{
+                  new int[]{android.R.attr.state_enabled}, // enabled
+                  new int[]{-android.R.attr.state_enabled}, // disabled
+                  new int[]{-android.R.attr.state_checked}, // unchecked
+                  new int[]{android.R.attr.state_pressed}  // pressed
+          };
+          int spinnerBarColor = Color.parseColor(spinnerColor);
+          int[] colors = new int[]{
+                  spinnerBarColor,
+                  spinnerBarColor,
+                  spinnerBarColor,
+                  spinnerBarColor
+          };
+          ColorStateList colorStateList = new ColorStateList(states, colors);
+          spinnerBar.setIndeterminateTintList(colorStateList);
+        }
+      } catch (IllegalArgumentException ex) {
+        Log.d(LogUtils.getCoreTag(), "Spinner color not applied");
+      }
+    }
   }
 
   /**
@@ -129,9 +187,7 @@ public class Splash {
       return;
     }
 
-    if (splashImage == null) {
-      buildViews(a);
-    }
+    buildViews(a);
 
     if (isVisible) {
       return;
@@ -187,63 +243,13 @@ public class Splash {
                 .setListener(listener)
                 .start();
 
-        Boolean showSpinner = Config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
+        if (spinnerBar != null) {
+          Boolean showSpinner = Config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
 
-        if (showSpinner) {
-          if (spinnerBar == null) {
-            String spinnerStyle = Config.getString(CONFIG_KEY_PREFIX + "androidSpinnerStyle");
-            if (spinnerStyle != null) {
-              int spinnerBarStyle = android.R.attr.progressBarStyleLarge;
+          spinnerBar.setVisibility(View.INVISIBLE);
 
-              switch (spinnerStyle.toLowerCase()) {
-                case "horizontal":
-                  spinnerBarStyle = android.R.attr.progressBarStyleHorizontal;
-                  break;
-                case "small":
-                  spinnerBarStyle = android.R.attr.progressBarStyleSmall;
-                  break;
-                case "large":
-                  spinnerBarStyle = android.R.attr.progressBarStyleLarge;
-                  break;
-                case "inverse":
-                  spinnerBarStyle = android.R.attr.progressBarStyleInverse;
-                  break;
-                case "smallinverse":
-                  spinnerBarStyle = android.R.attr.progressBarStyleSmallInverse;
-                  break;
-                case "largeinverse":
-                  spinnerBarStyle = android.R.attr.progressBarStyleLargeInverse;
-                  break;
-              }
-
-              spinnerBar = new ProgressBar(a, null, spinnerBarStyle);
-            } else {
-              spinnerBar = new ProgressBar(a);
-            }
-            spinnerBar.setIndeterminate(true);
-
-            String spinnerColor = Config.getString(CONFIG_KEY_PREFIX + "spinnerColor");
-            try {
-              if (spinnerColor != null) {
-                int[][] states = new int[][] {
-                        new int[] { android.R.attr.state_enabled}, // enabled
-                        new int[] {-android.R.attr.state_enabled}, // disabled
-                        new int[] {-android.R.attr.state_checked}, // unchecked
-                        new int[] { android.R.attr.state_pressed}  // pressed
-                };
-                int spinnerBarColor = Color.parseColor(spinnerColor);
-                int[] colors = new int[] {
-                        spinnerBarColor,
-                        spinnerBarColor,
-                        spinnerBarColor,
-                        spinnerBarColor
-                };
-                ColorStateList colorStateList = new ColorStateList(states, colors);
-                spinnerBar.setIndeterminateTintList(colorStateList);
-              }
-            } catch (IllegalArgumentException ex) {
-              Log.d(LogUtils.getCoreTag(), "Spinner color not applied");
-            }
+          if (spinnerBar.getParent() != null) {
+            wm.removeView(spinnerBar);
           }
 
           params.height = 120;
@@ -251,14 +257,17 @@ public class Splash {
 
           wm.addView(spinnerBar, params);
 
-          spinnerBar.setAlpha(0f);
+          if (showSpinner) {
+            spinnerBar.setAlpha(0f);
 
-          spinnerBar.animate()
-                  .alpha(1f)
-                  .setInterpolator(new LinearInterpolator())
-                  .setDuration(fadeInDuration)
-                  .setListener(listener)
-                  .start();
+            spinnerBar.animate()
+                    .alpha(1f)
+                    .setInterpolator(new LinearInterpolator())
+                    .setDuration(fadeInDuration)
+                    .start();
+
+            spinnerBar.setVisibility(View.VISIBLE);
+          }
         }
       }
     });
@@ -287,12 +296,12 @@ public class Splash {
     final Animator.AnimatorListener listener = new Animator.AnimatorListener() {
       @Override
       public void onAnimationEnd(Animator animator) {
-        tearDown();
+        tearDown(false);
       }
 
       @Override
       public void onAnimationCancel(Animator animator) {
-        tearDown();
+        tearDown(false);
       }
 
       @Override
@@ -313,7 +322,6 @@ public class Splash {
                   .alpha(0)
                   .setInterpolator(new LinearInterpolator())
                   .setDuration(fadeOutDuration)
-                  .setListener(listener)
                   .start();
         }
 
@@ -329,11 +337,13 @@ public class Splash {
     });
   }
 
-  private static void tearDown() {
+  private static void tearDown(boolean removeSpinner) {
     if (spinnerBar != null && spinnerBar.getParent() != null) {
-      //wm.removeView(spinnerBar);
+      spinnerBar.setVisibility(View.INVISIBLE);
 
-      spinnerBar = null;
+      if (removeSpinner == true) {
+        wm.removeView(spinnerBar);
+      }
     }
 
     if (splashImage != null && splashImage.getParent() != null) {
@@ -345,9 +355,9 @@ public class Splash {
   }
 
   public static void onPause() {
-    tearDown();
+    tearDown(true);
   }
   public static void onDestroy() {
-    tearDown();
+    tearDown(true);
   }
 }
