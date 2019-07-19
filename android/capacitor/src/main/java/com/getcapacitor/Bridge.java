@@ -821,6 +821,9 @@ public class Bridge {
     });
   }
 
+  public String getAppUrl() {
+    return appUrl;
+  }
 
   public String getLocalUrl() {
     return localUrl;

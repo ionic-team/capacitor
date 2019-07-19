@@ -173,10 +173,11 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || loadingUrl.toString().startsWith(bridge.getLocalUrl())) {
+    if (isLocalFile(loadingUrl) || !bridge.getAppUrl().contains("localhost:8100") && loadingUrl.toString().startsWith(bridge.getLocalUrl())) {
       Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
+      Log.d(LogUtils.getCoreTag(), "Handling proxy request: " + request.getUrl().toString());
       return handleProxyRequest(request, handler);
     }
   }
@@ -294,22 +295,32 @@ public class WebViewLocalServer {
         String path = request.getUrl().getPath();
         URL url = new URL(request.getUrl().toString());
         Map<String, String> headers = request.getRequestHeaders();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        for (Map.Entry<String, String> header : headers.entrySet()) {
-          conn.setRequestProperty(header.getKey(), header.getValue());
-        }
-        conn.setRequestMethod(method);
-        conn.setReadTimeout(30 * 1000);
-        conn.setConnectTimeout(30 * 1000);
+
+        HttpURLConnection conn;
+        boolean isContentTypeNull;
+        do {
+          conn = (HttpURLConnection) url.openConnection();
+          for (Map.Entry<String, String> header : headers.entrySet()) {
+            conn.setRequestProperty(header.getKey(), header.getValue());
+          }
+          conn.setRequestMethod(method);
+          conn.setReadTimeout(30 * 1000);
+          conn.setConnectTimeout(30 * 1000);
+
+          isContentTypeNull = conn.getContentType() == null;
+          if (isContentTypeNull) {
+            conn.disconnect();
+            Thread.sleep(1000);
+          }
+        } while (isContentTypeNull);
 
         if (conn.getContentType().contains("text/html")) {
           InputStream responseStream = conn.getInputStream();
           responseStream = jsInjector.getInjectedStream(responseStream);
           bridge.reset();
           return new WebResourceResponse("text/html", handler.getEncoding(),
-                  handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
+            handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
-
       } catch (SocketTimeoutException ex) {
         bridge.handleAppUrlLoadError(ex);
       } catch (Exception ex) {
