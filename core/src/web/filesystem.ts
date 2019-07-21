@@ -144,6 +144,11 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   async writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     const path: string = this.getPath(options.directory, options.path);
     const data = options.data;
+
+    let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
+    if (occupiedEntry && occupiedEntry.type === 'directory')
+      throw('The supplied path is a directory.');
+
     // const encoding = options.encoding;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
