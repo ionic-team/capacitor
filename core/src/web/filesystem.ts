@@ -269,8 +269,15 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     if (entry === undefined)
       throw Error('Folder does not exist.');
     let entries = await this.dbIndexRequest('by_folder', 'getAllKeys', [IDBKeyRange.only(path)]);
-    if (entries.length !== 0)
-      throw Error('Folder is not empty.');
+
+    for (const entry of entries) {
+      let entryObj = await this.stat({path: entry, directory: options.directory});
+      if (entryObj.type === 'file') {
+        await this.deleteFile({path: entry, directory: options.directory});
+      } else {
+        await this.rmdir({path: entry, directory: options.directory});
+      }
+    }
 
     await this.dbRequest('delete', [path]);
     return {};
