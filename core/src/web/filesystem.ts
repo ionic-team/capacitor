@@ -182,12 +182,17 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
 
     const now = Date.now();
     let ctime = now;
+
+    let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
+    if (occupiedEntry && occupiedEntry.type === 'directory')
+      throw('The supplied path is a directory.');
+
     let parentEntry = await this.dbRequest('get', [parentPath]) as EntryObj;
     if (parentEntry === undefined) {
       const parentArgPath = parentPath.substr(parentPath.indexOf('/', 1));
       await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true})
     }
-    let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
+
     if (occupiedEntry !== undefined) {
       data = occupiedEntry.content + data;
       ctime = occupiedEntry.ctime;
