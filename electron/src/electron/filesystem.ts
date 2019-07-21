@@ -16,6 +16,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
 
   NodeFS:any = null;
   fileLocations:any = null;
+  Path:any = null;
 
   constructor() {
     super({
@@ -34,6 +35,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     this.fileLocations[FilesystemDirectory.Documents] = path.join(os.homedir(), `Documents`) + path.sep;
 
     this.NodeFS = require('fs');
+    this.Path = path;
   }
 
   readFile(options: FileReadOptions): Promise<FileReadResult>{
@@ -117,19 +119,42 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
   }
 
   rmdir(options: RmdirOptions): Promise<RmdirResult> {
-    return new Promise((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
-        reject(`${options.directory} is currently not supported in the Electron implementation.`);
-      let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.rmdir(lookupPath, (err:any) => {
-        if(err) {
-          reject(err);
-          return;
-        }
+    let {path, directory} = options;
 
-        resolve();
+    if (Object.keys(this.fileLocations).indexOf(directory) === -1)
+      return Promise.reject(`${directory} is currently not supported in the Electron implementation.`);
+
+    return this.stat({path, directory})
+      .then((stat) => {
+        if (stat.type === 'directory') {
+          return this.readdir({path, directory})
+            .then((readDirResult) => {
+              if (!readDirResult.files.length) {
+                return new Promise((resolve, reject) => {
+                  let lookupPath = this.fileLocations[directory] + path;
+
+                  this.NodeFS.rmdir(lookupPath, (err: any) => {
+                    if (err) {
+                      reject(err);
+                      return;
+                    }
+
+                    resolve();
+                  });
+                });
+              } else {
+                return Promise.all(readDirResult.files.map((f) => {
+                  return this.rmdir({path: this.Path.join(path, f), directory});
+                }))
+                  .then(() => {
+                    return this.rmdir({path, directory});
+                  });
+              }
+            });
+        } else {
+          return this.deleteFile({path, directory});
+        }
       });
-    });
   }
 
   readdir(options: ReaddirOptions): Promise<ReaddirResult> {
@@ -168,7 +193,13 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
           return;
         }
 
-        resolve({type: 'Not Available', size: stats.size, ctime: stats.ctimeMs, mtime: stats.mtimeMs, uri: lookupPath});
+        resolve({
+          type: (stats.isDirectory() ? 'directory' : (stats.isFile() ? 'file' : 'Not available')),
+          size: stats.size,
+          ctime: stats.ctimeMs,
+          mtime: stats.mtimeMs,
+          uri: lookupPath
+        });
       });
     });
   }
