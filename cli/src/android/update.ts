@@ -216,7 +216,7 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
         keys.map(k => {
           configElement[k].map((e: any) => {
             const xmlElement = buildXmlElement(e, k);
-            const pathParts = getPathParts(configElement.$.parent);
+            const pathParts = getPathParts(configElement.$.parent || configElement.$.target);
             if(pathParts.length > 1) {
               if (pathParts.pop() === 'application') {
                 if (!applicationXMLEntries.includes(xmlElement) && !contains(applicationXMLEntries, xmlElement, k)) {
