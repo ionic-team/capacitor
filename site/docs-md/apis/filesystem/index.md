@@ -11,7 +11,7 @@ contributors:
 
 # Filesystem
 
-The Filsystem API provides a NodeJS-like API for working with files on the device.
+The Filesystem API provides a NodeJS-like API for working with files on the device.
 
 <plugin-api index="true" name="filesystem"></plugin-api>
 
