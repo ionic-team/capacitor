@@ -8,12 +8,18 @@ contributors:
 
 # CI/CD with Ionic Appflow
 
-**Web Framework**: Ionic 4 + Angular  
+**Web Framework**: Any  
 **Platforms**: iOS, Android
 
 [Ionic Appflow](https://ionicframework.com/appflow) is a Mobile DevOps solution for developers and teams building apps with Ionic. It helps increase agility and app quality while speeding up time-to-market by automating key phases of the development lifecycle. By generating and streamlining the native app build process, shipping real-time updates, and organizing approval workflows, your team is free to focus on the good stuff (innovation).
 
-Appflow’s Capacitor support combines a modernized native app runtime with compelling DevOps features, resulting in a powerful solution for teams looking to build powerful Ionic mobile apps.
+Appflow’s Capacitor support combines a modernized native app runtime with compelling DevOps features, resulting in a compelling solution for teams looking to build powerful Ionic mobile apps.
+
+## Required Dependencies
+
+Building and deploying iOS and Android apps require additional dependencies, including an iOS and Android device. Please [follow the instructions here](../getting-started/dependencies) before continuing.
+
+Configuring Ionic Appflow requires the Ionic CLI (`npm install -g ionic`) as well as a [free Ionic account](https://ionicframework.com/getting-started#account).
 
 ## Setting Up Capacitor
 
@@ -21,30 +27,31 @@ Appflow’s Capacitor support combines a modernized native app runtime with comp
 
 First, we need to add Capacitor to our web-based project. For the best experience, we recommend an Ionic app. From a terminal, run these commands:
 
-<strong>New Ionic Project</strong>
+<strong>New Ionic Project:</strong>
 ```shell
 # Create a new Ionic "tabs" starter app
 ionic start myApp tabs --capacitor
 cd myApp
 ```
 
-<strong>Existing Ionic Project</strong>
+<strong>Existing Ionic Project:</strong>
 ```shell
 cd myApp
 ionic integrations enable capacitor
 ```
 
-<strong>Initialize Capacitor</strong>
+<strong>Initialize Capacitor:</strong>
 ```shell
-# appName is name of the app, appId is domain identifier (ex: com.example.app)
+# appName is name of the app, appId is domain identifier 
+# (ex: com.example.app)
 npx cap init [appName] [appId]
 
 # Build the project once
 ionic build
 
 # Add native platforms
-npx cap add ios
-npx cap add android
+ionic cap add ios
+ionic cap add android
 ```
 
 ## Getting Started with Appflow
@@ -63,9 +70,13 @@ Otherwise, check that you are logged into your account:
 ionic login
 ```
 
-Next, ensure that your Ionic app has been linked to Ionic Appflow. Run the `ionic link` command then follow the prompts to connect the app to Appflow.
+Next, ensure that your Ionic app has been linked to Ionic Appflow:
 
-If you don't have an app linked to Ionic Appflow, select `Create a new app on Ionic Appflow.` Otherwise, choose `Link an existing app on Ionic Appflow`.
+```shell
+ionic link
+```
+
+Follow the prompts to connect the app to Appflow. If you don't have an app linked to Ionic Appflow, select `Create a new app on Ionic Appflow.` Otherwise, choose `Link an existing app on Ionic Appflow`.
 
 ## Deploy: Push Live Updates Remotely in Real-time
 
@@ -83,7 +94,7 @@ Several prompts will walk you through the setup:
 
 <strong>Channel Name:</strong> [Enter desired channel name or “Master”]
 
-<strong>Update Method:</strong> [Select “auto”, “background”, or “none.”] The "background" method is recommended. If an update is available, it will be downloaded and installed in the background while the user is using the older version. The next time they launch the app, the new version will be loaded.
+<strong>Update Method:</strong> [Select “auto”, “background”, or “none.”] The "background" method downloads and installs each Deploy update in the background while the user is using the previous version. The next time they launch the app, the new version is loaded. The "auto" method downloads any available updates and loads them immediately. This delays the launch of the app, so the "background" method is typically recommended. For ease of demoing Deploy here though, we'll use the "auto" method.
 
 After answering these prompts, the Deploy plugin (`cordova-plugin-ionic`, named as such since it was created long before Capacitor) is successfully installed into your Ionic project and various variables are automatically configured in the native iOS/Android projects for you.
 
@@ -106,7 +117,7 @@ Now for the fun part: shipping a live update to an Android device!
 
 > Live Deploy works well with iOS devices too, but iOS (via Xcode) requires [additional set up steps](https://ionicframework.com/docs/installation/ios). It's a bit easier to just "plug and play" with Android, hence it's usage here.
 
-If you're using the Ionic `tabs` starter app, open `tab1.page.html`, which will look similar to this:
+If you're using the Ionic `tabs` starter app, open the Tab 1 HTML file, which will look similar to this:
 
 ```html
 <ion-content>
@@ -153,7 +164,7 @@ As the build progresses, you can watch its progress via the log output:
 
 ### View the Live Update on an Android Device
 
-The local Android project still has the original version of our code, before the GIF and text changes were added, since we never copied the code into the native project. Let's have Appflow deploy the changes to our device.
+The local Android project still has the original version of our code (i.e. no GIF image or text changes), since we never copied the code into the native project. Let's have Appflow deploy those changes to our device.
 
 First, connect an Android device to your computer and ensure that [Android Studio is installed](../getting-started/dependencies#android-development).
 
