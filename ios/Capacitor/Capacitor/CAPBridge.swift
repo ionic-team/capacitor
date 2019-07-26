@@ -11,7 +11,6 @@ enum BridgeError: Error {
 
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://capacitor.ionicframework.com/"
-  public static var CAP_SCHEME = "capacitor"
   public static var CAP_FILE_START = "/_capacitor_file_"
 
   // The last URL that caused the app to open
@@ -53,7 +52,7 @@ enum BridgeError: Error {
     super.init()
 
     self.notificationsDelegate.bridge = self;
-    localUrl = "\(CAPBridge.CAP_SCHEME)://\(config.getString("server.hostname") ?? "localhost")"
+    localUrl = "\(CAPBridge.getSchemeForConfig(self.config))://\(config.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
     registerPlugins()
     setupCordovaCompatibility()
@@ -109,6 +108,13 @@ enum BridgeError: Error {
     ])
     CAPBridge.lastUrl = url
     return true
+  }
+    
+  /**
+   * Determine which scheme to use when serving content
+   */
+  public static func getSchemeForConfig(_ config: CAPConfig) -> String {
+    return config.getString("server.scheme") ?? "capacitor"
   }
   
   /**

@@ -115,6 +115,17 @@ iOS `edit-config` elements need to be [configured in Info.plist](/docs/ios/confi
 
 It's impossible to cover every `config.xml` element available. However, most questions relating to "How do I configure X in Capacitor?" should be thought of as "How do I configure X in [platform] (iOS/Android)?" when searching online for answers.
 
+## Setting Scheme
+When using Ionic with Cordova, your app uses `cordova-plugin-ionic-webview` by default. Capacitor uses its own webview, with its own origin. This means that using a origin-binded Web API like local storage, will result in a loss of data. This can be fixed by changing the scheme that is used for serving the content:
+
+```json
+{
+  "server": {
+    "scheme": "ionic"
+  }
+}
+```
+
 ## Removing Cordova
 
 Once you've tested that all migration changes have been applied and the app is working well, Cordova can be removed from the project. Delete `config.xml` as well as the `platforms` and `plugins` folders. Note that you don't technically have to remove Cordova, since Capacitor works alongside it. In fact, if you plan to continue using Cordova plugins or think you may in the future, you can leave the Cordova assets where they are.

@@ -4,9 +4,14 @@ import MobileCoreServices
 class CAPAssetHandler: NSObject, WKURLSchemeHandler {
 
   private var basePath: String = ""
+  private var config: CAPConfig!
 
   func setAssetPath(_ assetPath: String) {
     self.basePath = assetPath;
+  }
+    
+  func setConfig(_ config: CAPConfig) {
+    self.config = config
   }
 
   func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
@@ -15,7 +20,7 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
       let stringToLoad = url.path
       let scheme = url.scheme
 
-      if scheme == CAPBridge.CAP_SCHEME {
+      if scheme == CAPBridge.getSchemeForConfig(self.config) {
         if stringToLoad.isEmpty || url.pathExtension.isEmpty {
           startPath.append("/index.html")
         } else if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
