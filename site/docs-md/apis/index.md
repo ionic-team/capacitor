@@ -48,4 +48,4 @@ async openBrowser() {
 }
 ```
 
-By using the API correctly, the native implementation of the API is used first, followed by the web version (if available).
+By using the plugins from the plugin registry (`Plugins` object), the native implementation of the plugin is used (if available), with fallback to the web version.
