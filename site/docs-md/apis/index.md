@@ -19,17 +19,17 @@ See the APIs list on the left menu for the full list of available APIs.
 
 To use a Capacitor API, follow these steps:
 
-1) Import the API:
+1) Import the `Plugins` object. It represents the registry of all Capacitor plugins.
 ```typescript
-import { Browser } from '@capacitor/core';
+import { Plugins } from '@capacitor/core';
 ```
 
-2) Extract the API object from `Plugins`:
+2) Get a plugin from the Plugin Registry (`Plugins` object).
 ```typescript
 const { Browser } = Plugins;
 ```
 
-3) Use the API:
+3) Use the plugin API:
 ```typescript
 async openBrowser() {
   // On iOS, for example, open the URL in SFSafariViewController (the in-app browser)
@@ -48,4 +48,4 @@ async openBrowser() {
 }
 ```
 
-By instead leveraging the API object, the native implementation of the API is used first, followed by the web version (if available).
+By using the API correctly, the native implementation of the API is used first, followed by the web version (if available).
