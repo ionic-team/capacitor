@@ -110,7 +110,10 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   private getPath(directory: FilesystemDirectory | undefined, uriPath: string | undefined): string {
     directory = directory || this.DEFAULT_DIRECTORY;
     let cleanedUriPath = uriPath !== undefined ? uriPath.replace(/^[/]+|[/]+$/g, '') : '';
-    return '/' + directory + '/' + cleanedUriPath;
+    let fsPath = '/' + directory;
+    if (uriPath !== '')
+      fsPath += '/' + cleanedUriPath;
+    return fsPath;
   }
 
   async clear(): Promise<{}> {
@@ -295,12 +298,12 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     const path: string = this.getPath(options.directory, options.path);
 
     let entry = await this.dbRequest('get', [path]) as EntryObj;
-    if (entry === undefined)
+    if (options.path !== '' && entry === undefined)
       throw Error('Folder does not exist.');
 
     let entries: string[] = await this.dbIndexRequest('by_folder', 'getAllKeys', [IDBKeyRange.only(path)]);
     let names = entries.map((e) => {
-      return e.substring(entry.path.length + 1);
+      return e.substring(path.length + 1);
     });
     return {files: names};
   }
