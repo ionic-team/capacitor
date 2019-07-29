@@ -282,7 +282,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       let directoryContents = try FileManager.default.contentsOfDirectory(at: fileUrl, includingPropertiesForKeys: nil, options: [])
       
       let directoryPathStrings = directoryContents.map {(url: URL) -> String in
-        return url.path
+        return url.lastPathComponent
       }
       
       call.success([
