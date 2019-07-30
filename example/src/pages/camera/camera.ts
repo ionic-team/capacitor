@@ -36,17 +36,6 @@ export class CameraPage {
     console.log('ionViewDidLoad CameraPage');
   }
 
-
-  async hasPermission() {
-    const ret = await Plugins.Camera.hasPermission();
-    const alert = this.alertCtrl.create({
-      title: 'Has Permission?',
-      message: 'Value: ' + ret.value
-    });
-
-    alert.present();
-  }
-
   async getPhoto() {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
