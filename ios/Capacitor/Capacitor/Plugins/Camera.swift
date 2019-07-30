@@ -41,6 +41,22 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   var imageCounter = 0
 
   var settings = CameraSettings()
+  
+  @objc public override func hasPermission(_ call: CAPPluginCall) {
+    let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
+    
+    var ret = false
+    switch (authStatus){
+    case .authorized:
+      ret = true
+    default:
+      ret = false
+    }
+    
+    call.resolve([
+      "value": ret
+    ])
+  }
 
   @objc func getPhoto(_ call: CAPPluginCall) {
     self.call = call

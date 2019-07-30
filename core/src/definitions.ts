@@ -3,6 +3,7 @@ import { PluginRegistry } from './core-plugin-definitions';
 export interface Plugin {
   addListener(eventName: string, listenerFunc: Function): PluginListenerHandle;
   requestPermissions?: () => Promise<PermissionsRequestResult>;
+  hasPermission: (extra?: any) => Promise<{ value: boolean }>;
 }
 
 export interface PermissionsRequestResult {

@@ -16,6 +16,7 @@ export interface PluginRegistry {
   Modals: ModalsPlugin;
   Motion: MotionPlugin;
   Network: NetworkPlugin;
+  Permissions: PermissionsPlugin;
   Photos: PhotosPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
@@ -1127,6 +1128,12 @@ export interface NetworkStatus {
 }
 
 export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
+
+//
+
+export interface PermissionsPlugin extends Plugin {
+  hasPermission(extra: any): Promise<{ value: boolean }>;
+}
 
 //
 

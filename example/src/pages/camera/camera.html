@@ -15,6 +15,7 @@
 
 <ion-content padding>
   <img [src]="image" />
+  <button (click)="hasPermission()" ion-button color="primary">Check for Permission</button>
   <button (click)="getPhoto()" ion-button color="primary">Prompt</button>
   <button (click)="takePicture()" ion-button color="primary">From Camera</button>
   <button (click)="getFromPhotos()" ion-button color="primary">From Photos</button>

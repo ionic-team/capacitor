@@ -150,6 +150,10 @@ export class WebPlugin {
     };
   }
 
+  hasPermission(_extra: any): Promise<{ value: boolean }> {
+    return Promise.resolve({ value: false });
+  }
+
   requestPermissions(): Promise<PermissionsRequestResult> {
     if (Capacitor.isNative) {
       return Capacitor.nativePromise(this.config.name, 'requestPermissions', {});

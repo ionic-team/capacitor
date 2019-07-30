@@ -1,6 +1,6 @@
 import { Component, NgZone } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import {
   Plugins,
   CameraResultType,
@@ -25,13 +25,27 @@ const { Filesystem } = Plugins;
 export class CameraPage {
   image: SafeResourceUrl;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private zone: NgZone, private sanitizer: DomSanitizer) {
+  constructor(public navCtrl: NavController,
+              public navParams: NavParams,
+              private zone: NgZone,
+              private sanitizer: DomSanitizer,
+              private alertCtrl: AlertController) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad CameraPage');
   }
 
+
+  async hasPermission() {
+    const ret = await Plugins.Camera.hasPermission();
+    const alert = this.alertCtrl.create({
+      title: 'Has Permission?',
+      message: 'Value: ' + ret.value
+    });
+
+    alert.present();
+  }
 
   async getPhoto() {
     const image = await Plugins.Camera.getPhoto({
