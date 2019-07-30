@@ -7,6 +7,7 @@ import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.LogUtils;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.android.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +26,7 @@ public class LocalNotification {
   private String body;
   private Integer id;
   private String sound;
+  private String smallIcon;
   private String actionTypeId;
   private JSObject extra;
   private List<LocalNotificationAttachment> attachments;
@@ -65,6 +67,7 @@ public class LocalNotification {
     this.sound = sound;
   }
 
+  public void setSmallIcon(String smallIcon) { this.smallIcon = getResourceBaseName(smallIcon); }
 
   public List<LocalNotificationAttachment> getAttachments() {
     return attachments;
@@ -131,6 +134,7 @@ public class LocalNotification {
       activeLocalNotification.setActionTypeId(notification.getString("actionTypeId"));
       activeLocalNotification.setSound(notification.getString("sound"));
       activeLocalNotification.setTitle(notification.getString("title"));
+      activeLocalNotification.setSmallIcon(notification.getString("smallIcon"));
       activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
       try {
         activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
@@ -178,8 +182,16 @@ public class LocalNotification {
   }
 
   public int getSmallIcon(Context context) {
-    // TODO support custom icons
-    int resId = android.R.drawable.ic_dialog_info;
+    int resId = 0;
+
+    if(smallIcon != null){
+      resId = context.getResources().getIdentifier(smallIcon,"drawable", context.getPackageName());
+    }
+
+    if(resId == 0){
+      resId = android.R.drawable.ic_dialog_info;
+    }
+
     return resId;
   }
 
@@ -197,6 +209,7 @@ public class LocalNotification {
             ", body='" + body + '\'' +
             ", id=" + id +
             ", sound='" + sound + '\'' +
+            ", smallIcon='" + smallIcon + '\'' +
             ", actionTypeId='" + actionTypeId + '\'' +
             ", extra=" + extra +
             ", attachments=" + attachments +
@@ -215,6 +228,7 @@ public class LocalNotification {
     if (body != null ? !body.equals(that.body) : that.body != null) return false;
     if (id != null ? !id.equals(that.id) : that.id != null) return false;
     if (sound != null ? !sound.equals(that.sound) : that.sound != null) return false;
+    if (smallIcon != null ? !smallIcon.equals(that.smallIcon) : that.smallIcon != null) return false;
     if (actionTypeId != null ? !actionTypeId.equals(that.actionTypeId) : that.actionTypeId != null)
       return false;
     if (extra != null ? !extra.equals(that.extra) : that.extra != null) return false;
@@ -229,6 +243,7 @@ public class LocalNotification {
     result = 31 * result + (body != null ? body.hashCode() : 0);
     result = 31 * result + (id != null ? id.hashCode() : 0);
     result = 31 * result + (sound != null ? sound.hashCode() : 0);
+    result = 31 * result + (smallIcon != null ? smallIcon.hashCode() : 0);
     result = 31 * result + (actionTypeId != null ? actionTypeId.hashCode() : 0);
     result = 31 * result + (extra != null ? extra.hashCode() : 0);
     result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
@@ -252,5 +267,19 @@ public class LocalNotification {
 
   public void setSource(String source) {
     this.source = source;
+  }
+
+  private String getResourceBaseName (String resPath) {
+    if (resPath == null) return null;
+
+    if (resPath.contains("/")) {
+      return resPath.substring(resPath.lastIndexOf('/') + 1);
+    }
+
+    if (resPath.contains(".")) {
+      return resPath.substring(0, resPath.lastIndexOf('.'));
+    }
+
+    return resPath;
   }
 }
