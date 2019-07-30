@@ -37,6 +37,11 @@ export class PermissionsPage {
     this.a('Camera? ' + has.value);
   }
 
+  async checkPhotos() {
+    const has = await Plugins.Permissions.hasPermission({ type: PermissionType.Photos });
+    this.a('Photos? ' + has.value);
+  }
+
   async checkGeo() {
     const has = await Plugins.Permissions.hasPermission({ type: PermissionType.Geolocation });
     this.a('Geo? ' + has.value);

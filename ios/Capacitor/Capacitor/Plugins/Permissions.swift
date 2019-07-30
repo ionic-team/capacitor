@@ -12,22 +12,23 @@ public class CAPPermissionsPlugin: CAPPlugin {
       return
     }
     
-    var ret = false
     switch (type) {
     case "CAMERA":
-        ret = checkCamera(call)
+      return checkCamera(call)
     case "GEOLOCATION":
-        ret = checkGeolocation(call)
-      default:
-        return call.reject("Unknown permission")
+      return checkGeolocation(call)
+    case "PUSH_NOTIFICATIONS":
+      return checkPushNotifications(call)
+    case "CLIPBOARD":
+      return checkClipboard(call)
+    case "PHOTOS":
+      return checkPhotos(call)
+    default:
+      return call.reject("Unknown permission type")
     }
-    
-    call.resolve([
-      "value": ret
-    ])
   }
 
-  func checkCamera(_ call: CAPPluginCall) -> Bool {
+  func checkCamera(_ call: CAPPluginCall) {
     let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
     
     var ret = false
@@ -38,10 +39,24 @@ public class CAPPermissionsPlugin: CAPPlugin {
       ret = false
     }
 
-    return ret
+    call.resolve([
+      "value": ret
+    ])
   }
 
-  func checkGeolocation(_ call: CAPPluginCall) -> Bool {
+  func checkPhotos(_ call: CAPPluginCall) {
+    var ret = false
+
+    let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
+    if photoAuthorizationStatus == .authorized {
+      ret = true
+    }
+    call.resolve([
+      "value": ret
+    ])
+  }
+
+  func checkGeolocation(_ call: CAPPluginCall) {
     var ret = false
     if CLLocationManager.locationServicesEnabled() {
         switch CLLocationManager.authorizationStatus() {
@@ -56,6 +71,30 @@ public class CAPPermissionsPlugin: CAPPlugin {
       ret = false
     }
 
-    return ret
+    call.resolve([
+      "value": ret
+    ])
+  }
+
+  func checkPushNotifications(_ call: CAPPluginCall) {
+    UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { settings in
+      var ret = false
+      switch settings.authorizationStatus {
+      case .authorized, .provisional:
+        ret = true
+      case .denied, .notDetermined:
+        ret = false
+      }
+      
+      call.resolve([
+        "value": ret
+      ])
+    })
+  }
+  
+  func checkClipboard(_ call: CAPPluginCall) {
+    call.resolve([
+      "value": true
+    ])
   }
 }

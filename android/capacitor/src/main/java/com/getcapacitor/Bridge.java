@@ -34,6 +34,7 @@ import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.Network;
+import com.getcapacitor.plugin.Permissions;
 import com.getcapacitor.plugin.Photos;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.Share;
@@ -365,6 +366,7 @@ public class Bridge {
     this.registerPlugin(Keyboard.class);
     this.registerPlugin(Modals.class);
     this.registerPlugin(Network.class);
+    this.registerPlugin(Permissions.class);
     this.registerPlugin(Photos.class);
     this.registerPlugin(PushNotifications.class);
     this.registerPlugin(Share.class);

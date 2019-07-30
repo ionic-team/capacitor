@@ -17,6 +17,8 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,8 +187,11 @@ public class Geolocation extends Plugin {
 
     if (savedCall.getMethodName().equals("getCurrentPosition")) {
       sendLocation(savedCall);
-    } else {
+    } else if (savedCall.getMethodName().equals("watchPosition")) {
       startWatch(savedCall);
+    } else {
+      savedCall.resolve();
+      savedCall.release(bridge);
     }
   }
 
