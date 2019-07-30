@@ -17,9 +17,6 @@
  under the License.
  */
 
-#import <AssetsLibrary/ALAsset.h>
-#import <AssetsLibrary/ALAssetRepresentation.h>
-#import <AssetsLibrary/ALAssetsLibrary.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "CDVURLProtocol.h"
 #import "CDVViewController.h"
@@ -35,12 +32,6 @@ NSString* const kCDVAssetsLibraryPrefixes = @"assets-library://";
 
 + (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
 {
-    NSURL* theUrl = [theRequest URL];
-
-    if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
-        return YES;
-    }
-
     return NO;
 }
 
@@ -52,36 +43,7 @@ NSString* const kCDVAssetsLibraryPrefixes = @"assets-library://";
 
 - (void)startLoading
 {
-    // NSLog(@"%@ received %@ - start", self, NSStringFromSelector(_cmd));
-    NSURL* url = [[self request] URL];
-
-    if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefixes]) {
-        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
-            if (asset) {
-                // We have the asset!  Get the data and send it along.
-                ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
-                NSString* MIMEType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)[assetRepresentation UTI], kUTTagClassMIMEType);
-                Byte* buffer = (Byte*)malloc((unsigned long)[assetRepresentation size]);
-                NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:(NSUInteger)[assetRepresentation size] error:nil];
-                NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
-                [self sendResponseWithResponseCode:200 data:data mimeType:MIMEType];
-            } else {
-                // Retrieving the asset failed for some reason.  Send an error.
-                [self sendResponseWithResponseCode:404 data:nil mimeType:nil];
-            }
-        };
-        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
-            // Retrieving the asset failed for some reason.  Send an error.
-            [self sendResponseWithResponseCode:401 data:nil mimeType:nil];
-        };
-
-        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
-        [assetsLibrary assetForURL:url resultBlock:resultBlock failureBlock:failureBlock];
-        return;
-    }
-
-    NSString* body = [NSString stringWithFormat:@"Access not allowed to URL: %@", url];
-    [self sendResponseWithResponseCode:401 data:[body dataUsingEncoding:NSASCIIStringEncoding] mimeType:nil];
+    return;
 }
 
 - (void)stopLoading
