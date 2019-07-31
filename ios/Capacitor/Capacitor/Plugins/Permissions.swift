@@ -20,7 +20,7 @@ public class CAPPermissionsPlugin: CAPPlugin {
       return checkGeolocation(call)
     case "notifications":
       return checkNotifications(call)
-    case "clipboard":
+    case "clipboard-read", "clipboard-write":
       return checkClipboard(call)
     case "photos":
       return checkPhotos(call)

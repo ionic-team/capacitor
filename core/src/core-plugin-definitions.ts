@@ -1136,7 +1136,8 @@ export enum PermissionType {
   Photos = 'photos',
   Geolocation = 'geolocation',
   Notifications = 'notifications',
-  Clipboard = 'clipboard'
+  ClipboardRead = 'clipboard-read',
+  ClipboardWrite = 'clipboard-write'
 }
 
 export interface PermissionsOptions {

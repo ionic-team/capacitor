@@ -33,7 +33,8 @@ public class Permissions extends Plugin {
       case "notifications":
         checkNotifications(call);
         break;
-      case "clipboard":
+      case "clipboard-read":
+      case "clipboard-write":
         checkClipboard(call);
         break;
       default:
