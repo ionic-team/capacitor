@@ -327,6 +327,24 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
   @Override
   public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+    String tag = "Capacitor/Console";
+    if (consoleMessage.message() != null && isValidMsg(consoleMessage.message())) {
+      String msg = String.format("File: %s - Line %d - Msg: %s" , consoleMessage.sourceId() , consoleMessage.lineNumber(), consoleMessage.message());
+      String level = consoleMessage.messageLevel().name();
+      if ("ERROR".equalsIgnoreCase(level)) {
+        Log.e(tag, msg);
+      } else if ("WARNING".equalsIgnoreCase(level)) {
+        Log.w(tag, msg);
+      } else if ("TIP".equalsIgnoreCase(level)) {
+        Log.d(tag, msg);
+      } else {
+        Log.i(tag, msg);
+      }
+    }
     return true;
+  }
+
+  public  boolean isValidMsg(String msg) {
+    return !(msg.contains("%cresult %c") || (msg.contains("%cnative %c")) || msg.equalsIgnoreCase("[object Object]") || msg.equalsIgnoreCase("console.groupEnd"));
   }
 }
