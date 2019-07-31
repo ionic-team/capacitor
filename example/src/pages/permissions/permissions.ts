@@ -53,7 +53,8 @@ export class PermissionsPage {
   }
 
   async checkClipboard() {
-    const has = await Plugins.Permissions.query({ name: PermissionType.Clipboard });
-    this.a('Clipboard? ' + has.state);
+    const hasRead = await Plugins.Permissions.query({ name: PermissionType.ClipboardRead });
+    const hasWrite = await Plugins.Permissions.query({ name: PermissionType.ClipboardWrite });
+    this.a(`Clipboard - Read? ${hasRead.state} Write? ${hasWrite.state}`);
   }
 }
