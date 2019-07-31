@@ -1132,19 +1132,23 @@ export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
 //
 
 export enum PermissionType {
-  Camera = 'CAMERA',
-  Photos = 'PHOTOS',
-  Geolocation = 'GEOLOCATION',
-  PushNotifications = 'PUSH_NOTIFICATIONS',
-  Clipboard = 'CLIPBOARD'
+  Camera = 'camera',
+  Photos = 'photos',
+  Geolocation = 'geolocation',
+  Notifications = 'notifications',
+  Clipboard = 'clipboard'
 }
 
 export interface PermissionsOptions {
-  type: PermissionType;
+  name: PermissionType;
+}
+
+export interface PermissionResult {
+  state: 'granted' | 'denied' | 'prompt';
 }
 
 export interface PermissionsPlugin extends Plugin {
-  hasPermission(options: PermissionsOptions): Promise<{ value: boolean }>;
+  query(options: PermissionsOptions): Promise<PermissionResult>;
 }
 
 //

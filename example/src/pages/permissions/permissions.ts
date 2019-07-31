@@ -33,27 +33,27 @@ export class PermissionsPage {
   }
 
   async checkCamera() {
-    const has = await Plugins.Permissions.hasPermission({ type: PermissionType.Camera });
-    this.a('Camera? ' + has.value);
+    const has = await Plugins.Permissions.query({ name: PermissionType.Camera });
+    this.a('Camera? ' + has.state);
   }
 
   async checkPhotos() {
-    const has = await Plugins.Permissions.hasPermission({ type: PermissionType.Photos });
-    this.a('Photos? ' + has.value);
+    const has = await Plugins.Permissions.query({ name: PermissionType.Photos });
+    this.a('Photos? ' + has.state);
   }
 
   async checkGeo() {
-    const has = await Plugins.Permissions.hasPermission({ type: PermissionType.Geolocation });
-    this.a('Geo? ' + has.value);
+    const has = await Plugins.Permissions.query({ name: PermissionType.Geolocation });
+    this.a('Geo? ' + has.state);
   }
 
   async checkPush() {
-    const has = await Plugins.Permissions.hasPermission({ type: PermissionType.PushNotifications });
-    this.a('Push? ' + has.value);
+    const has = await Plugins.Permissions.query({ name: PermissionType.Notifications });
+    this.a('Push? ' + has.state);
   }
 
   async checkClipboard() {
-    const has = await Plugins.Permissions.hasPermission({ type: PermissionType.Clipboard });
-    this.a('Clipboard? ' + has.value);
+    const has = await Plugins.Permissions.query({ name: PermissionType.Clipboard });
+    this.a('Clipboard? ' + has.state);
   }
 }

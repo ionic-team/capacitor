@@ -6,22 +6,23 @@ import Photos
  */
 @objc(CAPPermissionsPlugin)
 public class CAPPermissionsPlugin: CAPPlugin {
-  @objc func hasPermission(_ call: CAPPluginCall) {
-    guard let type = call.getString("type") else {
+
+  @objc func query(_ call: CAPPluginCall) {
+    guard let name = call.getString("name") else {
       call.reject("Must provide a permission to check")
       return
     }
     
-    switch (type) {
-    case "CAMERA":
+    switch (name) {
+    case "camera":
       return checkCamera(call)
-    case "GEOLOCATION":
+    case "geolocation":
       return checkGeolocation(call)
-    case "PUSH_NOTIFICATIONS":
-      return checkPushNotifications(call)
-    case "CLIPBOARD":
+    case "notifications":
+      return checkNotifications(call)
+    case "clipboard":
       return checkClipboard(call)
-    case "PHOTOS":
+    case "photos":
       return checkPhotos(call)
     default:
       return call.reject("Unknown permission type")
@@ -31,70 +32,79 @@ public class CAPPermissionsPlugin: CAPPlugin {
   func checkCamera(_ call: CAPPluginCall) {
     let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
     
-    var ret = false
-    switch (authStatus){
+    var ret = "prompt"
+    switch (authStatus) {
+    case .notDetermined:
+      ret = "prompt"
+    case .denied, .restricted:
+      ret = "denied"
     case .authorized:
-      ret = true
-    default:
-      ret = false
+      ret = "granted"
     }
 
     call.resolve([
-      "value": ret
+      "state": ret
     ])
   }
 
   func checkPhotos(_ call: CAPPluginCall) {
-    var ret = false
-
     let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-    if photoAuthorizationStatus == .authorized {
-      ret = true
+
+    var ret = "prompt"
+    switch (photoAuthorizationStatus) {
+      case .notDetermined:
+        ret = "prompt"
+      case .denied, .restricted:
+        ret = "denied"
+      case .authorized:
+        ret = "granted"
     }
     call.resolve([
-      "value": ret
+      "state": ret
     ])
   }
 
   func checkGeolocation(_ call: CAPPluginCall) {
-    var ret = false
+    var ret = "prompt"
     if CLLocationManager.locationServicesEnabled() {
         switch CLLocationManager.authorizationStatus() {
-        case .notDetermined, .restricted, .denied:
-          ret = false
+        case .notDetermined:
+          ret = "prompt"
+        case .denied, .restricted:
+          ret = "denied"
         case .authorizedAlways, .authorizedWhenInUse:
-          ret = true
-        default:
-          ret = false
+          ret = "granted"
         }
     } else {
-      ret = false
+      ret = "denied"
     }
 
     call.resolve([
-      "value": ret
+      "state": ret
     ])
   }
 
-  func checkPushNotifications(_ call: CAPPluginCall) {
+  func checkNotifications(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { settings in
-      var ret = false
+      var ret = "prompt"
       switch settings.authorizationStatus {
       case .authorized, .provisional:
-        ret = true
-      case .denied, .notDetermined:
-        ret = false
+        ret = "granted"
+      case .denied:
+        ret = "denied"
+      case .notDetermined:
+        ret = "prompt"
       }
       
       call.resolve([
-        "value": ret
+        "state": ret
       ])
     })
   }
   
   func checkClipboard(_ call: CAPPluginCall) {
     call.resolve([
-      "value": true
+      "state": "granted"
     ])
   }
 }

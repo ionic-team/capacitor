@@ -98,7 +98,7 @@ CAP_PLUGIN(CAPNetworkPlugin, "Network",
 )
 
 CAP_PLUGIN(CAPPermissionsPlugin, "Permissions",
-  CAP_PLUGIN_METHOD(hasPermission, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(query, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
