@@ -71,37 +71,37 @@
     if (typeof win.console[level] === 'function') {
       // loop through all the console functions and keep references to the original
       orgConsole[level] = win.console[level];
+      if (capacitor.isIOS) {
+        win.console[level] = function capacitorConsole() {
+          var msgs = Array.prototype.slice.call(arguments);
 
-      win.console[level] = function capacitorConsole() {
-        var msgs = Array.prototype.slice.call(arguments);
+          // console log to browser
+          orgConsole[level].apply(win.console, msgs);
 
-        // console log to browser
-        orgConsole[level].apply(win.console, msgs);
-
-        if (capacitor.isNative && bridgedLevels[level]) {
-          // send log to native to print
-          try {
-            // convert all args to strings
-            msgs = msgs.map(function (arg) {
-              if (typeof arg === 'object') {
-                try {
-                  arg = JSON.stringify(arg);
-                } catch (e) {}
-              }
-              // convert to string
-              return arg + '';
-          });
-            capacitor.toNative('Console', 'log', {
-              level: level,
-              message: msgs.join(' ')
+          if (capacitor.isNative && bridgedLevels[level]) {
+            // send log to native to print
+            try {
+              // convert all args to strings
+              msgs = msgs.map(function (arg) {
+                if (typeof arg === 'object') {
+                  try {
+                    arg = JSON.stringify(arg);
+                  } catch (e) {}
+                }
+                // convert to string
+                return arg + '';
             });
-
-          } catch (e) {
-            // error converting/posting console messages
-            orgConsole.error.apply(win.console, e);
+              capacitor.toNative('Console', 'log', {
+                level: level,
+                message: msgs.join(' ')
+              });
+            } catch (e) {
+              // error converting/posting console messages
+              orgConsole.error.apply(win.console, e);
+            }
           }
-        }
-      };
+        };
+      }
     }
   });
 
@@ -384,10 +384,9 @@
         c.groupCollapsed('%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
         c.dir(call);
         c.groupEnd();
-        //orgConsole.log('LOG TO NATIVE', call);
     } else {
         win.console.log('LOG TO NATIVE: ', call);
-        if (capacitor.isNative) {
+        if (capacitor.isIOS) {
             try {
                 capacitor.toNative('Console', 'log', {message: JSON.stringify(call)});
             } catch (e) {
