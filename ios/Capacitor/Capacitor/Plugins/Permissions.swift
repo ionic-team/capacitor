@@ -2,7 +2,7 @@ import Foundation
 import Photos
 
 /**
- * Implement three common modal types: alert, confirm, and prompt
+ * Allow to check hardware permissions
  */
 @objc(CAPPermissionsPlugin)
 public class CAPPermissionsPlugin: CAPPlugin {
