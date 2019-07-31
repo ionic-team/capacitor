@@ -6,7 +6,7 @@ contributors:
   - mlynch
 ---
 
-<plugin-platforms platforms="ios,android"></plugin-platforms>
+<plugin-platforms platforms="pwa,electron,ios,android"></plugin-platforms>
 
 # Photos
 
