@@ -1,5 +1,6 @@
 import Foundation
 import Photos
+import UserNotifications
 
 /**
  * Allow to check hardware permissions
