@@ -27,7 +27,6 @@ CAP_PLUGIN(CAPBrowserPlugin, "Browser",
 
 CAP_PLUGIN(CAPCameraPlugin, "Camera",
   CAP_PLUGIN_METHOD(getPhoto, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(hasPermission, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPClipboardPlugin, "Clipboard",
