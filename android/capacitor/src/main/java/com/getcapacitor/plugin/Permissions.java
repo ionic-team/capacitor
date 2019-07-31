@@ -17,23 +17,23 @@ import org.json.JSONArray;
 public class Permissions extends Plugin {
 
   @PluginMethod
-  public void hasPermission(PluginCall call) {
-    String type = call.getString("type");
+  public void query(PluginCall call) {
+    String name = call.getString("name");
 
-    switch (type) {
-      case "CAMERA":
+    switch (name) {
+      case "camera":
         checkCamera(call);
         break;
-      case "PHOTOS":
+      case "photos":
         checkPhotos(call);
         break;
-      case "GEOLOCATION":
+      case "geolocation":
         checkGeo(call);
         break;
-      case "PUSH_NOTIFICATIONS":
-        checkPushNotifications(call);
+      case "notifications":
+        checkNotifications(call);
         break;
-      case "CLIPBOARD":
+      case "clipboard":
         checkClipboard(call);
         break;
       default:
@@ -43,10 +43,12 @@ public class Permissions extends Plugin {
 
   private void checkPerm(String perm, PluginCall call) {
     JSObject ret = new JSObject();
-    if (ContextCompat.checkSelfPermission(getContext(), perm) == PackageManager.PERMISSION_GRANTED) {
-      ret.put("value", true);
+    if (ContextCompat.checkSelfPermission(getContext(), perm) == PackageManager.PERMISSION_DENIED) {
+      ret.put("state", "denied");
+    } else if (ContextCompat.checkSelfPermission(getContext(), perm) == PackageManager.PERMISSION_GRANTED) {
+      ret.put("state", "granted");
     } else {
-      ret.put("value", false);
+      ret.put("state", "prompt");
     }
     call.resolve(ret);
   }
@@ -63,16 +65,16 @@ public class Permissions extends Plugin {
     checkPerm(Manifest.permission.ACCESS_COARSE_LOCATION, call);
   }
 
-  private void checkPushNotifications(PluginCall call) {
+  private void checkNotifications(PluginCall call) {
     boolean areEnabled = NotificationManagerCompat.from(getContext()).areNotificationsEnabled();
     JSObject ret = new JSObject();
-    ret.put("value", areEnabled);
+    ret.put("state", areEnabled ? "granted" : "denied");
     call.resolve(ret);
   }
 
   private void checkClipboard(PluginCall call) {
     JSObject ret = new JSObject();
-    ret.put("value", true);
+    ret.put("state", "granted");
     call.resolve(ret);
   }
 
