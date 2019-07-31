@@ -1,6 +1,6 @@
 import { Component, NgZone } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins,
   CameraResultType,
@@ -28,8 +28,7 @@ export class CameraPage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               private zone: NgZone,
-              private sanitizer: DomSanitizer,
-              private alertCtrl: AlertController) {
+              private sanitizer: DomSanitizer) {
   }
 
   ionViewDidLoad() {
