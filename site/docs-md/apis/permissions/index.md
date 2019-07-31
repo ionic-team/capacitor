@@ -8,7 +8,7 @@ contributors:
 
 <plugin-platforms platforms="pwa,electron,ios,android"></plugin-platforms>
 
-# Photos
+# Permissions
 
 The Permissions API provides methods to check if certain permissions have been granted before requesting them.
 
