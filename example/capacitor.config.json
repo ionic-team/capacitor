@@ -6,6 +6,9 @@
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 12345
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample"
     }
   }
 }

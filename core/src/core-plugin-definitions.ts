@@ -945,6 +945,11 @@ export interface LocalNotification {
   id: number;
   schedule?: LocalNotificationSchedule;
   sound?: string;
+  /**
+   * Android-only: set a custom statusbar icon.
+   * If set, it overrides default icon from capacitor.config.json
+   */
+  smallIcon?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
