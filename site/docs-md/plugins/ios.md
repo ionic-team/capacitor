@@ -19,6 +19,8 @@ To get started, first generate a plugin as shown in the [Getting Started](./#get
 
 Next, open `your-plugin/ios/Plugin.xcworkspace` in Xcode.
 
+**Note**: You may need to run `pod repo update` or `pod install` before the `.xcworkspace` file will show up in the iOS directory.
+
 ## Building your Plugin in Swift
 
 A Capacitor plugin for iOS is a simple Swift class that extends `CAPPlugin` and
