@@ -83,7 +83,8 @@ async rmdir() {
   try {
     let ret = await Filesystem.rmdir({
       path: 'secrets',
-      directory: FilesystemDirectory.Documents
+      directory: FilesystemDirectory.Documents,
+      recursive: false,
     });
   } catch(e) {
     console.error('Unable to remove directory', e);
