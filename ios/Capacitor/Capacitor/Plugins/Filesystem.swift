@@ -253,6 +253,18 @@ public class CAPFilesystemPlugin : CAPPlugin {
       return
     }
     
+    let recursiveOption = call.get("recursive", Bool.self, false)!
+    
+    do {
+      let directoryContents = try FileManager.default.contentsOfDirectory(at: fileUrl, includingPropertiesForKeys: nil, options: [])
+      if (directoryContents.count != 0 && !recursiveOption) {
+        handleError(call, "Folder is not empty")
+        return
+      }
+    } catch {
+      handleError(call, error.localizedDescription, error)
+    }
+    
     do {
       try FileManager.default.removeItem(at: fileUrl)
       call.success()

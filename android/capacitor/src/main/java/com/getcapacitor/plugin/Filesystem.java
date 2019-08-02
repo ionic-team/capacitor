@@ -356,6 +356,7 @@ public class Filesystem extends Plugin {
     saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
+    Boolean recursive = call.getBoolean("recursive", false);
 
     File fileObject = getFileObject(path, directory);
 
@@ -366,7 +367,18 @@ public class Filesystem extends Plugin {
         return;
       }
 
-      boolean deleted = fileObject.delete();
+      if (fileObject.isDirectory() && fileObject.listFiles().length != 0 && !recursive) {
+        call.error("Directory is not empty");
+        return;
+      }
+
+      boolean deleted = false;
+
+      try {
+        deleteRecursively(fileObject);
+        deleted = true;
+      } catch (IOException ignored) {
+      }
 
       if(deleted == false) {
         call.error("Unable to delete directory, unknown reason");
@@ -437,6 +449,25 @@ public class Filesystem extends Plugin {
       data.put("uri", Uri.fromFile(fileObject).toString());
       call.success(data);
     }
+  }
+
+  /**
+   * Helper function to recursively delete a directory
+   *
+   * @param file The file or directory to recursively delete
+   * @throws IOException
+   */
+  private static void deleteRecursively(File file) throws IOException {
+    if (file.isFile()) {
+      file.delete();
+      return;
+    }
+
+    for (File f : file.listFiles()) {
+      deleteRecursively(f);
+    }
+
+    file.delete();
   }
 
   /**

@@ -659,6 +659,10 @@ export interface RmdirOptions {
    * The FilesystemDirectory to remove the directory from
    */
   directory?: FilesystemDirectory;
+  /**
+   * Whether to recursively remove the contents of the directory (defaults to false)
+   */
+  recursive?: boolean;
 }
 
 export interface ReaddirOptions {

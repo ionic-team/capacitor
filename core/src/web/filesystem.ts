@@ -278,16 +278,33 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @param options the options for the directory remove
    */
   async rmdir(options: RmdirOptions): Promise<RmdirResult> {
-    const path: string = this.getPath(options.directory, options.path);
+    let {path, directory, recursive} = options;
+    const fullPath: string = this.getPath(directory, path);
 
-    let entry = await this.dbRequest('get', [path]) as EntryObj;
+    let entry = await this.dbRequest('get', [fullPath]) as EntryObj;
+
     if (entry === undefined)
       throw Error('Folder does not exist.');
-    let entries = await this.dbIndexRequest('by_folder', 'getAllKeys', [IDBKeyRange.only(path)]);
-    if (entries.length !== 0)
-      throw Error('Folder is not empty.');
 
-    await this.dbRequest('delete', [path]);
+    if (entry.type !== 'directory')
+      throw Error('Requested path is not a directory');
+
+    let readDirResult = await this.readdir({path, directory});
+
+    if (readDirResult.files.length !== 0 && !recursive)
+      throw Error('Folder is not empty');
+
+    for (const entry of readDirResult.files) {
+      let entryPath = `${path}/${entry}`;
+      let entryObj = await this.stat({path: entryPath, directory});
+      if (entryObj.type === 'file') {
+        await this.deleteFile({path: entryPath, directory});
+      } else {
+        await this.rmdir({path: entryPath, directory, recursive});
+      }
+    }
+
+    await this.dbRequest('delete', [fullPath]);
     return {};
   }
 
