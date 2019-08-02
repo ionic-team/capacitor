@@ -267,11 +267,11 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
   }
 
   copy(options: CopyOptions): Promise<CopyResult> {
-    return this._copy(options, true);
+    return this._copy(options, false);
   }
 
   rename(options: RenameOptions): Promise<RenameResult> {
-    return this._copy(options, false);
+    return this._copy(options, true);
   }
 }
 
