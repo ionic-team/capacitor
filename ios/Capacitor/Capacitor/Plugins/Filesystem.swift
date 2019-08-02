@@ -261,7 +261,9 @@ public class CAPFilesystemPlugin : CAPPlugin {
         handleError(call, "Folder is not empty")
         return
       }
-    } catch {}
+    } catch {
+      handleError(call, error.localizedDescription, error)
+    }
     
     do {
       try FileManager.default.removeItem(at: fileUrl)
