@@ -487,13 +487,16 @@ public class Filesystem extends Plugin {
       return;
     }
 
-    if (to.equals(from)) {
+    File fromObject = getFileObject(from, directory);
+    File toObject = getFileObject(to, toDirectory);
+
+    assert fromObject != null;
+    assert toObject != null;
+
+    if (toObject.equals(fromObject)) {
       call.success();
       return;
     }
-
-    File fromObject = getFileObject(from, directory);
-    File toObject = getFileObject(to, toDirectory);
 
     if (!fromObject.exists()) {
       call.error("The source object does not exist");
@@ -522,7 +525,6 @@ public class Filesystem extends Plugin {
       }
     }
 
-    assert toObject != null;
     if (toObject.isDirectory()) {
       call.error("Cannot overwrite a directory");
       return;
