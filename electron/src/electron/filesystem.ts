@@ -149,10 +149,10 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
                 });
               } else {
                 return Promise.all(readDirResult.files.map((f) => {
-                  return this.rmdir({path: this.Path.join(path, f), directory});
+                  return this.rmdir({path: this.Path.join(path, f), directory, recursive});
                 }))
                   .then(() => {
-                    return this.rmdir({path, directory});
+                    return this.rmdir({path, directory, recursive});
                   });
               }
             });
