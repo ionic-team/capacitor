@@ -361,7 +361,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    var toDirectoryOption = call.get("toDirectory", String.self, DEFAULT_DIRECTORY)!
+    var toDirectoryOption = call.get("toDirectory", String.self, "")!
     
     if (toDirectoryOption == "") {
       toDirectoryOption = directoryOption;
