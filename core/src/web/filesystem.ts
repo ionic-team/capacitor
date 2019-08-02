@@ -263,7 +263,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @param options the options for the directory remove
    */
   async rmdir(options: RmdirOptions): Promise<RmdirResult> {
-    let {path, directory} = options;
+    let {path, directory, recursive} = options;
     const fullPath: string = this.getPath(directory, path);
 
     let entry = await this.dbRequest('get', [fullPath]) as EntryObj;
@@ -275,6 +275,9 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       throw Error('Requested path is not a directory');
 
     let readDirResult = await this.readdir({path, directory});
+
+    if (readDirResult.files.length !== 0 && !recursive)
+      throw Error('Folder is not empty');
 
     for (const entry of readDirResult.files) {
       let entryPath = `${path}/${entry}`;
