@@ -10,7 +10,9 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
   public override init(){
     super.init()
     let center = UNUserNotificationCenter.current()
-    center.delegate = self
+    if center.delegate == nil {
+      center.delegate = self
+    }
   }
 
   public func setBridge(bridge: CAPBridge) {

@@ -1,6 +1,8 @@
 import {WebPlugin} from './index';
 
 import {
+  CopyOptions,
+  CopyResult,
   FileAppendOptions,
   FileAppendResult,
   FileDeleteOptions,
@@ -15,10 +17,10 @@ import {
   GetUriResult,
   MkdirOptions,
   MkdirResult,
-  RenameOptions,
-  RenameResult,
   ReaddirOptions,
   ReaddirResult,
+  RenameOptions,
+  RenameResult,
   RmdirOptions,
   RmdirResult,
   StatOptions,
@@ -110,7 +112,10 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   private getPath(directory: FilesystemDirectory | undefined, uriPath: string | undefined): string {
     directory = directory || this.DEFAULT_DIRECTORY;
     let cleanedUriPath = uriPath !== undefined ? uriPath.replace(/^[/]+|[/]+$/g, '') : '';
-    return '/' + directory + '/' + cleanedUriPath;
+    let fsPath = '/' + directory;
+    if (uriPath !== '')
+      fsPath += '/' + cleanedUriPath;
+    return fsPath;
   }
 
   async clear(): Promise<{}> {
@@ -144,6 +149,11 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   async writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     const path: string = this.getPath(options.directory, options.path);
     const data = options.data;
+
+    let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
+    if (occupiedEntry && occupiedEntry.type === 'directory')
+      throw('The supplied path is a directory.');
+
     // const encoding = options.encoding;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
@@ -182,12 +192,17 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
 
     const now = Date.now();
     let ctime = now;
+
+    let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
+    if (occupiedEntry && occupiedEntry.type === 'directory')
+      throw('The supplied path is a directory.');
+
     let parentEntry = await this.dbRequest('get', [parentPath]) as EntryObj;
     if (parentEntry === undefined) {
       const parentArgPath = parentPath.substr(parentPath.indexOf('/', 1));
       await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true})
     }
-    let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
+
     if (occupiedEntry !== undefined) {
       data = occupiedEntry.content + data;
       ctime = occupiedEntry.ctime;
@@ -302,12 +317,12 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     const path: string = this.getPath(options.directory, options.path);
 
     let entry = await this.dbRequest('get', [path]) as EntryObj;
-    if (entry === undefined)
+    if (options.path !== '' && entry === undefined)
       throw Error('Folder does not exist.');
 
     let entries: string[] = await this.dbIndexRequest('by_folder', 'getAllKeys', [IDBKeyRange.only(path)]);
     let names = entries.map((e) => {
-      return e.substring(entry.path.length + 1);
+      return e.substring(path.length + 1);
     });
     return {files: names};
   }
@@ -362,18 +377,45 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the rename result
    */
   async rename(options: RenameOptions): Promise<RenameResult> {
-    let {to, from, directory} = options;
+    return this._copy(options, true);
+  }
+
+  /**
+   * Copy a file or directory
+   * @param options the options for the copy operation
+   * @return a promise that resolves with the copy result
+   */
+  async copy(options: CopyOptions): Promise<CopyResult> {
+    return this._copy(options, false);
+  }
+
+  /**
+   * Function that can perform a copy or a rename
+   * @param options the options for the rename operation
+   * @param doRename whether to perform a rename or copy operation
+   * @return a promise that resolves with the result
+   */
+  private async _copy(options: CopyOptions, doRename: boolean = false): Promise<CopyResult> {
+    let {to, from, directory: fromDirectory, toDirectory} = options;
 
     if (!to || !from) {
       throw Error('Both to and from must be provided');
     }
 
+    // If no "to" directory is provided, use the "from" directory
+    if (!toDirectory) {
+      toDirectory = fromDirectory;
+    }
+
+    let fromPath = this.getPath(fromDirectory, from);
+    let toPath = this.getPath(toDirectory, to);
+
     // Test that the "to" and "from" locations are different
-    if (from === to) {
+    if (fromPath === toPath) {
       return {};
     }
 
-    if (to.startsWith(from)) {
+    if (toPath.startsWith(fromPath)) {
       throw Error('To path cannot contain the from path');
     }
 
@@ -382,7 +424,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     try {
       toObj = await this.stat({
         path: to,
-        directory
+        directory: toDirectory
       });
     } catch (e) {
       // To location does not exist, ensure the directory containing "to" location exists and is a directory
@@ -394,7 +436,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       if (toPathComponents.length > 0) {
         let toParentDirectory = await this.stat({
           path: toPath,
-          directory,
+          directory: toDirectory,
         });
 
         if (toParentDirectory.type !== 'directory') {
@@ -411,12 +453,12 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     // Ensure the "from" object exists
     let fromObj = await this.stat({
       path: from,
-      directory: directory
+      directory: fromDirectory,
     });
 
     // Set the mtime/ctime of the supplied path
     let updateTime = async (path: string, ctime: number, mtime: number) => {
-      let fullPath: string = this.getPath(directory, path);
+      let fullPath: string = this.getPath(toDirectory, path);
       let entry = await this.dbRequest('get', [fullPath]) as EntryObj;
       entry.ctime = ctime;
       entry.mtime = mtime;
@@ -429,24 +471,28 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
         // Read the file
         let file = await this.readFile({
           path: from,
-          directory
+          directory: fromDirectory
         });
 
-        // Remove the file
-        await this.deleteFile({
-          path: from,
-          directory
-        });
+        // Optionally remove the file
+        if (doRename) {
+          await this.deleteFile({
+            path: from,
+            directory: fromDirectory
+          });
+        }
 
         // Write the file to the new location
         await this.writeFile({
           path: to,
-          directory,
+          directory: toDirectory,
           data: file.data
         });
 
-        // Copy the mtime/ctime of the original file
-        await updateTime(to, fromObj.ctime, fromObj.mtime);
+        // Copy the mtime/ctime of a renamed file
+        if (doRename) {
+          await updateTime(to, fromObj.ctime, fromObj.mtime);
+        }
 
         // Resolve promise
         return {};
@@ -460,35 +506,40 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
           // Create the to directory
           await this.mkdir({
             path: to,
-            directory,
+            directory: toDirectory,
             createIntermediateDirectories: false,
           });
 
-          // Copy the mtime/ctime of the original directory
-          await updateTime(to, fromObj.ctime, fromObj.mtime);
+          // Copy the mtime/ctime of a renamed directory
+          if (doRename) {
+            await updateTime(to, fromObj.ctime, fromObj.mtime);
+          }
         } catch (e) {
         }
 
         // Iterate over the contents of the from location
         let contents = (await this.readdir({
           path: from,
-          directory
+          directory: fromDirectory,
         })).files;
 
         for (let filename of contents) {
           // Move item from the from directory to the to directory
-          await this.rename({
+          await this._copy({
             from: `${from}/${filename}`,
             to: `${to}/${filename}`,
-            directory,
-          });
+            directory: fromDirectory,
+            toDirectory,
+          }, doRename);
         }
 
-        // Remove the original from directory
-        await this.rmdir({
-          path: from,
-          directory
-        });
+        // Optionally remove the original from directory
+        if (doRename) {
+          await this.rmdir({
+            path: from,
+            directory: fromDirectory
+          });
+        }
     }
 
     return {};

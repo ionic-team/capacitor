@@ -124,9 +124,11 @@ getActivity().startActivity(intent);
 #### Intents with Result
 
 Sometimes when you launch an Intent, you expect some result back. In that case we will use `startActivityForResult`.
+Also make sure you call `saveCall(call);` as you will need it later.
 
 ```java
-static final int REQUEST_IMAGE_PICK = 12345;
+saveCall(call);
+static final int REQUEST_IMAGE_PICK = 12345; // Unique code
 Intent intent = new Intent(Intent.ACTION_PICK);
 intent.setType("image/*");
 startActivityForResult(call, intent, REQUEST_IMAGE_PICK);
@@ -139,6 +141,7 @@ To get the result back we have to override `handleOnActivityResult`
 protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
   super.handleOnActivityResult(requestCode, resultCode, data);
 
+  // Get the previously saved call
   PluginCall savedCall = getSavedCall();
 
   if (savedCall == null) {

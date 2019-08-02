@@ -359,6 +359,7 @@ public class Camera extends Plugin {
       bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
       Uri newUri = saveTemporaryImage(bitmap, u, bis);
       JSObject ret = new JSObject();
+      ret.put("format", "jpeg");
       ret.put("exif", exif.toJson());
       ret.put("path", newUri.toString());
       ret.put("webPath", FileUtils.getPortablePath(getContext(), bridge.getLocalUrl(), newUri));
@@ -406,9 +407,10 @@ public class Camera extends Plugin {
 
   private void returnDataUrl(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
     byte[] byteArray = bitmapOutputStream.toByteArray();
-    String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+    String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
 
     JSObject data = new JSObject();
+    data.put("format", "jpeg");
     data.put("dataUrl", "data:image/jpeg;base64," + encoded);
     data.put("exif", exif.toJson());
     call.resolve(data);
@@ -416,9 +418,10 @@ public class Camera extends Plugin {
 
   private void returnBase64(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
     byte[] byteArray = bitmapOutputStream.toByteArray();
-    String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+    String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
 
     JSObject data = new JSObject();
+    data.put("format", "jpeg");
     data.put("base64String", encoded);
     data.put("exif", exif.toJson());
     call.resolve(data);

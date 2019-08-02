@@ -36,6 +36,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Data Storage SQLite | `capacitor-data-storage-sqlite` | <https://github.com/jepiqueau/capacitor-data-storage-sqlite> | |
+| Secure Storage Plugin | `capacitor-secure-storage-plugin` | <https://github.com/martinkasa/capacitor-secure-storage-plugin> | |
 
 ## Video
 

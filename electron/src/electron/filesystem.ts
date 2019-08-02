@@ -1,5 +1,6 @@
 import {
   WebPlugin,
+  CopyOptions, CopyResult,
   FileReadOptions, FileReadResult,
   FilesystemPlugin, FileWriteOptions,
   FileWriteResult, FileDeleteResult,
@@ -107,7 +108,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.mkdir(lookupPath, (err:any) => {
+      this.NodeFS.mkdir(lookupPath, { recursive: options.createIntermediateDirectories }, (err:any) => {
         if(err) {
           reject(err);
           return;
@@ -208,24 +209,103 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     });
   }
 
-  rename(options: RenameOptions): Promise<RenameResult> {
-    return new Promise((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
-        reject(`${options.directory} is currently not supported in the Electron implementation.`);
-      let fromPath = this.fileLocations[options.directory] + options.from;
-      let toPath = this.fileLocations[options.directory] + options.to;
+  private _copy(options: CopyOptions, doRename: boolean = false): Promise<CopyResult> {
+    const copyRecursively = (src: string, dst: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        this.NodeFS.stat(src, (err: any, stats: any) => {
+          if(err) {
+            reject(err);
+            return;
+          }
 
-      this.NodeFS.rename(fromPath, toPath, (err: any) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+          if(stats.isDirectory()) {
+            this.NodeFS.mkdir(dst, (err: any) => {
+              if(err) {
+                reject(err);
+                return;
+              }
 
-        resolve();
+              const files = this.NodeFS.readdirSync(src);
+              Promise.all(
+                files.map(
+                  (file: string) =>
+                    copyRecursively(src + this.Path.sep + file, dst + this.Path.sep + file)
+                )
+              )
+                .then(() => resolve())
+                .catch(reject);
+              return;
+            });
+
+            return;
+          }
+
+          const dstParent = this.Path.dirname(dst).split(this.Path.sep).pop();
+          this.NodeFS.stat(dstParent, (err: any) => {
+            if(err) {
+              this.NodeFS.mkdirSync(dstParent);
+            }
+
+            this.NodeFS.copyFile(src, dst, (err: any) => {
+              if(err) {
+                reject(err);
+                return;
+              }
+
+              resolve();
+            });
+          });
+        });
       });
+    };
+
+    return new Promise((resolve, reject) => {
+      if(!options.from || !options.to) {
+        reject('Both to and from must be supplied');
+        return;
+      }
+
+      if(!options.toDirectory) {
+        options.toDirectory = options.directory;
+      }
+
+      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1) {
+        reject(`${options.directory} is currently not supported in the Electron implementation.`);
+        return;
+      }
+
+      if(Object.keys(this.fileLocations).indexOf(options.toDirectory) === -1) {
+        reject(`${options.toDirectory} is currently not supported in the Electron implementation.`);
+        return;
+      }
+
+      const fromPath = this.fileLocations[options.directory] + options.from;
+      const toPath = this.fileLocations[options.toDirectory] + options.to;
+
+      if(doRename) {
+        this.NodeFS.rename(fromPath, toPath, (err: any) => {
+          if(err) {
+            reject(err);
+            return;
+          }
+
+          resolve();
+        });
+      } else {
+        copyRecursively(fromPath, toPath)
+          .then(() => resolve())
+          .catch(reject);
+      }
     });
   }
 
+  copy(options: CopyOptions): Promise<CopyResult> {
+    return this._copy(options, false);
+  }
+
+  rename(options: RenameOptions): Promise<RenameResult> {
+    return this._copy(options, true);
+  }
 }
 
 const Filesystem = new FilesystemPluginElectron();

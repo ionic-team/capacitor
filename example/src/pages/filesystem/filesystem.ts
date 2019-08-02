@@ -175,4 +175,92 @@ export class FilesystemPage {
     }
     console.log('Wrote file');
   }
+
+  // Helper function to run the provided promise-returning function on a single item or array of items
+  async doAll(item, callback) {
+    item = Array.isArray(item) ? item : [item];
+    for (let i of item) {
+      await callback(i);
+    }
+  }
+
+  // Run stat on many paths
+  statAll(paths) {
+    return this.doAll(paths, path => Plugins.Filesystem.stat({path}));
+  }
+
+  // Create many files
+  writeAll(paths) {
+    return this.doAll(paths, path => Plugins.Filesystem.writeFile({
+      path,
+      data: path,
+      encoding: FilesystemEncoding.UTF8,
+    }));
+  }
+
+  // Delete many files
+  deleteAll(paths) {
+    return this.doAll(paths, path => Plugins.Filesystem.deleteFile({path}));
+  }
+
+  // Create many directories
+  mkdirAll(paths) {
+    return this.doAll(paths, path => Plugins.Filesystem.mkdir({
+      path,
+      createIntermediateDirectories: true,
+    }));
+  }
+
+  // Remove many directories
+  rmdirAll(paths) {
+    return this.doAll(paths, path => Plugins.Filesystem.rmdir({path}));
+  }
+
+  // Exercise the rename call
+  async renameFileTest() {
+    console.log('Rename a file into a directory');
+    await this.writeAll('fa');
+    await this.mkdirAll('da');
+    await Plugins.Filesystem.rename({from: 'fa', to: 'da/fb'});
+    await this.deleteAll('da/fb');
+    await this.rmdirAll('da');
+  }
+
+  // Exercise the copy call
+  async copyFileTest() {
+    console.log('Copy a file into a directory');
+    await this.writeAll('fa');
+    await this.mkdirAll('da');
+    await Plugins.Filesystem.copy({from: 'fa', to: 'da/fb'});
+    await this.deleteAll(['fa', 'da/fb']);
+    await this.rmdirAll('da');
+  }
+
+  async renameDirectoryTest() {
+    console.log('Move a directory into and out of a directory');
+    await this.mkdirAll(['da', 'db', 'db/dc']);
+    await this.writeAll(['db/fa', 'db/dc/fb']);
+
+    await Plugins.Filesystem.rename({from: 'db', to: 'da/db'});
+    await this.statAll(['da/db', 'da/db/fa', 'da/db/dc', 'da/db/dc/fb']);
+    await Plugins.Filesystem.rename({from: 'da/db', to: 'db'});
+    await this.statAll(['da', 'db', 'db/dc', 'db/fa', 'db/dc/fb']);
+
+    await this.deleteAll(['db/fa', 'db/dc/fb']);
+    await this.rmdirAll(['da', 'db/dc', 'db']);
+  }
+
+  async copyDirectoryTest() {
+    console.log('Copy a directory into and out of a directory');
+    await this.mkdirAll(['da', 'db', 'db/dc']);
+    await this.writeAll(['db/fa', 'db/dc/fb']);
+
+    await Plugins.Filesystem.copy({from: 'db', to: 'da/db'});
+    await this.statAll(['da/db', 'da/db/dc', 'da/db/fa', 'da/db/dc/fb']);
+    await Plugins.Filesystem.copy({from: 'da/db', to: 'dc'});
+    await this.statAll(['dc', 'dc/dc', 'dc/dc/fb', 'dc/fa']);
+
+    await this.deleteAll(['da/db/dc/fb', 'da/db/fa', 'db/dc/fb', 'db/fa', 'dc/dc/fb', 'dc/fa']);
+    await this.rmdirAll(['dc/dc', 'dc', 'db/dc', 'db', 'da/db/dc', 'da/db', 'da']);
+  }
 }

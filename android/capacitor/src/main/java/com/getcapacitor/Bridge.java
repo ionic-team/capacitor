@@ -25,7 +25,6 @@ import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Browser;
 import com.getcapacitor.plugin.Camera;
 import com.getcapacitor.plugin.Clipboard;
-import com.getcapacitor.plugin.Console;
 import com.getcapacitor.plugin.Device;
 import com.getcapacitor.plugin.Filesystem;
 import com.getcapacitor.plugin.Geolocation;
@@ -356,7 +355,6 @@ public class Bridge {
     this.registerPlugin(Browser.class);
     this.registerPlugin(Camera.class);
     this.registerPlugin(Clipboard.class);
-    this.registerPlugin(Console.class);
     this.registerPlugin(Device.class);
     this.registerPlugin(LocalNotifications.class);
     this.registerPlugin(Filesystem.class);

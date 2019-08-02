@@ -526,6 +526,13 @@ export interface FilesystemPlugin extends Plugin {
    * @return a promise that resolves with the rename result
    */
   rename(options: RenameOptions): Promise<RenameResult>;
+
+  /**
+   * Copy a file or directory
+   * @param options the options for the copy operation
+   * @return a promise that resolves with the copy result
+   */
+  copy(options: CopyOptions): Promise<CopyResult>;
 }
 
 export enum FilesystemDirectory {
@@ -691,20 +698,27 @@ export interface StatOptions {
   directory?: FilesystemDirectory;
 }
 
-export interface RenameOptions {
+export interface CopyOptions {
   /**
-   * The existing file or directory to rename
+   * The existing file or directory
    */
   from: string;
   /**
-   * The destination to rename the file or directory to
+   * The destination file or directory
    */
   to: string;
   /**
-   * The FilesystemDirectory containing the file or directory to rename
+   * The FilesystemDirectory containing the existing file or directory
    */
   directory?: FilesystemDirectory;
+  /**
+   * The FilesystemDirectory containing the destination file or directory. If not supplied will use the 'directory'
+   * parameter as the destination
+   */
+  toDirectory?: FilesystemDirectory;
 }
+
+export interface RenameOptions extends CopyOptions {}
 
 export interface FileReadResult {
   data: string;
@@ -720,6 +734,8 @@ export interface MkdirResult {
 export interface RmdirResult {
 }
 export interface RenameResult {
+}
+export interface CopyResult {
 }
 export interface ReaddirResult {
   files: string[];
@@ -949,6 +965,11 @@ export interface LocalNotification {
   id: number;
   schedule?: LocalNotificationSchedule;
   sound?: string;
+  /**
+   * Android-only: set a custom statusbar icon.
+   * If set, it overrides default icon from capacitor.config.json
+   */
+  smallIcon?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
