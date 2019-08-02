@@ -119,7 +119,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
   }
 
   rmdir(options: RmdirOptions): Promise<RmdirResult> {
-    let {path, directory} = options;
+    let {path, directory, recursive} = options;
 
     if (Object.keys(this.fileLocations).indexOf(directory) === -1)
       return Promise.reject(`${directory} is currently not supported in the Electron implementation.`);
@@ -129,6 +129,10 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         if (stat.type === 'directory') {
           return this.readdir({path, directory})
             .then((readDirResult) => {
+              if (readDirResult.files.length !== 0 && !recursive) {
+                return Promise.reject(`${path} is not empty.`);
+              }
+
               if (!readDirResult.files.length) {
                 return new Promise((resolve, reject) => {
                   let lookupPath = this.fileLocations[directory] + path;
