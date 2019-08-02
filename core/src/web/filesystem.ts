@@ -300,7 +300,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       if (entryObj.type === 'file') {
         await this.deleteFile({path: entryPath, directory});
       } else {
-        await this.rmdir({path: entryPath, directory});
+        await this.rmdir({path: entryPath, directory, recursive});
       }
     }
 
