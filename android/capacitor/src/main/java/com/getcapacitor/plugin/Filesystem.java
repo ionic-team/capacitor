@@ -354,6 +354,7 @@ public class Filesystem extends Plugin {
     saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
+    Boolean recursive = call.getBoolean("recursive", false);
 
     File fileObject = getFileObject(path, directory);
 
@@ -361,6 +362,11 @@ public class Filesystem extends Plugin {
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       if (!fileObject.exists()) {
         call.error("Directory does not exist");
+        return;
+      }
+
+      if (fileObject.isDirectory() && fileObject.listFiles().length != 0 && !recursive) {
+        call.error("Directory is not empty");
         return;
       }
 
