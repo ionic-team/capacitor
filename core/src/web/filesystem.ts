@@ -274,7 +274,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   }
 
   /**
-   * Recursively remove a directory and all its contents
+   * Remove a directory
    * @param options the options for the directory remove
    */
   async rmdir(options: RmdirOptions): Promise<RmdirResult> {
