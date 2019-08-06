@@ -87,6 +87,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | AdMob | `capacitor-admob` | <https://github.com/rahadur/capacitor-admob> | Android only (currently) |
+| AdMob | `@rdlabo/capacitor-admob` | <https://github.com/rdlabo/capacitor-admob> | |
 
 ## Notifications
 
