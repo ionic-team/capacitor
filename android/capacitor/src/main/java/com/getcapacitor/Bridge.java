@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
