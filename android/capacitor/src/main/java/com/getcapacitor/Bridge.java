@@ -202,6 +202,37 @@ public class Bridge {
 
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(new WebViewClient() {
+      @SuppressWarnings("deprecation")
+      @Override
+      public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+        final String marker = "capacitor_is_reloaded";
+        if(errorCode == -6) {
+          // errorCode: -6, desc: net::ERR_CONNECTION_REFUSED
+          try {
+            // try to stop loading
+            view.stopLoading();
+          } catch ( Exception e ) {
+            /* ignore */
+          } finally {
+            // then reload failing url
+            Uri failingUri = Uri.parse(failingUrl);
+            // check if url was reloaded to avoid loop
+            if(failingUri.getQueryParameter(marker) == null) {
+              Uri.Builder reloadUri = failingUri.buildUpon();
+              // mark url with marker parameter
+              reloadUri.appendQueryParameter(marker, "true");
+              view.loadUrl(reloadUri.build().toString());
+            }
+          }
+        }
+      }
+      @TargetApi(android.os.Build.VERSION_CODES.M)
+      @Override
+      public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError rerr) {
+        // Redirect to deprecated method, so you can use it in all SDK versions
+        onReceivedError(view, rerr.getErrorCode(), rerr.getDescription().toString(), req.getUrl().toString());
+      }
+
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         return localServer.shouldInterceptRequest(request);
