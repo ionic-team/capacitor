@@ -28,6 +28,7 @@ export class MyApp {
     { name: 'Motion', page: 'MotionPage' },
     { name: 'Nav', page: 'NavPage' },
     { name: 'Network', page: 'NetworkPage' },
+    { name: 'Permissions', page: 'PermissionsPage' },
     { name: 'Photos', page: 'PhotosPage' },
     { name: 'Share', page: 'SharePage' },
     { name: 'SplashScreen', page: 'SplashScreenPage' },

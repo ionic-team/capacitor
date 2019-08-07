@@ -1,6 +1,5 @@
 {
   "name": "avocado",
-  "app_id": "",
   "integrations": {
     "cordova": {}
   },
