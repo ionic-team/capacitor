@@ -1,17 +1,31 @@
 package com.getcapacitor;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Message;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.webkit.ClientCertRequest;
+import android.webkit.HttpAuthHandler;
+import android.webkit.RenderProcessGoneDetail;
+import android.webkit.SafeBrowsingResponse;
+import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -25,6 +39,7 @@ import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Browser;
 import com.getcapacitor.plugin.Camera;
 import com.getcapacitor.plugin.Clipboard;
+import com.getcapacitor.plugin.Console;
 import com.getcapacitor.plugin.Device;
 import com.getcapacitor.plugin.Filesystem;
 import com.getcapacitor.plugin.Geolocation;
@@ -128,6 +143,10 @@ public class Bridge {
   // Any URI that was passed to the app on start
   private Uri intentUri;
 
+  @Nullable
+  // A custom WebViewClient instance which methods will also be called with builtin implementation
+  private WebViewClient customWebViewClient;
+
 
   /**
    * Create the Bridge with a reference to the main {@link Activity} for the
@@ -201,21 +220,196 @@ public class Bridge {
     Log.d(LOG_TAG, "Loading app at " + appUrl);
 
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
-    webView.setWebViewClient(new WebViewClient() {
+
+    webView.setWebViewClient(new WebViewClient(){
+
       @Override
-      public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        return localServer.shouldInterceptRequest(request);
+      public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        super.onPageStarted(view, url, favicon);
+        if(customWebViewClient != null) {
+          customWebViewClient.onPageStarted(view, url, favicon);
+        }
       }
 
       @Override
+      public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+        if(customWebViewClient != null) {
+          customWebViewClient.onPageFinished(view, url);
+        }
+      }
+
+      @Override
+      public void onLoadResource(WebView view, String url) {
+        super.onLoadResource(view, url);
+        if(customWebViewClient != null) {
+          customWebViewClient.onLoadResource(view, url);
+        }
+      }
+
+      @TargetApi(Build.VERSION_CODES.M)
+      @Override
+      public void onPageCommitVisible(WebView view, String url) {
+        super.onPageCommitVisible(view, url);
+        if(customWebViewClient != null) {
+          customWebViewClient.onPageCommitVisible(view, url);
+        }
+      }
+
+
+      @Override
+      public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+        super.onReceivedError(view, errorCode, description, failingUrl);
+        if(customWebViewClient != null) {
+          customWebViewClient.onReceivedError(view, errorCode, description, failingUrl);
+        }
+      }
+
+      @TargetApi(Build.VERSION_CODES.M)
+      @Override
+      public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+        super.onReceivedError(view, request, error);
+        if(customWebViewClient != null) {
+          customWebViewClient.onReceivedError(view, request, error);
+        }
+      }
+
+      @RequiresApi(api = Build.VERSION_CODES.M)
+      @Override
+      public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+        super.onReceivedHttpError(view, request, errorResponse);
+        if(customWebViewClient != null) {
+          customWebViewClient.onReceivedHttpError(view, request, errorResponse);
+        }
+      }
+
+      @Override
+      public void onFormResubmission(WebView view, Message dontResend, Message resend) {
+        super.onFormResubmission(view, dontResend, resend);
+        if(customWebViewClient != null) {
+          customWebViewClient.onFormResubmission(view, dontResend, resend);
+        }
+      }
+
+      @Override
+      public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+        super.doUpdateVisitedHistory(view, url, isReload);
+        if(customWebViewClient != null) {
+          customWebViewClient.doUpdateVisitedHistory(view, url, isReload);
+        }
+      }
+
+      @Override
+      public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        super.onReceivedSslError(view, handler, error);
+        if(customWebViewClient != null) {
+          customWebViewClient.onReceivedSslError(view, handler, error);
+        }
+      }
+
+      @Override
+      public void onReceivedClientCertRequest(WebView view, ClientCertRequest request) {
+        super.onReceivedClientCertRequest(view, request);
+        if(customWebViewClient != null) {
+          customWebViewClient.onReceivedClientCertRequest(view, request);
+        }
+      }
+
+      @Override
+      public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+        super.onReceivedHttpAuthRequest(view, handler, host, realm);
+        if(customWebViewClient != null) {
+          customWebViewClient.onReceivedHttpAuthRequest(view, handler, host, realm);
+        }
+      }
+
+      @Override
+      public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
+        boolean result = super.shouldOverrideKeyEvent(view, event);
+        if(customWebViewClient != null) {
+          result = result || customWebViewClient.shouldOverrideKeyEvent(view, event);
+        }
+        return result;
+      }
+
+      @Override
+      public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
+        super.onUnhandledKeyEvent(view, event);
+        if(customWebViewClient != null) {
+          customWebViewClient.onUnhandledKeyEvent(view, event);
+        }
+      }
+
+      @Override
+      public void onScaleChanged(WebView view, float oldScale, float newScale) {
+        super.onScaleChanged(view, oldScale, newScale);
+        if(customWebViewClient != null) {
+          customWebViewClient.onScaleChanged(view, oldScale, newScale);
+        }
+      }
+
+      @Override
+      public void onReceivedLoginRequest(WebView view, String realm, @Nullable String account, String args) {
+        super.onReceivedLoginRequest(view, realm, account, args);
+        if(customWebViewClient != null) {
+          customWebViewClient.onReceivedLoginRequest(view, realm, account, args);
+        }
+      }
+
+      @TargetApi(Build.VERSION_CODES.O)
+      @Override
+      public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+        boolean result = super.onRenderProcessGone(view, detail);
+        if(customWebViewClient != null) {
+          result = result || customWebViewClient.onRenderProcessGone(view, detail);
+        }
+        return result;
+      }
+
+      @TargetApi(Build.VERSION_CODES.O_MR1)
+      @Override
+      public void onSafeBrowsingHit(WebView view, WebResourceRequest request, int threatType, SafeBrowsingResponse callback) {
+        super.onSafeBrowsingHit(view, request, threatType, callback);
+        if(customWebViewClient != null) {
+          customWebViewClient.onSafeBrowsingHit(view, request, threatType, callback);
+        }
+      }
+
+      @Override
+      public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        Log.i(LogUtils.getCoreTag("Bridge"), "shouldInterceptRequest: "+request.getMethod()+", "+request.getUrl());
+        final WebResourceResponse response = localServer.shouldInterceptRequest(request);
+        @Nullable WebResourceResponse response2 = null;
+        if(customWebViewClient != null) {
+          response2 = customWebViewClient.shouldInterceptRequest(view, request);
+        }
+        if(response != null) {
+          Log.i(LogUtils.getCoreTag("Bridge"), "shouldInterceptRequest.response: " + response.getReasonPhrase() + ", " + response.getStatusCode());
+          return response;
+        } else {
+          Log.i(LogUtils.getCoreTag("Bridge"), "shouldInterceptRequest.response>: " + response2);
+          return response2;
+        }
+      }
+
+      @TargetApi(Build.VERSION_CODES.N)
+      @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         Uri url = request.getUrl();
-        return launchIntent(url);
+        boolean result = launchIntent(url);
+        if(customWebViewClient != null) {
+          result = result || customWebViewClient.shouldOverrideUrlLoading(view, request);
+        }
+        return result;
       }
 
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        return launchIntent(Uri.parse(url));
+        boolean result = launchIntent(Uri.parse(url));
+        if(customWebViewClient != null) {
+          result = result || customWebViewClient.shouldOverrideUrlLoading(view, url);
+        }
+        return result;
       }
 
       private boolean launchIntent(Uri url) {
@@ -231,6 +425,7 @@ public class Bridge {
         return false;
       }
     });
+
 
     if (!isDeployDisabled()) {
       SharedPreferences prefs = getContext().getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
@@ -827,4 +1022,22 @@ public class Bridge {
   public WebViewLocalServer getLocalServer() {
     return localServer;
   }
+
+  /**
+   * Set the custom WebViewClient implementation. Pass `null` to remove it.
+   * ```
+   *     this.getBridge().setCustomWebViewClient(new WebViewClient(){
+   *       @Override
+   *       public void onPageStarted(WebView view, String url, Bitmap favicon) {
+   *         super.onPageStarted(view, url, favicon);
+   *         Log.e(LogUtils.getCoreTag("CapacitorWebViewClient"), "onPageStarted: "+url);
+   *       }
+   *     });
+   * ```
+   * @param client
+   */
+  public void setCustomWebViewClient(@Nullable WebViewClient client) {
+    customWebViewClient = client;
+  }
 }
+
