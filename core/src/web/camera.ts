@@ -58,58 +58,60 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
     if (!input) {
       input = document.createElement('input') as HTMLInputElement;
+      input.id = '_capacitor-camera-input';
       input.type = 'file';
-      input.accept = 'image/*';
-      (input as any).capture = true;
-
-      if (options.source === CameraSource.Photos || options.source === CameraSource.Prompt) {
-        input.removeAttribute('capture');
-      } else if (options.direction === CameraDirection.Front) {
-        (input as any).capture = 'user';
-      } else if (options.direction === CameraDirection.Rear) {
-        (input as any).capture = 'environment';
-      }
-
-      input.addEventListener('change', (_e: any) => {
-        const file = input.files[0];
-        let format = 'jpeg';
-        if (file.type === 'image/png') {
-          format = 'png';
-        }
-        if (file.type === 'image/gif') {
-          format = 'gif';
-        }
-
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          if (options.resultType === CameraResultType.DataUrl) {
-            resolve({
-              dataUrl: reader.result,
-              format
-            } as CameraPhoto);
-          } else if (options.resultType === CameraResultType.Base64) {
-            const b64 = (reader.result as string).split(',')[1];
-            resolve({
-              base64String: b64,
-              format
-            } as CameraPhoto);
-          } else {
-            reject('Unsupported result type for this platform');
-          }
-
-          cleanup();
-        });
-
-        if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
-          reader.readAsDataURL(file);
-        } else {
-          reject('Camera result type not supported on this platform. Use DataUrl or Base64');
-          cleanup();
-        }
-      });
-
       document.body.appendChild(input);
     }
+
+    input.accept = 'image/*';
+    (input as any).capture = true;
+
+    if (options.source === CameraSource.Photos || options.source === CameraSource.Prompt) {
+      input.removeAttribute('capture');
+    } else if (options.direction === CameraDirection.Front) {
+      (input as any).capture = 'user';
+    } else if (options.direction === CameraDirection.Rear) {
+      (input as any).capture = 'environment';
+    }
+
+    input.addEventListener('change', (_e: any) => {
+      console.log('CHANGE', _e);
+      const file = input.files[0];
+      let format = 'jpeg';
+      if (file.type === 'image/png') {
+        format = 'png';
+      }
+      if (file.type === 'image/gif') {
+        format = 'gif';
+      }
+
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        if (options.resultType === CameraResultType.DataUrl) {
+          resolve({
+            dataUrl: reader.result,
+            format
+          } as CameraPhoto);
+        } else if (options.resultType === CameraResultType.Base64) {
+          const b64 = (reader.result as string).split(',')[1];
+          resolve({
+            base64String: b64,
+            format
+          } as CameraPhoto);
+        } else {
+          reject('Unsupported result type for this platform');
+        }
+
+        cleanup();
+      });
+
+      if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
+        reader.readAsDataURL(file);
+      } else {
+        reject('Camera result type not supported on this platform. Use DataUrl or Base64');
+        cleanup();
+      }
+    });
 
     input.click();
   }
