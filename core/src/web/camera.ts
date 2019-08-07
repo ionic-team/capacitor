@@ -88,8 +88,6 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
           } else {
             reject('Unsupported result type for this platform');
           }
-          /*
-          */
         });
 
         if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
