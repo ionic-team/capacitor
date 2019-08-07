@@ -310,6 +310,12 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * Web only: whether to use the PWA Element experience or file input. The default
+   * is to use file input experience. Learn more about PWA Elements: https://capacitor.ionicframework.com/docs/pwa-elements/
+   */
+  webUsePWAElements?: boolean;
 }
 
 export enum CameraSource {
@@ -347,7 +353,7 @@ export interface CameraPhoto {
    */
   exif?: any;
   /**
-   * The format of the image. Currently, only "jpeg" is supported.
+   * The format of the image, ex: jpeg, png, gif.
    */
   format: string;
 }
