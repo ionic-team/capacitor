@@ -5,7 +5,8 @@ import {
   CameraPhoto,
   CameraOptions,
   CameraResultType,
-  CameraDirection
+  CameraDirection,
+  CameraSource
 } from '../core-plugin-definitions';
 
 export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
@@ -18,7 +19,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
   async getPhoto(options: CameraOptions): Promise<CameraPhoto> {
     return new Promise<CameraPhoto>(async (resolve, reject) => {
-      if (options.webUsePWAElements === true) {
+      if (options.webUsePWAElements === true && options.source === CameraSource.Camera) {
         const cameraModal: any = document.createElement('pwa-camera-modal');
         document.body.appendChild(cameraModal);
         try {
@@ -51,12 +52,19 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   private fileInputExperience(options: CameraOptions, resolve: any, reject: any) {
     let input = document.querySelector('#_capacitor-camera-input') as HTMLInputElement;
 
+    const cleanup = () => {
+      input.parentNode && input.parentNode.removeChild(input);
+    };
+
     if (!input) {
       input = document.createElement('input') as HTMLInputElement;
       input.type = 'file';
       input.accept = 'image/*';
+      (input as any).capture = true;
 
-      if (options.direction === CameraDirection.Front) {
+      if (options.source === CameraSource.Photos || options.source === CameraSource.Prompt) {
+        input.removeAttribute('capture');
+      } else if (options.direction === CameraDirection.Front) {
         (input as any).capture = 'user';
       } else if (options.direction === CameraDirection.Rear) {
         (input as any).capture = 'environment';
@@ -88,12 +96,15 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
           } else {
             reject('Unsupported result type for this platform');
           }
+
+          cleanup();
         });
 
         if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
           reader.readAsDataURL(file);
         } else {
           reject('Camera result type not supported on this platform. Use DataUrl or Base64');
+          cleanup();
         }
       });
 

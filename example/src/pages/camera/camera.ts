@@ -3,6 +3,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {
   Plugins,
+  CameraDirection,
   CameraResultType,
   CameraSource,
   FilesystemDirectory
@@ -39,6 +40,17 @@ export class CameraPage {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
+      resultType: CameraResultType.DataUrl
+    })
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
+  }
+
+  async getPhotoFront() {
+    const image = await Plugins.Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      direction: CameraDirection.Front,
       resultType: CameraResultType.DataUrl
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
