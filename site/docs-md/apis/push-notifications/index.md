@@ -15,7 +15,7 @@ The Push Notifications API provides methods for registering a device to receive 
 
 ## Enabling Push Notifications Capabilites
 
-On iOS you must enable Push Notifications Capabilities in your project to enable the Push Notifications plugin to work. To do so, go to the `Capabilities` section of the app project and switch the `Push Notifications` button from the `OFF` to the `ON` possition.
+On iOS you must enable Push Notifications Capabilities in your project to enable the Push Notifications plugin to work. To do so, go to the `Capabilities` section of the app project and switch the `Push Notifications` button from `OFF` to the `ON` position.
 
 This change adds the push capabilites to the app and creates an entitlements file in the project.
 
