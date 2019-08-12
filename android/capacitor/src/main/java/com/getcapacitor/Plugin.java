@@ -125,6 +125,9 @@ public class Plugin {
    * Set the last saved call to null to free memory
    */
   public void freeSavedCall() {
+    if (!this.savedLastCall.isReleased()) {
+      this.savedLastCall.release(bridge);
+    }
     this.savedLastCall = null;
   }
 
