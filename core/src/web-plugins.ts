@@ -14,6 +14,7 @@ export * from './web/share';
 export * from './web/modals';
 export * from './web/motion';
 export * from './web/network';
+export * from './web/permissions';
 export * from './web/splash-screen';
 export * from './web/storage';
 export * from './web/toast';

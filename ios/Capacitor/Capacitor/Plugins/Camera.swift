@@ -41,7 +41,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   var imageCounter = 0
 
   var settings = CameraSettings()
-
+  
   @objc func getPhoto(_ call: CAPPluginCall) {
     self.call = call
     self.settings = getSettings(call)
@@ -54,10 +54,12 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       return
     }
 
-    imagePicker = UIImagePickerController()
-    imagePicker!.delegate = self
-    imagePicker!.allowsEditing = settings.allowEditing
-
+    DispatchQueue.main.async {
+      self.imagePicker = UIImagePickerController()
+      self.imagePicker!.delegate = self
+      self.imagePicker!.allowsEditing = self.settings.allowEditing
+    }
+    
     doShow(call: call, settings: settings)
   }
 

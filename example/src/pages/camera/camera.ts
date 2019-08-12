@@ -25,13 +25,15 @@ const { Filesystem } = Plugins;
 export class CameraPage {
   image: SafeResourceUrl;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private zone: NgZone, private sanitizer: DomSanitizer) {
+  constructor(public navCtrl: NavController,
+              public navParams: NavParams,
+              private zone: NgZone,
+              private sanitizer: DomSanitizer) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad CameraPage');
   }
-
 
   async getPhoto() {
     const image = await Plugins.Camera.getPhoto({

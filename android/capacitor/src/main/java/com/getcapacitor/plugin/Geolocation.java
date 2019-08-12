@@ -185,8 +185,11 @@ public class Geolocation extends Plugin {
 
     if (savedCall.getMethodName().equals("getCurrentPosition")) {
       sendLocation(savedCall);
-    } else {
+    } else if (savedCall.getMethodName().equals("watchPosition")) {
       startWatch(savedCall);
+    } else {
+      savedCall.resolve();
+      savedCall.release(bridge);
     }
   }
 
