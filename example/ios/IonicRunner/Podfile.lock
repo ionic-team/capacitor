@@ -14,9 +14,9 @@ EXTERNAL SOURCES:
     :path: "../../../"
 
 SPEC CHECKSUMS:
-  Capacitor: f245413edff86ebf3d18bf76cadaee4be58b4a04
+  Capacitor: c9bf4c8abbc3ba54979aaa3f77f1a776fe390cd0
   CapacitorCordova: 25811fd90c0ea23ea135a42a217d1918873fa566
 
 PODFILE CHECKSUM: cf3dd73a42bef0923c014a1179dc29d10aa5cae0
 
-COCOAPODS: 1.7.2
+COCOAPODS: 1.6.2
