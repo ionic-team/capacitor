@@ -330,6 +330,8 @@ public class WebViewLocalServer {
         if (path.endsWith(".js")) {
           // Make sure JS files get the proper mimetype to support ES modules
           mimeType = "application/javascript";
+        } else if (path.endsWith(".wasm")) {
+          mimeType = "application/wasm";
         } else {
           mimeType = URLConnection.guessContentTypeFromStream(stream);
         }
