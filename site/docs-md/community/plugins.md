@@ -79,6 +79,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Fused Location | `@johannesnormannjensen/capacitor-fused-location` | <https://github.com/johannesnormannjensen/capacitor-fused-location> | |
 | Geofence Tracker | `capacitor-geofence-tracker` | <https://github.com/mvollebregt/capacitor-geofence-tracker> | |
 | Fancy Geo | `capacitor-fancy-geo` | <https://github.com/triniwiz/capacitor-fancy-geo> | |
+| [Radar](https://radar.io) | `capacitor-radar` | <https://github.com/radarlabs/capacitor-radar> | |
 
 ## Audio
 
