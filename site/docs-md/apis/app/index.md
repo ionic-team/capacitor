@@ -81,6 +81,7 @@ App.addListener('appRestoredResult', (data: any) => {
 App.addListener('appSendActionIntent', (data: any) => {
   const { extras } = data;
 
+  // The key is the constant value of the intent extra. You can find all of the options here: https://developer.android.com/reference/android/content/Intent#standard-extra-data
   const intentSubject = extras['android.intent.extra.SUBJECT'];
   const intentText = extras['android.intent.extra.TEXT'];
 
