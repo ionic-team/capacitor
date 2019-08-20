@@ -504,7 +504,7 @@ enum BridgeError: Error {
     let configScheme = config.getString("server.iosScheme")
     if let specifiedScheme = configScheme {
       // check if WebKit handles scheme and if it is valid according to Apple's documentation
-      if !!WKWebView.handlesURLScheme(self.scheme) && specifiedScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
+      if !WKWebView.handlesURLScheme(self.scheme) && specifiedScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
         self.scheme = specifiedScheme
       }
     }

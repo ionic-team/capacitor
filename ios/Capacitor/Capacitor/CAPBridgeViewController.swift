@@ -56,8 +56,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     let webViewConfiguration = WKWebViewConfiguration()
     self.handler = CAPAssetHandler()
     self.handler!.setAssetPath(startPath)
-    self.handler!.setScheme(bridge.scheme)
-    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: bridge.scheme)
+    self.handler!.setScheme(bridge!.scheme)
+    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: bridge!.scheme)
 
     webViewConfiguration.userContentController = o
     
