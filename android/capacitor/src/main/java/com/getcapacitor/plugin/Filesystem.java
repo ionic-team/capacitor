@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -39,6 +40,7 @@ import java.nio.charset.StandardCharsets;
   PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
   PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS,
   PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS,
+  PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS,
 })
 public class Filesystem extends Plugin {
 
@@ -354,6 +356,7 @@ public class Filesystem extends Plugin {
     saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
+    Boolean recursive = call.getBoolean("recursive", false);
 
     File fileObject = getFileObject(path, directory);
 
@@ -364,7 +367,18 @@ public class Filesystem extends Plugin {
         return;
       }
 
-      boolean deleted = fileObject.delete();
+      if (fileObject.isDirectory() && fileObject.listFiles().length != 0 && !recursive) {
+        call.error("Directory is not empty");
+        return;
+      }
+
+      boolean deleted = false;
+
+      try {
+        deleteRecursively(fileObject);
+        deleted = true;
+      } catch (IOException ignored) {
+      }
 
       if(deleted == false) {
         call.error("Unable to delete directory, unknown reason");
@@ -437,46 +451,147 @@ public class Filesystem extends Plugin {
     }
   }
 
-  @PluginMethod()
-  public void rename(PluginCall call) {
+  /**
+   * Helper function to recursively delete a directory
+   *
+   * @param file The file or directory to recursively delete
+   * @throws IOException
+   */
+  private static void deleteRecursively(File file) throws IOException {
+    if (file.isFile()) {
+      file.delete();
+      return;
+    }
+
+    for (File f : file.listFiles()) {
+      deleteRecursively(f);
+    }
+
+    file.delete();
+  }
+
+  /**
+   * Helper function to recursively copy a directory structure (or just a file)
+   *
+   * @param src The source location
+   * @param dst The destination location
+   * @throws IOException
+   */
+  private static void copyRecursively(File src, File dst) throws IOException {
+    if (src.isDirectory()) {
+      dst.mkdir();
+
+      for (String file : src.list()) {
+        copyRecursively(new File(src, file), new File(dst, file));
+      }
+
+      return;
+    }
+
+    if (!dst.getParentFile().exists()) {
+      dst.getParentFile().mkdirs();
+    }
+
+    if (!dst.exists()) {
+      dst.createNewFile();
+    }
+
+    try (FileChannel source = new FileInputStream(src).getChannel(); FileChannel destination = new FileOutputStream(dst).getChannel()) {
+      destination.transferFrom(source, 0, source.size());
+    }
+  }
+
+  private void _copy(PluginCall call, boolean doRename) {
     saveCall(call);
+
     String from = call.getString("from");
     String to = call.getString("to");
-    String directory = getDirectoryParameter(call);
+    String directory = call.getString("directory");
+    String toDirectory = call.getString("toDirectory");
+
+    if (toDirectory == null) {
+      toDirectory = directory;
+    }
 
     if (from == null || from.isEmpty() || to == null || to.isEmpty()) {
       call.error("Both to and from must be provided");
       return;
     }
 
-    if (to.equals(from)) {
+    File fromObject = getFileObject(from, directory);
+    File toObject = getFileObject(to, toDirectory);
+
+    assert fromObject != null;
+    assert toObject != null;
+
+    if (toObject.equals(fromObject)) {
       call.success();
       return;
     }
 
-    File fromObject = getFileObject(from, directory);
-    File toObject = getFileObject(to, directory);
-
-    if (!isPublicDirectory(directory)
-            || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-      assert toObject != null;
-      if (toObject.isDirectory()) {
-        call.error("Cannot overwrite a directory");
-        return;
-      }
-      toObject.delete();
-
-      assert fromObject != null;
-      boolean renamed = fromObject.renameTo(toObject);
-
-      if (!renamed) {
-        call.error("Unable to rename, unknown reason");
-        return;
-      }
-
-      call.success();
+    if (!fromObject.exists()) {
+      call.error("The source object does not exist");
+      return;
     }
+
+    if (toObject.getParentFile().isFile()) {
+      call.error("The parent object of the destination is a file");
+      return;
+    }
+
+    if (!toObject.getParentFile().exists()) {
+      call.error("The parent object of the destination does not exist");
+      return;
+    }
+
+    if (isPublicDirectory(directory) || isPublicDirectory(toDirectory)) {
+      if (doRename) {
+        if (!isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+          return;
+        }
+      } else {
+        if (!isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+          return;
+        }
+      }
+    }
+
+    if (toObject.isDirectory()) {
+      call.error("Cannot overwrite a directory");
+      return;
+    }
+
+    toObject.delete();
+
+    assert fromObject != null;
+    boolean modified = false;
+
+    if (doRename) {
+      modified = fromObject.renameTo(toObject);
+    } else {
+      try {
+        copyRecursively(fromObject, toObject);
+        modified = true;
+      } catch (IOException ignored) {
+      }
+    }
+
+    if (!modified) {
+      call.error("Unable to perform action, unknown reason");
+      return;
+    }
+
+    call.success();
+  }
+
+  @PluginMethod()
+  public void rename(PluginCall call) {
+    this._copy(call, true);
+  }
+
+  @PluginMethod()
+  public void copy(PluginCall call) {
+    this._copy(call, false);
   }
 
   /**
@@ -554,6 +669,8 @@ public class Filesystem extends Plugin {
       this.stat(savedCall);
     } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS) {
       this.rename(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS) {
+      this.copy(savedCall);
     }
     this.freeSavedCall();
   }

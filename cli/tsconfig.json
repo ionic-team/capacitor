@@ -11,7 +11,6 @@
       //"noUnusedParameters": true
   },
   "files": [
-      "src/declarations.d.ts",
       "src/index.ts"
   ]
 }

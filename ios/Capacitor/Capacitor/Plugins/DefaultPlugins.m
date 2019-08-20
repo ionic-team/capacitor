@@ -54,6 +54,7 @@ CAP_PLUGIN(CAPFilesystemPlugin, "Filesystem",
   CAP_PLUGIN_METHOD(getUri, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(stat, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(rename, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(copy, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
@@ -96,6 +97,9 @@ CAP_PLUGIN(CAPNetworkPlugin, "Network",
   CAP_PLUGIN_METHOD(getStatus, CAPPluginReturnPromise);
 )
 
+CAP_PLUGIN(CAPPermissionsPlugin, "Permissions",
+  CAP_PLUGIN_METHOD(query, CAPPluginReturnPromise);
+)
 
 CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(register, CAPPluginReturnPromise);

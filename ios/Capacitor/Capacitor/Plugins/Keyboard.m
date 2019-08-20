@@ -98,50 +98,58 @@ NSTimer *hideTimer;
 
 - (void)onKeyboardWillHide:(NSNotification *)notification
 {
-  [self setKeyboardHeight:0 delay:0.01];
-  [self resetScrollView];
-  hideTimer = [NSTimer scheduledTimerWithTimeInterval:0 repeats:NO block:^(NSTimer * _Nonnull timer) {
-    [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
-    [self notifyListeners:@"keyboardWillHide" data:nil];
-  }];
+  if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+    [self setKeyboardHeight:0 delay:0.01];
+    [self resetScrollView];
+    hideTimer = [NSTimer scheduledTimerWithTimeInterval:0 repeats:NO block:^(NSTimer * _Nonnull timer) {
+      [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
+      [self notifyListeners:@"keyboardWillHide" data:nil];
+    }];
+  }
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)notification
 {
-  if (hideTimer != nil) {
-    [hideTimer invalidate];
+  if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+    if (hideTimer != nil) {
+      [hideTimer invalidate];
+    }
+    CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    double height = rect.size.height;
+
+    double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue]+0.2;
+    [self setKeyboardHeight:height delay:duration];
+    [self resetScrollView];
+
+    NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
+    [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillShow" data:data];
+    NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
+    [self notifyListeners:@"keyboardWillShow" data:kbData];
   }
-  CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-  double height = rect.size.height;
-  
-  double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue]+0.2;
-  [self setKeyboardHeight:height delay:duration];
-  [self resetScrollView];
-  
-  NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
-  [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillShow" data:data];
-  NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
-  [self notifyListeners:@"keyboardWillShow" data:kbData];
 }
 
 - (void)onKeyboardDidShow:(NSNotification *)notification
 {
-  CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-  double height = rect.size.height;
-  
-  [self resetScrollView];
-  
-  NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
-  [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidShow" data:data];
-  NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
-  [self notifyListeners:@"keyboardDidShow" data:kbData];
+  if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+    CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    double height = rect.size.height;
+
+    [self resetScrollView];
+
+    NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
+    [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidShow" data:data];
+    NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
+    [self notifyListeners:@"keyboardDidShow" data:kbData];
+  }
 }
 
 - (void)onKeyboardDidHide:(NSNotification *)notification
 {
-  [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidHide"];
-  [self notifyListeners:@"keyboardDidHide" data:nil];
-  [self resetScrollView];
+  if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+    [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidHide"];
+    [self notifyListeners:@"keyboardDidHide" data:nil];
+    [self resetScrollView];
+  }
 }
 
 - (void)setKeyboardHeight:(int)height delay:(NSTimeInterval)delay
@@ -149,9 +157,9 @@ NSTimer *hideTimer;
   if (self.paddingBottom == height) {
     return;
   }
-  
+
   self.paddingBottom = height;
-  
+
   __weak CAPKeyboard* weakSelf = self;
   SEL action = @selector(_updateFrame);
   [NSObject cancelPreviousPerformRequestsWithTarget:weakSelf selector:action object:nil];
