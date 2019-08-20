@@ -19,6 +19,7 @@ public class App extends Plugin {
   private static final String EVENT_URL_OPEN = "appUrlOpen";
   private static final String EVENT_STATE_CHANGE = "appStateChange";
   private static final String EVENT_RESTORED_RESULT = "appRestoredResult";
+  private static final String EVENT_SEND_ACTION_INTENT = "appSendActionIntent";
 
   public void fireChange(boolean isActive) {
     Log.d(getLogTag(), "Firing change: " + isActive);
@@ -112,19 +113,31 @@ public class App extends Plugin {
   protected void handleOnNewIntent(Intent intent) {
     super.handleOnNewIntent(intent);
 
-    final String intentString = intent.getDataString();
-
-    // read intent
+    // read intent action
     String action = intent.getAction();
-    Uri url = intent.getData();
 
-    if (!Intent.ACTION_VIEW.equals(action) || url == null) {
-      return;
+    if (Intent.ACTION_VIEW.equals(action)) {
+      Uri url = intent.getData();
+      if (url != null) {
+        JSObject ret = new JSObject();
+        ret.put("url", url.toString());
+        notifyListeners(EVENT_URL_OPEN, ret, true);
+      }
+    } else if (Intent.ACTION_SEND.equals(action)) {
+      // Get the extras from the intent
+      Bundle bundle = intent.getExtras();
+
+      JSObject extras = new JSObject();
+      for (String key : bundle.keySet()) {
+        Object value = bundle.get(key);
+        extras.put(key, value);
+      }
+
+      JSObject ret = new JSObject();
+      ret.put("extras", extras);
+
+      notifyListeners(EVENT_SEND_ACTION_INTENT, ret, true);
     }
-
-    JSObject ret = new JSObject();
-    ret.put("url", url.toString());
-    notifyListeners(EVENT_URL_OPEN, ret, true);
   }
 
 }

@@ -129,6 +129,12 @@ export interface AppPlugin extends Plugin {
    * Listen for the hardware back button event (Android only). If you want to close the app, call `App.exitApp()`
    */
   addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+
+/**
+ * Listen for send action intent events (Android only). The extras will be passed as a key value pair
+ * directly from the Android intent.
+ */
+  addListener(eventName: 'appSendActionIntent', listenerFunc: (data: AppSendActionIntentResult) => void): PluginListenerHandle;
 }
 
 export interface AppState {
@@ -172,6 +178,13 @@ export interface AppRestoredResult {
    * expect from normally calling the plugin method. For example, `CameraPhoto`
    */
   data: any;
+}
+
+export interface AppSendActionIntentResult {
+  /**
+   * An object with keys for Android intent names (like 'android.intent.extra.SUBJECT') and their value passed from the Android intent
+   */
+  extras: any;
 }
 
 //

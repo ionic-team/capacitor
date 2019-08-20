@@ -24,6 +24,22 @@ To use `canOpenUrl`, you need to set the URL schemes your app will query for in 
 
 Read more about [LSApplicationQueriesSchemes](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/TP40009250-SW14) and [configuring Info.plist](../ios/configuration).
 
+## Note about `appSendActionIntent` event 
+This event is for Android only and it is useful when your application was opened via an intent of type 'send'. This enables you to react to values provided by the intent in your application. 
+
+For example, you might want to add your application as a target for receiving text from other applications. In this case you would need to add an intent filter to your `AndroidManifest.xml` under the `<activity>` node like so:
+
+```xml
+<intent-filter>
+  <action android:name="android.intent.action.SEND" />
+  <category android:name="android.intent.category.DEFAULT" />
+  <data android:mimeType="text/plain" />
+</intent-filter>
+```
+
+Without this intent filter, your application will not show as a target in the Android share list when sharing the appropriate type (in this case text) from another application.
+Also note that the `mimeType` could be something other than `text/plain`. See [here for more information](https://developer.android.com/guide/topics/manifest/data-element#mime).
+
 ## Example
 
 ```typescript
@@ -59,6 +75,17 @@ App.addListener('appUrlOpen', (data: any) => {
 
 App.addListener('appRestoredResult', (data: any) => {
   console.log('Restored state:', data);
+});
+
+// Android Only
+App.addListener('appSendActionIntent', (data: any) => {
+  const { extras } = data;
+
+  const intentSubject = extras['android.intent.extra.SUBJECT'];
+  const intentText = extras['android.intent.extra.TEXT'];
+
+  console.log('Intent Subject', intentSubject);
+  console.log('Intent Text', intentText);
 });
 ```
 
