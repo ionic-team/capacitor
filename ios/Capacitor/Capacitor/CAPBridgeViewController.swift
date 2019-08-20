@@ -47,16 +47,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     setScreenOrientationDefaults()
     
     let capConfig = CAPConfig(self.config)
+    
+    let o = WKUserContentController()
+    o.add(self, name: "bridge")
+    bridge = CAPBridge(self, o, capConfig)
 
     HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
     let webViewConfiguration = WKWebViewConfiguration()
     self.handler = CAPAssetHandler()
     self.handler!.setAssetPath(startPath)
-    self.handler!.setConfig(capConfig)
-    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: CAPBridge.getSchemeForConfig(capConfig))
-    
-    let o = WKUserContentController()
-    o.add(self, name: "bridge")
+    self.handler!.setScheme(bridge.scheme)
+    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: bridge.scheme)
 
     webViewConfiguration.userContentController = o
     
@@ -74,7 +75,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     setKeyboardRequiresUserInteraction(false)
     
-    bridge = CAPBridge(self, o, capConfig)
     if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
         webView?.scrollView.isScrollEnabled = scrollEnabled
     }

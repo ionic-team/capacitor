@@ -86,7 +86,8 @@ public class Bridge {
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
-  public static final String CAPACITOR_SCHEME_NAME = "http";
+  public static final String CAPACITOR_HTTP_SCHEME = "http";
+  public static final String CAPACITOR_HTTPS_SCHEME = "https";
   public static final String CAPACITOR_FILE_START = "/_capacitor_file_";
   public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
 
@@ -176,7 +177,15 @@ public class Bridge {
 
     String authority = Config.getString("server.hostname", "localhost");
     authorities.add(authority);
-    localUrl = CAPACITOR_SCHEME_NAME + "://" + authority;
+
+    String scheme = this.getScheme();
+
+    localUrl = scheme + "://" + authority;
+
+    // custom URL schemes requires path ending with /
+    if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
+      localUrl += "/";
+    }
 
     if (appUrlConfig != null) {
       try {
@@ -292,6 +301,14 @@ public class Bridge {
    */
   public Uri getIntentUri() {
     return intentUri;
+  }
+
+  /**
+   * Get scheme that is used to serve content
+   * @return
+   */
+  public String getScheme() {
+      return Config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
   }
 
   /*

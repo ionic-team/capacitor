@@ -12,6 +12,7 @@ enum BridgeError: Error {
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://capacitor.ionicframework.com/"
   public static var CAP_FILE_START = "/_capacitor_file_"
+  public static let CAP_DEFAULT_SCHEME = "capacitor"
 
   // The last URL that caused the app to open
   private static var lastUrl: URL?
@@ -35,6 +36,8 @@ enum BridgeError: Error {
   public var cordovaPluginManager: CDVPluginManager?
   // Calls we are storing to resolve later
   public var storedCalls = [String:CAPPluginCall]()
+  // Scheme to use when serving content
+  public var scheme = CAPBridge.CAP_DEFAULT_SCHEME
   // Whether the app is active
   private var isActive = true
 
@@ -51,8 +54,10 @@ enum BridgeError: Error {
 
     super.init()
 
+    determineScheme()
+
     self.notificationsDelegate.bridge = self;
-    localUrl = "\(CAPBridge.getSchemeForConfig(self.config))://\(config.getString("server.hostname") ?? "localhost")"
+    localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
     registerPlugins()
     setupCordovaCompatibility()
@@ -108,13 +113,6 @@ enum BridgeError: Error {
     ])
     CAPBridge.lastUrl = url
     return true
-  }
-    
-  /**
-   * Determine which scheme to use when serving content
-   */
-  public static func getSchemeForConfig(_ config: CAPConfig) -> String {
-    return config.getString("server.scheme") ?? "capacitor"
   }
   
   /**
@@ -495,6 +493,19 @@ enum BridgeError: Error {
         if error != nil && result != nil {
           CAPLog.print(result!)
         }
+      }
+    }
+  }
+
+  /**
+   * Determine which scheme to use and check if it is valid
+   */
+  private func determineScheme() {
+    let configScheme = config.getString("server.iosScheme")
+    if let specifiedScheme = configScheme {
+      // check if WebKit handles scheme and if it is valid according to Apple's documentation
+      if !!WKWebView.handlesURLScheme(self.scheme) && specifiedScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
+        self.scheme = specifiedScheme
       }
     }
   }
