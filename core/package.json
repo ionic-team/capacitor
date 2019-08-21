@@ -26,6 +26,7 @@
   "typings": "dist/esm/index.d.ts",
   "devDependencies": {
     "@types/jest": "^21.1.8",
+    "firebase": "^6.4.0",
     "jest": "^22.0.0",
     "rimraf": "^2.6.1",
     "rollup": "^1.12.3",

@@ -3,6 +3,7 @@ import { basename, join, resolve } from 'path';
 import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 import { execSync } from 'child_process';
+import * as _ from 'lodash';
 
 let Package: PackageJson;
 let ExtConfig: ExternalConfig;
@@ -86,6 +87,20 @@ export class Config implements CliConfig {
     extConfigFilePath: '',
     extConfig: ExtConfig,
     bundledWebRuntime: false,
+    serviceWorker: {
+      name: 'capacitor-sw.js',
+      firebaseConfig: {
+        apiKey: '',
+        authDomain: '',
+        databaseURL: '',
+        projectId: '',
+        storageBucket: '',
+        messagingSenderId: '',
+        appId: '',
+        vapidKey: ''
+      },
+      combineOtherWorker: ''
+    },
     plugins: {},
     assets: {
       templateName: 'app-template',
@@ -227,7 +242,7 @@ export class Config implements CliConfig {
   private mergeConfigData() {
     const extConfig: ExternalConfig = this.app.extConfig || {};
 
-    Object.assign(this.app, extConfig);
+    _.merge(this.app, extConfig);
 
     // Build the absolute path to the web directory
     this.app.webDirAbs = resolve(this.app.rootDir, this.app.webDir);

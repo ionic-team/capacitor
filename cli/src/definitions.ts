@@ -83,6 +83,7 @@ export interface CliConfigApp {
    * module imports, set this to "true" and import "capacitor.js" manually.
    */
   bundledWebRuntime: boolean;
+  serviceWorker: CliConfigServiceWorker;
   assets: CliConfigPlatformAssets;
 }
 
@@ -99,4 +100,21 @@ export interface CliConfig {
   cli: CliConfigCli;
   app: CliConfigApp;
   plugins: CliConfigPlugins;
+}
+
+export interface CliConfigServiceWorker {
+  name: string;
+  firebaseConfig: CliConfigFirebase;
+  combineOtherWorker: string;
+}
+
+export interface CliConfigFirebase {
+  apiKey: string;
+  authDomain: string;
+  databaseURL: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+  vapidKey: string;
 }
