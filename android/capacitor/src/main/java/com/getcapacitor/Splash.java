@@ -252,8 +252,8 @@ public class Splash {
             wm.removeView(spinnerBar);
           }
 
-          params.height = 120;
-          params.width = 120;
+          params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+          params.width = WindowManager.LayoutParams.WRAP_CONTENT;
 
           wm.addView(spinnerBar, params);
 
