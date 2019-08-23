@@ -182,11 +182,6 @@ public class Bridge {
 
     localUrl = scheme + "://" + authority;
 
-    // custom URL schemes requires path ending with /
-    if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
-      localUrl += "/";
-    }
-
     if (appUrlConfig != null) {
       try {
         URL appUrlObject = new URL(appUrlConfig);
@@ -205,8 +200,15 @@ public class Bridge {
     localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
     localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
-
-    appUrl = appUrlConfig == null ? localUrl : appUrlConfig;
+    if (appUrlConfig == null) {
+      appUrl = localUrl;
+      // custom URL schemes requires path ending with /
+      if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
+        appUrl += "/";
+      }
+    } else {
+      appUrl = appUrlConfig;
+    }
 
     Log.d(LOG_TAG, "Loading app at " + appUrl);
 
