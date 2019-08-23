@@ -77,8 +77,12 @@ export class PushNotificationsPluginWeb extends WebPlugin implements PushNotific
           id: '' // Leaving blank. Nothing unique can be extracted from onMessage payload.
         };
         
-        if (payload.hasOwnProperty('notification'))
+        if (payload.hasOwnProperty('notification')) {
+          pushNotification.title = payload.notification.title;
+          pushNotification.body = payload.notification.body;
+
           this.notifyListeners('pushNotificationReceived', pushNotification);
+        }
         else {
           const pushNotificationActionPerformed: PushNotificationActionPerformed = {
             notification: pushNotification,
