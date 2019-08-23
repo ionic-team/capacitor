@@ -45,13 +45,20 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     setStatusBarDefaults()
     setScreenOrientationDefaults()
+    let capConfig = CAPConfig(self.config)
 
     HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
     let webViewConfiguration = WKWebViewConfiguration()
     self.handler = CAPAssetHandler()
     self.handler!.setAssetPath(startPath)
-    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: CAPBridge.CAP_SCHEME)
-    
+    var specifiedScheme = CAPBridge.CAP_DEFAULT_SCHEME
+    let configScheme = capConfig.getString("server.iosScheme") ?? CAPBridge.CAP_DEFAULT_SCHEME
+    // check if WebKit handles scheme and if it is valid according to Apple's documentation
+    if !WKWebView.handlesURLScheme(configScheme) && configScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
+      specifiedScheme = configScheme.lowercased()
+    }
+    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: specifiedScheme)
+
     let o = WKUserContentController()
     o.add(self, name: "bridge")
 
@@ -71,17 +78,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     setKeyboardRequiresUserInteraction(false)
     
-    bridge = CAPBridge(self, o, CAPConfig(self.config))
+    bridge = CAPBridge(self, o, capConfig, specifiedScheme)
     if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
-        webView?.scrollView.isScrollEnabled = scrollEnabled
+      webView?.scrollView.isScrollEnabled = scrollEnabled
     }
 
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
-        webView?.backgroundColor = UIColor(fromHex: backgroundColor)
-        webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+      webView?.backgroundColor = UIColor(fromHex: backgroundColor)
+      webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
     }
   }
-  
+
   private func getStartPath() -> String? {
     let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
     guard var startPath = Bundle.main.path(forResource: fullStartPath.relativePath, ofType: nil) else {
@@ -156,7 +163,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
           self.isStatusBarVisible = false
         }
       }
-        
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
         if (statusBarStyle != "UIStatusBarStyleDefault") {
           self.statusBarStyle = .lightContent
@@ -434,7 +440,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return self.webView!
   }
 
-
   public func getServerBasePath() -> String {
     return self.basePath
   }
@@ -483,4 +488,3 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
    */
   
 }
-

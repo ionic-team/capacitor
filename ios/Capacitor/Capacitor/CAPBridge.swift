@@ -11,8 +11,8 @@ enum BridgeError: Error {
 
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://capacitor.ionicframework.com/"
-  public static var CAP_SCHEME = "capacitor"
   public static var CAP_FILE_START = "/_capacitor_file_"
+  public static let CAP_DEFAULT_SCHEME = "capacitor"
 
   // The last URL that caused the app to open
   private static var lastUrl: URL?
@@ -36,6 +36,8 @@ enum BridgeError: Error {
   public var cordovaPluginManager: CDVPluginManager?
   // Calls we are storing to resolve later
   public var storedCalls = [String:CAPPluginCall]()
+  // Scheme to use when serving content
+  public var scheme: String
   // Whether the app is active
   private var isActive = true
 
@@ -44,16 +46,17 @@ enum BridgeError: Error {
 
   public var notificationsDelegate : CAPUNUserNotificationCenterDelegate
 
-  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ config: CAPConfig) {
+  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ config: CAPConfig, _ scheme: String) {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
     self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
     self.config = config
+    self.scheme = scheme
 
     super.init()
 
     self.notificationsDelegate.bridge = self;
-    localUrl = "\(CAPBridge.CAP_SCHEME)://\(config.getString("server.hostname") ?? "localhost")"
+    localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
     registerPlugins()
     setupCordovaCompatibility()
