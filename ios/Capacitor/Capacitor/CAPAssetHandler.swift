@@ -4,35 +4,22 @@ import MobileCoreServices
 class CAPAssetHandler: NSObject, WKURLSchemeHandler {
 
   private var basePath: String = ""
-  private var config: CAPConfig!
-  private var scheme: String = CAPBridge.CAP_DEFAULT_SCHEME
 
   func setAssetPath(_ assetPath: String) {
     self.basePath = assetPath;
-  }
-    
-  func setConfig(_ config: CAPConfig) {
-    self.config = config
-  }
-    
-  func setScheme(_ scheme: String) {
-    self.scheme = scheme
   }
 
   func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
       var startPath = self.basePath
       let url = urlSchemeTask.request.url!
       let stringToLoad = url.path
-      let urlScheme = url.scheme
 
-      if urlScheme == self.scheme {
-        if stringToLoad.isEmpty || url.pathExtension.isEmpty {
-          startPath.append("/index.html")
-        } else if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
-          startPath = stringToLoad.replacingOccurrences(of: CAPBridge.CAP_FILE_START, with: "")
-        } else {
-          startPath.append(stringToLoad)
-        }
+      if stringToLoad.isEmpty || url.pathExtension.isEmpty {
+        startPath.append("/index.html")
+      } else if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
+        startPath = stringToLoad.replacingOccurrences(of: CAPBridge.CAP_FILE_START, with: "")
+      } else {
+        startPath.append(stringToLoad)
       }
       let localUrl = URL.init(string: url.absoluteString)!
       let fileUrl = URL.init(fileURLWithPath: startPath)

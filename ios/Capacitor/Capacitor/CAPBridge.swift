@@ -37,7 +37,7 @@ enum BridgeError: Error {
   // Calls we are storing to resolve later
   public var storedCalls = [String:CAPPluginCall]()
   // Scheme to use when serving content
-  public var scheme = CAPBridge.CAP_DEFAULT_SCHEME
+  public var scheme: String
   // Whether the app is active
   private var isActive = true
 
@@ -46,15 +46,14 @@ enum BridgeError: Error {
 
   public var notificationsDelegate : CAPUNUserNotificationCenterDelegate
 
-  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ config: CAPConfig) {
+  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ config: CAPConfig, _ scheme: String) {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
     self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
     self.config = config
+    self.scheme = scheme
 
     super.init()
-
-    determineScheme()
 
     self.notificationsDelegate.bridge = self;
     localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
@@ -493,19 +492,6 @@ enum BridgeError: Error {
         if error != nil && result != nil {
           CAPLog.print(result!)
         }
-      }
-    }
-  }
-
-  /**
-   * Determine which scheme to use and check if it is valid
-   */
-  private func determineScheme() {
-    let configScheme = config.getString("server.iosScheme")
-    if let specifiedScheme = configScheme {
-      // check if WebKit handles scheme and if it is valid according to Apple's documentation
-      if !WKWebView.handlesURLScheme(self.scheme) && specifiedScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
-        self.scheme = specifiedScheme
       }
     }
   }
