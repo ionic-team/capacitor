@@ -36,6 +36,19 @@
   return TRUE;
 }
 
+-(NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue
+{
+  id idVal = [call.options objectForKey:field];
+  if(![idVal isKindOfClass:[NSString class]]) {
+    return defaultValue;
+  }
+  NSString *value = (NSString *)idVal;
+  if(value == nil) {
+    return defaultValue;
+  }
+  return value;
+}
+
 -(id)getConfigValue:(NSString *)key {
   return [self.bridge.config getPluginConfigValue:self.pluginName :key];
 }
