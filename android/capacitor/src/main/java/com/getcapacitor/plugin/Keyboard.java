@@ -134,4 +134,10 @@ public class Keyboard extends Plugin {
   public void setAccessoryBarVisible(PluginCall call) {
     call.unimplemented();
   }
+
+  @PluginMethod()
+  public void setStyle(PluginCall call) {
+    call.unimplemented();
+  }
+
 }

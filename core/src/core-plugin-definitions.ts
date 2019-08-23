@@ -902,6 +902,10 @@ export interface KeyboardPlugin extends Plugin {
    * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
    */
   setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
+  /**
+   * Programmatically set the keyboard style
+   */
+  setStyle(options: KeyboardStyleOptions): Promise<void>;
 
   addListener(eventName: 'keyboardWillShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
   addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
@@ -911,6 +915,15 @@ export interface KeyboardPlugin extends Plugin {
 
 export interface KeyboardInfo {
   keyboardHeight: number;
+}
+
+export interface KeyboardStyleOptions {
+  style: KeyboardStyle;
+}
+
+export enum KeyboardStyle {
+  Dark = 'DARK',
+  Light = 'LIGHT'
 }
 
 //

@@ -40,14 +40,20 @@ typedef enum : NSUInteger {
 @implementation CAPKeyboard
 
 NSTimer *hideTimer;
-
+NSString* UIClassString;
+NSString* WKClassString;
+NSString* UITraitsClassString;
+NSString* _keyboardStyle;
 - (void)load
 {
+  UIClassString = [@[@"UI", @"Web", @"Browser", @"View"] componentsJoinedByString:@""];
+  WKClassString = [@[@"WK", @"Content", @"View"] componentsJoinedByString:@""];
+  UITraitsClassString = [@[@"UI", @"Text", @"Input", @"Traits"] componentsJoinedByString:@""];
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarDidChangeFrame:) name:UIApplicationDidChangeStatusBarFrameNotification object: nil];
     
   NSString * style = [self getConfigValue:@"style"];
   if ([style isEqualToString:@"dark"]) {
-    [self setKeyboardAppearanceDark];
+    [self changeKeyboardStyle:style.uppercaseString];
   }
 
   self.keyboardResizes = ResizeNative;
@@ -110,6 +116,7 @@ NSTimer *hideTimer;
 
 - (void)onKeyboardWillShow:(NSNotification *)notification
 {
+  [self changeKeyboardStyle:self.keyboardStyle];
   if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
     if (hideTimer != nil) {
       [hideTimer invalidate];
@@ -225,31 +232,22 @@ static IMP WKOriginalImp;
   if (hideFormAccessoryBar == _hideFormAccessoryBar) {
     return;
   }
-  
-  NSString* UIClassString = [@[@"UI", @"Web", @"Browser", @"View"] componentsJoinedByString:@""];
-  NSString* WKClassString = [@[@"WK", @"Content", @"View"] componentsJoinedByString:@""];
-  
   Method UIMethod = class_getInstanceMethod(NSClassFromString(UIClassString), @selector(inputAccessoryView));
   Method WKMethod = class_getInstanceMethod(NSClassFromString(WKClassString), @selector(inputAccessoryView));
-  
   if (hideFormAccessoryBar) {
     UIOriginalImp = method_getImplementation(UIMethod);
     WKOriginalImp = method_getImplementation(WKMethod);
-    
     IMP newImp = imp_implementationWithBlock(^(id _s) {
       return nil;
     });
-    
     method_setImplementation(UIMethod, newImp);
     method_setImplementation(WKMethod, newImp);
   } else {
     method_setImplementation(UIMethod, UIOriginalImp);
     method_setImplementation(WKMethod, WKOriginalImp);
   }
-  
   _hideFormAccessoryBar = hideFormAccessoryBar;
 }
-
 
 #pragma mark Plugin interface
 
@@ -275,20 +273,29 @@ static IMP WKOriginalImp;
   [call unimplemented];
 }
 
-- (void)setKeyboardAppearanceDark
+- (void)setStyle:(CAPPluginCall *)call
 {
-  IMP darkImp = imp_implementationWithBlock(^(id _s) {
+  self.keyboardStyle = [self getString:call field:@"style" defaultValue:@"LIGHT"];
+  [call success];
+}
+
+- (void)changeKeyboardStyle:(NSString*)style
+{
+  IMP newImp = [style isEqualToString:@"DARK"] ? imp_implementationWithBlock(^(id _s) {
     return UIKeyboardAppearanceDark;
+  }) : imp_implementationWithBlock(^(id _s) {
+    return UIKeyboardAppearanceLight;
   });
-  for (NSString* classString in @[@"WKContentView", @"UITextInputTraits"]) {
+  for (NSString* classString in @[WKClassString, UITraitsClassString]) {
     Class c = NSClassFromString(classString);
     Method m = class_getInstanceMethod(c, @selector(keyboardAppearance));
     if (m != NULL) {
-      method_setImplementation(m, darkImp);
+      method_setImplementation(m, newImp);
     } else {
-      class_addMethod(c, @selector(keyboardAppearance), darkImp, "l@:");
+      class_addMethod(c, @selector(keyboardAppearance), newImp, "l@:");
     }
   }
+  _keyboardStyle = style;
 }
 
 #pragma mark dealloc
