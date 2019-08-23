@@ -116,7 +116,8 @@ iOS `edit-config` elements need to be [configured in Info.plist](/docs/ios/confi
 It's impossible to cover every `config.xml` element available. However, most questions relating to "How do I configure X in Capacitor?" should be thought of as "How do I configure X in [platform] (iOS/Android)?" when searching online for answers.
 
 ## Setting Scheme
-When using Ionic with Cordova, your app uses `cordova-plugin-ionic-webview` by default. Capacitor uses its own webview, with its own origin. This means that using a origin-binded Web API like local storage, will result in a loss of data. The origin on iOS for `cordova-plugin-ionic-webview` is different from the Capacitor one. This can be fixed by changing the scheme that is used for serving the content:
+
+When using Ionic with Cordova, your app uses `cordova-plugin-ionic-webview` by default, which on iOS uses `ionic://` scheme for serving the content. Capacitor apps use `capacitor://` as default scheme on iOS. This means that using a origin-binded Web API like LocalStorage, will result in a loss of data as the origin is different. This can be fixed by changing the scheme that is used for serving the content:
 
 ```json
 {
