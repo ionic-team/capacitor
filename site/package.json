@@ -9,14 +9,13 @@
     "build-firebase-config": "node scripts/host-to-firebase.js",
     "build": "npm run site-structure && npm run docs && stencil build --prerender && npm run build-firebase-config",
     "deploy": "npm run build && firebase deploy",
-    "start": "npm run site-structure && npm run docs && stencil build --dev --watch --serve",
+    "start": "npm run site-structure && npm run docs && stencil build --dev --serve --watch",
     "serve": "stencil build --dev --watch"
   },
   "devDependencies": {
-    "@stencil/core": "^0.17.0",
-    "@stencil/router": "^0.3.1",
-    "@stencil/sass": "^0.1.1",
-    "@stencil/state-tunnel": "0.0.9-1",
+    "@stencil/core": "^1.2.5",
+    "@stencil/router": "^1.0.1",
+    "@stencil/sass": "^1.0.1",
     "@stencil/utils": "0.0.5",
     "@types/glob": "^7.1.0",
     "@types/marked": "^0.6.2",

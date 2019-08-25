@@ -1,4 +1,4 @@
-import { Component, Prop, State, Element } from '@stencil/core';
+import { Component, h, Prop, State, Element } from '@stencil/core';
 @Component({
   tag: 'plugin-api',
   styleUrl: 'plugin-api.scss'

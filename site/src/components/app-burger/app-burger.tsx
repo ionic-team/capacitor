@@ -1,4 +1,4 @@
-import { Component, Event, EventEmitter } from '@stencil/core';
+import { Component, h, Event, EventEmitter } from '@stencil/core';
 
 @Component({
   tag: 'app-burger',

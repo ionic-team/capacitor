@@ -1,5 +1,5 @@
 import '@stencil/router';
-import { Component, Prop, Element, Listen, State } from '@stencil/core';
+import { Component, h, Prop, Element, Listen, State } from '@stencil/core';
 import { LocationSegments, RouterHistory } from '@stencil/router';
 import SiteProviderConsumer, { SiteState } from '../../global/site-provider-consumer';
 
@@ -22,7 +22,7 @@ export class App {
 
   @State() isLeftSidebarIn: boolean;
 
-  @Listen('window:resize')
+  @Listen('resize', { target: 'window' })
   handleResize() {
     requestAnimationFrame(() => {
       if (window.innerWidth > 768 && this.isLeftSidebarIn) {
@@ -81,9 +81,9 @@ export class App {
   }
 
   render() {
-    const siteState: SiteState = {
+    let siteState: SiteState = {
       isLeftSidebarIn: this.isLeftSidebarIn,
-      toggleLeftSidebar: this.toggleLeftSidebar
+      toggleLeftSidebar: () => {}
     }
     const footerClass = this.isLandingPage ? 'footer-landing' : '';
 
@@ -111,7 +111,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/basics/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -121,7 +121,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/cordova/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -131,7 +131,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/guides/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -141,7 +141,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/ios/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -151,7 +151,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/android/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -161,7 +161,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/electron/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -171,7 +171,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/web/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -181,7 +181,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/plugins/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -191,7 +191,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/apis/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -205,7 +205,7 @@ export class App {
                     );
                   }}
                 />
-  
+
                 <stencil-route
                   url="/docs/community/:pageName?"
                   routeRender={(props: { [key: string]: any }) => {
@@ -239,7 +239,7 @@ export class App {
 
             <div id="footer-icons">
               <iframe
-                title="Github Star Count" 
+                title="Github Star Count"
                 class="star-button"
                 src="https://ghbtns.com/github-btn.html?user=ionic-team&repo=capacitor&type=star&count=true"
                 frameBorder="0"

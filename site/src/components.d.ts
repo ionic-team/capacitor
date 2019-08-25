@@ -5,192 +5,72 @@
  */
 
 
-import '@stencil/core';
-
-import '@stencil/state-tunnel';
-import '@stencil/router';
+import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
   MarkdownContent,
   MarkdownHeading,
   SiteStructureItem,
 } from './global/definitions';
-
+import {
+  JSX,
+} from '@stencil/core';
 
 export namespace Components {
-
   interface AnchorLink {
     'to': string;
   }
-  interface AnchorLinkAttributes extends StencilHTMLAttributes {
-    'to'?: string;
-  }
-
   interface AppBurger {}
-  interface AppBurgerAttributes extends StencilHTMLAttributes {
-    'onBurgerClick'?: (event: CustomEvent) => void;
-  }
-
   interface AppIcon {
     'name': string;
   }
-  interface AppIconAttributes extends StencilHTMLAttributes {
-    'name'?: string;
-  }
-
   interface AppMarked {
     'fetchPath'?: string;
     'renderer'?: (doc: MarkdownContent) => JSX.Element;
   }
-  interface AppMarkedAttributes extends StencilHTMLAttributes {
-    'fetchPath'?: string;
-    'renderer'?: (doc: MarkdownContent) => JSX.Element;
-  }
-
   interface AvcCodeType {
     'typeId': string;
   }
-  interface AvcCodeTypeAttributes extends StencilHTMLAttributes {
-    'typeId'?: string;
-  }
-
   interface BlogPage {}
-  interface BlogPageAttributes extends StencilHTMLAttributes {}
-
   interface CapacitorSite {
     'isLandingPage': boolean;
   }
-  interface CapacitorSiteAttributes extends StencilHTMLAttributes {
-    'isLandingPage'?: boolean;
-  }
-
   interface ContributorList {
     'contributors': string[];
-    'link': any;
+    'link': (contributor: string) => string;
   }
-  interface ContributorListAttributes extends StencilHTMLAttributes {
-    'contributors'?: string[];
-    'link'?: any;
-  }
-
   interface DemosPage {}
-  interface DemosPageAttributes extends StencilHTMLAttributes {}
-
   interface DocSnippet {}
-  interface DocSnippetAttributes extends StencilHTMLAttributes {}
-
   interface DocumentComponent {
     'page': string;
     'pages': string[];
   }
-  interface DocumentComponentAttributes extends StencilHTMLAttributes {
-    'page'?: string;
-    'pages'?: string[];
-  }
-
   interface InPageNavigation {
     'currentPageUrl': string;
     'pageLinks': MarkdownHeading[];
     'srcUrl': string;
   }
-  interface InPageNavigationAttributes extends StencilHTMLAttributes {
-    'currentPageUrl'?: string;
-    'pageLinks'?: MarkdownHeading[];
-    'srcUrl'?: string;
-  }
-
   interface LandingPage {}
-  interface LandingPageAttributes extends StencilHTMLAttributes {}
-
   interface LowerContentNav {
     'next'?: SiteStructureItem;
     'prev'?: SiteStructureItem;
   }
-  interface LowerContentNavAttributes extends StencilHTMLAttributes {
-    'next'?: SiteStructureItem;
-    'prev'?: SiteStructureItem;
-  }
-
   interface NewsletterSignup {}
-  interface NewsletterSignupAttributes extends StencilHTMLAttributes {}
-
   interface PluginApi {
     'index': boolean;
     'name': string;
   }
-  interface PluginApiAttributes extends StencilHTMLAttributes {
-    'index'?: boolean;
-    'name'?: string;
-  }
-
   interface PluginPlatforms {
     'platforms': string;
   }
-  interface PluginPlatformsAttributes extends StencilHTMLAttributes {
-    'platforms'?: string;
-  }
-
   interface SiteBar {}
-  interface SiteBarAttributes extends StencilHTMLAttributes {}
-
   interface SiteHeader {}
-  interface SiteHeaderAttributes extends StencilHTMLAttributes {}
-
   interface SiteMenu {
     'selectedParent': SiteStructureItem;
     'siteStructureList': SiteStructureItem[];
   }
-  interface SiteMenuAttributes extends StencilHTMLAttributes {
-    'selectedParent'?: SiteStructureItem;
-    'siteStructureList'?: SiteStructureItem[];
-  }
 }
 
 declare global {
-  interface StencilElementInterfaces {
-    'AnchorLink': Components.AnchorLink;
-    'AppBurger': Components.AppBurger;
-    'AppIcon': Components.AppIcon;
-    'AppMarked': Components.AppMarked;
-    'AvcCodeType': Components.AvcCodeType;
-    'BlogPage': Components.BlogPage;
-    'CapacitorSite': Components.CapacitorSite;
-    'ContributorList': Components.ContributorList;
-    'DemosPage': Components.DemosPage;
-    'DocSnippet': Components.DocSnippet;
-    'DocumentComponent': Components.DocumentComponent;
-    'InPageNavigation': Components.InPageNavigation;
-    'LandingPage': Components.LandingPage;
-    'LowerContentNav': Components.LowerContentNav;
-    'NewsletterSignup': Components.NewsletterSignup;
-    'PluginApi': Components.PluginApi;
-    'PluginPlatforms': Components.PluginPlatforms;
-    'SiteBar': Components.SiteBar;
-    'SiteHeader': Components.SiteHeader;
-    'SiteMenu': Components.SiteMenu;
-  }
-
-  interface StencilIntrinsicElements {
-    'anchor-link': Components.AnchorLinkAttributes;
-    'app-burger': Components.AppBurgerAttributes;
-    'app-icon': Components.AppIconAttributes;
-    'app-marked': Components.AppMarkedAttributes;
-    'avc-code-type': Components.AvcCodeTypeAttributes;
-    'blog-page': Components.BlogPageAttributes;
-    'capacitor-site': Components.CapacitorSiteAttributes;
-    'contributor-list': Components.ContributorListAttributes;
-    'demos-page': Components.DemosPageAttributes;
-    'doc-snippet': Components.DocSnippetAttributes;
-    'document-component': Components.DocumentComponentAttributes;
-    'in-page-navigation': Components.InPageNavigationAttributes;
-    'landing-page': Components.LandingPageAttributes;
-    'lower-content-nav': Components.LowerContentNavAttributes;
-    'newsletter-signup': Components.NewsletterSignupAttributes;
-    'plugin-api': Components.PluginApiAttributes;
-    'plugin-platforms': Components.PluginPlatformsAttributes;
-    'site-bar': Components.SiteBarAttributes;
-    'site-header': Components.SiteHeaderAttributes;
-    'site-menu': Components.SiteMenuAttributes;
-  }
 
 
   interface HTMLAnchorLinkElement extends Components.AnchorLink, HTMLStencilElement {}
@@ -312,31 +192,7 @@ declare global {
     prototype: HTMLSiteMenuElement;
     new (): HTMLSiteMenuElement;
   };
-
   interface HTMLElementTagNameMap {
-    'anchor-link': HTMLAnchorLinkElement
-    'app-burger': HTMLAppBurgerElement
-    'app-icon': HTMLAppIconElement
-    'app-marked': HTMLAppMarkedElement
-    'avc-code-type': HTMLAvcCodeTypeElement
-    'blog-page': HTMLBlogPageElement
-    'capacitor-site': HTMLCapacitorSiteElement
-    'contributor-list': HTMLContributorListElement
-    'demos-page': HTMLDemosPageElement
-    'doc-snippet': HTMLDocSnippetElement
-    'document-component': HTMLDocumentComponentElement
-    'in-page-navigation': HTMLInPageNavigationElement
-    'landing-page': HTMLLandingPageElement
-    'lower-content-nav': HTMLLowerContentNavElement
-    'newsletter-signup': HTMLNewsletterSignupElement
-    'plugin-api': HTMLPluginApiElement
-    'plugin-platforms': HTMLPluginPlatformsElement
-    'site-bar': HTMLSiteBarElement
-    'site-header': HTMLSiteHeaderElement
-    'site-menu': HTMLSiteMenuElement
-  }
-
-  interface ElementTagNameMap {
     'anchor-link': HTMLAnchorLinkElement;
     'app-burger': HTMLAppBurgerElement;
     'app-icon': HTMLAppIconElement;
@@ -358,14 +214,95 @@ declare global {
     'site-header': HTMLSiteHeaderElement;
     'site-menu': HTMLSiteMenuElement;
   }
-
-
-  export namespace JSX {
-    export interface Element {}
-    export interface IntrinsicElements extends StencilIntrinsicElements {
-      [tagName: string]: any;
-    }
-  }
-  export interface HTMLAttributes extends StencilHTMLAttributes {}
-
 }
+
+declare namespace LocalJSX {
+  interface AnchorLink extends JSXBase.HTMLAttributes<HTMLAnchorLinkElement> {
+    'to'?: string;
+  }
+  interface AppBurger extends JSXBase.HTMLAttributes<HTMLAppBurgerElement> {
+    'onBurgerClick'?: (event: CustomEvent<any>) => void;
+  }
+  interface AppIcon extends JSXBase.HTMLAttributes<HTMLAppIconElement> {
+    'name'?: string;
+  }
+  interface AppMarked extends JSXBase.HTMLAttributes<HTMLAppMarkedElement> {
+    'fetchPath'?: string;
+    'renderer'?: (doc: MarkdownContent) => JSX.Element;
+  }
+  interface AvcCodeType extends JSXBase.HTMLAttributes<HTMLAvcCodeTypeElement> {
+    'typeId'?: string;
+  }
+  interface BlogPage extends JSXBase.HTMLAttributes<HTMLBlogPageElement> {}
+  interface CapacitorSite extends JSXBase.HTMLAttributes<HTMLCapacitorSiteElement> {
+    'isLandingPage'?: boolean;
+  }
+  interface ContributorList extends JSXBase.HTMLAttributes<HTMLContributorListElement> {
+    'contributors'?: string[];
+    'link'?: (contributor: string) => string;
+  }
+  interface DemosPage extends JSXBase.HTMLAttributes<HTMLDemosPageElement> {}
+  interface DocSnippet extends JSXBase.HTMLAttributes<HTMLDocSnippetElement> {}
+  interface DocumentComponent extends JSXBase.HTMLAttributes<HTMLDocumentComponentElement> {
+    'page'?: string;
+    'pages'?: string[];
+  }
+  interface InPageNavigation extends JSXBase.HTMLAttributes<HTMLInPageNavigationElement> {
+    'currentPageUrl'?: string;
+    'pageLinks'?: MarkdownHeading[];
+    'srcUrl'?: string;
+  }
+  interface LandingPage extends JSXBase.HTMLAttributes<HTMLLandingPageElement> {}
+  interface LowerContentNav extends JSXBase.HTMLAttributes<HTMLLowerContentNavElement> {
+    'next'?: SiteStructureItem;
+    'prev'?: SiteStructureItem;
+  }
+  interface NewsletterSignup extends JSXBase.HTMLAttributes<HTMLNewsletterSignupElement> {}
+  interface PluginApi extends JSXBase.HTMLAttributes<HTMLPluginApiElement> {
+    'index'?: boolean;
+    'name'?: string;
+  }
+  interface PluginPlatforms extends JSXBase.HTMLAttributes<HTMLPluginPlatformsElement> {
+    'platforms'?: string;
+  }
+  interface SiteBar extends JSXBase.HTMLAttributes<HTMLSiteBarElement> {}
+  interface SiteHeader extends JSXBase.HTMLAttributes<HTMLSiteHeaderElement> {}
+  interface SiteMenu extends JSXBase.HTMLAttributes<HTMLSiteMenuElement> {
+    'selectedParent'?: SiteStructureItem;
+    'siteStructureList'?: SiteStructureItem[];
+  }
+
+  interface IntrinsicElements {
+    'anchor-link': AnchorLink;
+    'app-burger': AppBurger;
+    'app-icon': AppIcon;
+    'app-marked': AppMarked;
+    'avc-code-type': AvcCodeType;
+    'blog-page': BlogPage;
+    'capacitor-site': CapacitorSite;
+    'contributor-list': ContributorList;
+    'demos-page': DemosPage;
+    'doc-snippet': DocSnippet;
+    'document-component': DocumentComponent;
+    'in-page-navigation': InPageNavigation;
+    'landing-page': LandingPage;
+    'lower-content-nav': LowerContentNav;
+    'newsletter-signup': NewsletterSignup;
+    'plugin-api': PluginApi;
+    'plugin-platforms': PluginPlatforms;
+    'site-bar': SiteBar;
+    'site-header': SiteHeader;
+    'site-menu': SiteMenu;
+  }
+}
+
+export { LocalJSX as JSX };
+
+
+declare module "@stencil/core" {
+  export namespace JSX {
+    interface IntrinsicElements extends LocalJSX.IntrinsicElements {}
+  }
+}
+
+

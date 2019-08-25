@@ -1,4 +1,4 @@
-import { Component, Prop, ComponentInterface, Listen, State, Watch } from '@stencil/core';
+import { Component, h, Prop, ComponentInterface, Listen, State, Watch } from '@stencil/core';
 import { MarkdownHeading } from '../../global/definitions';
 
 interface ItemOffset {
@@ -12,7 +12,7 @@ interface ItemOffset {
 })
 export class InPageNavigtion implements ComponentInterface {
 
-  @Listen('window:scroll')
+  @Listen('scroll', { target: 'window' })
   function() {
     const itemIndex = this.itemOffsets.findIndex(item => item.topOffset > window.scrollY);
     if (itemIndex === 0 || this.itemOffsets[this.itemOffsets.length - 1] === undefined) {
@@ -31,7 +31,7 @@ export class InPageNavigtion implements ComponentInterface {
   @State() selectedId: string = null;
 
   @Watch('pageLinks')
-  @Listen('window:resize')
+  @Listen('resize', { target: 'window' })
   updateItemOffsets() {
     requestAnimationFrame(() => {
       this.itemOffsets = this.pageLinks.map((pl) => {

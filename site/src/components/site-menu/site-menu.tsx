@@ -1,4 +1,4 @@
-import { Component, Prop, ComponentInterface, State } from '@stencil/core';
+import { Component, h, Prop, ComponentInterface, State } from '@stencil/core';
 import SiteProviderConsumer, { SiteState } from '../../global/site-provider-consumer';
 import { SiteStructureItem } from '../../global/definitions';
 

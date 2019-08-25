@@ -1,4 +1,4 @@
-import { Component, Prop, Watch, ComponentInterface, State } from '@stencil/core';
+import { Component, h, Prop, Watch, ComponentInterface, State } from '@stencil/core';
 import siteStructure from '../../assets/docs-structure.json';
 import { findItem } from '../../global/site-structure-utils';
 import { SiteStructureItem } from '../../global/definitions';

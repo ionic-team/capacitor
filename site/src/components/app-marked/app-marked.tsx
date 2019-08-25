@@ -1,4 +1,4 @@
-import { Component, Prop, State, Watch, ComponentInterface } from '@stencil/core';
+import { Component, Prop, State, Watch, ComponentInterface, JSX } from '@stencil/core';
 import { MarkdownContent } from '../../global/definitions';
 
 @Component({
