@@ -903,6 +903,10 @@ export interface KeyboardPlugin extends Plugin {
    */
   setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
   /**
+   * Programmatically enable or disable the WebView scroll
+   */
+  setScroll(options: { isDisabled: boolean }): Promise<void>;
+  /**
    * Programmatically set the keyboard style
    */
   setStyle(options: KeyboardStyleOptions): Promise<void>;

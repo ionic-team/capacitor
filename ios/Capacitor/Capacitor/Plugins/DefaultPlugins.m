@@ -78,6 +78,7 @@ CAP_PLUGIN(CAPKeyboard, "Keyboard",
   CAP_PLUGIN_METHOD(setAccessoryBarVisible, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(setStyle, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(setResizeMode, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(setScroll, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",

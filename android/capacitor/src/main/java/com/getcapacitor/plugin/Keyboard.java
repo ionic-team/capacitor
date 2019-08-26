@@ -145,4 +145,9 @@ public class Keyboard extends Plugin {
     call.unimplemented();
   }
 
+  @PluginMethod()
+  public void setScroll(PluginCall call) {
+        call.unimplemented();
+  }
+
 }

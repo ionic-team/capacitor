@@ -79,9 +79,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     setKeyboardRequiresUserInteraction(false)
     
     bridge = CAPBridge(self, o, capConfig, specifiedScheme)
-    if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
-      webView?.scrollView.isScrollEnabled = scrollEnabled
-    }
 
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
       webView?.backgroundColor = UIColor(fromHex: backgroundColor)
