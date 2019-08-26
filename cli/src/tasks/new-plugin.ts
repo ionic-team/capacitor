@@ -1,10 +1,10 @@
 import { Config } from '../config';
 import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON, logWarn } from '../common';
+import { OS } from '../definitions';
 import { emoji } from '../util/emoji';
 import { existsAsync, mkdirAsync, writeFileAsync, readFileAsync } from '../util/fs';
 import { fixName, removeScope } from '../plugin'
-
-import { copy, move, mkdirs, unlink } from 'fs-extra';
+import { copy, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
 import { isInteractive } from '../util/term';
 
@@ -127,6 +127,13 @@ export async function newPlugin(config: Config) {
     await runTask('Installing NPM dependencies', async () => {
       return  runCommand(`cd "${pluginPath}" && npm install`);
     });
+
+    if (config.cli.os === OS.Mac) {
+      await runTask('Building iOS project', async () => {
+        const iosPath = join(pluginPath, 'ios');
+        return  runCommand(`cd "${iosPath}" && pod install`);
+      });
+    }
 
     logInfo(`Your Capacitor plugin was created at ${pluginPath}`);
 
