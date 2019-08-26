@@ -140,4 +140,9 @@ public class Keyboard extends Plugin {
     call.unimplemented();
   }
 
+  @PluginMethod()
+  public void setResizeMode(PluginCall call) {
+    call.unimplemented();
+  }
+
 }

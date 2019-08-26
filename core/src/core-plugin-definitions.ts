@@ -906,6 +906,10 @@ export interface KeyboardPlugin extends Plugin {
    * Programmatically set the keyboard style
    */
   setStyle(options: KeyboardStyleOptions): Promise<void>;
+  /**
+   * Programmatically set the resize mode
+   */
+  setResizeMode(options: KeyboardResizeOptions): Promise<void>;
 
   addListener(eventName: 'keyboardWillShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
   addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
@@ -924,6 +928,17 @@ export interface KeyboardStyleOptions {
 export enum KeyboardStyle {
   Dark = 'DARK',
   Light = 'LIGHT'
+}
+
+export interface KeyboardResizeOptions {
+  mode: KeyboardResize;
+}
+
+export enum KeyboardResize {
+  Body = 'body',
+  Ionic = 'ionic',
+  Native = 'native',
+  None = 'none'
 }
 
 //

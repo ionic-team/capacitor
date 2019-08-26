@@ -279,6 +279,20 @@ static IMP WKOriginalImp;
   [call success];
 }
 
+- (void)setResizeMode:(CAPPluginCall *)call
+{
+  NSString * mode = [self getString:call field:@"mode" defaultValue:@"none"];
+  if ([mode isEqualToString:@"ionic"]) {
+    self.keyboardResizes = ResizeIonic;
+  } else if ([mode isEqualToString:@"body"]) {
+    self.keyboardResizes = ResizeBody;
+  } else if ([mode isEqualToString:@"native"]) {
+    self.keyboardResizes = ResizeNative;
+  } else {
+    self.keyboardResizes = ResizeNone;
+  }
+}
+
 - (void)changeKeyboardStyle:(NSString*)style
 {
   IMP newImp = [style isEqualToString:@"DARK"] ? imp_implementationWithBlock(^(id _s) {
