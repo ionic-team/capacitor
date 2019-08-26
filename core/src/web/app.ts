@@ -26,6 +26,10 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
     return Promise.resolve({ completed: true });
   }
 
+  openPackage(_options: { packageName: string; }): Promise<{ completed: boolean; }> {
+    return Promise.resolve({ completed: true });
+  }
+
   getLaunchUrl(): Promise<AppLaunchUrl> {
     return Promise.resolve({ url: '' });
   }

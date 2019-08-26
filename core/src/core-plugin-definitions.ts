@@ -103,6 +103,11 @@ export interface AppPlugin extends Plugin {
   openUrl(options: { url: string }): Promise<{completed: boolean}>;
 
   /**
+   * Opens the main activity of an app with the given package name (Android Only)
+   */
+  openPackage(options: { packageName: string }): Promise<{ completed: boolean }>;
+
+  /**
    * Get the URL the app was launched with, if any
    */
   getLaunchUrl(): Promise<AppLaunchUrl>;

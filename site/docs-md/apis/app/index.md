@@ -47,6 +47,10 @@ console.log('Can open url: ', ret.value);
 ret = await App.openUrl({ url: 'com.getcapacitor.myapp://page?id=ionicframework' });
 console.log('Open url response: ', ret);
 
+// Android Only
+ret = await App.openPackage({ packageName: 'com.instagram.android' });
+console.log('Open package response: ', ret);
+
 ret = await App.getLaunchUrl();
 if(ret && ret.url) {
   console.log('App opened with URL: ' + ret.url);

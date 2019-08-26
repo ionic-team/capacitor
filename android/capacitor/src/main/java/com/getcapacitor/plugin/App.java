@@ -104,6 +104,24 @@ public class App extends Plugin {
     }
   }
 
+  @PluginMethod()
+  public void openPackage(PluginCall call) {
+    String packageName = call.getString("packageName");
+    if (packageName == null) {
+      call.error("Must provide a packageName to open");
+      return;
+    }
+
+    final PackageManager manager = getContext().getPackageManager();
+    final Intent launchIntent = manager.getLaunchIntentForPackage(packageName);
+
+    try {
+      getActivity().startActivity(launchIntent);
+    } catch(Exception ex) {
+      call.error("Unable to open package", ex);
+    }
+  }
+
   /**
    * Handle ACTION_VIEW intents to store a URL that was used to open the app
    * @param intent
