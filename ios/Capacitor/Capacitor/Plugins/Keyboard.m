@@ -31,8 +31,11 @@ typedef enum : NSUInteger {
 
 @interface CAPKeyboard () <UIScrollViewDelegate>
 
-@property (nonatomic, readwrite, assign) BOOL keyboardIsVisible;
+@property (readwrite, assign, nonatomic) BOOL disableScroll;
+@property (readwrite, assign, nonatomic) BOOL hideFormAccessoryBar;
+@property (readwrite, assign, nonatomic) BOOL keyboardIsVisible;
 @property (nonatomic, readwrite) ResizePolicy keyboardResizes;
+@property (readwrite, assign, nonatomic) NSString* keyboardStyle;
 @property (nonatomic, readwrite) int paddingBottom;
 
 @end
@@ -43,9 +46,12 @@ NSTimer *hideTimer;
 NSString* UIClassString;
 NSString* WKClassString;
 NSString* UITraitsClassString;
-NSString* _keyboardStyle;
+
 - (void)load
 {
+  if ([self.bridge.config getValue:@"ios.scrollEnabled"] != nil) {
+    self.disableScroll = ![[self.bridge.config getValue:@"ios.scrollEnabled"] boolValue];
+  }
   UIClassString = [@[@"UI", @"Web", @"Browser", @"View"] componentsJoinedByString:@""];
   WKClassString = [@[@"WK", @"Content", @"View"] componentsJoinedByString:@""];
   UITraitsClassString = [@[@"UI", @"Text", @"Input", @"Traits"] componentsJoinedByString:@""];
@@ -249,6 +255,29 @@ static IMP WKOriginalImp;
   _hideFormAccessoryBar = hideFormAccessoryBar;
 }
 
+#pragma mark scroll
+
+- (void)setDisableScroll:(BOOL)disableScroll {
+  if (disableScroll == _disableScroll) {
+    return;
+  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (disableScroll) {
+      self.webView.scrollView.scrollEnabled = NO;
+      self.webView.scrollView.delegate = self;
+    }
+    else {
+      self.webView.scrollView.scrollEnabled = YES;
+      self.webView.scrollView.delegate = nil;
+    }
+  });
+  _disableScroll = disableScroll;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+  [scrollView setContentOffset: CGPointZero];
+}
+
 #pragma mark Plugin interface
 
 - (void)setAccessoryBarVisible:(CAPPluginCall *)call
@@ -291,6 +320,12 @@ static IMP WKOriginalImp;
   } else {
     self.keyboardResizes = ResizeNone;
   }
+  [call success];
+}
+
+- (void)setScroll:(CAPPluginCall *)call {
+  self.disableScroll = [self getBool:call field:@"isDisabled" defaultValue:FALSE];
+  [call success];
 }
 
 - (void)changeKeyboardStyle:(NSString*)style
