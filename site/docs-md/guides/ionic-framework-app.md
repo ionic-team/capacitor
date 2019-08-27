@@ -168,7 +168,7 @@ Open the Developer Tools and select the `Console` tab. Then, navigate over to Ta
 Some Capacitor plugins, including the Camera, provide the web-based functionality and UI via the Ionic [PWA Elements library](https://github.com/ionic-team/ionic-pwa-elements). It's a separate dependency, so install it using the Terminal (cancel the `ionic serve` command currently running first):
 
 ```shell
-npm install @ionic/pwa-elements
+npm install @ionic/pwa-elements --save
 ```
 
 Import `@ionic/pwa-elements` by editing `src/main.ts`:
