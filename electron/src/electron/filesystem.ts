@@ -39,18 +39,18 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     this.Path = path;
   }
 
-  readFile(options: FileReadOptions): Promise<FileReadResult>{
+  readFile(options: FileReadOptions): Promise<FileReadResult> {
     return new Promise<FileReadResult>((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+      if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.readFile(lookupPath, options.encoding || 'binary', (err:any, data:any) => {
-        if(err) {
+      this.NodeFS.readFile(lookupPath, options.encoding || 'binary', (err: any, data: any) => {
+        if (err) {
           reject(err);
           return;
         }
 
-        resolve({ data: options.encoding ? data : data.toString('base64') });
+        resolve({ data: options.encoding ? data : Buffer.from(data, 'binary').toString('base64') });
       });
     });
   }
