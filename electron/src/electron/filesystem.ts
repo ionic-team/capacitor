@@ -57,21 +57,22 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
 
   writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     return new Promise((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+      if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      let data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
+      let data: (Buffer | string) = options.data;
       if (!options.encoding) {
-        data = Buffer.from(data, 'base64')
+        const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
+        data = Buffer.from(base64Data, 'base64');
       }
-      this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err:any) => {
-        if(err) {
+      this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err: any) => {
+        if (err) {
           reject(err);
           return;
         }
 
         resolve();
-      })
+      });
     });
   }
 
