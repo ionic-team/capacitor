@@ -13,16 +13,13 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
       var startPath = self.basePath
       let url = urlSchemeTask.request.url!
       let stringToLoad = url.path
-      let scheme = url.scheme
 
-      if scheme == CAPBridge.CAP_SCHEME {
-        if stringToLoad.isEmpty || url.pathExtension.isEmpty {
-          startPath.append("/index.html")
-        } else if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
-          startPath = stringToLoad.replacingOccurrences(of: CAPBridge.CAP_FILE_START, with: "")
-        } else {
-          startPath.append(stringToLoad)
-        }
+      if stringToLoad.isEmpty || url.pathExtension.isEmpty {
+        startPath.append("/index.html")
+      } else if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
+        startPath = stringToLoad.replacingOccurrences(of: CAPBridge.CAP_FILE_START, with: "")
+      } else {
+        startPath.append(stringToLoad)
       }
       let localUrl = URL.init(string: url.absoluteString)!
       let fileUrl = URL.init(fileURLWithPath: startPath)

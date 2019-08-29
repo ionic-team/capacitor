@@ -63,6 +63,10 @@ The current ones you might configure are:
     // as it allows to run web APIs that require a secure context such as
     // navigator.geolocation and MediaDevices.getUserMedia.
     "hostname": "app",
+    // It is possible to configure the local scheme that is used. This can be useful
+    // when migrating from cordova-plugin-ionic-webview, where the default scheme on iOS is ionic.
+    "iosScheme": "ionic",
+    "androidScheme": "http",
     // Normally all external URLs are opened in the browser. By setting this option, you tell
     // Capacitor to open URLs belonging to these hosts inside its WebView.
     "allowNavigation": [

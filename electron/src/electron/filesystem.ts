@@ -39,35 +39,40 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     this.Path = path;
   }
 
-  readFile(options: FileReadOptions): Promise<FileReadResult>{
+  readFile(options: FileReadOptions): Promise<FileReadResult> {
     return new Promise<FileReadResult>((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+      if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.readFile(lookupPath, options.encoding, (err:any, data:any) => {
-        if(err) {
+      this.NodeFS.readFile(lookupPath, options.encoding || 'binary', (err: any, data: any) => {
+        if (err) {
           reject(err);
           return;
         }
 
-        resolve({data});
+        resolve({ data: options.encoding ? data : Buffer.from(data, 'binary').toString('base64') });
       });
     });
   }
 
   writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     return new Promise((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+      if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.writeFile(lookupPath, options.data, options.encoding, (err:any) => {
-        if(err) {
+      let data: (Buffer | string) = options.data;
+      if (!options.encoding) {
+        const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
+        data = Buffer.from(base64Data, 'base64');
+      }
+      this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err: any) => {
+        if (err) {
           reject(err);
           return;
         }
 
         resolve();
-      })
+      });
     });
   }
 

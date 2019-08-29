@@ -30,6 +30,7 @@
 -(void) load;
 -(NSString *)getId;
 -(BOOL)getBool:(CAPPluginCall*) call field:(NSString *)field defaultValue:(BOOL)defaultValue;
+-(NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue;
 -(id)getConfigValue:(NSString *) key;
 -(void)setCenteredPopover:(UIViewController *) vc;
 

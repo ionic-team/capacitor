@@ -44,7 +44,7 @@ sdk.dir=${defaultAndroidPath}
     try {
       await gradleSync(platformDir);
     } catch (e) {
-      console.error('Error running gralde sync', e);
+      console.error('Error running gradle sync', e);
       console.error('Unable to infer default Android SDK settings. This is fine, just run npx cap open android and import and sync gradle manually');
     }
   }
