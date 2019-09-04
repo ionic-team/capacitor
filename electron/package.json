@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/electron",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -62,7 +62,7 @@
     ]
   },
   "dependencies": {
-    "@capacitor/core": "^1.1.1"
+    "@capacitor/core": "^1.2.0"
   },
-  "gitHead": "593aa0af9e2b9dfb3c4e69e739d36d7358959b31"
+  "gitHead": "106575b647e3f08391a4fdd80b0b4d77491264fa"
 }
