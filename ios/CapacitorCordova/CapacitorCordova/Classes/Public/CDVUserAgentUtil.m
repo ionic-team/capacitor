@@ -32,6 +32,38 @@ static NSInteger gNextLockToken = 0;
 static NSInteger gCurrentLockToken = 0;
 static NSMutableArray* gPendingSetUserAgentBlocks = nil;
 
+#import <WebKit/WebKit.h>
+
+ @interface WKWebView(SynchronousEvaluateJavaScript)
+- (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
+@end
+
+ @implementation WKWebView(SynchronousEvaluateJavaScript)
+
+ - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script
+{
+    __block NSString *resultString = nil;
+    __block BOOL finished = NO;
+
+     [self evaluateJavaScript:script completionHandler:^(id result, NSError *error) {
+        if (error == nil) {
+            if (result != nil) {
+                resultString = [NSString stringWithFormat:@"%@", result];
+            }
+        } else {
+            NSLog(@"evaluateJavaScript error : %@", error.localizedDescription);
+        }
+        finished = YES;
+    }];
+
+     while (!finished) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+
+     return resultString;
+}
+@end
+
 @implementation CDVUserAgentUtil
 
 + (NSString*)originalUserAgent
@@ -54,7 +86,7 @@ static NSMutableArray* gPendingSetUserAgentBlocks = nil;
         BOOL cachedValueIsOld = ![systemAndLocale isEqualToString:cordovaUserAgentVersion];
 
         if ((gOriginalUserAgent == nil) || cachedValueIsOld) {
-            UIWebView* sampleWebView = [[UIWebView alloc] initWithFrame:CGRectZero];
+            WKWebView* sampleWebView = [[WKWebView alloc] initWithFrame:CGRectZero];
             gOriginalUserAgent = [sampleWebView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
 
             [userDefaults setObject:gOriginalUserAgent forKey:kCdvUserAgentKey];
