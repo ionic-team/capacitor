@@ -1,3 +1,66 @@
+## [1.2.0](https://github.com/ionic-team/capacitor/compare/1.1.1...1.2.0) (2019-09-04)
+
+
+### Bug Fixes
+
+* fix(core/web): avoid appendFile/writeFile to overwrite existing directory entry ([#1782](https://github.com/ionic-team/capacitor/pull/1782))
+* fix(cli): properly handle edit-config tag target ([#1794](https://github.com/ionic-team/capacitor/pull/1794))
+* fix(android): remove new line characters from camera base64 results ([#1800](https://github.com/ionic-team/capacitor/pull/1800))
+* fix(android): add missing format field in CameraPhoto ([#1798](https://github.com/ionic-team/capacitor/pull/1798))
+* fix(ios): don't override notification delegate if already set ([#1805](https://github.com/ionic-team/capacitor/pull/1805))
+* fix(core/global): ensure window is not used in ssr environment ([#1804](https://github.com/ionic-team/capacitor/pull/1804))
+* fix(electron): createIntermediateDirectories option not being used in mkdir ([#1812](https://github.com/ionic-team/capacitor/pull/1812))
+* fix(core/Filesystem): allow readdir on root directories ([#1818](https://github.com/ionic-team/capacitor/pull/1818))
+* fix(ios/Filesystem): make readdir return only content names ([#1819](https://github.com/ionic-team/capacitor/pull/1819))
+* fix(ios): improve CAPLog variadic logging ([#1824](https://github.com/ionic-team/capacitor/pull/1824))
+* fix(cordova): return proper pathForResource in CDVCommandDelegate ([#1826](https://github.com/ionic-team/capacitor/pull/1826))
+* fix(cli): remove deprecated dependencies ([#1827](https://github.com/ionic-team/capacitor/pull/1827))
+* fix(android): not override console so it shows proper line ([#1832](https://github.com/ionic-team/capacitor/pull/1832))
+* fix(android): make freeSavedCall also be released from the bridge ([#1862](https://github.com/ionic-team/capacitor/pull/1862))
+* fix: return proper mimeType for wasm files ([#1877](https://github.com/ionic-team/capacitor/pull/1877))
+* fix(ios): only listen for keyboard events when the app is active ([#1882](https://github.com/ionic-team/capacitor/pull/1882))
+* fix(android/splash): don't hardcode spinner size ([#1891](https://github.com/ionic-team/capacitor/pull/1891))
+* fix(android/splash): Avoid glitches on slow devices and respect keep fullscreen flag ([#1890](https://github.com/ionic-team/capacitor/pull/1890))
+* fix(cli): typo on error message ([#1899](https://github.com/ionic-team/capacitor/pull/1899))
+* fix(cli): make plugin generator run pod install on plugin creation ([#1903](https://github.com/ionic-team/capacitor/pull/1903))
+* fix(android): make openUrl open apps that don't handle VIEW intents ([#1906](https://github.com/ionic-team/capacitor/pull/1906))
+* fix(electron): correctly read/write file with no encoding ([#1905](https://github.com/ionic-team/capacitor/pull/1905))
+* fix(ios/cordova): Replace UIWebView with WKWebView in CDVUserAgentUtil ([#1925](https://github.com/ionic-team/capacitor/pull/1925))
+* fix(app-template): use correct node_modules value in .gitignore ([#1916](https://github.com/ionic-team/capacitor/pull/1916))
+
+
+### Features
+
+* feat(android): support custom local notification icon ([#1830](https://github.com/ionic-team/capacitor/pull/1830))
+* feat(Filesystem): Add copy implementation ([#1758](https://github.com/ionic-team/capacitor/pull/1758))
+* feat(Filesystem): Add recursive option for rmdir ([#1781](https://github.com/ionic-team/capacitor/pull/1781))
+* feat: Permissions API ([#1828](https://github.com/ionic-team/capacitor/pull/1828))
+* feat(ios+android): Add possibility to configure loading scheme ([#1810](https://github.com/ionic-team/capacitor/pull/1810))
+* feat(ios): add method to programmatically set keyboard style ([#1895](https://github.com/ionic-team/capacitor/pull/1895))
+* feat(ios): allow to programmatically set the keyboard resize mode ([#1896](https://github.com/ionic-team/capacitor/pull/1896))
+* feat(ios): add method to programmatically enable/disable the WebView scroll ([#1900](https://github.com/ionic-team/capacitor/pull/1900))
+
+
+### Docs
+
+* feat(docs): Add more docs for configuring Android App Links ([76f6624](https://github.com/ionic-team/capacitor/commit/76f6624))
+* docs(community plugins): Add Secure storage plugin reference ([#1791](https://github.com/ionic-team/capacitor/pull/1791))
+* docs: fix minor typo in FCM guide ([#1802](https://github.com/ionic-team/capacitor/pull/1802))
+* Clarify API usage ([#1811](https://github.com/ionic-team/capacitor/pull/1811))
+* docs: document saveCall on Android plugin guide ([#1823](https://github.com/ionic-team/capacitor/pull/1823))
+* docs(community plugins): add @rdlabo/capacitor-admob ([#1739](https://github.com/ionic-team/capacitor/pull/1739))
+* docs(community plugins): Add capacitor-radar plugin ([#1884](https://github.com/ionic-team/capacitor/pull/1884))
+* Update index.md ([#1861](https://github.com/ionic-team/capacitor/pull/1861))
+
+
+### Chores
+
+* chore(example): update example app to work with latest Capacitor ([#1789](https://github.com/ionic-team/capacitor/pull/1789))
+* chore(cordova): remove deprecated AssetsLibrary ([#1825](https://github.com/ionic-team/capacitor/pull/1825))
+* chore(electron): remove package-lock.json ([#1926](https://github.com/ionic-team/capacitor/pull/1926))
+
+
+
 ## [1.1.1](https://github.com/ionic-team/capacitor/compare/1.1.0...1.1.1) (2019-07-18)
 
 
