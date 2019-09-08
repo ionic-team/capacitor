@@ -9,7 +9,8 @@ export const config:Config = {
   outputTargets: [
     {
       type: 'www',
-      serviceWorker: null
+      baseUrl: 'https://capacitor.ionicframework.com/',
+      serviceWorker: null,
       /*
       serviceWorker: {
         skipWaiting: false,
