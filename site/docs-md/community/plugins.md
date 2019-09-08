@@ -139,4 +139,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-
+| Install Referrer | `capacitor-install-referrer` | <https://github.com/eladcandroid/capacitor-install-referrer> | |
