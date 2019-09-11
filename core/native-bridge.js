@@ -217,6 +217,11 @@
       if (storedCall) {
         // looks like we've got a stored call
 
+        if (result.error) {
+          // ensure stacktraces
+          result.error = Object.assign(new Error(), result.error);
+        }
+
         if (typeof storedCall.callback === 'function') {
           // callback
           if (result.success) {
