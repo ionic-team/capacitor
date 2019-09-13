@@ -49,6 +49,35 @@
     capacitor.platform = 'ios';
   }
 
+  // static list of console methods generated from latest Chrome with `Object.keys(console).filter(method => typeof console[method] === 'function').sort();`
+  const consoleKeys = [
+    'assert',
+    'clear',
+    'context',
+    'count',
+    'countReset',
+    'debug',
+    'dir',
+    'dirxml',
+    'error',
+    'group',
+    'groupCollapsed',
+    'groupEnd',
+    'info',
+    'log',
+    'profile',
+    'profileEnd',
+    'reactStack',
+    'reactStackEnd',
+    'table',
+    'time',
+    'timeEnd',
+    'timeLog',
+    'timeStamp',
+    'trace',
+    'warn',
+  ];
+
   var useFallbackLogging = Object.keys(win.console).length === 0;
   if(useFallbackLogging) {
     win.console.warn('Advance console logging disabled.')
@@ -67,7 +96,7 @@
     warn: true,
   };
   
-  Object.keys(win.console).forEach(function (level) {
+  consoleKeys.forEach(function (level) {
     if (typeof win.console[level] === 'function') {
       // loop through all the console functions and keep references to the original
       orgConsole[level] = win.console[level];
