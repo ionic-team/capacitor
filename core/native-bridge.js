@@ -78,11 +78,21 @@
     'warn',
   ];
 
-  // Enumerate which console methods are required for advanced logging 
-  // (currently listed only used in `logToNative` and `logFromNative`)
-  const advancedConsoleMethods = ['groupCollapsed','dir','groupEnd','error'];
+  var useFallbackLogging = (function() {
+    // Enumerate which console methods are required for advanced logging 
+    // (currently listed only used in `logToNative` and `logFromNative`)
+    const methods = ['groupCollapsed','dir','groupEnd','error'];
 
-  var useFallbackLogging = Object.keys(win.console).length === 0;
+    let valid = true;
+    let i = 0;
+    while (valid && i < methods.length) {
+      var method = methods[i];
+      valid = typeof orgConsole[method] === 'function';
+      i++;
+    }
+    return !valid;
+  })();
+  
   if(useFallbackLogging) {
     win.console.warn('Advance console logging disabled.')
   }
