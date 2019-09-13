@@ -424,9 +424,9 @@
   capacitor.logToNative = function(call) {
     if(!useFallbackLogging) {
         var c = orgConsole;
-        c.groupCollapsed('%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
-        c.dir(call);
-        c.groupEnd();
+        c.groupCollapsed.call(win.console, '%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
+        c.dir.call(win.console, call);
+        c.groupEnd.call(win.console);
     } else {
         win.console.log('LOG TO NATIVE: ', call);
         if (capacitor.isIOS) {
@@ -448,15 +448,15 @@
           var tagStyles = success ? 'font-style: italic; font-weight: lighter; color: gray' :
               'font-style: italic; font-weight: lighter; color: red';
 
-          c.groupCollapsed('%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
+          c.groupCollapsed.call(win.console, '%cresult %c' + result.pluginId + '.' + result.methodName + ' (#' + result.callbackId + ')',
               tagStyles,
               'font-style: italic; font-weight: bold; color: #444');
           if (result.success === false) {
-              c.error(result.error);
+              c.error.call(win.console, result.error);
           } else {
-              c.dir(result.data);
+              c.dir.call(win.console, result.data);
           }
-          c.groupEnd();
+          c.groupEnd.call(win.console);
       } else {
           if (result.success === false) {
               win.console.error(result.error);
