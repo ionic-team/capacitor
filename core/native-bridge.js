@@ -50,7 +50,7 @@
   }
 
   // static list of console methods generated from latest Chrome with `Object.keys(console).filter(method => typeof console[method] === 'function').sort();`
-  const consoleKeys = [
+  var consoleKeys = [
     'assert',
     'clear',
     'context',
@@ -81,10 +81,10 @@
   var useFallbackLogging = (function() {
     // Enumerate which console methods are required for advanced logging 
     // (currently listed only used in `logToNative` and `logFromNative`)
-    const methods = ['groupCollapsed','dir','groupEnd','error'];
+    var methods = ['groupCollapsed','dir','groupEnd','error'];
 
-    let valid = true;
-    let i = 0;
+    var valid = true;
+    var i = 0;
     while (valid && i < methods.length) {
       var method = methods[i];
       valid = typeof orgConsole[method] === 'function';
