@@ -45,7 +45,6 @@ import java.util.Map;
  */
 public class WebViewLocalServer {
 
-  private final static String capacitorScheme = Bridge.CAPACITOR_SCHEME_NAME;
   private final static String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
   private final static String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
   private String basePath;
@@ -330,6 +329,8 @@ public class WebViewLocalServer {
         if (path.endsWith(".js")) {
           // Make sure JS files get the proper mimetype to support ES modules
           mimeType = "application/javascript";
+        } else if (path.endsWith(".wasm")) {
+          mimeType = "application/wasm";
         } else {
           mimeType = URLConnection.guessContentTypeFromStream(stream);
         }
@@ -433,8 +434,13 @@ public class WebViewLocalServer {
     };
 
     for (String authority: authorities) {
-      registerUriForScheme(capacitorScheme, handler, authority);
-      registerUriForScheme("https", handler, authority);
+      registerUriForScheme(Bridge.CAPACITOR_HTTP_SCHEME, handler, authority);
+      registerUriForScheme(Bridge.CAPACITOR_HTTPS_SCHEME, handler, authority);
+
+      String customScheme = this.bridge.getScheme();
+      if (!customScheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !customScheme.equals(Bridge.CAPACITOR_HTTPS_SCHEME)) {
+        registerUriForScheme(customScheme, handler, authority);
+      }
     }
 
   }

@@ -902,6 +902,18 @@ export interface KeyboardPlugin extends Plugin {
    * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
    */
   setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
+  /**
+   * Programmatically enable or disable the WebView scroll
+   */
+  setScroll(options: { isDisabled: boolean }): Promise<void>;
+  /**
+   * Programmatically set the keyboard style
+   */
+  setStyle(options: KeyboardStyleOptions): Promise<void>;
+  /**
+   * Programmatically set the resize mode
+   */
+  setResizeMode(options: KeyboardResizeOptions): Promise<void>;
 
   addListener(eventName: 'keyboardWillShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
   addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
@@ -911,6 +923,26 @@ export interface KeyboardPlugin extends Plugin {
 
 export interface KeyboardInfo {
   keyboardHeight: number;
+}
+
+export interface KeyboardStyleOptions {
+  style: KeyboardStyle;
+}
+
+export enum KeyboardStyle {
+  Dark = 'DARK',
+  Light = 'LIGHT'
+}
+
+export interface KeyboardResizeOptions {
+  mode: KeyboardResize;
+}
+
+export enum KeyboardResize {
+  Body = 'body',
+  Ionic = 'ionic',
+  Native = 'native',
+  None = 'none'
 }
 
 //

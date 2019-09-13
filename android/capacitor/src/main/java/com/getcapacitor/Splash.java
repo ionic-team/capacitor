@@ -228,6 +228,7 @@ public class Splash {
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.gravity = Gravity.CENTER;
+        params.flags = a.getWindow().getAttributes().flags & (WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Required to enable the view to actually fade
         params.format = PixelFormat.TRANSLUCENT;
@@ -243,6 +244,8 @@ public class Splash {
                 .setListener(listener)
                 .start();
 
+        splashImage.setVisibility(View.VISIBLE);
+
         if (spinnerBar != null) {
           Boolean showSpinner = Config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
 
@@ -252,8 +255,8 @@ public class Splash {
             wm.removeView(spinnerBar);
           }
 
-          params.height = 120;
-          params.width = 120;
+          params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+          params.width = WindowManager.LayoutParams.WRAP_CONTENT;
 
           wm.addView(spinnerBar, params);
 
@@ -347,6 +350,8 @@ public class Splash {
     }
 
     if (splashImage != null && splashImage.getParent() != null) {
+      splashImage.setVisibility(View.INVISIBLE);
+
       wm.removeView(splashImage);
     }
 
