@@ -78,25 +78,6 @@
     'warn',
   ];
 
-  var useFallbackLogging = (function() {
-    // Enumerate which console methods are required for advanced logging 
-    // (currently listed only used in `logToNative` and `logFromNative`)
-    var methods = ['groupCollapsed','dir','groupEnd','error'];
-
-    var valid = true;
-    var i = 0;
-    while (valid && i < methods.length) {
-      var method = methods[i];
-      valid = typeof orgConsole[method] === 'function';
-      i++;
-    }
-    return !valid;
-  })();
-  
-  if(useFallbackLogging) {
-    win.console.warn('Advance console logging disabled.')
-  }
-
   // patch window.console and store original console fns
   var orgConsole = {};
   
@@ -147,6 +128,25 @@
       }
     }
   });
+
+  var useFallbackLogging = (function() {
+    // Enumerate which console methods are required for advanced logging 
+    // (currently listed only used in `logToNative` and `logFromNative`)
+    var methods = ['groupCollapsed','dir','groupEnd','error'];
+
+    var valid = true;
+    var i = 0;
+    while (valid && i < methods.length) {
+      var method = methods[i];
+      valid = typeof orgConsole[method] === 'function';
+      i++;
+    }
+    return !valid;
+  })();
+  
+  if(useFallbackLogging) {
+    win.console.warn('Advance console logging disabled.')
+  }  
 
   function addLegacyHandlers(win) {
     win.navigator.app = {
