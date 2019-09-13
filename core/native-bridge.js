@@ -140,7 +140,7 @@
               });
             } catch (e) {
               // error converting/posting console messages
-              orgConsole.error.apply(win.console, e);
+              orgConsole.error.call(win.console, e);
             }
           }
         };
