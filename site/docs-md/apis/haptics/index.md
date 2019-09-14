@@ -26,10 +26,7 @@ To use vibration, you must add this permission to your `AndroidManifest.xml` fil
 ## Example
 
 ```typescript
-import {
-  Plugins,
-  HapticsImpactStyle
-} from '@capacitor/core';
+import { Plugins, HapticsImpactStyle } from '@capacitor/core';
 
 const { Haptics } = Plugins;
 
