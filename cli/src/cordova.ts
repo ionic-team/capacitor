@@ -1,7 +1,7 @@
 import { Config } from './config';
 import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
-import { join, resolve } from 'path';
+import { basename, extname, join, resolve } from 'path';
 import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, readXML, resolveNode, writeXML } from './common';
 import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
@@ -51,11 +51,12 @@ export function generateCordovaPluginsJSFile(config: Config, plugins: Plugin[], 
       if (jsModule.runs) {
         runsModule = ',\n        "runs": true';
       }
-      const pluginModule = { 
+      const pluginModule = {
         clobber: clobberKey,
         merge: mergeKey,
+        // mimics Cordova's module name logic if the name attr is missing
         pluginContent: `{
-          "id": "${pluginId}.${jsModule.$.name}",
+          "id": "${pluginId + '.' + (jsModule.$.name || jsModule.$.src.match(/([^\/]+)\.js/)[1])}",
           "file": "plugins/${pluginId}/${jsModule.$.src}",
           "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
         }`
@@ -107,7 +108,9 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       copySync(join(p.rootPath, jsModule.$.src), filePath);
       let data = await readFileAsync(filePath, 'utf8');
       data = data.trim();
-      data = `cordova.define("${pluginId}.${jsModule.$.name}", function(require, exports, module) { \n${data}\n});`;
+      // mimics Cordova's module name logic if the name attr is missing
+      const name = pluginId + '.' + (jsModule.$.name || basename(jsModule.$.src, extname(jsModule.$.src)));
+      data = `cordova.define("${name}", function(require, exports, module) { \n${data}\n});`;
       data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, "")
       await writeFileAsync(filePath, data, 'utf8');
     }));
@@ -207,7 +210,7 @@ export async function copyCordovaJSFiles(config: Config, platform: string) {
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
     plugins = getIOSPlugins(allPlugins);
-  } else if (platform === config.android.name) { 
+  } else if (platform === config.android.name) {
     plugins = getAndroidPlugins(allPlugins);
   }
   const cordovaPlugins = plugins
