@@ -139,4 +139,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-
+| AppRate | `capacitor-app-rate` | <https://github.com/danielsogl/capacitor-app-rate> | |
