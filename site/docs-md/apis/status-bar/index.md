@@ -34,10 +34,7 @@ window.addEventListener('statusTap', function () {
 });
 
 //API
-import {
-  Plugins,
-  StatusBarStyle,
-} from '@capacitor/core';
+import { Plugins, StatusBarStyle } from '@capacitor/core';
 
 const { StatusBar } = Plugins;
 
