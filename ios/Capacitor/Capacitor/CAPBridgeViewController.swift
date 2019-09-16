@@ -93,7 +93,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       return nil
     }
 
-    if !isDeployDisabled() {
+    if !isDeployDisabled() && !isNewBinary() {
       let defaults = UserDefaults.standard
       let persistedPath = defaults.string(forKey: "serverBasePath")
       if (persistedPath != nil && !persistedPath!.isEmpty) {
@@ -111,6 +111,24 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   func isDeployDisabled() -> Bool {
     let val = cordovaParser.settings.object(forKey: "DisableDeploy".lowercased()) as? NSString
     return val?.boolValue ?? false
+  }
+
+  func isNewBinary() -> Bool {
+    if let plist = Bundle.main.infoDictionary {
+      if let versionCode = plist["CFBundleVersion"] as? String, let versionName = plist["CFBundleShortVersionString"] as? String {
+        let prefs = UserDefaults.standard
+        let lastVersionCode = prefs.string(forKey: "lastBinaryVersionCode")
+        let lastVersionName = prefs.string(forKey: "lastBinaryVersionName")
+        if !versionCode.isEqual(lastVersionCode) || !versionName.isEqual(lastVersionName) {
+          prefs.set(versionCode, forKey: "lastBinaryVersionCode")
+          prefs.set(versionName, forKey: "lastBinaryVersionName")
+          prefs.set("", forKey: "serverBasePath")
+          prefs.synchronize()
+          return true
+        }
+      }
+    }
+    return false
   }
 
   override public func viewDidLoad() {
