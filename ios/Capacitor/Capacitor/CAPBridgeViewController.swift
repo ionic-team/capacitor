@@ -444,7 +444,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public func setServerBasePath(path: String) {
     setServerPath(path: path)
     let request = URLRequest(url: URL(string: hostname!)!)
-    _ = getWebView().load(request)
+    DispatchQueue.main.async {
+      _ = self.getWebView().load(request)
+    }
   }
 
   override open var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
