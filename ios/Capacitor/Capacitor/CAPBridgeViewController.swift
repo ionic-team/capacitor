@@ -7,7 +7,7 @@ import UIKit
 import WebKit
 import Cordova
 
-public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
+open class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
   
@@ -34,7 +34,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public var bridge: CAPBridge?
   private var handler: CAPAssetHandler?
   
-  override public func loadView() {
+  override open func loadView() {
     let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
     let configParser = XMLParser(contentsOf: configUrl!)!;
     configParser.delegate = cordovaParser
@@ -131,7 +131,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return false
   }
 
-  override public func viewDidLoad() {
+  override open func viewDidLoad() {
     super.viewDidLoad()
     self.becomeFirstResponder()
     loadWebView()
@@ -263,7 +263,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webView.reload()
   }
 
-  public override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
+  open override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
     return false
   }
 
@@ -355,24 +355,24 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return host == pattern
   }
 
-  override public func didReceiveMemoryWarning() {
+  override open func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
 
-  override public var prefersStatusBarHidden: Bool {
+  override open var prefersStatusBarHidden: Bool {
     get {
       return !isStatusBarVisible
     }
   }
 
-  override public var preferredStatusBarStyle: UIStatusBarStyle {
+  override open var preferredStatusBarStyle: UIStatusBarStyle {
     get {
       return statusBarStyle
     }
   }
 
-  override public var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+  override open var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
     get {
       return .slide
     }
@@ -471,7 +471,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return UIApplication.shared.statusBarOrientation
   }
 
-  override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+  override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
     var ret = 0
     if self.supportedOrientations.contains(UIInterfaceOrientation.portrait.rawValue) {
       ret = ret | (1 << UIInterfaceOrientation.portrait.rawValue)
