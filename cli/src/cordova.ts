@@ -173,11 +173,19 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     const xmlString = await writeXML(item);
     return xmlString;
   }));
+  let pluginPreferencesString: Array<string> = [];
+  if (config.app.extConfig.cordova && config.app.extConfig.cordova.preferences) {
+    pluginPreferencesString = await Promise.all(Object.keys(config.app.extConfig.cordova.preferences).map(async (key): Promise<string> => {
+      return `
+  <preference name="${key}" value="${config.app.extConfig.cordova.preferences[key]}" />`;
+    }));
+  }
   const content = `<?xml version='1.0' encoding='utf-8'?>
-  <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <access origin="*" />
-  ${pluginEntriesString.join('\n')}
-  </widget>`;
+  ${pluginEntriesString.join('')}
+  ${pluginPreferencesString.join('')}
+</widget>`;
   await writeFileAsync(cordovaConfigXMLFile, content);
 }
 
