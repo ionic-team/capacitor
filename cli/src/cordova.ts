@@ -347,7 +347,7 @@ export async function getCordovaPreferences(config: Config) {
       cordova.preferences[pref.$.name] = pref.$.value;
     });
   }
-  if (config.app.extConfig.cordova && config.app.extConfig.cordova.preferences && cordova.preferences) {
+  if (config.app.extConfig && config.app.extConfig.cordova && config.app.extConfig.cordova.preferences && cordova.preferences) {
     const answer = await inquirer.prompt({
       type: 'confirm',
       name: 'confirm',
