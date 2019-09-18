@@ -174,7 +174,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     return xmlString;
   }));
   let pluginPreferencesString: Array<string> = [];
-  if (config.app.extConfig.cordova && config.app.extConfig.cordova.preferences) {
+  if (config.app.extConfig && config.app.extConfig.cordova && config.app.extConfig.cordova.preferences) {
     pluginPreferencesString = await Promise.all(Object.keys(config.app.extConfig.cordova.preferences).map(async (key): Promise<string> => {
       return `
   <preference name="${key}" value="${config.app.extConfig.cordova.preferences[key]}" />`;
@@ -357,7 +357,7 @@ export async function getCordovaPreferences(config: Config) {
       cordova = config.app.extConfig.cordova;
     }
   }
-  if (!cordova.preferences) {
+  if (config.app.extConfig && !cordova.preferences) {
     cordova = config.app.extConfig.cordova;
   }
   return cordova;
