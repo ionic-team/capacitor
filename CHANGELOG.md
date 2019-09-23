@@ -1,3 +1,15 @@
+## [1.2.1](https://github.com/ionic-team/capacitor/compare/1.2.0...1.2.1) (2019-09-17)
+
+
+### Bug Fixes
+
+* fix(cli): mimic cordova's js-module logic when no name attribute ([#1959](https://github.com/ionic-team/capacitor/pull/1959))
+* fix(ios): call webview.load on main thread on setServerBasePath ([#1967](https://github.com/ionic-team/capacitor/pull/1967))
+* fix(ios): reset server path on app updates ([#1968](https://github.com/ionic-team/capacitor/pull/1968))
+* fix(android): reset server path on app updates ([#1969](https://github.com/ionic-team/capacitor/pull/1969))
+
+
+
 ## [1.2.0](https://github.com/ionic-team/capacitor/compare/1.1.1...1.2.0) (2019-09-04)
 
 

@@ -30,6 +30,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Firebase Auth | `capacitor-firebase-auth` | <https://github.com/baumblatt/capacitor-firebase-auth> | |
 | Twitter Kit | `capacitor-twitter` | <https://github.com/stewwan/capacitor-twitter> | |
 | Google Sign-in | `@codetrix-studio/capacitor-google-auth` | <https://github.com/CodetrixStudio/CapacitorGoogleAuth> | Works with Firebase. Lightweight |
+| Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
 
 ## Storage
 
@@ -140,3 +141,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Install Referrer | `capacitor-install-referrer` | <https://github.com/eladcandroid/capacitor-install-referrer> | |
+| Request app review | `capacitor-rate-app` | <https://github.com/Nodonisko/capacitor-rate-app> | Request app review from users |

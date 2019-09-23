@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -83,6 +84,8 @@ public class Bridge {
   private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
   private static final String BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY = "capacitorLastPluginCallOptions";
   private static final String BUNDLE_PLUGIN_CALL_BUNDLE_KEY = "capacitorLastPluginCallBundle";
+  private static final String LAST_BINARY_VERSION_CODE = "lastBinaryVersionCode";
+  private static final String LAST_BINARY_VERSION_NAME = "lastBinaryVersionName";
 
   // The name of the directory we use to look for index.html and the rest of our web assets
   public static final String DEFAULT_WEB_ASSET_DIR = "public";
@@ -244,7 +247,7 @@ public class Bridge {
       }
     });
 
-    if (!isDeployDisabled()) {
+    if (!isDeployDisabled() && !isNewBinary()) {
       SharedPreferences prefs = getContext().getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
       String path = prefs.getString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, null);
       if (path != null && !path.isEmpty() && new File(path).exists()) {
@@ -253,6 +256,33 @@ public class Bridge {
     }
     // Get to work
     webView.loadUrl(appUrl);
+  }
+
+
+  private boolean isNewBinary() {
+    String versionCode = "";
+    String versionName = "";
+    SharedPreferences prefs = getContext().getSharedPreferences(com.getcapacitor.plugin.WebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
+    String lastVersionCode = prefs.getString(LAST_BINARY_VERSION_CODE, null);
+    String lastVersionName = prefs.getString(LAST_BINARY_VERSION_NAME, null);
+
+    try {
+      PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+      versionCode = Integer.toString(pInfo.versionCode);
+      versionName = pInfo.versionName;
+    } catch(Exception ex) {
+      Log.e(LOG_TAG, "Unable to get package info", ex);
+    }
+
+    if (!versionCode.equals(lastVersionCode) || !versionName.equals(lastVersionName)) {
+      SharedPreferences.Editor editor = prefs.edit();
+      editor.putString(LAST_BINARY_VERSION_CODE, versionCode);
+      editor.putString(LAST_BINARY_VERSION_NAME, versionName);
+      editor.putString(com.getcapacitor.plugin.WebView.CAP_SERVER_PATH, "");
+      editor.apply();
+      return true;
+    }
+    return false;
   }
 
   public boolean isDeployDisabled() {
