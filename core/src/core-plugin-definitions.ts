@@ -1500,7 +1500,7 @@ export interface SplashScreenShowOptions {
    */
   fadeOutDuration?: number;
   /**
-  * How long to show the splash screen when authHide is enabled (in ms)
+  * How long to show the splash screen when autoHide is enabled (in ms)
   * Default is 3000ms
   */
   showDuration?: number;
