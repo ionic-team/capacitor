@@ -7,6 +7,7 @@ import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
+import * as inquirer from 'inquirer';
 
 const plist = require('plist');
 const chalk = require('chalk');
@@ -172,11 +173,19 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
     const xmlString = await writeXML(item);
     return xmlString;
   }));
+  let pluginPreferencesString: Array<string> = [];
+  if (config.app.extConfig && config.app.extConfig.cordova && config.app.extConfig.cordova.preferences) {
+    pluginPreferencesString = await Promise.all(Object.keys(config.app.extConfig.cordova.preferences).map(async (key): Promise<string> => {
+      return `
+  <preference name="${key}" value="${config.app.extConfig.cordova.preferences[key]}" />`;
+    }));
+  }
   const content = `<?xml version='1.0' encoding='utf-8'?>
-  <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <access origin="*" />
-  ${pluginEntriesString.join('\n')}
-  </widget>`;
+  ${pluginEntriesString.join('')}
+  ${pluginPreferencesString.join('')}
+</widget>`;
   await writeFileAsync(cordovaConfigXMLFile, content);
 }
 
@@ -317,7 +326,7 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
   return needsUpdate;
 }
 
-export function getIncompatibleCordovaPlugins(platform: string){
+export function getIncompatibleCordovaPlugins(platform: string) {
   let pluginList = ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
   "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
   "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support",
@@ -326,4 +335,30 @@ export function getIncompatibleCordovaPlugins(platform: string){
     pluginList.push("cordova-plugin-googlemaps");
   }
   return pluginList;
+}
+
+export async function getCordovaPreferences(config: Config) {
+  const configXml = join(config.app.rootDir, 'config.xml');
+  let cordova: any = {};
+  if (existsSync(configXml)) {
+    cordova.preferences = {};
+    const xmlMeta = await readXML(configXml);
+    xmlMeta.widget.preference.map((pref: any) => {
+      cordova.preferences[pref.$.name] = pref.$.value;
+    });
+  }
+  if (config.app.extConfig && config.app.extConfig.cordova && config.app.extConfig.cordova.preferences && cordova.preferences) {
+    const answer = await inquirer.prompt({
+      type: 'confirm',
+      name: 'confirm',
+      message: 'capacitor.config.json already contains cordova preferences. Overwrite with values from config.xml?'
+    });
+    if (!answer.confirm) {
+      cordova = config.app.extConfig.cordova;
+    }
+  }
+  if (config.app.extConfig && !cordova.preferences) {
+    cordova = config.app.extConfig.cordova;
+  }
+  return cordova;
 }
