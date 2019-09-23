@@ -139,4 +139,5 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
+| Request app review | `capacitor-rate-app` | <https://github.com/Nodonisko/capacitor-rate-app> | Request app review from users |
 
