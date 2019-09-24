@@ -154,7 +154,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     if (occupiedEntry && occupiedEntry.type === 'directory')
       throw('The supplied path is a directory.');
 
-    // const encoding = options.encoding;
+    const encoding = options.encoding;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
     let parentEntry = await this.dbRequest('get', [parentPath]) as EntryObj;
@@ -162,7 +162,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       const subDirIndex = parentPath.indexOf('/', 1);
       if (subDirIndex !== -1) {
         const parentArgPath = parentPath.substr(subDirIndex);
-        await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true})
+        await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true});
       }
     }
     const now = Date.now();
@@ -173,7 +173,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       size: data.length,
       ctime: now,
       mtime: now,
-      content: data
+      content: !encoding && data.indexOf(',') >= 0 ? data.split(',')[1] : data,
     };
     await this.dbRequest('put', [pathObj]);
     return {};
@@ -200,7 +200,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     let parentEntry = await this.dbRequest('get', [parentPath]) as EntryObj;
     if (parentEntry === undefined) {
       const parentArgPath = parentPath.substr(parentPath.indexOf('/', 1));
-      await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true})
+      await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true});
     }
 
     if (occupiedEntry !== undefined) {
