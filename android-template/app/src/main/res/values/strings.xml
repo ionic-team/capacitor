@@ -3,6 +3,5 @@
     <string name="app_name">My App</string>
     <string name="title_activity_main">My App</string>
     <string name="package_name">com.getcapacitor.myapp</string>
-    <string name="fileprovider_authority">com.getcapacitor.myapp.fileprovider</string>
     <string name="custom_url_scheme">com.getcapacitor.myapp</string>
 </resources>
