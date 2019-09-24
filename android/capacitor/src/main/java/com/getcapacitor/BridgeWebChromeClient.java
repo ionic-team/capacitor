@@ -302,6 +302,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
     if (fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
       intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
     }
+    if (fileChooserParams.getAcceptTypes().length > 1) {
+      intent.setType("*/*");
+      intent.putExtra(Intent.EXTRA_MIME_TYPES, fileChooserParams.getAcceptTypes());
+    }
     try {
       bridge.cordovaInterface.startActivityForResult(new CordovaPlugin() {
         @Override
