@@ -286,6 +286,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     let oldSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
     let newSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
     let newerSelector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
+    let ios13Selector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:")
 
     if let method = class_getInstanceMethod(wkc, oldSelector) {
       let originalImp: IMP = method_getImplementation(method)
@@ -303,6 +304,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     if let method = class_getInstanceMethod(wkc, newerSelector) {
       self.swizzleAutofocusMethod(method, newerSelector, value)
+    }
+
+    if let method = class_getInstanceMethod(wkc, ios13Selector) {
+      self.swizzleAutofocusMethod(method, ios13Selector, value)
     }
   }
 
