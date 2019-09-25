@@ -179,7 +179,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
         }
       }
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
-        if (statusBarStyle != "UIStatusBarStyleDefault") {
+        if (statusBarStyle != "UIStatusBarStyleDefault" && statusBarStyle != "UIStatusBarStyleDarkContent") {
           self.statusBarStyle = .lightContent
         }
       }
