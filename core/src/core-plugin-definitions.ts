@@ -418,6 +418,10 @@ export interface DeviceInfo {
    */
   appVersion: string;
   /**
+   * The current bundle build of the app
+   */
+  appBuild: string;
+  /**
    * The version of the device OS
    */
   osVersion: string;
