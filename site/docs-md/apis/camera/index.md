@@ -41,6 +41,10 @@ Read about [Setting Android Permissions](../../android/configuration/) in the [A
 Additionally, because the Camera API launches a separate Activity to handle taking the photo, you should listen for `appRestoredResult` in the `App` plugin
 to handle any camera data that was sent in the case your app was terminated by the operating system while the Activity was running.
 
+## PWA/Electron Notes
+
+[PWA Elements](/docs/pwa-elements) are required for Camera plugin to work.
+
 ## Example
 
 ```typescript

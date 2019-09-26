@@ -9,13 +9,13 @@ contributors:
 
 # PWA Elements
 
-<p class="intro">Some Capacitor plugins, such as <code>Camera</code>, have web-based UI available when not running natively. For example, calling <code>Camera.getPhoto()</code> will 
+<p class="intro">Some Capacitor plugins, such as <code>Camera</code> or <code>Toast</code>, have web-based UI available when not running natively. For example, calling <code>Camera.getPhoto()</code> will 
 load a responsive photo-taking experience when running on the web or electron:</p>
 
 <img src="/assets/img/docs/pwa-elements.png" style="height: 200px" />
 
-This UI is implemented using a subset of the [Ionic Framework](http://ionicframework.com/) web components. Due to the magic of Shadow DOM, these components should not conflict
-with your own UI whether you choose to use Ionic or not.
+This UI is implemented using web components. Due to the magic of Shadow DOM, these components should not conflict
+with your own UI.
 
 ## Installation
 
