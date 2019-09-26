@@ -94,6 +94,14 @@ enum BridgeError: Error {
     }
     return bridgeVC.preferredStatusBarStyle
   }
+
+  @available(iOS 12.0, *)
+  public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return UIUserInterfaceStyle.unspecified
+    }
+    return bridgeVC.traitCollection.userInterfaceStyle
+  }
   
   /**
    * Get the last URL that triggered an open or continue activity event.
