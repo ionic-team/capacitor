@@ -656,9 +656,16 @@ export interface MkdirOptions {
    */
   directory?: FilesystemDirectory;
   /**
+   * @deprecated - use recursive
    * Whether to create any missing parent directories as well
+   * Defaults to false
    */
-  createIntermediateDirectories: boolean;
+  createIntermediateDirectories?: boolean;
+  /**
+   * Whether to create any missing parent directories as well.
+   * Defaults to false
+   */
+  recursive?: boolean;
 }
 
 export interface RmdirOptions {
@@ -671,7 +678,8 @@ export interface RmdirOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * Whether to recursively remove the contents of the directory (defaults to false)
+   * Whether to recursively remove the contents of the directory
+   * Defaults to false
    */
   recursive?: boolean;
 }

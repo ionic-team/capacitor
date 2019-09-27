@@ -223,6 +223,10 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     let createIntermediateDirectories = call.get("createIntermediateDirectories", Bool.self, false)!
+    if let _ = call.get("createIntermediateDirectories", Bool.self) {
+        CAPLog.print("createIntermediateDirectories is deprecated, use recursive")
+    }
+    let recursive = call.get("recursive", Bool.self, false)!
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
@@ -230,7 +234,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     do {
-      try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: createIntermediateDirectories, attributes: nil)
+      try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: createIntermediateDirectories || recursive, attributes: nil)
       call.success()
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)

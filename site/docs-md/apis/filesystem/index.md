@@ -72,7 +72,7 @@ async mkdir() {
     let ret = await Filesystem.mkdir({
       path: 'secrets',
       directory: FilesystemDirectory.Documents,
-      createIntermediateDirectories: false // like mkdir -p
+      recursive: false // like mkdir -p
     });
   } catch(e) {
     console.error('Unable to make directory', e);

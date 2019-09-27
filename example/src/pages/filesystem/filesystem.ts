@@ -73,7 +73,7 @@ export class FilesystemPage {
       let ret = await Plugins.Filesystem.mkdir({
         path: 'secrets',
         directory: FilesystemDirectory.Documents,
-        createIntermediateDirectories: false
+        recursive: false
       });
       console.log('Made dir', ret);
     } catch(e) {
@@ -207,7 +207,7 @@ export class FilesystemPage {
   mkdirAll(paths) {
     return this.doAll(paths, path => Plugins.Filesystem.mkdir({
       path,
-      createIntermediateDirectories: true,
+      recursive: true,
     }));
   }
 
