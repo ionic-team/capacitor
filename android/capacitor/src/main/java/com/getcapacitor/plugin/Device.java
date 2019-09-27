@@ -69,7 +69,7 @@ public class Device extends Plugin {
       PackageInfo pinfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
       return pinfo.versionName;
     } catch(Exception ex) {
-      return null;
+      return "";
     }
   }
 
@@ -78,7 +78,7 @@ public class Device extends Plugin {
       PackageInfo pinfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
       return Integer.toString(pinfo.versionCode);
     } catch(Exception ex) {
-      return null;
+      return "";
     }
   }
 
