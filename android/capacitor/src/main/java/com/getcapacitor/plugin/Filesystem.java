@@ -327,6 +327,10 @@ public class Filesystem extends Plugin {
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
     boolean intermediate = call.getBoolean("createIntermediateDirectories", false).booleanValue();
+    if (call.getBoolean("createIntermediateDirectories") != null) {
+      Log.w(getLogTag(),"createIntermediateDirectories is deprecated, use recursive");
+    }
+    boolean recursive = call.getBoolean("recursive", false).booleanValue();
 
     File fileObject = getFileObject(path, directory);
 
@@ -338,7 +342,7 @@ public class Filesystem extends Plugin {
     if (!isPublicDirectory(directory)
             || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       boolean created = false;
-      if (intermediate) {
+      if (intermediate || recursive) {
         created = fileObject.mkdirs();
       } else {
         created = fileObject.mkdir();
