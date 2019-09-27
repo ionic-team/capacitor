@@ -587,7 +587,10 @@ export interface FileWriteOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * The encoding to write the file in (defautls to utf8)
+   * The encoding to write the file in. If not provided, data
+   * is written as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
 }
@@ -606,7 +609,10 @@ export interface FileAppendOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * The encoding to write the file in (defautls to utf8)
+   * The encoding to write the file in. If not provided, data
+   * is written as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
 }
