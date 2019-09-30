@@ -34,9 +34,9 @@ assignees: ''
 
 <!--  Please explain the steps required to duplicate the issue, especially if you are able to provide a sample application. -->
 
-## Technical Details
+## Other Technical Details
 
-<!-- Please provide the following information with your request. -->
+<!-- Please provide the following information with your request, and any other relevant technical details (versions of IDEs, local environment info, plugin information or links, etc). -->
 
 `npm --version` output:
 
