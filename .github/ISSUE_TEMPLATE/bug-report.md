@@ -10,7 +10,10 @@ assignees: ''
 # Bug Report
 
 ## Capacitor Version
-<!-- Provide the version of Capacitor you are using in your application. This can be found in your package.json file. -->
+<!-- Provide the version of Capacitor and related installed dependencies. You can use the command `npx capacitor doctor` or `npx cap doctor` for the output from the root directory of your project. -->
+
+`npx cap doctor` output:
+
 
 ## Affected Platform(s)
 <!-- Leave these checkboxes EMPTY until after the issue is created. Once the issue is created, check one or more boxes for the platform(s) this bug affects. -->
