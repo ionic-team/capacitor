@@ -48,7 +48,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Twilio iOS | `twilio-ios-capacitor` | <https://github.com/MCanhisares/twilio-ios-capacitor> | Video calls with Twilio |
 | Video Recorder | `@teamhive/capacitor-video-recorder` | <https://github.com/TeamHive/capacitor-video-recorder> | |
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
-
+| Camera preview | `capacitor-camera-preview` | <https://github.com/arielhernandezmusa/capacitor-camera-preview> | |
 ## Analytics
 
 | Name                    | NPM package | GitHub | Notes |
