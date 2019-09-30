@@ -15,6 +15,11 @@ assignees: ''
 ## Platform Support Requested
 <!-- Check one or more boxes for the platform(s) you would like this feature to support. Note that some features may not be feasible for a particular platform (i.e. no web API may be available). -->
 
+- [ ] Android
+- [ ] iOS
+- [ ] Electron
+- [ ] Web
+
 ## Describe Preferred Solution
 <!-- A clear and concise description of what you want to happen. -->
 
