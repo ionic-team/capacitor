@@ -13,6 +13,7 @@ assignees: ''
 <!-- Provide the version of Capacitor you are using in your application. This can be found in your package.json file. -->
 
 ## Affected Platform(s)
+<!-- Leave these checkboxes EMPTY until after the issue is created. Once the issue is created, check one or more boxes for the platform(s) this bug affects. -->
 
 - [ ] Android
 - [ ] iOS
@@ -28,7 +29,13 @@ assignees: ''
 
 ## Sample Code or Sample Application Repo
 
-<!-- If you are able to illustrate the bug or feature request with an example, please provide sample code snippets or a sample application via a public GitHub or Bitbucket repo. -->
+<!-- 
+
+NOTE: Issues with sample projects are prioritized higher than ones without because they are easier to reproduce and fix.
+
+If you are able to illustrate the bug or feature request with an example, please provide sample code snippets or a sample application via a public GitHub or Bitbucket repo. 
+
+-->
 
 ## Reproduction Steps
 
