@@ -13,7 +13,7 @@ assignees: ''
 <!-- A clear and concise description of what the feature request is. Please include if your feature request is related to a problem. -->
 
 ## Platform Support Requested
-<!-- Check one or more boxes for the platform(s) you would like this feature to support. Note that some features may not be feasible for a particular platform (i.e. no web API may be available). -->
+<!-- Leave these checkboxes EMPTY until after the issue is created. Once the issue is created, check one or more boxes for the platform(s) this bug affects. -->
 
 - [ ] Android
 - [ ] iOS
