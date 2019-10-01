@@ -327,12 +327,15 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
 }
 
 export function getIncompatibleCordovaPlugins(platform: string) {
-  let pluginList = ["cordova-plugin-statusbar", "cordova-plugin-splashscreen", "cordova-plugin-ionic-webview",
-  "cordova-plugin-crosswalk-webview", "cordova-plugin-wkwebview-engine", "cordova-plugin-console",
-  "cordova-plugin-compat", "cordova-plugin-music-controls", "cordova-plugin-add-swift-support",
-  "cordova-plugin-ionic-keyboard", "cordova-plugin-braintree"];
+  let pluginList = ["cordova-plugin-splashscreen", "cordova-plugin-ionic-webview", "cordova-plugin-crosswalk-webview",
+  "cordova-plugin-wkwebview-engine", "cordova-plugin-console", "cordova-plugin-music-controls",
+  "cordova-plugin-add-swift-support", "cordova-plugin-ionic-keyboard", "cordova-plugin-braintree",
+  "@ionic-enterprise/filesystem", "@ionic-enterprise/keyboard", "@ionic-enterprise/splashscreen"];
   if (platform === "ios") {
-    pluginList.push("cordova-plugin-googlemaps");
+    pluginList.push("cordova-plugin-googlemaps", "cordova-plugin-statusbar", "@ionic-enterprise/statusbar");
+  }
+  if (platform === "android") {
+    pluginList.push("cordova-plugin-compat");
   }
   return pluginList;
 }
