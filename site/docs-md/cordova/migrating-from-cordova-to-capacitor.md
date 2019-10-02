@@ -84,6 +84,22 @@ Note that any plugins that are [incompatible or cause build issues](/docs/cordov
 
 By default, the entire initial permissions requested for the latest version of Capacitor are set for you in the default native projects for both iOS and Android. However, you may need to apply additional permissions manually by mapping between `plugin.xml` and required settings on iOS and Android. Consult the [iOS](/docs/ios/configuration) and [Android](/docs/android/configuration) configuration guides for info on how to configure each platform.
 
+## Cordova Plugin preferences
+
+When `npx cap init` is run, Capacitor reads all the preferences in `config.xml` and port them to `capacitor.config.json` file. You can manually add more preferences to the `cordova.preferences` object too.
+
+```json
+{
+  "cordova": {
+    "preferences": {
+      "DisableDeploy": "true",
+      "CameraUsesGeolocation": "true"
+    }
+  }
+}
+```
+
+
 ## Additional Config.xml Fields
 
 You may be curious about how other elements from `config.xml` work in Capacitor apps.

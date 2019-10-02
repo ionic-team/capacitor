@@ -418,6 +418,10 @@ export interface DeviceInfo {
    */
   appVersion: string;
   /**
+   * The current bundle build of the app
+   */
+  appBuild: string;
+  /**
    * The version of the device OS
    */
   osVersion: string;
@@ -583,7 +587,10 @@ export interface FileWriteOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * The encoding to write the file in (defautls to utf8)
+   * The encoding to write the file in. If not provided, data
+   * is written as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
 }
@@ -602,7 +609,10 @@ export interface FileAppendOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * The encoding to write the file in (defautls to utf8)
+   * The encoding to write the file in. If not provided, data
+   * is written as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
 }
@@ -646,9 +656,16 @@ export interface MkdirOptions {
    */
   directory?: FilesystemDirectory;
   /**
+   * @deprecated - use recursive
    * Whether to create any missing parent directories as well
+   * Defaults to false
    */
-  createIntermediateDirectories: boolean;
+  createIntermediateDirectories?: boolean;
+  /**
+   * Whether to create any missing parent directories as well.
+   * Defaults to false
+   */
+  recursive?: boolean;
 }
 
 export interface RmdirOptions {
@@ -661,7 +678,8 @@ export interface RmdirOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * Whether to recursively remove the contents of the directory (defaults to false)
+   * Whether to recursively remove the contents of the directory
+   * Defaults to false
    */
   recursive?: boolean;
 }
@@ -1500,7 +1518,7 @@ export interface SplashScreenShowOptions {
    */
   fadeOutDuration?: number;
   /**
-  * How long to show the splash screen when authHide is enabled (in ms)
+  * How long to show the splash screen when autoHide is enabled (in ms)
   * Default is 3000ms
   */
   showDuration?: number;

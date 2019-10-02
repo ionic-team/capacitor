@@ -43,3 +43,5 @@ contributors:
 [Create Native HTML5 Games with Phaser and Capacitor &#8250;](https://www.joshmorony.com/create-native-html5-games-with-phaser-and-capacitor)
 
 [Integrating the Scanbot SDK in a Capacitor App with Ionic &#8250;](https://scanbot.io/blog/capacitor-app/)
+
+[Music Playback in Capacitor App with Ionic &#8250;](https://enappd.com/blog/play-music-in-ionic-capacitor-apps/112)

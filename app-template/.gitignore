@@ -1,5 +1,5 @@
 .idea/
-node-modules/
+node_modules/
 .vscode/
 *.map
 .DS_Store

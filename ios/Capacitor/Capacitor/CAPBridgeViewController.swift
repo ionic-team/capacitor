@@ -93,7 +93,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       return nil
     }
 
-    if !isDeployDisabled() {
+    if !isDeployDisabled() && !isNewBinary() {
       let defaults = UserDefaults.standard
       let persistedPath = defaults.string(forKey: "serverBasePath")
       if (persistedPath != nil && !persistedPath!.isEmpty) {
@@ -111,6 +111,24 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   func isDeployDisabled() -> Bool {
     let val = cordovaParser.settings.object(forKey: "DisableDeploy".lowercased()) as? NSString
     return val?.boolValue ?? false
+  }
+
+  func isNewBinary() -> Bool {
+    if let plist = Bundle.main.infoDictionary {
+      if let versionCode = plist["CFBundleVersion"] as? String, let versionName = plist["CFBundleShortVersionString"] as? String {
+        let prefs = UserDefaults.standard
+        let lastVersionCode = prefs.string(forKey: "lastBinaryVersionCode")
+        let lastVersionName = prefs.string(forKey: "lastBinaryVersionName")
+        if !versionCode.isEqual(lastVersionCode) || !versionName.isEqual(lastVersionName) {
+          prefs.set(versionCode, forKey: "lastBinaryVersionCode")
+          prefs.set(versionName, forKey: "lastBinaryVersionName")
+          prefs.set("", forKey: "serverBasePath")
+          prefs.synchronize()
+          return true
+        }
+      }
+    }
+    return false
   }
 
   override public func viewDidLoad() {
@@ -161,7 +179,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
         }
       }
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
-        if (statusBarStyle != "UIStatusBarStyleDefault") {
+        if (statusBarStyle != "UIStatusBarStyleDefault" && statusBarStyle != "UIStatusBarStyleDarkContent") {
           self.statusBarStyle = .lightContent
         }
       }
@@ -268,6 +286,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     let oldSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
     let newSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
     let newerSelector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
+    let ios13Selector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:")
 
     if let method = class_getInstanceMethod(wkc, oldSelector) {
       let originalImp: IMP = method_getImplementation(method)
@@ -285,6 +304,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     if let method = class_getInstanceMethod(wkc, newerSelector) {
       self.swizzleAutofocusMethod(method, newerSelector, value)
+    }
+
+    if let method = class_getInstanceMethod(wkc, ios13Selector) {
+      self.swizzleAutofocusMethod(method, ios13Selector, value)
     }
   }
 
@@ -444,7 +467,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public func setServerBasePath(path: String) {
     setServerPath(path: path)
     let request = URLRequest(url: URL(string: hostname!)!)
-    _ = getWebView().load(request)
+    DispatchQueue.main.async {
+      _ = self.getWebView().load(request)
+    }
   }
 
   override open var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {

@@ -30,6 +30,7 @@ public class Device extends Plugin {
     r.put("model", android.os.Build.MODEL);
     r.put("osVersion", android.os.Build.VERSION.RELEASE);
     r.put("appVersion", getAppVersion());
+    r.put("appBuild", getAppBuild());
     r.put("platform", getPlatform());
     r.put("manufacturer", android.os.Build.MANUFACTURER);
     r.put("uuid", getUuid());
@@ -68,7 +69,16 @@ public class Device extends Plugin {
       PackageInfo pinfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
       return pinfo.versionName;
     } catch(Exception ex) {
-      return null;
+      return "";
+    }
+  }
+
+  private String getAppBuild() {
+    try {
+      PackageInfo pinfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+      return Integer.toString(pinfo.versionCode);
+    } catch(Exception ex) {
+      return "";
     }
   }
 

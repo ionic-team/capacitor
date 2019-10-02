@@ -12,6 +12,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
+import android.webkit.MimeTypeMap;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -302,6 +303,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
     if (fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
       intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
     }
+    if (fileChooserParams.getAcceptTypes().length > 1) {
+      String[] validTypes = getValidTypes(fileChooserParams.getAcceptTypes());
+      intent.putExtra(Intent.EXTRA_MIME_TYPES, validTypes);
+    }
     try {
       bridge.cordovaInterface.startActivityForResult(new CordovaPlugin() {
         @Override
@@ -323,6 +328,24 @@ public class BridgeWebChromeClient extends WebChromeClient {
     } catch (ActivityNotFoundException e) {
       filePathCallback.onReceiveValue(null);
     }
+  }
+
+  private String[] getValidTypes(String[] currentTypes) {
+    List<String> validTypes = new ArrayList<>();
+    MimeTypeMap mtm = MimeTypeMap.getSingleton();
+    for (String mime : currentTypes) {
+      if (mime.startsWith(".")) {
+        String extension = mime.substring(1);
+        String extensionMime = mtm.getMimeTypeFromExtension(extension);
+        if (extensionMime != null && !validTypes.contains(extensionMime)) {
+          validTypes.add(extensionMime);
+        }
+      } else if (!validTypes.contains(mime)) {
+        validTypes.add(mime);
+      }
+    }
+    Object[] validObj = validTypes.toArray();
+    return Arrays.copyOf(validObj, validObj.length, String[].class);
   }
 
   @Override

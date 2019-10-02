@@ -54,8 +54,8 @@
     win.console.warn('Advance console logging disabled.')
   }
 
-  // patch window.console and store original console fns
-  var orgConsole = {};
+  // patch window.console on iOS and store original console fns
+  var orgConsole = capacitor.isIOS ? {} : win.console;
   
   // list log functions bridged to native log
   var bridgedLevels = {
@@ -66,12 +66,11 @@
     trace: true,
     warn: true,
   };
-  
-  Object.keys(win.console).forEach(function (level) {
-    if (typeof win.console[level] === 'function') {
-      // loop through all the console functions and keep references to the original
-      orgConsole[level] = win.console[level];
-      if (capacitor.isIOS) {
+  if (capacitor.isIOS) {
+    Object.keys(win.console).forEach(function (level) {
+      if (typeof win.console[level] === 'function') {
+        // loop through all the console functions and keep references to the original
+        orgConsole[level] = win.console[level];
         win.console[level] = function capacitorConsole() {
           var msgs = Array.prototype.slice.call(arguments);
 
@@ -102,8 +101,8 @@
           }
         };
       }
-    }
-  });
+    });
+  }
 
   function addLegacyHandlers(win) {
     win.navigator.app = {
@@ -216,6 +215,14 @@
 
       if (storedCall) {
         // looks like we've got a stored call
+
+        if (result.error && typeof result.error === 'object') {
+          // ensure stacktraces by copying error properties to an Error
+          result.error = Object.keys(result.error).reduce(function(err, key) {
+            err[key] = result.error[key];
+            return err;
+          }, new Error());
+        }
 
         if (typeof storedCall.callback === 'function') {
           // callback
@@ -348,7 +355,7 @@
   capacitor.handleError = function(error) {
     console.error(error);
   }
- 
+
   capacitor.handleWindowError = function (msg, url, lineNo, columnNo, error) {
     var string = msg.toLowerCase();
     var substring = "script error";

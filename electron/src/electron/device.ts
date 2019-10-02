@@ -18,6 +18,7 @@ export class DevicePluginElectron extends WebPlugin implements DevicePlugin {
       model: info.model,
       platform: <'electron'> 'electron',
       appVersion: '',
+      appBuild: '',
       osVersion: info.osVersion,
       manufacturer: navigator.vendor,
       isVirtual: false,

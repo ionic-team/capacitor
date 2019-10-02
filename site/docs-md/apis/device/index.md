@@ -30,6 +30,7 @@ console.log(info);
 {
   "diskFree": 12228108288,
   "appVersion": "1.0.2",
+  "appBuild": "123",
   "osVersion": "11.2",
   "platform": "ios",
   "memUsed": 93851648,
