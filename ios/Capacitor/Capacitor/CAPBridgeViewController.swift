@@ -65,6 +65,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webViewConfiguration.userContentController = o
     
     configureWebView(configuration: webViewConfiguration)
+    CAPBridge.runWKWebViewConfigurationHooks(configuration: webViewConfiguration)
     
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false

@@ -28,6 +28,8 @@
 // some loading so the plugin author doesn't
 // need to override init()
 -(void) load;
+// Called before init to allow the plugin to modify the configuration of the main webview
++(void) configureWKWebView:(WKWebViewConfiguration *) configuration;
 -(NSString *)getId;
 -(BOOL)getBool:(CAPPluginCall*) call field:(NSString *)field defaultValue:(BOOL)defaultValue;
 -(NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue;

@@ -240,6 +240,20 @@ enum BridgeError: Error {
   func reset() {
     storedCalls = [String:CAPPluginCall]()
   }
+
+  /**
+   * Give all plugins that will be registered a chance to modify the Web View configuration before creating it
+   */
+  static func runWKWebViewConfigurationHooks(configuration: WKWebViewConfiguration) {
+    var numClasses = UInt32(0);
+    let classes = objc_copyClassList(&numClasses)
+    for i in 0..<Int(numClasses) {
+      let c: AnyClass = classes![i]
+      if class_conformsToProtocol(c, CAPBridgedPlugin.self) {
+        c.configureWKWebView?(configuration)
+      }
+    }
+  }
   
   /**
    * Register all plugins that have been declared
