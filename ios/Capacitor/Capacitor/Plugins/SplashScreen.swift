@@ -19,6 +19,8 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   let defaultShowDuration = 3000
   let defaultAutoHide = true
 
+  let defaultContentMode = UIView.ContentMode.scaleAspectFill.rawValue
+
   public override func load() {
     buildViews()
     showOnLaunch()
@@ -101,7 +103,11 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     }
     imageView.image = image
     imageView.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: window.bounds.size)
-    imageView.contentMode = .scaleAspectFill
+
+    let contentModeConfig = getConfigValue("contentMode") as? Int ?? defaultContentMode
+    let contentMode = UIView.ContentMode(rawValue: contentModeConfig)
+
+    imageView.contentMode = contentMode!
   }
 
   public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change _: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
