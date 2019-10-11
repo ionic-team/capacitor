@@ -190,6 +190,13 @@ public class WebViewLocalServer {
 
   private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
     String path = request.getUrl().getPath();
+    
+    String origin = request.getRequestHeaders().get("Origin");
+    if (origin != null) {
+      Map<String, String> tempResponseHeaders = handler.getResponseHeaders();
+
+      tempResponseHeaders.put("Access-Control-Allow-Origin", origin);
+    }
 
     if (request.getRequestHeaders().get("Range") != null) {
       InputStream responseStream = new LollipopLazyInputStream(handler, request);
