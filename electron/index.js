@@ -113,7 +113,7 @@ class CapacitorSplashScreen {
     `;
 
     this.mainWindowRef.on('closed', () => {
-      if (this.splashWindow && !this.splashWindow.isDestroyed) { 
+      if (this.splashWindow && !this.splashWindow.isDestroyed()) { 
         this.splashWindow.close(); 
       }
     });
