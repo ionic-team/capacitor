@@ -5,11 +5,13 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.net.Uri;
 
 
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
