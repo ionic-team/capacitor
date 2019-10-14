@@ -216,6 +216,14 @@
       if (storedCall) {
         // looks like we've got a stored call
 
+        if (result.error && typeof result.error === 'object') {
+          // ensure stacktraces by copying error properties to an Error
+          result.error = Object.keys(result.error).reduce(function(err, key) {
+            err[key] = result.error[key];
+            return err;
+          }, new Error());
+        }
+
         if (typeof storedCall.callback === 'function') {
           // callback
           if (result.success) {
