@@ -19,24 +19,43 @@ import java.io.InputStream;
 public class ImageUtils {
 
   /**
-   * Resize an image to the given width and height. Leave one dimension 0 to
-   * perform an aspect-ratio scale on the provided dimension.
+   * Resize an image to the given max width and max height. Constraint can be put
+   # on one dimension, or both. Resize will always preserve aspect ratio.
    * @param bitmap
    * @param width
    * @param height
    * @return a new, scaled Bitmap
    */
-  public static Bitmap resize(Bitmap bitmap, final int width, final int height) {
-    float aspect = bitmap.getWidth() / (float) bitmap.getHeight();
-    if (width > 0 && height > 0) {
-      return Bitmap.createScaledBitmap(bitmap, width, height, false);
-    } else if (width > 0) {
-      return Bitmap.createScaledBitmap(bitmap, width, (int) (width * 1/aspect), false);
-    } else if (height > 0) {
-      return Bitmap.createScaledBitmap(bitmap, (int)(height * 1/aspect), height, false);
+  public static Bitmap resize(Bitmap bitmap, final int maxWidth, final int maxHeight) {
+    int width = bitmap.getWidth();
+    int height = bitmap.getHeight();
+
+    // 0 as maxHeight or maxWidth is treated as 'no restriction'
+    if (maxHeight == 0) {
+      maxHeight = height;
     }
 
-    return bitmap;
+    if (maxWidth == 0) {
+      maxWidth = width;
+    }
+
+    // resize with preserved aspect ratio
+    int newWidth = Math.min(width, maxWidth);
+    int newHeight = (height * newWidth) / width;
+
+    if (newHeight > maxHeight) {
+      newWidth = (width * maxHeight) / height;
+      newHeight = maxHeight;
+    }
+
+    newWidth = Math.round(newWidth);
+    newHeight = Math.round(newHeight);
+
+    if (newWidth == width && newHeight == height) {
+      return Bitmap;
+    } else {
+      return Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, false);
+    }
   }
 
   /**
