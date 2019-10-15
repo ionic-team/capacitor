@@ -27,6 +27,7 @@ public class CameraUtils {
         if(saveToGallery) {
             Log.d(getLogTag(), "Trying to save image to public external directory");
             storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            storageDir.mkdirs();
         }  else {
             storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         }
