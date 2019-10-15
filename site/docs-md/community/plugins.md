@@ -33,6 +33,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
 | Biometric AUth | `capacitor-biometric-auth` | <https://github.com/arielhernandezmusa/capacitor-biometric-auth> | Allow to use Face ID and Touch ID in the same plugin |
 
+## Deep Links
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Branch Deep Links |`capacitor-branch-deep-links` | <https://github.com/boundstate/capacitor-branch-deep-links> | |
+
 ## Storage
 
 | Name                    | NPM package | GitHub | Notes |
