@@ -18,7 +18,7 @@ contributors:
 
 [Capacitor Workflow for iOS and Android Apps &#8250;](https://www.youtube.com/watch?v=oXbRcpsytGQ)
 
-[Using the Capacitor in Vue.js app](https://akhromieiev.com/tutorials/using-capacitor-in-vue-js-app/)
+[Using the Capacitor in Vue.js app &#8250;](https://akhromieiev.com/tutorials/using-capacitor-in-vue-js-app/)
 
 ## APIs
 
@@ -30,11 +30,11 @@ contributors:
 
 [Splash Screen: Creating a Dynamic/Adaptable Splash Screen for Capacitor (Android) &#8250;](https://www.joshmorony.com/creating-a-dynamic-universal-splash-screen-for-capacitor-android/)
 
-[Using the Capacitor Share API in IOS app](https://akhromieiev.com/tutorials/using-the-capacitor-share-api-in-ios-app/)
+[Using the Capacitor Share API in IOS app &#8250;](https://akhromieiev.com/tutorials/using-the-capacitor-share-api-in-ios-app/)
 
-[Using the Capacitor Browser API to open urls](https://akhromieiev.com/tutorials/using-the-capacitor-browser-api-to-open-links/)
+[Using the Capacitor Browser API to open urls &#8250;](https://akhromieiev.com/tutorials/using-the-capacitor-browser-api-to-open-links/)
 
-[Network Detection with Capacitor in Ionic project](https://akhromieiev.com/tutorials/network-detection-capacitor/)
+[Network Detection with Capacitor in Ionic project &#8250;](https://akhromieiev.com/tutorials/network-detection-capacitor/)
 
 ## Integrations
 
