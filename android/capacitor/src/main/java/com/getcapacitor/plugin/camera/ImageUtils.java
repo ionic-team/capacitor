@@ -49,7 +49,7 @@ public class ImageUtils {
     if (newWidth == width && newHeight == height) {
       return bitmap;
     } else {
-      return Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, false);
+      return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
     }
   }
 
