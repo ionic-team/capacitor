@@ -126,7 +126,9 @@ export interface AppPlugin extends Plugin {
   addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
 
   /**
-   * Listen for the hardware back button event (Android only). If you want to close the app, call `App.exitApp()`
+   * Listen for the hardware back button event (Android only). Listening for this event will disable the
+   * default back button behaviour, so you might want to call `window.history.back()` manually.
+   * If you want to close the app, call `App.exitApp()`.
    */
   addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
 }
