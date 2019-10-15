@@ -52,7 +52,7 @@ public class ImageUtils {
     newHeight = Math.round(newHeight);
 
     if (newWidth == width && newHeight == height) {
-      return Bitmap;
+      return bitmap;
     } else {
       return Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, false);
     }
