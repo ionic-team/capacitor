@@ -26,18 +26,13 @@ public class ImageUtils {
    * @param height
    * @return a new, scaled Bitmap
    */
-  public static Bitmap resize(Bitmap bitmap, final int maxWidth, final int maxHeight) {
+  public static Bitmap resize(Bitmap bitmap, final int desiredMaxWidth, final int desiredMaxHeight) {
     int width = bitmap.getWidth();
     int height = bitmap.getHeight();
 
-    // 0 as maxHeight or maxWidth is treated as 'no restriction'
-    if (maxHeight == 0) {
-      maxHeight = height;
-    }
-
-    if (maxWidth == 0) {
-      maxWidth = width;
-    }
+    // 0 is treated as 'no restriction'
+    int maxHeight = desiredMaxHeight == 0 ? height : desiredMaxHeight;
+    int maxWidth = desiredMaxWidth == 0 ? width : desiredMaxWidth;
 
     // resize with preserved aspect ratio
     int newWidth = Math.min(width, maxWidth);
