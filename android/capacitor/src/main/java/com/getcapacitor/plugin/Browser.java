@@ -62,8 +62,12 @@ public class Browser extends Plugin {
     CustomTabsIntent tabsIntent = builder.build();
     tabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
         Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + getContext().getPackageName()));
-    tabsIntent.launchUrl(getContext(), Uri.parse(url));
-    call.success();
+    try {
+      tabsIntent.launchUrl(getContext(), Uri.parse(url));
+      call.success();
+    } catch (Exception ex) {
+      call.error(ex.getLocalizedMessage());
+    }
   }
 
   @PluginMethod()
