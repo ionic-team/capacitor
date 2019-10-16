@@ -56,6 +56,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Video Recorder | `@teamhive/capacitor-video-recorder` | <https://github.com/TeamHive/capacitor-video-recorder> | |
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
 | Camera preview | `capacitor-camera-preview` | <https://github.com/arielhernandezmusa/capacitor-camera-preview> | |
+
 ## Analytics
 
 | Name                    | NPM package | GitHub | Notes |
