@@ -59,6 +59,8 @@ public class EchoPlugin extends Plugin {
 }
 ```
 
+> In order to make Capacitor aware of your plugin, you have to [export it to capacitor](#export-to-capacitor) in your apps `MainActivity`.
+
 ### Accessing Called Data
 
 Each plugin method receives an instance of `com.getcapacitor.PluginCall` containing all the information of the plugin method invocation from the client.
@@ -287,9 +289,9 @@ protected void handleRequestPermissionsResult(int requestCode, String[] permissi
 
 ### Export to Capacitor
 
-By using the `@NativePlugin` and `@PluginMethod()` annotations in your plugins, you make them available to Capacitor, but you still need an extra step, you have to register your plugin's class in your Acitivity so Capacitor is aware of it:
+By using the `@NativePlugin` and `@PluginMethod()` annotations in your plugins, you make them available to Capacitor, but you still need an extra step in your application to make Capacitor aware of the plugins.
 
-To register the plugin in your Activity:
+This is done in your apps `MainActivity`, where you `add` it in e.g. `src/main/java/com/example/myapp/MainActivity.java` like so:
 
 ```java
 // Other imports...
