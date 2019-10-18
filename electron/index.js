@@ -113,7 +113,9 @@ class CapacitorSplashScreen {
     `;
 
     this.mainWindowRef.on('closed', () => {
-      this.splashWindow.close();
+      if (this.splashWindow && !this.splashWindow.isDestroyed()) { 
+        this.splashWindow.close(); 
+      }
     });
 
     this.splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`, {baseURLForDataURL: `file://${rootPath}/splash_assets/`});

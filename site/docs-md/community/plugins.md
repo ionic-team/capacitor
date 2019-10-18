@@ -31,6 +31,13 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Twitter Kit | `capacitor-twitter` | <https://github.com/stewwan/capacitor-twitter> | |
 | Google Sign-in | `@codetrix-studio/capacitor-google-auth` | <https://github.com/CodetrixStudio/CapacitorGoogleAuth> | Works with Firebase. Lightweight |
 | Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
+| Biometric AUth | `capacitor-biometric-auth` | <https://github.com/arielhernandezmusa/capacitor-biometric-auth> | Allow to use Face ID and Touch ID in the same plugin |
+
+## Deep Links
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Branch Deep Links |`capacitor-branch-deep-links` | <https://github.com/boundstate/capacitor-branch-deep-links> | |
 
 ## Storage
 
@@ -49,6 +56,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Video Recorder | `@teamhive/capacitor-video-recorder` | <https://github.com/TeamHive/capacitor-video-recorder> | |
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
 | Camera preview | `capacitor-camera-preview` | <https://github.com/arielhernandezmusa/capacitor-camera-preview> | |
+
 ## Analytics
 
 | Name                    | NPM package | GitHub | Notes |
