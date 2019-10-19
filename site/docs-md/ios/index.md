@@ -53,7 +53,7 @@ Once Xcode is open, just click the Play button to run your app on a Simulator or
 
 ## Next steps
 
-If your app ran you are now ready to continue developing and building your app. Use the various APIs available, Capacitor or Cordova plugins, or custom native code to build our the rest of your app.
+If your app ran you are now ready to continue developing and building your app. Use the various APIs available, Capacitor or Cordova plugins, or custom native code to build out the rest of your app.
 
 ## Further Reading 
 
