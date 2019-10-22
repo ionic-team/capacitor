@@ -6,6 +6,7 @@
   case UniversalLinkOpen
   case ContinueActivity
   case DidRegisterForRemoteNotificationsWithDeviceToken
+  case DidRegisterForRemoteNotificationsWithFCMToken
   case DidFailToRegisterForRemoteNotificationsWithError
   case DecidePolicyForNavigationAction
   
@@ -17,6 +18,7 @@
       case .DidRegisterForRemoteNotificationsWithDeviceToken: return "CAPDidRegisterForRemoteNotificationsWithDeviceToken"
       case .DidFailToRegisterForRemoteNotificationsWithError: return "CAPDidFailToRegisterForRemoteNotificationsWithError"
       case .DecidePolicyForNavigationAction: return "CAPDecidePolicyForNavigationAction"
+      case .DidRegisterForRemoteNotificationsWithFCMToken: return "CAPDidRegisterForRemoteNotificationsWithFCMToken"
     }
   }
 }

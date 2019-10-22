@@ -1,6 +1,10 @@
 import Foundation
 import UserNotifications
 
+enum PushNotificationError: Error {
+  case tokenIsNull
+}
+
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
@@ -12,6 +16,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   
   public override func load() {
     NotificationCenter.default.addObserver(self, selector: #selector(self.didRegisterForRemoteNotificationsWithDeviceToken(notification:)), name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(self.didRegisterForRemoteNotificationsWithFCMToken(notification:)), name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithFCMToken.name()), object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(self.didFailToRegisterForRemoteNotificationsWithError(notification:)), name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: nil)
   }
 
@@ -74,16 +79,32 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   @objc func listChannels(_ call: CAPPluginCall) {
     call.unimplemented()
   }
+  
+  func handleMissingTokenData() {
+    notifyListeners("registrationError", data: [
+      "error": (PushNotificationError.tokenIsNull).localizedDescription
+      ])
+  }
 
   @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification){
     guard let deviceToken = notification.object as? Data else {
+      self.handleMissingTokenData()
       return
     }
     let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
     notifyListeners("registration", data:[
       "value": deviceTokenString
     ])
-
+  }
+    
+  @objc public func didRegisterForRemoteNotificationsWithFCMToken(notification: NSNotification) {
+    guard let fcmToken = notification.object as? String else {
+      self.handleMissingTokenData()
+      return
+    }
+    notifyListeners("registration", data:[
+      "value": fcmToken
+    ])
   }
 
   @objc public func didFailToRegisterForRemoteNotificationsWithError(notification: NSNotification){
