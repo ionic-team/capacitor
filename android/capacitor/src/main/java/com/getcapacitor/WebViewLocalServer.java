@@ -172,7 +172,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || loadingUrl.toString().startsWith(bridge.getLocalUrl())) {
+    if (isLocalFile(loadingUrl) || Config.getString("server.url") == null) {
       Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
@@ -326,7 +326,7 @@ public class WebViewLocalServer {
         Log.d(LogUtils.getCoreTag(), "We shouldn't be here");
       }
       if (mimeType == null) {
-        if (path.endsWith(".js")) {
+        if (path.endsWith(".js") || path.endsWith(".mjs")) {
           // Make sure JS files get the proper mimetype to support ES modules
           mimeType = "application/javascript";
         } else if (path.endsWith(".wasm")) {
