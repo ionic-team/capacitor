@@ -35,8 +35,8 @@ public class ImageUtils {
     int maxWidth = desiredMaxWidth == 0 ? width : desiredMaxWidth;
 
     // resize with preserved aspect ratio
-    int newWidth = Math.min(width, maxWidth);
-    int newHeight = (height * newWidth) / width;
+    float newWidth = Math.min(width, maxWidth);
+    float newHeight = (height * newWidth) / width;
 
     if (newHeight > maxHeight) {
       newWidth = (width * maxHeight) / height;
@@ -46,11 +46,7 @@ public class ImageUtils {
     newWidth = Math.round(newWidth);
     newHeight = Math.round(newHeight);
 
-    if (newWidth == width && newHeight == height) {
-      return bitmap;
-    } else {
-      return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
-    }
+    return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
   }
 
   /**
