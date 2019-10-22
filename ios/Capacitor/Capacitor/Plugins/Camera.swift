@@ -215,7 +215,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
     
     if settings.saveToGallery {
-        UIImageWriteToSavedPhotoAlbum(image, nil, nil, nil);
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
     }
     
     guard let jpeg = image!.jpegData(compressionQuality: CGFloat(settings.quality/100)) else {
