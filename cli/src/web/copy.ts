@@ -22,6 +22,10 @@ const FIREBASE_SERVICEWORKER_TEMPLATE = `
     self.addEventListener('pushsubscriptionchange', e => {
       event.stopImmediatePropagation();
     });
+
+    messaging.setBackgroundMessageHandler(msgPayload => {
+      return messaging.sendMessageToWindowClients_(msgPayload);
+    });
   })();
 `;
 
