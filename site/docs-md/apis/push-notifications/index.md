@@ -5,6 +5,7 @@ url: /docs/apis/push-notifications
 contributors:
   - mlynch
   - jcesarmobile
+  - bibyzan
 ---
 
 <plugin-platforms platforms="ios,android"></plugin-platforms>
@@ -21,7 +22,11 @@ This change adds the push capabilites to the app and creates an entitlements fil
 
 ![Enabling Push Notifications Capabilities](/assets/img/docs/ios/enable-push-capabilities.png)
 
+On iOS, if you need the FCM key instead of the regular apple APNS one, then you need to install a native implementation of the iOS SDK like this example: https://github.com/stewwan/capacitor-fcm
+
 On Android just download the app project's `google-services.json` file from the Firebase console, and place it in the  `projectName/android/app` folder.
+
+You don't need to worry about installing a plugin for FCM on android.
 
 ## Push Notifications icon
 
