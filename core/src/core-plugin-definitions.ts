@@ -281,11 +281,11 @@ export interface CameraOptions {
    */
   saveToGallery?: boolean;
   /**
-   * The width of the saved image
+   * The maximum width of the saved image (aspect ration will be preserved)
    */
   width?: number;
   /**
-   * The height of the saved image
+   * The maximum height of the saved image (aspect ratio will be preserved)
    */
   height?: number;
   /**
