@@ -47,3 +47,7 @@ contributors:
 [Music Playback in Capacitor App with Ionic &#8250;](https://enappd.com/blog/play-music-in-ionic-capacitor-apps/112)
 
 [Facebook Login in Capacitor App with Ionic React &#8250;](https://enappd.com/blog/facebook-login-in-ionic-react-capacitor-apps/118)
+
+[Google Login in Capacitor Apps with Ionic React &#8250;](https://enappd.com/blog/google-login-in-ionic-react-capacitor-apps/122)
+
+[Twitter Login in Capacitor Apps with Ionic React &#8250;](https://enappd.com/blog/twitter-login-in-ionic-react-capacitor-app/121)

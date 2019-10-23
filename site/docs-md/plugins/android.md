@@ -59,6 +59,8 @@ public class EchoPlugin extends Plugin {
 }
 ```
 
+> In order to make Capacitor aware of your plugin, you have to [export it to capacitor](#export-to-capacitor) in your apps `MainActivity`.
+
 ### Accessing Called Data
 
 Each plugin method receives an instance of `com.getcapacitor.PluginCall` containing all the information of the plugin method invocation from the client.
@@ -112,43 +114,56 @@ call.reject(exception.getLocalizedMessage(), exception);
 
 To present a Native Screen over the Capacitor screen we will use [Android's Intents](https://developer.android.com/guide/components/intents-filters). Intents allow you to start an activity from your app, or from another app. [See Common Intents](https://developer.android.com/guide/components/intents-common)
 
-#### Intents without Results
+#### Intents without Result(s)
 
-Most times you just want to present the native Activity
+Most times you just want to present the native Activity,
+in this case you can just trigger the [relevant action](https://developer.android.com/guide/components/intents-common).
 
 ```java
 Intent intent = new Intent(Intent.ACTION_VIEW);
 getActivity().startActivity(intent);
 ```
 
-#### Intents with Result
+#### Intents with Result(s)
 
-Sometimes when you launch an Intent, you expect some result back. In that case we will use `startActivityForResult`.
-Also make sure you call `saveCall(call);` as you will need it later.
+Sometimes when you launch an Intent, you expect some result back. In that case you want to use `startActivityForResult`.
 
-```java
-saveCall(call);
-static final int REQUEST_IMAGE_PICK = 12345; // Unique code
-Intent intent = new Intent(Intent.ACTION_PICK);
-intent.setType("image/*");
-startActivityForResult(call, intent, REQUEST_IMAGE_PICK);
-```
+Also make sure you call `saveCall(call);` as you will need it later when handling the intents result.
 
-To get the result back we have to override `handleOnActivityResult`
+You also have to register your intents [unique request](https://developer.android.com/training/basics/intents/result#StartActivity) code with `@NativePlugin` in order for
+`handleOnActivityResult` to be triggered.
 
 ```java
-@Override
-protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-  super.handleOnActivityResult(requestCode, resultCode, data);
+@NativePlugin(
+  requestCodes={MyPlugin.REQUEST_IMAGE_PICK} // register request code(s) for intent results
+)
+class ImagePicker extends Plugin {
+  protected static final int REQUEST_IMAGE_PICK = 12345; // Unique request code
 
-  // Get the previously saved call
-  PluginCall savedCall = getSavedCall();
+  @PluginMethod()
+  public void pickImage(PluginCall call) {
+    saveCall(call);
 
-  if (savedCall == null) {
-    return;
+    Intent intent = new Intent(Intent.ACTION_PICK);
+    intent.setType("image/*");
+
+    startActivityForResult(call, intent, REQUEST_IMAGE_PICK);
   }
-  if (requestCode == REQUEST_IMAGE_PICK) {
-    // Do something with the data
+
+  // in order to handle the intents result, you have to @Override handleOnActivityResult
+  @Override
+  protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
+    super.handleOnActivityResult(requestCode, resultCode, data);
+
+    // Get the previously saved call
+    PluginCall savedCall = getSavedCall();
+
+    if (savedCall == null) {
+      return;
+    }
+    if (requestCode == REQUEST_IMAGE_PICK) {
+      // Do something with the data
+    }
   }
 }
 ```
@@ -274,9 +289,9 @@ protected void handleRequestPermissionsResult(int requestCode, String[] permissi
 
 ### Export to Capacitor
 
-By using the `@NativePlugin` and `@PluginMethod()` annotations in your plugins, you make them available to Capacitor, but you still need an extra step, you have to register your plugin's class in your Acitivity so Capacitor is aware of it:
+By using the `@NativePlugin` and `@PluginMethod()` annotations in your plugins, you make them available to Capacitor, but you still need an extra step in your application to make Capacitor aware of the plugins.
 
-To register the plugin in your Activity:
+This is done in your apps `MainActivity`, where you `add` it in e.g. `src/main/java/com/example/myapp/MainActivity.java` like so:
 
 ```java
 // Other imports...
