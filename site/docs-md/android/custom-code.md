@@ -5,6 +5,7 @@ url: /docs/android/custom-code
 contributors:
   - mlynch
   - jcesarmobile
+  - RoderickQiu
 ---
 
 # Custom Native Android Code
@@ -17,9 +18,11 @@ contributors:
 
 The easiest way to build custom native code that needs to be accessible in the WebView is to build
 a local Capacitor plugin for it. In this case, building the plugin is as simple as building a class
-that inherits from `com.getcapacitor.Plugin` and uses the `@NativePlugin()` and `@PluginMethod()` annotations:
+that inherits from `com.getcapacitor.Plugin` and uses the `@NativePlugin()` and `@PluginMethod()` annotations.
 
-`com/example/myapp/CustomNativePlugin.java`:
+Here is a simple example: 
+
+`com/example/myapp/CustomNativePlugin.java` in `android/app/src/main/java`:
 
 ```java
 package com.example.myapp;
@@ -35,7 +38,14 @@ public class CustomNativePlugin extends Plugin {
   @PluginMethod()
   public void customCall(PluginCall call) {
     String message = call.getString("message");
+    // More code here...
     call.success();
+  }
+  
+  @PluginMethod()
+  public void customFunction(PluginCall call) {
+    // More code here...
+    call.resolve();
   }
 }
 ```
@@ -60,6 +70,20 @@ public class MainActivity extends BridgeActivity {
   }
 }
 ```
+
+Then you can use your functions in your webView code:
+
+```javascript
+// Other codes...
+import { Plugins } from "@capacitor/core";
+const { CustomNativePlugin } = Plugins;
+// Other codes...
+CustomNativePlugin.customCall({ message: "CUSTOM MESSAGE" });
+CustomNativePlugin.customFunction();
+// Other codes...
+```
+
+For more usages of plugin APIs, have a look at [Capacitor Android Plugin Guide](https://capacitor.ionicframework.com/docs/plugins/android/).
 
 ## Private Native Code
 

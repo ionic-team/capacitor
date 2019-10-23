@@ -191,9 +191,16 @@ public class Bridge {
         authorities.add(appUrlObject.getAuthority());
       } catch (Exception ex) {
       }
-
+      localUrl = appUrlConfig;
+      appUrl = appUrlConfig;
       if (BuildConfig.DEBUG) {
-        Toast.show(getContext(), "Using app server " + appUrlConfig.toString());
+        Toast.show(getContext(), "Using app server " + appUrlConfig);
+      }
+    } else {
+      appUrl = localUrl;
+      // custom URL schemes requires path ending with /
+      if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
+        appUrl += "/";
       }
     }
 
@@ -202,16 +209,6 @@ public class Bridge {
     // Start the local web server
     localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
     localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
-
-    if (appUrlConfig == null) {
-      appUrl = localUrl;
-      // custom URL schemes requires path ending with /
-      if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
-        appUrl += "/";
-      }
-    } else {
-      appUrl = appUrlConfig;
-    }
 
     Log.d(LOG_TAG, "Loading app at " + appUrl);
 
