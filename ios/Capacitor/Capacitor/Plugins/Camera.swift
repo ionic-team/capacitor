@@ -71,7 +71,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     settings.source = CameraSource(rawValue: call.getString("source") ?? DEFAULT_SOURCE.rawValue) ?? DEFAULT_SOURCE
     settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
     settings.resultType = call.get("resultType", String.self, "base64")!
-    settings.saveToGallery = call.get("saveToGAllery", Bool.self, false)!
+    settings.saveToGallery = call.get("saveToGallery", Bool.self, false)!
     
     // Get the new image dimensions if provided
     settings.width = Float(call.get("width", Int.self, 0)!)
