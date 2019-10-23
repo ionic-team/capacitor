@@ -31,7 +31,7 @@ const { Filesystem } = Plugins;
 
 fileWrite() {
   try {
-    Filesystem.writeFile({
+    await Filesystem.writeFile({
       path: 'secrets/text.txt',
       data: "This is a test",
       directory: FilesystemDirectory.Documents,
