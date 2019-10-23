@@ -31,7 +31,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
 
     return Promise.resolve({
       model: uaFields.model,
-      platform: <'web'> 'web',
+      platform: this.getPlatform(),
       appVersion: '',
       appBuild: '',
       osVersion: uaFields.osVersion,
@@ -75,6 +75,16 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
     }
 
     return uaFields;
+  }
+
+  getPlatform() {
+    if (/android/i.test(navigator.userAgent)) {
+      return 'android';
+    } else if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+      return 'ios';
+    } else {
+      return 'web';
+    }
   }
 
   getUid() {
