@@ -93,7 +93,7 @@
 
 - (void)notifyListeners:(NSString *)eventName data:(NSDictionary<NSString *,id> *)data retainUntilConsumed:(BOOL)retain {
   NSArray<CAPPluginCall *> *listenersForEvent = [self.eventListeners objectForKey:eventName];
-  if(listenersForEvent == nil) {
+  if(listenersForEvent == nil || [listenersForEvent count] == 0) {
     if (retain == YES) {
       [self.retainedEventArguments setObject:data forKey:eventName];
     }
