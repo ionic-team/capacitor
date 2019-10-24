@@ -44,6 +44,7 @@ to handle any camera data that was sent in the case your app was terminated by t
 ## PWA/Electron Notes
 
 [PWA Elements](/docs/pwa-elements) are required for Camera plugin to work.
+Note: Camera needs https on iOS
 
 ## Example
 
