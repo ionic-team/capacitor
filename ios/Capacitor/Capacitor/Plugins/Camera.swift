@@ -28,6 +28,7 @@ struct CameraSettings {
   var width: Float = 0
   var height: Float = 0
   var resultType = "base64"
+  var saveToGallery = false
 }
 
 @objc(CAPCameraPlugin)
@@ -70,6 +71,8 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     settings.source = CameraSource(rawValue: call.getString("source") ?? DEFAULT_SOURCE.rawValue) ?? DEFAULT_SOURCE
     settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
     settings.resultType = call.get("resultType", String.self, "base64")!
+    settings.saveToGallery = call.get("saveToGallery", Bool.self, false)!
+    
     // Get the new image dimensions if provided
     settings.width = Float(call.get("width", Int.self, 0)!)
     settings.height = Float(call.get("height", Int.self, 0)!)
@@ -210,7 +213,11 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       }
       image = convertedImage
     }
-
+    
+    if settings.saveToGallery {
+        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil);
+    }
+    
     guard let jpeg = image!.jpegData(compressionQuality: CGFloat(settings.quality/100)) else {
       self.call?.error("Unable to convert image to jpeg")
       return
