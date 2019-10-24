@@ -15,5 +15,8 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "@capacitor/core": "^1.2.1"
+  },
   "gitHead": "2499e5986dee438893a204e62be56be765441273"
 }
