@@ -357,7 +357,7 @@ If you would like to recieve the firebase FCM token from iOS instead of the raw 
             if let error = error {
                 NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: error)
             } else if let result = result {
-                NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithFCMToken.name()), object: result.token)
+                NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: result.token)
             }
         }
     }
