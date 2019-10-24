@@ -2,7 +2,7 @@ import Foundation
 import UserNotifications
 
 enum PushNotificationError: Error {
-  case tokenIsNull
+  case tokenParsingFailed
 }
 
 /**
@@ -91,7 +91,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
       ])
     } else {
       notifyListeners("registrationError", data: [
-        "error": PushNotificationError.tokenIsNull.localizedDescription
+        "error": PushNotificationError.tokenParsingFailed.localizedDescription
       ])
     }
   }
