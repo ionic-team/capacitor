@@ -29,7 +29,7 @@ import { Plugins, FilesystemDirectory, FilesystemEncoding } from '@capacitor/cor
 
 const { Filesystem } = Plugins;
 
-fileWrite() {
+async fileWrite() {
   try {
     await Filesystem.writeFile({
       path: 'secrets/text.txt',
