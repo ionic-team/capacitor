@@ -29,9 +29,9 @@ import { Plugins, FilesystemDirectory, FilesystemEncoding } from '@capacitor/cor
 
 const { Filesystem } = Plugins;
 
-fileWrite() {
+async fileWrite() {
   try {
-    Filesystem.writeFile({
+    await Filesystem.writeFile({
       path: 'secrets/text.txt',
       data: "This is a test",
       directory: FilesystemDirectory.Documents,
