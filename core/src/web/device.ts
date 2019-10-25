@@ -31,9 +31,10 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
 
     return Promise.resolve({
       model: uaFields.model,
-      platform: this.getPlatform(),
+      platform: <'web'> 'web',
       appVersion: '',
       appBuild: '',
+      operatingSystem: uaFields.operatingSystem,
       osVersion: uaFields.osVersion,
       manufacturer: navigator.vendor,
       isVirtual: false,
@@ -74,17 +75,19 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
       }
     }
 
-    return uaFields;
-  }
-
-  getPlatform() {
-    if (/android/i.test(navigator.userAgent)) {
-      return 'android';
-    } else if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-      return 'ios';
+    if (/android/i.test(_ua)) {
+      uaFields.operatingSystem = 'android';
+    } else if (/iPad|iPhone|iPod/.test(_ua) && !window.MSStream) {
+      uaFields.operatingSystem = 'ios';
+    } else if (/Win/.test(_ua)) {
+      uaFields.operatingSystem = 'windows';
+    } else if (/Mac/i.test(_ua)) {
+      uaFields.operatingSystem = 'mac';
     } else {
-      return 'web';
+      uaFields.operatingSystem = 'unknown';
     }
+
+    return uaFields;
   }
 
   getUid() {

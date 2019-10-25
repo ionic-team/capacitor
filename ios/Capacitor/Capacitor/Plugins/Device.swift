@@ -23,6 +23,7 @@ public class CAPDevicePlugin: CAPPlugin {
       "diskFree": diskFree,
       "diskTotal": diskTotal,
       "model": UIDevice.current.model,
+      "operatingSystem": "ios",
       "osVersion": UIDevice.current.systemVersion,
       "appVersion": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
       "appBuild": Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "",

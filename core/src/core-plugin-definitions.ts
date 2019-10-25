@@ -401,6 +401,8 @@ export interface DevicePlugin extends Plugin {
   getLanguageCode(): Promise<DeviceLanguageCodeResult>;
 }
 
+export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown';
+
 export interface DeviceInfo {
   /**
    * The device model. For example, "iPhone"
@@ -423,6 +425,10 @@ export interface DeviceInfo {
    * The current bundle build of the app
    */
   appBuild: string;
+  /**
+   * The operating system of the device
+   */
+  operatingSystem: OperatingSystem;
   /**
    * The version of the device OS
    */
