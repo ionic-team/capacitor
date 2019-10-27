@@ -1,3 +1,68 @@
+## [1.3.0](https://github.com/ionic-team/capacitor/compare/1.2.1...1.3.0) (2019-10-24)
+
+
+### Bug Fixes
+
+* fix(ios/Camera): implement saveToGallery (#2081) ([871651b](https://github.com/ionic-team/capacitor/commit/871651b)), closes [#2081](https://github.com/ionic-team/capacitor/issues/2081)
+* fix(ios/Modals): Don't success until dismissed (#2080) ([64aa6c7](https://github.com/ionic-team/capacitor/commit/64aa6c7)), closes [#2080](https://github.com/ionic-team/capacitor/issues/2080)
+* fix(android template): drop orphaned file provider authority variable (#1975) ([ed6647b](https://github.com/ionic-team/capacitor/commit/ed6647b)), closes [#1975](https://github.com/ionic-team/capacitor/issues/1975)
+* fix(android): allow fetch to local files on livereload (#2067) ([ccc00b3](https://github.com/ionic-team/capacitor/commit/ccc00b3)), closes [#2067](https://github.com/ionic-team/capacitor/issues/2067)
+* fix(android): don't patch console object (#1991) ([8964a4a](https://github.com/ionic-team/capacitor/commit/8964a4a)), closes [#1991](https://github.com/ionic-team/capacitor/issues/1991)
+* fix(android): handle input file when accept have file extensions (#1990) ([9fc348a](https://github.com/ionic-team/capacitor/commit/9fc348a)), closes [#1990](https://github.com/ionic-team/capacitor/issues/1990)
+* fix(android): handle input file with multiple accept mimetypes (#1988) ([52f083d](https://github.com/ionic-team/capacitor/commit/52f083d)), closes [#1988](https://github.com/ionic-team/capacitor/issues/1988)
+* fix(android): return empty string if appVersion or appBuild fail (#2002) ([5bb526a](https://github.com/ionic-team/capacitor/commit/5bb526a)), closes [#2002](https://github.com/ionic-team/capacitor/issues/2002)
+* fix(android): return proper mimeType for .mjs files (#2017) ([b7fc6c8](https://github.com/ionic-team/capacitor/commit/b7fc6c8)), closes [#2017](https://github.com/ionic-team/capacitor/issues/2017)
+* fix(android): when saving picture to gallery make sure the folder exist (#2016) ([aa5ecbb](https://github.com/ionic-team/capacitor/commit/aa5ecbb)), closes [#2016](https://github.com/ionic-team/capacitor/issues/2016)
+* fix(Browser): avoid crash when using invalid urls (#2056) ([2e4d8b1](https://github.com/ionic-team/capacitor/commit/2e4d8b1)), closes [#2056](https://github.com/ionic-team/capacitor/issues/2056)
+* fix(cli): skip incompatible enterprise plugins (#2018) ([5446fc3](https://github.com/ionic-team/capacitor/commit/5446fc3)), closes [#2018](https://github.com/ionic-team/capacitor/issues/2018)
+* fix(core): remove data url header on writeFile if no encoding is passed (#1909) ([6a4de97](https://github.com/ionic-team/capacitor/commit/6a4de97)), closes [#1909](https://github.com/ionic-team/capacitor/issues/1909)
+* fix(core): return proper Error objects from native (#1950) ([2fa29e3](https://github.com/ionic-team/capacitor/commit/2fa29e3)), closes [#1950](https://github.com/ionic-team/capacitor/issues/1950)
+* fix(core): update FileWriteOptions and FileAppendOptions encoding description (#2003) ([e7bd634](https://github.com/ionic-team/capacitor/commit/e7bd634)), closes [#2003](https://github.com/ionic-team/capacitor/issues/2003)
+* fix(electron): Check whether the splash screen is already destroyed on close (#2044) ([455c6e9](https://github.com/ionic-team/capacitor/commit/455c6e9)), closes [#2044](https://github.com/ionic-team/capacitor/issues/2044)
+* fix(electron): use proper quotes on splashHtml style font (#2083) ([7bb4404](https://github.com/ionic-team/capacitor/commit/7bb4404)), closes [#2083](https://github.com/ionic-team/capacitor/issues/2083)
+* fix(ios): event listener is not retained if was removed and added again (#2095) ([fb97d06](https://github.com/ionic-team/capacitor/commit/fb97d06)), closes [#2095](https://github.com/ionic-team/capacitor/issues/2095)
+* fix(ios): make programmatically focus work on iOS 13 (#1995) ([069b248](https://github.com/ionic-team/capacitor/commit/069b248)), closes [#1995](https://github.com/ionic-team/capacitor/issues/1995)
+* fix(ios): make StatusBar Light style work on Dark mode (#1996) ([ab1ffd5](https://github.com/ionic-team/capacitor/commit/ab1ffd5)), closes [#1996](https://github.com/ionic-team/capacitor/issues/1996)
+
+
+### Features
+
+* feat(cordova): move Cordova prefs from config.xml to capacitor.config.json (#1977) ([2655f0f](https://github.com/ionic-team/capacitor/commit/2655f0f)), closes [#1977](https://github.com/ionic-team/capacitor/issues/1977)
+* feat(core): add appBuild to device getInfo (#1994) ([c2d7d9a](https://github.com/ionic-team/capacitor/commit/c2d7d9a)), closes [#1994](https://github.com/ionic-team/capacitor/issues/1994)
+* feat(Filesystem): Deprecate createIntermediateDirectories in mkdir (#2004) ([d67d460](https://github.com/ionic-team/capacitor/commit/d67d460)), closes [#2004](https://github.com/ionic-team/capacitor/issues/2004)
+
+
+### Docs
+
+* docs(android/types): Add note about backbutton listener behaviour (#2026) ([14cc338](https://github.com/ionic-team/capacitor/commit/14cc338)), closes [#2026](https://github.com/ionic-team/capacitor/issues/2026)
+* docs: Add information about Cordova plugin preferences (#1999) ([fbd1b47](https://github.com/ionic-team/capacitor/commit/fbd1b47)), closes [#1999](https://github.com/ionic-team/capacitor/issues/1999)
+* docs: add note on plugins that require PWA Elements (#1998) ([0408df7](https://github.com/ionic-team/capacitor/commit/0408df7)), closes [#1998](https://github.com/ionic-team/capacitor/issues/1998)
+* docs: add reasoning for cordova plugin incompatibility (#2000) ([29087ec](https://github.com/ionic-team/capacitor/commit/29087ec)), closes [#2000](https://github.com/ionic-team/capacitor/issues/2000)
+* docs: document cordova-plugin-googlemaps as incompatible for iOS (#2072) ([470147a](https://github.com/ionic-team/capacitor/commit/470147a)), closes [#2072](https://github.com/ionic-team/capacitor/issues/2072)
+* docs: improve Android custom code section (#1857) ([557dfb1](https://github.com/ionic-team/capacitor/commit/557dfb1)), closes [#1857](https://github.com/ionic-team/capacitor/issues/1857)
+* docs(android): improve plugin development guide (#2066) ([219c885](https://github.com/ionic-team/capacitor/commit/219c885)), closes [#2066](https://github.com/ionic-team/capacitor/issues/2066)
+* docs(ce-guides): Add tutorial for capacitor music playback (#1993) ([6791b04](https://github.com/ionic-team/capacitor/commit/6791b04)), closes [#1993](https://github.com/ionic-team/capacitor/issues/1993)
+* docs(ce-guides): Add tutorial for Facebook login (#2029) ([9b77835](https://github.com/ionic-team/capacitor/commit/9b77835)), closes [#2029](https://github.com/ionic-team/capacitor/issues/2029)
+* docs(ce-guides): add tutorials for Google and Twitter Login (#2061) ([97d738d](https://github.com/ionic-team/capacitor/commit/97d738d)), closes [#2061](https://github.com/ionic-team/capacitor/issues/2061)
+* docs(ce-plugins): add capacitor-biometric-auth (#2049) ([e10661d](https://github.com/ionic-team/capacitor/commit/e10661d)), closes [#2049](https://github.com/ionic-team/capacitor/issues/2049)
+* docs(ce-plugins): add capacitor-branch-deep-links plugin (#2041) ([f2a5240](https://github.com/ionic-team/capacitor/commit/f2a5240)), closes [#2041](https://github.com/ionic-team/capacitor/issues/2041)
+* docs(ce-plugins): add capacitor-camera-preview (#2009) ([6e0d8ba](https://github.com/ionic-team/capacitor/commit/6e0d8ba)), closes [#2009](https://github.com/ionic-team/capacitor/issues/2009)
+* docs(ce-plugins): add face id plugin (#1964) ([7b4c097](https://github.com/ionic-team/capacitor/commit/7b4c097)), closes [#1964](https://github.com/ionic-team/capacitor/issues/1964)
+* docs(ce-plugins): add Install Referrer plugin (#1935) ([40f4aac](https://github.com/ionic-team/capacitor/commit/40f4aac)), closes [#1935](https://github.com/ionic-team/capacitor/issues/1935)
+* docs(ce-plugins): capacitor-rate-app plugin (#1970) ([e1ab364](https://github.com/ionic-team/capacitor/commit/e1ab364)), closes [#1970](https://github.com/ionic-team/capacitor/issues/1970)
+* docs(ios): Fix minor typo in index.md (#2070) ([83ac295](https://github.com/ionic-team/capacitor/commit/83ac295)), closes [#2070](https://github.com/ionic-team/capacitor/issues/2070)
+* docs(splash screen): fix typo for options (#1976) ([a932267](https://github.com/ionic-team/capacitor/commit/a932267)), closes [#1976](https://github.com/ionic-team/capacitor/issues/1976)
+* docs(Storage): explain what the plugin uses under the hood (#2058) ([64cc133](https://github.com/ionic-team/capacitor/commit/64cc133)), closes [#2058](https://github.com/ionic-team/capacitor/issues/2058)
+* docs(community): fix layout (#2057) ([667c331](https://github.com/ionic-team/capacitor/commit/667c331)), closes [#2057](https://github.com/ionic-team/capacitor/issues/2057)
+
+
+### Chores
+
+* chore: make @capacitor/core peerDependency of ios/android ([844c0fe](https://github.com/ionic-team/capacitor/commit/844c0fe))
+* chore(github): Update issue submission templates (#2012) ([df6bd87](https://github.com/ionic-team/capacitor/commit/df6bd87)), closes [#2012](https://github.com/ionic-team/capacitor/issues/2012)
+
+
+
 ## [1.2.1](https://github.com/ionic-team/capacitor/compare/1.2.0...1.2.1) (2019-09-17)
 
 
