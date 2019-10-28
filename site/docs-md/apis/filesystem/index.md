@@ -24,6 +24,8 @@ leave out the `directory` param to use a full file path.
 
 ## Example
 
+> Be sure to run the `mkdir` method before trying any other file calls in this example. **iOS** will not allow to write or read to non-existing folders.
+
 ```typescript
 import { Plugins, FilesystemDirectory, FilesystemEncoding } from '@capacitor/core';
 
