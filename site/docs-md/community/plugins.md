@@ -150,3 +150,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Install Referrer | `capacitor-install-referrer` | <https://github.com/eladcandroid/capacitor-install-referrer> | |
 | Request app review | `capacitor-rate-app` | <https://github.com/Nodonisko/capacitor-rate-app> | Request app review from users |
+| Change Android Navigationbar Color | `capacitor-navigationbar` | <https://github.com/nikosdouvlis/capacitor-navigationbar> | Programmatically change the navigation bar color on android devices |
