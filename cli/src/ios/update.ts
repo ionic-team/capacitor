@@ -275,6 +275,10 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
           fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
           writeFileSync(fileDest, fileContent, 'utf8');
         }
+        if (fileContent.includes('[NSBundle bundleForClass:[self class]]')) {
+          fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
+          writeFileSync(fileDest, fileContent, 'utf8');
+        }
       }
     });
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
