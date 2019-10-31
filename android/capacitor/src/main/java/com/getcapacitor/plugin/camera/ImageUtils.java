@@ -33,7 +33,7 @@ public class ImageUtils {
     } else if (width > 0) {
       return Bitmap.createScaledBitmap(bitmap, width, (int) (width * 1/aspect), false);
     } else if (height > 0) {
-      return Bitmap.createScaledBitmap(bitmap, (int)(height * 1/aspect), height, false);
+      return Bitmap.createScaledBitmap(bitmap, (int) (height * aspect), height, false);
     }
 
     return bitmap;
