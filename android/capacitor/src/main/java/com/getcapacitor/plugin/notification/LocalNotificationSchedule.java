@@ -16,6 +16,7 @@ public class LocalNotificationSchedule {
   private Date at;
   private Boolean repeats;
   private String every;
+  private Integer count;
 
   private DateMatch on;
 
@@ -25,6 +26,8 @@ public class LocalNotificationSchedule {
     if (schedule != null) {
       // Every specific unit of time (always constant)
       buildEveryElement(schedule);
+      // Count of units of time from every to repeat on
+      buildCountElement(schedule);
       // At specific moment of time (with repeating option)
       buildAtElement(schedule);
       // Build on - recurring times. For e.g. every 1st day of the month at 8:30.
@@ -38,6 +41,10 @@ public class LocalNotificationSchedule {
   private void buildEveryElement(JSObject schedule) {
     // 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
     this.every = schedule.getString("every");
+  }
+
+  private void buildCountElement(JSObject schedule) {
+    this.count = schedule.getInteger("count");
   }
 
   private void buildAtElement(JSObject schedule) throws ParseException {
@@ -94,6 +101,14 @@ public class LocalNotificationSchedule {
     this.every = every;
   }
 
+  public int getCount() {
+    return count;
+  }
+
+  public void setCount(int count) {
+    this.count = count;
+  }
+
   public boolean isRepeating() {
     return Boolean.TRUE.equals(this.repeats);
   }
@@ -113,24 +128,28 @@ public class LocalNotificationSchedule {
    * Get constant long value representing specific interval of time (weeks, days etc.)
    */
   public Long getEveryInterval() {
+    Integer value = count;
+    if (value == null) {
+      value = 1;
+    }
     switch (every) {
       case "year":
-        return DateUtils.YEAR_IN_MILLIS;
+        return value * DateUtils.YEAR_IN_MILLIS;
       case "month":
         // This case is just approximation as months have different number of days
-        return 30 * DateUtils.DAY_IN_MILLIS;
+        return value * 30 * DateUtils.DAY_IN_MILLIS;
       case "two-weeks":
-        return 2 * DateUtils.WEEK_IN_MILLIS;
+        return value * 2 * DateUtils.WEEK_IN_MILLIS;
       case "week":
-        return DateUtils.WEEK_IN_MILLIS;
+        return value * DateUtils.WEEK_IN_MILLIS;
       case "day":
-        return DateUtils.DAY_IN_MILLIS;
+        return value * DateUtils.DAY_IN_MILLIS;
       case "hour":
-        return DateUtils.HOUR_IN_MILLIS;
+        return value * DateUtils.HOUR_IN_MILLIS;
       case "minute":
-        return DateUtils.MINUTE_IN_MILLIS;
+        return value * DateUtils.MINUTE_IN_MILLIS;
       case "second":
-        return DateUtils.SECOND_IN_MILLIS;
+        return value * DateUtils.SECOND_IN_MILLIS;
       default:
         return null;
     }
