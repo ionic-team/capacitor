@@ -65,7 +65,11 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     webViewConfiguration.userContentController = o
     
     configureWebView(configuration: webViewConfiguration)
-    
+
+    if let appendUserAgent = (capConfig.getValue("ios.appendUserAgent") as? String) ?? (capConfig.getValue("appendUserAgent") as? String) {
+      webViewConfiguration.applicationNameForUserAgent = appendUserAgent
+    }
+
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
     
@@ -83,6 +87,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
       webView?.backgroundColor = UIColor(fromHex: backgroundColor)
       webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+    }
+    if let overrideUserAgent = (bridge!.config.getValue("ios.overrideUserAgent") as? String) ?? (bridge!.config.getValue("overrideUserAgent") as? String) {
+      webView?.customUserAgent = overrideUserAgent
     }
   }
 

@@ -376,6 +376,17 @@ public class Bridge {
     if (Config.getBoolean("android.allowMixedContent", false)) {
       settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
+
+    String appendUserAgent = Config.getString("android.appendUserAgent" , Config.getString("appendUserAgent", null));
+    if (appendUserAgent != null) {
+      String defaultUserAgent = settings.getUserAgentString();
+      settings.setUserAgentString(defaultUserAgent + " " + appendUserAgent);
+    }
+    String overrideUserAgent = Config.getString("android.overrideUserAgent" , Config.getString("overrideUserAgent", null));
+    if (overrideUserAgent != null) {
+      settings.setUserAgentString(overrideUserAgent);
+    }
+
     String backgroundColor = Config.getString("android.backgroundColor" , Config.getString("backgroundColor", null));
     try {
       if (backgroundColor != null) {
