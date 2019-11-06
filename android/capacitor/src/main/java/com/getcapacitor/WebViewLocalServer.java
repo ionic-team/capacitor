@@ -172,7 +172,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || Config.getString("server.url") == null) {
+    if (isLocalFile(loadingUrl) || (Config.getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
       Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
