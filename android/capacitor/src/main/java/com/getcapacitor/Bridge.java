@@ -886,4 +886,8 @@ public class Bridge {
   public WebViewLocalServer getLocalServer() {
     return localServer;
   }
+
+  public HostMask getAppAllowNavigationMask() {
+    return appAllowNavigationMask;
+  }
 }
