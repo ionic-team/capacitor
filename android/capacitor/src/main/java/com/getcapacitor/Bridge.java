@@ -285,9 +285,10 @@ public class Bridge {
 
       @Override
       public void onFormResubmission(WebView view, Message dontResend, Message resend) {
-        super.onFormResubmission(view, dontResend, resend);
         if(customWebViewClient != null) {
           customWebViewClient.onFormResubmission(view, dontResend, resend);
+        } else {
+          super.onFormResubmission(view, dontResend, resend);
         }
       }
 
