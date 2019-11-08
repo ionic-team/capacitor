@@ -577,7 +577,7 @@ export enum FilesystemEncoding {
 
 export interface FileWriteOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -599,7 +599,7 @@ export interface FileWriteOptions {
 
 export interface FileAppendOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -621,7 +621,7 @@ export interface FileAppendOptions {
 
 export interface FileReadOptions {
   /**
-   * the filename to read
+   * The filename to read
    */
   path: string;
   /**
@@ -639,7 +639,7 @@ export interface FileReadOptions {
 
 export interface FileDeleteOptions {
   /**
-   * the filename to delete
+   * The filename to delete
    */
   path: string;
   /**
