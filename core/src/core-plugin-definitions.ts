@@ -688,11 +688,11 @@ export interface RmdirOptions {
 
 export interface ReaddirOptions {
   /**
-   * The path of the directory to remove
+   * The path of the directory to list files from
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to read
    */
   directory?: FilesystemDirectory;
 }
