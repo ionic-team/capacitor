@@ -710,11 +710,11 @@ export interface GetUriOptions {
 
 export interface StatOptions {
   /**
-   * The path of the directory to remove
+   * The path of the file to get data about
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to get the file under
    */
   directory?: FilesystemDirectory;
 }
