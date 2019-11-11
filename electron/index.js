@@ -26,6 +26,18 @@ const injectCapacitor = async function(url) {
   }
 };
 
+const configCapacitor = async function(mainWindow) {
+  let capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
+  const appendUserAgent = capConfigJson.electron && capConfigJson.electron.appendUserAgent ? capConfigJson.electron.appendUserAgent : capConfigJson.appendUserAgent;
+  if (appendUserAgent) {
+    mainWindow.webContents.setUserAgent(mainWindow.webContents.getUserAgent() + " " + appendUserAgent);
+  }
+  const overrideUserAgent = capConfigJson.electron && capConfigJson.electron.overrideUserAgent ? capConfigJson.electron.overrideUserAgent : capConfigJson.overrideUserAgent;
+  if (overrideUserAgent) {
+    mainWindow.webContents.setUserAgent(overrideUserAgent);
+  }
+}
+
 class CapacitorSplashScreen {
 
   /**
@@ -153,5 +165,6 @@ class CapacitorSplashScreen {
 
 module.exports = {
   injectCapacitor,
+  configCapacitor,
   CapacitorSplashScreen
 };
