@@ -27,7 +27,11 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
       do {
         var data = Data()
         if !stringToLoad.contains("cordova.js") {
-          data = try Data(contentsOf: fileUrl)
+          if isMediaExtension(pathExtension: url.pathExtension) {
+            data = try Data(contentsOf: fileUrl, options: Data.ReadingOptions.mappedIfSafe)
+          } else {
+            data = try Data(contentsOf: fileUrl)
+          }
         }
         let mimeType = mimeTypeForExtension(pathExtension: url.pathExtension)
         let expectedContentLength = data.count

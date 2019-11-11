@@ -75,9 +75,18 @@ The current ones you might configure are:
       "192.0.2.1"
     ]
   },
+  // User agent of Capacitor WebView for iOS, Android and Electron, unless also declared inside ios, android or electron objects
+  "overrideUserAgent": "my custom user agent",
+  // String to append to the original user agent of Capacitor WebView for iOS, Android and Electron,
+  // unless also declared inside ios, android or electron objects. Only if overrideUserAgent is not set.
+  "appendUserAgent": "string to append",
   // Background color of Capacitor WebView for both iOS and Android unless also declared inside ios or android objects
   "backgroundColor": "#ffffffff",
   "android": {
+    // User agent of Capacitor WebView for Android
+    "overrideUserAgent": "my custom user agent for Android",
+    // String to append to the original user agent of Capacitor WebView for Android.
+    "appendUserAgent": "string to append for Android",
     // Background color of Capacitor WebView for Android only
     "backgroundColor": "#ffffffff",
     // On Android, if you are loading the app from a remote/testing server from https
@@ -95,6 +104,10 @@ The current ones you might configure are:
     "webContentsDebuggingEnabled": true
   },
   "ios": {
+    // User agent of Capacitor WebView for iOS
+    "overrideUserAgent": "my custom user agent for iOS",
+    // String to append to the original user agent of Capacitor WebView for iOS.
+    "appendUserAgent": "string to append for iOS",
     // Background color of Capacitor WebView for iOS only
     "backgroundColor": "#ffffffff",
     // Configure the Swift version to be used for Cordova plugins.
@@ -105,6 +118,12 @@ The current ones you might configure are:
     "minVersion": "11.3",
     // Some Cordova plugins require to configure the linker flags
     "cordovaLinkerFlags": ["-ObjC"]
+  },
+  "electron": {
+    // User agent of Capacitor WebView for Electron
+    "overrideUserAgent": "my custom user agent for Electron",
+    // String to append to the original user agent of Capacitor WebView for Electron.
+    "appendUserAgent": "string to append for Electron",
   }
 }
 ```

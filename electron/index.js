@@ -26,6 +26,18 @@ const injectCapacitor = async function(url) {
   }
 };
 
+const configCapacitor = async function(mainWindow) {
+  let capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
+  const appendUserAgent = capConfigJson.electron && capConfigJson.electron.appendUserAgent ? capConfigJson.electron.appendUserAgent : capConfigJson.appendUserAgent;
+  if (appendUserAgent) {
+    mainWindow.webContents.setUserAgent(mainWindow.webContents.getUserAgent() + " " + appendUserAgent);
+  }
+  const overrideUserAgent = capConfigJson.electron && capConfigJson.electron.overrideUserAgent ? capConfigJson.electron.overrideUserAgent : capConfigJson.overrideUserAgent;
+  if (overrideUserAgent) {
+    mainWindow.webContents.setUserAgent(overrideUserAgent);
+  }
+}
+
 class CapacitorSplashScreen {
 
   /**
@@ -105,7 +117,7 @@ class CapacitorSplashScreen {
     let splashHtml = this.splashOptions.customHtml || `
       <html style="width: 100%; height: 100%; margin: 0; overflow: hidden;">
         <body style="background-image: url('./${this.splashOptions.imageFileName}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">
-          <div style="font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;>
+          <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;">
             ${this.splashOptions.loadingText}
           </div>
         </body>
@@ -153,5 +165,6 @@ class CapacitorSplashScreen {
 
 module.exports = {
   injectCapacitor,
+  configCapacitor,
   CapacitorSplashScreen
 };
