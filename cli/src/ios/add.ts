@@ -1,5 +1,5 @@
 import { checkCocoaPods } from './common';
-import { CheckFunction, copyTemplate, installDeps, resolveNode, runTask, TaskInfoProvider } from '../common';
+import { CheckFunction, TaskInfoProvider, copyTemplate, installDeps, resolveNode, runTask } from '../common';
 import { Config } from '../config';
 
 export const addIOSChecks: CheckFunction[] = [checkCocoaPods];
