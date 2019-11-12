@@ -265,7 +265,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       if settings.width > 0 {
         size = CGSize.init(width: Int(settings.width), height: Int(settings.width * (1/aspect)))
       } else if settings.height > 0 {
-        size = CGSize.init(width: Int(settings.height * (1/aspect)), height: Int(settings.height))
+        size = CGSize.init(width: Int(settings.height * aspect), height: Int(settings.height))
       }
     }
 
