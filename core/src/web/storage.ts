@@ -6,7 +6,7 @@ import {
 
 
 export class StoragePluginWeb extends WebPlugin implements StoragePlugin {
-  KEY_PREFIX = "_cap_";
+  KEY_PREFIX = '_cap_';
 
   constructor() {
     super({
@@ -20,14 +20,14 @@ export class StoragePluginWeb extends WebPlugin implements StoragePlugin {
       resolve({
         value: window.localStorage.getItem(this.makeKey(options.key))
       });
-    })
+    });
   }
 
   set(options: { key: string, value: string }): Promise<void> {
     return new Promise((resolve, _reject) => {
       window.localStorage.setItem(this.makeKey(options.key), options.value);
       resolve();
-    })
+    });
   }
 
   remove(options: { key: string }): Promise<void> {

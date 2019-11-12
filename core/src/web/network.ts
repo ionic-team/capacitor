@@ -44,7 +44,7 @@ export class NetworkPluginWeb extends WebPlugin implements NetworkPlugin {
     let onlineBindFunc = listenerFunc.bind(thisRef, { connected: true, connectionType: connectionType });
     let offlineBindFunc = listenerFunc.bind(thisRef, { connected: false, connectionType: 'none' });
 
-    if(eventName.localeCompare('networkStatusChange') === 0) {
+    if (eventName.localeCompare('networkStatusChange') === 0) {
       window.addEventListener('online', onlineBindFunc);
       window.addEventListener('offline', offlineBindFunc);
       return {
