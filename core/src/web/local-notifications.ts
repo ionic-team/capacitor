@@ -66,7 +66,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     });
 
     return Promise.resolve({
-      notifications: notifications.map(_ => { return { id: '' }})
+      notifications: notifications.map(_ => { return { id: '' }; })
     });
   }
 
@@ -75,13 +75,13 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
       notifications: this.pending.map(localNotification => {
         return {
           id: '' + localNotification.id
-        }
+        };
       })
     });
   }
 
   registerActionTypes(_options: { types: LocalNotificationActionType[]; }): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   cancel(pending: LocalNotificationPendingList): Promise<void> {
@@ -92,14 +92,14 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
   }
 
   areEnabled(): Promise<LocalNotificationEnabledResult> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
 
   requestPermissions(): Promise<PermissionsRequestResult> {
     return new Promise((resolve, reject) => {
       Notification.requestPermission().then((result) => {
-        if(result === 'denied' || result === 'default') {
+        if (result === 'denied' || result === 'default') {
           reject(result);
           return;
         }

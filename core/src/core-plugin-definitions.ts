@@ -28,7 +28,7 @@ export interface PluginRegistry {
 
   [pluginName: string]: {
     [prop: string]: any;
-  }
+  };
 }
 
 export type ISODateString = string;

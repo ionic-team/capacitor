@@ -70,8 +70,8 @@ export interface Capacitor {
   isNative?: boolean;
   platform?: string;
   isPluginAvailable: (name: string) => boolean;
-  convertFileSrc:(filePath: string) => string;
-  getPlatform:() => string;
+  convertFileSrc: (filePath: string) => string;
+  getPlatform: () => string;
   toNative?: (pluginId: string, methodName: string, options: any, storedCallback?: StoredCallback) => void;
   fromNative?: (result: PluginResult) => void;
   withPlugin?: (pluginId: string, fn: Function) => void;

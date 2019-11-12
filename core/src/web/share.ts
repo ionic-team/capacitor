@@ -5,7 +5,7 @@ import {
   ShareOptions
 } from '../core-plugin-definitions';
 
-declare var navigator:any;
+declare var navigator: any;
 
 export class SharePluginWeb extends WebPlugin implements SharePlugin {
   constructor() {
@@ -17,7 +17,7 @@ export class SharePluginWeb extends WebPlugin implements SharePlugin {
 
   share(options?: ShareOptions): Promise<void> {
     if (!navigator.share) {
-      return Promise.reject("Web Share API not available");
+      return Promise.reject('Web Share API not available');
     }
 
     return navigator.share({
