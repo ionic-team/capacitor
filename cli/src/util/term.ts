@@ -1,4 +1,4 @@
-import { logError } from "../common";
+import { logError } from '../common';
 
 // Given input variables to a command, make sure all are provided if the terminal
 // is not interactive (because we won't be able to prompt the user)
@@ -20,8 +20,8 @@ export const checkInteractive = (...args: string[]) => {
     return false;
   }
   return true;
-}
+};
 
 export const isInteractive = () => {
   return Boolean(process.stdin.isTTY && process.stdout.isTTY && process.stderr.isTTY);
-}
+};

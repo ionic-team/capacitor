@@ -1,10 +1,10 @@
 import { runCommand } from '../common';
 import { Config } from '../config';
-import { getPluginPlatform, Plugin, PluginType } from '../plugin';
+import { getIncompatibleCordovaPlugins } from '../cordova';
 import { mkdirs } from 'fs-extra';
 import { convertToUnixPath, copyAsync, existsAsync, existsSync, readFileAsync, removeAsync, writeFileAsync } from '../util/fs';
-import { resolve, join } from 'path';
-import { getIncompatibleCordovaPlugins } from '../cordova';
+import { join, resolve } from 'path';
+import { Plugin, PluginType, getPluginPlatform } from '../plugin';
 
 export async function gradleClean(config: Config) {
   await runCommand(`cd ${config.android.platformDir} && ./gradlew clean`);
@@ -33,7 +33,7 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
       type: PluginType.Cordova,
       path: 'src/' + platform
     };
-    if(getIncompatibleCordovaPlugins(platform).includes(plugin.id) || !getPluginPlatform(plugin, platform)) {
+    if (getIncompatibleCordovaPlugins(platform).includes(plugin.id) || !getPluginPlatform(plugin, platform)) {
       plugin.android.type = PluginType.Incompatible;
     }
   } else {
@@ -98,7 +98,7 @@ export async function editProjectSettingsAndroid(config: Config) {
   const stringsPath = resolve(config.app.rootDir, config.android.platformDir, 'app/src/main/res/values/strings.xml');
   let stringsContent = await readFileAsync(stringsPath, 'utf8');
   stringsContent = stringsContent.replace(/com.getcapacitor.myapp/g, appId);
-  stringsContent = stringsContent.replace(/My App/g, appName.replace(/'/g, "\\'"));
+  stringsContent = stringsContent.replace(/My App/g, appName.replace(/'/g, `\\'`));
 
   await writeFileAsync(stringsPath, stringsContent);
 }
