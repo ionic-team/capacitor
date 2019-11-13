@@ -186,7 +186,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
         }
       }
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
-        if (statusBarStyle != "UIStatusBarStyleDefault" && statusBarStyle != "UIStatusBarStyleDarkContent") {
+        if (statusBarStyle == "UIStatusBarStyleDarkContent") {
+          if #available(iOS 13.0, *) {
+            // TODO - use .darkContent instead of rawValue once Xcode 10 support is dropped
+            self.statusBarStyle = UIStatusBarStyle.init(rawValue: 3) ?? .default
+          }
+        } else if (statusBarStyle != "UIStatusBarStyleDefault") {
           self.statusBarStyle = .lightContent
         }
       }
