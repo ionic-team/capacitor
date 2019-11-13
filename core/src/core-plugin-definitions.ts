@@ -577,7 +577,7 @@ export enum FilesystemEncoding {
 
 export interface FileWriteOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -599,7 +599,7 @@ export interface FileWriteOptions {
 
 export interface FileAppendOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -621,7 +621,7 @@ export interface FileAppendOptions {
 
 export interface FileReadOptions {
   /**
-   * the filename to read
+   * The filename to read
    */
   path: string;
   /**
@@ -639,7 +639,7 @@ export interface FileReadOptions {
 
 export interface FileDeleteOptions {
   /**
-   * the filename to delete
+   * The filename to delete
    */
   path: string;
   /**
@@ -688,11 +688,11 @@ export interface RmdirOptions {
 
 export interface ReaddirOptions {
   /**
-   * The path of the directory to remove
+   * The path of the directory to read
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to list files from
    */
   directory?: FilesystemDirectory;
 }
@@ -710,11 +710,11 @@ export interface GetUriOptions {
 
 export interface StatOptions {
   /**
-   * The path of the directory to remove
+   * The path of the file to get data about
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to get the file under
    */
   directory?: FilesystemDirectory;
 }
