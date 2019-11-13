@@ -688,11 +688,11 @@ export interface RmdirOptions {
 
 export interface ReaddirOptions {
   /**
-   * The path of the directory to list files from
+   * The path of the directory to read
    */
   path: string;
   /**
-   * The FilesystemDirectory to read
+   * The FilesystemDirectory to list files from
    */
   directory?: FilesystemDirectory;
 }
