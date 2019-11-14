@@ -128,25 +128,26 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     AVCaptureDevice.requestAccess(for: .video) { granted in
         if granted {
-          let presentationStyle = call.getString("presentationStyle")
-          if presentationStyle != nil && presentationStyle == "popover" {
-            self.configurePicker()
-          } else {
-            self.imagePicker!.modalPresentationStyle = .fullScreen
-          }
-
-          self.imagePicker!.sourceType = .camera
-
-          if self.settings.direction.rawValue == "REAR" {
-            if UIImagePickerController.isCameraDeviceAvailable(.rear) {
-              self.imagePicker!.cameraDevice = .rear
-            }
-          } else if self.settings.direction.rawValue == "FRONT" {
-            if UIImagePickerController.isCameraDeviceAvailable(.front) {
-              self.imagePicker!.cameraDevice = .front
-            }
-          }
           DispatchQueue.main.async {
+            let presentationStyle = call.getString("presentationStyle")
+            if presentationStyle != nil && presentationStyle == "popover" {
+              self.configurePicker()
+            } else {
+              self.imagePicker!.modalPresentationStyle = .fullScreen
+            }
+
+            self.imagePicker!.sourceType = .camera
+
+            if self.settings.direction.rawValue == "REAR" {
+              if UIImagePickerController.isCameraDeviceAvailable(.rear) {
+                self.imagePicker!.cameraDevice = .rear
+              }
+            } else if self.settings.direction.rawValue == "FRONT" {
+              if UIImagePickerController.isCameraDeviceAvailable(.front) {
+                self.imagePicker!.cameraDevice = .front
+              }
+            }
+
             self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
           }
         } else {
@@ -265,7 +266,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       if settings.width > 0 {
         size = CGSize.init(width: Int(settings.width), height: Int(settings.width * (1/aspect)))
       } else if settings.height > 0 {
-        size = CGSize.init(width: Int(settings.height * (1/aspect)), height: Int(settings.height))
+        size = CGSize.init(width: Int(settings.height * aspect), height: Int(settings.height))
       }
     }
 

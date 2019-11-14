@@ -25,7 +25,7 @@ export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
     if (options.string || options.url) {
       await navigator.clipboard.writeText(options.string || options.url);
     } else if (options.image) {
-      return Promise.reject("Setting images not supported on the web");
+      return Promise.reject('Setting images not supported on the web');
     }
     return Promise.resolve();
   }

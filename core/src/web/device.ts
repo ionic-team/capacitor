@@ -46,19 +46,19 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   async getLanguageCode(): Promise<DeviceLanguageCodeResult> {
     return {
       value: navigator.language
-    }
+    };
   }
 
   parseUa(_ua: string) {
     let uaFields: any = {};
-    const start = _ua.indexOf('(')+1;
+    const start = _ua.indexOf('(') + 1;
     let end = _ua.indexOf(') AppleWebKit');
     if (_ua.indexOf(') Gecko') !== -1) {
       end = _ua.indexOf(') Gecko');
     }
     const fields = _ua.substring(start, end);
     if (_ua.indexOf('Android') !== -1) {
-      uaFields.model = fields.replace("; wv", "").split("; ").pop().split(' Build')[0];
+      uaFields.model = fields.replace('; wv', '').split('; ').pop().split(' Build')[0];
       uaFields.osVersion = fields.split('; ')[1];
     } else {
       uaFields.model = fields.split('; ')[0];
@@ -68,8 +68,8 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
         if (_ua.indexOf('Windows') !== -1) {
           uaFields.osVersion = fields;
         } else {
-          let lastParts = fields.split('; ').pop().replace(" like Mac OS X", "").split(" ");
-          uaFields.osVersion = lastParts[lastParts.length-1].replace(/_/g, ".");
+          let lastParts = fields.split('; ').pop().replace(' like Mac OS X', '').split(' ');
+          uaFields.osVersion = lastParts[lastParts.length - 1].replace(/_/g, '.');
         }
       }
     }
