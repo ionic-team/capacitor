@@ -61,7 +61,7 @@ async setItem() {
 }
 
 async getItem() {
-  const value = await Storage.get({ key: 'name' });
+  const { value } = await Storage.get({ key: 'name' });
   console.log('Got item: ', value);
 }
 
@@ -70,7 +70,7 @@ async removeItem() {
 }
 
 async keys() {
-  const keys = await Storage.keys();
+  const { keys } = await Storage.keys();
   console.log('Got keys: ', keys);
 }
 

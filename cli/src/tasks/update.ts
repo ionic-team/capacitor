@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, log, logFatal, logInfo, runTask, writeXML, logError } from '../common';
+import { CheckFunction, check, checkPackage, log, logError, logFatal, logInfo, runTask } from '../common';
 
 import chalk from 'chalk';
 

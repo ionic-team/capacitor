@@ -1,7 +1,7 @@
 import { Config } from '../config';
 import { logError, logInfo } from '../common';
 import { allSerial } from '../util/promise';
-import { getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
+import { Plugin, PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
 import { getAndroidPlugins } from '../android/common';
 import { getIOSPlugins } from '../ios/common';
 
@@ -19,12 +19,12 @@ export async function listCommand(config: Config, selectedPlatformName: string) 
 }
 
 export async function list(config: Config, platform: string) {
-   
+
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
     plugins = getIOSPlugins(allPlugins);
-  } else if (platform === config.android.name) { 
+  } else if (platform === config.android.name) {
     plugins = getAndroidPlugins(allPlugins);
   } else if (platform === config.web.name || platform === config.electron.name) {
     logInfo(`Listing plugins for ${platform} is not possible`);
@@ -32,7 +32,7 @@ export async function list(config: Config, platform: string) {
   } else {
     throw `Platform ${platform} is not valid.`;
   }
-  
+
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   printPlugins(capacitorPlugins, platform);
   const cordovaPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Cordova);

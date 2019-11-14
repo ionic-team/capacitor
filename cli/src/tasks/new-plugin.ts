@@ -1,9 +1,9 @@
 import { Config } from '../config';
-import { log, logFatal, logInfo, runCommand, runTask, writePrettyJSON, logWarn } from '../common';
+import { log, logFatal, logInfo, logWarn, runCommand, runTask, writePrettyJSON } from '../common';
 import { OS } from '../definitions';
 import { emoji } from '../util/emoji';
-import { existsAsync, mkdirAsync, writeFileAsync, readFileAsync } from '../util/fs';
-import { fixName, removeScope } from '../plugin'
+import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync } from '../util/fs';
+import { fixName, removeScope } from '../plugin';
 import { copy, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
 import { isInteractive } from '../util/term';

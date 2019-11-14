@@ -63,7 +63,7 @@ export async function initCommand(config: Config, name: string, id: string, webD
       });
     });
 
-    await printNextSteps(config, "");
+    await printNextSteps(config, '');
   } catch (e) {
     log('Usage: npx cap init appName appId\n');
     log('Example: npx cap init "My App" "com.example.myapp"\n');

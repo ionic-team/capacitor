@@ -23,7 +23,7 @@ export async function check(config: Config, checks: CheckFunction[]): Promise<vo
 }
 
 export async function checkWebDir(config: Config): Promise<string | null> {
-  const invalidFolders = ["", ".", "..", "../", "./"];
+  const invalidFolders = ['', '.', '..', '../', './'];
   if (invalidFolders.includes(config.app.webDir)) {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
@@ -325,7 +325,7 @@ export async function getAppId(config: Config, id: string) {
 export function getNpmClient(config: Config, npmClient: string): Promise<string> {
   return new Promise(async (resolve) => {
     if (!npmClient) {
-      if (await hasYarn(config)) return resolve('yarn')
+      if (await hasYarn(config)) return resolve('yarn');
       exec('yarn --version', async (err, stdout) => {
         // Don't show prompt if yarn is not installed
         if (err || !isInteractive()) {
