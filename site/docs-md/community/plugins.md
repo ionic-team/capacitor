@@ -39,6 +39,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Branch Deep Links |`capacitor-branch-deep-links` | <https://github.com/boundstate/capacitor-branch-deep-links> | |
 
+## Display
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Keep Screen On |`capacitor-keep-screen-on` | <https://github.com/go-u/capacitor-keep-screen-on> | |
+
 ## Storage
 
 | Name                    | NPM package | GitHub | Notes |
