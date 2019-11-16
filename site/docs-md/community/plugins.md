@@ -110,8 +110,9 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-| Filesharer | `@byteowls/capacitor-filesharer` | <https://github.com/moberwasserlechner/capacitor-filesharer> | |
 | Downloader | `capacitor-downloader` | <https://github.com/triniwiz/capacitor-downloader> | |
+| FileTransfer | `https://github.com/areo/capacitor-plugin-file-transfer` | <https://https://github.com/areo/capacitor-plugin-file-transfer> | |
+| Filesharer | `@byteowls/capacitor-filesharer` | <https://github.com/moberwasserlechner/capacitor-filesharer> | |
 | Zip | `capacitor-zip` | <https://github.com/triniwiz/capacitor-zip> | |
 
 ## Bluetooth
