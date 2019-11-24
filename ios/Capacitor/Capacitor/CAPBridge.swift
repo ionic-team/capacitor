@@ -118,6 +118,7 @@ enum BridgeError: Error {
       "url": url,
       "options": options
     ])
+    NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url)
     CAPBridge.lastUrl = url
     return true
   }
