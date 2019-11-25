@@ -98,7 +98,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
 
   requestPermissions(): Promise<PermissionsRequestResult> {
     return new Promise((resolve, reject) => {
-      Notification.requestPermission().then((result) => {
+      Notification.requestPermission((result) => {
         if (result === 'denied' || result === 'default') {
           reject(result);
           return;
