@@ -30,7 +30,7 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
     return Promise.resolve({ url: '' });
   }
 
-  handleVisibilityChange():void {
+  handleVisibilityChange(): void {
     const data = {
       isActive: document.hidden !== true
     };

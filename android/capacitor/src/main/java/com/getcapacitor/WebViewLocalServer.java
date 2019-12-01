@@ -18,6 +18,7 @@ package com.getcapacitor;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
@@ -172,7 +173,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || Config.getString("server.url") == null) {
+    if (isLocalFile(loadingUrl) || (Config.getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
       Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
@@ -297,6 +298,7 @@ public class WebViewLocalServer {
         for (Map.Entry<String, String> header : headers.entrySet()) {
           conn.setRequestProperty(header.getKey(), header.getValue());
         }
+        conn.setRequestProperty("Cookie", CookieManager.getInstance().getCookie(request.getUrl().toString()));
         conn.setRequestMethod(method);
         conn.setReadTimeout(30 * 1000);
         conn.setConnectTimeout(30 * 1000);

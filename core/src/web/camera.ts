@@ -7,8 +7,6 @@ import {
   CameraResultType
 } from '../core-plugin-definitions';
 
-//import '@ionic/pwa-elements';
-
 export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   constructor() {
     super({
@@ -46,8 +44,8 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   private _getCameraPhoto(photo: Blob, options: CameraOptions) {
     return new Promise<CameraPhoto>((resolve, reject) => {
       var reader = new FileReader();
-      var format = photo.type.split('/')[1]
-      if (options.resultType == CameraResultType.Uri) {
+      var format = photo.type.split('/')[1];
+      if (options.resultType === CameraResultType.Uri) {
         resolve({
           webPath: URL.createObjectURL(photo),
           format: format
@@ -56,7 +54,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         reader.readAsDataURL(photo);
         reader.onloadend = () => {
           const r = reader.result as string;
-          if (options.resultType == CameraResultType.DataUrl) {
+          if (options.resultType === CameraResultType.DataUrl) {
             resolve({
               dataUrl: r,
               format: format

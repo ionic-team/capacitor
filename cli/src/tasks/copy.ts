@@ -6,7 +6,7 @@ import { copyWeb } from '../web/copy';
 import { copyElectron } from '../electron/copy';
 import { basename, join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
-import { copyCordovaJSFiles } from '../cordova'
+import { copyCordovaJSFiles } from '../cordova';
 import chalk from 'chalk';
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {

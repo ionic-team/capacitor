@@ -1,6 +1,6 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const isDevMode = require('electron-is-dev');
-const { CapacitorSplashScreen } = require('@capacitor/electron');
+const { CapacitorSplashScreen, configCapacitor } = require('@capacitor/electron');
 
 const path = require('path');
 
@@ -39,6 +39,8 @@ async function createWindow () {
       preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
     }
   });
+
+  configCapacitor(mainWindow);
 
   if (isDevMode) {
     // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.

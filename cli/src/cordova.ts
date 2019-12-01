@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { getJSModules, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from './plugin';
+import { Plugin, PluginType, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { basename, extname, join, resolve } from 'path';
 import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, readXML, resolveNode, writeXML } from './common';
@@ -112,7 +112,7 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       // mimics Cordova's module name logic if the name attr is missing
       const name = pluginId + '.' + (jsModule.$.name || basename(jsModule.$.src, extname(jsModule.$.src)));
       data = `cordova.define("${name}", function(require, exports, module) { \n${data}\n});`;
-      data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, "")
+      data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '');
       await writeFileAsync(filePath, data, 'utf8');
     }));
   }));
@@ -160,7 +160,7 @@ export async function autoGenerateConfig(config: Config, cordovaPlugins: Plugin[
       if (configFiles) {
         const configXMLEntries = configFiles.filter(function(item: any) { return item.$ && item.$.target.includes(fileName); });
         configXMLEntries.map(  (entry: any)  => {
-          if(entry.feature) {
+          if (entry.feature) {
             const feature = { feature: entry.feature };
             pluginEntries.push(feature);
           }
@@ -255,8 +255,8 @@ async function logiOSPlist (configElement: any, config: Config, plugin: Plugin) 
     logWarn(`Plugin ${plugin.id} requires you to add \n  ${xml} to your Info.plist to work`);
   } else if (configElement.array || configElement.dict) {
     if (configElement.array && configElement.array[0] && configElement.array[0].string) {
-        var xml = "";
-        configElement.array[0].string.map((element : any) => {
+        var xml = '';
+        configElement.array[0].string.map((element: any) => {
           if (!plistData[configElement.$.parent].includes(element)) {
             xml = xml.concat(`<string>${element}</string>\n`);
           }
@@ -286,7 +286,7 @@ function getConfigFileTagContent(str: string) {
 }
 
 function removeOuterTags(str: string) {
-  var start = str.indexOf('>')+1;
+  var start = str.indexOf('>') + 1;
   var end = str.lastIndexOf('<');
   return str.substring(start, end);
 }
@@ -316,7 +316,7 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
             await config.updateAppPackage();
             needsUpdate = true;
           } catch (e) {
-            log("\n");
+            log('\n');
             logError(`couldn't install dependency plugin ${plugin}`);
           }
         }
@@ -327,15 +327,15 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
 }
 
 export function getIncompatibleCordovaPlugins(platform: string) {
-  let pluginList = ["cordova-plugin-splashscreen", "cordova-plugin-ionic-webview", "cordova-plugin-crosswalk-webview",
-  "cordova-plugin-wkwebview-engine", "cordova-plugin-console", "cordova-plugin-music-controls",
-  "cordova-plugin-add-swift-support", "cordova-plugin-ionic-keyboard", "cordova-plugin-braintree",
-  "@ionic-enterprise/filesystem", "@ionic-enterprise/keyboard", "@ionic-enterprise/splashscreen"];
-  if (platform === "ios") {
-    pluginList.push("cordova-plugin-googlemaps", "cordova-plugin-statusbar", "@ionic-enterprise/statusbar");
+  let pluginList = ['cordova-plugin-splashscreen', 'cordova-plugin-ionic-webview', 'cordova-plugin-crosswalk-webview',
+  'cordova-plugin-wkwebview-engine', 'cordova-plugin-console', 'cordova-plugin-music-controls',
+  'cordova-plugin-add-swift-support', 'cordova-plugin-ionic-keyboard', 'cordova-plugin-braintree',
+  '@ionic-enterprise/filesystem', '@ionic-enterprise/keyboard', '@ionic-enterprise/splashscreen'];
+  if (platform === 'ios') {
+    pluginList.push('cordova-plugin-googlemaps', 'cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
   }
-  if (platform === "android") {
-    pluginList.push("cordova-plugin-compat");
+  if (platform === 'android') {
+    pluginList.push('cordova-plugin-compat');
   }
   return pluginList;
 }

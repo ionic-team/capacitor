@@ -4,9 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
-
 import { Capacitor } from '@capacitor/core';
 
 @Injectable()
@@ -46,8 +43,6 @@ export class MyErrorHandler implements ErrorHandler {
     MyApp
   ],
   providers: [
-    StatusBar,
-    SplashScreen,
     {provide: ErrorHandler, useClass: MyErrorHandler}
   ]
 })
