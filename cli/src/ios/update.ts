@@ -11,7 +11,7 @@ import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSt
 export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
 const platform = 'ios';
 
-export async function updateIOS(config: Config) {
+export async function updateIOS(config: Config, deployment: boolean) {
 
   let plugins = await getPluginsTask(config);
 
@@ -35,7 +35,7 @@ export async function updateIOS(config: Config) {
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await generateCordovaPodspecs(cordovaPlugins, config);
-  await installCocoaPodsPlugins(config, plugins);
+  await installCocoaPodsPlugins(config, plugins, deployment);
   await logCordovaManualSteps(cordovaPlugins, config, platform);
 
   const incompatibleCordovaPlugins = plugins
@@ -44,13 +44,13 @@ export async function updateIOS(config: Config) {
   await checkPlatformVersions(config, platform);
 }
 
-export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[]) {
+export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean) {
   await runTask('Updating iOS native dependencies with "pod install" (may take several minutes)', () => {
-    return updatePodfile(config, plugins);
+    return updatePodfile(config, plugins, deployment);
   });
 }
 
-export async function updatePodfile(config: Config, plugins: Plugin[]) {
+export async function updatePodfile(config: Config, plugins: Plugin[], deployment: boolean) {
   const dependenciesContent = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
   const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
@@ -60,8 +60,13 @@ export async function updatePodfile(config: Config, plugins: Plugin[]) {
   podfileContent = podfileContent.replace(/(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/, '$1' + dependenciesContent + '\n  $2');
   podfileContent = podfileContent.replace(/platform :ios, '[^']*'/ , `platform :ios, '${config.ios.minVersion}'`);
   await writeFileAsync(podfilePath, podfileContent, 'utf8');
-  removeSync(podfileLockPath);
-  await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && pod install && xcodebuild -project App.xcodeproj clean`);
+  let installCommand = 'pod install';
+  if (!deployment) {
+    removeSync(podfileLockPath);
+  } else {
+    installCommand += ' --deployment';
+  }
+  await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`);
 }
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
