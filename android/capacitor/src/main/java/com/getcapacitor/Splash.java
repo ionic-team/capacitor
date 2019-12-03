@@ -233,7 +233,11 @@ public class Splash {
         // Required to enable the view to actually fade
         params.format = PixelFormat.TRANSLUCENT;
 
-        wm.addView(splashImage, params);
+        try {
+          wm.addView(splashImage, params);
+        } catch (IllegalStateException ex) {
+          Log.d(LogUtils.getCoreTag(), "Could not add splash view");
+        }
 
         splashImage.setAlpha(0f);
 
