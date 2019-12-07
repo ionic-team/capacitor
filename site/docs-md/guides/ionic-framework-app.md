@@ -20,7 +20,7 @@ Building and deploying iOS and Android apps require additional dependencies, inc
 If you have an existing Ionic app, skip this section. If not, let's create an Ionic app first. In a Terminal, install Ionic (this also updates to the latest version of Ionic):
 
 ```bash
-npm install -g ionic
+sudo npm install -g ionic
 ```
 
 Next, create a new Ionic app based on the "tabs" starter project and install Capacitor too:
@@ -32,6 +32,7 @@ ionic start capApp tabs --capacitor
 Next, initialize Capacitor with your app information.
 
 ```bash
+cd ./capApp
 npx cap init
 ```
 
