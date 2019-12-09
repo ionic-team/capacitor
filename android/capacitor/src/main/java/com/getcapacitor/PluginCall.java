@@ -168,10 +168,10 @@ public class PluginCall {
       return (Float) value;
     }
     if(value instanceof Double) {
-      return new Float((Double) value);
+      return ((Double) value).floatValue();
     }
     if(value instanceof Integer) {
-      return new Float((Integer) value);
+      return ((Integer) value).floatValue();
     }
     return defaultValue;
   }
@@ -185,6 +185,12 @@ public class PluginCall {
 
     if(value instanceof Double) {
       return (Double) value;
+    }
+    if(value instanceof Float) {
+      return ((Float) value).doubleValue();
+    }
+    if(value instanceof Integer) {
+      return ((Integer) value).doubleValue();
     }
     return defaultValue;
   }
