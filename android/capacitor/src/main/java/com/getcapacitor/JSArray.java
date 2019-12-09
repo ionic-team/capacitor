@@ -4,12 +4,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
 public class JSArray extends JSONArray {
   public JSArray() {
     super();
+  }
+
+  public JSArray(Collection copyFrom) {
+    super(copyFrom);
   }
 
   public JSArray(Object array) throws JSONException {
