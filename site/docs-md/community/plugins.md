@@ -79,6 +79,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | NFC | `capacitor-nfc` | <https://github.com/adrynov/Capacitor-NFC-Plugin> | Android only |
 | Heartland Form | `capacitor-heartland-form` | <https://github.com/philmerrell/capacitor-heartland-form> | |
+| Stripe Terminal | `capacitor-stripe-terminal` | <https://github.com/eventOneHQ/capacitor-stripe-terminal> | iOS only |
 
 
 ## Location
