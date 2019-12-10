@@ -97,6 +97,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Fancy Geo | `capacitor-fancy-geo` | <https://github.com/triniwiz/capacitor-fancy-geo> | |
 | [Radar](https://radar.io) | `capacitor-radar` | <https://github.com/radarlabs/capacitor-radar> | |
 
+## Health
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Google Fit | `capacitor-google-fit` | <https://github.com/Ad-Scientiam/capacitor-google-fit> | Android only (currently) |
+
 ## Audio
 
 ## Ads
