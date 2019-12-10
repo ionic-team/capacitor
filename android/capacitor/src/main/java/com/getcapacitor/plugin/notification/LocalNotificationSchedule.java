@@ -44,7 +44,7 @@ public class LocalNotificationSchedule {
   }
 
   private void buildCountElement(JSObject schedule) {
-    this.count = schedule.getInteger("count");
+    this.count = schedule.getInteger("count", 1);
   }
 
   private void buildAtElement(JSObject schedule) throws ParseException {
@@ -128,28 +128,24 @@ public class LocalNotificationSchedule {
    * Get constant long value representing specific interval of time (weeks, days etc.)
    */
   public Long getEveryInterval() {
-    Integer value = count;
-    if (value == null) {
-      value = 1;
-    }
     switch (every) {
       case "year":
-        return value * DateUtils.YEAR_IN_MILLIS;
+        return count * DateUtils.YEAR_IN_MILLIS;
       case "month":
         // This case is just approximation as months have different number of days
-        return value * 30 * DateUtils.DAY_IN_MILLIS;
+        return count * 30 * DateUtils.DAY_IN_MILLIS;
       case "two-weeks":
-        return value * 2 * DateUtils.WEEK_IN_MILLIS;
+        return count * 2 * DateUtils.WEEK_IN_MILLIS;
       case "week":
-        return value * DateUtils.WEEK_IN_MILLIS;
+        return count * DateUtils.WEEK_IN_MILLIS;
       case "day":
-        return value * DateUtils.DAY_IN_MILLIS;
+        return count * DateUtils.DAY_IN_MILLIS;
       case "hour":
-        return value * DateUtils.HOUR_IN_MILLIS;
+        return count * DateUtils.HOUR_IN_MILLIS;
       case "minute":
-        return value * DateUtils.MINUTE_IN_MILLIS;
+        return count * DateUtils.MINUTE_IN_MILLIS;
       case "second":
-        return value * DateUtils.SECOND_IN_MILLIS;
+        return count * DateUtils.SECOND_IN_MILLIS;
       default:
         return null;
     }

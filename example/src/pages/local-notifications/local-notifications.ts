@@ -161,7 +161,6 @@ export class LocalNotificationsPage {
   }
 
   async scheduleRepeatingEveryWithValue(value: number) {
-    var now = new Date();
     this.notifs = await Plugins.LocalNotifications.schedule({
       notifications: [{
         title: 'Happy Holidays! Last couple minutes.',
@@ -169,7 +168,7 @@ export class LocalNotificationsPage {
         id: 4,
         schedule: {
           every: 'minute',
-          count: 2
+          count: value
         }
       }]
     });
