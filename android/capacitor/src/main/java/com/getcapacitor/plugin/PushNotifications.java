@@ -119,7 +119,14 @@ public class PushNotifications extends Plugin {
         if (notification != null) {
           jsNotif.put("title", notification.extras.getCharSequence(Notification.EXTRA_TITLE));
           jsNotif.put("body", notification.extras.getCharSequence(Notification.EXTRA_TEXT));
-          jsNotif.put("extra", JSONObject.wrap(notification.extras));
+
+          JSObject extras = new JSObject();
+
+          for (String key : notification.extras.keySet()) {
+            extras.put(key, notification.extras.get(key));
+          }
+
+          jsNotif.put("extra", extras);
         }
 
         notifications.put(jsNotif);
