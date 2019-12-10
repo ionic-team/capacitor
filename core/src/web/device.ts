@@ -34,6 +34,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
       platform: <'web'> 'web',
       appVersion: '',
       appBuild: '',
+      operatingSystem: uaFields.operatingSystem,
       osVersion: uaFields.osVersion,
       manufacturer: navigator.vendor,
       isVirtual: false,
@@ -72,6 +73,18 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
           uaFields.osVersion = lastParts[lastParts.length - 1].replace(/_/g, '.');
         }
       }
+    }
+
+    if (/android/i.test(_ua)) {
+      uaFields.operatingSystem = 'android';
+    } else if (/iPad|iPhone|iPod/.test(_ua) && !window.MSStream) {
+      uaFields.operatingSystem = 'ios';
+    } else if (/Win/.test(_ua)) {
+      uaFields.operatingSystem = 'windows';
+    } else if (/Mac/i.test(_ua)) {
+      uaFields.operatingSystem = 'mac';
+    } else {
+      uaFields.operatingSystem = 'unknown';
     }
 
     return uaFields;
