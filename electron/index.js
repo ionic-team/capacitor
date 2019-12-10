@@ -107,11 +107,18 @@ class CapacitorSplashScreen {
     });
 
     let imagePath = path.join(rootPath, 'splash_assets', this.splashOptions.imageFileName);
-    let imageUrl = url.pathToFileURL(imagePath);
+    let imageUrl = '';
+    let useFallback = false;
+    try {
+      imageUrl = url.pathToFileURL(imagePath).href;
+    } catch (err) {
+      useFallback = true;
+      imageUrl = `./${this.splashOptions.imageFileName}`;
+    }
 
     let splashHtml = this.splashOptions.customHtml || `
       <html style="width: 100%; height: 100%; margin: 0; overflow: hidden;">
-      <body style="background-image: url('${imageUrl.href}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;">
+      <body style="background-image: url('${imageUrl}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;">
             ${this.splashOptions.loadingText}
           </div>
         </body>
@@ -124,7 +131,11 @@ class CapacitorSplashScreen {
       }
     });
 
-    this.splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`);
+    if (useFallback) {
+      this.splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`, {baseURLForDataURL: `file://${rootPath}/splash_assets/`});
+    } else {
+      this.splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`);
+    }
 
     this.splashWindow.webContents.on('dom-ready', async () => {
       this.splashWindow.show();
