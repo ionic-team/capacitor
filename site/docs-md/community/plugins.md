@@ -127,6 +127,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Bluetooth Low Energy Client | `cap-bluetooth-low-energy-client` | <https://github.com/robmarti/cap-bluetooth-low-energy-client> | Web, Android|
 
+## Sensors
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| SensingKit | `cap-sensing-kit` | <https://github.com/robmarti/cap-sensing-kit> | Web, Android|
+
 
 ## Date/Calendar
 
