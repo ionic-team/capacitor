@@ -131,6 +131,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   let systemLibraries: Array<string> = [];
   let sourceFrameworks: Array<string> = [];
   let frameworkDeps: Array<string> = [];
+  let compilerFlags: Array<string> = [];
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';
   if (isStatic) {
@@ -195,6 +196,11 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
         if (!sourceFrameworks.includes(frameworktPath)) {
           sourceFrameworks.push(frameworktPath);
         }
+      } else if (sourceFile.$['compiler-flags']) {
+        const cFlag = sourceFile.$['compiler-flags'];
+        if (!compilerFlags.includes(cFlag)) {
+          compilerFlags.push(cFlag);
+        }
       }
     });
   });
@@ -212,6 +218,9 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   }
   if (sourceFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join(`', '`)}'`);
+  }
+  if (compilerFlags.length > 0) {
+    frameworkDeps.push(`s.compiler_flags = '${compilerFlags.join(' ')}'`);
   }
   const arcPlugins = cordovaPlugins.filter(filterARCFiles);
   if (arcPlugins.length > 0) {
