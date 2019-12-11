@@ -106,8 +106,6 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
         resolve({
           results: [ result ]
         });
-      }).catch((e) => {
-        reject(e);
       });
     });
   }
