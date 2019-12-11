@@ -349,6 +349,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
 ```
+If you would like to recieve the firebase FCM token from iOS instead of the raw APNS token, you will need to also change your `AppDelegate.didRegisterForRemoteNotificationsWithDeviceToken` code to look like this:
+```swift
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+        InstanceID.instanceID().instanceID { (result, error) in
+            if let error = error {
+                NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: error)
+            } else if let result = result {
+                NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: result.token)
+            }
+        }
+    }
+```
+
 
 ### Upload the APNS Certificate or Key to Firebase
 
