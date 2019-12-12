@@ -31,7 +31,6 @@ public class Browser extends Plugin {
 
   private CustomTabsClient customTabsClient;
   private CustomTabsSession currentSession;
-  private boolean appIsPaused = false;
 
   @PluginMethod()
   public void open(PluginCall call) {
@@ -118,7 +117,6 @@ public class Browser extends Plugin {
   }
 
   protected void handleOnResume() {
-    appIsPaused = false;
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
     if (!ok) {
       Log.e(getLogTag(), "Error binding to custom tabs service");
@@ -126,7 +124,6 @@ public class Browser extends Plugin {
   }
 
   protected void handleOnPause() {
-    appIsPaused = true;
     getContext().unbindService(connection);
   }
 
@@ -144,9 +141,7 @@ public class Browser extends Plugin {
               notifyListeners("browserPageLoaded", new JSObject());
               break;
             case TAB_HIDDEN:
-              if (!appIsPaused) {
                 notifyListeners("browserFinished", new JSObject());
-              }
               break;
           }
         }
