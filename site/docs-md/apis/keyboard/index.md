@@ -78,7 +78,7 @@ Keyboard.hide();
 
 ## Keyboard configuration (iOS only)
 
-Keyboard plugin allow this configurations for iOS. To be added to `capacitor.config.json`.
+The keyboard plugin allows the following configuration values to be added in `capacitor.config.json` for the iOS platform:
 
 - `resize`: It configures the way the app is resized when the Keyboard appears.
 Allowed values are
