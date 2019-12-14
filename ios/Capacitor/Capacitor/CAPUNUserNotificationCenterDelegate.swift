@@ -25,7 +25,11 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
     // Override point for customization after application launch.
     let center = UNUserNotificationCenter.current()
     center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
-      // Enable or disable features based on authorization.
+      if granted {
+        plugin.notifyListeners("permissionAllowed", data: nil)
+      } else {
+        plugin.notifyListeners("permissionDeclined", data: nil)
+      }
     }
 
     DispatchQueue.main.async {
