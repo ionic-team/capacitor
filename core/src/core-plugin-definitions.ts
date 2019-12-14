@@ -1469,6 +1469,8 @@ export interface PushNotificationsPlugin extends Plugin {
   addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+  addListener(eventName: 'permissionAllowed', listenerFunc: () => void): PluginListenerHandle;
+  addListener(eventName: 'permissionDeclined', listenerFunc: () => void): PluginListenerHandle;
 }
 
 //
