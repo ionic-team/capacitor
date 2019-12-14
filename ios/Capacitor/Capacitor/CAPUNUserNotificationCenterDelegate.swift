@@ -22,6 +22,8 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
    * Request permissions to send notifications
    */
   public func requestPermissions() {
+    let plugin: CAPPlugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
+
     // Override point for customization after application launch.
     let center = UNUserNotificationCenter.current()
     center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
