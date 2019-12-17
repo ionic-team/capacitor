@@ -167,6 +167,12 @@ public class PluginCall {
     if(value instanceof Float) {
       return (Float) value;
     }
+    if(value instanceof Double) {
+      return ((Double) value).floatValue();
+    }
+    if(value instanceof Integer) {
+      return ((Integer) value).floatValue();
+    }
     return defaultValue;
   }
 
@@ -179,6 +185,12 @@ public class PluginCall {
 
     if(value instanceof Double) {
       return (Double) value;
+    }
+    if(value instanceof Float) {
+      return ((Float) value).doubleValue();
+    }
+    if(value instanceof Integer) {
+      return ((Integer) value).doubleValue();
     }
     return defaultValue;
   }
@@ -274,4 +286,3 @@ public class PluginCall {
     PluginCallDataTypeException(String m) { super(m); }
   }
 }
-

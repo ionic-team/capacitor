@@ -39,6 +39,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Branch Deep Links |`capacitor-branch-deep-links` | <https://github.com/boundstate/capacitor-branch-deep-links> | |
 
+## Display
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Keep Screen On |`capacitor-keep-screen-on` | <https://github.com/go-u/capacitor-keep-screen-on> | |
+
 ## Storage
 
 | Name                    | NPM package | GitHub | Notes |
@@ -79,6 +85,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | NFC | `capacitor-nfc` | <https://github.com/adrynov/Capacitor-NFC-Plugin> | Android only |
 | Heartland Form | `capacitor-heartland-form` | <https://github.com/philmerrell/capacitor-heartland-form> | |
+| Stripe Terminal | `capacitor-stripe-terminal` | <https://github.com/eventOneHQ/capacitor-stripe-terminal> | iOS only |
 
 
 ## Location
@@ -89,6 +96,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Geofence Tracker | `capacitor-geofence-tracker` | <https://github.com/mvollebregt/capacitor-geofence-tracker> | |
 | Fancy Geo | `capacitor-fancy-geo` | <https://github.com/triniwiz/capacitor-fancy-geo> | |
 | [Radar](https://radar.io) | `capacitor-radar` | <https://github.com/radarlabs/capacitor-radar> | |
+
+## Health
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Google Fit | `capacitor-google-fit` | <https://github.com/Ad-Scientiam/capacitor-google-fit> | Android only (currently) |
 
 ## Audio
 
@@ -119,6 +132,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Bluetooth Low Energy Client | `cap-bluetooth-low-energy-client` | <https://github.com/robmarti/cap-bluetooth-low-energy-client> | Web, Android|
+
+## Sensors
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| SensingKit | `cap-sensing-kit` | <https://github.com/robmarti/cap-sensing-kit> | Web, Android|
 
 
 ## Date/Calendar

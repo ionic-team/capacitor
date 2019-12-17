@@ -78,12 +78,12 @@ Keyboard.hide();
 
 ## Keyboard configuration (iOS only)
 
-Keyboard plugin allow this configurations for iOS
+The keyboard plugin allows the following configuration values to be added in `capacitor.config.json` for the iOS platform:
 
 - `resize`: It configures the way the app is resized when the Keyboard appears.
 Allowed values are
   - `none`: Not the app, nor the webview are resized
-  - `native`: The whole native webview will be resized when the keyboard shows/hides, it will affect the `vh` relative unit.
+  - `native`: (default) The whole native webview will be resized when the keyboard shows/hides, it will affect the `vh` relative unit.
   - `body`: Only the html `<body>` element will be resized. Relative units are not affected, because the viewport does not change.
   - `ionic`: Only the html ion-app element will be resized. Use it only for ionic apps.
 

@@ -15,7 +15,7 @@ describe.each([false, true])('Update: iOS (monoRepoLike: %p)', (monoRepoLike) =>
     await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm`);
     await run(appDir, `add ios`);
     // Redundant, because add does this, but called explicitly for thoroughness
-    await updateCommand(makeConfig(appDir), 'ios');
+    await updateCommand(makeConfig(appDir), 'ios', false);
     FS = new MappedFS(appDir);
   });
 
