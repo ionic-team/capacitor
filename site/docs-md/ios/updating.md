@@ -33,4 +33,5 @@ In particular, [AppDelegate.swift](https://github.com/ionic-team/capacitor/blob/
 ### From 1.0.0 to 1.1.0
 
 Recommended change:
+
 * Update `.gitignore` file inside `ios` folder with [this changes](https://github.com/ionic-team/capacitor/commit/91941975ea5fe5389e0b09bb8331d5cb16ea6a78#diff-ea346566a7f09b5e88ed28d3d6362ec3)

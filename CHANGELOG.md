@@ -1,3 +1,64 @@
+## [1.4.0](https://github.com/ionic-team/capacitor/compare/1.3.0...1.4.0) (2019-12-12)
+
+
+### Bug Fixes
+
+* fix(cordova/ios): patch usage of NSBundle bundleForClass in plugins (#2111) ([a2a1165](https://github.com/ionic-team/capacitor/commit/a2a1165)), closes [#2111](https://github.com/ionic-team/capacitor/issues/2111)
+* fix(cordova/ios): post CDVPluginHandleOpenURLNotification (#2198) ([2972661](https://github.com/ionic-team/capacitor/commit/2972661)), closes [#2198](https://github.com/ionic-team/capacitor/issues/2198)
+* fix(core/web): make LocalNotifications.requestPermissions() work on Safari (#2205) ([af306ff](https://github.com/ionic-team/capacitor/commit/af306ff)), closes [#2205](https://github.com/ionic-team/capacitor/issues/2205)
+* fix(plugin/camera): Fix scaling when setting only height (#2123) ([0bc0039](https://github.com/ionic-team/capacitor/commit/0bc0039)), closes [#2123](https://github.com/ionic-team/capacitor/issues/2123)
+* fix(android): avoid crash on SplashScreen.show() (#2213) ([d200727](https://github.com/ionic-team/capacitor/commit/d200727)), closes [#2213](https://github.com/ionic-team/capacitor/issues/2213)
+* fix(android): Ensure appStateChange doesn't fire on startup (#2179) ([77a04c5](https://github.com/ionic-team/capacitor/commit/77a04c5)), closes [#2179](https://github.com/ionic-team/capacitor/issues/2179)
+* fix(android): proper parsing of plugin integers and doubles (#2234) ([7fc4b5d](https://github.com/ionic-team/capacitor/commit/7fc4b5d)), closes [#2234](https://github.com/ionic-team/capacitor/issues/2234)
+* fix(android): properly proxy requests to domains in allowNavigation (#2146) ([4a1c19f](https://github.com/ionic-team/capacitor/commit/4a1c19f)), closes [#2146](https://github.com/ionic-team/capacitor/issues/2146)
+* fix(android): Send cookies on proxied requests (#2151) ([fbe0b9d](https://github.com/ionic-team/capacitor/commit/fbe0b9d)), closes [#2151](https://github.com/ionic-team/capacitor/issues/2151)
+* fix(core): improve Filesystem parameter descriptions (#2023) ([21914e9](https://github.com/ionic-team/capacitor/commit/21914e9)), closes [#2023](https://github.com/ionic-team/capacitor/issues/2023)
+* fix(electron): make apps work on electron 7 (#2084) ([046aad2](https://github.com/ionic-team/capacitor/commit/046aad2)), closes [#2084](https://github.com/ionic-team/capacitor/issues/2084)
+* fix(ios): make getFloat work on plugins (#2235) ([99996e2](https://github.com/ionic-team/capacitor/commit/99996e2)), closes [#2235](https://github.com/ionic-team/capacitor/issues/2235)
+* fix(ios): mitigate memory usage of media files (#2115) ([4b8fc3e](https://github.com/ionic-team/capacitor/commit/4b8fc3e)), closes [#2115](https://github.com/ionic-team/capacitor/issues/2115)
+* fix(ios): set camera configuration in main thread (#2167) ([c57da0e](https://github.com/ionic-team/capacitor/commit/c57da0e)), closes [#2167](https://github.com/ionic-team/capacitor/issues/2167)
+* fix(ios): set dark statusbar style if defined in plist (#2098) ([2529015](https://github.com/ionic-team/capacitor/commit/2529015)), closes [#2098](https://github.com/ionic-team/capacitor/issues/2098)
+
+
+### Features
+
+* feat(cli/cordova): add support for source-file compiler-flags attribute (#2237) ([8549141](https://github.com/ionic-team/capacitor/commit/8549141)), closes [#2237](https://github.com/ionic-team/capacitor/issues/2237)
+* feat: make possible to configure userAgent (#2140) ([8952ed1](https://github.com/ionic-team/capacitor/commit/8952ed1)), closes [#2140](https://github.com/ionic-team/capacitor/issues/2140)
+* feat(cli): Add --deployment option for update and sync commands (#2222) ([a4b12ee](https://github.com/ionic-team/capacitor/commit/a4b12ee)), closes [#2222](https://github.com/ionic-team/capacitor/issues/2222)
+* feat(device): Add operatingSystem field (#2086) ([dcdf675](https://github.com/ionic-team/capacitor/commit/dcdf675)), closes [#2086](https://github.com/ionic-team/capacitor/issues/2086)
+* feat(ios): make didRegisterForRemoteNotificationsWithDeviceToken handle Data and String push tokens  ([94879b3](https://github.com/ionic-team/capacitor/commit/94879b3)), closes [#2078](https://github.com/ionic-team/capacitor/issues/2078)
+* feat(LocalNotifications): Add support for count to work with every on LocalNotificationSchedule (#21 ([473a50e](https://github.com/ionic-team/capacitor/commit/473a50e)), closes [#2124](https://github.com/ionic-team/capacitor/issues/2124)
+
+
+### Docs
+
+* docs: Added JS example to iOS custom-code section (#2015) ([c1a7e20](https://github.com/ionic-team/capacitor/commit/c1a7e20)), closes [#2015](https://github.com/ionic-team/capacitor/issues/2015)
+* docs: reword the Periodic Maintenance section (#2071) ([7009d37](https://github.com/ionic-team/capacitor/commit/7009d37)), closes [#2071](https://github.com/ionic-team/capacitor/issues/2071)
+* docs: Update Storage code example to be accurate (#2112) ([2ecea21](https://github.com/ionic-team/capacitor/commit/2ecea21)), closes [#2112](https://github.com/ionic-team/capacitor/issues/2112)
+* docs(ce-plugins): add cap-sensing-kit (#2206) ([e5c54e0](https://github.com/ionic-team/capacitor/commit/e5c54e0)), closes [#2206](https://github.com/ionic-team/capacitor/issues/2206)
+* docs(ce-plugins): add capacitor-google-fit (#2228) ([fd28a2c](https://github.com/ionic-team/capacitor/commit/fd28a2c)), closes [#2228](https://github.com/ionic-team/capacitor/issues/2228)
+* docs(ce-plugins): add capacitor-navigationbar to community plugins (#2116) ([b941e88](https://github.com/ionic-team/capacitor/commit/b941e88)), closes [#2116](https://github.com/ionic-team/capacitor/issues/2116)
+* docs(ce-plugins): Add capacitor-stripe-terminal (#2102) ([0961345](https://github.com/ionic-team/capacitor/commit/0961345)), closes [#2102](https://github.com/ionic-team/capacitor/issues/2102)
+* docs(ce-plugins): add keep screen on plugin (#2180) ([80b4cde](https://github.com/ionic-team/capacitor/commit/80b4cde)), closes [#2180](https://github.com/ionic-team/capacitor/issues/2180)
+* docs(Filesystem): use await in writeFile example (#2087) ([e374f2e](https://github.com/ionic-team/capacitor/commit/e374f2e)), closes [#2087](https://github.com/ionic-team/capacitor/issues/2087)
+* docs(ios-plugin-guide): Change getBoolean to getBool (#2221) ([bae2a8d](https://github.com/ionic-team/capacitor/commit/bae2a8d)), closes [#2221](https://github.com/ionic-team/capacitor/issues/2221)
+* docs(updating): add 1.4.0 recommended changes (#2238) ([849eb8f](https://github.com/ionic-team/capacitor/commit/849eb8f)), closes [#2238](https://github.com/ionic-team/capacitor/issues/2238)
+
+
+### Chores
+
+* chore(android): Add JSArray constructor to handle Collection types (#2233) ([0cc877f](https://github.com/ionic-team/capacitor/commit/0cc877f)), closes [#2233](https://github.com/ionic-team/capacitor/issues/2233)
+* chore(cli): fix lint problems in code (#2170) ([2ee8dbd](https://github.com/ionic-team/capacitor/commit/2ee8dbd)), closes [#2170](https://github.com/ionic-team/capacitor/issues/2170)
+* chore(core): Add lint script and fix lint issues (#2168) ([f08e4a4](https://github.com/ionic-team/capacitor/commit/f08e4a4)), closes [#2168](https://github.com/ionic-team/capacitor/issues/2168)
+* chore(deps): bump mixin-deep from 1.3.1 to 1.3.2 in /cli (#2144) ([5e9ce8c](https://github.com/ionic-team/capacitor/commit/5e9ce8c)), closes [#2144](https://github.com/ionic-team/capacitor/issues/2144)
+* chore(deps): bump mixin-deep from 1.3.1 to 1.3.2 in /core (#2142) ([34fe999](https://github.com/ionic-team/capacitor/commit/34fe999)), closes [#2142](https://github.com/ionic-team/capacitor/issues/2142)
+* chore(deps): bump mixin-deep from 1.3.1 to 1.3.2 in /example (#2143) ([ef5c137](https://github.com/ionic-team/capacitor/commit/ef5c137)), closes [#2143](https://github.com/ionic-team/capacitor/issues/2143)
+* chore(deps): bump mixin-deep from 1.3.1 to 1.3.2 in /site (#2145) ([05f3d37](https://github.com/ionic-team/capacitor/commit/05f3d37)), closes [#2145](https://github.com/ionic-team/capacitor/issues/2145)
+* chore(deps): remove unused lerna-changelog (#2159) ([fab99de](https://github.com/ionic-team/capacitor/commit/fab99de)), closes [#2159](https://github.com/ionic-team/capacitor/issues/2159)
+* chore(example): remove unused dependencies (#2164) ([52f2bc6](https://github.com/ionic-team/capacitor/commit/52f2bc6)), closes [#2164](https://github.com/ionic-team/capacitor/issues/2164)
+
+
+
 ## [1.3.0](https://github.com/ionic-team/capacitor/compare/1.2.1...1.3.0) (2019-10-24)
 
 
