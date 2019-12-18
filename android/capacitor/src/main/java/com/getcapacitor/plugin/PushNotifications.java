@@ -126,7 +126,7 @@ public class PushNotifications extends Plugin {
             extras.put(key, notification.extras.get(key));
           }
 
-          jsNotif.put("extra", extras);
+          jsNotif.put("data", extras);
         }
 
         notifications.put(jsNotif);
