@@ -8,6 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -19,6 +20,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.content.SharedPreferences;
+import android.webkit.SslErrorHandler;
 
 import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.Accessibility;
@@ -241,6 +243,14 @@ public class Bridge {
           return true;
         }
         return false;
+      }
+
+      // Allow self-signed ssl certificates in development
+      @Override
+      public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
+        if (BuildConfig.DEBUG) {
+          handler.proceed();
+        }
       }
     });
 
