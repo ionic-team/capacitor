@@ -52,7 +52,7 @@ import { Plugins, CameraResultType } from '@capacitor/core';
 
 const { Camera } = Plugins;
 
-async takePicture() {
+async function takePicture() {
   const image = await Camera.getPhoto({
     quality: 90,
     allowEditing: true,
