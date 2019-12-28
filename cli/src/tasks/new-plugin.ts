@@ -36,61 +36,42 @@ export async function newPlugin(config: Config) {
   log(`${emoji('✏️', '*')}  Creating new Capacitor plugin`);
 
   const inquirer = await import('inquirer');
+  const requiredInput = (input: string): boolean => {
+    if (!input || input.trim() === '') {
+      return false;
+    }
+    return true;
+  }
   const answers: NewPluginAnswers = await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
       message: 'Plugin NPM name (snake-case):',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'domain',
       message: 'Plugin id (domain-style syntax. ex: com.example.plugin)',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'className',
       message: 'Plugin class name (ex: AwesomePlugin)',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'description',
       message: 'description:',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'git',
       message: 'git repository:',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
