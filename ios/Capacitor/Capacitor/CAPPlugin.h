@@ -24,6 +24,7 @@
 - (void)addListener:(CAPPluginCall *)call;
 - (void)removeListener:(CAPPluginCall *)call;
 - (void)removeAllListeners:(CAPPluginCall *)call;
+- (BOOL)shouldOverrideLoadWith:(NSURLRequest *)request navigationType:(WKNavigationType)navigationType;
 
 // Called after init if the plugin wants to do
 // some loading so the plugin author doesn't
