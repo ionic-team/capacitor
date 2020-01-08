@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -547,6 +548,19 @@ public class Plugin {
    * Handle onDestroy
    */
   protected void handleOnDestroy() {}
+
+  /**
+   * Hook for blocking the launching of Intents by the Capacitor application.
+   *
+   * This will be called when the WebView will not navigate to a page, but
+   * could launch an intent to handle the URL. Return false to block this: if
+   * any plugin returns false, Capacitor will block the navigation. If all
+   * plugins return null, the default policy will be enforced. If at least one
+   * plugin returns true, and no plugins return false, then the URL will be
+   * opened in the WebView.
+   */
+  @SuppressWarnings("unused")
+  public Boolean shouldOpenExternalUrl(Uri url) { return null; }
 
   /**
    * Start a new Activity.
