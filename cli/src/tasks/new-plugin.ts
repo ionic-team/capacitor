@@ -30,7 +30,7 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'name',
-      message: 'Plugin NPM name (snake-case):',
+      message: 'Plugin NPM name (kebab-case):',
       validate: function(input) {
         if (!input || input.trim() === '') {
           return false;
