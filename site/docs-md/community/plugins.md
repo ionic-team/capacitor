@@ -79,6 +79,11 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | SMS | `capacitor-sms` | <https://github.com/abritopach/capacitor-sms> | |
 | Intercom | `capacitor-intercom` | <https://github.com/stewwan/capacitor-intercom> | |
 
+## UDP
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| UDP | `@unitree-czk/capacitor-udp` | <https://github.com/unitree-czk/capacitor-udp> | |
+
 
 ## Payments/NFC
 
