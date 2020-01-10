@@ -51,9 +51,9 @@ npx cap update
 
 If you don't want to risk to introduce breaking changes, use `npm update cordova-plugin-name` instead of `@latest`.
 
-## Determining Plugin Version Numbers
+## Determining Installed Plugin Version
 
-See the list of Capacitor and Cordova plugins installed in your project with:
+See the list of Capacitor and Cordova plugins (and their exact version numbers) installed in your project with:
 
 ```bash
 npx cap ls
