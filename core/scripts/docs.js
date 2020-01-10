@@ -136,7 +136,7 @@ const generateDocumentationForPlugin = (plugin) => {
 
     if(interfaceDecl.children) {
       html.push(...interfaceDecl.children.map(c => {
-        const nameString = c.type.name ? c.type.name : c.type.value ? `'${c.type.value}'` : 'any';
+        const nameString = c.type.name ? c.type.name : c.type.value ? `'${c.type.value}'` : c.type.type && c.type.type === 'array' ? `${c.type.elementType.name}[]` : 'any';
         if (!c.type.name && !c.type.value) {
           console.log(c);
         }
