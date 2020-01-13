@@ -127,6 +127,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Filesharer | `@byteowls/capacitor-filesharer` | <https://github.com/moberwasserlechner/capacitor-filesharer> | |
 | Downloader | `capacitor-downloader` | <https://github.com/triniwiz/capacitor-downloader> | |
 | Zip | `capacitor-zip` | <https://github.com/triniwiz/capacitor-zip> | |
+| UDP | `@unitree-czk/capacitor-udp` | <https://github.com/unitree-czk/capacitor-udp> | |
 
 ## Bluetooth
 
