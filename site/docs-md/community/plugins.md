@@ -33,6 +33,8 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
 | Biometric AUth | `capacitor-biometric-auth` | <https://github.com/arielhernandezmusa/capacitor-biometric-auth> | Allow to use Face ID and Touch ID in the same plugin |
 | Apple Login | `capacitor-apple-login` | <https://github.com/htorbov/capacitor-apple-login> | |
+| Wechat | `capacitor-wechat` |  <https://github.com/Wind2esg/capacitor-wechat>| android done, doing IOS |
+| Alipay | `capacitor-alipay` |  <https://github.com/Wind2esg/capacitor-alipay>| android done, doing IOS |
 
 ## Deep Links
 
@@ -87,7 +89,8 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | NFC | `capacitor-nfc` | <https://github.com/adrynov/Capacitor-NFC-Plugin> | Android only |
 | Heartland Form | `capacitor-heartland-form` | <https://github.com/philmerrell/capacitor-heartland-form> | |
 | Stripe Terminal | `capacitor-stripe-terminal` | <https://github.com/eventOneHQ/capacitor-stripe-terminal> | iOS only |
-
+| Wechat | `capacitor-wechat` |  <https://github.com/Wind2esg/capacitor-wechat>| android done, doing IOS |
+| Alipay | `capacitor-alipay` |  <https://github.com/Wind2esg/capacitor-alipay>| android done, doing IOS |
 
 ## Location
 
