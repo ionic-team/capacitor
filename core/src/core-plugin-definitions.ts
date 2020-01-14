@@ -1620,6 +1620,7 @@ export interface ToastPlugin extends Plugin {
 export interface ToastShowOptions {
   text: string;
   duration?: 'short' | 'long';
+  position?: 'top' | 'center' | 'bottom';
 }
 
 export interface WebViewPlugin extends Plugin {
