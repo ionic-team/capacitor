@@ -13,10 +13,6 @@ public class CAPToastPlugin : CAPPlugin {
     let durationStyle = call.get("durationStyle", String.self, "long")!
     let duration = durationStyle == "short" ? 1500 : 3000
     let position = call.get("position", String.self, "bottom")
-    if (!["top", "center", "bottom"].contains(position)) {
-      call.error("Invalid position. Valid options are 'top', 'center' and 'bottom'.")
-      return
-    }
 
     DispatchQueue.main.async {
       let vc = self.bridge!.viewController
@@ -47,8 +43,11 @@ public class CAPToastPlugin : CAPPlugin {
         y = topBottomOffset
       } else if (position == "center") {
         y = (vc.view.bounds.size.height/2) - (height/2)
-      } else {
+      } else if (position == "bottom") {
         y = vc.view.bounds.size.height - height - topBottomOffset
+      } else {
+        call.error("Invalid position. Valid options are 'top', 'center' and 'bottom'.")
+        return
       }
       lb.frame = CGRect(
         x: ((vc.view.bounds.size.width)/2) - ((expectedSizeTitle.width+32)/2),
