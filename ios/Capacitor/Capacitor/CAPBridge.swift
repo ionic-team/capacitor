@@ -447,11 +447,10 @@ enum BridgeError: Error {
         return
       }
 
-      dispatchQueue.sync {
-        let arguments = call.options["options"] as! [Any]
-        let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
-        plugin.perform(selector, with: pluginCall)
-      }
+      let arguments = call.options["options"] as! [Any]
+      let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
+      plugin.perform(selector, with: pluginCall)
+
     } else {
       CAPLog.print("Error: Cordova Plugin mapping not found")
       return

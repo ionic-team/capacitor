@@ -14,7 +14,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "npm run clean && npm run assets && tsc",
-    "clean": "rm -rf ./dist",
+    "clean": "rimraf ./dist",
     "deploy": "np",
     "lint": "tslint --project tsconfig.json",
     "assets": "node scripts/copy-assets.js",
@@ -69,6 +69,7 @@
     "jest": "^23.6.0",
     "mock-fs": "^4.4.2",
     "np": "^2.18.2",
+    "rimraf": "^3.0.0",
     "tmp": "0.0.33",
     "ts-jest": "^23.10.4",
     "tslint": "^5.8.0",
