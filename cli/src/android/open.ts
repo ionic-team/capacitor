@@ -38,7 +38,7 @@ export async function openAndroid(config: Config) {
       };
 
       try {
-        await opn(dir, { app: config.linux.androidStudioPath, wait: false });
+        await opn(dir, { app: config.linux.androidStudioPath, wait: true });
       } catch (e) {
         linuxError();
       }
