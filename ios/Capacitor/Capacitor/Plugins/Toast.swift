@@ -12,6 +12,11 @@ public class CAPToastPlugin : CAPPlugin {
     }
     let durationStyle = call.get("durationStyle", String.self, "long")!
     let duration = durationStyle == "short" ? 1500 : 3000
+    let position = call.get("position", String.self, "bottom")
+    if (!["top", "center", "bottom"].contains(position)) {
+      call.error("position must be either 'top', 'center' or 'bottom'")
+      return
+    }
     
     DispatchQueue.main.async {
       let vc = self.bridge!.viewController
@@ -34,11 +39,22 @@ public class CAPToastPlugin : CAPPlugin {
       let minWidth = min(maxSizeTitle.width, expectedSizeTitle.width)
       let minHeight = min(maxSizeTitle.height, expectedSizeTitle.height)
       expectedSizeTitle = CGSize(width: minWidth, height: minHeight)
+        
+      let topBottomOffset: CGFloat = 20
+      let height = expectedSizeTitle.height+32
+      let y: CGFloat
+      if (position == "top") {
+        y = topBottomOffset
+      } else if (position == "center") {
+        y = (vc.view.bounds.size.height/2) - (height/2)
+      } else {
+        y = vc.view.bounds.size.height - height - topBottomOffset
+      }
       lb.frame = CGRect(
         x: ((vc.view.bounds.size.width)/2) - ((expectedSizeTitle.width+32)/2),
-        y: (vc.view.bounds.size.height-(expectedSizeTitle.height+32)) - ((expectedSizeTitle.height+32)/2),
+        y: y,
         width: expectedSizeTitle.width+32,
-        height: expectedSizeTitle.height+32)
+        height: height)
       
       lb.padding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
       self.toast = lb
