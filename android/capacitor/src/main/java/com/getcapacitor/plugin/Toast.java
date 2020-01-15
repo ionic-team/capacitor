@@ -42,7 +42,7 @@ public class Toast extends Plugin {
     } else if("center".equals(position)) {
       toast.setGravity(GRAVITY_CENTER, 0, 0);
     } else {
-      call.error("Invalid position. Valid options are 'top', 'center' and 'bottom'");
+      call.error("Invalid position. Valid options are 'top', 'center' and 'bottom'.");
       return;
     }
 
