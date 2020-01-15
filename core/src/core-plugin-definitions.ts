@@ -1619,6 +1619,9 @@ export interface ToastPlugin extends Plugin {
 
 export interface ToastShowOptions {
   text: string;
+  /**
+   * Duration of the toast, either 'short' (2000ms, default) or 'long' (3500ms)
+   */
   duration?: 'short' | 'long';
 }
 
