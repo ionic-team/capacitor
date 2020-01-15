@@ -8,6 +8,16 @@ import { copy, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
 import { isInteractive } from '../util/term';
 
+interface NewPluginAnswers {
+  name: string
+  domain: string
+  className: string
+  description: string
+  git: string
+  author: string
+  license: string
+  confirm: boolean
+}
 
 export async function newPluginCommand(config: Config) {
   try {
@@ -26,61 +36,42 @@ export async function newPlugin(config: Config) {
   log(`${emoji('✏️', '*')}  Creating new Capacitor plugin`);
 
   const inquirer = await import('inquirer');
-  const answers = await inquirer.prompt([
+  const requiredInput = (input: string): boolean => {
+    if (!input || input.trim() === '') {
+      return false;
+    }
+    return true;
+  }
+  const answers: NewPluginAnswers = await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
       message: 'Plugin NPM name (kebab-case):',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'domain',
       message: 'Plugin id (domain-style syntax. ex: com.example.plugin)',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'className',
       message: 'Plugin class name (ex: AwesomePlugin)',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'description',
       message: 'description:',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
       name: 'git',
       message: 'git repository:',
-      validate: function(input) {
-        if (!input || input.trim() === '') {
-          return false;
-        }
-        return true;
-      }
+      validate: requiredInput
     },
     {
       type: 'input',
@@ -98,7 +89,7 @@ export async function newPlugin(config: Config) {
       name: 'confirm',
       message: `package.json will be created, do you want to continue?`
     }
-  ]);
+  ]) as NewPluginAnswers;
 
   console.log('\n');
 
@@ -142,7 +133,7 @@ export async function newPlugin(config: Config) {
   }
 }
 
-async function createTSPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
+async function createTSPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: NewPluginAnswers) {
   const newPluginPath = join(pluginPath, 'src');
 
   const originalDefinitions = await readFileAsync(join(newPluginPath, 'definitions.ts'), 'utf8');
@@ -154,7 +145,7 @@ async function createTSPlugin(config: Config, pluginPath: string, domain: string
   await writeFileAsync(join(newPluginPath, `web.ts`), web, 'utf8');
 }
 
-async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: any) {
+async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: NewPluginAnswers) {
   const newPluginPath = join(pluginPath, 'ios', 'Plugin');
 
   const originalPluginSwift = await readFileAsync(join(newPluginPath, 'Plugin.swift'), 'utf8');
@@ -174,7 +165,7 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
   await writeFileAsync(join(newPluginPath, 'Plugin.m'), pluginObjc, 'utf8');
 }
 
-function generatePodspec(config: Config, answers: any) {
+function generatePodspec(config: Config, answers: NewPluginAnswers) {
   return `
   Pod::Spec.new do |s|
     s.name = '${fixName(answers.name)}'
@@ -222,7 +213,7 @@ function generateAndroidManifest(domain: string, pluginPath: string) {
   `;
 }
 
-function generatePackageJSON(answers: any) {
+function generatePackageJSON(answers: NewPluginAnswers) {
   return {
     name: answers.name,
     version: '0.0.1',
