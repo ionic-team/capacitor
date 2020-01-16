@@ -288,8 +288,9 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
           fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
           writeFileSync(fileDest, fileContent, 'utf8');
         }
-        if (fileContent.includes('[NSBundle bundleForClass:[self class]]')) {
+        if (fileContent.includes('[NSBundle bundleForClass:[self class]]') || fileContent.includes('[NSBundle bundleForClass:[CDVCapture class]]')) {
           fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
+          fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
           writeFileSync(fileDest, fileContent, 'utf8');
         }
       }
