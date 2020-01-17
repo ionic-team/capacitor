@@ -156,6 +156,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Image Cache | `capacitor-image-cache` | <https://github.com/triniwiz/capacitor-image-cache> | |
 | Image Crop | `capacitor-image-crop` | <https://github.com/triniwiz/capacitor-image-crop> | | 
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
+| Code Scanner | `@rdlabo/capacitor-codescanner` | <https://github.com/rdlabo/capacitor-codescanner> | iOS only (currently) |
 
 
 ## Printers
