@@ -176,7 +176,7 @@ enum BridgeError: Error {
       self.isActive = true
       appStatePlugin?.fireChange(isActive: self.isActive)
     }
-    NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { (notification) in
+    NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { (notification) in
       CAPLog.print("APP INACTIVE")
       self.isActive = false
       appStatePlugin?.fireChange(isActive: self.isActive)
@@ -447,11 +447,10 @@ enum BridgeError: Error {
         return
       }
 
-      dispatchQueue.sync {
-        let arguments = call.options["options"] as! [Any]
-        let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
-        plugin.perform(selector, with: pluginCall)
-      }
+      let arguments = call.options["options"] as! [Any]
+      let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
+      plugin.perform(selector, with: pluginCall)
+
     } else {
       CAPLog.print("Error: Cordova Plugin mapping not found")
       return

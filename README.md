@@ -4,13 +4,15 @@
 
 Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom Native plugins that your app might need.  Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores, _and_ the mobile web.
 
-Capacitor is being designed by the Ionic Framework team as an eventual alternative to Cordova, though backwards compatibility with Cordova plugins is a priority and is actively being worked on. Capacitor can be used without Ionic Framework, but soon it'll become a core part of the Ionic developer experience.
+Capacitor was created by the Ionic Framework team as a spiritual successor to Cordova, though it does have backward compatibility with the majority of Cordova plugins. Capacitor can be used without [Ionic Framework](https://ionicframework.com/docs/components), but since it's a core part of the Ionic Platform, it's recommended for the best app development experience.
 
-Capacitor also comes with a Plugin API for building native plugins. On iOS, first-class Swift support is available, and much of the iOS Capacitor runtime is written in Swift. Plugins may also be written in Objective-C. On Android, support for writing plugins with Java and Kotlin is supported.
+Capacitor also comes with a Plugin API for building native plugins. On iOS, first-class Swift support is available, and much of the iOS Capacitor runtime is written in Swift. Plugins may also be written in Objective-C. On Android, writing plugins in Java and Kotlin is supported.
  
 ## Roadmap
 
 _Disclaimer: Our roadmap is subject to change at any time and has no specific date guarantees_
+
+2020 and beyond: The core Capacitor project is now stable. Maintenance is ongoing (including support for new mobile operating system versions, bugs, etc.). Going forward, most new functionality will be implemented as plugins. For the latest updates, track new releases [here](https://github.com/ionic-team/capacitor/releases) or milestones [here](https://github.com/ionic-team/capacitor/milestones).
 
 [2019](https://blog.ionicframework.com/capacitor-in-2019-native-progressive-web-apps-for-all/)
 
@@ -18,8 +20,6 @@ _Disclaimer: Our roadmap is subject to change at any time and has no specific da
 
  - __Cordova Plugin Integration__
    - Preliminary support for using plugins from the existing Cordova community
- - __Native Shell Add-ons__
-   - Support for interacting with Native UI shell elements, such as native menus, tabs, and navigation, with 1-1 fallbacks to the web for first-class Progressive Web App and Electron support.
  - __Electron support__
    - Support for building Electron apps and interacting with Node.js libraries
  - __Enterprise Premium Plugins__
