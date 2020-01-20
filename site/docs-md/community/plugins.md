@@ -32,6 +32,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Google Sign-in | `@codetrix-studio/capacitor-google-auth` | <https://github.com/CodetrixStudio/CapacitorGoogleAuth> | Works with Firebase. Lightweight |
 | Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
 | Biometric AUth | `capacitor-biometric-auth` | <https://github.com/arielhernandezmusa/capacitor-biometric-auth> | Allow to use Face ID and Touch ID in the same plugin |
+| Apple Login | `capacitor-apple-login` | <https://github.com/htorbov/capacitor-apple-login> | |
 
 ## Deep Links
 
@@ -109,7 +110,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-| AdMob | `capacitor-admob` | <https://github.com/rahadur/capacitor-admob> | Android only (currently) |
+| AdMob | `capacitor-admob` | <https://github.com/rahadur/capacitor-admob> | iOS, Android |
 | AdMob | `@rdlabo/capacitor-admob` | <https://github.com/rdlabo/capacitor-admob> | |
 
 ## Notifications
@@ -126,6 +127,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Filesharer | `@byteowls/capacitor-filesharer` | <https://github.com/moberwasserlechner/capacitor-filesharer> | |
 | Downloader | `capacitor-downloader` | <https://github.com/triniwiz/capacitor-downloader> | |
 | Zip | `capacitor-zip` | <https://github.com/triniwiz/capacitor-zip> | |
+| UDP | `@unitree-czk/capacitor-udp` | <https://github.com/unitree-czk/capacitor-udp> | |
 
 ## Bluetooth
 
@@ -154,6 +156,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Image Cache | `capacitor-image-cache` | <https://github.com/triniwiz/capacitor-image-cache> | |
 | Image Crop | `capacitor-image-crop` | <https://github.com/triniwiz/capacitor-image-crop> | | 
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
+| Code Scanner | `@rdlabo/capacitor-codescanner` | <https://github.com/rdlabo/capacitor-codescanner> | iOS only (currently) |
 
 
 ## Printers

@@ -19,6 +19,23 @@
 
 #import "CDVPluginResult.h"
 
+// This exists to preserve compatibility with early Swift plugins, who are
+// using CDVCommandStatus as ObjC-style constants rather than as Swift enum
+// values.
+// These constants alias the enum values back to their previous names.
+#define SWIFT_ENUM_COMPAT_HACK(enumVal) const CDVCommandStatus SWIFT_##enumVal NS_SWIFT_NAME(enumVal) = enumVal
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_NO_RESULT);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_OK);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_CLASS_NOT_FOUND_EXCEPTION);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ILLEGAL_ACCESS_EXCEPTION);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_INSTANTIATION_EXCEPTION);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_MALFORMED_URL_EXCEPTION);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_IO_EXCEPTION);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_INVALID_ACTION);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_JSON_EXCEPTION);
+SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR);
+#undef SWIFT_ENUM_COMPAT_HACK
+
 @interface CDVPluginResult ()
 
 - (CDVPluginResult*)initWithStatus:(CDVCommandStatus)statusOrdinal message:(id)theMessage;

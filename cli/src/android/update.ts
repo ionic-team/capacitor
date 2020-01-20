@@ -207,6 +207,7 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
   const manifestPath = join(pluginsFolder, 'src', 'main', 'AndroidManifest.xml');
   let rootXMLEntries: Array<any> = [];
   let applicationXMLEntries: Array<any> = [];
+  let applicationXMLAttributes: Array<any> = [];
   cordovaPlugins.map(async p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
@@ -219,7 +220,11 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
             const pathParts = getPathParts(configElement.$.parent || configElement.$.target);
             if (pathParts.length > 1) {
               if (pathParts.pop() === 'application') {
-                if (!applicationXMLEntries.includes(xmlElement) && !contains(applicationXMLEntries, xmlElement, k)) {
+                if (configElement.$.mode && configElement.$.mode === 'merge') {
+                  Object.keys(e.$).map((ek: any) => {
+                    applicationXMLAttributes.push(`${ek}="${e.$[ek]}"`);
+                  });
+                } else if (!applicationXMLEntries.includes(xmlElement) && !contains(applicationXMLEntries, xmlElement, k)) {
                   applicationXMLEntries.push(xmlElement);
                 }
               } else {
@@ -239,7 +244,7 @@ async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Con
 <manifest package="capacitor.android.plugins"
 xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:amazon="http://schemas.amazon.com/apk/res/android">
-<application>
+<application ${applicationXMLAttributes.join('\n')}>
 ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
