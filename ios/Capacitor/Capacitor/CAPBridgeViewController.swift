@@ -233,8 +233,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     configuration.allowsAirPlayForMediaPlayback = true
     configuration.mediaTypesRequiringUserActionForPlayback = []
   }
-
+    
   public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidStartProvisionalNavigation.name()), object: navigation)
     // Reset the bridge on each navigation
     bridge!.reset()
   }
@@ -264,16 +265,19 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     CAPLog.print("⚡️  WebView loaded")
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidFinishNavigation.name()), object: navigation)
   }
 
   public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     CAPLog.print("⚡️  WebView failed to load")
     CAPLog.print("⚡️  Error: " + error.localizedDescription)
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidFailNavigation.name()), object: [ "navigation": navigation, "error": error])
   }
 
   public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
     CAPLog.print("⚡️  WebView failed provisional navigation")
     CAPLog.print("⚡️  Error: " + error.localizedDescription)
+    NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidFailProvisionalNavigation.name()), object: [ "navigation": navigation, "error": error])
   }
 
   public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
