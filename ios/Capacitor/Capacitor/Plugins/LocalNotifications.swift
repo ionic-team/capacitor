@@ -165,6 +165,8 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     let sound = notification["sound"] as? String
     let attachments = notification["attachments"] as? JSArray
     let extra = notification["extra"] as? JSObject ?? [:]
+    let threadIdentifier = notification["threadIdentifier"] as? String
+    let summaryArgument = notification["summaryArgument"] as? String
     
     let content = UNMutableNotificationContent()
     content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
@@ -174,6 +176,14 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     content.userInfo = extra
     if actionTypeId != nil {
       content.categoryIdentifier = actionTypeId!
+    }
+
+    if let threadIdentifier = threadIdentifier {
+      content.threadIdentifier = threadIdentifier
+    }
+
+    if let summaryArgument = summaryArgument, #available(iOS 12, *) {
+      content.summaryArgument = summaryArgument
     }
     
     if sound != nil {

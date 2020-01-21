@@ -1032,6 +1032,12 @@ export interface LocalNotification {
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
+  /**
+   * iOS only: set the thread identifier and summary argument for notification
+   * grouping
+   */
+  threadIdentifier?: string;
+  summaryArgument?: string;
 }
 
 export interface LocalNotificationSchedule {
