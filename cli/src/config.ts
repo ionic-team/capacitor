@@ -1,8 +1,7 @@
-import { accessSync, existsSync, readFileSync } from 'fs';
+import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
 import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
-import { execSync } from 'child_process';
 
 let Package: PackageJson;
 let ExtConfig: ExternalConfig;
@@ -197,21 +196,7 @@ export class Config implements CliConfig {
     if (this.cli.os !== OS.Windows) {
         return;
     }
-    if (this.app.windowsAndroidStudioPath) {
-      try {
-        if (!existsSync(this.app.windowsAndroidStudioPath)) {
-          const buffer = execSync('REG QUERY "HKEY_LOCAL_MACHINE\\SOFTWARE\\Android Studio" /v Path');
-          const bufferString = buffer.toString('utf-8').replace(/(\r\n|\n|\r)/gm, '');
-          const ix = bufferString.indexOf('REG_SZ');
-          if (ix > 0) {
-            this.app.windowsAndroidStudioPath = bufferString.substring(ix + 6).trim() + '\\bin\\studio64.exe';
-          }
-        }
-        this.windows.androidStudioPath = this.app.windowsAndroidStudioPath;
-      } catch (e) {
-         this.windows.androidStudioPath = '';
-      }
-    }
+    this.windows.androidStudioPath = this.app.windowsAndroidStudioPath;
   }
 
   private initLinuxConfig() {
