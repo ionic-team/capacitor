@@ -56,6 +56,19 @@ export class ClipboardPage {
     console.log('Got string from clipboard:', str.value);
   }
 
+  clipboardSetEmptyString() {
+    Plugins.Clipboard.write({
+      string: ""
+    });
+  }
+
+  async clipboardGetEmptyString() {
+    let str = await Plugins.Clipboard.read({
+      type: "string"
+    });
+    console.log('Got string from clipboard:', str.value);
+  }
+
   clipboardSetURL() {
     Plugins.Clipboard.write({
       url: "http://google.com/"
