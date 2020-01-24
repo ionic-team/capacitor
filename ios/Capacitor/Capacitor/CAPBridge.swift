@@ -9,7 +9,7 @@ enum BridgeError: Error {
 
 @objc public class CAPBridge : NSObject {
 
-  public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
+  @objc public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://capacitor.ionicframework.com/"
   public static var CAP_FILE_START = "/_capacitor_file_"
   public static let CAP_DEFAULT_SCHEME = "capacitor"
