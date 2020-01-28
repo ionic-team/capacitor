@@ -61,6 +61,10 @@ public class ExifWrapper {
     // p(ret, TAG_FOCAL_PLANE_RESOLUTION_UNIT);
     p(ret, TAG_FOCAL_LENGTH);
     // p(ret, TAG_GAIN_CONTROL);
+    p(ret, TAG_GPS_LATITUDE);
+    p(ret, TAG_GPS_LATITUDE_REF);
+    p(ret, TAG_GPS_LONGITUDE);
+    p(ret, TAG_GPS_LONGITUDE_REF);
     p(ret, TAG_GPS_ALTITUDE);
     p(ret, TAG_GPS_ALTITUDE_REF);
     // p(ret, TAG_GPS_AREA_INFORMATION);

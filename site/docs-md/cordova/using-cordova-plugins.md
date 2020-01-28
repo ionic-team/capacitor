@@ -51,6 +51,14 @@ npx cap update
 
 If you don't want to risk to introduce breaking changes, use `npm update cordova-plugin-name` instead of `@latest`.
 
+## Determining Installed Plugin Version
+
+See the list of Capacitor and Cordova plugins (and their exact version numbers) installed in your project with:
+
+```bash
+npx cap ls
+```
+
 ## Important: Configuration 
 
 Capacitor does not support Cordova install variables, auto configuration, or hooks, due to our philosophy of letting you control your native project source code (meaning things like hooks are unnecessary). If your plugin requires variables or settings to be set, you'll need to apply those configuration settings manually by mapping between the plugin's `plugin.xml` and required settings on iOS and Android.

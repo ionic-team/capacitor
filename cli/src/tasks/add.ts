@@ -5,7 +5,7 @@ import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, logFatal, logInfo, runTask, writePrettyJSON, log, logError } from '../common';
+import { check, checkAppConfig, checkPackage, checkWebDir, log, logError, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';
@@ -41,7 +41,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     await editPlatforms(config, platformName);
 
     if (shouldSync(config, platformName)) {
-      await sync(config, platformName);
+      await sync(config, platformName, false);
     }
 
     if (platformName === config.ios.name || platformName === config.android.name) {
@@ -111,7 +111,7 @@ async function editPlatforms(config: Config, platformName: string) {
 
 function shouldSync(config: Config, platformName: string) {
   // Don't sync if we're adding the iOS platform not on a mac
-  if (config.cli.os !== OS.Mac && platformName === "ios") {
+  if (config.cli.os !== OS.Mac && platformName === 'ios') {
     return false;
   }
   return true;

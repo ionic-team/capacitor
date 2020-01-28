@@ -32,12 +32,19 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Google Sign-in | `@codetrix-studio/capacitor-google-auth` | <https://github.com/CodetrixStudio/CapacitorGoogleAuth> | Works with Firebase. Lightweight |
 | Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
 | Biometric AUth | `capacitor-biometric-auth` | <https://github.com/arielhernandezmusa/capacitor-biometric-auth> | Allow to use Face ID and Touch ID in the same plugin |
+| Apple Login | `capacitor-apple-login` | <https://github.com/htorbov/capacitor-apple-login> | |
 
 ## Deep Links
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Branch Deep Links |`capacitor-branch-deep-links` | <https://github.com/boundstate/capacitor-branch-deep-links> | |
+
+## Display
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Keep Screen On |`capacitor-keep-screen-on` | <https://github.com/go-u/capacitor-keep-screen-on> | |
 
 ## Storage
 
@@ -79,6 +86,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | NFC | `capacitor-nfc` | <https://github.com/adrynov/Capacitor-NFC-Plugin> | Android only |
 | Heartland Form | `capacitor-heartland-form` | <https://github.com/philmerrell/capacitor-heartland-form> | |
+| Stripe Terminal | `capacitor-stripe-terminal` | <https://github.com/eventOneHQ/capacitor-stripe-terminal> | iOS only |
 
 
 ## Location
@@ -90,13 +98,19 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Fancy Geo | `capacitor-fancy-geo` | <https://github.com/triniwiz/capacitor-fancy-geo> | |
 | [Radar](https://radar.io) | `capacitor-radar` | <https://github.com/radarlabs/capacitor-radar> | |
 
+## Health
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Google Fit | `capacitor-google-fit` | <https://github.com/Ad-Scientiam/capacitor-google-fit> | Android only (currently) |
+
 ## Audio
 
 ## Ads
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-| AdMob | `capacitor-admob` | <https://github.com/rahadur/capacitor-admob> | Android only (currently) |
+| AdMob | `capacitor-admob` | <https://github.com/rahadur/capacitor-admob> | iOS, Android |
 | AdMob | `@rdlabo/capacitor-admob` | <https://github.com/rdlabo/capacitor-admob> | |
 
 ## Notifications
@@ -113,12 +127,19 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Filesharer | `@byteowls/capacitor-filesharer` | <https://github.com/moberwasserlechner/capacitor-filesharer> | |
 | Downloader | `capacitor-downloader` | <https://github.com/triniwiz/capacitor-downloader> | |
 | Zip | `capacitor-zip` | <https://github.com/triniwiz/capacitor-zip> | |
+| UDP | `@unitree-czk/capacitor-udp` | <https://github.com/unitree-czk/capacitor-udp> | |
 
 ## Bluetooth
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Bluetooth Low Energy Client | `cap-bluetooth-low-energy-client` | <https://github.com/robmarti/cap-bluetooth-low-energy-client> | Web, Android|
+
+## Sensors
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| SensingKit | `cap-sensing-kit` | <https://github.com/robmarti/cap-sensing-kit> | Web, Android|
 
 
 ## Date/Calendar
@@ -135,6 +156,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Image Cache | `capacitor-image-cache` | <https://github.com/triniwiz/capacitor-image-cache> | |
 | Image Crop | `capacitor-image-crop` | <https://github.com/triniwiz/capacitor-image-crop> | | 
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
+| Code Scanner | `@rdlabo/capacitor-codescanner` | <https://github.com/rdlabo/capacitor-codescanner> | iOS only (currently) |
 
 
 ## Printers
@@ -150,3 +172,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Install Referrer | `capacitor-install-referrer` | <https://github.com/eladcandroid/capacitor-install-referrer> | |
 | Request app review | `capacitor-rate-app` | <https://github.com/Nodonisko/capacitor-rate-app> | Request app review from users |
+| Change Android Navigationbar Color | `capacitor-navigationbar` | <https://github.com/nikosdouvlis/capacitor-navigationbar> | Programmatically change the navigation bar color on android devices |

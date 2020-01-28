@@ -10,7 +10,7 @@ import { join } from 'path';
 import chalk from 'chalk';
 
 export async function doctorCommand(config: Config, selectedPlatform: string) {
-  log(`${_e('💊', '')}   ${chalk.bold('Capacitor Doctor')}  ${_e('💊', '')} \n`)
+  log(`${_e('💊', '')}   ${chalk.bold('Capacitor Doctor')}  ${_e('💊', '')} \n`);
 
   await doctorCore(config);
 
@@ -40,7 +40,7 @@ export async function doctorCore(config: Config) {
 }
 
 async function printInstalledPackages( config: Config) {
-  const packageNames = ["@capacitor/cli", "@capacitor/core", "@capacitor/android", "@capacitor/ios"];
+  const packageNames = ['@capacitor/cli', '@capacitor/core', '@capacitor/android', '@capacitor/ios'];
   await Promise.all(packageNames.map(async packageName => {
     let version;
     const packagePath = resolveNode(config, packageName, 'package.json');

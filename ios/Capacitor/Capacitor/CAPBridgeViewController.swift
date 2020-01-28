@@ -22,6 +22,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var hostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
+  private let assetsFolder = "public"
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
@@ -94,8 +95,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   private func getStartPath() -> String? {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
-    guard var startPath = Bundle.main.path(forResource: fullStartPath.relativePath, ofType: nil) else {
+    var resourcesPath = assetsFolder
+    if !startDir.isEmpty {
+      resourcesPath = URL(fileURLWithPath: resourcesPath).appendingPathComponent(startDir).relativePath
+    }
+
+    guard var startPath = Bundle.main.path(forResource: resourcesPath, ofType: nil) else {
       printLoadError()
       return nil
     }
@@ -145,7 +150,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func printLoadError() {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
+    let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir)
     
     CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
     CAPLog.print("⚡️  This file is the root of your web app and must exist before")
@@ -159,7 +164,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func loadWebView() {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir).appendingPathComponent("index")
+    let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
       fatalLoadError()
     }
@@ -186,7 +191,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
         }
       }
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
-        if (statusBarStyle != "UIStatusBarStyleDefault" && statusBarStyle != "UIStatusBarStyleDarkContent") {
+        if (statusBarStyle == "UIStatusBarStyleDarkContent") {
+          if #available(iOS 13.0, *) {
+            // TODO - use .darkContent instead of rawValue once Xcode 10 support is dropped
+            self.statusBarStyle = UIStatusBarStyle.init(rawValue: 3) ?? .default
+          }
+        } else if (statusBarStyle != "UIStatusBarStyleDefault") {
           self.statusBarStyle = .lightContent
         }
       }

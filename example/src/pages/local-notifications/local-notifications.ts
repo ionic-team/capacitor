@@ -160,6 +160,20 @@ export class LocalNotificationsPage {
     });
   }
 
+  async scheduleRepeatingEveryWithValue(value: number) {
+    this.notifs = await Plugins.LocalNotifications.schedule({
+      notifications: [{
+        title: 'Happy Holidays! Last couple minutes.',
+        body: 'Swipe to learn more',
+        id: 4,
+        schedule: {
+          every: 'minute',
+          count: value
+        }
+      }]
+    });
+  }
+
   cancelNotification() {
     this.pendingNotifs && Plugins.LocalNotifications.cancel(this.pendingNotifs);
   }

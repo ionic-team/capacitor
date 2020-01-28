@@ -1,6 +1,10 @@
 import Foundation
 import UserNotifications
 
+enum PushNotificationError: Error {
+  case tokenParsingFailed
+}
+
 /**
  * Implement three common modal types: alert, confirm, and prompt
  */
@@ -74,16 +78,22 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   @objc func listChannels(_ call: CAPPluginCall) {
     call.unimplemented()
   }
-
+  
   @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification){
-    guard let deviceToken = notification.object as? Data else {
-      return
+    if let deviceToken = notification.object as? Data {
+      let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
+      notifyListeners("registration", data:[
+        "value": deviceTokenString
+      ])
+    } else if let stringToken = notification.object as? String {
+      notifyListeners("registration", data:[
+        "value": stringToken
+      ])
+    } else {
+      notifyListeners("registrationError", data: [
+        "error": PushNotificationError.tokenParsingFailed.localizedDescription
+      ])
     }
-    let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
-    notifyListeners("registration", data:[
-      "value": deviceTokenString
-    ])
-
   }
 
   @objc public func didFailToRegisterForRemoteNotificationsWithError(notification: NSNotification){

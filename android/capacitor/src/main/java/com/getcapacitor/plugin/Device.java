@@ -28,6 +28,7 @@ public class Device extends Plugin {
     r.put("diskFree", getDiskFree());
     r.put("diskTotal", getDiskTotal());
     r.put("model", android.os.Build.MODEL);
+    r.put("operatingSystem", "android");
     r.put("osVersion", android.os.Build.VERSION.RELEASE);
     r.put("appVersion", getAppVersion());
     r.put("appBuild", getAppBuild());

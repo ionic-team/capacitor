@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 import { Config } from '../config';
-import { copyTemplate, installDeps, hasYarn, runTask } from '../common';
+import { copyTemplate, hasYarn, installDeps, runTask } from '../common';
 
 export async function addElectron(config: Config) {
 

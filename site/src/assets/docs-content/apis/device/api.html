@@ -143,6 +143,14 @@ path for the os, in bytes</div>
           </div>
 
           <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// The operating system of the device</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">operatingSystem</span>
+              :
+              <avc-code-type>'ios' | 'android' | 'windows' | 'mac' | 'unknown'</avc-code-type>;
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
             <div class="avc-code-param-comment">// The version of the device OS</div>
             <div class="avc-code-line"><span class="avc-code-param-name">osVersion</span>
               :
@@ -154,7 +162,7 @@ path for the os, in bytes</div>
             <div class="avc-code-param-comment">// The device platform (lowercase).</div>
             <div class="avc-code-line"><span class="avc-code-param-name">platform</span>
               :
-              <avc-code-type>any</avc-code-type>;
+              <avc-code-type>'ios' | 'android' | 'electron' | 'web'</avc-code-type>;
             </div>
           </div>
 
