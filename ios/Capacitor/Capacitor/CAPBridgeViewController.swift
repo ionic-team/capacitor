@@ -78,6 +78,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
+    webView?.allowsLinkPreview = false
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
