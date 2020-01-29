@@ -117,7 +117,11 @@ The current ones you might configure are:
     // Default is 11.0
     "minVersion": "11.3",
     // Some Cordova plugins require to configure the linker flags
-    "cordovaLinkerFlags": ["-ObjC"]
+    "cordovaLinkerFlags": ["-ObjC"],
+    // Turn off link previews for hyperlinks. `true` by default. Turn this off if your
+    // links are are correctly being followed because users hold the link a little longer than
+    // a quick tap. 
+    "allowsLinkPreview": false
   },
   "electron": {
     // User agent of Capacitor WebView for Electron
