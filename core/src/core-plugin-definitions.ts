@@ -1031,7 +1031,7 @@ export interface LocalNotification {
   smallIcon?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
-  extra?: any;
+  extra?: Record<string, string>;
   /**
    * iOS only: set the thread identifier for notification grouping
    */
