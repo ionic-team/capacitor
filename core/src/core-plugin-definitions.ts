@@ -1,4 +1,4 @@
-import { Plugin, PluginListenerHandle } from './definitions';
+import { Plugin, PluginListenerHandle } from "./definitions";
 
 export interface PluginRegistry {
   Accessibility: AccessibilityPlugin;
@@ -62,7 +62,10 @@ export interface AccessibilityPlugin {
   /**
    * Listen for screen reader state change (on/off)
    */
-  addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): PluginListenerHandle;
+  addListener(
+    eventName: "accessibilityScreenReaderStateChange",
+    listenerFunc: ScreenReaderStateChangeCallback
+  ): PluginListenerHandle;
 }
 
 export interface AccessibilitySpeakOptions {
@@ -80,7 +83,9 @@ export interface AccessibilitySpeakOptions {
 export interface ScreenReaderEnabledResult {
   value: boolean;
 }
-export type ScreenReaderStateChangeCallback = (state: ScreenReaderEnabledResult) => void;
+export type ScreenReaderStateChangeCallback = (
+  state: ScreenReaderEnabledResult
+) => void;
 
 //
 
@@ -95,12 +100,12 @@ export interface AppPlugin extends Plugin {
   /**
    * Check if an app can be opened with the given URL
    */
-  canOpenUrl(options: { url: string }): Promise<{value: boolean}>;
+  canOpenUrl(options: { url: string }): Promise<{ value: boolean }>;
 
   /**
    * Open an app with the given URL
    */
-  openUrl(options: { url: string }): Promise<{completed: boolean}>;
+  openUrl(options: { url: string }): Promise<{ completed: boolean }>;
 
   /**
    * Get the URL the app was launched with, if any
@@ -110,27 +115,39 @@ export interface AppPlugin extends Plugin {
   /**
    * Listen for changes in the App's active state (whether the app is in the foreground or background)
    */
-  addListener(eventName: 'appStateChange', listenerFunc: (state: AppState) => void): PluginListenerHandle;
+  addListener(
+    eventName: "appStateChange",
+    listenerFunc: (state: AppState) => void
+  ): PluginListenerHandle;
 
   /**
    * Listen for url open events for the app. This handles both custom URL scheme links as well
    * as URLs your app handles (Universal Links on iOS and App Links on Android)
    */
-  addListener(eventName: 'appUrlOpen', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+  addListener(
+    eventName: "appUrlOpen",
+    listenerFunc: (data: AppUrlOpen) => void
+  ): PluginListenerHandle;
 
   /**
    * If the app was launched with previously persisted plugin call data, such as on Android
    * when an activity returns to an app that was closed, this call will return any data
    * the app was launched with, converted into the form of a result from a plugin call.
    */
-  addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
+  addListener(
+    eventName: "appRestoredResult",
+    listenerFunc: (data: AppRestoredResult) => void
+  ): PluginListenerHandle;
 
   /**
    * Listen for the hardware back button event (Android only). Listening for this event will disable the
    * default back button behaviour, so you might want to call `window.history.back()` manually.
    * If you want to close the app, call `App.exitApp()`.
    */
-  addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+  addListener(
+    eventName: "backButton",
+    listenerFunc: (data: AppUrlOpen) => void
+  ): PluginListenerHandle;
 }
 
 export interface AppState {
@@ -199,7 +216,7 @@ export interface BackgroundTaskPlugin extends Plugin {
    * Notify the OS that the given task is finished and the OS can continue
    * backgrounding the app.
    */
-  finish(options: {taskId: CallbackID}): void;
+  finish(options: { taskId: CallbackID }): void;
 }
 
 //
@@ -223,8 +240,14 @@ export interface BrowserPlugin extends Plugin {
    */
   close(): Promise<void>;
 
-  addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): PluginListenerHandle;
-  addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): PluginListenerHandle;
+  addListener(
+    eventName: "browserFinished",
+    listenerFunc: (info: any) => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "browserPageLoaded",
+    listenerFunc: (info: any) => void
+  ): PluginListenerHandle;
 }
 
 export interface BrowserOpenOptions {
@@ -245,10 +268,10 @@ export interface BrowserOpenOptions {
    */
   toolbarColor?: string;
 
-   /**
+  /**
    * iOS only: The presentation style of the browser. Defaults to fullscreen.
    */
-  presentationStyle?: 'fullscreen' | 'popover';
+  presentationStyle?: "fullscreen" | "popover";
 }
 
 export interface BrowserPrefetchOptions {
@@ -311,18 +334,18 @@ export interface CameraOptions {
   /**
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
-  presentationStyle?: 'fullscreen' | 'popover';
+  presentationStyle?: "fullscreen" | "popover";
 }
 
 export enum CameraSource {
-  Prompt = 'PROMPT',
-  Camera = 'CAMERA',
-  Photos = 'PHOTOS'
+  Prompt = "PROMPT",
+  Camera = "CAMERA",
+  Photos = "PHOTOS"
 }
 
 export enum CameraDirection {
-  Rear = 'REAR',
-  Front = 'FRONT',
+  Rear = "REAR",
+  Front = "FRONT"
 }
 
 export interface CameraPhoto {
@@ -355,9 +378,9 @@ export interface CameraPhoto {
 }
 
 export enum CameraResultType {
-  Uri = 'uri',
-  Base64 = 'base64',
-  DataUrl = 'dataUrl'
+  Uri = "uri",
+  Base64 = "base64",
+  DataUrl = "dataUrl"
 }
 
 //
@@ -381,7 +404,7 @@ export interface ClipboardWrite {
 }
 
 export interface ClipboardRead {
-  type: 'string' | 'url' | 'image';
+  type: "string" | "url" | "image";
 }
 
 export interface ClipboardReadResult {
@@ -401,7 +424,7 @@ export interface DevicePlugin extends Plugin {
   getLanguageCode(): Promise<DeviceLanguageCodeResult>;
 }
 
-export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown';
+export type OperatingSystem = "ios" | "android" | "windows" | "mac" | "unknown";
 
 export interface DeviceInfo {
   /**
@@ -411,7 +434,7 @@ export interface DeviceInfo {
   /**
    * The device platform (lowercase).
    */
-  platform: 'ios' | 'android' | 'electron' | 'web';
+  platform: "ios" | "android" | "electron" | "web";
   /**
    * The UUID of the device as available to the app. This identifier may change
    * on modern mobile platforms that only allow per-app install UUIDs.
@@ -552,33 +575,33 @@ export enum FilesystemDirectory {
   /**
    * The Application directory
    */
-  Application = 'APPLICATION',
+  Application = "APPLICATION",
   /**
    * The Documents directory
    */
-  Documents = 'DOCUMENTS',
+  Documents = "DOCUMENTS",
   /**
    * The Data directory
    */
-  Data = 'DATA',
+  Data = "DATA",
   /**
    * The Cache directory
    */
-  Cache = 'CACHE',
+  Cache = "CACHE",
   /**
    * The external directory (Android only)
    */
-  External = 'EXTERNAL',
+  External = "EXTERNAL",
   /**
    * The external storage directory (Android only)
    */
-  ExternalStorage = 'EXTERNAL_STORAGE'
+  ExternalStorage = "EXTERNAL_STORAGE"
 }
 
 export enum FilesystemEncoding {
-  UTF8 = 'utf8',
-  ASCII = 'ascii',
-  UTF16 = 'utf16'
+  UTF8 = "utf8",
+  ASCII = "ascii",
+  UTF16 = "utf16"
 }
 
 export interface FileWriteOptions {
@@ -750,20 +773,13 @@ export interface RenameOptions extends CopyOptions {}
 export interface FileReadResult {
   data: string;
 }
-export interface FileDeleteResult {
-}
-export interface FileWriteResult {
-}
-export interface FileAppendResult {
-}
-export interface MkdirResult {
-}
-export interface RmdirResult {
-}
-export interface RenameResult {
-}
-export interface CopyResult {
-}
+export interface FileDeleteResult {}
+export interface FileWriteResult {}
+export interface FileAppendResult {}
+export interface MkdirResult {}
+export interface RmdirResult {}
+export interface RenameResult {}
+export interface CopyResult {}
 export interface ReaddirResult {
   files: string[];
 }
@@ -784,12 +800,17 @@ export interface GeolocationPlugin extends Plugin {
   /**
    * Get the current GPS location of the device
    */
-  getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition>;
+  getCurrentPosition(
+    options?: GeolocationOptions
+  ): Promise<GeolocationPosition>;
   /**
    * Set up a watch for location changes. Note that watching for location changes
    * can consume a large amount of energy. Be smart about listening only when you need to.
    */
-  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): CallbackID;
+  watchPosition(
+    options: GeolocationOptions,
+    callback: GeolocationWatchCallback
+  ): CallbackID;
 
   /**
    * Clear a given watch
@@ -854,7 +875,10 @@ export interface GeolocationOptions {
   requireAltitude?: boolean; // default: false
 }
 
-export type GeolocationWatchCallback = (position: GeolocationPosition, err?: any) => void;
+export type GeolocationWatchCallback = (
+  position: GeolocationPosition,
+  err?: any
+) => void;
 
 //
 
@@ -893,9 +917,9 @@ export interface HapticsImpactOptions {
 }
 
 export enum HapticsImpactStyle {
-  Heavy = 'HEAVY',
-  Medium = 'MEDIUM',
-  Light = 'LIGHT'
+  Heavy = "HEAVY",
+  Medium = "MEDIUM",
+  Light = "LIGHT"
 }
 
 export interface HapticsNotificationOptions {
@@ -903,9 +927,9 @@ export interface HapticsNotificationOptions {
 }
 
 export enum HapticsNotificationType {
-  SUCCESS = 'SUCCESS',
-  WARNING = 'WARNING',
-  ERROR = 'ERROR'
+  SUCCESS = "SUCCESS",
+  WARNING = "WARNING",
+  ERROR = "ERROR"
 }
 
 export interface VibrateOptions {
@@ -941,10 +965,22 @@ export interface KeyboardPlugin extends Plugin {
    */
   setResizeMode(options: KeyboardResizeOptions): Promise<void>;
 
-  addListener(eventName: 'keyboardWillShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
-  addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
-  addListener(eventName: 'keyboardWillHide', listenerFunc: () => void): PluginListenerHandle;
-  addListener(eventName: 'keyboardDidHide', listenerFunc: () => void): PluginListenerHandle;
+  addListener(
+    eventName: "keyboardWillShow",
+    listenerFunc: (info: KeyboardInfo) => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "keyboardDidShow",
+    listenerFunc: (info: KeyboardInfo) => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "keyboardWillHide",
+    listenerFunc: () => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "keyboardDidHide",
+    listenerFunc: () => void
+  ): PluginListenerHandle;
 }
 
 export interface KeyboardInfo {
@@ -956,8 +992,8 @@ export interface KeyboardStyleOptions {
 }
 
 export enum KeyboardStyle {
-  Dark = 'DARK',
-  Light = 'LIGHT'
+  Dark = "DARK",
+  Light = "LIGHT"
 }
 
 export interface KeyboardResizeOptions {
@@ -965,10 +1001,10 @@ export interface KeyboardResizeOptions {
 }
 
 export enum KeyboardResize {
-  Body = 'body',
-  Ionic = 'ionic',
-  Native = 'native',
-  None = 'none'
+  Body = "body",
+  Ionic = "ionic",
+  Native = "native",
+  None = "none"
 }
 
 //
@@ -981,8 +1017,8 @@ export interface LocalNotificationPendingList {
   notifications: LocalNotificationRequest[];
 }
 
-export interface LocalNotificationScheduleResult extends LocalNotificationPendingList {
-}
+export interface LocalNotificationScheduleResult
+  extends LocalNotificationPendingList {}
 
 export interface LocalNotificationActionType {
   id: string;
@@ -1040,12 +1076,22 @@ export interface LocalNotification {
    * iOS 12+ only: set the summary argument for notification grouping
    */
   summaryArgument?: string;
+  group?: string;
+  groupSummary?: boolean;
 }
 
 export interface LocalNotificationSchedule {
   at?: Date;
   repeats?: boolean;
-  every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
+  every?:
+    | "year"
+    | "month"
+    | "two-weeks"
+    | "week"
+    | "day"
+    | "hour"
+    | "minute"
+    | "second";
   count?: number;
   on?: {
     year?: number;
@@ -1070,15 +1116,24 @@ export interface LocalNotificationEnabledResult {
 }
 
 export interface LocalNotificationsPlugin extends Plugin {
-  schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
+  schedule(options: {
+    notifications: LocalNotification[];
+  }): Promise<LocalNotificationScheduleResult>;
   getPending(): Promise<LocalNotificationPendingList>;
-  registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
+  registerActionTypes(options: {
+    types: LocalNotificationActionType[];
+  }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
-  addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+  addListener(
+    eventName: "localNotificationReceived",
+    listenerFunc: (notification: LocalNotification) => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "localNotificationActionPerformed",
+    listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void
+  ): PluginListenerHandle;
 }
-
 
 //
 
@@ -1140,9 +1195,9 @@ export interface ActionSheetOptions {
 }
 
 export enum ActionSheetOptionStyle {
-  Default = 'DEFAULT',
-  Destructive = 'DESTRUCTIVE',
-  Cancel = 'CANCEL'
+  Default = "DEFAULT",
+  Destructive = "DESTRUCTIVE",
+  Cancel = "CANCEL"
 }
 
 export interface ActionSheetOption {
@@ -1164,14 +1219,22 @@ export interface MotionPlugin extends Plugin {
   /**
    * Listen for accelerometer data
    */
-  addListener(eventName: 'accel', listenerFunc: (event: MotionEventResult) => void): PluginListenerHandle;
+  addListener(
+    eventName: "accel",
+    listenerFunc: (event: MotionEventResult) => void
+  ): PluginListenerHandle;
   /**
    * Listen for device orientation change (compass heading, etc.)
    */
-  addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
+  addListener(
+    eventName: "orientation",
+    listenerFunc: (event: MotionOrientationEventResult) => void
+  ): PluginListenerHandle;
 }
 
-export type MotionWatchOrientationCallback = (accel: MotionOrientationEventResult) => void;
+export type MotionWatchOrientationCallback = (
+  accel: MotionOrientationEventResult
+) => void;
 export type MotionWatchAccelCallback = (accel: MotionEventResult) => void;
 
 export interface MotionOrientationEventResult {
@@ -1199,7 +1262,6 @@ export interface MotionEventResult {
   interval: number;
 }
 
-
 //
 
 export interface NetworkPlugin extends Plugin {
@@ -1211,12 +1273,15 @@ export interface NetworkPlugin extends Plugin {
   /**
    * Listen for network status change events
    */
-  addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle;
+  addListener(
+    eventName: "networkStatusChange",
+    listenerFunc: (status: NetworkStatus) => void
+  ): PluginListenerHandle;
 }
 
 export interface NetworkStatus {
   connected: boolean;
-  connectionType: 'wifi' | 'cellular' | 'none' | 'unknown';
+  connectionType: "wifi" | "cellular" | "none" | "unknown";
 }
 
 export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
@@ -1224,12 +1289,12 @@ export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
 //
 
 export enum PermissionType {
-  Camera = 'camera',
-  Photos = 'photos',
-  Geolocation = 'geolocation',
-  Notifications = 'notifications',
-  ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write'
+  Camera = "camera",
+  Photos = "photos",
+  Geolocation = "geolocation",
+  Notifications = "notifications",
+  ClipboardRead = "clipboard-read",
+  ClipboardWrite = "clipboard-write"
 }
 
 export interface PermissionsOptions {
@@ -1237,7 +1302,7 @@ export interface PermissionsOptions {
 }
 
 export interface PermissionResult {
-  state: 'granted' | 'denied' | 'prompt';
+  state: "granted" | "denied" | "prompt";
 }
 
 export interface PermissionsPlugin extends Plugin {
@@ -1414,15 +1479,15 @@ export enum PhotosAlbumType {
   /**
    * Album is a "smart" album (such as Favorites or Recently Added)
    */
-  Smart = 'smart',
+  Smart = "smart",
   /**
    * Album is a cloud-shared album
    */
-  Shared = 'shared',
+  Shared = "shared",
   /**
    * Album is a user-created album
    */
-  User = 'user'
+  User = "user"
 }
 
 //
@@ -1458,8 +1523,8 @@ export interface PushNotificationChannel {
   name: string;
   description: string;
   sound: string;
-  importance: 1 | 2 | 3 | 4 | 5;
-  visibility?: -1 | 0 | 1 ;
+  importance: 1 | 2 | 3 | 4 | 5;
+  visibility?: -1 | 0 | 1;
 }
 
 export interface PushNotificationChannelList {
@@ -1469,15 +1534,29 @@ export interface PushNotificationChannelList {
 export interface PushNotificationsPlugin extends Plugin {
   register(): Promise<void>;
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
-  removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
+  removeDeliveredNotifications(
+    delivered: PushNotificationDeliveredList
+  ): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;
   createChannel(channel: PushNotificationChannel): Promise<void>;
   deleteChannel(channel: PushNotificationChannel): Promise<void>;
   listChannels(): Promise<PushNotificationChannelList>;
-  addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
-  addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+  addListener(
+    eventName: "registration",
+    listenerFunc: (token: PushNotificationToken) => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "registrationError",
+    listenerFunc: (error: any) => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "pushNotificationReceived",
+    listenerFunc: (notification: PushNotification) => void
+  ): PluginListenerHandle;
+  addListener(
+    eventName: "pushNotificationActionPerformed",
+    listenerFunc: (notification: PushNotificationActionPerformed) => void
+  ): PluginListenerHandle;
 }
 
 //
@@ -1536,9 +1615,9 @@ export interface SplashScreenShowOptions {
    */
   fadeOutDuration?: number;
   /**
-  * How long to show the splash screen when autoHide is enabled (in ms)
-  * Default is 3000ms
-  */
+   * How long to show the splash screen when autoHide is enabled (in ms)
+   * Default is 3000ms
+   */
   showDuration?: number;
 }
 
@@ -1582,11 +1661,11 @@ export enum StatusBarStyle {
   /**
    * Light text for dark backgrounds.
    */
-  Dark = 'DARK',
+  Dark = "DARK",
   /**
    * Dark text for light backgrounds.
    */
-  Light = 'LIGHT'
+  Light = "LIGHT"
 }
 
 export interface StatusBarBackgroundColorOptions {
@@ -1607,7 +1686,7 @@ export interface StoragePlugin extends Plugin {
   /**
    * Set the value for the given key
    */
-  set(options: { key: string, value: string }): Promise<void>;
+  set(options: { key: string; value: string }): Promise<void>;
   /**
    * Remove the value for this key (if any)
    */
@@ -1628,8 +1707,8 @@ export interface ToastPlugin extends Plugin {
 
 export interface ToastShowOptions {
   text: string;
-  duration?: 'short' | 'long';
-  position?: 'top' | 'center' | 'bottom';
+  duration?: "short" | "long";
+  position?: "top" | "center" | "bottom";
 }
 
 export interface WebViewPlugin extends Plugin {
