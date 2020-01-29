@@ -6,7 +6,7 @@ import { CheckFunction, check, checkPackage, log, logError, logFatal, logInfo, r
 
 import chalk from 'chalk';
 
-export async function updateCommand(config: Config, selectedPlatformName: string) {
+export async function updateCommand(config: Config, selectedPlatformName: string, deployment: boolean) {
   const then = +new Date;
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
@@ -19,7 +19,7 @@ export async function updateCommand(config: Config, selectedPlatformName: string
       [checkPackage, ...updateChecks(config, platforms)]
     );
 
-    await allSerial(platforms.map(platformName => async () => await update(config, platformName)));
+    await allSerial(platforms.map(platformName => async () => await update(config, platformName, deployment)));
     const now = +new Date;
     const diff = (now - then) / 1000;
     log(`Update finished in ${diff}s`);
@@ -46,11 +46,11 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
   return checks;
 }
 
-export async function update(config: Config, platformName: string) {
+export async function update(config: Config, platformName: string, deployment: boolean) {
   try {
     await runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
       if (platformName === config.ios.name) {
-        await updateIOS(config);
+        await updateIOS(config, deployment);
       } else if (platformName === config.android.name) {
         await updateAndroid(config);
       }

@@ -22,6 +22,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var hostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
+  private let assetsFolder = "public"
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
@@ -77,6 +78,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
+    if let allowsLinkPreview = (capConfig.getValue("ios.allowsLinkPreview") as? Bool) {
+        webView?.allowsLinkPreview = allowsLinkPreview
+    }
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
@@ -94,8 +98,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   private func getStartPath() -> String? {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
-    guard var startPath = Bundle.main.path(forResource: fullStartPath.relativePath, ofType: nil) else {
+    var resourcesPath = assetsFolder
+    if !startDir.isEmpty {
+      resourcesPath = URL(fileURLWithPath: resourcesPath).appendingPathComponent(startDir).relativePath
+    }
+
+    guard var startPath = Bundle.main.path(forResource: resourcesPath, ofType: nil) else {
       printLoadError()
       return nil
     }
@@ -145,7 +153,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func printLoadError() {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
+    let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir)
     
     CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
     CAPLog.print("⚡️  This file is the root of your web app and must exist before")
@@ -159,7 +167,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func loadWebView() {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir).appendingPathComponent("index")
+    let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
       fatalLoadError()
     }

@@ -24,7 +24,7 @@ public class App extends Plugin {
     Log.d(getLogTag(), "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
-    notifyListeners(EVENT_STATE_CHANGE, data, true);
+    notifyListeners(EVENT_STATE_CHANGE, data, false);
   }
 
   public void fireRestoredResult(PluginResult result) {

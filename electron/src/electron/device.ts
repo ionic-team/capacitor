@@ -1,4 +1,4 @@
-import { DeviceInfo, DeviceLanguageCodeResult, DevicePlugin, DevicePluginWeb,  WebPlugin } from "@capacitor/core";
+import { DeviceInfo, DeviceLanguageCodeResult, DevicePlugin, DevicePluginWeb, WebPlugin } from "@capacitor/core";
 
 declare var navigator: any;
 const webDevice = new DevicePluginWeb();
@@ -19,6 +19,7 @@ export class DevicePluginElectron extends WebPlugin implements DevicePlugin {
       platform: <'electron'> 'electron',
       appVersion: '',
       appBuild: '',
+      operatingSystem: info.operatingSystem,
       osVersion: info.osVersion,
       manufacturer: navigator.vendor,
       isVirtual: false,

@@ -52,16 +52,18 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .command('sync [platform]')
-    .description('updates + copy')
-    .action(platform => {
-      return syncCommand(config, platform);
+    .description('copy + update')
+    .option('--deployment', 'Optional: if provided, Podfile.lock won\'t be deleted and pod install will use --deployment option')
+    .action((platform, { deployment }) => {
+      return syncCommand(config, platform, deployment);
     });
 
   program
     .command('update [platform]')
     .description(`updates the native plugins and dependencies based in package.json`)
-    .action(platform => {
-      return updateCommand(config, platform);
+    .option('--deployment', 'Optional: if provided, Podfile.lock won\'t be deleted and pod install will use --deployment option')
+    .action((platform, { deployment }) => {
+      return updateCommand(config, platform, deployment);
     });
 
   program

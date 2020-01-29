@@ -64,7 +64,7 @@ If you encountered any issue above, please let us know by filing an issue on the
 
 ### Next Steps
 
-If your app ran you are now ready to continue developing and building your app. Use the various APIs available, Capacitor or Cordova plugins, or custom native code to build our the rest of your app.
+If your app ran you are now ready to continue developing and building your app. Use the various APIs available, Capacitor or Cordova plugins, or custom native code to build out the rest of your app.
 
 ## Further Reading
 

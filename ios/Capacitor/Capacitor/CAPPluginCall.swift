@@ -26,7 +26,13 @@ public typealias PluginEventListener = CAPPluginCall
   }
   
   @nonobjc func getFloat(_ key: String, _ defaultValue: Float? = nil) -> Float? {
-    return self.options[key] as? Float ?? defaultValue
+    if let floatValue = self.options[key] as? Float {
+        return floatValue
+    }
+    if let doubleValue = self.options[key] as? Double {
+        return Float(doubleValue)
+    }
+    return defaultValue
   }
   
   @nonobjc func getDouble(_ key: String, _ defaultValue: Double? = nil) -> Double? {
