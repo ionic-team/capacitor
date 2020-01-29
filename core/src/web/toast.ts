@@ -18,7 +18,6 @@ export class ToastPluginWeb extends WebPlugin implements ToastPlugin {
     const toast = document.createElement('pwa-toast') as any;
     toast.duration = duration;
     toast.message = options.text;
-    toast.position = options.position;
     document.body.appendChild(toast);
   }
 }
