@@ -106,6 +106,10 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 ## Audio
 
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Voice Recorder | `capacitor-voice-recorder` | <https://bitbucket.org/tchvu3/capacitor-voice-recorder> | |
+
 ## Ads
 
 | Name                    | NPM package | GitHub | Notes |

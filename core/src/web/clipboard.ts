@@ -22,8 +22,8 @@ export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
       return Promise.reject('Clipboard API not available in this browser');
     }
 
-    if (options.string || options.url) {
-      await navigator.clipboard.writeText(options.string || options.url);
+    if (options.string !== undefined || options.url) {
+      await navigator.clipboard.writeText(options.string !== undefined ? options.string : options.url);
     } else if (options.image) {
       return Promise.reject('Setting images not supported on the web');
     }
