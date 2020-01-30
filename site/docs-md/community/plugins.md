@@ -64,12 +64,6 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
 | Camera preview | `capacitor-camera-preview` | <https://github.com/arielhernandezmusa/capacitor-camera-preview> | |
 
-## Voice
-
-| Name                    | NPM package | GitHub | Notes |
-| ----------------------- | ----------- | ------ | ------ |
-| Voice Recorder | `capacitor-voice-recorder` | <https://bitbucket.org/tchvu3/capacitor-voice-recorder> | |
-
 ## Analytics
 
 | Name                    | NPM package | GitHub | Notes |
@@ -111,6 +105,10 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Google Fit | `capacitor-google-fit` | <https://github.com/Ad-Scientiam/capacitor-google-fit> | Android only (currently) |
 
 ## Audio
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Voice Recorder | `capacitor-voice-recorder` | <https://bitbucket.org/tchvu3/capacitor-voice-recorder> | |
 
 ## Ads
 
