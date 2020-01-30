@@ -42,12 +42,10 @@ public class CAPToastPlugin : CAPPlugin {
         y = 40
       } else if (position == "center") {
         y = (vc.view.bounds.size.height/2) - (height/2)
-      } else if (position == "bottom") {
-        y = vc.view.bounds.size.height - height - (height/2)
       } else {
-        call.error("Invalid position. Valid options are 'top', 'center' and 'bottom'.")
-        return
+        y = vc.view.bounds.size.height - height - (height/2)
       }
+
       lb.frame = CGRect(
         x: ((vc.view.bounds.size.width)/2) - ((expectedSizeTitle.width+32)/2),
         y: y,
