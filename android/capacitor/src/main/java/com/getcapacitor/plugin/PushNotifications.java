@@ -1,10 +1,13 @@
 package com.getcapacitor.plugin;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.net.Uri;
 
@@ -25,6 +28,10 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,12 +106,62 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void getDeliveredNotifications(PluginCall call) {
-    call.unimplemented();
+    JSArray notifications = new JSArray();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+
+      for (StatusBarNotification notif : activeNotifications) {
+        JSObject jsNotif = new JSObject();
+
+        jsNotif.put("id", notif.getId());
+
+        Notification notification = notif.getNotification();
+        if (notification != null) {
+          jsNotif.put("title", notification.extras.getCharSequence(Notification.EXTRA_TITLE));
+          jsNotif.put("body", notification.extras.getCharSequence(Notification.EXTRA_TEXT));
+
+          JSObject extras = new JSObject();
+
+          for (String key : notification.extras.keySet()) {
+            extras.put(key, notification.extras.get(key));
+          }
+
+          jsNotif.put("data", extras);
+        }
+
+        notifications.put(jsNotif);
+      }
+    }
+
+    JSObject result = new JSObject();
+    result.put("notifications", notifications);
+    call.resolve(result);
   }
 
   @PluginMethod()
   public void removeDeliveredNotifications(PluginCall call) {
-    call.unimplemented();
+    JSArray notifications = call.getArray("notifications");
+
+    List<Integer> ids = new ArrayList<>();
+    try {
+      for (Object o : notifications.toList()) {
+        if (o instanceof JSONObject) {
+          JSObject notif = JSObject.fromJSONObject((JSONObject) o);
+          Integer id = notif.getInteger("id");
+          ids.add(id);
+        } else {
+          call.reject("Expected notifications to be a list of notification objects");
+        }
+      }
+    } catch (JSONException e) {
+      call.reject(e.getMessage());
+    }
+
+    for (int id : ids) {
+      notificationManager.cancel(id);
+    }
+
+    call.resolve();
   }
 
   @PluginMethod()
