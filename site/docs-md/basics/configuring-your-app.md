@@ -110,6 +110,11 @@ The current ones you might configure are:
     "appendUserAgent": "string to append for iOS",
     // Background color of Capacitor WebView for iOS only
     "backgroundColor": "#ffffffff",
+    // Configure the WebView's UIScrollView's content inset behavior
+    // Default is never
+    // Possible values are "automatic", "scrollableAxes", "never" and "always"
+    // https://developer.apple.com/documentation/uikit/uiscrollview/contentinsetadjustmentbehavior
+    "contentInset": "always",
     // Configure the Swift version to be used for Cordova plugins.
     // Default is 4.0
     "cordovaSwiftVersion": "3.0",
