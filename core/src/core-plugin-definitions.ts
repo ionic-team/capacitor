@@ -1502,6 +1502,8 @@ export interface PushNotification {
   data: any;
   click_action?: string;
   link?: string;
+  group?: string;
+  groupSummary?: boolean;
 }
 
 export interface PushNotificationActionPerformed {
