@@ -2,7 +2,7 @@ import { Config } from './config';
 import { Plugin, PluginType, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { basename, extname, join, resolve } from 'path';
-import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, readXML, resolveNode, writeXML } from './common';
+import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, parseXML, readXML, resolveNode, writeXML } from './common';
 import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
@@ -214,7 +214,7 @@ export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: C
   await autoGenerateConfig(config, cordovaPlugins, platform);
 }
 
-export async function copyCordovaJSFiles(config: Config, platform: string) {
+export async function getCordovaPlugins(config: Config, platform: string): Promise<Plugin[]> {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
@@ -222,9 +222,8 @@ export async function copyCordovaJSFiles(config: Config, platform: string) {
   } else if (platform === config.android.name) {
     plugins = getAndroidPlugins(allPlugins);
   }
-  const cordovaPlugins = plugins
+  return plugins
   .filter(p => getPluginType(p, platform) === PluginType.Cordova);
-  await handleCordovaPluginsJS(cordovaPlugins, config, platform);
 }
 
 export async function logCordovaManualSteps(cordovaPlugins: Plugin[], config: Config, platform: string) {
@@ -364,4 +363,77 @@ export async function getCordovaPreferences(config: Config) {
     cordova = config.app.extConfig.cordova;
   }
   return cordova;
+}
+
+export async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Config, platform: string) {
+  const pluginsFolder = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
+  const manifestPath = join(pluginsFolder, 'src', 'main', 'AndroidManifest.xml');
+  let rootXMLEntries: Array<any> = [];
+  let applicationXMLEntries: Array<any> = [];
+  let applicationXMLAttributes: Array<any> = [];
+  cordovaPlugins.map(async p => {
+    const editConfig = getPlatformElement(p, platform, 'edit-config');
+    const configFile = getPlatformElement(p, platform, 'config-file');
+    editConfig.concat(configFile).map(async (configElement: any) => {
+      if (configElement.$ && (configElement.$.target && configElement.$.target.includes('AndroidManifest.xml') || configElement.$.file && configElement.$.file.includes('AndroidManifest.xml'))) {
+        const keys = Object.keys(configElement).filter(k  => k !== '$');
+        keys.map(k => {
+          configElement[k].map((e: any) => {
+            const xmlElement = buildXmlElement(e, k);
+            const pathParts = getPathParts(configElement.$.parent || configElement.$.target);
+            if (pathParts.length > 1) {
+              if (pathParts.pop() === 'application') {
+                if (configElement.$.mode && configElement.$.mode === 'merge') {
+                  Object.keys(e.$).map((ek: any) => {
+                    applicationXMLAttributes.push(`${ek}="${e.$[ek]}"`);
+                  });
+                } else if (!applicationXMLEntries.includes(xmlElement) && !contains(applicationXMLEntries, xmlElement, k)) {
+                  applicationXMLEntries.push(xmlElement);
+                }
+              } else {
+                logInfo(`plugin ${p.id} requires to add \n  ${xmlElement} to your AndroidManifest.xml to work`);
+              }
+            } else {
+              if (!rootXMLEntries.includes(xmlElement) && !contains(rootXMLEntries, xmlElement, k)) {
+                rootXMLEntries.push(xmlElement);
+              }
+            }
+          });
+        });
+      }
+    });
+  });
+  let cleartext = config.app.extConfig.server?.cleartext ? 'android:usesCleartextTraffic="true"' : '';
+  let content = `<?xml version='1.0' encoding='utf-8'?>
+<manifest package="capacitor.android.plugins"
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:amazon="http://schemas.amazon.com/apk/res/android">
+<application ${applicationXMLAttributes.join('\n')}${cleartext}>
+${applicationXMLEntries.join('\n')}
+</application>
+${rootXMLEntries.join('\n')}
+</manifest>`;
+  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), config.app.appId);
+  await writeFileAsync(manifestPath, content);
+}
+
+function getPathParts(path: string) {
+  const rootPath = 'manifest';
+  path = path.replace('/*', rootPath);
+  let parts = path.split('/').filter(part => part !== '');
+  if (parts.length > 1 || parts.includes(rootPath)) {
+    return parts;
+  }
+  return [rootPath, path];
+}
+
+function contains(a: Array<any>, obj: any, k: string) {
+  const element = parseXML(obj);
+  for (var i = 0; i < a.length; i++) {
+    const current = parseXML(a[i]);
+    if (element && current && current[k]  && element[k] && current[k].$ && element[k].$ && element[k].$['android:name'] === current[k].$['android:name']) {
+      return true;
+    }
+  }
+  return false;
 }
