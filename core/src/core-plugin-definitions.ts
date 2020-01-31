@@ -1033,10 +1033,12 @@ export interface LocalNotification {
   actionTypeId?: string;
   extra?: any;
   /**
-   * iOS only: set the thread identifier and summary argument for notification
-   * grouping
+   * iOS only: set the thread identifier for notification grouping
    */
   threadIdentifier?: string;
+  /**
+   * iOS 12+ only: set the summary argument for notification grouping
+   */
   summaryArgument?: string;
 }
 
