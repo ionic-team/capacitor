@@ -118,9 +118,8 @@ The current ones you might configure are:
     "minVersion": "11.3",
     // Some Cordova plugins require to configure the linker flags
     "cordovaLinkerFlags": ["-ObjC"],
-    // Turn off link previews for hyperlinks. `true` by default. Turn this off if your
-    // links are are correctly being followed because users hold the link a little longer than
-    // a quick tap. 
+    // A Boolean value that determines whether pressing on a link displays a preview of
+    // the destination for the link.
     "allowsLinkPreview": false
   },
   "electron": {
