@@ -24,6 +24,9 @@ export interface ExternalConfig {
   };
   npmClient?: string;
   cordova?: any;
+  server?: {
+    cleartext?: boolean;
+  }
 }
 
 export interface AppPluginsConfig {
