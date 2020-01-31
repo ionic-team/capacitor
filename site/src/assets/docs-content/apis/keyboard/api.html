@@ -34,6 +34,60 @@ the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI<
   
 </div></div>
 <div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-setResizeMode-0">setResizeMode</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">setResizeMode</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="615">KeyboardResizeOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
+    <div class="avc-code-method-comment">Programmatically set the resize mode</div>
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">options</span>
+                
+<avc-code-type type-id="615">KeyboardResizeOptions</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-setScroll-0">setScroll</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">setScroll</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type>{ isDisabled: <avc-code-type>boolean</avc-code-type> }</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
+    <div class="avc-code-method-comment">Programmatically enable or disable the WebView scroll</div>
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">options</span>
+                
+<avc-code-type>{ isDisabled: <avc-code-type>boolean</avc-code-type> }</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-setStyle-0">setStyle</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">setStyle</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="610">KeyboardStyleOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
+    <div class="avc-code-method-comment">Programmatically set the keyboard style</div>
+  <div class="avc-code-method-params">
+<div class="avc-code-method-param-info">
+                <span class="avc-code-method-param-info-name">options</span>
+                
+<avc-code-type type-id="610">KeyboardStyleOptions</avc-code-type>
+</div>
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-show-0">show</h3>
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">show</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
@@ -49,7 +103,7 @@ the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI<
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-0">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardWillShow"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardWillShow"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(info: <avc-code-type type-id="608">KeyboardInfo</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     
   <div class="avc-code-method-params">
@@ -61,7 +115,7 @@ the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI<
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type>
+<avc-code-type>(info: <avc-code-type type-id="608">KeyboardInfo</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -72,7 +126,7 @@ the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI<
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-1">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardDidShow"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"keyboardDidShow"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(info: <avc-code-type type-id="608">KeyboardInfo</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     
   <div class="avc-code-method-params">
@@ -84,7 +138,7 @@ the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI<
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>(info: <avc-code-type type-id="571">KeyboardInfo</avc-code-type>) => void</avc-code-type>
+<avc-code-type>(info: <avc-code-type type-id="608">KeyboardInfo</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -139,4 +193,96 @@ the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI<
   
 </div></div>
 <h3 id="interfaces">Interfaces Used</h3>
+
+    <div class="avc-code-interface" id="type-615">
+      <h4 class="avc-code-interface-name">KeyboardResizeOptions</h4>
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">KeyboardResizeOptions</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">mode</span>
+              :
+              <avc-code-type type-id="617">KeyboardResize</avc-code-type>;
+            </div>
+          </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface" id="type-610">
+      <h4 class="avc-code-interface-name">KeyboardStyleOptions</h4>
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">KeyboardStyleOptions</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">style</span>
+              :
+              <avc-code-type type-id="612">KeyboardStyle</avc-code-type>;
+            </div>
+          </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+      <div class="avc-code-interface" id="type-617">
+        <h4 class="avc-code-interface-name">KeyboardResize</h4>
+        <div class="avc-code-line">
+          <span class="avc-code-keyword">enum</span> <span class="avc-code-type-name">KeyboardResize</span>
+          <span class="avc-code-brace">{</span>
+        </div>
+
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment"></div>
+              <div class="avc-code-line"><span class="avc-code-param-name">Body</span>:
+                <avc-code-type">"body"</avc-code-type>
+              </div>
+            </div>
+
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment"></div>
+              <div class="avc-code-line"><span class="avc-code-param-name">Ionic</span>:
+                <avc-code-type">"ionic"</avc-code-type>
+              </div>
+            </div>
+
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment"></div>
+              <div class="avc-code-line"><span class="avc-code-param-name">Native</span>:
+                <avc-code-type">"native"</avc-code-type>
+              </div>
+            </div>
+
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment"></div>
+              <div class="avc-code-line"><span class="avc-code-param-name">None</span>:
+                <avc-code-type">"none"</avc-code-type>
+              </div>
+            </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+      <div class="avc-code-interface" id="type-612">
+        <h4 class="avc-code-interface-name">KeyboardStyle</h4>
+        <div class="avc-code-line">
+          <span class="avc-code-keyword">enum</span> <span class="avc-code-type-name">KeyboardStyle</span>
+          <span class="avc-code-brace">{</span>
+        </div>
+
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment"></div>
+              <div class="avc-code-line"><span class="avc-code-param-name">Dark</span>:
+                <avc-code-type">"DARK"</avc-code-type>
+              </div>
+            </div>
+
+            <div class="avc-code-interface-param">
+              <div class="avc-code-param-comment"></div>
+              <div class="avc-code-line"><span class="avc-code-param-name">Light</span>:
+                <avc-code-type">"LIGHT"</avc-code-type>
+              </div>
+            </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 </div>
