@@ -122,6 +122,8 @@ public class PushNotifications extends Plugin {
         if (notification != null) {
           jsNotif.put("title", notification.extras.getCharSequence(Notification.EXTRA_TITLE));
           jsNotif.put("body", notification.extras.getCharSequence(Notification.EXTRA_TEXT));
+          jsNotif.put("group", notification.getGroup());
+          jsNotif.put("groupSummary", 0 != (notification.flags & Notification.FLAG_GROUP_SUMMARY));
 
           JSObject extras = new JSObject();
 
