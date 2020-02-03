@@ -1,3 +1,60 @@
+## [1.5.0](https://github.com/ionic-team/capacitor/compare/1.4.0...1.5.0) (2020-02-03)
+
+### Bug Fixes
+
+* fix(web/clipboard): allow writing empty string (#2371) ([4a41922](https://github.com/ionic-team/capacitor/commit/4a41922)), closes [#2371](https://github.com/ionic-team/capacitor/issues/2371)
+* fix(android): add missing GPS tags to exif data (#2284) ([3b43df1](https://github.com/ionic-team/capacitor/commit/3b43df1)), closes [#2284](https://github.com/ionic-team/capacitor/issues/2284)
+* fix(android): implement getDeliveredNotifications and removeDeliveredNotifications (#2266) ([d942523](https://github.com/ionic-team/capacitor/commit/d942523)), closes [#2266](https://github.com/ionic-team/capacitor/issues/2266)
+* fix(android): make Browser plugin fire browserFinished (#2332) ([4f5a4fc](https://github.com/ionic-team/capacitor/commit/4f5a4fc)), closes [#2332](https://github.com/ionic-team/capacitor/issues/2332)
+* fix(android): make Share properly share file urls (#2338) ([9226d77](https://github.com/ionic-team/capacitor/commit/9226d77)), closes [#2338](https://github.com/ionic-team/capacitor/issues/2338)
+* fix(cli): handle edit-config with merge mode on application object (#2322) ([9e56701](https://github.com/ionic-team/capacitor/commit/9e56701)), closes [#2322](https://github.com/ionic-team/capacitor/issues/2322)
+* fix(cli): linux not showing error message on open (#2336) ([72d07e0](https://github.com/ionic-team/capacitor/commit/72d07e0)), closes [#2336](https://github.com/ionic-team/capacitor/issues/2336)
+* fix(cli): move Android Studio detection to avoid displaying registry errors (#2364) ([60cd80b](https://github.com/ionic-team/capacitor/commit/60cd80b)), closes [#2364](https://github.com/ionic-team/capacitor/issues/2364)
+* fix(cli): use proper kebab-case name for npm package (#2276) ([c9f1511](https://github.com/ionic-team/capacitor/commit/c9f1511)), closes [#2276](https://github.com/ionic-team/capacitor/issues/2276)
+* fix(cli): use rimraf instead of rm -rf (#2285) ([ec458c8](https://github.com/ionic-team/capacitor/commit/ec458c8)), closes [#2285](https://github.com/ionic-team/capacitor/issues/2285)
+* fix(cordova): add new iOS Swift CDVCommandStatus enums (#2328) ([45244d6](https://github.com/ionic-team/capacitor/commit/45244d6)), closes [#2328](https://github.com/ionic-team/capacitor/issues/2328)
+* fix(cordova): avoid build failure if plugin uses viewController.webView (#2330) ([69f589b](https://github.com/ionic-team/capacitor/commit/69f589b)), closes [#2330](https://github.com/ionic-team/capacitor/issues/2330)
+* fix(cordova): patch CDVCapture bundle path (#2342) ([3f4bd1a](https://github.com/ionic-team/capacitor/commit/3f4bd1a)), closes [#2342](https://github.com/ionic-team/capacitor/issues/2342)
+* fix(ios): avoid lock of subsequent plugin calls (#2317) ([02da187](https://github.com/ionic-team/capacitor/commit/02da187)), closes [#2317](https://github.com/ionic-team/capacitor/issues/2317)
+* fix(ios): fire appStateChange in incoming calls (#2282) ([7fd0c7c](https://github.com/ionic-team/capacitor/commit/7fd0c7c)), closes [#2282](https://github.com/ionic-team/capacitor/issues/2282)
+* fix(ios): incorrect behavior of appendingPathComponent when framework is present (#2309) ([0a25cce](https://github.com/ionic-team/capacitor/commit/0a25cce)), closes [#2309](https://github.com/ionic-team/capacitor/issues/2309)
+
+
+### Features
+
+* feat(ios/android): allow to position Toast (#2337) ([a1384d5](https://github.com/ionic-team/capacitor/commit/a1384d5)), closes [#2337](https://github.com/ionic-team/capacitor/issues/2337)
+* feat(android): add group and groupSummary to LocalNotifications (#2385) ([8e8a157](https://github.com/ionic-team/capacitor/commit/8e8a157)), closes [#2385](https://github.com/ionic-team/capacitor/issues/2385)
+* feat(android): add splashFullScreen configuration option (#2302) ([9521e0a](https://github.com/ionic-team/capacitor/commit/9521e0a)), closes [#2302](https://github.com/ionic-team/capacitor/issues/2302)
+* feat(android): add support to custom sound on Push Notifications (#2362) ([284d4b2](https://github.com/ionic-team/capacitor/commit/284d4b2)), closes [#2362](https://github.com/ionic-team/capacitor/issues/2362)
+* feat(cli): allow to modify cleartext setting from capacitor.config.json (#2397) ([181d564](https://github.com/ionic-team/capacitor/commit/181d564)), closes [#2397](https://github.com/ionic-team/capacitor/issues/2397)
+* feat(ios): add configuration option for allowsLinkPreview (#2382) ([47b4d66](https://github.com/ionic-team/capacitor/commit/47b4d66)), closes [#2382](https://github.com/ionic-team/capacitor/issues/2382)
+* feat(ios): add threadIdentifier and summaryArgument to LocalNotification (#2396) ([7c5f30b](https://github.com/ionic-team/capacitor/commit/7c5f30b)), closes [#2396](https://github.com/ionic-team/capacitor/issues/2396)
+* feat(ios): Allow to configure WebView's ScrollView's content insets (#2392) ([1f7e40d](https://github.com/ionic-team/capacitor/commit/1f7e40d)), closes [#2392](https://github.com/ionic-team/capacitor/issues/2392)
+
+
+### Docs
+
+* site updates ([64286f8](https://github.com/ionic-team/capacitor/commit/64286f8))
+* docs: add allowsLinkPreview configuration information (#2387) ([e603032](https://github.com/ionic-team/capacitor/commit/e603032)), closes [#2387](https://github.com/ionic-team/capacitor/issues/2387)
+* docs: Add how to determine installed plugin version in project (#2319) ([580a236](https://github.com/ionic-team/capacitor/commit/580a236)), closes [#2319](https://github.com/ionic-team/capacitor/issues/2319)
+* docs: fix broken link to Cordova project description (#2277) ([88ce7db](https://github.com/ionic-team/capacitor/commit/88ce7db)), closes [#2277](https://github.com/ionic-team/capacitor/issues/2277)
+* docs(android-guide): fix typo (#2343) ([4475ed5](https://github.com/ionic-team/capacitor/commit/4475ed5)), closes [#2343](https://github.com/ionic-team/capacitor/issues/2343)
+* docs(ce-plugins): add @rdlabo/capacitor-codescanner (#2344) ([b2522ca](https://github.com/ionic-team/capacitor/commit/b2522ca)), closes [#2344](https://github.com/ionic-team/capacitor/issues/2344)
+* docs(ce-plugins): add Apple Login Plugin (#2267) ([663657d](https://github.com/ionic-team/capacitor/commit/663657d)), closes [#2267](https://github.com/ionic-team/capacitor/issues/2267)
+* docs(ce-plugins): Add capacitor UDP plugin (#2314) ([e904eaa](https://github.com/ionic-team/capacitor/commit/e904eaa)), closes [#2314](https://github.com/ionic-team/capacitor/issues/2314)
+* docs(ce-plugins): add capacitor-voice-recorder (#2378) ([9836d05](https://github.com/ionic-team/capacitor/commit/9836d05)), closes [#2378](https://github.com/ionic-team/capacitor/issues/2378)
+* docs(ce-plugins): Update capacitor-admob plugin note (#2335) ([5aeb4e6](https://github.com/ionic-team/capacitor/commit/5aeb4e6)), closes [#2335](https://github.com/ionic-team/capacitor/issues/2335)
+* docs(core): show array type instead of any (#2318) ([2b9fb4d](https://github.com/ionic-team/capacitor/commit/2b9fb4d)), closes [#2318](https://github.com/ionic-team/capacitor/issues/2318)
+* docs(keyboard): Add Keyboard config info (#2245) ([3344af2](https://github.com/ionic-team/capacitor/commit/3344af2)), closes [#2245](https://github.com/ionic-team/capacitor/issues/2245) [#2243](https://github.com/ionic-team/capacitor/issues/2243)
+* docs(readme): update for 2020 (#2341) ([2e24d8d](https://github.com/ionic-team/capacitor/commit/2e24d8d)), closes [#2341](https://github.com/ionic-team/capacitor/issues/2341)
+
+
+### Chores
+
+* chore(cli): add interface for new plugin answers and use arrow function for input validation (#2286) ([0d2826e](https://github.com/ionic-team/capacitor/commit/0d2826e)), closes [#2286](https://github.com/ionic-team/capacitor/issues/2286)
+
+
+
 ## [1.4.0](https://github.com/ionic-team/capacitor/compare/1.3.0...1.4.0) (2019-12-12)
 
 
