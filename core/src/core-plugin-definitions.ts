@@ -1447,7 +1447,15 @@ export interface PushNotification {
   data: any;
   click_action?: string;
   link?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
   group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
   groupSummary?: boolean;
 }
 
