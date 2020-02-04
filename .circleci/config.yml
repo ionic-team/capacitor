@@ -7,19 +7,9 @@ jobs:
     steps:
       - checkout
 
-  install-cocoapods:
-    macos:
-      xcode: "10.0"
-    working_directory: /tmp/workspace
-    steps:
-      - run:
-          name: Install CocoaPods
-          command: |
-            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-
   run-cli-tests:
     macos:
-      xcode: "10.0"
+      xcode: "11.1.0"
     working_directory: /tmp/workspace
 
     steps:
@@ -39,7 +29,7 @@ jobs:
 
   build-ios:
     macos:
-      xcode: "10.0"
+      xcode: "11.1.0"
     working_directory: /tmp/workspace
 
     steps:
@@ -65,12 +55,8 @@ workflows:
   node-ios-android:
     jobs:
       - get-cli
-      - install-cocoapods
       - run-cli-tests:
           requires:
             - get-cli
-            - install-cocoapods
-      - build-ios:
-          requires:
-            - install-cocoapods
+      - build-ios
       - build-android
