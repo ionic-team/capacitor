@@ -1486,8 +1486,12 @@ export interface PushNotificationChannelList {
   channels: PushNotificationChannel[];
 }
 
+export interface PushNotificationRegistrationResponse {
+  granted: boolean;
+}
+
 export interface PushNotificationsPlugin extends Plugin {
-  register(): Promise<void>;
+  register(): Promise<PushNotificationRegistrationResponse>;
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;

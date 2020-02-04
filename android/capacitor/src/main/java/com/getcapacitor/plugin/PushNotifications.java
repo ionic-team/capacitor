@@ -104,7 +104,9 @@ public class PushNotifications extends Plugin {
         sendError(e.getLocalizedMessage());
       }
     });
-    call.success();
+    JSObject result = new JSObject();
+    result.put("granted", true);
+    call.success(result);
   }
 
   @PluginMethod()
