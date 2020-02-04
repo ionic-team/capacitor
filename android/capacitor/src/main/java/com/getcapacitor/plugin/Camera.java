@@ -1,6 +1,7 @@
 package com.getcapacitor.plugin;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -53,7 +54,6 @@ public class Camera extends Plugin {
   static final int REQUEST_IMAGE_CAPTURE = PluginRequestCodes.CAMERA_IMAGE_CAPTURE;
   static final int REQUEST_IMAGE_PICK = PluginRequestCodes.CAMERA_IMAGE_PICK;
   static final int REQUEST_IMAGE_EDIT = PluginRequestCodes.CAMERA_IMAGE_EDIT;
-
   // Message constants
   private static final String INVALID_RESULT_TYPE_ERROR = "Invalid resultType option";
   private static final String PERMISSION_DENIED_ERROR = "Unable to access camera, user denied permission request";
@@ -221,7 +221,7 @@ public class Camera extends Plugin {
     }
   }
 
-  public void processCameraImage(PluginCall call, Intent data) {
+  public void processCameraImage(PluginCall call) {
     boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
     CameraResultType resultType = getResultType(call.getString("resultType"));
     if(imageFileSavePath == null) {
@@ -468,12 +468,15 @@ public class Camera extends Plugin {
     settings = getSettings(savedCall);
 
     if (requestCode == REQUEST_IMAGE_CAPTURE) {
-      processCameraImage(savedCall, data);
+      processCameraImage(savedCall);
     } else if (requestCode == REQUEST_IMAGE_PICK) {
       processPickedImage(savedCall, data);
-    } else if (requestCode == REQUEST_IMAGE_EDIT) {
+    } else if (requestCode == REQUEST_IMAGE_EDIT && resultCode == Activity.RESULT_OK) {
       isEdited = true;
       processPickedImage(savedCall, data);
+    } else if (resultCode == Activity.RESULT_CANCELED && imageFileSavePath != null) {
+      isEdited = true;
+      processCameraImage(savedCall);
     }
   }
 
