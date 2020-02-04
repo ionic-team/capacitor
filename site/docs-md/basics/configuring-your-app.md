@@ -110,6 +110,11 @@ The current ones you might configure are:
     "appendUserAgent": "string to append for iOS",
     // Background color of Capacitor WebView for iOS only
     "backgroundColor": "#ffffffff",
+    // Configure the WebView's UIScrollView's content inset behavior
+    // Default is never
+    // Possible values are "automatic", "scrollableAxes", "never" and "always"
+    // https://developer.apple.com/documentation/uikit/uiscrollview/contentinsetadjustmentbehavior
+    "contentInset": "always",
     // Configure the Swift version to be used for Cordova plugins.
     // Default is 4.0
     "cordovaSwiftVersion": "3.0",
@@ -117,7 +122,10 @@ The current ones you might configure are:
     // Default is 11.0
     "minVersion": "11.3",
     // Some Cordova plugins require to configure the linker flags
-    "cordovaLinkerFlags": ["-ObjC"]
+    "cordovaLinkerFlags": ["-ObjC"],
+    // A Boolean value that determines whether pressing on a link displays a preview of
+    // the destination for the link.
+    "allowsLinkPreview": false
   },
   "electron": {
     // User agent of Capacitor WebView for Electron
