@@ -9,7 +9,7 @@ jobs:
 
   run-cli-tests:
     macos:
-      xcode: "11.1.0"
+      xcode: "11.3.1"
     working_directory: /tmp/workspace
 
     steps:
