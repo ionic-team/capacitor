@@ -10,8 +10,8 @@ public class CAPToastPlugin : CAPPlugin {
       call.error("text must be provided and must be a string.")
       return
     }
-    let durationStyle = call.get("durationStyle", String.self, "long")!
-    let duration = durationStyle == "short" ? 1500 : 3000
+    let durationType = call.get("duration", String.self, "short")!
+    let duration = durationType == "long" ? 3500 : 2000
     let position = call.get("position", String.self, "bottom")
     
     DispatchQueue.main.async {
