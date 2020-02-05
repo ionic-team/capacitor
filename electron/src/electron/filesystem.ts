@@ -113,10 +113,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      if (options.createIntermediateDirectories !== undefined) {
-        console.warn('createIntermediateDirectories is deprecated, use recursive');
-      }
-      const doRecursive = options.createIntermediateDirectories || options.recursive;
+      const doRecursive = options.recursive;
       this.NodeFS.mkdir(lookupPath, { recursive: doRecursive }, (err:any) => {
         if(err) {
           reject(err);

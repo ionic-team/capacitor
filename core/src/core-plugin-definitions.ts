@@ -664,12 +664,6 @@ export interface MkdirOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * @deprecated - use recursive
-   * Whether to create any missing parent directories as well
-   * Defaults to false
-   */
-  createIntermediateDirectories?: boolean;
-  /**
    * Whether to create any missing parent directories as well.
    * Defaults to false
    */
