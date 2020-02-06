@@ -300,7 +300,7 @@ public class Plugin {
    */
   private void addEventListener(String eventName, PluginCall call) {
     List<PluginCall> listeners = eventListeners.get(eventName);
-    if (listeners == null) {
+    if (listeners == null || listeners.isEmpty()) {
       listeners = new ArrayList<PluginCall>();
       eventListeners.put(eventName, listeners);
 
@@ -335,7 +335,7 @@ public class Plugin {
   protected void notifyListeners(String eventName, JSObject data, boolean retainUntilConsumed) {
     Log.v(getLogTag(), "Notifying listeners for event " + eventName);
     List<PluginCall> listeners = eventListeners.get(eventName);
-    if (listeners == null) {
+    if (listeners == null || listeners.isEmpty()) {
       Log.d(getLogTag(), "No listeners found for event " + eventName);
       if (retainUntilConsumed) {
         retainedEventArguments.put(eventName, data);
