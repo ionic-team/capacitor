@@ -14,19 +14,6 @@ function getURLFileContents(path) {
   });
 }
 
-const injectCapacitor = async function (url) {
-  console.warn('\nWARNING: injectCapacitor method is deprecated and will be removed in next major release. Check release notes for migration instructions\n')
-  try {
-    let urlFileContents = await getURLFileContents(url.substr(url.indexOf('://') + 3));
-    let pathing = path.join(url.substr(url.indexOf('://') + 3), '../../node_modules/@capacitor/electron/dist/electron-bridge.js');
-    urlFileContents = urlFileContents.replace('<body>', `<body><script>window.require('${pathing.replace(/\\/g, '\\\\')}')</script>`);
-    return 'data:text/html;charset=UTF-8,' + urlFileContents;
-  } catch (e) {
-    console.error(e);
-    return url;
-  }
-};
-
 const configCapacitor = async function(mainWindow) {
   let capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
   const appendUserAgent = capConfigJson.electron && capConfigJson.electron.appendUserAgent ? capConfigJson.electron.appendUserAgent : capConfigJson.appendUserAgent;
@@ -103,7 +90,7 @@ class CapacitorSplashScreen {
     });
   }
 
-  init(inject = true) {
+  init() {
     let rootPath = app.getAppPath();
 
     this.splashWindow = new BrowserWindow({
@@ -152,11 +139,7 @@ class CapacitorSplashScreen {
     this.splashWindow.webContents.on('dom-ready', async () => {
       this.splashWindow.show();
       setTimeout(async () => {
-        if (inject) {
-          this.mainWindowRef.loadURL(await injectCapacitor(`file://${rootPath}/app/index.html`), { baseURLForDataURL: `file://${rootPath}/app/` });
-        } else {
-          this.mainWindowRef.loadURL(`file://${rootPath}/app/index.html`);
-        }
+        this.mainWindowRef.loadURL(`file://${rootPath}/app/index.html`);
       }, 4500);
     });
 
@@ -181,7 +164,6 @@ class CapacitorSplashScreen {
 }
 
 module.exports = {
-  injectCapacitor,
   configCapacitor,
   CapacitorSplashScreen
 };
