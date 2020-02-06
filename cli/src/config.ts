@@ -105,6 +105,9 @@ export class Config implements CliConfig {
       templateName: 'app-template',
       templateDir: '',
       pluginsTemplateDir: ''
+    },
+    server: {
+      cleartext: false
     }
   };
 

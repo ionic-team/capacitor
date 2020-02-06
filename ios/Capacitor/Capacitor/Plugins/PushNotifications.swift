@@ -13,7 +13,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   // Local list of notification id -> JSObject for storing options
   // between notification requets
   var notificationRequestLookup = [String:JSObject]()
-  
+
   public override func load() {
     NotificationCenter.default.addObserver(self, selector: #selector(self.didRegisterForRemoteNotificationsWithDeviceToken(notification:)), name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(self.didFailToRegisterForRemoteNotificationsWithError(notification:)), name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: nil)
@@ -23,8 +23,14 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    * Register for push notifications
    */
   @objc func register(_ call: CAPPluginCall) {
-    self.bridge.notificationsDelegate.requestPermissions()
-    call.success()
+    self.bridge.notificationsDelegate.requestPermissions() { granted, error in
+        guard error == nil else {
+            call.error(error!.localizedDescription)
+            return
+        }
+
+        call.success(["granted": granted])
+    }
   }
 
   /**
@@ -40,7 +46,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
       ])
     })
   }
-  
+
   /**
    * Remove specified notifications from Notification Center
    */
@@ -78,7 +84,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
   @objc func listChannels(_ call: CAPPluginCall) {
     call.unimplemented()
   }
-  
+
   @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification){
     if let deviceToken = notification.object as? Data {
       let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})

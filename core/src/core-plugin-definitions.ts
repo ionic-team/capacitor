@@ -664,12 +664,6 @@ export interface MkdirOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * @deprecated - use recursive
-   * Whether to create any missing parent directories as well
-   * Defaults to false
-   */
-  createIntermediateDirectories?: boolean;
-  /**
    * Whether to create any missing parent directories as well.
    * Defaults to false
    */
@@ -839,19 +833,8 @@ export interface GeolocationPosition {
 
 export interface GeolocationOptions {
   enableHighAccuracy?: boolean; // default: false
-  timeout?: number; // default: 10000,
+  timeout?: number; // default: 10000
   maximumAge?: number; // default: 0
-  /**
-   * Whether your app needs altitude data or not. This can impact the
-   * sensor the device uses, increasing energy consumption.
-   * Note: altitude information may not be available even when
-   * passing true here. Similarly, altitude data maybe be returned
-   * even if this value is false, in the case where doing so requires
-   * no increased energy consumption.
-   *
-   * Default: false
-   */
-  requireAltitude?: boolean; // default: false
 }
 
 export type GeolocationWatchCallback = (position: GeolocationPosition, err?: any) => void;
@@ -1032,6 +1015,24 @@ export interface LocalNotification {
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
+  /**
+   * iOS only: set the thread identifier for notification grouping
+   */
+  threadIdentifier?: string;
+  /**
+   * iOS 12+ only: set the summary argument for notification grouping
+   */
+  summaryArgument?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
 }
 
 export interface LocalNotificationSchedule {
@@ -1429,6 +1430,16 @@ export interface PushNotification {
   data: any;
   click_action?: string;
   link?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
 }
 
 export interface PushNotificationActionPerformed {
@@ -1449,6 +1460,7 @@ export interface PushNotificationChannel {
   id: string;
   name: string;
   description: string;
+  sound: string;
   importance: 1 | 2 | 3 | 4 | 5;
   visibility?: -1 | 0 | 1 ;
 }
@@ -1457,8 +1469,12 @@ export interface PushNotificationChannelList {
   channels: PushNotificationChannel[];
 }
 
+export interface PushNotificationRegistrationResponse {
+  granted: boolean;
+}
+
 export interface PushNotificationsPlugin extends Plugin {
-  register(): Promise<void>;
+  register(): Promise<PushNotificationRegistrationResponse>;
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;
@@ -1619,7 +1635,11 @@ export interface ToastPlugin extends Plugin {
 
 export interface ToastShowOptions {
   text: string;
+  /**
+   * Duration of the toast, either 'short' (2000ms, default) or 'long' (3500ms)
+   */
   duration?: 'short' | 'long';
+  position?: 'top' | 'center' | 'bottom';
 }
 
 export interface WebViewPlugin extends Plugin {

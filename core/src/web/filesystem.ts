@@ -246,12 +246,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    */
   async mkdir(options: MkdirOptions): Promise<MkdirResult> {
     const path: string = this.getPath(options.directory, options.path);
-    const createIntermediateDirectories = options.createIntermediateDirectories;
-    if (options.createIntermediateDirectories !== undefined) {
-      console.warn('createIntermediateDirectories is deprecated, use recursive');
-    }
-    const recursive = options.recursive;
-    const doRecursive = (createIntermediateDirectories || recursive);
+    const doRecursive = options.recursive;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
     let depth = (path.match(/\//g) || []).length;

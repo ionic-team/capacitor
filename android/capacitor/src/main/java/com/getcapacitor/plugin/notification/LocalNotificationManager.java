@@ -149,6 +149,7 @@ public class LocalNotificationManager {
             .setAutoCancel(true)
             .setOngoing(false)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setGroupSummary(localNotification.isGroupSummary())
             .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
 
     String sound = localNotification.getSound();
@@ -159,6 +160,11 @@ public class LocalNotificationManager {
               "com.android.systemui", soundUri,
               Intent.FLAG_GRANT_READ_URI_PERMISSION);
       mBuilder.setSound(soundUri);
+    }
+
+    String group = localNotification.getGroup();
+    if (group != null) {
+      mBuilder.setGroup(group);
     }
 
     mBuilder.setVisibility(Notification.VISIBILITY_PRIVATE);
