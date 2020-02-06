@@ -51,7 +51,7 @@ async function createWindow () {
 
   if(useSplashScreen) {
     splashScreen = new CapacitorSplashScreen(mainWindow);
-    splashScreen.init(false);
+    splashScreen.init();
   } else {
     mainWindow.loadURL(`file://${__dirname}/app/index.html`);
     mainWindow.webContents.on('dom-ready', () => {
