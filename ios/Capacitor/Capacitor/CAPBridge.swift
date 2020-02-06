@@ -40,6 +40,8 @@ enum BridgeError: Error {
   public var scheme: String
   // Whether the app is active
   private var isActive = true
+  // Wheter to inject the Cordova files
+  private var injectCordovaFiles = false
 
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
@@ -207,16 +209,6 @@ enum BridgeError: Error {
    * their JS.
    */
   func setupCordovaCompatibility() {
-    var injectCordovaFiles = false
-    var numClasses = UInt32(0);
-    let classes = objc_copyClassList(&numClasses)
-    for i in 0..<Int(numClasses) {
-      let c: AnyClass = classes![i]
-      if class_getSuperclass(c) == CDVPlugin.self {
-        injectCordovaFiles = true
-        break
-      }
-    }
     if injectCordovaFiles {
       exportCordovaJS()
       registerCordovaPlugins()
@@ -246,20 +238,29 @@ enum BridgeError: Error {
    * Register all plugins that have been declared
    */
   func registerPlugins() {
-    var numClasses = UInt32(0);
-    let classes = objc_copyClassList(&numClasses)
+    let classCount = objc_getClassList(nil, 0)
+    let classes = UnsafeMutablePointer<AnyClass?>.allocate(capacity: Int(classCount))
+
+    let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
+    let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
+
     for i in 0..<Int(numClasses) {
-      let c: AnyClass = classes![i]
-      if class_conformsToProtocol(c, CAPBridgedPlugin.self) {
-        let pluginClassName = NSStringFromClass(c)
-        let pluginType = c as! CAPPlugin.Type
-        let bridgeType = c as! CAPBridgedPlugin.Type
-        
-        registerPlugin(pluginClassName, bridgeType.jsName(), pluginType)
+      if let c: AnyClass = classes[i] {
+        if class_getSuperclass(c) == CDVPlugin.self {
+          injectCordovaFiles = true
+        }
+        if class_conformsToProtocol(c, CAPBridgedPlugin.self) {
+          let pluginClassName = NSStringFromClass(c)
+          let pluginType = c as! CAPPlugin.Type
+          let bridgeType = c as! CAPBridgedPlugin.Type
+
+          registerPlugin(pluginClassName, bridgeType.jsName(), pluginType)
+        }
       }
     }
+    classes.deallocate()
   }
-  
+
   /**
    * Register a single plugin.
    */
