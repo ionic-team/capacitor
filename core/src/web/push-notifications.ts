@@ -8,7 +8,8 @@ import {
   PushNotificationChannelList,
   PushNotificationToken,
   PushNotification,
-  PushNotificationActionPerformed
+  PushNotificationActionPerformed,
+  PushNotificationRegistrationResponse
 } from '../core-plugin-definitions';
 
 export class PushNotificationsPluginWeb extends WebPlugin implements PushNotificationsPlugin {
@@ -105,9 +106,20 @@ export class PushNotificationsPluginWeb extends WebPlugin implements PushNotific
     this.notifyListeners('registration', token);
   }
 
-  async register(): Promise<void> {
+  async register(): Promise<PushNotificationRegistrationResponse> {
+    const response: PushNotificationRegistrationResponse = { granted: false };
+    
     await this.ensureFirebase();
-    await this.getFirebaseToken();
+
+    try {
+      await this.getFirebaseToken();
+      response.granted = true;
+    }
+    catch (ex) {
+      console.error('Unable to get Firebase token', ex);
+    }
+
+    return response;
   }
 
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList> {
