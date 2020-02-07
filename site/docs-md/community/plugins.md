@@ -3,6 +3,7 @@ title: Capacitor Community Plugins
 description: Capacitor Community Plugins
 url: /docs/community/plugins
 contributors:
+  - AntoninBeaufort
 ---
 
 # Capacitor Community Plugins
@@ -50,14 +51,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-| Data Storage SQLite | `capacitor-data-storage-sqlite` | <https://github.com/jepiqueau/capacitor-data-storage-sqlite> | |
 | Secure Storage Plugin | `capacitor-secure-storage-plugin` | <https://github.com/martinkasa/capacitor-secure-storage-plugin> | |
 
 ## Video
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-| Video Player | `capacitor-video-player` | <https://github.com/jepiqueau/capacitor-video-player> | |
 | YouTube | `capacitor-youtube-player` | <https://github.com/abritopach/capacitor-youtube-player> | |
 | Twilio iOS | `twilio-ios-capacitor` | <https://github.com/MCanhisares/twilio-ios-capacitor> | Video calls with Twilio |
 | Video Recorder | `@teamhive/capacitor-video-recorder` | <https://github.com/TeamHive/capacitor-video-recorder> | |
@@ -93,7 +92,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
-| Fused Location | `@johannesnormannjensen/capacitor-fused-location` | <https://github.com/johannesnormannjensen/capacitor-fused-location> | |
+| Fused Location | `@jonoj/capacitor-fused-location` | <https://github.com/jonoj-team/capacitor-fused-location> | |
 | Geofence Tracker | `capacitor-geofence-tracker` | <https://github.com/mvollebregt/capacitor-geofence-tracker> | |
 | Fancy Geo | `capacitor-fancy-geo` | <https://github.com/triniwiz/capacitor-fancy-geo> | |
 | [Radar](https://radar.io) | `capacitor-radar` | <https://github.com/radarlabs/capacitor-radar> | |
@@ -177,3 +176,9 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Install Referrer | `capacitor-install-referrer` | <https://github.com/eladcandroid/capacitor-install-referrer> | |
 | Request app review | `capacitor-rate-app` | <https://github.com/Nodonisko/capacitor-rate-app> | Request app review from users |
 | Change Android Navigationbar Color | `capacitor-navigationbar` | <https://github.com/nikosdouvlis/capacitor-navigationbar> | Programmatically change the navigation bar color on android devices |
+
+## Set of plugins
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Jeep Capacitor Plugins Library | `@jeepq/capacitor` | <https://github.com/jepiqueau/jeep> | Replace Data Storage SQLite Plugin and Video Player Plugin from jepiqueau |
