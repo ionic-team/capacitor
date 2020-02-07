@@ -24,8 +24,6 @@ contributors:
 
 [Camera: Building an Ionic Framework Camera App](/docs/guides/ionic-framework-app)
 
-[Network: Ionic 4 and Network Detection with Capacitor &#8250;](https://developer.school/posts/ionic-4-network-detection-with-capacitor/)
-
 [Push Notifications: Using Push Notifications with Firebase in an Ionic Angular App](/docs/guides/push-notifications-firebase)
 
 [Splash Screen: Creating a Dynamic/Adaptable Splash Screen for Capacitor (Android) &#8250;](https://www.joshmorony.com/creating-a-dynamic-universal-splash-screen-for-capacitor-android/)
