@@ -846,6 +846,15 @@ public class Bridge {
     }
   }
 
+  /**
+   * Handle onDestroy lifecycle event and notify the plugins
+   */
+  public void onDestroy() {
+    for (PluginHandle plugin : plugins.values()) {
+      plugin.getInstance().handleOnDestroy();
+    }
+  }
+
   public void onBackPressed() {
     PluginHandle appHandle = getPlugin("App");
     if (appHandle != null) {
