@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.novoda:bintray-release:0.9.1'
     }
 }
@@ -69,5 +69,3 @@ publish {
     desc = 'Capacitor Android Runtime'
     website = 'https://github.com/ionic-team/capacitor'
 }
-
-
