@@ -41,7 +41,7 @@ jobs:
 
   build-android:
     docker:
-      - image: circleci/android:api-28-node8-alpha
+      - image: circleci/android:api-29-node
     working_directory: /tmp/workspace
 
     steps:
