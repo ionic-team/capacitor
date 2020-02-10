@@ -418,7 +418,7 @@ export function resolveNode(config: Config, ...pathSegments: any[]): string | nu
   return join(modulePath, ...path);
 }
 
-function resolveNodeFrom(start: string, id: string): string | null {
+export function resolveNodeFrom(start: string, id: string): string | null {
   const rootPath = parse(start).root;
   let basePath = resolve(start);
   let modulePath;
@@ -450,4 +450,14 @@ export const hasYarn = async (config: Config, projectDir?: string) => {
 // Install deps with NPM or Yarn
 export async function installDeps(projectDir: string, deps: string[], config: Config) {
   return runCommand(`cd "${projectDir}" && ${await hasYarn(config, projectDir) ? 'yarn add' : 'npm install --save'} ${deps.join(' ')}`);
+}
+
+export async function checkNPMVersion() {
+  const minVersion = '5.5.0';
+  const version = await runCommand('npm -v');
+  const semver = await import('semver');
+  if (semver.gt(minVersion, version)) {
+    return `Capacitor CLI requires at least NPM ${minVersion}`;
+  }
+  return null;
 }

@@ -1,5 +1,5 @@
 import { checkCocoaPods, checkIOSProject } from './common';
-import { check, checkWebDir, isInstalled, logFatal, logSuccess, runCommand } from '../common';
+import { check, checkNPMVersion, checkWebDir, isInstalled, logFatal, logSuccess } from '../common';
 import { Config } from '../config';
 import { getPlugins, printPlugins } from '../plugin';
 
@@ -46,12 +46,4 @@ async function checkXcode() {
 }
 
 
-async function checkNPMVersion() {
-  const minVersion = '5.5.0';
-  const version = await runCommand('npm -v');
-  const semver = await import('semver');
-  if (semver.gt(minVersion, version)) {
-    return `Capacitor CLI requires at least NPM ${minVersion}`;
-  }
-  return null;
-}
+
