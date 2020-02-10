@@ -35,9 +35,17 @@ public class Device extends Plugin {
     r.put("platform", getPlatform());
     r.put("manufacturer", android.os.Build.MANUFACTURER);
     r.put("uuid", getUuid());
+    r.put("isVirtual", isVirtual());
+
+    call.success(r);
+  }
+
+  @PluginMethod()
+  public void getBatteryInfo(PluginCall call) {
+    JSObject r = new JSObject();
+
     r.put("batteryLevel", getBatteryLevel());
     r.put("isCharging", isCharging());
-    r.put("isVirtual", isVirtual());
 
     call.success(r);
   }
