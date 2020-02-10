@@ -27,8 +27,8 @@ async function checkAppSrcDirs(config: Config) {
     return `"app" directory is missing in: ${config.electron.platformDir}`;
   }
 
-  const appSrcMainAssetsWwwIndexHtmlDir = join(appDir, 'index.html');
-  if (!await existsAsync(appSrcMainAssetsWwwIndexHtmlDir)) {
+  const appIndexHtml = join(appDir, 'index.html');
+  if (!await existsAsync(appIndexHtml)) {
     return `"index.html" directory is missing in: ${appDir}`;
   }
   return checkElectronIndexFile(config, config.electron.platformDir);
@@ -51,4 +51,3 @@ async function checkElectronInstall(config: Config) {
     return 'electron not installed';
   }
 }
-
