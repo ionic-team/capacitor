@@ -1,5 +1,5 @@
 import { accessSync } from 'fs';
-import { check, isInstalled, logFatal, logSuccess, readXML } from '../common';
+import { check, logFatal, logSuccess, readXML } from '../common';
 import { existsAsync, readFileAsync } from '../util/fs';
 import { Config } from '../config';
 import { join } from 'path';
