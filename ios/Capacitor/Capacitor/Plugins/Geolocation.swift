@@ -14,7 +14,7 @@ public struct GeolocationCoords {
 class GetLocationHandler: NSObject, CLLocationManagerDelegate {
   var locationManager = CLLocationManager()
   var call: CAPPluginCall
-  
+
   init(call: CAPPluginCall, options: [String:Any]) {
     self.call = call
     
@@ -23,19 +23,24 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
     // TODO: Allow user to configure accuracy, request/authorization mode
     self.locationManager.delegate = self
     self.locationManager.requestWhenInUseAuthorization()
+    let shouldWatch = options["watch"] as! Bool
     if call.getBool("enableHighAccuracy", false)! {
+      if shouldWatch {
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-    } else {
+      } else {
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+      }
+    } else {
+      self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
     }
-    
-    if let shouldWatch = options["watch"], shouldWatch as? Bool == true {
+
+    if shouldWatch {
       self.locationManager.startUpdatingLocation()
     } else {
       self.locationManager.requestLocation()
     }
   }
-  
+
   public func stopUpdating() {
     self.locationManager.stopUpdatingLocation()
   }

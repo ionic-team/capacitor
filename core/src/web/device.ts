@@ -1,6 +1,7 @@
 import { WebPlugin } from './index';
 
 import {
+  DeviceBatteryInfo,
   DeviceInfo,
   DevicePlugin,
   DeviceLanguageCodeResult
@@ -21,13 +22,6 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   async getInfo(): Promise<DeviceInfo> {
     const ua = navigator.userAgent;
     const uaFields = this.parseUa(ua);
-    let battery: any = {};
-
-    try {
-      battery = await navigator.getBattery();
-    } catch (e) {
-      // Let it fail, we don't care
-    }
 
     return Promise.resolve({
       model: uaFields.model,
@@ -38,9 +32,22 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
       osVersion: uaFields.osVersion,
       manufacturer: navigator.vendor,
       isVirtual: false,
-      batteryLevel: battery.level,
-      isCharging: battery.charging,
       uuid: this.getUid()
+    });
+  }
+
+  async getBatteryInfo(): Promise<DeviceBatteryInfo> {
+    let battery: any = {};
+
+    try {
+      battery = await navigator.getBattery();
+    } catch (e) {
+      // Let it fail, we don't care
+    }
+
+    return Promise.resolve({
+      batteryLevel: battery.level,
+      isCharging: battery.charging
     });
   }
 

@@ -23,32 +23,46 @@ public class CAPClipboardPlugin : CAPPlugin {
   
   @objc func read(_ call: CAPPluginCall) {
     let type = call.options["type"] as? String ?? "string"
-    
-    if type == "string" && UIPasteboard.general.hasStrings {
-      call.success([
-        "value": UIPasteboard.general.string!
-      ])
-      return
-    }
-    
-    if type == "url" && UIPasteboard.general.hasURLs {
-      let url = UIPasteboard.general.url!
-      call.success([
-        "value": url.absoluteString
-      ])
-      return
-    }
-    
-    if type == "image" && UIPasteboard.general.hasImages {
-      let image = UIPasteboard.general.image!
-      let data = image.pngData()
-      if let base64 = data?.base64EncodedString() {
+
+    if type == "string" {
+      if UIPasteboard.general.hasStrings {
         call.success([
-          "value": base64
+          "value": UIPasteboard.general.string!
         ])
+      } else {
+        call.error("Unable to get string from clipboard")
       }
       return
     }
+
+    if type == "url" {
+      if UIPasteboard.general.hasURLs {
+        let url = UIPasteboard.general.url!
+        call.success([
+          "value": url.absoluteString
+        ])
+      } else {
+        call.error("Unable to get url from clipboard")
+      }
+      return
+    }
+
+    if type == "image" {
+      if UIPasteboard.general.hasImages {
+        let image = UIPasteboard.general.image!
+        let data = image.pngData()
+        if let base64 = data?.base64EncodedString() {
+          call.success([
+            "value": base64
+          ])
+        }
+      } else {
+        call.error("Unable to get image from clipboard")
+      }
+      return
+    }
+
+    call.error("Invalid type")
   }
 }
 

@@ -33,6 +33,7 @@ public class Browser extends Plugin {
 
   private CustomTabsClient customTabsClient;
   private CustomTabsSession currentSession;
+  private boolean fireFinished = false;
 
   @PluginMethod()
   public void open(PluginCall call) {
@@ -119,6 +120,9 @@ public class Browser extends Plugin {
   }
 
   protected void handleOnResume() {
+    if (fireFinished) {
+      notifyListeners("browserFinished", new JSObject());
+    }
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
     if (!ok) {
       Log.e(getLogTag(), "Error binding to custom tabs service");
@@ -141,6 +145,12 @@ public class Browser extends Plugin {
           switch (navigationEvent) {
             case NAVIGATION_FINISHED:
               notifyListeners("browserPageLoaded", new JSObject());
+              break;
+            case TAB_HIDDEN:
+              fireFinished = true;
+              break;
+            case TAB_SHOWN:
+              fireFinished = false;
               break;
           }
         }

@@ -48,10 +48,6 @@ The Network API requires the following permission be added to your `AndroidManif
 
 This permission allows the app to access information about the current network, such as whether it is connected to wifi or cellular.
 
-## Example Guides
-
-[Network: Ionic 4 and Network Detection with Capacitor &#8250;](https://developer.school/posts/ionic-4-network-detection-with-capacitor/)
-
 ## API
 
 <plugin-api name="network"></plugin-api>

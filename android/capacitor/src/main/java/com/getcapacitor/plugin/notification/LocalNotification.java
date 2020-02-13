@@ -32,6 +32,8 @@ public class LocalNotification {
   private String sound;
   private String smallIcon;
   private String actionTypeId;
+  private String group;
+  private boolean groupSummary;
   private JSObject extra;
   private List<LocalNotificationAttachment> attachments;
   private LocalNotificationSchedule schedule;
@@ -89,6 +91,14 @@ public class LocalNotification {
     this.actionTypeId = actionTypeId;
   }
 
+  public String getGroup() {
+    return group;
+  }
+
+  public void setGroup(String group) {
+    this.group = group;
+  }
+
   public JSObject getExtra() {
     return extra;
   }
@@ -103,6 +113,14 @@ public class LocalNotification {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public boolean isGroupSummary() {
+    return groupSummary;
+  }
+
+  public void setGroupSummary(boolean groupSummary) {
+    this.groupSummary = groupSummary;
   }
 
   /**
@@ -136,10 +154,12 @@ public class LocalNotification {
       activeLocalNotification.setId(notification.getInteger("id"));
       activeLocalNotification.setBody(notification.getString("body"));
       activeLocalNotification.setActionTypeId(notification.getString("actionTypeId"));
+      activeLocalNotification.setGroup(notification.getString("group"));
       activeLocalNotification.setSound(notification.getString("sound"));
       activeLocalNotification.setTitle(notification.getString("title"));
       activeLocalNotification.setSmallIcon(notification.getString("smallIcon"));
       activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
+      activeLocalNotification.setGroupSummary(notification.getBoolean("groupSummary", false));
       try {
         activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
       } catch (ParseException e) {
@@ -234,9 +254,11 @@ public class LocalNotification {
             ", sound='" + sound + '\'' +
             ", smallIcon='" + smallIcon + '\'' +
             ", actionTypeId='" + actionTypeId + '\'' +
+            ", group='" + group + '\'' +
             ", extra=" + extra +
             ", attachments=" + attachments +
             ", schedule=" + schedule +
+            ", groupSummary=" + groupSummary +
             '}';
   }
 
@@ -254,9 +276,11 @@ public class LocalNotification {
     if (smallIcon != null ? !smallIcon.equals(that.smallIcon) : that.smallIcon != null) return false;
     if (actionTypeId != null ? !actionTypeId.equals(that.actionTypeId) : that.actionTypeId != null)
       return false;
+    if (group != null ? !group.equals(that.group) : that.group != null) return false;
     if (extra != null ? !extra.equals(that.extra) : that.extra != null) return false;
     if (attachments != null ? !attachments.equals(that.attachments) : that.attachments != null)
       return false;
+    if (groupSummary != that.groupSummary) return false;
     return schedule != null ? schedule.equals(that.schedule) : that.schedule == null;
   }
 
@@ -268,6 +292,8 @@ public class LocalNotification {
     result = 31 * result + (sound != null ? sound.hashCode() : 0);
     result = 31 * result + (smallIcon != null ? smallIcon.hashCode() : 0);
     result = 31 * result + (actionTypeId != null ? actionTypeId.hashCode() : 0);
+    result = 31 * result + (group != null ? group.hashCode() : 0);
+    result = 31 * result + Boolean.hashCode(groupSummary);
     result = 31 * result + (extra != null ? extra.hashCode() : 0);
     result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
     result = 31 * result + (schedule != null ? schedule.hashCode() : 0);

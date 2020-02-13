@@ -153,6 +153,7 @@ public class LocalNotificationManager {
             .setAutoCancel(true)
             .setOngoing(false)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setGroupSummary(localNotification.isGroupSummary())
             .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
 
     String sound = localNotification.getSound();
@@ -165,7 +166,12 @@ public class LocalNotificationManager {
       mBuilder.setSound(soundUri);
     }
 
-    mBuilder.setVisibility(VISIBILITY_PRIVATE);
+    String group = localNotification.getGroup();
+    if (group != null) {
+      mBuilder.setGroup(group);
+    }
+
+    mBuilder.setVisibility(Notification.VISIBILITY_PRIVATE);
     mBuilder.setOnlyAlertOnce(true);
 
     mBuilder.setSmallIcon(localNotification.getSmallIcon(context));

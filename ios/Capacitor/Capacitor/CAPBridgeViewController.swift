@@ -73,11 +73,19 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
-    
-    webView?.scrollView.contentInsetAdjustmentBehavior = .never
-    
+    let availableInsets = ["automatic", "scrollableAxes", "never", "always"]
+    if let contentInset = (capConfig.getValue("ios.contentInset") as? String),
+      let index = availableInsets.firstIndex(of: contentInset) {
+      webView?.scrollView.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.init(rawValue: index)!
+    } else {
+      webView?.scrollView.contentInsetAdjustmentBehavior = .never
+    }
+
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
+    if let allowsLinkPreview = (capConfig.getValue("ios.allowsLinkPreview") as? Bool) {
+        webView?.allowsLinkPreview = allowsLinkPreview
+    }
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
