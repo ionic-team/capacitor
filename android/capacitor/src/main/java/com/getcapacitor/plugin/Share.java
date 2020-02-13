@@ -2,8 +2,9 @@ package com.getcapacitor.plugin;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
 import android.webkit.MimeTypeMap;
+
+import androidx.core.content.FileProvider;
 
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
