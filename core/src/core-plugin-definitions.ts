@@ -396,6 +396,10 @@ export interface DevicePlugin extends Plugin {
    */
   getInfo(): Promise<DeviceInfo>;
   /**
+   * Return information about the battery
+   */
+  getBatteryInfo(): Promise<DeviceBatteryInfo>;
+  /**
    * Get the device's current language locale code
    */
   getLanguageCode(): Promise<DeviceLanguageCodeResult>;
@@ -455,6 +459,9 @@ export interface DeviceInfo {
    * The total size of the normal data storage path for the OS, in bytes
    */
   diskTotal?: number;
+}
+
+export interface DeviceBatteryInfo {
   /**
    * A percentage (0 to 1) indicating how much the battery is charged
    */

@@ -177,6 +177,7 @@ public class BridgeActivity extends AppCompatActivity {
   @Override
   public void onDestroy() {
     super.onDestroy();
+    this.bridge.onDestroy();
     if (this.mockWebView != null) {
       mockWebView.handleDestroy();
     }
