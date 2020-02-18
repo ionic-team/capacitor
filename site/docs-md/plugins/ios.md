@@ -62,7 +62,7 @@ For example, here is how you'd get data passed to your method:
 @objc func storeContact(_ call: CAPPluginCall) {
   let name = call.getString("yourName") ?? "default name"
   let address = call.getObject("address") ?? [:]
-  let isAwesome = call.getBoolean("isAwesome") ?? false
+  let isAwesome = call.getBool("isAwesome") ?? false
 
   guard let id = call.options["id"] as? String else {
     call.reject("Must provide an id")

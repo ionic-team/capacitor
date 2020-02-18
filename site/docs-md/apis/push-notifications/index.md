@@ -15,13 +15,13 @@ The Push Notifications API provides methods for registering a device to receive 
 
 ## Enabling Push Notifications Capabilites
 
-On iOS it's required to enable Push Notifications Capabilities in your project to make Push Notifications plugin work. To do so, go to the `Capabilities` section of your app and switch the `Push Notifications` button from `OFF` to `ON` possition.
+On iOS you must enable Push Notifications Capabilities in your project to enable the Push Notifications plugin to work. To do so, go to the `Capabilities` section of the app project and switch the `Push Notifications` button from `OFF` to the `ON` position.
 
-That will add the push capabilites to your app and will create an entitlements file.
+This change adds the push capabilites to the app and creates an entitlements file in the project.
 
 ![Enabling Push Notifications Capabilities](/assets/img/docs/ios/enable-push-capabilities.png)
 
-On Android just download your app's `google-services.json` file from Firebase console and put it in `projectName/android/app` folder.
+On Android just download the app project's `google-services.json` file from the Firebase console, and place it in the  `projectName/android/app` folder.
 
 ## Push Notifications icon
 

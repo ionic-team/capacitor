@@ -16,6 +16,7 @@ export interface PluginRegistry {
   Modals: ModalsPlugin;
   Motion: MotionPlugin;
   Network: NetworkPlugin;
+  Permissions: PermissionsPlugin;
   Photos: PhotosPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
@@ -27,7 +28,7 @@ export interface PluginRegistry {
 
   [pluginName: string]: {
     [prop: string]: any;
-  }
+  };
 }
 
 export type ISODateString = string;
@@ -125,7 +126,9 @@ export interface AppPlugin extends Plugin {
   addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
 
   /**
-   * Listen for the hardware back button event (Android only). If you want to close the app, call `App.exitApp()`
+   * Listen for the hardware back button event (Android only). Listening for this event will disable the
+   * default back button behaviour, so you might want to call `window.history.back()` manually.
+   * If you want to close the app, call `App.exitApp()`.
    */
   addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
 }
@@ -393,10 +396,16 @@ export interface DevicePlugin extends Plugin {
    */
   getInfo(): Promise<DeviceInfo>;
   /**
+   * Return information about the battery
+   */
+  getBatteryInfo(): Promise<DeviceBatteryInfo>;
+  /**
    * Get the device's current language locale code
    */
   getLanguageCode(): Promise<DeviceLanguageCodeResult>;
 }
+
+export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown';
 
 export interface DeviceInfo {
   /**
@@ -416,6 +425,14 @@ export interface DeviceInfo {
    * The current bundle verison of the app
    */
   appVersion: string;
+  /**
+   * The current bundle build of the app
+   */
+  appBuild: string;
+  /**
+   * The operating system of the device
+   */
+  operatingSystem: OperatingSystem;
   /**
    * The version of the device OS
    */
@@ -442,6 +459,9 @@ export interface DeviceInfo {
    * The total size of the normal data storage path for the OS, in bytes
    */
   diskTotal?: number;
+}
+
+export interface DeviceBatteryInfo {
   /**
    * A percentage (0 to 1) indicating how much the battery is charged
    */
@@ -526,6 +546,13 @@ export interface FilesystemPlugin extends Plugin {
    * @return a promise that resolves with the rename result
    */
   rename(options: RenameOptions): Promise<RenameResult>;
+
+  /**
+   * Copy a file or directory
+   * @param options the options for the copy operation
+   * @return a promise that resolves with the copy result
+   */
+  copy(options: CopyOptions): Promise<CopyResult>;
 }
 
 export enum FilesystemDirectory {
@@ -563,7 +590,7 @@ export enum FilesystemEncoding {
 
 export interface FileWriteOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -575,14 +602,17 @@ export interface FileWriteOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * The encoding to write the file in (defautls to utf8)
+   * The encoding to write the file in. If not provided, data
+   * is written as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
 }
 
 export interface FileAppendOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -594,14 +624,17 @@ export interface FileAppendOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * The encoding to write the file in (defautls to utf8)
+   * The encoding to write the file in. If not provided, data
+   * is written as base64 encoded data.
+   *
+   * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
 }
 
 export interface FileReadOptions {
   /**
-   * the filename to read
+   * The filename to read
    */
   path: string;
   /**
@@ -619,7 +652,7 @@ export interface FileReadOptions {
 
 export interface FileDeleteOptions {
   /**
-   * the filename to delete
+   * The filename to delete
    */
   path: string;
   /**
@@ -638,9 +671,10 @@ export interface MkdirOptions {
    */
   directory?: FilesystemDirectory;
   /**
-   * Whether to create any missing parent directories as well
+   * Whether to create any missing parent directories as well.
+   * Defaults to false
    */
-  createIntermediateDirectories: boolean;
+  recursive?: boolean;
 }
 
 export interface RmdirOptions {
@@ -652,15 +686,20 @@ export interface RmdirOptions {
    * The FilesystemDirectory to remove the directory from
    */
   directory?: FilesystemDirectory;
+  /**
+   * Whether to recursively remove the contents of the directory
+   * Defaults to false
+   */
+  recursive?: boolean;
 }
 
 export interface ReaddirOptions {
   /**
-   * The path of the directory to remove
+   * The path of the directory to read
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to list files from
    */
   directory?: FilesystemDirectory;
 }
@@ -678,29 +717,36 @@ export interface GetUriOptions {
 
 export interface StatOptions {
   /**
-   * The path of the directory to remove
+   * The path of the file to get data about
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to get the file under
    */
   directory?: FilesystemDirectory;
 }
 
-export interface RenameOptions {
+export interface CopyOptions {
   /**
-   * The existing file or directory to rename
+   * The existing file or directory
    */
   from: string;
   /**
-   * The destination to rename the file or directory to
+   * The destination file or directory
    */
   to: string;
   /**
-   * The FilesystemDirectory containing the file or directory to rename
+   * The FilesystemDirectory containing the existing file or directory
    */
   directory?: FilesystemDirectory;
+  /**
+   * The FilesystemDirectory containing the destination file or directory. If not supplied will use the 'directory'
+   * parameter as the destination
+   */
+  toDirectory?: FilesystemDirectory;
 }
+
+export interface RenameOptions extends CopyOptions {}
 
 export interface FileReadResult {
   data: string;
@@ -716,6 +762,8 @@ export interface MkdirResult {
 export interface RmdirResult {
 }
 export interface RenameResult {
+}
+export interface CopyResult {
 }
 export interface ReaddirResult {
   files: string[];
@@ -792,19 +840,8 @@ export interface GeolocationPosition {
 
 export interface GeolocationOptions {
   enableHighAccuracy?: boolean; // default: false
-  timeout?: number; // default: 10000,
+  timeout?: number; // default: 10000
   maximumAge?: number; // default: 0
-  /**
-   * Whether your app needs altitude data or not. This can impact the
-   * sensor the device uses, increasing energy consumption.
-   * Note: altitude information may not be available even when
-   * passing true here. Similarly, altitude data maybe be returned
-   * even if this value is false, in the case where doing so requires
-   * no increased energy consumption.
-   *
-   * Default: false
-   */
-  requireAltitude?: boolean; // default: false
 }
 
 export type GeolocationWatchCallback = (position: GeolocationPosition, err?: any) => void;
@@ -881,6 +918,18 @@ export interface KeyboardPlugin extends Plugin {
    * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
    */
   setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
+  /**
+   * Programmatically enable or disable the WebView scroll
+   */
+  setScroll(options: { isDisabled: boolean }): Promise<void>;
+  /**
+   * Programmatically set the keyboard style
+   */
+  setStyle(options: KeyboardStyleOptions): Promise<void>;
+  /**
+   * Programmatically set the resize mode
+   */
+  setResizeMode(options: KeyboardResizeOptions): Promise<void>;
 
   addListener(eventName: 'keyboardWillShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
   addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
@@ -890,6 +939,26 @@ export interface KeyboardPlugin extends Plugin {
 
 export interface KeyboardInfo {
   keyboardHeight: number;
+}
+
+export interface KeyboardStyleOptions {
+  style: KeyboardStyle;
+}
+
+export enum KeyboardStyle {
+  Dark = 'DARK',
+  Light = 'LIGHT'
+}
+
+export interface KeyboardResizeOptions {
+  mode: KeyboardResize;
+}
+
+export enum KeyboardResize {
+  Body = 'body',
+  Ionic = 'ionic',
+  Native = 'native',
+  None = 'none'
 }
 
 //
@@ -945,15 +1014,39 @@ export interface LocalNotification {
   id: number;
   schedule?: LocalNotificationSchedule;
   sound?: string;
+  /**
+   * Android-only: set a custom statusbar icon.
+   * If set, it overrides default icon from capacitor.config.json
+   */
+  smallIcon?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
+  /**
+   * iOS only: set the thread identifier for notification grouping
+   */
+  threadIdentifier?: string;
+  /**
+   * iOS 12+ only: set the summary argument for notification grouping
+   */
+  summaryArgument?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
 }
 
 export interface LocalNotificationSchedule {
   at?: Date;
   repeats?: boolean;
   every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
+  count?: number;
   on?: {
     year?: number;
     month?: number;
@@ -1127,6 +1220,29 @@ export interface NetworkStatus {
 }
 
 export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
+
+//
+
+export enum PermissionType {
+  Camera = 'camera',
+  Photos = 'photos',
+  Geolocation = 'geolocation',
+  Notifications = 'notifications',
+  ClipboardRead = 'clipboard-read',
+  ClipboardWrite = 'clipboard-write'
+}
+
+export interface PermissionsOptions {
+  name: PermissionType;
+}
+
+export interface PermissionResult {
+  state: 'granted' | 'denied' | 'prompt';
+}
+
+export interface PermissionsPlugin extends Plugin {
+  query(options: PermissionsOptions): Promise<PermissionResult>;
+}
 
 //
 
@@ -1321,6 +1437,16 @@ export interface PushNotification {
   data: any;
   click_action?: string;
   link?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
 }
 
 export interface PushNotificationActionPerformed {
@@ -1341,6 +1467,7 @@ export interface PushNotificationChannel {
   id: string;
   name: string;
   description: string;
+  sound: string;
   importance: 1 | 2 | 3 | 4 | 5;
   visibility?: -1 | 0 | 1 ;
 }
@@ -1349,8 +1476,12 @@ export interface PushNotificationChannelList {
   channels: PushNotificationChannel[];
 }
 
+export interface PushNotificationRegistrationResponse {
+  granted: boolean;
+}
+
 export interface PushNotificationsPlugin extends Plugin {
-  register(): Promise<void>;
+  register(): Promise<PushNotificationRegistrationResponse>;
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;
@@ -1419,7 +1550,7 @@ export interface SplashScreenShowOptions {
    */
   fadeOutDuration?: number;
   /**
-  * How long to show the splash screen when authHide is enabled (in ms)
+  * How long to show the splash screen when autoHide is enabled (in ms)
   * Default is 3000ms
   */
   showDuration?: number;
@@ -1511,7 +1642,11 @@ export interface ToastPlugin extends Plugin {
 
 export interface ToastShowOptions {
   text: string;
+  /**
+   * Duration of the toast, either 'short' (2000ms, default) or 'long' (3500ms)
+   */
   duration?: 'short' | 'long';
+  position?: 'top' | 'center' | 'bottom';
 }
 
 export interface WebViewPlugin extends Plugin {

@@ -1,19 +1,20 @@
 import { Capacitor as _Capacitor } from './definitions';
-
-declare var window: any;
-
 import { CapacitorWeb } from './web-runtime';
+
 
 // Create our default Capacitor instance, which will be
 // overridden on native platforms
-var Capacitor: _Capacitor = new CapacitorWeb();
+const Capacitor = ((globalThis: any): _Capacitor => {
+  // Create a new CapacitorWeb instance if one doesn't already exist on globalThis
+  // Ensure the global is assigned the same Capacitor instance,
+  // then export Capacitor so it can be imported in other modules
+  return globalThis.Capacitor = (globalThis.Capacitor || new CapacitorWeb());
+})(
+  // figure out the current globalThis, such as "window", "self" or "global"
+  // ensure errors are not thrown in an node SSR environment or web worker
+  typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : {}
+);
 
-Capacitor = window.Capacitor || Capacitor;
-
-// Export window.Capacitor if not available already (ex: web)
-if (!window.Capacitor) {
-  window.Capacitor = Capacitor;
-}
 
 const Plugins = Capacitor.Plugins;
 

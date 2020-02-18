@@ -11,6 +11,7 @@ export interface PackageJson {
   name: string;
   version: string;
   dependencies: any;
+  devDependencies: any;
 }
 
 export interface ExternalConfig {
@@ -22,6 +23,10 @@ export interface ExternalConfig {
     cordovaLinkerFlags?: string[];
   };
   npmClient?: string;
+  cordova?: any;
+  server?: {
+    cleartext?: boolean;
+  }
 }
 
 export interface AppPluginsConfig {

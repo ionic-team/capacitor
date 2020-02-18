@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsCallback;
-import android.support.customtabs.CustomTabsClient;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.customtabs.CustomTabsServiceConnection;
-import android.support.customtabs.CustomTabsSession;
 import android.util.Log;
+
+import androidx.browser.customtabs.CustomTabsCallback;
+import androidx.browser.customtabs.CustomTabsClient;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.browser.customtabs.CustomTabsServiceConnection;
+import androidx.browser.customtabs.CustomTabsSession;
+
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -31,6 +33,7 @@ public class Browser extends Plugin {
 
   private CustomTabsClient customTabsClient;
   private CustomTabsSession currentSession;
+  private boolean fireFinished = false;
 
   @PluginMethod()
   public void open(PluginCall call) {
@@ -62,8 +65,12 @@ public class Browser extends Plugin {
     CustomTabsIntent tabsIntent = builder.build();
     tabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
         Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + getContext().getPackageName()));
-    tabsIntent.launchUrl(getContext(), Uri.parse(url));
-    call.success();
+    try {
+      tabsIntent.launchUrl(getContext(), Uri.parse(url));
+      call.success();
+    } catch (Exception ex) {
+      call.error(ex.getLocalizedMessage());
+    }
   }
 
   @PluginMethod()
@@ -113,6 +120,9 @@ public class Browser extends Plugin {
   }
 
   protected void handleOnResume() {
+    if (fireFinished) {
+      notifyListeners("browserFinished", new JSObject());
+    }
     boolean ok = CustomTabsClient.bindCustomTabsService(getContext(), CUSTOM_TAB_PACKAGE_NAME, connection);
     if (!ok) {
       Log.e(getLogTag(), "Error binding to custom tabs service");
@@ -135,6 +145,12 @@ public class Browser extends Plugin {
           switch (navigationEvent) {
             case NAVIGATION_FINISHED:
               notifyListeners("browserPageLoaded", new JSObject());
+              break;
+            case TAB_HIDDEN:
+              fireFinished = true;
+              break;
+            case TAB_SHOWN:
+              fireFinished = false;
               break;
           }
         }

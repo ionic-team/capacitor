@@ -1,6 +1,7 @@
 package com.getcapacitor.plugin;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,9 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
+
+import androidx.core.content.FileProvider;
+
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.FileUtils;
 import com.getcapacitor.JSObject;
@@ -53,7 +56,6 @@ public class Camera extends Plugin {
   static final int REQUEST_IMAGE_CAPTURE = PluginRequestCodes.CAMERA_IMAGE_CAPTURE;
   static final int REQUEST_IMAGE_PICK = PluginRequestCodes.CAMERA_IMAGE_PICK;
   static final int REQUEST_IMAGE_EDIT = PluginRequestCodes.CAMERA_IMAGE_EDIT;
-
   // Message constants
   private static final String INVALID_RESULT_TYPE_ERROR = "Invalid resultType option";
   private static final String PERMISSION_DENIED_ERROR = "Unable to access camera, user denied permission request";
@@ -221,7 +223,7 @@ public class Camera extends Plugin {
     }
   }
 
-  public void processCameraImage(PluginCall call, Intent data) {
+  public void processCameraImage(PluginCall call) {
     boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
     CameraResultType resultType = getResultType(call.getString("resultType"));
     if(imageFileSavePath == null) {
@@ -359,6 +361,7 @@ public class Camera extends Plugin {
       bis = new ByteArrayInputStream(bitmapOutputStream.toByteArray());
       Uri newUri = saveTemporaryImage(bitmap, u, bis);
       JSObject ret = new JSObject();
+      ret.put("format", "jpeg");
       ret.put("exif", exif.toJson());
       ret.put("path", newUri.toString());
       ret.put("webPath", FileUtils.getPortablePath(getContext(), bridge.getLocalUrl(), newUri));
@@ -406,9 +409,10 @@ public class Camera extends Plugin {
 
   private void returnDataUrl(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
     byte[] byteArray = bitmapOutputStream.toByteArray();
-    String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+    String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
 
     JSObject data = new JSObject();
+    data.put("format", "jpeg");
     data.put("dataUrl", "data:image/jpeg;base64," + encoded);
     data.put("exif", exif.toJson());
     call.resolve(data);
@@ -416,9 +420,10 @@ public class Camera extends Plugin {
 
   private void returnBase64(PluginCall call, ExifWrapper exif, ByteArrayOutputStream bitmapOutputStream) {
     byte[] byteArray = bitmapOutputStream.toByteArray();
-    String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+    String encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
 
     JSObject data = new JSObject();
+    data.put("format", "jpeg");
     data.put("base64String", encoded);
     data.put("exif", exif.toJson());
     call.resolve(data);
@@ -465,12 +470,15 @@ public class Camera extends Plugin {
     settings = getSettings(savedCall);
 
     if (requestCode == REQUEST_IMAGE_CAPTURE) {
-      processCameraImage(savedCall, data);
+      processCameraImage(savedCall);
     } else if (requestCode == REQUEST_IMAGE_PICK) {
       processPickedImage(savedCall, data);
-    } else if (requestCode == REQUEST_IMAGE_EDIT) {
+    } else if (requestCode == REQUEST_IMAGE_EDIT && resultCode == Activity.RESULT_OK) {
       isEdited = true;
       processPickedImage(savedCall, data);
+    } else if (resultCode == Activity.RESULT_CANCELED && imageFileSavePath != null) {
+      isEdited = true;
+      processCameraImage(savedCall);
     }
   }
 

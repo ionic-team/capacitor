@@ -20,7 +20,12 @@ public class CAPStatusBarPlugin: CAPPlugin {
       if style == "DARK" {
         bridge.setStatusBarStyle(.lightContent)
       } else if style == "LIGHT" {
-        bridge.setStatusBarStyle(.default)
+        if #available(iOS 13.0, *) {
+          // TODO - use .darkContent instead of rawValue once Xcode 10 support is dropped
+          bridge.setStatusBarStyle(UIStatusBarStyle.init(rawValue: 3) ?? .default)
+        } else {
+          bridge.setStatusBarStyle(.default)
+        }
       }
     }
     
@@ -42,16 +47,34 @@ public class CAPStatusBarPlugin: CAPPlugin {
   }
 
   @objc func getInfo(_ call: CAPPluginCall) {
-    let style: String
-    if bridge.getStatusBarStyle() == .default {
-      style = "LIGHT"
-    } else {
-      style = "DARK"
+    DispatchQueue.main.async {
+      let style: String
+      if #available(iOS 13.0, *) {
+        switch self.bridge.getStatusBarStyle() {
+        case .default:
+          if self.bridge.getUserInterfaceStyle() == UIUserInterfaceStyle.dark {
+            style = "DARK"
+          } else {
+            style = "LIGHT"
+          }
+        case .lightContent:
+          style = "DARK"
+        default:
+          style = "LIGHT"
+        }
+      } else {
+        if self.bridge.getStatusBarStyle() == .lightContent {
+          style = "DARK"
+        } else {
+          style = "LIGHT"
+        }
+      }
+
+      call.success([
+        "visible": self.bridge.getStatusBarVisible(),
+        "style": style
+      ])
     }
-    call.success([
-      "visible": bridge.getStatusBarVisible(),
-      "style": style
-    ])
   }
 }
 

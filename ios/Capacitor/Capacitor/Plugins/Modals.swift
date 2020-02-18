@@ -14,14 +14,13 @@ public class CAPModalsPlugin : CAPPlugin {
     let buttonTitle = call.options["buttonTitle"] as? String ?? "OK"
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
-    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
+    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in
+      call.success()
+    }))
     
     DispatchQueue.main.async {
       self.bridge.viewController.present(alert, animated: true, completion: nil)
     }
-    
-    // Call success immediately
-    call.success()
   }
   
   @objc public func confirm(_ call: CAPPluginCall) {

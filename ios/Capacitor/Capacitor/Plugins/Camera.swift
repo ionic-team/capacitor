@@ -28,6 +28,7 @@ struct CameraSettings {
   var width: Float = 0
   var height: Float = 0
   var resultType = "base64"
+  var saveToGallery = false
 }
 
 @objc(CAPCameraPlugin)
@@ -41,7 +42,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   var imageCounter = 0
 
   var settings = CameraSettings()
-
+  
   @objc func getPhoto(_ call: CAPPluginCall) {
     self.call = call
     self.settings = getSettings(call)
@@ -54,10 +55,12 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       return
     }
 
-    imagePicker = UIImagePickerController()
-    imagePicker!.delegate = self
-    imagePicker!.allowsEditing = settings.allowEditing
-
+    DispatchQueue.main.async {
+      self.imagePicker = UIImagePickerController()
+      self.imagePicker!.delegate = self
+      self.imagePicker!.allowsEditing = self.settings.allowEditing
+    }
+    
     doShow(call: call, settings: settings)
   }
 
@@ -68,6 +71,8 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     settings.source = CameraSource(rawValue: call.getString("source") ?? DEFAULT_SOURCE.rawValue) ?? DEFAULT_SOURCE
     settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
     settings.resultType = call.get("resultType", String.self, "base64")!
+    settings.saveToGallery = call.get("saveToGallery", Bool.self, false)!
+    
     // Get the new image dimensions if provided
     settings.width = Float(call.get("width", Int.self, 0)!)
     settings.height = Float(call.get("height", Int.self, 0)!)
@@ -123,25 +128,26 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     AVCaptureDevice.requestAccess(for: .video) { granted in
         if granted {
-          let presentationStyle = call.getString("presentationStyle")
-          if presentationStyle != nil && presentationStyle == "popover" {
-            self.configurePicker()
-          } else {
-            self.imagePicker!.modalPresentationStyle = .fullScreen
-          }
-
-          self.imagePicker!.sourceType = .camera
-
-          if self.settings.direction.rawValue == "REAR" {
-            if UIImagePickerController.isCameraDeviceAvailable(.rear) {
-              self.imagePicker!.cameraDevice = .rear
-            }
-          } else if self.settings.direction.rawValue == "FRONT" {
-            if UIImagePickerController.isCameraDeviceAvailable(.front) {
-              self.imagePicker!.cameraDevice = .front
-            }
-          }
           DispatchQueue.main.async {
+            let presentationStyle = call.getString("presentationStyle")
+            if presentationStyle != nil && presentationStyle == "popover" {
+              self.configurePicker()
+            } else {
+              self.imagePicker!.modalPresentationStyle = .fullScreen
+            }
+
+            self.imagePicker!.sourceType = .camera
+
+            if self.settings.direction.rawValue == "REAR" {
+              if UIImagePickerController.isCameraDeviceAvailable(.rear) {
+                self.imagePicker!.cameraDevice = .rear
+              }
+            } else if self.settings.direction.rawValue == "FRONT" {
+              if UIImagePickerController.isCameraDeviceAvailable(.front) {
+                self.imagePicker!.cameraDevice = .front
+              }
+            }
+
             self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
           }
         } else {
@@ -208,7 +214,11 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       }
       image = convertedImage
     }
-
+    
+    if settings.saveToGallery {
+        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil);
+    }
+    
     guard let jpeg = image!.jpegData(compressionQuality: CGFloat(settings.quality/100)) else {
       self.call?.error("Unable to convert image to jpeg")
       return
@@ -256,7 +266,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       if settings.width > 0 {
         size = CGSize.init(width: Int(settings.width), height: Int(settings.width * (1/aspect)))
       } else if settings.height > 0 {
-        size = CGSize.init(width: Int(settings.height * (1/aspect)), height: Int(settings.height))
+        size = CGSize.init(width: Int(settings.height * aspect), height: Int(settings.height))
       }
     }
 

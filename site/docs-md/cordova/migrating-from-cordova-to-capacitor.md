@@ -84,6 +84,22 @@ Note that any plugins that are [incompatible or cause build issues](/docs/cordov
 
 By default, the entire initial permissions requested for the latest version of Capacitor are set for you in the default native projects for both iOS and Android. However, you may need to apply additional permissions manually by mapping between `plugin.xml` and required settings on iOS and Android. Consult the [iOS](/docs/ios/configuration) and [Android](/docs/android/configuration) configuration guides for info on how to configure each platform.
 
+## Cordova Plugin preferences
+
+When `npx cap init` is run, Capacitor reads all the preferences in `config.xml` and port them to `capacitor.config.json` file. You can manually add more preferences to the `cordova.preferences` object too.
+
+```json
+{
+  "cordova": {
+    "preferences": {
+      "DisableDeploy": "true",
+      "CameraUsesGeolocation": "true"
+    }
+  }
+}
+```
+
+
 ## Additional Config.xml Fields
 
 You may be curious about how other elements from `config.xml` work in Capacitor apps.
@@ -114,6 +130,18 @@ iOS `edit-config` elements need to be [configured in Info.plist](/docs/ios/confi
 ```
 
 It's impossible to cover every `config.xml` element available. However, most questions relating to "How do I configure X in Capacitor?" should be thought of as "How do I configure X in [platform] (iOS/Android)?" when searching online for answers.
+
+## Setting Scheme
+
+When using Ionic with Cordova, your app uses `cordova-plugin-ionic-webview` by default, which on iOS uses `ionic://` scheme for serving the content. Capacitor apps use `capacitor://` as default scheme on iOS. This means that using a origin-binded Web API like LocalStorage, will result in a loss of data as the origin is different. This can be fixed by changing the scheme that is used for serving the content:
+
+```json
+{
+  "server": {
+    "iosScheme": "ionic"
+  }
+}
+```
 
 ## Removing Cordova
 

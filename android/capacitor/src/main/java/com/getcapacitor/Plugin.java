@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,6 +127,9 @@ public class Plugin {
    * Set the last saved call to null to free memory
    */
   public void freeSavedCall() {
+    if (!this.savedLastCall.isReleased()) {
+      this.savedLastCall.release(bridge);
+    }
     this.savedLastCall = null;
   }
 
@@ -297,7 +302,7 @@ public class Plugin {
    */
   private void addEventListener(String eventName, PluginCall call) {
     List<PluginCall> listeners = eventListeners.get(eventName);
-    if (listeners == null) {
+    if (listeners == null || listeners.isEmpty()) {
       listeners = new ArrayList<PluginCall>();
       eventListeners.put(eventName, listeners);
 
@@ -332,7 +337,7 @@ public class Plugin {
   protected void notifyListeners(String eventName, JSObject data, boolean retainUntilConsumed) {
     Log.v(getLogTag(), "Notifying listeners for event " + eventName);
     List<PluginCall> listeners = eventListeners.get(eventName);
-    if (listeners == null) {
+    if (listeners == null || listeners.isEmpty()) {
       Log.d(getLogTag(), "No listeners found for event " + eventName);
       if (retainUntilConsumed) {
         retainedEventArguments.put(eventName, data);
@@ -528,6 +533,11 @@ public class Plugin {
    * Handle onStop
    */
   protected void handleOnStop() {}
+
+  /**
+   * Handle onDestroy
+   */
+  protected void handleOnDestroy() {}
 
   /**
    * Start a new Activity.

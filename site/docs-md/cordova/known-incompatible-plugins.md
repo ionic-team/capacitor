@@ -14,19 +14,19 @@ contributors:
 
 ## Known incompatible plugins (Subject to change)
 
-- cordova-plugin-add-swift-support
-- cordova-plugin-admobpro
-- cordova-plugin-background-fetch
-- cordova-plugin-braintree
-- cordova-plugin-compat
-- cordova-plugin-console
-- cordova-plugin-crosswalk-webview
-- cordova-plugin-fcm
-- cordova-plugin-firebase
-- cordova-plugin-ionic-keyboard
-- cordova-plugin-ionic-webview
-- cordova-plugin-music-controls
-- cordova-plugin-qrscanner
-- cordova-plugin-splashscreen
-- cordova-plugin-statusbar
-- cordova-plugin-wkwebview-engine
+- cordova-plugin-add-swift-support (not needed, Capacitor has built in Swift support)
+- cordova-plugin-admobpro ([see details](https://github.com/ionic-team/capacitor/issues/1101))
+- cordova-plugin-braintree ([see details](https://github.com/ionic-team/capacitor/issues/1415))
+- cordova-plugin-compat (not needed)
+- cordova-plugin-console (not needed, Capacitor has its own)
+- cordova-plugin-crosswalk-webview (Capacitor doesn't allow to change the webview)
+- cordova-plugin-fcm ([see details](https://github.com/ionic-team/capacitor/issues/584))
+- cordova-plugin-firebase ([see details](https://github.com/ionic-team/capacitor/issues/815))
+- cordova-plugin-ionic-keyboard (not needed, Capacitor has it's own)
+- cordova-plugin-ionic-webview (not needed, Capacitor uses WKWebView)
+- cordova-plugin-music-controls (causes build failures, skipped)
+- cordova-plugin-qrscanner ([see details](https://github.com/ionic-team/capacitor/issues/1213))
+- cordova-plugin-splashscreen (not needed, Capacitor has its own)
+- cordova-plugin-statusbar (not needed, Capacitor has its own)
+- cordova-plugin-wkwebview-engine (not needed, Capacitor uses WKWebView)
+- cordova-plugin-googlemaps (causes build failures on iOS, skipped for iOS only)

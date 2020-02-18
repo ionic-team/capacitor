@@ -2,10 +2,10 @@ public class CAPLog {
 
   public static let config = CAPConfig()
   
-  public static func print(_ items: Any..., separator: String = " ", terminator: String = "") {
+  public static func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
     if !self.hideLogs() {
-      for item in items {
-        Swift.print(item, separator, terminator)
+      for i in 0..<items.count {
+        Swift.print(items[i], terminator: i == items.count - 1 ? terminator : separator)
       }
     }
   }

@@ -1,4 +1,4 @@
-import { DeviceInfo, DeviceLanguageCodeResult, DevicePlugin, DevicePluginWeb,  WebPlugin } from "@capacitor/core";
+import { DeviceBatteryInfo, DeviceInfo, DeviceLanguageCodeResult, DevicePlugin, DevicePluginWeb, WebPlugin } from "@capacitor/core";
 
 declare var navigator: any;
 const webDevice = new DevicePluginWeb();
@@ -18,12 +18,21 @@ export class DevicePluginElectron extends WebPlugin implements DevicePlugin {
       model: info.model,
       platform: <'electron'> 'electron',
       appVersion: '',
+      appBuild: '',
+      operatingSystem: info.operatingSystem,
       osVersion: info.osVersion,
       manufacturer: navigator.vendor,
       isVirtual: false,
-      batteryLevel: info.batteryLevel,
-      isCharging: info.isCharging,
       uuid: info.uuid
+    };
+  }
+
+  async getBatteryInfo(): Promise<DeviceBatteryInfo> {
+    var batInfo = await webDevice.getBatteryInfo();
+
+    return {
+      batteryLevel: batInfo.batteryLevel,
+      isCharging: batInfo.isCharging
     };
   }
 

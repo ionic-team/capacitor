@@ -6,7 +6,7 @@ export class CapacitorWeb {
   isNative = false;
 
   constructor() {
-    // Need to assign here to avoid having to define every plugin but still 
+    // Need to assign here to avoid having to define every plugin but still
     // get the typed benefits of the provided plugins in PluginRegistry
     this.Plugins = {} as any;
 

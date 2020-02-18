@@ -4,15 +4,14 @@ import { convertToUnixPath, copySync, readFileAsync, readFileSync, removeSync, w
 import { Config } from '../config';
 import { join, relative, resolve } from 'path';
 import { realpathSync } from 'fs';
-import { getFilePath, getPlatformElement, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
+import { Plugin, PluginType, getFilePath, getPlatformElement, getPluginType, getPlugins, printPlugins } from '../plugin';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
-//import * as inquirer from 'inquirer';
 
 export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
 const platform = 'ios';
 
-export async function updateIOS(config: Config) {
+export async function updateIOS(config: Config, deployment: boolean) {
 
   let plugins = await getPluginsTask(config);
 
@@ -36,7 +35,7 @@ export async function updateIOS(config: Config) {
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await generateCordovaPodspecs(cordovaPlugins, config);
-  await installCocoaPodsPlugins(config, plugins);
+  await installCocoaPodsPlugins(config, plugins, deployment);
   await logCordovaManualSteps(cordovaPlugins, config, platform);
 
   const incompatibleCordovaPlugins = plugins
@@ -45,13 +44,13 @@ export async function updateIOS(config: Config) {
   await checkPlatformVersions(config, platform);
 }
 
-export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[]) {
+export async function installCocoaPodsPlugins(config: Config, plugins: Plugin[], deployment: boolean) {
   await runTask('Updating iOS native dependencies with "pod install" (may take several minutes)', () => {
-    return updatePodfile(config, plugins);
+    return updatePodfile(config, plugins, deployment);
   });
 }
 
-export async function updatePodfile(config: Config, plugins: Plugin[]) {
+export async function updatePodfile(config: Config, plugins: Plugin[], deployment: boolean) {
   const dependenciesContent = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
   const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
@@ -61,8 +60,13 @@ export async function updatePodfile(config: Config, plugins: Plugin[]) {
   podfileContent = podfileContent.replace(/(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/, '$1' + dependenciesContent + '\n  $2');
   podfileContent = podfileContent.replace(/platform :ios, '[^']*'/ , `platform :ios, '${config.ios.minVersion}'`);
   await writeFileAsync(podfilePath, podfileContent, 'utf8');
-  removeSync(podfileLockPath);
-  await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && pod install && xcodebuild -project App.xcodeproj clean`);
+  let installCommand = 'pod install';
+  if (!deployment) {
+    removeSync(podfileLockPath);
+  } else {
+    installCommand += ' --deployment';
+  }
+  await runCommand(`cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`);
 }
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
@@ -105,11 +109,11 @@ function getFrameworkName(framework: any) {
     }
     return framework.$.src.substr(0, framework.$.src.indexOf('.'));
   }
-  return framework.$.src.substr(0, framework.$.src.indexOf('.')).replace('lib','');
+  return framework.$.src.substr(0, framework.$.src.indexOf('.')).replace('lib', '');
 }
 
 function isFramework(framework: any) {
-  return framework.$.src.split(".").pop() === 'framework';
+  return framework.$.src.split('.').pop() === 'framework';
 }
 
 async function generateCordovaPodspecs(cordovaPlugins: Plugin[], config: Config) {
@@ -127,6 +131,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   let systemLibraries: Array<string> = [];
   let sourceFrameworks: Array<string> = [];
   let frameworkDeps: Array<string> = [];
+  let compilerFlags: Array<string> = [];
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';
   if (isStatic) {
@@ -180,34 +185,42 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
           if (!frameworkDeps.includes(depString)) {
             frameworkDeps.push(depString);
           }
-        })
+        });
       });
     });
     const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
     sourceFiles.map((sourceFile: any) => {
       if (sourceFile.$.framework && sourceFile.$.framework === 'true') {
-        const fileName = sourceFile.$.src.split("/").pop();
+        const fileName = sourceFile.$.src.split('/').pop();
         const frameworktPath = join(sourcesFolderName, plugin.name, fileName);
         if (!sourceFrameworks.includes(frameworktPath)) {
           sourceFrameworks.push(frameworktPath);
         }
+      } else if (sourceFile.$['compiler-flags']) {
+        const cFlag = sourceFile.$['compiler-flags'];
+        if (!compilerFlags.includes(cFlag)) {
+          compilerFlags.push(cFlag);
+        }
       }
-    })
+    });
   });
   if (weakFrameworks.length > 0) {
-    frameworkDeps.push(`s.weak_frameworks = '${weakFrameworks.join("', '")}'`);
+    frameworkDeps.push(`s.weak_frameworks = '${weakFrameworks.join(`', '`)}'`);
   }
   if (linkedFrameworks.length > 0) {
-    frameworkDeps.push(`s.frameworks = '${linkedFrameworks.join("', '")}'`);
+    frameworkDeps.push(`s.frameworks = '${linkedFrameworks.join(`', '`)}'`);
   }
   if (systemLibraries.length > 0) {
-    frameworkDeps.push(`s.libraries = '${systemLibraries.join("', '")}'`);
+    frameworkDeps.push(`s.libraries = '${systemLibraries.join(`', '`)}'`);
   }
   if (customFrameworks.length > 0) {
-    frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join("', '")}'`);
+    frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`);
   }
   if (sourceFrameworks.length > 0) {
-    frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join("', '")}'`);
+    frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join(`', '`)}'`);
+  }
+  if (compilerFlags.length > 0) {
+    frameworkDeps.push(`s.compiler_flags = '${compilerFlags.join(' ')}'`);
   }
   const arcPlugins = cordovaPlugins.filter(filterARCFiles);
   if (arcPlugins.length > 0) {
@@ -216,7 +229,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
       sna.source_files = 'noarc/**/*.{swift,h,m,c,cc,mm,cpp}'
     end`);
   }
-  const frameworksString = frameworkDeps.join("\n    ");
+  const frameworksString = frameworkDeps.join('\n    ');
   const content = `
   Pod::Spec.new do |s|
     s.name = '${name}'
@@ -257,8 +270,8 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     }
     const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
     codeFiles.map( (codeFile: any) => {
-      const fileName = codeFile.$.src.split("/").pop();
-      const fileExt = codeFile.$.src.split(".").pop();
+      const fileName = codeFile.$.src.split('/').pop();
+      const fileExt = codeFile.$.src.split('.').pop();
       let destFolder = sourcesFolderName;
       if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
         destFolder = 'noarc';
@@ -267,19 +280,24 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const fileDest = join(pluginsPath, destFolder, p.name, fileName);
       copySync(filePath, fileDest);
       let fileContent = readFileSync(fileDest, 'utf8');
-      if (fileExt === "swift") {
+      if (fileExt === 'swift') {
         fileContent = 'import Cordova\n' + fileContent;
         writeFileSync(fileDest, fileContent, 'utf8');
       } else {
-        if (fileContent.includes('@import Firebase;')){
+        if (fileContent.includes('@import Firebase;')) {
           fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
+          writeFileSync(fileDest, fileContent, 'utf8');
+        }
+        if (fileContent.includes('[NSBundle bundleForClass:[self class]]') || fileContent.includes('[NSBundle bundleForClass:[CDVCapture class]]')) {
+          fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
+          fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
           writeFileSync(fileDest, fileContent, 'utf8');
         }
       }
     });
     const resourceFiles = getPlatformElement(p, platform, 'resource-file');
     resourceFiles.map( (resourceFile: any) => {
-      const fileName = resourceFile.$.src.split("/").pop();
+      const fileName = resourceFile.$.src.split('/').pop();
       copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'resources', fileName));
     });
     frameworks.map((framework: any) => {

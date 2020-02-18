@@ -22,6 +22,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var hostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
+  private let assetsFolder = "public"
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
@@ -45,51 +46,74 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     setStatusBarDefaults()
     setScreenOrientationDefaults()
+    let capConfig = CAPConfig(self.config)
 
     HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
     let webViewConfiguration = WKWebViewConfiguration()
     self.handler = CAPAssetHandler()
     self.handler!.setAssetPath(startPath)
-    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: CAPBridge.CAP_SCHEME)
-    
+    var specifiedScheme = CAPBridge.CAP_DEFAULT_SCHEME
+    let configScheme = capConfig.getString("server.iosScheme") ?? CAPBridge.CAP_DEFAULT_SCHEME
+    // check if WebKit handles scheme and if it is valid according to Apple's documentation
+    if !WKWebView.handlesURLScheme(configScheme) && configScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
+      specifiedScheme = configScheme.lowercased()
+    }
+    webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: specifiedScheme)
+
     let o = WKUserContentController()
     o.add(self, name: "bridge")
 
     webViewConfiguration.userContentController = o
     
     configureWebView(configuration: webViewConfiguration)
-    
+
+    if let appendUserAgent = (capConfig.getValue("ios.appendUserAgent") as? String) ?? (capConfig.getValue("appendUserAgent") as? String) {
+      webViewConfiguration.applicationNameForUserAgent = appendUserAgent
+    }
+
     webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
     webView?.scrollView.bounces = false
-    
-    webView?.scrollView.contentInsetAdjustmentBehavior = .never
-    
+    let availableInsets = ["automatic", "scrollableAxes", "never", "always"]
+    if let contentInset = (capConfig.getValue("ios.contentInset") as? String),
+      let index = availableInsets.firstIndex(of: contentInset) {
+      webView?.scrollView.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.init(rawValue: index)!
+    } else {
+      webView?.scrollView.contentInsetAdjustmentBehavior = .never
+    }
+
     webView?.uiDelegate = self
     webView?.navigationDelegate = self
+    if let allowsLinkPreview = (capConfig.getValue("ios.allowsLinkPreview") as? Bool) {
+        webView?.allowsLinkPreview = allowsLinkPreview
+    }
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
     
     setKeyboardRequiresUserInteraction(false)
     
-    bridge = CAPBridge(self, o, CAPConfig(self.config))
-    if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
-        webView?.scrollView.isScrollEnabled = scrollEnabled
-    }
+    bridge = CAPBridge(self, o, capConfig, specifiedScheme)
 
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
-        webView?.backgroundColor = UIColor(fromHex: backgroundColor)
-        webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+      webView?.backgroundColor = UIColor(fromHex: backgroundColor)
+      webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+    }
+    if let overrideUserAgent = (bridge!.config.getValue("ios.overrideUserAgent") as? String) ?? (bridge!.config.getValue("overrideUserAgent") as? String) {
+      webView?.customUserAgent = overrideUserAgent
     }
   }
-  
+
   private func getStartPath() -> String? {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
-    guard var startPath = Bundle.main.path(forResource: fullStartPath.relativePath, ofType: nil) else {
+    var resourcesPath = assetsFolder
+    if !startDir.isEmpty {
+      resourcesPath = URL(fileURLWithPath: resourcesPath).appendingPathComponent(startDir).relativePath
+    }
+
+    guard var startPath = Bundle.main.path(forResource: resourcesPath, ofType: nil) else {
       printLoadError()
       return nil
     }
 
-    if !isDeployDisabled() {
+    if !isDeployDisabled() && !isNewBinary() {
       let defaults = UserDefaults.standard
       let persistedPath = defaults.string(forKey: "serverBasePath")
       if (persistedPath != nil && !persistedPath!.isEmpty) {
@@ -109,6 +133,24 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return val?.boolValue ?? false
   }
 
+  func isNewBinary() -> Bool {
+    if let plist = Bundle.main.infoDictionary {
+      if let versionCode = plist["CFBundleVersion"] as? String, let versionName = plist["CFBundleShortVersionString"] as? String {
+        let prefs = UserDefaults.standard
+        let lastVersionCode = prefs.string(forKey: "lastBinaryVersionCode")
+        let lastVersionName = prefs.string(forKey: "lastBinaryVersionName")
+        if !versionCode.isEqual(lastVersionCode) || !versionName.isEqual(lastVersionName) {
+          prefs.set(versionCode, forKey: "lastBinaryVersionCode")
+          prefs.set(versionName, forKey: "lastBinaryVersionName")
+          prefs.set("", forKey: "serverBasePath")
+          prefs.synchronize()
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   override public func viewDidLoad() {
     super.viewDidLoad()
     self.becomeFirstResponder()
@@ -116,7 +158,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func printLoadError() {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir)
+    let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir)
     
     CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
     CAPLog.print("⚡️  This file is the root of your web app and must exist before")
@@ -130,7 +172,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func loadWebView() {
-    let fullStartPath = URL(fileURLWithPath: "public").appendingPathComponent(startDir).appendingPathComponent("index")
+    let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
       fatalLoadError()
     }
@@ -156,9 +198,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
           self.isStatusBarVisible = false
         }
       }
-        
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
-        if (statusBarStyle != "UIStatusBarStyleDefault") {
+        if (statusBarStyle == "UIStatusBarStyleDarkContent") {
+          if #available(iOS 13.0, *) {
+            // TODO - use .darkContent instead of rawValue once Xcode 10 support is dropped
+            self.statusBarStyle = UIStatusBarStyle.init(rawValue: 3) ?? .default
+          }
+        } else if (statusBarStyle != "UIStatusBarStyleDefault") {
           self.statusBarStyle = .lightContent
         }
       }
@@ -265,6 +311,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     let oldSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:userObject:")
     let newSelector: Selector = sel_getUid("_startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
     let newerSelector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:")
+    let ios13Selector: Selector = sel_getUid("_elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:")
 
     if let method = class_getInstanceMethod(wkc, oldSelector) {
       let originalImp: IMP = method_getImplementation(method)
@@ -282,6 +329,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     if let method = class_getInstanceMethod(wkc, newerSelector) {
       self.swizzleAutofocusMethod(method, newerSelector, value)
+    }
+
+    if let method = class_getInstanceMethod(wkc, ios13Selector) {
+      self.swizzleAutofocusMethod(method, ios13Selector, value)
     }
   }
 
@@ -434,7 +485,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return self.webView!
   }
 
-
   public func getServerBasePath() -> String {
     return self.basePath
   }
@@ -442,7 +492,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public func setServerBasePath(path: String) {
     setServerPath(path: path)
     let request = URLRequest(url: URL(string: hostname!)!)
-    _ = getWebView().load(request)
+    DispatchQueue.main.async {
+      _ = self.getWebView().load(request)
+    }
   }
 
   override open var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
@@ -483,4 +535,3 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
    */
   
 }
-

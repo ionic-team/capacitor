@@ -1,10 +1,10 @@
 import { Config } from '../config';
-import { buildXmlElement, checkPlatformVersions, logFatal, logInfo, parseXML, resolveNode, runTask } from '../common';
-import { getAllElements, getFilePath, getPlatformElement, getPluginPlatform, getPlugins, getPluginType, printPlugins, Plugin, PluginType } from '../plugin';
+import { buildXmlElement, checkPlatformVersions, logFatal, resolveNode, runTask } from '../common';
 import { getAndroidPlugins } from './common';
-import { checkAndInstallDependencies, handleCordovaPluginsJS } from '../cordova';
+import { checkAndInstallDependencies, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
 import { convertToUnixPath, copySync, readFileAsync, removeSync, writeFileAsync} from '../util/fs';
 import { join, relative, resolve } from 'path';
+import { Plugin, PluginType, getAllElements, getFilePath, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from '../plugin';
 
 const platform = 'android';
 
@@ -32,7 +32,7 @@ export async function updateAndroid(config: Config) {
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
-  await writeCordovaAndroidManifest(cordovaPlugins, config);
+  await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
 
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
@@ -135,7 +135,7 @@ export async function handleCordovaPluginsGradle(config: Config,  cordovaPlugins
     return `    implementation "${f}"`;
   }).join('\n');
   prefsArray.map((preference: any) => {
-    frameworkString = frameworkString.replace(new RegExp(('$'+preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
+    frameworkString = frameworkString.replace(new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
   });
   let applyString = applyArray.join('\n');
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
@@ -175,7 +175,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
           const target = resourceFile.$['target'];
           if (resourceFile.$.src.split('.').pop() === 'aar') {
             copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, 'libs', target.split('/').pop()));
-          } else if (target !== ".") {
+          } else if (target !== '.') {
             copySync(getFilePath(config, p, resourceFile.$.src), join(pluginsPath, target));
           }
         });
@@ -200,71 +200,4 @@ async function getPluginsTask(config: Config) {
     const androidPlugins = getAndroidPlugins(allPlugins);
     return androidPlugins;
   });
-}
-
-async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], config: Config) {
-  const pluginsFolder = resolve(config.app.rootDir, 'android', config.android.assets.pluginsFolderName);
-  const manifestPath = join(pluginsFolder, 'src', 'main', 'AndroidManifest.xml');
-  let rootXMLEntries: Array<any> = [];
-  let applicationXMLEntries: Array<any> = [];
-  cordovaPlugins.map(async p => {
-    const editConfig = getPlatformElement(p, platform, 'edit-config');
-    const configFile = getPlatformElement(p, platform, 'config-file');
-    editConfig.concat(configFile).map(async (configElement: any) => {
-      if (configElement.$ && (configElement.$.target && configElement.$.target.includes('AndroidManifest.xml') || configElement.$.file && configElement.$.file.includes('AndroidManifest.xml'))) {
-        const keys = Object.keys(configElement).filter(k  => k !== '$');
-        keys.map(k => {
-          configElement[k].map((e: any) => {
-            const xmlElement = buildXmlElement(e, k);
-            const pathParts = getPathParts(configElement.$.parent);
-            if(pathParts.length > 1) {
-              if (pathParts.pop() === 'application') {
-                if (!applicationXMLEntries.includes(xmlElement) && !contains(applicationXMLEntries, xmlElement, k)) {
-                  applicationXMLEntries.push(xmlElement);
-                }
-              } else {
-                logInfo(`plugin ${p.id} requires to add \n  ${xmlElement} to your AndroidManifest.xml to work`);
-              }
-            } else {
-              if (!rootXMLEntries.includes(xmlElement) && !contains(rootXMLEntries, xmlElement, k)) {
-                rootXMLEntries.push(xmlElement);
-              }
-            }
-          });
-        });
-      }
-    });
-  });
-  let content = `<?xml version='1.0' encoding='utf-8'?>
-<manifest package="capacitor.android.plugins"
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:amazon="http://schemas.amazon.com/apk/res/android">
-<application>
-${applicationXMLEntries.join('\n')}
-</application>
-${rootXMLEntries.join('\n')}
-</manifest>`;
-  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), config.app.appId);
-  await writeFileAsync(manifestPath, content);
-}
-
-function getPathParts(path: string) {
-  const rootPath = 'manifest';
-  path = path.replace('/*', rootPath);
-  let parts = path.split('/').filter(part => part !== '');
-  if (parts.length > 1 || parts.includes(rootPath)) {
-    return parts;
-  }
-  return [rootPath, path];
-}
-
-function contains(a: Array<any>, obj: any, k: string) {
-  const element = parseXML(obj);
-  for (var i = 0; i < a.length; i++) {
-    const current = parseXML(a[i]);
-    if (element && current && current[k]  && element[k] && current[k].$ && element[k].$ && element[k].$["android:name"] === current[k].$["android:name"]){
-      return true;
-    }
-  }
-  return false;
 }

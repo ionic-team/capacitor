@@ -3,8 +3,7 @@ import { isInstalled } from '../common';
 import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-
-import { getPluginPlatform, Plugin, PluginType } from '../plugin';
+import { Plugin, PluginType, getPluginPlatform } from '../plugin';
 
 
 export async function findXcodePath(config: Config): Promise<string | null> {
@@ -55,7 +54,7 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
       type: PluginType.Cordova,
       path: 'src/' + platform
     };
-    if(getIncompatibleCordovaPlugins(platform).includes(plugin.id) || !getPluginPlatform(plugin, platform)) {
+    if (getIncompatibleCordovaPlugins(platform).includes(plugin.id) || !getPluginPlatform(plugin, platform)) {
       plugin.ios.type = PluginType.Incompatible;
     }
   } else {

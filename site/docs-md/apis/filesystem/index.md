@@ -11,7 +11,7 @@ contributors:
 
 # Filesystem
 
-The Filsystem API provides a NodeJS-like API for working with files on the device.
+The Filesystem API provides a NodeJS-like API for working with files on the device.
 
 <plugin-api index="true" name="filesystem"></plugin-api>
 
@@ -29,9 +29,9 @@ import { Plugins, FilesystemDirectory, FilesystemEncoding } from '@capacitor/cor
 
 const { Filesystem } = Plugins;
 
-fileWrite() {
+async fileWrite() {
   try {
-    Filesystem.writeFile({
+    await Filesystem.writeFile({
       path: 'secrets/text.txt',
       data: "This is a test",
       directory: FilesystemDirectory.Documents,
@@ -72,7 +72,7 @@ async mkdir() {
     let ret = await Filesystem.mkdir({
       path: 'secrets',
       directory: FilesystemDirectory.Documents,
-      createIntermediateDirectories: false // like mkdir -p
+      recursive: false // like mkdir -p
     });
   } catch(e) {
     console.error('Unable to make directory', e);
@@ -83,7 +83,8 @@ async rmdir() {
   try {
     let ret = await Filesystem.rmdir({
       path: 'secrets',
-      directory: FilesystemDirectory.Documents
+      directory: FilesystemDirectory.Documents,
+      recursive: false,
     });
   } catch(e) {
     console.error('Unable to remove directory', e);
@@ -125,6 +126,7 @@ async readFilePath() {
 
 async rename() {
   try {
+    // This example moves the file within the same 'directory'
     let ret = await Filesystem.rename({
       from: 'text.txt',
       to: 'text2.txt',
@@ -132,6 +134,33 @@ async rename() {
     });
   } catch(e) {
     console.error('Unable to rename file', e);
+  }
+}
+
+async copy() {
+  try {
+    // This example copies a file from the app directory to the documents directory
+    let ret = await Filesystem.copy({
+      from: 'assets/icon.png',
+      to: 'icon.png',
+      directory: FilesystemDirectory.Application,
+      toDirectory: FilesystemDirectory.Documents
+    });
+  } catch(e) {
+    console.error('Unable to copy file', e);
+  }
+}
+
+async copy() {
+  try {
+    // This example copies a file within the documents directory
+    let ret = await Filesystem.copy({
+      from: 'text.txt',
+      to: 'text2.txt',
+      directory: FilesystemDirectory.Documents
+    });
+  } catch(e) {
+    console.error('Unable to copy file', e);
   }
 }
 ```

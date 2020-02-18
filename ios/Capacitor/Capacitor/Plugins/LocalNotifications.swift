@@ -165,6 +165,8 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     let sound = notification["sound"] as? String
     let attachments = notification["attachments"] as? JSArray
     let extra = notification["extra"] as? JSObject ?? [:]
+    let threadIdentifier = notification["threadIdentifier"] as? String
+    let summaryArgument = notification["summaryArgument"] as? String
     
     let content = UNMutableNotificationContent()
     content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
@@ -174,6 +176,14 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     content.userInfo = extra
     if actionTypeId != nil {
       content.categoryIdentifier = actionTypeId!
+    }
+
+    if let threadIdentifier = threadIdentifier {
+      content.threadIdentifier = threadIdentifier
+    }
+
+    if let summaryArgument = summaryArgument, #available(iOS 12, *) {
+      content.summaryArgument = summaryArgument
     }
     
     if sound != nil {
@@ -194,6 +204,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
   func handleScheduledNotification(_ call: CAPPluginCall, _ schedule: [String:Any]) throws -> UNNotificationTrigger? {
     let at = schedule["at"] as? Date
     let every = schedule["every"] as? String
+    let count = schedule["count"] as? Int ?? 1
     let on = schedule["on"] as? [String:Int]
     let repeats = schedule["repeats"] as? Bool ?? false
 
@@ -206,7 +217,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
         return nil
       }
     
-      var dateInterval = DateInterval(start: Date(), end: dateInfo.date!)
+      let dateInterval = DateInterval(start: Date(), end: dateInfo.date!)
       
       // Notifications that repeat have to be at least a minute between each other
       if repeats && dateInterval.duration < 60 {
@@ -216,7 +227,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       return UNTimeIntervalNotificationTrigger(timeInterval: dateInterval.duration, repeats: repeats)
     }
     
-    // If this notification should repeat every day/month/week/etc. or on a certain
+    // If this notification should repeat every count of day/month/week/etc. or on a certain
     // matching set of date components
     if on != nil {
       let dateComponents = getDateComponents(on!)
@@ -224,7 +235,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     }
     
     if every != nil {
-      if let repeatDateInterval = getRepeatDateInterval(every!) {
+      if let repeatDateInterval = getRepeatDateInterval(every!, count) {
         return UNTimeIntervalNotificationTrigger(timeInterval: repeatDateInterval.duration, repeats: true)
       }
     }
@@ -267,33 +278,33 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
    * interval and today. For example, if every is "month", then we
    * return the interval between today and a month from today.
    */
-  func getRepeatDateInterval(_ every: String) -> DateInterval? {
+  func getRepeatDateInterval(_ every: String, _ count: Int) -> DateInterval? {
     let cal = Calendar.current
     let now = Date()
     switch every {
     case "year":
-      let newDate = cal.date(byAdding: .year, value: 1, to: now)!
+      let newDate = cal.date(byAdding: .year, value: count, to: now)!
       return DateInterval(start: now, end: newDate)
     case "month":
-      let newDate = cal.date(byAdding: .month, value: 1, to: now)!
+      let newDate = cal.date(byAdding: .month, value: count, to: now)!
       return DateInterval(start: now, end: newDate)
     case "two-weeks":
-      let newDate = cal.date(byAdding: .weekOfYear, value: 2, to: now)!
+      let newDate = cal.date(byAdding: .weekOfYear, value: 2 * count, to: now)!
       return DateInterval(start: now, end: newDate)
     case "week":
-      let newDate = cal.date(byAdding: .weekOfYear, value: 1, to: now)!
+      let newDate = cal.date(byAdding: .weekOfYear, value: count, to: now)!
       return DateInterval(start: now, end: newDate)
     case "day":
-      let newDate = cal.date(byAdding: .day, value: 1, to: now)!
+      let newDate = cal.date(byAdding: .day, value: count, to: now)!
       return DateInterval(start: now, end: newDate)
     case "hour":
-      let newDate = cal.date(byAdding: .hour, value: 1, to: now)!
+      let newDate = cal.date(byAdding: .hour, value: count, to: now)!
       return DateInterval(start: now, end: newDate)
     case "minute":
-      let newDate = cal.date(byAdding: .minute, value: 1, to: now)!
+      let newDate = cal.date(byAdding: .minute, value: count, to: now)!
       return DateInterval(start: now, end: newDate)
     case "second":
-      let newDate = cal.date(byAdding: .second, value: 1, to: now)!
+      let newDate = cal.date(byAdding: .second, value: count, to: now)!
       return DateInterval(start: now, end: newDate)
     default:
       return nil

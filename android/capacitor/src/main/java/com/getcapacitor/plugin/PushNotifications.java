@@ -1,15 +1,20 @@
 package com.getcapacitor.plugin;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
+import android.service.notification.StatusBarNotification;
+import androidx.core.app.NotificationCompat;
 import android.net.Uri;
 
-
 import android.util.Log;
+
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -25,6 +30,10 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +46,7 @@ public class PushNotifications extends Plugin {
   public static String CHANNEL_DESCRIPTION = "description";
   public static String CHANNEL_IMPORTANCE = "importance";
   public static String CHANNEL_VISIBILITY = "visibility";
+  public static String CHANNEL_SOUND = "sound";
 
   public static Bridge staticBridge = null;
   public static RemoteMessage lastMessage = null;
@@ -60,7 +70,7 @@ public class PushNotifications extends Plugin {
   protected void handleOnNewIntent(Intent data) {
     super.handleOnNewIntent(data);
     Bundle bundle = data.getExtras();
-    if(bundle != null && bundle.containsKey("google.message_id")) {
+    if (bundle != null && bundle.containsKey("google.message_id")) {
       JSObject notificationJson = new JSObject();
       JSObject dataObject = new JSObject();
       for (String key : bundle.keySet()) {
@@ -83,7 +93,7 @@ public class PushNotifications extends Plugin {
   @PluginMethod()
   public void register(PluginCall call) {
     FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(),  new OnSuccessListener<InstanceIdResult>() {
+    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(getActivity(), new OnSuccessListener<InstanceIdResult>() {
       @Override
       public void onSuccess(InstanceIdResult instanceIdResult) {
         sendToken(instanceIdResult.getToken());
@@ -94,17 +104,71 @@ public class PushNotifications extends Plugin {
         sendError(e.getLocalizedMessage());
       }
     });
-    call.success();
+    JSObject result = new JSObject();
+    result.put("granted", true);
+    call.success(result);
   }
 
   @PluginMethod()
   public void getDeliveredNotifications(PluginCall call) {
-    call.unimplemented();
+    JSArray notifications = new JSArray();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+
+      for (StatusBarNotification notif : activeNotifications) {
+        JSObject jsNotif = new JSObject();
+
+        jsNotif.put("id", notif.getId());
+
+        Notification notification = notif.getNotification();
+        if (notification != null) {
+          jsNotif.put("title", notification.extras.getCharSequence(Notification.EXTRA_TITLE));
+          jsNotif.put("body", notification.extras.getCharSequence(Notification.EXTRA_TEXT));
+          jsNotif.put("group", notification.getGroup());
+          jsNotif.put("groupSummary", 0 != (notification.flags & Notification.FLAG_GROUP_SUMMARY));
+
+          JSObject extras = new JSObject();
+
+          for (String key : notification.extras.keySet()) {
+            extras.put(key, notification.extras.get(key));
+          }
+
+          jsNotif.put("data", extras);
+        }
+
+        notifications.put(jsNotif);
+      }
+    }
+
+    JSObject result = new JSObject();
+    result.put("notifications", notifications);
+    call.resolve(result);
   }
 
   @PluginMethod()
   public void removeDeliveredNotifications(PluginCall call) {
-    call.unimplemented();
+    JSArray notifications = call.getArray("notifications");
+
+    List<Integer> ids = new ArrayList<>();
+    try {
+      for (Object o : notifications.toList()) {
+        if (o instanceof JSONObject) {
+          JSObject notif = JSObject.fromJSONObject((JSONObject) o);
+          Integer id = notif.getInteger("id");
+          ids.add(id);
+        } else {
+          call.reject("Expected notifications to be a list of notification objects");
+        }
+      }
+    } catch (JSONException e) {
+      call.reject(e.getMessage());
+    }
+
+    for (int id : ids) {
+      notificationManager.cancel(id);
+    }
+
+    call.resolve();
   }
 
   @PluginMethod()
@@ -115,13 +179,14 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void createChannel(PluginCall call) {
-    if (android.os.Build.VERSION.SDK_INT  >= android.os.Build.VERSION_CODES.O) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       JSObject channel = new JSObject();
       channel.put(CHANNEL_ID, call.getString(CHANNEL_ID));
       channel.put(CHANNEL_NAME, call.getString(CHANNEL_NAME));
       channel.put(CHANNEL_DESCRIPTION, call.getString(CHANNEL_DESCRIPTION, ""));
-      channel.put(CHANNEL_VISIBILITY,  call.getInt(CHANNEL_VISIBILITY, NotificationCompat.VISIBILITY_PUBLIC));
+      channel.put(CHANNEL_VISIBILITY, call.getInt(CHANNEL_VISIBILITY, NotificationCompat.VISIBILITY_PUBLIC));
       channel.put(CHANNEL_IMPORTANCE, call.getInt(CHANNEL_IMPORTANCE));
+      channel.put(CHANNEL_SOUND, call.getString(CHANNEL_SOUND, null));
       createChannel(channel);
       call.success();
     } else {
@@ -131,7 +196,7 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void deleteChannel(PluginCall call) {
-    if (android.os.Build.VERSION.SDK_INT  >= android.os.Build.VERSION_CODES.O) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       String channelId = call.getString("id");
       notificationManager.deleteNotificationChannel(channelId);
       call.success();
@@ -152,6 +217,7 @@ public class PushNotifications extends Plugin {
         channel.put(CHANNEL_DESCRIPTION, notificationChannel.getDescription());
         channel.put(CHANNEL_IMPORTANCE, notificationChannel.getImportance());
         channel.put(CHANNEL_VISIBILITY, notificationChannel.getLockscreenVisibility());
+        channel.put(CHANNEL_SOUND, notificationChannel.getSound());
         Log.d(getLogTag(), "visibility " + notificationChannel.getLockscreenVisibility());
         Log.d(getLogTag(), "importance " + notificationChannel.getImportance());
         channels.put(channel);
@@ -169,6 +235,14 @@ public class PushNotifications extends Plugin {
       NotificationChannel notificationChannelChannel = new NotificationChannel(channel.getString(CHANNEL_ID), channel.getString(CHANNEL_NAME), channel.getInteger(CHANNEL_IMPORTANCE));
       notificationChannelChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION, ""));
       notificationChannelChannel.setLockscreenVisibility(channel.getInteger(CHANNEL_VISIBILITY, 0));
+      String sound = channel.getString(CHANNEL_SOUND, null);
+      if (sound != null && !sound.isEmpty()) {
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_ALARM).build();
+        Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getContext().getPackageName() + "/raw/" + sound);
+        notificationChannelChannel.setSound(soundUri, audioAttributes);
+      }
       notificationManager.createNotificationChannel(notificationChannelChannel);
     }
   }

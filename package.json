@@ -5,10 +5,6 @@
 		"publish-push": "bash scripts/deploy.sh"
 	},
 	"devDependencies": {
-		"lerna": "^2.4.0",
-		"lerna-changelog": "^0.8.2"
-	},
-	"changelog": {
-		"repo": "https://github.com/ionic-team/capacitor"
+		"lerna": "^2.4.0"
 	}
 }

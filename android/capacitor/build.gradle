@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.novoda:bintray-release:0.9.1'
     }
 }
@@ -15,13 +15,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -42,14 +42,15 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:support-compat:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:customtabs:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.core:core:1.2.0'
+    implementation 'com.google.android.material:material:1.1.0-rc02'
+    implementation 'androidx.browser:browser:1.2.0'
     implementation 'com.google.firebase:firebase-messaging:18.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     implementation 'org.apache.cordova:framework:7.0.0'
 }
 
@@ -68,5 +69,3 @@ publish {
     desc = 'Capacitor Android Runtime'
     website = 'https://github.com/ionic-team/capacitor'
 }
-
-

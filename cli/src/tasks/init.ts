@@ -14,6 +14,7 @@ import {
   printNextSteps,
   runTask,
 } from '../common';
+import { getCordovaPreferences } from '../cordova';
 import { emoji as _e } from '../util/emoji';
 import { checkInteractive } from '../util/term';
 
@@ -43,6 +44,8 @@ export async function initCommand(config: Config, name: string, id: string, webD
       ]
     );
 
+    const cordova = await getCordovaPreferences(config);
+
     await runTask(`Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`, async () => {
       config.app.appId = appId;
       config.app.appName = appName;
@@ -55,11 +58,12 @@ export async function initCommand(config: Config, name: string, id: string, webD
         appId,
         appName,
         webDir,
-        npmClient
+        npmClient,
+        cordova
       });
     });
 
-    await printNextSteps(config, "");
+    await printNextSteps(config, '');
   } catch (e) {
     log('Usage: npx cap init appName appId\n');
     log('Example: npx cap init "My App" "com.example.myapp"\n');

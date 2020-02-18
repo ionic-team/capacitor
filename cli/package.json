@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "1.1.0",
+  "version": "1.5.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -14,7 +14,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "npm run clean && npm run assets && tsc",
-    "clean": "rm -rf ./dist",
+    "clean": "rimraf ./dist",
     "deploy": "np",
     "lint": "tslint --project tsconfig.json",
     "assets": "node scripts/copy-assets.js",
@@ -53,9 +53,6 @@
     "ora": "^1.3.0",
     "plist": "^3.0.1",
     "semver": "^5.4.1",
-    "superagent": "^3.8.2",
-    "superagent-proxy": "^1.0.2",
-    "tar": "^4.2.0",
     "which": "^1.3.0",
     "xml2js": "^0.4.19"
   },
@@ -67,12 +64,12 @@
     "@types/open": "^6.1.0",
     "@types/ora": "^1.3.1",
     "@types/semver": "^5.4.0",
-    "@types/tar": "^4.0.0",
     "@types/which": "^1.0.28",
     "@types/xml2js": "^0.4.2",
     "jest": "^23.6.0",
     "mock-fs": "^4.4.2",
     "np": "^2.18.2",
+    "rimraf": "^3.0.0",
     "tmp": "0.0.33",
     "ts-jest": "^23.10.4",
     "tslint": "^5.8.0",
@@ -102,5 +99,5 @@
       }
     }
   },
-  "gitHead": "4e9014a5f1f37b18f5e03fbf682a9a3142ad2151"
+  "gitHead": "844c0feba4a801ee5041429a82d0f805c9e665b0"
 }

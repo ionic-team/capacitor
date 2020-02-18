@@ -18,23 +18,21 @@ contributors:
 
 [Capacitor Workflow for iOS and Android Apps &#8250;](https://www.youtube.com/watch?v=oXbRcpsytGQ)
 
-[Using the Capacitor in Vue.js app](https://akhromieiev.com/tutorials/using-capacitor-in-vue-js-app/)
+[Using the Capacitor in Vue.js app &#8250;](https://akhromieiev.com/tutorials/using-capacitor-in-vue-js-app/)
 
 ## APIs
 
 [Camera: Building an Ionic Framework Camera App](/docs/guides/ionic-framework-app)
 
-[Network: Ionic 4 and Network Detection with Capacitor &#8250;](https://developer.school/posts/ionic-4-network-detection-with-capacitor/)
-
 [Push Notifications: Using Push Notifications with Firebase in an Ionic Angular App](/docs/guides/push-notifications-firebase)
 
 [Splash Screen: Creating a Dynamic/Adaptable Splash Screen for Capacitor (Android) &#8250;](https://www.joshmorony.com/creating-a-dynamic-universal-splash-screen-for-capacitor-android/)
 
-[Using the Capacitor Share API in IOS app](https://akhromieiev.com/tutorials/using-the-capacitor-share-api-in-ios-app/)
+[Using the Capacitor Share API in IOS app &#8250;](https://akhromieiev.com/tutorials/using-the-capacitor-share-api-in-ios-app/)
 
-[Using the Capacitor Browser API to open urls](https://akhromieiev.com/tutorials/using-the-capacitor-browser-api-to-open-links/)
+[Using the Capacitor Browser API to open urls &#8250;](https://akhromieiev.com/tutorials/using-the-capacitor-browser-api-to-open-links/)
 
-[Network Detection with Capacitor in Ionic project](https://akhromieiev.com/tutorials/network-detection-capacitor/)
+[Network Detection with Capacitor in Ionic project &#8250;](https://akhromieiev.com/tutorials/network-detection-capacitor/)
 
 ## Integrations
 
@@ -43,3 +41,11 @@ contributors:
 [Create Native HTML5 Games with Phaser and Capacitor &#8250;](https://www.joshmorony.com/create-native-html5-games-with-phaser-and-capacitor)
 
 [Integrating the Scanbot SDK in a Capacitor App with Ionic &#8250;](https://scanbot.io/blog/capacitor-app/)
+
+[Music Playback in Capacitor App with Ionic &#8250;](https://enappd.com/blog/play-music-in-ionic-capacitor-apps/112)
+
+[Facebook Login in Capacitor App with Ionic React &#8250;](https://enappd.com/blog/facebook-login-in-ionic-react-capacitor-apps/118)
+
+[Google Login in Capacitor Apps with Ionic React &#8250;](https://enappd.com/blog/google-login-in-ionic-react-capacitor-apps/122)
+
+[Twitter Login in Capacitor Apps with Ionic React &#8250;](https://enappd.com/blog/twitter-login-in-ionic-react-capacitor-app/121)

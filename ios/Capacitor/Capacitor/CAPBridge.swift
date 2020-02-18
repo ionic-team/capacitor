@@ -11,8 +11,8 @@ enum BridgeError: Error {
 
   public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   public static var CAP_SITE = "https://capacitor.ionicframework.com/"
-  public static var CAP_SCHEME = "capacitor"
   public static var CAP_FILE_START = "/_capacitor_file_"
+  public static let CAP_DEFAULT_SCHEME = "capacitor"
 
   // The last URL that caused the app to open
   private static var lastUrl: URL?
@@ -36,6 +36,8 @@ enum BridgeError: Error {
   public var cordovaPluginManager: CDVPluginManager?
   // Calls we are storing to resolve later
   public var storedCalls = [String:CAPPluginCall]()
+  // Scheme to use when serving content
+  public var scheme: String
   // Whether the app is active
   private var isActive = true
 
@@ -44,16 +46,17 @@ enum BridgeError: Error {
 
   public var notificationsDelegate : CAPUNUserNotificationCenterDelegate
 
-  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ config: CAPConfig) {
+  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ config: CAPConfig, _ scheme: String) {
     self.bridgeDelegate = bridgeDelegate
     self.userContentController = userContentController
     self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
     self.config = config
+    self.scheme = scheme
 
     super.init()
 
     self.notificationsDelegate.bridge = self;
-    localUrl = "\(CAPBridge.CAP_SCHEME)://\(config.getString("server.hostname") ?? "localhost")"
+    localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
     registerPlugins()
     setupCordovaCompatibility()
@@ -91,6 +94,14 @@ enum BridgeError: Error {
     }
     return bridgeVC.preferredStatusBarStyle
   }
+
+  @available(iOS 12.0, *)
+  public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return UIUserInterfaceStyle.unspecified
+    }
+    return bridgeVC.traitCollection.userInterfaceStyle
+  }
   
   /**
    * Get the last URL that triggered an open or continue activity event.
@@ -107,6 +118,7 @@ enum BridgeError: Error {
       "url": url,
       "options": options
     ])
+    NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url)
     CAPBridge.lastUrl = url
     return true
   }
@@ -164,7 +176,7 @@ enum BridgeError: Error {
       self.isActive = true
       appStatePlugin?.fireChange(isActive: self.isActive)
     }
-    NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { (notification) in
+    NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { (notification) in
       CAPLog.print("APP INACTIVE")
       self.isActive = false
       appStatePlugin?.fireChange(isActive: self.isActive)
@@ -435,11 +447,10 @@ enum BridgeError: Error {
         return
       }
 
-      dispatchQueue.sync {
-        let arguments = call.options["options"] as! [Any]
-        let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
-        plugin.perform(selector, with: pluginCall)
-      }
+      let arguments = call.options["options"] as! [Any]
+      let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
+      plugin.perform(selector, with: pluginCall)
+
     } else {
       CAPLog.print("Error: Cordova Plugin mapping not found")
       return

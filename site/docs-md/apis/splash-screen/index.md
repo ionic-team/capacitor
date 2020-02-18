@@ -132,38 +132,12 @@ These config parameters are available in `capacitor.config.json`:
 
 ### Android
 
-If your splash screen images aren't named "splash.png" but for example "screen.png" you have to change `"androidSplashResourceName": "screen"` in `capacitor.config.json` and change the following files in you're Android app as well:
+To use splash screen images named something other than `splash.png`, set `androidSplashResourceName` to the new resource name in `capacitor.config.json`. Additionally, in `android/app/src/main/res/values/styles.xml`, change the resource name in the following block:
 
-`android/app/src/main/res/drawable/launch_splash.xml`
-
-replace
 ```xml
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/splash"
-    android:scaleType="centerCrop"
-    />
-```
-with
-```xml
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/screen"
-    android:scaleType="centerCrop"
-    />
-```
-
-`android/app/src/main/res/values/styles.xml`
-
-replace
-```xml
-    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
-        <item name="android:background">@drawable/splash</item>
-    </style>
-```
-with
-```xml
-    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
-        <item name="android:background">@drawable/screen</item>
-    </style>
+<style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
+    <item name="android:background">@drawable/NAME</item>
+</style>
 ```
 
 ## Example Guides

@@ -63,6 +63,10 @@ The current ones you might configure are:
     // as it allows to run web APIs that require a secure context such as
     // navigator.geolocation and MediaDevices.getUserMedia.
     "hostname": "app",
+    // It is possible to configure the local scheme that is used. This can be useful
+    // when migrating from cordova-plugin-ionic-webview, where the default scheme on iOS is ionic.
+    "iosScheme": "ionic",
+    "androidScheme": "http",
     // Normally all external URLs are opened in the browser. By setting this option, you tell
     // Capacitor to open URLs belonging to these hosts inside its WebView.
     "allowNavigation": [
@@ -71,9 +75,18 @@ The current ones you might configure are:
       "192.0.2.1"
     ]
   },
+  // User agent of Capacitor WebView for iOS, Android and Electron, unless also declared inside ios, android or electron objects
+  "overrideUserAgent": "my custom user agent",
+  // String to append to the original user agent of Capacitor WebView for iOS, Android and Electron,
+  // unless also declared inside ios, android or electron objects. Only if overrideUserAgent is not set.
+  "appendUserAgent": "string to append",
   // Background color of Capacitor WebView for both iOS and Android unless also declared inside ios or android objects
   "backgroundColor": "#ffffffff",
   "android": {
+    // User agent of Capacitor WebView for Android
+    "overrideUserAgent": "my custom user agent for Android",
+    // String to append to the original user agent of Capacitor WebView for Android.
+    "appendUserAgent": "string to append for Android",
     // Background color of Capacitor WebView for Android only
     "backgroundColor": "#ffffffff",
     // On Android, if you are loading the app from a remote/testing server from https
@@ -91,8 +104,17 @@ The current ones you might configure are:
     "webContentsDebuggingEnabled": true
   },
   "ios": {
+    // User agent of Capacitor WebView for iOS
+    "overrideUserAgent": "my custom user agent for iOS",
+    // String to append to the original user agent of Capacitor WebView for iOS.
+    "appendUserAgent": "string to append for iOS",
     // Background color of Capacitor WebView for iOS only
     "backgroundColor": "#ffffffff",
+    // Configure the WebView's UIScrollView's content inset behavior
+    // Default is never
+    // Possible values are "automatic", "scrollableAxes", "never" and "always"
+    // https://developer.apple.com/documentation/uikit/uiscrollview/contentinsetadjustmentbehavior
+    "contentInset": "always",
     // Configure the Swift version to be used for Cordova plugins.
     // Default is 4.0
     "cordovaSwiftVersion": "3.0",
@@ -100,7 +122,16 @@ The current ones you might configure are:
     // Default is 11.0
     "minVersion": "11.3",
     // Some Cordova plugins require to configure the linker flags
-    "cordovaLinkerFlags": ["-ObjC"]
+    "cordovaLinkerFlags": ["-ObjC"],
+    // A Boolean value that determines whether pressing on a link displays a preview of
+    // the destination for the link.
+    "allowsLinkPreview": false
+  },
+  "electron": {
+    // User agent of Capacitor WebView for Electron
+    "overrideUserAgent": "my custom user agent for Electron",
+    // String to append to the original user agent of Capacitor WebView for Electron.
+    "appendUserAgent": "string to append for Electron",
   }
 }
 ```

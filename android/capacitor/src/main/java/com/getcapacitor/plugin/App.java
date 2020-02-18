@@ -24,7 +24,7 @@ public class App extends Plugin {
     Log.d(getLogTag(), "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
-    notifyListeners(EVENT_STATE_CHANGE, data, true);
+    notifyListeners(EVENT_STATE_CHANGE, data, false);
   }
 
   public void fireRestoredResult(PluginResult result) {
@@ -93,15 +93,24 @@ public class App extends Plugin {
       return;
     }
 
+    JSObject ret = new JSObject();
     final PackageManager manager = getContext().getPackageManager();
-    final Intent launchIntent = new Intent(Intent.ACTION_VIEW);
+    Intent launchIntent = new Intent(Intent.ACTION_VIEW);
     launchIntent.setData(Uri.parse(url));
 
     try {
       getActivity().startActivity(launchIntent);
+      ret.put("completed", true);
     } catch(Exception ex) {
-      call.error("Unable to open url", ex);
+      launchIntent = manager.getLaunchIntentForPackage(url);
+      try {
+        getActivity().startActivity(launchIntent);
+        ret.put("completed", true);
+      } catch(Exception expgk) {
+        ret.put("completed", false);
+      }
     }
+    call.success(ret);
   }
 
   /**

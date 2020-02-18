@@ -15,7 +15,7 @@ describe.each([false, true])('Update: Android (monoRepoLike: %p)', (monoRepoLike
     await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm`);
     await run(appDir, `add android`);
     // Redundant, because add does this, but called explicitly for thoroughness
-    await updateCommand(makeConfig(appDir), 'android');
+    await updateCommand(makeConfig(appDir), 'android', false);
     FS = new MappedFS(appDir);
   });
 

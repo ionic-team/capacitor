@@ -9,7 +9,9 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
       platforms: ['web']
     });
 
-    document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this), false);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this), false);
+    }
   }
 
   exitApp(): never {
@@ -28,7 +30,7 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
     return Promise.resolve({ url: '' });
   }
 
-  handleVisibilityChange():void {
+  handleVisibilityChange(): void {
     const data = {
       isActive: document.hidden !== true
     };

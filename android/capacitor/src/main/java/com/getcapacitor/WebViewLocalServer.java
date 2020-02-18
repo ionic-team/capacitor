@@ -18,6 +18,7 @@ package com.getcapacitor;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 
@@ -45,7 +46,6 @@ import java.util.Map;
  */
 public class WebViewLocalServer {
 
-  private final static String capacitorScheme = Bridge.CAPACITOR_SCHEME_NAME;
   private final static String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
   private final static String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
   private String basePath;
@@ -173,7 +173,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || loadingUrl.toString().startsWith(bridge.getLocalUrl())) {
+    if (isLocalFile(loadingUrl) || (Config.getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
       Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
@@ -298,20 +298,18 @@ public class WebViewLocalServer {
         for (Map.Entry<String, String> header : headers.entrySet()) {
           conn.setRequestProperty(header.getKey(), header.getValue());
         }
+        conn.setRequestProperty("Cookie", CookieManager.getInstance().getCookie(request.getUrl().toString()));
         conn.setRequestMethod(method);
         conn.setReadTimeout(30 * 1000);
         conn.setConnectTimeout(30 * 1000);
 
-        InputStream responseStream = conn.getInputStream();
-        String mimeType = getMimeType(path, responseStream);
-
-        if (mimeType.equals("text/html")) {
+        if (conn.getContentType().contains("text/html")) {
+          InputStream responseStream = conn.getInputStream();
           responseStream = jsInjector.getInjectedStream(responseStream);
           bridge.reset();
+          return new WebResourceResponse("text/html", handler.getEncoding(),
+                  handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
-
-        return new WebResourceResponse(mimeType, handler.getEncoding(),
-                handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
 
       } catch (SocketTimeoutException ex) {
         bridge.handleAppUrlLoadError(ex);
@@ -330,9 +328,11 @@ public class WebViewLocalServer {
         Log.d(LogUtils.getCoreTag(), "We shouldn't be here");
       }
       if (mimeType == null) {
-        if (path.endsWith(".js")) {
+        if (path.endsWith(".js") || path.endsWith(".mjs")) {
           // Make sure JS files get the proper mimetype to support ES modules
           mimeType = "application/javascript";
+        } else if (path.endsWith(".wasm")) {
+          mimeType = "application/wasm";
         } else {
           mimeType = URLConnection.guessContentTypeFromStream(stream);
         }
@@ -436,8 +436,13 @@ public class WebViewLocalServer {
     };
 
     for (String authority: authorities) {
-      registerUriForScheme(capacitorScheme, handler, authority);
-      registerUriForScheme("https", handler, authority);
+      registerUriForScheme(Bridge.CAPACITOR_HTTP_SCHEME, handler, authority);
+      registerUriForScheme(Bridge.CAPACITOR_HTTPS_SCHEME, handler, authority);
+
+      String customScheme = this.bridge.getScheme();
+      if (!customScheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !customScheme.equals(Bridge.CAPACITOR_HTTPS_SCHEME)) {
+        registerUriForScheme(customScheme, handler, authority);
+      }
     }
 
   }

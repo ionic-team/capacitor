@@ -47,15 +47,9 @@ Capacitor uses the Native IDEs to build, simulate, and run your app. To open it 
 npx cap open
 ```
 
-## 4. Periodic Maintenance
+## 4. Update the native project
 
-Your Capacitor app needs periodic maintenance, such as updating dependencies and installing new plugins.
-
-To update your app's dependencies, run
-
-```bash
-npx cap update
-```
+In some cases, the Capacitor app needs to be updated, such as when installing new plugins.
 
 To install new plugins (including Cordova ones), run
 

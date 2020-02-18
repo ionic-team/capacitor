@@ -23,7 +23,7 @@ export async function check(config: Config, checks: CheckFunction[]): Promise<vo
 }
 
 export async function checkWebDir(config: Config): Promise<string | null> {
-  const invalidFolders = ["", ".", "..", "../", "./"];
+  const invalidFolders = ['', '.', '..', '../', './'];
   if (invalidFolders.includes(config.app.webDir)) {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
@@ -325,7 +325,7 @@ export async function getAppId(config: Config, id: string) {
 export function getNpmClient(config: Config, npmClient: string): Promise<string> {
   return new Promise(async (resolve) => {
     if (!npmClient) {
-      if (await hasYarn(config)) return resolve('yarn')
+      if (await hasYarn(config)) return resolve('yarn');
       exec('yarn --version', async (err, stdout) => {
         // Don't show prompt if yarn is not installed
         if (err || !isInteractive()) {
@@ -418,7 +418,7 @@ export function resolveNode(config: Config, ...pathSegments: any[]): string | nu
   return join(modulePath, ...path);
 }
 
-function resolveNodeFrom(start: string, id: string): string | null {
+export function resolveNodeFrom(start: string, id: string): string | null {
   const rootPath = parse(start).root;
   let basePath = resolve(start);
   let modulePath;
@@ -450,4 +450,14 @@ export const hasYarn = async (config: Config, projectDir?: string) => {
 // Install deps with NPM or Yarn
 export async function installDeps(projectDir: string, deps: string[], config: Config) {
   return runCommand(`cd "${projectDir}" && ${await hasYarn(config, projectDir) ? 'yarn add' : 'npm install --save'} ${deps.join(' ')}`);
+}
+
+export async function checkNPMVersion() {
+  const minVersion = '5.5.0';
+  const version = await runCommand('npm -v');
+  const semver = await import('semver');
+  if (semver.gt(minVersion, version)) {
+    return `Capacitor CLI requires at least NPM ${minVersion}`;
+  }
+  return null;
 }

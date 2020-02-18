@@ -3,6 +3,7 @@ package com.getcapacitor.plugin.notification;
 import android.content.Context;
 import android.util.Log;
 
+import com.getcapacitor.Config;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.LogUtils;
@@ -21,11 +22,18 @@ import java.util.List;
  */
 public class LocalNotification {
 
+  private static final String CONFIG_KEY_PREFIX = "plugins.LocalNotifications.";
+  private static final int RESOURCE_ID_ZERO_VALUE = 0;
+  private static int defaultSmallIconID = RESOURCE_ID_ZERO_VALUE;
+
   private String title;
   private String body;
   private Integer id;
   private String sound;
+  private String smallIcon;
   private String actionTypeId;
+  private String group;
+  private boolean groupSummary;
   private JSObject extra;
   private List<LocalNotificationAttachment> attachments;
   private LocalNotificationSchedule schedule;
@@ -65,6 +73,7 @@ public class LocalNotification {
     this.sound = sound;
   }
 
+  public void setSmallIcon(String smallIcon) { this.smallIcon = getResourceBaseName(smallIcon); }
 
   public List<LocalNotificationAttachment> getAttachments() {
     return attachments;
@@ -82,6 +91,14 @@ public class LocalNotification {
     this.actionTypeId = actionTypeId;
   }
 
+  public String getGroup() {
+    return group;
+  }
+
+  public void setGroup(String group) {
+    this.group = group;
+  }
+
   public JSObject getExtra() {
     return extra;
   }
@@ -96,6 +113,14 @@ public class LocalNotification {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public boolean isGroupSummary() {
+    return groupSummary;
+  }
+
+  public void setGroupSummary(boolean groupSummary) {
+    this.groupSummary = groupSummary;
   }
 
   /**
@@ -129,9 +154,12 @@ public class LocalNotification {
       activeLocalNotification.setId(notification.getInteger("id"));
       activeLocalNotification.setBody(notification.getString("body"));
       activeLocalNotification.setActionTypeId(notification.getString("actionTypeId"));
+      activeLocalNotification.setGroup(notification.getString("group"));
       activeLocalNotification.setSound(notification.getString("sound"));
       activeLocalNotification.setTitle(notification.getString("title"));
+      activeLocalNotification.setSmallIcon(notification.getString("smallIcon"));
       activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
+      activeLocalNotification.setGroupSummary(notification.getBoolean("groupSummary", false));
       try {
         activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
       } catch (ParseException e) {
@@ -178,8 +206,35 @@ public class LocalNotification {
   }
 
   public int getSmallIcon(Context context) {
-    // TODO support custom icons
-    int resId = android.R.drawable.ic_dialog_info;
+    int resId = RESOURCE_ID_ZERO_VALUE;
+
+    if(smallIcon != null){
+      resId = getResourceID(context, smallIcon,"drawable");
+    }
+
+    if(resId == RESOURCE_ID_ZERO_VALUE){
+      resId = getDefaultSmallIcon(context);
+    }
+
+    return resId;
+  }
+
+  private static int getDefaultSmallIcon(Context context){
+    if(defaultSmallIconID != RESOURCE_ID_ZERO_VALUE) return defaultSmallIconID;
+
+    int resId = RESOURCE_ID_ZERO_VALUE;
+    String smallIconConfigResourceName = Config.getString(CONFIG_KEY_PREFIX + "smallIcon");
+    smallIconConfigResourceName = getResourceBaseName(smallIconConfigResourceName);
+
+    if(smallIconConfigResourceName != null){
+      resId = getResourceID(context, smallIconConfigResourceName, "drawable");
+    }
+
+    if(resId == RESOURCE_ID_ZERO_VALUE){
+      resId = android.R.drawable.ic_dialog_info;
+    }
+
+    defaultSmallIconID = resId;
     return resId;
   }
 
@@ -197,10 +252,13 @@ public class LocalNotification {
             ", body='" + body + '\'' +
             ", id=" + id +
             ", sound='" + sound + '\'' +
+            ", smallIcon='" + smallIcon + '\'' +
             ", actionTypeId='" + actionTypeId + '\'' +
+            ", group='" + group + '\'' +
             ", extra=" + extra +
             ", attachments=" + attachments +
             ", schedule=" + schedule +
+            ", groupSummary=" + groupSummary +
             '}';
   }
 
@@ -215,11 +273,14 @@ public class LocalNotification {
     if (body != null ? !body.equals(that.body) : that.body != null) return false;
     if (id != null ? !id.equals(that.id) : that.id != null) return false;
     if (sound != null ? !sound.equals(that.sound) : that.sound != null) return false;
+    if (smallIcon != null ? !smallIcon.equals(that.smallIcon) : that.smallIcon != null) return false;
     if (actionTypeId != null ? !actionTypeId.equals(that.actionTypeId) : that.actionTypeId != null)
       return false;
+    if (group != null ? !group.equals(that.group) : that.group != null) return false;
     if (extra != null ? !extra.equals(that.extra) : that.extra != null) return false;
     if (attachments != null ? !attachments.equals(that.attachments) : that.attachments != null)
       return false;
+    if (groupSummary != that.groupSummary) return false;
     return schedule != null ? schedule.equals(that.schedule) : that.schedule == null;
   }
 
@@ -229,7 +290,10 @@ public class LocalNotification {
     result = 31 * result + (body != null ? body.hashCode() : 0);
     result = 31 * result + (id != null ? id.hashCode() : 0);
     result = 31 * result + (sound != null ? sound.hashCode() : 0);
+    result = 31 * result + (smallIcon != null ? smallIcon.hashCode() : 0);
     result = 31 * result + (actionTypeId != null ? actionTypeId.hashCode() : 0);
+    result = 31 * result + (group != null ? group.hashCode() : 0);
+    result = 31 * result + Boolean.hashCode(groupSummary);
     result = 31 * result + (extra != null ? extra.hashCode() : 0);
     result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
     result = 31 * result + (schedule != null ? schedule.hashCode() : 0);
@@ -252,5 +316,23 @@ public class LocalNotification {
 
   public void setSource(String source) {
     this.source = source;
+  }
+
+  private static int getResourceID(Context context, String resourceName, String dir){
+    return context.getResources().getIdentifier(resourceName, dir, context.getPackageName());
+  }
+
+  private static String getResourceBaseName (String resPath) {
+    if (resPath == null) return null;
+
+    if (resPath.contains("/")) {
+      return resPath.substring(resPath.lastIndexOf('/') + 1);
+    }
+
+    if (resPath.contains(".")) {
+      return resPath.substring(0, resPath.lastIndexOf('.'));
+    }
+
+    return resPath;
   }
 }

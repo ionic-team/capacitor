@@ -19,7 +19,10 @@
   </button>
   <br/><br/>
   <button (click)="scheduleNow()" ion-button>
-    Schedule Now
+    Schedule Now - Icon from config (or default)
+  </button>
+  <button (click)="scheduleNowWithIcon()" ion-button>
+    Schedule Now - Icon parameter
   </button>
   <br/><br/>
   <button (click)="scheduleOnce()" ion-button>
@@ -28,6 +31,9 @@
   <br/><br/>
   <button (click)="scheduleRepeatingEvery()" ion-button>
     Schedule every minute
+  </button>
+  <button (click)="scheduleRepeatingEveryWithValue(2)" ion-button>
+    Schedule every 2 minutes
   </button>
   <br/><br/>
   <button (click)="scheduleRepeatingOn()" ion-button>

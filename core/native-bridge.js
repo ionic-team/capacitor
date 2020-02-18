@@ -54,8 +54,8 @@
     win.console.warn('Advance console logging disabled.')
   }
 
-  // patch window.console and store original console fns
-  var orgConsole = {};
+  // patch window.console on iOS and store original console fns
+  var orgConsole = capacitor.isIOS ? {} : win.console;
   
   // list log functions bridged to native log
   var bridgedLevels = {
@@ -66,44 +66,43 @@
     trace: true,
     warn: true,
   };
-  
-  Object.keys(win.console).forEach(function (level) {
-    if (typeof win.console[level] === 'function') {
-      // loop through all the console functions and keep references to the original
-      orgConsole[level] = win.console[level];
+  if (capacitor.isIOS) {
+    Object.keys(win.console).forEach(function (level) {
+      if (typeof win.console[level] === 'function') {
+        // loop through all the console functions and keep references to the original
+        orgConsole[level] = win.console[level];
+        win.console[level] = function capacitorConsole() {
+          var msgs = Array.prototype.slice.call(arguments);
 
-      win.console[level] = function capacitorConsole() {
-        var msgs = Array.prototype.slice.call(arguments);
+          // console log to browser
+          orgConsole[level].apply(win.console, msgs);
 
-        // console log to browser
-        orgConsole[level].apply(win.console, msgs);
-
-        if (capacitor.isNative && bridgedLevels[level]) {
-          // send log to native to print
-          try {
-            // convert all args to strings
-            msgs = msgs.map(function (arg) {
-              if (typeof arg === 'object') {
-                try {
-                  arg = JSON.stringify(arg);
-                } catch (e) {}
-              }
-              // convert to string
-              return arg + '';
-          });
-            capacitor.toNative('Console', 'log', {
-              level: level,
-              message: msgs.join(' ')
+          if (capacitor.isNative && bridgedLevels[level]) {
+            // send log to native to print
+            try {
+              // convert all args to strings
+              msgs = msgs.map(function (arg) {
+                if (typeof arg === 'object') {
+                  try {
+                    arg = JSON.stringify(arg);
+                  } catch (e) {}
+                }
+                // convert to string
+                return arg + '';
             });
-
-          } catch (e) {
-            // error converting/posting console messages
-            orgConsole.error.apply(win.console, e);
+              capacitor.toNative('Console', 'log', {
+                level: level,
+                message: msgs.join(' ')
+              });
+            } catch (e) {
+              // error converting/posting console messages
+              orgConsole.error.apply(win.console, e);
+            }
           }
-        }
-      };
-    }
-  });
+        };
+      }
+    });
+  }
 
   function addLegacyHandlers(win) {
     win.navigator.app = {
@@ -149,6 +148,13 @@
       return window.WEBVIEW_SERVER_URL + url.replace('content:/', '/_capacitor_content_');
     }
     return url;
+  }
+
+  /*
+   * Check running platform
+   */
+  capacitor.getPlatform = function getPlatform() {
+    return this.platform;
   }
 
   /**
@@ -209,6 +215,14 @@
 
       if (storedCall) {
         // looks like we've got a stored call
+
+        if (result.error && typeof result.error === 'object') {
+          // ensure stacktraces by copying error properties to an Error
+          result.error = Object.keys(result.error).reduce(function(err, key) {
+            err[key] = result.error[key];
+            return err;
+          }, new Error());
+        }
 
         if (typeof storedCall.callback === 'function') {
           // callback
@@ -341,7 +355,7 @@
   capacitor.handleError = function(error) {
     console.error(error);
   }
- 
+
   capacitor.handleWindowError = function (msg, url, lineNo, columnNo, error) {
     var string = msg.toLowerCase();
     var substring = "script error";
@@ -377,10 +391,9 @@
         c.groupCollapsed('%cnative %c' + call.pluginId + '.' + call.methodName + ' (#' + call.callbackId + ')', 'font-weight: lighter; color: gray', 'font-weight: bold; color: #000');
         c.dir(call);
         c.groupEnd();
-        //orgConsole.log('LOG TO NATIVE', call);
     } else {
         win.console.log('LOG TO NATIVE: ', call);
-        if (capacitor.isNative) {
+        if (capacitor.isIOS) {
             try {
                 capacitor.toNative('Console', 'log', {message: JSON.stringify(call)});
             } catch (e) {

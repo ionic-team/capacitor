@@ -17,7 +17,7 @@ export class BrowserPluginWeb extends WebPlugin implements BrowserPlugin {
   }
 
   async open(options: BrowserOpenOptions): Promise<void> {
-    this._lastWindow = window.open(options.url, options.windowName || "_blank");
+    this._lastWindow = window.open(options.url, options.windowName || '_blank');
     return Promise.resolve();
   }
 
