@@ -10,12 +10,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.app.RemoteInput;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.RemoteInput;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.LogUtils;
 import com.getcapacitor.PluginCall;
@@ -26,6 +28,8 @@ import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.List;
+
+import static androidx.core.app.NotificationCompat.VISIBILITY_PRIVATE;
 
 /**
  * Contains implementations for all notification actions

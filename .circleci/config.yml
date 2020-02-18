@@ -47,7 +47,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: ./gradlew clean build -b capacitor/build.gradle
+          command: ./gradlew clean build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
           working_directory: /tmp/workspace/android
 
 workflows:
