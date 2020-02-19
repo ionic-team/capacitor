@@ -4,29 +4,37 @@ import { copy } from 'fs-extra';
 import { writeFileAsync } from '../util/fs';
 import { join } from 'path';
 
+// When a new version of Capacitor's PWA service worker is seen by the browser, immediately activate it after installation
+const CAPACITOR_SERVICEWORKER_HEADER = `
+// Timestamp: ${Date.now()}
+
+self.addEventListener('installed', () => {
+  self.skipWaiting();
+});
+`;
 const FIREBASE_SERVICEWORKER_TEMPLATE = `
-  (function() {
-    importScripts('./firebase-app.js');
-    importScripts('./firebase-messaging.js');
+(function() {
+  importScripts('./firebase-app.js');
+  importScripts('./firebase-messaging.js');
 
-    firebase.initializeApp({
-      messagingSenderId: '[SENDER_ID]'
-    });
+  firebase.initializeApp({
+    messagingSenderId: '[SENDER_ID]'
+  });
 
-    const messaging = firebase.messaging();
+  const messaging = firebase.messaging();
 
-    self.addEventListener('push', (event) => {
-      event.stopImmediatePropagation();
-    });
-    
-    self.addEventListener('pushsubscriptionchange', e => {
-      event.stopImmediatePropagation();
-    });
+  self.addEventListener('push', (event) => {
+    event.stopImmediatePropagation();
+  });
+  
+  self.addEventListener('pushsubscriptionchange', e => {
+    event.stopImmediatePropagation();
+  });
 
-    messaging.setBackgroundMessageHandler(msgPayload => {
-      return messaging.sendMessageToWindowClients_(msgPayload);
-    });
-  })();
+  messaging.setBackgroundMessageHandler(msgPayload => {
+    return messaging.sendMessageToWindowClients_(msgPayload);
+  });
+})();
 `;
 
 export async function copyWeb(config: Config) {
@@ -48,6 +56,8 @@ export async function copyWeb(config: Config) {
   if (config.app.serviceWorker) {
     const firebaseConfigKeys = Object.keys(config.app.serviceWorker.firebaseConfig);
     const missingFirebaseValues = firebaseConfigKeys.filter(k => !(config.app.serviceWorker.firebaseConfig as any)[k]);
+
+    serviceWorker = CAPACITOR_SERVICEWORKER_HEADER;
 
     if (missingFirebaseValues.length > 0 && missingFirebaseValues.length < firebaseConfigKeys.length) {
       logFatal(`Firebase values missing: ${missingFirebaseValues.join(', ')}. `,
