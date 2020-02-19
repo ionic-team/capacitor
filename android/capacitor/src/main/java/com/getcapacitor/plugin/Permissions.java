@@ -2,8 +2,9 @@ package com.getcapacitor.plugin;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
