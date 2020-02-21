@@ -1,3 +1,4 @@
+platform :ios, '11.0'
 
 target 'Capacitor' do
   use_frameworks!
