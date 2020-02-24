@@ -383,7 +383,7 @@ export async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], conf
             const pathParts = getPathParts(configElement.$.parent || configElement.$.target);
             if (pathParts.length > 1) {
               if (pathParts.pop() === 'application') {
-                if (configElement.$.mode && configElement.$.mode === 'merge') {
+                if (configElement.$.mode && configElement.$.mode === 'merge' && xmlElement.startsWith('<application')) {
                   Object.keys(e.$).map((ek: any) => {
                     applicationXMLAttributes.push(`${ek}="${e.$[ek]}"`);
                   });
