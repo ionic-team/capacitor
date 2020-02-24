@@ -21,8 +21,7 @@ public class CAPStatusBarPlugin: CAPPlugin {
         bridge.setStatusBarStyle(.lightContent)
       } else if style == "LIGHT" {
         if #available(iOS 13.0, *) {
-          // TODO - use .darkContent instead of rawValue once Xcode 10 support is dropped
-          bridge.setStatusBarStyle(UIStatusBarStyle.init(rawValue: 3) ?? .default)
+          bridge.setStatusBarStyle(.darkContent)
         } else {
           bridge.setStatusBarStyle(.default)
         }
