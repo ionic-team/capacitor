@@ -64,7 +64,7 @@ public class CAPModalsPlugin : CAPPlugin {
     DispatchQueue.main.async {
       
       alert.addTextField { (textField) in
-        textField.text = inputPlaceholder
+        textField.placeholder = inputPlaceholder
       }
       
       alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in

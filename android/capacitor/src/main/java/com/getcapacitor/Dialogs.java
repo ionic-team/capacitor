@@ -158,7 +158,7 @@ public class Dialogs {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final EditText input = new EditText(context);
 
-        input.setText(promptInputPlaceholder);
+        input.setHint(promptInputPlaceholder);
 
         builder
             .setMessage(message)
