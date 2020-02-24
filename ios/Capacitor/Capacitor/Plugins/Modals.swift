@@ -58,6 +58,7 @@ public class CAPModalsPlugin : CAPPlugin {
     let okButtonTitle = call.options["okButtonTitle"] as? String ?? "OK"
     let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? "Cancel"
     let inputPlaceholder = call.options["inputPlaceholder"] as? String ?? ""
+    let inputText = call.options["inputText"] as? String ?? ""
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
     
@@ -65,6 +66,7 @@ public class CAPModalsPlugin : CAPPlugin {
       
       alert.addTextField { (textField) in
         textField.placeholder = inputPlaceholder
+        textField.text = inputText
       }
       
       alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in

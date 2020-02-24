@@ -1115,6 +1115,7 @@ export interface PromptOptions {
   okButtonTitle?: string;
   cancelButtonTitle?: string;
   inputPlaceholder?: string;
+  inputText?: string;
 }
 
 export interface ConfirmOptions {
