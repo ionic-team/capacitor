@@ -137,7 +137,7 @@ public class Dialogs {
                             final String message,
                             final Dialogs.OnResultListener listener) {
 
-    prompt(context, message, null, null, null, null, listener);
+    prompt(context, message, null, null, null, null, null, listener);
   }
 
   public static void prompt(final Context context,
@@ -146,11 +146,13 @@ public class Dialogs {
                             final String okButtonTitle,
                             final String cancelButtonTitle,
                             final String inputPlaceholder,
+                            final String inputText,
                             final Dialogs.OnResultListener listener) {
     final String promptTitle = title == null ? "Prompt" : title;
     final String promptOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
     final String promptCancelButtonTitle = cancelButtonTitle == null ? "Cancel" : cancelButtonTitle;
     final String promptInputPlaceholder = inputPlaceholder == null ? "" : inputPlaceholder;
+    final String promptInputText = inputText == null ? "" : inputText;
 
     new Handler(Looper.getMainLooper()).post(new Runnable() {
       @Override
@@ -159,6 +161,7 @@ public class Dialogs {
         final EditText input = new EditText(context);
 
         input.setHint(promptInputPlaceholder);
+        input.setText(promptInputText);
 
         builder
             .setMessage(message)

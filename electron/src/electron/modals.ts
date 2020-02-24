@@ -33,7 +33,7 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
   }
 
   async prompt(options: PromptOptions): Promise<PromptResult> {
-    const val = window.prompt(options.message, options.inputPlaceholder || '');
+    const val = window.prompt(options.message, options.inputText || '');
     return Promise.resolve({
       value: val,
       cancelled: val === null
