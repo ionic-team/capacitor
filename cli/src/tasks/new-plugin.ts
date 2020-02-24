@@ -41,7 +41,7 @@ export async function newPlugin(config: Config) {
       return false;
     }
     return true;
-  };
+  }
   const answers: NewPluginAnswers = await inquirer.prompt([
     {
       type: 'input',
