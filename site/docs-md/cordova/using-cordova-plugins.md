@@ -16,6 +16,7 @@ Simply install your plugin of choice, sync your project, finish any required nat
 
 ```bash
 npm install cordova-plugin-name
+ionic cordova plugin add cordova-plugin-name
 npx cap sync
 ```
 
