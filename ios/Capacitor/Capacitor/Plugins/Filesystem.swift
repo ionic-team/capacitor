@@ -115,7 +115,9 @@ public class CAPFilesystemPlugin : CAPPlugin {
           return
         }
       }
-      call.success()
+      call.success([
+        "uri": fileUrl.absoluteString
+      ])
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)
     }

@@ -754,6 +754,7 @@ export interface FileReadResult {
 export interface FileDeleteResult {
 }
 export interface FileWriteResult {
+  uri: string;
 }
 export interface FileAppendResult {
 }

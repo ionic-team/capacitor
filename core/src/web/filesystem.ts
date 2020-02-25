@@ -176,7 +176,9 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       content: !encoding && data.indexOf(',') >= 0 ? data.split(',')[1] : data,
     };
     await this.dbRequest('put', [pathObj]);
-    return {};
+    return {
+      uri: pathObj.path
+    };
   }
 
   /**
