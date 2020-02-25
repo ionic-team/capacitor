@@ -149,6 +149,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   async writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     const path: string = this.getPath(options.directory, options.path);
     const data = options.data;
+    const doRecursive = options.recursive;
 
     let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
     if (occupiedEntry && occupiedEntry.type === 'directory')
@@ -162,7 +163,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       const subDirIndex = parentPath.indexOf('/', 1);
       if (subDirIndex !== -1) {
         const parentArgPath = parentPath.substr(subDirIndex);
-        await this.mkdir({path: parentArgPath, directory: options.directory, recursive: true});
+        await this.mkdir({path: parentArgPath, directory: options.directory, recursive: doRecursive});
       }
     }
     const now = Date.now();
