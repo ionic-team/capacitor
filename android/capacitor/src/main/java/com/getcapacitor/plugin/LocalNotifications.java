@@ -71,7 +71,17 @@ public class LocalNotifications extends Plugin {
     }
     JSONArray ids = manager.schedule(call, localNotifications);
     notificationStorage.appendNotificationIds(localNotifications);
-    call.success(new JSObject().put("ids", ids));
+    JSObject result = new JSObject();
+    JSArray jsArray = new JSArray();
+    for (int i=0; i < ids.length(); i++) {
+      try {
+        JSObject notification = new JSObject().put("id", ids.getString(i));
+        jsArray.put(notification);
+      } catch (Exception ex) {
+      }
+    }
+    result.put("notifications", jsArray);
+    call.success(result);
   }
 
   @PluginMethod()
