@@ -282,7 +282,9 @@ public class Filesystem extends Plugin {
         MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
       Log.d(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
-      call.success();
+      JSObject result = new JSObject();
+      result.put("uri", Uri.fromFile(file).toString());
+      call.success(result);
     } else {
       call.error("FILE_NOTCREATED");
     }

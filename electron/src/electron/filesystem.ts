@@ -71,7 +71,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
           return;
         }
 
-        resolve();
+        resolve({uri: lookupPath});
       });
     });
   }
