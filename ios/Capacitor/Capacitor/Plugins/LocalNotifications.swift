@@ -86,8 +86,13 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       ids.append(request.identifier)
     }
 
+    let ret = ids.map({ (id) -> [String:String] in
+      return [
+        "id": id,
+      ]
+    })
     call.success([
-      "ids": ids
+      "notifications": ret
     ])
   }
   
