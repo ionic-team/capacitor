@@ -65,13 +65,21 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
         data = Buffer.from(base64Data, 'base64');
       }
-      this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err: any) => {
-        if (err) {
-          reject(err);
-          return;
+      const dstDirectory = this.Path.dirname(lookupPath);
+      this.NodeFS.stat(dstDirectory, (err: any) => {
+        if(err) {
+          const doRecursive = options.recursive;
+          if (doRecursive) {
+            this.NodeFS.mkdirSync(dstDirectory, {recursive: doRecursive});
+          }
         }
-
-        resolve({uri: lookupPath});
+        this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err: any) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({uri: lookupPath});
+        });
       });
     });
   }

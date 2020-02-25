@@ -192,6 +192,7 @@ public class Filesystem extends Plugin {
     saveCall(call);
     String path = call.getString("path");
     String data = call.getString("data");
+    Boolean recursive = call.getBoolean("recursive", false);
 
     if (path == null) {
       Log.e(getLogTag(), "No path or filename retrieved from call");
@@ -215,8 +216,10 @@ public class Filesystem extends Plugin {
           if (androidDir.exists() || androidDir.mkdirs()) {
             // path might include directories as well
             File fileObject = new File(androidDir, path);
-            if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
+            if (fileObject.getParentFile().exists() || (recursive && fileObject.getParentFile().mkdirs())) {
               saveFile(call, fileObject, data);
+            } else {
+              call.error("Parent folder doesn't exist");
             }
           } else {
             Log.e(getLogTag(), "Not able to create '" + directory + "'!");
@@ -235,8 +238,10 @@ public class Filesystem extends Plugin {
         // do not know where the file is being store so checking the permission to be secure
         // TODO to prevent permission checking we need a property from the call
         if (isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-          if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
+          if (fileObject.getParentFile().exists() || (recursive && fileObject.getParentFile().mkdirs())) {
             saveFile(call, fileObject, data);
+          } else {
+            call.error("Parent folder doesn't exist");
           }
         }
       }
