@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, Loading } from 'ionic-angular';
 
 import { Plugins } from '@capacitor/core';
 
@@ -19,7 +19,9 @@ export class HttpPage {
   url: string = 'https://jsonplaceholder.typicode.com';
   output: string = '';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  loading: Loading;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public loadingCtrl: LoadingController) {
   }
 
   ionViewDidLoad() {
@@ -29,32 +31,42 @@ export class HttpPage {
   async get() {
     this.output = '';
 
+    this.loading = this.loadingCtrl.create({
+      content: 'Requesting...'
+    });
+    this.loading.present();
     const ret = await Plugins.Http.request({
       method: 'GET',
       url: `${this.url}/posts/1`
     });
     console.log('Got ret', ret);
+    this.loading.dismiss();
 
-    this.output = JSON.stringify(ret.data);
+    this.output = JSON.stringify(ret, null, 2);
   }
 
-  async post() {
-    this.output = '';
+  delete =  () => this.mutate('/posts/1', 'DELETE', { title: 'foo', body: 'bar', userId: 1 });
+  patch =   () => this.mutate('/posts/1', 'PATCH', { title: 'foo', body: 'bar', userId: 1 });
+  post =    () => this.mutate('/posts', 'POST', { title: 'foo', body: 'bar', userId: 1 });
+  put =     () => this.mutate('/posts/1', 'PUT', { title: 'foo', body: 'bar', userId: 1 });
 
+  async mutate(path, method, data = {}) {
+    this.output = '';
+    this.loading = this.loadingCtrl.create({
+      content: 'Requesting...'
+    });
+    this.loading.present();
     const ret = await Plugins.Http.request({
-      url: `${this.url}/posts`,
-      method: 'POST',
+      url: `${this.url}${path}`,
+      method: method,
       headers: {
         'content-type': 'application/json'
       },
-      data: {
-        title: 'foo',
-        body: 'bar',
-        userId: 1
-      }
+      data
     });
     console.log('Got ret', ret);
-    this.output = JSON.stringify(ret.data);
+    this.loading.dismiss();
+    this.output = JSON.stringify(ret, null, 2);
   }
 
 }

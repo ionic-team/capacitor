@@ -15,7 +15,11 @@
 
 <ion-content padding no-bounce>
   <button (click)="get()" ion-button>GET</button>
+  <button (click)="head()" ion-button>HEAD</button>
+  <button (click)="delete()" ion-button>DELETE</button>
+  <button (click)="patch()" ion-button>PATCH</button>
   <button (click)="post()" ion-button>POST</button>
+  <button (click)="put()" ion-button>PUT</button>
 
   <h4>Output</h4>
   <ion-textarea [value]="output" placeholder="Ouput"></ion-textarea>
