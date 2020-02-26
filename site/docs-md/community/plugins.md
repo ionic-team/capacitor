@@ -102,6 +102,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Google Fit | `capacitor-google-fit` | <https://github.com/Ad-Scientiam/capacitor-google-fit> | Android only (currently) |
+| HealthKit | `capacitor-healthkit` | <https://github.com/Ad-Scientiam/capacitor-healthkit> | iOS only |
 
 ## Audio
 
