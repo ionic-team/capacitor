@@ -11,6 +11,7 @@ export interface PluginRegistry {
   Filesystem: FilesystemPlugin;
   Geolocation: GeolocationPlugin;
   Haptics: HapticsPlugin;
+  Http: HttpPlugin;
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
@@ -903,6 +904,36 @@ export enum HapticsNotificationType {
   WARNING = 'WARNING',
   ERROR = 'ERROR'
 }
+
+// Http
+
+export interface HttpPlugin {
+  request(options: HttpOptions): Promise<HttpResponse>;
+}
+
+export interface HttpOptions {
+  url: string;
+  method: string;
+  params?: HttpParams;
+  data?: any;
+  headers?: HttpHeaders;
+}
+
+export interface HttpParams {
+  [key:string]: string;
+}
+
+export interface HttpHeaders {
+  [key:string]: string;
+}
+
+export interface HttpResponse {
+  data: any;
+  status: number;
+  headers: HttpHeaders;
+}
+
+// Vibrate
 
 export interface VibrateOptions {
   duration?: number;

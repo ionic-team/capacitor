@@ -1,0 +1,22 @@
+<!--
+  Generated template for the KeyboardPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Http</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding no-bounce>
+  <button (click)="get()" ion-button>GET</button>
+  <button (click)="post()" ion-button>POST</button>
+
+  <h4>Output</h4>
+  <ion-textarea [value]="output" placeholder="Ouput"></ion-textarea>
+</ion-content>

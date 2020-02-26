@@ -9,7 +9,7 @@ import { Plugins } from '@capacitor/core';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage = 'AppPage';
+  rootPage = 'HttpPage';
 
   PLUGINS = [
     { name: 'App', page: 'AppPage' },
@@ -22,6 +22,7 @@ export class MyApp {
     { name: 'Filesystem', page: 'FilesystemPage' },
     { name: 'Geolocation', page: 'GeolocationPage' },
     { name: 'Haptics', page: 'HapticsPage' },
+    { name: 'Http', page: 'HttpPage' },
     { name: 'Keyboard', page: 'KeyboardPage' },
     { name: 'LocalNotifications', page: 'LocalNotificationsPage' },
     { name: 'Modals', page: 'ModalsPage' },
