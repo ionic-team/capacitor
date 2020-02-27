@@ -654,7 +654,7 @@ public class Bridge {
   protected void storeDanglingPluginResult(PluginCall call, PluginResult result) {
     PluginHandle appHandle = getPlugin("App");
     App appPlugin = (App) appHandle.getInstance();
-    appPlugin.fireRestoredResult(result.getWrappedResult(call));
+    appPlugin.fireRestoredResult(result);
   }
 
   /**

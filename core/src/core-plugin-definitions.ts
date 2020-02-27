@@ -173,7 +173,17 @@ export interface AppRestoredResult {
    * The result data passed from the plugin. This would be the result you'd
    * expect from normally calling the plugin method. For example, `CameraPhoto`
    */
-  data: any;
+  data?: any;
+  /**
+   * Boolean indicating if the plugin call succeeded
+   */
+  success: boolean;
+  /**
+   * If the plugin call didn't succeed, it will contain the error message
+   */
+  error?: {
+    message: string;
+  }
 }
 
 //
