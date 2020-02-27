@@ -110,8 +110,13 @@ public class CAPModalsPlugin : CAPPlugin {
     for (index, option) in options.enumerated() {
       let style = option["style"] as? String ?? "DEFAULT"
       let title = option["title"] as? String ?? ""
-      
-      let action = UIAlertAction(title: title, style: style == "DESTRUCTIVE" ? .destructive : .default, handler: { (action) -> Void in
+      var buttonStyle: UIAlertAction.Style = .default
+      if style == "DESTRUCTIVE" {
+        buttonStyle = .destructive
+      } else if style == "CANCEL" {
+        buttonStyle = .cancel
+      }
+      let action = UIAlertAction(title: title, style: buttonStyle, handler: { (action) -> Void in
         call.success([
           "index": index
         ])
