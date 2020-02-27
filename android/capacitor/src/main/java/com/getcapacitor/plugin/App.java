@@ -29,7 +29,7 @@ public class App extends Plugin {
 
   public void fireRestoredResult(PluginResult result) {
     Log.d(getLogTag(), "Firing restored result");
-    notifyListeners(EVENT_RESTORED_RESULT, result.getData(), true);
+    notifyListeners(EVENT_RESTORED_RESULT, result.getWrappedResult(), true);
   }
 
   public void fireBackButton() {
