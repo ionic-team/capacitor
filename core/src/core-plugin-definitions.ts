@@ -411,7 +411,7 @@ export interface DeviceInfo {
   /**
    * The name of the device. For example, "John's iPhone"
    */
-  name: string;
+  name?: string;
   /**
    * The device model. For example, "iPhone"
    */
