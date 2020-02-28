@@ -1,4 +1,6 @@
-import { WebPlugin } from "@capacitor/core";
+import { ModalsPluginWeb, WebPlugin } from "@capacitor/core";
+
+const webModals = new ModalsPluginWeb();
 
 const { dialog , getCurrentWindow } = require('electron').remote;
 
@@ -53,36 +55,7 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
   }
 
   async showActions(options: ActionSheetOptions): Promise<ActionSheetResult> {
-    return new Promise<ActionSheetResult>(async (resolve, _reject) => {
-      var controller: any = document.querySelector('ion-action-sheet-controller');
-
-      if (!controller) {
-        controller = document.createElement('ion-action-sheet-controller');
-        document.body.appendChild(controller);
-      }
-
-      await controller.componentOnReady();
-
-      const items = options.options.map((o, i) => {
-        return {
-          text: o.title,
-          role: o.style && o.style.toLowerCase() || '',
-          icon: o.icon || '',
-          handler: () => {
-            resolve({
-              index: i
-            });
-          }
-        };
-      });
-
-      const actionSheetElement = await controller.create({
-        title: options.title,
-        buttons: items
-      });
-
-      await actionSheetElement.present();
-    });
+    return webModals.showActions(options);
   }
 
 }
