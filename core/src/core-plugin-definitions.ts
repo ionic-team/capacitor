@@ -409,6 +409,7 @@ export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown'
 
 export interface DeviceInfo {
   /**
+   * Note: this property is iOS only, so it is optional.
    * The name of the device. For example, "John's iPhone"
    */
   name?: string;
