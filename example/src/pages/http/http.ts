@@ -117,4 +117,14 @@ export class HttpPage {
     console.log('Got ret', ret);
     this.loading.dismiss();
   }
+
+  downloadFile = async () => {
+    const ret = await Plugins.Http.downloadFile({
+      url: this.apiUrl('/download-pdf'),
+      filePath: 'document.pdf'
+    });
+  }
+
+  uploadFile = async () => {
+  }
 }

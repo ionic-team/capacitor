@@ -76,6 +76,43 @@ public class CAPHttpPlugin: CAPPlugin {
       call.reject("Unknown method")
     }
   }
+
+  
+  @objc public func downloadFile(_ call: CAPPluginCall) {
+    guard let urlValue = call.getString("url") else {
+      return call.reject("Must provide a URL")
+    }
+    guard let filePath = call.getString("filePath") else {
+      return call.reject("Must provide a file path to download the file to")
+    }
+    //let fileDirectory = call.getString("filePath") ?? "DOCUMENTS"
+    
+    guard let url = URL(string: urlValue) else {
+      return call.reject("Invalid URL")
+    }
+    
+    var request = URLRequest(url: url)
+    
+    request.httpMethod = "GET"
+    
+    let task = URLSession.shared.downloadTask(with: request) { (data, response, error) in
+      if error != nil {
+        CAPLog.print("Error on download file", data, response, error)
+        call.reject("Error", error, [:])
+        return
+      }
+      
+      let res = response as! HTTPURLResponse
+      
+      CAPLog.print("Downloaded file")
+      call.resolve()
+    }
+    
+    task.resume()
+  }
+  
+  
+  /* PRIVATE */
   
   // Handle GET operations
   func get(_ call: CAPPluginCall, _ url: URL, _ method: String) {
