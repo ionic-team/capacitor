@@ -32,7 +32,7 @@ public class CAPHttpPlugin: CAPPlugin {
     request.httpMethod = method
     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
       if error != nil {
-        print("Error on GET", data, response, error)
+        CAPLog.print("Error on GET", data, response, error)
         call.reject("Error", error, [:])
         return
       }
@@ -56,9 +56,13 @@ public class CAPHttpPlugin: CAPPlugin {
     
     let contentType = getRequestHeader(headers, "Content-Type") as? String
     
+    if contentType != nil {
+      request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+    }
+    
     if data != nil && contentType != nil {
       do {
-        try setRequestData(request, data!, contentType!)
+        request.httpBody = try getRequestData(request, data!, contentType!)
       } catch let e {
         call.reject("Unable to set request data", e)
         return
@@ -67,7 +71,7 @@ public class CAPHttpPlugin: CAPPlugin {
 
     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
       if error != nil {
-        print("Error on mutate  ", data, response, error)
+        CAPLog.print("Error on mutate  ", data, response, error)
         call.reject("Error", error, [:])
         return
       }
@@ -114,27 +118,39 @@ public class CAPHttpPlugin: CAPPlugin {
     return normalizedHeaders[header.lowercased()]
   }
   
-  func setRequestData(_ request: URLRequest, _ data: [String:Any], _ contentType: String) throws {
+  func getRequestData(_ request: URLRequest, _ data: [String:Any], _ contentType: String) throws -> Data? {
     if contentType.contains("application/json") {
-      try setRequestDataJson(request, data)
+      return try setRequestDataJson(request, data)
     } else if contentType.contains("application/x-www-form-urlencoded") {
-      setRequestDataFormUrlEncoded(request, data)
+      return try setRequestDataFormUrlEncoded(request, data)
     } else if contentType.contains("multipart/form-data") {
-      setRequestDataMultipartFormData(request, data)
+      return try setRequestDataMultipartFormData(request, data)
     }
+    return nil
   }
   
-  func setRequestDataJson(_ request: URLRequest, _ data: [String:Any]) throws {
-    var req = request
+  func setRequestDataJson(_ request: URLRequest, _ data: [String:Any]) throws -> Data? {
     let jsonData = try JSONSerialization.data(withJSONObject: data)
-    req.httpBody = jsonData
+    return jsonData
   }
   
-  func setRequestDataFormUrlEncoded(_ request: URLRequest, _ data: [String:Any]) {
+  func setRequestDataFormUrlEncoded(_ request: URLRequest, _ data: [String:Any]) -> Data? {
+    guard var components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false) else {
+      return nil
+    }
+    components.queryItems = []
+    data.keys.forEach { (key) in
+      components.queryItems?.append(URLQueryItem(name: key, value: "\(data[key] ?? "")"))
+    }
     
+    if components.query != nil {
+      return Data(components.query!.utf8)
+    }
+    
+    return nil
   }
   
-  func setRequestDataMultipartFormData(_ request: URLRequest, _ data: [String:Any]) {
-    
+  func setRequestDataMultipartFormData(_ request: URLRequest, _ data: [String:Any]) -> Data? {
+    return nil
   }
 }

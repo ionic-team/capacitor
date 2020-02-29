@@ -70,4 +70,20 @@ export class HttpPage {
     this.output = JSON.stringify(ret, null, 2);
   }
 
+
+  formPost = async () => {
+    const server = 'http://localhost:3455/form-data';
+
+    const ret = await Plugins.Http.request({
+      url: server,
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        name: 'Max',
+        age: 5
+      }
+    });
+  }
 }
