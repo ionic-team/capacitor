@@ -28,7 +28,7 @@ export class HttpPage {
     console.log('ionViewDidLoad KeyboardPage');
   }
 
-  async get() {
+  async get(path = '/posts/1', method = 'GET') {
     this.output = '';
 
     this.loading = this.loadingCtrl.create({
@@ -36,8 +36,8 @@ export class HttpPage {
     });
     this.loading.present();
     const ret = await Plugins.Http.request({
-      method: 'GET',
-      url: `${this.url}/posts/1`
+      method: method,
+      url: `${this.url}${path}`
     });
     console.log('Got ret', ret);
     this.loading.dismiss();
@@ -45,6 +45,7 @@ export class HttpPage {
     this.output = JSON.stringify(ret, null, 2);
   }
 
+  head =  () => this.get('/posts/1', 'HEAD');
   delete =  () => this.mutate('/posts/1', 'DELETE', { title: 'foo', body: 'bar', userId: 1 });
   patch =   () => this.mutate('/posts/1', 'PATCH', { title: 'foo', body: 'bar', userId: 1 });
   post =    () => this.mutate('/posts', 'POST', { title: 'foo', body: 'bar', userId: 1 });
