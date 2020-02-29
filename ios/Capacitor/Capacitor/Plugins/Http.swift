@@ -3,7 +3,58 @@ import AudioToolbox
 
 @objc(CAPHttpPlugin)
 public class CAPHttpPlugin: CAPPlugin {
-
+  @objc public func setCookie(_ call: CAPPluginCall) {
+  
+    guard let key = call.getString("key") else {
+      return call.reject("Must provide key")
+    }
+    guard let value = call.getString("value") else {
+      return call.reject("Must provide value")
+    }
+    guard let urlString = call.getString("url") else {
+      return call.reject("Must provide URL")
+    }
+    
+    guard let url = URL(string: urlString) else {
+      return call.reject("Invalid URL")
+    }
+    
+    let jar = HTTPCookieStorage.shared
+    let field = ["Set-Cookie": "\(key)=\(value)"]
+    let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
+    jar.setCookies(cookies, for: url, mainDocumentURL: url)
+    
+    call.resolve()
+  }
+  
+  @objc public func getCookies(_ call: CAPPluginCall) {
+    guard let urlString = call.getString("url") else {
+      return call.reject("Must provide URL")
+    }
+    
+    guard let url = URL(string: urlString) else {
+      return call.reject("Invalid URL")
+    }
+    
+    let jar = HTTPCookieStorage.shared
+    guard let cookies = jar.cookies(for: url) else {
+      return call.resolve([
+        "value": []
+      ])
+    }
+    
+    let c = cookies.map { (cookie: HTTPCookie) -> [String:String] in
+      return [
+        "key": cookie.name,
+        "value": cookie.value
+      ]
+    }
+    
+    call.resolve([
+      "value": c
+    ])
+  }
+  
   @objc public func request(_ call: CAPPluginCall) {
     guard let urlValue = call.getString("url") else {
       return call.reject("Must provide a URL")
@@ -29,6 +80,7 @@ public class CAPHttpPlugin: CAPPlugin {
   // Handle GET operations
   func get(_ call: CAPPluginCall, _ url: URL, _ method: String) {
     var request = URLRequest(url: url)
+    
     request.httpMethod = method
     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
       if error != nil {

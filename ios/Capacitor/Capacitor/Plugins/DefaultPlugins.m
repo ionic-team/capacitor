@@ -75,6 +75,8 @@ CAP_PLUGIN(CAPHapticsPlugin, "Haptics",
 
 CAP_PLUGIN(CAPHttpPlugin, "Http",
   CAP_PLUGIN_METHOD(request, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(setCookie, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(getCookies, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPKeyboard, "Keyboard",

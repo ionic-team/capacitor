@@ -909,6 +909,8 @@ export enum HapticsNotificationType {
 
 export interface HttpPlugin {
   request(options: HttpOptions): Promise<HttpResponse>;
+  setCookie(options: HttpSetCookieOptions): Promise<void>;
+  getCookies(options: HttpGetCookiesOptions): Promise<HttpGetCookiesResult>;
 }
 
 export interface HttpOptions {
@@ -931,6 +933,25 @@ export interface HttpResponse {
   data: any;
   status: number;
   headers: HttpHeaders;
+}
+
+export interface HttpCookie {
+  key: string;
+  value: string;
+}
+
+export interface HttpSetCookieOptions {
+  url: string;
+  key: string;
+  value: string;
+}
+
+export interface HttpGetCookiesOptions {
+  url: string;
+}
+
+export interface HttpGetCookiesResult {
+  value: HttpCookie[];
 }
 
 // Vibrate

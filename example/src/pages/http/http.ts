@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController, Loading } from 'ionic-angular';
 
 import { Plugins } from '@capacitor/core';
+import { SERVER_TRANSITION_PROVIDERS } from '@angular/platform-browser/src/browser/server-transition';
 
 /**
  * Generated class for the KeyboardPage page.
@@ -16,7 +17,9 @@ import { Plugins } from '@capacitor/core';
   templateUrl: 'http.html',
 })
 export class HttpPage {
+  serverUrl = 'http://localhost:3455';
   url: string = 'https://jsonplaceholder.typicode.com';
+
   output: string = '';
 
   loading: Loading;
@@ -70,12 +73,11 @@ export class HttpPage {
     this.output = JSON.stringify(ret, null, 2);
   }
 
+  apiUrl = (path: string) => `${this.serverUrl}${path}`;
 
   formPost = async () => {
-    const server = 'http://localhost:3455/form-data';
-
     const ret = await Plugins.Http.request({
-      url: server,
+      url: this.apiUrl('/form-data'),
       method: 'POST',
       headers: {
         'content-type': 'application/x-www-form-urlencoded'
@@ -85,5 +87,34 @@ export class HttpPage {
         age: 5
       }
     });
+  }
+
+  setCookie = async () => {
+    const ret = await Plugins.Http.setCookie({
+      url: this.apiUrl('/cookie'),
+      key: 'language',
+      value: 'en'
+    });
+  }
+
+  getCookies = async () => {
+    const ret = await Plugins.Http.getCookies({
+      url: this.apiUrl('/cookie')
+    });
+    console.log('Got cookies', ret);
+    this.output = JSON.stringify(ret.value);
+  }
+
+  testCookies = async () => {
+    this.loading = this.loadingCtrl.create({
+      content: 'Requesting...'
+    });
+    this.loading.present();
+    const ret = await Plugins.Http.request({
+      method: 'GET',
+      url: this.apiUrl('/cookie')
+    });
+    console.log('Got ret', ret);
+    this.loading.dismiss();
   }
 }
