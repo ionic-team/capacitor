@@ -91,20 +91,40 @@ public class CAPHttpPlugin: CAPPlugin {
       return call.reject("Invalid URL")
     }
     
-    var request = URLRequest(url: url)
     
-    request.httpMethod = "GET"
-    
-    let task = URLSession.shared.downloadTask(with: request) { (data, response, error) in
+    let task = URLSession.shared.downloadTask(with: url) { (downloadLocation, response, error) in
       if error != nil {
-        CAPLog.print("Error on download file", data, response, error)
+        CAPLog.print("Error on download file", downloadLocation, response, error)
         call.reject("Error", error, [:])
+        return
+      }
+      
+      guard let location = downloadLocation else {
+        call.reject("Unable to get file after downloading")
         return
       }
       
       let res = response as! HTTPURLResponse
       
-      CAPLog.print("Downloaded file")
+      let basename = location.lastPathComponent
+      
+      // TODO: Move to abstracted FS operations
+      let fileManager = FileManager.default
+      let dir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+      
+      do {
+        let dest = dir!.appendingPathComponent(basename)
+        print("File Dest", dest.absoluteString)
+        try fileManager.moveItem(at: location, to: dest)
+        call.resolve([
+          "path": dest.absoluteString
+        ])
+      } catch let e {
+        CAPLog.print("Unable to download file", e)
+      }
+      
+      
+      CAPLog.print("Downloaded file", location)
       call.resolve()
     }
     

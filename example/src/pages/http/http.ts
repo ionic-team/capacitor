@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController, Loading } from 'ionic-angular';
 
-import { Plugins } from '@capacitor/core';
+import { FilesystemDirectory, Plugins } from '@capacitor/core';
 import { SERVER_TRANSITION_PROVIDERS } from '@angular/platform-browser/src/browser/server-transition';
+
+const { Filesystem, Http } = Plugins;
 
 /**
  * Generated class for the KeyboardPage page.
@@ -38,7 +40,7 @@ export class HttpPage {
       content: 'Requesting...'
     });
     this.loading.present();
-    const ret = await Plugins.Http.request({
+    const ret = await Http.request({
       method: method,
       url: `${this.url}${path}`
     });
@@ -60,7 +62,7 @@ export class HttpPage {
       content: 'Requesting...'
     });
     this.loading.present();
-    const ret = await Plugins.Http.request({
+    const ret = await Http.request({
       url: `${this.url}${path}`,
       method: method,
       headers: {
@@ -76,7 +78,7 @@ export class HttpPage {
   apiUrl = (path: string) => `${this.serverUrl}${path}`;
 
   formPost = async () => {
-    const ret = await Plugins.Http.request({
+    const ret = await Http.request({
       url: this.apiUrl('/form-data'),
       method: 'POST',
       headers: {
@@ -90,7 +92,7 @@ export class HttpPage {
   }
 
   setCookie = async () => {
-    const ret = await Plugins.Http.setCookie({
+    const ret = await Http.setCookie({
       url: this.apiUrl('/cookie'),
       key: 'language',
       value: 'en'
@@ -98,7 +100,7 @@ export class HttpPage {
   }
 
   getCookies = async () => {
-    const ret = await Plugins.Http.getCookies({
+    const ret = await Http.getCookies({
       url: this.apiUrl('/cookie')
     });
     console.log('Got cookies', ret);
@@ -110,7 +112,7 @@ export class HttpPage {
       content: 'Requesting...'
     });
     this.loading.present();
-    const ret = await Plugins.Http.request({
+    const ret = await Http.request({
       method: 'GET',
       url: this.apiUrl('/cookie')
     });
@@ -119,10 +121,18 @@ export class HttpPage {
   }
 
   downloadFile = async () => {
-    const ret = await Plugins.Http.downloadFile({
+    const ret = await Http.downloadFile({
       url: this.apiUrl('/download-pdf'),
       filePath: 'document.pdf'
     });
+
+    console.log('Got download ret', ret);
+
+    const read = await Filesystem.readFile({
+      path: ret.path,
+      directory: FilesystemDirectory.Documents
+    })
+    console.log('Read file', read);
   }
 
   uploadFile = async () => {
