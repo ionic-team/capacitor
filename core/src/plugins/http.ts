@@ -31,19 +31,37 @@ export interface HttpResponse {
   headers: HttpHeaders;
 }
 
-export interface HttpUploadFileOptions extends HttpOptions {
-  filePath: string;
-  fileDirectory?: FilesystemDirectory;
-}
-
 export interface HttpDownloadFileOptions extends HttpOptions {
+  /**
+   * The path the downloaded file should be moved to
+   */
   filePath: string;
+  /**
+   * Optionally, the directory to put the file in
+   * 
+   * If this option is used, filePath can be a relative path rather than absolute
+   */
   fileDirectory?: FilesystemDirectory;
 }
 
-export interface HttpUploadFileOptions {
+export interface HttpUploadFileOptions extends HttpOptions {
+  /**
+   * The URL to upload the file to
+   */
   url: string;
+  /**
+   * The field name to upload the file with
+   */
+  name: string;
+  /**
+   * The path to the file on disk to upload
+   */
   filePath: string;
+  /**
+   * Optionally, the directory to look for the file in.
+   * 
+   * If this option is used, filePath can be a relative path rather than absolute
+   */
   fileDirectory?: FilesystemDirectory;
 }
 

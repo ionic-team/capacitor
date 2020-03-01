@@ -138,6 +138,8 @@ public class CAPHttpPlugin: CAPPlugin {
     guard let filePath = call.getString("filePath") else {
       return call.reject("Must provide a file path to download the file to")
     }
+    let name = call.getString("name") ?? "file"
+    
     let fileDirectory = call.getString("filePath") ?? "DOCUMENTS"
     
     guard let url = URL(string: urlValue) else {
@@ -155,7 +157,7 @@ public class CAPHttpPlugin: CAPPlugin {
     
     var fullFormData: Data?
     do {
-      fullFormData = try generateFullMultipartRequestBody(fileUrl, boundary)
+      fullFormData = try generateFullMultipartRequestBody(fileUrl, name, boundary)
     } catch let e {
       return call.reject("Unable to read file to upload", e)
     }
@@ -179,7 +181,7 @@ public class CAPHttpPlugin: CAPPlugin {
     task.resume()
   }
   
-  func generateFullMultipartRequestBody(_ url: URL, _ boundary: String) throws -> Data {
+  func generateFullMultipartRequestBody(_ url: URL, _ name: String, _ boundary: String) throws -> Data {
     var data = Data()
     
     let fileData = try Data(contentsOf: url)
@@ -187,8 +189,8 @@ public class CAPHttpPlugin: CAPPlugin {
     
     let fname = url.lastPathComponent
     let mimeType = FilesystemUtils.mimeTypeForPath(path: fname)
-    data.append("--\(boundary)--\r\n".data(using: .utf8)!)
-    data.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fname)\"\r\n".data(using: .utf8)!)
+    data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+    data.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fname)\"\r\n".data(using: .utf8)!)
     data.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
     data.append(fileData)
     data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)

@@ -128,16 +128,24 @@ export class HttpPage {
 
     console.log('Got download ret', ret);
 
+    const renameRet = await Filesystem.rename({
+      from: ret.path,
+      to: 'document.pdf',
+      toDirectory: FilesystemDirectory.Documents
+    });
+
+    console.log('Did rename', renameRet);
+
     const read = await Filesystem.readFile({
-      path: ret.path,
+      path: 'document.pdf',
       directory: FilesystemDirectory.Documents
     })
-    console.log('Read file', read);
   }
 
   uploadFile = async () => {
     const ret = await Http.uploadFile({
       url: this.apiUrl('/upload-pdf'),
+      name: 'myFile',
       filePath: 'document.pdf',
     });
 
