@@ -131,6 +131,70 @@ public class CAPHttpPlugin: CAPPlugin {
     task.resume()
   }
   
+  @objc public func uploadFile(_ call: CAPPluginCall) {
+    guard let urlValue = call.getString("url") else {
+      return call.reject("Must provide a URL")
+    }
+    guard let filePath = call.getString("filePath") else {
+      return call.reject("Must provide a file path to download the file to")
+    }
+    let fileDirectory = call.getString("filePath") ?? "DOCUMENTS"
+    
+    guard let url = URL(string: urlValue) else {
+      return call.reject("Invalid URL")
+    }
+    
+    guard let fileUrl = FilesystemUtils.getFileUrl(filePath, fileDirectory) else {
+      return call.reject("Unable to get file URL")
+    }
+   
+    var request = URLRequest.init(url: url)
+    request.httpMethod = "POST"
+    
+    let boundary = UUID().uuidString
+    
+    var fullFormData: Data?
+    do {
+      fullFormData = try generateFullMultipartRequestBody(fileUrl, boundary)
+    } catch let e {
+      return call.reject("Unable to read file to upload", e)
+    }
+
+
+    request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+    
+    let task = URLSession.shared.uploadTask(with: request, from: fullFormData) { (data, response, error) in
+      if error != nil {
+        CAPLog.print("Error on upload file", data, response, error)
+        call.reject("Error", error, [:])
+        return
+      }
+      
+      let res = response as! HTTPURLResponse
+      
+      //CAPLog.print("Uploaded file", location)
+      call.resolve()
+    }
+    
+    task.resume()
+  }
+  
+  func generateFullMultipartRequestBody(_ url: URL, _ boundary: String) throws -> Data {
+    var data = Data()
+    
+    let fileData = try Data(contentsOf: url)
+
+    
+    let fname = url.lastPathComponent
+    let mimeType = FilesystemUtils.mimeTypeForPath(path: fname)
+    data.append("--\(boundary)--\r\n".data(using: .utf8)!)
+    data.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fname)\"\r\n".data(using: .utf8)!)
+    data.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+    data.append(fileData)
+    data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+    
+    return data
+  }
   
   /* PRIVATE */
   

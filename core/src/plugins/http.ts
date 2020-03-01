@@ -44,6 +44,7 @@ export interface HttpDownloadFileOptions extends HttpOptions {
 export interface HttpUploadFileOptions {
   url: string;
   filePath: string;
+  fileDirectory?: FilesystemDirectory;
 }
 
 export interface HttpCookie {

@@ -136,5 +136,11 @@ export class HttpPage {
   }
 
   uploadFile = async () => {
+    const ret = await Http.uploadFile({
+      url: this.apiUrl('/upload-pdf'),
+      filePath: 'document.pdf',
+    });
+
+    console.log('Got upload ret', ret);
   }
 }
