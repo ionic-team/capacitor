@@ -3,58 +3,7 @@ import AudioToolbox
 
 @objc(CAPHttpPlugin)
 public class CAPHttpPlugin: CAPPlugin {
-  @objc public func setCookie(_ call: CAPPluginCall) {
-  
-    guard let key = call.getString("key") else {
-      return call.reject("Must provide key")
-    }
-    guard let value = call.getString("value") else {
-      return call.reject("Must provide value")
-    }
-    guard let urlString = call.getString("url") else {
-      return call.reject("Must provide URL")
-    }
-    
-    guard let url = URL(string: urlString) else {
-      return call.reject("Invalid URL")
-    }
-    
-    let jar = HTTPCookieStorage.shared
-    let field = ["Set-Cookie": "\(key)=\(value)"]
-    let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
-    jar.setCookies(cookies, for: url, mainDocumentURL: url)
-    
-    call.resolve()
-  }
-  
-  @objc public func getCookies(_ call: CAPPluginCall) {
-    guard let urlString = call.getString("url") else {
-      return call.reject("Must provide URL")
-    }
-    
-    guard let url = URL(string: urlString) else {
-      return call.reject("Invalid URL")
-    }
-    
-    let jar = HTTPCookieStorage.shared
-    guard let cookies = jar.cookies(for: url) else {
-      return call.resolve([
-        "value": []
-      ])
-    }
-    
-    let c = cookies.map { (cookie: HTTPCookie) -> [String:String] in
-      return [
-        "key": cookie.name,
-        "value": cookie.value
-      ]
-    }
-    
-    call.resolve([
-      "value": c
-    ])
-  }
-  
+
   @objc public func request(_ call: CAPPluginCall) {
     guard let urlValue = call.getString("url") else {
       return call.reject("Must provide a URL")
@@ -63,15 +12,20 @@ public class CAPHttpPlugin: CAPPlugin {
       return call.reject("Must provide a method. One of GET, DELETE, HEAD PATCH, POST, or PUT")
     }
     
-    guard let url = URL(string: urlValue) else {
+    let headers = (call.getObject("headers") ?? [:]) as [String:String]
+    
+    let params = (call.getObject("params") ?? [:]) as [String:String]
+    
+    guard var url = URL(string: urlValue) else {
       return call.reject("Invalid URL")
     }
     
+    
     switch method {
     case "GET", "HEAD":
-      get(call, url, method)
+      get(call, &url, method, headers, params)
     case "DELETE", "PATCH", "POST", "PUT":
-      mutate(call, url, method)
+      mutate(call, url, method, headers)
     default:
       call.reject("Unknown method")
     }
@@ -181,33 +135,110 @@ public class CAPHttpPlugin: CAPPlugin {
     task.resume()
   }
   
-  func generateFullMultipartRequestBody(_ url: URL, _ name: String, _ boundary: String) throws -> Data {
-    var data = Data()
+  @objc public func setCookie(_ call: CAPPluginCall) {
+  
+    guard let key = call.getString("key") else {
+      return call.reject("Must provide key")
+    }
+    guard let value = call.getString("value") else {
+      return call.reject("Must provide value")
+    }
+    guard let urlString = call.getString("url") else {
+      return call.reject("Must provide URL")
+    }
     
-    let fileData = try Data(contentsOf: url)
-
+    guard let url = URL(string: urlString) else {
+      return call.reject("Invalid URL")
+    }
     
-    let fname = url.lastPathComponent
-    let mimeType = FilesystemUtils.mimeTypeForPath(path: fname)
-    data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
-    data.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fname)\"\r\n".data(using: .utf8)!)
-    data.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
-    data.append(fileData)
-    data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+    let jar = HTTPCookieStorage.shared
+    let field = ["Set-Cookie": "\(key)=\(value)"]
+    let cookies = HTTPCookie.cookies(withResponseHeaderFields: field, for: url)
+    jar.setCookies(cookies, for: url, mainDocumentURL: url)
     
-    return data
+    call.resolve()
   }
+  
+  @objc public func getCookies(_ call: CAPPluginCall) {
+    guard let urlString = call.getString("url") else {
+      return call.reject("Must provide URL")
+    }
+    
+    guard let url = URL(string: urlString) else {
+      return call.reject("Invalid URL")
+    }
+    
+    let jar = HTTPCookieStorage.shared
+    guard let cookies = jar.cookies(for: url) else {
+      return call.resolve([
+        "value": []
+      ])
+    }
+    
+    let c = cookies.map { (cookie: HTTPCookie) -> [String:String] in
+      return [
+        "key": cookie.name,
+        "value": cookie.value
+      ]
+    }
+    
+    call.resolve([
+      "value": c
+    ])
+  }
+  
+  @objc public func deleteCookie(_ call: CAPPluginCall) {
+    guard let urlString = call.getString("url") else {
+      return call.reject("Must provide URL")
+    }
+    guard let key = call.getString("key") else {
+      return call.reject("Must provide key")
+    }
+    guard let url = URL(string: urlString) else {
+      return call.reject("Invalid URL")
+    }
+    
+    let jar = HTTPCookieStorage.shared
+    
+    let cookie = jar.cookies(for: url)?.first(where: { (cookie) -> Bool in
+      return cookie.name == key
+    })
+    if cookie != nil {
+      jar.deleteCookie(cookie!)
+    }
+    
+    call.resolve()
+  }
+  
+  @objc public func clearCookies(_ call: CAPPluginCall) {
+    guard let urlString = call.getString("url") else {
+      return call.reject("Must provide URL")
+    }
+    guard let url = URL(string: urlString) else {
+      return call.reject("Invalid URL")
+    }
+    let jar = HTTPCookieStorage.shared
+    jar.cookies(for: url)?.forEach({ (cookie) in
+      jar.deleteCookie(cookie)
+    })
+    call.resolve()
+  }
+
   
   /* PRIVATE */
   
   // Handle GET operations
-  func get(_ call: CAPPluginCall, _ url: URL, _ method: String) {
+  func get(_ call: CAPPluginCall, _ url: inout URL, _ method: String, _ headers: [String:String], _ params: [String:String]) {
+    setUrlQuery(&url, params)
+    
     var request = URLRequest(url: url)
     
     request.httpMethod = method
+    
+    setRequestHeaders(&request, headers)
+  
     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
       if error != nil {
-        CAPLog.print("Error on GET", data, response, error)
         call.reject("Error", error, [:])
         return
       }
@@ -220,20 +251,33 @@ public class CAPHttpPlugin: CAPPlugin {
     task.resume()
   }
   
+  func setUrlQuery(_ url: inout URL, _ params: [String:String]) {
+    var cmps = URLComponents(url: url, resolvingAgainstBaseURL: true)
+    cmps!.queryItems = params.map({ (key, value) -> URLQueryItem in
+      return URLQueryItem(name: key, value: value)
+    })
+    url = cmps!.url!
+  }
+  
+  func setRequestHeaders(_ request: inout URLRequest, _ headers: [String:String]) {
+    headers.keys.forEach { (key) in
+      guard let value = headers[key] else {
+        return
+      }
+      request.addValue(value, forHTTPHeaderField: key)
+    }
+  }
+  
   // Handle mutation operations: DELETE, PATCH, POST, and PUT
-  func mutate(_ call: CAPPluginCall, _ url: URL, _ method: String) {
+  func mutate(_ call: CAPPluginCall, _ url: URL, _ method: String, _ headers: [String:String]) {
     let data = call.getObject("data")
     
     var request = URLRequest(url: url)
     request.httpMethod = method
-    
-    let headers = (call.getObject("headers") ?? [:]) as [String:Any]
+  
+    setRequestHeaders(&request, headers)
     
     let contentType = getRequestHeader(headers, "Content-Type") as? String
-    
-    if contentType != nil {
-      request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-    }
     
     if data != nil && contentType != nil {
       do {
@@ -246,7 +290,6 @@ public class CAPHttpPlugin: CAPPlugin {
 
     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
       if error != nil {
-        CAPLog.print("Error on mutate  ", data, response, error)
         call.reject("Error", error, [:])
         return
       }
@@ -297,9 +340,9 @@ public class CAPHttpPlugin: CAPPlugin {
     if contentType.contains("application/json") {
       return try setRequestDataJson(request, data)
     } else if contentType.contains("application/x-www-form-urlencoded") {
-      return try setRequestDataFormUrlEncoded(request, data)
+      return setRequestDataFormUrlEncoded(request, data)
     } else if contentType.contains("multipart/form-data") {
-      return try setRequestDataMultipartFormData(request, data)
+      return setRequestDataMultipartFormData(request, data)
     }
     return nil
   }
@@ -327,5 +370,23 @@ public class CAPHttpPlugin: CAPPlugin {
   
   func setRequestDataMultipartFormData(_ request: URLRequest, _ data: [String:Any]) -> Data? {
     return nil
+  }
+  
+  
+  func generateFullMultipartRequestBody(_ url: URL, _ name: String, _ boundary: String) throws -> Data {
+    var data = Data()
+    
+    let fileData = try Data(contentsOf: url)
+
+    
+    let fname = url.lastPathComponent
+    let mimeType = FilesystemUtils.mimeTypeForPath(path: fname)
+    data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+    data.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fname)\"\r\n".data(using: .utf8)!)
+    data.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+    data.append(fileData)
+    data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+    
+    return data
   }
 }

@@ -5,6 +5,8 @@ export interface HttpPlugin extends Plugin {
   request(options: HttpOptions): Promise<HttpResponse>;
   setCookie(options: HttpSetCookieOptions): Promise<void>;
   getCookies(options: HttpGetCookiesOptions): Promise<HttpGetCookiesResult>;
+  deleteCookie(options: HttpDeleteCookieOptions): Promise<void>;
+  clearCookies(options: HttpClearCookiesOptions): Promise<void>;
   uploadFile(options: HttpUploadFileOptions): Promise<HttpUploadFileResult>;
   downloadFile(options: HttpDownloadFileOptions): Promise<HttpDownloadFileResult>;
 }
@@ -77,6 +79,15 @@ export interface HttpSetCookieOptions {
 }
 
 export interface HttpGetCookiesOptions {
+  url: string;
+}
+
+export interface HttpDeleteCookieOptions {
+  url: string;
+  key: string;
+}
+
+export interface HttpClearCookiesOptions {
   url: string;
 }
 

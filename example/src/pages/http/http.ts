@@ -20,7 +20,6 @@ const { Filesystem, Http } = Plugins;
 })
 export class HttpPage {
   serverUrl = 'http://localhost:3455';
-  url: string = 'https://jsonplaceholder.typicode.com';
 
   output: string = '';
 
@@ -33,7 +32,7 @@ export class HttpPage {
     console.log('ionViewDidLoad KeyboardPage');
   }
 
-  async get(path = '/posts/1', method = 'GET') {
+  async get(path = '/get', method = 'GET') {
     this.output = '';
 
     this.loading = this.loadingCtrl.create({
@@ -42,7 +41,13 @@ export class HttpPage {
     this.loading.present();
     const ret = await Http.request({
       method: method,
-      url: `${this.url}${path}`
+      url: this.apiUrl(path),
+      headers: {
+        'X-Fake-Header': 'Max was here'
+      },
+      params: {
+        'size': 'XL'
+      }
     });
     console.log('Got ret', ret);
     this.loading.dismiss();
@@ -50,11 +55,11 @@ export class HttpPage {
     this.output = JSON.stringify(ret, null, 2);
   }
 
-  head =  () => this.get('/posts/1', 'HEAD');
-  delete =  () => this.mutate('/posts/1', 'DELETE', { title: 'foo', body: 'bar', userId: 1 });
-  patch =   () => this.mutate('/posts/1', 'PATCH', { title: 'foo', body: 'bar', userId: 1 });
-  post =    () => this.mutate('/posts', 'POST', { title: 'foo', body: 'bar', userId: 1 });
-  put =     () => this.mutate('/posts/1', 'PUT', { title: 'foo', body: 'bar', userId: 1 });
+  head =  () => this.get('/head', 'HEAD');
+  delete =  () => this.mutate('/delete', 'DELETE', { title: 'foo', body: 'bar', userId: 1 });
+  patch =   () => this.mutate('/patch', 'PATCH', { title: 'foo', body: 'bar', userId: 1 });
+  post =    () => this.mutate('/post', 'POST', { title: 'foo', body: 'bar', userId: 1 });
+  put =     () => this.mutate('/put', 'PUT', { title: 'foo', body: 'bar', userId: 1 });
 
   async mutate(path, method, data = {}) {
     this.output = '';
@@ -63,10 +68,10 @@ export class HttpPage {
     });
     this.loading.present();
     const ret = await Http.request({
-      url: `${this.url}${path}`,
+      url: this.apiUrl(path),
       method: method,
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       data
     });
@@ -96,6 +101,19 @@ export class HttpPage {
       url: this.apiUrl('/cookie'),
       key: 'language',
       value: 'en'
+    });
+  }
+
+  deleteCookie = async () => {
+    const ret = await Http.deleteCookie({
+      url: this.apiUrl('/cookie'),
+      key: 'language',
+    });
+  }
+
+  clearCookies = async () => {
+    const ret = await Http.clearCookies({
+      url: this.apiUrl('/cookie'),
     });
   }
 
