@@ -54,16 +54,16 @@ public class JSObject extends JSONObject {
     return defaultValue;
   }
 
+  public Integer getInteger(String key) {
+    return getInteger(key, null);
+  }
+
   public Integer getInteger(String key, Integer defaultValue) {
     try {
       return super.getInt(key);
     } catch (JSONException e) {
     }
     return defaultValue;
-  }
-
-  public Integer getInteger(String key) {
-    return getInteger(key, null);
   }
 
   public Boolean getBoolean(String key, Boolean defaultValue) {
