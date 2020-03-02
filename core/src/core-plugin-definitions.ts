@@ -173,7 +173,17 @@ export interface AppRestoredResult {
    * The result data passed from the plugin. This would be the result you'd
    * expect from normally calling the plugin method. For example, `CameraPhoto`
    */
-  data: any;
+  data?: any;
+  /**
+   * Boolean indicating if the plugin call succeeded
+   */
+  success: boolean;
+  /**
+   * If the plugin call didn't succeed, it will contain the error message
+   */
+  error?: {
+    message: string;
+  }
 }
 
 //
@@ -608,6 +618,11 @@ export interface FileWriteOptions {
    * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
+  /**
+   * Whether to create any missing parent directories.
+   * Defaults to false
+   */
+  recursive?: boolean;
 }
 
 export interface FileAppendOptions {
@@ -754,6 +769,7 @@ export interface FileReadResult {
 export interface FileDeleteResult {
 }
 export interface FileWriteResult {
+  uri: string;
 }
 export interface FileAppendResult {
 }
@@ -1115,6 +1131,7 @@ export interface PromptOptions {
   okButtonTitle?: string;
   cancelButtonTitle?: string;
   inputPlaceholder?: string;
+  inputText?: string;
 }
 
 export interface ConfirmOptions {

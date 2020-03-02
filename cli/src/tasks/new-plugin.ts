@@ -9,14 +9,14 @@ import { dirname, join } from 'path';
 import { isInteractive } from '../util/term';
 
 interface NewPluginAnswers {
-  name: string
-  domain: string
-  className: string
-  description: string
-  git: string
-  author: string
-  license: string
-  confirm: boolean
+  name: string;
+  domain: string;
+  className: string;
+  description: string;
+  git: string;
+  author: string;
+  license: string;
+  confirm: boolean;
 }
 
 export async function newPluginCommand(config: Config) {
@@ -41,7 +41,7 @@ export async function newPlugin(config: Config) {
       return false;
     }
     return true;
-  }
+  };
   const answers: NewPluginAnswers = await inquirer.prompt([
     {
       type: 'input',

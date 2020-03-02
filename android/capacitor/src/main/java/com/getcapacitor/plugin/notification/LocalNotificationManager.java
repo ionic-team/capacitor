@@ -29,7 +29,6 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.List;
 
-import static androidx.core.app.NotificationCompat.VISIBILITY_PRIVATE;
 
 /**
  * Contains implementations for all notification actions

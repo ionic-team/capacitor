@@ -116,8 +116,8 @@ The current ones you might configure are:
     // https://developer.apple.com/documentation/uikit/uiscrollview/contentinsetadjustmentbehavior
     "contentInset": "always",
     // Configure the Swift version to be used for Cordova plugins.
-    // Default is 4.0
-    "cordovaSwiftVersion": "3.0",
+    // Default is 5.0
+    "cordovaSwiftVersion": "4.2",
     // Minimum iOS version supported by the project.
     // Default is 11.0
     "minVersion": "11.3",

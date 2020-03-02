@@ -27,6 +27,10 @@ jobs:
           command: npm run test
           working_directory: /tmp/workspace/cli
 
+      - run:
+          command: npm run lint
+          working_directory: /tmp/workspace/cli
+
   build-ios:
     macos:
       xcode: "11.1.0"

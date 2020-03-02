@@ -66,7 +66,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     });
 
     return Promise.resolve({
-      notifications: notifications.map(_ => { return { id: '' }; })
+      notifications: options.notifications.map(notification => { return { id: '' + notification.id }; })
     });
   }
 
