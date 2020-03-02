@@ -279,19 +279,21 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const filePath = getFilePath(config, p, codeFile.$.src);
       const fileDest = join(pluginsPath, destFolder, p.name, fileName);
       copySync(filePath, fileDest);
-      let fileContent = readFileSync(fileDest, 'utf8');
-      if (fileExt === 'swift') {
-        fileContent = 'import Cordova\n' + fileContent;
-        writeFileSync(fileDest, fileContent, 'utf8');
-      } else {
-        if (fileContent.includes('@import Firebase;')) {
-          fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
+      if (!codeFile.$.framework) {
+        let fileContent = readFileSync(fileDest, 'utf8');
+        if (fileExt === 'swift') {
+          fileContent = 'import Cordova\n' + fileContent;
           writeFileSync(fileDest, fileContent, 'utf8');
-        }
-        if (fileContent.includes('[NSBundle bundleForClass:[self class]]') || fileContent.includes('[NSBundle bundleForClass:[CDVCapture class]]')) {
-          fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
-          fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
-          writeFileSync(fileDest, fileContent, 'utf8');
+        } else {
+          if (fileContent.includes('@import Firebase;')) {
+            fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
+            writeFileSync(fileDest, fileContent, 'utf8');
+          }
+          if (fileContent.includes('[NSBundle bundleForClass:[self class]]') || fileContent.includes('[NSBundle bundleForClass:[CDVCapture class]]')) {
+            fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
+            fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
+            writeFileSync(fileDest, fileContent, 'utf8');
+          }
         }
       }
     });
