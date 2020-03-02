@@ -7,15 +7,20 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.HapticFeedbackConstants;
 
+import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Haptic engine plugin, also handles vibration.
@@ -28,11 +33,12 @@ public class Http extends Plugin {
   public void request(PluginCall call) {
     String url = call.getString("url");
     String method = call.getString("method");
+    JSObject headers = call.getObject("headers");
 
     switch (method) {
       case "GET":
       case "HEAD":
-        get(call, url, method);
+        get(call, url, method, headers);
         return;
       case "DELETE":
       case "PATCH":
@@ -43,16 +49,33 @@ public class Http extends Plugin {
     }
   }
 
-  private void get(PluginCall call, String urlString, String method) {
+  private void get(PluginCall call, String urlString, String method, JSObject headers) {
     try {
       URL url = new URL(urlString);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod(method);
+
+      setRequestHeaders(conn, headers);
+
+      conn.setDoInput(true);
+
+      conn.connect();
+
+      InputStream stream = conn.getInputStream();
       
-    } catch (IOException ex) {
-      call.error("Error", ex);
     } catch (MalformedURLException ex) {
       call.error("Invalid URL", ex);
+    } catch (IOException ex) {
+      call.error("Error", ex);
+    }
+  }
+
+  private void setRequestHeaders(HttpURLConnection conn, JSObject headers) {
+    Iterator<String> keys = headers.keys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      String value = headers.getString(key);
+      conn.setRequestProperty(key, value);
     }
   }
 
