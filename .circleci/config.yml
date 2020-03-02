@@ -53,6 +53,10 @@ jobs:
       - run:
           command: ./gradlew clean build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
           working_directory: /tmp/workspace/android
+      - run:
+          command: ./gradlew test -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
+          working_directory: /tmp/workspace/android
+
 
 workflows:
   version: 2.1
