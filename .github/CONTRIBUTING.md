@@ -10,7 +10,7 @@ Please read [@maxlynch](http://twitter.com/maxlynch)'s essay [How Capacitor Work
 
 ## About Third Party Libraries
 
-Before embarking on Capacitor contributions, make sure you aren't planning on introducing third party libraries without consulting with the team first. To achieve Capacitor's goal of being stable and easy to upgrade, we would like to avoid unnecessary third party libraries as much as possible.
+To achieve Capacitor's goal of being stable and easy to upgrade, we would like to avoid unnecessary third party libraries as much as possible. Before embarking on Capacitor contributions, make sure you aren't planning on introducing third party libraries without consulting with the team first.
 
 On native, that means avoid adding any new Cocoapod or Gradle dependencies without explicit approval. If you just need a small bit of functionality from that library, consider adding an implementation to the codebase directly.
 
