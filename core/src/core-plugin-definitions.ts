@@ -173,7 +173,17 @@ export interface AppRestoredResult {
    * The result data passed from the plugin. This would be the result you'd
    * expect from normally calling the plugin method. For example, `CameraPhoto`
    */
-  data: any;
+  data?: any;
+  /**
+   * Boolean indicating if the plugin call succeeded
+   */
+  success: boolean;
+  /**
+   * If the plugin call didn't succeed, it will contain the error message
+   */
+  error?: {
+    message: string;
+  }
 }
 
 //
@@ -557,10 +567,6 @@ export interface FilesystemPlugin extends Plugin {
 
 export enum FilesystemDirectory {
   /**
-   * The Application directory
-   */
-  Application = 'APPLICATION',
-  /**
    * The Documents directory
    */
   Documents = 'DOCUMENTS',
@@ -608,6 +614,11 @@ export interface FileWriteOptions {
    * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
+  /**
+   * Whether to create any missing parent directories.
+   * Defaults to false
+   */
+  recursive?: boolean;
 }
 
 export interface FileAppendOptions {
@@ -754,6 +765,7 @@ export interface FileReadResult {
 export interface FileDeleteResult {
 }
 export interface FileWriteResult {
+  uri: string;
 }
 export interface FileAppendResult {
 }
@@ -1069,12 +1081,17 @@ export interface LocalNotificationEnabledResult {
   value: boolean;
 }
 
+export interface NotificationPermissionResponse {
+  granted: boolean;
+}
+
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 }
@@ -1115,6 +1132,7 @@ export interface PromptOptions {
   okButtonTitle?: string;
   cancelButtonTitle?: string;
   inputPlaceholder?: string;
+  inputText?: string;
 }
 
 export interface ConfirmOptions {
@@ -1476,12 +1494,9 @@ export interface PushNotificationChannelList {
   channels: PushNotificationChannel[];
 }
 
-export interface PushNotificationRegistrationResponse {
-  granted: boolean;
-}
-
 export interface PushNotificationsPlugin extends Plugin {
-  register(): Promise<PushNotificationRegistrationResponse>;
+  register(): Promise<void>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;

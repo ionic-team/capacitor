@@ -139,20 +139,6 @@ async rename() {
 
 async copy() {
   try {
-    // This example copies a file from the app directory to the documents directory
-    let ret = await Filesystem.copy({
-      from: 'assets/icon.png',
-      to: 'icon.png',
-      directory: FilesystemDirectory.Application,
-      toDirectory: FilesystemDirectory.Documents
-    });
-  } catch(e) {
-    console.error('Unable to copy file', e);
-  }
-}
-
-async copy() {
-  try {
     // This example copies a file within the documents directory
     let ret = await Filesystem.copy({
       from: 'text.txt',

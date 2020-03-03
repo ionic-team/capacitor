@@ -26,7 +26,7 @@ export interface ExternalConfig {
   cordova?: any;
   server?: {
     cleartext?: boolean;
-  }
+  };
 }
 
 export interface AppPluginsConfig {

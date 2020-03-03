@@ -12,8 +12,6 @@ public class CAPFilesystemPlugin : CAPPlugin {
     switch directory {
     case "DOCUMENTS":
       return .documentDirectory
-    case "APPLICATION":
-      return .applicationDirectory
     case "CACHE":
       return .cachesDirectory
     default:
@@ -85,6 +83,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
    */
   @objc func writeFile(_ call: CAPPluginCall) {
     let encoding = call.getString("encoding")
+    let recursive = call.get("recursive", Bool.self, false)!
     // TODO: Allow them to switch encoding
     guard let file = call.get("path", String.self) else {
       handleError(call, "path must be provided and must be a string.")
@@ -104,6 +103,14 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
 
     do {
+      if !FileManager.default.fileExists(atPath: fileUrl.deletingLastPathComponent().absoluteString) {
+        if recursive {
+          try FileManager.default.createDirectory(at: fileUrl.deletingLastPathComponent(), withIntermediateDirectories: recursive, attributes: nil)
+        } else {
+          handleError(call, "Parent folder doesn't exist");
+          return
+        }
+      }
       if encoding != nil {
         try data.write(to: fileUrl, atomically: false, encoding: .utf8)
       } else {
@@ -115,7 +122,9 @@ public class CAPFilesystemPlugin : CAPPlugin {
           return
         }
       }
-      call.success()
+      call.success([
+        "uri": fileUrl.absoluteString
+      ])
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)
     }
