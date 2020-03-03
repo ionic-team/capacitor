@@ -36,38 +36,35 @@ public class MessageHandler {
 
       String type = postData.getString("type");
 
-      if (type != null && type.equals("cordova")) {
-        String callbackId = postData.getString("callbackId");
+      boolean typeIsNotNull = type != null;
+      boolean isCordovaPlugin = typeIsNotNull && type.equals("cordova");
+      boolean isJavaScriptError = typeIsNotNull && type.equals("js.error");
+
+      String callbackId = postData.getString("callbackId");
+
+      if (isCordovaPlugin) {
         String service = postData.getString("service");
         String action = postData.getString("action");
         String actionArgs = postData.getString("actionArgs");
+
         Log.v(LogUtils.getPluginTag(), "To native (Cordova plugin): callbackId: " + callbackId + ", service: " + service +
           ", action: " + action + ", actionArgs: " + actionArgs);
+
         this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
-      } else if (type != null && type.equals("js.error")) {
+      } else if (isJavaScriptError) {
         Log.e(LogUtils.getCoreTag(), "JavaScript Error: " + jsonStr);
       } else {
-        String callbackId = postData.getString("callbackId");
         String pluginId = postData.getString("pluginId");
         String methodName = postData.getString("methodName");
         JSObject methodData = postData.getJSObject("options", new JSObject());
+
         Log.v(LogUtils.getPluginTag(), "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName);
+
         this.callPluginMethod(callbackId, pluginId, methodName, methodData);
       }
-
     } catch (Exception ex) {
       Log.e(LogUtils.getCoreTag(), "Post message error:", ex);
     }
-  }
-
-  private void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {
-    PluginCall call = new PluginCall(this, pluginId, callbackId, methodName, methodData);
-
-    bridge.callPluginMethod(pluginId, methodName, call);
-  }
-
-  private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs){
-    cordovaPluginManager.exec(service, action, callbackId, actionArgs);
   }
 
   public void sendResponseMessage(PluginCall call, PluginResult successResult, PluginResult errorResult) {
@@ -78,7 +75,8 @@ public class MessageHandler {
       data.put("pluginId", call.getPluginId());
       data.put("methodName", call.getMethodName());
 
-      if (errorResult != null) {
+      boolean pluginResultInError = errorResult != null;
+      if (pluginResultInError) {
         data.put("success", false);
         data.put("error", errorResult);
         Log.d(LogUtils.getCoreTag(), "Sending plugin error: " + data.toString());
@@ -87,17 +85,12 @@ public class MessageHandler {
         data.put("data", successResult);
       }
 
-      // Only eval the JS code if this is a valid callback id
-      if (!call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING)) {
+      boolean isValidCallbackId = !call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING);
+      if (isValidCallbackId) {
         final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
-
         final WebView webView = this.webView;
-        webView.post(new Runnable() {
-          @Override
-          public void run() {
-            webView.evaluateJavascript(runScript, null);
-          }
-        });
+
+        webView.post(() -> webView.evaluateJavascript(runScript, null));
       } else {
         bridge.storeDanglingPluginResult(call, data);
       }
@@ -107,4 +100,12 @@ public class MessageHandler {
     }
   }
 
+  private void callPluginMethod(String callbackId, String pluginId, String methodName, JSObject methodData) {
+    PluginCall call = new PluginCall(this, pluginId, callbackId, methodName, methodData);
+    bridge.callPluginMethod(pluginId, methodName, call);
+  }
+
+  private void callCordovaPluginMethod(String callbackId, String service, String action, String actionArgs){
+    cordovaPluginManager.exec(service, action, callbackId, actionArgs);
+  }
 }
