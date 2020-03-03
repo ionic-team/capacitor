@@ -6,7 +6,8 @@ import {
   LocalNotificationPendingList,
   LocalNotificationActionType,
   LocalNotification,
-  LocalNotificationScheduleResult
+  LocalNotificationScheduleResult,
+  NotificationPermissionResponse
 } from '../core-plugin-definitions';
 
 import { PermissionsRequestResult } from '../definitions';
@@ -95,6 +96,17 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     throw new Error('Method not implemented.');
   }
 
+  requestPermission(): Promise<NotificationPermissionResponse> {
+    return new Promise((resolve) => {
+      Notification.requestPermission((result) => {
+        let granted = true;
+        if (result === 'denied' || result === 'default') {
+          granted = false;
+        }
+        resolve({granted});
+      });
+    });
+  }
 
   requestPermissions(): Promise<PermissionsRequestResult> {
     return new Promise((resolve, reject) => {
