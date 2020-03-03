@@ -1081,12 +1081,17 @@ export interface LocalNotificationEnabledResult {
   value: boolean;
 }
 
+export interface NotificationPermissionResponse {
+  granted: boolean;
+}
+
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 }
@@ -1489,12 +1494,9 @@ export interface PushNotificationChannelList {
   channels: PushNotificationChannel[];
 }
 
-export interface PushNotificationRegistrationResponse {
-  granted: boolean;
-}
-
 export interface PushNotificationsPlugin extends Plugin {
-  register(): Promise<PushNotificationRegistrationResponse>;
+  register(): Promise<void>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;
