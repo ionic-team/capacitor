@@ -8,6 +8,10 @@ Before working on Capacitor, it's important to understand the philosophy behind 
 
 Please read [@maxlynch](http://twitter.com/maxlynch)'s essay [How Capacitor Works](https://tinyletter.com/ionic-max/letters/how-capacitor-works) for a deep dive into the project and its goals.
 
+## Consult with the team
+
+For any large changes, make sure you've consulted with the team first. One way to do this would be to create a draft PR for discussion, or bringing up the discussion in the Capacitor slack.
+
 ## About Third Party Libraries
 
 To achieve Capacitor's goal of being stable and easy to upgrade, we would like to avoid unnecessary third party libraries as much as possible. Before embarking on Capacitor contributions, make sure you aren't planning on introducing third party libraries without consulting with the team first.
