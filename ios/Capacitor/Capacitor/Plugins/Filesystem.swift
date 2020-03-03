@@ -12,8 +12,6 @@ public class CAPFilesystemPlugin : CAPPlugin {
     switch directory {
     case "DOCUMENTS":
       return .documentDirectory
-    case "APPLICATION":
-      return .applicationDirectory
     case "CACHE":
       return .cachesDirectory
     default:

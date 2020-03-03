@@ -567,10 +567,6 @@ export interface FilesystemPlugin extends Plugin {
 
 export enum FilesystemDirectory {
   /**
-   * The Application directory
-   */
-  Application = 'APPLICATION',
-  /**
    * The Documents directory
    */
   Documents = 'DOCUMENTS',
