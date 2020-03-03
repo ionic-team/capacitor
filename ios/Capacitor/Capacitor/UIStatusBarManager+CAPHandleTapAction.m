@@ -1,5 +1,3 @@
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
-
 #import <Capacitor/Capacitor-Swift.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
@@ -37,5 +35,3 @@
 }
 
 @end
-
-#endif
