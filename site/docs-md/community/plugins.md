@@ -123,6 +123,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Fancy Notifications | `fancy-notifications` | <https://github.com/triniwiz/fancy-notifications> | |
 | FCM | `capacitor-fcm` | <https://github.com/stewwan/capacitor-fcm> | |
+| PWA Push Notifications with Firebase | `capacitor-pwa-firebase-msg` | <https://github.com/CFT-Chris/capacitor-pwa-firebase-msg> | |
 
 ## Files/Networking
 

@@ -108,17 +108,5 @@ export interface CliConfig {
 
 export interface CliConfigServiceWorker {
   name: string;
-  firebaseConfig: CliConfigFirebase;
-  combineOtherWorker: string;
-}
-
-export interface CliConfigFirebase {
-  apiKey: string;
-  authDomain: string;
-  databaseURL: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-  vapidKey: string;
+  combineWorkers: string[];
 }

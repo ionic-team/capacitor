@@ -88,17 +88,7 @@ export class Config implements CliConfig {
     bundledWebRuntime: false,
     serviceWorker: {
       name: 'capacitor-sw.js',
-      firebaseConfig: {
-        apiKey: '',
-        authDomain: '',
-        databaseURL: '',
-        projectId: '',
-        storageBucket: '',
-        messagingSenderId: '',
-        appId: '',
-        vapidKey: ''
-      },
-      combineOtherWorker: ''
+      combineWorkers: []
     },
     plugins: {},
     assets: {

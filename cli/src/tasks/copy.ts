@@ -44,7 +44,6 @@ export async function copy(config: Config, platformName: string) {
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
       await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
     } else if (platformName === config.web.name) {
-      await copyCapacitorConfig(config, config.app.webDirAbs);
       await copyWeb(config);
     } else if (platformName === config.electron.name) {
       await copyElectron(config);
