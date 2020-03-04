@@ -26,5 +26,5 @@ git push --follow-tags origin master
 #rm -rf capacitor-ios
 
 # Do the actual native deploys second, because they require tags/releases in github
-bash scripts/deploy/pods.sh
 bash scripts/deploy/android.sh
+bash scripts/deploy/pods.sh
