@@ -522,10 +522,11 @@ public class Bridge {
             if (call.isSaved()) {
               saveCall(call);
             }
-          } catch(PluginLoadException | InvalidPluginMethodException | PluginInvocationException ex) {
+          } catch(PluginLoadException | InvalidPluginMethodException ex) {
             Log.e(LOG_TAG, "Unable to execute plugin method", ex);
-          } catch(Exception ex) {
+          } catch (Exception ex) {
             Log.e(LOG_TAG, "Serious error executing plugin", ex);
+            throw new RuntimeException(ex);
           }
         }
       };
