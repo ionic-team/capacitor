@@ -3,7 +3,6 @@ import { WebPlugin } from './index';
 import {
   ClipboardPlugin,
   ClipboardWrite,
-  ClipboardRead,
   ClipboardReadResult
 } from '../core-plugin-definitions';
 
@@ -23,7 +22,7 @@ export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
       return Promise.reject('Clipboard API not available in this browser');
     }
 
-    if (options.string || options.url) {
+    if (options.string !== undefined || options.url) {
       if (!navigator.clipboard.writeText) {
         return Promise.reject('Writting to clipboard not supported in this browser');
       }
@@ -45,32 +44,41 @@ export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
     return Promise.resolve();
   }
 
-  async read(_options: ClipboardRead): Promise<ClipboardReadResult> {
+  async read(): Promise<ClipboardReadResult> {
     if (!navigator.clipboard) {
       return Promise.reject('Clipboard API not available in this browser');
     }
-    if (_options.type === 'string' || _options.type === 'url') {
+    if (!navigator.clipboard.read) {
       if (!navigator.clipboard.readText) {
         return Promise.reject('Reading from clipboard not supported in this browser');
       }
-      const text = await navigator.clipboard.readText();
-      return Promise.resolve({ value: text});
+      return this.readText();
     } else {
-      if (navigator.clipboard.read) {
+      try {
         const clipboardItems = await navigator.clipboard.read();
-        const imgBlob = await clipboardItems[0].getType('image/png');
-        const data = await this._getBlobData(imgBlob);
-        return Promise.resolve({ value: data});
-      } else {
-        return Promise.reject('Reading images not supported in this browser');
+        const type = clipboardItems[0].types[0];
+        const clipboardBlob = await clipboardItems[0].getType(type);
+        const data = await this._getBlobData(clipboardBlob, type);
+        return Promise.resolve({ value: data, type});
+      } catch (err) {
+        return this.readText();
       }
     }
   }
 
-  private _getBlobData(imgBlob: Blob) {
+  private async readText() {
+    const text = await navigator.clipboard.readText();
+    return Promise.resolve({ value: text, type: 'text/plain'});
+  }
+
+  private _getBlobData(clipboardBlob: Blob, type: string) {
     return new Promise<string>((resolve, reject) => {
       var reader = new FileReader();
-      reader.readAsDataURL(imgBlob);
+      if (type.includes('image')) {
+        reader.readAsDataURL(clipboardBlob);
+      } else {
+        reader.readAsText(clipboardBlob);
+      }
       reader.onloadend = () => {
         const r = reader.result as string;
         resolve(r);
