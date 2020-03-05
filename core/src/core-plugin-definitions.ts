@@ -380,7 +380,7 @@ export interface ClipboardPlugin extends Plugin {
   /**
    * Read a value from the clipboard (the "paste" action)
    */
-  read(options: ClipboardRead): Promise<ClipboardReadResult>;
+  read(): Promise<ClipboardReadResult>;
 }
 
 export interface ClipboardWrite {
@@ -390,12 +390,9 @@ export interface ClipboardWrite {
   label?: string; // Android only
 }
 
-export interface ClipboardRead {
-  type: 'string' | 'url' | 'image';
-}
-
 export interface ClipboardReadResult {
   value: string;
+  type: string;
 }
 
 //

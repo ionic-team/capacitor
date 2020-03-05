@@ -29,7 +29,7 @@ public class Clipboard extends Plugin {
     if(strVal != null) {
       data = ClipData.newPlainText(label, strVal);
     } else if(imageVal != null) {
-      // Does nothing
+      data = ClipData.newPlainText(label, imageVal);
     } else if(urlVal != null) {
       data = ClipData.newPlainText(label, urlVal);
     }
@@ -45,24 +45,26 @@ public class Clipboard extends Plugin {
   public void read(PluginCall call) {
     Context c = this.getContext();
 
-    String type = call.getString("type");
     ClipboardManager clipboard = (ClipboardManager)
         c.getSystemService(Context.CLIPBOARD_SERVICE);
 
+    CharSequence value = "";
     if(clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
       Log.d(getLogTag(), "Got plaintxt");
       ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-
-      JSObject ret = new JSObject();
-      ret.put("value", item.getText());
-      call.success(ret);
+      value = item.getText();
     } else {
       Log.d(getLogTag(), "Not plaintext!");
       ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-      String value = item.coerceToText(this.getContext()).toString();
-      JSObject ret = new JSObject();
-      ret.put("value", value);
-      call.success(ret);
+      value = item.coerceToText(this.getContext()).toString();
     }
+    JSObject ret = new JSObject();
+    String type = "text/plain";
+    ret.put("value", value != null ? value : "");
+    if (value != null && value.toString().startsWith("data:")) {
+      type = value.toString().split(";")[0].split(":")[1];
+    }
+    ret.put("type", type);
+    call.success(ret);
   }
 }
