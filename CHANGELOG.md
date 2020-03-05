@@ -1,3 +1,13 @@
+## [1.5.1](https://github.com/ionic-team/capacitor/compare/1.5.0...1.5.1) (2020-03-05)
+
+### Bug Fixes
+
+* fix(android): plugin retained events not being retained if listeners were empty (#2408) ([7decd0b](https://github.com/ionic-team/capacitor/commit/7decd0b)), closes [#2408](https://github.com/ionic-team/capacitor/issues/2408)
+* fix(cli): Avoid AndroidManifest.xml not found error on add (#2400) ([605b045](https://github.com/ionic-team/capacitor/commit/605b045)), closes [#2400](https://github.com/ionic-team/capacitor/issues/2400)
+* chore: Update changelog for 1.5.0 ([cf2f746](https://github.com/ionic-team/capacitor/commit/cf2f746))
+
+
+
 ## [1.5.0](https://github.com/ionic-team/capacitor/compare/1.4.0...1.5.0) (2020-02-03)
 
 ### Bug Fixes
