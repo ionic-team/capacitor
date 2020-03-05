@@ -1,8 +1,12 @@
-import { logFatal, resolveNode, runTask } from '../common';
+import { logWarn, logFatal, resolveNode, runTask, readJSON, runCommand } from '../common';
 import { Config } from '../config';
 import { copy } from 'fs-extra';
 import { writeFileAsync } from '../util/fs';
 import { join } from 'path';
+import { getDependencies } from '../plugin';
+import chalk from 'chalk';
+
+const NPM_PRECAPCOPYWEB_SCRIPT = 'precapcopyweb';
 
 // When a new version of Capacitor's PWA service worker is seen by the browser, immediately activate it after installation
 const CAPACITOR_SERVICEWORKER_HEADER = `
@@ -17,6 +21,30 @@ export async function copyWeb(config: Config) {
   let serviceWorker = '';
   let runtimePath: string | null = null;
 
+  const deps = getDependencies(config);
+
+  await runTask(`Scan for web plugins and run ${NPM_PRECAPCOPYWEB_SCRIPT} npm scripts`, async () => {
+    await Promise.all(
+      deps.map(async p => {
+        const rootPath = resolveNode(config, p);
+        
+        if (!rootPath) {
+          logFatal(`Unable to find node_modules/${p}. Are you sure ${p} is installed?`);
+          return null;
+        }
+
+        const packagePath = join(rootPath, 'package.json');
+        const meta = await readJSON(packagePath);
+
+        if (meta.scripts && meta.scripts[NPM_PRECAPCOPYWEB_SCRIPT]) {
+          await runTask(chalk`  {white {bold ${p}}}: running ${NPM_PRECAPCOPYWEB_SCRIPT} npm script`, async () => {
+            await runCommand(`npm explore ${p} -- npm run ${NPM_PRECAPCOPYWEB_SCRIPT}`);
+          });
+        }
+      })
+    );  
+  });
+
   if (config.app.bundledWebRuntime) {
     runtimePath = resolveNode(config, '@capacitor/core', 'dist', 'capacitor.js');
 
@@ -25,6 +53,11 @@ export async function copyWeb(config: Config) {
         '@capacitor/core is installed? This file is required for Capacitor to function');
       return;
     }
+    
+    await runTask(`Copying capacitor.js to web dir`, async () => {
+      if (runtimePath)
+        await copy(runtimePath, join(config.app.webDirAbs, 'capacitor.js'));
+    });
   }
 
   if (config.app.serviceWorker) {
@@ -33,14 +66,9 @@ export async function copyWeb(config: Config) {
     if (config.app.serviceWorker.combineWorkers) {
       serviceWorker += config.app.serviceWorker.combineWorkers.map(s => `importScripts('${s}');`).join('\n');
     }
-  }
 
-  return runTask(`Copying capacitor.js and service workers to web dir`, async () => {
-    if (serviceWorker) {
+    await runTask(`Copying ${config.app.serviceWorker.name} to web dir`, async () => {
       await writeFileAsync(join(config.app.webDirAbs, config.app.serviceWorker.name), serviceWorker);
-    }
-
-    if (config.app.bundledWebRuntime && runtimePath)
-      await copy(runtimePath, join(config.app.webDirAbs, 'capacitor.js'));
-  });
+    });
+  }
 }
