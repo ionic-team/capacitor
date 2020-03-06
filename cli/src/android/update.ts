@@ -205,9 +205,7 @@ async function replaceFrameworkVariables(config: Config, prefsArray: Array<any>,
     variablesGradle = await readFileAsync(variablesFile, 'utf8');
   }
   prefsArray.map((preference: any) => {
-    if (variablesGradle.includes(preference.$.name)) {
-      frameworkString = frameworkString.replace(new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'), `$rootProject.ext.${preference.$.name}`);
-    } else {
+    if (!variablesGradle.includes(preference.$.name)) {
       frameworkString = frameworkString.replace(new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
     }
   });
