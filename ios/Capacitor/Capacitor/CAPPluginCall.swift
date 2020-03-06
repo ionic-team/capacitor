@@ -79,15 +79,15 @@ public typealias PluginEventListener = CAPPluginCall
   }
   
   func error(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
-    errorHandler(CAPPluginCallError(message: message, error: error, data: data))
+    errorHandler(CAPPluginCallError(message: message, code: nil, error: error, data: data))
   }
-  
-  func reject(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
-    errorHandler(CAPPluginCallError(message: message, error: error, data: data))
+
+  func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
+    errorHandler(CAPPluginCallError(message: message, code: code, error: error, data: data))
   }
 
   func unimplemented() {
-    errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, error: nil, data: [:]))
+    errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, code: nil, error: nil, data: [:]))
   }
 }
 

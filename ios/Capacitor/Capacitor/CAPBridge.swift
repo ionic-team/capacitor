@@ -418,7 +418,7 @@ enum BridgeError: Error {
         }
       }, error: {(error: CAPPluginCallError?) -> Void in
         let description = error?.error?.localizedDescription ?? ""
-        self.toJsError(error: JSResultError(call: call, message: error!.message, errorMessage: description, error: error!.data))
+        self.toJsError(error: JSResultError(call: call, message: error!.message, errorMessage: description, error: error!.data, code: error!.code))
       })!
       
       plugin.perform(selector, with: pluginCall)
