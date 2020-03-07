@@ -157,17 +157,19 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   }
 
   func showPhotos(_ call: CAPPluginCall) {
-    let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-    if photoAuthorizationStatus == .restricted || photoAuthorizationStatus == .denied {
-      call.error("User denied access to photos")
-      return
-    }
+        // Authorization Request for exif and location data
+        PHPhotoLibrary.requestAuthorization({ (status) in
+            if (status != PHAuthorizationStatus.authorized) {
+                 call.error("User denied access to photos")
+                 return
+            } else {
+                    self.configurePicker()
 
-    self.configurePicker()
+                   self.imagePicker!.sourceType = .photoLibrary
 
-    self.imagePicker!.sourceType = .photoLibrary
-
-    self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+                   self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+            }
+        });
   }
 
   private func configurePicker() {
@@ -197,7 +199,31 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       image = originalImage
     }
 
-    let imageMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any]
+    var imageMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any]
+    
+
+    if #available(iOS 13, *) {
+        // iOS 13 or high
+        let asset = info[UIImagePickerController.InfoKey.phAsset] as! PHAsset
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+        PHImageManager.default().requestImageDataAndOrientation(for: asset, options: options) { (data, responseString, imageOrient, info) in
+            let imageData: NSData = data! as NSData
+            if let imageSource = CGImageSourceCreateWithData(imageData, nil) {
+                 imageMetadata = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil)! as? [AnyHashable: Any]
+            }
+        }
+    }
+
+    let coordinate = (info[UIImagePickerController.InfoKey.phAsset] as? PHAsset)?.location?.coordinate
+    
+    let numLat = NSNumber(value: (coordinate?.latitude)! as Double)
+    let numLong = NSNumber(value: (coordinate?.latitude)! as Double)
+    
+    let gps: [AnyHashable: Any] = [
+        AnyHashable("latitude"): numLat.stringValue,
+        AnyHashable("longitude"): numLong.stringValue
+    ]
 
     if settings.shouldResize {
       guard let convertedImage = resizeImage(image!) else {
@@ -226,32 +252,37 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     if settings.resultType == CameraResultType.base64.rawValue {
       let base64String = jpeg.base64EncodedString()
-
-      self.call?.success([
-        "base64String": base64String,
-        "exif": makeExif(imageMetadata) ?? [:],
-        "format": "jpeg"
-      ])
+        
+            self.call?.success([
+                "base64String": base64String,
+                "exif": makeExif(imageMetadata) ?? [:],
+                "gps": gps,
+                "format": "jpeg"
+            ])
+       
     } else if settings.resultType == CameraResultType.DATA_URL.rawValue {
       let base64String = jpeg.base64EncodedString()
-
-      self.call?.success([
-        "dataUrl": "data:image/jpeg;base64," + base64String,
-        "exif": makeExif(imageMetadata) ?? [:],
-        "format": "jpeg"
-      ])
+        
+            self.call?.success([
+                "dataUrl": "data:image/jpeg;base64," + base64String,
+                "exif": makeExif(imageMetadata) ?? [:],
+                "gps": gps,
+                "format": "jpeg"
+            ])
+        
     } else if settings.resultType == CameraResultType.uri.rawValue {
       let path = try! saveTemporaryImage(jpeg)
       guard let webPath = CAPFileManager.getPortablePath(host: bridge.getLocalUrl(), uri: URL(string: path)) else {
         call?.reject("Unable to get portable path to file")
         return
       }
-      call?.success([
-        "path": path,
-        "exif": makeExif(imageMetadata) ?? [:],
-        "webPath": webPath,
-        "format": "jpeg"
-      ])
+          call?.success([
+            "path": path,
+            "exif": makeExif(imageMetadata) ?? [:],
+            "webPath": webPath,
+            "gps": gps,
+            "format": "jpeg"
+          ])
     }
 
     picker.dismiss(animated: true, completion: nil)
