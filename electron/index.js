@@ -42,7 +42,6 @@ class CapacitorSplashScreen {
  * @param {string} splashOptions.customHtml Custom html string, if used all most of customization options will be ignored
  * @param {string} splashOptions.initUrl Initial baseUrl, if App should load from server or local files
  * @param {string} splashOptions.splashAssetsUrl SplashAssets url, if splashassets should be fetched remotely or used from local files
- * @param {string} splashOptions.customCapacitorConfig Cusom capacitor config that overrides the default one
  */
   constructor(mainWindow, splashOptions) {
     this.mainWindowRef = null;
