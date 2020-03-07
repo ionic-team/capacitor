@@ -40,6 +40,9 @@ class CapacitorSplashScreen {
  * @param {boolean} splashOptions.transparentWindow If the window should of transparent
  * @param {boolean} splashOptions.autoHideLaunchSplash If auto hide the splash screen
  * @param {string} splashOptions.customHtml Custom html string, if used all most of customization options will be ignored
+ * @param {string} splashOptions.initUrl Initial baseUrl, if App should load from server or local files
+ * @param {string} splashOptions.splashAssetsUrl SplashAssets url, if splashassets should be fetched remotely or used from local files
+ * @param {string} splashOptions.customCapacitorConfig Cusom capacitor config that overrides the default one
  */
   constructor(mainWindow, splashOptions) {
     this.mainWindowRef = null;
@@ -58,7 +61,9 @@ class CapacitorSplashScreen {
       textPercentageFromTop: splashOptions.textPercentageFromTop || 75,
       transparentWindow: splashOptions.transparentWindow || false,
       autoHideLaunchSplash: splashOptions.autoHideLaunchSplash || true,
-      customHtml: splashOptions.customHtml || false
+      customHtml: splashOptions.customHtml || false,
+      initUrl: splashOptions.initUrl || `file://${rootPath}/app/index.html`,
+      splashAssetsUrl = splashOptions.splashAssetsUrl || `file://${rootPath}/splash_assets/`
     };
 
     this.mainWindowRef = mainWindow;
@@ -139,7 +144,7 @@ class CapacitorSplashScreen {
     this.splashWindow.webContents.on('dom-ready', async () => {
       this.splashWindow.show();
       setTimeout(async () => {
-        this.mainWindowRef.loadURL(`file://${rootPath}/app/index.html`);
+        this.mainWindowRef.loadURL(this.splashOptions.initUrl);
       }, 4500);
     });
 
