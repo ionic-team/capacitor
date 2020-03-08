@@ -217,8 +217,16 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     let coordinate = (info[UIImagePickerController.InfoKey.phAsset] as? PHAsset)?.location?.coordinate
     
-    let numLat = NSNumber(value: (coordinate?.latitude)! as Double)
-    let numLong = NSNumber(value: (coordinate?.latitude)! as Double)
+    var numLat = NSNumber(value: 0 as Double)
+    var numLong = NSNumber(value: 0 as Double)
+    
+    if(coordinate?.latitude != nil){
+        numLat = NSNumber(value: (coordinate?.latitude)! as Double)
+    }
+    
+    if(coordinate?.longitude != nil){
+        numLong = NSNumber(value: (coordinate?.longitude)! as Double)
+    }
     
     let gps: [AnyHashable: Any] = [
         AnyHashable("latitude"): numLat.stringValue,
