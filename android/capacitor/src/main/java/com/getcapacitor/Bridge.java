@@ -662,7 +662,7 @@ public class Bridge {
    * Restore any saved bundle state data
    * @param savedInstanceState
    */
-  protected void restoreInstanceState(Bundle savedInstanceState) {
+  public void restoreInstanceState(Bundle savedInstanceState) {
     String lastPluginId = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_ID_KEY);
     String lastPluginCallMethod = savedInstanceState.getString(BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY);
     String lastOptionsJson = savedInstanceState.getString(BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY);
