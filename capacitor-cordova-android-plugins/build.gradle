@@ -11,10 +11,10 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 29
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 21
+        targetSdkVersion targetSdkVersion = project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 29
         versionCode 1
         versionName "1.0"
     }
@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'src/main/libs', include: ['*.jar'])
-    implementation 'org.apache.cordova:framework:7.0.0'
+    implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
     // SUB-PROJECT DEPENDENCIES START
     
     // SUB-PROJECT DEPENDENCIES END
