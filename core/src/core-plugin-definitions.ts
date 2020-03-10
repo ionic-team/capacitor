@@ -380,7 +380,7 @@ export interface ClipboardPlugin extends Plugin {
   /**
    * Read a value from the clipboard (the "paste" action)
    */
-  read(options: ClipboardRead): Promise<ClipboardReadResult>;
+  read(): Promise<ClipboardReadResult>;
 }
 
 export interface ClipboardWrite {
@@ -390,12 +390,9 @@ export interface ClipboardWrite {
   label?: string; // Android only
 }
 
-export interface ClipboardRead {
-  type: 'string' | 'url' | 'image';
-}
-
 export interface ClipboardReadResult {
   value: string;
+  type: string;
 }
 
 //
@@ -418,6 +415,11 @@ export interface DevicePlugin extends Plugin {
 export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown';
 
 export interface DeviceInfo {
+  /**
+   * Note: this property is iOS only.
+   * The name of the device. For example, "John's iPhone"
+   */
+  name?: string;
   /**
    * The device model. For example, "iPhone"
    */
@@ -566,10 +568,6 @@ export interface FilesystemPlugin extends Plugin {
 }
 
 export enum FilesystemDirectory {
-  /**
-   * The Application directory
-   */
-  Application = 'APPLICATION',
   /**
    * The Documents directory
    */
@@ -1085,12 +1083,17 @@ export interface LocalNotificationEnabledResult {
   value: boolean;
 }
 
+export interface NotificationPermissionResponse {
+  granted: boolean;
+}
+
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 }
@@ -1493,12 +1496,9 @@ export interface PushNotificationChannelList {
   channels: PushNotificationChannel[];
 }
 
-export interface PushNotificationRegistrationResponse {
-  granted: boolean;
-}
-
 export interface PushNotificationsPlugin extends Plugin {
-  register(): Promise<PushNotificationRegistrationResponse>;
+  register(): Promise<void>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;

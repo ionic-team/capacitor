@@ -85,6 +85,13 @@ public class LocalNotifications extends Plugin {
   }
 
   @PluginMethod()
+  public void requestPermission(PluginCall call) {
+    JSObject result = new JSObject();
+    result.put("granted", true);
+    call.success(result);
+  }
+
+  @PluginMethod()
   public void cancel(PluginCall call) {
     manager.cancel(call);
   }

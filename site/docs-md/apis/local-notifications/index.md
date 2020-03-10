@@ -1,7 +1,7 @@
 ---
 title: Local Notifications
 description: Local Notifications API
-url: /docs/apis/local-Notifications
+url: /docs/apis/local-notifications
 contributors:
   - mlynch
   - jcesarmobile

@@ -104,6 +104,11 @@ public class PushNotifications extends Plugin {
         sendError(e.getLocalizedMessage());
       }
     });
+    call.success();
+  }
+
+  @PluginMethod()
+  public void requestPermission(PluginCall call) {
     JSObject result = new JSObject();
     result.put("granted", true);
     call.success(result);

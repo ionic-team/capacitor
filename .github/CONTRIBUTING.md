@@ -2,6 +2,24 @@
 
 This guide attempts to make it easy for volunteer contributors and the core team to contribute to and publish Capacitor. Please let us know if there's something missing!
 
+## Design Philosophy
+
+Before working on Capacitor, it's important to understand the philosophy behind the project to avoid investing time in things that won't fit into the goals of the project.
+
+Please read [@maxlynch](http://twitter.com/maxlynch)'s essay [How Capacitor Works](https://tinyletter.com/ionic-max/letters/how-capacitor-works) for a deep dive into the project and its goals.
+
+## Consult with the team
+
+For any large changes, make sure you've consulted with the team first. One way to do this would be to create a draft PR for discussion, or bringing up the discussion in the Capacitor slack.
+
+## About Third Party Libraries
+
+To achieve Capacitor's goal of being stable and easy to upgrade, we would like to avoid unnecessary third party libraries as much as possible. Before embarking on Capacitor contributions, make sure you aren't planning on introducing third party libraries without consulting with the team first.
+
+On native, that means avoid adding any new Cocoapod or Gradle dependencies without explicit approval. If you just need a small bit of functionality from that library, consider adding an implementation to the codebase directly.
+
+On web, this means do not add any third party libraries such as Firebase or Lodash. Strive for implementations that use pure Web APIs even if it means more work.
+
 ## Directory Structure
 
 The `ionic-team/capacitor` repo is a monorepo containing all of the standard Capacitor components. The current directory structure looks like this:

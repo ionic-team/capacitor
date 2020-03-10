@@ -5,8 +5,7 @@
     "./android/",
     "./capacitor-ios/",
     "./cli/",
-    "./core/",
-    "./electron/"
+    "./core/"
   ],
   "version": "1.5.0"
 }
