@@ -111,7 +111,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }))
 
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
-      alert.dismiss(animated: true, completion: nil)
+      self.imagePickerControllerDidCancel(self.imagePicker!)
     }))
 
     self.setCenteredPopover(alert)
