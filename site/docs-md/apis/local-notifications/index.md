@@ -33,7 +33,9 @@ LocalNotifications.schedule({
       sound: null,
       attachments: null,
       actionTypeId: "",
-      extra: null
+      extra: null,
+      smallIcon: null,
+      iconColor: null
     }
   ]
 });
