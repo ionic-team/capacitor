@@ -153,7 +153,11 @@ public class LocalNotificationManager {
             .setOngoing(false)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setGroupSummary(localNotification.isGroupSummary())
-            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
+            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
+
+            // make sure the scheduled time is shown 
+            .setWhen(localNotification.getSchedule().getAt().getTime())
+            .setShowWhen(true);
 
     String sound = localNotification.getSound();
     if (sound != null) {
