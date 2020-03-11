@@ -65,6 +65,7 @@ public class Camera extends Plugin {
   private static final String IMAGE_PROCESS_NO_FILE_ERROR = "Unable to process image, file not found on disk";
   private static final String UNABLE_TO_PROCESS_IMAGE = "Unable to process image";
   private static final String IMAGE_EDIT_ERROR = "Unable to edit image";
+  private static final String IMAGE_GALLERY_SAVE_ERROR = "Unable to save the image in the gallery";
 
   private String imageFileSavePath;
   private Uri imageFileUri;
@@ -191,14 +192,12 @@ public class Camera extends Plugin {
 
   public void openCamera(final PluginCall call) {
     if (checkCameraPermissions(call)) {
-      boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
-
       Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
       if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
         // If we will be saving the photo, send the target file along
         try {
           String appId = getAppId();
-          File photoFile = CameraUtils.createImageFile(getActivity(), saveToGallery);
+          File photoFile = CameraUtils.createImageFile(getActivity());
           imageFileSavePath = photoFile.getAbsolutePath();
           // TODO: Verify provider config exists
           imageFileUri = FileProvider.getUriForFile(getActivity(), appId + ".fileprovider", photoFile);
@@ -225,20 +224,17 @@ public class Camera extends Plugin {
 
   public void processCameraImage(PluginCall call) {
     boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
-    CameraResultType resultType = getResultType(call.getString("resultType"));
     if(imageFileSavePath == null) {
       call.error(IMAGE_PROCESS_NO_FILE_ERROR);
       return;
     }
-
     if (saveToGallery) {
-      Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-      File f = new File(imageFileSavePath);
-      Uri contentUri = Uri.fromFile(f);
-      mediaScanIntent.setData(contentUri);
-      getActivity().sendBroadcast(mediaScanIntent);
+      try {
+        MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), imageFileSavePath, "", "");
+      } catch (FileNotFoundException e) {
+        Log.e(getLogTag(), IMAGE_GALLERY_SAVE_ERROR, e);
+      }
     }
-
     // Load the image as a Bitmap
     File f = new File(imageFileSavePath);
     BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -490,7 +486,7 @@ public class Camera extends Plugin {
       }
       Intent editIntent = new Intent(Intent.ACTION_EDIT);
       editIntent.setDataAndType(origPhotoUri, "image/*");
-      File editedFile = CameraUtils.createImageFile(getActivity(), false);
+      File editedFile = CameraUtils.createImageFile(getActivity());
       Uri editedUri = Uri.fromFile(editedFile);
       editIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
       editIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
