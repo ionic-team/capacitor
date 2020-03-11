@@ -124,7 +124,7 @@ public class Camera extends Plugin {
   }
 
   private void showCamera(final PluginCall call) {
-    if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+    if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
       call.error(NO_CAMERA_ERROR);
       return;
     }
