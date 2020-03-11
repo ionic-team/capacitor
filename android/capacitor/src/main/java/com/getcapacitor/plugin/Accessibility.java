@@ -61,9 +61,6 @@ public class Accessibility extends Plugin {
         tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, "capacitoraccessibility" + System.currentTimeMillis());
       }
     });
-
-    // Not yet implemented
-    throw new UnsupportedOperationException();
   }
 
 }
