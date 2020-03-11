@@ -22,6 +22,7 @@
 * Guides
   * [Ionic Framework Camera App](guides/ionic-framework-app.md)
   * [Push Notifications - Firebase](guides/push-notifications-firebase.md)
+  * [Universal & App Links](guides/universal-app-links.md)
   * [Community Guides](guides/community.md)
 * iOS
   * [Getting Started](ios/index.md)

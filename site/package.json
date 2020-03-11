@@ -29,6 +29,7 @@
     "natives": "^1.1.6",
     "node-fetch": "^2.3.0",
     "prismjs": "1.16.0",
+    "typedoc": "^0.16.11",
     "workbox-build": "3.4.1"
   },
   "author": "Ionic Team",
