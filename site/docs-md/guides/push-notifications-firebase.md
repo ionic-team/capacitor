@@ -225,7 +225,7 @@ iOS push notifications are significantly more complicated to set up than Android
 
 1. [Setup the proper Development or Production certificates & provisioning profiles](https://help.apple.com/xcode/mac/current/#/dev60b6fbbc7) for your iOS application in the Apple Developer Portal
 2. [Create an APNS certificate or key](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_certificate-based_connection_to_apns) for either Development or Production in the Apple Developer Portal
-3. [Ensure Push Notification capabilities have been enabled](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) in your application in Xcode
+3. [Ensure Push Notification (and Background Modes for Remote Notifications) capabilities have been enabled](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) in your application in Xcode
 4. Have a physical iOS device as per the guidelines in the [Dependencies](../getting-started/dependencies) documentation
 
 ### Integrating Firebase with our native iOS app
