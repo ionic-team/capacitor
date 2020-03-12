@@ -1,4 +1,5 @@
 import { DeviceBatteryInfo, DeviceInfo, DeviceLanguageCodeResult, DevicePlugin, DevicePluginWeb, WebPlugin } from "@capacitor/core";
+const { app } = require('electron').remote;
 
 declare var navigator: any;
 const webDevice = new DevicePluginWeb();
@@ -17,7 +18,7 @@ export class DevicePluginElectron extends WebPlugin implements DevicePlugin {
     return {
       model: info.model,
       platform: <'electron'> 'electron',
-      appVersion: '',
+      appVersion: app.getVersion(),
       appBuild: '',
       operatingSystem: info.operatingSystem,
       osVersion: info.osVersion,
