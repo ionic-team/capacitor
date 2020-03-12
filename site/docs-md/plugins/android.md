@@ -213,6 +213,8 @@ Plugins.MyPlugin.addListener("myPluginEvent", (info: any) => {
 });
 ```
 
+> **Attention:** Note that the listener you provide will be run outside of the Angular zone, even if it is a lambda expression. This might have unintended side affects, like views not getting updated if they are hooked to an observable that is updated wihtin your plugin listener. Your might want to make use of `NgZone.run()`.
+
 To emit the event from the Java plugin class you can do it like this:
 
 ```java
