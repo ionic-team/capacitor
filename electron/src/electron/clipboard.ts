@@ -1,4 +1,4 @@
-import { WebPlugin, ClipboardPlugin,ClipboardWrite,ClipboardRead,ClipboardReadResult } from "@capacitor/core";
+import { WebPlugin, ClipboardPlugin, ClipboardWrite, ClipboardReadResult } from "@capacitor/core";
 
 const { clipboard , nativeImage } = require('electron');
 
@@ -16,7 +16,7 @@ export class ClipboardPluginElectron extends WebPlugin implements ClipboardPlugi
   async write(options: ClipboardWrite): Promise<void> {
 
     return new Promise<void>((resolve) => {
-        if (options.string) {
+        if (options.string !== undefined) {
             clipboard.writeText(options.string);
         } else if(options.url){
             
@@ -37,26 +37,29 @@ export class ClipboardPluginElectron extends WebPlugin implements ClipboardPlugi
 
   }
 
-  async read(_options: ClipboardRead): Promise<ClipboardReadResult> {
+  async read(): Promise<ClipboardReadResult> {
 
-    return new Promise<ClipboardReadResult>((resolve, reject)=>{
+    return new Promise<ClipboardReadResult>((resolve)=>{
         const availableFormats = clipboard.availableFormats();
-
-        for(const format of availableFormats){
-            if(format === "text/plain"){
-                return resolve({"value": clipboard.readText()});
+        if (availableFormats.length > 0) {
+            let format = availableFormats[availableFormats.length-1];
+            if (format.includes("image")) {
+                return resolve({"value": clipboard.readImage().toDataURL(), "type": format});
+            } else {
+                format = availableFormats[0];
+                if (format === undefined) {
+                    return resolve({"value": "", "type": "text/plain"});
+                }
+                else if(format === "text/plain"){
+                    return resolve({"value": clipboard.readText(), "type": format});
+                }
+                else if (format === "text/html"){
+                    return resolve({"value": clipboard.readHTML(), "type": format});
+                }
             }
-            else if (format === "text/html"){
-                return resolve({"value": clipboard.readHTML()});
-            }
-            else if (format === "image/png" || format === "image/jpeg" ){
-                
-                
-                return resolve({"value": clipboard.readImage().toDataURL()});
-            }
+        } else {
+            return resolve({"value": "", "type": "text/plain"});
         }
-
-        return reject('Unable to get data from clipboard');
     });
   }  
 
