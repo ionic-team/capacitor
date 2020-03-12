@@ -35,7 +35,7 @@ public class CAPClipboardPlugin : CAPPlugin {
     if UIPasteboard.general.hasStrings {
       call.success([
         "value": UIPasteboard.general.string!,
-        "type": "text/html"
+        "type": "text/plain"
       ])
       return
     }
@@ -43,7 +43,7 @@ public class CAPClipboardPlugin : CAPPlugin {
       let url = UIPasteboard.general.url!
       call.success([
         "value": url.absoluteString,
-        "type": "text/html"
+        "type": "text/plain"
       ])
       return
     }
