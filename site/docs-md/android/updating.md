@@ -36,3 +36,89 @@ Recommended change:
 Recommended change:
 
 * Update `strings.xml` file inside `android/app/src/main/res/values/` folder with [this change](https://github.com/ionic-team/capacitor/commit/ed6647b35a8da08d26a7ff13cc9f4fd918b923a0#diff-15c65f143d85c95277307da1bdd0528e)
+
+### From <= 1.5.1 to 2.0.0-beta.0
+
+Since Capacitor 2.0 is still beta, install it using `next` tag
+
+```bash
+npm install @capacitor/cli@next
+npm install @capacitor/core@next
+npm install @capacitor/android@next
+npx cap sync android
+npx cap open android
+```
+
+Mandatory changes:
+
+* Use Android X
+
+  Capacitor 2.0 uses Android X for Android support library dependencies as recommended by Google, so the native project needs to be updated to use Android X too.
+
+  From Android Studio do `Refactor -> Migrate to AndroidX`. Then click on `Migrate` button and finally click on `Do Refactor`.
+
+  If using Cordova plugins that don't use Android X yet, you can use [jetifier](https://www.npmjs.com/package/jetifier) tool to patch them.
+
+  ```bash
+  npm install jetifier
+  npx jetifier
+  ```
+
+  To run it automatically after every package install, add `"postinstall": "jetifier"` in the `package.json`.
+
+* Create common variables
+
+  Create a `variables.gradle` file inside `android` folder with this content
+
+  ```
+  ext {
+    minSdkVersion = 21
+    compileSdkVersion = 29
+    targetSdkVersion = 29
+    androidxAppCompatVersion = '1.1.0'
+    androidxCoreVersion =  '1.2.0'
+    androidxMaterialVersion =  '1.1.0-rc02'
+    androidxBrowserVersion =  '1.2.0'
+    androidxLocalbroadcastmanagerVersion =  '1.0.0'
+    firebaseMessagingVersion =  '20.1.2'
+    playServicesLocationVersion =  '17.0.0'
+    junitVersion =  '4.12'
+    androidxJunitVersion =  '1.1.1'
+    androidxEspressoCoreVersion =  '3.2.0'
+    cordovaAndroidVersion =  '7.0.0'
+  }
+  ```
+
+  In `android/build.gradle` file, add `apply from: "variables.gradle"`
+
+
+Recommended changes:
+
+* Use common variables
+
+  Since we have common variables, it's recommended to update your project to use them. In the `android/app/build.gradle` file, change:
+  - `compileSdkVersion 28` to `compileSdkVersion rootProject.ext.compileSdkVersion`
+  - `minSdkVersion 21` to `minSdkVersion rootProject.ext.minSdkVersion`
+  - `targetSdkVersion 28` to `rootProject.ext.targetSdkVersion`
+  - `implementation 'androidx.appcompat:appcompat:1.0.0'` to `implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"`
+  - `testImplementation 'junit:junit:4.12'` to `testImplementation "junit:junit:$junitVersion"`
+  - `androidTestImplementation 'androidx.test.ext:junit:1.1.1'` to `androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"`
+  - `androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'` to `androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"`
+
+  Note that they use double quote instead of single quote now, that's required for variables to work.
+
+* Android Studio Plugin Update Recommended
+
+  When you open the Android project in Android Studio, a `Plugin Update Recommended` message will appear. Click on `update`. It will tell you to update Gradle plugin and Gradle. Click `Update` button.
+
+  You can also manually update the Gradle plugin and Gradle.
+  
+  To manually update Gradle plugin, edit `android/build.gradle` file. Change `classpath 'com.android.tools.build:gradle:3.3.2'` to `classpath 'com.android.tools.build:gradle:3.6.1'`. Change `gradle-4.10.1-all.zip` to `gradle-5.6.4-all.zip`.
+
+  To manually update Gradle, edit `android/gradle/wrapper/gradle-wrapper.properties`. Change `gradle-4.10.1-all.zip` to `gradle-5.6.4-all.zip`.
+
+* Update Google Services plugin
+
+  In `android/build.gradle` file, change `classpath 'com.google.gms:google-services:4.2.0'` to `classpath 'com.google.gms:google-services:4.3.3'`.
+
+For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0-beta.0)
