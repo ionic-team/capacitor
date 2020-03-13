@@ -35,12 +35,20 @@ console.log(info);
   "osVersion": "11.2",
   "platform": "ios",
   "memUsed": 93851648,
-  "battery": -1,
   "diskTotal": 499054952448,
   "model": "iPhone",
   "manufacturer": "Apple",
   "uuid": "84AE7AA1-7000-4696-8A74-4FD588A4A5C7",
   "isVirtual":true
+}
+
+const info = await Device.getBatteryInfo();
+console.log(info);
+
+// Example output:
+{
+  "batteryLevel": -1,
+  "isCharging": true
 }
 ```
 
