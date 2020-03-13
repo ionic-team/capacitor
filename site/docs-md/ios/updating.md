@@ -35,3 +35,29 @@ In particular, [AppDelegate.swift](https://github.com/ionic-team/capacitor/blob/
 Recommended change:
 
 * Update `.gitignore` file inside `ios` folder with [this changes](https://github.com/ionic-team/capacitor/commit/91941975ea5fe5389e0b09bb8331d5cb16ea6a78#diff-ea346566a7f09b5e88ed28d3d6362ec3)
+
+### From <= 1.5.1 to 2.0.0-beta.0
+
+Since Capacitor 2.0 is still beta, install it using `next` tag
+
+```bash
+npm install @capacitor/cli@next
+npm install @capacitor/core@next
+npm install @capacitor/ios@next
+npx cap sync ios
+```
+
+Recommended change:
+
+* Update native project to Swift 5
+
+  Capacitor 2.0 uses Swift 5, it's recommended to update your native project to also use Swift 5.
+  To do so, from Xcode click `Edit -> Convert -> To Current Swift Syntax`.
+
+  App.app will appear selected, click `Next` button.
+
+  Then a message will say `No source changes necessary`.
+
+  Finally, click the `Update` button.
+
+For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0-beta.0)
