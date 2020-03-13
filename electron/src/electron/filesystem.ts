@@ -89,7 +89,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.appendFile(lookupPath, options.data, options.encoding (err:any) => {
+      this.NodeFS.appendFile(lookupPath, options.data, options.encoding, (err:any) => {
         if(err) {
           reject(err);
           return;
