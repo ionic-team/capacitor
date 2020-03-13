@@ -31,12 +31,13 @@ const { Filesystem } = Plugins;
 
 async fileWrite() {
   try {
-    await Filesystem.writeFile({
+    const result = await Filesystem.writeFile({
       path: 'secrets/text.txt',
       data: "This is a test",
       directory: FilesystemDirectory.Documents,
       encoding: FilesystemEncoding.UTF8
     })
+    console.log('Wrote file', result);
   } catch(e) {
     console.error('Unable to write file', e);
   }
