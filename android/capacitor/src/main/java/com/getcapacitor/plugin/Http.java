@@ -16,9 +16,11 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpCookie;
@@ -68,28 +70,28 @@ public class Http extends Plugin {
 
   private void get(PluginCall call, String urlString, String method, JSObject headers, JSObject params) {
     try {
-      /*
-      Uri.Builder builder = Uri.parse(urlString)
-        .buildUpon();
+      Integer connectTimeout = call.getInt("connectTimeout");
+      Integer readTimeout = call.getInt("readTimeout");
 
-       */
       URL url = new URL(urlString);
 
-
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setAllowUserInteraction(false);
       conn.setRequestMethod(method);
+
+      if (connectTimeout != null) {
+        conn.setConnectTimeout(connectTimeout);
+      }
+
+      if (readTimeout != null) {
+        conn.setReadTimeout(readTimeout);
+      }
 
       setRequestHeaders(conn, headers);
 
-      conn.setDoInput(true);
-
       conn.connect();
 
-      InputStream stream = conn.getInputStream();
-
-      Log.d(getLogTag(), "GET request completed, got data");
-
-      call.resolve();
+      buildResponse(call, conn);
     } catch (MalformedURLException ex) {
       call.reject("Invalid URL", ex);
     } catch (IOException ex) {
@@ -97,6 +99,59 @@ public class Http extends Plugin {
     } catch (Exception ex) {
       call.reject("Error", ex);
     }
+  }
+
+  private void buildResponse(PluginCall call, HttpURLConnection conn) throws Exception {
+    int statusCode = conn.getResponseCode();
+
+    JSObject ret = new JSObject();
+    ret.put("status", statusCode);
+    ret.put("headers", makeResponseHeaders(conn));
+
+    InputStream stream = conn.getInputStream();
+
+    BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+    StringBuilder builder = new StringBuilder();
+    String line;
+    while ((line = in.readLine()) != null) {
+      builder.append(line);
+    }
+    in.close();
+
+    Log.d(getLogTag(), "GET request completed, got data");
+
+    String contentType = conn.getHeaderField("Content-Type");
+
+    if (contentType != null) {
+      if (contentType.contains("application/json")) {
+        JSObject jsonValue = new JSObject(builder.toString());
+        ret.put("data", jsonValue);
+      } else {
+        ret.put("data", builder.toString());
+      }
+    } else {
+      ret.put("data", builder.toString());
+    }
+
+    call.resolve(ret);
+  }
+
+  private JSArray makeResponseHeaders(HttpURLConnection conn) {
+    JSArray ret = new JSArray();
+
+    for (Map.Entry<String, List<String>> entries : conn.getHeaderFields().entrySet()) {
+      JSObject header = new JSObject();
+
+      String val = "";
+      for (String headerVal : entries.getValue()) {
+        val += headerVal + ", ";
+      }
+
+      header.put(entries.getKey(), val);
+      ret.put(header);
+    }
+
+    return ret;
   }
 
   private void setRequestHeaders(HttpURLConnection conn, JSObject headers) {

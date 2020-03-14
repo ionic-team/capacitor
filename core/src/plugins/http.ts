@@ -17,6 +17,15 @@ export interface HttpOptions {
   params?: HttpParams;
   data?: any;
   headers?: HttpHeaders;
+  /**
+   * How long to wait to read additional data. Resets each time new
+   * data is received
+   */
+  readTimeout?: number;
+  /**
+   * How long to wait for the initial connection.
+   */
+  connectTimeout?: number;
 }
 
 export interface HttpParams {

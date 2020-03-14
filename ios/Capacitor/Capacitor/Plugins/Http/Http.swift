@@ -318,12 +318,13 @@ public class CAPHttpPlugin: CAPPlugin {
           // handle json...
         ret["data"] = json
       }
+    } else {
+      if (data != nil) {
+        ret["data"] = String(data: data!, encoding: .utf8);
+      } else {
+        ret["data"] = ""
+      }
     }
-    // TODO: Handle other response content types, including binary
-    /*
-    else {
-      ret["data"] =
-    }*/
     
     return ret
   }

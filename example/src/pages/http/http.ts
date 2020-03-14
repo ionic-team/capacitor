@@ -61,6 +61,9 @@ export class HttpPage {
     }
   }
 
+  getJson = () => this.get('/get-json');
+  getHtml = () => this.get('/get-html');
+
   head =  () => this.get('/head', 'HEAD');
   delete =  () => this.mutate('/delete', 'DELETE', { title: 'foo', body: 'bar', userId: 1 });
   patch =   () => this.mutate('/patch', 'PATCH', { title: 'foo', body: 'bar', userId: 1 });
