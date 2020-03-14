@@ -39,20 +39,26 @@ export class HttpPage {
       content: 'Requesting...'
     });
     this.loading.present();
-    const ret = await Http.request({
-      method: method,
-      url: this.apiUrl(path),
-      headers: {
-        'X-Fake-Header': 'Max was here'
-      },
-      params: {
-        'size': 'XL'
-      }
-    });
-    console.log('Got ret', ret);
-    this.loading.dismiss();
 
-    this.output = JSON.stringify(ret, null, 2);
+    try {
+      const ret = await Http.request({
+        method: method,
+        url: this.apiUrl(path),
+        headers: {
+          'X-Fake-Header': 'Max was here'
+        },
+        params: {
+          'size': 'XL'
+        }
+      });
+      console.log('Got ret', ret);
+      this.output = JSON.stringify(ret, null, 2);
+    } catch (e) {
+      this.output = `Error: ${e.message}`;
+      console.error(e);
+    } finally {
+      this.loading.dismiss();
+    }
   }
 
   head =  () => this.get('/head', 'HEAD');
@@ -130,12 +136,19 @@ export class HttpPage {
       content: 'Requesting...'
     });
     this.loading.present();
-    const ret = await Http.request({
-      method: 'GET',
-      url: this.apiUrl('/cookie')
-    });
-    console.log('Got ret', ret);
-    this.loading.dismiss();
+    try {
+      const ret = await Http.request({
+        method: 'GET',
+        url: this.apiUrl('/cookie')
+      });
+      console.log('Got ret', ret);
+      this.loading.dismiss();
+    } catch (e) {
+      this.output = `Error: ${e.message}`;
+      console.error(e);
+    } finally {
+      this.loading.dismiss();
+    }
   }
 
   downloadFile = async () => {

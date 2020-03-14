@@ -88,10 +88,14 @@ public class Http extends Plugin {
       InputStream stream = conn.getInputStream();
 
       Log.d(getLogTag(), "GET request completed, got data");
+
+      call.resolve();
     } catch (MalformedURLException ex) {
-      call.error("Invalid URL", ex);
+      call.reject("Invalid URL", ex);
     } catch (IOException ex) {
-      call.error("Error", ex);
+      call.reject("Error", ex);
+    } catch (Exception ex) {
+      call.reject("Error", ex);
     }
   }
 
@@ -123,7 +127,7 @@ public class Http extends Plugin {
 
     URI uri = getUri(url);
     if (uri == null) {
-      call.error("Invalid URL");
+      call.reject("Invalid URL");
       return;
     }
 
@@ -138,7 +142,7 @@ public class Http extends Plugin {
 
     URI uri = getUri(url);
     if (uri == null) {
-      call.error("Invalid URL");
+      call.reject("Invalid URL");
       return;
     }
 
@@ -165,7 +169,7 @@ public class Http extends Plugin {
 
     URI uri = getUri(url);
     if (uri == null) {
-      call.error("Invalid URL");
+      call.reject("Invalid URL");
       return;
     }
 
