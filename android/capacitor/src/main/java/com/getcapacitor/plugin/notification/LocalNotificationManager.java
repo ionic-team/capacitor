@@ -155,6 +155,10 @@ public class LocalNotificationManager {
             .setGroupSummary(localNotification.isGroupSummary())
             .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
 
+
+    // support multiline text
+    mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(localNotification.getBody()));
+
     String sound = localNotification.getSound();
     if (sound != null) {
       Uri soundUri = Uri.parse(sound);
