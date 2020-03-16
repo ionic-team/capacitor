@@ -1033,7 +1033,7 @@ export interface LocalNotification {
    * If set, it overrides default icon from capacitor.config.json
    */
   smallIcon?: string;
-      /**
+  /**
    * Android only: set the color of the notification icon
    */
   iconColor?: string

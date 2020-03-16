@@ -178,7 +178,12 @@ public class LocalNotificationManager {
 
     String iconColor = localNotification.getIconColor();
     if (iconColor != null) {
-      mBuilder.setColor(Color.parseColor(iconColor));
+      try {
+        mBuilder.setColor(Color.parseColor(iconColor));
+      } catch (Exception ex) {
+        call.error("The iconColor string was not able to be parsed.  Please provide a valid string hexidecimal color code.", ex);
+        return;
+      }
     }
 
     createActionIntents(localNotification, mBuilder);
