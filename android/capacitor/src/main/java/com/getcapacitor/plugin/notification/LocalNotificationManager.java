@@ -174,6 +174,12 @@ public class LocalNotificationManager {
       mBuilder.setGroup(group);
     }
 
+    // make sure scheduled time is shown instead of display time
+    if (localNotification.isScheduled()) {
+      mBuilder.setWhen(localNotification.getSchedule().getAt().getTime())
+        .setShowWhen(true);
+    }
+
     mBuilder.setVisibility(Notification.VISIBILITY_PRIVATE);
     mBuilder.setOnlyAlertOnce(true);
 
