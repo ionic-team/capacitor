@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -184,6 +185,17 @@ public class LocalNotificationManager {
     mBuilder.setOnlyAlertOnce(true);
 
     mBuilder.setSmallIcon(localNotification.getSmallIcon(context));
+
+    String iconColor = localNotification.getIconColor();
+    if (iconColor != null) {
+      try {
+        mBuilder.setColor(Color.parseColor(iconColor));
+      } catch (IllegalArgumentException ex) {
+        call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
+        return;
+      }
+    }
+
     createActionIntents(localNotification, mBuilder);
     // notificationId is a unique int for each localNotification that you must define
     Notification buildNotification = mBuilder.build();
