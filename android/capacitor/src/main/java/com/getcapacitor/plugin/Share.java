@@ -28,13 +28,18 @@ public class Share extends Plugin {
       return;
     }
     Intent intent = new Intent(Intent.ACTION_SEND);
-    // If they supplied both fields, concat em
-    if (text != null && url != null && url.startsWith("http")) {
-      text = text + " " + url;
-      intent.setTypeAndNormalize("text/plain");
+    if (text != null) {
+      // If they supplied both fields, concat em
+      if (url != null && url.startsWith("http")) {
+        text = text + " " + url;
+      }
       intent.putExtra(Intent.EXTRA_TEXT, text);
-    } else if(url != null) {
-      if (url.startsWith("file:")) {
+      intent.setTypeAndNormalize("text/plain");
+    } else if (url != null) {
+      if (url.startsWith("http")) {
+        intent.putExtra(Intent.EXTRA_TEXT, url);
+        intent.setTypeAndNormalize("text/plain");
+      } else if (url.startsWith("file:")) {
         String type = getMimeType(url);
         intent.setType(type);
         Uri fileUrl = FileProvider.getUriForFile(getActivity(), getContext().getPackageName() + ".fileprovider", new File(Uri.parse(url).getPath()));
