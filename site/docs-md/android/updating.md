@@ -99,7 +99,7 @@ Recommended changes:
   Since we have common variables, it's recommended to update your project to use them. In the `android/app/build.gradle` file, change:
   - `compileSdkVersion 28` to `compileSdkVersion rootProject.ext.compileSdkVersion`
   - `minSdkVersion 21` to `minSdkVersion rootProject.ext.minSdkVersion`
-  - `targetSdkVersion 28` to `rootProject.ext.targetSdkVersion`
+  - `targetSdkVersion 28` to `targetSdkVersion rootProject.ext.targetSdkVersion`
   - `implementation 'androidx.appcompat:appcompat:1.0.0'` to `implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"`
   - `testImplementation 'junit:junit:4.12'` to `testImplementation "junit:junit:$junitVersion"`
   - `androidTestImplementation 'androidx.test.ext:junit:1.1.1'` to `androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"`
