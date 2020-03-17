@@ -180,7 +180,7 @@ public class LocalNotificationManager {
         .setShowWhen(true);
     }
 
-    mBuilder.setVisibility(Notification.VISIBILITY_PRIVATE);
+    mBuilder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
     mBuilder.setOnlyAlertOnce(true);
 
     mBuilder.setSmallIcon(localNotification.getSmallIcon(context));
