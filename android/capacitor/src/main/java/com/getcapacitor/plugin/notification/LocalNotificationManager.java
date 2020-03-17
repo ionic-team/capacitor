@@ -180,8 +180,8 @@ public class LocalNotificationManager {
     if (iconColor != null) {
       try {
         mBuilder.setColor(Color.parseColor(iconColor));
-      } catch (Exception ex) {
-        call.error("The iconColor string was not able to be parsed.  Please provide a valid string hexidecimal color code.", ex);
+      } catch (IllegalArgumentException ex) {
+        call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
         return;
       }
     }
