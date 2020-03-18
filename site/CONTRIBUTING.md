@@ -20,6 +20,8 @@ Open `site/docs-md/README.md` to add the new entry to the side bar.
 
 ## Modifying documentation
 
+For smaller edits, navigate to the desired page in the [Capacitor docs](https://capacitor.ionicframework.com/docs/) then click the "Submit an edit" button.
+
 1. Locate the doc you want to modify in `site/docs-md/`.
 2. Modify the documentation, making sure to keep the format the same as the rest of the doc.
 3. Run `npm run start` to make sure your changes look correct.
