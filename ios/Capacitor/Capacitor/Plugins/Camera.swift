@@ -158,15 +158,25 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
   func showPhotos(_ call: CAPPluginCall) {
     let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-    if photoAuthorizationStatus == .restricted || photoAuthorizationStatus == .denied {
-      call.error("User denied access to photos")
-      return
+    if (photoAuthorizationStatus != PHAuthorizationStatus.authorized) {
+      PHPhotoLibrary.requestAuthorization({ (status) in
+        if (status != PHAuthorizationStatus.authorized) {
+          call.error("User denied access to photos")
+          return
+        } else {
+          DispatchQueue.main.async {
+            self.presentPhotos()
+          }
+        }
+      })
+    } else {
+      presentPhotos()
     }
+  }
 
+  private func presentPhotos() {
     self.configurePicker()
-
     self.imagePicker!.sourceType = .photoLibrary
-
     self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
   }
 
@@ -197,7 +207,13 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       image = originalImage
     }
 
-    let imageMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any]
+    var imageMetadata: [AnyHashable: Any] = [:]
+    if let photoMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any] {
+      imageMetadata = photoMetadata
+    }
+    if let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset {
+      imageMetadata = getImageMeta(asset: asset)!
+    }
 
     if settings.shouldResize {
       guard let convertedImage = resizeImage(image!) else {
@@ -255,6 +271,30 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
 
     picker.dismiss(animated: true, completion: nil)
+  }
+
+  func metadataFromImageData(data: NSData)-> [String: Any]? {
+    let options = [kCGImageSourceShouldCache as String: kCFBooleanFalse]
+    if let imgSrc = CGImageSourceCreateWithData(data, options as CFDictionary) {
+      let metadata = CGImageSourceCopyPropertiesAtIndex(imgSrc, 0, options as CFDictionary) as! [String: Any]
+      return metadata
+    }
+    return nil
+  }
+
+  func getImageMeta(asset: PHAsset) -> [String:Any]?{
+    let options = PHImageRequestOptions()
+    options.isSynchronous = true
+    options.resizeMode = .none
+    options.isNetworkAccessAllowed = false
+    options.version = .current
+    var meta:[String:Any]? = nil
+    _ = PHCachingImageManager().requestImageData(for: asset, options: options) { (imageData, dataUTI, orientation, info) in
+      if let data = imageData {
+        meta = self.metadataFromImageData(data: data as NSData)
+      }
+    }
+    return meta
   }
 
   func resizeImage(_ image: UIImage) -> UIImage? {
