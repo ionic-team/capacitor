@@ -75,5 +75,9 @@ public class CAPStatusBarPlugin: CAPPlugin {
       ])
     }
   }
+
+  @objc func setOverlaysWebView(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
 }
 

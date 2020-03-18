@@ -116,4 +116,32 @@ public class StatusBar extends Plugin {
     data.put("color", String.format("#%06X", (0xFFFFFF & window.getStatusBarColor())));
     call.resolve(data);
   }
+
+  @PluginMethod()
+  public void setOverlaysWebView(final PluginCall call) {
+    final Boolean overlays = call.getBoolean("enabled", true);
+    getBridge().executeOnMainThread(new Runnable() {
+      @Override
+      public void run() {
+        if (overlays) {
+          // Sets the layout to a fullscreen one that does not hide the actual status bar, so the webview is displayed behind it.
+          View decorView = getActivity().getWindow().getDecorView();
+          int uiOptions = decorView.getSystemUiVisibility();
+          uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+          decorView.setSystemUiVisibility(uiOptions);
+          getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
+
+          call.success();
+        } else {
+          // Sets the layout to a normal one that displays the webview below the status bar.
+          View decorView = getActivity().getWindow().getDecorView();
+          int uiOptions = decorView.getSystemUiVisibility();
+          uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
+          decorView.setSystemUiVisibility(uiOptions);
+          call.success();
+        }
+
+      }
+    });
+  }
 }

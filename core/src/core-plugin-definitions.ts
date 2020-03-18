@@ -1608,6 +1608,11 @@ export interface StatusBarPlugin extends Plugin {
    *  Get info about the current state of the status bar
    */
   getInfo(): Promise<StatusBarInfoResult>;
+  /**
+   *  Set whether or not the status bar should overlay the webview to allow usage of the space
+   *  around a device "notch"
+   */
+  setOverlaysWebView(options: StatusBarOverlaysWebviewOptions): Promise<void>;
 }
 
 export interface StatusBarStyleOptions {
@@ -1633,6 +1638,10 @@ export interface StatusBarInfoResult {
   visible: boolean;
   style: StatusBarStyle;
   color?: string;
+}
+
+export interface StatusBarOverlaysWebviewOptions {
+  enabled: boolean;
 }
 
 export interface StoragePlugin extends Plugin {
