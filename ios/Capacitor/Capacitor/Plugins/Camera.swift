@@ -111,7 +111,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }))
 
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
-      self.imagePickerControllerDidCancel(self.imagePicker!)
+      self.call?.error("User cancelled photos app")
     }))
 
     self.setCenteredPopover(alert)
