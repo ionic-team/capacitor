@@ -1,18 +1,18 @@
 ---
-title: Universal and App Links
+title: Deep Linking
 description: Implement deep linking functionality in an iOS and Android app
-url: /docs/guides/universal-and-app-links
+url: /docs/guides/deep-linking
 contributors:
   - dotnetkow
 ---
 
-# Universal and App Links
+# Deep Linking with Universal and App Links
 
 **Platforms**: Web, iOS, Android
 
 Universal links (iOS) and App Links (Android) offer the ability to take users directly to specific content within a native app (common known as deep linking).
 
-When users tap or click on a deep link, the mobile operating system sends the user directly into your app without routing through the device's web browser or website first. If the app isn't installed, then the user is directed to the website.
+When users tap or click on a deep link, the mobile operating system sends the user directly into your app without routing through the device's web browser or website first. If the app isn't installed, then the user is directed to the website. If the user navigates directly to the website, they remain on the website.  This makes deep links an excellent feature for cross-platform apps built for the web, iOS, and Android.
 
 Benefits:
 - Secure: Universal/App Links use HTTPS URLs that link to a website domain that you own, ensuring that no other app can use your links.
@@ -78,7 +78,62 @@ initializeApp() {
 
 ### React
 
-Routing should be implemented in TODO.
+There's a variety of options for React. One approach is to wrap the App API listener functionality in a new component, then add it inside of `App.tsx`. Start by creating `AppUrlListener.tsx` then import the React Router `useHistory` hook as well as the Capacitor App API:
+
+```typescript
+import React, { useEffect } from 'react';
+import { useHistory } from "react-router-dom";
+import { Plugins } from '@capacitor/core';
+const { App: CapApp } = Plugins;
+```
+
+Next, define the AppUrlListener component, listening for the `appUrlOpen` event then redirecting when a deep link is found:
+
+```typescript
+const AppUrlListener: React.FC<any> = () => {
+    let history = useHistory();
+    useEffect(() => {
+        CapApp.addListener('appUrlOpen', (data: any) => {
+            // Example url: https://beerswift.app/tabs/tab2
+            // slug = /tabs/tab2
+            const slug = data.url.split(".app").pop();
+            if (slug) {
+                history.push(slug);
+            }
+            // If no match, do nothing - let regular routing 
+            // logic take over
+        });
+    }, []);
+
+    return null;
+};
+
+export default AppUrlListener;
+```
+
+Over in `App.tsx`, import the new component:
+
+```typescript
+import AppUrlListener from './pages/AppUrlListener';
+```
+
+Then add it inside of `IonReactRouter` (or wherever your app is bootstrapped, just ensure that the History hook is available):
+
+```tsx
+const App: React.FC = () => {
+    return (
+        <IonApp>
+            <IonReactRouter>
+                <AppUrlListener></AppUrlListener>
+                <IonRouterOutlet>
+                    <Route path="/home" component={Home} exact={true} />
+                    <Route exact path="/" render={() => <Redirect to="/home" />} />
+                </IonRouterOutlet>
+            </IonReactRouter>
+        </IonApp>
+    );
+};
+```
 
 ## Creating Site Association Files
 
@@ -96,7 +151,7 @@ iOS configuration involves creating a site association file and configuring the 
 
 First, log into the [Apple Developer site](https://developer.apple.com). Navigate to the "Certificates, Identifiers, & Profiles" section and select your app's identifier. Note the Team ID and Bundle ID, and under Capabilities, toggle "Associated Domains" then save:
 
-![iOS Identifier Config](/assets/img/docs/guides/universal-app-links/ios-config.png)
+![iOS Identifier Config](/assets/img/docs/guides/deep-links/ios-config.png)
 
 Next, create the site association file (`apple-app-site-association`).
 
@@ -126,7 +181,7 @@ Next, upload the file to your web site (hosted on HTTPS), then validate that it'
 
 The final step is to configure the iOS app to recognize incoming links. Open Xcode, then navigate to Signing & Capabilities. Click "+ Capability", then choose Associated Domains. In the Domains entry that appears, edit it using the format `applinks:yourdomain.com`:
 
-![Xcode Associated Domain](/assets/img/docs/guides/universal-app-links/xcode-associated-domain.png)
+![Xcode Associated Domain](/assets/img/docs/guides/deep-links/xcode-associated-domain.png)
 
 ## Android Configuration
 
@@ -150,11 +205,11 @@ keytool -list -v -keystore my-release-key.keystore
 
 The printed output will include the SHA256 fingerprint:
 
-![Keytool output](/assets/img/docs/guides/universal-app-links/keystore-sha256.png)
+![Keytool output](/assets/img/docs/guides/deep-links/keystore-sha256.png)
 
 Next, use Google's [Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator) to create the Site Association file. Fill in the website domain, app package name, and SHA256 fingerprint, then click "Generate statement":
 
-![Android Identifier Config](/assets/img/docs/guides/universal-app-links/android-config.png)
+![Android Identifier Config](/assets/img/docs/guides/deep-links/android-config.png)
 
 Copy the JSON output into a new local file under `.well-known/applinks.json`.
 
@@ -235,9 +290,7 @@ Build then deploy the site.
 
 ### React
 
-TODO
-
-Build then deploy the site.
+Place the association files under `public/.well-known`. No additional steps are necessary; simply build then deploy the site.
 
 ### Wordpress
 
