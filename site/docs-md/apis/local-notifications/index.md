@@ -40,6 +40,22 @@ const notifs = await LocalNotifications.schedule({
 console.log('scheduled notifications', notifs);
 ```
 
+## Local Notifications configuration (Android only)
+
+The local notification plugin allows the following configuration values to be added in `capacitor.config.json` for the Android platform:
+
+- `smallIcon`: It allows you to set the default icon for the local notification.
+- `iconColor`: It allows you to set the default color for the local notification icon.
+
+```json
+ "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#488AFF"
+    }
+  }
+```
+
 ## API
 
 <plugin-api name="local-notifications"></plugin-api>
