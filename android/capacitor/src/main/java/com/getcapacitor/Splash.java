@@ -53,7 +53,9 @@ public class Splash {
       }
 
       splashImage = new ImageView(c);
-      
+
+      splashImage.setFitsSystemWindows(true);
+
       // Hide status bar during splash screen.
       Boolean splashFullScreen = Config.getBoolean(CONFIG_KEY_PREFIX + "splashFullScreen", DEFAULT_SPLASH_FULL_SCREEN);
       if(splashFullScreen){
@@ -236,7 +238,7 @@ public class Splash {
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.gravity = Gravity.CENTER;
-        params.flags = a.getWindow().getAttributes().flags & (WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        params.flags = a.getWindow().getAttributes().flags;
 
         // Required to enable the view to actually fade
         params.format = PixelFormat.TRANSLUCENT;
