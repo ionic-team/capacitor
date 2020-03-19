@@ -16,6 +16,8 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -155,30 +157,6 @@ public class Http extends Plugin {
     return ret;
   }
 
-  private void setRequestHeaders(HttpURLConnection conn, JSObject headers) {
-    Iterator<String> keys = headers.keys();
-    while (keys.hasNext()) {
-      String key = keys.next();
-      String value = headers.getString(key);
-      conn.setRequestProperty(key, value);
-    }
-  }
-
-  private void setRequestBody(HttpURLConnection conn, JSObject data, JSObject headers) throws IOException {
-    String contentType = conn.getHeaderField("Content-Type");
-
-    if (contentType != null) {
-      if (contentType.contains("application/json")) {
-        DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-        os.writeBytes(URLEncoder.encode(data.toString(), "UTF-8"));
-        os.flush();
-        os.close();
-      } else if (contentType.contains("application/x-www-form-urlencoded")) {
-      } else if (contentType.contains("multipart/form-data")) {
-      }
-    }
-  }
-
   private void mutate(PluginCall call, String urlString, String method, JSObject headers) {
     try {
       Integer connectTimeout = call.getInt("connectTimeout");
@@ -295,6 +273,49 @@ public class Http extends Plugin {
     call.resolve();
   }
 
+
+  private void setRequestHeaders(HttpURLConnection conn, JSObject headers) {
+    Iterator<String> keys = headers.keys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      String value = headers.getString(key);
+      conn.setRequestProperty(key, value);
+    }
+  }
+
+  private void setRequestBody(HttpURLConnection conn, JSObject data, JSObject headers) throws IOException, JSONException {
+    String contentType = conn.getRequestProperty("Content-Type");
+
+    if (contentType != null) {
+      if (contentType.contains("application/json")) {
+        DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+        os.writeBytes(data.toString());
+        os.flush();
+        os.close();
+      } else if (contentType.contains("application/x-www-form-urlencoded")) {
+
+        StringBuilder builder = new StringBuilder();
+
+        Iterator<String> keys = data.keys();
+        while (keys.hasNext()) {
+          String key = keys.next();
+          Object d = data.get(key);
+          if (d != null) {
+            builder.append(key + "=" + URLEncoder.encode(d.toString(), "UTF-8"));
+            if (keys.hasNext()) {
+              builder.append("&");
+            }
+          }
+        }
+
+        DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+        os.writeBytes(builder.toString());
+        os.flush();
+        os.close();
+      } else if (contentType.contains("multipart/form-data")) {
+      }
+    }
+  }
   private URI getUri(String url) {
     try {
       return new URI(url);
