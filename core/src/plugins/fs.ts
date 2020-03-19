@@ -88,6 +88,10 @@ export enum FilesystemDirectory {
    */
   Documents = 'DOCUMENTS',
   /**
+   * The Downloads directory
+   */
+  Downloads = 'DOWNLOADS',
+  /**
    * The Data directory
    */
   Data = 'DATA',

@@ -1,4 +1,4 @@
-package com.getcapacitor.plugin;
+package com.getcapacitor.plugin.http;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,11 +15,15 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.PluginRequestCodes;
+import com.getcapacitor.plugin.filesystem.FilesystemUtils;
 
 import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -195,10 +199,98 @@ public class Http extends Plugin {
 
   @PluginMethod()
   public void downloadFile(PluginCall call) {
+    try {
+      String urlString = call.getString("url");
+      String filePath = call.getString("filePath");
+      String fileDirectory = call.getString("fileDirectory", FilesystemUtils.DIRECTORY_DOCUMENTS);
+      JSObject headers = call.getObject("headers");
+
+      Integer connectTimeout = call.getInt("connectTimeout");
+      Integer readTimeout = call.getInt("readTimeout");
+
+      URL url = new URL(urlString);
+
+      if (!FilesystemUtils.isPublicDirectory(fileDirectory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+      }
+
+
+        File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
+
+
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setAllowUserInteraction(false);
+      conn.setRequestMethod("GET");
+
+      if (connectTimeout != null) {
+        conn.setConnectTimeout(connectTimeout);
+      }
+
+      if (readTimeout != null) {
+        conn.setReadTimeout(readTimeout);
+      }
+
+      setRequestHeaders(conn, headers);
+
+      InputStream is = conn.getInputStream();
+
+      FileOutputStream fos = new FileOutputStream(file, false);
+
+      byte[] buffer = new byte[1024];
+      int len;
+
+      while ((len = is.read(buffer)) > 0) {
+        fos.write(buffer, 0, len);
+      }
+
+      is.close();
+      fos.close();
+
+      call.resolve();
+    } catch (MalformedURLException ex) {
+      call.reject("Invalid URL", ex);
+    } catch (IOException ex) {
+      call.reject("Error", ex);
+    } catch (Exception ex) {
+      call.reject("Error", ex);
+    }
   }
+
+  private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
+    if (hasPermission(permission)) {
+      Log.v(getLogTag(),"Permission '" + permission + "' is granted");
+      return true;
+    } else {
+      Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
+      pluginRequestPermissions(new String[] {permission}, permissionRequestCode);
+      return false;
+    }
+  }
+
+  @Override
+  protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+  }
+
 
   @PluginMethod()
   public void uploadFile(PluginCall call) {
+    String url = call.getString("url");
+    String filePath = call.getString("filePath");
+    String fileDirectory = call.getString("fileDirectory", FilesystemUtils.DIRECTORY_DOCUMENTS);
+    String name = call.getString("name", "file");
+    JSObject headers = call.getObject("headers");
+    JSObject params = call.getObject("params");
+    JSObject data = call.getObject("data");
+
+    try {
+      File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
+
+      call.resolve();
+    } catch (Exception ex) {
+      call.reject("Error", ex);
+    }
   }
 
   @PluginMethod()
@@ -313,6 +405,7 @@ public class Http extends Plugin {
         os.flush();
         os.close();
       } else if (contentType.contains("multipart/form-data")) {
+
       }
     }
   }

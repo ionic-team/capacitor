@@ -1,4 +1,4 @@
-package com.getcapacitor.plugin;
+package com.getcapacitor.plugin.filesystem;
 
 import android.Manifest;
 import android.content.Context;
@@ -62,46 +62,6 @@ public class Filesystem extends Plugin {
     return null;
   }
 
-  private File getDirectory(String directory) {
-    Context c = bridge.getContext();
-    switch(directory) {
-      case "APPLICATION":
-        return c.getFilesDir();
-      case "DOCUMENTS":
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-      case "DATA":
-        return c.getFilesDir();
-      case "CACHE":
-        return c.getCacheDir();
-      case "EXTERNAL":
-        return c.getExternalFilesDir(null);
-      case "EXTERNAL_STORAGE":
-        return Environment.getExternalStorageDirectory();
-    }
-    return null;
-  }
-
-  private File getFileObject(String path, String directory) {
-    if (directory == null) {
-      Uri u = Uri.parse(path);
-      if (u.getScheme() == null || u.getScheme().equals("file")) {
-        return new File(u.getPath());
-      }
-    }
-
-    File androidDirectory = this.getDirectory(directory);
-
-    if (androidDirectory == null) {
-      return null;
-    } else {
-      if(!androidDirectory.exists()) {
-        androidDirectory.mkdir();
-      }
-    }
-
-    return new File(androidDirectory, path);
-  }
-
   private InputStream getInputStream(String path, String directory) throws IOException {
     if (directory == null) {
       Uri u = Uri.parse(path);
@@ -112,7 +72,7 @@ public class Filesystem extends Plugin {
       }
     }
 
-    File androidDirectory = this.getDirectory(directory);
+    File androidDirectory = FilesystemUtils.getDirectory(getContext(), directory);
 
     if (androidDirectory == null) {
       throw new IOException("Directory not found");
@@ -163,7 +123,7 @@ public class Filesystem extends Plugin {
       return;
     }
 
-    if (!isPublicDirectory(directory)
+    if (!FilesystemUtils.isPublicDirectory(directory)
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
         try {
           InputStream is = getInputStream(file, directory);
@@ -208,10 +168,10 @@ public class Filesystem extends Plugin {
 
     String directory = getDirectoryParameter(call);
     if (directory != null) {
-      if (!isPublicDirectory(directory)
+      if (!FilesystemUtils.isPublicDirectory(directory)
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
         // create directory because it might not exist
-        File androidDir = getDirectory(directory);
+        File androidDir = FilesystemUtils.getDirectory(getContext(), directory);
         if (androidDir != null) {
           if (androidDir.exists() || androidDir.mkdirs()) {
             // path might include directories as well
@@ -283,7 +243,7 @@ public class Filesystem extends Plugin {
 
     if (success) {
       // update mediaStore index only if file was written to external storage
-      if (isPublicDirectory(getDirectoryParameter(call))) {
+      if (FilesystemUtils.isPublicDirectory(getDirectoryParameter(call))) {
         MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
       Log.d(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
@@ -310,9 +270,9 @@ public class Filesystem extends Plugin {
     String file = call.getString("path");
     String directory = getDirectoryParameter(call);
 
-    File fileObject = getFileObject(file, directory);
+    File fileObject = FilesystemUtils.getFileObject(getContext(), file, directory);
 
-    if (!isPublicDirectory(directory)
+    if (!FilesystemUtils.isPublicDirectory(directory)
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       if (!fileObject.exists()) {
         call.error("File does not exist");
@@ -335,14 +295,14 @@ public class Filesystem extends Plugin {
     String directory = getDirectoryParameter(call);
     boolean recursive = call.getBoolean("recursive", false).booleanValue();
 
-    File fileObject = getFileObject(path, directory);
+    File fileObject = FilesystemUtils.getFileObject(getContext(), path, directory);
 
     if (fileObject.exists()) {
       call.error("Directory exists");
       return;
     }
 
-    if (!isPublicDirectory(directory)
+    if (!FilesystemUtils.isPublicDirectory(directory)
             || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       boolean created = false;
       if (recursive) {
@@ -365,9 +325,9 @@ public class Filesystem extends Plugin {
     String directory = getDirectoryParameter(call);
     Boolean recursive = call.getBoolean("recursive", false);
 
-    File fileObject = getFileObject(path, directory);
+    File fileObject = FilesystemUtils.getFileObject(getContext(), path, directory);
 
-    if (!isPublicDirectory(directory)
+    if (!FilesystemUtils.isPublicDirectory(directory)
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       if (!fileObject.exists()) {
         call.error("Directory does not exist");
@@ -401,9 +361,9 @@ public class Filesystem extends Plugin {
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
 
-    File fileObject = getFileObject(path, directory);
+    File fileObject = FilesystemUtils.getFileObject(getContext(), path, directory);
 
-     if (!isPublicDirectory(directory)
+     if (!FilesystemUtils.isPublicDirectory(directory)
          || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
       if (fileObject != null && fileObject.exists()) {
         String[] files = fileObject.list();
@@ -423,9 +383,9 @@ public class Filesystem extends Plugin {
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
 
-    File fileObject = getFileObject(path, directory);
+    File fileObject = FilesystemUtils.getFileObject(getContext(), path, directory);
 
-    if (!isPublicDirectory(directory)
+    if (!FilesystemUtils.isPublicDirectory(directory)
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
       JSObject data = new JSObject();
       data.put("uri", Uri.fromFile(fileObject).toString());
@@ -439,9 +399,9 @@ public class Filesystem extends Plugin {
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
 
-    File fileObject = getFileObject(path, directory);
+    File fileObject = FilesystemUtils.getFileObject(getContext(), path, directory);
 
-    if (!isPublicDirectory(directory)
+    if (!FilesystemUtils.isPublicDirectory(directory)
         || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
       if (!fileObject.exists()) {
         call.error("File does not exist");
@@ -525,8 +485,8 @@ public class Filesystem extends Plugin {
       return;
     }
 
-    File fromObject = getFileObject(from, directory);
-    File toObject = getFileObject(to, toDirectory);
+    File fromObject = FilesystemUtils.getFileObject(getContext(), from, directory);
+    File toObject = FilesystemUtils.getFileObject(getContext(), to, toDirectory);
 
     assert fromObject != null;
     assert toObject != null;
@@ -551,7 +511,7 @@ public class Filesystem extends Plugin {
       return;
     }
 
-    if (isPublicDirectory(directory) || isPublicDirectory(toDirectory)) {
+    if (FilesystemUtils.isPublicDirectory(directory) || FilesystemUtils.isPublicDirectory(toDirectory)) {
       if (doRename) {
         if (!isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
           return;
@@ -626,13 +586,7 @@ public class Filesystem extends Plugin {
     return call.getString("directory");
   }
 
-  /**
-   * True if the given directory string is a public storage directory, which is accessible by the user or other apps.
-   * @param directory the directory string.
-   */
-  private boolean isPublicDirectory(String directory) {
-    return "DOCUMENTS".equals(directory) || "EXTERNAL_STORAGE".equals(directory);
-  }
+
 
   @Override
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {

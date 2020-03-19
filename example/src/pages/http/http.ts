@@ -99,17 +99,61 @@ export class HttpPage {
   apiUrl = (path: string) => `${this.serverUrl}${path}`;
 
   formPost = async () => {
-    const ret = await Http.request({
-      url: this.apiUrl('/form-data'),
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      data: {
-        name: 'Max',
-        age: 5
-      }
+    this.output = '';
+    this.loading = this.loadingCtrl.create({
+      content: 'Requesting...'
     });
+    this.loading.present();
+    try {
+      const ret = await Http.request({
+        url: this.apiUrl('/form-data'),
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          name: 'Max',
+          age: 5
+        }
+      });
+      console.log('Got ret', ret);
+      this.loading.dismiss();
+      this.output = JSON.stringify(ret, null, 2);
+    } catch (e) {
+      this.output = `Error: ${e.message}, ${e.platformMessage}`;
+      console.error(e);
+    } finally {
+      this.loading.dismiss();
+    }
+  }
+
+  formPostMultipart = async () => {
+    this.output = '';
+    this.loading = this.loadingCtrl.create({
+      content: 'Requesting...'
+    });
+    this.loading.present();
+    try {
+      const ret = await Http.request({
+        url: this.apiUrl('/form-data-multi'),
+        method: 'POST',
+        headers: {
+          'content-type': 'multipart/form-data'
+        },
+        data: {
+          name: 'Max',
+          age: 5
+        }
+      });
+      console.log('Got ret', ret);
+      this.loading.dismiss();
+      this.output = JSON.stringify(ret, null, 2);
+    } catch (e) {
+      this.output = `Error: ${e.message}, ${e.platformMessage}`;
+      console.error(e);
+    } finally {
+      this.loading.dismiss();
+    }
   }
 
   setCookie = async () => {
@@ -162,25 +206,32 @@ export class HttpPage {
   }
 
   downloadFile = async () => {
+    console.log('Doing download', FilesystemDirectory.Downloads);
+
     const ret = await Http.downloadFile({
       url: this.apiUrl('/download-pdf'),
-      filePath: 'document.pdf'
+      filePath: 'document.pdf',
+      fileDirectory: FilesystemDirectory.Downloads
     });
 
     console.log('Got download ret', ret);
 
+    /*
     const renameRet = await Filesystem.rename({
       from: ret.path,
       to: 'document.pdf',
-      toDirectory: FilesystemDirectory.Documents
+      toDirectory: FilesystemDirectory.Downloads
     });
 
     console.log('Did rename', renameRet);
+    */
 
     const read = await Filesystem.readFile({
       path: 'document.pdf',
-      directory: FilesystemDirectory.Documents
-    })
+      directory: FilesystemDirectory.Downloads
+    });
+
+    console.log('Read', read);
   }
 
   uploadFile = async () => {
@@ -188,6 +239,7 @@ export class HttpPage {
       url: this.apiUrl('/upload-pdf'),
       name: 'myFile',
       filePath: 'document.pdf',
+      fileDirectory: FilesystemDirectory.Downloads
     });
 
     console.log('Got upload ret', ret);
