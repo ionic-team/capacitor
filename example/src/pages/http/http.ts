@@ -54,7 +54,7 @@ export class HttpPage {
       console.log('Got ret', ret);
       this.output = JSON.stringify(ret, null, 2);
     } catch (e) {
-      this.output = `Error: ${e.message}`;
+      this.output = `Error: ${e.message}, ${e.platformMessage}`;
       console.error(e);
     } finally {
       this.loading.dismiss();
@@ -76,17 +76,24 @@ export class HttpPage {
       content: 'Requesting...'
     });
     this.loading.present();
-    const ret = await Http.request({
-      url: this.apiUrl(path),
-      method: method,
-      headers: {
-        'content-type': 'application/json',
-      },
-      data
-    });
-    console.log('Got ret', ret);
-    this.loading.dismiss();
-    this.output = JSON.stringify(ret, null, 2);
+    try {
+      const ret = await Http.request({
+        url: this.apiUrl(path),
+        method: method,
+        headers: {
+          'content-type': 'application/json',
+        },
+        data
+      });
+      console.log('Got ret', ret);
+      this.loading.dismiss();
+      this.output = JSON.stringify(ret, null, 2);
+    } catch (e) {
+      this.output = `Error: ${e.message}, ${e.platformMessage}`;
+      console.error(e);
+    } finally {
+      this.loading.dismiss();
+    }
   }
 
   apiUrl = (path: string) => `${this.serverUrl}${path}`;

@@ -83,7 +83,7 @@ public class PluginCall {
     this.msgHandler.sendResponseMessage(this, null, errorResult);
   }
 
-  public void error(String msg, Exception ex) {
+  public void error(String msg, Exception ex, JSObject data) {
     PluginResult errorResult = new PluginResult();
 
     if(ex != null) {
@@ -92,6 +92,7 @@ public class PluginCall {
 
     try {
       errorResult.put("message", msg);
+      errorResult.put("platformMessage", ex.getMessage());
     } catch (Exception jsonEx) {
       Log.e(LogUtils.getPluginTag(), jsonEx.getMessage());
     }
@@ -99,12 +100,20 @@ public class PluginCall {
     this.msgHandler.sendResponseMessage(this, null, errorResult);
   }
 
+  public void error(String msg, Exception ex) {
+    error(msg, ex, null);
+  }
+
   public void error(String msg) {
-    error(msg, null);
+    error(msg, null, null);
+  }
+
+  public void reject(String msg, Exception ex, JSObject data) {
+    error(msg, ex, data);
   }
 
   public void reject(String msg, Exception ex) {
-    error(msg, ex);
+    error(msg, ex, null);
   }
 
   public void reject(String msg) {

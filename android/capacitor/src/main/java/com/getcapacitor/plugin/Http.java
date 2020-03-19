@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +64,7 @@ public class Http extends Plugin {
       case "PATCH":
       case "POST":
       case "PUT":
-        mutate(call, url, method);
+        mutate(call, url, method, headers);
         return;
     }
   }
@@ -163,7 +164,55 @@ public class Http extends Plugin {
     }
   }
 
-  private void mutate(PluginCall call, String url, String method) {
+  private void setRequestBody(HttpURLConnection conn, JSObject data, JSObject headers) throws IOException {
+    String contentType = conn.getHeaderField("Content-Type");
+
+    if (contentType != null) {
+      if (contentType.contains("application/json")) {
+        DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+        os.writeBytes(URLEncoder.encode(data.toString(), "UTF-8"));
+        os.flush();
+        os.close();
+      } else if (contentType.contains("application/x-www-form-urlencoded")) {
+      } else if (contentType.contains("multipart/form-data")) {
+      }
+    }
+  }
+
+  private void mutate(PluginCall call, String urlString, String method, JSObject headers) {
+    try {
+      Integer connectTimeout = call.getInt("connectTimeout");
+      Integer readTimeout = call.getInt("readTimeout");
+      JSObject data = call.getObject("data");
+
+      URL url = new URL(urlString);
+
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setAllowUserInteraction(false);
+      conn.setRequestMethod(method);
+
+      if (connectTimeout != null) {
+        conn.setConnectTimeout(connectTimeout);
+      }
+
+      if (readTimeout != null) {
+        conn.setReadTimeout(readTimeout);
+      }
+
+      setRequestHeaders(conn, headers);
+
+      setRequestBody(conn, data, headers);
+
+      conn.connect();
+
+      buildResponse(call, conn);
+    } catch (MalformedURLException ex) {
+      call.reject("Invalid URL", ex);
+    } catch (IOException ex) {
+      call.reject("Error", ex);
+    } catch (Exception ex) {
+      call.reject("Error", ex);
+    }
   }
 
   @PluginMethod()
