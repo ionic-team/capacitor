@@ -1,7 +1,6 @@
 package com.getcapacitor.plugin;
 
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +16,6 @@ import com.getcapacitor.PluginMethod;
 @NativePlugin()
 public class StatusBar extends Plugin {
 
-  @ColorInt
   private int currentStatusbarColor;
 
   public void load() {
