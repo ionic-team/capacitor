@@ -8,11 +8,11 @@ contributors:
 
 # Deep Linking with Universal and App Links
 
-**Platforms**: Web, iOS, Android
+**Platforms**: iOS, Android
 
 Universal links (iOS) and App Links (Android) offer the ability to take users directly to specific content within a native app (commonly known as deep linking).
 
-When users tap or click on a deep link, the mobile operating system sends the user directly into your app without routing through the device's web browser or website first. If the app isn't installed, then the user is directed to the website. If the user navigates directly to the website, they remain on the website.  This makes deep links an excellent feature for cross-platform apps built for the web, iOS, and Android.
+When users tap or click on a deep link, the user is sent directly into your app without routing through the device's web browser or website first. If the app isn't installed, then the user is directed to the website. If the user navigates directly to the website, they remain on the website.  This makes deep links an excellent feature for cross-platform apps built for the web, iOS, and Android: a seamless mobile experience, with graceful fallback to the website.
 
 Benefits:
 - Secure: Universal/App Links use HTTPS URLs that link to a website domain that you own, ensuring that no other app can use your links.
@@ -172,8 +172,6 @@ Next, create the site association file (`apple-app-site-association`).
     }
 }
 ```
-
-> Note: Some tutorials mention that the file must be served with content type `application/pkcs7-mime`. This is not needed. If your app runs in iOS 9 or later and you use HTTPS to serve the file, you can create a plain text file that uses the `application/json` MIME type.
 
 Next, upload the file to your web site (hosted on HTTPS), then validate that it's configured correctly using Apple's tool [here](https://search.developer.apple.com/appsearch-validation-tool/). The URL should follow this format: https://beerswift.app/.well-known/apple-app-site-association
 
