@@ -1,13 +1,7 @@
 package com.getcapacitor.plugin.http;
 
 import android.Manifest;
-import android.content.Context;
-import android.net.Uri;
-import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.Log;
-import android.view.HapticFeedbackConstants;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -35,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -286,6 +279,10 @@ public class Http extends Plugin {
 
     try {
       File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
+
+      FormUploader builder = new FormUploader(url);
+      builder.addFilePart(name, file);
+      builder.finish();
 
       call.resolve();
     } catch (Exception ex) {

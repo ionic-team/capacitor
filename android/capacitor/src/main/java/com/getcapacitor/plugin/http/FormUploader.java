@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class FormBuilder {
+public class FormUploader {
   private final String boundary;
   private static final String LINE_FEED = "\r\n";
   private HttpURLConnection httpConn;
-  private String charset;
+  private String charset = "UTF-8";
   private OutputStream outputStream;
   private PrintWriter writer;
 
@@ -28,16 +28,12 @@ public class FormBuilder {
    * is set to multipart/form-data
    *
    * @param requestURL
-   * @param charset
    * @throws java.io.IOException
    */
-  public FormBuilder(String requestURL, String charset)
-    throws IOException {
-    this.charset = charset;
-
+  public FormUploader(String requestURL) throws IOException {
     // creates a unique boundary based on time stamp
     UUID uuid = UUID.randomUUID();
-    boundary = "===" + uuid.toString() + "===";
+    boundary = uuid.toString();
     URL url = new URL(requestURL);
     httpConn = (HttpURLConnection) url.openConnection();
     httpConn.setUseCaches(false);
@@ -77,6 +73,7 @@ public class FormBuilder {
   public void addFilePart(String fieldName, File uploadFile)
     throws IOException {
     String fileName = uploadFile.getName();
+    writer.append(LINE_FEED);
     writer.append("--" + boundary).append(LINE_FEED);
     writer.append(
       "Content-Disposition: form-data; name=\"" + fieldName
@@ -85,9 +82,10 @@ public class FormBuilder {
     writer.append(
       "Content-Type: "
         + URLConnection.guessContentTypeFromName(fileName))
+      .append(LINE_FEED)
       .append(LINE_FEED);
-    writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
-    writer.append(LINE_FEED);
+    //writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+    // writer.append(LINE_FEED);
     writer.flush();
 
     FileInputStream inputStream = new FileInputStream(uploadFile);
@@ -98,7 +96,7 @@ public class FormBuilder {
     }
     outputStream.flush();
     inputStream.close();
-    writer.append(LINE_FEED);
+    writer.append(LINE_FEED).append("--" + boundary + "--").append(LINE_FEED);
     writer.flush();
   }
 
