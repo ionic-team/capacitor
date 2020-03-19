@@ -1,6 +1,7 @@
 package com.getcapacitor.plugin;
 
 import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -15,6 +16,14 @@ import com.getcapacitor.PluginMethod;
 
 @NativePlugin()
 public class StatusBar extends Plugin {
+
+  @ColorInt
+  private int currentStatusbarColor;
+
+  public void load() {
+    // save initial color of the status bar
+    currentStatusbarColor = getActivity().getWindow().getStatusBarColor();
+  }
 
   @PluginMethod()
   public void setStyle(final PluginCall call) {
@@ -57,7 +66,10 @@ public class StatusBar extends Plugin {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         try {
-          window.setStatusBarColor(Color.parseColor(color.toUpperCase()));
+          final int parsedColor = Color.parseColor(color.toUpperCase());
+          window.setStatusBarColor(parsedColor);
+          // update the local color field as well
+          currentStatusbarColor = parsedColor;
           call.success();
         } catch (IllegalArgumentException ex) {
           call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
@@ -130,6 +142,7 @@ public class StatusBar extends Plugin {
           int uiOptions = decorView.getSystemUiVisibility();
           uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
           decorView.setSystemUiVisibility(uiOptions);
+          currentStatusbarColor = getActivity().getWindow().getStatusBarColor();
           getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
 
           call.success();
@@ -137,11 +150,13 @@ public class StatusBar extends Plugin {
           // Sets the layout to a normal one that displays the webview below the status bar.
           View decorView = getActivity().getWindow().getDecorView();
           int uiOptions = decorView.getSystemUiVisibility();
-          uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
+          uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
           decorView.setSystemUiVisibility(uiOptions);
+          // recover the previous color of the status bar
+          getActivity().getWindow().setStatusBarColor(currentStatusbarColor);
+
           call.success();
         }
-
       }
     });
   }
