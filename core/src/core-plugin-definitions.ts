@@ -1599,11 +1599,11 @@ export interface StatusBarPlugin extends Plugin {
   /**
    * Show the status bar
    */
-  show(): Promise<void>;
+  show(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Hide the status bar
    */
-  hide(): Promise<void>;
+  hide(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Get info about the current state of the status bar
    */
@@ -1623,6 +1623,28 @@ export enum StatusBarStyle {
    * Dark text for light backgrounds.
    */
   Light = 'LIGHT'
+}
+
+export interface StatusBarAnimationOptions {
+  /**
+   * iOS only. The type of status bar animation used when showing or hiding.
+   */
+  animation: StatusBarAnimation;
+}
+
+export enum StatusBarAnimation {
+  /**
+   * No animation during show/hide.
+   */
+  None = 'NONE',
+  /**
+   * Slide animation during show/hide.
+   */
+  Slide = 'SLIDE',
+  /**
+   * Fade animation during show/hide.
+   */
+  Fade = 'FADE'
 }
 
 export interface StatusBarBackgroundColorOptions {
