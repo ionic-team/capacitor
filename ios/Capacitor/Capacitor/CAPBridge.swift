@@ -83,6 +83,15 @@ enum BridgeError: Error {
     }
   }
 
+  public func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
+    guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+      return
+    }
+    DispatchQueue.main.async {
+      bridgeVC.setStatusBarAnimation(statusBarAnimation)
+    }
+  }
+
   public func getStatusBarVisible() -> Bool {
     guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
       return false

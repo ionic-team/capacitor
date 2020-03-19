@@ -26,6 +26,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
+  private var statusBarAnimation: UIStatusBarAnimation = .slide
   @objc public var supportedOrientations: Array<Int> = []
   
   @objc public var startDir = ""
@@ -405,7 +406,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   override public var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
     get {
-      return .slide
+      return statusBarAnimation
     }
   }
 
@@ -421,6 +422,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     UIView.animate(withDuration: 0.2, animations: {
       self.setNeedsStatusBarAppearanceUpdate()
     })
+  }
+
+  public func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
+    self.statusBarAnimation = statusBarAnimation
   }
 
   public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
