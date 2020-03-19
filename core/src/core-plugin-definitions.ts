@@ -1641,7 +1641,7 @@ export interface StatusBarInfoResult {
 }
 
 export interface StatusBarOverlaysWebviewOptions {
-  enabled: boolean;
+  overlay: boolean;
 }
 
 export interface StoragePlugin extends Plugin {

@@ -119,7 +119,7 @@ public class StatusBar extends Plugin {
 
   @PluginMethod()
   public void setOverlaysWebView(final PluginCall call) {
-    final Boolean overlays = call.getBoolean("enabled", true);
+    final Boolean overlays = call.getBoolean("overlay", true);
     getBridge().executeOnMainThread(new Runnable() {
       @Override
       public void run() {
