@@ -1638,7 +1638,7 @@ export interface StatusBarInfoResult {
   visible: boolean;
   style: StatusBarStyle;
   color?: string;
-  overlaysWebview: boolean;
+  overlays?: boolean;
 }
 
 export interface StatusBarOverlaysWebviewOptions {

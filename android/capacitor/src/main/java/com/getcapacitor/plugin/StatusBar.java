@@ -124,7 +124,7 @@ public class StatusBar extends Plugin {
     data.put("visible", (decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != View.SYSTEM_UI_FLAG_FULLSCREEN);
     data.put("style", style);
     data.put("color", String.format("#%06X", (0xFFFFFF & window.getStatusBarColor())));
-    data.put("overlaysWebview", (decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    data.put("overlays", (decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     call.resolve(data);
   }
 
