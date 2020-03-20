@@ -75,19 +75,32 @@ public class Http extends Plugin {
 
       URL url = new URL(urlString);
 
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setAllowUserInteraction(false);
-      conn.setRequestMethod(method);
+      HttpURLConnection conn = makeUrlConnection(url, method, connectTimeout, readTimeout, headers);
 
-      if (connectTimeout != null) {
-        conn.setConnectTimeout(connectTimeout);
-      }
+      buildResponse(call, conn);
+    } catch (MalformedURLException ex) {
+      call.reject("Invalid URL", ex);
+    } catch (IOException ex) {
+      call.reject("Error", ex);
+    } catch (Exception ex) {
+      call.reject("Error", ex);
+    }
+  }
 
-      if (readTimeout != null) {
-        conn.setReadTimeout(readTimeout);
-      }
 
-      setRequestHeaders(conn, headers);
+  private void mutate(PluginCall call, String urlString, String method, JSObject headers) {
+    try {
+      Integer connectTimeout = call.getInt("connectTimeout");
+      Integer readTimeout = call.getInt("readTimeout");
+      JSObject data = call.getObject("data");
+
+      URL url = new URL(urlString);
+
+      HttpURLConnection conn = makeUrlConnection(url, method, connectTimeout, readTimeout, headers);
+
+      conn.setDoOutput(true);
+
+      setRequestBody(conn, data, headers);
 
       conn.connect();
 
@@ -99,6 +112,196 @@ public class Http extends Plugin {
     } catch (Exception ex) {
       call.reject("Error", ex);
     }
+  }
+
+  private HttpURLConnection makeUrlConnection(URL url, String method, Integer connectTimeout, Integer readTimeout, JSObject headers) throws Exception {
+    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+    conn.setAllowUserInteraction(false);
+    conn.setRequestMethod(method);
+
+    if (connectTimeout != null) {
+      conn.setConnectTimeout(connectTimeout);
+    }
+
+    if (readTimeout != null) {
+      conn.setReadTimeout(readTimeout);
+    }
+
+    setRequestHeaders(conn, headers);
+
+    return conn;
+  }
+
+  @SuppressWarnings("unused")
+  @PluginMethod()
+  public void downloadFile(PluginCall call) {
+    try {
+      String urlString = call.getString("url");
+      String filePath = call.getString("filePath");
+      String fileDirectory = call.getString("fileDirectory", FilesystemUtils.DIRECTORY_DOCUMENTS);
+      JSObject headers = call.getObject("headers");
+
+      Integer connectTimeout = call.getInt("connectTimeout");
+      Integer readTimeout = call.getInt("readTimeout");
+
+      URL url = new URL(urlString);
+
+      if (!FilesystemUtils.isPublicDirectory(fileDirectory)
+        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+      }
+
+      File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
+
+      HttpURLConnection conn = makeUrlConnection(url, "GET", connectTimeout, readTimeout, headers);
+
+      InputStream is = conn.getInputStream();
+
+      FileOutputStream fos = new FileOutputStream(file, false);
+
+      byte[] buffer = new byte[1024];
+      int len;
+
+      while ((len = is.read(buffer)) > 0) {
+        fos.write(buffer, 0, len);
+      }
+
+      is.close();
+      fos.close();
+
+      call.resolve();
+    } catch (MalformedURLException ex) {
+      call.reject("Invalid URL", ex);
+    } catch (IOException ex) {
+      call.reject("Error", ex);
+    } catch (Exception ex) {
+      call.reject("Error", ex);
+    }
+  }
+
+  private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
+    if (hasPermission(permission)) {
+      Log.v(getLogTag(),"Permission '" + permission + "' is granted");
+      return true;
+    } else {
+      Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
+      pluginRequestPermissions(new String[] {permission}, permissionRequestCode);
+      return false;
+    }
+  }
+
+  @Override
+  protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+  }
+
+
+  @SuppressWarnings("unused")
+  @PluginMethod()
+  public void uploadFile(PluginCall call) {
+    String urlString = call.getString("url");
+    String filePath = call.getString("filePath");
+    String fileDirectory = call.getString("fileDirectory", FilesystemUtils.DIRECTORY_DOCUMENTS);
+    String name = call.getString("name", "file");
+    Integer connectTimeout = call.getInt("connectTimeout");
+    Integer readTimeout = call.getInt("readTimeout");
+    JSObject headers = call.getObject("headers");
+    JSObject params = call.getObject("params");
+    JSObject data = call.getObject("data");
+
+    try {
+      URL url = new URL(urlString);
+
+      File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
+
+      HttpURLConnection conn = makeUrlConnection(url, "POST", connectTimeout, readTimeout, headers);
+      conn.setDoOutput(true);
+
+      FormUploader builder = new FormUploader(conn);
+      builder.addFilePart(name, file);
+      builder.finish();
+
+      buildResponse(call, conn);
+    } catch (Exception ex) {
+      call.reject("Error", ex);
+    }
+  }
+
+  @SuppressWarnings("unused")
+  @PluginMethod()
+  public void setCookie(PluginCall call) {
+    String url = call.getString("url");
+    String key = call.getString("key");
+    String value = call.getString("value");
+
+    URI uri = getUri(url);
+    if (uri == null) {
+      call.reject("Invalid URL");
+      return;
+    }
+
+    cookieManager.getCookieStore().add(uri, new HttpCookie(key, value));
+
+    call.resolve();
+  }
+
+  @SuppressWarnings("unused")
+  @PluginMethod()
+  public void getCookies(PluginCall call) {
+    String url = call.getString("url");
+
+    URI uri = getUri(url);
+    if (uri == null) {
+      call.reject("Invalid URL");
+      return;
+    }
+
+    List<HttpCookie> cookies = cookieManager.getCookieStore().get(uri);
+
+    JSArray cookiesArray = new JSArray();
+
+    for (HttpCookie cookie : cookies) {
+      JSObject ret = new JSObject();
+      ret.put("key", cookie.getName());
+      ret.put("value", cookie.getValue());
+      cookiesArray.put(ret);
+    }
+
+    JSObject ret = new JSObject();
+    ret.put("value", cookiesArray);
+    call.resolve(ret);
+  }
+
+  @SuppressWarnings("unused")
+  @PluginMethod()
+  public void deleteCookie(PluginCall call) {
+    String url = call.getString("url");
+    String key = call.getString("key");
+
+    URI uri = getUri(url);
+    if (uri == null) {
+      call.reject("Invalid URL");
+      return;
+    }
+
+
+    List<HttpCookie> cookies = cookieManager.getCookieStore().get(uri);
+
+    for (HttpCookie cookie : cookies) {
+      if (cookie.getName().equals(key)) {
+        cookieManager.getCookieStore().remove(uri, cookie);
+      }
+    }
+
+    call.resolve();
+  }
+
+  @SuppressWarnings("unused")
+  @PluginMethod()
+  public void clearCookies(PluginCall call) {
+    cookieManager.getCookieStore().removeAll();
+    call.resolve();
   }
 
   private void buildResponse(PluginCall call, HttpURLConnection conn) throws Exception {
@@ -154,215 +357,6 @@ public class Http extends Plugin {
     return ret;
   }
 
-  private void mutate(PluginCall call, String urlString, String method, JSObject headers) {
-    try {
-      Integer connectTimeout = call.getInt("connectTimeout");
-      Integer readTimeout = call.getInt("readTimeout");
-      JSObject data = call.getObject("data");
-
-      URL url = new URL(urlString);
-
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setAllowUserInteraction(false);
-      conn.setRequestMethod(method);
-
-      if (connectTimeout != null) {
-        conn.setConnectTimeout(connectTimeout);
-      }
-
-      if (readTimeout != null) {
-        conn.setReadTimeout(readTimeout);
-      }
-
-      setRequestHeaders(conn, headers);
-
-      setRequestBody(conn, data, headers);
-
-      conn.connect();
-
-      buildResponse(call, conn);
-    } catch (MalformedURLException ex) {
-      call.reject("Invalid URL", ex);
-    } catch (IOException ex) {
-      call.reject("Error", ex);
-    } catch (Exception ex) {
-      call.reject("Error", ex);
-    }
-  }
-
-  @PluginMethod()
-  public void downloadFile(PluginCall call) {
-    try {
-      String urlString = call.getString("url");
-      String filePath = call.getString("filePath");
-      String fileDirectory = call.getString("fileDirectory", FilesystemUtils.DIRECTORY_DOCUMENTS);
-      JSObject headers = call.getObject("headers");
-
-      Integer connectTimeout = call.getInt("connectTimeout");
-      Integer readTimeout = call.getInt("readTimeout");
-
-      URL url = new URL(urlString);
-
-      if (!FilesystemUtils.isPublicDirectory(fileDirectory)
-        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-      }
-
-
-        File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
-
-
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setAllowUserInteraction(false);
-      conn.setRequestMethod("GET");
-
-      if (connectTimeout != null) {
-        conn.setConnectTimeout(connectTimeout);
-      }
-
-      if (readTimeout != null) {
-        conn.setReadTimeout(readTimeout);
-      }
-
-      setRequestHeaders(conn, headers);
-
-      InputStream is = conn.getInputStream();
-
-      FileOutputStream fos = new FileOutputStream(file, false);
-
-      byte[] buffer = new byte[1024];
-      int len;
-
-      while ((len = is.read(buffer)) > 0) {
-        fos.write(buffer, 0, len);
-      }
-
-      is.close();
-      fos.close();
-
-      call.resolve();
-    } catch (MalformedURLException ex) {
-      call.reject("Invalid URL", ex);
-    } catch (IOException ex) {
-      call.reject("Error", ex);
-    } catch (Exception ex) {
-      call.reject("Error", ex);
-    }
-  }
-
-  private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
-    if (hasPermission(permission)) {
-      Log.v(getLogTag(),"Permission '" + permission + "' is granted");
-      return true;
-    } else {
-      Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
-      pluginRequestPermissions(new String[] {permission}, permissionRequestCode);
-      return false;
-    }
-  }
-
-  @Override
-  protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
-  }
-
-
-  @PluginMethod()
-  public void uploadFile(PluginCall call) {
-    String url = call.getString("url");
-    String filePath = call.getString("filePath");
-    String fileDirectory = call.getString("fileDirectory", FilesystemUtils.DIRECTORY_DOCUMENTS);
-    String name = call.getString("name", "file");
-    JSObject headers = call.getObject("headers");
-    JSObject params = call.getObject("params");
-    JSObject data = call.getObject("data");
-
-    try {
-      File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
-
-      FormUploader builder = new FormUploader(url);
-      builder.addFilePart(name, file);
-      builder.finish();
-
-      call.resolve();
-    } catch (Exception ex) {
-      call.reject("Error", ex);
-    }
-  }
-
-  @PluginMethod()
-  public void setCookie(PluginCall call) {
-    String url = call.getString("url");
-    String key = call.getString("key");
-    String value = call.getString("value");
-
-    URI uri = getUri(url);
-    if (uri == null) {
-      call.reject("Invalid URL");
-      return;
-    }
-
-    cookieManager.getCookieStore().add(uri, new HttpCookie(key, value));
-
-    call.resolve();
-  }
-
-  @PluginMethod()
-  public void getCookies(PluginCall call) {
-    String url = call.getString("url");
-
-    URI uri = getUri(url);
-    if (uri == null) {
-      call.reject("Invalid URL");
-      return;
-    }
-
-    List<HttpCookie> cookies = cookieManager.getCookieStore().get(uri);
-
-    JSArray cookiesArray = new JSArray();
-
-    for (HttpCookie cookie : cookies) {
-      JSObject ret = new JSObject();
-      ret.put("key", cookie.getName());
-      ret.put("value", cookie.getValue());
-      cookiesArray.put(ret);
-    }
-
-    JSObject ret = new JSObject();
-    ret.put("value", cookiesArray);
-    call.resolve(ret);
-  }
-
-  @PluginMethod()
-  public void deleteCookie(PluginCall call) {
-    String url = call.getString("url");
-    String key = call.getString("key");
-
-    URI uri = getUri(url);
-    if (uri == null) {
-      call.reject("Invalid URL");
-      return;
-    }
-
-
-    List<HttpCookie> cookies = cookieManager.getCookieStore().get(uri);
-
-    for (HttpCookie cookie : cookies) {
-      if (cookie.getName().equals(key)) {
-        cookieManager.getCookieStore().remove(uri, cookie);
-      }
-    }
-
-    call.resolve();
-  }
-
-  @PluginMethod()
-  public void clearCookies(PluginCall call) {
-    cookieManager.getCookieStore().removeAll();
-    call.resolve();
-  }
-
-
   private void setRequestHeaders(HttpURLConnection conn, JSObject headers) {
     Iterator<String> keys = headers.keys();
     while (keys.hasNext()) {
@@ -402,7 +396,16 @@ public class Http extends Plugin {
         os.flush();
         os.close();
       } else if (contentType.contains("multipart/form-data")) {
+        FormUploader uploader = new FormUploader(conn);
 
+        Iterator<String> keys = data.keys();
+        while (keys.hasNext()) {
+          String key = keys.next();
+
+          String d = data.get(key).toString();
+          uploader.addFormField(key, d);
+        }
+        uploader.finish();
       }
     }
   }

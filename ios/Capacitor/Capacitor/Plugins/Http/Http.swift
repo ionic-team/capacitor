@@ -236,7 +236,7 @@ public class CAPHttpPlugin: CAPPlugin {
     request.httpMethod = method
     
     setRequestHeaders(&request, headers)
-  
+
     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
       if error != nil {
         call.reject("Error", error, [:])
