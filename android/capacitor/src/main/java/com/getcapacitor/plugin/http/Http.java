@@ -1,6 +1,7 @@
 package com.getcapacitor.plugin.http;
 
 import android.Manifest;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.getcapacitor.JSArray;
@@ -38,7 +39,9 @@ import java.util.Map;
  *
  * Requires the android.permission.VIBRATE permission.
  */
-@NativePlugin()
+@NativePlugin(requestCodes = {
+  PluginRequestCodes.HTTP_REQUEST_WRITE_FILE_PERMISSIONS,
+})
 public class Http extends Plugin {
   CookieManager cookieManager = new CookieManager();
 
@@ -137,6 +140,7 @@ public class Http extends Plugin {
   @PluginMethod()
   public void downloadFile(PluginCall call) {
     try {
+      saveCall(call);
       String urlString = call.getString("url");
       String filePath = call.getString("filePath");
       String fileDirectory = call.getString("fileDirectory", FilesystemUtils.DIRECTORY_DOCUMENTS);
@@ -148,29 +152,29 @@ public class Http extends Plugin {
       URL url = new URL(urlString);
 
       if (!FilesystemUtils.isPublicDirectory(fileDirectory)
-        || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        || isStoragePermissionGranted(PluginRequestCodes.HTTP_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        this.freeSavedCall();
 
+        File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
+
+        HttpURLConnection conn = makeUrlConnection(url, "GET", connectTimeout, readTimeout, headers);
+
+        InputStream is = conn.getInputStream();
+
+        FileOutputStream fos = new FileOutputStream(file, false);
+
+        byte[] buffer = new byte[1024];
+        int len;
+
+        while ((len = is.read(buffer)) > 0) {
+          fos.write(buffer, 0, len);
+        }
+
+        is.close();
+        fos.close();
+
+        call.resolve();
       }
-
-      File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
-
-      HttpURLConnection conn = makeUrlConnection(url, "GET", connectTimeout, readTimeout, headers);
-
-      InputStream is = conn.getInputStream();
-
-      FileOutputStream fos = new FileOutputStream(file, false);
-
-      byte[] buffer = new byte[1024];
-      int len;
-
-      while ((len = is.read(buffer)) > 0) {
-        fos.write(buffer, 0, len);
-      }
-
-      is.close();
-      fos.close();
-
-      call.resolve();
     } catch (MalformedURLException ex) {
       call.reject("Invalid URL", ex);
     } catch (IOException ex) {
@@ -194,6 +198,36 @@ public class Http extends Plugin {
   @Override
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    if (getSavedCall() == null) {
+      Log.d(getLogTag(),"No stored plugin call for permissions request result");
+      return;
+    }
+
+    PluginCall savedCall = getSavedCall();
+
+    for (int i = 0; i < grantResults.length; i++) {
+      int result = grantResults[i];
+      String perm = permissions[i];
+      if(result == PackageManager.PERMISSION_DENIED) {
+        Log.d(getLogTag(), "User denied storage permission: " + perm);
+        savedCall.error("User denied write permission needed to save files");
+        this.freeSavedCall();
+        return;
+      }
+    }
+
+    this.freeSavedCall();
+
+    final Http httpPlugin = this;
+    bridge.execute(new Runnable() {
+      @Override
+      public void run() {
+        if (requestCode == PluginRequestCodes.HTTP_REQUEST_WRITE_FILE_PERMISSIONS) {
+          httpPlugin.downloadFile(savedCall);
+        }
+      }
+    });
   }
 
 
