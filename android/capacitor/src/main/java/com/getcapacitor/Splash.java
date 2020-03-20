@@ -34,6 +34,7 @@ public class Splash {
   public static final int DEFAULT_SHOW_DURATION = 3000;
   public static final boolean DEFAULT_AUTO_HIDE = true;
   public static final boolean DEFAULT_SPLASH_FULL_SCREEN = false;
+  public static final boolean DEFAULT_SPLASH_IMMERSIVE = false;
 
   private static ImageView splashImage;
   private static ProgressBar spinnerBar;
@@ -58,11 +59,22 @@ public class Splash {
 
       // Hide status bar during splash screen.
       Boolean splashFullScreen = Config.getBoolean(CONFIG_KEY_PREFIX + "splashFullScreen", DEFAULT_SPLASH_FULL_SCREEN);
-      if(splashFullScreen){
+      if(splashFullScreen) {
         splashImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
       }
 
-      
+      // Enable immersive mode (hides status bar and navbar) during splash screen.
+      Boolean splashImmersive = Config.getBoolean(CONFIG_KEY_PREFIX + "splashImmersive", DEFAULT_SPLASH_IMMERSIVE);
+      if (splashImmersive) {
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        splashImage.setSystemUiVisibility(flags);
+      }
+
       // Stops flickers dead in their tracks
       // https://stackoverflow.com/a/21847579/32140
       splashImage.setDrawingCacheEnabled(true);
