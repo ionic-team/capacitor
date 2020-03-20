@@ -92,7 +92,9 @@ public class PluginCall {
 
     try {
       errorResult.put("message", msg);
-      errorResult.put("platformMessage", ex.getMessage());
+      if (ex != null) {
+        errorResult.put("platformMessage", ex.getMessage());
+      }
     } catch (Exception jsonEx) {
       Log.e(LogUtils.getPluginTag(), jsonEx.getMessage());
     }

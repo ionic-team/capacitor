@@ -40,7 +40,8 @@ import java.util.Map;
  * Requires the android.permission.VIBRATE permission.
  */
 @NativePlugin(requestCodes = {
-  PluginRequestCodes.HTTP_REQUEST_WRITE_FILE_PERMISSIONS,
+  PluginRequestCodes.HTTP_REQUEST_DOWNLOAD_WRITE_PERMISSIONS,
+  PluginRequestCodes.HTTP_REQUEST_UPLOAD_READ_PERMISSIONS,
 })
 public class Http extends Plugin {
   CookieManager cookieManager = new CookieManager();
@@ -152,7 +153,7 @@ public class Http extends Plugin {
       URL url = new URL(urlString);
 
       if (!FilesystemUtils.isPublicDirectory(fileDirectory)
-        || isStoragePermissionGranted(PluginRequestCodes.HTTP_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        || isStoragePermissionGranted(PluginRequestCodes.HTTP_REQUEST_DOWNLOAD_WRITE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
         this.freeSavedCall();
 
         File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
@@ -219,12 +220,15 @@ public class Http extends Plugin {
 
     this.freeSavedCall();
 
+    // Run on background thread to avoid main-thread network requests
     final Http httpPlugin = this;
     bridge.execute(new Runnable() {
       @Override
       public void run() {
-        if (requestCode == PluginRequestCodes.HTTP_REQUEST_WRITE_FILE_PERMISSIONS) {
+        if (requestCode == PluginRequestCodes.HTTP_REQUEST_DOWNLOAD_WRITE_PERMISSIONS) {
           httpPlugin.downloadFile(savedCall);
+        } else if (requestCode == PluginRequestCodes.HTTP_REQUEST_UPLOAD_READ_PERMISSIONS) {
+          httpPlugin.uploadFile(savedCall);
         }
       }
     });
@@ -245,18 +249,23 @@ public class Http extends Plugin {
     JSObject data = call.getObject("data");
 
     try {
+      saveCall(call);
       URL url = new URL(urlString);
 
-      File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
+      if (!FilesystemUtils.isPublicDirectory(fileDirectory)
+        || isStoragePermissionGranted(PluginRequestCodes.HTTP_REQUEST_UPLOAD_READ_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        this.freeSavedCall();
+        File file = FilesystemUtils.getFileObject(getContext(), filePath, fileDirectory);
 
-      HttpURLConnection conn = makeUrlConnection(url, "POST", connectTimeout, readTimeout, headers);
-      conn.setDoOutput(true);
+        HttpURLConnection conn = makeUrlConnection(url, "POST", connectTimeout, readTimeout, headers);
+        conn.setDoOutput(true);
 
-      FormUploader builder = new FormUploader(conn);
-      builder.addFilePart(name, file);
-      builder.finish();
+        FormUploader builder = new FormUploader(conn);
+        builder.addFilePart(name, file);
+        builder.finish();
 
-      buildResponse(call, conn);
+        buildResponse(call, conn);
+      }
     } catch (Exception ex) {
       call.reject("Error", ex);
     }
