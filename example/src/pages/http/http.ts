@@ -98,6 +98,8 @@ export class HttpPage {
 
   apiUrl = (path: string) => `${this.serverUrl}${path}`;
 
+  testSetCookies = () => this.get('/set-cookies');
+
   formPost = async () => {
     this.output = '';
     this.loading = this.loadingCtrl.create({
