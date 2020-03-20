@@ -46,7 +46,6 @@ public class CAPHttpPlugin: CAPPlugin {
       return call.reject("Invalid URL")
     }
     
-    
     let task = URLSession.shared.downloadTask(with: url) { (downloadLocation, response, error) in
       if error != nil {
         CAPLog.print("Error on download file", downloadLocation, response, error)

@@ -26,6 +26,10 @@ export interface HttpOptions {
    * How long to wait for the initial connection.
    */
   connectTimeout?: number;
+  /**
+   * Extra arguments for fetch when running on the web
+   */
+  webFetchExtra?: RequestInit;
 }
 
 export interface HttpParams {
