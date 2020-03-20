@@ -108,6 +108,11 @@ export interface AppPlugin extends Plugin {
   openUrl(options: { url: string }): Promise<{completed: boolean}>;
 
   /**
+   * Gets the current app state
+   */
+  getState(): Promise<AppState>;
+
+  /**
    * Get the URL the app was launched with, if any
    */
   getLaunchUrl(): Promise<AppLaunchUrl>;

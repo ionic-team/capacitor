@@ -1,6 +1,6 @@
 import { WebPlugin } from './index';
 
-import { AppPlugin, AppLaunchUrl } from '../core-plugin-definitions';
+import { AppPlugin, AppLaunchUrl, AppState } from '../core-plugin-definitions';
 
 export class AppPluginWeb extends WebPlugin implements AppPlugin {
   constructor() {
@@ -28,6 +28,10 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
 
   getLaunchUrl(): Promise<AppLaunchUrl> {
     return Promise.resolve({ url: '' });
+  }
+
+  getState(): Promise<AppState> {
+    return Promise.resolve({ isActive: document.hidden !== true });
   }
 
   handleVisibilityChange(): void {

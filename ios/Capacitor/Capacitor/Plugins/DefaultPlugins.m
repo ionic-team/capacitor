@@ -11,6 +11,7 @@ CAP_PLUGIN(CAPAccessibilityPlugin, "Accessibility",
 CAP_PLUGIN(CAPAppPlugin, "App",
   CAP_PLUGIN_METHOD(exitApp, CAPPluginReturnNone);
   CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(getState, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(canOpenUrl, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(openUrl, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
