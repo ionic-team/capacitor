@@ -174,7 +174,9 @@ public class Http extends Plugin {
         is.close();
         fos.close();
 
-        call.resolve();
+        call.resolve(new JSObject() {{
+          put("path", file.getAbsolutePath());
+        }});
       }
     } catch (MalformedURLException ex) {
       call.reject("Invalid URL", ex);
