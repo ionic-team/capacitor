@@ -39,7 +39,8 @@ public class CAPHttpPlugin: CAPPlugin {
     guard let filePath = call.getString("filePath") else {
       return call.reject("Must provide a file path to download the file to")
     }
-    //let fileDirectory = call.getString("filePath") ?? "DOCUMENTS"
+    
+    let fileDirectory = call.getString("fileDirectory") ?? "DOCUMENTS"
     
     guard let url = URL(string: urlValue) else {
       return call.reject("Invalid URL")
@@ -58,17 +59,18 @@ public class CAPHttpPlugin: CAPPlugin {
         return
       }
       
-      let res = response as! HTTPURLResponse
-      
-      let basename = location.lastPathComponent
-      
       // TODO: Move to abstracted FS operations
       let fileManager = FileManager.default
-      let dir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+      
+      let foundDir = FilesystemUtils.getDirectory(directory: fileDirectory)
+      let dir = fileManager.urls(for: foundDir, in: .userDomainMask).first
       
       do {
-        let dest = dir!.appendingPathComponent(basename)
+        let dest = dir!.appendingPathComponent(filePath)
         print("File Dest", dest.absoluteString)
+        
+        try FilesystemUtils.createDirectoryForFile(dest, true)
+        
         try fileManager.moveItem(at: location, to: dest)
         call.resolve([
           "path": dest.absoluteString

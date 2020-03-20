@@ -20,6 +20,8 @@ class FilesystemUtils {
       return .applicationDirectory
     case "CACHE":
       return .cachesDirectory
+    case "DOWNLOADS":
+      return .downloadsDirectory
     default:
       return .documentDirectory
     }
@@ -43,6 +45,16 @@ class FilesystemUtils {
     return dir.appendingPathComponent(path)
   }
 
+  static func createDirectoryForFile(_ fileUrl: URL, _ recursive: Bool) throws {
+    if !FileManager.default.fileExists(atPath: fileUrl.deletingLastPathComponent().absoluteString) {
+      if recursive {
+        try FileManager.default.createDirectory(at: fileUrl.deletingLastPathComponent(), withIntermediateDirectories: recursive, attributes: nil)
+      } else {
+        throw FilesystemError.parentFolderNotExists("Parent folder doesn't exist")
+      }
+    }
+  }
+  
   /**
    * Read a file as a string at the given directory and with the given encoding
    */
