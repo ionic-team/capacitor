@@ -23,6 +23,7 @@
 - (BOOL)hasListeners:(NSString *)eventName;
 - (void)addListener:(CAPPluginCall *)call;
 - (void)removeListener:(CAPPluginCall *)call;
+- (void)removeAllListeners:(CAPPluginCall *)call;
 
 // Called after init if the plugin wants to do
 // some loading so the plugin author doesn't

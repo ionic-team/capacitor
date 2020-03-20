@@ -417,6 +417,16 @@ public class Plugin {
   }
 
   /**
+   * Exported plugin call to remove all listeners from this plugin
+   * @param call
+   */
+  @SuppressWarnings("unused")
+  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
+  public void removeAllListeners(PluginCall call) {
+    eventListeners.clear();
+  }
+
+  /**
    * Exported plugin call to request all permissions for this plugin
    * @param call
    */

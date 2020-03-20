@@ -63,6 +63,11 @@ export interface AccessibilityPlugin {
    * Listen for screen reader state change (on/off)
    */
   addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface AccessibilitySpeakOptions {
@@ -131,6 +136,11 @@ export interface AppPlugin extends Plugin {
    * If you want to close the app, call `App.exitApp()`.
    */
   addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface AppState {
@@ -235,6 +245,10 @@ export interface BrowserPlugin extends Plugin {
 
   addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): PluginListenerHandle;
   addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): PluginListenerHandle;
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface BrowserOpenOptions {
@@ -950,6 +964,11 @@ export interface KeyboardPlugin extends Plugin {
   addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
   addListener(eventName: 'keyboardWillHide', listenerFunc: () => void): PluginListenerHandle;
   addListener(eventName: 'keyboardDidHide', listenerFunc: () => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface KeyboardInfo {
@@ -1101,6 +1120,11 @@ export interface LocalNotificationsPlugin extends Plugin {
   requestPermission(): Promise<NotificationPermissionResponse>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 
@@ -1194,6 +1218,11 @@ export interface MotionPlugin extends Plugin {
    * Listen for device orientation change (compass heading, etc.)
    */
   addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export type MotionWatchOrientationCallback = (accel: MotionOrientationEventResult) => void;
@@ -1237,6 +1266,11 @@ export interface NetworkPlugin extends Plugin {
    * Listen for network status change events
    */
   addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface NetworkStatus {
@@ -1514,6 +1548,11 @@ export interface PushNotificationsPlugin extends Plugin {
   addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 //

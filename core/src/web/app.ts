@@ -1,6 +1,6 @@
 import { WebPlugin } from './index';
 
-import { AppPlugin, AppLaunchUrl, } from '../core-plugin-definitions';
+import { AppPlugin, AppLaunchUrl } from '../core-plugin-definitions';
 
 export class AppPluginWeb extends WebPlugin implements AppPlugin {
   constructor() {
