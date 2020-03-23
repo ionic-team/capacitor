@@ -37,7 +37,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('init [appName] [appId]')
     .description('Initializes a new Capacitor project in the current directory')
-    .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', 'www')
+    .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', config.app.webDir ? config.app.webDir : 'www')
     .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
     .action((appName, appId, { webDir, npmClient }) => {
       return initCommand(config, appName, appId, webDir, npmClient);

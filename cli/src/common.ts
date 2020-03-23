@@ -301,7 +301,7 @@ export async function getName(config: Config, name: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'name',
-      default: 'App',
+      default: config.app.appName ? config.app.appName : 'App',
       message: `App name`
     }]);
     return answers.name;
@@ -314,7 +314,7 @@ export async function getAppId(config: Config, id: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'id',
-      default: 'com.example.app',
+      default: config.app.appId ? config.app.appId : 'com.example.app',
       message: 'App Package ID (in Java package format, no dashes)'
     }]);
     return answers.id;
