@@ -304,8 +304,11 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
     allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins(platform).includes(dep.$.id) && incompatible.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0);
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
-        if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
-          let plugin = dep.$.id;
+        let plugin = dep.$.id;
+        if (plugin.includes('@')) {
+          plugin = plugin.split('@')[0];
+        }
+        if (cordovaPlugins.filter(p => p.id === plugin || p.xml.$.id === plugin).length === 0) {
           if (dep.$.url && dep.$.url.startsWith('http')) {
             plugin = dep.$.url;
           }
