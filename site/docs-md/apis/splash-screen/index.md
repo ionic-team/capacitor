@@ -108,6 +108,10 @@ To set the color of the spinner use `spinnerColor`, values are either `#RGB` or 
 
 Then run `npx cap copy` to apply these changes.
 
+## Full Screen & Immersive
+
+You can enable `splashFullScreen` to hide status bar, or `splashImmersive` to hide both status bar and software navigation buttons.
+
 ## Configuration
 
 These config parameters are available in `capacitor.config.json`:
@@ -124,7 +128,9 @@ These config parameters are available in `capacitor.config.json`:
       "androidSpinnerStyle": "large",
       "iosSpinnerStyle": "small",
       "spinnerColor": "#999999",
-      "showSpinner": true
+      "showSpinner": true,
+      "splashFullScreen": true,
+      "splashImmersive": true
     }
   }
 }
