@@ -301,7 +301,7 @@ export async function getName(config: Config, name: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'name',
-      default: config.app.appName ? config.app.appName : 'App',
+      default: config.app.appName ? config.app.appName : config.app.package.name ? config.app.package.name : 'App',
       message: `App name`
     }]);
     return answers.name;
