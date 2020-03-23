@@ -1530,10 +1530,12 @@ export interface PushNotificationDeliveredList {
 export interface PushNotificationChannel {
   id: string;
   name: string;
-  description: string;
-  sound: string;
+  description?: string;
+  sound?: string;
   importance: 1 | 2 | 3 | 4 | 5;
   visibility?: -1 | 0 | 1 ;
+  lights?: boolean;
+  lightColor?: string;
 }
 
 export interface PushNotificationChannelList {
