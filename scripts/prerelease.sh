@@ -13,4 +13,5 @@ pod lib lint --allow-warnings CapacitorCordova.podspec
 
 # Do the gradle
 cd android
-./gradlew clean build -b capacitor/build.gradle
+./gradlew clean build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
+
