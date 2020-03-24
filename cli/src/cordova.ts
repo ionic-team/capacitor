@@ -348,9 +348,11 @@ export async function getCordovaPreferences(config: Config) {
   if (existsSync(configXml)) {
     cordova.preferences = {};
     const xmlMeta = await readXML(configXml);
-    xmlMeta.widget.preference.map((pref: any) => {
-      cordova.preferences[pref.$.name] = pref.$.value;
-    });
+    if (xmlMeta.widget.preference) {
+      xmlMeta.widget.preference.map((pref: any) => {
+        cordova.preferences[pref.$.name] = pref.$.value;
+      });
+    }
   }
   if (config.app.extConfig && config.app.extConfig.cordova && config.app.extConfig.cordova.preferences && cordova.preferences) {
     const answer = await inquirer.prompt({
