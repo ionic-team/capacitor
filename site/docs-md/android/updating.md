@@ -37,7 +37,7 @@ Recommended change:
 
 * Update `strings.xml` file inside `android/app/src/main/res/values/` folder with [this change](https://github.com/ionic-team/capacitor/commit/ed6647b35a8da08d26a7ff13cc9f4fd918b923a0#diff-15c65f143d85c95277307da1bdd0528e)
 
-### From <= 1.5.1 to 2.0.0-beta.0
+### From <= 1.5.1 to 2.0.0-beta.1
 
 Since Capacitor 2.0 is still beta, install it using `next` tag
 
@@ -49,7 +49,7 @@ npx cap sync android
 npx cap open android
 ```
 
-Mandatory changes:
+Mandatory change:
 
 * Use Android X
 
@@ -65,6 +65,8 @@ Mandatory changes:
   ```
 
   To run it automatically after every package install, add `"postinstall": "jetifier"` in the `package.json`.
+
+Recommended changes:
 
 * Create common variables
 
@@ -91,12 +93,9 @@ Mandatory changes:
 
   In `android/build.gradle` file, add `apply from: "variables.gradle"`
 
-
-Recommended changes:
-
 * Use common variables
 
-  Since we have common variables, it's recommended to update your project to use them. In the `android/app/build.gradle` file, change:
+  If you created the `variables.gradle` file, update your project to use them. In the `android/app/build.gradle` file, change:
   - `compileSdkVersion 28` to `compileSdkVersion rootProject.ext.compileSdkVersion`
   - `minSdkVersion 21` to `minSdkVersion rootProject.ext.minSdkVersion`
   - `targetSdkVersion 28` to `targetSdkVersion rootProject.ext.targetSdkVersion`
@@ -121,4 +120,8 @@ Recommended changes:
 
   In `android/build.gradle` file, change `classpath 'com.google.gms:google-services:4.2.0'` to `classpath 'com.google.gms:google-services:4.3.3'`.
 
-For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0-beta.0)
+* Change configChanges to avoid app restarts
+
+  In `android/app/src/main/AndroidManifest.xml` file, add `|smallestScreenSize|screenLayout|uiMode` in the activity `android:configChanges` attribute.
+
+For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0-beta.1)
