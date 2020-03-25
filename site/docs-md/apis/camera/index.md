@@ -23,6 +23,12 @@ iOS requires the following usage description be added and filled out for your ap
 Name: `Privacy - Camera Usage Description`  
 Key: 	`NSCameraUsageDescription`
 
+Name: `Privacy - Photo Library Additions Usage Description`  
+Key: 	`NSPhotoLibraryAddUsageDescription`
+
+Name: `Privacy - Photo Library Usage Description`  
+Key: 	`NSPhotoLibraryUsageDescription`
+
 Read about [Setting iOS Permissions](../../ios/configuration/) in the [iOS Guide](../../ios/) for more information on setting iOS permissions in Xcode
 
 ## Android Notes
