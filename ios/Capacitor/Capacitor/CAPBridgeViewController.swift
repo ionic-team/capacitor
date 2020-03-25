@@ -7,7 +7,7 @@ import UIKit
 import WebKit
 import Cordova
 
-public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
+open class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
   
@@ -18,7 +18,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public var bridgedViewController: UIViewController? {
     return self
   }
-  public let cordovaParser = CDVConfigParser.init();
+  public let cordovaParser = CDVConfigParser.init()
   private var hostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
@@ -36,9 +36,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public var bridge: CAPBridge?
   private var handler: CAPAssetHandler?
   
-  override public func loadView() {
+  override open func loadView() {
     let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
-    let configParser = XMLParser(contentsOf: configUrl!)!;
+    let configParser = XMLParser(contentsOf: configUrl!)!
     configParser.delegate = cordovaParser
     configParser.parse()
     guard let startPath = self.getStartPath() else {
@@ -134,7 +134,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return val?.boolValue ?? false
   }
 
-  func isNewBinary() -> Bool {
+  open func isNewBinary() -> Bool {
     if let plist = Bundle.main.infoDictionary {
       if let versionCode = plist["CFBundleVersion"] as? String, let versionName = plist["CFBundleShortVersionString"] as? String {
         let prefs = UserDefaults.standard
@@ -152,7 +152,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return false
   }
 
-  override public func viewDidLoad() {
+  override open func viewDidLoad() {
     super.viewDidLoad()
     self.becomeFirstResponder()
     loadWebView()
@@ -192,7 +192,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     self.handler?.setAssetPath(path)
   }
 
-  public func setStatusBarDefaults() {
+  open func setStatusBarDefaults() {
     if let plist = Bundle.main.infoDictionary {
       if let statusBarHidden = plist["UIStatusBarHidden"] as? Bool {
         if (statusBarHidden) {
@@ -213,7 +213,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
   }
 
-  public func setScreenOrientationDefaults() {
+  open func setScreenOrientationDefaults() {
     if let plist = Bundle.main.infoDictionary {
       if let orientations = plist["UISupportedInterfaceOrientations"] as? Array<String> {
         for orientation in orientations {
@@ -237,19 +237,19 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
   }
 
-  public func configureWebView(configuration: WKWebViewConfiguration) {
+  open func configureWebView(configuration: WKWebViewConfiguration) {
     configuration.allowsInlineMediaPlayback = true
     configuration.suppressesIncrementalRendering = false
     configuration.allowsAirPlayForMediaPlayback = true
     configuration.mediaTypesRequiringUserActionForPlayback = []
   }
 
-  public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+  open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
     // Reset the bridge on each navigation
     bridge!.reset()
   }
 
-  public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+  open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
     let navUrl = navigationAction.request.url!
     if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
@@ -272,29 +272,29 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     decisionHandler(.allow)
   }
 
-  public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+  open func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     CAPLog.print("⚡️  WebView loaded")
   }
 
-  public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+  open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     CAPLog.print("⚡️  WebView failed to load")
     CAPLog.print("⚡️  Error: " + error.localizedDescription)
   }
 
-  public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+  open func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
     CAPLog.print("⚡️  WebView failed provisional navigation")
     CAPLog.print("⚡️  Error: " + error.localizedDescription)
   }
 
-  public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+  open func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
     webView.reload()
   }
 
-  public override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
+  override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
     return false
   }
 
-  public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+  open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     guard let bridge = bridge else {
       return
     }
@@ -387,7 +387,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     return host == pattern
   }
 
-  override public func didReceiveMemoryWarning() {
+  override open func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
@@ -410,25 +410,25 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
   }
 
-  public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
+  open func setStatusBarVisible(_ isStatusBarVisible: Bool) {
     self.isStatusBarVisible = isStatusBarVisible
     UIView.animate(withDuration: 0.2, animations: {
       self.setNeedsStatusBarAppearanceUpdate()
     })
   }
 
-  public func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
+  open func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
     self.statusBarStyle = statusBarStyle
     UIView.animate(withDuration: 0.2, animations: {
       self.setNeedsStatusBarAppearanceUpdate()
     })
   }
 
-  public func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
+  open func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
     self.statusBarAnimation = statusBarAnimation
   }
 
-  public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+  open func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
 
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
 
@@ -439,7 +439,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     self.present(alertController, animated: true, completion: nil)
   }
 
-  public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+  open func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
 
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
 
@@ -454,7 +454,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     self.present(alertController, animated: true, completion: nil)
   }
 
-  public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+  open func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
     
     let alertController = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
     
@@ -480,22 +480,22 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     self.present(alertController, animated: true, completion: nil)
   }
 
-  public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+  open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
     if (navigationAction.request.url != nil) {
       UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
     }
     return nil
   }
 
-  public func getWebView() -> WKWebView {
+  open func getWebView() -> WKWebView {
     return self.webView!
   }
 
-  public func getServerBasePath() -> String {
+  open func getServerBasePath() -> String {
     return self.basePath
   }
 
-  public func setServerBasePath(path: String) {
+  open func setServerBasePath(path: String) {
     setServerPath(path: path)
     let request = URLRequest(url: URL(string: hostname!)!)
     DispatchQueue.main.async {
