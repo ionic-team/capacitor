@@ -193,7 +193,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
       if (sourceFile.$.framework && sourceFile.$.framework === 'true') {
         let fileName = sourceFile.$.src.split('/').pop();
         if (!fileName.startsWith('lib')) {
-          fileName = 'lib'+fileName;
+          fileName = 'lib' + fileName;
         }
         const frameworktPath = join(sourcesFolderName, plugin.name, fileName);
         if (!sourceFrameworks.includes(frameworktPath)) {
@@ -276,7 +276,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       let fileName = codeFile.$.src.split('/').pop();
       const fileExt = codeFile.$.src.split('.').pop();
       if (fileExt === 'a' && !fileName.startsWith('lib')) {
-        fileName = 'lib'+fileName;
+        fileName = 'lib' + fileName;
       }
       let destFolder = sourcesFolderName;
       if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
