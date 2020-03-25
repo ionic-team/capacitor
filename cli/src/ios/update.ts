@@ -191,7 +191,10 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
     const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
     sourceFiles.map((sourceFile: any) => {
       if (sourceFile.$.framework && sourceFile.$.framework === 'true') {
-        const fileName = sourceFile.$.src.split('/').pop();
+        let fileName = sourceFile.$.src.split('/').pop();
+        if (!fileName.startsWith('lib')) {
+          fileName = 'lib' + fileName;
+        }
         const frameworktPath = join(sourcesFolderName, plugin.name, fileName);
         if (!sourceFrameworks.includes(frameworktPath)) {
           sourceFrameworks.push(frameworktPath);
@@ -270,8 +273,11 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     }
     const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
     codeFiles.map( (codeFile: any) => {
-      const fileName = codeFile.$.src.split('/').pop();
+      let fileName = codeFile.$.src.split('/').pop();
       const fileExt = codeFile.$.src.split('.').pop();
+      if (fileExt === 'a' && !fileName.startsWith('lib')) {
+        fileName = 'lib' + fileName;
+      }
       let destFolder = sourcesFolderName;
       if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
         destFolder = 'noarc';
