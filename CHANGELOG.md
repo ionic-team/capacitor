@@ -1,3 +1,9 @@
+## [1.5.2](https://github.com/ionic-team/capacitor/compare/1.5.1...1.5.2) (2020-03-27)
+
+* fix(ios): avoid crash on Xcode 11.4 (#2651) ([281c628](https://github.com/ionic-team/capacitor/commit/281c628)), closes [#2651](https://github.com/ionic-team/capacitor/issues/2651)
+
+
+
 ## [1.5.1](https://github.com/ionic-team/capacitor/compare/1.5.0...1.5.1) (2020-03-05)
 
 ### Bug Fixes
