@@ -247,9 +247,9 @@ public class LocalNotificationManager {
   @NonNull
   private Intent buildIntent(LocalNotification localNotification, String action) {
     Intent intent;
-    if (activity != null)
+    if (activity != null) {
       intent = new Intent(context, activity.getClass());
-    else {
+    } else {
       String packageName = context.getPackageName();
       intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
     }
