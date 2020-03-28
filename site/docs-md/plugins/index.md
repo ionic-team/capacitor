@@ -85,6 +85,12 @@ This will build the JS portion of your plugin and publish the rest of your plugi
 
 Your package can now be installed using `npm install your-plugin` in any Capacitor app.
 
+You may need to import your plugin for the web implementation to be registered within the `Plugins`:
+
+```js
+import 'your-plugin';
+```
+
 ## Next steps
 
 Now it's up to you to make your plugin do something truly awesome!
