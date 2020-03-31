@@ -198,9 +198,12 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   public func imagePickerController(_ picker: UIImagePickerController,
                                     didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     var image: UIImage?
+    var isEdited = false
+    var isGallery = true
 
     if let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
       // Use editedImage Here
+      isEdited = true
       image = editedImage
     } else if let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
       // Use originalImage Here
@@ -210,6 +213,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     var imageMetadata: [AnyHashable: Any] = [:]
     if let photoMetadata = info[UIImagePickerController.InfoKey.mediaMetadata] as? [AnyHashable: Any] {
       imageMetadata = photoMetadata
+      isGallery = false
     }
     if let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset {
       imageMetadata = getImageMeta(asset: asset)!
@@ -232,7 +236,9 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
     
     if settings.saveToGallery {
+      if !isGallery || isEdited {
         UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil);
+      }
     }
     
     guard let jpeg = image!.jpegData(compressionQuality: CGFloat(settings.quality/100)) else {
