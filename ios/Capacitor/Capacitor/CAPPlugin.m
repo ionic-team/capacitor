@@ -120,6 +120,10 @@
   [self.bridge releaseCallWithCallbackId:callbackId];
 }
 
+- (void)removeAllListeners:(CAPPluginCall *)call {
+  [self.eventListeners removeAllObjects];
+}
+
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
   NSArray<CAPPluginCall *>* listeners = [self.eventListeners objectForKey:eventName];
   return listeners;

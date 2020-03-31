@@ -128,6 +128,14 @@ export class WebPlugin {
     }
   }
 
+  removeAllListeners(): void {
+    this.listeners = {};
+    for (const listener in this.windowListeners) {
+      this.removeWindowListener(this.windowListeners[listener]);
+    }
+    this.windowListeners = {};
+  }
+
   notifyListeners(eventName: string, data: any): void {
     let listeners = this.listeners[eventName];
     if (listeners) {

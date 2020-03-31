@@ -33,5 +33,7 @@ Contributing to Capacitor may involve writing TypeScript, Swift/Objective-C, Jav
 
 Please read the [Contributing](.github/CONTRIBUTING.md) guide for more information.
 
+For details on updating the Capacitor website or documentation, [see here](site/CONTRIBUTING.md).
+
 [circle-badge]: https://circleci.com/gh/ionic-team/capacitor.svg?style=shield
 [circle-badge-url]: https://circleci.com/gh/ionic-team/capacitor

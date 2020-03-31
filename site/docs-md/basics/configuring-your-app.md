@@ -125,7 +125,10 @@ The current ones you might configure are:
     "cordovaLinkerFlags": ["-ObjC"],
     // A Boolean value that determines whether pressing on a link displays a preview of
     // the destination for the link.
-    "allowsLinkPreview": false
+    "allowsLinkPreview": false,
+    // A Boolean value that determines whether to hide native logs or not
+    // Default is false
+    "hideLogs": true
   },
   "electron": {
     // User agent of Capacitor WebView for Electron

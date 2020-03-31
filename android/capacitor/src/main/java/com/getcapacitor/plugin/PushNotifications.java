@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,8 @@ public class PushNotifications extends Plugin {
   public static String CHANNEL_IMPORTANCE = "importance";
   public static String CHANNEL_VISIBILITY = "visibility";
   public static String CHANNEL_SOUND = "sound";
+  public static String CHANNEL_USE_LIGHTS = "lights";
+  public static String CHANNEL_LIGHT_COLOR = "lightColor";
 
   public static Bridge staticBridge = null;
   public static RemoteMessage lastMessage = null;
@@ -192,6 +195,8 @@ public class PushNotifications extends Plugin {
       channel.put(CHANNEL_VISIBILITY, call.getInt(CHANNEL_VISIBILITY, NotificationCompat.VISIBILITY_PUBLIC));
       channel.put(CHANNEL_IMPORTANCE, call.getInt(CHANNEL_IMPORTANCE));
       channel.put(CHANNEL_SOUND, call.getString(CHANNEL_SOUND, null));
+      channel.put(CHANNEL_USE_LIGHTS, call.getBoolean(CHANNEL_USE_LIGHTS, false));
+      channel.put(CHANNEL_LIGHT_COLOR, call.getString(CHANNEL_LIGHT_COLOR, null));
       createChannel(channel);
       call.success();
     } else {
@@ -223,6 +228,8 @@ public class PushNotifications extends Plugin {
         channel.put(CHANNEL_IMPORTANCE, notificationChannel.getImportance());
         channel.put(CHANNEL_VISIBILITY, notificationChannel.getLockscreenVisibility());
         channel.put(CHANNEL_SOUND, notificationChannel.getSound());
+        channel.put(CHANNEL_USE_LIGHTS, notificationChannel.shouldShowLights());
+        channel.put(CHANNEL_LIGHT_COLOR, String.format("#%06X", (0xFFFFFF & notificationChannel.getLightColor())));
         Log.d(getLogTag(), "visibility " + notificationChannel.getLockscreenVisibility());
         Log.d(getLogTag(), "importance " + notificationChannel.getImportance());
         channels.put(channel);
@@ -238,8 +245,17 @@ public class PushNotifications extends Plugin {
   private void createChannel(JSObject channel) {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       NotificationChannel notificationChannelChannel = new NotificationChannel(channel.getString(CHANNEL_ID), channel.getString(CHANNEL_NAME), channel.getInteger(CHANNEL_IMPORTANCE));
-      notificationChannelChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION, ""));
-      notificationChannelChannel.setLockscreenVisibility(channel.getInteger(CHANNEL_VISIBILITY, 0));
+      notificationChannelChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION));
+      notificationChannelChannel.setLockscreenVisibility(channel.getInteger(CHANNEL_VISIBILITY));
+      notificationChannelChannel.enableLights(channel.getBool(CHANNEL_USE_LIGHTS));
+      String lightColor = channel.getString(CHANNEL_LIGHT_COLOR);
+      if (lightColor != null) {
+        try {
+          notificationChannelChannel.setLightColor(Color.parseColor(lightColor));
+        } catch (IllegalArgumentException ex) {
+          Log.e(getLogTag(), "Invalid color provided for light color.");
+        }
+      }
       String sound = channel.getString(CHANNEL_SOUND, null);
       if (sound != null && !sound.isEmpty()) {
         AudioAttributes audioAttributes = new AudioAttributes.Builder()

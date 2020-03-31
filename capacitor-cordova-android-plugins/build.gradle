@@ -1,3 +1,7 @@
+ext {
+    cordovaAndroidVersion =  project.hasProperty('cordovaAndroidVersion') ? rootProject.ext.cordovaAndroidVersion : '7.0.0'
+}
+
 buildscript {
     repositories {
         google()

@@ -19,11 +19,13 @@ public class App extends Plugin {
   private static final String EVENT_URL_OPEN = "appUrlOpen";
   private static final String EVENT_STATE_CHANGE = "appStateChange";
   private static final String EVENT_RESTORED_RESULT = "appRestoredResult";
+  private boolean isActive = false;
 
   public void fireChange(boolean isActive) {
     Log.d(getLogTag(), "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
+    this.isActive = isActive;
     notifyListeners(EVENT_STATE_CHANGE, data, false);
   }
 
@@ -58,6 +60,13 @@ public class App extends Plugin {
     } else {
       call.success();
     }
+  }
+
+  @PluginMethod()
+  public void getState(PluginCall call) {
+    JSObject data = new JSObject();
+    data.put("isActive", this.isActive);
+    call.success(data);
   }
 
   @PluginMethod()

@@ -63,6 +63,11 @@ export interface AccessibilityPlugin {
    * Listen for screen reader state change (on/off)
    */
   addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface AccessibilitySpeakOptions {
@@ -103,6 +108,11 @@ export interface AppPlugin extends Plugin {
   openUrl(options: { url: string }): Promise<{completed: boolean}>;
 
   /**
+   * Gets the current app state
+   */
+  getState(): Promise<AppState>;
+
+  /**
    * Get the URL the app was launched with, if any
    */
   getLaunchUrl(): Promise<AppLaunchUrl>;
@@ -131,6 +141,11 @@ export interface AppPlugin extends Plugin {
    * If you want to close the app, call `App.exitApp()`.
    */
   addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface AppState {
@@ -235,6 +250,10 @@ export interface BrowserPlugin extends Plugin {
 
   addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): PluginListenerHandle;
   addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): PluginListenerHandle;
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface BrowserOpenOptions {
@@ -571,22 +590,40 @@ export interface FilesystemPlugin extends Plugin {
 export enum FilesystemDirectory {
   /**
    * The Documents directory
+   * On iOS it's the app's documents directory.
+   * Use this directory to store user-generated content.
+   * On Android it's the Public Documents folder, so it's accessible from other apps.
+   * It's not accesible on Android 10 and newer.
    */
   Documents = 'DOCUMENTS',
   /**
    * The Data directory
+   * On iOS it will use the Documents directory
+   * On Android it's the directory holding application files.
+   * Files will be deleted when the application is uninstalled.
    */
   Data = 'DATA',
   /**
    * The Cache directory
+   * Can be deleted in cases of low memory, so use this directory to write app-specific files
+   * that your app can re-create easily.
    */
   Cache = 'CACHE',
   /**
-   * The external directory (Android only)
+   * The external directory
+   * On iOS it will use the Documents directory
+   * On Android it's the directory on the primary shared/external
+   * storage device where the application can place persistent files it owns.
+   * These files are internal to the applications, and not typically visible
+   * to the user as media.
+   * Files will be deleted when the application is uninstalled.
    */
   External = 'EXTERNAL',
   /**
-   * The external storage directory (Android only)
+   * The external storage directory
+   * On iOS it will use the Documents directory
+   * On Android it's the primary shared/external storage directory.
+   * It's not accesible on Android 10 and newer.
    */
   ExternalStorage = 'EXTERNAL_STORAGE'
 }
@@ -950,6 +987,11 @@ export interface KeyboardPlugin extends Plugin {
   addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
   addListener(eventName: 'keyboardWillHide', listenerFunc: () => void): PluginListenerHandle;
   addListener(eventName: 'keyboardDidHide', listenerFunc: () => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface KeyboardInfo {
@@ -1034,6 +1076,10 @@ export interface LocalNotification {
    * If set, it overrides default icon from capacitor.config.json
    */
   smallIcon?: string;
+  /**
+   * Android only: set the color of the notification icon
+   */
+  iconColor?: string
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
@@ -1097,6 +1143,11 @@ export interface LocalNotificationsPlugin extends Plugin {
   requestPermission(): Promise<NotificationPermissionResponse>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 
@@ -1190,6 +1241,11 @@ export interface MotionPlugin extends Plugin {
    * Listen for device orientation change (compass heading, etc.)
    */
   addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export type MotionWatchOrientationCallback = (accel: MotionOrientationEventResult) => void;
@@ -1233,6 +1289,11 @@ export interface NetworkPlugin extends Plugin {
    * Listen for network status change events
    */
   addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface NetworkStatus {
@@ -1487,10 +1548,12 @@ export interface PushNotificationDeliveredList {
 export interface PushNotificationChannel {
   id: string;
   name: string;
-  description: string;
-  sound: string;
+  description?: string;
+  sound?: string;
   importance: 1 | 2 | 3 | 4 | 5;
   visibility?: -1 | 0 | 1 ;
+  lights?: boolean;
+  lightColor?: string;
 }
 
 export interface PushNotificationChannelList {
@@ -1510,6 +1573,11 @@ export interface PushNotificationsPlugin extends Plugin {
   addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 //
@@ -1595,15 +1663,20 @@ export interface StatusBarPlugin extends Plugin {
   /**
    * Show the status bar
    */
-  show(): Promise<void>;
+  show(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Hide the status bar
    */
-  hide(): Promise<void>;
+  hide(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Get info about the current state of the status bar
    */
   getInfo(): Promise<StatusBarInfoResult>;
+  /**
+   *  Set whether or not the status bar should overlay the webview to allow usage of the space
+   *  around a device "notch"
+   */
+  setOverlaysWebView(options: StatusBarOverlaysWebviewOptions): Promise<void>;
 }
 
 export interface StatusBarStyleOptions {
@@ -1621,6 +1694,28 @@ export enum StatusBarStyle {
   Light = 'LIGHT'
 }
 
+export interface StatusBarAnimationOptions {
+  /**
+   * iOS only. The type of status bar animation used when showing or hiding.
+   */
+  animation: StatusBarAnimation;
+}
+
+export enum StatusBarAnimation {
+  /**
+   * No animation during show/hide.
+   */
+  None = 'NONE',
+  /**
+   * Slide animation during show/hide.
+   */
+  Slide = 'SLIDE',
+  /**
+   * Fade animation during show/hide.
+   */
+  Fade = 'FADE'
+}
+
 export interface StatusBarBackgroundColorOptions {
   color: string;
 }
@@ -1629,6 +1724,11 @@ export interface StatusBarInfoResult {
   visible: boolean;
   style: StatusBarStyle;
   color?: string;
+  overlays?: boolean;
+}
+
+export interface StatusBarOverlaysWebviewOptions {
+  overlay: boolean;
 }
 
 export interface StoragePlugin extends Plugin {

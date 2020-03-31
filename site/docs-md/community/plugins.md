@@ -52,6 +52,8 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Secure Storage Plugin | `capacitor-secure-storage-plugin` | <https://github.com/martinkasa/capacitor-secure-storage-plugin> | |
+| Data Storage SQLite Plugin | `capacitor-data-storage-sqlite` | <https://github.com/jepiqueau/capacitor-data-storage-sqlite> | |
+| SQLite Database Plugin | `capacitor-sqlite` | <https://github.com/jepiqueau/capacitor-sqlite> | |
 
 ## Video
 
@@ -62,6 +64,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Video Recorder | `@teamhive/capacitor-video-recorder` | <https://github.com/TeamHive/capacitor-video-recorder> | |
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
 | Camera preview | `capacitor-camera-preview` | <https://github.com/arielhernandezmusa/capacitor-camera-preview> | |
+| VideoPlayer | `capacitor-video-player` | <https://github.com/jepiqueau/capacitor-video-player> | |
 
 ## Analytics
 
