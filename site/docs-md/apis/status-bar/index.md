@@ -51,7 +51,7 @@ export class StatusBarExample {
     this.isStatusBarLight = !this.isStatusBarLight;
 
     // Display content under transparent status bar (Android only)
-    Statusbar.setOverlaysWebView({
+    StatusBar.setOverlaysWebView({
       overlay: true
     });
   }
