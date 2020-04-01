@@ -308,7 +308,8 @@ export interface CameraOptions {
    */
   resultType: CameraResultType;
   /**
-   * Whether to save the photo to the gallery/photo stream.
+   * Whether to save the photo to the gallery.
+   * If the photo was picked from the gallery, it will only be saved if edited.
    * Default: false
    */
   saveToGallery?: boolean;
