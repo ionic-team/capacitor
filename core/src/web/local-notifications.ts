@@ -21,6 +21,17 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
       platforms: ['web']
     });
   }
+  createChannel(channel: import("../core-plugin-definitions").PushNotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+
+  deleteChannel(channel: import("../core-plugin-definitions").PushNotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+  
+  listChannels(): Promise<import("../core-plugin-definitions").PushNotificationChannelList> {
+    throw new Error('Feature not available in the browser');
+  }
 
   sendPending() {
     const toRemove: LocalNotification[] = [];
@@ -103,7 +114,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
         if (result === 'denied' || result === 'default') {
           granted = false;
         }
-        resolve({granted});
+        resolve({ granted });
       });
     });
   }
@@ -116,7 +127,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
           return;
         }
         resolve({
-          results: [ result ]
+          results: [result]
         });
       });
     });

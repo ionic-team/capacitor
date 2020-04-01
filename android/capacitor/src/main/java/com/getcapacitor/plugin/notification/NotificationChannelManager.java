@@ -33,14 +33,17 @@ public class NotificationChannelManager {
 
     public static void createChannel(PluginCall call, Context context, NotificationManager notificationManager) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            android.app.NotificationChannel notificationChannelChannel = new android.app.NotificationChannel(call.getString(CHANNEL_ID), call.getString(CHANNEL_NAME), call.getInt(CHANNEL_IMPORTANCE));
-            notificationChannelChannel.setDescription(call.getString(CHANNEL_DESCRIPTION));
-            notificationChannelChannel.setLockscreenVisibility(call.getInt(CHANNEL_VISIBILITY));
-            notificationChannelChannel.enableLights(call.getBoolean(CHANNEL_USE_LIGHTS));
+            NotificationChannel notificationChannel = new NotificationChannel(call.getString(CHANNEL_ID), call.getString(CHANNEL_NAME), call.getInt(CHANNEL_IMPORTANCE));
+            if (call.getString(CHANNEL_DESCRIPTION) != null)
+                notificationChannel.setDescription(call.getString(CHANNEL_DESCRIPTION));
+            if (call.getInt(CHANNEL_VISIBILITY) != null)
+                notificationChannel.setLockscreenVisibility(call.getInt(CHANNEL_VISIBILITY));
+            if (call.getBoolean(CHANNEL_USE_LIGHTS) != null)
+                notificationChannel.enableLights(call.getBoolean(CHANNEL_USE_LIGHTS));
             String lightColor = call.getString(CHANNEL_LIGHT_COLOR);
             if (lightColor != null) {
                 try {
-                    notificationChannelChannel.setLightColor(Color.parseColor(lightColor));
+                    notificationChannel.setLightColor(Color.parseColor(lightColor));
                 } catch (IllegalArgumentException ex) {
                     call.error("Invalid color provided for light color.", ex);
                 }
@@ -51,9 +54,9 @@ public class NotificationChannelManager {
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .setUsage(AudioAttributes.USAGE_ALARM).build();
                 Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + sound);
-                notificationChannelChannel.setSound(soundUri, audioAttributes);
+                notificationChannel.setSound(soundUri, audioAttributes);
             }
-            notificationManager.createNotificationChannel(notificationChannelChannel);
+            notificationManager.createNotificationChannel(notificationChannel);
         }
     }
 
