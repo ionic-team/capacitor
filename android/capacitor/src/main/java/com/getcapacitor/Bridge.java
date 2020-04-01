@@ -861,7 +861,12 @@ public class Bridge {
     return this.localServer.getBasePath();
   }
 
-  public void setServerBasePath(String path){
+  /**
+   * Tell the local server to load files from the given
+   * file path instead of the assets path.
+   * @param path
+   */
+  public void setServerBasePath(String path) {
     localServer.hostFiles(path);
     webView.post(new Runnable() {
       @Override
@@ -871,6 +876,20 @@ public class Bridge {
     });
   }
 
+  /**
+   * Tell the local server to load files from the given
+   * asset path.
+   * @param path
+   */
+  public void setServerAssetPath(String path) {
+    localServer.hostAssets(path);
+    webView.post(new Runnable() {
+      @Override
+      public void run() {
+        webView.loadUrl(appUrl);
+      }
+    });
+  }
 
   public String getLocalUrl() {
     return localUrl;
