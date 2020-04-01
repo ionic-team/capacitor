@@ -147,7 +147,7 @@ public class LocalNotificationManager {
   // TODO media style notification support NotificationCompat.MediaStyle
   // TODO custom small/large icons
   private void buildNotification(NotificationManagerCompat notificationManager, LocalNotification localNotification, PluginCall call) {
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.context, DEFAULT_NOTIFICATION_CHANNEL_ID)
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.context, localNotification.getChannelId())
             .setContentTitle(localNotification.getTitle())
             .setContentText(localNotification.getBody())
             .setAutoCancel(true)

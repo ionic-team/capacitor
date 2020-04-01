@@ -1101,6 +1101,12 @@ export interface LocalNotification {
    * (should be used with the `group` property).
    */
   groupSummary?: boolean;
+  /**
+   * Android only: set the notification channel on which local notification 
+   * will generate. If channel with the given name does not exist then the 
+   * notification will not fire.
+   */
+  channelId: string;
 }
 
 export interface LocalNotificationSchedule {
@@ -1148,6 +1154,10 @@ export interface LocalNotificationsPlugin extends Plugin {
    * Remove all native listeners for this plugin
    */
   removeAllListeners(): void;
+  
+  createChannel(channel: PushNotificationChannel): Promise<void>;
+  deleteChannel(channel: PushNotificationChannel): Promise<void>;
+  listChannels(): Promise<PushNotificationChannelList>;
 }
 
 
