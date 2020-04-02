@@ -33,11 +33,11 @@ export interface HttpOptions {
 }
 
 export interface HttpParams {
-  [key:string]: string;
+  [key: string]: string;
 }
 
 export interface HttpHeaders {
-  [key:string]: string;
+  [key: string]: string;
 }
 
 export interface HttpResponse {
@@ -89,6 +89,7 @@ export interface HttpSetCookieOptions {
   url: string;
   key: string;
   value: string;
+  ageDays?: number;
 }
 
 export interface HttpGetCookiesOptions {
