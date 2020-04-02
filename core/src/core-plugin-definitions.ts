@@ -1106,7 +1106,7 @@ export interface LocalNotification {
    * will generate. If channel with the given name does not exist then the 
    * notification will not fire.
    */
-  channelId: string;
+  channelId?: string;
 }
 
 export interface LocalNotificationSchedule {

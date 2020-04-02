@@ -70,7 +70,7 @@ public class NotificationChannelManager {
         }
     }
 
-    public static void listChannel(PluginCall call, NotificationManager notificationManager) {
+    public static void listChannels(PluginCall call, NotificationManager notificationManager) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
             JSArray channels = new JSArray();

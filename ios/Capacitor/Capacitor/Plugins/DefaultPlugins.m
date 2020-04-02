@@ -94,6 +94,9 @@ CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",
   CAP_PLUGIN_METHOD(getPending, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(registerActionTypes, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(areEnabled, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(createChannel, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(deleteChannel, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(listChannels, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 

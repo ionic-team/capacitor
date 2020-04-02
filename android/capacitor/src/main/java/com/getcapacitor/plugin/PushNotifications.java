@@ -180,7 +180,7 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void listChannels(PluginCall call) {
-    NotificationChannelManager.listChannel(call, notificationManager);
+    NotificationChannelManager.listChannels(call, notificationManager);
   }
 
   public void sendToken(String token) {

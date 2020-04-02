@@ -511,5 +511,17 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     }
     return opts
   }
+  
+  @objc func createChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func deleteChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func listChannels(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
 }
 

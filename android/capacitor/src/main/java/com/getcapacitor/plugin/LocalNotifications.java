@@ -42,6 +42,7 @@ public class LocalNotifications extends Plugin {
     super.load();
     notificationStorage = new NotificationStorage(getContext());
     manager = new LocalNotificationManager(notificationStorage, getActivity());
+    manager.createNotificationChannel();
     notificationManager = (NotificationManager) getActivity()
             .getSystemService(Context.NOTIFICATION_SERVICE);
   }
@@ -135,7 +136,7 @@ public class LocalNotifications extends Plugin {
 
   @PluginMethod()
   public void listChannels(PluginCall call) {
-    NotificationChannelManager.listChannel(call, notificationManager);
+    NotificationChannelManager.listChannels(call, notificationManager);
   }
 
 }
