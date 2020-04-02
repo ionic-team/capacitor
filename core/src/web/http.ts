@@ -97,9 +97,11 @@ export class HttpPluginWeb extends WebPlugin implements HttpPlugin {
   }
 
   async getCookies(_options: HttpGetCookiesOptions): Promise<HttpGetCookiesResult> {
-    // const url = options.url;
+    if (!document.cookie) {
+      return { value: [] }
+    }
+
     var cookies = document.cookie.split(';');
-    console.log('Got cookies', cookies);
     return {
       value: cookies.map(c => {
         const cParts = c.split(';').map(cv => cv.trim());
@@ -116,12 +118,16 @@ export class HttpPluginWeb extends WebPlugin implements HttpPlugin {
     }
   }
 
-  deleteCookie(_options: HttpDeleteCookieOptions): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteCookie(options: HttpDeleteCookieOptions) {
+    document.cookie = options.key + '=; Max-Age=0'
   }
 
-  clearCookies(_options: HttpClearCookiesOptions): Promise<void> {
-    throw new Error("Method not implemented.");
+  async clearCookies(_options: HttpClearCookiesOptions) {
+    document.cookie
+      .split(";")
+      .forEach(c =>
+        document.cookie = c.replace(/^ +/, '')
+          .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`));
   }
 
   uploadFile(_options: HttpUploadFileOptions): Promise<HttpUploadFileResult> {
