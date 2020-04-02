@@ -67,6 +67,7 @@ enum BridgeError: Error {
     setupCordovaCompatibility()
     bindObservers()
     self.tmpWindow.rootViewController = tmpVC
+    self.tmpWindow.makeKeyAndVisible()
     NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { _ in
       self.tmpWindow.isHidden = true
     }
