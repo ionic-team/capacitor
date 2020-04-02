@@ -46,12 +46,14 @@ The local notification plugin allows the following configuration values to be ad
 
 - `smallIcon`: It allows you to set the default icon for the local notification.
 - `iconColor`: It allows you to set the default color for the local notification icon.
+- `sound`: It allows you to set the default notification sound. On Android 26+ it sets the default channel sound and can't be changed unless the app is uninstalled.
 
 ```json
  "plugins": {
     "LocalNotifications": {
       "smallIcon": "ic_stat_icon_config_sample",
-      "iconColor": "#488AFF"
+      "iconColor": "#488AFF",
+      "sound": "beep.wav"
     }
   }
 ```

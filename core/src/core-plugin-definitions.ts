@@ -1071,6 +1071,13 @@ export interface LocalNotification {
   body: string;
   id: number;
   schedule?: LocalNotificationSchedule;
+  /**
+   * Name of the audio file with extension.
+   * On iOS the file should be in the app bundle.
+   * On Android the file should be on res/raw folder.
+   * Doesn't work on Android version 26+ (Android O and newer), for
+   * Recommended format is .wav because is supported by both platforms.
+   */
   sound?: string;
   /**
    * Android-only: set a custom statusbar icon.
