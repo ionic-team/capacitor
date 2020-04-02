@@ -34,7 +34,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
           self.vc!.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
         }
 
-        self.bridge.viewController.present(self.vc!, animated: true, completion: {
+        self.bridge.presentVC(self.vc!, animated: true, completion: {
           call.success()
         })
       }
@@ -48,7 +48,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
       call.success()
     }
     DispatchQueue.main.async {
-      self.bridge.viewController.dismiss(animated: true) {
+      self.bridge.dismissVC(animated: true) {
         call.success()
       }
     }
