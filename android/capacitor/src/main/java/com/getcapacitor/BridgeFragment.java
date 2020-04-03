@@ -119,7 +119,6 @@ public class BridgeFragment extends Fragment {
       bridge.restoreInstanceState(savedInstanceState);
     }
     this.keepRunning = preferences.getBoolean("KeepRunning", true);
-    // this.onNewIntent(getIntent());
   }
 
   public void loadConfig(Context context, Activity activity) {
