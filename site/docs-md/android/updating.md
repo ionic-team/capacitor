@@ -37,17 +37,7 @@ Recommended change:
 
 * Update `strings.xml` file inside `android/app/src/main/res/values/` folder with [this change](https://github.com/ionic-team/capacitor/commit/ed6647b35a8da08d26a7ff13cc9f4fd918b923a0#diff-15c65f143d85c95277307da1bdd0528e)
 
-### From <= 1.5.1 to 2.0.0-beta.1
-
-Since Capacitor 2.0 is still beta, install it using `next` tag
-
-```bash
-npm install @capacitor/cli@next
-npm install @capacitor/core@next
-npm install @capacitor/android@next
-npx cap sync android
-npx cap open android
-```
+### From <= 1.5.1 to 2.0.0
 
 Mandatory change:
 
@@ -124,4 +114,4 @@ Recommended changes:
 
   In `android/app/src/main/AndroidManifest.xml` file, add `|smallestScreenSize|screenLayout|uiMode` in the activity `android:configChanges` attribute.
 
-For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0-beta.1)
+For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0)

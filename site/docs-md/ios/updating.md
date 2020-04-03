@@ -36,16 +36,7 @@ Recommended change:
 
 * Update `.gitignore` file inside `ios` folder with [this changes](https://github.com/ionic-team/capacitor/commit/91941975ea5fe5389e0b09bb8331d5cb16ea6a78#diff-ea346566a7f09b5e88ed28d3d6362ec3)
 
-### From <= 1.5.1 to 2.0.0-beta.1
-
-Since Capacitor 2.0 is still beta, install it using `next` tag
-
-```bash
-npm install @capacitor/cli@next
-npm install @capacitor/core@next
-npm install @capacitor/ios@next
-npx cap sync ios
-```
+### From <= 1.5.1 to 2.0.0
 
 Recommended change:
 
@@ -60,4 +51,4 @@ Recommended change:
 
   Finally, click the `Update` button.
 
-For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0-beta.1)
+For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0)
