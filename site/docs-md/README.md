@@ -69,6 +69,7 @@
   * [Modals](apis/modals/index.md)
   * [Motion](apis/motion/index.md)
   * [Network](apis/network/index.md)
+  * [Permissions](apis/permissions/index.md)
   * [Push Notifications](apis/push-notifications/index.md)
   * [Share](apis/share/index.md)
   * [Splash Screen](apis/splash-screen/index.md)
