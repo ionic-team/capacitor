@@ -267,6 +267,7 @@ public class Splash {
           wm.addView(splashImage, params);
         } catch (IllegalStateException | IllegalArgumentException ex) {
           Log.d(LogUtils.getCoreTag(), "Could not add splash view");
+          return;
         }
 
         splashImage.setAlpha(0f);
