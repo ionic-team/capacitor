@@ -1109,6 +1109,12 @@ export interface LocalNotification {
    * (should be used with the `group` property).
    */
   groupSummary?: boolean;
+  /**
+   * Android only: set the notification channel on which local notification 
+   * will generate. If channel with the given name does not exist then the 
+   * notification will not fire. If not provided, it will use the default channel.
+   */
+  channelId?: string;
 }
 
 export interface LocalNotificationSchedule {
@@ -1148,6 +1154,9 @@ export interface LocalNotificationsPlugin extends Plugin {
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
+  createChannel(channel: NotificationChannel): Promise<void>;
+  deleteChannel(channel: NotificationChannel): Promise<void>;
+  listChannels(): Promise<NotificationChannelList>;
   requestPermission(): Promise<NotificationPermissionResponse>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
@@ -1553,7 +1562,7 @@ export interface PushNotificationDeliveredList {
   notifications: PushNotification[];
 }
 
-export interface PushNotificationChannel {
+export interface NotificationChannel {
   id: string;
   name: string;
   description?: string;
@@ -1564,8 +1573,8 @@ export interface PushNotificationChannel {
   lightColor?: string;
 }
 
-export interface PushNotificationChannelList {
-  channels: PushNotificationChannel[];
+export interface NotificationChannelList {
+  channels: NotificationChannel[];
 }
 
 export interface PushNotificationsPlugin extends Plugin {
@@ -1574,9 +1583,9 @@ export interface PushNotificationsPlugin extends Plugin {
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
   removeAllDeliveredNotifications(): Promise<void>;
-  createChannel(channel: PushNotificationChannel): Promise<void>;
-  deleteChannel(channel: PushNotificationChannel): Promise<void>;
-  listChannels(): Promise<PushNotificationChannelList>;
+  createChannel(channel: NotificationChannel): Promise<void>;
+  deleteChannel(channel: NotificationChannel): Promise<void>;
+  listChannels(): Promise<NotificationChannelList>;
   addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
   addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;

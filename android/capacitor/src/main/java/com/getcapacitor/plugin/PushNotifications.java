@@ -1,20 +1,13 @@
 package com.getcapacitor.plugin;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
-import androidx.core.app.NotificationCompat;
 import android.net.Uri;
-
-import android.util.Log;
 
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
@@ -24,6 +17,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginHandle;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.plugin.notification.NotificationChannelManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -35,26 +29,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @NativePlugin()
 public class PushNotifications extends Plugin {
 
-  public static String CHANNEL_ID = "id";
-  public static String CHANNEL_NAME = "name";
-  public static String CHANNEL_DESCRIPTION = "description";
-  public static String CHANNEL_IMPORTANCE = "importance";
-  public static String CHANNEL_VISIBILITY = "visibility";
-  public static String CHANNEL_SOUND = "sound";
-  public static String CHANNEL_USE_LIGHTS = "lights";
-  public static String CHANNEL_LIGHT_COLOR = "lightColor";
-
   public static Bridge staticBridge = null;
   public static RemoteMessage lastMessage = null;
   public NotificationManager notificationManager;
-
+  private NotificationChannelManager notificationChannelManager;
 
   private static final String EVENT_TOKEN_CHANGE = "registration";
   private static final String EVENT_TOKEN_ERROR = "registrationError";
@@ -67,6 +50,7 @@ public class PushNotifications extends Plugin {
       fireNotification(lastMessage);
       lastMessage = null;
     }
+    notificationChannelManager = new NotificationChannelManager(getActivity(), notificationManager);
   }
 
   @Override
@@ -187,85 +171,17 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void createChannel(PluginCall call) {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-      JSObject channel = new JSObject();
-      channel.put(CHANNEL_ID, call.getString(CHANNEL_ID));
-      channel.put(CHANNEL_NAME, call.getString(CHANNEL_NAME));
-      channel.put(CHANNEL_DESCRIPTION, call.getString(CHANNEL_DESCRIPTION, ""));
-      channel.put(CHANNEL_VISIBILITY, call.getInt(CHANNEL_VISIBILITY, NotificationCompat.VISIBILITY_PUBLIC));
-      channel.put(CHANNEL_IMPORTANCE, call.getInt(CHANNEL_IMPORTANCE));
-      channel.put(CHANNEL_SOUND, call.getString(CHANNEL_SOUND, null));
-      channel.put(CHANNEL_USE_LIGHTS, call.getBoolean(CHANNEL_USE_LIGHTS, false));
-      channel.put(CHANNEL_LIGHT_COLOR, call.getString(CHANNEL_LIGHT_COLOR, null));
-      createChannel(channel);
-      call.success();
-    } else {
-      call.unavailable();
-    }
+    notificationChannelManager.createChannel(call);
   }
 
   @PluginMethod()
   public void deleteChannel(PluginCall call) {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-      String channelId = call.getString("id");
-      notificationManager.deleteNotificationChannel(channelId);
-      call.success();
-    } else {
-      call.unavailable();
-    }
+    notificationChannelManager.deleteChannel(call);
   }
 
   @PluginMethod()
   public void listChannels(PluginCall call) {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-      List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
-      JSArray channels = new JSArray();
-      for (NotificationChannel notificationChannel : notificationChannels) {
-        JSObject channel = new JSObject();
-        channel.put(CHANNEL_ID, notificationChannel.getId());
-        channel.put(CHANNEL_NAME, notificationChannel.getName());
-        channel.put(CHANNEL_DESCRIPTION, notificationChannel.getDescription());
-        channel.put(CHANNEL_IMPORTANCE, notificationChannel.getImportance());
-        channel.put(CHANNEL_VISIBILITY, notificationChannel.getLockscreenVisibility());
-        channel.put(CHANNEL_SOUND, notificationChannel.getSound());
-        channel.put(CHANNEL_USE_LIGHTS, notificationChannel.shouldShowLights());
-        channel.put(CHANNEL_LIGHT_COLOR, String.format("#%06X", (0xFFFFFF & notificationChannel.getLightColor())));
-        Log.d(getLogTag(), "visibility " + notificationChannel.getLockscreenVisibility());
-        Log.d(getLogTag(), "importance " + notificationChannel.getImportance());
-        channels.put(channel);
-      }
-      JSObject result = new JSObject();
-      result.put("channels", channels);
-      call.success(result);
-    } else {
-      call.unavailable();
-    }
-  }
-
-  private void createChannel(JSObject channel) {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-      NotificationChannel notificationChannelChannel = new NotificationChannel(channel.getString(CHANNEL_ID), channel.getString(CHANNEL_NAME), channel.getInteger(CHANNEL_IMPORTANCE));
-      notificationChannelChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION));
-      notificationChannelChannel.setLockscreenVisibility(channel.getInteger(CHANNEL_VISIBILITY));
-      notificationChannelChannel.enableLights(channel.getBool(CHANNEL_USE_LIGHTS));
-      String lightColor = channel.getString(CHANNEL_LIGHT_COLOR);
-      if (lightColor != null) {
-        try {
-          notificationChannelChannel.setLightColor(Color.parseColor(lightColor));
-        } catch (IllegalArgumentException ex) {
-          Log.e(getLogTag(), "Invalid color provided for light color.");
-        }
-      }
-      String sound = channel.getString(CHANNEL_SOUND, null);
-      if (sound != null && !sound.isEmpty()) {
-        AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setUsage(AudioAttributes.USAGE_ALARM).build();
-        Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getContext().getPackageName() + "/raw/" + sound);
-        notificationChannelChannel.setSound(soundUri, audioAttributes);
-      }
-      notificationManager.createNotificationChannel(notificationChannelChannel);
-    }
+    notificationChannelManager.listChannels(call);
   }
 
   public void sendToken(String token) {

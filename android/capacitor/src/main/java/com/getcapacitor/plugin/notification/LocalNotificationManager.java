@@ -99,7 +99,6 @@ public class LocalNotificationManager {
    * Create notification channel
    */
   public void createNotificationChannel() {
-    // TODO allow to create multiple channels
     // Create the NotificationChannel, but only on API 26+ because
     // the NotificationChannel class is new and not in the support library
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -155,7 +154,11 @@ public class LocalNotificationManager {
   // TODO media style notification support NotificationCompat.MediaStyle
   // TODO custom small/large icons
   private void buildNotification(NotificationManagerCompat notificationManager, LocalNotification localNotification, PluginCall call) {
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.context, DEFAULT_NOTIFICATION_CHANNEL_ID)
+    String channelId = DEFAULT_NOTIFICATION_CHANNEL_ID;
+    if (localNotification.getChannelId() != null) {
+      channelId = localNotification.getChannelId();
+    }
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.context, channelId)
             .setContentTitle(localNotification.getTitle())
             .setContentText(localNotification.getBody())
             .setAutoCancel(true)

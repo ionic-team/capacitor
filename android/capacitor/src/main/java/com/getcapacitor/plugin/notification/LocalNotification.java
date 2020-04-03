@@ -41,6 +41,7 @@ public class LocalNotification {
   private JSObject extra;
   private List<LocalNotificationAttachment> attachments;
   private LocalNotificationSchedule schedule;
+  private String channelId;
 
   private String source;
 
@@ -157,6 +158,14 @@ public class LocalNotification {
     this.groupSummary = groupSummary;
   }
 
+  public String getChannelId() {
+    return channelId;
+  }
+
+  public void setChannelId(String channelId) {
+    this.channelId = channelId;
+  }
+
   /**
    * Build list of the notifications from remote plugin call
    */
@@ -195,6 +204,7 @@ public class LocalNotification {
       activeLocalNotification.setIconColor(notification.getString("iconColor"));
       activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
       activeLocalNotification.setGroupSummary(notification.getBoolean("groupSummary", false));
+      activeLocalNotification.setChannelId(notification.getString("channelId"));
       try {
         activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
       } catch (ParseException e) {

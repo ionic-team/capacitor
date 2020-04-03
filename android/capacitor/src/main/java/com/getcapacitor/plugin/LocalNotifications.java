@@ -12,6 +12,7 @@ import com.getcapacitor.PluginRequestCodes;
 import com.getcapacitor.plugin.notification.LocalNotification;
 import com.getcapacitor.plugin.notification.LocalNotificationManager;
 import com.getcapacitor.plugin.notification.NotificationAction;
+import com.getcapacitor.plugin.notification.NotificationChannelManager;
 import com.getcapacitor.plugin.notification.NotificationStorage;
 
 import org.json.JSONArray;
@@ -29,6 +30,7 @@ import java.util.Map;
 public class LocalNotifications extends Plugin {
   private LocalNotificationManager manager;
   private NotificationStorage notificationStorage;
+  private NotificationChannelManager notificationChannelManager;
 
   public LocalNotifications() {
   }
@@ -39,6 +41,7 @@ public class LocalNotifications extends Plugin {
     notificationStorage = new NotificationStorage(getContext());
     manager = new LocalNotificationManager(notificationStorage, getActivity());
     manager.createNotificationChannel();
+    notificationChannelManager = new NotificationChannelManager(getActivity());
   }
 
   @Override
@@ -116,6 +119,21 @@ public class LocalNotifications extends Plugin {
     JSObject data = new JSObject();
     data.put("value", manager.areNotificationsEnabled());
     call.success(data);
+  }
+
+  @PluginMethod()
+  public void createChannel(PluginCall call) {
+    notificationChannelManager.createChannel(call);
+  }
+
+  @PluginMethod()
+  public void deleteChannel(PluginCall call) {
+    notificationChannelManager.deleteChannel(call);
+  }
+
+  @PluginMethod()
+  public void listChannels(PluginCall call) {
+    notificationChannelManager.listChannels(call);
   }
 
 }
