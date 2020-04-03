@@ -69,9 +69,13 @@ export interface HttpUploadFileOptions extends HttpOptions {
    */
   name: string;
   /**
-   * The path to the file on disk to upload
+   * For uploading a file on the web, a JavaScript Blob to upload
    */
-  filePath: string;
+  blob?: Blob;
+  /**
+   * For uploading a file natively, the path to the file on disk to upload
+   */
+  filePath?: string;
   /**
    * Optionally, the directory to look for the file in.
    * 
@@ -110,7 +114,8 @@ export interface HttpGetCookiesResult {
 }
 
 export interface HttpDownloadFileResult {
-  path: string;
+  path?: string;
+  blob?: Blob;
 }
 
 export interface HttpUploadFileResult {

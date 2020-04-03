@@ -64,11 +64,11 @@ export class HttpPage {
   getJson = () => this.get('/get-json');
   getHtml = () => this.get('/get-html');
 
-  head =  () => this.get('/head', 'HEAD');
-  delete =  () => this.mutate('/delete', 'DELETE', { title: 'foo', body: 'bar', userId: 1 });
-  patch =   () => this.mutate('/patch', 'PATCH', { title: 'foo', body: 'bar', userId: 1 });
-  post =    () => this.mutate('/post', 'POST', { title: 'foo', body: 'bar', userId: 1 });
-  put =     () => this.mutate('/put', 'PUT', { title: 'foo', body: 'bar', userId: 1 });
+  head = () => this.get('/head', 'HEAD');
+  delete = () => this.mutate('/delete', 'DELETE', { title: 'foo', body: 'bar', userId: 1 });
+  patch = () => this.mutate('/patch', 'PATCH', { title: 'foo', body: 'bar', userId: 1 });
+  post = () => this.mutate('/post', 'POST', { title: 'foo', body: 'bar', userId: 1 });
+  put = () => this.mutate('/put', 'PUT', { title: 'foo', body: 'bar', userId: 1 });
 
   async mutate(path, method, data = {}) {
     this.output = '';
@@ -218,6 +218,7 @@ export class HttpPage {
 
     console.log('Got download ret', ret);
 
+
     /*
     const renameRet = await Filesystem.rename({
       from: ret.path,
@@ -228,12 +229,14 @@ export class HttpPage {
     console.log('Did rename', renameRet);
     */
 
-    const read = await Filesystem.readFile({
-      path: 'document.pdf',
-      directory: FilesystemDirectory.Downloads
-    });
+    if (ret.path) {
+      const read = await Filesystem.readFile({
+        path: 'document.pdf',
+        directory: FilesystemDirectory.Downloads
+      });
 
-    console.log('Read', read);
+      console.log('Read', read);
+    }
   }
 
   uploadFile = async () => {

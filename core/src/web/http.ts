@@ -130,12 +130,31 @@ export class HttpPluginWeb extends WebPlugin implements HttpPlugin {
           .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`));
   }
 
-  uploadFile(_options: HttpUploadFileOptions): Promise<HttpUploadFileResult> {
-    throw new Error("Method not implemented.");
+  async uploadFile(options: HttpUploadFileOptions): Promise<HttpUploadFileResult> {
+    const fetchOptions = this.makeFetchOptions(options, options.webFetchExtra);
+
+    const formData = new FormData();
+    formData.append(options.name, options.blob);
+
+    await fetch(options.url, {
+      ...fetchOptions,
+      body: formData,
+      method: 'POST'
+    });
+
+    return {};
   }
 
-  downloadFile(_options: HttpDownloadFileOptions): Promise<HttpDownloadFileResult> {
-    throw new Error("Method not implemented.");
+  async downloadFile(options: HttpDownloadFileOptions): Promise<HttpDownloadFileResult> {
+    const fetchOptions = this.makeFetchOptions(options, options.webFetchExtra);
+
+    const ret = await fetch(options.url, fetchOptions);
+
+    const blob = await ret.blob();
+
+    return {
+      blob
+    }
   }
 }
 

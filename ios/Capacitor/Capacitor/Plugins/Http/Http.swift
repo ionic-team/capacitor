@@ -75,7 +75,8 @@ public class CAPHttpPlugin: CAPPlugin {
           "path": dest.absoluteString
         ])
       } catch let e {
-        CAPLog.print("Unable to download file", e)
+        call.reject("Unable to download file", e)
+        return
       }
       
       
