@@ -147,8 +147,9 @@ public class LocalNotificationManager {
   // TODO custom small/large icons
   private void buildNotification(NotificationManagerCompat notificationManager, LocalNotification localNotification, PluginCall call) {
     String channelId = DEFAULT_NOTIFICATION_CHANNEL_ID;
-    if (localNotification.getChannelId() != null)
+    if (localNotification.getChannelId() != null) {
       channelId = localNotification.getChannelId();
+    }
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.context, channelId)
             .setContentTitle(localNotification.getTitle())
             .setContentText(localNotification.getBody())
