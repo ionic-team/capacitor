@@ -16,7 +16,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@capacitor/core": "^LERNA_VERSION"
+    "@capacitor/core": "~2.0.0"
   },
   "scripts": {
     "prepublishOnly": "bash ../scripts/setversion.sh"
