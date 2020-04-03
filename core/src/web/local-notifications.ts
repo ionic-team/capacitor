@@ -8,8 +8,8 @@ import {
   LocalNotification,
   LocalNotificationScheduleResult,
   NotificationPermissionResponse,
-  PushNotificationChannel,
-  PushNotificationChannelList
+  NotificationChannel,
+  NotificationChannelList
 } from '../core-plugin-definitions';
 
 import { PermissionsRequestResult } from '../definitions';
@@ -24,15 +24,15 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     });
   }
   
-  createChannel(channel: PushNotificationChannel): Promise<void> {
+  createChannel(channel: NotificationChannel): Promise<void> {
     throw new Error('Feature not available in the browser. ' + channel.id);
   }
 
-  deleteChannel(channel: PushNotificationChannel): Promise<void> {
+  deleteChannel(channel: NotificationChannel): Promise<void> {
     throw new Error('Feature not available in the browser. ' + channel.id);
   }
   
-  listChannels(): Promise<PushNotificationChannelList> {
+  listChannels(): Promise<NotificationChannelList> {
     throw new Error('Feature not available in the browser');
   }
 
