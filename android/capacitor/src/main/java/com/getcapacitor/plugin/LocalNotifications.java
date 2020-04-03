@@ -1,7 +1,5 @@
 package com.getcapacitor.plugin;
 
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 
 import com.getcapacitor.JSArray;
@@ -32,7 +30,7 @@ import java.util.Map;
 public class LocalNotifications extends Plugin {
   private LocalNotificationManager manager;
   private NotificationStorage notificationStorage;
-  public NotificationManager notificationManager;
+  private NotificationChannelManager notificationChannelManager;
 
   public LocalNotifications() {
   }
@@ -43,8 +41,7 @@ public class LocalNotifications extends Plugin {
     notificationStorage = new NotificationStorage(getContext());
     manager = new LocalNotificationManager(notificationStorage, getActivity());
     manager.createNotificationChannel();
-    notificationManager = (NotificationManager) getActivity()
-            .getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationChannelManager = new NotificationChannelManager(getActivity());
   }
 
   @Override
@@ -126,17 +123,17 @@ public class LocalNotifications extends Plugin {
 
   @PluginMethod()
   public void createChannel(PluginCall call) {
-    NotificationChannelManager.createChannel(call, getActivity(), notificationManager);
+    notificationChannelManager.createChannel(call);
   }
 
   @PluginMethod()
   public void deleteChannel(PluginCall call) {
-    NotificationChannelManager.deleteChannel(call, notificationManager);
+    notificationChannelManager.deleteChannel(call);
   }
 
   @PluginMethod()
   public void listChannels(PluginCall call) {
-    NotificationChannelManager.listChannels(call, notificationManager);
+    notificationChannelManager.listChannels(call);
   }
 
 }

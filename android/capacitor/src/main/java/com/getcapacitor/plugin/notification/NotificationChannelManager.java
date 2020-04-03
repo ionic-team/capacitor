@@ -20,6 +20,19 @@ import java.util.List;
 
 public class NotificationChannelManager {
 
+    private Context context;
+    private NotificationManager notificationManager;
+
+    public NotificationChannelManager(Context context) {
+        this.context = context;
+        this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    public NotificationChannelManager(Context context, NotificationManager manager) {
+        this.context = context;
+        this.notificationManager = manager;
+    }
+
     private static final String TAG = "NotificationChannel: ";
 
 
@@ -32,7 +45,7 @@ public class NotificationChannelManager {
     private static String CHANNEL_USE_LIGHTS = "lights";
     private static String CHANNEL_LIGHT_COLOR = "lightColor";
 
-    public static void createChannel(PluginCall call, Context context, NotificationManager notificationManager) {
+    public void createChannel(PluginCall call) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             JSObject channel = new JSObject();
             channel.put(CHANNEL_ID, call.getString(CHANNEL_ID));
@@ -43,13 +56,13 @@ public class NotificationChannelManager {
             channel.put(CHANNEL_SOUND, call.getString(CHANNEL_SOUND, null));
             channel.put(CHANNEL_USE_LIGHTS, call.getBoolean(CHANNEL_USE_LIGHTS, false));
             channel.put(CHANNEL_LIGHT_COLOR, call.getString(CHANNEL_LIGHT_COLOR, null));
-            createChannel(channel, context, notificationManager);
+            createChannel(channel);
             call.success();
         } else {
             call.unavailable();
         }
     }
-    public static void createChannel(JSObject channel, Context context, NotificationManager notificationManager) {
+    public void createChannel(JSObject channel) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(channel.getString(CHANNEL_ID), channel.getString(CHANNEL_NAME), channel.getInteger(CHANNEL_IMPORTANCE));
             notificationChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION));
@@ -78,7 +91,7 @@ public class NotificationChannelManager {
         }
     }
 
-    public static void deleteChannel(PluginCall call, NotificationManager notificationManager) {
+    public void deleteChannel(PluginCall call) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String channelId = call.getString("id");
             notificationManager.deleteNotificationChannel(channelId);
@@ -88,7 +101,7 @@ public class NotificationChannelManager {
         }
     }
 
-    public static void listChannels(PluginCall call, NotificationManager notificationManager) {
+    public void listChannels(PluginCall call) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
             JSArray channels = new JSArray();

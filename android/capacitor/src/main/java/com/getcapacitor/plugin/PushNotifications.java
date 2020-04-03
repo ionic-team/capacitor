@@ -37,7 +37,7 @@ public class PushNotifications extends Plugin {
   public static Bridge staticBridge = null;
   public static RemoteMessage lastMessage = null;
   public NotificationManager notificationManager;
-
+  private NotificationChannelManager notificationChannelManager;
 
   private static final String EVENT_TOKEN_CHANGE = "registration";
   private static final String EVENT_TOKEN_ERROR = "registrationError";
@@ -50,6 +50,7 @@ public class PushNotifications extends Plugin {
       fireNotification(lastMessage);
       lastMessage = null;
     }
+    notificationChannelManager = new NotificationChannelManager(getActivity(), notificationManager);
   }
 
   @Override
@@ -170,17 +171,17 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void createChannel(PluginCall call) {
-    NotificationChannelManager.createChannel(call,getContext(), notificationManager);
+    notificationChannelManager.createChannel(call);
   }
 
   @PluginMethod()
   public void deleteChannel(PluginCall call) {
-    NotificationChannelManager.deleteChannel(call, notificationManager);
+    notificationChannelManager.deleteChannel(call);
   }
 
   @PluginMethod()
   public void listChannels(PluginCall call) {
-    NotificationChannelManager.listChannels(call, notificationManager);
+    notificationChannelManager.listChannels(call);
   }
 
   public void sendToken(String token) {
