@@ -1,6 +1,8 @@
 package com.getcapacitor.plugin.notification;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.getcapacitor.Config;
@@ -25,6 +27,7 @@ public class LocalNotification {
   private static final String CONFIG_KEY_PREFIX = "plugins.LocalNotifications.";
   private static final int RESOURCE_ID_ZERO_VALUE = 0;
   private static int defaultSmallIconID = RESOURCE_ID_ZERO_VALUE;
+  private static int defaultSoundID = RESOURCE_ID_ZERO_VALUE;
 
   private String title;
   private String body;
@@ -66,8 +69,20 @@ public class LocalNotification {
     this.schedule = schedule;
   }
 
-  public String getSound() {
-    return sound;
+  public String getSound(Context context) {
+    String soundPath = null;
+    int resId = RESOURCE_ID_ZERO_VALUE;
+    String name = getResourceBaseName(sound);
+    if (name != null) {
+      resId = getResourceID(context, name, "raw");
+    }
+    if (resId == RESOURCE_ID_ZERO_VALUE) {
+      resId = getDefaultSound(context);
+    }
+    if(resId != RESOURCE_ID_ZERO_VALUE){
+      soundPath = ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + resId;
+    }
+    return soundPath;
   }
 
   public void setSound(String sound) {
@@ -256,6 +271,29 @@ public class LocalNotification {
 
     defaultSmallIconID = resId;
     return resId;
+  }
+
+  private static int getDefaultSound(Context context){
+    if(defaultSoundID != RESOURCE_ID_ZERO_VALUE) return defaultSoundID;
+
+    int resId = RESOURCE_ID_ZERO_VALUE;
+    String soundConfigResourceName = Config.getString(CONFIG_KEY_PREFIX + "sound");
+    soundConfigResourceName = getResourceBaseName(soundConfigResourceName);
+
+    if(soundConfigResourceName != null){
+      resId = getResourceID(context, soundConfigResourceName, "raw");
+    }
+
+    defaultSoundID = resId;
+    return resId;
+  }
+
+  public static Uri getDefaultSoundUrl(Context context){
+    int soundId = LocalNotification.getDefaultSound(context);
+    if (soundId != RESOURCE_ID_ZERO_VALUE) {
+      return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + soundId);
+    }
+    return null;
   }
 
   public boolean isScheduled() {

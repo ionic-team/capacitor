@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -107,6 +108,13 @@ public class LocalNotificationManager {
       int importance = android.app.NotificationManager.IMPORTANCE_DEFAULT;
       NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL_ID, name, importance);
       channel.setDescription(description);
+      AudioAttributes audioAttributes = new AudioAttributes.Builder()
+              .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+              .setUsage(AudioAttributes.USAGE_ALARM).build();
+      Uri soundUri = LocalNotification.getDefaultSoundUrl(context);
+      if (soundUri != null) {
+        channel.setSound(soundUri, audioAttributes);
+      }
       // Register the channel with the system; you can't change the importance
       // or other notification behaviors after this
       android.app.NotificationManager notificationManager = context.getSystemService(android.app.NotificationManager.class);
@@ -153,14 +161,13 @@ public class LocalNotificationManager {
             .setAutoCancel(true)
             .setOngoing(false)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setGroupSummary(localNotification.isGroupSummary())
-            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
+            .setGroupSummary(localNotification.isGroupSummary());
 
 
     // support multiline text
     mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(localNotification.getBody()));
 
-    String sound = localNotification.getSound();
+    String sound = localNotification.getSound(context);
     if (sound != null) {
       Uri soundUri = Uri.parse(sound);
       // Grant permission to use sound
@@ -168,7 +175,11 @@ public class LocalNotificationManager {
               "com.android.systemui", soundUri,
               Intent.FLAG_GRANT_READ_URI_PERMISSION);
       mBuilder.setSound(soundUri);
+      mBuilder.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
+    } else {
+      mBuilder.setDefaults(Notification.DEFAULT_ALL);
     }
+
 
     String group = localNotification.getGroup();
     if (group != null) {
