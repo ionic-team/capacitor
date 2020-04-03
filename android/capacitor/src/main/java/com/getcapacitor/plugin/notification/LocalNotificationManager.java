@@ -51,10 +51,10 @@ public class LocalNotificationManager {
   private Activity activity;
   private NotificationStorage storage;
 
-  public LocalNotificationManager(NotificationStorage notificationStorage, Activity activity) {
+  public LocalNotificationManager(NotificationStorage notificationStorage, Activity activity, Context context ) {
     storage = notificationStorage;
     this.activity = activity;
-    this.context = activity;
+    this.context = context;
   }
 
   /**
@@ -260,7 +260,13 @@ public class LocalNotificationManager {
 
   @NonNull
   private Intent buildIntent(LocalNotification localNotification, String action) {
-    Intent intent = new Intent(context, activity.getClass());
+    Intent intent;
+    if (activity != null) {
+      intent = new Intent(context, activity.getClass());
+    } else {
+      String packageName = context.getPackageName();
+      intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+    }
     intent.setAction(Intent.ACTION_MAIN);
     intent.addCategory(Intent.CATEGORY_LAUNCHER);
     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
