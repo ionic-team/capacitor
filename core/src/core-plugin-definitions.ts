@@ -921,7 +921,7 @@ export interface HapticsPlugin extends Plugin {
   /**
    * Trigger a selection changed haptic hint. If a selection was
    * started already, this will cause the device to provide haptic
-   * feedback (on iOS at least)
+   * feedback
    */
   selectionChanged(): void;
   /**
