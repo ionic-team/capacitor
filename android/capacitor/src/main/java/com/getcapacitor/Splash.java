@@ -64,15 +64,10 @@ public class Splash {
       splashImage = new ImageView(c);
 
       splashImage.setFitsSystemWindows(true);
-
-      // Hide status bar during splash screen.
-      Boolean splashFullScreen = Config.getBoolean(CONFIG_KEY_PREFIX + "splashFullScreen", DEFAULT_SPLASH_FULL_SCREEN);
-      if(splashFullScreen) {
-        splashImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-      }
-
-      // Enable immersive mode (hides status bar and navbar) during splash screen.
+      
+      // Enable immersive mode (hides status bar and navbar) during splash screen or hide status bar.
       Boolean splashImmersive = Config.getBoolean(CONFIG_KEY_PREFIX + "splashImmersive", DEFAULT_SPLASH_IMMERSIVE);
+      Boolean splashFullScreen = Config.getBoolean(CONFIG_KEY_PREFIX + "splashFullScreen", DEFAULT_SPLASH_FULL_SCREEN);
       if (splashImmersive) {
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -81,6 +76,8 @@ public class Splash {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         splashImage.setSystemUiVisibility(flags);
+      } else if (splashFullScreen) {
+        splashImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
       }
 
       // Stops flickers dead in their tracks
