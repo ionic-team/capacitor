@@ -47,7 +47,7 @@ Mandatory change:
 
   From Android Studio do `Refactor -> Migrate to AndroidX`. Then click on `Migrate` button and finally click on `Do Refactor`.
 
-  If using Cordova plugins that don't use Android X yet, you can use [jetifier](https://www.npmjs.com/package/jetifier) tool to patch them.
+  If using Cordova or Capacitor plugins that don't use Android X yet, you can use [jetifier](https://www.npmjs.com/package/jetifier) tool to patch them.
 
   ```bash
   npm install jetifier
@@ -113,5 +113,9 @@ Recommended changes:
 * Change configChanges to avoid app restarts
 
   In `android/app/src/main/AndroidManifest.xml` file, add `|smallestScreenSize|screenLayout|uiMode` in the activity `android:configChanges` attribute.
+
+* Add caches folder to FileProvider file paths to avoid permission error on editing gallery images.
+
+  In `android/app/src/main/res/xml/file_paths.xml` add `<cache-path name="my_cache_images" path="." />`.
 
 For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0)
