@@ -110,7 +110,7 @@ Then run `npx cap copy` to apply these changes.
 
 ## Full Screen & Immersive
 
-You can enable `splashFullScreen` to hide status bar, or `splashImmersive` to hide both status bar and software navigation buttons.
+You can enable `splashFullScreen` to hide status bar, or `splashImmersive` to hide both status bar and software navigation buttons. If both options are enabled `splashImmersive` takes priority, as it also fulfils `splashFullScreen` functionality.
 
 ## Configuration
 
