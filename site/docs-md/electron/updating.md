@@ -38,3 +38,14 @@ Recommended changes:
 
 * Update electron to ^7.0.0
 * Update `index.js` file inside `electron` folder to call `configCapacitor(mainWindow);` [like this](https://github.com/ionic-team/capacitor/commit/8952ed1157f1b480ecdd8cca5babcd6604ff3771#diff-0c827191c5f6b198e9b675fc7e4a324fR43) to be able to configure the userAgent from [this feature](https://github.com/ionic-team/capacitor/pull/2140)
+
+### From <= 1.5.2 to 2.0.0
+
+Mandatory change:
+
+* `injectCapacitor` was deprecated on 1.1.0 and has been removed on 2.0.0, if still using it you have to update `index.js` to remove the usage. [See example](https://github.com/ionic-team/capacitor/commit/5d244a196e429d19f33bae5fc1fad6f1e9205168#diff-bae4e5cfce4de49634ffd504a19c8311)
+
+Recommended changes:
+
+* Update electron to ^8.0.0
+* Update `splashScreen.init(false);` in `index.js` to `splashScreen.init();`.
