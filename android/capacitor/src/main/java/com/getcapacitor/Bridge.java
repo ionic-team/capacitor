@@ -382,7 +382,7 @@ public class Bridge {
     if (isDevMode()) {
       defaultDebuggable = true;
     }
-
+    webView.requestFocusFromTouch();
     WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
   }
 
