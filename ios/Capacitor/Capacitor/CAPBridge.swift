@@ -598,12 +598,20 @@ enum BridgeError: Error {
   }
 
   @objc public func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-    self.tmpWindow.makeKeyAndVisible()
-    self.tmpVC.present(viewControllerToPresent, animated: flag, completion: completion)
+    if viewControllerToPresent.modalPresentationStyle == .popover {
+      self.viewController.present(viewControllerToPresent, animated: flag, completion: completion)
+    } else {
+      self.tmpWindow.makeKeyAndVisible()
+      self.tmpVC.present(viewControllerToPresent, animated: flag, completion: completion)
+    }
   }
 
   @objc public func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-    self.tmpVC.dismiss(animated: flag, completion: completion)
+    if self.tmpWindow.isHidden {
+      self.viewController.dismiss(animated: flag, completion: completion)
+    } else {
+      self.tmpVC.dismiss(animated: flag, completion: completion)
+    }
   }
 
 }
