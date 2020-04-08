@@ -374,23 +374,39 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+export async function getCoreVersion(config: Config): Promise<string> {
+  const corePackagePath = resolveNode(config, '@capacitor/core', 'package.json');
+  if (!corePackagePath) {
+    logFatal('Unable to find node_modules/@capacitor/core/package.json. Are you sure',
+      '@capacitor/core is installed? This file is currently required for Capacitor to function.');
+  }
+
+  return (await readJSON(corePackagePath)).version;
+}
+
+export async function getCLIVersion(config: Config): Promise<string> {
   const cliPackagePath = resolveNode(config, '@capacitor/cli', 'package.json');
   if (!cliPackagePath) {
     logFatal('Unable to find node_modules/@capacitor/cli/package.json. Are you sure',
       '@capacitor/cli is installed? This file is currently required for Capacitor to function.');
-    return;
   }
 
+  return (await readJSON(cliPackagePath)).version;
+}
+
+export async function getPlatformVersion(config: Config, platform: string): Promise<string> {
   const platformPackagePath = resolveNode(config, `@capacitor/${platform}`, 'package.json');
   if (!platformPackagePath) {
     logFatal(`Unable to find node_modules/@capacitor/${platform}/package.json. Are you sure`,
       `@capacitor/${platform} is installed? This file is currently required for Capacitor to function.`);
-    return;
   }
 
-  const cliVersion = (await readJSON(cliPackagePath)).version;
-  const platformVersion = (await readJSON(platformPackagePath)).version;
+  return (await readJSON(platformPackagePath)).version;
+}
+
+export async function checkPlatformVersions(config: Config, platform: string) {
+  const cliVersion = await getCLIVersion(config);
+  const platformVersion = await getPlatformVersion(config, platform);
 
   if (semver.gt(cliVersion, platformVersion)) {
     log('\n');
