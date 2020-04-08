@@ -184,6 +184,45 @@ public class PushNotifications extends Plugin {
     notificationChannelManager.listChannels(call);
   }
 
+  @PluginMethod()
+  public void subscribeToTopic(PluginCall call) {
+    String topic = call.getString("topic");
+    
+    FirebaseMessaging.getInstance().subscribeToTopic(topic)
+      .addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+            call.success();
+        }
+      })
+      .addOnFailureListener(new OnFailureListener() {
+          @Override
+          public void onFailure(@NonNull Exception e) {
+              error(e.getLocalizedMessage());
+              call.error("error : unable to subscribe to topic " + topic, e);
+          }
+      });
+  }
+
+  @PluginMethod()
+  public void unsubscribeFromTopic(PluginCall call) {
+    String topic = call.getString("topic");
+    
+    FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
+      .addOnSuccessListener(new OnSuccessListener<Void>() {
+          @Override
+          public void onSuccess(Void aVoid) {
+              call.success();
+          }
+      })
+      .addOnFailureListener(new OnFailureListener() {
+          @Override
+          public void onFailure(@NonNull Exception e) {
+              call.error("error : unable to unsubscribe from topic " + topic, e)
+          }
+      });
+  }
+
   public void sendToken(String token) {
     JSObject data = new JSObject();
     data.put("value", token);
