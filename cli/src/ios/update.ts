@@ -343,7 +343,7 @@ function filterARCFiles(plugin: Plugin) {
 
 function removeNoSystem(library: string, sourceFrameworks: Array<string>) {
   const libraries = sourceFrameworks.filter(framework => framework.includes(library));
-  return libraries.length == 0;
+  return libraries.length === 0;
 }
 
 async function getPluginsTask(config: Config) {
