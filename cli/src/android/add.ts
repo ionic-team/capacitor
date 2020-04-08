@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { TaskInfoProvider, copyTemplate, installDeps, getCLIVersion, resolveNode, runCommand, runTask } from '../common';
+import { TaskInfoProvider, copyTemplate, getCLIVersion, installDeps, resolveNode, runCommand, runTask } from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
 import { homedir } from 'os';
 import { join } from 'path';
