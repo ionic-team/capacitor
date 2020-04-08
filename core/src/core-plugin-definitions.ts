@@ -1224,6 +1224,9 @@ export interface ConfirmResult {
 
 export interface ActionSheetOptions {
   title: string;
+  /**
+   * iOS only
+   */
   message?: string;
   options: ActionSheetOption[];
 }

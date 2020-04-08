@@ -28,10 +28,14 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
     void onSelected(int index);
   }
 
+  private String title;
   private JSArray options;
 
   private OnSelectedListener listener;
 
+  public void setTitle(String title) {
+    this.title = title;
+  }
   public void setOptions(JSArray options) {
     this.options = options;
   }
@@ -79,7 +83,11 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
     LinearLayout layout = new LinearLayout(getContext());
     layout.setOrientation(LinearLayout.VERTICAL);
     layout.setPadding(layoutPaddingPx16, layoutPaddingPx16, layoutPaddingPx16, layoutPaddingPx16);
-
+    TextView ttv = new TextView(getContext());
+    ttv.setTextColor(Color.parseColor("#757575"));
+    ttv.setPadding(layoutPaddingPx8, layoutPaddingPx8, layoutPaddingPx8, layoutPaddingPx8);
+    ttv.setText(title);
+    layout.addView(ttv);
     try {
       List<Object> optionsList = options.toList();
       for (int i = 0; i < optionsList.size(); i++) {
