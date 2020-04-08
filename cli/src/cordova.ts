@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { Plugin, PluginType, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
+import { Plugin, PluginType, getAssets, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { basename, extname, join, resolve } from 'path';
 import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, parseXML, readXML, resolveNode, writeXML } from './common';
@@ -115,6 +115,11 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '');
       await writeFileAsync(filePath, data, 'utf8');
     }));
+    const assets = getAssets(p, platform);
+    assets.map((asset: any) => {
+      const filePath = join(webDir, asset.$.target);
+      copySync(join(p.rootPath, asset.$.src), filePath);
+    });
   }));
   writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }
