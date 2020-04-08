@@ -374,6 +374,16 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
 }
 
+export async function getCoreVersion(config: Config): Promise<string> {
+  const corePackagePath = resolveNode(config, '@capacitor/core', 'package.json');
+  if (!corePackagePath) {
+    logFatal('Unable to find node_modules/@capacitor/core/package.json. Are you sure',
+      '@capacitor/core is installed? This file is currently required for Capacitor to function.');
+  }
+
+  return (await readJSON(corePackagePath)).version;
+}
+
 export async function getCLIVersion(config: Config): Promise<string> {
   const cliPackagePath = resolveNode(config, '@capacitor/cli', 'package.json');
   if (!cliPackagePath) {
