@@ -207,14 +207,15 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
       }
     });
   });
+  const onlySystemLibraries = systemLibraries.filter(library => removeNoSystem(library, sourceFrameworks));
   if (weakFrameworks.length > 0) {
     frameworkDeps.push(`s.weak_frameworks = '${weakFrameworks.join(`', '`)}'`);
   }
   if (linkedFrameworks.length > 0) {
     frameworkDeps.push(`s.frameworks = '${linkedFrameworks.join(`', '`)}'`);
   }
-  if (systemLibraries.length > 0) {
-    frameworkDeps.push(`s.libraries = '${systemLibraries.join(`', '`)}'`);
+  if (onlySystemLibraries.length > 0) {
+    frameworkDeps.push(`s.libraries = '${onlySystemLibraries.join(`', '`)}'`);
   }
   if (customFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`);
@@ -338,6 +339,11 @@ function filterARCFiles(plugin: Plugin) {
   const sources = getPlatformElement(plugin, platform, 'source-file');
   const sourcesARC = sources.filter((sourceFile: any) => sourceFile.$['compiler-flags'] && sourceFile.$['compiler-flags'] === '-fno-objc-arc');
   return sourcesARC.length > 0;
+}
+
+function removeNoSystem(library: string, sourceFrameworks: Array<string>) {
+  const libraries = sourceFrameworks.filter(framework => framework.includes(library));
+  return libraries.length === 0;
 }
 
 async function getPluginsTask(config: Config) {
