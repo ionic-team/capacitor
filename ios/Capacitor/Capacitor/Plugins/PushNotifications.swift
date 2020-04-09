@@ -94,6 +94,34 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
     call.unimplemented()
   }
 
+  /**
+   * Subscribe to a specific Push Notification Topic
+   */
+  @objc func subscribeToTopic(_ call: CAPPluginCall) {
+    let topic = call.getString("name")
+    Messaging.messaging().subscribe(toTopic: topic) {error in
+      guard error == nil else {
+        call.error(error!.localizedDescription)
+        return
+      }
+      call.success()
+    }
+  }
+
+  /**
+   * Unsubscribe from a specific Push Notification Topic
+   */
+  @objc func unsubscribeFromTopic(_ call: CAPPluginCall) {
+    let topic = call.getString("name")
+    Messaging.messaging().unsubscribe(fromTopic: topic) {error in
+      guard error == nil else {
+        call.error(error!.localizedDescription)
+        return
+      }
+      call.success()
+    }
+  }
+
   @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification){
     if let deviceToken = notification.object as? Data {
       let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})

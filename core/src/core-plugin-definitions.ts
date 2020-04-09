@@ -1577,6 +1577,10 @@ export interface NotificationChannelList {
   channels: NotificationChannel[];
 }
 
+export interface NotificationTopic {
+  name: string;
+}
+
 export interface PushNotificationsPlugin extends Plugin {
   register(): Promise<void>;
   requestPermission(): Promise<NotificationPermissionResponse>;
@@ -1586,6 +1590,8 @@ export interface PushNotificationsPlugin extends Plugin {
   createChannel(channel: NotificationChannel): Promise<void>;
   deleteChannel(channel: NotificationChannel): Promise<void>;
   listChannels(): Promise<NotificationChannelList>;
+  subscribeToTopic(topic: NotificationTopic): Promise<void>;
+  unsubscribeFromTopic(topic: NotificationTopic): Promise<void>;
   addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
   addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;

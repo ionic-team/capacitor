@@ -125,6 +125,8 @@ CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(createChannel, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(deleteChannel, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(listChannels, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(subscribeToTopic, CAPPluginReturnPromise);
+  CAP_PLUGIN_METHOD(unsubscribeFromTopic, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 

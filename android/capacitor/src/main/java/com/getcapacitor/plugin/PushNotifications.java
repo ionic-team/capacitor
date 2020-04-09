@@ -186,7 +186,7 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void subscribeToTopic(PluginCall call) {
-    String topic = call.getString("topic");
+    String topic = call.getString("name");
     
     FirebaseMessaging.getInstance().subscribeToTopic(topic)
       .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -206,7 +206,7 @@ public class PushNotifications extends Plugin {
 
   @PluginMethod()
   public void unsubscribeFromTopic(PluginCall call) {
-    String topic = call.getString("topic");
+    String topic = call.getString("name");
     
     FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
       .addOnSuccessListener(new OnSuccessListener<Void>() {
