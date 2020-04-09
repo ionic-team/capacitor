@@ -1,14 +1,14 @@
 import { exec } from 'child_process';
 import { Config } from '../config';
 import { copyTemplate, hasYarn, installDeps, runTask } from '../common';
+import { readFileSync, writeFileSync } from '../util/fs';
 import * as path from 'path';
-import { writeFileSync, readFileSync } from '../util/fs';
 
 export async function addElectron(config: Config) {
 
   await runTask(`Adding Electron project in: ${config.electron.platformDir}`, async () => {
     const copyReturn = await copyTemplate(config.electron.assets.templateDir, config.electron.platformDir);
-    const capConfigName= JSON.parse(readFileSync(path.join(config.electron.platformDir, '../capacitor.config.json')) + '')['appName'];
+    const capConfigName = JSON.parse(readFileSync(path.join(config.electron.platformDir, '../capacitor.config.json')) + '')['appName'];
     const packageJSONParse = JSON.parse(readFileSync(path.join(config.electron.platformDir, './package.json')) + '');
     packageJSONParse.name = capConfigName;
     writeFileSync(path.join(config.electron.platformDir, './package.json'), JSON.stringify(packageJSONParse));
