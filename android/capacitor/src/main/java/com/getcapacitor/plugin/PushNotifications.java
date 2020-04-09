@@ -218,7 +218,7 @@ public class PushNotifications extends Plugin {
       .addOnFailureListener(new OnFailureListener() {
           @Override
           public void onFailure(@NonNull Exception e) {
-              call.error("error : unable to unsubscribe from topic " + topic, e)
+              call.error("error : unable to unsubscribe from topic " + topic, e);
           }
       });
   }
