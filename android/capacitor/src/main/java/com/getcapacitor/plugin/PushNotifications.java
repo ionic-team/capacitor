@@ -197,8 +197,7 @@ public class PushNotifications extends Plugin {
       })
       .addOnFailureListener(new OnFailureListener() {
           @Override
-          public void onFailure(@NonNull Exception e) {
-              error(e.getLocalizedMessage());
+          public void onFailure(Exception e) {
               call.error("error : unable to subscribe to topic " + topic, e);
           }
       });
@@ -217,7 +216,7 @@ public class PushNotifications extends Plugin {
       })
       .addOnFailureListener(new OnFailureListener() {
           @Override
-          public void onFailure(@NonNull Exception e) {
+          public void onFailure(Exception e) {
               call.error("error : unable to unsubscribe from topic " + topic, e);
           }
       });
