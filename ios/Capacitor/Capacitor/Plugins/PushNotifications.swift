@@ -100,7 +100,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    * Subscribe to a specific Push Notification Topic
    */
   @objc func subscribeToTopic(_ call: CAPPluginCall) {
-    let topic = call.getString("name")
+    let topic = call.getString("name") ?? ""
     Messaging.messaging().subscribe(toTopic: topic) {error in
       guard error == nil else {
         call.error(error!.localizedDescription)
@@ -114,7 +114,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    * Unsubscribe from a specific Push Notification Topic
    */
   @objc func unsubscribeFromTopic(_ call: CAPPluginCall) {
-    let topic = call.getString("name")
+    let topic = call.getString("name") ?? ""
     Messaging.messaging().unsubscribe(fromTopic: topic) {error in
       guard error == nil else {
         call.error(error!.localizedDescription)
