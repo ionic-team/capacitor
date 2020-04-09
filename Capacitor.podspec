@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version.to_s }
   s.source_files = 'ios/Capacitor/Capacitor/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/*.{swift,h,m}', 'ios/Capacitor/Capacitor/Plugins/**/*.{swift,h,m}'
+  s.static_framework = true
   s.dependency 'CapacitorCordova', '2.0.0'
   s.dependency 'FirebaseMessaging'
   s.swift_version = '5.0'
