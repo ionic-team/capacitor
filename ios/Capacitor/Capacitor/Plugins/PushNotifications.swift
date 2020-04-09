@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 
-import Firebase
+import FirebaseMessaging
 
 enum PushNotificationError: Error {
   case tokenParsingFailed
