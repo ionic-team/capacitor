@@ -1,3 +1,39 @@
+## [2.0.1](https://github.com/ionic-team/capacitor/compare/2.0.0...2.0.1) (2020-04-10)
+
+
+### Bug Fixes
+
+* fix(android): Avoid crash on schedule if LocalNotifications are disabled (#2718) ([aac51fe](https://github.com/ionic-team/capacitor/commit/aac51fe)), closes [#2718](https://github.com/ionic-team/capacitor/issues/2718)
+* fix(android): display title on Modals.showActions (#2730) ([c2e0358](https://github.com/ionic-team/capacitor/commit/c2e0358)), closes [#2730](https://github.com/ionic-team/capacitor/issues/2730)
+* fix(android): input autofocus and javascript focus not working (#2719) ([e010a28](https://github.com/ionic-team/capacitor/commit/e010a28)), closes [#2719](https://github.com/ionic-team/capacitor/issues/2719)
+* fix(android): use proper targetSdkVersion (#2706) ([3cd02e4](https://github.com/ionic-team/capacitor/commit/3cd02e4)), closes [#2706](https://github.com/ionic-team/capacitor/issues/2706)
+* fix(cli): avoid error on create command (#2727) ([fefa4b9](https://github.com/ionic-team/capacitor/commit/fefa4b9)), closes [#2727](https://github.com/ionic-team/capacitor/issues/2727)
+* fix(cli): match platform version with cli version on add command (#2724) ([6172932](https://github.com/ionic-team/capacitor/commit/6172932)), closes [#2724](https://github.com/ionic-team/capacitor/issues/2724)
+* fix(cli): use appName as package.json name on electron project (#2741) ([d6fc2d8](https://github.com/ionic-team/capacitor/commit/d6fc2d8)), closes [#2741](https://github.com/ionic-team/capacitor/issues/2741)
+* fix(cli): Warn if core version doesn't match platform version (#2736) ([29a9acf](https://github.com/ionic-team/capacitor/commit/29a9acf)), closes [#2736](https://github.com/ionic-team/capacitor/issues/2736)
+* fix(cordova): Don't add as system library if it's a vendored library (#2729) ([404574d](https://github.com/ionic-team/capacitor/commit/404574d)), closes [#2729](https://github.com/ionic-team/capacitor/issues/2729)
+* fix(cordova): handle plugin.xml asset tag (#2728) ([8e1abfe](https://github.com/ionic-team/capacitor/commit/8e1abfe)), closes [#2728](https://github.com/ionic-team/capacitor/issues/2728)
+* fix(electron): Update Modals Plugin to use new dialog async syntax (#2742) ([4c13fe0](https://github.com/ionic-team/capacitor/commit/4c13fe0)), closes [#2742](https://github.com/ionic-team/capacitor/issues/2742)
+* fix(ios): allow access to extension-less files (#2726) ([3baf81b](https://github.com/ionic-team/capacitor/commit/3baf81b)), closes [#2726](https://github.com/ionic-team/capacitor/issues/2726)
+* fix(ios): don't use the tmpWindow on popover presentation (#2714) ([327ffc5](https://github.com/ionic-team/capacitor/commit/327ffc5)), closes [#2714](https://github.com/ionic-team/capacitor/issues/2714)
+* fix(plugin-template): remove incorrect = from android gradle file (#2689) ([39c8d4a](https://github.com/ionic-team/capacitor/commit/39c8d4a)), closes [#2689](https://github.com/ionic-team/capacitor/issues/2689)
+
+
+### Docs
+
+* docs(ce-plugins): Remove capacitor-apple-login (#2734) ([b532179](https://github.com/ionic-team/capacitor/commit/b532179)), closes [#2734](https://github.com/ionic-team/capacitor/issues/2734)
+* docs(updating): Add 2.0.0 changes for electron (#2708) ([6a03960](https://github.com/ionic-team/capacitor/commit/6a03960)), closes [#2708](https://github.com/ionic-team/capacitor/issues/2708)
+* docs(updating): Add some 2.0.0 missing information (#2707) ([46ca030](https://github.com/ionic-team/capacitor/commit/46ca030)), closes [#2707](https://github.com/ionic-team/capacitor/issues/2707)
+* docs(updating): modify the guides for 2.0.0 final ([00f6196](https://github.com/ionic-team/capacitor/commit/00f6196))
+
+
+### Chores
+
+* chore(android): fix release script to use Android X (#2687) ([a63e203](https://github.com/ionic-team/capacitor/commit/a63e203)), closes [#2687](https://github.com/ionic-team/capacitor/issues/2687)
+* chore(android): Improve handling of splashImmersive and splashFullScreen preferences (#2705) ([1c633c5](https://github.com/ionic-team/capacitor/commit/1c633c5)), closes [#2705](https://github.com/ionic-team/capacitor/issues/2705)
+
+
+
 ## [2.0.0](https://github.com/ionic-team/capacitor/compare/1.5.0...2.0.0) (2020-04-03)
 
 
