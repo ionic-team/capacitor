@@ -64,16 +64,10 @@ class CapacitorSplashScreen {
     this.mainWindowRef = mainWindow;
 
     try {
-      let capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
-      let ss = {};
-      if ( capConfigJson.plugins !== undefined ) {
-        if ( capConfigJson.plugins.SplashScreen !== undefined ) {
-          ss = capConfigJson.plugins.SplashScreen;
-        }
-      }
+      const capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
       this.splashOptions = Object.assign(
         this.splashOptions,
-        ss
+        capConfigJson.plugins ? capConfigJson.plugins.SplashScreen || {} : {}
       );
     } catch (e) {
       console.error(e.message);
