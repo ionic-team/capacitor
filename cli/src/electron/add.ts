@@ -11,7 +11,7 @@ export async function addElectron(config: Config) {
     const capConfigName = require(join(config.app.rootDir, 'capacitor.config.json')).appName;
     const packageJSONParse = require(join(config.electron.platformDir, 'package.json'));
     packageJSONParse.name = capConfigName;
-    writeFileSync(path.join(config.electron.platformDir, './package.json'), JSON.stringify(packageJSONParse));
+    writeFileSync(join(config.electron.platformDir, 'package.json'), JSON.stringify(packageJSONParse));
     return copyReturn;
   });
 
