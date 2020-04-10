@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import { Config } from '../config';
 import { copyTemplate, hasYarn, installDeps, runTask } from '../common';
-import { readFileSync, writeFileSync } from '../util/fs';
+import { writeFileSync } from '../util/fs';
 import { join } from 'path';
 
 export async function addElectron(config: Config) {
