@@ -8,7 +8,7 @@ export async function addElectron(config: Config) {
 
   await runTask(`Adding Electron project in: ${config.electron.platformDir}`, async () => {
     const copyReturn = await copyTemplate(config.electron.assets.templateDir, config.electron.platformDir);
-    const capConfigName = JSON.parse(readFileSync(path.join(config.electron.platformDir, '../capacitor.config.json')) + '')['appName'];
+    const capConfigName = require(join(config.app.rootDir, 'capacitor.config.json')).appName;
     const packageJSONParse = JSON.parse(readFileSync(path.join(config.electron.platformDir, './package.json')) + '');
     packageJSONParse.name = capConfigName;
     writeFileSync(path.join(config.electron.platformDir, './package.json'), JSON.stringify(packageJSONParse));
