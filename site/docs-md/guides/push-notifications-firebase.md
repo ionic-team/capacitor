@@ -9,7 +9,7 @@ contributors:
 
 # Using Push Notifications with Firebase in an Ionic + Angular App
 
-**Web Framework**: Ionic 5 + Angular
+**Web Framework**: Angular
 **Platforms**: iOS, Android
 
 One of the most common features provided by application developers to their users is push notifications. In this tutorial, we'll walk through all the steps needed to get [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) working on iOS and Android.
@@ -28,7 +28,7 @@ Also, we're using Firebase for push notifications, so if you're using other Cord
 
 ## Prepare an Ionic Capacitor App
 
-If you have an existing Ionic 5 app, skip this section. If not, let's create an Ionic app first.
+If you have an existing Ionic app, skip this section. If not, let's create an Ionic app first.
 
 In your preferred terminal, install the latest version of the Ionic CLI:
 
@@ -36,7 +36,7 @@ In your preferred terminal, install the latest version of the Ionic CLI:
 npm install -g @ionic/cli
 ```
 
-Next, let's use the CLI to create a new Ionic 5 Angular app based on the **blank** starter project and call it **capApp**:
+Next, let's use the CLI to create a new Ionic Angular app based on the **blank** starter project and call it **capApp**:
 
 ```bash
 ionic start capApp blank --type=angular
