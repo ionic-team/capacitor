@@ -22,6 +22,10 @@ Building and deploying iOS and Android applications using Capacitor requires a b
 
 To test push notifications on iOS, Apple requires that you have [a paid Apple Developer account](https://developer.apple.com/) and a *physical* iOS device.
 
+If you are running into issues or your console throws warnings about outdated or deprecated packages, make sure that you're on the latest estable versions of Node, Android Studio, and Xcode".
+
+Also, we're using Firebase for push notifications, so if you're using other Cordova plugins that use the Firebase SDK make sure they're using the latest versions.
+
 ## Prepare an Ionic Capacitor App
 
 If you have an existing Ionic 5 app, skip this section. If not, let's create an Ionic app first.
