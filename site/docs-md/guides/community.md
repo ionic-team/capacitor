@@ -49,3 +49,5 @@ contributors:
 [Google Login in Capacitor Apps with Ionic React &#8250;](https://enappd.com/blog/google-login-in-ionic-react-capacitor-apps/122)
 
 [Twitter Login in Capacitor Apps with Ionic React &#8250;](https://enappd.com/blog/twitter-login-in-ionic-react-capacitor-app/121)
+
+[Implement AdMob in Ionic React Capacitor Apps &#8250;](https://enappd.com/blog/implement-admob-in-ionic-react-capacitor-apps/135/)
