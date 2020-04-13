@@ -62,16 +62,7 @@ class CapacitorSplashScreen {
     };
 
     this.mainWindowRef = mainWindow;
-/*
-Change let to const
-Maybe use a ternary operator instead of multiple if's
-const capConfigJson = JSON.parse(fs.readFileSync('./capacitor.config.json', 'utf-8'));
 
-this.splashOptions = Object.assign(
-this.splashOptions,
-capConfigJson.plugins ? capConfigJson.plugins.SplashScreen || {} : {}
-);
-*/
     try {
       const capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
       this.splashOptions = Object.assign(
