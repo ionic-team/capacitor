@@ -59,7 +59,8 @@
     },
     "testMatch": [
       "**/__test__/*.(ts|tsx|js)"
-    ]
+    ],
+    "testURL": "http://localhost/"
   },
   "dependencies": {
     "tslib": "^1.9.0"
