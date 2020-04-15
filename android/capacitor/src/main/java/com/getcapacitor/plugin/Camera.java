@@ -485,6 +485,7 @@ public class Camera extends Plugin {
       isEdited = true;
       processPickedImage(savedCall, data);
     } else if (resultCode == Activity.RESULT_CANCELED && imageFileSavePath != null) {
+      imageEditedFileSavePath = null;
       isEdited = true;
       processCameraImage(savedCall);
     }
