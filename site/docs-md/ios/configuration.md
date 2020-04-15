@@ -38,3 +38,22 @@ Entitlements are used to enable key features that your app may need.
 Unlike certain configuration options or usage descriptions, entitlements are configured in a special area inside of Xcode, rather than in `Info.plist`.
 
 If a plugin requires certain entitlements, open your app in Xcode, click on the name of your project in the left project menu, and select `Capabilities` in the tab bar.
+
+## Renaming the application's default `App` name
+
+You can't rename the App folder, but you can set the name of your app by renaming the "target" called "App".
+
+In XCode you will see something like this:
+```
+PROJECT
+  App
+-------
+TARGET
+  App
+```
+Here you can click on the name "App" under TARGET to rename your app.
+
+You then also have to modify the Podfile to rename the current target accordingly:
+
+The default Podfile has an `'App'` target, which needs to be replaced by your new name here:
+https://github.com/ionic-team/capacitor/blob/master/ios-template/App/Podfile#L16
