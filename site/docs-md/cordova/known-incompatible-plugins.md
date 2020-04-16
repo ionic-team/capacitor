@@ -30,3 +30,4 @@ contributors:
 - cordova-plugin-statusbar (not needed, Capacitor has its own)
 - cordova-plugin-wkwebview-engine (not needed, Capacitor uses WKWebView)
 - cordova-plugin-googlemaps (causes build failures on iOS, skipped for iOS only)
+- cordova-plugin-file (with angular because both zonejs and FileReader modify FileReader in incompatibe ways)
