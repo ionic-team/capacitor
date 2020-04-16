@@ -23,7 +23,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
         self.vc = SFSafariViewController.init(url: url!)
         self.vc!.delegate = self
         let presentationStyle = call.getString("presentationStyle")
-        if presentationStyle != nil && presentationStyle == "popover" && UIDevice.current.userInterfaceIdiom == .pad {
+        if presentationStyle != nil && presentationStyle == "popover" && self.supportsPopover() {
           self.vc!.modalPresentationStyle = .popover
           self.setCenteredPopover(self.vc)
         } else {
