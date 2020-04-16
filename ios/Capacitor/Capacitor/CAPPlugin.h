@@ -34,5 +34,6 @@
 -(NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue;
 -(id)getConfigValue:(NSString *) key;
 -(void)setCenteredPopover:(UIViewController *) vc;
+-(BOOL)supportsPopover;
 
 @end

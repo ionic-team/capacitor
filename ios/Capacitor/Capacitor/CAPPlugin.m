@@ -147,5 +147,13 @@
   vc.popoverPresentationController.permittedArrowDirections = 0;
 }
 
+-(BOOL)supportsPopover {
+  if (@available(iOS 13, *)) {
+    return YES;
+  } else {
+    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
+  }
+}
+
 @end
 
