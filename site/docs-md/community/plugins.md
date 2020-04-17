@@ -45,6 +45,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Keep Screen On |`capacitor-keep-screen-on` | <https://github.com/go-u/capacitor-keep-screen-on> | |
+| Snackbar | [`capacitor-snackbar-gfc`](https://www.npmjs.com/package/capacitor-snackbar-gfc)  | <https://github.com/SASGeniusFlashConception/capacitor-snackbar-gfc> | Currently on Android, soon on Ios
 
 ## Storage
 
