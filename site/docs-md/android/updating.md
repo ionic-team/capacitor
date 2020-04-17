@@ -81,7 +81,7 @@ Recommended changes:
   }
   ```
 
-  In `android/build.gradle` file, add `apply from: "variables.gradle"`
+  In `android/build.gradle` file, add `apply from: "variables.gradle"` as shown [here](https://github.com/ionic-team/capacitor/blob/master/android-template/build.gradle#L18).
 
 * Use common variables
 
