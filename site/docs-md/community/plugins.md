@@ -178,5 +178,6 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Install Referrer | `capacitor-install-referrer` | <https://github.com/eladcandroid/capacitor-install-referrer> | |
 | Request app review | `capacitor-rate-app` | <https://github.com/Nodonisko/capacitor-rate-app> | Request app review from users |
+| AppRate GFC| [`capacitor-apprate-gfc`](https://www.npmjs.com/package/capacitor-apprate-gfc)  | <https://github.com/SASGeniusFlashConception/capacitor-apprate-gfc> | Currently on Android, soon on Ios
 | Change Android Navigationbar Color | `capacitor-navigationbar` | <https://github.com/nikosdouvlis/capacitor-navigationbar> | Programmatically change the navigation bar color on android devices |
 | Dark Mode | `capacitor-dark-mode` | <https://github.com/hinddeep/ionicCapacitorDarkMode> | | Listen for dark mode change events
