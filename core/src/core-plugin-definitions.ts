@@ -1358,11 +1358,11 @@ export interface PhotosPlugin extends Plugin {
    */
   getAlbums(options?: PhotosAlbumsFetchOptions): Promise<PhotosAlbumsResult>;
   /**
-   * Save a photo the the user's photo library
+   * Save a photo to the user's photo library
    */
   savePhoto(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
   /**
-   * Create an album in the user's photo library
+   * iOS only. Create an album in the user's photo library
    */
   createAlbum(options: PhotosCreateAlbumOptions): Promise<void>;
 }
@@ -1465,17 +1465,12 @@ export interface PhotosSaveOptions {
    */
   data: string;
   /**
-   * The optional album identifier to save this photo in
+   * iOS only. The optional album identifier to save this photo in
    */
   albumIdentifier?: string;
 }
 
-export interface PhotosSaveResult {
-  /**
-   * Whether the photo was created
-   */
-  success: boolean;
-}
+export interface PhotosSaveResult {}
 
 export interface PhotosAlbumsFetchOptions {
   /**
