@@ -253,6 +253,8 @@ public class LocalNotificationManager {
     dissmissIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
     dissmissIntent.putExtra(NOTIFICATION_INTENT_KEY, localNotification.getId());
     dissmissIntent.putExtra(ACTION_INTENT_KEY, "dismiss");
+    LocalNotificationSchedule schedule = localNotification.getSchedule();
+    dissmissIntent.putExtra(NOTIFICATION_IS_REMOVABLE_KEY, schedule == null || schedule.isRemovable());
     PendingIntent deleteIntent = PendingIntent.getBroadcast(
             context, localNotification.getId(), dissmissIntent, 0);
     mBuilder.setDeleteIntent(deleteIntent);
