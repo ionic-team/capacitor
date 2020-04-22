@@ -87,9 +87,6 @@ export class SiteHeader {
           <stencil-route-link urlMatch="/docs" url="/docs/" onClick={() => { this.hideNav() }}>
             Docs
           </stencil-route-link>
-          {/* <stencil-route-link urlMatch="/blog" url="/blog/" onClick={() => { this.hideNav() }}>
-            Blog
-          </stencil-route-link> */}
 
           <span
             class={{
