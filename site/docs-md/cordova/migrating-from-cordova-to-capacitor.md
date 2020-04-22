@@ -74,7 +74,7 @@ If you've previously created icon and splash screen images, they can be found in
 
 Begin by auditing your existing Cordova plugins - it's possible that you may be able to remove ones that are no longer needed. 
 
-Next, review all of Capacitor's [core plugins](/docs/apis) as well as [community plugins](/docs/community/plugins). You may be able to switch to the Capacitor-equivalent Cordova plugin. Also note that some Capacitor plugins extend beyond mobile, including [PWA](/docs/web) and [Desktop](/docs/electron/) functionality, which Cordova traditionally hasn't had support for. For example, compare the [Capacitor Camera](/docs/apis/camera) to the [Cordova Camera](https://github.com/apache/cordova-plugin-camera).
+Next, review all of Capacitor's [core plugins](/docs/apis) as well as [community plugins](/docs/community/plugins). You may be able to switch to the Capacitor-equivalent Cordova plugin.
 
 Some plugins may not match functionality entirely, but based on the features you need that may not matter.
 

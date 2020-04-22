@@ -27,7 +27,7 @@ export class LandingPage {
           <hgroup>
             <h1 id="action-call">The Native Bridge for Cross-Platform Web Apps</h1>
             <h3>
-              Invoke Native SDKs on iOS, Android, Electron, and the Web with one code base.
+              Invoke Native SDKs on iOS, Android, and the Web with one code base.
               Optimized for Ionic Framework apps, or use with any web app framework.
             </h3>
             <stencil-route-link url="/docs/getting-started/">
@@ -36,7 +36,7 @@ export class LandingPage {
               </button>
             </stencil-route-link>
             <h5>Supports</h5>
-            <img alt="Apple, Android, Electron, PWA" src="/assets/img/supported-env.png"></img>
+            <img alt="Apple, Android, PWA" src="/assets/img/supported-env.png"></img>
           </hgroup>
           <div class="hero-illustration">
             <img src="/assets/img/capacitor-hero.jpg"></img>
@@ -48,8 +48,7 @@ export class LandingPage {
               <h2>Cross Platform</h2>
 
               <p>
-                Build web apps that run equally well on iOS, Android,
-                Electron, and as Progressive Web Apps
+                Build web apps that run equally well on iOS, Android, and as Progressive Web Apps
             </p>
           </div>
           <div class="points__item points__item--nativeaccess">

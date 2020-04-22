@@ -39,7 +39,3 @@ npx cap serve
 ```
 
 This will open your web app in a local web server instance in the browser.
-
-## Electron
-
-(Coming soon)
