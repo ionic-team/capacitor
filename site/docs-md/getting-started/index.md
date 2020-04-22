@@ -51,7 +51,6 @@ Next, install any of the desired native platforms:
 ```bash
 npx cap add android
 npx cap add ios
-npx cap add electron
 ```
 
 🎉 Capacitor is now installed in your project. 🎉

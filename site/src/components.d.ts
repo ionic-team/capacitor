@@ -7,8 +7,8 @@
 
 import '@stencil/core';
 
-import '@stencil/router';
 import '@stencil/state-tunnel';
+import '@stencil/router';
 import {
   MarkdownContent,
   MarkdownHeading,
