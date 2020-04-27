@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import android.webkit.CookieManager;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -7,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.net.HttpURLConnection;
 
 /**
  * JSInject is responsible for returning Capacitor's core
@@ -55,6 +57,18 @@ class JSInjector {
    * @return
    */
   public InputStream getInjectedStream(InputStream responseStream) {
+    return getInjectedStream(responseStream, null, null);
+  }
+
+  /**
+   * Given an InputStream from the web server, prepend it with
+   * our JS stream
+   * @param responseStream
+   * @param conn
+   * @param url
+   * @return
+   */
+  public InputStream getInjectedStream(InputStream responseStream, HttpURLConnection conn, String url) {
     String js = "<script type=\"text/javascript\">" + getScriptString() + "</script>";
     String html = this.readAssetStream(responseStream);
     if (html.contains("<head>")) {
@@ -64,8 +78,16 @@ class JSInjector {
     } else {
       Log.e(LogUtils.getCoreTag(), "Unable to inject Capacitor, Plugins won't work");
     }
+
+    if (conn != null && url != null) {
+      String cookie = conn.getHeaderField("Set-Cookie");
+      if (cookie != null) {
+        CookieManager.getInstance().setCookie(url, cookie);
+      }
+    }
+
     return new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
-  }
+  }  
 
   private String readAssetStream(InputStream stream) {
     try {
