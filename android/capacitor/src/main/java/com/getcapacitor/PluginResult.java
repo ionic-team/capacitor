@@ -1,9 +1,5 @@
 package com.getcapacitor;
 
-import android.util.Log;
-
-import org.json.JSONException;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -62,7 +58,7 @@ public class PluginResult {
     try {
       this.json.put(name, value);
     } catch (Exception ex) {
-      Log.e(LogUtils.getPluginTag(), "", ex);
+      Logger.error(Logger.tags("Plugin"), "", ex);
     }
     return this;
   }

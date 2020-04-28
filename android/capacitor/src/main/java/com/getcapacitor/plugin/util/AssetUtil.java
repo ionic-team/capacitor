@@ -8,11 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.StrictMode;
-import android.util.Log;
 
 import androidx.core.content.FileProvider;
 
-import com.getcapacitor.LogUtils;
+import com.getcapacitor.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -90,7 +89,7 @@ public final class AssetUtil {
         File file      = new File(absPath);
 
         if (!file.exists()) {
-            Log.e(LogUtils.getCoreTag(), "File not found: " + file.getAbsolutePath());
+            Logger.error("File not found: " + file.getAbsolutePath());
             return Uri.EMPTY;
         }
 
@@ -119,7 +118,7 @@ public final class AssetUtil {
             FileOutputStream out = new FileOutputStream(file);
             copyFile(in, out);
         } catch (Exception e) {
-            Log.e(LogUtils.getCoreTag(), "File not found: assets/" + resPath);
+            Logger.error("File not found: assets/" + resPath);
             return Uri.EMPTY;
         }
 
@@ -139,7 +138,7 @@ public final class AssetUtil {
         int resId      = getResId(resPath);
 
         if (resId == 0) {
-            Log.e(LogUtils.getCoreTag(), "File not found: " + resPath);
+            Logger.error("File not found: " + resPath);
             return Uri.EMPTY;
         }
 
@@ -183,11 +182,11 @@ public final class AssetUtil {
             copyFile(in, out);
             return getUriFromFile(file);
         } catch (MalformedURLException e) {
-            Log.e("Asset", "Incorrect URL", e);
+            Logger.error(Logger.tags("Asset"), "Incorrect URL", e);
         } catch (FileNotFoundException e) {
-            Log.e("Asset", "Failed to create new File from HTTP Content", e);
+            Logger.error(Logger.tags("Asset"), "Failed to create new File from HTTP Content", e);
         } catch (IOException e) {
-            Log.e("Asset", "No Input can be created from http Stream", e);
+            Logger.error(Logger.tags("Asset"), "No Input can be created from http Stream", e);
         }
 
         return Uri.EMPTY;
@@ -210,7 +209,7 @@ public final class AssetUtil {
             out.flush();
             out.close();
         } catch (Exception e) {
-            Log.e(LogUtils.getCoreTag(), "Error copiing", e);
+            Logger.error("Error copying", e);
         }
     }
 
@@ -310,7 +309,7 @@ public final class AssetUtil {
         }
 
         if (dir == null) {
-            Log.e("Asset", "Missing cache dir");
+            Logger.error(Logger.tags("Asset"), "Missing cache dir", null);
             return null;
         }
 
@@ -334,7 +333,7 @@ public final class AssetUtil {
             String authority = context.getPackageName() + ".provider";
             return FileProvider.getUriForFile(context, authority, file);
         } catch (IllegalArgumentException e) {
-            Log.e(LogUtils.getCoreTag(), "File not supported by provider", e);
+            Logger.error("File not supported by provider", e);
             return Uri.EMPTY;
         }
     }

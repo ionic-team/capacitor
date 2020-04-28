@@ -3,7 +3,6 @@ package com.getcapacitor.ui;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
@@ -14,7 +13,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.LogUtils;
+import com.getcapacitor.Logger;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -104,7 +103,7 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         tv.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.d(LogUtils.getCoreTag(), "CliCKED: " + optionIndex);
+            Logger.debug("CliCKED: " + optionIndex);
 
             if (listener != null) {
               listener.onSelected(optionIndex);
@@ -127,7 +126,7 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
       }
     } catch (JSONException ex) {
-      Log.e(LogUtils.getCoreTag(), "JSON error processing an option for showActions", ex);
+      Logger.error("JSON error processing an option for showActions", ex);
     }
   }
 }

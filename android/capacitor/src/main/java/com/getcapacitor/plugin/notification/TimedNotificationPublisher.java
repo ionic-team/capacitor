@@ -7,8 +7,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import com.getcapacitor.LogUtils;
+import com.getcapacitor.Logger;
 
 import java.util.Date;
 
@@ -29,7 +28,7 @@ public class TimedNotificationPublisher extends BroadcastReceiver {
     Notification notification = intent.getParcelableExtra(NOTIFICATION_KEY);
     int id = intent.getIntExtra(LocalNotificationManager.NOTIFICATION_INTENT_KEY, Integer.MIN_VALUE);
     if (id == Integer.MIN_VALUE) {
-      Log.e(LogUtils.getPluginTag("LN"), "No valid id supplied");
+      Logger.error(Logger.tags("LN"), "No valid id supplied", null);
     }
     notificationManager.notify(id, notification);
     rescheduleNotificationIfNeeded(context, intent, id);
