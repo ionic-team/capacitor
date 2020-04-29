@@ -209,10 +209,10 @@ Next, use Google's [Asset Links tool](https://developers.google.com/digital-asse
 
 ![Android Identifier Config](/assets/img/docs/guides/deep-links/android-config.png)
 
-Copy the JSON output into a new local file under `.well-known/applinks.json`.
+Copy the JSON output into a new local file under `.well-known/assetlinks.json`.
 
 ```json
-// applinks.json
+// assetlinks.json
 [
   {
     "relation": ["delegate_permission/common.handle_all_urls"],
