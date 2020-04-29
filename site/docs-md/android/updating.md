@@ -102,7 +102,7 @@ Recommended changes:
 
   You can also manually update the Gradle plugin and Gradle.
   
-  To manually update Gradle plugin, edit `android/build.gradle` file. Change `classpath 'com.android.tools.build:gradle:3.3.2'` to `classpath 'com.android.tools.build:gradle:3.6.1'`. Change `gradle-4.10.1-all.zip` to `gradle-5.6.4-all.zip`.
+  To manually update Gradle plugin, edit `android/build.gradle` file. Change `classpath 'com.android.tools.build:gradle:3.3.2'` to `classpath 'com.android.tools.build:gradle:3.6.1'`.
 
   To manually update Gradle, edit `android/gradle/wrapper/gradle-wrapper.properties`. Change `gradle-4.10.1-all.zip` to `gradle-5.6.4-all.zip`.
 
