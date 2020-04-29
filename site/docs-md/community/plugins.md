@@ -118,6 +118,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | AdMob | `capacitor-admob` | <https://github.com/rahadur/capacitor-admob> | iOS, Android |
 | AdMob | `@rdlabo/capacitor-admob` | <https://github.com/rdlabo/capacitor-admob> | |
+| AdMob | `capacitor-admob-advanced` | <https://github.com/DTX-Elliot/capacitor-admob-advanced> | iOS, Android |
 
 ## Notifications
 
