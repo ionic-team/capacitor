@@ -64,17 +64,10 @@ public class Clipboard extends Plugin {
 
     JSObject ret = new JSObject();
     String type = "text/plain";
-
-    if (value != null) {
-      ret.put("value", value);
-      if (value.toString().startsWith("data:")) {
-        type = value.toString().split(";")[0].split(":")[1];
-      }
+    ret.put("value", value != null ? value : "");
+    if (value != null && value.toString().startsWith("data:")) {
+      type = value.toString().split(";")[0].split(":")[1];
     }
-    else {
-      ret.put("value", "");
-    }
-
     ret.put("type", type);
 
     call.success(ret);
