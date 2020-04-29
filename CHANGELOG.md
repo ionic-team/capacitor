@@ -1,3 +1,38 @@
+## [2.0.2](https://github.com/ionic-team/capacitor/compare/2.0....2.0.2) (2020-04-29)
+
+
+### Bug Fixes
+
+* fix(android) : App can crash on clipboard.read if empty (#2815) ([fc33265](https://github.com/ionic-team/capacitor/commit/fc33265)), closes [#2815](https://github.com/ionic-team/capacitor/issues/2815)
+* fix(android): avoid camera crash on photo edit cancel (#2776) ([4b8820d](https://github.com/ionic-team/capacitor/commit/4b8820d)), closes [#2776](https://github.com/ionic-team/capacitor/issues/2776)
+* fix(android): don't remove LocalNotification from pending on dismiss (#2809) ([822b140](https://github.com/ionic-team/capacitor/commit/822b140)), closes [#2809](https://github.com/ionic-team/capacitor/issues/2809)
+* fix(ios): allow Browser popover presentation if supported (#2784) ([4b40494](https://github.com/ionic-team/capacitor/commit/4b40494)), closes [#2784](https://github.com/ionic-team/capacitor/issues/2784)
+* fix(ios): remove applicationState check on keyboard plugin (#2820) ([dbc1da1](https://github.com/ionic-team/capacitor/commit/dbc1da1)), closes [#2820](https://github.com/ionic-team/capacitor/issues/2820)
+* fix(web): Gracefully degrade Proxy usage to fix IE11 (#2759) ([b61f909](https://github.com/ionic-team/capacitor/commit/b61f909)), closes [#2759](https://github.com/ionic-team/capacitor/issues/2759)
+
+
+### Docs
+
+* docs(ios/configuration): Add information on how to rename your app (#2768) ([55c3d52](https://github.com/ionic-team/capacitor/commit/55c3d52)), closes [#2768](https://github.com/ionic-team/capacitor/issues/2768)
+* docs: improve visibility of jetifier command (#2844) ([fd28a3a](https://github.com/ionic-team/capacitor/commit/fd28a3a)), closes [#2844](https://github.com/ionic-team/capacitor/issues/2844)
+* docs(android): explain where to apply the variables change (#2791) ([e5bd2eb](https://github.com/ionic-team/capacitor/commit/e5bd2eb)), closes [#2791](https://github.com/ionic-team/capacitor/issues/2791)
+* docs(ce-plugins): Add capacitor-admob-advanced (#2780) ([9b1593d](https://github.com/ionic-team/capacitor/commit/9b1593d)), closes [#2780](https://github.com/ionic-team/capacitor/issues/2780)
+* docs(deep-links): Rename applinks.json to assetlinks.json (#2842) ([53883ce](https://github.com/ionic-team/capacitor/commit/53883ce)), closes [#2842](https://github.com/ionic-team/capacitor/issues/2842)
+* docs(firebase pn): Update Push Notifications with Firebase Guide (#2698) ([ee5e283](https://github.com/ionic-team/capacitor/commit/ee5e283)), closes [#2698](https://github.com/ionic-team/capacitor/issues/2698)
+* docs(keyboard): Add missing import in example (#2749) ([04fb275](https://github.com/ionic-team/capacitor/commit/04fb275)), closes [#2749](https://github.com/ionic-team/capacitor/issues/2749)
+* docs(troubleshooting): Add AndroidX information and workaround (#2832) ([d9cd399](https://github.com/ionic-team/capacitor/commit/d9cd399)), closes [#2832](https://github.com/ionic-team/capacitor/issues/2832)
+* docs(updating): Provide a full path to variables.gradle file (#2769) ([3638a89](https://github.com/ionic-team/capacitor/commit/3638a89)), closes [#2769](https://github.com/ionic-team/capacitor/issues/2769)
+* docs(updating): Remove duplicate gradle sentence (#2798) ([347029c](https://github.com/ionic-team/capacitor/commit/347029c)), closes [#2798](https://github.com/ionic-team/capacitor/issues/2798)
+
+
+### Chores
+
+* chore: remove blog (#2813) ([e219e69](https://github.com/ionic-team/capacitor/commit/e219e69)), closes [#2813](https://github.com/ionic-team/capacitor/issues/2813)
+* chore: remove electron mentions (#2812) ([4dad4a1](https://github.com/ionic-team/capacitor/commit/4dad4a1)), closes [#2812](https://github.com/ionic-team/capacitor/issues/2812)
+* chore(core): update jest (#2843) ([b525c17](https://github.com/ionic-team/capacitor/commit/b525c17)), closes [#2843](https://github.com/ionic-team/capacitor/issues/2843)
+
+
+
 ## [2.0.1](https://github.com/ionic-team/capacitor/compare/2.0.0...2.0.1) (2020-04-10)
 
 
