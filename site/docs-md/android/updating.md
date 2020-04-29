@@ -60,7 +60,7 @@ Recommended changes:
 
 * Create common variables
 
-  Create a `variables.gradle` file inside `android` folder with this content
+  Create a `android/variables.gradle` file with this content
 
   ```
   ext {
