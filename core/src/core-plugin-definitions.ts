@@ -343,6 +343,19 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * If use CameraSource.Prompt only, can change Prompt label.
+   * default:
+   *   promptLabelHeader  : 'Photo'       // iOS only
+   *   promptLabelCancel  : 'Cancel'      // iOS only
+   *   promptLabelPhoto   : 'From Photos'
+   *   promptLabelPicture : 'Take Picture'
+   */
+  promptLabelHeader?: string;
+  promptLabelCancel?: string;
+  promptLabelPhoto?: string;
+  promptLabelPicture?: string;
 }
 
 export enum CameraSource {

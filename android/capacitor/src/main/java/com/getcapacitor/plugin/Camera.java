@@ -104,10 +104,13 @@ public class Camera extends Plugin {
 
   private void showPrompt(final PluginCall call) {
     // We have all necessary permissions, open the camera
+    String promptLabelPhoto = call.getString("promptLabelPhoto", "From Photos");
+    String promptLabelPicture = call.getString("promptLabelPicture", "Take Picture");
+
     JSObject fromPhotos = new JSObject();
-    fromPhotos.put("title", "From Photos");
+    fromPhotos.put("title", promptLabelPhoto);
     JSObject takePicture = new JSObject();
-    takePicture.put("title", "Take Picture");
+    takePicture.put("title", promptLabelPicture);
     Object[] options = new Object[] {
       fromPhotos,
       takePicture
