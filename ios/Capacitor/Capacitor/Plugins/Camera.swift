@@ -101,10 +101,10 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
   func showPrompt(_ call: CAPPluginCall) {
     // Build the action sheet
-    var promptLabelHeader = call.getString("promptLabelHeader") ?? "Photo"
-    var promptLabelPhoto = call.getString("promptLabelPhoto") ?? "From Photos"
-    var promptLabelPicture = call.getString("promptLabelPicture") ?? "Take Picture"
-    var promptLabelCancel = call.getString("promptLabelCancel") ?? "Cancel"
+    let promptLabelHeader = call.getString("promptLabelHeader") ?? "Photo"
+    let promptLabelPhoto = call.getString("promptLabelPhoto") ?? "From Photos"
+    let promptLabelPicture = call.getString("promptLabelPicture") ?? "Take Picture"
+    let promptLabelCancel = call.getString("promptLabelCancel") ?? "Cancel"
     
     let alert = UIAlertController(title: promptLabelHeader, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
     alert.addAction(UIAlertAction(title: promptLabelPhoto, style: .default, handler: { (action: UIAlertAction) in
