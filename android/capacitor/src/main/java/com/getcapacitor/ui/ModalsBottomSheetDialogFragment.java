@@ -2,6 +2,7 @@ package com.getcapacitor.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.getcapacitor.Dialogs;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.LogUtils;
@@ -28,10 +30,18 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
     void onSelected(int index);
   }
 
+  @Override
+  public void onCancel(DialogInterface dialog)
+  {
+    super.onCancel(dialog);
+    this.cancelListener.onCancel();
+  }
+
   private String title;
   private JSArray options;
 
   private OnSelectedListener listener;
+  private Dialogs.OnCancelListener cancelListener;
 
   public void setTitle(String title) {
     this.title = title;
@@ -42,6 +52,10 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
   public void setOnSelectedListener(OnSelectedListener listener) {
     this.listener = listener;
+  }
+
+  public void setOnCancelListener(Dialogs.OnCancelListener listener) {
+    this.cancelListener = listener;
   }
 
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {

@@ -125,6 +125,11 @@ public class Camera extends Plugin {
           openCamera(call);
         }
       }
+    }, new Dialogs.OnCancelListener() {
+      @Override
+      public void onCancel() {
+        call.error("User cancelled photos app");
+      }
     });
   }
 
