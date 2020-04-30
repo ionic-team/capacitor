@@ -23,6 +23,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
+import com.getcapacitor.android.R;
 import com.getcapacitor.plugin.camera.CameraResultType;
 import com.getcapacitor.plugin.camera.CameraSettings;
 import com.getcapacitor.plugin.camera.CameraSource;
@@ -105,9 +106,9 @@ public class Camera extends Plugin {
   private void showPrompt(final PluginCall call) {
     // We have all necessary permissions, open the camera
     JSObject fromPhotos = new JSObject();
-    fromPhotos.put("title", "From Photos");
+    fromPhotos.put("title", getContext().getResources().getString(R.string.from_photos));
     JSObject takePicture = new JSObject();
-    takePicture.put("title", "Take Picture");
+    takePicture.put("title", getContext().getResources().getString(R.string.take_picture));
     Object[] options = new Object[] {
       fromPhotos,
       takePicture

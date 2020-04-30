@@ -4,4 +4,6 @@
     <string name="picture">Picture</string>
     <string name="request_permission">Allow this app to take pictures</string>
     <string name="camera_error">Unable to use camera</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="from_photos">From Photos</string>
 </resources>
