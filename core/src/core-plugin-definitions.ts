@@ -244,7 +244,7 @@ export interface BrowserPlugin extends Plugin {
   prefetch(options: BrowserPrefetchOptions): Promise<void>;
 
   /**
-   * Close an open browser. Only works on iOS, otherwise is a no-op
+   * Close an open browser. Only works on iOS and Web environment, otherwise is a no-op
    */
   close(): Promise<void>;
 
