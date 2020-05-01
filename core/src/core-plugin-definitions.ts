@@ -244,7 +244,7 @@ export interface BrowserPlugin extends Plugin {
   prefetch(options: BrowserPrefetchOptions): Promise<void>;
 
   /**
-   * Close an open browser. Only works on iOS, otherwise is a no-op
+   * Close an open browser. Only works on iOS and Web environment, otherwise is a no-op
    */
   close(): Promise<void>;
 
@@ -343,6 +343,19 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * If use CameraSource.Prompt only, can change Prompt label.
+   * default:
+   *   promptLabelHeader  : 'Photo'       // iOS only
+   *   promptLabelCancel  : 'Cancel'      // iOS only
+   *   promptLabelPhoto   : 'From Photos'
+   *   promptLabelPicture : 'Take Picture'
+   */
+  promptLabelHeader?: string;
+  promptLabelCancel?: string;
+  promptLabelPhoto?: string;
+  promptLabelPicture?: string;
 }
 
 export enum CameraSource {
@@ -921,7 +934,7 @@ export interface HapticsPlugin extends Plugin {
   /**
    * Trigger a selection changed haptic hint. If a selection was
    * started already, this will cause the device to provide haptic
-   * feedback (on iOS at least)
+   * feedback
    */
   selectionChanged(): void;
   /**

@@ -144,7 +144,7 @@ public class Filesystem extends Plugin {
     }
     fileInputStreamReader.close();
 
-    return new String(Base64.encodeToString(byteStream.toByteArray(), Base64.DEFAULT));
+    return new String(Base64.encodeToString(byteStream.toByteArray(), Base64.NO_WRAP));
   }
 
   @PluginMethod()

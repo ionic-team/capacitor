@@ -25,6 +25,10 @@ public class Dialogs {
     void onSelect(int index);
   }
 
+  public interface OnCancelListener {
+    void onCancel();
+  }
+
   /**
    * Show a simple alert with a message and default values for
    * title and ok button
@@ -196,7 +200,7 @@ public class Dialogs {
 
   public static void actions(final AppCompatActivity activity,
                              final Object[] options,
-                             final Dialogs.OnSelectListener listener) {
+                             final Dialogs.OnSelectListener listener, final Dialogs.OnCancelListener cancelListener) {
 
     JSArray optionsArray;
     try {
@@ -214,6 +218,7 @@ public class Dialogs {
         fragment.dismiss();
       }
     });
+    fragment.setOnCancelListener(cancelListener);
     fragment.show(activity.getSupportFragmentManager(), "capacitorModalsActionSheet");
   }
 }
