@@ -79,6 +79,6 @@ public class Logger {
   }
 
   protected static boolean shouldLog() {
-    return !Config.getBoolean("android.hideLogs", false);
+    return !Config.getBoolean("android.hideLogs", Config.getBoolean("hideLogs", false));
   }
 }
