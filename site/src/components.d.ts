@@ -84,6 +84,9 @@ export namespace Components {
     'pages'?: string[];
   }
 
+  interface CapacitorEnterprise {}
+  interface CapacitorEnterpriseAttributes extends StencilHTMLAttributes {}
+
   interface InPageNavigation {
     'currentPageUrl': string;
     'pageLinks': MarkdownHeading[];
@@ -151,6 +154,7 @@ declare global {
     'DemosPage': Components.DemosPage;
     'DocSnippet': Components.DocSnippet;
     'DocumentComponent': Components.DocumentComponent;
+    'CapacitorEnterprise': Components.CapacitorEnterprise;
     'InPageNavigation': Components.InPageNavigation;
     'LandingPage': Components.LandingPage;
     'LowerContentNav': Components.LowerContentNav;
@@ -172,6 +176,7 @@ declare global {
     'demos-page': Components.DemosPageAttributes;
     'doc-snippet': Components.DocSnippetAttributes;
     'document-component': Components.DocumentComponentAttributes;
+    'capacitor-enterprise': Components.CapacitorEnterpriseAttributes;
     'in-page-navigation': Components.InPageNavigationAttributes;
     'landing-page': Components.LandingPageAttributes;
     'lower-content-nav': Components.LowerContentNavAttributes;
@@ -243,6 +248,12 @@ declare global {
     new (): HTMLDocumentComponentElement;
   };
 
+  interface HTMLCapacitorEnterpriseElement extends Components.CapacitorEnterprise, HTMLStencilElement {}
+  var HTMLCapacitorEnterpriseElement: {
+    prototype: HTMLCapacitorEnterpriseElement;
+    new (): HTMLCapacitorEnterpriseElement;
+  };
+
   interface HTMLInPageNavigationElement extends Components.InPageNavigation, HTMLStencilElement {}
   var HTMLInPageNavigationElement: {
     prototype: HTMLInPageNavigationElement;
@@ -302,6 +313,7 @@ declare global {
     'demos-page': HTMLDemosPageElement
     'doc-snippet': HTMLDocSnippetElement
     'document-component': HTMLDocumentComponentElement
+    'capacitor-enterprise': HTMLCapacitorEnterpriseElement
     'in-page-navigation': HTMLInPageNavigationElement
     'landing-page': HTMLLandingPageElement
     'lower-content-nav': HTMLLowerContentNavElement
@@ -323,6 +335,7 @@ declare global {
     'demos-page': HTMLDemosPageElement;
     'doc-snippet': HTMLDocSnippetElement;
     'document-component': HTMLDocumentComponentElement;
+    'capacitor-enterprise': HTMLCapacitorEnterpriseElement;
     'in-page-navigation': HTMLInPageNavigationElement;
     'landing-page': HTMLLandingPageElement;
     'lower-content-nav': HTMLLowerContentNavElement;

@@ -114,6 +114,10 @@ export class SiteHeader {
             </ul>
           </span>
 
+          <stencil-route-link urlMatch="/enterprise" url="/enterprise/" class="link">
+            Enterprise
+          </stencil-route-link>
+
           <a class="link link--external" href="https://github.com/ionic-team/capacitor" target="_blank">
             GitHub
             <app-icon name="targetblank"></app-icon>
