@@ -7,13 +7,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
-import android.util.Log;
-
 
 import androidx.core.app.NotificationCompat;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.PluginCall;
 
 import java.util.List;
@@ -32,9 +31,6 @@ public class NotificationChannelManager {
         this.context = context;
         this.notificationManager = manager;
     }
-
-    private static final String TAG = "NotificationChannel: ";
-
 
     private static String CHANNEL_ID = "id";
     private static String CHANNEL_NAME = "name";
@@ -73,7 +69,7 @@ public class NotificationChannelManager {
                 try {
                     notificationChannel.setLightColor(Color.parseColor(lightColor));
                 } catch (IllegalArgumentException ex) {
-                    Log.e(TAG, "Invalid color provided for light color.");
+                    Logger.error(Logger.tags("NotificationChannel"), "Invalid color provided for light color.", null);
                 }
             }
             String sound = channel.getString(CHANNEL_SOUND, null);
@@ -115,8 +111,8 @@ public class NotificationChannelManager {
                 channel.put(CHANNEL_SOUND, notificationChannel.getSound());
                 channel.put(CHANNEL_USE_LIGHTS, notificationChannel.shouldShowLights());
                 channel.put(CHANNEL_LIGHT_COLOR, String.format("#%06X", (0xFFFFFF & notificationChannel.getLightColor())));
-                Log.d(TAG, "visibility " + notificationChannel.getLockscreenVisibility());
-                Log.d(TAG, "importance " + notificationChannel.getImportance());
+                Logger.debug(Logger.tags("NotificationChannel"), "visibility " + notificationChannel.getLockscreenVisibility());
+                Logger.debug(Logger.tags("NotificationChannel"), "importance " + notificationChannel.getImportance());
                 channels.put(channel);
             }
             JSObject result = new JSObject();

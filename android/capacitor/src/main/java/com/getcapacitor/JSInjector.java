@@ -1,7 +1,6 @@
 package com.getcapacitor;
 
 import android.webkit.CookieManager;
-import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -76,7 +75,7 @@ class JSInjector {
     } else if (html.contains("</head>")) {
       html = html.replace("</head>", js + "\n" + "</head>");
     } else {
-      Log.e(LogUtils.getCoreTag(), "Unable to inject Capacitor, Plugins won't work");
+      Logger.error("Unable to inject Capacitor, Plugins won't work");
     }
 
     if (conn != null && url != null) {
@@ -103,7 +102,7 @@ class JSInjector {
       }
       return out.toString();
     } catch (Exception e) {
-      Log.e(LogUtils.getCoreTag(), "Unable to process HTML asset file. This is a fatal error", e);
+      Logger.error("Unable to process HTML asset file. This is a fatal error", e);
     }
 
     return "";

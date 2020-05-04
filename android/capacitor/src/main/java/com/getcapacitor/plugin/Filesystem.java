@@ -7,9 +7,9 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -144,7 +144,7 @@ public class Filesystem extends Plugin {
     }
     fileInputStreamReader.close();
 
-    return new String(Base64.encodeToString(byteStream.toByteArray(), Base64.DEFAULT));
+    return new String(Base64.encodeToString(byteStream.toByteArray(), Base64.NO_WRAP));
   }
 
   @PluginMethod()
@@ -193,13 +193,13 @@ public class Filesystem extends Plugin {
     Boolean recursive = call.getBoolean("recursive", false);
 
     if (path == null) {
-      Log.e(getLogTag(), "No path or filename retrieved from call");
+      Logger.error(getLogTag(), "No path or filename retrieved from call", null);
       call.error("NO_PATH");
       return;
     }
 
     if (data == null) {
-      Log.e(getLogTag(), "No data retrieved from call");
+      Logger.error(getLogTag(), "No data retrieved from call", null);
       call.error("NO_DATA");
       return;
     }
@@ -220,11 +220,11 @@ public class Filesystem extends Plugin {
               call.error("Parent folder doesn't exist");
             }
           } else {
-            Log.e(getLogTag(), "Not able to create '" + directory + "'!");
+            Logger.error(getLogTag(), "Not able to create '" + directory + "'!", null);
             call.error("NOT_CREATED_DIR");
           }
         } else {
-          Log.e(getLogTag(), "Directory ID '" + directory + "' is not supported by plugin");
+          Logger.error(getLogTag(), "Directory ID '" + directory + "' is not supported by plugin", null);
           call.error("INVALID_DIR");
         }
       }
@@ -264,7 +264,7 @@ public class Filesystem extends Plugin {
         writer.write(data);
         success = true;
       } catch (IOException e) {
-        Log.e(getLogTag(), "Creating text file '" + file.getPath() + "' with charset '" + charset + "' failed. Error: " + e.getMessage(), e);
+        Logger.error(getLogTag(), "Creating text file '" + file.getPath() + "' with charset '" + charset + "' failed. Error: " + e.getMessage(), e);
       }
     } else {
       //remove header from dataURL
@@ -275,7 +275,7 @@ public class Filesystem extends Plugin {
         fos.write(Base64.decode(data, Base64.NO_WRAP));
         success = true;
       } catch (IOException e) {
-        Log.e(getLogTag(), "Creating binary file '" + file.getPath() + "' failed. Error: " + e.getMessage(), e);
+        Logger.error(getLogTag(), "Creating binary file '" + file.getPath() + "' failed. Error: " + e.getMessage(), e);
       }
     }
 
@@ -284,7 +284,7 @@ public class Filesystem extends Plugin {
       if (isPublicDirectory(getDirectoryParameter(call))) {
         MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
-      Log.d(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
+      Logger.debug(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
       JSObject result = new JSObject();
       result.put("uri", Uri.fromFile(file).toString());
       call.success(result);
@@ -607,10 +607,10 @@ public class Filesystem extends Plugin {
    */
   private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
     if (hasPermission(permission)) {
-      Log.v(getLogTag(),"Permission '" + permission + "' is granted");
+      Logger.verbose(getLogTag(),"Permission '" + permission + "' is granted");
       return true;
     } else {
-      Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
+      Logger.verbose(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
       pluginRequestPermissions(new String[] {permission}, permissionRequestCode);
       return false;
     }
@@ -636,10 +636,10 @@ public class Filesystem extends Plugin {
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    Log.d(getLogTag(),"handling request perms result");
+    Logger.debug(getLogTag(),"handling request perms result");
 
     if (getSavedCall() == null) {
-      Log.d(getLogTag(),"No stored plugin call for permissions request result");
+      Logger.debug(getLogTag(),"No stored plugin call for permissions request result");
       return;
     }
 
@@ -649,7 +649,7 @@ public class Filesystem extends Plugin {
       int result = grantResults[i];
       String perm = permissions[i];
       if(result == PackageManager.PERMISSION_DENIED) {
-        Log.d(getLogTag(), "User denied storage permission: " + perm);
+        Logger.debug(getLogTag(), "User denied storage permission: " + perm);
         savedCall.error(PERMISSION_DENIED_ERROR);
         this.freeSavedCall();
         return;

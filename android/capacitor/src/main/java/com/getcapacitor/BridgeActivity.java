@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,7 +61,7 @@ public class BridgeActivity extends AppCompatActivity {
    * Load the WebView and create the Bridge
    */
   protected void load(Bundle savedInstanceState) {
-    Log.d(LogUtils.getCoreTag(), "Starting BridgeActivity");
+    Logger.debug("Starting BridgeActivity");
 
     webView = findViewById(R.id.webview);
 
@@ -122,14 +121,14 @@ public class BridgeActivity extends AppCompatActivity {
     this.bridge.onStart();
     mockWebView.handleStart();
 
-    Log.d(LogUtils.getCoreTag(), "App started");
+    Logger.debug("App started");
   }
 
   @Override
   public void onRestart() {
     super.onRestart();
     this.bridge.onRestart();
-    Log.d(LogUtils.getCoreTag(), "App restarted");
+    Logger.debug("App restarted");
   }
 
   @Override
@@ -142,7 +141,7 @@ public class BridgeActivity extends AppCompatActivity {
 
     mockWebView.handleResume(this.keepRunning);
 
-    Log.d(LogUtils.getCoreTag(), "App resumed");
+    Logger.debug("App resumed");
   }
 
   @Override
@@ -155,7 +154,7 @@ public class BridgeActivity extends AppCompatActivity {
       this.mockWebView.handlePause(keepRunning);
     }
 
-    Log.d(LogUtils.getCoreTag(), "App paused");
+    Logger.debug("App paused");
   }
 
   @Override
@@ -173,7 +172,7 @@ public class BridgeActivity extends AppCompatActivity {
       mockWebView.handleStop();
     }
 
-    Log.d(LogUtils.getCoreTag(), "App stopped");
+    Logger.debug("App stopped");
   }
 
   @Override
@@ -183,7 +182,7 @@ public class BridgeActivity extends AppCompatActivity {
     if (this.mockWebView != null) {
       mockWebView.handleDestroy();
     }
-    Log.d(LogUtils.getCoreTag(), "App destroyed");
+    Logger.debug("App destroyed");
   }
 
   @Override
