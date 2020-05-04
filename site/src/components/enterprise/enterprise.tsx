@@ -32,7 +32,10 @@ export class Enterprise {
             <h1>Capacitor for Enterprises</h1>
             <p>
               Powerful solution for mission-critical enterprise
-              apps<br />across consumer and employee-facing iOS, Android, and Progressive Web Apps.
+              apps
+              <br />
+              across consumer and employee-facing<br />
+              iOS, Android, and Progressive Web Apps.
             </p>
             <a href="#contact" class="btn">
               Learn more
@@ -81,7 +84,7 @@ export class Enterprise {
             <div class="highlight">
               <h2>World-class support</h2>
               <p>
-                Get guaranteed response SLAs through the app lifecylce. Ionic's professional support team is on-hand to help you troubleshoot and address issues occuring at the native layer.
+                Get guaranteed response SLAs through the app lifecycle. Ionic's professional support team is on-hand to help you troubleshoot and address issues occurring at the native layer.
               </p>
             </div>
             <div class="highlight">
@@ -176,7 +179,7 @@ export class Enterprise {
             <div>
               <h3>Accelerated timeline</h3>
               <p>
-                Facing an aggresive release timeline? We can help. Our pre-built solutions will save you weeks or months of coding from scratch, while our native mobile experts can help you find ways to speed up development and better reach your goals.
+                Facing an aggressive release timeline? We can help. Our pre-built solutions will save you weeks or months of coding from scratch, while our native mobile experts can help you find ways to speed up development and better reach your goals.
               </p>
             </div>
           </div>
