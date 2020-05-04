@@ -4,8 +4,8 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -52,11 +52,11 @@ public class Clipboard extends Plugin {
 
     if (clipboard.hasPrimaryClip()) {
       if(clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-        Log.d(getLogTag(), "Got plaintxt");
+        Logger.debug(getLogTag(), "Got plaintxt");
         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
         value = item.getText();
       } else {
-        Log.d(getLogTag(), "Not plaintext!");
+        Logger.debug(getLogTag(), "Not plaintext!");
         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
         value = item.coerceToText(this.getContext()).toString();
       }

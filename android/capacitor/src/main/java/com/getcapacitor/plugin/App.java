@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.util.Log;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -22,7 +22,7 @@ public class App extends Plugin {
   private boolean isActive = false;
 
   public void fireChange(boolean isActive) {
-    Log.d(getLogTag(), "Firing change: " + isActive);
+    Logger.debug(getLogTag(), "Firing change: " + isActive);
     JSObject data = new JSObject();
     data.put("isActive", isActive);
     this.isActive = isActive;
@@ -30,7 +30,7 @@ public class App extends Plugin {
   }
 
   public void fireRestoredResult(PluginResult result) {
-    Log.d(getLogTag(), "Firing restored result");
+    Logger.debug(getLogTag(), "Firing restored result");
     notifyListeners(EVENT_RESTORED_RESULT, result.getWrappedResult(), true);
   }
 
@@ -87,7 +87,7 @@ public class App extends Plugin {
       call.success(ret);
       return;
     } catch(PackageManager.NameNotFoundException e) {
-      Log.e(getLogTag(), "Package name '"+url+"' not found!");
+      Logger.error(getLogTag(), "Package name '"+url+"' not found!", null);
     }
 
     ret.put("value", false);

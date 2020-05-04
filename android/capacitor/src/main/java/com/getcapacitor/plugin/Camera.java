@@ -8,16 +8,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 
 import androidx.core.content.FileProvider;
 
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.FileUtils;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -194,7 +193,7 @@ public class Camera extends Plugin {
     try {
       return CameraResultType.valueOf(resultType.toUpperCase());
     } catch (IllegalArgumentException ex) {
-      Log.d(getLogTag(), "Invalid result type \"" + resultType + "\", defaulting to base64");
+      Logger.debug(getLogTag(), "Invalid result type \"" + resultType + "\", defaulting to base64");
       return CameraResultType.BASE64;
     }
   }
@@ -279,7 +278,7 @@ public class Camera extends Plugin {
         try {
           imageStream.close();
         } catch (IOException e) {
-          Log.e(getLogTag(), UNABLE_TO_PROCESS_IMAGE, e);
+          Logger.error(getLogTag(), UNABLE_TO_PROCESS_IMAGE, e);
         }
       }
     }
@@ -342,7 +341,7 @@ public class Camera extends Plugin {
         String fileToSave = imageEditedFileSavePath != null ? imageEditedFileSavePath : imageFileSavePath;
         MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), fileToSave, "", "");
       } catch (FileNotFoundException e) {
-        Log.e(getLogTag(), IMAGE_GALLERY_SAVE_ERROR, e);
+        Logger.error(getLogTag(), IMAGE_GALLERY_SAVE_ERROR, e);
       }
     }
 
@@ -388,7 +387,7 @@ public class Camera extends Plugin {
         try {
           bis.close();
         } catch (IOException e) {
-          Log.e(getLogTag(), UNABLE_TO_PROCESS_IMAGE, e);
+          Logger.error(getLogTag(), UNABLE_TO_PROCESS_IMAGE, e);
         }
       }
     }
@@ -449,10 +448,10 @@ public class Camera extends Plugin {
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    Log.d(getLogTag(),"handling request perms result");
+    Logger.debug(getLogTag(),"handling request perms result");
 
     if (getSavedCall() == null) {
-      Log.d(getLogTag(),"No stored plugin call for permissions request result");
+      Logger.debug(getLogTag(),"No stored plugin call for permissions request result");
       return;
     }
 
@@ -462,7 +461,7 @@ public class Camera extends Plugin {
       int result = grantResults[i];
       String perm = permissions[i];
       if(result == PackageManager.PERMISSION_DENIED) {
-        Log.d(getLogTag(), "User denied camera permission: " + perm);
+        Logger.debug(getLogTag(), "User denied camera permission: " + perm);
         savedCall.error(PERMISSION_DENIED_ERROR);
         return;
       }
