@@ -11,7 +11,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   var hideTask: Any?
   var isVisible: Bool = false
 
-  let launchShowDuration = 3000
+  let launchShowDuration = 0
   let launchAutoHide = true
 
   let defaultFadeInDuration = 200
@@ -114,6 +114,10 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let launchBackgroundColorConfig = getConfigValue("backgroundColor") as? String ?? nil
     let launchSpinnerStyleConfig = getConfigValue("iosSpinnerStyle") as? String ?? nil
     let launchSpinnerColorConfig = getConfigValue("spinnerColor") as? String ?? nil
+
+    if launchShowDurationConfig == 0 {
+      return
+    }
 
     let view = bridge.viewController.view
     view?.addSubview(imageView)

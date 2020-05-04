@@ -28,7 +28,7 @@ public class Splash {
 
   public static final String CONFIG_KEY_PREFIX = "plugins.SplashScreen.";
 
-  public static final int DEFAULT_LAUNCH_SHOW_DURATION = 3000;
+  public static final int DEFAULT_LAUNCH_SHOW_DURATION = 0;
   public static final int DEFAULT_FADE_IN_DURATION = 200;
   public static final int DEFAULT_FADE_OUT_DURATION = 200;
   public static final int DEFAULT_SHOW_DURATION = 3000;
@@ -168,6 +168,11 @@ public class Splash {
   public static void showOnLaunch(final BridgeActivity a) {
     Integer duration = Config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
     Boolean autohide = Config.getBoolean(CONFIG_KEY_PREFIX + "launchAutoHide", DEFAULT_AUTO_HIDE);
+
+    if (duration == 0) {
+      return;
+    }
+
     show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, autohide, null, true);
   }
 
