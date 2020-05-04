@@ -310,7 +310,7 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
         let plugin = dep.$.id;
-        if (plugin.includes('@')) {
+        if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
           plugin = plugin.split('@')[0];
         }
         if (cordovaPlugins.filter(p => p.id === plugin || p.xml.$.id === plugin).length === 0) {
