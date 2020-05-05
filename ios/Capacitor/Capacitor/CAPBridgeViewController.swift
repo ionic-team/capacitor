@@ -27,6 +27,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
   private var statusBarAnimation: UIStatusBarAnimation = .slide
+
+  private var toast: UILabel?
+
   @objc public var supportedOrientations: Array<Int> = []
   
   @objc public var startDir = ""
@@ -172,10 +175,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     exit(1)
   }
     
-  var toast: UILabel?
-    @objc func show(text: String) {
-    
-    let duration = 10000
+  private func showToast(text: String) {
+    let duration = 3500
     let position = "bottom"
     
     DispatchQueue.main.async {
@@ -201,14 +202,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       expectedSizeTitle = CGSize(width: minWidth, height: minHeight)
         
       let height = expectedSizeTitle.height+32
-      let y: CGFloat
-      if (position == "top") {
-        y = 40
-      } else if (position == "center") {
-        y = (vc.view.bounds.size.height/2) - (height/2)
-      } else {
-        y = vc.view.bounds.size.height - height - (height/2)
-      }
+      let y = vc.view.bounds.size.height - height - (height/2)
 
       lb.frame = CGRect(
         x: ((vc.view.bounds.size.width)/2) - ((expectedSizeTitle.width+32)/2),
@@ -230,7 +224,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
         }, completion: {(isCompleted) in
           self.toast!.removeFromSuperview()
         })
-
       })
     }
   }
@@ -241,13 +234,16 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       fatalLoadError()
     }
 
-    hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
+    let appUrlConfig = bridge!.config.getString("server.url")
+
+    hostname =  appUrlConfig ?? "\(bridge!.getLocalUrl())"
     allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? Array<String>
 
     #if DEBUG
-      self.show(text:"Hallo")
+      if appUrlConfig != nil {
+        self.showToast(text: "Using app server \(hostname!)")
+      }
     #endif
-
 
     CAPLog.print("⚡️  Loading app at \(hostname!)...")
     let request = URLRequest(url: URL(string: hostname!)!)
