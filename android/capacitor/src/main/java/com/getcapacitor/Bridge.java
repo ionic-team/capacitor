@@ -230,9 +230,9 @@ public class Bridge {
     for (Map.Entry<String, PluginHandle> entry : plugins.entrySet()) {
       Plugin plugin = entry.getValue().getInstance();
       if (plugin != null) {
-        Boolean result = plugin.shouldOpenExternalUrl(url);
-        if (result != null) {
-          return !result;
+        Boolean shouldOverrideLoad = plugin.shouldOverrideLoad(url);
+        if (shouldOverrideLoad != null) {
+          return shouldOverrideLoad;
         }
       }
     }

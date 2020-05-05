@@ -259,12 +259,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     if let plugins = bridge?.plugins {
       for pluginObject in plugins {
         let plugin = pluginObject.value
-        let selector = NSSelectorFromString("shouldOverrideLoadWith:navigationType:")
+        let selector = NSSelectorFromString("shouldOverrideLoad:")
         if plugin.responds(to: selector) {
-          let shouldAllowRequest = plugin.shouldOverrideLoad(with: navigationAction.request, navigationType: navigationAction.navigationType)
-          if (shouldAllowRequest) {
-            decisionHandler(.allow)
-            return
+          let shouldOverrideLoad = plugin.shouldOverrideLoad(navigationAction)
+          if (shouldOverrideLoad != nil) {
+            if (shouldOverrideLoad == true) {
+              decisionHandler(.cancel)
+              return
+            } else if shouldOverrideLoad == false {
+              decisionHandler(.allow)
+              return
+            }
           }
         }
       }
