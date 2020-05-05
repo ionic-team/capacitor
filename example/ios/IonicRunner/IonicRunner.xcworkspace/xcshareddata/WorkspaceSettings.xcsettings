@@ -4,7 +4,5 @@
 <dict>
 	<key>BuildSystemType</key>
 	<string>Original</string>
-	<key>PreviewsEnabled</key>
-	<false/>
 </dict>
 </plist>
