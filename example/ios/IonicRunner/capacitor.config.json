@@ -8,5 +8,9 @@
     "SplashScreen": {
       "launchShowDuration": 12345
     }
+  },
+  "server": {
+    "url": "http://localhost:4200",
+    "cleartext": true
   }
 }
