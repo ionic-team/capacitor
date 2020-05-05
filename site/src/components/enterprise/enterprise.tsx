@@ -61,7 +61,7 @@ export class Enterprise {
                 </p>
               </div>
               <div class="point">
-                <h3>Project your users &amp; data</h3>
+                <h3>Protect your users &amp; data</h3>
                 <p>
                   Give your users the best possible mobile security,
                   with advanced biometric authentication, SSO integration,
@@ -73,7 +73,7 @@ export class Enterprise {
                 <p>
                   Save valuable time and effort that would normally
                   be spent chasing plugins and building from scratch.
-                  Capacitor Enterprise delivers everything you need on Day 1
+                  Capacitor Enterprise delivers everything you need on Day 1.
                 </p>
               </div>
             </div>
@@ -96,11 +96,11 @@ export class Enterprise {
             <div class="highlight">
               <h2>Pre-built solutions</h2>
               <p>
-                Accelerate development with pre-built native solutions to common mobile use cases, like biometrics, authentication, and encrypted offline storage. Expert engineered. Deployed in minutes.
+                Accelerate development with pre-built native solutions to common mobile use cases, like biometrics, authentication, and encrypted offline storage. Built by mobile experts. Deployed in minutes.
               </p>
             </div>
             <div class="highlight">
-              <h2>Expert help and guidance</h2>
+              <h2>Expert help &amp; guidance</h2>
               <p>
                 Our team of native experts will work with you to define a native strategy that fits your unique goals and challenges. From architectural reviews to performance &amp; security audits.
               </p>
@@ -173,7 +173,7 @@ export class Enterprise {
             <div>
               <h3>Highly secure apps</h3>
               <p>
-                Handling sensitive user or company data? Project what matters most with advanced mobile security solutions that take advantage of the latest in native security best practices--from biometrics to military-grade encryption.
+                Handling sensitive user or company data? Protect what matters most with advanced mobile security solutions that take advantage of the latest in native security best practices--from biometrics to military-grade encryption.
               </p>
             </div>
             <div>
