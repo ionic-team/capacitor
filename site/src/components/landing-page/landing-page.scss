@@ -24,6 +24,9 @@ landing-page {
   }
 
   .announcement {
+    position: relative;
+    top: 60px;
+
     a {
       text-decoration: none;
       color: #fff;
@@ -52,7 +55,7 @@ landing-page {
       font-weight: 800;
       padding: 2px 6px;
       border-radius: 100px;
-      flex: 0 0 38px;
+      flex: 0 0 70px;
       text-align: center;
     }
     .message {
@@ -66,7 +69,7 @@ landing-page {
       color: $color-yellow;
       font-weight: 600;
       padding-right: 4px;
-      flex: 0 0 76px;
+      flex: 0 0 94px;
     }
     .icon {
       fill: $color-yellow;
@@ -76,9 +79,15 @@ landing-page {
       margin-left: 2px;
     }
 
+    @media screen and (max-width: $breakpoint-lg) {
+      top: 20px;
+    }
+
     @media screen and (max-width: $breakpoint-md) {
       max-width: 100%;
       padding: 0;
+      top: 0;
+
       a {
         display: flex;
         width: 100%;
@@ -89,7 +98,7 @@ landing-page {
         flex: 1;
       }
       .cta {
-        flex: 0 0 70px;
+        flex: 0 0 94px;
         padding-right: 0;
       }
     }

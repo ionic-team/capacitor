@@ -22,6 +22,18 @@ export class LandingPage {
 
   render() {
     return [
+      <div class="announcement container">
+        <stencil-route-link url="/blog/" >
+          <span class="pill">Live demo</span>
+          <span class="message">
+            Capacitor 2.0 features and capabilities
+          </span>
+          <span class="cta">
+            Register Now
+            <app-icon name="caret-right"></app-icon>
+          </span>
+        </stencil-route-link>
+       </div>,
       <div class="container">
         <section class="hero">
           <hgroup>
