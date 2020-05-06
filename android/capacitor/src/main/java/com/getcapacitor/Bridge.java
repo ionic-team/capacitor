@@ -224,6 +224,19 @@ public class Bridge {
   }
 
   public boolean launchIntent(Uri url) {
+    /*
+    * Give plugins the chance to handle the url
+    */
+    for (Map.Entry<String, PluginHandle> entry : plugins.entrySet()) {
+      Plugin plugin = entry.getValue().getInstance();
+      if (plugin != null) {
+        Boolean shouldOverrideLoad = plugin.shouldOverrideLoad(url);
+        if (shouldOverrideLoad != null) {
+          return shouldOverrideLoad;
+        }
+      }
+    }
+
     if (!url.toString().contains(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
       try {
         Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
