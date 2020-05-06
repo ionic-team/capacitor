@@ -23,7 +23,7 @@ export class LandingPage {
   render() {
     return [
       <div class="announcement container">
-        <stencil-route-link url="/blog/" >
+        <a href="https://ionicframework.com/resources/webinars/capacitor-2-launch" target="_blank">
           <span class="pill">Live demo</span>
           <span class="message">
             Capacitor 2.0 features and capabilities
@@ -32,7 +32,7 @@ export class LandingPage {
             Register Now
             <app-icon name="caret-right"></app-icon>
           </span>
-        </stencil-route-link>
+        </a>
        </div>,
       <div class="container">
         <section class="hero">
