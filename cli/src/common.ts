@@ -181,7 +181,12 @@ export async function getOrCreateConfig(config: Config) {
     appName: config.app.appName,
     bundledWebRuntime: config.app.bundledWebRuntime,
     npmClient: config.cli.npmClient,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir))
+    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
+    plugins: {
+      SplashScreen : {
+        launchShowDuration: 0
+      }
+    }
   });
 
   // Store our newly created or found external config as the default

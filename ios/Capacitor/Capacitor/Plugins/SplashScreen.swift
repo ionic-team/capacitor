@@ -11,7 +11,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   var hideTask: Any?
   var isVisible: Bool = false
 
-  let launchShowDuration = 0
+  let launchShowDuration = 3000
   let launchAutoHide = true
 
   let defaultFadeInDuration = 200
