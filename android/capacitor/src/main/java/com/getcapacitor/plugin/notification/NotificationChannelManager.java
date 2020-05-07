@@ -42,7 +42,7 @@ public class NotificationChannelManager {
     private static String CHANNEL_IMPORTANCE = "importance";
     private static String CHANNEL_VISIBILITY = "visibility";
     private static String CHANNEL_SOUND = "sound";
-    private static String CHANNEL_VIBRATE = "vibrate";
+    private static String CHANNEL_VIBRATE = "vibration";
     private static String CHANNEL_USE_LIGHTS = "lights";
     private static String CHANNEL_LIGHT_COLOR = "lightColor";
 
