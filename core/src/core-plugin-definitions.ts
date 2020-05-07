@@ -1587,6 +1587,7 @@ export interface NotificationChannel {
   visibility?: -1 | 0 | 1 ;
   lights?: boolean;
   lightColor?: string;
+  vibration?: boolean;
 }
 
 export interface NotificationChannelList {
