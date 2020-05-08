@@ -76,8 +76,6 @@ export class SiteHeader {
   }
 
   render() {
-    const messageColor = window.location.href.indexOf("docs") > 1 ? "message black" : "message";
-
     return (
       <div class="site-header container">
 
@@ -88,7 +86,7 @@ export class SiteHeader {
         <div class="announcement">
           <a href="https://ionicframework.com/resources/webinars/capacitor-2-launch" target="_blank">
             <span class="pill">Live demo</span>
-            <span class={messageColor}>
+            <span class="message">
               Capacitor 2.0 features and capabilities
             </span>
             <span class="cta">

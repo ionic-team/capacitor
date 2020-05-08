@@ -63,7 +63,7 @@ site-header {
 
     a {
       text-decoration: none;
-      color: #fff;
+      color: var(--color-woodsmoke);
       transition: background 0.3s;
       display: inline-flex;
       align-items: center;
@@ -116,20 +116,19 @@ site-header {
       margin-left: 2px;
     }
 
-    @media screen and (max-width: $breakpoint-lg) {
-      top: 20px;
+    @media screen and (max-width: $breakpoint-lg) and (min-width: $breakpoint-md) {
+      display: none;
     }
 
     @media screen and (max-width: $breakpoint-md) {
       max-width: 100%;
-      padding: 0;
-      top: 20;
+      padding-top: 5px;
 
       a {
         display: flex;
         width: 100%;
         border-radius: 0;
-        padding: 12px 24px;
+        padding: 5px 24px;
       }
       .message {
         flex: 1;
