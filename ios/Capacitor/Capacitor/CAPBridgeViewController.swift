@@ -27,9 +27,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
   private var statusBarAnimation: UIStatusBarAnimation = .slide
-
-  private var toast: UILabel?
-
   @objc public var supportedOrientations: Array<Int> = []
   
   @objc public var startDir = ""
@@ -174,7 +171,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     printLoadError()
     exit(1)
   }
-    
+
   func loadWebView() {
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {

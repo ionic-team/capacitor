@@ -3,7 +3,7 @@ import Foundation
 
 
 @objc(CAPToastPlugin)
-  public class CAPToastPlugin : CAPPlugin {
+public class CAPToastPlugin : CAPPlugin {
 
   @objc func show(_ call: CAPPluginCall) {
     guard let text = call.get("text", String.self) else {
