@@ -175,59 +175,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     exit(1)
   }
     
-  private func showToast(text: String) {
-    let duration = 3500
-    let position = "bottom"
-    
-    DispatchQueue.main.async {
-      let vc = self.bridge!.viewController
-      
-      let maxSizeTitle : CGSize = CGSize(width: vc.view.bounds.size.width-32, height: vc.view.bounds.size.height)
-      
-      let lb = UILabel()
-      lb.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-      lb.textColor = UIColor.white
-      lb.textAlignment = .center
-      lb.text = text
-      lb.alpha = 0
-      lb.layer.cornerRadius = 18
-      lb.clipsToBounds  =  true
-      lb.lineBreakMode = .byWordWrapping
-      lb.numberOfLines = 0
-      
-      var expectedSizeTitle : CGSize = lb.sizeThatFits(maxSizeTitle)
-      // UILabel can return a size larger than the max size when the number of lines is 1
-      let minWidth = min(maxSizeTitle.width, expectedSizeTitle.width)
-      let minHeight = min(maxSizeTitle.height, expectedSizeTitle.height)
-      expectedSizeTitle = CGSize(width: minWidth, height: minHeight)
-        
-      let height = expectedSizeTitle.height+32
-      let y = vc.view.bounds.size.height - height - (height/2)
-
-      lb.frame = CGRect(
-        x: ((vc.view.bounds.size.width)/2) - ((expectedSizeTitle.width+32)/2),
-        y: y,
-        width: expectedSizeTitle.width+32,
-        height: height)
-      
-      lb.padding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-      self.toast = lb
-      
-      vc.view.addSubview(lb)
-      
-      UIView.animateKeyframes(withDuration: 0.3, delay: 0, animations: {
-        self.toast!.alpha = 1.0
-      }, completion: {(isCompleted) in
-        
-        UIView.animate(withDuration: 0.3, delay: (Double(duration) / 1000), options: .curveEaseOut, animations: {
-          self.toast!.alpha = 0.0
-        }, completion: {(isCompleted) in
-          self.toast!.removeFromSuperview()
-        })
-      })
-    }
-  }
-
   func loadWebView() {
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
@@ -241,7 +188,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     #if DEBUG
       if appUrlConfig != nil {
-        self.showToast(text: "Using app server \(hostname!)")
+        CAPToastPlugin.showToast(vc: self.bridge!.viewController, text: "Using app server \(hostname!)", duration: 3500)
       }
     #endif
 
