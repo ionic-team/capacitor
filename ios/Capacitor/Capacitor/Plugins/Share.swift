@@ -1,7 +1,8 @@
 import Foundation
 
 /**
- * Implement three common modal types: alert, confirm, and prompt
+ * Implement two common types: text and url
+ * 
  */
 @objc(CAPSharePlugin)
 public class CAPSharePlugin : CAPPlugin {
