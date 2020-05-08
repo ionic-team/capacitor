@@ -22,18 +22,6 @@ export class LandingPage {
 
   render() {
     return [
-      <div class="announcement container">
-        <a href="https://ionicframework.com/resources/webinars/capacitor-2-launch" target="_blank">
-          <span class="pill">Live demo</span>
-          <span class="message">
-            Capacitor 2.0 features and capabilities
-          </span>
-          <span class="cta">
-            Register Now
-            <app-icon name="caret-right"></app-icon>
-          </span>
-        </a>
-       </div>,
       <div class="container">
         <section class="hero">
           <hgroup>

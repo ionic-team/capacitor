@@ -83,6 +83,19 @@ export class SiteHeader {
           <div class="logo"></div>
         </stencil-route-link>
 
+        <div class="announcement">
+          <a href="https://ionicframework.com/resources/webinars/capacitor-2-launch" target="_blank">
+            <span class="pill">Live demo</span>
+            <span class="message">
+              Capacitor 2.0 features and capabilities
+            </span>
+            <span class="cta">
+              Register Now
+              <app-icon name="caret-right"></app-icon>
+            </span>
+          </a>
+        </div>
+
         <div class="header-menu">
           <stencil-route-link urlMatch="/docs" url="/docs/" onClick={() => { this.hideNav() }}>
             Docs
