@@ -67,7 +67,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
       permissionList.add(Manifest.permission.RECORD_AUDIO);
     }
     if (!permissionList.isEmpty() && isRequestPermissionRequired) {
-      String [] permissions = permissionList.toArray(new String[0]);;
+      String [] permissions = permissionList.toArray(new String[0]);
       bridge.cordovaInterface.requestPermissions(new CordovaPlugin(){
         @Override
         public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {

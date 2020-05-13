@@ -127,7 +127,7 @@ public class Filesystem extends Plugin {
 
     while ((length = is.read(buffer)) != -1) {
       outputStream.write(buffer, 0, length);
-    };
+    }
 
     return outputStream.toString(encoding);
   }

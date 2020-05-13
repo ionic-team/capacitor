@@ -35,4 +35,4 @@ class CapacitorCordovaCookieManager implements ICordovaCookieManager {
   public void flush() {
     cookieManager.flush();
   }
-};
+}
