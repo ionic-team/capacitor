@@ -140,6 +140,10 @@ ngOnInit() {
 }
 ```
 
+Some notes here:
+* Token updates (Firebase `onNewToken`) will also be sent to your `registration` listeners, so you don't have to worry about that.
+* If there is already a valid token, registering notifications on each app init does not mean a new token will be generated, instead, you will be getting the current token.
+
 Here is the full implementation of `home.page.ts`:
 
 ```typescript
@@ -379,7 +383,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
 ```
 
-If you would like to recieve the firebase FCM token from iOS instead of the raw APNS token, you will need to also change your `AppDelegate.didRegisterForRemoteNotificationsWithDeviceToken` code to look like this:
+If you would like to receive the firebase FCM token from iOS instead of the raw APNS token, you will need to also change your `AppDelegate.didRegisterForRemoteNotificationsWithDeviceToken` code to look like this:
 
 ```swift
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
