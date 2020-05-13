@@ -91,12 +91,7 @@ public class MessageHandler {
         final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
 
         final WebView webView = this.webView;
-        webView.post(new Runnable() {
-          @Override
-          public void run() {
-            webView.evaluateJavascript(runScript, null);
-          }
-        });
+        webView.post(() -> webView.evaluateJavascript(runScript, null));
       } else {
         bridge.storeDanglingPluginResult(call, data);
       }

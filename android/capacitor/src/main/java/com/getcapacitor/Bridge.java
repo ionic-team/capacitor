@@ -508,21 +508,18 @@ public class Bridge {
           ", pluginId: " + plugin.getId() +
           ", methodName: " + methodName + ", methodData: " + call.getData().toString());
 
-      Runnable currentThreadTask = new Runnable() {
-        @Override
-        public void run() {
-          try {
-            plugin.invoke(methodName, call);
+      Runnable currentThreadTask = () -> {
+        try {
+          plugin.invoke(methodName, call);
 
-            if (call.isSaved()) {
-              saveCall(call);
-            }
-          } catch(PluginLoadException | InvalidPluginMethodException ex) {
-            Logger.error("Unable to execute plugin method", ex);
-          } catch (Exception ex) {
-            Logger.error("Serious error executing plugin", ex);
-            throw new RuntimeException(ex);
+          if (call.isSaved()) {
+            saveCall(call);
           }
+        } catch(PluginLoadException | InvalidPluginMethodException ex) {
+          Logger.error("Unable to execute plugin method", ex);
+        } catch (Exception ex) {
+          Logger.error("Serious error executing plugin", ex);
+          throw new RuntimeException(ex);
         }
       };
 
@@ -543,12 +540,7 @@ public class Bridge {
    */
   public void eval(final String js, final ValueCallback<String> callback) {
     Handler mainHandler = new Handler(context.getMainLooper());
-    mainHandler.post(new Runnable() {
-      @Override
-      public void run() {
-        webView.evaluateJavascript(js, callback);
-      }
-    });
+    mainHandler.post(() -> webView.evaluateJavascript(js, callback));
   }
 
   public void logToJs(final String message, final String level) {
@@ -560,18 +552,12 @@ public class Bridge {
   }
 
   public void triggerJSEvent(final String eventName, final String target) {
-    eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\")", new ValueCallback<String>() {
-      @Override
-      public void onReceiveValue(String s) {
-      }
+    eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\")", s -> {
     });
   }
 
   public void triggerJSEvent(final String eventName, final String target, final String data) {
-    eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", new ValueCallback<String>() {
-      @Override
-      public void onReceiveValue(String s) {
-      }
+    eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", s -> {
     });
   }
 
@@ -863,12 +849,7 @@ public class Bridge {
    */
   public void setServerBasePath(String path) {
     localServer.hostFiles(path);
-    webView.post(new Runnable() {
-      @Override
-      public void run() {
-        webView.loadUrl(appUrl);
-      }
-    });
+    webView.post(() -> webView.loadUrl(appUrl));
   }
 
   /**
@@ -878,12 +859,7 @@ public class Bridge {
    */
   public void setServerAssetPath(String path) {
     localServer.hostAssets(path);
-    webView.post(new Runnable() {
-      @Override
-      public void run() {
-        webView.loadUrl(appUrl);
-      }
-    });
+    webView.post(() -> webView.loadUrl(appUrl));
   }
 
   public String getLocalUrl() {

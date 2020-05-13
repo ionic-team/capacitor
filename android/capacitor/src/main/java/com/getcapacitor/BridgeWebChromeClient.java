@@ -96,14 +96,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
       return true;
     }
 
-    Dialogs.alert(view.getContext(), message, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        if(value) {
-          result.confirm();
-        } else {
-          result.cancel();
-        }
+    Dialogs.alert(view.getContext(), message, (value, didCancel, inputValue) -> {
+      if(value) {
+        result.confirm();
+      } else {
+        result.cancel();
       }
     });
 
@@ -124,14 +121,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
       return true;
     }
 
-    Dialogs.confirm(view.getContext(), message, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        if(value) {
-          result.confirm();
-        } else {
-          result.cancel();
-        }
+    Dialogs.confirm(view.getContext(), message, (value, didCancel, inputValue) -> {
+      if(value) {
+        result.confirm();
+      } else {
+        result.cancel();
       }
     });
 
@@ -153,14 +147,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
       return true;
     }
 
-    Dialogs.prompt(view.getContext(), message, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        if(value) {
-          result.confirm(inputValue);
-        } else {
-          result.cancel();
-        }
+    Dialogs.prompt(view.getContext(), message, (value, didCancel, inputValue) -> {
+      if(value) {
+        result.confirm(inputValue);
+      } else {
+        result.cancel();
       }
     });
 

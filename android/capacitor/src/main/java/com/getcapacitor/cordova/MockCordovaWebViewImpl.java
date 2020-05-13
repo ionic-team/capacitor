@@ -73,12 +73,10 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
     @Override
     public void onNativeToJsMessageAvailable(final NativeToJsMessageQueue queue) {
-      cordova.getActivity().runOnUiThread(new Runnable() {
-        public void run() {
-          String js = queue.popAndEncodeAsJs();
-          if (js != null) {
-            webView.evaluateJavascript(js, null);
-          }
+      cordova.getActivity().runOnUiThread(() -> {
+        String js = queue.popAndEncodeAsJs();
+        if (js != null) {
+          webView.evaluateJavascript(js, null);
         }
       });
     }
@@ -197,19 +195,11 @@ public class MockCordovaWebViewImpl implements CordovaWebView {
 
   public void eval(final String js, final ValueCallback<String> callback) {
     Handler mainHandler = new Handler(context.getMainLooper());
-    mainHandler.post(new Runnable() {
-      @Override
-      public void run() {
-        webView.evaluateJavascript(js, callback);
-      }
-    });
+    mainHandler.post(() -> webView.evaluateJavascript(js, callback));
   }
 
   public void triggerDocumentEvent(final String eventName) {
-    eval("window.Capacitor.triggerEvent('" + eventName + "', 'document');", new ValueCallback<String>() {
-      @Override
-      public void onReceiveValue(String s) {
-      }
+    eval("window.Capacitor.triggerEvent('" + eventName + "', 'document');", s -> {
     });
   }
 
