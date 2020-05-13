@@ -491,13 +491,13 @@ public class WebViewLocalServer {
     }
 
     @Override
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
       InputStream is = getInputStream();
       return (is != null) ? is.read(b) : -1;
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
       InputStream is = getInputStream();
       return (is != null) ? is.read(b, off, len) : -1;
     }
