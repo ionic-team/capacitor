@@ -7,7 +7,7 @@ ext {
     androidxMaterialVersion =  '1.1.0-rc02'
     androidxBrowserVersion =  '1.2.0'
     androidxLocalbroadcastmanagerVersion =  '1.0.0'
-    firebaseMessagingVersion =  '20.1.2'
+    firebaseMessagingVersion =  '20.1.6'
     playServicesLocationVersion =  '17.0.0'
     junitVersion =  '4.12'
     androidxJunitVersion =  '1.1.1'
