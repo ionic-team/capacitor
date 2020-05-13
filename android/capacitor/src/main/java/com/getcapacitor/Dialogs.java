@@ -2,7 +2,6 @@ package com.getcapacitor;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.EditText;

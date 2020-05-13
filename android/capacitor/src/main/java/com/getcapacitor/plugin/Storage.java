@@ -11,7 +11,6 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.Set;
