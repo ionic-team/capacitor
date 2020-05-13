@@ -53,7 +53,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
   public void onPermissionRequest(final PermissionRequest request) {
     boolean isRequestPermissionRequired = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M;
 
-    List<String> permissionList = new ArrayList<String>();
+    List<String> permissionList = new ArrayList<>();
     if (Arrays.asList(request.getResources()).contains("android.webkit.resource.VIDEO_CAPTURE")) {
       permissionList.add(Manifest.permission.CAMERA);
     }

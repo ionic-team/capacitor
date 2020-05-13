@@ -33,14 +33,14 @@ public class UriMatcher {
   public UriMatcher(Object code) {
     mCode = code;
     mWhich = -1;
-    mChildren = new ArrayList<UriMatcher>();
+    mChildren = new ArrayList<>();
     mText = null;
   }
 
   private UriMatcher() {
     mCode = null;
     mWhich = -1;
-    mChildren = new ArrayList<UriMatcher>();
+    mChildren = new ArrayList<>();
     mText = null;
   }
 

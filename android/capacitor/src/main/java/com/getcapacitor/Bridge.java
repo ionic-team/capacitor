@@ -169,7 +169,7 @@ public class Bridge {
     appUrlConfig = Config.getString("server.url");
     String[] appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
-    ArrayList<String> authorities = new ArrayList<String>();
+    ArrayList<String> authorities = new ArrayList<>();
     if (appAllowNavigationConfig != null) {
       authorities.addAll(Arrays.asList(appAllowNavigationConfig));
     }
