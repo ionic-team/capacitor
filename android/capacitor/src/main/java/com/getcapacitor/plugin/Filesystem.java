@@ -268,7 +268,7 @@ public class Filesystem extends Plugin {
       }
     } else {
       //remove header from dataURL
-      if(data.indexOf(",") != -1) {
+      if(data.contains(",")) {
         data = data.split(",")[1];
       }
       try (FileOutputStream fos = new FileOutputStream(file, append)) {
