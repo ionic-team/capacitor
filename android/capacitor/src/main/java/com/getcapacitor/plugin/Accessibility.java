@@ -20,6 +20,7 @@ public class Accessibility extends Plugin {
   private TextToSpeech tts;
   private AccessibilityManager am;
 
+  @Override
   public void load() {
     am = (AccessibilityManager) getContext().getSystemService(ACCESSIBILITY_SERVICE);
 

@@ -39,6 +39,7 @@ public class PushNotifications extends Plugin {
   private static final String EVENT_TOKEN_CHANGE = "registration";
   private static final String EVENT_TOKEN_ERROR = "registrationError";
 
+  @Override
   public void load() {
     notificationManager = (NotificationManager)getActivity()
             .getSystemService(Context.NOTIFICATION_SERVICE);

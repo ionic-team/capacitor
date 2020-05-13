@@ -22,6 +22,7 @@ public class BackgroundTask extends Plugin {
 
   private BroadcastReceiver taskReceiver;
 
+  @Override
   public void load() {
     IntentFilter intentFilter = new IntentFilter(TASK_BROADCAST_ACTION);
 

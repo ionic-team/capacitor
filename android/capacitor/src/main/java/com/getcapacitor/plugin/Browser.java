@@ -116,6 +116,7 @@ public class Browser extends Plugin {
     }
   };
 
+  @Override
   protected void handleOnResume() {
     if (fireFinished) {
       notifyListeners("browserFinished", new JSObject());
@@ -126,6 +127,7 @@ public class Browser extends Plugin {
     }
   }
 
+  @Override
   protected void handleOnPause() {
     getContext().unbindService(connection);
   }

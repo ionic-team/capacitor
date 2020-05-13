@@ -16,6 +16,7 @@ public class StatusBar extends Plugin {
 
   private int currentStatusbarColor;
 
+  @Override
   public void load() {
     // save initial color of the status bar
     currentStatusbarColor = getActivity().getWindow().getStatusBarColor();

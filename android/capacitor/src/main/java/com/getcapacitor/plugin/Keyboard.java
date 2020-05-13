@@ -31,6 +31,7 @@ public class Keyboard extends Plugin {
   private static final String EVENT_KB_DID_HIDE = "keyboardDidHide";
 
 
+  @Override
   public void load() {
     execute(() -> {
       //calculate density-independent pixels (dp)

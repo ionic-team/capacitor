@@ -21,6 +21,7 @@ public class Storage extends Plugin {
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
 
+  @Override
   public void load() {
     prefs = getContext().getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
     editor = prefs.edit();
