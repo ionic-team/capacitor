@@ -182,10 +182,7 @@ public class WebViewLocalServer {
 
   private boolean isLocalFile(Uri uri) {
     String path = uri.getPath();
-    if (path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart)) {
-      return true;
-    }
-    return false;
+      return path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart);
   }
 
   private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {

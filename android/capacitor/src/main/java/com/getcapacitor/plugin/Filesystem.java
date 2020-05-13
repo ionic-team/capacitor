@@ -318,7 +318,7 @@ public class Filesystem extends Plugin {
       }
 
       boolean deleted = fileObject.delete();
-      if(deleted == false) {
+      if(!deleted) {
         call.error("Unable to delete file");
       } else {
         call.success();
@@ -348,7 +348,7 @@ public class Filesystem extends Plugin {
       } else {
         created = fileObject.mkdir();
       }
-      if(created == false) {
+      if(!created) {
         call.error("Unable to create directory, unknown reason");
       } else {
         call.success();
@@ -385,7 +385,7 @@ public class Filesystem extends Plugin {
       } catch (IOException ignored) {
       }
 
-      if(deleted == false) {
+      if(!deleted) {
         call.error("Unable to delete directory, unknown reason");
       } else {
         call.success();

@@ -372,7 +372,7 @@ public class Splash {
     if (spinnerBar != null && spinnerBar.getParent() != null) {
       spinnerBar.setVisibility(View.INVISIBLE);
 
-      if (removeSpinner == true) {
+      if (removeSpinner) {
         wm.removeView(spinnerBar);
       }
     }

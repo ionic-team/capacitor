@@ -128,7 +128,6 @@ public class StatusBar extends Plugin {
         currentStatusbarColor = getActivity().getWindow().getStatusBarColor();
         getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
 
-        call.success();
       } else {
         // Sets the layout to a normal one that displays the webview below the status bar.
         View decorView = getActivity().getWindow().getDecorView();
@@ -138,8 +137,8 @@ public class StatusBar extends Plugin {
         // recover the previous color of the status bar
         getActivity().getWindow().setStatusBarColor(currentStatusbarColor);
 
-        call.success();
       }
+      call.success();
     });
   }
 }
