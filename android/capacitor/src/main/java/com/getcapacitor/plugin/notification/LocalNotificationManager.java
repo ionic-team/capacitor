@@ -44,7 +44,7 @@ public class LocalNotificationManager {
   public static final String REMOTE_INPUT_KEY = "LocalNotificationRemoteInput";
 
   public static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "default";
-  private static final String DEFAULT_PRESS_ACTION = "tap";
+  protected static final String DEFAULT_PRESS_ACTION = "tap";
 
   private Context context;
   private Activity activity;
@@ -152,7 +152,7 @@ public class LocalNotificationManager {
   // TODO expandable notification NotificationCompat.MessagingStyle
   // TODO media style notification support NotificationCompat.MediaStyle
   // TODO custom small/large icons
-  private void buildNotification(NotificationManagerCompat notificationManager, LocalNotification localNotification, PluginCall call) {
+  protected void buildNotification(NotificationManagerCompat notificationManager, LocalNotification localNotification, PluginCall call) {
     String channelId = DEFAULT_NOTIFICATION_CHANNEL_ID;
     if (localNotification.getChannelId() != null) {
       channelId = localNotification.getChannelId();
@@ -260,7 +260,7 @@ public class LocalNotificationManager {
   }
 
   @NonNull
-  private Intent buildIntent(LocalNotification localNotification, String action) {
+  protected Intent buildIntent(LocalNotification localNotification, String action) {
     Intent intent;
     if (activity != null) {
       intent = new Intent(context, activity.getClass());
@@ -285,7 +285,7 @@ public class LocalNotificationManager {
    */
   // TODO support different AlarmManager.RTC modes depending on priority
   // TODO restore alarm on device shutdown (requires persistence)
-  private void triggerScheduledNotification(Notification notification, LocalNotification request) {
+  protected void triggerScheduledNotification(Notification notification, LocalNotification request) {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     LocalNotificationSchedule schedule = request.getSchedule();
     Intent notificationIntent = new Intent(context, TimedNotificationPublisher.class);
@@ -341,7 +341,7 @@ public class LocalNotificationManager {
     call.success();
   }
 
-  private void cancelTimerForNotification(Integer notificationId) {
+  protected void cancelTimerForNotification(Integer notificationId) {
     Intent intent = new Intent(context, TimedNotificationPublisher.class);
     PendingIntent pi = PendingIntent.getBroadcast(
             context, notificationId, intent, 0);
@@ -351,7 +351,7 @@ public class LocalNotificationManager {
     }
   }
 
-  private void dismissVisibleNotification(int notificationId) {
+  protected void dismissVisibleNotification(int notificationId) {
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this.context);
     notificationManager.cancel(notificationId);
   }
