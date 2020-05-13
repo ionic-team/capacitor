@@ -16,7 +16,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@capacitor/core": "~2.0.0"
+    "@capacitor/core": "~2.1.0"
   },
   "scripts": {
     "prepublishOnly": "bash ../scripts/setversion.sh"
