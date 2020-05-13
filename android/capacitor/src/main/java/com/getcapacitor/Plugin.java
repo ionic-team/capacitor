@@ -165,8 +165,7 @@ public class Plugin {
     if (requestedPermissions != null && requestedPermissions.length > 0)
     {
       List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-      ArrayList<String> requestedPermissionsArrayList = new ArrayList<>();
-      requestedPermissionsArrayList.addAll(requestedPermissionsList);
+      ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
       for (String permission: neededPermissions) {
         if (!requestedPermissionsArrayList.contains(permission)) {
           undefinedPermissions.add(permission);
@@ -191,8 +190,7 @@ public class Plugin {
     if (requestedPermissions != null && requestedPermissions.length > 0)
     {
       List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-      ArrayList<String> requestedPermissionsArrayList = new ArrayList<>();
-      requestedPermissionsArrayList.addAll(requestedPermissionsList);
+      ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
       if (requestedPermissionsArrayList.contains(permission)) {
         hasPermission = true;
       }
