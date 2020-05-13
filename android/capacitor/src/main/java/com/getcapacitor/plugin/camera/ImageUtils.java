@@ -93,10 +93,7 @@ public class ImageUtils {
   private static int getOrientation(final Context c, final Uri imageUri) throws IOException {
     int result = 0;
 
-    InputStream iStream = null;
-
-    try {
-      iStream = c.getContentResolver().openInputStream(imageUri);
+    try (InputStream iStream = c.getContentResolver().openInputStream(imageUri)) {
       final ExifInterface exifInterface = new ExifInterface(iStream);
 
       final int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
@@ -108,10 +105,6 @@ public class ImageUtils {
       } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
         result = 270;
       }
-    } finally {
-       if (iStream != null) {
-         iStream.close();
-       }
     }
 
     return result;
