@@ -45,8 +45,8 @@ import java.util.Map;
  */
 public class WebViewLocalServer {
 
-  private final static String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
-  private final static String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
+  private static final String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
+  private static final String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
   private String basePath;
 
   private final UriMatcher uriMatcher;
@@ -104,7 +104,7 @@ public class WebViewLocalServer {
       return handle(request.getUrl());
     }
 
-    abstract public InputStream handle(Uri url);
+    public abstract InputStream handle(Uri url);
 
     public String getEncoding() {
       return encoding;
@@ -461,7 +461,7 @@ public class WebViewLocalServer {
    * The KitKat WebView reads the InputStream on a separate threadpool. We can use that to
    * parallelize loading.
    */
-  private static abstract class LazyInputStream extends InputStream {
+  private abstract static class LazyInputStream extends InputStream {
     protected final PathHandler handler;
     private InputStream is = null;
 
