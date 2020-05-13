@@ -121,7 +121,7 @@ public class JSExport {
     args.add(CATCHALL_OPTIONS_PARAM);
 
     String returnType = method.getReturnType();
-    if (returnType == PluginMethod.RETURN_CALLBACK) {
+    if (returnType.equals(PluginMethod.RETURN_CALLBACK)) {
       args.add(CALLBACK_PARAM);
     }
 

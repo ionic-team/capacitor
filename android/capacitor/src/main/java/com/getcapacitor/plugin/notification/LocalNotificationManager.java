@@ -78,7 +78,7 @@ public class LocalNotificationManager {
       dataJson.put("inputValue", input.toString());
     }
     String menuAction = data.getStringExtra(LocalNotificationManager.ACTION_INTENT_KEY);
-    if (menuAction != DEFAULT_PRESS_ACTION) {
+    if (!menuAction.equals(DEFAULT_PRESS_ACTION)) {
       dismissVisibleNotification(notificationId);
     }
     dataJson.put("actionId", menuAction);
