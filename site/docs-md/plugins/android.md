@@ -287,6 +287,13 @@ protected void handleRequestPermissionsResult(int requestCode, String[] permissi
 }
 ```
 
+### Override navigation
+
+Capacitor plugins can override the webview navigation. For that the plugin can override `public Boolean shouldOverrideLoad(Uri url)` method.
+Returning `true` causes the WebView to abort loading the URL.
+Returning `false` causes the WebView to continue loading the URL.
+Returning `null` will defer to the default Capacitor policy.
+
 ### Export to Capacitor
 
 By using the `@NativePlugin` and `@PluginMethod()` annotations in your plugins, you make them available to Capacitor, but you still need an extra step in your application to make Capacitor aware of the plugins.

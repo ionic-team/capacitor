@@ -183,6 +183,12 @@ const myPluginEventListener = Plugins.MyPlugin.addListener("myPluginEvent", (inf
 myPluginEventListener.remove();
 ```
 
+### Override navigation
+
+Capacitor plugins can override the webview navigation. For that the plugin can override `- (NSNumber *)shouldOverrideLoad:(WKNavigationAction *)navigationAction` method.
+Returning `true` causes the WebView to abort loading the URL.
+Returning `false` causes the WebView to continue loading the URL.
+Returning `nil` will defer to the default Capacitor policy.
 
 ### Export to Capacitor
 
