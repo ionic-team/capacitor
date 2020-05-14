@@ -118,4 +118,16 @@ Recommended changes:
 
   In `android/app/src/main/res/xml/file_paths.xml` add `<cache-path name="my_cache_images" path="." />`.
 
+* Change FileProvider to prevent the app crash at startup.
+
+  In `android/app/src/main/AndroidManifest.xml` file, change `android:name="android.support.v4.content.FileProvider` to `android:name="androidx.core.content.FileProvider`.
+
+* Add AndroidX dependencies.
+
+  In `gradle.properties` file, add:
+  ```
+  # Supports AndroidX
+  android.useAndroidX=true
+  android.enableJetifier=true
+  ```
 For API changes check the [Release Notes](https://github.com/ionic-team/capacitor/releases/tag/2.0.0)
