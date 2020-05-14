@@ -1765,6 +1765,53 @@ export interface StatusBarOverlaysWebviewOptions {
   overlay: boolean;
 }
 
+export interface NavigationBarPlugin extends Plugin {
+  /**
+   *  Set the current style of the navigation bar
+   */
+  setStyle(options: NavigationBarStyleOptions): Promise<void>;
+  /**
+   *  Set the background color of the navigation bar
+   */
+  setBackgroundColor(options: NavigationBarBackgroundColorOptions): Promise<void>;
+  /**
+   * Show the navigation bar
+   */
+  show(): Promise<void>;
+  /**
+   *  Hide the navigation bar
+   */
+  hide(): Promise<void>;
+  /**
+   *  Get info about the current state of the navigation bar
+   */
+  getInfo(): Promise<NavigationBarInfoResult>;
+}
+
+export interface NavigationBarStyleOptions {
+  style: NavigationBarStyle;
+}
+
+export enum NavigationBarStyle {
+  /**
+   * Light text for dark backgrounds.
+   */
+  Dark = 'DARK',
+  /**
+   * Dark text for light backgrounds.
+   */
+  Light = 'LIGHT'
+}
+
+export interface NavigationBarBackgroundColorOptions {
+  color: string;
+}
+
+export interface NavigationBarInfoResult {
+  style: NavigationBarStyle;
+  color?: string;
+}
+
 export interface StoragePlugin extends Plugin {
   /**
    * Get the value with the given key.

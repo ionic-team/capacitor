@@ -36,6 +36,7 @@ import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
+import com.getcapacitor.plugin.NavigationBar;
 import com.getcapacitor.plugin.Storage;
 import com.getcapacitor.plugin.background.BackgroundTask;
 import com.getcapacitor.ui.Toast;
@@ -405,6 +406,7 @@ public class Bridge {
     this.registerPlugin(Share.class);
     this.registerPlugin(SplashScreen.class);
     this.registerPlugin(StatusBar.class);
+    this.registerPlugin(NavigationBar.class);
     this.registerPlugin(Storage.class);
     this.registerPlugin(com.getcapacitor.plugin.Toast.class);
     this.registerPlugin(com.getcapacitor.plugin.WebView.class);
