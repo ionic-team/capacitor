@@ -8,13 +8,13 @@ import WebKit
 import Cordova
 
 public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
-  
+
   private var webView: WKWebView?
-  
+
   public var bridgedWebView: WKWebView? {
     return webView
   }
-  
+
   public var bridgedViewController: UIViewController? {
     return self
   }
@@ -23,19 +23,19 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
   private let assetsFolder = "public"
-  
+
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
   private var statusBarAnimation: UIStatusBarAnimation = .slide
   @objc public var supportedOrientations: Array<Int> = []
-  
+
   @objc public var startDir = ""
   @objc public var config: String?
 
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
   private var handler: CAPAssetHandler?
-  
+
   override public func loadView() {
     let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
     let configParser = XMLParser(contentsOf: configUrl!)!;
@@ -44,7 +44,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     guard let startPath = self.getStartPath() else {
       return
     }
-    
+
     setStatusBarDefaults()
     setScreenOrientationDefaults()
     let capConfig = CAPConfig(self.config)
@@ -65,7 +65,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     o.add(self, name: "bridge")
 
     webViewConfiguration.userContentController = o
-    
+
     configureWebView(configuration: webViewConfiguration)
 
     if let appendUserAgent = (capConfig.getValue("ios.appendUserAgent") as? String) ?? (capConfig.getValue("appendUserAgent") as? String) {
@@ -89,15 +89,21 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
-    
+
     setKeyboardRequiresUserInteraction(false)
-    
+
     bridge = CAPBridge(self, o, capConfig, specifiedScheme)
 
+    webView?.isOpaque = false
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
-      webView?.backgroundColor = UIColor(fromHex: backgroundColor)
-      webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+        if #available(iOS 13.0, *) {
+            webView?.backgroundColor = UIColor.systemBackground
+        } else {
+            webView?.backgroundColor = UIColor(fromHex: backgroundColor)
+        };
+        webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
     }
+
     if let overrideUserAgent = (bridge!.config.getValue("ios.overrideUserAgent") as? String) ?? (bridge!.config.getValue("overrideUserAgent") as? String) {
       webView?.customUserAgent = overrideUserAgent
     }
@@ -160,13 +166,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   func printLoadError() {
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir)
-    
+
     CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
     CAPLog.print("⚡️  This file is the root of your web app and must exist before")
     CAPLog.print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
     CAPLog.print("⚡️  or, if embedding, that this directory exists as a resource directory.")
   }
-  
+
   func fatalLoadError() -> Never {
     printLoadError()
     exit(1)
@@ -256,7 +262,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
     let navUrl = navigationAction.request.url!
-    
+
     /*
      * Give plugins the chance to handle the url
      */
@@ -278,7 +284,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
         }
       }
     }
-    
+
     if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
       for pattern in allowNavigation {
         if matchHost(host: requestHost, pattern: pattern.lowercased()) {
@@ -480,9 +486,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-    
+
     let alertController = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
-    
+
     alertController.addTextField { (textField) in
       textField.text = defaultText
     }
@@ -497,9 +503,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     }))
 
     alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
-      
+
       completionHandler(nil)
-      
+
     }))
 
     self.present(alertController, animated: true, completion: nil)
@@ -551,7 +557,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   /**
    * Add hooks to detect failed HTTP requests
-   
+
    func webView(webView: WKWebView,
    didFailProvisionalNavigation navigation: WKNavigation!,
    withError error: NSError) {
@@ -564,5 +570,5 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
    }
    }
    */
-  
+
 }
