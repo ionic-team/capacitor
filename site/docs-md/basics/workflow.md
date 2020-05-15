@@ -65,13 +65,15 @@ To check if there are any new updates to Capacitor itself, run `npx cap doctor` 
 To update Capacitor Core and CLI:
 
 ```bash
-npm update @capacitor/cli
-npm update @capacitor/core
+npm install @capacitor/cli@latest
+npm install @capacitor/core@latest
 ```
 
 To update any or all of the platforms you are using:
 
 ```bash
-npm update @capacitor/ios
-npm update @capacitor/android
+npm install @capacitor/ios@latest
+npm install @capacitor/android@latest
 ```
+
+Note: If you don't want to risk to introduce breaking changes, use `npm update @capacitor/package-name` instead of `@latest` as `update` respects semver.
