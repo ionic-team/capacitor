@@ -80,6 +80,15 @@ Some plugins may not match functionality entirely, but based on the features you
 
 Note that any plugins that are [incompatible or cause build issues](/docs/cordova/known-incompatible-plugins) are automatically skipped.
 
+### Remove Cordova Plugin
+
+After replacing a Cordova plugin with a Capacitor one (or simply removing it entirely), uninstall the plugin then run the `sync` command to remove the plugin code from a native project:
+
+```bash
+npm uninstall cordova-plugin-name
+npx cap sync [android | ios]
+```
+
 ## Set Permissions
 
 By default, the entire initial permissions requested for the latest version of Capacitor are set for you in the default native projects for both iOS and Android. However, you may need to apply additional permissions manually by mapping between `plugin.xml` and required settings on iOS and Android. Consult the [iOS](/docs/ios/configuration) and [Android](/docs/android/configuration) configuration guides for info on how to configure each platform.
