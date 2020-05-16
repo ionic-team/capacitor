@@ -70,6 +70,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Firebase Analytics | `capacitor-firebase-analytics` | <https://github.com/philmerrell/capacitor-firebase-analytics> | |
+| Firebase Crashlytics | `@rdlabo/capacitor-firebase-crashlytics` | <https://github.com/rdlabo-team/capacitor-firebase-crashlytics> | |
 
 ## Messaging/SMS/Email
 
