@@ -172,6 +172,12 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | Zebra | `zebra-capacitor` | <https://github.com/cleversolutions/zebraCapacitor> | |
 
+## Contacts/Adressbook
+
+| Name                    | NPM package | GitHub | Notes |
+| ----------------------- | ----------- | ------ | ------ |
+| Contacts | `@byrds/capacitor-contacts` | <https://github.com/byrdsandbytes/capacitor-contacts-plugin> | |
+
 
 ## Misc
 
