@@ -136,6 +136,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Downloader | `capacitor-downloader` | <https://github.com/triniwiz/capacitor-downloader> | |
 | Zip | `capacitor-zip` | <https://github.com/triniwiz/capacitor-zip> | |
 | UDP | `@unitree-czk/capacitor-udp` | <https://github.com/unitree-czk/capacitor-udp> | |
+| BlobWriter | `capacitor-blob-writer` | <https://github.com/diachedelic/capacitor-blob-writer> | |
 
 ## Bluetooth
 
