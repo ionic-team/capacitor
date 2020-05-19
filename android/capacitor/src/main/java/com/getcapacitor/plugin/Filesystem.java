@@ -412,10 +412,13 @@ public class Filesystem extends Plugin {
          || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
       if (fileObject != null && fileObject.exists()) {
         String[] files = fileObject.list();
-
-        JSObject ret = new JSObject();
-        ret.put("files", JSArray.from(files));
-        call.success(ret);
+        if (files != null) {
+          JSObject ret = new JSObject();
+          ret.put("files", JSArray.from(files));
+          call.success(ret);
+        } else {
+          call.error("Unable to read directory");
+        }
       } else {
       call.error("Directory does not exist");
       }
