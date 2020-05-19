@@ -68,10 +68,23 @@ public class BridgeFragment extends Fragment {
    * @return A new instance of fragment BridgeFragment.
    */
   public static BridgeFragment newInstance(String startDir) {
+    return BridgeFragment.newInstance(startDir, null);
+  }
+
+  /**
+   * Use this factory method to create a new instance of
+   * this fragment using the provided parameters.
+   *
+   * @param startDir the directory to serve content from
+   * @param initialPlugins the plugins to load with Capacitor
+   * @return A new instance of fragment BridgeFragment.
+   */
+  public static BridgeFragment newInstance(String startDir, List<Class<? extends Plugin>> initialPlugins) {
     BridgeFragment fragment = new BridgeFragment();
     Bundle args = new Bundle();
     args.putString(ARG_START_DIR, startDir);
     fragment.setArguments(args);
+    fragment.setInitialPlugins(initialPlugins);
     return fragment;
   }
 
@@ -178,6 +191,30 @@ public class BridgeFragment extends Fragment {
   public void onDetach() {
     super.onDetach();
     mListener = null;
+  }
+
+  /**
+   * Set the initial plugins on the BridgrFragment to be included in Capacitor.
+   *
+   * @param initialPlugins a list of initial plugins to set
+   */
+  private void setInitialPlugins(List<Class<? extends Plugin>> initialPlugins) {
+    if (initialPlugins == null) {
+      this.initialPlugins = new ArrayList<>();
+    } else {
+      this.initialPlugins = initialPlugins;
+    }
+  }
+
+  /**
+   * Add a plugin to the BridgeFragment to be included in Capacitor.
+   *
+   * Should be added prior to the BridgeFragment being inflated.
+   *
+   * @param plugin a plugin to add to the BridgeFragment
+   */
+  public void addPlugin(Class<? extends Plugin> plugin) {
+    this.initialPlugins.add(plugin);
   }
 
   /**
