@@ -607,7 +607,9 @@ export enum FilesystemDirectory {
    * On iOS it's the app's documents directory.
    * Use this directory to store user-generated content.
    * On Android it's the Public Documents folder, so it's accessible from other apps.
-   * It's not accesible on Android 10 and newer.
+   * It's not accesible on Android 10 unless the app enables legacy External Storage
+   * by adding `android:requestLegacyExternalStorage="true"` in the `application` tag
+   * in the `AndroidManifest.xml`
    */
   Documents = 'DOCUMENTS',
   /**
@@ -637,7 +639,9 @@ export enum FilesystemDirectory {
    * The external storage directory
    * On iOS it will use the Documents directory
    * On Android it's the primary shared/external storage directory.
-   * It's not accesible on Android 10 and newer.
+   * It's not accesible on Android 10 unless the app enables legacy External Storage
+   * by adding `android:requestLegacyExternalStorage="true"` in the `application` tag
+   * in the `AndroidManifest.xml`
    */
   ExternalStorage = 'EXTERNAL_STORAGE'
 }
