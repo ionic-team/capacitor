@@ -113,7 +113,7 @@ function getFrameworkName(framework: any) {
 }
 
 function isFramework(framework: any) {
-  return framework.$.src.split('.').pop() === 'framework';
+  return framework.$.src.split('.').pop().includes('framework');
 }
 
 async function generateCordovaPodspecs(cordovaPlugins: Plugin[], config: Config) {
