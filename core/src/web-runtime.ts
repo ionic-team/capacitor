@@ -13,7 +13,7 @@ export class CapacitorWeb {
     // Gracefully degrade in non-Proxy supporting engines, e.g. IE11. This
     // effectively means that trying to access an unavailable plugin will
     // locally throw, but this is still better than throwing a syntax error.
-    if ('Proxy' in window) {
+    if (typeof Proxy !== 'undefined') {
       // Build a proxy for the Plugins object that returns the "Noop Plugin"
       // if a plugin isn't available
       this.Plugins = new Proxy<any>(this.Plugins, {
