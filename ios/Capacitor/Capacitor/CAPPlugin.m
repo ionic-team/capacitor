@@ -157,5 +157,9 @@
   }
 }
 
+- (NSNumber*)shouldOverrideLoad:(WKNavigationAction*)navigationAction {
+    return nil;
+}
+
 @end
 

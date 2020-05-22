@@ -40,6 +40,10 @@ typedef enum : NSUInteger {
 
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wprotocol"
+// suppressing warnings of the type: "Class 'CAPKeyboard' does not conform to protocol 'CAPBridgedPlugin'"
+// protocol conformance for this class is implemented by a macro and clang isn't detecting that
 @implementation CAPKeyboard
 
 NSTimer *hideTimer;
@@ -354,5 +358,5 @@ static IMP WKOriginalImp;
 }
 
 @end
-
+#pragma clang diagnostic pop
 
