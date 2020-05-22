@@ -2,7 +2,7 @@ import UserNotifications
 
 public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationCenterDelegate  {
 
-  public var bridge: CAPBridge?
+  public weak var bridge: CAPBridge?
   // Local list of notification id -> JSObject for storing options
   // between notification requets
   var notificationRequestLookup = [String:JSObject]()
