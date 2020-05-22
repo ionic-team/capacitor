@@ -65,8 +65,8 @@ enum BridgeError: Error {
     registerPlugins()
     setupCordovaCompatibility()
     bindObservers()
-    NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { _ in
-      self.tmpWindow = nil
+    NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
+      self?.tmpWindow = nil
     }
   }
   
@@ -187,15 +187,19 @@ enum BridgeError: Error {
   func bindObservers() {
     let appStatePlugin = getOrLoadPlugin(pluginName: "App") as? CAPAppPlugin
     
-    NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { (notification) in
+    NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self, weak appStatePlugin] (notification) in
       CAPLog.print("APP ACTIVE")
-      self.isActive = true
-      appStatePlugin?.fireChange(isActive: self.isActive)
+      self?.isActive = true
+      if let strongSelf = self {
+        appStatePlugin?.fireChange(isActive: strongSelf.isActive)
+      }
     }
-    NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { (notification) in
+    NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self, weak appStatePlugin] (notification) in
       CAPLog.print("APP INACTIVE")
-      self.isActive = false
-      appStatePlugin?.fireChange(isActive: self.isActive)
+      self?.isActive = false
+      if let strongSelf = self {
+        appStatePlugin?.fireChange(isActive: strongSelf.isActive)
+      }
     }
   }
   

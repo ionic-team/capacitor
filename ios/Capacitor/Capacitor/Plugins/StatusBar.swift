@@ -8,8 +8,8 @@ import Foundation
 public class CAPStatusBarPlugin: CAPPlugin {
 
   public override func load() {
-    NotificationCenter.default.addObserver(forName: CAPBridge.statusBarTappedNotification.name, object: .none, queue: .none) { _ in
-      self.bridge.triggerJSEvent(eventName: "statusTap", target: "window")
+    NotificationCenter.default.addObserver(forName: CAPBridge.statusBarTappedNotification.name, object: .none, queue: .none) { [weak self] _ in
+      self?.bridge.triggerJSEvent(eventName: "statusTap", target: "window")
     }
   }
 
