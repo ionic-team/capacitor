@@ -19,7 +19,7 @@ enum BridgeError: Error {
   // The last URL that caused the app to open
   private static var lastUrl: URL?
   
-  public var userContentController: WKUserContentController
+  public var messageHandlerWrapper: CAPMessageHandlerWrapper
   public var bridgeDelegate: CAPBridgeDelegate
   @objc public var viewController: UIViewController {
     return bridgeDelegate.bridgedViewController!
@@ -50,9 +50,9 @@ enum BridgeError: Error {
 
   public var notificationsDelegate : CAPUNUserNotificationCenterDelegate
 
-  public init(_ bridgeDelegate: CAPBridgeDelegate, _ userContentController: WKUserContentController, _ config: CAPConfig, _ scheme: String) {
+  public init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
     self.bridgeDelegate = bridgeDelegate
-    self.userContentController = userContentController
+    self.messageHandlerWrapper = messageHandlerWrapper
     self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
     self.config = config
     self.scheme = scheme
@@ -68,6 +68,11 @@ enum BridgeError: Error {
     NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
       self?.tmpWindow = nil
     }
+  }
+  
+  deinit {
+    // the message handler needs to removed to avoid any retain cycles
+    messageHandlerWrapper.cleanUp()
   }
   
   public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
@@ -215,8 +220,8 @@ enum BridgeError: Error {
    */
   func exportCoreJS(localUrl: String) {
     do {
-      try JSExport.exportCapacitorGlobalJS(userContentController: self.userContentController, isDebug: isDevMode(), localUrl: localUrl)
-      try JSExport.exportCapacitorJS(userContentController: self.userContentController)
+      try JSExport.exportCapacitorGlobalJS(userContentController: self.messageHandlerWrapper.contentController, isDebug: isDevMode(), localUrl: localUrl)
+      try JSExport.exportCapacitorJS(userContentController: self.messageHandlerWrapper.contentController)
     } catch {
       CAPBridge.fatalError(error, error)
     }
@@ -238,7 +243,7 @@ enum BridgeError: Error {
    */
   func exportCordovaJS() {
     do {
-      try JSExport.exportCordovaJS(userContentController: self.userContentController)
+      try JSExport.exportCordovaJS(userContentController: self.messageHandlerWrapper.contentController)
     } catch {
       CAPBridge.fatalError(error, error)
     }
@@ -285,7 +290,7 @@ enum BridgeError: Error {
   func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
     // let bridgeType = pluginType as! CAPBridgedPlugin.Type
     knownPlugins[jsName] = pluginType
-    JSExport.exportJS(userContentController: self.userContentController, pluginClassName: jsName, pluginType: pluginType)
+    JSExport.exportJS(userContentController: self.messageHandlerWrapper.contentController, pluginClassName: jsName, pluginType: pluginType)
     _ = loadPlugin(pluginName: jsName)
   }
   
@@ -348,7 +353,7 @@ enum BridgeError: Error {
       }
     }
     do {
-      try JSExport.exportCordovaPluginsJS(userContentController: self.userContentController)
+      try JSExport.exportCordovaPluginsJS(userContentController: self.messageHandlerWrapper.contentController)
     } catch {
       CAPBridge.fatalError(error, error)
     }

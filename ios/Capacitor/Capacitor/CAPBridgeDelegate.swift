@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol CAPBridgeDelegate {
+public protocol CAPBridgeDelegate: class {
   var bridgedWebView: WKWebView? { get }
   var bridgedViewController: UIViewController? { get }
 }
