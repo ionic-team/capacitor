@@ -19,24 +19,25 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
     let toolbarColor = call.getString("toolbarColor")
     let url = URL(string: urlString)
     if let scheme = url?.scheme, ["http", "https"].contains(scheme.lowercased()) {
-      DispatchQueue.main.async {
-        self.vc = SFSafariViewController.init(url: url!)
-        self.vc!.delegate = self
+    DispatchQueue.main.async { [weak self] in
+        let safariVC = SFSafariViewController.init(url: url!)
+        safariVC.delegate = self
         let presentationStyle = call.getString("presentationStyle")
-        if presentationStyle != nil && presentationStyle == "popover" && self.supportsPopover() {
-          self.vc!.modalPresentationStyle = .popover
-          self.setCenteredPopover(self.vc)
+        if presentationStyle != nil && presentationStyle == "popover" && (self?.supportsPopover() ?? false) {
+          safariVC.modalPresentationStyle = .popover
+          self?.setCenteredPopover(safariVC)
         } else {
-          self.vc!.modalPresentationStyle = .fullScreen
+          safariVC.modalPresentationStyle = .fullScreen
         }
 
         if toolbarColor != nil {
-          self.vc!.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
+          safariVC.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
         }
-
-        self.bridge.presentVC(self.vc!, animated: true, completion: {
+        
+        self?.bridge?.presentVC(safariVC, animated: true, completion: {
           call.success()
         })
+        self?.vc = safariVC
       }
     } else {
       call.error("Invalid URL")
@@ -48,7 +49,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
       call.success()
     }
     DispatchQueue.main.async {
-      self.bridge.dismissVC(animated: true) {
+      self.bridge?.dismissVC(animated: true) {
         call.success()
       }
     }

@@ -65,7 +65,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     }
 
     // Observe for changes on frame and bounds to handle rotation resizing
-    let parentView = bridge.viewController.view
+    let parentView = bridge?.viewController.view
     parentView?.addObserver(self, forKeyPath: "frame", options: .new, context: nil)
     parentView?.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
 
@@ -79,7 +79,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
 
   func tearDown() {
     isVisible = false
-    bridge.viewController.view.isUserInteractionEnabled = true
+    bridge?.viewController.view.isUserInteractionEnabled = true
     imageView.removeFromSuperview()
 
     if showSpinner {
@@ -91,12 +91,12 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   // the parent view observers fire
   func updateSplashImageBounds() {
     guard let delegate = UIApplication.shared.delegate else {
-      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
+      bridge?.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
 
     guard let window = delegate.window as? UIWindow else {
-      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
+      bridge?.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
     imageView.image = image
@@ -119,7 +119,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
       return
     }
 
-    let view = bridge.viewController.view
+    let view = bridge?.viewController.view
     view?.addSubview(imageView)
 
     if showSpinner {
@@ -138,7 +138,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
         self.imageView.backgroundColor = UIColor(fromHex: backgroundColor!)
       }
 
-      let view = self.bridge.viewController.view
+      let view = self.bridge?.viewController.view
 
       if self.showSpinner {
         if spinnerStyle != nil {

@@ -317,7 +317,7 @@ enum BridgeError: Error {
     
     let bridgeType = pluginType as! CAPBridgedPlugin.Type
     let p = pluginType.init(bridge: self, pluginId: bridgeType.pluginId(), pluginName: bridgeType.jsName())
-    p!.load()
+    p.load()
     self.plugins[bridgeType.jsName()] = p
     return p
   }
@@ -424,7 +424,7 @@ enum BridgeError: Error {
     }
     
     if !plugin.responds(to: selector) {
-      CAPLog.print("⚡️  Error: Plugin \(plugin.getId()!) does not respond to method call \"\(call.method)\" using selector \"\(selector!)\".")
+      CAPLog.print("⚡️  Error: Plugin \(plugin.getId()) does not respond to method call \"\(call.method)\" using selector \"\(selector!)\".")
       CAPLog.print("⚡️  Ensure plugin method exists, uses @objc in its declaration, and arguments match selector without callbacks in CAP_PLUGIN_METHOD.")
       CAPLog.print("⚡️  Learn more: \(docLink(DocLinks.CAPPluginMethodSelector.rawValue))")
       return
@@ -533,8 +533,8 @@ enum BridgeError: Error {
    */
   @objc public func evalWithPlugin(_ plugin: CAPPlugin, js: String) {
     let wrappedJs = """
-    window.Capacitor.withPlugin('\(plugin.getId()!)', function(plugin) {
-      if(!plugin) { console.error('Unable to execute JS in plugin, no such plugin found for id \(plugin.getId()!)'); }
+    window.Capacitor.withPlugin('\(plugin.getId())', function(plugin) {
+      if(!plugin) { console.error('Unable to execute JS in plugin, no such plugin found for id \(plugin.getId())'); }
       \(js)
     });
     """

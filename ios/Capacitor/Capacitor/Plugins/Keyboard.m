@@ -196,8 +196,14 @@ NSString* UITraitsClassString;
   if (statusBarHeight == 40) {
     _paddingBottom = _paddingBottom + 20;
   }
-  CGRect f = [[[[UIApplication sharedApplication] delegate] window] bounds];
-  CGRect wf = self.webView.frame;
+  CGRect f, wf = CGRectZero;
+  id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
+  if (delegate != nil && [delegate respondsToSelector:@selector(window)]) {
+    f = [[delegate window] bounds];
+  }
+  if (self.webView != nil) {
+    wf = self.webView.frame;
+  }
   switch (self.keyboardResizes) {
     case ResizeBody:
     {
