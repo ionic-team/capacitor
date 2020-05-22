@@ -4,6 +4,7 @@ description: Implement deep linking functionality in an iOS and Android app
 url: /docs/guides/deep-links
 contributors:
   - dotnetkow
+  - jaydrogers
 ---
 
 # Deep Linking with Universal and App Links
@@ -157,14 +158,14 @@ Next, create the site association file (`apple-app-site-association`).
 
 > Note: Despite being a JSON file, do not save it with a file extension.
 
+An example of the `apple-app-site-association` file is below. Be sure to replace `TEAMID.BUNDLEID` with your own IDs (example: `8L65AZE66A.com.netkosoft.beerswift`).
+
 ```json
-// apple-app-site-association
 {
     "applinks": {
         "apps": [],
         "details": [
             {
-                // example: 8L65AZE66A.com.netkosoft.beerswift
                 "appID": "TEAMID.BUNDLEID",
                 "paths": ["*"]
             }
