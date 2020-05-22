@@ -19,7 +19,7 @@ public class CAPModalsPlugin : CAPPlugin {
     }))
     
     DispatchQueue.main.async { [weak self] in
-      self?.bridge?.viewController.present(alert, animated: true, completion: nil)
+      self?.bridge?.viewController?.present(alert, animated: true, completion: nil)
     }
   }
   
@@ -45,7 +45,7 @@ public class CAPModalsPlugin : CAPPlugin {
     }))
     
     DispatchQueue.main.async { [weak self] in
-      self?.bridge?.viewController.present(alert, animated: true, completion: nil)
+      self?.bridge?.viewController?.present(alert, animated: true, completion: nil)
     }
   }
   
@@ -83,7 +83,7 @@ public class CAPModalsPlugin : CAPPlugin {
         ])
       }))
       
-      self?.bridge?.viewController.present(alert, animated: true, completion: nil)
+      self?.bridge?.viewController?.present(alert, animated: true, completion: nil)
     }
   }
   
@@ -98,7 +98,7 @@ public class CAPModalsPlugin : CAPPlugin {
     
     DispatchQueue.main.async { [weak self] in
       if let alertController = self?.buildActionSheet(call, title: title, message: message, options: options) {
-        self?.bridge?.viewController.present(alertController, animated: true, completion: nil)
+        self?.bridge?.viewController?.present(alertController, animated: true, completion: nil)
       }
     }
   }

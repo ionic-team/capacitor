@@ -120,7 +120,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }))
 
     self.setCenteredPopover(alert)
-    self.bridge?.viewController.present(alert, animated: true, completion: nil)
+    self.bridge?.viewController?.present(alert, animated: true, completion: nil)
   }
 
   func showCamera(_ call: CAPPluginCall) {
@@ -156,7 +156,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
               }
             }
 
-            strongSelf.bridge?.viewController.present(strongSelf.imagePicker!, animated: true, completion: nil)
+            strongSelf.bridge?.viewController?.present(strongSelf.imagePicker!, animated: true, completion: nil)
           }
         } else {
             call.error("User denied access to camera")
@@ -185,7 +185,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   private func presentPhotos() {
     self.configurePicker()
     self.imagePicker!.sourceType = .photoLibrary
-    self.bridge?.viewController.present(self.imagePicker!, animated: true, completion: nil)
+    self.bridge?.viewController?.present(self.imagePicker!, animated: true, completion: nil)
   }
 
   private func configurePicker() {

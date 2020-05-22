@@ -24,6 +24,6 @@ public class CAPMessageHandlerWrapper: NSObject, WKScriptMessageHandler {
         guard let bridge = bridge else {
           return
         }
-        bridge.bridgeDelegate.userContentController(userContentController, didReceive: message, bridge: bridge)
+        bridge.bridgeDelegate?.userContentController(userContentController, didReceive: message, bridge: bridge)
     }
 }

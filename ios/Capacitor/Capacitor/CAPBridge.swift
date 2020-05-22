@@ -20,9 +20,9 @@ enum BridgeError: Error {
   private static var lastUrl: URL?
   
   public var messageHandlerWrapper: CAPMessageHandlerWrapper
-  public var bridgeDelegate: CAPBridgeDelegate
-  @objc public var viewController: UIViewController {
-    return bridgeDelegate.bridgedViewController!
+  public weak var bridgeDelegate: CAPBridgeDelegate?
+  @objc public var viewController: UIViewController? {
+    return bridgeDelegate?.bridgedViewController
   }
   
   private var localUrl: String?
@@ -387,7 +387,7 @@ enum BridgeError: Error {
   public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
     alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
-    self.viewController.present(alert, animated: true, completion: nil)
+    self.viewController?.present(alert, animated: true, completion: nil)
   }
 
   func docLink(_ url: String) -> String {
@@ -596,7 +596,7 @@ enum BridgeError: Error {
   }
   
   @objc public func getWebView() -> WKWebView? {
-    return self.bridgeDelegate.bridgedWebView
+    return self.bridgeDelegate?.bridgedWebView
   }
 
   public func getLocalUrl() -> String {
@@ -605,7 +605,7 @@ enum BridgeError: Error {
 
   @objc public func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
     if viewControllerToPresent.modalPresentationStyle == .popover {
-      self.viewController.present(viewControllerToPresent, animated: flag, completion: completion)
+      self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
     } else {
       self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
       self.tmpWindow!.rootViewController = TmpViewController.init()
@@ -616,7 +616,7 @@ enum BridgeError: Error {
 
   @objc public func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
     if self.tmpWindow == nil {
-      self.viewController.dismiss(animated: flag, completion: completion)
+      self.viewController?.dismiss(animated: flag, completion: completion)
     } else {
       self.tmpWindow!.rootViewController!.dismiss(animated: flag, completion: completion)
       self.tmpWindow = nil
