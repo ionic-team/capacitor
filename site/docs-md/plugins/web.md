@@ -24,6 +24,8 @@ more explanation:
 
 ```typescript
 import { WebPlugin } from '@capacitor/core';
+import { registerWebPlugin } from '@capacitor/core';
+
 
 export class MyPluginWeb extends WebPlugin {
   constructor() {
@@ -47,6 +49,8 @@ const MyPlugin = new MyPluginWeb();
 
 // Export the plugin
 export { MyPlugin };
+registerWebPlugin(MyPlugin);
+
 ```
 
 Finally, make sure your `src/index.ts` has this line:
