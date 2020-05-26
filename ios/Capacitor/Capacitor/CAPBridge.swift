@@ -58,8 +58,9 @@ enum BridgeError: Error {
     self.scheme = scheme
 
     super.init()
-
-    self.notificationsDelegate.bridge = self;
+    
+    self.messageHandlerWrapper.bridge = self
+    self.notificationsDelegate.bridge = self
     localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
     registerPlugins()
