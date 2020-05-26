@@ -20,7 +20,7 @@
   * [Cordova/Ionic Native Plugins](cordova/using-cordova-plugins.md)
   * [Known Incompatible Plugins](cordova/known-incompatible-plugins.md)
 * Guides
-  * [Ionic Framework Camera App](guides/ionic-framework-app.md)
+  * [Ionic Photo Gallery App](guides/ionic-framework-app.md)
   * [Push Notifications - Firebase](guides/push-notifications-firebase.md)
   * [Deep Links](guides/deep-links.md)
   * [Community Guides](guides/community.md)
