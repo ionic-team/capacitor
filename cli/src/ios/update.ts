@@ -219,6 +219,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   }
   if (customFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`);
+    frameworkDeps.push(`s.exclude_files = 'sources/**/*.framework/Headers/*.h'`);
   }
   if (sourceFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join(`', '`)}'`);
