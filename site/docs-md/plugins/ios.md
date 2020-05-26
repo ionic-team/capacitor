@@ -17,7 +17,7 @@ contributors:
 
 To get started, first generate a plugin as shown in the [Getting Started](./#getting-started) section of the Plugin guide.
 
-Next, open `your-plugin/ios/Plugin.xcworkspace` in Xcode.
+Next, open `your-plugin/ios/Plugin.xcodeproj` in Xcode.
 
 ## Building your Plugin in Swift
 
