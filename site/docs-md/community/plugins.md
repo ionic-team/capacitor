@@ -112,6 +112,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Voice Recorder | `capacitor-voice-recorder` | <https://bitbucket.org/tchvu3/capacitor-voice-recorder> | |
+| Music Controls | `capacitor-music-controls-plugin` | <https://github.com/ingageco/capacitor-music-controls-plugin> | |
 
 ## Ads
 
