@@ -1,6 +1,5 @@
-import { Component, Prop, ComponentInterface, Listen, State, Watch, h } from '@stencil/core';
+import { Component, Prop, Listen, State, Watch, h } from '@stencil/core';
 import { MarkdownHeading } from '../../global/definitions';
-import { InternalAd } from '../internal-ad/internal-ad';
 
 interface ItemOffset {
   id: string,
@@ -31,6 +30,9 @@ export class InPageNavigtion {
   @State() itemOffsets: ItemOffset[] = [];
   @State() selectedId: string = null;
 
+  
+  
+
   @Watch('pageLinks')
   @Listen('window:resize')
   updateItemOffsets() {
@@ -44,7 +46,7 @@ export class InPageNavigtion {
       });
     });
   }
-
+  
   componentDidLoad() {
     this.updateItemOffsets();
   }

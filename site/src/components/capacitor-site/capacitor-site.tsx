@@ -22,7 +22,7 @@ export class App {
 
   @State() isLeftSidebarIn: boolean;
 
-  @Listen('resize', { target: 'window'})
+  @Listen('window:resize')
   handleResize() {
     requestAnimationFrame(() => {
       if (window.innerWidth > 768 && this.isLeftSidebarIn) {
@@ -54,7 +54,7 @@ export class App {
     this.isLeftSidebarIn = false;
   }
 
-  toggleLeftSidebar = () => {
+  toggleLeftSidebar(){
     if (this.isLeftSidebarIn) {
       this.isLeftSidebarIn = false;
       document.body.classList.remove('no-scroll');
