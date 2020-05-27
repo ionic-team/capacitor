@@ -432,24 +432,24 @@ enum BridgeError: Error {
     }
     
     // Create a plugin call object and handle the success/error callbacks
-    dispatchQueue.async {
+    dispatchQueue.async { [weak self] in
       //let startTime = CFAbsoluteTimeGetCurrent()
       
       let pluginCall = CAPPluginCall(callbackId: call.callbackId, options: call.options, success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
         if result != nil {
-          self.toJs(result: JSResult(call: call, result: result!.data ?? [:]), save: pluginCall?.isSaved ?? false)
+          self?.toJs(result: JSResult(call: call, result: result!.data ?? [:]), save: pluginCall?.isSaved ?? false)
         } else {
-          self.toJs(result: JSResult(call: call, result: [:]), save: pluginCall?.isSaved ?? false)
+          self?.toJs(result: JSResult(call: call, result: [:]), save: pluginCall?.isSaved ?? false)
         }
       }, error: {(error: CAPPluginCallError?) -> Void in
         let description = error?.error?.localizedDescription ?? ""
-        self.toJsError(error: JSResultError(call: call, message: error!.message, errorMessage: description, error: error!.data, code: error!.code))
+        self?.toJsError(error: JSResultError(call: call, message: error!.message, errorMessage: description, error: error!.data, code: error!.code))
       })!
       
       plugin.perform(selector, with: pluginCall)
       
       if pluginCall.isSaved {
-        self.savePluginCall(pluginCall)
+        self?.savePluginCall(pluginCall)
       }
       
       //let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
