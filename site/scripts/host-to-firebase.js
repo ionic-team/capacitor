@@ -27,7 +27,7 @@ const FIREBASE_DEST = './firebase.json';
         };
     });
     const finalData = {
-        hosting: Object.assign({}, firebaseData.hosting, { headers: fireBaseHeaders })
+        hosting: Object.assign(Object.assign({}, firebaseData.hosting), { headers: fireBaseHeaders })
     };
     await writeFile(FIREBASE_DEST, JSON.stringify(finalData, null, 2), { encoding: 'utf8' });
 })();
