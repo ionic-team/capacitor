@@ -9,8 +9,7 @@ enum BridgeError: Error {
 
 @objc public class CAPBridge : NSObject {
 
-  let tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
-  let tmpVC = TmpViewController.init()
+  var tmpWindow: UIWindow?
   @objc public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   @objc public static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
   public static var CAP_SITE = "https://capacitor.ionicframework.com/"
@@ -66,10 +65,8 @@ enum BridgeError: Error {
     registerPlugins()
     setupCordovaCompatibility()
     bindObservers()
-    self.tmpWindow.rootViewController = tmpVC
-    self.tmpWindow.makeKeyAndVisible()
     NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { _ in
-      self.tmpWindow.isHidden = true
+      self.tmpWindow = nil
     }
   }
   
@@ -601,16 +598,19 @@ enum BridgeError: Error {
     if viewControllerToPresent.modalPresentationStyle == .popover {
       self.viewController.present(viewControllerToPresent, animated: flag, completion: completion)
     } else {
-      self.tmpWindow.makeKeyAndVisible()
-      self.tmpVC.present(viewControllerToPresent, animated: flag, completion: completion)
+      self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
+      self.tmpWindow!.rootViewController = TmpViewController.init()
+      self.tmpWindow!.makeKeyAndVisible()
+      self.tmpWindow!.rootViewController!.present(viewControllerToPresent, animated: flag, completion: completion)
     }
   }
 
   @objc public func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-    if self.tmpWindow.isHidden {
+    if self.tmpWindow == nil {
       self.viewController.dismiss(animated: flag, completion: completion)
     } else {
-      self.tmpVC.dismiss(animated: flag, completion: completion)
+      self.tmpWindow!.rootViewController!.dismiss(animated: flag, completion: completion)
+      self.tmpWindow = nil
     }
   }
 
