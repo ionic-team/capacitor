@@ -184,4 +184,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Change Android Navigationbar Color | `capacitor-navigationbar` | <https://github.com/nikosdouvlis/capacitor-navigationbar> | Programmatically change the navigation bar color on android devices |
 | Dark Mode | `capacitor-dark-mode` | <https://github.com/hinddeep/ionicCapacitorDarkMode> | | Listen for dark mode change events
 | Contacts | `@byrds/capacitor-contacts` | <https://github.com/byrdsandbytes/capacitor-contacts-plugin> | |
-| BlinkID SDK | `capacitor-blinkid` | <https://github.com/nowjobs/capacitor-blinkid>
+| BlinkID SDK | `capacitor-blinkid` | <https://github.com/nowjobs/capacitor-blinkid> | BlinkID SDK by Microblink
