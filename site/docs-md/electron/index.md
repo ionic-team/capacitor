@@ -54,4 +54,4 @@ We will have more info on building Electron plugins soon.
 
 That's pretty much all you need to know to build an Electron app with Capacitor!
 
-Follow the [Development Workflow](../basics/workflow) guide to continue building and testing your app.
+Follow the [Development Workflow](/docs/basics/workflow) guide to continue building and testing your app.
