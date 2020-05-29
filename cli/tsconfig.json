@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
       "strict": true,
-      "lib": ["es2016"],
+      "lib": ["es2019"],
       "outDir": "dist",
       "module": "commonjs",
       "target": "es2017",

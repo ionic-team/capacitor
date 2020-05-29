@@ -37,12 +37,17 @@ export interface Plugin {
   };
 }
 
-function dependencyEntries(name: string, pkg: any): string[][] {
-  return [
-    [name, pkg.path],
-    ...Object.entries(pkg.dependencies).map(([name, pkg]) => dependencyEntries(name, pkg))
-  ];
+function flatten(pkg: any) {
+  let seen: any[] = [];
+  const _flatten = (pkg: any): any[] => {
+    if (pkg.constructor !== Object || seen.indexOf(pkg) >= 0) return [];
+    seen.push(pkg);
+    if (!Object.keys(pkg.dependencies)) return [pkg];
+    return [ pkg, ...Object.values(pkg.dependencies).map(_flatten).flat() ];
+  };
+  return _flatten(pkg);
 }
+
 
 function getInstalled(config: Config): Promise<any> {
   return new Promise((resolve, reject) => {
@@ -51,54 +56,37 @@ function getInstalled(config: Config): Promise<any> {
   });
 }
 
-function uniqueEntries(entries: string[][]): string[][] {
-  return Object.entries(
-    entries.reduce(([ key, val ], o) => ({ ...o, [key]: val }))
-  );
+export async function getPlugins(config: Config): Promise<Plugin[]> {
+  const rootPkg = await getInstalled(config);
+  const plugins = await Promise.all(flatten(rootPkg).map(resolvePlugin));
+  return plugins.filter(p => p !== null) as Plugin[];
 }
 
-export function getPlugins(config: Config): Promise<Plugin[]> {
-  return getInstalled(config)
-    .then(tree => dependencyEntries('', tree))
-    .then(uniqueEntries)
-    .then(deps => deps
-      .map(([ name, path ]) => resolvePlugin(name, path))
-      .filter(p => p !== null)) as Promise<Plugin[]>;
-}
-
-export async function resolvePlugin(name: string, rootPath: string): Promise<Plugin | null> {
+export async function resolvePlugin(pkg: any): Promise<Plugin | null> {
   try {
-    if (!rootPath) {
-      logFatal(`Unable to find node_modules/${name}. Are you sure ${name} is installed?`);
-      return null;
-    }
-
-    const packagePath = join(rootPath, 'package.json');
-    const meta = await readJSON(packagePath);
-    if (!meta) {
-      return null;
-    }
-    if (meta.capacitor) {
+    if (pkg.capacitor) {
       return {
-        id: name,
-        name: fixName(name),
-        version: meta.version,
-        rootPath: rootPath,
-        repository: meta.repository,
-        manifest: meta.capacitor
+        id: pkg.name,
+        name: fixName(pkg.name),
+        version: pkg.version,
+        rootPath: pkg.path,
+        repository: pkg.repository,
+        manifest: pkg.capacitor
       };
     }
-    const pluginXMLPath = join(rootPath, 'plugin.xml');
-    const xmlMeta = await readXML(pluginXMLPath);
-    return {
-      id: name,
-      name: fixName(name),
-      version: meta.version,
-      rootPath: rootPath,
-      repository: meta.repository,
-      xml: xmlMeta.plugin
-    };
-  } catch (e) { }
+
+    const xml = await readXML(join(pkg.path, 'plugin.xml'));
+    if (xml) {
+      return {
+        id: pkg.name,
+        name: fixName(pkg.name),
+        version: pkg.version,
+        rootPath: pkg.path,
+        repository: pkg.repository,
+        xml: xml.plugin
+      };
+    }
+  } catch (_) {}
   return null;
 }
 
