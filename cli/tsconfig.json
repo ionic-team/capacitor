@@ -6,8 +6,7 @@
       "module": "commonjs",
       "target": "es2017",
       "moduleResolution": "node",
-      "pretty": true,
-      "esModuleInterop": true
+      "pretty": true
   },
   "files": [
       "src/index.ts",

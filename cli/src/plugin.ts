@@ -1,8 +1,7 @@
-import readInstalled from 'read-installed';
+import readInstalled = require('read-installed');
 import { Config } from './config';
 import { join } from 'path';
 import { log, logFatal, readJSON, readXML, resolveNode } from './common';
-
 
 export const enum PluginType {
   Core,
