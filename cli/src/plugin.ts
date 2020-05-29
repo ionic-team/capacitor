@@ -1,3 +1,4 @@
+import readInstalled from 'read-installed';
 import { Config } from './config';
 import { join } from 'path';
 import { log, logFatal, readJSON, readXML, resolveNode } from './common';
@@ -37,15 +38,37 @@ export interface Plugin {
   };
 }
 
-export async function getPlugins(config: Config): Promise<Plugin[]> {
-  const deps = getDependencies(config);
-  const plugins = await Promise.all(deps.map(async p => resolvePlugin(config, p)));
-  return plugins.filter(p => !!p) as Plugin[];
+function dependencyEntries(name: string, pkg: any): string[][] {
+  return [
+    [name, pkg.path],
+    ...Object.entries(pkg.dependencies).map(([name, pkg]) => dependencyEntries(name, pkg))
+  ];
 }
 
-export async function resolvePlugin(config: Config, name: string): Promise<Plugin | null> {
+function getInstalled(config: Config): Promise<any> {
+  return new Promise((resolve, reject) => {
+    readInstalled(config.app.rootDir, { dev: true },
+      (err: Error, tree) => err ? reject(err) : resolve(tree));
+  });
+}
+
+function uniqueEntries(entries: string[][]): string[][] {
+  return Object.entries(
+    entries.reduce(([ key, val ], o) => ({ ...o, [key]: val }))
+  );
+}
+
+export function getPlugins(config: Config): Promise<Plugin[]> {
+  return getInstalled(config)
+    .then(tree => dependencyEntries('', tree))
+    .then(uniqueEntries)
+    .then(deps => deps
+      .map(([ name, path ]) => resolvePlugin(name, path))
+      .filter(p => p !== null)) as Promise<Plugin[]>;
+}
+
+export async function resolvePlugin(name: string, rootPath: string): Promise<Plugin | null> {
   try {
-    const rootPath = resolveNode(config, name);
     if (!rootPath) {
       logFatal(`Unable to find node_modules/${name}. Are you sure ${name} is installed?`);
       return null;
@@ -78,12 +101,6 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
     };
   } catch (e) { }
   return null;
-}
-
-export function getDependencies(config: Config): string[] {
-  const dependencies = config.app.package.dependencies ? config.app.package.dependencies : [];
-  const devDependencies = config.app.package.devDependencies ? config.app.package.devDependencies : [];
-  return Object.keys(dependencies).concat(Object.keys(devDependencies));
 }
 
 export function fixName(name: string): string {

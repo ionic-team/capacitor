@@ -7,10 +7,10 @@
       "target": "es2017",
       "moduleResolution": "node",
       "pretty": true,
-      //"noUnusedLocals": true,
-      //"noUnusedParameters": true
+      "esModuleInterop": true
   },
   "files": [
-      "src/index.ts"
+      "src/index.ts",
+      "src/read-installed.d.ts"
   ]
 }
