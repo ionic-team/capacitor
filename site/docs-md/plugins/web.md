@@ -52,5 +52,6 @@ export { MyPlugin };
 Finally, make sure your `src/index.ts` has this line:
 
 ```typescript
+export * from './definitions';
 export * from './web';
 ```
