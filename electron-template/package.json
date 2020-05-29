@@ -7,10 +7,11 @@
     "electron:start": "electron ./"
   },
   "dependencies": {
-    "electron-is-dev": "^1.1.0"
+    "electron-is-dev": "^1.1.0",
+    "image-data-uri": "^2.0.1"
   },
   "devDependencies": {
-    "electron": "^8.0.0"
+    "electron": "~9.0.0"
   },
   "keywords": [
     "capacitor",
