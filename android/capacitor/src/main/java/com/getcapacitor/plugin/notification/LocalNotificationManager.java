@@ -127,13 +127,17 @@ public class LocalNotificationManager {
 
     boolean notificationsEnabled = notificationManager.areNotificationsEnabled();
     if (!notificationsEnabled) {
-      call.error("Notifications not enabled on this device");
+      if(call != null){
+        call.error("Notifications not enabled on this device");
+      }
       return null;
     }
     for (LocalNotification localNotification : localNotifications) {
       Integer id = localNotification.getId();
       if (localNotification.getId() == null) {
-        call.error("LocalNotification missing identifier");
+        if(call != null) {
+          call.error("LocalNotification missing identifier");
+        }
         return null;
       }
       dismissVisibleNotification(id);
@@ -204,7 +208,9 @@ public class LocalNotificationManager {
       try {
         mBuilder.setColor(Color.parseColor(iconColor));
       } catch (IllegalArgumentException ex) {
-        call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
+        if(call != null) {
+            call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
+        }
         return;
       }
     }
@@ -284,7 +290,6 @@ public class LocalNotificationManager {
    * on a certain date "shape" (such as every first of the month)
    */
   // TODO support different AlarmManager.RTC modes depending on priority
-  // TODO restore alarm on device shutdown (requires persistence)
   private void triggerScheduledNotification(Notification notification, LocalNotification request) {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     LocalNotificationSchedule schedule = request.getSchedule();
