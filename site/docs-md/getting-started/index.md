@@ -27,7 +27,7 @@ make sure you update CocoaPods using `pod repo update` before starting a new pro
 
 ## Adding Capacitor to an existing web app
 
-Capacitor was designed to drop-in to any existing modern JS web app. A valid `package.json` file and a folder containing all web assets are required to get started.
+Capacitor was designed to drop-in to any existing modern JS web app. A valid `package.json` file and a folder containing all web assets are required to get started. Capacitor assumes that it can inject itself into the `head` element in the main `index.html` file.
 
 To add Capacitor to your web app, run the following commands:
 
