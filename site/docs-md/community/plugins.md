@@ -33,6 +33,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Google Sign-in | `@codetrix-studio/capacitor-google-auth` | <https://github.com/CodetrixStudio/CapacitorGoogleAuth> | Works with Firebase. Lightweight |
 | Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
 | Biometric AUth | `capacitor-biometric-auth` | <https://github.com/arielhernandezmusa/capacitor-biometric-auth> | Allow to use Face ID and Touch ID in the same plugin |
+| NativeBiometric | `capacitor-native-biometric` | <https://github.com/epicshaggy/capacitor-native-biometric> | Access the device's native biometric | 
 
 ## Deep Links
 
@@ -166,6 +167,8 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Image Crop | `capacitor-image-crop` | <https://github.com/triniwiz/capacitor-image-crop> | | 
 | Media Operations | `capacitor-media` | <https://github.com/stewwan/capacitor-media> | |
 | Code Scanner | `@rdlabo/capacitor-codescanner` | <https://github.com/rdlabo/capacitor-codescanner> | iOS only (currently) |
+| FilePicker | `capacitor-file-picker` | <https://github.com/epicshaggy/capacitor-file-picker> | Select files from the native file picker |
+| Sharing | `capacitor-sharing` | <https://github.com/epicshaggy/capacitor-sharing> | Share one or more files |
 
 
 ## Printers
