@@ -55,3 +55,20 @@ Finally, make sure your `src/index.ts` has this line:
 export * from './definitions';
 export * from './web';
 ```
+
+## Usage
+
+Custom Capacitor plugins are merged into Capacitor Core and thus are accessed through object destructuring. To use a plugin's features in a PWA, import the plugin package in addition to importing from Capacitor Core.
+
+```typescript
+// Import plugins from Capacitor Core
+import { Plugins } from '@capacitor/core';
+// Import custom plugin package for web support too
+import 'my-plugin';
+
+// Destructure custom plugin from core plugins
+const { MyPlugin } = Plugins;
+await MyPlugin.echo({
+  value: "Hello from web!"
+});
+```
