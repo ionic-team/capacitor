@@ -49,10 +49,10 @@ Mandatory change:
 
   If using Cordova or Capacitor plugins that don't use Android X yet, you can use [jetifier](https://www.npmjs.com/package/jetifier) tool to patch them.
 
-  ```bash
-  npm install jetifier
-  npx jetifier
-  ```
+```bash
+npm install jetifier
+npx jetifier
+```
 
   To run it automatically after every package install, add `"postinstall": "jetifier"` in the `package.json`.
 
@@ -60,7 +60,7 @@ Recommended changes:
 
 * Create common variables
 
-  Create a `variables.gradle` file inside `android` folder with this content
+  Create a `android/variables.gradle` file with this content
 
   ```
   ext {
@@ -81,7 +81,7 @@ Recommended changes:
   }
   ```
 
-  In `android/build.gradle` file, add `apply from: "variables.gradle"`
+  In `android/build.gradle` file, add `apply from: "variables.gradle"` as shown [here](https://github.com/ionic-team/capacitor/blob/master/android-template/build.gradle#L18).
 
 * Use common variables
 
@@ -102,7 +102,7 @@ Recommended changes:
 
   You can also manually update the Gradle plugin and Gradle.
   
-  To manually update Gradle plugin, edit `android/build.gradle` file. Change `classpath 'com.android.tools.build:gradle:3.3.2'` to `classpath 'com.android.tools.build:gradle:3.6.1'`. Change `gradle-4.10.1-all.zip` to `gradle-5.6.4-all.zip`.
+  To manually update Gradle plugin, edit `android/build.gradle` file. Change `classpath 'com.android.tools.build:gradle:3.3.2'` to `classpath 'com.android.tools.build:gradle:3.6.1'`.
 
   To manually update Gradle, edit `android/gradle/wrapper/gradle-wrapper.properties`. Change `gradle-4.10.1-all.zip` to `gradle-5.6.4-all.zip`.
 

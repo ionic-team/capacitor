@@ -57,6 +57,97 @@ site-header {
       align-items: center;
     }
   }
+
+  .announcement {
+    position: relative;
+    margin-right: 8px;
+
+    a {
+      text-decoration: none;
+      color: var(--color-woodsmoke);
+      transition: background 0.3s;
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255,255,255,0.10);
+      border-radius: 100px;
+      padding: 5px;
+      border: 0;
+    }
+
+    a:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .pill,
+    .cta {
+      font-size: 10px;
+      text-transform: uppercase;
+
+    }
+    .pill {
+      background-color: $color-yellow;
+      color: $color-yellow-contrast;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 100px;
+      flex: 0 0 70px;
+      text-align: center;
+    }
+    .message {
+      font-weight: 500;
+      opacity: 0.8;
+      font-size: 13px;
+      margin: 0 14px;
+      flex: 0 0 auto;
+
+      @media screen and (max-width: 1130px) {
+        flex: 0 1 auto;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: calc(100vw - 710px);
+      }
+    }
+    .black {
+      color: black;
+    }
+    .cta {
+      color: $color-yellow;
+      font-weight: 600;
+      padding-right: 7px;
+      flex: 0 0 94px;
+      white-space: nowrap;
+    }
+    .icon {
+      fill: $color-yellow;
+      height: 9px;
+      width: 8px;
+      transform: translateY(1.5px);
+      margin-left: 2px;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      width: 100vw;
+      padding-top: 5px;
+      margin-right: 0;
+      margin-left: 0;
+
+      a {
+        display: flex;
+        width: 100%;
+        border-radius: 0;
+        padding: 0 12px 0 16px;
+      }
+      .message {
+        flex: 1;
+        max-width: none;
+      }
+      .cta {
+        flex: 0 0 94px;
+        padding-right: 0;
+      }
+    }
+  }
 }
 
 .landing-page site-header .version{
@@ -160,6 +251,8 @@ site-header {
     position: static;
   }
   .header-menu {
+    display: flex;
+
     a,
     .dropdown__label {
       color: rgba($color-white, 0.7);

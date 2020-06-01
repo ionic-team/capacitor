@@ -15,7 +15,7 @@ contributors:
 
 ## Getting Started
 
-To build a custom JavaScript frontend for Capacitor, first follow the [Getting Started](../plugins) section of the plugin guide.
+To build a custom JavaScript frontend for Capacitor, first follow the [Getting Started](/docs/plugins) section of the plugin guide.
 
 Next, build out your plugin any way you see fit! The generated plugin template comes with TypeScript and a simple build process ready to go. You can adopt that (recommended) or remove those files and start fresh.
 

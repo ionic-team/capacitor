@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -75,7 +74,6 @@ import java.util.ArrayList;
  */
 public class Bridge {
 
-  private static final String LOG_TAG = LogUtils.getCoreTag();
   private static final String PREFS_NAME = "CapacitorSettings";
   private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
   private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
@@ -209,7 +207,7 @@ public class Bridge {
     localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
     localServer.hostAssets(DEFAULT_WEB_ASSET_DIR);
 
-    Log.d(LOG_TAG, "Loading app at " + appUrl);
+    Logger.debug("Loading app at " + appUrl);
 
     webView.setWebChromeClient(new BridgeWebChromeClient(this));
     webView.setWebViewClient(this.webViewClient);
@@ -226,6 +224,19 @@ public class Bridge {
   }
 
   public boolean launchIntent(Uri url) {
+    /*
+    * Give plugins the chance to handle the url
+    */
+    for (Map.Entry<String, PluginHandle> entry : plugins.entrySet()) {
+      Plugin plugin = entry.getValue().getInstance();
+      if (plugin != null) {
+        Boolean shouldOverrideLoad = plugin.shouldOverrideLoad(url);
+        if (shouldOverrideLoad != null) {
+          return shouldOverrideLoad;
+        }
+      }
+    }
+
     if (!url.toString().contains(appUrl) && !appAllowNavigationMask.matches(url.getHost())) {
       try {
         Intent openIntent = new Intent(Intent.ACTION_VIEW, url);
@@ -251,7 +262,7 @@ public class Bridge {
       versionCode = Integer.toString(pInfo.versionCode);
       versionName = pInfo.versionName;
     } catch(Exception ex) {
-      Log.e(LOG_TAG, "Unable to get package info", ex);
+      Logger.error("Unable to get package info", ex);
     }
 
     if (!versionCode.equals(lastVersionCode) || !versionName.equals(lastVersionName)) {
@@ -275,7 +286,7 @@ public class Bridge {
       if (BuildConfig.DEBUG) {
         Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + appUrl + "?");
       }
-      Log.e(LOG_TAG, "Unable to load app. Ensure the server is running at " + appUrl + ", or modify the " +
+      Logger.error("Unable to load app. Ensure the server is running at " + appUrl + ", or modify the " +
           "appUrl setting in capacitor.config.json (make sure to npx cap copy after to commit changes).", ex);
     }
   }
@@ -323,22 +334,6 @@ public class Bridge {
       return Config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
   }
 
-  /*
-  public void registerPlugins() {
-    Log.d(LOG_TAG, "Finding plugins");
-    try {
-      Enumeration<URL> roots = getClass().getClassLoader().getResources("");
-      while (roots.hasMoreElements()) {
-        URL url = roots.nextElement();
-        Log.d(LOG_TAG, "CLASSAPTH ROOT: " + url.getPath());
-        //File root = new File(url.getPath());
-      }
-    } catch(Exception ex) {
-      Log.e(LOG_TAG, "Unable to query for plugin classes", ex);
-    }
-  }
-  */
-
   public void reset() {
     savedCalls = new HashMap<>();
   }
@@ -376,7 +371,7 @@ public class Bridge {
         webView.setBackgroundColor(Color.parseColor(backgroundColor));
       }
     } catch (IllegalArgumentException ex) {
-      Log.d(LogUtils.getCoreTag(), "WebView background color not applied");
+      Logger.debug("WebView background color not applied");
     }
     boolean defaultDebuggable = false;
     if (isDevMode()) {
@@ -437,7 +432,7 @@ public class Bridge {
     NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
 
     if (pluginAnnotation == null) {
-      Log.e(LOG_TAG, "NativePlugin doesn't have the @NativePlugin annotation. Please add it");
+      Logger.error("NativePlugin doesn't have the @NativePlugin annotation. Please add it");
       return;
     }
 
@@ -448,16 +443,16 @@ public class Bridge {
       pluginId = pluginAnnotation.name();
     }
 
-    Log.d(LOG_TAG, "Registering plugin: " + pluginId);
+    Logger.debug("Registering plugin: " + pluginId);
 
     try {
       this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
     } catch (InvalidPluginException ex) {
-      Log.e(LOG_TAG, "NativePlugin " + pluginClass.getName() +
+      Logger.error("NativePlugin " + pluginClass.getName() +
           " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
           " the class extends Plugin");
     } catch (PluginLoadException ex) {
-      Log.e(LOG_TAG, "NativePlugin " + pluginClass.getName() + " failed to load", ex);
+      Logger.error("NativePlugin " + pluginClass.getName() + " failed to load", ex);
     }
   }
 
@@ -504,12 +499,12 @@ public class Bridge {
       final PluginHandle plugin = this.getPlugin(pluginId);
 
       if (plugin == null) {
-        Log.e(LOG_TAG, "unable to find plugin : " + pluginId);
+        Logger.error("unable to find plugin : " + pluginId);
         call.errorCallback("unable to find plugin : " + pluginId);
         return;
       }
 
-      Log.v(LOG_TAG, "callback: " + call.getCallbackId() +
+      Logger.verbose("callback: " + call.getCallbackId() +
           ", pluginId: " + plugin.getId() +
           ", methodName: " + methodName + ", methodData: " + call.getData().toString());
 
@@ -523,9 +518,9 @@ public class Bridge {
               saveCall(call);
             }
           } catch(PluginLoadException | InvalidPluginMethodException ex) {
-            Log.e(LOG_TAG, "Unable to execute plugin method", ex);
+            Logger.error("Unable to execute plugin method", ex);
           } catch (Exception ex) {
-            Log.e(LOG_TAG, "Serious error executing plugin", ex);
+            Logger.error("Serious error executing plugin", ex);
             throw new RuntimeException(ex);
           }
         }
@@ -534,7 +529,7 @@ public class Bridge {
       taskHandler.post(currentThreadTask);
 
     } catch (Exception ex) {
-      Log.e("callPluginMethod", "error : " + ex);
+      Logger.error(Logger.tags("callPluginMethod"), "error : " + ex, null);
       call.errorCallback(ex.toString());
     }
   }
@@ -647,7 +642,7 @@ public class Bridge {
 
       return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
     } catch(JSExportException ex) {
-      Log.e(LOG_TAG, "Unable to export Capacitor JS. App will not function!", ex);
+      Logger.error("Unable to export Capacitor JS. App will not function!", ex);
     }
     return null;
   }
@@ -678,7 +673,7 @@ public class Bridge {
               lastPluginId, PluginCall.CALLBACK_ID_DANGLING, lastPluginCallMethod, options);
 
         } catch (JSONException ex) {
-          Log.e(LOG_TAG, "Unable to restore plugin call, unable to parse persisted JSON object", ex);
+          Logger.error("Unable to restore plugin call, unable to parse persisted JSON object", ex);
         }
       }
 
@@ -692,7 +687,7 @@ public class Bridge {
   }
 
   public void saveInstanceState(Bundle outState) {
-    Log.d(LOG_TAG, "Saving instance state!");
+    Logger.debug("Saving instance state!");
 
     // If there was a last PluginCall for a started activity, we need to
     // persist it so we can load it again in case our app gets terminated
@@ -710,7 +705,7 @@ public class Bridge {
   }
 
   public void startActivityForPluginWithResult(PluginCall call, Intent intent, int requestCode) {
-    Log.d(LOG_TAG, "Starting activity for result");
+    Logger.debug("Starting activity for result");
 
     pluginCallForLastActivity = call;
 
@@ -729,11 +724,11 @@ public class Bridge {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if (plugin == null) {
-      Log.d(LOG_TAG, "Unable to find a Capacitor plugin to handle permission requestCode, trying Cordova plugins " + requestCode);
+      Logger.debug("Unable to find a Capacitor plugin to handle permission requestCode, trying Cordova plugins " + requestCode);
       try {
         cordovaInterface.onRequestPermissionResult(requestCode, permissions, grantResults);
       } catch (JSONException e) {
-        Log.d(LOG_TAG, "Error on Cordova plugin permissions request " + e.getMessage());
+        Logger.debug("Error on Cordova plugin permissions request " + e.getMessage());
       }
       return;
     }
@@ -752,7 +747,7 @@ public class Bridge {
     PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
     if (plugin == null || plugin.getInstance() == null) {
-      Log.d(LOG_TAG, "Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
+      Logger.debug("Unable to find a Capacitor plugin to handle requestCode, trying Cordova plugins " + requestCode);
       cordovaInterface.onActivityResult(requestCode, resultCode, data);
       return;
     }

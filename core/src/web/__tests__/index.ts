@@ -1,14 +1,8 @@
-import { WebPlugin, WebPluginRegistry } from '../index';
-
-class MockPluginRegistry extends WebPluginRegistry {
-  constructor() {
-    super();
-  }
-}
+import { WebPlugin } from '../index';
 
 class MockPlugin extends WebPlugin {
   constructor() {
-    super("Mock", new MockPluginRegistry());
+    super({name: 'Mock'});
   }
   trigger() {
     this.notifyListeners('test', {
@@ -18,26 +12,27 @@ class MockPlugin extends WebPlugin {
 }
 
 describe('Web Plugin', () => {
-  var plugin;
+  var plugin: MockPlugin;
 
   beforeEach(() => {
     plugin = new MockPlugin();
   })
 
   it('Should add event listeners', () => {
-    let lf = (event) => {};
+    let lf = (event: any) => { console.log(event); };
 
     let handle = plugin.addListener('test', lf);
 
     const listener = plugin.listeners['test'];
     expect(listener).not.toBe(undefined);
     expect(listener.length).toEqual(1);
+    handle.remove();
   });
 
   it('Should manage multiple event listeners', () => {
-    let lf1 = (event) => {};
-    let lf2 = (event) => {};
-    let lf3 = (event) => {};
+    let lf1 = (event: any) => { console.log(event); };
+    let lf2 = (event: any) => { console.log(event); };
+    let lf3 = (event: any) => { console.log(event); };
     let handle1 = plugin.addListener('test', lf1);
     let handle2 = plugin.addListener('test', lf2);
     let handle3 = plugin.addListener('test', lf3);
@@ -53,7 +48,7 @@ describe('Web Plugin', () => {
   });
 
   it('Should remove event listeners', () => {
-    let lf = (event) => {};
+    let lf = (event: any) => { console.log(event); };
     let handle = plugin.addListener('test', lf);
     handle.remove();
 
@@ -68,11 +63,12 @@ describe('Web Plugin', () => {
     plugin.trigger();
 
     expect(lf.mock.calls.length).toEqual(1);
-    expect(lf.mock.calls[0][0]).toEqual({ value: 'Capacitors on top of toast!' })
+    expect(lf.mock.calls[0][0]).toEqual({ value: 'Capacitors on top of toast!' });
+    handle.remove();
   });
 
   it('Should register and remove window listeners', () => {
-    let pluginAddWindowListener = jest.spyOn(plugin, 'addWindowListener');
+    let pluginAddWindowListener = jest.spyOn(MockPlugin.prototype as any, 'addWindowListener');
     plugin.registerWindowListener('fake', 'test');
 
     let lf = jest.fn();

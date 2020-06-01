@@ -181,7 +181,12 @@ export async function getOrCreateConfig(config: Config) {
     appName: config.app.appName,
     bundledWebRuntime: config.app.bundledWebRuntime,
     npmClient: config.cli.npmClient,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir))
+    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
+    plugins: {
+      SplashScreen : {
+        launchShowDuration: 0
+      }
+    }
   });
 
   // Store our newly created or found external config as the default
@@ -405,13 +410,12 @@ export async function getPlatformVersion(config: Config, platform: string): Prom
 }
 
 export async function checkPlatformVersions(config: Config, platform: string) {
-  const cliVersion = await getCLIVersion(config);
+  const coreVersion = await getCoreVersion(config);
   const platformVersion = await getPlatformVersion(config, platform);
-
-  if (semver.gt(cliVersion, platformVersion)) {
+  if (semver.diff(coreVersion, platformVersion) === 'minor' || semver.diff(coreVersion, platformVersion) === 'major') {
     log('\n');
-    logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
-    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
+    logWarn(`Your @capacitor/core version doesn't match your @capacitor/${platform} version`);
+    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`);
   }
 }
 

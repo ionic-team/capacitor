@@ -220,6 +220,10 @@ export class App {
                   <document-component page='/docs/'></document-component>
                 )}/>
 
+                <stencil-route url="/enterprise/" exact={true} routeRender={() => (
+                  <capacitor-enterprise />
+                )}/>
+
                 <stencil-route url="/docs/:pageName*" routeRender={({ match }) => (
                   <document-component page={match.url}></document-component>
                 )}/>

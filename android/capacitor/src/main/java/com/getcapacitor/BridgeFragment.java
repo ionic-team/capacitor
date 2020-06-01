@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +83,7 @@ public class BridgeFragment extends Fragment {
    * Load the WebView and create the Bridge
    */
   protected void load(Bundle savedInstanceState) {
-    Log.d(LogUtils.getCoreTag(), "Starting BridgeActivity");
+    Logger.debug("Starting BridgeActivity");
 
     Bundle args = getArguments();
     String startDir = null;

@@ -21,7 +21,7 @@ For specific platforms, follow each guide below to ensure you have the correct d
 
 ## iOS Development
 
-For building iOS apps, Capacitor requires a **Mac with Xcode 11 or above**. Soon, you'll be able to use [Ionic Appflow](http://ionicframework.com/appflow) to build for iOS even if you're on Windows.
+For building iOS apps, Capacitor requires a **Mac with Xcode 11 or above**. Or you can use [Ionic Appflow](http://ionicframework.com/appflow) to build for iOS even if you're on Windows.
 
 Additionally, you'll need to install **[CocoaPods](https://cocoapods.org/)** (`sudo gem install cocoapods`), and install the **Xcode Command Line tools** (either from Xcode, or running `xcode-select --install`).
 
@@ -38,7 +38,3 @@ Android development requires the **Android SDK** installed with **[Android Studi
 Android version support for Capacitor is more complex than iOS. Currently, we are targeting API level 21 or greater, meaning Android 5.0 (Lollipop) or above. [As of May 2019](https://developer.android.com/about/dashboards), this represents over 89% of the Android market.
 
 Also, Capacitor requires an Android WebView with Chrome version 50 or later. On Android 5 and 6, the Capacitor uses the System WebView. On Android 7+, Google Chrome is used.
-
-## Electron Development
-
-No specific dependencies are needed to use Capacitor with Electron.

@@ -101,16 +101,21 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
   func showPrompt(_ call: CAPPluginCall) {
     // Build the action sheet
-    let alert = UIAlertController(title: "Photo", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-    alert.addAction(UIAlertAction(title: "From Photos", style: .default, handler: { (action: UIAlertAction) in
+    let promptLabelHeader = call.getString("promptLabelHeader") ?? "Photo"
+    let promptLabelPhoto = call.getString("promptLabelPhoto") ?? "From Photos"
+    let promptLabelPicture = call.getString("promptLabelPicture") ?? "Take Picture"
+    let promptLabelCancel = call.getString("promptLabelCancel") ?? "Cancel"
+    
+    let alert = UIAlertController(title: promptLabelHeader, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+    alert.addAction(UIAlertAction(title: promptLabelPhoto, style: .default, handler: { (action: UIAlertAction) in
       self.showPhotos(call)
     }))
 
-    alert.addAction(UIAlertAction(title: "Take Picture", style: .default, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: promptLabelPicture, style: .default, handler: { (action: UIAlertAction) in
       self.showCamera(call)
     }))
 
-    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: promptLabelCancel, style: .cancel, handler: { (action: UIAlertAction) in
       self.call?.error("User cancelled photos app")
     }))
 
@@ -192,6 +197,10 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   }
 
   public func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+    self.call?.error("User cancelled photos app")
+  }
+
+  public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
     self.call?.error("User cancelled photos app")
   }
 

@@ -252,6 +252,29 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
     let navUrl = navigationAction.request.url!
+    
+    /*
+     * Give plugins the chance to handle the url
+     */
+    if let plugins = bridge?.plugins {
+      for pluginObject in plugins {
+        let plugin = pluginObject.value
+        let selector = NSSelectorFromString("shouldOverrideLoad:")
+        if plugin.responds(to: selector) {
+          let shouldOverrideLoad = plugin.shouldOverrideLoad(navigationAction)
+          if (shouldOverrideLoad != nil) {
+            if (shouldOverrideLoad == true) {
+              decisionHandler(.cancel)
+              return
+            } else if shouldOverrideLoad == false {
+              decisionHandler(.allow)
+              return
+            }
+          }
+        }
+      }
+    }
+    
     if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
       for pattern in allowNavigation {
         if matchHost(host: requestHost, pattern: pattern.lowercased()) {
@@ -267,8 +290,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       return
     }
 
-    // TODO: Allow plugins to handle this. See
-    // https://github.com/ionic-team/cordova-plugin-ionic-webview/blob/608d64191405b233c01a939f5755f8b1fdd97f8c/src/ios/CDVWKWebViewEngine.m#L609
     decisionHandler(.allow)
   }
 

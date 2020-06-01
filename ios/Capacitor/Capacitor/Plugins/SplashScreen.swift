@@ -115,6 +115,10 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let launchSpinnerStyleConfig = getConfigValue("iosSpinnerStyle") as? String ?? nil
     let launchSpinnerColorConfig = getConfigValue("spinnerColor") as? String ?? nil
 
+    if launchShowDurationConfig == 0 {
+      return
+    }
+
     let view = bridge.viewController.view
     view?.addSubview(imageView)
 

@@ -3,12 +3,11 @@ package com.getcapacitor.plugin.notification;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.getcapacitor.Config;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.LogUtils;
+import com.getcapacitor.Logger;
 import com.getcapacitor.PluginCall;
 
 import org.json.JSONException;
@@ -377,7 +376,7 @@ public class LocalNotification {
       JSONObject jsonObject = new JSONObject(extraFromString);
       this.extra = JSObject.fromJSONObject(jsonObject);
     } catch (JSONException e) {
-      Log.e(LogUtils.getPluginTag("LN"), "Cannot rebuild extra data", e);
+      Logger.error(Logger.tags("LN"), "Cannot rebuild extra data", e);
     }
   }
 

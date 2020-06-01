@@ -83,13 +83,23 @@ export class SiteHeader {
           <div class="logo"></div>
         </stencil-route-link>
 
+        <div class="announcement">
+          <a href="https://ionicframework.com/ioniconf" target="_blank">
+            <span class="pill">Ioniconf</span>
+            <span class="message">
+              A one day online event celebrating cross-platform app development
+            </span>
+            <span class="cta">
+              Register Now
+              <app-icon name="caret-right"></app-icon>
+            </span>
+          </a>
+        </div>
+
         <div class="header-menu">
           <stencil-route-link urlMatch="/docs" url="/docs/" onClick={() => { this.hideNav() }}>
             Docs
           </stencil-route-link>
-          {/* <stencil-route-link urlMatch="/blog" url="/blog/" onClick={() => { this.hideNav() }}>
-            Blog
-          </stencil-route-link> */}
 
           <span
             class={{
@@ -116,6 +126,10 @@ export class SiteHeader {
               </li>
             </ul>
           </span>
+
+          <stencil-route-link urlMatch="/enterprise" url="/enterprise/" class="link">
+            Enterprise
+          </stencil-route-link>
 
           <a class="link link--external" href="https://github.com/ionic-team/capacitor" target="_blank">
             GitHub

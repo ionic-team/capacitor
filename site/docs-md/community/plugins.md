@@ -33,7 +33,6 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Google Sign-in | `@codetrix-studio/capacitor-google-auth` | <https://github.com/CodetrixStudio/CapacitorGoogleAuth> | Works with Firebase. Lightweight |
 | Face ID | `capacitor-face-id` | <https://github.com/danielsogl/capacitor-face-id> | |
 | Biometric AUth | `capacitor-biometric-auth` | <https://github.com/arielhernandezmusa/capacitor-biometric-auth> | Allow to use Face ID and Touch ID in the same plugin |
-| Apple Login | `capacitor-apple-login` | <https://github.com/htorbov/capacitor-apple-login> | |
 
 ## Deep Links
 
@@ -71,6 +70,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Name                    | NPM package | GitHub | Notes |
 | ----------------------- | ----------- | ------ | ------ |
 | Firebase Analytics | `capacitor-firebase-analytics` | <https://github.com/philmerrell/capacitor-firebase-analytics> | |
+| Firebase Crashlytics | `@rdlabo/capacitor-firebase-crashlytics` | <https://github.com/rdlabo-team/capacitor-firebase-crashlytics> | |
 
 ## Messaging/SMS/Email
 
@@ -119,6 +119,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | ----------------------- | ----------- | ------ | ------ |
 | AdMob | `capacitor-admob` | <https://github.com/rahadur/capacitor-admob> | iOS, Android |
 | AdMob | `@rdlabo/capacitor-admob` | <https://github.com/rdlabo/capacitor-admob> | |
+| AdMob | `capacitor-admob-advanced` | <https://github.com/DTX-Elliot/capacitor-admob-advanced> | iOS, Android |
 
 ## Notifications
 
@@ -135,6 +136,7 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Downloader | `capacitor-downloader` | <https://github.com/triniwiz/capacitor-downloader> | |
 | Zip | `capacitor-zip` | <https://github.com/triniwiz/capacitor-zip> | |
 | UDP | `@unitree-czk/capacitor-udp` | <https://github.com/unitree-czk/capacitor-udp> | |
+| BlobWriter | `capacitor-blob-writer` | <https://github.com/diachedelic/capacitor-blob-writer> | |
 
 ## Bluetooth
 
@@ -181,3 +183,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Request app review | `capacitor-rate-app` | <https://github.com/Nodonisko/capacitor-rate-app> | Request app review from users |
 | Change Android Navigationbar Color | `capacitor-navigationbar` | <https://github.com/nikosdouvlis/capacitor-navigationbar> | Programmatically change the navigation bar color on android devices |
 | Dark Mode | `capacitor-dark-mode` | <https://github.com/hinddeep/ionicCapacitorDarkMode> | | Listen for dark mode change events
+| Contacts | `@byrds/capacitor-contacts` | <https://github.com/byrdsandbytes/capacitor-contacts-plugin> | |

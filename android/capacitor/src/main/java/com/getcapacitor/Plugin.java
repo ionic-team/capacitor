@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -335,10 +335,10 @@ public class Plugin {
    * @param data
    */
   protected void notifyListeners(String eventName, JSObject data, boolean retainUntilConsumed) {
-    Log.v(getLogTag(), "Notifying listeners for event " + eventName);
+    Logger.verbose(getLogTag(), "Notifying listeners for event " + eventName);
     List<PluginCall> listeners = eventListeners.get(eventName);
     if (listeners == null || listeners.isEmpty()) {
-      Log.d(getLogTag(), "No listeners found for event " + eventName);
+      Logger.debug(getLogTag(), "No listeners found for event " + eventName);
       if (retainUntilConsumed) {
         retainedEventArguments.put(eventName, data);
       }
@@ -550,6 +550,15 @@ public class Plugin {
   protected void handleOnDestroy() {}
 
   /**
+   * Give the plugins a chance to take control when a URL is about to be loaded in the WebView.
+   * Returning true causes the WebView to abort loading the URL.
+   * Returning false causes the WebView to continue loading the URL.
+   * Returning null will defer to the default Capacitor policy
+   */
+  @SuppressWarnings("unused")
+  public Boolean shouldOverrideLoad(Uri url) { return null; }
+
+  /**
    * Start a new Activity.
    *
    * Note: This method must be used by all plugins instead of calling
@@ -576,13 +585,13 @@ public class Plugin {
    * @param subTags
    */
   protected String getLogTag(String... subTags) {
-    return LogUtils.getPluginTag(subTags);
+    return Logger.tags(subTags);
   }
 
   /**
    * Gets a plugin log tag with the child's class name as subTag.
    */
   protected String getLogTag() {
-    return LogUtils.getPluginTag(this.getClass().getSimpleName());
+    return Logger.tags(this.getClass().getSimpleName());
   }
 }

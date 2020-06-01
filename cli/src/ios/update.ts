@@ -113,7 +113,7 @@ function getFrameworkName(framework: any) {
 }
 
 function isFramework(framework: any) {
-  return framework.$.src.split('.').pop() === 'framework';
+  return framework.$.src.split('.').pop().includes('framework');
 }
 
 async function generateCordovaPodspecs(cordovaPlugins: Plugin[], config: Config) {
@@ -219,6 +219,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   }
   if (customFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`);
+    frameworkDeps.push(`s.exclude_files = 'sources/**/*.framework/Headers/*.h'`);
   }
   if (sourceFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join(`', '`)}'`);
@@ -245,6 +246,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
     s.source = { :git => 'https://github.com/ionic-team/does-not-exist.git', :tag => '${config.cli.package.version}' }
     s.source_files = '${sourcesFolderName}/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
+    s.xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 WK_WEB_VIEW_ONLY=1' }
     s.dependency 'CapacitorCordova'${getLinkerFlags(config)}
     s.swift_version  = '${config.ios.cordovaSwiftVersion}'
     ${frameworksString}

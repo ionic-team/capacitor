@@ -10,7 +10,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,7 +52,7 @@ public class Splash {
       try {
         splash = c.getResources().getDrawable(splashId, c.getTheme());
       } catch (Resources.NotFoundException ex) {
-        Log.w(LogUtils.getCoreTag(), "No splash screen found, not displaying");
+        Logger.warn("No splash screen found, not displaying");
         return;
       }
 
@@ -90,7 +89,7 @@ public class Splash {
           splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
         }
       } catch (IllegalArgumentException ex) {
-        Log.d(LogUtils.getCoreTag(), "Background color not applied");
+        Logger.debug("Background color not applied");
       }
 
       String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
@@ -157,7 +156,7 @@ public class Splash {
           spinnerBar.setIndeterminateTintList(colorStateList);
         }
       } catch (IllegalArgumentException ex) {
-        Log.d(LogUtils.getCoreTag(), "Spinner color not applied");
+        Logger.debug("Spinner color not applied");
       }
     }
   }
@@ -169,6 +168,11 @@ public class Splash {
   public static void showOnLaunch(final BridgeActivity a) {
     Integer duration = Config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
     Boolean autohide = Config.getBoolean(CONFIG_KEY_PREFIX + "launchAutoHide", DEFAULT_AUTO_HIDE);
+
+    if (duration == 0) {
+      return;
+    }
+
     show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, autohide, null, true);
   }
 
@@ -194,6 +198,7 @@ public class Splash {
 
   /**
    * Show the Splash Screen
+   *
    * @param a
    * @param showDuration how long to show the splash for if autoHide is enabled
    * @param fadeInDuration how long to fade the splash screen in
@@ -263,7 +268,7 @@ public class Splash {
         try {
           wm.addView(splashImage, params);
         } catch (IllegalStateException | IllegalArgumentException ex) {
-          Log.d(LogUtils.getCoreTag(), "Could not add splash view");
+          Logger.debug("Could not add splash view");
           return;
         }
 
@@ -317,7 +322,7 @@ public class Splash {
     // Warn the user if the splash was hidden automatically, which means they could be experiencing an app
     // that feels slower than it actually is.
     if(isLaunchSplash && isVisible) {
-      Log.d(LogUtils.getCoreTag(), "SplashScreen was automatically hidden after the launch timeout. " +
+      Logger.debug("SplashScreen was automatically hidden after the launch timeout. " +
               "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
               "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
     }

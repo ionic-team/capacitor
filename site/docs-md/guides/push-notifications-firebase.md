@@ -4,11 +4,12 @@ description: Learn how to get Firebase Cloud Messaging working on iOS and Androi
 url: /docs/guides/push-notifications-firebase
 contributors:
   - bryplano
+  - javebratt
 ---
 
 # Using Push Notifications with Firebase in an Ionic + Angular App
 
-**Web Framework**: Ionic 4 + Angular  
+**Web Framework**: Angular
 **Platforms**: iOS, Android
 
 One of the most common features provided by application developers to their users is push notifications. In this tutorial, we'll walk through all the steps needed to get [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) working on iOS and Android.
@@ -17,20 +18,25 @@ For the purposes of registering and monitoring for push notifications from Fireb
 
 ## Required Dependencies
 
-Building and deploying iOS and Android applications using Capacitor requires a bit of setup. Please [follow the instructions to install the necessary Capacitor dependencies here](../getting-started/dependencies) before continuing.
+Building and deploying iOS and Android applications using Capacitor requires a bit of setup. Please [follow the instructions to install the necessary Capacitor dependencies here](/docs/getting-started/dependencies) before continuing.
 
 To test push notifications on iOS, Apple requires that you have [a paid Apple Developer account](https://developer.apple.com/) and a *physical* iOS device.
 
+If you are running into issues or your console throws warnings about outdated or deprecated packages, make sure that you're on the latest stable versions of Node, Android Studio, and Xcode.
+
+Also, we're using Firebase for push notifications, so if you're using other Cordova plugins that use the Firebase SDK make sure they're using the latest versions.
+
 ## Prepare an Ionic Capacitor App
-If you have an existing Ionic 4 app, skip this section. If not, let's create an Ionic app first. 
+
+If you have an existing Ionic app, skip this section. If not, let's create an Ionic app first.
 
 In your preferred terminal, install the latest version of the Ionic CLI:
 
 ```bash
-npm install -g ionic
+npm install -g @ionic/cli
 ```
 
-Next, let's use the CLI to create a new Ionic 4 Angular app based on the **blank** starter project and call it **capApp**:
+Next, let's use the CLI to create a new Ionic Angular app based on the **blank** starter project and call it **capApp**:
 
 ```bash
 ionic start capApp blank --type=angular
@@ -105,28 +111,28 @@ ngOnInit() {
     });
 
     // On success, we should be able to receive notifications
-    PushNotifications.addListener('registration', 
+    PushNotifications.addListener('registration',
       (token: PushNotificationToken) => {
         alert('Push registration success, token: ' + token.value);
       }
     );
 
     // Some issue with our setup and push will not work
-    PushNotifications.addListener('registrationError', 
+    PushNotifications.addListener('registrationError',
       (error: any) => {
         alert('Error on registration: ' + JSON.stringify(error));
       }
     );
 
     // Show us the notification payload if the app is open on our device
-    PushNotifications.addListener('pushNotificationReceived', 
+    PushNotifications.addListener('pushNotificationReceived',
       (notification: PushNotification) => {
         alert('Push received: ' + JSON.stringify(notification));
       }
     );
 
     // Method called when tapping on a notification
-    PushNotifications.addListener('pushNotificationActionPerformed', 
+    PushNotifications.addListener('pushNotificationActionPerformed',
       (notification: PushNotificationActionPerformed) => {
         alert('Push action performed: ' + JSON.stringify(notification));
       }
@@ -170,31 +176,38 @@ export class HomePage implements OnInit {
       }
     });
 
-    PushNotifications.addListener('registration', 
+    PushNotifications.addListener('registration',
       (token: PushNotificationToken) => {
         alert('Push registration success, token: ' + token.value);
       }
     );
 
-    PushNotifications.addListener('registrationError', 
+    PushNotifications.addListener('registrationError',
       (error: any) => {
         alert('Error on registration: ' + JSON.stringify(error));
       }
     );
 
-    PushNotifications.addListener('pushNotificationReceived', 
+    PushNotifications.addListener('pushNotificationReceived',
       (notification: PushNotification) => {
         alert('Push received: ' + JSON.stringify(notification));
       }
     );
 
-    PushNotifications.addListener('pushNotificationActionPerformed', 
+    PushNotifications.addListener('pushNotificationActionPerformed',
       (notification: PushNotificationActionPerformed) => {
         alert('Push action performed: ' + JSON.stringify(notification));
       }
     );
   }
 }
+```
+
+After this, you'll want to generate a new build and let Capacitor know about the changes. You can do that with:
+
+```bash
+ionic build
+npx cap copy
 ```
 
 ## Creating a Project for your App on Firebase
@@ -211,7 +224,9 @@ Name the project, accept the Firebase ToS and click **Create project** to contin
 
 This section more-or-less mirrors the [setting up Firebase using the Firebase console documentation](https://firebase.google.com/docs/android/setup?authuser=0). See below for specific Capacitor-related notes.
 
-Go to the Project Overview page for your Firebase project and, under the **Grow** section, click the **Cloud Messaging** option. At the top, click on the **Android** icon.
+Go to the Project Overview page for your Firebase project and at the top, click on the **Android** icon to add a new android application.
+
+![Add new Android Application in Firebase Console](/assets/img/docs/guides/firebase-push-notifications/add-android-app.png)
 
 The next screen will ask you for some information about your application.
 
@@ -240,7 +255,7 @@ iOS push notifications are significantly more complicated to set up than Android
 1. [Setup the proper Development or Production certificates & provisioning profiles](https://help.apple.com/xcode/mac/current/#/dev60b6fbbc7) for your iOS application in the Apple Developer Portal
 2. [Create an APNS certificate or key](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_certificate-based_connection_to_apns) for either Development or Production in the Apple Developer Portal
 3. [Ensure Push Notification capabilities have been enabled](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) in your application in Xcode
-4. Have a physical iOS device as per the guidelines in the [Dependencies](../getting-started/dependencies) documentation
+4. Have a physical iOS device as per the guidelines in the [Dependencies](/docs/getting-started/dependencies) documentation
 
 ### Integrating Firebase with our native iOS app
 
@@ -270,7 +285,7 @@ You'll then want to open Xcode...
 npx cap open ios
 ```
 
-... and move the `.plist` file into your Xcode project as instructed by Firebase, ensuring to add it to all targets. 
+... and move the `.plist` file into your Xcode project as instructed by Firebase, ensuring to add it to all targets.
 
 ![Google Service Info Plist Location for iOS](/assets/img/docs/guides/firebase-push-notifications/google-plist-location-ios.png)
 
@@ -307,7 +322,7 @@ def capacitor_pods
   # Automatic Capacitor Pod dependencies, do not delete
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-  
+
   # Do not delete
 end
 
@@ -363,7 +378,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
 ```
+
 If you would like to recieve the firebase FCM token from iOS instead of the raw APNS token, you will need to also change your `AppDelegate.didRegisterForRemoteNotificationsWithDeviceToken` code to look like this:
+
 ```swift
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
@@ -376,7 +393,6 @@ If you would like to recieve the firebase FCM token from iOS instead of the raw 
         }
     }
 ```
-
 
 ### Upload the APNS Certificate or Key to Firebase
 
@@ -395,11 +411,13 @@ Now for the fun part - let's verify that push notifications from Firebase are wo
 We need to fire up our application on Android or iOS so that our `home.page.ts` page can register and receive notifications.
 
 To open your Android project in Android Studio:
+
 ```bash
 npx cap open android
 ```
 
 To open your iOS project in Xcode:
+
 ```bash
 npx cap open ios
 ```
@@ -410,9 +428,9 @@ Once the project is open, side-load the application on your device using the Run
 
 If your app successfully registers and you followed the code above, you should see an alert with a success message!
 
-Now we'll test to see if the notifications are received by our device. To send a notification, in Firebase, go to the **Cloud Messaging** section under the Grow header in the project pane. 
+Now we'll test to see if the notifications are received by our device. To send a notification, in Firebase, go to the **Cloud Messaging** section under the Grow header in the project pane.
 
-Next, select the **New Notification** button. 
+Next, select the **New Notification** button.
 
 When creating the notification, you only need to specify the following information:
 
