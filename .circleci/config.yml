@@ -39,9 +39,9 @@ jobs:
     steps:
       - checkout
       - run:
-          command: pod lib lint --allow-warnings Capacitor.podspec
+          command: cd ios && pod lib lint --allow-warnings Capacitor.podspec
       - run:
-          command: pod lib lint --allow-warnings CapacitorCordova.podspec
+          command: cd ios && pod lib lint --allow-warnings CapacitorCordova.podspec
 
   build-android:
     docker:
