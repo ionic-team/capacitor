@@ -24,8 +24,9 @@ more explanation:
 
 ```typescript
 import { WebPlugin } from '@capacitor/core';
+import { MyPlugin } from './definitions';
 
-export class MyPluginWeb extends WebPlugin {
+export class MyPluginWeb extends WebPlugin implements MyPlugin {
   constructor() {
     // Call super with the name of our plugin (this should match the native name),
     // along with the platforms this plugin will activate on. For example, it's possible
@@ -47,6 +48,10 @@ const MyPlugin = new MyPluginWeb();
 
 // Export the plugin
 export { MyPlugin };
+
+// Register as a web plugin
+import { registerWebPlugin } from '@capacitor/core';
+registerWebPlugin(MyPlugin);
 ```
 
 Finally, make sure your `src/index.ts` has this line:
