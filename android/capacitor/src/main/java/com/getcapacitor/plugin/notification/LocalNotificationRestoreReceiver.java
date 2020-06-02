@@ -49,7 +49,7 @@ public class LocalNotificationRestoreReceiver extends BroadcastReceiver {
         }
 
         if(updatedNotifications.size() > 0){
-            storage.appendNotification(updatedNotifications);
+            storage.appendNotifications(updatedNotifications);
         }
 
         LocalNotificationManager localNotificationManager = new LocalNotificationManager(storage, null, context);

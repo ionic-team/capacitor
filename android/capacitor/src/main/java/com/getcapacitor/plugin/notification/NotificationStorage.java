@@ -38,7 +38,7 @@ public class NotificationStorage {
   /**
    * Persist the id of currently scheduled notification
    */
-  public void appendNotification(List<LocalNotification> localNotifications) {
+  public void appendNotifications(List<LocalNotification> localNotifications) {
     SharedPreferences storage = getStorage(NOTIFICATION_STORE_ID);
     SharedPreferences.Editor editor = storage.edit();
     for (LocalNotification request : localNotifications) {
