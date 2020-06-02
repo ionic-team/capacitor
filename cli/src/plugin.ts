@@ -43,7 +43,7 @@ function flatten(pkg: any) {
     if (pkg.constructor !== Object || seen.indexOf(pkg) >= 0) return [];
     seen.push(pkg);
     if (!Object.keys(pkg.dependencies)) return [pkg];
-    return [ pkg, ...Object.values(pkg.dependencies).map(_flatten).flat() ];
+    return [ pkg, ...([] as any[]).concat(...Object.values(pkg.dependencies).map(_flatten)) ];
   };
   return _flatten(pkg);
 }
