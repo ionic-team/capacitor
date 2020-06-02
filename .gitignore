@@ -23,7 +23,6 @@ site/www
 android-template.iml
 !/build/.npmkeep
 lerna-debug.log
-capacitor-ios/
 local.properties
 contents.xcworkspacedata
 .stencil/
