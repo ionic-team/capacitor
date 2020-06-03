@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { checkPlatformVersions, logFatal, resolveNode, runTask } from '../common';
+import { checkPlatformVersions, logFatal, resolveNode, runTask, readXML, log } from '../common';
 import { getAndroidPlugins } from './common';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
 import { convertToUnixPath, copySync, existsSync, readFileAsync, removeSync, writeFileAsync} from '../util/fs';
@@ -7,6 +7,26 @@ import { join, relative, resolve } from 'path';
 import { Plugin, PluginType, getAllElements, getFilePath, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from '../plugin';
 
 const platform = 'android';
+
+async function listAndroidClasses(plugins: Plugin[], config: Config): Promise<string[]> {
+  return Promise.all(
+    plugins.map(async (p: Plugin) => {
+      const manifestPath = resolve(p.rootPath,  p.android!.path, 'src', 'main', 'AndroidManifest.xml');
+      const pluginManifest = await readXML(manifestPath);
+      return `${pluginManifest.manifest.$.package}.${p.name}`;
+    })
+  );
+}
+
+async function printImports(plugins: Plugin[], config: Config) {
+  const compatiblePlugins = plugins.filter((p: Plugin) => getPluginType(p, platform) !== PluginType.Incompatible);
+  const imports = await listAndroidClasses(compatiblePlugins, config);
+
+  log();
+  log('These classes need to be imported and added in MainActivity.java:');
+  imports.forEach((line: string) => log(`  ${line}`));
+  log();
+}
 
 export async function updateAndroid(config: Config) {
   let plugins = await getPluginsTask(config);
@@ -33,6 +53,7 @@ export async function updateAndroid(config: Config) {
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
+  await printImports(plugins, config);
 
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
