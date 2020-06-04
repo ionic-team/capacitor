@@ -18,13 +18,10 @@ Describe the feature request. If your feature request is related to a problem, b
 
 ### Platform(s)
 <!--
-Check the box(es) for platforms for which this feature should be added.
+List the platforms for which this feature should be added.
 -->
 
-- [ ] Android
-- [ ] iOS
-- [ ] Electron
-- [ ] Web
+
 
 ### Preferred Solution
 <!-- Describe the solution you would prefer. -->

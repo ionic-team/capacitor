@@ -20,13 +20,10 @@ PASTE OUTPUT HERE
 
 ### Platform(s)
 <!--
-Check the box(es) for platforms that this bug affects once the issue is created.
+List the platforms that this bug affects.
 -->
 
-- [ ] Android
-- [ ] iOS
-- [ ] Electron
-- [ ] Web
+
 
 ### Current Behavior
 <!--
