@@ -32,7 +32,7 @@ Check the box(es) for platforms for which this feature should be added.
 
 
 ### Alternatives
-<!-- Describe any alternative solutions or features you've considered, if any. -->
+<!-- Describe alternative solutions or features you've considered, if any. -->
 
 
 
