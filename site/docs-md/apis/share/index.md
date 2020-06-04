@@ -31,8 +31,6 @@ let shareRet = await Share.share({
 });
 ```
 
-Each platform uses a different set of fields, but you should supply them all.
-
 ## API
 
 <plugin-api name="share"></plugin-api>
