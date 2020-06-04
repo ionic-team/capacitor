@@ -1691,7 +1691,7 @@ export interface ShareOptions {
    */
   text?: string;
   /**
-   * Set a URL to share
+   * Set a URL to share, can be http, https or file URL
    */
   url?: string;
   /**
