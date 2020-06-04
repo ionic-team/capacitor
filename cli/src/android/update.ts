@@ -18,14 +18,11 @@ async function listAndroidClasses(plugins: Plugin[], config: Config): Promise<st
   );
 }
 
-async function printImports(plugins: Plugin[], config: Config) {
+async function writePluginImports(plugins: Plugin[], config: Config) {
   const compatiblePlugins = plugins.filter((p: Plugin) => getPluginType(p, platform) !== PluginType.Incompatible);
   const imports = await listAndroidClasses(compatiblePlugins, config);
-
-  log();
-  log('These classes need to be imported and added in MainActivity.java:');
-  imports.forEach((line: string) => log(`  ${line}`));
-  log();
+  const writePath = resolve(config.android.platformDir, 'plugin-imports.json')
+  await writeFileAsync(writePath, JSON.stringify(imports))
 }
 
 export async function updateAndroid(config: Config) {
@@ -53,7 +50,7 @@ export async function updateAndroid(config: Config) {
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
-  await printImports(plugins, config);
+  await writePluginImports(plugins, config);
 
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);

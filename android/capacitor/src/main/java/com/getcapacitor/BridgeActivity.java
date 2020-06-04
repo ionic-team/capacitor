@@ -17,7 +17,13 @@ import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONTokener;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +46,11 @@ public class BridgeActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    try {
+      this.init(savedInstanceState, loadPluginList("plugin-imports.json"));
+    } catch (IOException | JSONException | ClassNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
@@ -55,6 +66,34 @@ public class BridgeActivity extends AppCompatActivity {
     setContentView(R.layout.bridge_layout_main);
 
     this.load(savedInstanceState);
+  }
+
+  @SuppressWarnings("unchecked")
+  ArrayList<Class<? extends Plugin>> loadPluginList(String fileName) throws IOException, JSONException, ClassNotFoundException {
+    ArrayList<Class<? extends Plugin>> pluginList = new ArrayList<>();
+    JSONArray plugins = loadJsonArray(fileName);
+    for (int iPlugin = 0; iPlugin < plugins.length(); ++iPlugin) {
+      String plugin = (String) plugins.get(iPlugin);
+      pluginList.add((Class<? extends Plugin>) Class.forName(plugin));
+    }
+    return pluginList;
+  }
+
+  private JSONArray loadJsonArray(String fileName) throws IOException, JSONException {
+    JSONTokener tokener = new JSONTokener(loadJsonStringFromFile(fileName));
+    return new JSONArray(tokener);
+  }
+
+  private String loadJsonStringFromFile(String fileName) throws IOException {
+    BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(fileName)));
+    // do reading, usually loop until end of file reading
+    StringBuilder b = new StringBuilder();
+    String line;
+    while ((line = reader.readLine()) != null) {
+      //process line
+      b.append(line);
+    }
+    return b.toString();
   }
 
   /**
