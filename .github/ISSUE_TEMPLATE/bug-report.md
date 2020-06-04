@@ -67,7 +67,7 @@ Please provide the following information with your request and any other relevan
 
 `pod --version` output (iOS issues only):
 
-### Other Information
+### Additional Context
 <!--
 List any other information that is relevant to your issue. Stack traces, related issues, suggestions on how to fix, Stack Overflow links, forum links, etc.
 -->
