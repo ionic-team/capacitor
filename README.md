@@ -25,17 +25,29 @@ Capacitor comes with a Plugin API for building native plugins. Plugins can be wr
 
 ## Getting Started
 
-Install the [Ionic CLI](https://ionicframework.com/docs/cli/) (`npm install -g @ionic/cli`) and start a new app:
+Capacitor was designed to drop-in to any existing modern web app. Run the following commands to initialize Capacitor in your app:
+
+```
+npm install @capacitor/core @capacitor/cli
+npx cap init
+```
+
+Next, install any of the desired native platforms:
+
+```
+npx cap add android
+npx cap add ios
+```
+
+### New App?
+
+For new apps, we recommend trying the [Ionic Framework](https://ionicframework.com/) with Capacitor.
+
+To begin, install the [Ionic CLI](https://ionicframework.com/docs/cli/) (`npm install -g @ionic/cli`) and start a new app:
 
 ```
 ionic start --capacitor
 ```
-
-Alternatively, you can:
-
-- [Add Capacitor to an existing web app](https://capacitor.ionicframework.com/docs/getting-started#adding-capacitor-to-an-existing-web-app)
-- [Create a fresh project](https://capacitor.ionicframework.com/docs/getting-started#optional-starting-a-fresh-project) without Ionic
-- [Read the docs](https://capacitor.ionicframework.com/docs/getting-started/) for more options
 
 ## FAQ
 
