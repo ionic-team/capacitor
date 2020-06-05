@@ -1,4 +1,4 @@
-import { Component, Listen, State, h } from '@stencil/core';
+import { Component, Listen, State, Element, h, forceUpdate } from '@stencil/core';
 import PrismicDOM from 'prismic-dom';
 
 import { trackClick, trackView } from './tracking-service';
@@ -10,6 +10,7 @@ import { getAd } from './ad-service';
 })
 export class InternalAd {
   @State() ad: any;
+  @Element() el: HTMLElement;
 
   timeout: ReturnType<typeof setTimeout>;
 
@@ -36,21 +37,23 @@ export class InternalAd {
     if (!this.ad || Object.keys(this.ad).length === 0) return;
 
     return (
-      <a href={this.ad.ad_url.url}
-         target={this.ad.ad_url.target}
-         onClick={e => trackClick(this.ad.ad_id, e)}>
-        {/* Reponsive image since Prismic supports it out of the box */}
-        <picture>
-          <source media="(min-width: 37.5em)" src={this.ad.ad_image.url}/>
-          <source src={this.ad.ad_image['1x'].url}/>
-          <img src={this.ad.ad_image.url}
-               alt={this.ad.ad_image.alt}
-               height={this.ad.ad_image['1x'].dimensions.height}
-               width={this.ad.ad_image['1x'].dimensions.width} />
-          <p>{this.ad.ad_image.alt}</p>
-        </picture>
-        <div innerHTML={PrismicDOM.RichText.asHtml(this.ad.ad_copy)}></div>
-      </a>
+      <div class="internalAd__wrapper">
+        <a href={this.ad.ad_url.url}
+          target={this.ad.ad_url.target}
+          onClick={e => trackClick(this.ad.ad_id, e)}>
+          {/* Reponsive image since Prismic supports it out of the box */}
+          <picture>
+            <source media="(min-width: 37.5em)" src={this.ad.ad_image.url}/>
+            <source src={this.ad.ad_image['1x'].url}/>
+            <img src={this.ad.ad_image.url}
+                alt={this.ad.ad_image.alt}
+                height={this.ad.ad_image['1x'].dimensions.height}
+                width={this.ad.ad_image['1x'].dimensions.width} />
+            <p>{this.ad.ad_image.alt}</p>
+          </picture>
+          <div innerHTML={PrismicDOM.RichText.asHtml(this.ad.ad_copy)}></div>
+        </a>
+      </div>
     );
   }
 }

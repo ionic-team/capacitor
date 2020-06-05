@@ -2,6 +2,17 @@ internal-ad {
   max-width: 148px;
   display: block;
   margin: 48px 0 0;
+  overflow:hidden;
+}
+
+internal-ad a {
+  display:inline-block;
+  text-decoration: none;
+}
+
+internal-ad a:hover {
+  border-bottom-color: transparent;
+  text-decoration:underline;
 }
 
 internal-ad p {

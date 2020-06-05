@@ -1,4 +1,4 @@
-import { Component, Prop, Listen, State, Watch, h } from '@stencil/core';
+import { Component, Prop, Listen, State, Watch, h, Element } from '@stencil/core';
 import { MarkdownHeading } from '../../global/definitions';
 
 interface ItemOffset {
@@ -24,13 +24,30 @@ export class InPageNavigtion {
     }
   }
 
+  @Element() el: HTMLElement;
   @Prop() pageLinks: MarkdownHeading[] = [];
   @Prop() srcUrl: string = '';
   @Prop() currentPageUrl: string = '';
   @State() itemOffsets: ItemOffset[] = [];
   @State() selectedId: string = null;
 
+  componentShouldUpdate() {
+    const adContent = this.el.querySelector('.internalAd__wrapper')
+    if (!adContent) return;
+
+    adContent.parentElement.style.height = '0px';
+  }
   
+  componentDidRender() {
+    const adContent = this.el.querySelector('.internalAd__wrapper')
+    if (!adContent) return;
+
+    if (adContent.getBoundingClientRect().bottom < window.innerHeight) {
+      adContent.parentElement.style.height = 'auto';
+    } else {
+      adContent.parentElement.style.height = '0px';
+    }
+  }
   
 
   @Watch('pageLinks')
