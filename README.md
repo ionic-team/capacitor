@@ -1,39 +1,74 @@
-[![Build Status][circle-badge]][circle-badge-url]
+<br />
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/236501/83809024-9da80580-a66a-11ea-8a1d-090fe6f8b01e.png" width="372" height="70" /><br />
+</p>
+<p align="center">
+  ⚡️ Cross-platform apps with JavaScript and the Web ⚡️
+</p>
+<br />
+<p align="center">
+  <a href="https://github.com/ionic-team/capacitor/actions?query=workflow%3ACI"><img src="https://img.shields.io/github/workflow/status/ionic-team/capacitor/CI?style=flat-square" /></a>
+  <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/dw/@capacitor/core?style=flat-square" /></a>
+  <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/v/@capacitor/core?style=flat-square" /></a>
+  <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
+</p>
+<p align="center">
+  <a href="https://capacitor.ionicframework.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=getcapacitor.com&color=blue&style=flat-square" /></a>
+  <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/twitter/follow/capacitorjs" /></a>
+</p>
 
-# ⚡️ Cross-platform apps with JavaScript and the Web ⚡️
+---
 
-Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom Native plugins that your app might need.  Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores, _and_ the mobile web.
+Capacitor is a cross-platform API and code execution layer that makes it easy to call Native SDKs from web code and to write custom native plugins that your app may need. Additionally, Capacitor provides first-class Progressive Web App support so you can write one app and deploy it to the app stores _and_ the mobile web.
 
-Capacitor was created by the Ionic Framework team as a spiritual successor to Cordova, though it does have backward compatibility with the majority of Cordova plugins. Capacitor can be used without [Ionic Framework](https://ionicframework.com/docs/components), but since it's a core part of the Ionic Platform, it's recommended for the best app development experience.
+Capacitor comes with a Plugin API for building native plugins. Plugins can be written inside Capacitor apps or packaged into an npm dependency for community use. Plugin authors are encouraged to use Swift to develop plugins in iOS and Kotlin (or Java) in Android.
 
-Capacitor also comes with a Plugin API for building native plugins. On iOS, first-class Swift support is available, and much of the iOS Capacitor runtime is written in Swift. Plugins may also be written in Objective-C. On Android, writing plugins in Java and Kotlin is supported.
- 
-## Roadmap
+## Getting Started
 
-_Disclaimer: Our roadmap is subject to change at any time and has no specific date guarantees_
+Capacitor was designed to drop-in to any existing modern web app. Run the following commands to initialize Capacitor in your app:
 
-2020 and beyond: The core Capacitor project is now stable. Maintenance is ongoing (including support for new mobile operating system versions, bugs, etc.). Going forward, most new functionality will be implemented as plugins. For the latest updates, track new releases [here](https://github.com/ionic-team/capacitor/releases) or milestones [here](https://github.com/ionic-team/capacitor/milestones).
+```
+npm install @capacitor/core @capacitor/cli
+npx cap init
+```
 
-[2019](https://blog.ionicframework.com/capacitor-in-2019-native-progressive-web-apps-for-all/)
+Next, install any of the desired native platforms:
 
-2018
+```
+npx cap add android
+npx cap add ios
+```
 
- - __Cordova Plugin Integration__
-   - Preliminary support for using plugins from the existing Cordova community
- - __Electron support__
-   - Support for building Electron apps and interacting with Node.js libraries
- - __Enterprise Premium Plugins__
-   - Paid add-on plugins with support for common Enterprise use cases, such as storage, authentication, security, and more
-   - Developer Support options with SLAs and priority patches
-   - We are working with a few large teams/businesses as early development partners. Interested? Email [max@ionicframework.com](mailto:max@ionicframework.com)
+### New App?
+
+For new apps, we recommend trying the [Ionic Framework](https://ionicframework.com/) with Capacitor.
+
+To begin, install the [Ionic CLI](https://ionicframework.com/docs/cli/) (`npm install -g @ionic/cli`) and start a new app:
+
+```
+ionic start --capacitor
+```
+
+## FAQ
+
+#### What are the differences between Capacitor and Cordova?
+
+In spirit, Capacitor and Cordova are very similar. Capacitor offers backward compatibility with a vast majority of Cordova plugins.
+
+Capacitor and Cordova differ in that Capacitor:
+
+- takes a more modern approach to tooling and plugin development
+- treats native projects as source artifacts as opposed to build artifacts
+- is maintained by the Ionic Team itself 💙😊
+
+See [the docs](https://capacitor.ionicframework.com/docs/cordova#differences-between-capacitor-and-cordova) for more details.
+
+#### Do I need to use Ionic Framework with Capacitor?
+
+No, you do not need to use Ionic Framework with Capacitor. Without the Ionic Framework, you may need to implement Native UI yourself. Without the Ionic CLI, you may need to configure tooling yourself to enable features such as [livereload](https://ionicframework.com/docs/cli/livereload). See [the docs](https://capacitor.ionicframework.com/docs/getting-started/with-ionic) for more details.
 
 ## Contributing
 
-Contributing to Capacitor may involve writing TypeScript, Swift/Objective-C, Java, or Markdown depending on the component you are working on. We are looking for help in any of these areas!
+See [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) 💖
 
-Please read the [Contributing](.github/CONTRIBUTING.md) guide for more information.
-
-For details on updating the Capacitor website or documentation, [see here](site/CONTRIBUTING.md).
-
-[circle-badge]: https://circleci.com/gh/ionic-team/capacitor.svg?style=shield
-[circle-badge-url]: https://circleci.com/gh/ionic-team/capacitor
+To help with the Capacitor website or documentation, [see here](site/CONTRIBUTING.md).
