@@ -149,6 +149,7 @@ public class Bridge {
     taskHandler = new Handler(handlerThread.getLooper());
 
     this.config = new Config(getActivity().getAssets(), config);
+    Logger.init(this.config);
 
     // Initialize web view and message handler for it
     this.initWebView();
