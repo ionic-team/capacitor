@@ -253,6 +253,7 @@ declare namespace LocalJSX {
         "srcUrl"?: string;
     }
     interface InternalAd {
+        "onInternalAdLoaded"?: (event: CustomEvent<any>) => void;
     }
     interface LandingPage {
     }

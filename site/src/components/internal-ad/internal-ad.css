@@ -2,6 +2,7 @@ internal-ad {
   max-width: 148px;
   display: block;
   margin: 48px 0 0;
+  height: 0px;
   overflow:hidden;
 }
 

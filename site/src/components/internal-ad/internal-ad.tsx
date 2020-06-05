@@ -1,4 +1,4 @@
-import { Component, Listen, State, Element, h, forceUpdate } from '@stencil/core';
+import { Component, Listen, State, Element, h, Event, EventEmitter} from '@stencil/core';
 import PrismicDOM from 'prismic-dom';
 
 import { trackClick, trackView } from './tracking-service';
@@ -11,6 +11,7 @@ import { getAd } from './ad-service';
 export class InternalAd {
   @State() ad: any;
   @Element() el: HTMLElement;
+  @Event() internalAdLoaded: EventEmitter;
 
   timeout: ReturnType<typeof setTimeout>;
 
@@ -25,7 +26,11 @@ export class InternalAd {
     // give the page a chance to reflow
     this.timeout = setTimeout(() => {
       trackView(this.ad.ad_id);
-    }, 50);
+    }, 50);    
+  }
+
+  componentDidUpdate() {
+    this.internalAdLoaded.emit();
   }
 
   disconnectedCallback() {

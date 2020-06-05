@@ -38,6 +38,7 @@ export class InPageNavigtion {
     adContent.parentElement.style.height = '0px';
   }
   
+  @Listen('internalAdLoaded', { target: 'body' })
   componentDidRender() {
     const adContent = this.el.querySelector('.internalAd__wrapper')
     if (!adContent) return;
