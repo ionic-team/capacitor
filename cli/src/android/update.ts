@@ -49,7 +49,7 @@ export async function updateAndroid(config: Config, allPlugins: Plugin[]) {
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
   }
-  await handleCordovaPluginsJS(cordovaPlugins, config, platform);
+  await handleCordovaPluginsJS(allPlugins, cordovaPlugins, config, platform);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);

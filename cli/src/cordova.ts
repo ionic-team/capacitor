@@ -204,9 +204,9 @@ function getWebDir(config: Config, platform: string): string {
   return '';
 }
 
-export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: Config, platform: string) {
+export async function handleCordovaPluginsJS(allPlugins: Plugin[], cordovaPlugins: Plugin[], config: Config, platform: string) {
   if (!existsSync(getWebDir(config, platform))) {
-    await copy(config, platform);
+    await copy(config, allPlugins, platform);
   }
   if (cordovaPlugins.length > 0) {
     printPlugins(cordovaPlugins, platform, 'cordova');
@@ -219,8 +219,7 @@ export async function handleCordovaPluginsJS(cordovaPlugins: Plugin[], config: C
   await autoGenerateConfig(config, cordovaPlugins, platform);
 }
 
-export async function getCordovaPlugins(config: Config, platform: string): Promise<Plugin[]> {
-  const allPlugins = await getPlugins(config);
+export async function getCordovaPlugins(config: Config, allPlugins: Plugin[], platform: string): Promise<Plugin[]> {
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
     plugins = getIOSPlugins(allPlugins);

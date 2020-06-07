@@ -73,7 +73,7 @@ export async function createCommand(config: Config, dir: string, name: string, i
       return installDeps(appDir, ['@capacitor/cli', '@capacitor/core'], config);
     });
     // Copy web and capacitor to web assets
-    await copy(config, config.web.name);
+    await copy(config, [], config.web.name);
     // Say something nice
     printNextSteps(config, appDir);
   } catch (e) {

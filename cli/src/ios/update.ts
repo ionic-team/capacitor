@@ -33,7 +33,7 @@ export async function updateIOS(config: Config, allPlugins: Plugin[], deployment
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
   }
-  await handleCordovaPluginsJS(cordovaPlugins, config, platform);
+  await handleCordovaPluginsJS(allPlugins, cordovaPlugins, config, platform);
   await generateCordovaPodspecs(cordovaPlugins, config);
   await installCocoaPodsPlugins(config, plugins, deployment);
   await logCordovaManualSteps(cordovaPlugins, config, platform);

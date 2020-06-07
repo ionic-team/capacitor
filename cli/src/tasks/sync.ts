@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { copy } from './copy';
 import { update, updateChecks } from './update';
 import { check, checkPackage, checkWebDir, log, logError, logFatal, logInfo } from '../common';
-import { getPlugins } from '../plugin';
+import { Plugin, getPlugins } from '../plugin';
 import { allSerial } from '../util/promise';
 
 /**
@@ -17,7 +17,8 @@ export async function syncCommand(config: Config, selectedPlatform: string, depl
   }
   try {
     await check(config, [checkPackage, checkWebDir, ...updateChecks(config, platforms)]);
-    await allSerial(platforms.map(platformName => () => sync(config, platformName, deployment)));
+    const allPlugins = await getPlugins(config);
+    await allSerial(platforms.map(platformName => () => sync(config, platformName, allPlugins, deployment)));
     const now = +new Date;
     const diff = (now - then) / 1000;
     log(`Sync finished in ${diff}s`);
@@ -26,12 +27,11 @@ export async function syncCommand(config: Config, selectedPlatform: string, depl
   }
 }
 
-export async function sync(config: Config, platformName: string, deployment: boolean) {
+export async function sync(config: Config, platformName: string, allPlugins: Plugin[], deployment: boolean) {
   try {
-    await copy(config, platformName);
+    await copy(config, allPlugins, platformName);
   } catch (e) {
     logError(e);
   }
-  const allPlugins = await getPlugins(config);
   await update(config, allPlugins, platformName, deployment);
 }

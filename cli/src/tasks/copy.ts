@@ -7,6 +7,7 @@ import { copyElectron } from '../electron/copy';
 import { basename, join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
 import { getCordovaPlugins, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
+import { Plugin, getPlugins } from '../plugin';
 import chalk from 'chalk';
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
@@ -16,13 +17,14 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
     return;
   }
   try {
-    await allSerial(platforms.map(platformName => () => copy(config, platformName)));
+    const allPlugins = await getPlugins(config);
+    await allSerial(platforms.map(platformName => () => copy(config, allPlugins, platformName)));
   } catch (e) {
     logError(e);
   }
 }
 
-export async function copy(config: Config, platformName: string) {
+export async function copy(config: Config, allPlugins: Plugin[], platformName: string) {
   await runTask(chalk`{green {bold copy}}`, async () => {
 
     const result = await checkWebDir(config);
@@ -34,14 +36,14 @@ export async function copy(config: Config, platformName: string) {
       await copyWebDir(config, config.ios.webDirAbs);
       await copyNativeBridge(config, config.ios.webDirAbs);
       await copyCapacitorConfig(config, join(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName));
-      const cordovaPlugins = await getCordovaPlugins(config, platformName);
-      await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
+      const cordovaPlugins = await getCordovaPlugins(config, allPlugins, platformName);
+      await handleCordovaPluginsJS(allPlugins, cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
       await copyWebDir(config, config.android.webDirAbs);
       await copyNativeBridge(config, config.android.webDirAbs);
       await copyCapacitorConfig(config, join(config.android.platformDir, 'app/src/main/assets'));
-      const cordovaPlugins = await getCordovaPlugins(config, platformName);
-      await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
+      const cordovaPlugins = await getCordovaPlugins(config, allPlugins, platformName);
+      await handleCordovaPluginsJS(allPlugins, cordovaPlugins, config, platformName);
       await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
     } else if (platformName === config.web.name) {
       await copyWeb(config);
