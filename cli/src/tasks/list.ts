@@ -12,15 +12,14 @@ export async function listCommand(config: Config, selectedPlatformName: string) 
     return;
   }
   try {
-    await allSerial(platforms.map(platformName => () => list(config, platformName)));
+    const allPlugins = await getPlugins(config);
+    await allSerial(platforms.map(platformName => () => list(config, platformName, allPlugins)));
   } catch (e) {
     logError(e);
   }
 }
 
-export async function list(config: Config, platform: string) {
-
-  const allPlugins = await getPlugins(config);
+export async function list(config: Config, platform: string, allPlugins: Plugin[]) {
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
     plugins = getIOSPlugins(allPlugins);

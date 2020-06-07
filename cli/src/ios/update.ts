@@ -11,9 +11,9 @@ import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSt
 export const updateIOSChecks: CheckFunction[] = [checkCocoaPods, checkIOSProject];
 const platform = 'ios';
 
-export async function updateIOS(config: Config, deployment: boolean) {
+export async function updateIOS(config: Config, allPlugins: Plugin[], deployment: boolean) {
 
-  let plugins = await getPluginsTask(config);
+  let plugins = await getPluginsTask(config, allPlugins);
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
 
@@ -23,7 +23,7 @@ export async function updateIOS(config: Config, deployment: boolean) {
   while (needsPluginUpdate) {
     needsPluginUpdate = await checkAndInstallDependencies(config, plugins, platform);
     if (needsPluginUpdate) {
-      plugins = await getPluginsTask(config);
+      plugins = await getPluginsTask(config, allPlugins);
     }
   }
 
@@ -348,9 +348,8 @@ function removeNoSystem(library: string, sourceFrameworks: Array<string>) {
   return libraries.length === 0;
 }
 
-async function getPluginsTask(config: Config) {
+async function getPluginsTask(config: Config, allPlugins: Plugin[]) {
   return await runTask('Updating iOS plugins', async () => {
-    const allPlugins = await getPlugins(config);
     const iosPlugins = getIOSPlugins(allPlugins);
     return iosPlugins;
   });

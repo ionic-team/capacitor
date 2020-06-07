@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { checkPlatformVersions, logFatal, resolveNode, runTask, readXML, log } from '../common';
+import { checkPlatformVersions, log, logFatal, readXML, resolveNode, runTask } from '../common';
 import { getAndroidPlugins } from './common';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
 import { convertToUnixPath, copySync, existsSync, readFileAsync, removeSync, writeFileAsync} from '../util/fs';
@@ -25,8 +25,8 @@ async function writePluginImports(plugins: Plugin[], config: Config) {
   await writeFileAsync(writePath, JSON.stringify(imports))
 }
 
-export async function updateAndroid(config: Config) {
-  let plugins = await getPluginsTask(config);
+export async function updateAndroid(config: Config, allPlugins: Plugin[]) {
+  let plugins = await getPluginsTask(config, allPlugins);
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
 
@@ -34,7 +34,7 @@ export async function updateAndroid(config: Config) {
   while (needsPluginUpdate) {
     needsPluginUpdate = await checkAndInstallDependencies(config, plugins, platform);
     if (needsPluginUpdate) {
-      plugins = await getPluginsTask(config);
+      plugins = await getPluginsTask(config, allPlugins);
     }
   }
 
@@ -208,9 +208,8 @@ function removePluginsNativeFiles(config: Config) {
   copySync(config.android.assets.pluginsDir, pluginsRoot);
 }
 
-async function getPluginsTask(config: Config) {
+async function getPluginsTask(config: Config, allPlugins: Plugin[]) {
   return await runTask('Updating Android plugins', async () => {
-    const allPlugins = await getPlugins(config);
     const androidPlugins = getAndroidPlugins(allPlugins);
     return androidPlugins;
   });
