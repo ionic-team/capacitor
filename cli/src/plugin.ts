@@ -2,7 +2,7 @@ import readInstalled = require('read-installed');
 import semver = require('semver');
 import { Config } from './config';
 import { join } from 'path';
-import { runTask, log, logWarn, logFatal, readJSON, readXML, resolveNode } from './common';
+import { log, logFatal, logWarn, readJSON, readXML, resolveNode, runTask } from './common';
 import { existsAsync } from './util/fs';
 
 export const enum PluginType {
@@ -71,21 +71,21 @@ export async function getPlugins(config: Config): Promise<Plugin[]> {
 
     const returnedPlugins = [];
     for (let id in pluginMap) {
-      const variations = pluginMap[id]
+      const variations = pluginMap[id];
       if (variations.length > 1) {
-        variations.sort((a, b) => semver.rcompare(a.version, b.version))
-        const usedVersion = variations[0].version
-        log()
-        logWarn(`Found multiple versions of plugin ${id} using ${usedVersion}.`)
+        variations.sort((a, b) => semver.rcompare(a.version, b.version));
+        const usedVersion = variations[0].version;
+        log();
+        logWarn(`Found multiple versions of plugin ${id} using ${usedVersion}.`);
         variations.slice(1).forEach((plugin) => {
           const otherVersion = plugin.version;
           const diff = semver.diff(usedVersion, otherVersion);
           if ( diff !== null ) { // if not equal
-            logWarn(`  ${usedVersion} is a ${diff} change ahead of ${otherVersion}, which was found but unused.`)
+            logWarn(`  ${usedVersion} is a ${diff} change ahead of ${otherVersion}, which was found but unused.`);
           }
-        })
+        });
       }
-      returnedPlugins.push(variations[0])
+      returnedPlugins.push(variations[0]);
     }
     return returnedPlugins;
   });

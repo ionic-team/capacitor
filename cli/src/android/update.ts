@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { checkPlatformVersions, logFatal, resolveNode, runTask, readXML, log } from '../common';
+import { checkPlatformVersions, log, logFatal, readXML, resolveNode, runTask } from '../common';
 import { getAndroidPlugins } from './common';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
 import { convertToUnixPath, copySync, existsSync, readFileAsync, removeSync, writeFileAsync} from '../util/fs';
