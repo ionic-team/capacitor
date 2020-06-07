@@ -2,7 +2,8 @@ import readInstalled = require('read-installed');
 import semver = require('semver');
 import { Config } from './config';
 import { join } from 'path';
-import { log, logWarn, logFatal, readJSON, readXML, resolveNode } from './common';
+import { runTask, log, logWarn, logFatal, readJSON, readXML, resolveNode } from './common';
+import { existsAsync } from './util/fs';
 
 export const enum PluginType {
   Core,
@@ -58,34 +59,36 @@ function getInstalled(config: Config): Promise<any> {
 }
 
 export async function getPlugins(config: Config): Promise<Plugin[]> {
-  const rootPkg = await getInstalled(config);
-  const nullablePlugins = await Promise.all(flatten(rootPkg).map(resolvePlugin));
-  const plugins: Plugin[] = nullablePlugins.filter(p => p !== null) as Plugin[];
+  return await runTask('Finding plugins', async () => {
+    const rootPkg = await getInstalled(config);
+    const nullablePlugins = await Promise.all(flatten(rootPkg).map(resolvePlugin));
+    const plugins: Plugin[] = nullablePlugins.filter(p => p !== null) as Plugin[];
 
-  const pluginMap = plugins.reduce((o, p) => {
-    (o[p.id] = o[p.id] || []).push(p);
-    return o;
-  }, {} as { [key: string]: Plugin[] });
+    const pluginMap = plugins.reduce((o, p) => {
+      (o[p.id] = o[p.id] || []).push(p);
+      return o;
+    }, {} as { [key: string]: Plugin[] });
 
-  const returnedPlugins = [];
-  for (let id in pluginMap) {
-    const variations = pluginMap[id]
-    if (variations.length > 1) {
-      variations.sort((a, b) => semver.rcompare(a.version, b.version))
-      const usedVersion = variations[0].version
-      log()
-      logWarn(`Found multiple versions of plugin ${id} using ${usedVersion}.`)
-      variations.slice(1).forEach((plugin) => {
-        const otherVersion = plugin.version;
-        const diff = semver.diff(usedVersion, otherVersion);
-        if ( diff !== null ) { // if not equal
-          logWarn(`  ${usedVersion} is a ${diff} change ahead of ${otherVersion}, which was found but unused.`)
-        }
-      })
+    const returnedPlugins = [];
+    for (let id in pluginMap) {
+      const variations = pluginMap[id]
+      if (variations.length > 1) {
+        variations.sort((a, b) => semver.rcompare(a.version, b.version))
+        const usedVersion = variations[0].version
+        log()
+        logWarn(`Found multiple versions of plugin ${id} using ${usedVersion}.`)
+        variations.slice(1).forEach((plugin) => {
+          const otherVersion = plugin.version;
+          const diff = semver.diff(usedVersion, otherVersion);
+          if ( diff !== null ) { // if not equal
+            logWarn(`  ${usedVersion} is a ${diff} change ahead of ${otherVersion}, which was found but unused.`)
+          }
+        })
+      }
+      returnedPlugins.push(variations[0])
     }
-    returnedPlugins.push(variations[0])
-  }
-  return returnedPlugins;
+    return returnedPlugins;
+  });
 }
 
 export async function resolvePlugin(pkg: any): Promise<Plugin | null> {
@@ -100,8 +103,9 @@ export async function resolvePlugin(pkg: any): Promise<Plugin | null> {
         manifest: pkg.capacitor
       };
     }
-
-    const xml = await readXML(join(pkg.path, 'plugin.xml'));
+    const xmlPath = join(pkg.path, 'plugin.xml');
+    if (await existsAsync(xmlPath)) return null;
+    const xml = await readXML(xmlPath);
     if (xml) {
       return {
         id: pkg.name,

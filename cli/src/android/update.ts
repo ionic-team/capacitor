@@ -28,8 +28,8 @@ async function printImports(plugins: Plugin[], config: Config) {
   log();
 }
 
-export async function updateAndroid(config: Config) {
-  let plugins = await getPluginsTask(config);
+export async function updateAndroid(config: Config, allPlugins: Plugin[]) {
+  let plugins = await getPluginsTask(config, allPlugins);
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
 
@@ -37,7 +37,7 @@ export async function updateAndroid(config: Config) {
   while (needsPluginUpdate) {
     needsPluginUpdate = await checkAndInstallDependencies(config, plugins, platform);
     if (needsPluginUpdate) {
-      plugins = await getPluginsTask(config);
+      plugins = await getPluginsTask(config, allPlugins);
     }
   }
 
@@ -211,9 +211,8 @@ function removePluginsNativeFiles(config: Config) {
   copySync(config.android.assets.pluginsDir, pluginsRoot);
 }
 
-async function getPluginsTask(config: Config) {
+async function getPluginsTask(config: Config, allPlugins: Plugin[]) {
   return await runTask('Updating Android plugins', async () => {
-    const allPlugins = await getPlugins(config);
     const androidPlugins = getAndroidPlugins(allPlugins);
     return androidPlugins;
   });
