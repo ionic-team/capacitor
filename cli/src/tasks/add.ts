@@ -7,6 +7,7 @@ import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
 import { check, checkAppConfig, checkPackage, checkWebDir, log, logError, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
+import { getPlugins } from '../plugin';
 
 import chalk from 'chalk';
 import { resolve } from 'path';
@@ -41,7 +42,8 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     await editPlatforms(config, platformName);
 
     if (shouldSync(config, platformName)) {
-      await sync(config, platformName, false);
+      const allPlugins = await getPlugins(config);
+      await sync(config, platformName, allPlugins, false);
     }
 
     if (platformName === config.ios.name || platformName === config.android.name) {
