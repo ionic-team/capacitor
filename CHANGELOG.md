@@ -1,4 +1,26 @@
-##  (2020-05-27)
+## [2.1.2](https://github.com/ionic-team/capacitor/compare/2.1.1...2.1.2) (2020-05-29)
+
+
+### Bug Fixes
+
+* fix: send error on photos picker dismiss on ios 13 (#3010) ([47f2dd8](https://github.com/ionic-team/capacitor/commit/47f2dd8)), closes [#3010](https://github.com/ionic-team/capacitor/issues/3010)
+* fix(android): remove bintray publishing plugin to fix Gradle 6+ issues (#3016) ([b584b00](https://github.com/ionic-team/capacitor/commit/b584b00)), closes [#3016](https://github.com/ionic-team/capacitor/issues/3016)
+
+
+### Docs
+
+* docs: add information about disabling logs (#3001) ([e9b2c9d](https://github.com/ionic-team/capacitor/commit/e9b2c9d)), closes [#3001](https://github.com/ionic-team/capacitor/issues/3001)
+* docs: make links to other pages absolute (#3002) ([22d9a09](https://github.com/ionic-team/capacitor/commit/22d9a09)), closes [#3002](https://github.com/ionic-team/capacitor/issues/3002)
+
+
+### Chores
+
+* chore: remove redundant checks for android_home and bintray (#3019) ([c407d74](https://github.com/ionic-team/capacitor/commit/c407d74)), closes [#3019](https://github.com/ionic-team/capacitor/issues/3019)
+* chore: Update changelog for 2.1.1 ([555f4af](https://github.com/ionic-team/capacitor/commit/555f4af))
+* chore(cli): run tests with max workers, not in band (#3018) ([2e6a9c4](https://github.com/ionic-team/capacitor/commit/2e6a9c4)), closes [#3018](https://github.com/ionic-team/capacitor/issues/3018)
+* chore(ios): remove pod deployment (#3017) ([8b8c051](https://github.com/ionic-team/capacitor/commit/8b8c051)), closes [#3017](https://github.com/ionic-team/capacitor/issues/3017)
+
+
 
 ## [2.1.1](https://github.com/ionic-team/capacitor/compare/2.1.0...2.1.1) (2020-05-27)
 
