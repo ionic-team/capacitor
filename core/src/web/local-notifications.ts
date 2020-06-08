@@ -107,7 +107,9 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
   }
 
   areEnabled(): Promise<LocalNotificationEnabledResult> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve({
+      value: Notification.permission === 'granted'
+    });
   }
 
   requestPermission(): Promise<NotificationPermissionResponse> {
