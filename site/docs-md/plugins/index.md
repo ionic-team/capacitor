@@ -89,4 +89,4 @@ Your package can now be installed using `npm install your-plugin` in any Capacit
 
 Now it's up to you to make your plugin do something truly awesome!
 
-Follow the [iOS](./ios) guide for information on using Swift (or Obj-C) to build an iOS plugin, the [Android](./android) guide for building Android plugins with Java, the [Web](./web) guide for implementing web and PWA functionality for your plugin, and the [Custom JavaScript](./js) guide for information on how to build a custom JavaScript plugin (i.e. in addition to Capacitor's auto-JS plugin binding).
+Follow the [iOS](/docs/plugins/ios) guide for information on using Swift (or Obj-C) to build an iOS plugin, the [Android](/docs/plugins/android) guide for building Android plugins with Java, the [Web](/docs/plugins/web) guide for implementing web and PWA functionality for your plugin, and the [Custom JavaScript](/docs/plugins/js) guide for information on how to build a custom JavaScript plugin (i.e. in addition to Capacitor's auto-JS plugin binding).

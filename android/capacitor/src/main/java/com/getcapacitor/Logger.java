@@ -5,6 +5,24 @@ import android.util.Log;
 
 public class Logger {
   public static final String LOG_TAG_CORE = "Capacitor";
+  public static Config config;
+
+  private static Logger instance;
+
+  private static Logger getInstance() {
+    if (instance == null) {
+      instance = new Logger();
+    }
+    return instance;
+  }
+
+  public static void init(Config config) {
+    Logger.getInstance().loadConfig(config);
+  }
+
+  private void loadConfig(Config config) {
+      this.config = config;
+  }
 
   public static String tags(String... subtags) {
     if (subtags != null && subtags.length > 0) {
@@ -79,6 +97,6 @@ public class Logger {
   }
 
   protected static boolean shouldLog() {
-    return !Config.getBoolean("android.hideLogs", Config.getBoolean("hideLogs", false));
+    return config == null || !config.getBoolean("android.hideLogs", config.getBoolean("hideLogs", false));
   }
 }

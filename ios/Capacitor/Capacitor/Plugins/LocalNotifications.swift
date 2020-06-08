@@ -24,7 +24,7 @@ enum LocalNotificationError: LocalizedError {
 
 
 /**
- * Implement three common modal types: alert, confirm, and prompt
+ * Implement Local Notifications
  */
 @objc(CAPLocalNotificationsPlugin)
 public class CAPLocalNotificationsPlugin : CAPPlugin {
