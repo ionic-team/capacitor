@@ -25,7 +25,7 @@ public class SplashScreen extends Plugin {
       public void error() {
         call.error("An error occurred while showing splash");
       }
-    });
+    }, bridge.getConfig());
   }
 
   @PluginMethod()
