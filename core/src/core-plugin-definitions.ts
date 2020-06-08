@@ -1348,7 +1348,8 @@ export enum PermissionType {
   Geolocation = 'geolocation',
   Notifications = 'notifications',
   ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write'
+  ClipboardWrite = 'clipboard-write',
+  Microphone = 'microphone'
 }
 
 export interface PermissionsOptions {
