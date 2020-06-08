@@ -28,6 +28,7 @@ import java.util.UUID;
  */
 public final class AssetUtil {
 
+    public static final int RESOURCE_ID_ZERO_VALUE = 0;
     // Name of the storage folder
     private static final String STORAGE_FOLDER = "/capacitorassets";
 
@@ -343,6 +344,24 @@ public final class AssetUtil {
      */
     private String getPkgName (Resources res) {
         return res == Resources.getSystem() ? "android" : context.getPackageName();
+    }
+
+    public static int getResourceID(Context context, String resourceName, String dir){
+        return context.getResources().getIdentifier(resourceName, dir, context.getPackageName());
+    }
+
+    public static String getResourceBaseName (String resPath) {
+        if (resPath == null) return null;
+
+        if (resPath.contains("/")) {
+            return resPath.substring(resPath.lastIndexOf('/') + 1);
+        }
+
+        if (resPath.contains(".")) {
+            return resPath.substring(0, resPath.lastIndexOf('.'));
+        }
+
+        return resPath;
     }
 
 }
