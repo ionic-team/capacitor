@@ -8,6 +8,12 @@
   background-color: #0B1A24;
 }
 
+.landing-page .announcement a {
+  color: #fff;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
 landing-page {
   display: block;
   color: #fff;
@@ -21,78 +27,6 @@ landing-page {
   }
   p {
     color: #BCC0BE;
-  }
-
-  .announcement {
-    a {
-      text-decoration: none;
-      color: #fff;
-      transition: background 0.3s;
-      display: inline-flex;
-      align-items: center;
-      background: rgba(255,255,255,0.10);
-      border-radius: 100px;
-      padding: 5px;
-      border: 0;
-    }
-
-    a:hover {
-      background: rgba(255,255,255,0.15);
-    }
-
-    .pill,
-    .cta {
-      font-size: 10px;
-      text-transform: uppercase;
-
-    }
-    .pill {
-      background-color: $color-yellow;
-      color: $color-yellow-contrast;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 100px;
-      flex: 0 0 38px;
-      text-align: center;
-    }
-    .message {
-      font-weight: 500;
-      opacity: 0.8;
-      font-size: 13px;
-      margin: 0 14px;
-      flex: 0 0 auto;
-    }
-    .cta {
-      color: $color-yellow;
-      font-weight: 600;
-      padding-right: 4px;
-      flex: 0 0 76px;
-    }
-    .icon {
-      fill: $color-yellow;
-      height: 9px;
-      width: 8px;
-      transform: translateY(1.5px);
-      margin-left: 2px;
-    }
-
-    @media screen and (max-width: $breakpoint-md) {
-      max-width: 100%;
-      padding: 0;
-      a {
-        display: flex;
-        width: 100%;
-        border-radius: 0;
-        padding: 12px 24px;
-      }
-      .message {
-        flex: 1;
-      }
-      .cta {
-        flex: 0 0 70px;
-        padding-right: 0;
-      }
-    }
   }
 
   .hero {

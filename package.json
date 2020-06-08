@@ -1,7 +1,7 @@
 {
 	"name": "@capacitor/core",
 	"scripts": {
-		"publish": "bash scripts/prerelease.sh && bash scripts/generate.sh && lerna run build && lerna publish --force-publish --skip-git && npm run publish-push",
+		"publish": "bash scripts/prerelease.sh && lerna run build && lerna publish --force-publish --skip-git && npm run publish-push",
 		"publish-push": "bash scripts/deploy.sh"
 	},
 	"devDependencies": {

@@ -83,6 +83,19 @@ export class SiteHeader {
           <div class="logo"></div>
         </stencil-route-link>
 
+        <div class="announcement">
+          <a href="https://ionicframework.com/ioniconf" target="_blank">
+            <span class="pill">Ioniconf</span>
+            <span class="message">
+              A one day online event celebrating cross-platform app development
+            </span>
+            <span class="cta">
+              Register Now
+              <app-icon name="caret-right"></app-icon>
+            </span>
+          </a>
+        </div>
+
         <div class="header-menu">
           <stencil-route-link urlMatch="/docs" url="/docs/" onClick={() => { this.hideNav() }}>
             Docs

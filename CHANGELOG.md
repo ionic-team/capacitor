@@ -1,4 +1,100 @@
-## [2.0.2](https://github.com/ionic-team/capacitor/compare/2.0....2.0.2) (2020-04-29)
+## [2.1.2](https://github.com/ionic-team/capacitor/compare/2.1.1...2.1.2) (2020-05-29)
+
+
+### Bug Fixes
+
+* fix: send error on photos picker dismiss on ios 13 (#3010) ([47f2dd8](https://github.com/ionic-team/capacitor/commit/47f2dd8)), closes [#3010](https://github.com/ionic-team/capacitor/issues/3010)
+* fix(android): remove bintray publishing plugin to fix Gradle 6+ issues (#3016) ([b584b00](https://github.com/ionic-team/capacitor/commit/b584b00)), closes [#3016](https://github.com/ionic-team/capacitor/issues/3016)
+
+
+### Docs
+
+* docs: add information about disabling logs (#3001) ([e9b2c9d](https://github.com/ionic-team/capacitor/commit/e9b2c9d)), closes [#3001](https://github.com/ionic-team/capacitor/issues/3001)
+* docs: make links to other pages absolute (#3002) ([22d9a09](https://github.com/ionic-team/capacitor/commit/22d9a09)), closes [#3002](https://github.com/ionic-team/capacitor/issues/3002)
+
+
+### Chores
+
+* chore: remove redundant checks for android_home and bintray (#3019) ([c407d74](https://github.com/ionic-team/capacitor/commit/c407d74)), closes [#3019](https://github.com/ionic-team/capacitor/issues/3019)
+* chore: Update changelog for 2.1.1 ([555f4af](https://github.com/ionic-team/capacitor/commit/555f4af))
+* chore(cli): run tests with max workers, not in band (#3018) ([2e6a9c4](https://github.com/ionic-team/capacitor/commit/2e6a9c4)), closes [#3018](https://github.com/ionic-team/capacitor/issues/3018)
+* chore(ios): remove pod deployment (#3017) ([8b8c051](https://github.com/ionic-team/capacitor/commit/8b8c051)), closes [#3017](https://github.com/ionic-team/capacitor/issues/3017)
+
+
+
+## [2.1.1](https://github.com/ionic-team/capacitor/compare/2.1.0...2.1.1) (2020-05-27)
+
+
+### Bug Fixes
+
+* fix(core/web): Filesystem.appendFile creating wrong parent folder (#2985) ([3951f6b](https://github.com/ionic-team/capacitor/commit/3951f6b)), closes [#2985](https://github.com/ionic-team/capacitor/issues/2985)
+* fix(android): Filesystem.requestPermissions() not working (#2936) ([2a9a95d](https://github.com/ionic-team/capacitor/commit/2a9a95d)), closes [#2936](https://github.com/ionic-team/capacitor/issues/2936)
+* fix(android): Prevent Android 10 crash on Filesystem.readdir (#2950) ([0914c23](https://github.com/ionic-team/capacitor/commit/0914c23)), closes [#2950](https://github.com/ionic-team/capacitor/issues/2950)
+* fix(android): remember camera prompt selection after permission result (#2903) ([cdd317f](https://github.com/ionic-team/capacitor/commit/cdd317f)), closes [#2903](https://github.com/ionic-team/capacitor/issues/2903)
+* fix(cli): Improve plugin.xml framework detection (#2956) ([8736d90](https://github.com/ionic-team/capacitor/commit/8736d90)), closes [#2956](https://github.com/ionic-team/capacitor/issues/2956)
+* fix(cordova): Add cordova-support-google-services to incompatible list (#2912) ([58d0768](https://github.com/ionic-team/capacitor/commit/58d0768)), closes [#2912](https://github.com/ionic-team/capacitor/issues/2912)
+* fix(cordova): Exclude framework headers (#2972) ([53a6371](https://github.com/ionic-team/capacitor/commit/53a6371)), closes [#2972](https://github.com/ionic-team/capacitor/issues/2972)
+* fix(ios): Create tmpWindow when is needed and destroy when not needed (#2995) ([9475129](https://github.com/ionic-team/capacitor/commit/9475129)), closes [#2995](https://github.com/ionic-team/capacitor/issues/2995)
+* fix(web): improve Proxy check to avoid SSR problems (#2851) ([7afc9eb](https://github.com/ionic-team/capacitor/commit/7afc9eb)), closes [#2851](https://github.com/ionic-team/capacitor/issues/2851)
+
+
+### Docs
+
+* docs(ce-plugins) add @byrds/capacitor-contacts plugin (#2939) ([56d4159](https://github.com/ionic-team/capacitor/commit/56d4159)), closes [#2939](https://github.com/ionic-team/capacitor/issues/2939)
+* docs: Appflow is now available (#2970) ([516386e](https://github.com/ionic-team/capacitor/commit/516386e)), closes [#2970](https://github.com/ionic-team/capacitor/issues/2970)
+* docs(android): Add information about accessing public folders in Android 10 (#2951) ([6d1778b](https://github.com/ionic-team/capacitor/commit/6d1778b)), closes [#2951](https://github.com/ionic-team/capacitor/issues/2951)
+* docs(ce-plugins): add capacitor-blob-writer (#2885) ([cacecb4](https://github.com/ionic-team/capacitor/commit/cacecb4)), closes [#2885](https://github.com/ionic-team/capacitor/issues/2885)
+* docs(ce-plugins): add capacitor-firebase-crashlytics (#2938) ([cb1e672](https://github.com/ionic-team/capacitor/commit/cb1e672)), closes [#2938](https://github.com/ionic-team/capacitor/issues/2938)
+* docs(cordova-migration): Add cordova plugin uninstall details (#2935) ([17bf3ab](https://github.com/ionic-team/capacitor/commit/17bf3ab)), closes [#2935](https://github.com/ionic-team/capacitor/issues/2935)
+* docs(deep-links): clarify apple-app-site-association file (#2963) ([ac9c3de](https://github.com/ionic-team/capacitor/commit/ac9c3de)), closes [#2963](https://github.com/ionic-team/capacitor/issues/2963)
+* docs(Plugins): add information about how to override navigation (#2923) ([63c8542](https://github.com/ionic-team/capacitor/commit/63c8542)), closes [#2923](https://github.com/ionic-team/capacitor/issues/2923)
+* docs(splash): Full Screen & Immersive are android only (#2945) ([b8e7279](https://github.com/ionic-team/capacitor/commit/b8e7279)), closes [#2945](https://github.com/ionic-team/capacitor/issues/2945)
+* docs(workflow): change update instructions to get latest version (#2937) ([0c151fc](https://github.com/ionic-team/capacitor/commit/0c151fc)), closes [#2937](https://github.com/ionic-team/capacitor/issues/2937)
+
+
+### Chores
+
+* chore(dependencies): Update package dependencies to 2.1.0 ([a5fb2bc](https://github.com/ionic-team/capacitor/commit/a5fb2bc))
+* chore(site): Update dependencies (#2928) ([a9d4698](https://github.com/ionic-team/capacitor/commit/a9d4698)), closes [#2928](https://github.com/ionic-team/capacitor/issues/2928)
+* chore(site): update firebase-tools (#2915) ([bdce166](https://github.com/ionic-team/capacitor/commit/bdce166)), closes [#2915](https://github.com/ionic-team/capacitor/issues/2915)
+
+
+
+##  (2020-05-07)
+
+## [2.1.0](https://github.com/ionic-team/capacitor/compare/2.0.2...2.1.0) (2020-05-07)
+
+
+### Bug Fixes
+
+* fix: set launchShowDuration to 0 on new projects only (#2876) ([8de0414](https://github.com/ionic-team/capacitor/commit/8de0414)), closes [#2876](https://github.com/ionic-team/capacitor/issues/2876)
+* fix(android): call error on prompt cancel (#2855) ([c86cfb1](https://github.com/ionic-team/capacitor/commit/c86cfb1)), closes [#2855](https://github.com/ionic-team/capacitor/issues/2855)
+* fix(android): check if NETWORK_PROVIDER is enabled (#2859) ([f4d5c84](https://github.com/ionic-team/capacitor/commit/f4d5c84)), closes [#2859](https://github.com/ionic-team/capacitor/issues/2859)
+* fix(android): make readFile not add newlines on base64 strings (#2857) ([31d65c9](https://github.com/ionic-team/capacitor/commit/31d65c9)), closes [#2857](https://github.com/ionic-team/capacitor/issues/2857)
+* fix(cli): avoid infinite loop on scoped dependencies (#2868) ([69d62f7](https://github.com/ionic-team/capacitor/commit/69d62f7)), closes [#2868](https://github.com/ionic-team/capacitor/issues/2868)
+* fix(ios): remove thread warning on Haptics.selectionEnd() (#2860) ([471ed0c](https://github.com/ionic-team/capacitor/commit/471ed0c)), closes [#2860](https://github.com/ionic-team/capacitor/issues/2860)
+* fix(splash): Make splash launch delay timeout zero to speed up capacitor boot ([b29346b](https://github.com/ionic-team/capacitor/commit/b29346b))
+
+
+### Features
+
+* feat: Add common hideLogs option (#2865) ([1b3f0ec](https://github.com/ionic-team/capacitor/commit/1b3f0ec)), closes [#2865](https://github.com/ionic-team/capacitor/issues/2865)
+* feat: Allow plugins to override navigation (#2872) ([41f9834](https://github.com/ionic-team/capacitor/commit/41f9834)), closes [#2872](https://github.com/ionic-team/capacitor/issues/2872)
+* feat(android): add vibration option to notifications channel (#2787) ([2f6f0ba](https://github.com/ionic-team/capacitor/commit/2f6f0ba)), closes [#2787](https://github.com/ionic-team/capacitor/issues/2787)
+* feat(android): expose JSON string constructor for JSArray (#2879) ([040bfc8](https://github.com/ionic-team/capacitor/commit/040bfc8)), closes [#2879](https://github.com/ionic-team/capacitor/issues/2879)
+* feat(android): hideLogs feature (#2839) ([d60757a](https://github.com/ionic-team/capacitor/commit/d60757a)), closes [#2839](https://github.com/ionic-team/capacitor/issues/2839)
+* feat(android): implement selection haptic feedback (#2704) ([34dd280](https://github.com/ionic-team/capacitor/commit/34dd280)), closes [#2704](https://github.com/ionic-team/capacitor/issues/2704)
+* feat(camera): make prompt strings localizable (#2631) ([0c09fc8](https://github.com/ionic-team/capacitor/commit/0c09fc8)), closes [#2631](https://github.com/ionic-team/capacitor/issues/2631)
+* feat(cordova): Add WK_WEB_VIEW_ONLY=1 preprocessor macro (#2880) ([603b2e3](https://github.com/ionic-team/capacitor/commit/603b2e3)), closes [#2880](https://github.com/ionic-team/capacitor/issues/2880)
+
+
+### Docs
+
+* docs(browser): Update information for close method (#2796) ([89c64af](https://github.com/ionic-team/capacitor/commit/89c64af)), closes [#2796](https://github.com/ionic-team/capacitor/issues/2796)
+
+
+
+## [2.0.2](https://github.com/ionic-team/capacitor/compare/2.0.1...2.0.2) (2020-04-29)
 
 
 ### Bug Fixes
