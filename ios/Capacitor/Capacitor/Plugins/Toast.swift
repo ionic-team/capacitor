@@ -14,12 +14,12 @@ public class CAPToastPlugin : CAPPlugin {
     let duration = durationType == "long" ? 3500 : 2000
     let position = call.get("position", String.self, "bottom")
 
-    CAPToastPlugin.showToast(vc: self.bridge!.viewController, text: text, duration: duration, position: position!, completion: {(isCompleted) in
+    showToast(vc: self.bridge!.viewController, text: text, duration: duration, position: position!, completion: {(isCompleted) in
       call.success()
     });
   }
   
-  public static func showToast(vc: UIViewController, text: String, duration: Int = 2000, position: String = "bottom", completion: ((Bool) -> Void)? = nil) {
+  public func showToast(vc: UIViewController, text: String, duration: Int = 2000, position: String = "bottom", completion: ((Bool) -> Void)? = nil) {
     DispatchQueue.main.async {
       let maxSizeTitle : CGSize = CGSize(width: vc.view.bounds.size.width-32, height: vc.view.bounds.size.height)
       

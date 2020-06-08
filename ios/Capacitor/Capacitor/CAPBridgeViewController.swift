@@ -178,16 +178,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       fatalLoadError()
     }
 
-    let appUrlConfig = bridge!.config.getString("server.url")
-
-    hostname =  appUrlConfig ?? "\(bridge!.getLocalUrl())"
+    hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
     allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? Array<String>
 
-    #if DEBUG
-      if appUrlConfig != nil {
-        CAPToastPlugin.showToast(vc: self.bridge!.viewController, text: "Using app server \(hostname!)", duration: 3500)
-      }
-    #endif
+    if bridge!.isDevMode() && bridge!.config.getString("server.url") != nil {
+      let toastPlugin = bridge!.getOrLoadPlugin(pluginName: "Toast") as? CAPToastPlugin
+      toastPlugin!.showToast(vc: self, text: "Using app server \(hostname!)", duration: 3500)
+    }
 
     CAPLog.print("⚡️  Loading app at \(hostname!)...")
     let request = URLRequest(url: URL(string: hostname!)!)
