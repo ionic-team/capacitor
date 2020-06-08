@@ -46,9 +46,10 @@ If you are able to illustrate the bug with an example, please provide sample cod
 
 
 
-### Reproduction Steps
+### Code Reproduction
 <!--
-Please explain the steps required to duplicate the issue, especially if you are able to provide a sample application.
+To isolate the cause of the problem, we ask you to provide a minimal sample application that demonstrates the issue.
+For full instructions, see: https://github.com/ionic-team/capacitor/blob/master/CONTRIBUTING.md#creating-a-code-reproduction
 -->
 
 
