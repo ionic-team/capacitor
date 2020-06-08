@@ -112,16 +112,16 @@ public class CAPPermissionsPlugin: CAPPlugin {
   }
 
   func checkMicrophone(_ call: CAPPluginCall) {
-    let microStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeAudio)
+    let microStatus = AVCaptureDevice.authorizationStatus(for: .audio)
 
     var ret = "prompt"
     switch (microStatus) {
-        case .Authorized:
-             ret = "granted"
-        case .Denied .Restricted:
-            ret = "denied"
-        case .NotDetermined:
-            ret = "prompt"
+        case .authorized:
+          ret = "granted"
+        case .denied, .restricted:
+          ret = "denied"
+        case .notDetermined:
+          ret = "prompt"
     }
 
     call.resolve([
