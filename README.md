@@ -69,6 +69,6 @@ No, you do not need to use Ionic Framework with Capacitor. Without the Ionic Fra
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) 💖
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) 💖
 
 To help with the Capacitor website or documentation, [see here](site/CONTRIBUTING.md).
