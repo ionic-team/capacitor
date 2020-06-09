@@ -290,33 +290,37 @@ public class WebViewLocalServer {
     final String method = request.getMethod();
     if (method.equals("GET")) {
       try {
-        String path = request.getUrl().getPath();
         String url = request.getUrl().toString();
         Map<String, String> headers = request.getRequestHeaders();
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        boolean isHtmlText = false;
         for (Map.Entry<String, String> header : headers.entrySet()) {
-          conn.setRequestProperty(header.getKey(), header.getValue());
+          if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
+            isHtmlText = true;
+            break;
+          }
         }
-        String getCookie = CookieManager.getInstance().getCookie(url);
-        if (getCookie != null) {
-          conn.setRequestProperty("Cookie", getCookie);
-        }
-        conn.setRequestMethod(method);
-        conn.setReadTimeout(30 * 1000);
-        conn.setConnectTimeout(30 * 1000);
-        String cookie = conn.getHeaderField("Set-Cookie");
-        if (cookie != null) {
-          CookieManager.getInstance().setCookie(url, cookie);
-        }
-
-        if (conn.getContentType().contains("text/html")) {
+        if (isHtmlText) {
+          HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+          for (Map.Entry<String, String> header : headers.entrySet()) {
+            conn.setRequestProperty(header.getKey(), header.getValue());
+          }
+          String getCookie = CookieManager.getInstance().getCookie(url);
+          if (getCookie != null) {
+            conn.setRequestProperty("Cookie", getCookie);
+          }
+          conn.setRequestMethod(method);
+          conn.setReadTimeout(30 * 1000);
+          conn.setConnectTimeout(30 * 1000);
+          String cookie = conn.getHeaderField("Set-Cookie");
+          if (cookie != null) {
+            CookieManager.getInstance().setCookie(url, cookie);
+          }
           InputStream responseStream = conn.getInputStream();
           responseStream = jsInjector.getInjectedStream(responseStream);
           bridge.reset();
           return new WebResourceResponse("text/html", handler.getEncoding(),
                   handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
-
       } catch (SocketTimeoutException ex) {
         bridge.handleAppUrlLoadError(ex);
       } catch (Exception ex) {
