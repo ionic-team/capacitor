@@ -291,16 +291,20 @@ public class WebViewLocalServer {
     if (method.equals("GET")) {
       try {
         String path = request.getUrl().getPath();
-        URL url = new URL(request.getUrl().toString());
+        String url = request.getUrl().toString();
         Map<String, String> headers = request.getRequestHeaders();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         for (Map.Entry<String, String> header : headers.entrySet()) {
           conn.setRequestProperty(header.getKey(), header.getValue());
         }
-        conn.setRequestProperty("Cookie", CookieManager.getInstance().getCookie(request.getUrl().toString()));
+        conn.setRequestProperty("Cookie", CookieManager.getInstance().getCookie(url));
         conn.setRequestMethod(method);
         conn.setReadTimeout(30 * 1000);
         conn.setConnectTimeout(30 * 1000);
+        String cookie = conn.getHeaderField("Set-Cookie");
+        if (cookie != null) {
+          CookieManager.getInstance().setCookie(url, cookie);
+        }
 
         if (conn.getContentType().contains("text/html")) {
           InputStream responseStream = conn.getInputStream();
