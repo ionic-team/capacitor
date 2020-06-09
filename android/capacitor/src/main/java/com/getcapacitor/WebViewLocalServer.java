@@ -297,7 +297,10 @@ public class WebViewLocalServer {
         for (Map.Entry<String, String> header : headers.entrySet()) {
           conn.setRequestProperty(header.getKey(), header.getValue());
         }
-        conn.setRequestProperty("Cookie", CookieManager.getInstance().getCookie(url));
+        String getCookie = CookieManager.getInstance().getCookie(url);
+        if (getCookie != null) {
+          conn.setRequestProperty("Cookie", getCookie);
+        }
         conn.setRequestMethod(method);
         conn.setReadTimeout(30 * 1000);
         conn.setConnectTimeout(30 * 1000);
