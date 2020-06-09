@@ -30,18 +30,25 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-@NativePlugin(requestCodes = {
-  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS,
-})
+@NativePlugin(
+    requestCodes = {
+      PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS,
+    },
+    permissions={
+      Manifest.permission.READ_EXTERNAL_STORAGE,
+      Manifest.permission.WRITE_EXTERNAL_STORAGE
+    },
+    permissionRequestCode = PluginRequestCodes.FILESYSTEM_REQUEST_ALL_PERMISSIONS
+)
 public class Filesystem extends Plugin {
 
   private static final String PERMISSION_DENIED_ERROR = "Unable to do file operation, user denied permission request";
@@ -405,10 +412,13 @@ public class Filesystem extends Plugin {
          || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
       if (fileObject != null && fileObject.exists()) {
         String[] files = fileObject.list();
-
-        JSObject ret = new JSObject();
-        ret.put("files", JSArray.from(files));
-        call.success(ret);
+        if (files != null) {
+          JSObject ret = new JSObject();
+          ret.put("files", JSArray.from(files));
+          call.success(ret);
+        } else {
+          call.error("Unable to read directory");
+        }
       } else {
       call.error("Directory does not exist");
       }
@@ -676,6 +686,8 @@ public class Filesystem extends Plugin {
       this.rename(savedCall);
     } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS) {
       this.copy(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_ALL_PERMISSIONS){
+      savedCall.resolve();
     }
     this.freeSavedCall();
   }

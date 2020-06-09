@@ -181,6 +181,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
     allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? Array<String>
 
+    if bridge!.isDevMode() && bridge!.config.getString("server.url") != nil {
+      let toastPlugin = bridge!.getOrLoadPlugin(pluginName: "Toast") as? CAPToastPlugin
+      toastPlugin!.showToast(vc: self, text: "Using app server \(hostname!)", duration: 3500)
+    }
 
     CAPLog.print("⚡️  Loading app at \(hostname!)...")
     let request = URLRequest(url: URL(string: hostname!)!)

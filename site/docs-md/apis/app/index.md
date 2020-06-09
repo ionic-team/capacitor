@@ -22,7 +22,7 @@ deeplinks, opens other apps, and manages persisted plugin state.
 
 To use `canOpenUrl`, you need to set the URL schemes your app will query for in `LSApplicationQueriesSchemes` in `Info.plist`.
 
-Read more about [LSApplicationQueriesSchemes](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/TP40009250-SW14) and [configuring Info.plist](../ios/configuration).
+Read more about [LSApplicationQueriesSchemes](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/TP40009250-SW14) and [configuring Info.plist](/docs/ios/configuration).
 
 ## Example
 

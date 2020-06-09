@@ -68,7 +68,22 @@ Both android and ios folders at the root of the project are created. These are e
 
 ## Splash Screens and Icons
 
-If you've previously created icon and splash screen images, they can be found in the top-level `resources` folder of your project. [Follow this guide](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/) to move them over to each native project.
+If you've previously created icon and splash screen images, they can be found in the top-level `resources` folder of your project. With those images in place, you can use the `cordova-res` tool to generate icons and splash screens for Capacitor-based iOS and Android projects.
+
+First, install `cordova-res`:
+
+```bash
+$ npm install -g cordova-res
+```
+
+Next, run the following to regenerate the images and copy them into the native projects:
+
+```bash
+$ cordova-res ios --skip-config --copy
+$ cordova-res android --skip-config --copy
+```
+
+[Complete details here](https://github.com/ionic-team/cordova-res#capacitor).
 
 ## Migrate Plugins
 
@@ -79,6 +94,15 @@ Next, review all of Capacitor's [core plugins](/docs/apis) as well as [community
 Some plugins may not match functionality entirely, but based on the features you need that may not matter.
 
 Note that any plugins that are [incompatible or cause build issues](/docs/cordova/known-incompatible-plugins) are automatically skipped.
+
+### Remove Cordova Plugin
+
+After replacing a Cordova plugin with a Capacitor one (or simply removing it entirely), uninstall the plugin then run the `sync` command to remove the plugin code from a native project:
+
+```bash
+npm uninstall cordova-plugin-name
+npx cap sync [android | ios]
+```
 
 ## Set Permissions
 

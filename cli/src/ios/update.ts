@@ -113,7 +113,7 @@ function getFrameworkName(framework: any) {
 }
 
 function isFramework(framework: any) {
-  return framework.$.src.split('.').pop() === 'framework';
+  return framework.$.src.split('.').pop().includes('framework');
 }
 
 async function generateCordovaPodspecs(cordovaPlugins: Plugin[], config: Config) {
@@ -219,6 +219,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   }
   if (customFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`);
+    frameworkDeps.push(`s.exclude_files = 'sources/**/*.framework/Headers/*.h'`);
   }
   if (sourceFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join(`', '`)}'`);

@@ -13,7 +13,7 @@ import java.util.Date;
 
 /**
  * Class used to create notification from timer event
- * Note: Class is being registered in Android manifest as broadcast reciever
+ * Note: Class is being registered in Android manifest as broadcast receiver
  */
 public class TimedNotificationPublisher extends BroadcastReceiver {
 

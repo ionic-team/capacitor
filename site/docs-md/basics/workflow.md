@@ -15,7 +15,7 @@ contributors:
 
 Capacitor turns your web app into a native binary for each platform. Thus, much of your work will consist of developing and then building a mobile-focused web app.
 
-You will interact with the native platform underneath using Capacitor's APIs (such as [Camera](../apis/camera)), or by using existing Cordova plugins with Capacitor's [Cordova Compatibility](./cordova).
+You will interact with the native platform underneath using Capacitor's APIs (such as [Camera](/docs/apis/camera)), or by using existing Cordova plugins with Capacitor's [Cordova Compatibility](/docs/cordova).
 
 As a final step you will build your application using a command similar to
 
@@ -65,13 +65,15 @@ To check if there are any new updates to Capacitor itself, run `npx cap doctor` 
 To update Capacitor Core and CLI:
 
 ```bash
-npm update @capacitor/cli
-npm update @capacitor/core
+npm install @capacitor/cli@latest
+npm install @capacitor/core@latest
 ```
 
 To update any or all of the platforms you are using:
 
 ```bash
-npm update @capacitor/ios
-npm update @capacitor/android
+npm install @capacitor/ios@latest
+npm install @capacitor/android@latest
 ```
+
+Note: If you don't want to risk to introduce breaking changes, use `npm update @capacitor/package-name` instead of `@latest` as `update` respects semver.

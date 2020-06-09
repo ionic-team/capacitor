@@ -18,7 +18,7 @@ set of UI controls which you will most likely need unless you're building a game
 
 ## Before you start
 
-Make sure you have all the required [Dependencies](./dependencies) installed for the platforms you will be building for. Most importantly,
+Make sure you have all the required [Dependencies](/docs/getting-started/dependencies) installed for the platforms you will be building for. Most importantly,
 make sure you update CocoaPods using `pod repo update` before starting a new project, if you plan on building for iOS using a Mac.
 
 ## Adding Capacitor to an existing Ionic App
