@@ -8,11 +8,27 @@ Before working on Capacitor, it's important to understand the philosophy behind 
 
 Please read [@maxlynch](http://twitter.com/maxlynch)'s essay [How Capacitor Works](https://tinyletter.com/ionic-max/letters/how-capacitor-works) for a deep dive into the project and its goals.
 
-## Consult with the team
+## Creating a Code Reproduction
+
+To isolate the cause of the problem, we ask you to provide a minimal sample application that demonstrates the issue. Without a reliable code reproduction, it is unlikely we will be able to resolve the issue, leading to it being closed.
+
+To create a code reproduction:
+
+* Create a new application using `npx @capacitor/cli create` (or `ionic start --capacitor`).
+* Add the minimum amount of code necessary to recreate the issue you're experiencing.
+* Push the code reproduction to a public GitHub repository and include a link when you create a bug report.
+* Be sure to include steps to reproduce the issue.
+
+## Developing Capacitor
+
+1. Check out this repository.
+2. Read and follow [`example/README.md`](../example/README.md)
+
+### Consult with the team
 
 For any large changes, make sure you've consulted with the team first. One way to do this would be to create a draft PR for discussion, or bringing up the discussion in the Capacitor slack.
 
-## About Third Party Libraries
+### About Third Party Libraries
 
 To achieve Capacitor's goal of being stable and easy to upgrade, we would like to avoid unnecessary third party libraries as much as possible. Before embarking on Capacitor contributions, make sure you aren't planning on introducing third party libraries without consulting with the team first.
 
@@ -20,7 +36,7 @@ On native, that means avoid adding any new Cocoapod or Gradle dependencies witho
 
 On web, this means do not add any third party libraries such as Firebase or Lodash. Strive for implementations that use pure Web APIs even if it means more work.
 
-## Directory Structure
+### Directory Structure
 
 The `ionic-team/capacitor` repo is a monorepo containing all of the standard Capacitor components. The current directory structure looks like this:
 
@@ -34,29 +50,15 @@ The `ionic-team/capacitor` repo is a monorepo containing all of the standard Cap
 * `example`: Example project for development
 * `e2e`: An end-to-end testing app
 * `plugin-template`: The default plugin template when creating a new plugin
-* `scripts`: deploy and task scripts
+* `scripts`: publish and task scripts
 * `site`: Website and documentation
 
-## Developing Capacitor
+## Publishing Capacitor
 
-1. Check out this repository.
-2. Read and follow [`example/README.md`](../example/README.md)
+Capacitor packages are published together with a fixed version using [Lerna](https://github.com/lerna/lerna).
 
-## Deploying Capacitor (requires commit privileges)
+To publish Capacitor, run the following:
 
-The `publish` npm task runs lerna to update and publish JS dependencies, and then uses that version number to deploy the Android and iOS runtimes.
-
-Additionally, it updates the master branch of the [capacitor-starter](https://github.com/ionic-team/capacitor-starter) mirror, which contains an exported starter project for easy project creation, based on the code in the `starter` folder in this monorepo.
-
-Before deploying, you must set the following environment variables:
-
- - `BINTRAY_USER`: your username from [bintray.com](http://bintray.com)
- - `BINTRAY_KEY`: your API key from Bintray, found in the "Edit Profile" section of the site.
- 
-Finally, to deploy Capacitor, in the root of the project run
- 
 ```bash
 npm run publish
 ```
-
-Note: if you don't have any JS updates that cause lerna to increment the version, just increment it yourself in `lerna.json` and you're golden.

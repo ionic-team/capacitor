@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -19,7 +19,7 @@
     "lint": "tslint --project tsconfig.json",
     "assets": "node scripts/copy-assets.js",
     "prepublishOnly": "npm run build",
-    "test": "jest --maxWorkers=4",
+    "test": "jest -i",
     "watch": "npm run assets && tsc -w"
   },
   "files": [
