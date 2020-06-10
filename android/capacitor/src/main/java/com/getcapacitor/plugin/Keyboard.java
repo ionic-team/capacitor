@@ -60,7 +60,8 @@ public class Keyboard extends Plugin {
             if (Build.VERSION.SDK_INT >= 23) {
               WindowInsets windowInsets = rootView.getRootWindowInsets();
               int stableInsetBottom = windowInsets.getStableInsetBottom();
-              screenHeight = rootViewHeight - stableInsetBottom;
+              screenHeight = rootViewHeight;
+              resultBottom = resultBottom + stableInsetBottom;
             } else {
               // calculate screen height differently for android versions <23: Lollipop 5.x, Marshmallow 6.x
               //http://stackoverflow.com/a/29257533/3642890 beware of nexus 5
