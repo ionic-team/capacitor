@@ -72,7 +72,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       webViewConfiguration.applicationNameForUserAgent = appendUserAgent
     }
 
-    webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
+    let moduleName = Bundle.main.infoDictionary!["CFBundleName"] as! String
+    if let customWebView = capConfig.getString("ios.customWebView"), let webViewClass = NSClassFromString(moduleName.replacingOccurrences(of: " ", with: "_")+"."+customWebView) as? (WKWebView).Type{
+        webView = webViewClass.init(frame: .zero, configuration: webViewConfiguration)
+    } else {
+      webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
+    }
+
     webView?.scrollView.bounces = false
     let availableInsets = ["automatic", "scrollableAxes", "never", "always"]
     if let contentInset = (capConfig.getValue("ios.contentInset") as? String),
