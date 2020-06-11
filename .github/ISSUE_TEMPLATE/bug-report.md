@@ -39,13 +39,6 @@ Describe what the behavior should be.
 
 
 
-### Example Code or Repo
-<!--
-If you are able to illustrate the bug with an example, please provide sample code snippets or a sample application using a public repo (preferred).
--->
-
-
-
 ### Code Reproduction
 <!--
 To isolate the cause of the problem, we ask you to provide a minimal sample application that demonstrates the issue.
