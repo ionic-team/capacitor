@@ -9,13 +9,13 @@ import { join } from 'path';
 
 import chalk from 'chalk';
 
-export async function doctorCommand(config: Config, selectedPlatform: string) {
+export async function doctorCommand(config: Config, selectedPlatform: string): Promise<void> {
   log(`${_e('💊', '')}   ${chalk.bold('Capacitor Doctor')}  ${_e('💊', '')} \n`);
 
   await doctorCore(config);
 
   const platforms = config.selectPlatforms(selectedPlatform);
-  return Promise.all(platforms.map(platformName => {
+  await Promise.all(platforms.map(platformName => {
     return doctor(config, platformName);
   }));
 }
