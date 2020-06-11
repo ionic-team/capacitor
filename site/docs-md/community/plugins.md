@@ -184,3 +184,4 @@ Are we missing your awesome plugin? [Add it to this page](https://github.com/ion
 | Change Android Navigationbar Color | `capacitor-navigationbar` | <https://github.com/nikosdouvlis/capacitor-navigationbar> | Programmatically change the navigation bar color on android devices |
 | Dark Mode | `capacitor-dark-mode` | <https://github.com/hinddeep/ionicCapacitorDarkMode> | | Listen for dark mode change events
 | Contacts | `@byrds/capacitor-contacts` | <https://github.com/byrdsandbytes/capacitor-contacts-plugin> | |
+| Check App Updates | `@abitofsoftware/capacitor-check-app-update` | <https://github.com/MarnickvdA/capacitor-check-app-update> | Check the App and Play store for app version updates |
