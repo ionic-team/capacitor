@@ -1,6 +1,9 @@
 name: Capacitor Bot
 
 on:
+  push:
+    branches:
+      - master
   issues:
     types:
       - opened
@@ -17,3 +20,8 @@ jobs:
       - uses: ionic-team/capacitor-bot@master
         with:
           repo-token: ${{ secrets.BOT_TOKEN }}
+        env:
+          GIT_AUTHOR_NAME: Ionitron
+          GIT_AUTHOR_EMAIL: hi@ionicframework.com
+          GIT_COMMITTER_NAME: Ionitron
+          GIT_COMMITTER_EMAIL: hi@ionicframework.com
