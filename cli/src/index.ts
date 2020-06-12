@@ -118,7 +118,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program.parse(process.argv);
 
-  if (!program.args.length) {
+  if (program.rawArgs.length < 3) {
     console.log(`\n  ${_e('⚡️', '--')}  ${chalk.bold('Capacitor - Cross-Platform apps with JavaScript and the Web')}  ${_e('⚡️', '--')}`);
     program.help();
   }
