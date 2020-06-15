@@ -20,6 +20,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
   public let cordovaParser = CDVConfigParser.init();
   private var hostname: String?
+  private var dynamicHostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
   private let assetsFolder = "public"
@@ -172,13 +173,22 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     exit(1)
   }
 
+  public func setDynamicHostname(_ hostname: String)-> Void{
+      dynamicHostname = hostname
+  }
+
   func loadWebView() {
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
       fatalLoadError()
     }
 
-    hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
+    if dynamicHostname != nil {
+        hostname = dynamicHostname
+    } else {
+        hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
+    }
+
     allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? Array<String>
 
     if bridge!.isDevMode() && bridge!.config.getString("server.url") != nil {
