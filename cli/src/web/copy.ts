@@ -1,4 +1,4 @@
-import { logWarn, logFatal, resolveNode, runTask, readJSON, runCommand } from '../common';
+import { logFatal, readJSON, resolveNode, runCommand, runTask } from '../common';
 import { Config } from '../config';
 import { copy } from 'fs-extra';
 import { writeFileAsync } from '../util/fs';
@@ -27,7 +27,7 @@ export async function copyWeb(config: Config) {
     await Promise.all(
       deps.map(async p => {
         const rootPath = resolveNode(config, p);
-        
+
         if (!rootPath) {
           logFatal(`Unable to find node_modules/${p}. Are you sure ${p} is installed?`);
           return null;
@@ -42,7 +42,7 @@ export async function copyWeb(config: Config) {
           });
         }
       })
-    );  
+    );
   });
 
   if (config.app.bundledWebRuntime) {
@@ -53,7 +53,7 @@ export async function copyWeb(config: Config) {
         '@capacitor/core is installed? This file is required for Capacitor to function');
       return;
     }
-    
+
     await runTask(`Copying capacitor.js to web dir`, async () => {
       if (runtimePath)
         await copy(runtimePath, join(config.app.webDirAbs, 'capacitor.js'));
@@ -62,7 +62,7 @@ export async function copyWeb(config: Config) {
 
   if (config.app.serviceWorker) {
     serviceWorker = CAPACITOR_SERVICEWORKER_HEADER;
-      
+
     if (config.app.serviceWorker.combineWorkers) {
       serviceWorker += config.app.serviceWorker.combineWorkers.map(s => `importScripts('${s}');`).join('\n');
     }
