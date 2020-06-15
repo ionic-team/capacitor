@@ -21,7 +21,7 @@ export async function copyWeb(config: Config) {
   let serviceWorker = '';
   let runtimePath: string | null = null;
 
-  const deps = getDependencies(config);
+  const deps = config.app.package ? getDependencies(config) : [];
 
   await runTask(`Scan for web plugins and run ${NPM_PRECAPCOPYWEB_SCRIPT} npm scripts`, async () => {
     await Promise.all(
