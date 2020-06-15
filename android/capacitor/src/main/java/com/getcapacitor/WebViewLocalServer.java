@@ -172,7 +172,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || (Config.getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
+    if (isLocalFile(loadingUrl) || (bridge.getConfig().getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
       Logger.debug("Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
@@ -290,26 +290,37 @@ public class WebViewLocalServer {
     final String method = request.getMethod();
     if (method.equals("GET")) {
       try {
-        String path = request.getUrl().getPath();
-        URL url = new URL(request.getUrl().toString());
+        String url = request.getUrl().toString();
         Map<String, String> headers = request.getRequestHeaders();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        boolean isHtmlText = false;
         for (Map.Entry<String, String> header : headers.entrySet()) {
-          conn.setRequestProperty(header.getKey(), header.getValue());
+          if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
+            isHtmlText = true;
+            break;
+          }
         }
-        conn.setRequestProperty("Cookie", CookieManager.getInstance().getCookie(request.getUrl().toString()));
-        conn.setRequestMethod(method);
-        conn.setReadTimeout(30 * 1000);
-        conn.setConnectTimeout(30 * 1000);
-
-        if (conn.getContentType().contains("text/html")) {
+        if (isHtmlText) {
+          HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+          for (Map.Entry<String, String> header : headers.entrySet()) {
+            conn.setRequestProperty(header.getKey(), header.getValue());
+          }
+          String getCookie = CookieManager.getInstance().getCookie(url);
+          if (getCookie != null) {
+            conn.setRequestProperty("Cookie", getCookie);
+          }
+          conn.setRequestMethod(method);
+          conn.setReadTimeout(30 * 1000);
+          conn.setConnectTimeout(30 * 1000);
+          String cookie = conn.getHeaderField("Set-Cookie");
+          if (cookie != null) {
+            CookieManager.getInstance().setCookie(url, cookie);
+          }
           InputStream responseStream = conn.getInputStream();
           responseStream = jsInjector.getInjectedStream(responseStream);
           bridge.reset();
           return new WebResourceResponse("text/html", handler.getEncoding(),
                   handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
-
       } catch (SocketTimeoutException ex) {
         bridge.handleAppUrlLoadError(ex);
       } catch (Exception ex) {

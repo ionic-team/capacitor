@@ -17,6 +17,7 @@ import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class BridgeActivity extends AppCompatActivity {
   private PluginManager pluginManager;
   private CordovaPreferences preferences;
   private MockCordovaWebViewImpl mockWebView;
+  private JSONObject config;
 
   private int activityDepth = 0;
 
@@ -43,8 +45,11 @@ public class BridgeActivity extends AppCompatActivity {
   }
 
   protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
+    this.init(savedInstanceState, plugins, null);
+  }
+  protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
     this.initialPlugins = plugins;
-
+    this.config = config;
     loadConfig(this.getApplicationContext(),this);
 
     getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
@@ -75,9 +80,9 @@ public class BridgeActivity extends AppCompatActivity {
 
     pluginManager = mockWebView.getPluginManager();
     cordovaInterface.onCordovaInit(pluginManager);
-    bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, pluginManager, preferences);
+    bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, pluginManager, preferences, this.config);
 
-    Splash.showOnLaunch(this);
+    Splash.showOnLaunch(this, bridge.getConfig());
 
     if (savedInstanceState != null) {
       bridge.restoreInstanceState(savedInstanceState);

@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -45,7 +45,7 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^2.3.0",
-    "commander": "^2.12.2",
+    "commander": "^4.1.1",
     "compare-versions": "^3.1.0",
     "fs-extra": "^4.0.3",
     "inquirer": "6.3.1",
@@ -74,7 +74,7 @@
     "ts-jest": "^23.10.4",
     "tslint": "^5.8.0",
     "tslint-ionic-rules": "0.0.11",
-    "typescript": "^3.2.4"
+    "typescript": "~3.7.0"
   },
   "publishConfig": {
     "access": "public"

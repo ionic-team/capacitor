@@ -12,7 +12,7 @@ describe('Init', () => {
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(20000);
+    jest.setTimeout(150000);
     appDirObj = await mktmp();
     tmpDir = appDirObj.path;
     appDir = join(tmpDir, 'test-app');

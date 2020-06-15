@@ -35,7 +35,7 @@ For illustrative purposes, https://beerswift.app will be used as the web app lin
 
 ## Deep Link Routing using the Capacitor App API
 
-When the native app is opened after a deep link is clicked, the mobile OS doesn't automatically know where to route the user. This must be implemented within the app itself using the Capacitor [App API](../apis/app) on app startup.
+When the native app is opened after a deep link is clicked, the mobile OS doesn't automatically know where to route the user. This must be implemented within the app itself using the Capacitor [App API](/docs/apis/app) on app startup.
 
 If your website and app paths don't match, you will need to implement more advanced url pattern matching (see [this guide](https://devdactic.com/universal-links-ionic/) for examples). If your mobile app and web app use the same codebase though, this is very straightforward - just redirect to the same URL. The following examples assume this.
 

@@ -14,7 +14,7 @@ contributors:
 Capacitor makes it easy to build web apps that run natively on iOS, Android, desktop, and the web. In this guide, we'll add Camera functionality to an Ionic Angular app that works on the web, iOS, and Android. Ready to capture photos using just one JavaScript method call?  Let's get started.
 
 ## Required Dependencies
-Building and deploying iOS and Android apps require additional dependencies, including an iOS and Android device. Please [follow the instructions here](../getting-started/dependencies) before continuing.
+Building and deploying iOS and Android apps require additional dependencies, including an iOS and Android device. Please [follow the instructions here](/docs/getting-started/dependencies) before continuing.
 
 ## Prepare an Ionic App
 If you have an existing Ionic app, skip this section. If not, let's create an Ionic app first. In a Terminal, install Ionic (this also updates to the latest version of Ionic):
@@ -72,7 +72,7 @@ npx cap add android
 Upon running these commands, both `android` and `ios` folders at the root of the project are created. These are entirely separate native project artifacts that should be considered part of your Ionic app (i.e., check them into source control).
 
 ## Adding Camera Functionality
-Next up, we'll add the ability to take photos with the device's camera using the Capacitor [Camera API](../apis/camera).
+Next up, we'll add the ability to take photos with the device's camera using the Capacitor [Camera API](/docs/apis/camera).
 
 To begin, open the Tab2 HTML page under the `src/app/tab2` folder. Add an image tag that will display the current photo taken with the camera and add an Ionic fab button that will open the camera when clicked:
 
@@ -212,7 +212,7 @@ Within Xcode, click on `App` in the Project Navigator on the left-hand side, the
 
 ![Xcode - Selecting Development Team](/assets/img/docs/guides/ionic-framework/xcode-signing.png)
 
-Next, for the Camera plugin to work, we must configure the "Privacy - Camera Usage" permission. iOS displays a modal dialog automatically after the first time that `Camera.getPhoto()` is called, prompting the user to allow the app to use the Camera. To set this, the `Info.plist` file must be modified ([more details here](../ios/configuration/)). To access it, click "Info," then expand "Custom iOS Target Properties."
+Next, for the Camera plugin to work, we must configure the "Privacy - Camera Usage" permission. iOS displays a modal dialog automatically after the first time that `Camera.getPhoto()` is called, prompting the user to allow the app to use the Camera. To set this, the `Info.plist` file must be modified ([more details here](/docs/ios/configuration/)). To access it, click "Info," then expand "Custom iOS Target Properties."
 
 ![Xcode Custom iOS Target Properties](/assets/img/docs/guides/ionic-framework/xcode-info-plist.png)
 
@@ -272,6 +272,6 @@ Once again, upon tapping the Camera button on Tab Two, the permission prompt sho
 
 We created a cross-platform Ionic Angular app that runs on the web, Android, and iOS. Using the Capacitor Camera API, we added the ability to use the device's camera with just a few lines of code.
 
-What's next? Try adding another API, such as [Toasts](../apis/toast) or [Push Notifications](../apis/push-notifications). Looking to create custom native functionality? Create a [Capacitor plugin](../plugins/). This is just the beginning of your Capacitor journey. 
+What's next? Try adding another API, such as [Toasts](/docs/apis/toast) or [Push Notifications](/docs/apis/push-notifications). Looking to create custom native functionality? Create a [Capacitor plugin](/docs/plugins/). This is just the beginning of your Capacitor journey. 
 
 Happy app building!

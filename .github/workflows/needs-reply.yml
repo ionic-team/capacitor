@@ -1,0 +1,19 @@
+name: Close old issues that need reply
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close old issues that need reply
+        uses: dwieeb/needs-reply@master
+        with:
+          repo-token: ${{ secrets.BOT_TOKEN }}
+          close-message: |
+            It looks like this issue didn't get the information it needed, so I'll close it for now. If I made a mistake, sorry! I am just a bot.
+
+            Have a great day!
+            Ionitron 💙

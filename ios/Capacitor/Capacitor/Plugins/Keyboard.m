@@ -116,6 +116,7 @@ NSString* UITraitsClassString;
     [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
     [self notifyListeners:@"keyboardWillHide" data:nil];
   }];
+  [[NSRunLoop currentRunLoop] addTimer:hideTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)notification
@@ -171,7 +172,7 @@ NSString* UITraitsClassString;
   if (delay == 0) {
     [self _updateFrame];
   } else {
-    [weakSelf performSelector:action withObject:nil afterDelay:delay];
+    [weakSelf performSelector:action withObject:nil afterDelay:delay inModes:@[NSRunLoopCommonModes]];
   }
 }
 
