@@ -24,7 +24,7 @@ enum LocalNotificationError: LocalizedError {
 
 
 /**
- * Implement three common modal types: alert, confirm, and prompt
+ * Implement Local Notifications
  */
 @objc(CAPLocalNotificationsPlugin)
 public class CAPLocalNotificationsPlugin : CAPPlugin {
@@ -510,6 +510,18 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       opts[UNNotificationAttachmentOptionsThumbnailTimeKey] = iosUNNotificationAttachmentOptionsThumbnailTimeKey
     }
     return opts
+  }
+  
+  @objc func createChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func deleteChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func listChannels(_ call: CAPPluginCall) {
+    call.unimplemented()
   }
 }
 

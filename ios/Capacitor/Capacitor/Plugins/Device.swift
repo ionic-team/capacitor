@@ -20,6 +20,7 @@ public class CAPDevicePlugin: CAPPlugin {
       "memUsed": memUsed,
       "diskFree": diskFree,
       "diskTotal": diskTotal,
+      "name": UIDevice.current.name,
       "model": UIDevice.current.model,
       "operatingSystem": "ios",
       "osVersion": UIDevice.current.systemVersion,

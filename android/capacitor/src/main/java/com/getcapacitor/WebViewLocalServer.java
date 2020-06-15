@@ -17,7 +17,6 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -143,12 +142,12 @@ public class WebViewLocalServer {
     }
     Uri uri = Uri.parse(url);
     if (uri == null) {
-      Log.e(LogUtils.getCoreTag(), "Malformed URL: " + url);
+      Logger.error("Malformed URL: " + url);
       return null;
     }
     String path = uri.getPath();
     if (path == null || path.length() == 0) {
-      Log.e(LogUtils.getCoreTag(), "URL does not have a path: " + url);
+      Logger.error("URL does not have a path: " + url);
       return null;
     }
     return uri;
@@ -173,8 +172,8 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || (Config.getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
-      Log.d(LogUtils.getCoreTag(), "Handling local request: " + request.getUrl().toString());
+    if (isLocalFile(loadingUrl) || (bridge.getConfig().getString("server.url") == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
+      Logger.debug("Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
       return handleProxyRequest(request, handler);
@@ -239,7 +238,7 @@ public class WebViewLocalServer {
           responseStream = protocolHandler.openFile(startPath);
         }
       } catch (IOException e) {
-        Log.e(LogUtils.getCoreTag(), "Unable to open index.html", e);
+        Logger.error("Unable to open index.html", e);
         return null;
       }
 
@@ -255,7 +254,7 @@ public class WebViewLocalServer {
       try {
         return new WebResourceResponse("image/png", null, null);
       } catch (Exception e) {
-        Log.e(LogUtils.getCoreTag(), "favicon handling failed", e);
+        Logger.error("favicon handling failed", e);
       }
     }
 
@@ -291,26 +290,37 @@ public class WebViewLocalServer {
     final String method = request.getMethod();
     if (method.equals("GET")) {
       try {
-        String path = request.getUrl().getPath();
-        URL url = new URL(request.getUrl().toString());
+        String url = request.getUrl().toString();
         Map<String, String> headers = request.getRequestHeaders();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        boolean isHtmlText = false;
         for (Map.Entry<String, String> header : headers.entrySet()) {
-          conn.setRequestProperty(header.getKey(), header.getValue());
+          if (header.getKey().equalsIgnoreCase("Accept") && header.getValue().toLowerCase().contains("text/html")) {
+            isHtmlText = true;
+            break;
+          }
         }
-        conn.setRequestProperty("Cookie", CookieManager.getInstance().getCookie(request.getUrl().toString()));
-        conn.setRequestMethod(method);
-        conn.setReadTimeout(30 * 1000);
-        conn.setConnectTimeout(30 * 1000);
-
-        if (conn.getContentType().contains("text/html")) {
+        if (isHtmlText) {
+          HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+          for (Map.Entry<String, String> header : headers.entrySet()) {
+            conn.setRequestProperty(header.getKey(), header.getValue());
+          }
+          String getCookie = CookieManager.getInstance().getCookie(url);
+          if (getCookie != null) {
+            conn.setRequestProperty("Cookie", getCookie);
+          }
+          conn.setRequestMethod(method);
+          conn.setReadTimeout(30 * 1000);
+          conn.setConnectTimeout(30 * 1000);
+          String cookie = conn.getHeaderField("Set-Cookie");
+          if (cookie != null) {
+            CookieManager.getInstance().setCookie(url, cookie);
+          }
           InputStream responseStream = conn.getInputStream();
           responseStream = jsInjector.getInjectedStream(responseStream);
           bridge.reset();
           return new WebResourceResponse("text/html", handler.getEncoding(),
                   handler.getStatusCode(), handler.getReasonPhrase(), handler.getResponseHeaders(), responseStream);
         }
-
       } catch (SocketTimeoutException ex) {
         bridge.handleAppUrlLoadError(ex);
       } catch (Exception ex) {
@@ -325,7 +335,7 @@ public class WebViewLocalServer {
     try {
       mimeType = URLConnection.guessContentTypeFromName(path); // Does not recognize *.js
       if (mimeType != null && path.endsWith(".js") && mimeType.equals("image/x-icon")) {
-        Log.d(LogUtils.getCoreTag(), "We shouldn't be here");
+        Logger.debug("We shouldn't be here");
       }
       if (mimeType == null) {
         if (path.endsWith(".js") || path.endsWith(".mjs")) {
@@ -338,7 +348,7 @@ public class WebViewLocalServer {
         }
       }
     } catch (Exception ex) {
-      Log.e(LogUtils.getCoreTag(), "Unable to get mime type" + path, ex);
+      Logger.error("Unable to get mime type" + path, ex);
     }
     return mimeType;
   }
@@ -427,7 +437,7 @@ public class WebViewLocalServer {
             stream = protocolHandler.openAsset(assetPath + path);
           }
         } catch (IOException e) {
-          Log.e(LogUtils.getCoreTag(), "Unable to open asset URL: " + url);
+          Logger.error("Unable to open asset URL: " + url);
           return null;
         }
 

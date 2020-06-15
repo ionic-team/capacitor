@@ -103,7 +103,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
 
     do {
-      if !FileManager.default.fileExists(atPath: fileUrl.deletingLastPathComponent().absoluteString) {
+      if !FileManager.default.fileExists(atPath: fileUrl.deletingLastPathComponent().path) {
         if recursive {
           try FileManager.default.createDirectory(at: fileUrl.deletingLastPathComponent(), withIntermediateDirectories: recursive, attributes: nil)
         } else {

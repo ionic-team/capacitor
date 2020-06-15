@@ -33,7 +33,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;

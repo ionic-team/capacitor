@@ -181,7 +181,12 @@ export async function getOrCreateConfig(config: Config) {
     appName: config.app.appName,
     bundledWebRuntime: config.app.bundledWebRuntime,
     npmClient: config.cli.npmClient,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir))
+    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
+    plugins: {
+      SplashScreen : {
+        launchShowDuration: 0
+      }
+    }
   });
 
   // Store our newly created or found external config as the default
@@ -301,7 +306,7 @@ export async function getName(config: Config, name: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'name',
-      default: 'App',
+      default: config.app.appName ? config.app.appName : config.app.package && config.app.package.name ? config.app.package.name : 'App',
       message: `App name`
     }]);
     return answers.name;
@@ -314,7 +319,7 @@ export async function getAppId(config: Config, id: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'id',
-      default: 'com.example.app',
+      default: config.app.appId ? config.app.appId : 'com.example.app',
       message: 'App Package ID (in Java package format, no dashes)'
     }]);
     return answers.id;
@@ -374,28 +379,43 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+export async function getCoreVersion(config: Config): Promise<string> {
+  const corePackagePath = resolveNode(config, '@capacitor/core', 'package.json');
+  if (!corePackagePath) {
+    logFatal('Unable to find node_modules/@capacitor/core/package.json. Are you sure',
+      '@capacitor/core is installed? This file is currently required for Capacitor to function.');
+  }
+
+  return (await readJSON(corePackagePath)).version;
+}
+
+export async function getCLIVersion(config: Config): Promise<string> {
   const cliPackagePath = resolveNode(config, '@capacitor/cli', 'package.json');
   if (!cliPackagePath) {
     logFatal('Unable to find node_modules/@capacitor/cli/package.json. Are you sure',
       '@capacitor/cli is installed? This file is currently required for Capacitor to function.');
-    return;
   }
 
+  return (await readJSON(cliPackagePath)).version;
+}
+
+export async function getPlatformVersion(config: Config, platform: string): Promise<string> {
   const platformPackagePath = resolveNode(config, `@capacitor/${platform}`, 'package.json');
   if (!platformPackagePath) {
     logFatal(`Unable to find node_modules/@capacitor/${platform}/package.json. Are you sure`,
       `@capacitor/${platform} is installed? This file is currently required for Capacitor to function.`);
-    return;
   }
 
-  const cliVersion = (await readJSON(cliPackagePath)).version;
-  const platformVersion = (await readJSON(platformPackagePath)).version;
+  return (await readJSON(platformPackagePath)).version;
+}
 
-  if (semver.gt(cliVersion, platformVersion)) {
+export async function checkPlatformVersions(config: Config, platform: string) {
+  const coreVersion = await getCoreVersion(config);
+  const platformVersion = await getPlatformVersion(config, platform);
+  if (semver.diff(coreVersion, platformVersion) === 'minor' || semver.diff(coreVersion, platformVersion) === 'major') {
     log('\n');
-    logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
-    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
+    logWarn(`Your @capacitor/core version doesn't match your @capacitor/${platform} version`);
+    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`);
   }
 }
 

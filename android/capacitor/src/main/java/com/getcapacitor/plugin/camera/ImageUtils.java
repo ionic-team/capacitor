@@ -8,10 +8,9 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.getcapacitor.FileUtils;
-import com.getcapacitor.LogUtils;
+import com.getcapacitor.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,7 +124,7 @@ public class ImageUtils {
 
       return new ExifWrapper(exifInterface);
     } catch (IOException ex) {
-      Log.e(LogUtils.getCoreTag(), "Error loading exif data from image", ex);
+      Logger.error("Error loading exif data from image", ex);
     } finally {
     }
     return new ExifWrapper(null);

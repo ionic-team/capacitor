@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { Plugin, PluginType, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
+import { Plugin, PluginType, getAssets, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { basename, extname, join, resolve } from 'path';
 import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, parseXML, readXML, resolveNode, writeXML } from './common';
@@ -115,6 +115,11 @@ export async function copyPluginsJS(config: Config, cordovaPlugins: Plugin[], pl
       data = data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '');
       await writeFileAsync(filePath, data, 'utf8');
     }));
+    const assets = getAssets(p, platform);
+    assets.map((asset: any) => {
+      const filePath = join(webDir, asset.$.target);
+      copySync(join(p.rootPath, asset.$.src), filePath);
+    });
   }));
   writeFileAsync(cordovaPluginsJSFile, generateCordovaPluginsJSFile(config, cordovaPlugins, platform));
 }
@@ -304,8 +309,11 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
     allDependencies = allDependencies.filter((dep: any) => !getIncompatibleCordovaPlugins(platform).includes(dep.$.id) && incompatible.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0);
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
-        if (cordovaPlugins.filter(p => p.id === dep.$.id || p.xml.$.id === dep.$.id).length === 0) {
-          let plugin = dep.$.id;
+        let plugin = dep.$.id;
+        if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
+          plugin = plugin.split('@')[0];
+        }
+        if (cordovaPlugins.filter(p => p.id === plugin || p.xml.$.id === plugin).length === 0) {
           if (dep.$.url && dep.$.url.startsWith('http')) {
             plugin = dep.$.url;
           }
@@ -329,7 +337,7 @@ export function getIncompatibleCordovaPlugins(platform: string) {
   let pluginList = ['cordova-plugin-splashscreen', 'cordova-plugin-ionic-webview', 'cordova-plugin-crosswalk-webview',
   'cordova-plugin-wkwebview-engine', 'cordova-plugin-console', 'cordova-plugin-music-controls',
   'cordova-plugin-add-swift-support', 'cordova-plugin-ionic-keyboard', 'cordova-plugin-braintree',
-  '@ionic-enterprise/filesystem', '@ionic-enterprise/keyboard', '@ionic-enterprise/splashscreen'];
+  '@ionic-enterprise/filesystem', '@ionic-enterprise/keyboard', '@ionic-enterprise/splashscreen', 'cordova-support-google-services'];
   if (platform === 'ios') {
     pluginList.push('cordova-plugin-googlemaps', 'cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
   }
@@ -345,9 +353,11 @@ export async function getCordovaPreferences(config: Config) {
   if (existsSync(configXml)) {
     cordova.preferences = {};
     const xmlMeta = await readXML(configXml);
-    xmlMeta.widget.preference.map((pref: any) => {
-      cordova.preferences[pref.$.name] = pref.$.value;
-    });
+    if (xmlMeta.widget.preference) {
+      xmlMeta.widget.preference.map((pref: any) => {
+        cordova.preferences[pref.$.name] = pref.$.value;
+      });
+    }
   }
   if (config.app.extConfig && config.app.extConfig.cordova && config.app.extConfig.cordova.preferences && cordova.preferences) {
     const answer = await inquirer.prompt({
@@ -413,7 +423,7 @@ ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
 </manifest>`;
-  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), config.app.appId);
+  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), '${applicationId}');
   if (existsSync(manifestPath)) {
     await writeFileAsync(manifestPath, content);
   }

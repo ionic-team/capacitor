@@ -53,9 +53,6 @@ export namespace Components {
     'typeId'?: string;
   }
 
-  interface BlogPage {}
-  interface BlogPageAttributes extends StencilHTMLAttributes {}
-
   interface CapacitorSite {
     'isLandingPage': boolean;
   }
@@ -86,6 +83,9 @@ export namespace Components {
     'page'?: string;
     'pages'?: string[];
   }
+
+  interface CapacitorEnterprise {}
+  interface CapacitorEnterpriseAttributes extends StencilHTMLAttributes {}
 
   interface InPageNavigation {
     'currentPageUrl': string;
@@ -129,9 +129,6 @@ export namespace Components {
     'platforms'?: string;
   }
 
-  interface SiteBar {}
-  interface SiteBarAttributes extends StencilHTMLAttributes {}
-
   interface SiteHeader {}
   interface SiteHeaderAttributes extends StencilHTMLAttributes {}
 
@@ -152,19 +149,18 @@ declare global {
     'AppIcon': Components.AppIcon;
     'AppMarked': Components.AppMarked;
     'AvcCodeType': Components.AvcCodeType;
-    'BlogPage': Components.BlogPage;
     'CapacitorSite': Components.CapacitorSite;
     'ContributorList': Components.ContributorList;
     'DemosPage': Components.DemosPage;
     'DocSnippet': Components.DocSnippet;
     'DocumentComponent': Components.DocumentComponent;
+    'CapacitorEnterprise': Components.CapacitorEnterprise;
     'InPageNavigation': Components.InPageNavigation;
     'LandingPage': Components.LandingPage;
     'LowerContentNav': Components.LowerContentNav;
     'NewsletterSignup': Components.NewsletterSignup;
     'PluginApi': Components.PluginApi;
     'PluginPlatforms': Components.PluginPlatforms;
-    'SiteBar': Components.SiteBar;
     'SiteHeader': Components.SiteHeader;
     'SiteMenu': Components.SiteMenu;
   }
@@ -175,19 +171,18 @@ declare global {
     'app-icon': Components.AppIconAttributes;
     'app-marked': Components.AppMarkedAttributes;
     'avc-code-type': Components.AvcCodeTypeAttributes;
-    'blog-page': Components.BlogPageAttributes;
     'capacitor-site': Components.CapacitorSiteAttributes;
     'contributor-list': Components.ContributorListAttributes;
     'demos-page': Components.DemosPageAttributes;
     'doc-snippet': Components.DocSnippetAttributes;
     'document-component': Components.DocumentComponentAttributes;
+    'capacitor-enterprise': Components.CapacitorEnterpriseAttributes;
     'in-page-navigation': Components.InPageNavigationAttributes;
     'landing-page': Components.LandingPageAttributes;
     'lower-content-nav': Components.LowerContentNavAttributes;
     'newsletter-signup': Components.NewsletterSignupAttributes;
     'plugin-api': Components.PluginApiAttributes;
     'plugin-platforms': Components.PluginPlatformsAttributes;
-    'site-bar': Components.SiteBarAttributes;
     'site-header': Components.SiteHeaderAttributes;
     'site-menu': Components.SiteMenuAttributes;
   }
@@ -223,12 +218,6 @@ declare global {
     new (): HTMLAvcCodeTypeElement;
   };
 
-  interface HTMLBlogPageElement extends Components.BlogPage, HTMLStencilElement {}
-  var HTMLBlogPageElement: {
-    prototype: HTMLBlogPageElement;
-    new (): HTMLBlogPageElement;
-  };
-
   interface HTMLCapacitorSiteElement extends Components.CapacitorSite, HTMLStencilElement {}
   var HTMLCapacitorSiteElement: {
     prototype: HTMLCapacitorSiteElement;
@@ -257,6 +246,12 @@ declare global {
   var HTMLDocumentComponentElement: {
     prototype: HTMLDocumentComponentElement;
     new (): HTMLDocumentComponentElement;
+  };
+
+  interface HTMLCapacitorEnterpriseElement extends Components.CapacitorEnterprise, HTMLStencilElement {}
+  var HTMLCapacitorEnterpriseElement: {
+    prototype: HTMLCapacitorEnterpriseElement;
+    new (): HTMLCapacitorEnterpriseElement;
   };
 
   interface HTMLInPageNavigationElement extends Components.InPageNavigation, HTMLStencilElement {}
@@ -295,12 +290,6 @@ declare global {
     new (): HTMLPluginPlatformsElement;
   };
 
-  interface HTMLSiteBarElement extends Components.SiteBar, HTMLStencilElement {}
-  var HTMLSiteBarElement: {
-    prototype: HTMLSiteBarElement;
-    new (): HTMLSiteBarElement;
-  };
-
   interface HTMLSiteHeaderElement extends Components.SiteHeader, HTMLStencilElement {}
   var HTMLSiteHeaderElement: {
     prototype: HTMLSiteHeaderElement;
@@ -319,19 +308,18 @@ declare global {
     'app-icon': HTMLAppIconElement
     'app-marked': HTMLAppMarkedElement
     'avc-code-type': HTMLAvcCodeTypeElement
-    'blog-page': HTMLBlogPageElement
     'capacitor-site': HTMLCapacitorSiteElement
     'contributor-list': HTMLContributorListElement
     'demos-page': HTMLDemosPageElement
     'doc-snippet': HTMLDocSnippetElement
     'document-component': HTMLDocumentComponentElement
+    'capacitor-enterprise': HTMLCapacitorEnterpriseElement
     'in-page-navigation': HTMLInPageNavigationElement
     'landing-page': HTMLLandingPageElement
     'lower-content-nav': HTMLLowerContentNavElement
     'newsletter-signup': HTMLNewsletterSignupElement
     'plugin-api': HTMLPluginApiElement
     'plugin-platforms': HTMLPluginPlatformsElement
-    'site-bar': HTMLSiteBarElement
     'site-header': HTMLSiteHeaderElement
     'site-menu': HTMLSiteMenuElement
   }
@@ -342,19 +330,18 @@ declare global {
     'app-icon': HTMLAppIconElement;
     'app-marked': HTMLAppMarkedElement;
     'avc-code-type': HTMLAvcCodeTypeElement;
-    'blog-page': HTMLBlogPageElement;
     'capacitor-site': HTMLCapacitorSiteElement;
     'contributor-list': HTMLContributorListElement;
     'demos-page': HTMLDemosPageElement;
     'doc-snippet': HTMLDocSnippetElement;
     'document-component': HTMLDocumentComponentElement;
+    'capacitor-enterprise': HTMLCapacitorEnterpriseElement;
     'in-page-navigation': HTMLInPageNavigationElement;
     'landing-page': HTMLLandingPageElement;
     'lower-content-nav': HTMLLowerContentNavElement;
     'newsletter-signup': HTMLNewsletterSignupElement;
     'plugin-api': HTMLPluginApiElement;
     'plugin-platforms': HTMLPluginPlatformsElement;
-    'site-bar': HTMLSiteBarElement;
     'site-header': HTMLSiteHeaderElement;
     'site-menu': HTMLSiteMenuElement;
   }

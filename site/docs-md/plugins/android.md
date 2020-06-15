@@ -15,7 +15,7 @@ contributors:
 
 ## Getting Started
 
-To get started, first generate a plugin as shown in the [Getting Started](./#getting-started) section of the Plugin guide.
+To get started, first generate a plugin as shown in the [Getting Started](/docs/plugins/#getting-started) section of the Plugin guide.
 
 Next, open `your-plugin/android/` in Android Studio. You then want to navigate to the `.java` file for your plugin, which changes depending on the Plugin ID and Plugin Class Name you used when creating the plugin.
 
@@ -286,6 +286,13 @@ protected void handleRequestPermissionsResult(int requestCode, String[] permissi
   }
 }
 ```
+
+### Override navigation
+
+Capacitor plugins can override the webview navigation. For that the plugin can override `public Boolean shouldOverrideLoad(Uri url)` method.
+Returning `true` causes the WebView to abort loading the URL.
+Returning `false` causes the WebView to continue loading the URL.
+Returning `null` will defer to the default Capacitor policy.
 
 ### Export to Capacitor
 

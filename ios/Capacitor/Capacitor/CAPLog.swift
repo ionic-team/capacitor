@@ -11,7 +11,7 @@ public class CAPLog {
   }
 
   public static func hideLogs() -> Bool {
-    if let hideLogs = config.getValue("ios.hideLogs") as? Bool {
+    if let hideLogs = (config.getValue("ios.hideLogs") as? Bool) ?? (config.getValue("hideLogs") as? Bool) {
       return hideLogs
     }
     return false

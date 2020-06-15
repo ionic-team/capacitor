@@ -7,7 +7,9 @@ import {
   LocalNotificationActionType,
   LocalNotification,
   LocalNotificationScheduleResult,
-  NotificationPermissionResponse
+  NotificationPermissionResponse,
+  NotificationChannel,
+  NotificationChannelList
 } from '../core-plugin-definitions';
 
 import { PermissionsRequestResult } from '../definitions';
@@ -20,6 +22,18 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
       name: 'LocalNotifications',
       platforms: ['web']
     });
+  }
+
+  createChannel(channel: NotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+
+  deleteChannel(channel: NotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+
+  listChannels(): Promise<NotificationChannelList> {
+    throw new Error('Feature not available in the browser');
   }
 
   sendPending() {
@@ -93,7 +107,9 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
   }
 
   areEnabled(): Promise<LocalNotificationEnabledResult> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve({
+      value: Notification.permission === 'granted'
+    });
   }
 
   requestPermission(): Promise<NotificationPermissionResponse> {
@@ -103,7 +119,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
         if (result === 'denied' || result === 'default') {
           granted = false;
         }
-        resolve({granted});
+        resolve({ granted });
       });
     });
   }
@@ -116,7 +132,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
           return;
         }
         resolve({
-          results: [ result ]
+          results: [result]
         });
       });
     });

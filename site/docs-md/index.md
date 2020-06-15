@@ -1,6 +1,6 @@
 ---
 title: Capacitor - A Cross-platform App Runtime
-description: A cross-platform app runtime for building Native Progressive Web Apps for iOS, Android, Electron, and beyond
+description: A cross-platform app runtime for building Native Progressive Web Apps for iOS, Android, and beyond
 url: /docs/
 contributors:
   - mlynch
@@ -11,7 +11,7 @@ contributors:
 
 # Capacitor: A Cross-platform App Runtime
 
-<p class="intro">Capacitor is a cross-platform app runtime that makes it easy to build web apps that run natively on iOS, Android, Electron, <em>and</em> the web. We call these apps "Native Progressive Web Apps" and they represent the next evolution beyond Hybrid apps.</p>
+<p class="intro">Capacitor is a cross-platform app runtime that makes it easy to build web apps that run natively on iOS, Android, <em>and</em> the web. We call these apps "Native Progressive Web Apps" and they represent the next evolution beyond Hybrid apps.</p>
 
 <img src="/assets/img/docs/capacitor-index.png" style="max-height: 360px" />
 
