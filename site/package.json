@@ -13,10 +13,10 @@
     "serve": "stencil build --dev --watch"
   },
   "devDependencies": {
-    "@stencil/core": "^0.17.2",
-    "@stencil/router": "^0.3.3",
+    "@stencil/core": "^1.13.0",
+    "@stencil/router": "^1.0.1",
     "@stencil/sass": "^1.3.1",
-    "@stencil/state-tunnel": "0.0.9-1",
+    "@stencil/state-tunnel": "1.0.1",
     "@stencil/utils": "0.0.5",
     "@types/glob": "^7.1.1",
     "@types/marked": "^0.6.5",
@@ -45,6 +45,8 @@
   },
   "homepage": "https://github.com/ionic-team/capacitor",
   "dependencies": {
-    "dotenv": "^8.0.0"
+    "dotenv": "^8.0.0",
+    "prismic-dom": "^2.2.3",
+    "prismic-javascript": "^2.7.1"
   }
 }

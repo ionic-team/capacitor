@@ -36,13 +36,26 @@ exit the app when navigation is complete.</div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-getLaunchUrl-0">getLaunchUrl</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">getLaunchUrl</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="227">AppLaunchUrl</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">getLaunchUrl</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="233">AppLaunchUrl</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment">Get the URL the app was launched with, if any</div>
   <div class="avc-code-method-params">
 
   <div class="avc-code-method-returns-info">
-    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="227">AppLaunchUrl</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="233">AppLaunchUrl</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-getState-0">getState</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">getState</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="227">AppState</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+    </div>
+    <div class="avc-code-method-comment">Gets the current app state</div>
+  <div class="avc-code-method-params">
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="227">AppState</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
   </div>
   
 </div></div>
@@ -65,9 +78,22 @@ exit the app when navigation is complete.</div>
   
 </div></div>
 <div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-removeAllListeners-0">removeAllListeners</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">removeAllListeners</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+    </div>
+    <div class="avc-code-method-comment">Remove all native listeners for this plugin</div>
+  <div class="avc-code-method-params">
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> void
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-0">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"appStateChange"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(state: <avc-code-type type-id="221">AppState</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"appStateChange"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(state: <avc-code-type type-id="227">AppState</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     <div class="avc-code-method-comment">Listen for changes in the App's active state (whether the app is in the foreground or background)</div>
   <div class="avc-code-method-params">
@@ -79,7 +105,7 @@ exit the app when navigation is complete.</div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>(state: <avc-code-type type-id="221">AppState</avc-code-type>) => void</avc-code-type>
+<avc-code-type>(state: <avc-code-type type-id="227">AppState</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -90,7 +116,7 @@ exit the app when navigation is complete.</div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-1">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"appUrlOpen"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(data: <avc-code-type type-id="223">AppUrlOpen</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"appUrlOpen"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(data: <avc-code-type type-id="229">AppUrlOpen</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     <div class="avc-code-method-comment">Listen for url open events for the app. This handles both custom URL scheme links as well
 as URLs your app handles (Universal Links on iOS and App Links on Android)</div>
@@ -103,7 +129,7 @@ as URLs your app handles (Universal Links on iOS and App Links on Android)</div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>(data: <avc-code-type type-id="223">AppUrlOpen</avc-code-type>) => void</avc-code-type>
+<avc-code-type>(data: <avc-code-type type-id="229">AppUrlOpen</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -114,7 +140,7 @@ as URLs your app handles (Universal Links on iOS and App Links on Android)</div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-2">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"appRestoredResult"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(data: <avc-code-type type-id="229">AppRestoredResult</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"appRestoredResult"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(data: <avc-code-type type-id="235">AppRestoredResult</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     <div class="avc-code-method-comment">If the app was launched with previously persisted plugin call data, such as on Android
 when an activity returns to an app that was closed, this call will return any data
@@ -128,7 +154,7 @@ the app was launched with, converted into the form of a result from a plugin cal
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>(data: <avc-code-type type-id="229">AppRestoredResult</avc-code-type>) => void</avc-code-type>
+<avc-code-type>(data: <avc-code-type type-id="235">AppRestoredResult</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -139,7 +165,7 @@ the app was launched with, converted into the form of a result from a plugin cal
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-3">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"backButton"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(data: <avc-code-type type-id="223">AppUrlOpen</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"backButton"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type>(data: <avc-code-type type-id="229">AppUrlOpen</avc-code-type>) => void</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     <div class="avc-code-method-comment">Listen for the hardware back button event (Android only). Listening for this event will disable the
 default back button behaviour, so you might want to call `window.history.back()` manually.
@@ -153,7 +179,7 @@ If you want to close the app, call `App.exitApp()`.</div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type>(data: <avc-code-type type-id="223">AppUrlOpen</avc-code-type>) => void</avc-code-type>
+<avc-code-type>(data: <avc-code-type type-id="229">AppUrlOpen</avc-code-type>) => void</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -163,7 +189,7 @@ If you want to close the app, call `App.exitApp()`.</div>
 </div></div>
 <h3 id="interfaces">Interfaces Used</h3>
 
-    <div class="avc-code-interface" id="type-227">
+    <div class="avc-code-interface" id="type-233">
       <h4 class="avc-code-interface-name">AppLaunchUrl</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">AppLaunchUrl</span>
@@ -176,6 +202,23 @@ If you want to close the app, call `App.exitApp()`.</div>
             <div class="avc-code-line"><span class="avc-code-param-name">url</span>
               :
               <avc-code-type>string</avc-code-type>;
+            </div>
+          </div>
+<span class="avc-code-line"><span class="avc-code-brace">}</span></span>
+
+    <div class="avc-code-interface" id="type-227">
+      <h4 class="avc-code-interface-name">AppState</h4>
+      <div class="avc-code-line">
+        <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">AppState</span>
+        <span class="avc-code-brace">{</span>
+      </div>
+    
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">isActive</span>
+              :
+              <avc-code-type>boolean</avc-code-type>;
             </div>
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>

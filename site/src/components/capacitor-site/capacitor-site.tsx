@@ -1,5 +1,5 @@
 import '@stencil/router';
-import { Component, Prop, Element, Listen, State } from '@stencil/core';
+import { Component, Prop, Element, Listen, State, h } from '@stencil/core';
 import { LocationSegments, RouterHistory } from '@stencil/router';
 import SiteProviderConsumer, { SiteState } from '../../global/site-provider-consumer';
 
@@ -35,10 +35,10 @@ export class App {
     });
   }
 
-  @Listen('burgerClick')
-  @Listen('leftSidebarClick')
+  @Listen('burgerClick', { target: 'body' })
+  @Listen('leftSidebarClick', { target: 'body' })
   handleToggle() {
-    if (window.innerWidth <= 768) this.toggleLeftSidebar();
+    if (window.innerWidth <= 768) this.toggleLeftSidebar();    
   }
 
   setHistory = ({ history }: { history: RouterHistory }) => {
@@ -54,7 +54,7 @@ export class App {
     this.isLeftSidebarIn = false;
   }
 
-  toggleLeftSidebar() {
+  toggleLeftSidebar(){
     if (this.isLeftSidebarIn) {
       this.isLeftSidebarIn = false;
       document.body.classList.remove('no-scroll');
@@ -81,6 +81,7 @@ export class App {
   }
 
   render() {
+    
     const siteState: SiteState = {
       isLeftSidebarIn: this.isLeftSidebarIn,
       toggleLeftSidebar: this.toggleLeftSidebar

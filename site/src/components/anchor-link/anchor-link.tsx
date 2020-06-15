@@ -1,4 +1,4 @@
-import { Component, Prop } from '@stencil/core';
+import { Component, h, Prop } from '@stencil/core';
 
 /**
  * Used in the generated doc markup as well as the site, so don't remve this

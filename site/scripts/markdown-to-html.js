@@ -30,7 +30,6 @@ const SITE_STRUCTURE_FILE = './src/assets/docs-structure.json';
         if (filePath === './docs-md/README.md') {
             return Promise.resolve();
         }
-        let htmlContents = '';
         let markdownMetadata = {};
         const jsonFileName = path_1.default.relative(SOURCE_DIR, filePath);
         const destinationFileName = path_1.default.join(DESTINATION_DIR, path_1.default.dirname(jsonFileName), path_1.default.basename(jsonFileName, '.md') + '.json');
@@ -43,12 +42,12 @@ const SITE_STRUCTURE_FILE = './src/assets/docs-structure.json';
             markdown_renderer_1.collectHeadingMetadata(renderer, markdownMetadata);
             markdown_renderer_1.changeCodeCreation(renderer);
             markdown_renderer_1.localizeMarkdownLink(renderer, destinationFileName.replace('src', ''), siteStructureJson);
-            htmlContents = marked_1.default(parsedMarkdown.body, {
+            let htmlContents = marked_1.default(parsedMarkdown.body, {
                 renderer,
                 headerIds: true
             });
             await utils_1.mkdirp(path_1.default.join(DESTINATION_DIR, path_1.default.dirname(jsonFileName)));
-            await writeFile(destinationFileName, JSON.stringify(Object.assign({}, parsedMarkdown.attributes, markdownMetadata, { srcPath: filePath, content: htmlContents })), {
+            await writeFile(destinationFileName, JSON.stringify(Object.assign(Object.assign(Object.assign({}, parsedMarkdown.attributes), markdownMetadata), { srcPath: filePath, content: htmlContents })), {
                 encoding: 'utf8'
             });
         }

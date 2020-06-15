@@ -6,7 +6,7 @@
                     <div class="avc-code-method-signature">
                       <span class="avc-code-method-name">close</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
     </div>
-    <div class="avc-code-method-comment">Close an open browser. Only works on iOS, otherwise is a no-op</div>
+    <div class="avc-code-method-comment">Close an open browser. Only works on iOS and Web environment, otherwise is a no-op</div>
   <div class="avc-code-method-params">
 
   <div class="avc-code-method-returns-info">
@@ -17,14 +17,14 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-open-0">open</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">open</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="274">BrowserOpenOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">open</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="286">BrowserOpenOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment">Open a page with the given URL</div>
   <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="274">BrowserOpenOptions</avc-code-type>
+<avc-code-type type-id="286">BrowserOpenOptions</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -35,7 +35,7 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-prefetch-0">prefetch</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">prefetch</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="279">BrowserPrefetchOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">prefetch</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="291">BrowserPrefetchOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment">Hint to the browser that the given URLs will be accessed
 to improve initial loading times.</div>
@@ -43,11 +43,24 @@ to improve initial loading times.</div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="279">BrowserPrefetchOptions</avc-code-type>
+<avc-code-type type-id="291">BrowserPrefetchOptions</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
     <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-removeAllListeners-0">removeAllListeners</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">removeAllListeners</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+    </div>
+    <div class="avc-code-method-comment">Remove all native listeners for this plugin</div>
+  <div class="avc-code-method-params">
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> void
   </div>
   
 </div></div>
@@ -99,7 +112,7 @@ to improve initial loading times.</div>
 </div></div>
 <h3 id="interfaces">Interfaces Used</h3>
 
-    <div class="avc-code-interface" id="type-274">
+    <div class="avc-code-interface" id="type-286">
       <h4 class="avc-code-interface-name">BrowserOpenOptions</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">BrowserOpenOptions</span>
@@ -142,7 +155,7 @@ to _blank</div>
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-    <div class="avc-code-interface" id="type-279">
+    <div class="avc-code-interface" id="type-291">
       <h4 class="avc-code-interface-name">BrowserPrefetchOptions</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">BrowserPrefetchOptions</span>

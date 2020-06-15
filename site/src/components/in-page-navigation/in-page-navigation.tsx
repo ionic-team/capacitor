@@ -1,4 +1,4 @@
-import { Component, Prop, ComponentInterface, Listen, State, Watch } from '@stencil/core';
+import { Component, Prop, Listen, State, Watch, h, Element } from '@stencil/core';
 import { MarkdownHeading } from '../../global/definitions';
 
 interface ItemOffset {
@@ -10,7 +10,7 @@ interface ItemOffset {
   tag: 'in-page-navigation',
   styleUrl: 'in-page-navigation.css'
 })
-export class InPageNavigtion implements ComponentInterface {
+export class InPageNavigtion {
 
   @Listen('window:scroll')
   function() {
@@ -24,11 +24,32 @@ export class InPageNavigtion implements ComponentInterface {
     }
   }
 
+  @Element() el: HTMLElement;
   @Prop() pageLinks: MarkdownHeading[] = [];
   @Prop() srcUrl: string = '';
   @Prop() currentPageUrl: string = '';
   @State() itemOffsets: ItemOffset[] = [];
   @State() selectedId: string = null;
+
+  componentShouldUpdate() {
+    const adContent = this.el.querySelector('.internalAd__wrapper')
+    if (!adContent) return;
+
+    adContent.parentElement.style.height = '0px';
+  }
+  
+  @Listen('internalAdLoaded', { target: 'body' })
+  componentDidRender() {
+    const adContent = this.el.querySelector('.internalAd__wrapper')
+    if (!adContent) return;
+
+    if (adContent.getBoundingClientRect().bottom < window.innerHeight) {
+      adContent.parentElement.style.height = 'auto';
+    } else {
+      adContent.parentElement.style.height = '0px';
+    }
+  }
+  
 
   @Watch('pageLinks')
   @Listen('window:resize')
@@ -43,7 +64,7 @@ export class InPageNavigtion implements ComponentInterface {
       });
     });
   }
-
+  
   componentDidLoad() {
     this.updateItemOffsets();
   }
@@ -95,6 +116,7 @@ export class InPageNavigtion implements ComponentInterface {
           )) }
         </ul>
         { submitEditLink }
+        <internal-ad></internal-ad>
       </div>
     );
   }

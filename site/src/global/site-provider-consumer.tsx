@@ -1,4 +1,5 @@
 import { createProviderConsumer } from '@stencil/state-tunnel';
+import { h } from '@stencil/core';
 
 export interface SiteState {
   isLeftSidebarIn: boolean,
