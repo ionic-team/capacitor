@@ -155,5 +155,32 @@
   }
 }
 
+/**
+ * Get the SearchPathDirectory corresponding to the JS string
+ */
+-(NSSearchPathDirectory)getDirectory:(NSString *) directory {
+  NSArray *directories = @[@"DOCUMENTS", @"CACHE"];
+
+  switch ([directories indexOfObject:directory]) {
+    case 0:
+          return NSDocumentDirectory;
+    case 1:
+          return NSCachesDirectory;
+    default:
+          return NSDocumentDirectory;
+  }
+}
+
+-(NSURL *)getFileUrl:(NSString *)path directory:(NSString *)directoryOption {
+    if ([path hasPrefix:@"file://"]) {
+        return [NSURL fileURLWithPath:path];
+    }
+
+    NSSearchPathDirectory directory = [self getDirectory:directoryOption];
+    NSURL *dir = [NSFileManager.defaultManager URLsForDirectory:directory inDomains:NSUserDomainMask].firstObject;
+
+    return [dir URLByAppendingPathComponent:path];
+}
+
 @end
 

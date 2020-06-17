@@ -42,5 +42,7 @@
 -(id)getConfigValue:(NSString *) key;
 -(void)setCenteredPopover:(UIViewController *) vc;
 -(BOOL)supportsPopover;
+-(NSSearchPathDirectory)getDirectory:(NSString *)directory;
+-(NSURL *)getFileUrl:(NSString *)path directory:(NSString *)directoryOption;
 
 @end
