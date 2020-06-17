@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -14,6 +15,10 @@ import androidx.core.app.ActivityCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -447,6 +452,62 @@ public class Plugin {
     }
   }
 
+  protected File getDirectory(String directory) {
+    Context c = bridge.getContext();
+    switch(directory) {
+      case "DOCUMENTS":
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+      case "DATA":
+        return c.getFilesDir();
+      case "CACHE":
+        return c.getCacheDir();
+      case "EXTERNAL":
+        return c.getExternalFilesDir(null);
+      case "EXTERNAL_STORAGE":
+        return Environment.getExternalStorageDirectory();
+    }
+    return null;
+  }
+
+  protected File getFileObject(String path, String directory) {
+    if (directory == null) {
+      Uri u = Uri.parse(path);
+      if (u.getScheme() == null || u.getScheme().equals("file")) {
+        return new File(u.getPath());
+      }
+    }
+
+    File androidDirectory = this.getDirectory(directory);
+
+    if (androidDirectory == null) {
+      return null;
+    } else {
+      if(!androidDirectory.exists()) {
+        androidDirectory.mkdir();
+      }
+    }
+
+    return new File(androidDirectory, path);
+  }
+
+  protected InputStream getInputStream(String path, String directory) throws IOException {
+    if (directory == null) {
+      Uri u = Uri.parse(path);
+      if (u.getScheme().equals("content")) {
+        return getContext().getContentResolver().openInputStream(u);
+      } else {
+        return new FileInputStream(new File(u.getPath()));
+      }
+    }
+
+    File androidDirectory = this.getDirectory(directory);
+
+    if (androidDirectory == null) {
+      throw new IOException("Directory not found");
+    }
+
+    return new FileInputStream(new File(androidDirectory, path));
+  }
 
   /**
    * Handle request permissions result. A plugin can override this to handle the result

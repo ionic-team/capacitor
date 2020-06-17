@@ -1,12 +1,11 @@
 package com.getcapacitor.plugin;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Base64;
+
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
@@ -15,6 +14,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.PluginRequestCodes;
+
 import org.json.JSONException;
 
 import java.io.BufferedWriter;
@@ -67,63 +67,6 @@ public class Filesystem extends Plugin {
         return StandardCharsets.US_ASCII;
     }
     return null;
-  }
-
-  private File getDirectory(String directory) {
-    Context c = bridge.getContext();
-    switch(directory) {
-      case "DOCUMENTS":
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-      case "DATA":
-        return c.getFilesDir();
-      case "CACHE":
-        return c.getCacheDir();
-      case "EXTERNAL":
-        return c.getExternalFilesDir(null);
-      case "EXTERNAL_STORAGE":
-        return Environment.getExternalStorageDirectory();
-    }
-    return null;
-  }
-
-  private File getFileObject(String path, String directory) {
-    if (directory == null) {
-      Uri u = Uri.parse(path);
-      if (u.getScheme() == null || u.getScheme().equals("file")) {
-        return new File(u.getPath());
-      }
-    }
-
-    File androidDirectory = this.getDirectory(directory);
-
-    if (androidDirectory == null) {
-      return null;
-    } else {
-      if(!androidDirectory.exists()) {
-        androidDirectory.mkdir();
-      }
-    }
-
-    return new File(androidDirectory, path);
-  }
-
-  private InputStream getInputStream(String path, String directory) throws IOException {
-    if (directory == null) {
-      Uri u = Uri.parse(path);
-      if (u.getScheme().equals("content")) {
-        return getContext().getContentResolver().openInputStream(u);
-      } else {
-        return new FileInputStream(new File(u.getPath()));
-      }
-    }
-
-    File androidDirectory = this.getDirectory(directory);
-
-    if (androidDirectory == null) {
-      throw new IOException("Directory not found");
-    }
-
-    return new FileInputStream(new File(androidDirectory, path));
   }
 
   private String readFileAsString(InputStream is, String encoding) throws IOException {
