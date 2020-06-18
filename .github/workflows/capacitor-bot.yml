@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ionic-team/capacitor-bot@master
+      - uses: ionic-team/bot@fea115086a25fc19b6775c70138bcbfe9557d5f6
         with:
           repo-token: ${{ secrets.BOT_TOKEN }}
         env:
