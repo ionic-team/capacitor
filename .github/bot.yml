@@ -1,0 +1,18 @@
+tasks:
+  - name: remove-label
+    on:
+      issue_comment:
+        types: [created]
+    config:
+      label: needs-reply
+      exclude-labeler: true
+  - name: add-platform-labels
+    on:
+      issues:
+        types: [opened, edited]
+  - name: add-contributors
+    on:
+      push:
+        branches: [master]
+    config:
+      base: master
