@@ -2,15 +2,11 @@ name: Capacitor Bot
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
   issues:
-    types:
-      - opened
-      - edited
+    types: [opened, edited]
   issue_comment:
-    types:
-      - created
+    types: [created]
 
 jobs:
   bot:
@@ -18,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ionic-team/bot@fea115086a25fc19b6775c70138bcbfe9557d5f6
+      - uses: ionic-team/bot@main
         with:
           repo-token: ${{ secrets.BOT_TOKEN }}
         env:
