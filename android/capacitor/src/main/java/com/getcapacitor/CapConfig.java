@@ -1,42 +1,35 @@
 package com.getcapacitor;
 
-import android.app.Activity;
+import android.content.res.AssetManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * @deprecated use getBridge().getConfig() instead of the static Config
+ * Management interface for accessing values in capacitor.config.json
  */
-public class Config {
+public class CapConfig {
 
   private JSONObject config = new JSONObject();
 
-  private static Config instance;
-
-  private static Config getInstance() {
-    if (instance == null) {
-      instance = new Config();
+  public CapConfig(AssetManager assetManager, JSONObject config) {
+    if (config != null) {
+      this.config = config;
+    } else {
+      // Load our capacitor.config.json
+      this.loadConfig(assetManager);
     }
-    return instance;
   }
 
-  /**
-   * @deprecated
-   */
-  public static void load(Activity activity) {
-    Config.getInstance().loadConfig(activity);
-  }
-
-  private void loadConfig(Activity activity) {
+  private void loadConfig(AssetManager assetManager) {
     BufferedReader reader = null;
     try {
-      reader = new BufferedReader(new InputStreamReader(activity.getAssets().open("capacitor.config.json")));
+      reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.config.json")));
 
       // do reading, usually loop until end of file reading
       StringBuilder b = new StringBuilder();
@@ -62,12 +55,9 @@ public class Config {
     }
   }
 
-  /**
-   * @deprecated
-   */
-  public static JSONObject getObject(String key) {
+  public JSONObject getObject(String key) {
     try {
-      return getInstance().config.getJSONObject(key);
+      return this.config.getJSONObject(key);
     } catch (Exception ex) {
     }
     return null;
@@ -86,20 +76,14 @@ public class Config {
     return o;
   }
 
-  /**
-   * @deprecated
-   */
-  public static String getString(String key) {
+  public String getString(String key) {
     return getString(key, null);
   }
 
-  /**
-   * @deprecated
-   */
-  public static String getString(String key, String defaultValue) {
+  public String getString(String key, String defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = getInstance().getConfigObjectDeepest(key);
+      JSONObject o = this.getConfigObjectDeepest(key);
 
       String value = o.getString(k);
       if (value == null) {
@@ -110,26 +94,20 @@ public class Config {
     return defaultValue;
   }
 
-  /**
-   * @deprecated
-   */
-  public static boolean getBoolean(String key, boolean defaultValue) {
+  public boolean getBoolean(String key, boolean defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = getInstance().getConfigObjectDeepest(key);
+      JSONObject o = this.getConfigObjectDeepest(key);
 
       return o.getBoolean(k);
     } catch (Exception ex) {}
     return defaultValue;
   }
 
-  /**
-   * @deprecated
-   */
-  public static int getInt(String key, int defaultValue) {
+  public int getInt(String key, int defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = getInstance().getConfigObjectDeepest(key);
+      JSONObject o = this.getConfigObjectDeepest(key);
       return o.getInt(k);
     } catch (Exception ignore) {
       // value was not found
@@ -137,10 +115,7 @@ public class Config {
     return defaultValue;
   }
 
-  /**
-   * @deprecated
-   */
-  private static String getConfigKey(String key) {
+  private String getConfigKey(String key) {
     String[] parts = key.split("\\.");
     if (parts.length > 0) {
       return parts[parts.length - 1];
@@ -148,20 +123,14 @@ public class Config {
     return null;
   }
 
-  /**
-   * @deprecated
-   */
-  public static String[] getArray(String key) {
+  public String[] getArray(String key) {
     return getArray(key, null);
   }
 
-  /**
-   * @deprecated
-   */
-  public static String[] getArray(String key, String[] defaultValue) {
+  public String[] getArray(String key, String[] defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = getInstance().getConfigObjectDeepest(key);
+      JSONObject o = this.getConfigObjectDeepest(key);
 
       JSONArray a = o.getJSONArray(k);
       if (a == null) {

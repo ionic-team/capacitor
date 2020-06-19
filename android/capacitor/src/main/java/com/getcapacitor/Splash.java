@@ -42,7 +42,7 @@ public class Splash {
   private static boolean isVisible = false;
   private static boolean isHiding = false;
 
-  private static void buildViews(Context c, Config config) {
+  private static void buildViews(Context c, CapConfig config) {
     if (splashImage == null) {
       String splashResourceName = config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
 
@@ -165,7 +165,7 @@ public class Splash {
    * Show the splash screen on launch without fading in
    * @param a
    */
-  public static void showOnLaunch(final BridgeActivity a, Config config) {
+  public static void showOnLaunch(final BridgeActivity a, CapConfig config) {
     Integer duration = config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
     Boolean autohide = config.getBoolean(CONFIG_KEY_PREFIX + "launchAutoHide", DEFAULT_AUTO_HIDE);
 
@@ -193,7 +193,7 @@ public class Splash {
                           final int fadeOutDuration,
                           final boolean autoHide,
                           final SplashListener splashListener,
-                          final Config config) {
+                          final CapConfig config) {
     show(a, showDuration, fadeInDuration, fadeOutDuration, autoHide, splashListener, false, config);
   }
 
@@ -214,7 +214,7 @@ public class Splash {
                           final boolean autoHide,
                           final SplashListener splashListener,
                           final boolean isLaunchSplash,
-                          final Config config) {
+                          final CapConfig config) {
     wm = (WindowManager)a.getSystemService(Context.WINDOW_SERVICE);
 
     if (a.isFinishing()) {

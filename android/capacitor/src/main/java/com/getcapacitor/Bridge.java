@@ -90,7 +90,7 @@ public class Bridge {
   public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
 
   // Loaded Capacitor config
-  private Config config;
+  private CapConfig config;
 
   // A reference to the main activity for the app
   private final Activity context;
@@ -148,7 +148,8 @@ public class Bridge {
     handlerThread.start();
     taskHandler = new Handler(handlerThread.getLooper());
 
-    this.config = new Config(getActivity().getAssets(), config);
+    Config.load(getActivity());
+    this.config = new CapConfig(getActivity().getAssets(), config);
     Logger.init(this.config);
 
     // Initialize web view and message handler for it
@@ -335,7 +336,7 @@ public class Bridge {
       return this.config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
   }
 
-  public Config getConfig() {
+  public CapConfig getConfig() {
     return this.config;
   }
 
