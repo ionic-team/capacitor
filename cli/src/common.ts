@@ -29,9 +29,10 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   }
   if (!await existsAsync(config.app.webDirAbs)) {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
-    Please create it, and make sure it has an index.html file. You can change
-    the path of this directory in capacitor.config.json.
-    More info: https://capacitor.ionicframework.com/docs/basics/configuring-your-app`;
+    Please create it and make sure it has an index.html file. You can change
+    the path of this directory in capacitor.config.json (webDir option).
+    You may need to compile the web assets for your app (typically 'npm run build').
+    More info: https://capacitor.ionicframework.com/docs/basics/building-your-app`;
   }
 
   if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
