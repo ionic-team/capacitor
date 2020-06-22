@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class Logger {
   public static final String LOG_TAG_CORE = "Capacitor";
-  public static Config config;
+  public static CapConfig config;
 
   private static Logger instance;
 
@@ -16,11 +16,11 @@ public class Logger {
     return instance;
   }
 
-  public static void init(Config config) {
+  public static void init(CapConfig config) {
     Logger.getInstance().loadConfig(config);
   }
 
-  private void loadConfig(Config config) {
+  private void loadConfig(CapConfig config) {
       this.config = config;
   }
 
