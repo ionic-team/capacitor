@@ -183,6 +183,8 @@ public class CAPSplashScreenPlugin: CAPPlugin {
             self.hideSplash(fadeOutDuration: fadeOutDuration, isLaunchSplash: isLaunchSplash)
             completion()
           }
+        } else {
+            completion()
         }
       }
     }
