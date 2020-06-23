@@ -59,38 +59,6 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-<<<<<<< HEAD
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core:1.2.0'
-    implementation 'com.google.android.material:material:1.1.0-rc02'
-    implementation 'androidx.browser:browser:1.2.0'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
-    implementation 'com.google.firebase:firebase-messaging:18.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.json:json:20140107'
-
-
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'org.apache.cordova:framework:7.0.0'
-}
-
-def version = System.getenv("BINTRAY_PKG_VERSION")
-
-publish {
-    userOrg = 'ionic-team'
-    repoName = 'capacitor'
-    groupId = 'ionic-team'
-    artifactId = 'capacitor-android'
-    if (version != null) {
-        publishVersion = System.getenv("BINTRAY_PKG_VERSION")
-    } else {
-        publishVersion = '0.0.0'
-    }
-    desc = 'Capacitor Android Runtime'
-    website = 'https://github.com/ionic-team/capacitor'
-=======
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.core:core:$androidxCoreVersion"
     implementation "com.google.android.material:material:$androidxMaterialVersion"
@@ -102,5 +70,4 @@ publish {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
->>>>>>> 7c82ad307633e79d38670b6c2dc498cfc78b1e85
 }

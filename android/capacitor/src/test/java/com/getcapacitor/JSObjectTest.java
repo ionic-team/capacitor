@@ -1,8 +1,9 @@
 package com.getcapacitor;
 
 import org.json.JSONException;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class JSObjectTest {
 
@@ -12,7 +13,7 @@ public class JSObjectTest {
 
         String actualValue = jsObject.getString("should be null");
 
-        Assert.assertNull(actualValue);
+        assertNull(actualValue);
     }
 
     @Test
@@ -22,7 +23,7 @@ public class JSObjectTest {
         String expectedValue = jsObject.getString("thisKeyExists");
         String actualValue = "this is the key value";
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -32,7 +33,7 @@ public class JSObjectTest {
         String expectedValue = jsObject.getString("thisKeyDoesNotExist", "default value");
         String actualValue = "default value";
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -42,7 +43,7 @@ public class JSObjectTest {
         String expectedValue = jsObject.getString("thisKeyExists", "default value");
         String actualValue = "default value";
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class JSObjectTest {
 
         Integer actualValue = jsObject.getInteger("should be null");
 
-        Assert.assertNull(actualValue);
+        assertNull(actualValue);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class JSObjectTest {
         Integer expectedValue = jsObject.getInteger("thisKeyExists" );
         Integer actualValue = 1;
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class JSObjectTest {
         Integer expectedValue = jsObject.getInteger("thisKeyDoesNotExist", 1);
         Integer actualValue = 1;
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -81,7 +82,7 @@ public class JSObjectTest {
         Integer expectedValue = jsObject.getInteger("thisKeyExists", 1);
         Integer actualValue = 1;
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -90,7 +91,7 @@ public class JSObjectTest {
 
         Boolean actualValue = jsObject.getBool("should be null");
 
-        Assert.assertNull(actualValue);
+        assertNull(actualValue);
     }
 
     @Test
@@ -100,7 +101,7 @@ public class JSObjectTest {
         Boolean expectedValue = jsObject.getBool("thisKeyExists" );
         Boolean actualValue = true;
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -110,7 +111,7 @@ public class JSObjectTest {
         Boolean expectedValue = jsObject.getBoolean("thisKeyDoesNotExist", true);
         Boolean actualValue = true;
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -120,7 +121,7 @@ public class JSObjectTest {
         Boolean expectedValue = jsObject.getBoolean("thisKeyExists", true);
         Boolean actualValue = true;
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -129,7 +130,7 @@ public class JSObjectTest {
 
         JSObject actualValue = jsObject.getJSObject("should be null");
 
-        Assert.assertNull(actualValue);
+        assertNull(actualValue);
     }
 
     @Test
@@ -139,7 +140,7 @@ public class JSObjectTest {
         String actualValue = jsObject.getJSObject("thisKeyExists").getString("innerObjectKey");
         String expectedValue = "innerObjectValue";
 
-        Assert.assertEquals(expectedValue,  actualValue);
+        assertEquals(expectedValue,  actualValue);
     }
 
     @Test
@@ -149,7 +150,7 @@ public class JSObjectTest {
         String actualValue = jsObject.getJSObject("thisKeyExists", new JSObject("{\"thisKeyExists\": \"default string\"}")).getString("thisKeyExists");
         String expectedValue = "default string";
 
-        Assert.assertEquals(expectedValue,  actualValue);
+        assertEquals(expectedValue,  actualValue);
     }
 
     @Test
@@ -159,7 +160,7 @@ public class JSObjectTest {
 
         Boolean actualValue = jsObject.getBool("bool");
 
-        Assert.assertTrue(actualValue);
+        assertTrue(actualValue);
     }
 
     @Test
@@ -170,7 +171,7 @@ public class JSObjectTest {
         Integer expectedValue = 1;
         Integer actualValue = jsObject.getInteger("integer");
 
-        Assert.assertEquals(actualValue, expectedValue);
+        assertEquals(actualValue, expectedValue);
     }
 
     @Test
@@ -181,7 +182,7 @@ public class JSObjectTest {
         Long expectedValue = 1l;
         Long actualValue = jsObject.getLong("long");
 
-        Assert.assertEquals(actualValue, expectedValue);
+        assertEquals(actualValue, expectedValue);
     }
 
     @Test
@@ -192,7 +193,7 @@ public class JSObjectTest {
         Double expectedValue = 1d;
         Double actualValue = jsObject.getDouble("double");
 
-        Assert.assertEquals(actualValue, expectedValue);
+        assertEquals(actualValue, expectedValue);
     }
 
     @Test
@@ -203,6 +204,6 @@ public class JSObjectTest {
         String expectedValue = "test";
         String actualValue = jsObject.getString("string");
 
-        Assert.assertEquals(actualValue, expectedValue);
+        assertEquals(actualValue, expectedValue);
     }
 }
