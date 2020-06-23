@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { copy, copyCommand } from './copy';
-import { update, updateCommand, updateChecks } from './update';
+import { update, updateChecks, updateCommand } from './update';
 import { check, checkPackage, checkWebDir, log, logError, logFatal, logInfo } from '../common';
 
 import { allSerial } from '../util/promise';
