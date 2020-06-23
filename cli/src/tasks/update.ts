@@ -11,7 +11,7 @@ export async function updateCommand(config: Config, selectedPlatformName: string
     const platformFolder = resolveNode(config, selectedPlatformName);
     if (platformFolder) {
       const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:update`);
-      log('result', result);
+      log(result);
     } else {
       logError(`platform ${selectedPlatformName} not found`);
     }
