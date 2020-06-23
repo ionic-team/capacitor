@@ -1,7 +1,7 @@
 import { Config } from '../config';
-import { copy } from './copy';
-import { update, updateChecks } from './update';
-import { check, checkPackage, checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolveNode, runCommand } from '../common';
+import { copy, copyCommand } from './copy';
+import { update, updateCommand, updateChecks } from './update';
+import { check, checkPackage, checkWebDir, log, logError, logFatal, logInfo } from '../common';
 
 import { allSerial } from '../util/promise';
 
@@ -10,13 +10,12 @@ import { allSerial } from '../util/promise';
  */
 export async function syncCommand(config: Config, selectedPlatformName: string, deployment: boolean) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
-    const platformFolder = resolveNode(config, selectedPlatformName);
-    if (platformFolder) {
-      const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run sync`);
-      log('result', result);
-    } else {
-      logError(`platform ${selectedPlatformName} not found`);
+    try {
+      await copyCommand(config, selectedPlatformName);
+    } catch (e) {
+      logError(e);
     }
+    await updateCommand(config, selectedPlatformName, deployment);
   } else {
     const then = +new Date;
     const platforms = config.selectPlatforms(selectedPlatformName);
