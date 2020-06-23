@@ -109,7 +109,7 @@ export class FilesystemPage {
     try {
       let ret = await Plugins.Filesystem.getUri({
         path: 'text.txt',
-        directory: FilesystemDirectory.Application
+        directory: FilesystemDirectory.Data
       });
       alert(ret.uri);
     } catch(e) {

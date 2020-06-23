@@ -25,6 +25,8 @@ public class CAPPermissionsPlugin: CAPPlugin {
       return checkClipboard(call)
     case "photos":
       return checkPhotos(call)
+    case "microphone":
+      return checkMicrophone(call)
     default:
       return call.reject("Unknown permission type")
     }
@@ -106,6 +108,24 @@ public class CAPPermissionsPlugin: CAPPlugin {
   func checkClipboard(_ call: CAPPluginCall) {
     call.resolve([
       "state": "granted"
+    ])
+  }
+
+  func checkMicrophone(_ call: CAPPluginCall) {
+    let microStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+
+    var ret = "prompt"
+    switch (microStatus) {
+        case .authorized:
+          ret = "granted"
+        case .denied, .restricted:
+          ret = "denied"
+        case .notDetermined:
+          ret = "prompt"
+    }
+
+    call.resolve([
+      "state": ret
     ])
   }
 }

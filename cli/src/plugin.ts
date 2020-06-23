@@ -157,6 +157,13 @@ export function getJSModules(p: Plugin, platform: string) {
   return getAllElements(p, platform, 'js-module');
 }
 
+/**
+ * Get each asset tag for the given plugin
+ */
+export function getAssets(p: Plugin, platform: string) {
+  return getAllElements(p, platform, 'asset');
+}
+
 export function getFilePath(config: Config, plugin: Plugin, path: string) {
   if (path.startsWith('node_modules')) {
     let pathSegments = path.split('/').slice(1);

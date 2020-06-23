@@ -46,7 +46,7 @@ public class JSObject extends JSONObject {
   public String getString(String key, String defaultValue) {
     try {
       String value = super.getString(key);
-      if (value != null) {
+      if (!super.isNull(key) && value != null) {
         return value;
       }
     } catch (JSONException ex) {

@@ -13,6 +13,10 @@ public class JSArray extends JSONArray {
     super();
   }
 
+  public JSArray(String json) throws JSONException {
+    super(json);
+  }
+
   public JSArray(Collection copyFrom) {
     super(copyFrom);
   }

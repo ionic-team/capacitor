@@ -1,6 +1,5 @@
 package com.getcapacitor;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,6 +23,10 @@ public class Dialogs {
 
   public interface OnSelectListener {
     void onSelect(int index);
+  }
+
+  public interface OnCancelListener {
+    void onCancel();
   }
 
   /**
@@ -197,7 +200,7 @@ public class Dialogs {
 
   public static void actions(final AppCompatActivity activity,
                              final Object[] options,
-                             final Dialogs.OnSelectListener listener) {
+                             final Dialogs.OnSelectListener listener, final Dialogs.OnCancelListener cancelListener) {
 
     JSArray optionsArray;
     try {
@@ -215,6 +218,7 @@ public class Dialogs {
         fragment.dismiss();
       }
     });
+    fragment.setOnCancelListener(cancelListener);
     fragment.show(activity.getSupportFragmentManager(), "capacitorModalsActionSheet");
   }
 }

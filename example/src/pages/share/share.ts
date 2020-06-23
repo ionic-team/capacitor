@@ -34,4 +34,18 @@ export class SharePage {
     console.log('Share return', shareRet);
   }
 
+  async showSharingTextOnly() {
+    let shareRet = await Share.share({
+      text: 'Really awesome thing you need to see right meow',
+    });
+    console.log('Share return', shareRet);
+  }
+
+  async showSharingUrlOnly() {
+    let shareRet = await Share.share({
+      url: 'http://ionicframework.com/',
+    });
+    console.log('Share return', shareRet);
+  }
+
 }

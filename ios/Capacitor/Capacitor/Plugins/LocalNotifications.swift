@@ -24,7 +24,7 @@ enum LocalNotificationError: LocalizedError {
 
 
 /**
- * Implement three common modal types: alert, confirm, and prompt
+ * Implement Local Notifications
  */
 @objc(CAPLocalNotificationsPlugin)
 public class CAPLocalNotificationsPlugin : CAPPlugin {
@@ -37,9 +37,6 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       call.error("Must provide notifications array as notifications option")
       return
     }
-    
-    self.bridge.notificationsDelegate.requestPermissions()
-    
     var ids = [String]()
     
     for notification in notifications {
@@ -95,7 +92,20 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       "notifications": ret
     ])
   }
-  
+
+  /**
+   * Request notification permission
+   */
+  @objc func requestPermission(_ call: CAPPluginCall) {
+    self.bridge.notificationsDelegate.requestPermissions() { granted, error in
+        guard error == nil else {
+            call.error(error!.localizedDescription)
+            return
+        }
+        call.success(["granted": granted])
+    }
+  }
+
   /**
    * Cancel notifications by id
    */
@@ -500,6 +510,18 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       opts[UNNotificationAttachmentOptionsThumbnailTimeKey] = iosUNNotificationAttachmentOptionsThumbnailTimeKey
     }
     return opts
+  }
+  
+  @objc func createChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func deleteChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func listChannels(_ call: CAPPluginCall) {
+    call.unimplemented()
   }
 }
 

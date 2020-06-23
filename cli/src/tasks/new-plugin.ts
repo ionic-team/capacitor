@@ -167,17 +167,22 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
 
 function generatePodspec(config: Config, answers: NewPluginAnswers) {
   return `
+  require 'json'
+
+  package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
+
   Pod::Spec.new do |s|
     s.name = '${fixName(answers.name)}'
-    s.version = '0.0.1'
-    s.summary = '${answers.description}'
-    s.license = '${answers.license}'
-    s.homepage = '${answers.git}'
-    s.author = '${answers.author}'
-    s.source = { :git => '${answers.git}', :tag => s.version.to_s }
+    s.version = package['version']
+    s.summary = package['description']
+    s.license = package['license']
+    s.homepage = package['repository']['url']
+    s.author = package['author']
+    s.source = { :git => package['repository']['url'], :tag => s.version.to_s }
     s.source_files = 'ios/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.dependency 'Capacitor'
+    s.swift_version = '5.0'
   end`;
 }
 
