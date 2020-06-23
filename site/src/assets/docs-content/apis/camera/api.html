@@ -4,7 +4,7 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-getPhoto-0">getPhoto</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">getPhoto</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="292">CameraOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="310">CameraPhoto</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">getPhoto</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="304">CameraOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="326">CameraPhoto</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment">Prompt the user to pick a photo from an album, or take a new photo
 with the camera.</div>
@@ -12,11 +12,11 @@ with the camera.</div>
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="292">CameraOptions</avc-code-type>
+<avc-code-type type-id="304">CameraOptions</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
-    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="310">CameraPhoto</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="326">CameraPhoto</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
   </div>
   
 </div></div>
@@ -45,7 +45,7 @@ with the camera.</div>
 </div></div>
 <h3 id="interfaces">Interfaces Used</h3>
 
-    <div class="avc-code-interface" id="type-292">
+    <div class="avc-code-interface" id="type-304">
       <h4 class="avc-code-interface-name">CameraOptions</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">CameraOptions</span>
@@ -76,7 +76,7 @@ Default: true</div>
 Default: CameraDirection.Rear</div>
             <div class="avc-code-line"><span class="avc-code-param-name">direction</span>
               <span class="avc-code-param-optional">?</span>:
-              <avc-code-type type-id="307">CameraDirection</avc-code-type>;
+              <avc-code-type type-id="323">CameraDirection</avc-code-type>;
             </div>
           </div>
 
@@ -97,6 +97,43 @@ Default: CameraDirection.Rear</div>
           </div>
 
           <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">promptLabelCancel</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type>string</avc-code-type>;
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment">// If use CameraSource.Prompt only, can change Prompt label.
+default:
+  promptLabelHeader  : 'Photo'       // iOS only
+  promptLabelCancel  : 'Cancel'      // iOS only
+  promptLabelPhoto   : 'From Photos'
+  promptLabelPicture : 'Take Picture'</div>
+            <div class="avc-code-line"><span class="avc-code-param-name">promptLabelHeader</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type>string</avc-code-type>;
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">promptLabelPhoto</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type>string</avc-code-type>;
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
+            <div class="avc-code-param-comment"></div>
+            <div class="avc-code-line"><span class="avc-code-param-name">promptLabelPicture</span>
+              <span class="avc-code-param-optional">?</span>:
+              <avc-code-type>string</avc-code-type>;
+            </div>
+          </div>
+
+          <div class="avc-code-interface-param">
             <div class="avc-code-param-comment">// The quality of image to return as JPEG, from 0-100</div>
             <div class="avc-code-line"><span class="avc-code-param-name">quality</span>
               <span class="avc-code-param-optional">?</span>:
@@ -108,12 +145,14 @@ Default: CameraDirection.Rear</div>
             <div class="avc-code-param-comment">// How the data should be returned. Currently, only 'Base64', 'DataUrl' or 'Uri' is supported</div>
             <div class="avc-code-line"><span class="avc-code-param-name">resultType</span>
               :
-              <avc-code-type type-id="317">CameraResultType</avc-code-type>;
+              <avc-code-type type-id="333">CameraResultType</avc-code-type>;
             </div>
           </div>
 
           <div class="avc-code-interface-param">
-            <div class="avc-code-param-comment">// Whether to save the photo to the gallery/photostream</div>
+            <div class="avc-code-param-comment">// Whether to save the photo to the gallery.
+If the photo was picked from the gallery, it will only be saved if edited.
+Default: false</div>
             <div class="avc-code-line"><span class="avc-code-param-name">saveToGallery</span>
               <span class="avc-code-param-optional">?</span>:
               <avc-code-type>boolean</avc-code-type>;
@@ -126,7 +165,7 @@ either the photo album or take a photo.
 Default: CameraSource.Prompt</div>
             <div class="avc-code-line"><span class="avc-code-param-name">source</span>
               <span class="avc-code-param-optional">?</span>:
-              <avc-code-type type-id="303">CameraSource</avc-code-type>;
+              <avc-code-type type-id="319">CameraSource</avc-code-type>;
             </div>
           </div>
 
@@ -139,7 +178,7 @@ Default: CameraSource.Prompt</div>
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-    <div class="avc-code-interface" id="type-310">
+    <div class="avc-code-interface" id="type-326">
       <h4 class="avc-code-interface-name">CameraPhoto</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">CameraPhoto</span>
@@ -198,7 +237,7 @@ loading and rendering.</div>
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-      <div class="avc-code-interface" id="type-307">
+      <div class="avc-code-interface" id="type-323">
         <h4 class="avc-code-interface-name">CameraDirection</h4>
         <div class="avc-code-line">
           <span class="avc-code-keyword">enum</span> <span class="avc-code-type-name">CameraDirection</span>
@@ -220,7 +259,7 @@ loading and rendering.</div>
             </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-      <div class="avc-code-interface" id="type-317">
+      <div class="avc-code-interface" id="type-333">
         <h4 class="avc-code-interface-name">CameraResultType</h4>
         <div class="avc-code-line">
           <span class="avc-code-keyword">enum</span> <span class="avc-code-type-name">CameraResultType</span>
@@ -249,7 +288,7 @@ loading and rendering.</div>
             </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-      <div class="avc-code-interface" id="type-303">
+      <div class="avc-code-interface" id="type-319">
         <h4 class="avc-code-interface-name">CameraSource</h4>
         <div class="avc-code-line">
           <span class="avc-code-keyword">enum</span> <span class="avc-code-type-name">CameraSource</span>

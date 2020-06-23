@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
 
+import com.getcapacitor.CapConfig;
 import com.getcapacitor.Config;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
@@ -56,9 +57,9 @@ public class LocalNotificationManager {
   private Context context;
   private Activity activity;
   private NotificationStorage storage;
-  private Config config;
+  private CapConfig config;
 
-  public LocalNotificationManager(NotificationStorage notificationStorage, Activity activity, Context context, Config config) {
+  public LocalNotificationManager(NotificationStorage notificationStorage, Activity activity, Context context, CapConfig config) {
     storage = notificationStorage;
     this.activity = activity;
     this.context = context;
@@ -87,9 +88,9 @@ public class LocalNotificationManager {
       dataJson.put("inputValue", input.toString());
     }
     String menuAction = data.getStringExtra(LocalNotificationManager.ACTION_INTENT_KEY);
-    if (menuAction != DEFAULT_PRESS_ACTION) {
-      dismissVisibleNotification(notificationId);
-    }
+
+    dismissVisibleNotification(notificationId);
+
     dataJson.put("actionId", menuAction);
     JSONObject request = null;
     try {

@@ -4,27 +4,40 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-isScreenReaderEnabled-0">isScreenReaderEnabled</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">isScreenReaderEnabled</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="172">ScreenReaderEnabledResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">isScreenReaderEnabled</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="174">ScreenReaderEnabledResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment">Check if a screen reader is enabled on the device</div>
   <div class="avc-code-method-params">
 
   <div class="avc-code-method-returns-info">
-    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="172">ScreenReaderEnabledResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+    <span class="avc-code-method-returns-label">Returns:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span><avc-code-type type-id="174">ScreenReaderEnabledResult</avc-code-type><span class="avc-code-typearg-bracket">&gt;</span>
+  </div>
+  
+</div></div>
+<div class="avc-code-method">
+                    <h3 class="avc-code-method-header" id="method-removeAllListeners-0">removeAllListeners</h3>
+                    <div class="avc-code-method-signature">
+                      <span class="avc-code-method-name">removeAllListeners</span><span class="avc-code-paren">(</span><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> void
+    </div>
+    <div class="avc-code-method-comment">Remove all native listeners for this plugin</div>
+  <div class="avc-code-method-params">
+
+  <div class="avc-code-method-returns-info">
+    <span class="avc-code-method-returns-label">Returns:</span> void
   </div>
   
 </div></div>
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-speak-0">speak</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">speak</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="169">AccessibilitySpeakOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
+                      <span class="avc-code-method-name">speak</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">options</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="171">AccessibilitySpeakOptions</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> Promise<span class="avc-code-typearg-bracket">&lt;</span>void<span class="avc-code-typearg-bracket">&gt;</span>
     </div>
     <div class="avc-code-method-comment">Speak a string with a connected screen reader.</div>
   <div class="avc-code-method-params">
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">options</span>
                 
-<avc-code-type type-id="169">AccessibilitySpeakOptions</avc-code-type>
+<avc-code-type type-id="171">AccessibilitySpeakOptions</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -35,7 +48,7 @@
 <div class="avc-code-method">
                     <h3 class="avc-code-method-header" id="method-addListener-0">addListener</h3>
                     <div class="avc-code-method-signature">
-                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"accessibilityScreenReaderStateChange"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="1121">ScreenReaderStateChangeCallback</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
+                      <span class="avc-code-method-name">addListener</span><span class="avc-code-paren">(</span><span class="avc-code-param-name">eventName</span><span class="avc-code-param-colon">:</span> <span class="avc-code-string">"accessibilityScreenReaderStateChange"</span>, <span class="avc-code-param-name">listenerFunc</span><span class="avc-code-param-colon">:</span> <avc-code-type type-id="1186">ScreenReaderStateChangeCallback</avc-code-type><span class="avc-code-paren">)</span><span class="avc-code-return-type-colon">:</span> <avc-code-type type-id="12">PluginListenerHandle</avc-code-type>
     </div>
     <div class="avc-code-method-comment">Listen for screen reader state change (on/off)</div>
   <div class="avc-code-method-params">
@@ -47,7 +60,7 @@
 <div class="avc-code-method-param-info">
                 <span class="avc-code-method-param-info-name">listenerFunc</span>
                 
-<avc-code-type type-id="1121">ScreenReaderStateChangeCallback</avc-code-type>
+<avc-code-type type-id="1186">ScreenReaderStateChangeCallback</avc-code-type>
 </div>
 
   <div class="avc-code-method-returns-info">
@@ -57,7 +70,7 @@
 </div></div>
 <h3 id="interfaces">Interfaces Used</h3>
 
-    <div class="avc-code-interface" id="type-172">
+    <div class="avc-code-interface" id="type-174">
       <h4 class="avc-code-interface-name">ScreenReaderEnabledResult</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">ScreenReaderEnabledResult</span>
@@ -74,7 +87,7 @@
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-    <div class="avc-code-interface" id="type-169">
+    <div class="avc-code-interface" id="type-171">
       <h4 class="avc-code-interface-name">AccessibilitySpeakOptions</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">interface</span> <span class="avc-code-type-name">AccessibilitySpeakOptions</span>
@@ -100,7 +113,7 @@ Currently only supported on Android.</div>
           </div>
 <span class="avc-code-line"><span class="avc-code-brace">}</span></span>
 
-    <div class="avc-code-interface" id="type-1121">
+    <div class="avc-code-interface" id="type-1186">
       <h4 class="avc-code-interface-name">ScreenReaderStateChangeCallback</h4>
       <div class="avc-code-line">
         <span class="avc-code-keyword">type alias</span> <span class="avc-code-type-name">ScreenReaderStateChangeCallback</span>

@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.name = 'Capacitor'
   s.version = package['version']
   s.summary = 'Capacitor for iOS'
-	s.social_media_url = 'http://twitter.com/getcapacitor'
+  s.social_media_url = 'https://twitter.com/capacitorjs'
   s.license = 'MIT'
   s.homepage = 'https://capacitor.ionicframework.com/'
   s.ios.deployment_target  = '11.0'

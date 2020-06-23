@@ -1,5 +1,5 @@
 ---
-name: 🐛 Bug Report
+name: 🚨 Bug Report
 about: Report something not working
 title: 'bug: '
 labels: ''
@@ -35,13 +35,6 @@ Describe how the bug manifests. Be specific.
 ### Expected Behavior
 <!--
 Describe what the behavior should be.
--->
-
-
-
-### Example Code or Repo
-<!--
-If you are able to illustrate the bug with an example, please provide sample code snippets or a sample application using a public repo (preferred).
 -->
 
 

@@ -100,6 +100,10 @@ site-header {
       margin: 0 14px;
       flex: 0 0 auto;
 
+      @media screen and (max-width: $breakpoint-sm) {
+        display:none;
+      }
+
       @media screen and (max-width: 1130px) {
         flex: 0 1 auto;
         white-space: nowrap; 
@@ -114,7 +118,8 @@ site-header {
     .cta {
       color: $color-yellow;
       font-weight: 600;
-      padding-right: 7px;
+      padding-right: 4px;
+      margin-left: 8px;
       flex: 0 0 94px;
       white-space: nowrap;
     }
