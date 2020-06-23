@@ -13,7 +13,7 @@ export async function copyCommand(config: Config, selectedPlatformName: string) 
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformFolder = resolveNode(config, selectedPlatformName);
     if (platformFolder) {
-      const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run copy`);
+      const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:copy`);
       log('result', result);
     } else {
       logError(`platform ${selectedPlatformName} not found`);
