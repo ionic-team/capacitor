@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolveNode, runCommand, runTask } from '../common';
+import { checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolveNode, resolvePlatform, runCommand, runTask } from '../common';
 import { existsAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
@@ -11,7 +11,7 @@ import chalk from 'chalk';
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
-    const platformFolder = resolveNode(config, selectedPlatformName);
+    const platformFolder = resolvePlatform(config, selectedPlatformName);
     if (platformFolder) {
       const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:copy`);
       log(result);

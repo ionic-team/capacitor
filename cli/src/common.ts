@@ -420,7 +420,26 @@ export async function checkPlatformVersions(config: Config, platform: string) {
   }
 }
 
-export function resolveNode(config: Config, ...pathSegments: any[]): string | null {
+export function resolvePlatform(config: Config, platform: string): string | null {
+  if (platform[0] !== '@') {
+    const core = resolveNode(config, `@capacitor/${platform}`);
+
+    if (core) {
+      return core;
+    }
+
+    const community = resolveNode(config, `@capacitor-community/${platform}`);
+
+    if (community) {
+      return community;
+    }
+  }
+
+  // third-party
+  return resolveNode(config, platform);
+}
+
+export function resolveNode(config: Config, ...pathSegments: string[]): string | null {
   const id = pathSegments[0];
   const path = pathSegments.slice(1);
 
