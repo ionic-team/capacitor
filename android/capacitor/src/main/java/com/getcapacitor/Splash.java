@@ -243,6 +243,11 @@ public class Splash {
               }
             }
           }, showDuration);
+        } else {
+          // If no autoHide, call complete
+          if (splashListener != null) {
+            splashListener.completed();
+          }
         }
       }
 
