@@ -6,7 +6,7 @@ enum PushNotificationError: Error {
 }
 
 /**
- * Implement three common modal types: alert, confirm, and prompt
+ * Implement Push Notifications
  */
 @objc(CAPPushNotificationsPlugin)
 public class CAPPushNotificationsPlugin : CAPPlugin {
@@ -23,12 +23,21 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    * Register for push notifications
    */
   @objc func register(_ call: CAPPluginCall) {
+    DispatchQueue.main.async {
+      UIApplication.shared.registerForRemoteNotifications()
+    }
+    call.success()
+  }
+
+  /**
+   * Request notification permission
+   */
+  @objc func requestPermission(_ call: CAPPluginCall) {
     self.bridge.notificationsDelegate.requestPermissions() { granted, error in
         guard error == nil else {
             call.error(error!.localizedDescription)
             return
         }
-
         call.success(["granted": granted])
     }
   }

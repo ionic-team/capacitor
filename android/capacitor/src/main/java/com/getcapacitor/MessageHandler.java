@@ -1,6 +1,5 @@
 package com.getcapacitor;
 
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -47,23 +46,22 @@ public class MessageHandler {
         String action = postData.getString("action");
         String actionArgs = postData.getString("actionArgs");
 
-        Log.v(LogUtils.getPluginTag(), "To native (Cordova plugin): callbackId: " + callbackId + ", service: " + service +
-          ", action: " + action + ", actionArgs: " + actionArgs);
+        Logger.verbose(Logger.tags("Plugin"), "To native (Cordova plugin): callbackId: " + callbackId + ", service: " + service + ", action: " + action + ", actionArgs: " + actionArgs);
 
         this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
-      } else if (isJavaScriptError) {
-        Log.e(LogUtils.getCoreTag(), "JavaScript Error: " + jsonStr);
+      } else if (type != null && type.equals("js.error")) {
+        Logger.error("JavaScript Error: " + jsonStr);
       } else {
         String pluginId = postData.getString("pluginId");
         String methodName = postData.getString("methodName");
         JSObject methodData = postData.getJSObject("options", new JSObject());
 
-        Log.v(LogUtils.getPluginTag(), "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName);
+        Logger.verbose(Logger.tags("Plugin"), "To native (Capacitor plugin): callbackId: " + callbackId + ", pluginId: " + pluginId + ", methodName: " + methodName);
 
         this.callPluginMethod(callbackId, pluginId, methodName, methodData);
       }
     } catch (Exception ex) {
-      Log.e(LogUtils.getCoreTag(), "Post message error:", ex);
+      Logger.error("Post message error:", ex);
     }
   }
 
@@ -79,7 +77,7 @@ public class MessageHandler {
       if (pluginResultInError) {
         data.put("success", false);
         data.put("error", errorResult);
-        Log.d(LogUtils.getCoreTag(), "Sending plugin error: " + data.toString());
+        Logger.debug("Sending plugin error: " + data.toString());
       } else {
         data.put("success", true);
         data.put("data", successResult);
@@ -96,7 +94,7 @@ public class MessageHandler {
       }
 
     } catch (Exception ex) {
-      Log.e(LogUtils.getCoreTag(), "sendResponseMessage: error: " + ex);
+      Logger.error("sendResponseMessage: error: " + ex);
     }
   }
 

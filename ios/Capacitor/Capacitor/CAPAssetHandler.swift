@@ -14,10 +14,10 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
       let url = urlSchemeTask.request.url!
       let stringToLoad = url.path
 
-      if stringToLoad.isEmpty || url.pathExtension.isEmpty {
-        startPath.append("/index.html")
-      } else if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
+      if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
         startPath = stringToLoad.replacingOccurrences(of: CAPBridge.CAP_FILE_START, with: "")
+      } else if stringToLoad.isEmpty || url.pathExtension.isEmpty {
+        startPath.append("/index.html")
       } else {
         startPath.append(stringToLoad)
       }

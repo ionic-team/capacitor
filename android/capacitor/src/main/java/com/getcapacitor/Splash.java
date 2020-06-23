@@ -3,13 +3,13 @@ package com.getcapacitor;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,6 +34,7 @@ public class Splash {
   public static final int DEFAULT_SHOW_DURATION = 3000;
   public static final boolean DEFAULT_AUTO_HIDE = true;
   public static final boolean DEFAULT_SPLASH_FULL_SCREEN = false;
+  public static final boolean DEFAULT_SPLASH_IMMERSIVE = false;
 
   private static ImageView splashImage;
   private static ProgressBar spinnerBar;
@@ -41,40 +42,57 @@ public class Splash {
   private static boolean isVisible = false;
   private static boolean isHiding = false;
 
-  private static void buildViews(Context c) {
+  private static void buildViews(Context c, CapConfig config) {
     if (splashImage == null) {
-      String splashResourceName = Config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
+      String splashResourceName = config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
 
       int splashId = c.getResources().getIdentifier(splashResourceName, "drawable", c.getPackageName());
-      Drawable splash = c.getResources().getDrawable(splashId, c.getTheme());
+
+      Drawable splash;
+      try {
+        splash = c.getResources().getDrawable(splashId, c.getTheme());
+      } catch (Resources.NotFoundException ex) {
+        Logger.warn("No splash screen found, not displaying");
+        return;
+      }
 
       if (splash instanceof Animatable) {
         ((Animatable) splash).start();
       }
 
       splashImage = new ImageView(c);
+
+      splashImage.setFitsSystemWindows(true);
       
-      // Hide status bar during splash screen.
-      Boolean splashFullScreen = Config.getBoolean(CONFIG_KEY_PREFIX + "splashFullScreen", DEFAULT_SPLASH_FULL_SCREEN);
-      if(splashFullScreen){
+      // Enable immersive mode (hides status bar and navbar) during splash screen or hide status bar.
+      Boolean splashImmersive = config.getBoolean(CONFIG_KEY_PREFIX + "splashImmersive", DEFAULT_SPLASH_IMMERSIVE);
+      Boolean splashFullScreen = config.getBoolean(CONFIG_KEY_PREFIX + "splashFullScreen", DEFAULT_SPLASH_FULL_SCREEN);
+      if (splashImmersive) {
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        splashImage.setSystemUiVisibility(flags);
+      } else if (splashFullScreen) {
         splashImage.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
       }
 
-      
       // Stops flickers dead in their tracks
       // https://stackoverflow.com/a/21847579/32140
       splashImage.setDrawingCacheEnabled(true);
 
-      String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
+      String backgroundColor = config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
       try {
         if (backgroundColor != null) {
           splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
         }
       } catch (IllegalArgumentException ex) {
-        Log.d(LogUtils.getCoreTag(), "Background color not applied");
+        Logger.debug("Background color not applied");
       }
 
-      String scaleTypeName = Config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
+      String scaleTypeName = config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
       ImageView.ScaleType scaleType = null;
       try {
         scaleType = ImageView.ScaleType.valueOf(scaleTypeName);
@@ -87,7 +105,7 @@ public class Splash {
     }
 
     if (spinnerBar == null) {
-      String spinnerStyle = Config.getString(CONFIG_KEY_PREFIX + "androidSpinnerStyle");
+      String spinnerStyle = config.getString(CONFIG_KEY_PREFIX + "androidSpinnerStyle");
       if (spinnerStyle != null) {
         int spinnerBarStyle = android.R.attr.progressBarStyleLarge;
 
@@ -118,7 +136,7 @@ public class Splash {
       }
       spinnerBar.setIndeterminate(true);
 
-      String spinnerColor = Config.getString(CONFIG_KEY_PREFIX + "spinnerColor");
+      String spinnerColor = config.getString(CONFIG_KEY_PREFIX + "spinnerColor");
       try {
         if (spinnerColor != null) {
           int[][] states = new int[][]{
@@ -138,7 +156,7 @@ public class Splash {
           spinnerBar.setIndeterminateTintList(colorStateList);
         }
       } catch (IllegalArgumentException ex) {
-        Log.d(LogUtils.getCoreTag(), "Spinner color not applied");
+        Logger.debug("Spinner color not applied");
       }
     }
   }
@@ -147,10 +165,15 @@ public class Splash {
    * Show the splash screen on launch without fading in
    * @param a
    */
-  public static void showOnLaunch(final BridgeActivity a) {
-    Integer duration = Config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
-    Boolean autohide = Config.getBoolean(CONFIG_KEY_PREFIX + "launchAutoHide", DEFAULT_AUTO_HIDE);
-    show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, autohide, null, true);
+  public static void showOnLaunch(final BridgeActivity a, CapConfig config) {
+    Integer duration = config.getInt(CONFIG_KEY_PREFIX + "launchShowDuration", DEFAULT_LAUNCH_SHOW_DURATION);
+    Boolean autohide = config.getBoolean(CONFIG_KEY_PREFIX + "launchAutoHide", DEFAULT_AUTO_HIDE);
+
+    if (duration == 0) {
+      return;
+    }
+
+    show(a, duration, 0, DEFAULT_FADE_OUT_DURATION, autohide, null, true, config);
   }
 
   /**
@@ -158,7 +181,7 @@ public class Splash {
    * @param a
    */
   public static void show(final Activity a) {
-    show(a, DEFAULT_LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null);
+    show(a, DEFAULT_LAUNCH_SHOW_DURATION, DEFAULT_FADE_IN_DURATION, DEFAULT_FADE_OUT_DURATION, DEFAULT_AUTO_HIDE, null, null);
   }
 
   /**
@@ -169,12 +192,14 @@ public class Splash {
                           final int fadeInDuration,
                           final int fadeOutDuration,
                           final boolean autoHide,
-                          final SplashListener splashListener) {
-    show(a, showDuration, fadeInDuration, fadeOutDuration, autoHide, splashListener, false);
+                          final SplashListener splashListener,
+                          final CapConfig config) {
+    show(a, showDuration, fadeInDuration, fadeOutDuration, autoHide, splashListener, false, config);
   }
 
   /**
    * Show the Splash Screen
+   *
    * @param a
    * @param showDuration how long to show the splash for if autoHide is enabled
    * @param fadeInDuration how long to fade the splash screen in
@@ -188,14 +213,15 @@ public class Splash {
                           final int fadeOutDuration,
                           final boolean autoHide,
                           final SplashListener splashListener,
-                          final boolean isLaunchSplash) {
+                          final boolean isLaunchSplash,
+                          final CapConfig config) {
     wm = (WindowManager)a.getSystemService(Context.WINDOW_SERVICE);
 
     if (a.isFinishing()) {
       return;
     }
 
-    buildViews(a);
+    buildViews(a, config);
 
     if (isVisible) {
       return;
@@ -236,15 +262,16 @@ public class Splash {
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.gravity = Gravity.CENTER;
-        params.flags = a.getWindow().getAttributes().flags & (WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        params.flags = a.getWindow().getAttributes().flags;
 
         // Required to enable the view to actually fade
         params.format = PixelFormat.TRANSLUCENT;
 
         try {
           wm.addView(splashImage, params);
-        } catch (IllegalStateException ex) {
-          Log.d(LogUtils.getCoreTag(), "Could not add splash view");
+        } catch (IllegalStateException | IllegalArgumentException ex) {
+          Logger.debug("Could not add splash view");
+          return;
         }
 
         splashImage.setAlpha(0f);
@@ -259,7 +286,7 @@ public class Splash {
         splashImage.setVisibility(View.VISIBLE);
 
         if (spinnerBar != null) {
-          Boolean showSpinner = Config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
+          Boolean showSpinner = config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
 
           spinnerBar.setVisibility(View.INVISIBLE);
 
@@ -297,7 +324,7 @@ public class Splash {
     // Warn the user if the splash was hidden automatically, which means they could be experiencing an app
     // that feels slower than it actually is.
     if(isLaunchSplash && isVisible) {
-      Log.d(LogUtils.getCoreTag(), "SplashScreen was automatically hidden after the launch timeout. " +
+      Logger.debug("SplashScreen was automatically hidden after the launch timeout. " +
               "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
               "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
     }

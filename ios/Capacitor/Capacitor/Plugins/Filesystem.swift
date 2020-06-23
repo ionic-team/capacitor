@@ -12,8 +12,6 @@ public class CAPFilesystemPlugin : CAPPlugin {
     switch directory {
     case "DOCUMENTS":
       return .documentDirectory
-    case "APPLICATION":
-      return .applicationDirectory
     case "CACHE":
       return .cachesDirectory
     default:
@@ -105,7 +103,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
 
     do {
-      if !FileManager.default.fileExists(atPath: fileUrl.deletingLastPathComponent().absoluteString) {
+      if !FileManager.default.fileExists(atPath: fileUrl.deletingLastPathComponent().path) {
         if recursive {
           try FileManager.default.createDirectory(at: fileUrl.deletingLastPathComponent(), withIntermediateDirectories: recursive, attributes: nil)
         } else {

@@ -11,8 +11,9 @@
 
 @implementation CAPPluginCallError
 
-- (instancetype)initWithMessage:(NSString *)message error:(NSError *)error data:(NSDictionary<NSString *,id> *)data {
+- (instancetype)initWithMessage:(NSString *)message code:(NSString *) code error:(NSError *)error data:(NSDictionary<NSString *,id> *)data {
   self.message = message;
+  self.code = code;
   self.error = error;
   self.data = data;
   return self;
