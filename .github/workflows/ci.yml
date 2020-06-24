@@ -67,4 +67,4 @@ jobs:
         working-directory: ./android
     steps:
       - uses: actions/checkout@v2
-      - run: ./gradlew clean build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
+      - run: ./gradlew clean test build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
