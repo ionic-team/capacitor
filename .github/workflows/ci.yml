@@ -61,6 +61,7 @@ jobs:
       run:
         working-directory: ./ios
     steps:
+      - run: sudo ls -al /Applications
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/checkout@v2
       - run: pod lib lint --allow-warnings Capacitor.podspec
