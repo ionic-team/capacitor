@@ -49,7 +49,7 @@ public class MessageHandler {
         Logger.verbose(Logger.tags("Plugin"), "To native (Cordova plugin): callbackId: " + callbackId + ", service: " + service + ", action: " + action + ", actionArgs: " + actionArgs);
 
         this.callCordovaPluginMethod(callbackId, service, action, actionArgs);
-      } else if (type != null && type.equals("js.error")) {
+      } else if (isJavaScriptError) {
         Logger.error("JavaScript Error: " + jsonStr);
       } else {
         String pluginId = postData.getString("pluginId");
