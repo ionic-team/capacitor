@@ -4,7 +4,7 @@ tasks:
       issue_comment:
         types: [created]
     config:
-      label: needs-reply
+      label: 'needs reply'
       exclude-labeler: true
   - name: add-platform-labels
     on:
