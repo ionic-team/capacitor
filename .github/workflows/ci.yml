@@ -61,7 +61,7 @@ jobs:
       run:
         working-directory: ./ios
     steps:
-      - run: xcode-select --select ${{ matrix.xcode }}
+      - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/checkout@v2
       - run: pod lib lint --allow-warnings Capacitor.podspec
       - run: pod lib lint --allow-warnings CapacitorCordova.podspec
