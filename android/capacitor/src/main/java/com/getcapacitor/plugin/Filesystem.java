@@ -589,7 +589,6 @@ public class Filesystem extends Plugin {
     } else {
       try {
         copyRecursively(fromObject, toObject);
-        modified = true;
       } catch (IOException e) {
         call.error("Unable to perform action: " + e.getLocalizedMessage());
         return;
