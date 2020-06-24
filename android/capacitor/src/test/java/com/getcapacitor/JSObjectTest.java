@@ -59,7 +59,7 @@ public class JSObjectTest {
     public void getIntegerReturnsExpectedValue_WhenJSObject_IsConstructed_WithAValidJSONObject() throws JSONException {
         JSObject jsObject = new JSObject("{\"thisKeyExists\": 1}");
 
-        Integer expectedValue = jsObject.getInteger("thisKeyExists" );
+        Integer expectedValue = jsObject.getInteger("thisKeyExists");
         Integer actualValue = 1;
 
         assertEquals(expectedValue, actualValue);
@@ -98,7 +98,7 @@ public class JSObjectTest {
     public void getBoolReturnsExpectedValue_WhenJSObject_IsConstructed_WithAValidJSONObject() throws JSONException {
         JSObject jsObject = new JSObject("{\"thisKeyExists\": true}");
 
-        Boolean expectedValue = jsObject.getBool("thisKeyExists" );
+        Boolean expectedValue = jsObject.getBool("thisKeyExists");
         Boolean actualValue = true;
 
         assertEquals(expectedValue, actualValue);
