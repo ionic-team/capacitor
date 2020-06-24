@@ -37,12 +37,12 @@ public class CAPPermissionsPlugin: CAPPlugin {
     
     var ret = "prompt"
     switch (authStatus) {
-    case .notDetermined:
-      ret = "prompt"
     case .denied, .restricted:
       ret = "denied"
     case .authorized:
       ret = "granted"
+    default:
+      ret = "prompt"
     }
 
     call.resolve([
@@ -55,12 +55,12 @@ public class CAPPermissionsPlugin: CAPPlugin {
 
     var ret = "prompt"
     switch (photoAuthorizationStatus) {
-      case .notDetermined:
-        ret = "prompt"
       case .denied, .restricted:
         ret = "denied"
       case .authorized:
         ret = "granted"
+      default:
+        ret = "prompt"
     }
     call.resolve([
       "state": ret
@@ -71,12 +71,12 @@ public class CAPPermissionsPlugin: CAPPlugin {
     var ret = "prompt"
     if CLLocationManager.locationServicesEnabled() {
         switch CLLocationManager.authorizationStatus() {
-        case .notDetermined:
-          ret = "prompt"
         case .denied, .restricted:
           ret = "denied"
         case .authorizedAlways, .authorizedWhenInUse:
           ret = "granted"
+        default:
+          ret = "prompt"
         }
     } else {
       ret = "denied"
@@ -95,7 +95,7 @@ public class CAPPermissionsPlugin: CAPPlugin {
         ret = "granted"
       case .denied:
         ret = "denied"
-      case .notDetermined:
+      default:
         ret = "prompt"
       }
       
@@ -120,7 +120,7 @@ public class CAPPermissionsPlugin: CAPPlugin {
           ret = "granted"
         case .denied, .restricted:
           ret = "denied"
-        case .notDetermined:
+        default:
           ret = "prompt"
     }
 
