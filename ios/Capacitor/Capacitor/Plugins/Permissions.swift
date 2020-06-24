@@ -61,8 +61,10 @@ public class CAPPermissionsPlugin: CAPPlugin {
         ret = "denied"
       case .authorized:
         ret = "granted"
-    case .limited:
-        ret = "granted"
+      #if swift(>=5.3)
+      case .limited:
+          ret = "limited"
+      #endif
     }
     call.resolve([
       "state": ret
@@ -99,10 +101,11 @@ public class CAPPermissionsPlugin: CAPPlugin {
         ret = "denied"
       case .notDetermined:
         ret = "prompt"
+      #if swift(>=5.3)
       case .ephemeral:
-        ret = "granted"
+        ret = "ephemeral"
       }
-      
+      #endif
       call.resolve([
         "state": ret
       ])
