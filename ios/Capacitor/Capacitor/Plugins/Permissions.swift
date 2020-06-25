@@ -64,7 +64,7 @@ public class CAPPermissionsPlugin: CAPPlugin {
     #if swift(>=5.3)
     case .limited:
       // TODO: address this new case properly
-      #warning(".limited != .authorized, authorization status should be revisted for iOS 14")
+      #warning(".limited != .authorized, authorization status should be revisited for iOS 14")
       ret = "granted"
     #endif
     case .notDetermined:
