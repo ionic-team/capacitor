@@ -79,7 +79,7 @@ public class CAPPermissionsPlugin: CAPPlugin {
   }
 
   func checkGeolocation(_ call: CAPPluginCall) {
-    var ret = "prompt"
+    let ret: String
     if CLLocationManager.locationServicesEnabled() {
         switch CLLocationManager.authorizationStatus() {
         case .denied, .restricted:
