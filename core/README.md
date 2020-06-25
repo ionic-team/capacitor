@@ -1,3 +1,3 @@
 # Capacitor Core JS
 
-See [Capacitor Docs](https://ionic-team.github.com/capacitor) for more information.
+See the [Capacitor website](https://capacitorjs.com) for more information.

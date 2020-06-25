@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/@capacitor/core"><img src="https://img.shields.io/npm/l/@capacitor/core?style=flat-square" /></a>
 </p>
 <p align="center">
-  <a href="https://capacitor.ionicframework.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=getcapacitor.com&color=blue&style=flat-square" /></a>
+  <a href="https://capacitorjs.com/docs"><img src="https://img.shields.io/static/v1?label=docs&message=getcapacitor.com&color=blue&style=flat-square" /></a>
   <a href="https://twitter.com/capacitorjs"><img src="https://img.shields.io/twitter/follow/capacitorjs" /></a>
 </p>
 
@@ -61,11 +61,11 @@ Capacitor and Cordova differ in that Capacitor:
 - treats native projects as source artifacts as opposed to build artifacts
 - is maintained by the Ionic Team itself 💙😊
 
-See [the docs](https://capacitor.ionicframework.com/docs/cordova#differences-between-capacitor-and-cordova) for more details.
+See [the docs](https://capacitorjs.com/docs/cordova#differences-between-capacitor-and-cordova) for more details.
 
 #### Do I need to use Ionic Framework with Capacitor?
 
-No, you do not need to use Ionic Framework with Capacitor. Without the Ionic Framework, you may need to implement Native UI yourself. Without the Ionic CLI, you may need to configure tooling yourself to enable features such as [livereload](https://ionicframework.com/docs/cli/livereload). See [the docs](https://capacitor.ionicframework.com/docs/getting-started/with-ionic) for more details.
+No, you do not need to use Ionic Framework with Capacitor. Without the Ionic Framework, you may need to implement Native UI yourself. Without the Ionic CLI, you may need to configure tooling yourself to enable features such as [livereload](https://ionicframework.com/docs/cli/livereload). See [the docs](https://capacitorjs.com/docs/getting-started/with-ionic) for more details.
 
 ## Contributing
 

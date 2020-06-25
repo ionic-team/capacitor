@@ -326,7 +326,7 @@ public class Splash {
     if(isLaunchSplash && isVisible) {
       Logger.debug("SplashScreen was automatically hidden after the launch timeout. " +
               "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout)." +
-              "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen");
+              "Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen");
     }
 
     if (isHiding || splashImage == null || splashImage.getParent() == null) {

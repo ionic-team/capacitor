@@ -12,7 +12,7 @@ enum BridgeError: Error {
   var tmpWindow: UIWindow?
   @objc public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   @objc public static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
-  public static var CAP_SITE = "https://capacitor.ionicframework.com/"
+  public static var CAP_SITE = "https://capacitorjs.com/"
   public static var CAP_FILE_START = "/_capacitor_file_"
   public static let CAP_DEFAULT_SCHEME = "capacitor"
 
