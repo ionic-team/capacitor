@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolveNode, resolvePlatform, runCommand, runTask, runPlatformHook } from '../common';
+import { checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolveNode, resolvePlatform, runCommand, runPlatformHook, runTask } from '../common';
 import { existsAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
