@@ -64,7 +64,6 @@ The `ionic-team/capacitor` repo is a monorepo containing all of the standard Cap
 * `example`: Example project for development
 * `plugin-template`: The default plugin template when creating a new plugin
 * `scripts`: publish and task scripts
-* `site`: Website and documentation
 
 ## Publishing Capacitor
 

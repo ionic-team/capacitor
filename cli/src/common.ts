@@ -32,7 +32,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     Please create it and make sure it has an index.html file. You can change
     the path of this directory in capacitor.config.json (webDir option).
     You may need to compile the web assets for your app (typically 'npm run build').
-    More info: https://capacitor.ionicframework.com/docs/basics/building-your-app`;
+    More info: https://capacitorjs.com/docs/basics/building-your-app`;
   }
 
   if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
@@ -377,7 +377,7 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add ios`);
   log(`  npx cap add electron`);
   log('');
-  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
+  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitorjs.com/docs/basics/workflow`)}\n`);
 }
 
 export async function getCoreVersion(config: Config): Promise<string> {
