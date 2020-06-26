@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runTask } from '../common';
+import { CheckFunction, check, checkPackage, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runTask, runPlatformHook } from '../common';
 
 import chalk from 'chalk';
 
@@ -10,7 +10,7 @@ export async function updateCommand(config: Config, selectedPlatformName: string
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformFolder = resolvePlatform(config, selectedPlatformName);
     if (platformFolder) {
-      const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:update`);
+      const result = await runPlatformHook(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:update`);
       log(result);
     } else {
       logError(`platform ${selectedPlatformName} not found`);

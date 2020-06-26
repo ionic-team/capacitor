@@ -252,7 +252,7 @@ export function wait(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export function runCommand(command: string): Promise<string> {
+export function runPlatformHook(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const cmd = spawn(command, {
       stdio: 'inherit',
@@ -263,6 +263,18 @@ export function runCommand(command: string): Promise<string> {
     });
     cmd.on('error', (err) => {
       reject(err);
+    });
+  });
+}
+
+export function runCommand(command: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(stdout + stderr);
+      } else {
+        resolve(stdout);
+      }
     });
   });
 }

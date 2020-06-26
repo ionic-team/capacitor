@@ -5,7 +5,7 @@ import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runTask, writePrettyJSON } from '../common';
+import { check, checkAppConfig, checkPackage, checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runTask, writePrettyJSON, runPlatformHook } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';
@@ -15,7 +15,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformFolder = resolvePlatform(config, selectedPlatformName);
     if (platformFolder) {
-      const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:add`);
+      const result = await runPlatformHook(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:add`);
       log(result);
     } else {
       logError(`platform ${selectedPlatformName} not found`);
