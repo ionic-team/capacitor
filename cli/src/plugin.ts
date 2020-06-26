@@ -1,9 +1,9 @@
-import readInstalled = require('read-installed');
+import { EntryInfo } from 'readdirp';
 import semver = require('semver');
 import { Config } from './config';
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { log, logFatal, logWarn, readJSON, readXML, resolveNode, runTask } from './common';
-import { existsAsync } from './util/fs';
+import { existsAsync, readdirp } from './util/fs';
 
 export const enum PluginType {
   Core,
@@ -39,31 +39,26 @@ export interface Plugin {
   };
 }
 
-function flatten(pkg: any) {
-  let seen: any[] = [];
-  const _flatten = (pkg: any): any[] => {
-    if (pkg.constructor !== Object || seen.indexOf(pkg) >= 0) return [];
-    seen.push(pkg);
-    if (!Object.keys(pkg.dependencies)) return [pkg];
-    return [ pkg, ...([] as any[]).concat(...Object.values(pkg.dependencies).map(_flatten)) ];
-  };
-  return _flatten(pkg);
-}
+interface DirToEntry { [key: string]: EntryInfo; }
 
+async function getInstalled(config: Config): Promise<Plugin[]> {
+  const path = join(config.app.rootDir, 'node_modules');
 
-function getInstalled(config: Config): Promise<any> {
-  return new Promise((resolve, reject) => {
-    readInstalled(config.app.rootDir, { dev: true },
-      (err: Error, tree) => err ? reject(err) : resolve(tree));
-  });
+  const packageEntries = await readdirp.promise(path, {fileFilter: 'package.json'});
+  const cordovaEntries = await readdirp.promise(path, {fileFilter: 'plugin.xml'});
+  const cordovaDirs = cordovaEntries.reduce(
+    (obj, entry) => ({ ...obj, [dirname(entry.fullPath)]: entry }),
+    {} as DirToEntry);
+
+  const resolvePlugin = createPluginResolver(cordovaDirs);
+  const nullablePlugins = await Promise.all(packageEntries.map(resolvePlugin));
+  const plugins: Plugin[] = nullablePlugins.filter(p => p !== null) as Plugin[];
+  return plugins;
 }
 
 export async function getPlugins(config: Config): Promise<Plugin[]> {
   return await runTask('Finding plugins', async () => {
-    const rootPkg = await getInstalled(config);
-    const nullablePlugins = await Promise.all(flatten(rootPkg).map(resolvePlugin));
-    const plugins: Plugin[] = nullablePlugins.filter(p => p !== null) as Plugin[];
-
+    const plugins = await getInstalled(config);
     const pluginMap = plugins.reduce((o, p) => {
       (o[p.id] = o[p.id] || []).push(p);
       return o;
@@ -91,34 +86,35 @@ export async function getPlugins(config: Config): Promise<Plugin[]> {
   });
 }
 
-export async function resolvePlugin(pkg: any): Promise<Plugin | null> {
-  try {
-    if (pkg.capacitor) {
-      return {
-        id: pkg.name,
-        name: fixName(pkg.name),
-        version: pkg.version,
-        rootPath: pkg.path,
-        repository: pkg.repository,
-        manifest: pkg.capacitor
-      };
-    }
-    const xmlPath = join(pkg.path, 'plugin.xml');
-    if (await existsAsync(xmlPath)) return null;
-    const xml = await readXML(xmlPath);
-    if (xml) {
-      return {
-        id: pkg.name,
-        name: fixName(pkg.name),
-        version: pkg.version,
-        rootPath: pkg.path,
-        repository: pkg.repository,
-        xml: xml.plugin
-      };
-    }
-  } catch (_) {}
-  return null;
-}
+export const createPluginResolver = (cordovaDirs: DirToEntry) =>
+  async (packageEntry: EntryInfo): Promise<Plugin | null> => {
+
+  const pkg = await readJSON(packageEntry.fullPath);
+  const dir = dirname(packageEntry.fullPath);
+
+  if (pkg.capacitor) {
+    return {
+      id: pkg.name,
+      name: fixName(pkg.name),
+      version: pkg.version,
+      rootPath: dir,
+      repository: pkg.repository,
+      manifest: pkg.capacitor
+    };
+  } else if (cordovaDirs.hasOwnProperty(dir)) {
+    const xml = await readXML(cordovaDirs[dir].fullPath);
+    return {
+      id: pkg.name,
+      name: fixName(pkg.name),
+      version: pkg.version,
+      rootPath: dir,
+      repository: pkg.repository,
+      xml: xml.plugin
+    };
+  } else {
+    return null;
+  }
+};
 
 export function fixName(name: string): string {
   name = name

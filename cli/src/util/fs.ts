@@ -1,3 +1,4 @@
+import * as _readdirp from 'readdirp';
 import * as fsExtra from 'fs-extra';
 import * as fs from 'fs';
 import * as util from 'util';
@@ -33,3 +34,4 @@ export const existsAsync = async (path: string) => {
 export const convertToUnixPath = (path: string) => {
   return path.replace(/\\/g, '/');
 };
+export const readdirp = _readdirp;
