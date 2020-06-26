@@ -28,15 +28,18 @@ export async function updateAndroid(config: Config, allPlugins: Plugin[]) {
       .filter(p => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
+    printPlugins(cordovaPlugins, platform, 'cordova');
   }
+
+  const incompatibleCordovaPlugins = plugins
+  .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
+  printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
+
   await handleCordovaPluginsJS(allPlugins, cordovaPlugins, config, platform);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
 
-  const incompatibleCordovaPlugins = plugins
-  .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
-  printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
   await checkPlatformVersions(config, platform);
 }
 

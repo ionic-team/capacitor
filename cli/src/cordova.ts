@@ -209,7 +209,6 @@ export async function handleCordovaPluginsJS(allPlugins: Plugin[], cordovaPlugin
     await copy(config, allPlugins, platform);
   }
   if (cordovaPlugins.length > 0) {
-    printPlugins(cordovaPlugins, platform, 'cordova');
     await copyCordovaJS(config, platform);
     await copyPluginsJS(config, cordovaPlugins, platform);
   } else {

@@ -32,15 +32,17 @@ export async function updateIOS(config: Config, allPlugins: Plugin[], deployment
       .filter(p => getPluginType(p, platform) === PluginType.Cordova);
   if (cordovaPlugins.length > 0) {
     copyPluginsNativeFiles(config, cordovaPlugins);
+    printPlugins(cordovaPlugins, platform, 'cordova');
   }
-  await handleCordovaPluginsJS(allPlugins, cordovaPlugins, config, platform);
-  await generateCordovaPodspecs(cordovaPlugins, config);
-  await installCocoaPodsPlugins(config, plugins, deployment);
-  await logCordovaManualSteps(cordovaPlugins, config, platform);
 
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
   printPlugins(incompatibleCordovaPlugins, platform, 'incompatible');
+
+  await handleCordovaPluginsJS(allPlugins, cordovaPlugins, config, platform);
+  await generateCordovaPodspecs(cordovaPlugins, config);
+  await installCocoaPodsPlugins(config, plugins, deployment);
+  await logCordovaManualSteps(cordovaPlugins, config, platform);
   await checkPlatformVersions(config, platform);
 }
 
