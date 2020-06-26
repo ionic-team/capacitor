@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, parse, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
@@ -250,6 +250,21 @@ export async function isInstalled(command: string): Promise<boolean> {
 
 export function wait(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+export function runPlatformHook(command: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const cmd = spawn(command, {
+      stdio: 'inherit',
+      shell: true
+    });
+    cmd.on('close', (code) => {
+      resolve('');
+    });
+    cmd.on('error', (err) => {
+      reject(err);
+    });
+  });
 }
 
 export function runCommand(command: string): Promise<string> {
