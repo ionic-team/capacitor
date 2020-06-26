@@ -8,26 +8,6 @@ import { Plugin, PluginType, getAllElements, getFilePath, getPlatformElement, ge
 
 const platform = 'android';
 
-async function listAndroidClasses(plugins: Plugin[], config: Config): Promise<string[]> {
-  return Promise.all(
-    plugins.map(async (p: Plugin) => {
-      const manifestPath = resolve(p.rootPath,  p.android!.path, 'src', 'main', 'AndroidManifest.xml');
-      const pluginManifest = await readXML(manifestPath);
-      return `${pluginManifest.manifest.$.package}.${p.name}`;
-    })
-  );
-}
-
-async function printImports(plugins: Plugin[], config: Config) {
-  const compatiblePlugins = plugins.filter((p: Plugin) => getPluginType(p, platform) !== PluginType.Incompatible);
-  const imports = await listAndroidClasses(compatiblePlugins, config);
-
-  log();
-  log('These classes need to be imported and added in MainActivity.java:');
-  imports.forEach((line: string) => log(`  ${line}`));
-  log();
-}
-
 export async function updateAndroid(config: Config, allPlugins: Plugin[]) {
   let plugins = await getPluginsTask(config, allPlugins);
 
@@ -53,7 +33,6 @@ export async function updateAndroid(config: Config, allPlugins: Plugin[]) {
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);
-  await printImports(plugins, config);
 
   const incompatibleCordovaPlugins = plugins
   .filter(p => getPluginType(p, platform) === PluginType.Incompatible);
