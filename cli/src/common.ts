@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, parse, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
@@ -254,12 +254,15 @@ export function wait(time: number) {
 
 export function runCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(stdout + stderr);
-      } else {
-        resolve(stdout);
-      }
+    const cmd = spawn(command, {
+      stdio: 'inherit',
+      shell: true
+    });
+    cmd.on('close', (code) => {
+      resolve('');
+    });
+    cmd.on('error', (err) => {
+      reject(err);
     });
   });
 }

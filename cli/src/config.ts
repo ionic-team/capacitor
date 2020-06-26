@@ -135,7 +135,7 @@ export class Config implements CliConfig {
 
       // Post-merge
       this.initAndroidConfig();
-      this.initElectronConfig();
+      // this.initElectronConfig();
       this.initIosConfig();
       this.initWindowsConfig();
       this.initLinuxConfig();
