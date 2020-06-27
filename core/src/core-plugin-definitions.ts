@@ -1137,6 +1137,10 @@ export interface LocalNotification {
    * If set to true the notification can't be swiped away.
    */
    ongoing?: boolean;
+   /**
+    * Android only: set the notification to be removed automatically when the user clicks on it
+    */
+   autoCancel?: boolean;
 }
 
 export interface LocalNotificationSchedule {
