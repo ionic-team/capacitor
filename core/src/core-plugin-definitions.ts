@@ -1132,6 +1132,11 @@ export interface LocalNotification {
    * notification will not fire. If not provided, it will use the default channel.
    */
   channelId?: string;
+  /**
+   * Android only: set the notification ongoing.
+   * If set to true the notification can't be swiped away.
+   */
+   ongoing?: boolean;
 }
 
 export interface LocalNotificationSchedule {

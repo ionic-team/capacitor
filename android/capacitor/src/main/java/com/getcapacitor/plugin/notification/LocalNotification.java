@@ -33,6 +33,7 @@ public class LocalNotification {
   private String actionTypeId;
   private String group;
   private boolean groupSummary;
+  private boolean ongoing;
   private JSObject extra;
   private List<LocalNotificationAttachment> attachments;
   private LocalNotificationSchedule schedule;
@@ -152,6 +153,14 @@ public class LocalNotification {
     this.groupSummary = groupSummary;
   }
 
+  public boolean isOngoing() {
+    return ongoing;
+  }
+
+  public void setOngoing(boolean ongoing) {
+    this.ongoing = ongoing;
+  }
+
   public String getChannelId() {
     return channelId;
   }
@@ -199,6 +208,7 @@ public class LocalNotification {
       activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
       activeLocalNotification.setGroupSummary(notification.getBoolean("groupSummary", false));
       activeLocalNotification.setChannelId(notification.getString("channelId"));
+      activeLocalNotification.setOngoing(notification.getBoolean("ongoing", false));
       try {
         activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
       } catch (ParseException e) {
@@ -282,6 +292,7 @@ public class LocalNotification {
             ", attachments=" + attachments +
             ", schedule=" + schedule +
             ", groupSummary=" + groupSummary +
+            ", ongoing=" + ongoing +
             '}';
   }
 
@@ -305,6 +316,7 @@ public class LocalNotification {
     if (attachments != null ? !attachments.equals(that.attachments) : that.attachments != null)
       return false;
     if (groupSummary != that.groupSummary) return false;
+    if( ongoing != that.ongoing ) return false;
     return schedule != null ? schedule.equals(that.schedule) : that.schedule == null;
   }
 
@@ -319,6 +331,7 @@ public class LocalNotification {
     result = 31 * result + (actionTypeId != null ? actionTypeId.hashCode() : 0);
     result = 31 * result + (group != null ? group.hashCode() : 0);
     result = 31 * result + Boolean.hashCode(groupSummary);
+    result = 31 * result + Boolean.hashCode( ongoing );
     result = 31 * result + (extra != null ? extra.hashCode() : 0);
     result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
     result = 31 * result + (schedule != null ? schedule.hashCode() : 0);

@@ -171,7 +171,7 @@ public class LocalNotificationManager {
             .setContentTitle(localNotification.getTitle())
             .setContentText(localNotification.getBody())
             .setAutoCancel(true)
-            .setOngoing(false)
+            .setOngoing(localNotification.isOngoing())
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setGroupSummary(localNotification.isGroupSummary());
 
