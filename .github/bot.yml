@@ -16,3 +16,4 @@ tasks:
         branches: [master]
     config:
       base: master
+      commitMsg: 'chore(readme): add new contributor'
