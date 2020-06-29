@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runTask } from '../common';
+import { hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runTask, runPlatformHook } from '../common';
 import { openAndroid } from '../android/open';
 import { openElectron } from '../electron/open';
 import { openIOS } from '../ios/open';
@@ -8,7 +8,7 @@ export async function openCommand(config: Config, selectedPlatformName: string) 
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformFolder = resolvePlatform(config, selectedPlatformName);
     if (platformFolder) {
-      const result = await runCommand(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:open`);
+      const result = await runPlatformHook(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:open`);
       log(result);
     } else {
       logError(`platform ${selectedPlatformName} not found`);
