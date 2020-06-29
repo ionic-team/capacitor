@@ -1,5 +1,5 @@
 ---
-name: ✨ Feature Request
+name: ⚡️ Feature Request
 about: Request a feature or change
 title: 'feat: '
 labels: ''
