@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runTask, runPlatformHook } from '../common';
+import { hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runPlatformHook, runTask } from '../common';
 import { openAndroid } from '../android/open';
 import { openElectron } from '../electron/open';
 import { openIOS } from '../ios/open';
