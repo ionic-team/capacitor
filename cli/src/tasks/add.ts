@@ -121,5 +121,5 @@ function webWarning() {
   logError(`Not adding platform ${chalk.bold('web')}`);
   log(`\nIn Capacitor, the 'web' platform is just your web app!`);
   log(`For example, if you have a React or Angular project, the 'web' platform is that project.`);
-  log(`To add Capacitor functionality to your web app, follow the Web Getting Started Guide: https://capacitor.ionicframework.com/docs/web/`);
+  log(`To add Capacitor functionality to your web app, follow the Web Getting Started Guide: https://capacitorjs.com/docs/web`);
 }
