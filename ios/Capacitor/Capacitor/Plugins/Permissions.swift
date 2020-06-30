@@ -7,7 +7,8 @@ import UserNotifications
  */
 @objc(CAPPermissionsPlugin)
 public class CAPPermissionsPlugin: CAPPlugin {
-
+  fileprivate static let uknownPermissionValue = "Unknown permission value"
+  
   @objc func query(_ call: CAPPluginCall) {
     guard let name = call.getString("name") else {
       call.reject("Must provide a permission to check")
@@ -42,9 +43,10 @@ public class CAPPermissionsPlugin: CAPPlugin {
     case .authorized:
       ret = "granted"
     case .notDetermined:
-      fallthrough
-    @unknown default:
       ret = "prompt"
+    @unknown default:
+      call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+      return
     }
 
     call.resolve([
@@ -68,9 +70,10 @@ public class CAPPermissionsPlugin: CAPPlugin {
       ret = "granted"
     #endif
     case .notDetermined:
-      fallthrough
-    @unknown default:
       ret = "prompt"
+    @unknown default:
+      call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+      return
     }
     
     call.resolve([
@@ -87,9 +90,10 @@ public class CAPPermissionsPlugin: CAPPlugin {
         case .authorizedAlways, .authorizedWhenInUse:
           ret = "granted"
         case .notDetermined:
-          fallthrough
-        @unknown default:
           ret = "prompt"
+        @unknown default:
+          call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+          return
         }
     } else {
       ret = "denied"
@@ -113,9 +117,10 @@ public class CAPPermissionsPlugin: CAPPlugin {
       case .denied:
         ret = "denied"
       case .notDetermined:
-        fallthrough
-      @unknown default:
         ret = "prompt"
+      @unknown default:
+        call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+        return
       }
       
       call.resolve([
@@ -140,9 +145,10 @@ public class CAPPermissionsPlugin: CAPPlugin {
     case .denied, .restricted:
       ret = "denied"
     case .notDetermined:
-      fallthrough
-    @unknown default:
       ret = "prompt"
+    @unknown default:
+      call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+      return
     }
 
     call.resolve([
