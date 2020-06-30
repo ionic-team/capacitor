@@ -16,4 +16,5 @@ tasks:
         branches: [master]
     config:
       base: master
-      commitMsg: 'chore(readme): add new contributor'
+      commit-message: 'chore(readme): add new contributor'
+      exclude-pattern: '^(?!Ionitron).+?(?<!\\[bot\\])$'
