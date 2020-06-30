@@ -1,11 +1,10 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
 import { addAndroid } from '../android/add';
-import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, electronWarning, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runPlatformHook, runTask, writePrettyJSON } from '../common';
+import { check, checkAppConfig, checkPackage, checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runPlatformHook, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';
@@ -29,8 +28,6 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     if (platformName === config.web.name) {
       webWarning();
       return;
-    } else if (platformName === config.electron.name) {
-      electronWarning();
     }
 
     const existingPlatformDir = config.platformDirExists(platformName);
@@ -93,8 +90,6 @@ export function addChecks(config: Config, platformName: string) {
     return [];
   } else if (platformName === config.web.name) {
     return [];
-  } else if (platformName === config.electron.name) {
-    return [];
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
@@ -106,8 +101,6 @@ export async function doAdd(config: Config, platformName: string) {
       await addIOS(config);
     } else if (platformName === config.android.name) {
       await addAndroid(config);
-    } else if (platformName === config.electron.name) {
-      await addElectron(config);
     }
   });
 }
