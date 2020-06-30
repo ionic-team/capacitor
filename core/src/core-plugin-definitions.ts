@@ -473,7 +473,7 @@ export interface DeviceInfo {
   /**
    * The device platform (lowercase).
    */
-  platform: 'ios' | 'android' | 'electron' | 'web';
+  platform: 'ios' | 'android' | 'web';
   /**
    * The UUID of the device as available to the app. This identifier may change
    * on modern mobile platforms that only allow per-app install UUIDs.

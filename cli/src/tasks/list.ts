@@ -26,7 +26,7 @@ export async function list(config: Config, platform: string) {
     plugins = getIOSPlugins(allPlugins);
   } else if (platform === config.android.name) {
     plugins = getAndroidPlugins(allPlugins);
-  } else if (platform === config.web.name || platform === config.electron.name) {
+  } else if (platform === config.web.name) {
     logInfo(`Listing plugins for ${platform} is not possible`);
     return;
   } else {

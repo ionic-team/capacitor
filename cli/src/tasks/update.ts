@@ -47,8 +47,6 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
       return [];
     } else if (platformName === config.web.name) {
       return [];
-    } else if (platformName === config.electron.name) {
-      return [];
     } else {
       throw `Platform ${platformName} is not valid.`;
     }
