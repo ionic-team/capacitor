@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,7 @@ import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class BridgeFragment extends Fragment {
   private String lastActivityPlugin;
 
   private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-
+  private JSONObject config = new JSONObject();
 
   public BridgeFragment() {
     // Required empty public constructor
@@ -84,7 +84,7 @@ public class BridgeFragment extends Fragment {
    * Load the WebView and create the Bridge
    */
   protected void load(Bundle savedInstanceState) {
-    Log.d(LogUtils.getCoreTag(), "Starting BridgeActivity");
+    Logger.debug("Starting BridgeActivity");
 
     Bundle args = getArguments();
     String startDir = null;
@@ -109,7 +109,7 @@ public class BridgeFragment extends Fragment {
       preferences = new CordovaPreferences();
     }
 
-    bridge = new Bridge(this.getActivity(), webView, initialPlugins, cordovaInterface, pluginManager, preferences);
+    bridge = new Bridge(this.getActivity(), webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
 
     if (startDir != null) {
       bridge.setServerAssetPath(startDir);

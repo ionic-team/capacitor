@@ -29,9 +29,10 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   }
   if (!await existsAsync(config.app.webDirAbs)) {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
-    Please create it, and make sure it has an index.html file. You can change
-    the path of this directory in capacitor.config.json.
-    More info: https://capacitor.ionicframework.com/docs/basics/configuring-your-app`;
+    Please create it and make sure it has an index.html file. You can change
+    the path of this directory in capacitor.config.json (webDir option).
+    You may need to compile the web assets for your app (typically 'npm run build').
+    More info: https://capacitorjs.com/docs/basics/building-your-app`;
   }
 
   if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
@@ -181,7 +182,12 @@ export async function getOrCreateConfig(config: Config) {
     appName: config.app.appName,
     bundledWebRuntime: config.app.bundledWebRuntime,
     npmClient: config.cli.npmClient,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir))
+    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
+    plugins: {
+      SplashScreen : {
+        launchShowDuration: 0
+      }
+    }
   });
 
   // Store our newly created or found external config as the default
@@ -371,7 +377,7 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add ios`);
   log(`  npx cap add electron`);
   log('');
-  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
+  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitorjs.com/docs/basics/workflow`)}\n`);
 }
 
 export async function getCoreVersion(config: Config): Promise<string> {
@@ -405,13 +411,12 @@ export async function getPlatformVersion(config: Config, platform: string): Prom
 }
 
 export async function checkPlatformVersions(config: Config, platform: string) {
-  const cliVersion = await getCLIVersion(config);
+  const coreVersion = await getCoreVersion(config);
   const platformVersion = await getPlatformVersion(config, platform);
-
-  if (semver.gt(cliVersion, platformVersion)) {
+  if (semver.diff(coreVersion, platformVersion) === 'minor' || semver.diff(coreVersion, platformVersion) === 'major') {
     log('\n');
-    logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
-    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
+    logWarn(`Your @capacitor/core version doesn't match your @capacitor/${platform} version`);
+    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`);
   }
 }
 

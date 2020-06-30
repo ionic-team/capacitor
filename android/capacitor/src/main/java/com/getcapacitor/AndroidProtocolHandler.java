@@ -7,7 +7,6 @@ package com.getcapacitor;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.net.Uri;
-import android.util.Log;
 import android.util.TypedValue;
 
 import java.io.File;
@@ -51,10 +50,10 @@ public class AndroidProtocolHandler {
       if (valueType == TypedValue.TYPE_STRING) {
         return context.getResources().openRawResource(fieldId);
       } else {
-        Log.e(LogUtils.getCoreTag(), "Asset not of type string: " + uri);
+        Logger.error("Asset not of type string: " + uri);
       }
     } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
-      Log.e(LogUtils.getCoreTag(), "Unable to open resource URL: " + uri, e);
+      Logger.error("Unable to open resource URL: " + uri, e);
     }
     return null;
   }
@@ -86,7 +85,7 @@ public class AndroidProtocolHandler {
     try {
       stream = context.getContentResolver().openInputStream(Uri.parse(realPath));
     } catch (SecurityException e) {
-      Log.e(LogUtils.getCoreTag(), "Unable to open content URL: " + uri, e);
+      Logger.error("Unable to open content URL: " + uri, e);
     }
     return stream;
   }
