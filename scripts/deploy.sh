@@ -9,7 +9,6 @@ echo "Deploying Capacitor v$LERNA_VERSION"
 git add lerna.json
 git add cli/package.json
 git add core/package.json
-git add electron/package.json
 git add android/package.json
 git add ios/package.json
 git commit -m "Release v$LERNA_VERSION"

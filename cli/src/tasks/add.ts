@@ -1,7 +1,6 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
 import { addAndroid } from '../android/add';
-import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
@@ -91,8 +90,6 @@ export function addChecks(config: Config, platformName: string) {
     return [];
   } else if (platformName === config.web.name) {
     return [];
-  } else if (platformName === config.electron.name) {
-    return [];
   } else {
     throw `Platform ${platformName} is not valid.`;
   }
@@ -104,8 +101,6 @@ export async function doAdd(config: Config, platformName: string) {
       await addIOS(config);
     } else if (platformName === config.android.name) {
       await addAndroid(config);
-    } else if (platformName === config.electron.name) {
-      await addElectron(config);
     }
   });
 }
