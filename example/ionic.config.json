@@ -1,7 +1,0 @@
-{
-  "name": "avocado",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "ionic-angular"
-}
