@@ -2,7 +2,7 @@ import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, electronWarning, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runPlatformHook, runTask } from '../common';
+import { CheckFunction, check, checkPackage, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runPlatformHook, runTask } from '../common';
 
 import chalk from 'chalk';
 
@@ -46,9 +46,6 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
     } else if (platformName === config.android.name) {
       return [];
     } else if (platformName === config.web.name) {
-      return [];
-    } else if (platformName === config.electron.name) {
-      electronWarning();
       return [];
     } else {
       throw `Platform ${platformName} is not valid.`;

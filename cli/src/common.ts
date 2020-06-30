@@ -390,7 +390,6 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`Add platforms using "npx cap add":\n`);
   log(`  npx cap add android`);
   log(`  npx cap add ios`);
-  log(`  npx cap add electron`);
   log('');
   log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitorjs.com/docs/basics/workflow`)}\n`);
 }
@@ -515,9 +514,4 @@ export async function checkNPMVersion() {
     return `Capacitor CLI requires at least NPM ${minVersion}`;
   }
   return null;
-}
-
-export function electronWarning() {
-  logWarn(`The electron platform is deprecated!`);
-  log(`\nPlease use the Capacitor Community Electron Platform: https://github.com/capacitor-community/electron\n`);
 }
