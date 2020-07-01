@@ -13,7 +13,6 @@
 		50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* CapacitorTests.swift */; };
 		BCFA72E81BB38E2E034791D7 /* Pods_CapacitorTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B975B0A166283500B55FD2E7 /* Pods_CapacitorTests.framework */; };
 		EFD716F22CFA442BCB16ABAC /* Pods_Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ABFE550E2358D6D2984A359 /* Pods_Capacitor.framework */; };
-		F94B7D73956102C5FB02F5F2 /* Pods_AvocadoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1139EB954BCD7D1FE04679EA /* Pods_AvocadoTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,7 +26,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1139EB954BCD7D1FE04679EA /* Pods_AvocadoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AvocadoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3979367CC1BEE8D19B3C2F5A /* Pods-Capacitor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Capacitor.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Capacitor/Pods-Capacitor.debug.xcconfig"; sourceTree = "<group>"; };
 		40367A7722BCB186FA84278A /* Pods_Avocado.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Avocado.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		451BCB03DDD54A8F94065E22 /* Pods-AvocadoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AvocadoTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AvocadoTests/Pods-AvocadoTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -62,7 +60,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */,
-				F94B7D73956102C5FB02F5F2 /* Pods_AvocadoTests.framework in Frameworks */,
 				BCFA72E81BB38E2E034791D7 /* Pods_CapacitorTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -75,7 +72,6 @@
 			children = (
 				501CBAA61FC0A723009B0D4D /* WebKit.framework */,
 				40367A7722BCB186FA84278A /* Pods_Avocado.framework */,
-				1139EB954BCD7D1FE04679EA /* Pods_AvocadoTests.framework */,
 				9ABFE550E2358D6D2984A359 /* Pods_Capacitor.framework */,
 				B975B0A166283500B55FD2E7 /* Pods_CapacitorTests.framework */,
 			);
@@ -166,7 +162,6 @@
 				50503EE41FC08595003606DC /* Sources */,
 				50503EE51FC08595003606DC /* Frameworks */,
 				50503EE61FC08595003606DC /* Resources */,
-				E163225B0E98190034E8EB69 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -272,24 +267,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E163225B0E98190034E8EB69 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-CapacitorTests/Pods-CapacitorTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/CapacitorCordova/Cordova.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cordova.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CapacitorTests/Pods-CapacitorTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -374,7 +351,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -427,7 +404,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -454,7 +431,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -478,7 +455,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -493,7 +470,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.avocadojs.ios.AvocadoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -508,7 +485,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.avocadojs.ios.AvocadoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

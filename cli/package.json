@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "1.2.1",
+  "version": "2.2.1",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -14,7 +14,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "npm run clean && npm run assets && tsc",
-    "clean": "rm -rf ./dist",
+    "clean": "rimraf ./dist",
     "deploy": "np",
     "lint": "tslint --project tsconfig.json",
     "assets": "node scripts/copy-assets.js",
@@ -45,7 +45,7 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^2.3.0",
-    "commander": "^2.12.2",
+    "commander": "^4.1.1",
     "compare-versions": "^3.1.0",
     "fs-extra": "^4.0.3",
     "inquirer": "6.3.1",
@@ -69,11 +69,12 @@
     "jest": "^23.6.0",
     "mock-fs": "^4.4.2",
     "np": "^2.18.2",
+    "rimraf": "^3.0.0",
     "tmp": "0.0.33",
     "ts-jest": "^23.10.4",
     "tslint": "^5.8.0",
     "tslint-ionic-rules": "0.0.11",
-    "typescript": "^3.2.4"
+    "typescript": "~3.7.0"
   },
   "publishConfig": {
     "access": "public"
@@ -98,5 +99,5 @@
       }
     }
   },
-  "gitHead": "2499e5986dee438893a204e62be56be765441273"
+  "gitHead": "844c0feba4a801ee5041429a82d0f805c9e665b0"
 }

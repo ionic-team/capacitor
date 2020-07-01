@@ -149,6 +149,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   async writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     const path: string = this.getPath(options.directory, options.path);
     const data = options.data;
+    const doRecursive = options.recursive;
 
     let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
     if (occupiedEntry && occupiedEntry.type === 'directory')
@@ -162,7 +163,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       const subDirIndex = parentPath.indexOf('/', 1);
       if (subDirIndex !== -1) {
         const parentArgPath = parentPath.substr(subDirIndex);
-        await this.mkdir({path: parentArgPath, directory: options.directory, recursive: true});
+        await this.mkdir({path: parentArgPath, directory: options.directory, recursive: doRecursive});
       }
     }
     const now = Date.now();
@@ -176,7 +177,9 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       content: !encoding && data.indexOf(',') >= 0 ? data.split(',')[1] : data,
     };
     await this.dbRequest('put', [pathObj]);
-    return {};
+    return {
+      uri: pathObj.path
+    };
   }
 
   /**
@@ -199,7 +202,8 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
 
     let parentEntry = await this.dbRequest('get', [parentPath]) as EntryObj;
     if (parentEntry === undefined) {
-      const parentArgPath = parentPath.substr(parentPath.indexOf('/', 1));
+      const parentArgPathIndex = parentPath.indexOf('/', 1);
+      const parentArgPath = parentArgPathIndex !== -1 ? parentPath.substr(parentArgPathIndex) : '/';
       await this.mkdir({path: parentArgPath, directory: options.directory, recursive: true});
     }
 
@@ -246,12 +250,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    */
   async mkdir(options: MkdirOptions): Promise<MkdirResult> {
     const path: string = this.getPath(options.directory, options.path);
-    const createIntermediateDirectories = options.createIntermediateDirectories;
-    if (options.createIntermediateDirectories !== undefined) {
-      console.warn('createIntermediateDirectories is deprecated, use recursive');
-    }
-    const recursive = options.recursive;
-    const doRecursive = (createIntermediateDirectories || recursive);
+    const doRecursive = options.recursive;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
     let depth = (path.match(/\//g) || []).length;

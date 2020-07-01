@@ -28,7 +28,7 @@ export interface PluginRegistry {
 
   [pluginName: string]: {
     [prop: string]: any;
-  }
+  };
 }
 
 export type ISODateString = string;
@@ -63,6 +63,11 @@ export interface AccessibilityPlugin {
    * Listen for screen reader state change (on/off)
    */
   addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface AccessibilitySpeakOptions {
@@ -103,6 +108,11 @@ export interface AppPlugin extends Plugin {
   openUrl(options: { url: string }): Promise<{completed: boolean}>;
 
   /**
+   * Gets the current app state
+   */
+  getState(): Promise<AppState>;
+
+  /**
    * Get the URL the app was launched with, if any
    */
   getLaunchUrl(): Promise<AppLaunchUrl>;
@@ -126,9 +136,16 @@ export interface AppPlugin extends Plugin {
   addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
 
   /**
-   * Listen for the hardware back button event (Android only). If you want to close the app, call `App.exitApp()`
+   * Listen for the hardware back button event (Android only). Listening for this event will disable the
+   * default back button behaviour, so you might want to call `window.history.back()` manually.
+   * If you want to close the app, call `App.exitApp()`.
    */
   addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface AppState {
@@ -171,7 +188,17 @@ export interface AppRestoredResult {
    * The result data passed from the plugin. This would be the result you'd
    * expect from normally calling the plugin method. For example, `CameraPhoto`
    */
-  data: any;
+  data?: any;
+  /**
+   * Boolean indicating if the plugin call succeeded
+   */
+  success: boolean;
+  /**
+   * If the plugin call didn't succeed, it will contain the error message
+   */
+  error?: {
+    message: string;
+  };
 }
 
 //
@@ -217,12 +244,16 @@ export interface BrowserPlugin extends Plugin {
   prefetch(options: BrowserPrefetchOptions): Promise<void>;
 
   /**
-   * Close an open browser. Only works on iOS, otherwise is a no-op
+   * Close an open browser. Only works on iOS and Web environment, otherwise is a no-op
    */
   close(): Promise<void>;
 
   addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): PluginListenerHandle;
   addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): PluginListenerHandle;
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface BrowserOpenOptions {
@@ -277,7 +308,9 @@ export interface CameraOptions {
    */
   resultType: CameraResultType;
   /**
-   * Whether to save the photo to the gallery/photostream
+   * Whether to save the photo to the gallery.
+   * If the photo was picked from the gallery, it will only be saved if edited.
+   * Default: false
    */
   saveToGallery?: boolean;
   /**
@@ -310,6 +343,19 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * If use CameraSource.Prompt only, can change Prompt label.
+   * default:
+   *   promptLabelHeader  : 'Photo'       // iOS only
+   *   promptLabelCancel  : 'Cancel'      // iOS only
+   *   promptLabelPhoto   : 'From Photos'
+   *   promptLabelPicture : 'Take Picture'
+   */
+  promptLabelHeader?: string;
+  promptLabelCancel?: string;
+  promptLabelPhoto?: string;
+  promptLabelPicture?: string;
 }
 
 export enum CameraSource {
@@ -368,7 +414,7 @@ export interface ClipboardPlugin extends Plugin {
   /**
    * Read a value from the clipboard (the "paste" action)
    */
-  read(options: ClipboardRead): Promise<ClipboardReadResult>;
+  read(): Promise<ClipboardReadResult>;
 }
 
 export interface ClipboardWrite {
@@ -378,12 +424,9 @@ export interface ClipboardWrite {
   label?: string; // Android only
 }
 
-export interface ClipboardRead {
-  type: 'string' | 'url' | 'image';
-}
-
 export interface ClipboardReadResult {
   value: string;
+  type: string;
 }
 
 //
@@ -394,12 +437,23 @@ export interface DevicePlugin extends Plugin {
    */
   getInfo(): Promise<DeviceInfo>;
   /**
+   * Return information about the battery
+   */
+  getBatteryInfo(): Promise<DeviceBatteryInfo>;
+  /**
    * Get the device's current language locale code
    */
   getLanguageCode(): Promise<DeviceLanguageCodeResult>;
 }
 
+export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown';
+
 export interface DeviceInfo {
+  /**
+   * Note: this property is iOS only.
+   * The name of the device. For example, "John's iPhone"
+   */
+  name?: string;
   /**
    * The device model. For example, "iPhone"
    */
@@ -421,6 +475,10 @@ export interface DeviceInfo {
    * The current bundle build of the app
    */
   appBuild: string;
+  /**
+   * The operating system of the device
+   */
+  operatingSystem: OperatingSystem;
   /**
    * The version of the device OS
    */
@@ -447,6 +505,9 @@ export interface DeviceInfo {
    * The total size of the normal data storage path for the OS, in bytes
    */
   diskTotal?: number;
+}
+
+export interface DeviceBatteryInfo {
   /**
    * A percentage (0 to 1) indicating how much the battery is charged
    */
@@ -542,27 +603,45 @@ export interface FilesystemPlugin extends Plugin {
 
 export enum FilesystemDirectory {
   /**
-   * The Application directory
-   */
-  Application = 'APPLICATION',
-  /**
    * The Documents directory
+   * On iOS it's the app's documents directory.
+   * Use this directory to store user-generated content.
+   * On Android it's the Public Documents folder, so it's accessible from other apps.
+   * It's not accesible on Android 10 unless the app enables legacy External Storage
+   * by adding `android:requestLegacyExternalStorage="true"` in the `application` tag
+   * in the `AndroidManifest.xml`
    */
   Documents = 'DOCUMENTS',
   /**
    * The Data directory
+   * On iOS it will use the Documents directory
+   * On Android it's the directory holding application files.
+   * Files will be deleted when the application is uninstalled.
    */
   Data = 'DATA',
   /**
    * The Cache directory
+   * Can be deleted in cases of low memory, so use this directory to write app-specific files
+   * that your app can re-create easily.
    */
   Cache = 'CACHE',
   /**
-   * The external directory (Android only)
+   * The external directory
+   * On iOS it will use the Documents directory
+   * On Android it's the directory on the primary shared/external
+   * storage device where the application can place persistent files it owns.
+   * These files are internal to the applications, and not typically visible
+   * to the user as media.
+   * Files will be deleted when the application is uninstalled.
    */
   External = 'EXTERNAL',
   /**
-   * The external storage directory (Android only)
+   * The external storage directory
+   * On iOS it will use the Documents directory
+   * On Android it's the primary shared/external storage directory.
+   * It's not accesible on Android 10 unless the app enables legacy External Storage
+   * by adding `android:requestLegacyExternalStorage="true"` in the `application` tag
+   * in the `AndroidManifest.xml`
    */
   ExternalStorage = 'EXTERNAL_STORAGE'
 }
@@ -575,7 +654,7 @@ export enum FilesystemEncoding {
 
 export interface FileWriteOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -593,11 +672,16 @@ export interface FileWriteOptions {
    * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
+  /**
+   * Whether to create any missing parent directories.
+   * Defaults to false
+   */
+  recursive?: boolean;
 }
 
 export interface FileAppendOptions {
   /**
-   * the filename to write
+   * The filename to write
    */
   path: string;
   /**
@@ -619,7 +703,7 @@ export interface FileAppendOptions {
 
 export interface FileReadOptions {
   /**
-   * the filename to read
+   * The filename to read
    */
   path: string;
   /**
@@ -637,7 +721,7 @@ export interface FileReadOptions {
 
 export interface FileDeleteOptions {
   /**
-   * the filename to delete
+   * The filename to delete
    */
   path: string;
   /**
@@ -655,12 +739,6 @@ export interface MkdirOptions {
    * The FilesystemDirectory to make the new directory in
    */
   directory?: FilesystemDirectory;
-  /**
-   * @deprecated - use recursive
-   * Whether to create any missing parent directories as well
-   * Defaults to false
-   */
-  createIntermediateDirectories?: boolean;
   /**
    * Whether to create any missing parent directories as well.
    * Defaults to false
@@ -686,11 +764,11 @@ export interface RmdirOptions {
 
 export interface ReaddirOptions {
   /**
-   * The path of the directory to remove
+   * The path of the directory to read
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to list files from
    */
   directory?: FilesystemDirectory;
 }
@@ -708,11 +786,11 @@ export interface GetUriOptions {
 
 export interface StatOptions {
   /**
-   * The path of the directory to remove
+   * The path of the file to get data about
    */
   path: string;
   /**
-   * The FilesystemDirectory to remove the directory from
+   * The FilesystemDirectory to get the file under
    */
   directory?: FilesystemDirectory;
 }
@@ -745,6 +823,7 @@ export interface FileReadResult {
 export interface FileDeleteResult {
 }
 export interface FileWriteResult {
+  uri: string;
 }
 export interface FileAppendResult {
 }
@@ -831,19 +910,8 @@ export interface GeolocationPosition {
 
 export interface GeolocationOptions {
   enableHighAccuracy?: boolean; // default: false
-  timeout?: number; // default: 10000,
+  timeout?: number; // default: 10000
   maximumAge?: number; // default: 0
-  /**
-   * Whether your app needs altitude data or not. This can impact the
-   * sensor the device uses, increasing energy consumption.
-   * Note: altitude information may not be available even when
-   * passing true here. Similarly, altitude data maybe be returned
-   * even if this value is false, in the case where doing so requires
-   * no increased energy consumption.
-   *
-   * Default: false
-   */
-  requireAltitude?: boolean; // default: false
 }
 
 export type GeolocationWatchCallback = (position: GeolocationPosition, err?: any) => void;
@@ -870,7 +938,7 @@ export interface HapticsPlugin extends Plugin {
   /**
    * Trigger a selection changed haptic hint. If a selection was
    * started already, this will cause the device to provide haptic
-   * feedback (on iOS at least)
+   * feedback
    */
   selectionChanged(): void;
   /**
@@ -937,6 +1005,11 @@ export interface KeyboardPlugin extends Plugin {
   addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
   addListener(eventName: 'keyboardWillHide', listenerFunc: () => void): PluginListenerHandle;
   addListener(eventName: 'keyboardDidHide', listenerFunc: () => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface KeyboardInfo {
@@ -1015,21 +1088,57 @@ export interface LocalNotification {
   body: string;
   id: number;
   schedule?: LocalNotificationSchedule;
+  /**
+   * Name of the audio file with extension.
+   * On iOS the file should be in the app bundle.
+   * On Android the file should be on res/raw folder.
+   * Doesn't work on Android version 26+ (Android O and newer), for
+   * Recommended format is .wav because is supported by both platforms.
+   */
   sound?: string;
   /**
    * Android-only: set a custom statusbar icon.
    * If set, it overrides default icon from capacitor.config.json
    */
   smallIcon?: string;
+  /**
+   * Android only: set the color of the notification icon
+   */
+  iconColor?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
+  /**
+   * iOS only: set the thread identifier for notification grouping
+   */
+  threadIdentifier?: string;
+  /**
+   * iOS 12+ only: set the summary argument for notification grouping
+   */
+  summaryArgument?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
+  /**
+   * Android only: set the notification channel on which local notification
+   * will generate. If channel with the given name does not exist then the
+   * notification will not fire. If not provided, it will use the default channel.
+   */
+  channelId?: string;
 }
 
 export interface LocalNotificationSchedule {
   at?: Date;
   repeats?: boolean;
   every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
+  count?: number;
   on?: {
     year?: number;
     month?: number;
@@ -1052,14 +1161,27 @@ export interface LocalNotificationEnabledResult {
   value: boolean;
 }
 
+export interface NotificationPermissionResponse {
+  granted: boolean;
+}
+
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
   getPending(): Promise<LocalNotificationPendingList>;
   registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
   cancel(pending: LocalNotificationPendingList): Promise<void>;
   areEnabled(): Promise<LocalNotificationEnabledResult>;
+  createChannel(channel: NotificationChannel): Promise<void>;
+  deleteChannel(channel: NotificationChannel): Promise<void>;
+  listChannels(): Promise<NotificationChannelList>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 
@@ -1098,6 +1220,7 @@ export interface PromptOptions {
   okButtonTitle?: string;
   cancelButtonTitle?: string;
   inputPlaceholder?: string;
+  inputText?: string;
 }
 
 export interface ConfirmOptions {
@@ -1118,6 +1241,9 @@ export interface ConfirmResult {
 
 export interface ActionSheetOptions {
   title: string;
+  /**
+   * iOS only
+   */
   message?: string;
   options: ActionSheetOption[];
 }
@@ -1152,6 +1278,11 @@ export interface MotionPlugin extends Plugin {
    * Listen for device orientation change (compass heading, etc.)
    */
   addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export type MotionWatchOrientationCallback = (accel: MotionOrientationEventResult) => void;
@@ -1195,6 +1326,11 @@ export interface NetworkPlugin extends Plugin {
    * Listen for network status change events
    */
   addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface NetworkStatus {
@@ -1212,7 +1348,8 @@ export enum PermissionType {
   Geolocation = 'geolocation',
   Notifications = 'notifications',
   ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write'
+  ClipboardWrite = 'clipboard-write',
+  Microphone = 'microphone'
 }
 
 export interface PermissionsOptions {
@@ -1420,6 +1557,16 @@ export interface PushNotification {
   data: any;
   click_action?: string;
   link?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
 }
 
 export interface PushNotificationActionPerformed {
@@ -1436,30 +1583,93 @@ export interface PushNotificationDeliveredList {
   notifications: PushNotification[];
 }
 
-export interface PushNotificationChannel {
+export interface NotificationChannel {
   id: string;
   name: string;
-  description: string;
+  description?: string;
+  sound?: string;
   importance: 1 | 2 | 3 | 4 | 5;
   visibility?: -1 | 0 | 1 ;
+  lights?: boolean;
+  lightColor?: string;
+  vibration?: boolean;
 }
 
-export interface PushNotificationChannelList {
-  channels: PushNotificationChannel[];
+export interface NotificationChannelList {
+  channels: NotificationChannel[];
 }
 
 export interface PushNotificationsPlugin extends Plugin {
+  /**
+   * Register the app to receive push notifications.
+   * Will trigger registration event with the push token
+   * or registrationError if there was some problem.
+   * Doesn't prompt the user for notification permissions, use requestPermission() first.
+   */
   register(): Promise<void>;
+  /**
+   * On iOS it prompts the user to allow displaying notifications
+   * and return if the permission was granted or not.
+   * On Android there is no such prompt, so just return as granted.
+   */
+  requestPermission(): Promise<NotificationPermissionResponse>;
+  /**
+   * Returns the notifications that are visible on the notifications screen.
+   */
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
+  /**
+   * Removes the specified notifications from the notifications screen.
+   * @param delivered list of delivered notifications.
+   */
   removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
+  /**
+   * Removes all the notifications from the notifications screen.
+   */
   removeAllDeliveredNotifications(): Promise<void>;
-  createChannel(channel: PushNotificationChannel): Promise<void>;
-  deleteChannel(channel: PushNotificationChannel): Promise<void>;
-  listChannels(): Promise<PushNotificationChannelList>;
+  /**
+   * On Android O or newer (SDK 26+) creates a notification channel.
+   * @param channel to create.
+   */
+  createChannel(channel: NotificationChannel): Promise<void>;
+  /**
+   * On Android O or newer (SDK 26+) deletes a notification channel.
+   * @param channel to delete.
+   */
+  deleteChannel(channel: NotificationChannel): Promise<void>;
+  /**
+   * On Android O or newer (SDK 26+) list the available notification channels.
+   */
+  listChannels(): Promise<NotificationChannelList>;
+  /**
+   * Event called when the push notification registration finished without problems.
+   * Provides the push notification token.
+   * @param eventName registration.
+   * @param listenerFunc callback with the push token.
+   */
   addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
+  /**
+   * Event called when the push notification registration finished with problems.
+   * Provides an error with the registration problem.
+   * @param eventName registrationError.
+   * @param listenerFunc callback with the registration error.
+   */
   addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
+  /**
+   * Event called when the device receives a push notification.
+   * @param eventName pushNotificationReceived.
+   * @param listenerFunc callback with the received notification.
+   */
   addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
+  /**
+   * Event called when an action is performed on a pusn notification.
+   * @param eventName pushNotificationActionPerformed.
+   * @param listenerFunc callback with the notification action.
+   */
   addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+  /**
+   * Remove all native listeners for this plugin.
+   */
+  removeAllListeners(): void;
 }
 
 //
@@ -1482,7 +1692,7 @@ export interface ShareOptions {
    */
   text?: string;
   /**
-   * Set a URL to share
+   * Set a URL to share, can be http, https or file URL
    */
   url?: string;
   /**
@@ -1545,15 +1755,20 @@ export interface StatusBarPlugin extends Plugin {
   /**
    * Show the status bar
    */
-  show(): Promise<void>;
+  show(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Hide the status bar
    */
-  hide(): Promise<void>;
+  hide(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Get info about the current state of the status bar
    */
   getInfo(): Promise<StatusBarInfoResult>;
+  /**
+   *  Set whether or not the status bar should overlay the webview to allow usage of the space
+   *  around a device "notch"
+   */
+  setOverlaysWebView(options: StatusBarOverlaysWebviewOptions): Promise<void>;
 }
 
 export interface StatusBarStyleOptions {
@@ -1571,6 +1786,28 @@ export enum StatusBarStyle {
   Light = 'LIGHT'
 }
 
+export interface StatusBarAnimationOptions {
+  /**
+   * iOS only. The type of status bar animation used when showing or hiding.
+   */
+  animation: StatusBarAnimation;
+}
+
+export enum StatusBarAnimation {
+  /**
+   * No animation during show/hide.
+   */
+  None = 'NONE',
+  /**
+   * Slide animation during show/hide.
+   */
+  Slide = 'SLIDE',
+  /**
+   * Fade animation during show/hide.
+   */
+  Fade = 'FADE'
+}
+
 export interface StatusBarBackgroundColorOptions {
   color: string;
 }
@@ -1579,6 +1816,11 @@ export interface StatusBarInfoResult {
   visible: boolean;
   style: StatusBarStyle;
   color?: string;
+  overlays?: boolean;
+}
+
+export interface StatusBarOverlaysWebviewOptions {
+  overlay: boolean;
 }
 
 export interface StoragePlugin extends Plugin {
@@ -1610,7 +1852,11 @@ export interface ToastPlugin extends Plugin {
 
 export interface ToastShowOptions {
   text: string;
+  /**
+   * Duration of the toast, either 'short' (2000ms, default) or 'long' (3500ms)
+   */
   duration?: 'short' | 'long';
+  position?: 'top' | 'center' | 'bottom';
 }
 
 export interface WebViewPlugin extends Plugin {

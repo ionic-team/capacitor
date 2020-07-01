@@ -6,7 +6,10 @@ import {
   LocalNotificationPendingList,
   LocalNotificationActionType,
   LocalNotification,
-  LocalNotificationScheduleResult
+  LocalNotificationScheduleResult,
+  NotificationPermissionResponse,
+  NotificationChannel,
+  NotificationChannelList
 } from '../core-plugin-definitions';
 
 import { PermissionsRequestResult } from '../definitions';
@@ -19,6 +22,18 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
       name: 'LocalNotifications',
       platforms: ['web']
     });
+  }
+
+  createChannel(channel: NotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+
+  deleteChannel(channel: NotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+
+  listChannels(): Promise<NotificationChannelList> {
+    throw new Error('Feature not available in the browser');
   }
 
   sendPending() {
@@ -66,7 +81,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     });
 
     return Promise.resolve({
-      notifications: notifications.map(_ => { return { id: '' }})
+      notifications: options.notifications.map(notification => { return { id: '' + notification.id }; })
     });
   }
 
@@ -75,13 +90,13 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
       notifications: this.pending.map(localNotification => {
         return {
           id: '' + localNotification.id
-        }
+        };
       })
     });
   }
 
   registerActionTypes(_options: { types: LocalNotificationActionType[]; }): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   cancel(pending: LocalNotificationPendingList): Promise<void> {
@@ -92,22 +107,33 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
   }
 
   areEnabled(): Promise<LocalNotificationEnabledResult> {
-    throw new Error("Method not implemented.");
+    return Promise.resolve({
+      value: Notification.permission === 'granted'
+    });
   }
 
+  requestPermission(): Promise<NotificationPermissionResponse> {
+    return new Promise((resolve) => {
+      Notification.requestPermission((result) => {
+        let granted = true;
+        if (result === 'denied' || result === 'default') {
+          granted = false;
+        }
+        resolve({ granted });
+      });
+    });
+  }
 
   requestPermissions(): Promise<PermissionsRequestResult> {
     return new Promise((resolve, reject) => {
-      Notification.requestPermission().then((result) => {
-        if(result === 'denied' || result === 'default') {
+      Notification.requestPermission((result) => {
+        if (result === 'denied' || result === 'default') {
           reject(result);
           return;
         }
         resolve({
-          results: [ result ]
+          results: [result]
         });
-      }).catch((e) => {
-        reject(e);
       });
     });
   }

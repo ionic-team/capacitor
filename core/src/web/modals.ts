@@ -25,7 +25,7 @@ export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
   }
 
   async prompt(options: PromptOptions): Promise<PromptResult> {
-    const val = window.prompt(options.message, options.inputPlaceholder || '');
+    const val = window.prompt(options.message, options.inputText || '');
     return Promise.resolve({
       value: val,
       cancelled: val === null
@@ -41,34 +41,20 @@ export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
 
   async showActions(options: ActionSheetOptions): Promise<ActionSheetResult> {
     return new Promise<ActionSheetResult>(async (resolve, _reject) => {
-      var controller: any = document.querySelector('ion-action-sheet-controller');
-
-      if (!controller) {
-        controller = document.createElement('ion-action-sheet-controller');
-        document.body.appendChild(controller);
+      var actionSheet: any = document.querySelector('pwa-action-sheet');
+      if (!actionSheet) {
+        actionSheet = document.createElement('pwa-action-sheet');
+        document.body.appendChild(actionSheet);
       }
-
-      await controller.componentOnReady();
-
-      const items = options.options.map((o, i) => {
-        return {
-          text: o.title,
-          role: o.style && o.style.toLowerCase() || '',
-          icon: o.icon || '',
-          handler: () => {
-            resolve({
-              index: i
-            });
-          }
-        };
+      actionSheet.header = options.title;
+      actionSheet.cancelable = false;
+      actionSheet.options = options.options;
+      actionSheet.addEventListener('onSelection', async (e: any) => {
+        const selection = e.detail;
+        resolve({
+          index: selection
+        });
       });
-
-      const actionSheetElement = await controller.create({
-        title: options.title,
-        buttons: items
-      });
-
-      await actionSheetElement.present();
     });
   }
 }

@@ -1,11 +1,17 @@
 package com.getcapacitor.plugin;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.webkit.MimeTypeMap;
+
+import androidx.core.content.FileProvider;
 
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+
+import java.io.File;
 
 @NativePlugin()
 public class Share extends Plugin {
@@ -21,18 +27,28 @@ public class Share extends Plugin {
       call.error("Must provide a URL or Message");
       return;
     }
-
-    // If they supplied both fields, concat em
-    if (text != null && url != null) {
-      text = text + " " + url;
-    } else if(url != null) {
-      text = url;
-    }
-
     Intent intent = new Intent(Intent.ACTION_SEND);
-    intent.setTypeAndNormalize("text/plain");
-
-    intent.putExtra(Intent.EXTRA_TEXT, text);
+    if (text != null) {
+      // If they supplied both fields, concat em
+      if (url != null && url.startsWith("http")) {
+        text = text + " " + url;
+      }
+      intent.putExtra(Intent.EXTRA_TEXT, text);
+      intent.setTypeAndNormalize("text/plain");
+    } else if (url != null) {
+      if (url.startsWith("http")) {
+        intent.putExtra(Intent.EXTRA_TEXT, url);
+        intent.setTypeAndNormalize("text/plain");
+      } else if (url.startsWith("file:")) {
+        String type = getMimeType(url);
+        intent.setType(type);
+        Uri fileUrl = FileProvider.getUriForFile(getActivity(), getContext().getPackageName() + ".fileprovider", new File(Uri.parse(url).getPath()));
+        intent.putExtra(Intent.EXTRA_STREAM, fileUrl);
+      } else {
+        call.error("Unsupported url");
+        return;
+      }
+    }
 
     if (title != null) {
       intent.putExtra(Intent.EXTRA_SUBJECT, title);
@@ -43,5 +59,14 @@ public class Share extends Plugin {
 
     getActivity().startActivity(chooser);
     call.success();
+  }
+
+  private String getMimeType(String url) {
+    String type = null;
+    String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+    if (extension != null) {
+      type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+    }
+    return type;
   }
 }

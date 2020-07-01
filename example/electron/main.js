@@ -6,20 +6,26 @@ const BrowserWindow = electron.BrowserWindow
 
 const path = require('path')
 const url = require('url')
-const { injectCapacitor } = require('@capacitor/electron');
 
 let mainWindow
 
 async function createWindow () {
 
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
+    }
+  })
   /*mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'www/index.html'),
     protocol: 'file:',
     slashes: true
   }))*/
 
-  mainWindow.loadURL(await injectCapacitor(`file://${__dirname}/www/index.html`), {baseURLForDataURL: `file://${__dirname}/www/`});
+  mainWindow.loadURL(`file://${__dirname}/www/index.html`);
   mainWindow.webContents.openDevTools()
 
 

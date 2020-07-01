@@ -97,9 +97,9 @@ export function fixName(name: string): string {
 }
 
 export function removeScope(name: string): string {
-  var parts = name.split("/");
+  var parts = name.split('/');
   if (parts.length > 1) {
-    name = parts[parts.length-1];
+    name = parts[parts.length - 1];
   }
   return name;
 }
@@ -157,16 +157,23 @@ export function getJSModules(p: Plugin, platform: string) {
   return getAllElements(p, platform, 'js-module');
 }
 
+/**
+ * Get each asset tag for the given plugin
+ */
+export function getAssets(p: Plugin, platform: string) {
+  return getAllElements(p, platform, 'asset');
+}
+
 export function getFilePath(config: Config, plugin: Plugin, path: string) {
-  if (path.startsWith("node_modules")) {
-    let pathSegments = path.split("/").slice(1);
+  if (path.startsWith('node_modules')) {
+    let pathSegments = path.split('/').slice(1);
     if (pathSegments[0].startsWith('@')) {
-      pathSegments = [pathSegments[0] + '/' + pathSegments[1], ...pathSegments.slice(2)]
+      pathSegments = [pathSegments[0] + '/' + pathSegments[1], ...pathSegments.slice(2)];
     }
 
     let filePath = resolveNode(config, ...pathSegments);
     if (!filePath) {
-      throw new Error(`Can't resolve module ${pathSegments[0]}`)
+      throw new Error(`Can't resolve module ${pathSegments[0]}`);
     }
 
     return filePath;

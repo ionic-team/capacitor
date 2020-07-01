@@ -1,6 +1,6 @@
 import { WebPlugin } from './index';
 
-import { AppPlugin, AppLaunchUrl, } from '../core-plugin-definitions';
+import { AppPlugin, AppLaunchUrl, AppState } from '../core-plugin-definitions';
 
 export class AppPluginWeb extends WebPlugin implements AppPlugin {
   constructor() {
@@ -30,7 +30,11 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
     return Promise.resolve({ url: '' });
   }
 
-  handleVisibilityChange():void {
+  getState(): Promise<AppState> {
+    return Promise.resolve({ isActive: document.hidden !== true });
+  }
+
+  handleVisibilityChange(): void {
     const data = {
       isActive: document.hidden !== true
     };

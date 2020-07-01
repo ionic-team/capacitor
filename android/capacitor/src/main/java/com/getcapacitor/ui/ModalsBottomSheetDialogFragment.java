@@ -2,19 +2,23 @@ package com.getcapacitor.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.CoordinatorLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.getcapacitor.Dialogs;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.LogUtils;
+import com.getcapacitor.Logger;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,16 +29,32 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
     void onSelected(int index);
   }
 
+  @Override
+  public void onCancel(DialogInterface dialog)
+  {
+    super.onCancel(dialog);
+    this.cancelListener.onCancel();
+  }
+
+  private String title;
   private JSArray options;
 
   private OnSelectedListener listener;
+  private Dialogs.OnCancelListener cancelListener;
 
+  public void setTitle(String title) {
+    this.title = title;
+  }
   public void setOptions(JSArray options) {
     this.options = options;
   }
 
   public void setOnSelectedListener(OnSelectedListener listener) {
     this.listener = listener;
+  }
+
+  public void setOnCancelListener(Dialogs.OnCancelListener listener) {
+    this.cancelListener = listener;
   }
 
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
@@ -76,7 +96,11 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
     LinearLayout layout = new LinearLayout(getContext());
     layout.setOrientation(LinearLayout.VERTICAL);
     layout.setPadding(layoutPaddingPx16, layoutPaddingPx16, layoutPaddingPx16, layoutPaddingPx16);
-
+    TextView ttv = new TextView(getContext());
+    ttv.setTextColor(Color.parseColor("#757575"));
+    ttv.setPadding(layoutPaddingPx8, layoutPaddingPx8, layoutPaddingPx8, layoutPaddingPx8);
+    ttv.setText(title);
+    layout.addView(ttv);
     try {
       List<Object> optionsList = options.toList();
       for (int i = 0; i < optionsList.size(); i++) {
@@ -93,7 +117,7 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         tv.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.d(LogUtils.getCoreTag(), "CliCKED: " + optionIndex);
+            Logger.debug("CliCKED: " + optionIndex);
 
             if (listener != null) {
               listener.onSelected(optionIndex);
@@ -116,7 +140,7 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
       }
     } catch (JSONException ex) {
-      Log.e(LogUtils.getCoreTag(), "JSON error processing an option for showActions", ex);
+      Logger.error("JSON error processing an option for showActions", ex);
     }
   }
 }

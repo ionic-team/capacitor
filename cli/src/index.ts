@@ -37,7 +37,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('init [appName] [appId]')
     .description('Initializes a new Capacitor project in the current directory')
-    .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', 'www')
+    .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', config.app.webDir ? config.app.webDir : 'www')
     .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
     .action((appName, appId, { webDir, npmClient }) => {
       return initCommand(config, appName, appId, webDir, npmClient);
@@ -52,16 +52,18 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .command('sync [platform]')
-    .description('updates + copy')
-    .action(platform => {
-      return syncCommand(config, platform);
+    .description('copy + update')
+    .option('--deployment', 'Optional: if provided, Podfile.lock won\'t be deleted and pod install will use --deployment option')
+    .action((platform, { deployment }) => {
+      return syncCommand(config, platform, deployment);
     });
 
   program
     .command('update [platform]')
     .description(`updates the native plugins and dependencies based in package.json`)
-    .action(platform => {
-      return updateCommand(config, platform);
+    .option('--deployment', 'Optional: if provided, Podfile.lock won\'t be deleted and pod install will use --deployment option')
+    .action((platform, { deployment }) => {
+      return updateCommand(config, platform, deployment);
     });
 
   program
@@ -116,7 +118,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program.parse(process.argv);
 
-  if (!program.args.length) {
+  if (program.rawArgs.length < 3) {
     console.log(`\n  ${_e('⚡️', '--')}  ${chalk.bold('Capacitor - Cross-Platform apps with JavaScript and the Web')}  ${_e('⚡️', '--')}`);
     program.help();
   }

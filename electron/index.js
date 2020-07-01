@@ -1,30 +1,30 @@
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 const { app, ipcMain, BrowserWindow } = require('electron');
 
 function getURLFileContents(path) {
   console.trace();
   return new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
-      if(err)
+      if (err)
         reject(err);
       resolve(data.toString());
     });
   });
 }
 
-const injectCapacitor = async function(url) {
-  console.warn('\nWARNING: injectCapacitor method is deprecated and will be removed in next major release. Check release notes for migration instructions\n')
-  try {
-    let urlFileContents = await getURLFileContents(url.substr(url.indexOf('://') + 3));
-    let pathing = path.join(url.substr(url.indexOf('://') + 3), '../../node_modules/@capacitor/electron/dist/electron-bridge.js');
-    urlFileContents = urlFileContents.replace('<body>', `<body><script>window.require('${pathing.replace(/\\/g,'\\\\')}')</script>`);
-    return 'data:text/html;charset=UTF-8,' + urlFileContents;
-  } catch(e) {
-    console.error(e);
-    return url;
+const configCapacitor = async function(mainWindow) {
+  let capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
+  const appendUserAgent = capConfigJson.electron && capConfigJson.electron.appendUserAgent ? capConfigJson.electron.appendUserAgent : capConfigJson.appendUserAgent;
+  if (appendUserAgent) {
+    mainWindow.webContents.setUserAgent(mainWindow.webContents.getUserAgent() + " " + appendUserAgent);
   }
-};
+  const overrideUserAgent = capConfigJson.electron && capConfigJson.electron.overrideUserAgent ? capConfigJson.electron.overrideUserAgent : capConfigJson.overrideUserAgent;
+  if (overrideUserAgent) {
+    mainWindow.webContents.setUserAgent(overrideUserAgent);
+  }
+}
 
 class CapacitorSplashScreen {
 
@@ -45,7 +45,7 @@ class CapacitorSplashScreen {
     this.mainWindowRef = null;
     this.splashWindow = null;
 
-    if(!splashOptions) {
+    if (!splashOptions) {
       splashOptions = {};
     }
 
@@ -67,7 +67,7 @@ class CapacitorSplashScreen {
       let capConfigJson = JSON.parse(fs.readFileSync(`./capacitor.config.json`, 'utf-8'));
       this.splashOptions = Object.assign(
         this.splashOptions,
-        capConfigJson.plugins.SplashScreen
+        capConfigJson.plugins.SplashScreen || {}
       );
     } catch (e) {
       console.error(e.message);
@@ -75,8 +75,8 @@ class CapacitorSplashScreen {
 
     ipcMain.on('showCapacitorSplashScreen', (event, options) => {
       this.show();
-      if(options) {
-        if(options.autoHide) {
+      if (options) {
+        if (options.autoHide) {
           let showTime = options.showDuration || 3000;
           setTimeout(() => {
             this.hide();
@@ -90,9 +90,8 @@ class CapacitorSplashScreen {
     });
   }
 
-  init(inject = true) {
+  init() {
     let rootPath = app.getAppPath();
-
 
     this.splashWindow = new BrowserWindow({
       width: this.splashOptions.windowWidth,
@@ -100,12 +99,25 @@ class CapacitorSplashScreen {
       frame: false,
       show: false,
       transparent: this.splashOptions.transparentWindow,
+      webPreferences: {
+        // Required to load file:// splash screen
+        webSecurity: false
+      }
     });
+
+    let imagePath = path.join(rootPath, 'splash_assets', this.splashOptions.imageFileName);
+    let imageUrl = '';
+    let useFallback = false;
+    try {
+      imageUrl = url.pathToFileURL(imagePath).href;
+    } catch (err) {
+      useFallback = true;
+      imageUrl = `./${this.splashOptions.imageFileName}`;
+    }
 
     let splashHtml = this.splashOptions.customHtml || `
       <html style="width: 100%; height: 100%; margin: 0; overflow: hidden;">
-        <body style="background-image: url('./${this.splashOptions.imageFileName}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">
-          <div style="font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;>
+      <body style="background-image: url('${imageUrl}'); background-position: center center; background-repeat: no-repeat; width: 100%; height: 100%; margin: 0; overflow: hidden;">       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: ${this.splashOptions.textColor}; position: absolute; top: ${this.splashOptions.textPercentageFromTop}%; text-align: center; font-size: 10vw; width: 100vw;">
             ${this.splashOptions.loadingText}
           </div>
         </body>
@@ -113,23 +125,25 @@ class CapacitorSplashScreen {
     `;
 
     this.mainWindowRef.on('closed', () => {
-      this.splashWindow.close();
+      if (this.splashWindow && !this.splashWindow.isDestroyed()) {
+        this.splashWindow.close();
+      }
     });
 
-    this.splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`, {baseURLForDataURL: `file://${rootPath}/splash_assets/`});
+    if (useFallback) {
+      this.splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`, {baseURLForDataURL: `file://${rootPath}/splash_assets/`});
+    } else {
+      this.splashWindow.loadURL(`data:text/html;charset=UTF-8,${splashHtml}`);
+    }
 
     this.splashWindow.webContents.on('dom-ready', async () => {
       this.splashWindow.show();
       setTimeout(async () => {
-        if (inject) {
-          this.mainWindowRef.loadURL(await injectCapacitor(`file://${rootPath}/app/index.html`), {baseURLForDataURL: `file://${rootPath}/app/`});
-        } else {
-          this.mainWindowRef.loadURL(`file://${rootPath}/app/index.html`);
-        }
+        this.mainWindowRef.loadURL(`file://${rootPath}/app/index.html`);
       }, 4500);
     });
 
-    if(this.splashOptions.autoHideLaunchSplash) {
+    if (this.splashOptions.autoHideLaunchSplash) {
       this.mainWindowRef.webContents.on('dom-ready', () => {
         this.mainWindowRef.show();
         this.splashWindow.hide();
@@ -150,6 +164,6 @@ class CapacitorSplashScreen {
 }
 
 module.exports = {
-  injectCapacitor,
+  configCapacitor,
   CapacitorSplashScreen
 };

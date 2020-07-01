@@ -1,7 +1,7 @@
 platform :ios, '11.0'
 use_frameworks!
 
-# workaround to avoid Xcode 10 caching of Pods that requires
+# workaround to avoid Xcode caching of Pods that requires
 # Product -> Clean Build Folder after new Cordova plugins installed
 # Requires CocoaPods 1.6 or newer
 install! 'cocoapods', :disable_input_output_paths => true

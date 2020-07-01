@@ -1,7 +1,5 @@
 package com.getcapacitor;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,23 +75,28 @@ public class PluginCall {
     try {
       errorResult.put("message", msg);
     } catch (Exception jsonEx) {
-      Log.e(LogUtils.getPluginTag(), jsonEx.toString());
+      Logger.error(Logger.tags("Plugin"), jsonEx.toString(), null);
     }
 
     this.msgHandler.sendResponseMessage(this, null, errorResult);
   }
 
   public void error(String msg, Exception ex) {
+    error(msg, null, ex);
+  }
+
+  public void error(String msg, String code, Exception ex) {
     PluginResult errorResult = new PluginResult();
 
     if(ex != null) {
-      Log.e(LogUtils.getPluginTag(), msg, ex);
+      Logger.error(Logger.tags("Plugin"), msg, ex);
     }
 
     try {
       errorResult.put("message", msg);
+      errorResult.put("code", code);
     } catch (Exception jsonEx) {
-      Log.e(LogUtils.getPluginTag(), jsonEx.getMessage());
+      Logger.error(Logger.tags("Plugin"), jsonEx.getMessage(), null);
     }
 
     this.msgHandler.sendResponseMessage(this, null, errorResult);
@@ -105,6 +108,10 @@ public class PluginCall {
 
   public void reject(String msg, Exception ex) {
     error(msg, ex);
+  }
+
+  public void reject(String msg, String code) {
+    error(msg, code, null);
   }
 
   public void reject(String msg) {
@@ -167,6 +174,12 @@ public class PluginCall {
     if(value instanceof Float) {
       return (Float) value;
     }
+    if(value instanceof Double) {
+      return ((Double) value).floatValue();
+    }
+    if(value instanceof Integer) {
+      return ((Integer) value).floatValue();
+    }
     return defaultValue;
   }
 
@@ -179,6 +192,12 @@ public class PluginCall {
 
     if(value instanceof Double) {
       return (Double) value;
+    }
+    if(value instanceof Float) {
+      return ((Float) value).doubleValue();
+    }
+    if(value instanceof Integer) {
+      return ((Integer) value).doubleValue();
     }
     return defaultValue;
   }
@@ -274,4 +293,3 @@ public class PluginCall {
     PluginCallDataTypeException(String m) { super(m); }
   }
 }
-

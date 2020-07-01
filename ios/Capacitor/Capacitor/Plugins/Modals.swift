@@ -14,14 +14,13 @@ public class CAPModalsPlugin : CAPPlugin {
     let buttonTitle = call.options["buttonTitle"] as? String ?? "OK"
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
-    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
+    alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in
+      call.success()
+    }))
     
     DispatchQueue.main.async {
       self.bridge.viewController.present(alert, animated: true, completion: nil)
     }
-    
-    // Call success immediately
-    call.success()
   }
   
   @objc public func confirm(_ call: CAPPluginCall) {
@@ -59,13 +58,15 @@ public class CAPModalsPlugin : CAPPlugin {
     let okButtonTitle = call.options["okButtonTitle"] as? String ?? "OK"
     let cancelButtonTitle = call.options["cancelButtonTitle"] as? String ?? "Cancel"
     let inputPlaceholder = call.options["inputPlaceholder"] as? String ?? ""
+    let inputText = call.options["inputText"] as? String ?? ""
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
     
     DispatchQueue.main.async {
       
       alert.addTextField { (textField) in
-        textField.text = inputPlaceholder
+        textField.placeholder = inputPlaceholder
+        textField.text = inputText
       }
       
       alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertAction.Style.default, handler: { (action) -> Void in
@@ -109,8 +110,13 @@ public class CAPModalsPlugin : CAPPlugin {
     for (index, option) in options.enumerated() {
       let style = option["style"] as? String ?? "DEFAULT"
       let title = option["title"] as? String ?? ""
-      
-      let action = UIAlertAction(title: title, style: style == "DESTRUCTIVE" ? .destructive : .default, handler: { (action) -> Void in
+      var buttonStyle: UIAlertAction.Style = .default
+      if style == "DESTRUCTIVE" {
+        buttonStyle = .destructive
+      } else if style == "CANCEL" {
+        buttonStyle = .cancel
+      }
+      let action = UIAlertAction(title: title, style: buttonStyle, handler: { (action) -> Void in
         call.success([
           "index": index
         ])

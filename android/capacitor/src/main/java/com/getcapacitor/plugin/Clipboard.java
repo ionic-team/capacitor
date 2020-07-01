@@ -4,8 +4,8 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -29,7 +29,7 @@ public class Clipboard extends Plugin {
     if(strVal != null) {
       data = ClipData.newPlainText(label, strVal);
     } else if(imageVal != null) {
-      // Does nothing
+      data = ClipData.newPlainText(label, imageVal);
     } else if(urlVal != null) {
       data = ClipData.newPlainText(label, urlVal);
     }
@@ -45,24 +45,31 @@ public class Clipboard extends Plugin {
   public void read(PluginCall call) {
     Context c = this.getContext();
 
-    String type = call.getString("type");
     ClipboardManager clipboard = (ClipboardManager)
         c.getSystemService(Context.CLIPBOARD_SERVICE);
 
-    if(clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-      Log.d(getLogTag(), "Got plaintxt");
-      ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+    CharSequence value = null;
 
-      JSObject ret = new JSObject();
-      ret.put("value", item.getText());
-      call.success(ret);
-    } else {
-      Log.d(getLogTag(), "Not plaintext!");
-      ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-      String value = item.coerceToText(this.getContext()).toString();
-      JSObject ret = new JSObject();
-      ret.put("value", value);
-      call.success(ret);
+    if (clipboard.hasPrimaryClip()) {
+      if(clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+        Logger.debug(getLogTag(), "Got plaintxt");
+        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+        value = item.getText();
+      } else {
+        Logger.debug(getLogTag(), "Not plaintext!");
+        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+        value = item.coerceToText(this.getContext()).toString();
+      }
     }
+
+    JSObject ret = new JSObject();
+    String type = "text/plain";
+    ret.put("value", value != null ? value : "");
+    if (value != null && value.toString().startsWith("data:")) {
+      type = value.toString().split(";")[0].split(":")[1];
+    }
+    ret.put("type", type);
+
+    call.success(ret);
   }
 }

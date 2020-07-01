@@ -93,7 +93,7 @@
 
 - (void)notifyListeners:(NSString *)eventName data:(NSDictionary<NSString *,id> *)data retainUntilConsumed:(BOOL)retain {
   NSArray<CAPPluginCall *> *listenersForEvent = [self.eventListeners objectForKey:eventName];
-  if(listenersForEvent == nil) {
+  if(listenersForEvent == nil || [listenersForEvent count] == 0) {
     if (retain == YES) {
       [self.retainedEventArguments setObject:data forKey:eventName];
     }
@@ -120,6 +120,10 @@
   [self.bridge releaseCallWithCallbackId:callbackId];
 }
 
+- (void)removeAllListeners:(CAPPluginCall *)call {
+  [self.eventListeners removeAllObjects];
+}
+
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
   NSArray<CAPPluginCall *>* listeners = [self.eventListeners objectForKey:eventName];
   return listeners;
@@ -141,6 +145,14 @@
   vc.popoverPresentationController.sourceRect = CGRectMake(self.bridge.viewController.view.center.x, self.bridge.viewController.view.center.y, 0, 0);
   vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
   vc.popoverPresentationController.permittedArrowDirections = 0;
+}
+
+-(BOOL)supportsPopover {
+  if (@available(iOS 13, *)) {
+    return YES;
+  } else {
+    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
+  }
 }
 
 @end
