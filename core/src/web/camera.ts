@@ -108,7 +108,10 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
       if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
         reader.readAsDataURL(file);
       } else {
-        reject('Camera result type not supported on this platform. Use DataUrl or Base64');
+        resolve({
+          webPath: URL.createObjectURL(file),
+          format: format
+        });
         cleanup();
       }
     });
