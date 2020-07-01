@@ -315,7 +315,7 @@ export interface CameraOptions {
    * Web only: whether to use the PWA Element experience or file input. The default
    * is to use file input experience. Learn more about PWA Elements: https://capacitor.ionicframework.com/docs/pwa-elements/
    */
-  webUsePWAElements?: boolean;
+  webUseInput?: boolean;
 }
 
 export enum CameraSource {

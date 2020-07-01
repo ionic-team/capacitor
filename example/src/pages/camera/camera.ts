@@ -72,7 +72,8 @@ export class CameraPage {
       quality: 90,
       allowEditing: true,
       resultType: CameraResultType.DataUrl,
-      webUsePWAElements: true
+      webUseInput: false,
+      source: CameraSource.Camera
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));

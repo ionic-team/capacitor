@@ -19,7 +19,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
   async getPhoto(options: CameraOptions): Promise<CameraPhoto> {
     return new Promise<CameraPhoto>(async (resolve, reject) => {
-      if (options.webUsePWAElements === true && options.source === CameraSource.Camera) {
+      if (options.webUseInput === false && options.source === CameraSource.Camera) {
         const cameraModal: any = document.createElement('pwa-camera-modal');
         document.body.appendChild(cameraModal);
         try {
