@@ -52,13 +52,18 @@ jobs:
   test-ios:
     runs-on: macos-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: ./ios
+    strategy:
+      matrix:
+        xcode:
+          - /Applications/Xcode_11.6_beta.app
+          - /Applications/Xcode_11.5.app
     steps:
+      - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/checkout@v2
       - run: pod lib lint --allow-warnings Capacitor.podspec
+        working-directory: ./ios
       - run: pod lib lint --allow-warnings CapacitorCordova.podspec
+        working-directory: ./ios
   test-android:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -67,4 +72,4 @@ jobs:
         working-directory: ./android
     steps:
       - uses: actions/checkout@v2
-      - run: ./gradlew clean build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
+      - run: ./gradlew clean test build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true

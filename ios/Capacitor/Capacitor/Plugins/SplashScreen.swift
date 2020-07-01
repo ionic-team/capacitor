@@ -183,6 +183,8 @@ public class CAPSplashScreenPlugin: CAPPlugin {
             self.hideSplash(fadeOutDuration: fadeOutDuration, isLaunchSplash: isLaunchSplash)
             completion()
           }
+        } else {
+            completion()
         }
       }
     }
@@ -196,7 +198,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     if isLaunchSplash, isVisible {
       CAPLog.print("SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. " +
             "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). " +
-            "Read more at https://capacitor.ionicframework.com/docs/apis/splash-screen/#hiding-the-splash-screen")
+            "Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen")
     }
     if !isVisible { return }
     DispatchQueue.main.async {
