@@ -5,50 +5,59 @@ import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, log, logError, logFatal, logInfo, runTask, writePrettyJSON } from '../common';
+import { check, checkAppConfig, checkPackage, checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runCommand, runPlatformHook, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';
 import { resolve } from 'path';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
-
-  const platformName = await config.askPlatform(
-    selectedPlatformName,
-    `Please choose a platform to add:`
-  );
-
-  if (platformName === config.web.name) {
-    webWarning();
-    return;
-  }
-
-  const existingPlatformDir = config.platformDirExists(platformName);
-  if (existingPlatformDir) {
-    logFatal(`"${platformName}" platform already exists.
-    To add a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.
-    WARNING! your native IDE project will be completely removed.`);
-  }
-
-  try {
-    await check(
-      config,
-      [checkPackage, checkAppConfig, ...addChecks(config, platformName)]
+  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+    const platformFolder = resolvePlatform(config, selectedPlatformName);
+    if (platformFolder) {
+      const result = await runPlatformHook(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:add`);
+      log(result);
+    } else {
+      logError(`platform ${selectedPlatformName} not found`);
+    }
+  } else {
+    const platformName = await config.askPlatform(
+      selectedPlatformName,
+      `Please choose a platform to add:`
     );
-    await generateCapacitorConfig(config);
-    await check(config, [checkWebDir]);
-    await doAdd(config, platformName);
-    await editPlatforms(config, platformName);
 
-    if (shouldSync(config, platformName)) {
-      await sync(config, platformName, false);
+    if (platformName === config.web.name) {
+      webWarning();
+      return;
     }
 
-    if (platformName === config.ios.name || platformName === config.android.name) {
-      log(chalk`\nNow you can run {green {bold npx cap open ${platformName}}} to launch ${platformName === config.ios.name ? 'Xcode' : 'Android Studio'}`);
+    const existingPlatformDir = config.platformDirExists(platformName);
+    if (existingPlatformDir) {
+      logFatal(`"${platformName}" platform already exists.
+      To add a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.
+      WARNING! your native IDE project will be completely removed.`);
     }
-  } catch (e) {
-    logFatal(e);
+
+    try {
+      await check(
+        config,
+        [checkPackage, checkAppConfig, ...addChecks(config, platformName)]
+      );
+      await generateCapacitorConfig(config);
+      await check(config, [checkWebDir]);
+      await doAdd(config, platformName);
+      await editPlatforms(config, platformName);
+
+      if (shouldSync(config, platformName)) {
+        await sync(config, platformName, false);
+      }
+
+      if (platformName === config.ios.name || platformName === config.android.name) {
+        log(chalk`\nNow you can run {green {bold npx cap open ${platformName}}} to launch ${platformName === config.ios.name ? 'Xcode' : 'Android Studio'}`);
+      }
+    } catch (e) {
+      logFatal(e);
+    }
   }
 }
 
