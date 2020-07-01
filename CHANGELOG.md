@@ -1,3 +1,60 @@
+## [2.2.1](https://github.com/ionic-team/capacitor/compare/2.2.0...2.2.1) (2020-07-01)
+
+
+### Bug Fixes
+
+* fix: revert static Config class (#3126) ([d104e9a](https://github.com/ionic-team/capacitor/commit/d104e9a)), closes [#3126](https://github.com/ionic-team/capacitor/issues/3126)
+* fix(android): LocalNotification action not dismissing notification (#3112) ([6f5504b](https://github.com/ionic-team/capacitor/commit/6f5504b)), closes [#3112](https://github.com/ionic-team/capacitor/issues/3112)
+* fix(iOS): Making permissions switch statements exhaustive & supporting new iOS 14 cases (#3160) ([f1d8c8c](https://github.com/ionic-team/capacitor/commit/f1d8c8c)), closes [#3160](https://github.com/ionic-team/capacitor/issues/3160)
+* fix(SplashScreen): show method not resolving if autoHide is false (#3144) ([28a0e42](https://github.com/ionic-team/capacitor/commit/28a0e42)), closes [#3144](https://github.com/ionic-team/capacitor/issues/3144)
+
+
+### Docs
+
+* docs(cli): clarify "missing web assets directory" error message (#3131) ([da8b8a0](https://github.com/ionic-team/capacitor/commit/da8b8a0)), closes [#3131](https://github.com/ionic-team/capacitor/issues/3131)
+* docs(contributing): outline difference between issues & discussions (#3083) ([4617908](https://github.com/ionic-team/capacitor/commit/4617908)), closes [#3083](https://github.com/ionic-team/capacitor/issues/3083)
+
+
+### Chores
+
+* chore: remove package-lock.json files (#3093) ([9cb36bb](https://github.com/ionic-team/capacitor/commit/9cb36bb)), closes [#3093](https://github.com/ionic-team/capacitor/issues/3093)
+* chore: update capacitor twitter url (#3099) ([782e57a](https://github.com/ionic-team/capacitor/commit/782e57a)), closes [#3099](https://github.com/ionic-team/capacitor/issues/3099)
+* chore: Update changelog for 2.2.0 ([dfe4239](https://github.com/ionic-team/capacitor/commit/dfe4239))
+* chore: update ios and android peerDependencies ([12daa6a](https://github.com/ionic-team/capacitor/commit/12daa6a))
+* chore: update site links (#3152) ([cdd0337](https://github.com/ionic-team/capacitor/commit/cdd0337)), closes [#3152](https://github.com/ionic-team/capacitor/issues/3152)
+* chore: Update the location of capacitor pods for IonicRunner (#3120) ([937e3a2](https://github.com/ionic-team/capacitor/commit/937e3a2)), closes [#3120](https://github.com/ionic-team/capacitor/issues/3120)
+* chore(android): update gradle wrapper to 5.6.4 (#3004) ([3a2244c](https://github.com/ionic-team/capacitor/commit/3a2244c)), closes [#3004](https://github.com/ionic-team/capacitor/issues/3004)
+* chore(ci): add core to CI tests (#3094) ([26e5e74](https://github.com/ionic-team/capacitor/commit/26e5e74)), closes [#3094](https://github.com/ionic-team/capacitor/issues/3094)
+* chore(ci): test multiple xcode versions (#3154) ([7b9ac92](https://github.com/ionic-team/capacitor/commit/7b9ac92)), closes [#3154](https://github.com/ionic-team/capacitor/issues/3154)
+* chore(cli): cleanup doctor output (#3096) ([c2adf4c](https://github.com/ionic-team/capacitor/commit/c2adf4c)), closes [#3096](https://github.com/ionic-team/capacitor/issues/3096)
+* chore(cli): read plugin podspec values from package.json (#3092) ([2e61a9a](https://github.com/ionic-team/capacitor/commit/2e61a9a)), closes [#3092](https://github.com/ionic-team/capacitor/issues/3092)
+* chore(e2e): remove for now (#3086) ([0e33ca4](https://github.com/ionic-team/capacitor/commit/0e33ca4)), closes [#3086](https://github.com/ionic-team/capacitor/issues/3086)
+* chore(github): add link to community proposals ([048b07e](https://github.com/ionic-team/capacitor/commit/048b07e))
+* chore(github): add needs-reply workflows ([e97fd48](https://github.com/ionic-team/capacitor/commit/e97fd48))
+* chore(github): add push handler for capacitor bot ([d2b6513](https://github.com/ionic-team/capacitor/commit/d2b6513))
+* chore(github): allow blank issues ([53c0c15](https://github.com/ionic-team/capacitor/commit/53c0c15))
+* chore(github): change new contributor commit message ([7e36434](https://github.com/ionic-team/capacitor/commit/7e36434))
+* chore(github): checkout for capacitor bot ([d4b8457](https://github.com/ionic-team/capacitor/commit/d4b8457))
+* chore(github): exclude Ionitron from contributors script ([fffa487](https://github.com/ionic-team/capacitor/commit/fffa487))
+* chore(github): hook up capacitor-bot ([c5878a8](https://github.com/ionic-team/capacitor/commit/c5878a8))
+* chore(github): lock in bot for now ([9534707](https://github.com/ionic-team/capacitor/commit/9534707))
+* chore(github): remove duplicate section ([615225a](https://github.com/ionic-team/capacitor/commit/615225a))
+* chore(github): update needs-reply label name ([9bd353c](https://github.com/ionic-team/capacitor/commit/9bd353c))
+* chore(github): use config-based bot ([673344d](https://github.com/ionic-team/capacitor/commit/673344d))
+* chore(readme): add new contributor (#3110) ([c04d8c3](https://github.com/ionic-team/capacitor/commit/c04d8c3)), closes [#3110](https://github.com/ionic-team/capacitor/issues/3110)
+* chore(readme): add new contributor (#3150) ([0bc0152](https://github.com/ionic-team/capacitor/commit/0bc0152)), closes [#3150](https://github.com/ionic-team/capacitor/issues/3150)
+* chore(readme): add new contributor (#3173) ([fe3f552](https://github.com/ionic-team/capacitor/commit/fe3f552)), closes [#3173](https://github.com/ionic-team/capacitor/issues/3173)
+* chore(readme): add new contributor (#3185) ([84ca1ed](https://github.com/ionic-team/capacitor/commit/84ca1ed)), closes [#3185](https://github.com/ionic-team/capacitor/issues/3185)
+* chore(readme): add new contributor (#3190) ([ce258f2](https://github.com/ionic-team/capacitor/commit/ce258f2)), closes [#3190](https://github.com/ionic-team/capacitor/issues/3190)
+* chore(readme): show contributors in readme (#3097) ([c4d749f](https://github.com/ionic-team/capacitor/commit/c4d749f)), closes [#3097](https://github.com/ionic-team/capacitor/issues/3097)
+* chore(site): remove from repo (#3138) ([7c82ad3](https://github.com/ionic-team/capacitor/commit/7c82ad3)), closes [#3138](https://github.com/ionic-team/capacitor/issues/3138)
+* chore(test): increase timeout ([c501208](https://github.com/ionic-team/capacitor/commit/c501208))
+* test(android): add tests for PluginMethodHandler (#3153) ([dd7077e](https://github.com/ionic-team/capacitor/commit/dd7077e)), closes [#3153](https://github.com/ionic-team/capacitor/issues/3153)
+* test(android): setup tests, test JSObject (#2508) ([5a37496](https://github.com/ionic-team/capacitor/commit/5a37496)), closes [#2508](https://github.com/ionic-team/capacitor/issues/2508)
+* refactor(android): MessageHandler formatting and simplifying (#2510) ([befe798](https://github.com/ionic-team/capacitor/commit/befe798)), closes [#2510](https://github.com/ionic-team/capacitor/issues/2510)
+
+
+
 ## [2.2.0](https://github.com/ionic-team/capacitor/compare/2.1.2...2.2.0) (2020-06-10)
 
 
