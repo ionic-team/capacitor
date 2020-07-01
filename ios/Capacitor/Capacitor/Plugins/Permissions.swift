@@ -7,7 +7,8 @@ import UserNotifications
  */
 @objc(CAPPermissionsPlugin)
 public class CAPPermissionsPlugin: CAPPlugin {
-
+  fileprivate static let uknownPermissionValue = "Unknown permission value"
+  
   @objc func query(_ call: CAPPluginCall) {
     guard let name = call.getString("name") else {
       call.reject("Must provide a permission to check")
@@ -35,14 +36,17 @@ public class CAPPermissionsPlugin: CAPPlugin {
   func checkCamera(_ call: CAPPluginCall) {
     let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
     
-    var ret = "prompt"
+    let ret: String
     switch (authStatus) {
-    case .notDetermined:
-      ret = "prompt"
     case .denied, .restricted:
       ret = "denied"
     case .authorized:
       ret = "granted"
+    case .notDetermined:
+      ret = "prompt"
+    @unknown default:
+      call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+      return
     }
 
     call.resolve([
@@ -52,31 +56,44 @@ public class CAPPermissionsPlugin: CAPPlugin {
 
   func checkPhotos(_ call: CAPPluginCall) {
     let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-
-    var ret = "prompt"
+    
+    let ret: String
     switch (photoAuthorizationStatus) {
-      case .notDetermined:
-        ret = "prompt"
-      case .denied, .restricted:
-        ret = "denied"
-      case .authorized:
-        ret = "granted"
+    case .denied, .restricted:
+      ret = "denied"
+    case .authorized:
+      ret = "granted"
+    #if swift(>=5.3)
+    case .limited:
+      // TODO: address this new case properly
+      #warning(".limited != .authorized, authorization status should be revisited for iOS 14")
+      ret = "granted"
+    #endif
+    case .notDetermined:
+      ret = "prompt"
+    @unknown default:
+      call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+      return
     }
+    
     call.resolve([
       "state": ret
     ])
   }
 
   func checkGeolocation(_ call: CAPPluginCall) {
-    var ret = "prompt"
+    let ret: String
     if CLLocationManager.locationServicesEnabled() {
         switch CLLocationManager.authorizationStatus() {
-        case .notDetermined:
-          ret = "prompt"
         case .denied, .restricted:
           ret = "denied"
         case .authorizedAlways, .authorizedWhenInUse:
           ret = "granted"
+        case .notDetermined:
+          ret = "prompt"
+        @unknown default:
+          call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+          return
         }
     } else {
       ret = "denied"
@@ -89,14 +106,21 @@ public class CAPPermissionsPlugin: CAPPlugin {
 
   func checkNotifications(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { settings in
-      var ret = "prompt"
+      let ret: String
       switch settings.authorizationStatus {
       case .authorized, .provisional:
         ret = "granted"
+      #if swift(>=5.3)
+      case .ephemeral:
+        ret = "granted"
+      #endif
       case .denied:
         ret = "denied"
       case .notDetermined:
         ret = "prompt"
+      @unknown default:
+        call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+        return
       }
       
       call.resolve([
@@ -114,14 +138,17 @@ public class CAPPermissionsPlugin: CAPPlugin {
   func checkMicrophone(_ call: CAPPluginCall) {
     let microStatus = AVCaptureDevice.authorizationStatus(for: .audio)
 
-    var ret = "prompt"
+    let ret: String
     switch (microStatus) {
-        case .authorized:
-          ret = "granted"
-        case .denied, .restricted:
-          ret = "denied"
-        case .notDetermined:
-          ret = "prompt"
+    case .authorized:
+      ret = "granted"
+    case .denied, .restricted:
+      ret = "denied"
+    case .notDetermined:
+      ret = "prompt"
+    @unknown default:
+      call.reject(CAPPermissionsPlugin.uknownPermissionValue)
+      return
     }
 
     call.resolve([
