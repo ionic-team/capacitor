@@ -42,10 +42,7 @@ public class ImageUtils {
       newHeight = maxHeight;
     }
 
-    newWidth = Math.round(newWidth);
-    newHeight = Math.round(newHeight);
-
-    return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
+    return Bitmap.createScaledBitmap(bitmap, Math.round(newWidth), Math.round(newHeight), false);
   }
 
   /**
