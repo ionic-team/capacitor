@@ -20,7 +20,11 @@ public class CAPStatusBarPlugin: CAPPlugin {
       if style == "DARK" {
         bridge.setStatusBarStyle(.lightContent)
       } else if style == "LIGHT" {
-        bridge.setStatusBarStyle(.default)
+        if #available(iOS 13.0, *) {
+          bridge.setStatusBarStyle(.darkContent)
+        } else {
+          bridge.setStatusBarStyle(.default)
+        }
       }
     }
     
@@ -31,27 +35,62 @@ public class CAPStatusBarPlugin: CAPPlugin {
     call.unimplemented()
   }
   
+  func setAnimation(_ call: CAPPluginCall) {
+    let animation = call.getString("animation", "SLIDE")
+    if animation == "FADE" {
+      bridge.setStatusBarAnimation(.fade)
+    } else if animation == "NONE" {
+      bridge.setStatusBarAnimation(.none)
+    } else {
+      bridge.setStatusBarAnimation(.slide)
+    }
+  }
+  
   @objc func hide(_ call: CAPPluginCall) {
+    setAnimation(call)
     bridge.setStatusBarVisible(false)
     call.success()
   }
   
   @objc func show(_ call: CAPPluginCall) {
+    setAnimation(call)
     bridge.setStatusBarVisible(true)
     call.success()
   }
 
   @objc func getInfo(_ call: CAPPluginCall) {
-    let style: String
-    if bridge.getStatusBarStyle() == .default {
-      style = "LIGHT"
-    } else {
-      style = "DARK"
+    DispatchQueue.main.async {
+      let style: String
+      if #available(iOS 13.0, *) {
+        switch self.bridge.getStatusBarStyle() {
+        case .default:
+          if self.bridge.getUserInterfaceStyle() == UIUserInterfaceStyle.dark {
+            style = "DARK"
+          } else {
+            style = "LIGHT"
+          }
+        case .lightContent:
+          style = "DARK"
+        default:
+          style = "LIGHT"
+        }
+      } else {
+        if self.bridge.getStatusBarStyle() == .lightContent {
+          style = "DARK"
+        } else {
+          style = "LIGHT"
+        }
+      }
+
+      call.success([
+        "visible": self.bridge.getStatusBarVisible(),
+        "style": style
+      ])
     }
-    call.success([
-      "visible": bridge.getStatusBarVisible(),
-      "style": style
-    ])
+  }
+
+  @objc func setOverlaysWebView(_ call: CAPPluginCall) {
+    call.unimplemented()
   }
 }
 

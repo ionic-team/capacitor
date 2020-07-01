@@ -84,7 +84,8 @@ public class PluginHandle {
    */
   public void invoke(String methodName, PluginCall call) throws PluginLoadException,
                                                                 InvalidPluginMethodException,
-                                                                PluginInvocationException {
+                                                                InvocationTargetException,
+                                                                IllegalAccessException {
     if(this.instance == null) {
       // Can throw PluginLoadException
       this.load();
@@ -95,11 +96,8 @@ public class PluginHandle {
       throw new InvalidPluginMethodException("No method " + methodName + " found for plugin " + pluginClass.getName());
     }
 
-    try {
-      methodMeta.getMethod().invoke(this.instance, call);
-    } catch(InvocationTargetException | IllegalAccessException ex) {
-      throw new PluginInvocationException("Unable to invoke method " + methodName + " on plugin " + pluginClass.getName(), ex);
-    }
+    methodMeta.getMethod().invoke(this.instance, call);
+
   }
 
   /**

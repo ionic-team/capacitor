@@ -21,15 +21,10 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
   /**
    * Request permissions to send notifications
    */
-  public func requestPermissions() {
-    // Override point for customization after application launch.
+  public func requestPermissions(with completion: ((Bool, Error?) -> Void)? = nil) {
     let center = UNUserNotificationCenter.current()
     center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
-      // Enable or disable features based on authorization.
-    }
-
-    DispatchQueue.main.async {
-      UIApplication.shared.registerForRemoteNotifications()
+        completion?(granted, error)
     }
   }
 

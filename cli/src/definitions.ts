@@ -23,6 +23,10 @@ export interface ExternalConfig {
     cordovaLinkerFlags?: string[];
   };
   npmClient?: string;
+  cordova?: any;
+  server?: {
+    cleartext?: boolean;
+  };
 }
 
 export interface AppPluginsConfig {

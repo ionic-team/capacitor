@@ -6,7 +6,7 @@ import { copyWeb } from '../web/copy';
 import { copyElectron } from '../electron/copy';
 import { basename, join, relative, resolve } from 'path';
 import { copy as fsCopy, remove } from 'fs-extra';
-import { copyCordovaJSFiles } from '../cordova'
+import { getCordovaPlugins, handleCordovaPluginsJS, writeCordovaAndroidManifest } from '../cordova';
 import chalk from 'chalk';
 
 export async function copyCommand(config: Config, selectedPlatformName: string) {
@@ -34,12 +34,15 @@ export async function copy(config: Config, platformName: string) {
       await copyWebDir(config, config.ios.webDirAbs);
       await copyNativeBridge(config, config.ios.webDirAbs);
       await copyCapacitorConfig(config, join(config.ios.platformDir, config.ios.nativeProjectName, config.ios.nativeProjectName));
-      await copyCordovaJSFiles(config, platformName);
+      const cordovaPlugins = await getCordovaPlugins(config, platformName);
+      await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
       await copyWebDir(config, config.android.webDirAbs);
       await copyNativeBridge(config, config.android.webDirAbs);
       await copyCapacitorConfig(config, join(config.android.platformDir, 'app/src/main/assets'));
-      await copyCordovaJSFiles(config, platformName);
+      const cordovaPlugins = await getCordovaPlugins(config, platformName);
+      await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
+      await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
     } else if (platformName === config.web.name) {
       await copyWeb(config);
     } else if (platformName === config.electron.name) {

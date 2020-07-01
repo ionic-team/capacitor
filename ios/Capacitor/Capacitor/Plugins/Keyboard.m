@@ -31,8 +31,11 @@ typedef enum : NSUInteger {
 
 @interface CAPKeyboard () <UIScrollViewDelegate>
 
-@property (nonatomic, readwrite, assign) BOOL keyboardIsVisible;
+@property (readwrite, assign, nonatomic) BOOL disableScroll;
+@property (readwrite, assign, nonatomic) BOOL hideFormAccessoryBar;
+@property (readwrite, assign, nonatomic) BOOL keyboardIsVisible;
 @property (nonatomic, readwrite) ResizePolicy keyboardResizes;
+@property (readwrite, assign, nonatomic) NSString* keyboardStyle;
 @property (nonatomic, readwrite) int paddingBottom;
 
 @end
@@ -40,14 +43,23 @@ typedef enum : NSUInteger {
 @implementation CAPKeyboard
 
 NSTimer *hideTimer;
+NSString* UIClassString;
+NSString* WKClassString;
+NSString* UITraitsClassString;
 
 - (void)load
 {
+  if ([self.bridge.config getValue:@"ios.scrollEnabled"] != nil) {
+    self.disableScroll = ![[self.bridge.config getValue:@"ios.scrollEnabled"] boolValue];
+  }
+  UIClassString = [@[@"UI", @"Web", @"Browser", @"View"] componentsJoinedByString:@""];
+  WKClassString = [@[@"WK", @"Content", @"View"] componentsJoinedByString:@""];
+  UITraitsClassString = [@[@"UI", @"Text", @"Input", @"Traits"] componentsJoinedByString:@""];
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarDidChangeFrame:) name:UIApplicationDidChangeStatusBarFrameNotification object: nil];
     
   NSString * style = [self getConfigValue:@"style"];
   if ([style isEqualToString:@"dark"]) {
-    [self setKeyboardAppearanceDark];
+    [self changeKeyboardStyle:style.uppercaseString];
   }
 
   self.keyboardResizes = ResizeNative;
@@ -104,20 +116,22 @@ NSTimer *hideTimer;
     [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillHide"];
     [self notifyListeners:@"keyboardWillHide" data:nil];
   }];
+  [[NSRunLoop currentRunLoop] addTimer:hideTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)onKeyboardWillShow:(NSNotification *)notification
 {
+  [self changeKeyboardStyle:self.keyboardStyle];
   if (hideTimer != nil) {
     [hideTimer invalidate];
   }
   CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
-  
+
   double duration = [[notification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue]+0.2;
   [self setKeyboardHeight:height delay:duration];
   [self resetScrollView];
-  
+
   NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardWillShow" data:data];
   NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
@@ -128,9 +142,9 @@ NSTimer *hideTimer;
 {
   CGRect rect = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
   double height = rect.size.height;
-  
+
   [self resetScrollView];
-  
+
   NSString * data = [NSString stringWithFormat:@"{ 'keyboardHeight': %d }", (int)height];
   [self.bridge triggerWindowJSEventWithEventName:@"keyboardDidShow" data:data];
   NSDictionary * kbData = @{@"keyboardHeight": [NSNumber numberWithDouble:height]};
@@ -149,16 +163,16 @@ NSTimer *hideTimer;
   if (self.paddingBottom == height) {
     return;
   }
-  
+
   self.paddingBottom = height;
-  
+
   __weak CAPKeyboard* weakSelf = self;
   SEL action = @selector(_updateFrame);
   [NSObject cancelPreviousPerformRequestsWithTarget:weakSelf selector:action object:nil];
   if (delay == 0) {
     [self _updateFrame];
   } else {
-    [weakSelf performSelector:action withObject:nil afterDelay:delay];
+    [weakSelf performSelector:action withObject:nil afterDelay:delay inModes:@[NSRunLoopCommonModes]];
   }
 }
 
@@ -217,31 +231,45 @@ static IMP WKOriginalImp;
   if (hideFormAccessoryBar == _hideFormAccessoryBar) {
     return;
   }
-  
-  NSString* UIClassString = [@[@"UI", @"Web", @"Browser", @"View"] componentsJoinedByString:@""];
-  NSString* WKClassString = [@[@"WK", @"Content", @"View"] componentsJoinedByString:@""];
-  
   Method UIMethod = class_getInstanceMethod(NSClassFromString(UIClassString), @selector(inputAccessoryView));
   Method WKMethod = class_getInstanceMethod(NSClassFromString(WKClassString), @selector(inputAccessoryView));
-  
   if (hideFormAccessoryBar) {
     UIOriginalImp = method_getImplementation(UIMethod);
     WKOriginalImp = method_getImplementation(WKMethod);
-    
     IMP newImp = imp_implementationWithBlock(^(id _s) {
       return nil;
     });
-    
     method_setImplementation(UIMethod, newImp);
     method_setImplementation(WKMethod, newImp);
   } else {
     method_setImplementation(UIMethod, UIOriginalImp);
     method_setImplementation(WKMethod, WKOriginalImp);
   }
-  
   _hideFormAccessoryBar = hideFormAccessoryBar;
 }
 
+#pragma mark scroll
+
+- (void)setDisableScroll:(BOOL)disableScroll {
+  if (disableScroll == _disableScroll) {
+    return;
+  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (disableScroll) {
+      self.webView.scrollView.scrollEnabled = NO;
+      self.webView.scrollView.delegate = self;
+    }
+    else {
+      self.webView.scrollView.scrollEnabled = YES;
+      self.webView.scrollView.delegate = nil;
+    }
+  });
+  _disableScroll = disableScroll;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+  [scrollView setContentOffset: CGPointZero];
+}
 
 #pragma mark Plugin interface
 
@@ -267,20 +295,49 @@ static IMP WKOriginalImp;
   [call unimplemented];
 }
 
-- (void)setKeyboardAppearanceDark
+- (void)setStyle:(CAPPluginCall *)call
 {
-  IMP darkImp = imp_implementationWithBlock(^(id _s) {
+  self.keyboardStyle = [self getString:call field:@"style" defaultValue:@"LIGHT"];
+  [call success];
+}
+
+- (void)setResizeMode:(CAPPluginCall *)call
+{
+  NSString * mode = [self getString:call field:@"mode" defaultValue:@"none"];
+  if ([mode isEqualToString:@"ionic"]) {
+    self.keyboardResizes = ResizeIonic;
+  } else if ([mode isEqualToString:@"body"]) {
+    self.keyboardResizes = ResizeBody;
+  } else if ([mode isEqualToString:@"native"]) {
+    self.keyboardResizes = ResizeNative;
+  } else {
+    self.keyboardResizes = ResizeNone;
+  }
+  [call success];
+}
+
+- (void)setScroll:(CAPPluginCall *)call {
+  self.disableScroll = [self getBool:call field:@"isDisabled" defaultValue:FALSE];
+  [call success];
+}
+
+- (void)changeKeyboardStyle:(NSString*)style
+{
+  IMP newImp = [style isEqualToString:@"DARK"] ? imp_implementationWithBlock(^(id _s) {
     return UIKeyboardAppearanceDark;
+  }) : imp_implementationWithBlock(^(id _s) {
+    return UIKeyboardAppearanceLight;
   });
-  for (NSString* classString in @[@"WKContentView", @"UITextInputTraits"]) {
+  for (NSString* classString in @[WKClassString, UITraitsClassString]) {
     Class c = NSClassFromString(classString);
     Method m = class_getInstanceMethod(c, @selector(keyboardAppearance));
     if (m != NULL) {
-      method_setImplementation(m, darkImp);
+      method_setImplementation(m, newImp);
     } else {
-      class_addMethod(c, @selector(keyboardAppearance), darkImp, "l@:");
+      class_addMethod(c, @selector(keyboardAppearance), newImp, "l@:");
     }
   }
+  _keyboardStyle = style;
 }
 
 #pragma mark dealloc

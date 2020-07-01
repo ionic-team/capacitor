@@ -8,14 +8,14 @@ describe.each([false, true])('Update: Android (monoRepoLike: %p)', (monoRepoLike
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(50000);
+    jest.setTimeout(150000);
     appDirObj = await makeAppDir(monoRepoLike);
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm`);
     await run(appDir, `add android`);
     // Redundant, because add does this, but called explicitly for thoroughness
-    await updateCommand(makeConfig(appDir), 'android');
+    await updateCommand(makeConfig(appDir), 'android', false);
     FS = new MappedFS(appDir);
   });
 

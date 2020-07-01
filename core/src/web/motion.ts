@@ -5,7 +5,7 @@ import {
   /*
   MotionEventResult,
   MotionWatchAccelCallback,
-  MotionWatchOrientationCallback, 
+  MotionWatchOrientationCallback,
   MotionOrientationEventResult
   */
 } from '../core-plugin-definitions';

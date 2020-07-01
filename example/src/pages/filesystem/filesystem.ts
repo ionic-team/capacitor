@@ -27,18 +27,18 @@ export class FilesystemPage {
     console.log('ionViewDidLoad FilesystemPage');
   }
 
-  fileWrite() {
+  async fileWrite() {
     try {
-      Plugins.Filesystem.writeFile({
+      const result = await Plugins.Filesystem.writeFile({
         path: 'secrets/text.txt',
         data: "This is a test",
         directory: FilesystemDirectory.Documents,
         encoding: FilesystemEncoding.UTF8
       });
+      console.log('Wrote file', result);
     } catch(e) {
       console.error('Unable to write file (press mkdir first, silly)', e);
     }
-    console.log('Wrote file');
   }
 
   async fileRead() {
@@ -73,7 +73,7 @@ export class FilesystemPage {
       let ret = await Plugins.Filesystem.mkdir({
         path: 'secrets',
         directory: FilesystemDirectory.Documents,
-        createIntermediateDirectories: false
+        recursive: false
       });
       console.log('Made dir', ret);
     } catch(e) {
@@ -109,7 +109,7 @@ export class FilesystemPage {
     try {
       let ret = await Plugins.Filesystem.getUri({
         path: 'text.txt',
-        directory: FilesystemDirectory.Application
+        directory: FilesystemDirectory.Data
       });
       alert(ret.uri);
     } catch(e) {
@@ -131,12 +131,13 @@ export class FilesystemPage {
 
   async directoryTest() {
     try {
-      await Plugins.Filesystem.writeFile({
+      const result = await Plugins.Filesystem.writeFile({
         path: 'text.txt',
         data: "This is a test",
         directory: FilesystemDirectory.Data,
         encoding: FilesystemEncoding.UTF8
       });
+      console.log('wrote file', result);
       let stat = await Plugins.Filesystem.stat({
         path: 'text.txt',
         directory: FilesystemDirectory.Data
@@ -207,7 +208,7 @@ export class FilesystemPage {
   mkdirAll(paths) {
     return this.doAll(paths, path => Plugins.Filesystem.mkdir({
       path,
-      createIntermediateDirectories: true,
+      recursive: true,
     }));
   }
 

@@ -10,10 +10,11 @@
 @interface CAPPluginCallError : NSObject
 
 @property (nonatomic, strong) NSString *message;
+@property (nonatomic, strong) NSString *code;
 @property (nonatomic, strong) NSError *error;
 @property (nonatomic, strong) NSDictionary<NSString *, id> *data;
 
-- (instancetype)initWithMessage:(NSString *)message error:(NSError *)error data:(NSDictionary<NSString *, id>*)data;
+- (instancetype)initWithMessage:(NSString *)message code:(NSString *)code error:(NSError *)error data:(NSDictionary<NSString *, id>*)data;
 
 @end
 

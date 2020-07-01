@@ -1,20 +1,7 @@
 package com.getcapacitor.plugin;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.CoordinatorLayout;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.getcapacitor.Bridge;
 import com.getcapacitor.Dialogs;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -23,11 +10,6 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.ui.ModalsBottomSheetDialogFragment;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
 
 /**
  * Common popup modals
@@ -96,6 +78,7 @@ public class Modals extends Plugin {
     final String okButtonTitle = call.getString("okButtonTitle", "OK");
     final String cancelButtonTitle = call.getString("cancelButtonTitle", "Cancel");
     final String inputPlaceholder = call.getString("inputPlaceholder", "");
+    final String inputText = call.getString("inputText", "");
 
     if(title == null || message == null) {
       call.error("Please provide a title or message for the alert");
@@ -107,7 +90,7 @@ public class Modals extends Plugin {
       return;
     }
 
-    Dialogs.prompt(c, message, title, okButtonTitle, cancelButtonTitle, inputPlaceholder, new Dialogs.OnResultListener() {
+    Dialogs.prompt(c, message, title, okButtonTitle, cancelButtonTitle, inputPlaceholder, inputText, new Dialogs.OnResultListener() {
       @Override
       public void onResult(boolean value, boolean didCancel, String inputValue) {
         JSObject ret = new JSObject();
@@ -141,7 +124,9 @@ public class Modals extends Plugin {
     }
 
     final ModalsBottomSheetDialogFragment fragment = new ModalsBottomSheetDialogFragment();
+    fragment.setTitle(title);
     fragment.setOptions(options);
+    fragment.setCancelable(false);
     fragment.setOnSelectedListener(new ModalsBottomSheetDialogFragment.OnSelectedListener() {
       @Override
       public void onSelected(int index) {

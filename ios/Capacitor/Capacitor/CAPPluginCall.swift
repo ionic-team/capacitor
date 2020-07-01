@@ -26,7 +26,13 @@ public typealias PluginEventListener = CAPPluginCall
   }
   
   @nonobjc func getFloat(_ key: String, _ defaultValue: Float? = nil) -> Float? {
-    return self.options[key] as? Float ?? defaultValue
+    if let floatValue = self.options[key] as? Float {
+        return floatValue
+    }
+    if let doubleValue = self.options[key] as? Double {
+        return Float(doubleValue)
+    }
+    return defaultValue
   }
   
   @nonobjc func getDouble(_ key: String, _ defaultValue: Double? = nil) -> Double? {
@@ -73,15 +79,15 @@ public typealias PluginEventListener = CAPPluginCall
   }
   
   func error(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
-    errorHandler(CAPPluginCallError(message: message, error: error, data: data))
+    errorHandler(CAPPluginCallError(message: message, code: nil, error: error, data: data))
   }
-  
-  func reject(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
-    errorHandler(CAPPluginCallError(message: message, error: error, data: data))
+
+  func reject(_ message: String, _ code: String? = nil, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
+    errorHandler(CAPPluginCallError(message: message, code: code, error: error, data: data))
   }
 
   func unimplemented() {
-    errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, error: nil, data: [:]))
+    errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, code: nil, error: nil, data: [:]))
   }
 }
 

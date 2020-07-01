@@ -23,15 +23,16 @@ export async function check(config: Config, checks: CheckFunction[]): Promise<vo
 }
 
 export async function checkWebDir(config: Config): Promise<string | null> {
-  const invalidFolders = ["", ".", "..", "../", "./"];
+  const invalidFolders = ['', '.', '..', '../', './'];
   if (invalidFolders.includes(config.app.webDir)) {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
   if (!await existsAsync(config.app.webDirAbs)) {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
-    Please create it, and make sure it has an index.html file. You can change
-    the path of this directory in capacitor.config.json.
-    More info: https://capacitor.ionicframework.com/docs/basics/configuring-your-app`;
+    Please create it and make sure it has an index.html file. You can change
+    the path of this directory in capacitor.config.json (webDir option).
+    You may need to compile the web assets for your app (typically 'npm run build').
+    More info: https://capacitorjs.com/docs/basics/building-your-app`;
   }
 
   if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
@@ -181,7 +182,12 @@ export async function getOrCreateConfig(config: Config) {
     appName: config.app.appName,
     bundledWebRuntime: config.app.bundledWebRuntime,
     npmClient: config.cli.npmClient,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir))
+    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
+    plugins: {
+      SplashScreen : {
+        launchShowDuration: 0
+      }
+    }
   });
 
   // Store our newly created or found external config as the default
@@ -301,7 +307,7 @@ export async function getName(config: Config, name: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'name',
-      default: 'App',
+      default: config.app.appName ? config.app.appName : config.app.package && config.app.package.name ? config.app.package.name : 'App',
       message: `App name`
     }]);
     return answers.name;
@@ -314,7 +320,7 @@ export async function getAppId(config: Config, id: string) {
     const answers = await inquirer.prompt([{
       type: 'input',
       name: 'id',
-      default: 'com.example.app',
+      default: config.app.appId ? config.app.appId : 'com.example.app',
       message: 'App Package ID (in Java package format, no dashes)'
     }]);
     return answers.id;
@@ -325,7 +331,7 @@ export async function getAppId(config: Config, id: string) {
 export function getNpmClient(config: Config, npmClient: string): Promise<string> {
   return new Promise(async (resolve) => {
     if (!npmClient) {
-      if (await hasYarn(config)) return resolve('yarn')
+      if (await hasYarn(config)) return resolve('yarn');
       exec('yarn --version', async (err, stdout) => {
         // Don't show prompt if yarn is not installed
         if (err || !isInteractive()) {
@@ -371,31 +377,46 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add ios`);
   log(`  npx cap add electron`);
   log('');
-  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
+  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitorjs.com/docs/basics/workflow`)}\n`);
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+export async function getCoreVersion(config: Config): Promise<string> {
+  const corePackagePath = resolveNode(config, '@capacitor/core', 'package.json');
+  if (!corePackagePath) {
+    logFatal('Unable to find node_modules/@capacitor/core/package.json. Are you sure',
+      '@capacitor/core is installed? This file is currently required for Capacitor to function.');
+  }
+
+  return (await readJSON(corePackagePath)).version;
+}
+
+export async function getCLIVersion(config: Config): Promise<string> {
   const cliPackagePath = resolveNode(config, '@capacitor/cli', 'package.json');
   if (!cliPackagePath) {
     logFatal('Unable to find node_modules/@capacitor/cli/package.json. Are you sure',
       '@capacitor/cli is installed? This file is currently required for Capacitor to function.');
-    return;
   }
 
+  return (await readJSON(cliPackagePath)).version;
+}
+
+export async function getPlatformVersion(config: Config, platform: string): Promise<string> {
   const platformPackagePath = resolveNode(config, `@capacitor/${platform}`, 'package.json');
   if (!platformPackagePath) {
     logFatal(`Unable to find node_modules/@capacitor/${platform}/package.json. Are you sure`,
       `@capacitor/${platform} is installed? This file is currently required for Capacitor to function.`);
-    return;
   }
 
-  const cliVersion = (await readJSON(cliPackagePath)).version;
-  const platformVersion = (await readJSON(platformPackagePath)).version;
+  return (await readJSON(platformPackagePath)).version;
+}
 
-  if (semver.gt(cliVersion, platformVersion)) {
+export async function checkPlatformVersions(config: Config, platform: string) {
+  const coreVersion = await getCoreVersion(config);
+  const platformVersion = await getPlatformVersion(config, platform);
+  if (semver.diff(coreVersion, platformVersion) === 'minor' || semver.diff(coreVersion, platformVersion) === 'major') {
     log('\n');
-    logInfo(`Your @capacitor/cli version is greater than @capacitor/${platform} version`);
-    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/${platform}@${cliVersion}}`}`);
+    logWarn(`Your @capacitor/core version doesn't match your @capacitor/${platform} version`);
+    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`);
   }
 }
 
@@ -418,7 +439,7 @@ export function resolveNode(config: Config, ...pathSegments: any[]): string | nu
   return join(modulePath, ...path);
 }
 
-function resolveNodeFrom(start: string, id: string): string | null {
+export function resolveNodeFrom(start: string, id: string): string | null {
   const rootPath = parse(start).root;
   let basePath = resolve(start);
   let modulePath;
@@ -450,4 +471,14 @@ export const hasYarn = async (config: Config, projectDir?: string) => {
 // Install deps with NPM or Yarn
 export async function installDeps(projectDir: string, deps: string[], config: Config) {
   return runCommand(`cd "${projectDir}" && ${await hasYarn(config, projectDir) ? 'yarn add' : 'npm install --save'} ${deps.join(' ')}`);
+}
+
+export async function checkNPMVersion() {
+  const minVersion = '5.5.0';
+  const version = await runCommand('npm -v');
+  const semver = await import('semver');
+  if (semver.gt(minVersion, version)) {
+    return `Capacitor CLI requires at least NPM ${minVersion}`;
+  }
+  return null;
 }

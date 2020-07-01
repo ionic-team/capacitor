@@ -25,9 +25,10 @@ export class ToastPage {
     console.log('ionViewDidLoad ToastPage');
   }
 
-  async show() {
+  async show(position: 'top' | 'center' | 'bottom') {
     await Toast.show({
-      text: 'Hello!'
+      text: 'Hello!',
+      position,
     });
   }
 }

@@ -1,0 +1,24 @@
+name: Capacitor Bot
+
+on:
+  push:
+    branches: [master]
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created]
+
+jobs:
+  bot:
+    name: ${{ github.event_name }}/${{ github.event.action }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ionic-team/bot@main
+        with:
+          repo-token: ${{ secrets.BOT_TOKEN }}
+        env:
+          GIT_AUTHOR_NAME: Ionitron
+          GIT_AUTHOR_EMAIL: hi@ionicframework.com
+          GIT_COMMITTER_NAME: Ionitron
+          GIT_COMMITTER_EMAIL: hi@ionicframework.com

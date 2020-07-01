@@ -149,12 +149,13 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   async writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     const path: string = this.getPath(options.directory, options.path);
     const data = options.data;
+    const doRecursive = options.recursive;
 
     let occupiedEntry = await this.dbRequest('get', [path]) as EntryObj;
     if (occupiedEntry && occupiedEntry.type === 'directory')
       throw('The supplied path is a directory.');
 
-    // const encoding = options.encoding;
+    const encoding = options.encoding;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
     let parentEntry = await this.dbRequest('get', [parentPath]) as EntryObj;
@@ -162,7 +163,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       const subDirIndex = parentPath.indexOf('/', 1);
       if (subDirIndex !== -1) {
         const parentArgPath = parentPath.substr(subDirIndex);
-        await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true})
+        await this.mkdir({path: parentArgPath, directory: options.directory, recursive: doRecursive});
       }
     }
     const now = Date.now();
@@ -173,10 +174,12 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       size: data.length,
       ctime: now,
       mtime: now,
-      content: data
+      content: !encoding && data.indexOf(',') >= 0 ? data.split(',')[1] : data,
     };
     await this.dbRequest('put', [pathObj]);
-    return {};
+    return {
+      uri: pathObj.path
+    };
   }
 
   /**
@@ -199,8 +202,9 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
 
     let parentEntry = await this.dbRequest('get', [parentPath]) as EntryObj;
     if (parentEntry === undefined) {
-      const parentArgPath = parentPath.substr(parentPath.indexOf('/', 1));
-      await this.mkdir({path: parentArgPath, directory: options.directory, createIntermediateDirectories: true})
+      const parentArgPathIndex = parentPath.indexOf('/', 1);
+      const parentArgPath = parentArgPathIndex !== -1 ? parentPath.substr(parentArgPathIndex) : '/';
+      await this.mkdir({path: parentArgPath, directory: options.directory, recursive: true});
     }
 
     if (occupiedEntry !== undefined) {
@@ -246,7 +250,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    */
   async mkdir(options: MkdirOptions): Promise<MkdirResult> {
     const path: string = this.getPath(options.directory, options.path);
-    const createIntermediateDirectories = options.createIntermediateDirectories;
+    const doRecursive = options.recursive;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
     let depth = (path.match(/\//g) || []).length;
@@ -256,15 +260,15 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       throw Error('Cannot create Root directory');
     if (occupiedEntry !== undefined)
       throw Error('Current directory does already exist.');
-    if (!createIntermediateDirectories && depth !== 2 && parentEntry === undefined)
+    if (!doRecursive && depth !== 2 && parentEntry === undefined)
       throw Error('Parent directory must exist');
 
-    if (createIntermediateDirectories && depth !== 2 && parentEntry === undefined) {
+    if (doRecursive && depth !== 2 && parentEntry === undefined) {
       const parentArgPath = parentPath.substr(parentPath.indexOf('/', 1));
       await this.mkdir({
         path: parentArgPath,
         directory: options.directory,
-        createIntermediateDirectories: createIntermediateDirectories
+        recursive: doRecursive
       });
     }
     const now = Date.now();
@@ -507,7 +511,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
           await this.mkdir({
             path: to,
             directory: toDirectory,
-            createIntermediateDirectories: false,
+            recursive: false,
           });
 
           // Copy the mtime/ctime of a renamed directory

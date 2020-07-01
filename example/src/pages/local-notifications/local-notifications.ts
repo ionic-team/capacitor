@@ -86,6 +86,26 @@ export class LocalNotificationsPage {
     });
   }
 
+  async scheduleNowWithColor() {
+    this.notifs = await Plugins.LocalNotifications.schedule({
+      notifications: [{
+        title: 'Get 10% off!',
+        body: 'Swipe now to learn more',
+        // Get random id to test cancel
+        id: Math.floor(Math.random()*10),
+        sound: 'beep.aiff',
+        attachments: [
+          { id: 'face', url: 'res://public/assets/ionitron.png' }
+        ],
+        actionTypeId: 'OPEN_PRODUCT',
+        extra: {
+          productId: 'PRODUCT-1'
+        },
+        iconColor: '#00ff00'
+      }]
+    });
+  }
+
   async scheduleNowWithIcon() {
     this.notifs = await Plugins.LocalNotifications.schedule({
       notifications: [{
@@ -155,6 +175,20 @@ export class LocalNotificationsPage {
         id: 3,
         schedule: {
           every: 'minute'
+        }
+      }]
+    });
+  }
+
+  async scheduleRepeatingEveryWithValue(value: number) {
+    this.notifs = await Plugins.LocalNotifications.schedule({
+      notifications: [{
+        title: 'Happy Holidays! Last couple minutes.',
+        body: 'Swipe to learn more',
+        id: 4,
+        schedule: {
+          every: 'minute',
+          count: value
         }
       }]
     });

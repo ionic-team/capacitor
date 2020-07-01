@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,6 +127,9 @@ public class Plugin {
    * Set the last saved call to null to free memory
    */
   public void freeSavedCall() {
+    if (!this.savedLastCall.isReleased()) {
+      this.savedLastCall.release(bridge);
+    }
     this.savedLastCall = null;
   }
 
@@ -138,7 +143,7 @@ public class Plugin {
 
   public Object getConfigValue(String key) {
     try {
-      JSONObject plugins = Config.getObject("plugins");
+      JSONObject plugins = bridge.getConfig().getObject("plugins");
       if (plugins == null) {
         return null;
       }
@@ -297,7 +302,7 @@ public class Plugin {
    */
   private void addEventListener(String eventName, PluginCall call) {
     List<PluginCall> listeners = eventListeners.get(eventName);
-    if (listeners == null) {
+    if (listeners == null || listeners.isEmpty()) {
       listeners = new ArrayList<PluginCall>();
       eventListeners.put(eventName, listeners);
 
@@ -330,10 +335,10 @@ public class Plugin {
    * @param data
    */
   protected void notifyListeners(String eventName, JSObject data, boolean retainUntilConsumed) {
-    Log.v(getLogTag(), "Notifying listeners for event " + eventName);
+    Logger.verbose(getLogTag(), "Notifying listeners for event " + eventName);
     List<PluginCall> listeners = eventListeners.get(eventName);
-    if (listeners == null) {
-      Log.d(getLogTag(), "No listeners found for event " + eventName);
+    if (listeners == null || listeners.isEmpty()) {
+      Logger.debug(getLogTag(), "No listeners found for event " + eventName);
       if (retainUntilConsumed) {
         retainedEventArguments.put(eventName, data);
       }
@@ -409,6 +414,16 @@ public class Plugin {
       removeEventListener(eventName, savedCall);
       bridge.releaseCall(savedCall);
     }
+  }
+
+  /**
+   * Exported plugin call to remove all listeners from this plugin
+   * @param call
+   */
+  @SuppressWarnings("unused")
+  @PluginMethod(returnType=PluginMethod.RETURN_NONE)
+  public void removeAllListeners(PluginCall call) {
+    eventListeners.clear();
   }
 
   /**
@@ -530,6 +545,20 @@ public class Plugin {
   protected void handleOnStop() {}
 
   /**
+   * Handle onDestroy
+   */
+  protected void handleOnDestroy() {}
+
+  /**
+   * Give the plugins a chance to take control when a URL is about to be loaded in the WebView.
+   * Returning true causes the WebView to abort loading the URL.
+   * Returning false causes the WebView to continue loading the URL.
+   * Returning null will defer to the default Capacitor policy
+   */
+  @SuppressWarnings("unused")
+  public Boolean shouldOverrideLoad(Uri url) { return null; }
+
+  /**
    * Start a new Activity.
    *
    * Note: This method must be used by all plugins instead of calling
@@ -556,13 +585,13 @@ public class Plugin {
    * @param subTags
    */
   protected String getLogTag(String... subTags) {
-    return LogUtils.getPluginTag(subTags);
+    return Logger.tags(subTags);
   }
 
   /**
    * Gets a plugin log tag with the child's class name as subTag.
    */
   protected String getLogTag() {
-    return LogUtils.getPluginTag(this.getClass().getSimpleName());
+    return Logger.tags(this.getClass().getSimpleName());
   }
 }

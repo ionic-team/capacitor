@@ -39,35 +39,48 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
     this.Path = path;
   }
 
-  readFile(options: FileReadOptions): Promise<FileReadResult>{
+  readFile(options: FileReadOptions): Promise<FileReadResult> {
     return new Promise<FileReadResult>((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+      if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.readFile(lookupPath, options.encoding, (err:any, data:any) => {
-        if(err) {
+      this.NodeFS.readFile(lookupPath, options.encoding || 'binary', (err: any, data: any) => {
+        if (err) {
           reject(err);
           return;
         }
 
-        resolve({data});
+        resolve({ data: options.encoding ? data : Buffer.from(data, 'binary').toString('base64') });
       });
     });
   }
 
   writeFile(options: FileWriteOptions): Promise<FileWriteResult> {
     return new Promise((resolve, reject) => {
-      if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
+      if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.writeFile(lookupPath, options.data, options.encoding, (err:any) => {
+      let data: (Buffer | string) = options.data;
+      if (!options.encoding) {
+        const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
+        data = Buffer.from(base64Data, 'base64');
+      }
+      const dstDirectory = this.Path.dirname(lookupPath);
+      this.NodeFS.stat(dstDirectory, (err: any) => {
         if(err) {
-          reject(err);
-          return;
+          const doRecursive = options.recursive;
+          if (doRecursive) {
+            this.NodeFS.mkdirSync(dstDirectory, {recursive: doRecursive});
+          }
         }
-
-        resolve();
-      })
+        this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err: any) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({uri: lookupPath});
+        });
+      });
     });
   }
 
@@ -76,7 +89,12 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.appendFile(lookupPath, options.encoding, options.data, (err:any) => {
+      let data: (Buffer | string) = options.data;
+      if (!options.encoding) {
+        const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
+        data = Buffer.from(base64Data, 'base64');
+      }
+      this.NodeFS.appendFile(lookupPath, data, options.encoding || 'binary', (err:any) => {
         if(err) {
           reject(err);
           return;
@@ -108,7 +126,8 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.mkdir(lookupPath, { recursive: options.createIntermediateDirectories }, (err:any) => {
+      const doRecursive = options.recursive;
+      this.NodeFS.mkdir(lookupPath, { recursive: doRecursive }, (err:any) => {
         if(err) {
           reject(err);
           return;

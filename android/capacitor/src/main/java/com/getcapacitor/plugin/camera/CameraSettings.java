@@ -3,7 +3,7 @@ package com.getcapacitor.plugin.camera;
 public class CameraSettings {
 
     public static final int DEFAULT_QUALITY = 90;
-    public static final boolean DEFAULT_SAVE_IMAGE_TO_GALLERY = true;
+    public static final boolean DEFAULT_SAVE_IMAGE_TO_GALLERY = false;
     public static final boolean DEFAULT_CORRECT_ORIENTATION = true;
 
     private CameraResultType resultType = CameraResultType.BASE64;

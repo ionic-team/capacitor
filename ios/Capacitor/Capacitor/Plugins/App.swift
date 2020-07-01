@@ -53,7 +53,7 @@ public class CAPAppPlugin : CAPPlugin {
   @objc func exitApp(_ call: CAPPluginCall) {
     call.unimplemented()
   }
-  
+
   @objc func getLaunchUrl(_ call: CAPPluginCall) {
     if let lastUrl = CAPBridge.getLastUrl() {
       let urlValue = lastUrl.absoluteString
@@ -63,7 +63,15 @@ public class CAPAppPlugin : CAPPlugin {
     }
     call.resolve()
   }
-  
+
+  @objc func getState(_ call: CAPPluginCall) {
+    DispatchQueue.main.async {
+      call.resolve([
+        "isActive": UIApplication.shared.applicationState == UIApplication.State.active
+      ])
+    }
+  }
+
   @objc func canOpenUrl(_ call: CAPPluginCall) {
     guard let urlString = call.getString("url") else {
       call.error("Must supply a URL")

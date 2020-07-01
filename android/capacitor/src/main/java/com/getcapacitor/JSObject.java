@@ -46,12 +46,16 @@ public class JSObject extends JSONObject {
   public String getString(String key, String defaultValue) {
     try {
       String value = super.getString(key);
-      if (value != null) {
+      if (!super.isNull(key) && value != null) {
         return value;
       }
     } catch (JSONException ex) {
     }
     return defaultValue;
+  }
+
+  public Integer getInteger(String key) {
+    return getInteger(key, null);
   }
 
   public Integer getInteger(String key, Integer defaultValue) {
@@ -60,10 +64,6 @@ public class JSObject extends JSONObject {
     } catch (JSONException e) {
     }
     return defaultValue;
-  }
-
-  public Integer getInteger(String key) {
-    return getInteger(key, null);
   }
 
   public Boolean getBoolean(String key, Boolean defaultValue) {
