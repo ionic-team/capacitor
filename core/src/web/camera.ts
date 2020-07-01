@@ -75,7 +75,6 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     }
 
     input.addEventListener('change', (_e: any) => {
-     
       const file = input.files[0];
       let format = 'jpeg';
       if (file.type === 'image/png') {
