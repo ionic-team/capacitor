@@ -20,27 +20,32 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   async getPhoto(options: CameraOptions): Promise<CameraPhoto> {
     return new Promise<CameraPhoto>(async (resolve, reject) => {
       if (options.webUseInput === false && options.source === CameraSource.Camera) {
-        const cameraModal: any = document.createElement('pwa-camera-modal');
-        document.body.appendChild(cameraModal);
-        try {
-          await cameraModal.componentOnReady();
-          cameraModal.addEventListener('onPhoto', async (e: any) => {
-            const photo = e.detail;
+        if (customElements.get('pwa-camera-modal')) {
+          const cameraModal: any = document.createElement('pwa-camera-modal');
+          document.body.appendChild(cameraModal);
+          try {
+            await cameraModal.componentOnReady();
+            cameraModal.addEventListener('onPhoto', async (e: any) => {
+              const photo = e.detail;
 
-            if (photo === null) {
-              reject('User cancelled photos app');
-            } else if (photo instanceof Error) {
-              reject(photo.message);
-            } else {
-              resolve(await this._getCameraPhoto(photo, options));
-            }
+              if (photo === null) {
+                reject('User cancelled photos app');
+              } else if (photo instanceof Error) {
+                reject(photo.message);
+              } else {
+                resolve(await this._getCameraPhoto(photo, options));
+              }
 
-            cameraModal.dismiss();
-            document.body.removeChild(cameraModal);
-          });
+              cameraModal.dismiss();
+              document.body.removeChild(cameraModal);
+            });
 
-          cameraModal.present();
-        } catch (e) {
+            cameraModal.present();
+          } catch (e) {
+            this.fileInputExperience(options, resolve, reject);
+          }
+        } else {
+          console.error(`Unable to load PWA Element 'pwa-camera-modal'. See the docs: https://capacitorjs.com/docs/pwa-elements.`);
           this.fileInputExperience(options, resolve, reject);
         }
       } else {
