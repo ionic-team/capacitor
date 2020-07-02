@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, parse, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
@@ -252,6 +252,21 @@ export function wait(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+export function runPlatformHook(command: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const cmd = spawn(command, {
+      stdio: 'inherit',
+      shell: true
+    });
+    cmd.on('close', (code) => {
+      resolve('');
+    });
+    cmd.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
 export function runCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -420,7 +435,26 @@ export async function checkPlatformVersions(config: Config, platform: string) {
   }
 }
 
-export function resolveNode(config: Config, ...pathSegments: any[]): string | null {
+export function resolvePlatform(config: Config, platform: string): string | null {
+  if (platform[0] !== '@') {
+    const core = resolveNode(config, `@capacitor/${platform}`);
+
+    if (core) {
+      return core;
+    }
+
+    const community = resolveNode(config, `@capacitor-community/${platform}`);
+
+    if (community) {
+      return community;
+    }
+  }
+
+  // third-party
+  return resolveNode(config, platform);
+}
+
+export function resolveNode(config: Config, ...pathSegments: string[]): string | null {
   const id = pathSegments[0];
   const path = pathSegments.slice(1);
 
