@@ -1,26 +1,35 @@
 import { Config } from '../config';
-import { logFatal, logInfo, runTask } from '../common';
+import { hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runPlatformHook, runTask } from '../common';
 import { openAndroid } from '../android/open';
 import { openElectron } from '../electron/open';
 import { openIOS } from '../ios/open';
 
-export async function openCommand(config: Config, selectedPlatform: string) {
-  const platforms = config.selectPlatforms(selectedPlatform);
-  let platformName: string;
-  if (platforms.length === 0) {
-    logInfo(`There are no platforms to open yet. Create one with "capacitor add".`);
-    return;
-  } else if (platforms.length === 1) {
-    platformName = platforms[0];
+export async function openCommand(config: Config, selectedPlatformName: string) {
+  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+    const platformFolder = resolvePlatform(config, selectedPlatformName);
+    if (platformFolder) {
+      const result = await runPlatformHook(`cd "${platformFolder}" && ${await hasYarn(config) ? 'yarn' : 'npm'} run capacitor:open`);
+      log(result);
+    } else {
+      logError(`platform ${selectedPlatformName} not found`);
+    }
   } else {
-    platformName = await config.askPlatform('', `Please choose a platform to open:`);
-  }
+    const platforms = config.selectPlatforms(selectedPlatformName);
+    let platformName: string;
+    if (platforms.length === 0) {
+      logInfo(`There are no platforms to open yet. Create one with "capacitor add".`);
+      return;
+    } else if (platforms.length === 1) {
+      platformName = platforms[0];
+    } else {
+      platformName = await config.askPlatform('', `Please choose a platform to open:`);
+    }
 
-  try {
-    await open(config, platformName);
-
-  } catch (e) {
-    logFatal(e);
+    try {
+      await open(config, platformName);
+    } catch (e) {
+      logFatal(e);
+    }
   }
 }
 
