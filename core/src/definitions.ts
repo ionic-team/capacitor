@@ -1,12 +1,13 @@
 import { PluginRegistry } from './core-plugin-definitions';
 
-export interface Plugin {
-  addListener(eventName: string, listenerFunc: Function): PluginListenerHandle;
-  requestPermissions?: () => Promise<PermissionsRequestResult>;
-}
+export interface Plugin {}
 
 export interface PermissionsRequestResult {
   results: any[];
+}
+
+export interface PermissionRequestResult {
+  granted: boolean;
 }
 
 export interface PluginListenerHandle {

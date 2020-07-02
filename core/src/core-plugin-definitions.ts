@@ -1,4 +1,4 @@
-import { Plugin, PluginListenerHandle } from './definitions';
+import { PermissionRequestResult, PermissionsRequestResult, Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
   Accessibility: AccessibilityPlugin;
@@ -284,14 +284,16 @@ export interface BrowserPrefetchOptions {
   urls: string[];
 }
 
-//
-
 export interface CameraPlugin extends Plugin {
   /**
    * Prompt the user to pick a photo from an album, or take a new photo
    * with the camera.
    */
   getPhoto(options: CameraOptions): Promise<CameraPhoto>;
+  /*
+   * Return if the permission was granted or not.
+  */
+  requestPermission(): Promise<PermissionRequestResult>;
 }
 
 export interface CameraOptions {
@@ -1161,10 +1163,6 @@ export interface LocalNotificationEnabledResult {
   value: boolean;
 }
 
-export interface NotificationPermissionResponse {
-  granted: boolean;
-}
-
 export interface LocalNotificationsPlugin extends Plugin {
   schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
   getPending(): Promise<LocalNotificationPendingList>;
@@ -1174,7 +1172,7 @@ export interface LocalNotificationsPlugin extends Plugin {
   createChannel(channel: NotificationChannel): Promise<void>;
   deleteChannel(channel: NotificationChannel): Promise<void>;
   listChannels(): Promise<NotificationChannelList>;
-  requestPermission(): Promise<NotificationPermissionResponse>;
+  requestPermission(): Promise<PermissionRequestResult>;
   addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
   addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
 
@@ -1362,6 +1360,7 @@ export interface PermissionResult {
 
 export interface PermissionsPlugin extends Plugin {
   query(options: PermissionsOptions): Promise<PermissionResult>;
+  requestPermissions?: () => Promise<PermissionsRequestResult>;
 }
 
 //
@@ -1612,7 +1611,7 @@ export interface PushNotificationsPlugin extends Plugin {
    * and return if the permission was granted or not.
    * On Android there is no such prompt, so just return as granted.
    */
-  requestPermission(): Promise<NotificationPermissionResponse>;
+  requestPermission(): Promise<PermissionRequestResult>;
   /**
    * Returns the notifications that are visible on the notifications screen.
    */

@@ -1,18 +1,21 @@
-import { WebPlugin } from './index';
-
 import {
-  LocalNotificationsPlugin,
-  LocalNotificationEnabledResult,
+  LocalNotification, LocalNotificationActionType, LocalNotificationEnabledResult,
   LocalNotificationPendingList,
-  LocalNotificationActionType,
-  LocalNotification,
-  LocalNotificationScheduleResult,
-  NotificationPermissionResponse,
+
+
+  LocalNotificationScheduleResult, LocalNotificationsPlugin,
+
+
+
+
+
   NotificationChannel,
   NotificationChannelList
 } from '../core-plugin-definitions';
+import { PermissionRequestResult, PermissionsRequestResult } from '../definitions';
+import { WebPlugin } from './index';
 
-import { PermissionsRequestResult } from '../definitions';
+
 
 export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotificationsPlugin {
   private pending: LocalNotification[] = [];
@@ -112,7 +115,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     });
   }
 
-  requestPermission(): Promise<NotificationPermissionResponse> {
+  requestPermission(): Promise<PermissionRequestResult> {
     return new Promise((resolve) => {
       Notification.requestPermission((result) => {
         let granted = true;

@@ -385,4 +385,9 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     return nil
   }
 
+  @objc func requestPermission(_ call: CAPPluginCall) {
+    AVCaptureDevice.requestAccess(for: .video) { granted in
+        call.success(["granted": granted])
+    }
+  }
 }

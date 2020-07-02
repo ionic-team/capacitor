@@ -48,13 +48,14 @@ import java.util.Date;
  * Adapted from https://developer.android.com/training/camera/photobasics.html
  */
 @NativePlugin(
-    requestCodes={Camera.REQUEST_IMAGE_CAPTURE, Camera.REQUEST_IMAGE_PICK, Camera.REQUEST_IMAGE_EDIT}
+  requestCodes={Camera.REQUEST_IMAGE_CAPTURE, Camera.REQUEST_IMAGE_PICK, Camera.REQUEST_IMAGE_EDIT, Camera.CAMERA_REQUEST_PERMISSIONS}
 )
 public class Camera extends Plugin {
   // Request codes
   static final int REQUEST_IMAGE_CAPTURE = PluginRequestCodes.CAMERA_IMAGE_CAPTURE;
   static final int REQUEST_IMAGE_PICK = PluginRequestCodes.CAMERA_IMAGE_PICK;
   static final int REQUEST_IMAGE_EDIT = PluginRequestCodes.CAMERA_IMAGE_EDIT;
+  static final int CAMERA_REQUEST_PERMISSIONS = PluginRequestCodes.CAMERA_REQUEST_PERMISSIONS;
   // Message constants
   private static final String INVALID_RESULT_TYPE_ERROR = "Invalid resultType option";
   private static final String PERMISSION_DENIED_ERROR = "Unable to access camera, user denied permission request";
@@ -144,6 +145,17 @@ public class Camera extends Plugin {
 
   private void showPhotos(final PluginCall call) {
     openPhotos(call);
+  }
+
+  @PluginMethod()
+  public void requestPermission(PluginCall call) {
+    // Save the call so we can return data back once the permission request has completed
+    saveCall(call);
+
+    pluginRequestPermissions(new String[] {
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    }, CAMERA_REQUEST_PERMISSIONS);
   }
 
   private boolean checkCameraPermissions(PluginCall call) {
@@ -464,13 +476,23 @@ public class Camera extends Plugin {
       String perm = permissions[i];
       if(result == PackageManager.PERMISSION_DENIED) {
         Logger.debug(getLogTag(), "User denied camera permission: " + perm);
-        savedCall.error(PERMISSION_DENIED_ERROR);
+        if (requestCode != CAMERA_REQUEST_PERMISSIONS) {
+          savedCall.error(PERMISSION_DENIED_ERROR);
+        } else {
+          JSObject resp = new JSObject();
+          resp.put("granted", false);
+          savedCall.resolve(resp);
+        }
         return;
       }
     }
 
     if (requestCode == REQUEST_IMAGE_CAPTURE) {
       doShow(savedCall);
+    } else if (requestCode == CAMERA_REQUEST_PERMISSIONS) {
+      JSObject resp = new JSObject();
+      resp.put("granted", true);
+      savedCall.resolve(resp);
     }
   }
 
@@ -555,5 +577,4 @@ public class Camera extends Plugin {
       imageFileSavePath = storedImageFileSavePath;
     }
   }
-
 }

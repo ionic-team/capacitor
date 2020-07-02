@@ -1,11 +1,12 @@
-import { WebPlugin } from './index';
-
 import {
-  CameraPlugin,
-  CameraPhoto,
-  CameraOptions,
+  CameraOptions, CameraPhoto, CameraPlugin,
+
+
   CameraResultType
 } from '../core-plugin-definitions';
+import { PermissionRequestResult } from '../definitions';
+import { WebPlugin } from './index';
+
 
 export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   constructor() {
@@ -70,6 +71,13 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
           reject(e);
         };
       }
+    });
+  }
+
+  requestPermission(): Promise<PermissionRequestResult> {
+    return new Promise((resolve) => {
+      // TODO
+        resolve({ granted: true });
     });
   }
 }
