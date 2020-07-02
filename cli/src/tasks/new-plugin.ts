@@ -235,7 +235,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     author: answers.author,
     license: answers.license,
     dependencies: {
-      '@capacitor/core': `${cliVersion}`
+      '@capacitor/core': `^${cliVersion}`
     },
     devDependencies: {
       'rimraf': '^3.0.0',
@@ -271,4 +271,3 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     }
   };
 }
-
