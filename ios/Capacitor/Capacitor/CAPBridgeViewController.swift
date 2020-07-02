@@ -95,12 +95,11 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     bridge = CAPBridge(self, o, capConfig, specifiedScheme)
 
     webView?.isOpaque = false
+    if #available(iOS 13.0, *) {
+        webView?.backgroundColor = UIColor.systemBackground
+    }
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
-        if #available(iOS 13.0, *) {
-            webView?.backgroundColor = UIColor.systemBackground
-        } else {
-            webView?.backgroundColor = UIColor(fromHex: backgroundColor)
-        };
+        webView?.backgroundColor = UIColor(fromHex: backgroundColor)
         webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
     }
 
