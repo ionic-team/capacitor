@@ -308,12 +308,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    webView?isOpaque = true
+    webView?.isOpaque = true
     CAPLog.print("⚡️  WebView loaded")
   }
 
   public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-    webView?isOpaque = true
+    webView?.isOpaque = true
     CAPLog.print("⚡️  WebView failed to load")
     CAPLog.print("⚡️  Error: " + error.localizedDescription)
   }
