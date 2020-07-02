@@ -240,8 +240,8 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     devDependencies: {
       'rimraf': '^3.0.0',
       'typescript': '^3.2.4',
-      '@capacitor/ios': `${cliVersion}`,
-      '@capacitor/android': `${cliVersion}`
+      '@capacitor/ios': `^${cliVersion}`,
+      '@capacitor/android': `^${cliVersion}`
     },
     files: [
       'dist/',
