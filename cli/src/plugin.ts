@@ -1,7 +1,7 @@
 import { EntryInfo } from 'readdirp';
 import semver = require('semver');
 import { Config } from './config';
-import { dirname, join } from 'path';
+import { dirname, join, sep } from 'path';
 import { log, logFatal, logWarn, readJSON, readXML, resolveNode, runTask } from './common';
 import { existsAsync, readdirp } from './util/fs';
 
@@ -46,7 +46,7 @@ async function getInstalled(config: Config): Promise<Plugin[]> {
 
   // Match `package.json` and `plugin.xml` files only if they are in the root
   // of an npm package.
-  const re = /node_modules\/(?:[^\/@]+|@[^\/]+\/[^\/]+)\/(?:package\.json|plugin\.xml)$/;
+  const re = new RegExp(`node_modules${sep}(?:[^${sep}@]+|@[^${sep}]+${sep}[^${sep}]+)${sep}(?:package\.json|plugin\.xml)$`);
   const entries = await readdirp.promise(path, { fileFilter: entry => re.test(entry.fullPath) });
   const packageEntries = entries.filter(entry => entry.basename === 'package.json');
   const cordovaEntries = entries.filter(entry => entry.basename === 'plugin.xml');
