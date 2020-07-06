@@ -41,9 +41,9 @@ export interface Plugin {
 
 interface DirToEntry { [key: string]: EntryInfo; }
 
-const moduleRegexString = '^.*node_modules\/([a-z0-9\-\.\_\~]+|@[a-z0-9\-\.\_\~]+\/[a-z0-9\-\.\_\~]+)\/'
-const isPackageJSON = new RegExp(moduleRegexString + 'package\.json$')
-const isPluginXML = new RegExp(moduleRegexString + 'plugin\.xml$')
+const moduleRegexString = '^.*node_modules\/([a-z0-9\-\.\_\~]+|@[a-z0-9\-\.\_\~]+\/[a-z0-9\-\.\_\~]+)\/';
+const isPackageJSON = new RegExp(moduleRegexString + 'package\.json$');
+const isPluginXML = new RegExp(moduleRegexString + 'plugin\.xml$');
 
 async function getInstalled(config: Config): Promise<Plugin[]> {
   const path = join(config.app.rootDir, 'node_modules');

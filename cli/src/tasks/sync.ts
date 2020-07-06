@@ -18,7 +18,7 @@ export async function syncCommand(config: Config, selectedPlatformName: string, 
     await updateCommand(config, selectedPlatformName, deployment);
   } else {
     const then = +new Date;
-    const platforms = config.selectPlatforms(selectedPlatform);
+    const platforms = config.selectPlatforms(selectedPlatformName);
     if (platforms.length === 0) {
       logInfo(`There are no platforms to sync yet. Create one with "capacitor create".`);
       return;
