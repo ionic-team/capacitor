@@ -41,15 +41,16 @@ export interface Plugin {
 
 interface DirToEntry { [key: string]: EntryInfo; }
 
-const moduleRegexString = '^.*node_modules\/([a-z0-9\-\.\_\~]+|@[a-z0-9\-\.\_\~]+\/[a-z0-9\-\.\_\~]+)\/';
-const isPackageJSON = new RegExp(moduleRegexString + 'package\.json$');
-const isPluginXML = new RegExp(moduleRegexString + 'plugin\.xml$');
-
 async function getInstalled(config: Config): Promise<Plugin[]> {
   const path = join(config.app.rootDir, 'node_modules');
 
-  const packageEntries = await readdirp.promise(path, {fileFilter: (entry) => isPackageJSON.test(entry.fullPath)});
-  const cordovaEntries = await readdirp.promise(path, {fileFilter: (entry) => isPluginXML.test(entry.fullPath)});
+  // Match `package.json` and `plugin.xml` files only if they are in the root
+  // of an npm package.
+  const re = /node_modules\/(?:[^\/@]+|@[^\/]+\/[^\/]+)\/(?:package\.json|plugin\.xml)$/;
+  const entries = await readdirp.promise(path, { fileFilter: entry => re.test(entry.fullPath) });
+  const packageEntries = entries.filter(entry => entry.basename === 'package.json');
+  const cordovaEntries = entries.filter(entry => entry.basename === 'plugin.xml');
+
   const cordovaDirs = cordovaEntries.reduce(
     (obj, entry) => ({ ...obj, [dirname(entry.fullPath)]: entry }),
     {} as DirToEntry);
