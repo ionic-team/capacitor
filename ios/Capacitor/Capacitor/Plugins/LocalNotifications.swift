@@ -24,7 +24,7 @@ enum LocalNotificationError: LocalizedError {
 
 
 /**
- * Implement three common modal types: alert, confirm, and prompt
+ * Implement Local Notifications
  */
 @objc(CAPLocalNotificationsPlugin)
 public class CAPLocalNotificationsPlugin : CAPPlugin {
@@ -37,9 +37,6 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       call.error("Must provide notifications array as notifications option")
       return
     }
-    
-    self.bridge.notificationsDelegate.requestPermissions()
-    
     var ids = [String]()
     
     for notification in notifications {
@@ -86,11 +83,29 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       ids.append(request.identifier)
     }
 
+    let ret = ids.map({ (id) -> [String:String] in
+      return [
+        "id": id,
+      ]
+    })
     call.success([
-      "ids": ids
+      "notifications": ret
     ])
   }
-  
+
+  /**
+   * Request notification permission
+   */
+  @objc func requestPermission(_ call: CAPPluginCall) {
+    self.bridge.notificationsDelegate.requestPermissions() { granted, error in
+        guard error == nil else {
+            call.error(error!.localizedDescription)
+            return
+        }
+        call.success(["granted": granted])
+    }
+  }
+
   /**
    * Cancel notifications by id
    */
@@ -165,6 +180,8 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     let sound = notification["sound"] as? String
     let attachments = notification["attachments"] as? JSArray
     let extra = notification["extra"] as? JSObject ?? [:]
+    let threadIdentifier = notification["threadIdentifier"] as? String
+    let summaryArgument = notification["summaryArgument"] as? String
     
     let content = UNMutableNotificationContent()
     content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
@@ -174,6 +191,14 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     content.userInfo = extra
     if actionTypeId != nil {
       content.categoryIdentifier = actionTypeId!
+    }
+
+    if let threadIdentifier = threadIdentifier {
+      content.threadIdentifier = threadIdentifier
+    }
+
+    if let summaryArgument = summaryArgument, #available(iOS 12, *) {
+      content.summaryArgument = summaryArgument
     }
     
     if sound != nil {
@@ -485,6 +510,18 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       opts[UNNotificationAttachmentOptionsThumbnailTimeKey] = iosUNNotificationAttachmentOptionsThumbnailTimeKey
     }
     return opts
+  }
+  
+  @objc func createChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func deleteChannel(_ call: CAPPluginCall) {
+    call.unimplemented()
+  }
+
+  @objc func listChannels(_ call: CAPPluginCall) {
+    call.unimplemented()
   }
 }
 

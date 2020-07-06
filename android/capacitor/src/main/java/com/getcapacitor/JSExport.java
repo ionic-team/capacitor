@@ -2,7 +2,6 @@ package com.getcapacitor;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class JSExport {
     try {
       fileContent = getJS(context, "public/cordova.js");
     } catch(IOException ex) {
-      Log.e(LogUtils.getCoreTag(), "Unable to read public/cordova.js file, Cordova plugins will not work");
+      Logger.error("Unable to read public/cordova.js file, Cordova plugins will not work");
     }
     return fileContent;
   }
@@ -58,7 +57,7 @@ public class JSExport {
     try {
       fileContent = getJS(context, "public/cordova_plugins.js");
     } catch(IOException ex) {
-      Log.e(LogUtils.getCoreTag(), "Unable to read public/cordova_plugins.js file, Cordova plugins will not work");
+      Logger.error("Unable to read public/cordova_plugins.js file, Cordova plugins will not work");
     }
     return fileContent;
   }
@@ -109,7 +108,7 @@ public class JSExport {
         return getJS(context, path);
       }
     } catch(IOException ex) {
-      Log.e(LogUtils.getCoreTag(), "Unable to read file at path " + path);
+      Logger.error("Unable to read file at path " + path);
     }
     return builder.toString();
   }

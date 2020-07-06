@@ -7,9 +7,9 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -30,18 +30,25 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-@NativePlugin(requestCodes = {
-  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS,
-  PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS,
-})
+@NativePlugin(
+    requestCodes = {
+      PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_READ_FILE_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FILE_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_DELETE_FOLDER_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_URI_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_STAT_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_RENAME_PERMISSIONS,
+      PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS,
+    },
+    permissions={
+      Manifest.permission.READ_EXTERNAL_STORAGE,
+      Manifest.permission.WRITE_EXTERNAL_STORAGE
+    },
+    permissionRequestCode = PluginRequestCodes.FILESYSTEM_REQUEST_ALL_PERMISSIONS
+)
 public class Filesystem extends Plugin {
 
   private static final String PERMISSION_DENIED_ERROR = "Unable to do file operation, user denied permission request";
@@ -65,8 +72,6 @@ public class Filesystem extends Plugin {
   private File getDirectory(String directory) {
     Context c = bridge.getContext();
     switch(directory) {
-      case "APPLICATION":
-        return c.getFilesDir();
       case "DOCUMENTS":
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
       case "DATA":
@@ -146,7 +151,7 @@ public class Filesystem extends Plugin {
     }
     fileInputStreamReader.close();
 
-    return new String(Base64.encodeToString(byteStream.toByteArray(), Base64.DEFAULT));
+    return new String(Base64.encodeToString(byteStream.toByteArray(), Base64.NO_WRAP));
   }
 
   @PluginMethod()
@@ -192,15 +197,16 @@ public class Filesystem extends Plugin {
     saveCall(call);
     String path = call.getString("path");
     String data = call.getString("data");
+    Boolean recursive = call.getBoolean("recursive", false);
 
     if (path == null) {
-      Log.e(getLogTag(), "No path or filename retrieved from call");
+      Logger.error(getLogTag(), "No path or filename retrieved from call", null);
       call.error("NO_PATH");
       return;
     }
 
     if (data == null) {
-      Log.e(getLogTag(), "No data retrieved from call");
+      Logger.error(getLogTag(), "No data retrieved from call", null);
       call.error("NO_DATA");
       return;
     }
@@ -215,15 +221,17 @@ public class Filesystem extends Plugin {
           if (androidDir.exists() || androidDir.mkdirs()) {
             // path might include directories as well
             File fileObject = new File(androidDir, path);
-            if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
+            if (fileObject.getParentFile().exists() || (recursive && fileObject.getParentFile().mkdirs())) {
               saveFile(call, fileObject, data);
+            } else {
+              call.error("Parent folder doesn't exist");
             }
           } else {
-            Log.e(getLogTag(), "Not able to create '" + directory + "'!");
+            Logger.error(getLogTag(), "Not able to create '" + directory + "'!", null);
             call.error("NOT_CREATED_DIR");
           }
         } else {
-          Log.e(getLogTag(), "Directory ID '" + directory + "' is not supported by plugin");
+          Logger.error(getLogTag(), "Directory ID '" + directory + "' is not supported by plugin", null);
           call.error("INVALID_DIR");
         }
       }
@@ -235,8 +243,10 @@ public class Filesystem extends Plugin {
         // do not know where the file is being store so checking the permission to be secure
         // TODO to prevent permission checking we need a property from the call
         if (isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FILE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-          if (fileObject.getParentFile().exists() || fileObject.getParentFile().mkdirs()) {
+          if (fileObject.getParentFile().exists() || (recursive && fileObject.getParentFile().mkdirs())) {
             saveFile(call, fileObject, data);
+          } else {
+            call.error("Parent folder doesn't exist");
           }
         }
       }
@@ -261,7 +271,7 @@ public class Filesystem extends Plugin {
         writer.write(data);
         success = true;
       } catch (IOException e) {
-        Log.e(getLogTag(), "Creating text file '" + file.getPath() + "' with charset '" + charset + "' failed. Error: " + e.getMessage(), e);
+        Logger.error(getLogTag(), "Creating text file '" + file.getPath() + "' with charset '" + charset + "' failed. Error: " + e.getMessage(), e);
       }
     } else {
       //remove header from dataURL
@@ -272,7 +282,7 @@ public class Filesystem extends Plugin {
         fos.write(Base64.decode(data, Base64.NO_WRAP));
         success = true;
       } catch (IOException e) {
-        Log.e(getLogTag(), "Creating binary file '" + file.getPath() + "' failed. Error: " + e.getMessage(), e);
+        Logger.error(getLogTag(), "Creating binary file '" + file.getPath() + "' failed. Error: " + e.getMessage(), e);
       }
     }
 
@@ -281,8 +291,10 @@ public class Filesystem extends Plugin {
       if (isPublicDirectory(getDirectoryParameter(call))) {
         MediaScannerConnection.scanFile(getContext(), new String[] {file.getAbsolutePath()}, null, null);
       }
-      Log.d(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
-      call.success();
+      Logger.debug(getLogTag(), "File '" + file.getAbsolutePath() + "' saved!");
+      JSObject result = new JSObject();
+      result.put("uri", Uri.fromFile(file).toString());
+      call.success(result);
     } else {
       call.error("FILE_NOTCREATED");
     }
@@ -326,10 +338,6 @@ public class Filesystem extends Plugin {
     saveCall(call);
     String path = call.getString("path");
     String directory = getDirectoryParameter(call);
-    boolean intermediate = call.getBoolean("createIntermediateDirectories", false).booleanValue();
-    if (call.getBoolean("createIntermediateDirectories") != null) {
-      Log.w(getLogTag(),"createIntermediateDirectories is deprecated, use recursive");
-    }
     boolean recursive = call.getBoolean("recursive", false).booleanValue();
 
     File fileObject = getFileObject(path, directory);
@@ -342,7 +350,7 @@ public class Filesystem extends Plugin {
     if (!isPublicDirectory(directory)
             || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_WRITE_FOLDER_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       boolean created = false;
-      if (intermediate || recursive) {
+      if (recursive) {
         created = fileObject.mkdirs();
       } else {
         created = fileObject.mkdir();
@@ -404,10 +412,13 @@ public class Filesystem extends Plugin {
          || isStoragePermissionGranted(PluginRequestCodes.FILESYSTEM_REQUEST_READ_FOLDER_PERMISSIONS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
       if (fileObject != null && fileObject.exists()) {
         String[] files = fileObject.list();
-
-        JSObject ret = new JSObject();
-        ret.put("files", JSArray.from(files));
-        call.success(ret);
+        if (files != null) {
+          JSObject ret = new JSObject();
+          ret.put("files", JSArray.from(files));
+          call.success(ret);
+        } else {
+          call.error("Unable to read directory");
+        }
       } else {
       call.error("Directory does not exist");
       }
@@ -606,10 +617,10 @@ public class Filesystem extends Plugin {
    */
   private boolean isStoragePermissionGranted(int permissionRequestCode, String permission) {
     if (hasPermission(permission)) {
-      Log.v(getLogTag(),"Permission '" + permission + "' is granted");
+      Logger.verbose(getLogTag(),"Permission '" + permission + "' is granted");
       return true;
     } else {
-      Log.v(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
+      Logger.verbose(getLogTag(),"Permission '" + permission + "' denied. Asking user for it.");
       pluginRequestPermissions(new String[] {permission}, permissionRequestCode);
       return false;
     }
@@ -635,10 +646,10 @@ public class Filesystem extends Plugin {
   protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    Log.d(getLogTag(),"handling request perms result");
+    Logger.debug(getLogTag(),"handling request perms result");
 
     if (getSavedCall() == null) {
-      Log.d(getLogTag(),"No stored plugin call for permissions request result");
+      Logger.debug(getLogTag(),"No stored plugin call for permissions request result");
       return;
     }
 
@@ -648,7 +659,7 @@ public class Filesystem extends Plugin {
       int result = grantResults[i];
       String perm = permissions[i];
       if(result == PackageManager.PERMISSION_DENIED) {
-        Log.d(getLogTag(), "User denied storage permission: " + perm);
+        Logger.debug(getLogTag(), "User denied storage permission: " + perm);
         savedCall.error(PERMISSION_DENIED_ERROR);
         this.freeSavedCall();
         return;
@@ -675,6 +686,8 @@ public class Filesystem extends Plugin {
       this.rename(savedCall);
     } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_COPY_PERMISSIONS) {
       this.copy(savedCall);
+    } else if (requestCode == PluginRequestCodes.FILESYSTEM_REQUEST_ALL_PERMISSIONS){
+      savedCall.resolve();
     }
     this.freeSavedCall();
   }

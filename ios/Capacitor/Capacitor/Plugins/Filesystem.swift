@@ -12,8 +12,6 @@ public class CAPFilesystemPlugin : CAPPlugin {
     switch directory {
     case "DOCUMENTS":
       return .documentDirectory
-    case "APPLICATION":
-      return .applicationDirectory
     case "CACHE":
       return .cachesDirectory
     default:
@@ -85,6 +83,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
    */
   @objc func writeFile(_ call: CAPPluginCall) {
     let encoding = call.getString("encoding")
+    let recursive = call.get("recursive", Bool.self, false)!
     // TODO: Allow them to switch encoding
     guard let file = call.get("path", String.self) else {
       handleError(call, "path must be provided and must be a string.")
@@ -104,6 +103,14 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
 
     do {
+      if !FileManager.default.fileExists(atPath: fileUrl.deletingLastPathComponent().path) {
+        if recursive {
+          try FileManager.default.createDirectory(at: fileUrl.deletingLastPathComponent(), withIntermediateDirectories: recursive, attributes: nil)
+        } else {
+          handleError(call, "Parent folder doesn't exist");
+          return
+        }
+      }
       if encoding != nil {
         try data.write(to: fileUrl, atomically: false, encoding: .utf8)
       } else {
@@ -115,7 +122,9 @@ public class CAPFilesystemPlugin : CAPPlugin {
           return
         }
       }
-      call.success()
+      call.success([
+        "uri": fileUrl.absoluteString
+      ])
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)
     }
@@ -222,10 +231,6 @@ public class CAPFilesystemPlugin : CAPPlugin {
       return
     }
     
-    let createIntermediateDirectories = call.get("createIntermediateDirectories", Bool.self, false)!
-    if let _ = call.get("createIntermediateDirectories", Bool.self) {
-        CAPLog.print("createIntermediateDirectories is deprecated, use recursive")
-    }
     let recursive = call.get("recursive", Bool.self, false)!
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
@@ -234,7 +239,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
     
     do {
-      try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: createIntermediateDirectories || recursive, attributes: nil)
+      try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: recursive, attributes: nil)
       call.success()
     } catch let error as NSError {
       handleError(call, error.localizedDescription, error)

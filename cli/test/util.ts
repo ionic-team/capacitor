@@ -88,7 +88,10 @@ export async function makeAppDir(monoRepoLike: boolean = false) {
   await runCommand(`cd "${rootDir}" && npm install --save ${corePath} ${cliPath}`);
 
   // Make a fake cordova plugin
-  await makeCordovaPlugin(appDir);
+  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
+  await makeCordovaPlugin(cordovaPluginPath);
+
+  await runCommand(`cd "${rootDir}" && npm install --save ${cordovaPluginPath}`);
 
   return {
     ...appDirObj,
@@ -157,9 +160,9 @@ Pod::Spec.new do |s|
   s.name = 'CordovaPluginsResources'
   s.version = '0.0.105'
   s.summary = 'Resources for Cordova plugins'
-  s.social_media_url = 'http://twitter.com/getcapacitor'
+  s.social_media_url = 'https://twitter.com/capacitorjs'
   s.license = 'MIT'
-  s.homepage = 'https://capacitor.ionicframework.com/'
+  s.homepage = 'https://capacitorjs.com/'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version.to_s }
   s.resources = ['resources/*']
@@ -180,14 +183,13 @@ Pod::Spec.new do |s|
   s.dependency 'CapacitorCordova'
 end`;
 
-async function makeCordovaPlugin(appDir: string) {
-  const cordovaPluginPath = join(appDir, 'node_modules', CORDOVA_PLUGIN_ID);
+async function makeCordovaPlugin(cordovaPluginPath: string) {
   const iosPath = join(cordovaPluginPath, 'src', 'ios');
   const androidPath = join(cordovaPluginPath, 'android/com/getcapacitor');
   await mkdirs(cordovaPluginPath);
   await writeFileAsync(join(cordovaPluginPath, 'plugin.js'), CODOVA_PLUGIN_JS);
   await writeFileAsync(join(cordovaPluginPath, 'plugin.xml'), CORDOVA_PLUGIN_XML);
-  await writeFileAsync(join(cordovaPluginPath, 'package.json'), JSON.stringify(CORDOVA_PLUGIN_PACKAGE));
+  await writeFileAsync(join(cordovaPluginPath, 'package.json'), CORDOVA_PLUGIN_PACKAGE);
   await mkdirs(iosPath);
   await mkdirs(androidPath);
   await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');

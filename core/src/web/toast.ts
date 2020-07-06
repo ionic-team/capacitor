@@ -11,9 +11,9 @@ export class ToastPluginWeb extends WebPlugin implements ToastPlugin {
   }
 
   async show(options: ToastShowOptions) {
-    let duration = 3000;
+    let duration = 2000;
     if (options.duration) {
-      duration = options.duration === 'long' ? 5000 : 3000;
+      duration = options.duration === 'long' ? 3500 : 2000;
     }
     const toast = document.createElement('pwa-toast') as any;
     toast.duration = duration;

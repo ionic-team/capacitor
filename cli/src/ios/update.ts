@@ -113,7 +113,7 @@ function getFrameworkName(framework: any) {
 }
 
 function isFramework(framework: any) {
-  return framework.$.src.split('.').pop() === 'framework';
+  return framework.$.src.split('.').pop().includes('framework');
 }
 
 async function generateCordovaPodspecs(cordovaPlugins: Plugin[], config: Config) {
@@ -191,7 +191,10 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
     const sourceFiles = getPlatformElement(plugin, platform, 'source-file');
     sourceFiles.map((sourceFile: any) => {
       if (sourceFile.$.framework && sourceFile.$.framework === 'true') {
-        const fileName = sourceFile.$.src.split('/').pop();
+        let fileName = sourceFile.$.src.split('/').pop();
+        if (!fileName.startsWith('lib')) {
+          fileName = 'lib' + fileName;
+        }
         const frameworktPath = join(sourcesFolderName, plugin.name, fileName);
         if (!sourceFrameworks.includes(frameworktPath)) {
           sourceFrameworks.push(frameworktPath);
@@ -204,17 +207,19 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
       }
     });
   });
+  const onlySystemLibraries = systemLibraries.filter(library => removeNoSystem(library, sourceFrameworks));
   if (weakFrameworks.length > 0) {
     frameworkDeps.push(`s.weak_frameworks = '${weakFrameworks.join(`', '`)}'`);
   }
   if (linkedFrameworks.length > 0) {
     frameworkDeps.push(`s.frameworks = '${linkedFrameworks.join(`', '`)}'`);
   }
-  if (systemLibraries.length > 0) {
-    frameworkDeps.push(`s.libraries = '${systemLibraries.join(`', '`)}'`);
+  if (onlySystemLibraries.length > 0) {
+    frameworkDeps.push(`s.libraries = '${onlySystemLibraries.join(`', '`)}'`);
   }
   if (customFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_frameworks = '${customFrameworks.join(`', '`)}'`);
+    frameworkDeps.push(`s.exclude_files = 'sources/**/*.framework/Headers/*.h'`);
   }
   if (sourceFrameworks.length > 0) {
     frameworkDeps.push(`s.vendored_libraries = '${sourceFrameworks.join(`', '`)}'`);
@@ -241,6 +246,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
     s.source = { :git => 'https://github.com/ionic-team/does-not-exist.git', :tag => '${config.cli.package.version}' }
     s.source_files = '${sourcesFolderName}/**/*.{swift,h,m,c,cc,mm,cpp}'
     s.ios.deployment_target  = '${config.ios.minVersion}'
+    s.xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 WK_WEB_VIEW_ONLY=1' }
     s.dependency 'CapacitorCordova'${getLinkerFlags(config)}
     s.swift_version  = '${config.ios.cordovaSwiftVersion}'
     ${frameworksString}
@@ -270,8 +276,11 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
     }
     const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
     codeFiles.map( (codeFile: any) => {
-      const fileName = codeFile.$.src.split('/').pop();
+      let fileName = codeFile.$.src.split('/').pop();
       const fileExt = codeFile.$.src.split('.').pop();
+      if (fileExt === 'a' && !fileName.startsWith('lib')) {
+        fileName = 'lib' + fileName;
+      }
       let destFolder = sourcesFolderName;
       if (codeFile.$['compiler-flags'] && codeFile.$['compiler-flags'] === '-fno-objc-arc') {
         destFolder = 'noarc';
@@ -279,19 +288,21 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
       const filePath = getFilePath(config, p, codeFile.$.src);
       const fileDest = join(pluginsPath, destFolder, p.name, fileName);
       copySync(filePath, fileDest);
-      let fileContent = readFileSync(fileDest, 'utf8');
-      if (fileExt === 'swift') {
-        fileContent = 'import Cordova\n' + fileContent;
-        writeFileSync(fileDest, fileContent, 'utf8');
-      } else {
-        if (fileContent.includes('@import Firebase;')) {
-          fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
+      if (!codeFile.$.framework) {
+        let fileContent = readFileSync(fileDest, 'utf8');
+        if (fileExt === 'swift') {
+          fileContent = 'import Cordova\n' + fileContent;
           writeFileSync(fileDest, fileContent, 'utf8');
-        }
-        if (fileContent.includes('[NSBundle bundleForClass:[self class]]') || fileContent.includes('[NSBundle bundleForClass:[CDVCapture class]]')) {
-          fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
-          fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
-          writeFileSync(fileDest, fileContent, 'utf8');
+        } else {
+          if (fileContent.includes('@import Firebase;')) {
+            fileContent = fileContent.replace('@import Firebase;', '#import <Firebase/Firebase.h>');
+            writeFileSync(fileDest, fileContent, 'utf8');
+          }
+          if (fileContent.includes('[NSBundle bundleForClass:[self class]]') || fileContent.includes('[NSBundle bundleForClass:[CDVCapture class]]')) {
+            fileContent = fileContent.replace('[NSBundle bundleForClass:[self class]]', '[NSBundle mainBundle]');
+            fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
+            writeFileSync(fileDest, fileContent, 'utf8');
+          }
         }
       }
     });
@@ -330,6 +341,11 @@ function filterARCFiles(plugin: Plugin) {
   const sources = getPlatformElement(plugin, platform, 'source-file');
   const sourcesARC = sources.filter((sourceFile: any) => sourceFile.$['compiler-flags'] && sourceFile.$['compiler-flags'] === '-fno-objc-arc');
   return sourcesARC.length > 0;
+}
+
+function removeNoSystem(library: string, sourceFrameworks: Array<string>) {
+  const libraries = sourceFrameworks.filter(framework => framework.includes(library));
+  return libraries.length === 0;
 }
 
 async function getPluginsTask(config: Config) {

@@ -2,8 +2,9 @@ package com.getcapacitor.plugin;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -36,6 +37,8 @@ public class Permissions extends Plugin {
       case "clipboard-read":
       case "clipboard-write":
         checkClipboard(call);
+      case "microphone":
+        checkMicrophone(call);
         break;
       default:
         call.reject("Unknown permission type");
@@ -77,6 +80,10 @@ public class Permissions extends Plugin {
     JSObject ret = new JSObject();
     ret.put("state", "granted");
     call.resolve(ret);
+  }
+
+  private void checkMicrophone(PluginCall call) {
+    checkPerm(Manifest.permission.RECORD_AUDIO, call);
   }
 
 }

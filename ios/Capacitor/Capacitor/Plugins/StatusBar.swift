@@ -21,8 +21,7 @@ public class CAPStatusBarPlugin: CAPPlugin {
         bridge.setStatusBarStyle(.lightContent)
       } else if style == "LIGHT" {
         if #available(iOS 13.0, *) {
-          // TODO - use .darkContent instead of rawValue once Xcode 10 support is dropped
-          bridge.setStatusBarStyle(UIStatusBarStyle.init(rawValue: 3) ?? .default)
+          bridge.setStatusBarStyle(.darkContent)
         } else {
           bridge.setStatusBarStyle(.default)
         }
@@ -36,12 +35,25 @@ public class CAPStatusBarPlugin: CAPPlugin {
     call.unimplemented()
   }
   
+  func setAnimation(_ call: CAPPluginCall) {
+    let animation = call.getString("animation", "SLIDE")
+    if animation == "FADE" {
+      bridge.setStatusBarAnimation(.fade)
+    } else if animation == "NONE" {
+      bridge.setStatusBarAnimation(.none)
+    } else {
+      bridge.setStatusBarAnimation(.slide)
+    }
+  }
+  
   @objc func hide(_ call: CAPPluginCall) {
+    setAnimation(call)
     bridge.setStatusBarVisible(false)
     call.success()
   }
   
   @objc func show(_ call: CAPPluginCall) {
+    setAnimation(call)
     bridge.setStatusBarVisible(true)
     call.success()
   }
@@ -75,6 +87,10 @@ public class CAPStatusBarPlugin: CAPPlugin {
         "style": style
       ])
     }
+  }
+
+  @objc func setOverlaysWebView(_ call: CAPPluginCall) {
+    call.unimplemented()
   }
 }
 

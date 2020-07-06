@@ -65,13 +65,21 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
         const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
         data = Buffer.from(base64Data, 'base64');
       }
-      this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err: any) => {
-        if (err) {
-          reject(err);
-          return;
+      const dstDirectory = this.Path.dirname(lookupPath);
+      this.NodeFS.stat(dstDirectory, (err: any) => {
+        if(err) {
+          const doRecursive = options.recursive;
+          if (doRecursive) {
+            this.NodeFS.mkdirSync(dstDirectory, {recursive: doRecursive});
+          }
         }
-
-        resolve();
+        this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err: any) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({uri: lookupPath});
+        });
       });
     });
   }
@@ -81,7 +89,12 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      this.NodeFS.appendFile(lookupPath, options.encoding, options.data, (err:any) => {
+      let data: (Buffer | string) = options.data;
+      if (!options.encoding) {
+        const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
+        data = Buffer.from(base64Data, 'base64');
+      }
+      this.NodeFS.appendFile(lookupPath, data, options.encoding || 'binary', (err:any) => {
         if(err) {
           reject(err);
           return;
@@ -113,10 +126,7 @@ export class FilesystemPluginElectron extends WebPlugin implements FilesystemPlu
       if(Object.keys(this.fileLocations).indexOf(options.directory) === -1)
         reject(`${options.directory} is currently not supported in the Electron implementation.`);
       let lookupPath = this.fileLocations[options.directory] + options.path;
-      if (options.createIntermediateDirectories !== undefined) {
-        console.warn('createIntermediateDirectories is deprecated, use recursive');
-      }
-      const doRecursive = options.createIntermediateDirectories || options.recursive;
+      const doRecursive = options.recursive;
       this.NodeFS.mkdir(lookupPath, { recursive: doRecursive }, (err:any) => {
         if(err) {
           reject(err);
