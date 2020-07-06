@@ -42,19 +42,19 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
             cameraModal.present();
           } catch (e) {
-            this.fileInputExperience(options, resolve, reject);
+            this.fileInputExperience(options, resolve);
           }
         } else {
           console.error(`Unable to load PWA Element 'pwa-camera-modal'. See the docs: https://capacitorjs.com/docs/pwa-elements.`);
-          this.fileInputExperience(options, resolve, reject);
+          this.fileInputExperience(options, resolve);
         }
       } else {
-        this.fileInputExperience(options, resolve, reject);
+        this.fileInputExperience(options, resolve);
       }
     });
   }
 
-  private fileInputExperience(options: CameraOptions, resolve: any, reject: any) {
+  private fileInputExperience(options: CameraOptions, resolve: any) {
     let input = document.querySelector('#_capacitor-camera-input') as HTMLInputElement;
 
     const cleanup = () => {
@@ -82,34 +82,33 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     input.addEventListener('change', (_e: any) => {
       const file = input.files[0];
       let format = 'jpeg';
+
       if (file.type === 'image/png') {
         format = 'png';
-      }
-      if (file.type === 'image/gif') {
+      } else if (file.type === 'image/gif') {
         format = 'gif';
       }
 
-      const reader = new FileReader();
-      reader.addEventListener('load', () => {
-        if (options.resultType === CameraResultType.DataUrl) {
-          resolve({
-            dataUrl: reader.result,
-            format
-          } as CameraPhoto);
-        } else if (options.resultType === CameraResultType.Base64) {
-          const b64 = (reader.result as string).split(',')[1];
-          resolve({
-            base64String: b64,
-            format
-          } as CameraPhoto);
-        } else {
-          reject('Unsupported result type for this platform');
-        }
-
-        cleanup();
-      });
-
       if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
+        const reader = new FileReader();
+
+        reader.addEventListener('load', () => {
+          if (options.resultType === CameraResultType.DataUrl) {
+            resolve({
+              dataUrl: reader.result,
+              format
+            } as CameraPhoto);
+          } else if (options.resultType === CameraResultType.Base64) {
+            const b64 = (reader.result as string).split(',')[1];
+            resolve({
+              base64String: b64,
+              format
+            } as CameraPhoto);
+          }
+
+          cleanup();
+        });
+
         reader.readAsDataURL(file);
       } else {
         resolve({

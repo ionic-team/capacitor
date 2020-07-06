@@ -400,6 +400,9 @@ export interface CameraPhoto {
   exif?: any;
   /**
    * The format of the image, ex: jpeg, png, gif.
+   *
+   * iOS and Android only support jpeg.
+   * Web supports jpeg and png. gif is only supported if using file input.
    */
   format: string;
 }
