@@ -334,7 +334,7 @@ export interface CameraOptions {
    */
   source?: CameraSource;
   /**
-   * iOS only: The default camera direction. By default the rear camera.
+   * iOS and Web only: The camera direction.
    * Default: CameraDirection.Rear
    */
   direction?: CameraDirection;
