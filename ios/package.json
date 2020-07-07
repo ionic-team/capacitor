@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/ios",
-  "version": "2.1.2",
+  "version": "2.2.1",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
@@ -16,6 +16,6 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@capacitor/core": "~2.1.0"
+    "@capacitor/core": "~2.2.0"
   }
 }

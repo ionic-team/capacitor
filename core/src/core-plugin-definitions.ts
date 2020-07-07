@@ -198,7 +198,7 @@ export interface AppRestoredResult {
    */
   error?: {
     message: string;
-  }
+  };
 }
 
 //
@@ -1104,7 +1104,7 @@ export interface LocalNotification {
   /**
    * Android only: set the color of the notification icon
    */
-  iconColor?: string
+  iconColor?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
@@ -1127,8 +1127,8 @@ export interface LocalNotification {
    */
   groupSummary?: boolean;
   /**
-   * Android only: set the notification channel on which local notification 
-   * will generate. If channel with the given name does not exist then the 
+   * Android only: set the notification channel on which local notification
+   * will generate. If channel with the given name does not exist then the
    * notification will not fire. If not provided, it will use the default channel.
    */
   channelId?: string;
@@ -1602,7 +1602,7 @@ export interface NotificationChannelList {
 export interface PushNotificationsPlugin extends Plugin {
   /**
    * Register the app to receive push notifications.
-   * Will trigger registration event with the push token 
+   * Will trigger registration event with the push token
    * or registrationError if there was some problem.
    * Doesn't prompt the user for notification permissions, use requestPermission() first.
    */

@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, parse, resolve } from 'path';
 import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
@@ -29,9 +29,10 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   }
   if (!await existsAsync(config.app.webDirAbs)) {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
-    Please create it, and make sure it has an index.html file. You can change
-    the path of this directory in capacitor.config.json.
-    More info: https://capacitor.ionicframework.com/docs/basics/configuring-your-app`;
+    Please create it and make sure it has an index.html file. You can change
+    the path of this directory in capacitor.config.json (webDir option).
+    You may need to compile the web assets for your app (typically 'npm run build').
+    More info: https://capacitorjs.com/docs/basics/building-your-app`;
   }
 
   if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
@@ -251,6 +252,21 @@ export function wait(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+export function runPlatformHook(command: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const cmd = spawn(command, {
+      stdio: 'inherit',
+      shell: true
+    });
+    cmd.on('close', (code) => {
+      resolve('');
+    });
+    cmd.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
 export function runCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -376,7 +392,7 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add ios`);
   log(`  npx cap add electron`);
   log('');
-  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitor.ionicframework.com/docs/basics/workflow`)}\n`);
+  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitorjs.com/docs/basics/workflow`)}\n`);
 }
 
 export async function getCoreVersion(config: Config): Promise<string> {
@@ -419,7 +435,26 @@ export async function checkPlatformVersions(config: Config, platform: string) {
   }
 }
 
-export function resolveNode(config: Config, ...pathSegments: any[]): string | null {
+export function resolvePlatform(config: Config, platform: string): string | null {
+  if (platform[0] !== '@') {
+    const core = resolveNode(config, `@capacitor/${platform}`);
+
+    if (core) {
+      return core;
+    }
+
+    const community = resolveNode(config, `@capacitor-community/${platform}`);
+
+    if (community) {
+      return community;
+    }
+  }
+
+  // third-party
+  return resolveNode(config, platform);
+}
+
+export function resolveNode(config: Config, ...pathSegments: string[]): string | null {
   const id = pathSegments[0];
   const path = pathSegments.slice(1);
 

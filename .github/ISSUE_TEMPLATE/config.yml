@@ -1,5 +1,7 @@
-blank_issues_enabled: false
 contact_links:
+  - name: ⚙️ Request a new plugin
+    url: https://github.com/capacitor-community/proposals
+    about: Propose a new plugin or platform to the Capacitor community
   - name: 🙋 Open a discussion
     url: https://github.com/ionic-team/capacitor/discussions
     about: Ask questions and discuss with other community members

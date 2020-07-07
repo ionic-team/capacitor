@@ -2,15 +2,24 @@
 
 This guide attempts to make it easy for volunteer contributors and the core team to contribute to and publish Capacitor. Please let us know if there's something missing!
 
-## Design Philosophy
+## Issues & Discussions
 
-Before working on Capacitor, it's important to understand the philosophy behind the project to avoid investing time in things that won't fit into the goals of the project.
+The Capacitor repo uses GitHub [issues](https://github.com/ionic-team/capacitor/issues) and [discussions](https://github.com/ionic-team/capacitor/discussions) to track bugs and feature requests, as well as to provide a place for community questions, ideas, and discussions.
 
-Please read [@maxlynch](http://twitter.com/maxlynch)'s essay [How Capacitor Works](https://tinyletter.com/ionic-max/letters/how-capacitor-works) for a deep dive into the project and its goals.
+* **When to use [issues](https://github.com/ionic-team/capacitor/issues)**:
+    * To report specific, reproducible bugs.
+    * To propose detailed feature requests.
+* **When to use [discussions](https://github.com/ionic-team/capacitor/discussions)**:
+    * To ask for help.
+    * To ask general questions.
+    * To show off cool stuff.
+    * To propose ideas for improvement.
+    * If you think you found a bug, but may need help to further uncover it.
+    * Anything else! :rainbow:
 
-## Creating a Code Reproduction
+### Creating a Code Reproduction
 
-To isolate the cause of the problem, we ask you to provide a minimal sample application that demonstrates the issue. Without a reliable code reproduction, it is unlikely we will be able to resolve the issue, leading to it being closed.
+When reporting bugs, we ask you to provide a minimal sample application that demonstrates the issue. Without a reliable code reproduction, it is unlikely we will be able to resolve the issue, leading to it being closed.
 
 To create a code reproduction:
 
@@ -21,6 +30,11 @@ To create a code reproduction:
 
 ## Developing Capacitor
 
+### Design Philosophy
+
+Before working on Capacitor, it's important to understand the philosophy behind the project to avoid investing time in things that won't fit into the goals of the project.
+
+Please read [@maxlynch](http://twitter.com/maxlynch)'s essay [How Capacitor Works](https://tinyletter.com/ionic-max/letters/how-capacitor-works) for a deep dive into the project and its goals.
 1. Check out this repository.
 2. Read and follow [`example/README.md`](../example/README.md)
 
@@ -48,10 +62,8 @@ The `ionic-team/capacitor` repo is a monorepo containing all of the standard Cap
 * `android`: Capacitor Android Runtime
 * `android-template`: Default Android App installed by the CLI
 * `example`: Example project for development
-* `e2e`: An end-to-end testing app
 * `plugin-template`: The default plugin template when creating a new plugin
 * `scripts`: publish and task scripts
-* `site`: Website and documentation
 
 ## Publishing Capacitor
 

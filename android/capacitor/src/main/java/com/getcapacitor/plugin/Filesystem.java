@@ -579,21 +579,20 @@ public class Filesystem extends Plugin {
     toObject.delete();
 
     assert fromObject != null;
-    boolean modified = false;
 
     if (doRename) {
-      modified = fromObject.renameTo(toObject);
+      boolean modified = fromObject.renameTo(toObject);
+      if (!modified) {
+        call.error("Unable to rename, unknown reason");
+        return;
+      }
     } else {
       try {
         copyRecursively(fromObject, toObject);
-        modified = true;
-      } catch (IOException ignored) {
+      } catch (IOException e) {
+        call.error("Unable to perform action: " + e.getLocalizedMessage());
+        return;
       }
-    }
-
-    if (!modified) {
-      call.error("Unable to perform action, unknown reason");
-      return;
     }
 
     call.success();
