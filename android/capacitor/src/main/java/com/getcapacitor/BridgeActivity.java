@@ -200,7 +200,7 @@ public class BridgeActivity extends AppCompatActivity {
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     if (this.bridge == null) {
       return;
     }

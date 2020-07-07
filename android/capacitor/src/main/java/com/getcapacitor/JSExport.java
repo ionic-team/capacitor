@@ -63,7 +63,7 @@ public class JSExport {
   }
 
   public static String getPluginJS(Collection<PluginHandle> plugins) {
-    List<String> lines = new ArrayList<String>();
+    List<String> lines = new ArrayList<>();
 
     lines.add("// Begin: Capacitor Plugin JS");
 
@@ -114,14 +114,14 @@ public class JSExport {
   }
 
   private static String generateMethodJS(PluginHandle plugin, PluginMethodHandle method) {
-    List<String> lines = new ArrayList<String>();
+    List<String> lines = new ArrayList<>();
 
-    List<String> args = new ArrayList<String>();
+    List<String> args = new ArrayList<>();
     // Add the catch all param that will take a full javascript object to pass to the plugin
     args.add(CATCHALL_OPTIONS_PARAM);
 
     String returnType = method.getReturnType();
-    if (returnType == PluginMethod.RETURN_CALLBACK) {
+    if (returnType.equals(PluginMethod.RETURN_CALLBACK)) {
       args.add(CALLBACK_PARAM);
     }
 

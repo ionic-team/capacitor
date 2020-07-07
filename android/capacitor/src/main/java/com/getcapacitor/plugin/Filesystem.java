@@ -134,7 +134,7 @@ public class Filesystem extends Plugin {
 
     while ((length = is.read(buffer)) != -1) {
       outputStream.write(buffer, 0, length);
-    };
+    }
 
     return outputStream.toString(encoding);
   }
@@ -275,7 +275,7 @@ public class Filesystem extends Plugin {
       }
     } else {
       //remove header from dataURL
-      if(data.indexOf(",") != -1) {
+      if(data.contains(",")) {
         data = data.split(",")[1];
       }
       try (FileOutputStream fos = new FileOutputStream(file, append)) {
@@ -325,7 +325,7 @@ public class Filesystem extends Plugin {
       }
 
       boolean deleted = fileObject.delete();
-      if(deleted == false) {
+      if(!deleted) {
         call.error("Unable to delete file");
       } else {
         call.success();
@@ -355,7 +355,7 @@ public class Filesystem extends Plugin {
       } else {
         created = fileObject.mkdir();
       }
-      if(created == false) {
+      if(!created) {
         call.error("Unable to create directory, unknown reason");
       } else {
         call.success();
@@ -392,7 +392,7 @@ public class Filesystem extends Plugin {
       } catch (IOException ignored) {
       }
 
-      if(deleted == false) {
+      if(!deleted) {
         call.error("Unable to delete directory, unknown reason");
       } else {
         call.success();

@@ -11,7 +11,6 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +21,7 @@ public class Storage extends Plugin {
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
 
+  @Override
   public void load() {
     prefs = getContext().getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
     editor = prefs.edit();

@@ -45,8 +45,8 @@ import java.util.Map;
  */
 public class WebViewLocalServer {
 
-  private final static String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
-  private final static String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
+  private static final String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
+  private static final String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
   private String basePath;
 
   private final UriMatcher uriMatcher;
@@ -104,7 +104,7 @@ public class WebViewLocalServer {
       return handle(request.getUrl());
     }
 
-    abstract public InputStream handle(Uri url);
+    public abstract InputStream handle(Uri url);
 
     public String getEncoding() {
       return encoding;
@@ -182,10 +182,7 @@ public class WebViewLocalServer {
 
   private boolean isLocalFile(Uri uri) {
     String path = uri.getPath();
-    if (path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart)) {
-      return true;
-    }
-    return false;
+      return path.startsWith(capacitorContentStart) || path.startsWith(capacitorFileStart);
   }
 
   private WebResourceResponse handleLocalRequest(WebResourceRequest request, PathHandler handler) {
@@ -472,7 +469,7 @@ public class WebViewLocalServer {
    * The KitKat WebView reads the InputStream on a separate threadpool. We can use that to
    * parallelize loading.
    */
-  private static abstract class LazyInputStream extends InputStream {
+  private abstract static class LazyInputStream extends InputStream {
     protected final PathHandler handler;
     private InputStream is = null;
 
@@ -502,13 +499,13 @@ public class WebViewLocalServer {
     }
 
     @Override
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
       InputStream is = getInputStream();
       return (is != null) ? is.read(b) : -1;
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
       InputStream is = getInputStream();
       return (is != null) ? is.read(b, off, len) : -1;
     }
