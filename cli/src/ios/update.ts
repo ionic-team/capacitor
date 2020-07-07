@@ -303,6 +303,11 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
             fileContent = fileContent.replace('[NSBundle bundleForClass:[CDVCapture class]]', '[NSBundle mainBundle]');
             writeFileSync(fileDest, fileContent, 'utf8');
           }
+          if (fileContent.includes('[self.webView superview]') || fileContent.includes('self.webView.superview')) {
+            fileContent = fileContent.replace(/\[self.webView superview\]/g, 'self.viewController.view');
+            fileContent = fileContent.replace(/self.webView.superview/g, 'self.viewController.view');
+            writeFileSync(fileDest, fileContent, 'utf8');
+          }
         }
       }
     });

@@ -71,4 +71,7 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
     implementation 'androidx.exifinterface:exifinterface:1.3.0-alpha01'
+    testImplementation 'org.json:json:20140107'
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
 }
+

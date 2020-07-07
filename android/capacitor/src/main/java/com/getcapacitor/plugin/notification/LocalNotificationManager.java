@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,10 +20,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
 
+import com.getcapacitor.CapConfig;
+import com.getcapacitor.Config;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.android.R;
+import com.getcapacitor.plugin.util.AssetUtil;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +41,9 @@ import java.util.List;
  */
 public class LocalNotificationManager {
 
+  private static final String CONFIG_KEY_PREFIX = "plugins.LocalNotifications.";
+  private static int defaultSoundID = AssetUtil.RESOURCE_ID_ZERO_VALUE;
+  private static int defaultSmallIconID = AssetUtil.RESOURCE_ID_ZERO_VALUE;
   // Action constants
   public static final String NOTIFICATION_INTENT_KEY = "LocalNotificationId";
   public static final String NOTIFICATION_OBJ_INTENT_KEY = "LocalNotficationObject";
@@ -49,11 +57,13 @@ public class LocalNotificationManager {
   private Context context;
   private Activity activity;
   private NotificationStorage storage;
+  private CapConfig config;
 
-  public LocalNotificationManager(NotificationStorage notificationStorage, Activity activity, Context context ) {
+  public LocalNotificationManager(NotificationStorage notificationStorage, Activity activity, Context context, CapConfig config) {
     storage = notificationStorage;
     this.activity = activity;
     this.context = context;
+    this.config = config;
   }
 
   /**
@@ -78,9 +88,9 @@ public class LocalNotificationManager {
       dataJson.put("inputValue", input.toString());
     }
     String menuAction = data.getStringExtra(LocalNotificationManager.ACTION_INTENT_KEY);
-    if (menuAction != DEFAULT_PRESS_ACTION) {
-      dismissVisibleNotification(notificationId);
-    }
+
+    dismissVisibleNotification(notificationId);
+
     dataJson.put("actionId", menuAction);
     JSONObject request = null;
     try {
@@ -109,7 +119,7 @@ public class LocalNotificationManager {
       AudioAttributes audioAttributes = new AudioAttributes.Builder()
               .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
               .setUsage(AudioAttributes.USAGE_ALARM).build();
-      Uri soundUri = LocalNotification.getDefaultSoundUrl(context);
+      Uri soundUri = this.getDefaultSoundUrl(context);
       if (soundUri != null) {
         channel.setSound(soundUri, audioAttributes);
       }
@@ -169,7 +179,7 @@ public class LocalNotificationManager {
     // support multiline text
     mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(localNotification.getBody()));
 
-    String sound = localNotification.getSound(context);
+    String sound = localNotification.getSound(context, getDefaultSound(context));
     if (sound != null) {
       Uri soundUri = Uri.parse(sound);
       // Grant permission to use sound
@@ -197,9 +207,9 @@ public class LocalNotificationManager {
     mBuilder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
     mBuilder.setOnlyAlertOnce(true);
 
-    mBuilder.setSmallIcon(localNotification.getSmallIcon(context));
+    mBuilder.setSmallIcon(localNotification.getSmallIcon(context, getDefaultSmallIcon(context)));
 
-    String iconColor = localNotification.getIconColor();
+    String iconColor = localNotification.getIconColor(config.getString(CONFIG_KEY_PREFIX + "iconColor"));
     if (iconColor != null) {
       try {
         mBuilder.setColor(Color.parseColor(iconColor));
@@ -359,5 +369,47 @@ public class LocalNotificationManager {
   public boolean areNotificationsEnabled(){
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
     return notificationManager.areNotificationsEnabled();
+  }
+
+  public Uri getDefaultSoundUrl(Context context){
+    int soundId = this.getDefaultSound(context);
+    if (soundId != AssetUtil.RESOURCE_ID_ZERO_VALUE) {
+      return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + soundId);
+    }
+    return null;
+  }
+
+  private int getDefaultSound(Context context){
+    if(defaultSoundID != AssetUtil.RESOURCE_ID_ZERO_VALUE) return defaultSoundID;
+
+    int resId = AssetUtil.RESOURCE_ID_ZERO_VALUE;
+    String soundConfigResourceName = config.getString(CONFIG_KEY_PREFIX + "sound");
+    soundConfigResourceName = AssetUtil.getResourceBaseName(soundConfigResourceName);
+
+    if(soundConfigResourceName != null){
+      resId = AssetUtil.getResourceID(context, soundConfigResourceName, "raw");
+    }
+
+    defaultSoundID = resId;
+    return resId;
+  }
+
+  private int getDefaultSmallIcon(Context context){
+    if(defaultSmallIconID != AssetUtil.RESOURCE_ID_ZERO_VALUE) return defaultSmallIconID;
+
+    int resId = AssetUtil.RESOURCE_ID_ZERO_VALUE;
+    String smallIconConfigResourceName = config.getString(CONFIG_KEY_PREFIX + "smallIcon");
+    smallIconConfigResourceName = AssetUtil.getResourceBaseName(smallIconConfigResourceName);
+
+    if(smallIconConfigResourceName != null){
+      resId = AssetUtil.getResourceID(context, smallIconConfigResourceName, "drawable");
+    }
+
+    if(resId == AssetUtil.RESOURCE_ID_ZERO_VALUE){
+      resId = android.R.drawable.ic_dialog_info;
+    }
+
+    defaultSmallIconID = resId;
+    return resId;
   }
 }

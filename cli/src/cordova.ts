@@ -423,7 +423,7 @@ ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
 </manifest>`;
-  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), config.app.appId);
+  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), '${applicationId}');
   if (existsSync(manifestPath)) {
     await writeFileAsync(manifestPath, content);
   }
