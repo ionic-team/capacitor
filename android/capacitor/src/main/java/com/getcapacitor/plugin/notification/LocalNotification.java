@@ -93,11 +93,7 @@ public class LocalNotification {
       return iconColor;
     } 
 
-    if (globalColor != null) {
-      return globalColor;
-    }
-
-    return null;
+    return globalColor;
   }
 
   public void setIconColor(String iconColor) {

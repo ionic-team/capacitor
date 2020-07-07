@@ -34,12 +34,7 @@ public class Modals extends Plugin {
       return;
     }
 
-    Dialogs.alert(c, message, title, buttonTitle, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        call.success();
-      }
-    });
+    Dialogs.alert(c, message, title, buttonTitle, (value, didCancel, inputValue) -> call.success());
   }
 
   @PluginMethod()
@@ -60,13 +55,10 @@ public class Modals extends Plugin {
       return;
     }
 
-    Dialogs.confirm(c, message, title, okButtonTitle, cancelButtonTitle, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        JSObject ret = new JSObject();
-        ret.put("value", value);
-        call.success(ret);
-      }
+    Dialogs.confirm(c, message, title, okButtonTitle, cancelButtonTitle, (value, didCancel, inputValue) -> {
+      JSObject ret = new JSObject();
+      ret.put("value", value);
+      call.success(ret);
     });
   }
 
@@ -90,14 +82,11 @@ public class Modals extends Plugin {
       return;
     }
 
-    Dialogs.prompt(c, message, title, okButtonTitle, cancelButtonTitle, inputPlaceholder, inputText, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        JSObject ret = new JSObject();
-        ret.put("cancelled", didCancel);
-        ret.put("value", inputValue == null ? "" : inputValue);
-        call.success(ret);
-      }
+    Dialogs.prompt(c, message, title, okButtonTitle, cancelButtonTitle, inputPlaceholder, inputText, (value, didCancel, inputValue) -> {
+      JSObject ret = new JSObject();
+      ret.put("cancelled", didCancel);
+      ret.put("value", inputValue == null ? "" : inputValue);
+      call.success(ret);
     });
   }
 
@@ -127,14 +116,11 @@ public class Modals extends Plugin {
     fragment.setTitle(title);
     fragment.setOptions(options);
     fragment.setCancelable(false);
-    fragment.setOnSelectedListener(new ModalsBottomSheetDialogFragment.OnSelectedListener() {
-      @Override
-      public void onSelected(int index) {
-        JSObject ret = new JSObject();
-        ret.put("index", index);
-        call.success(ret);
-        fragment.dismiss();
-      }
+    fragment.setOnSelectedListener(index -> {
+      JSObject ret = new JSObject();
+      ret.put("index", index);
+      call.success(ret);
+      fragment.dismiss();
     });
     fragment.show(getActivity().getSupportFragmentManager(), "capacitorModalsActionSheet");
   }

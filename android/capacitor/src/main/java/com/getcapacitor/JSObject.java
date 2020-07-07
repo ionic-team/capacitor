@@ -39,6 +39,7 @@ public class JSObject extends JSONObject {
     return new JSObject(obj, keys.toArray(new String[keys.size()]));
   }
 
+  @Override
   public String getString(String key) {
     return getString(key, null);
   }

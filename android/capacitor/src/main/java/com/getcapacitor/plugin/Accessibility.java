@@ -20,16 +20,14 @@ public class Accessibility extends Plugin {
   private TextToSpeech tts;
   private AccessibilityManager am;
 
+  @Override
   public void load() {
     am = (AccessibilityManager) getContext().getSystemService(ACCESSIBILITY_SERVICE);
 
-    am.addTouchExplorationStateChangeListener(new AccessibilityManager.TouchExplorationStateChangeListener() {
-      @Override
-      public void onTouchExplorationStateChanged(boolean b) {
-        JSObject ret = new JSObject();
-        ret.put("value", b);
-        notifyListeners(EVENT_SCREEN_READER_STATE_CHANGE, ret);
-      }
+    am.addTouchExplorationStateChangeListener(b -> {
+      JSObject ret = new JSObject();
+      ret.put("value", b);
+      notifyListeners(EVENT_SCREEN_READER_STATE_CHANGE, ret);
     });
   }
 
@@ -54,12 +52,9 @@ public class Accessibility extends Plugin {
       return;
     }
 
-    tts = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
-      @Override
-      public void onInit(int i) {
-        tts.setLanguage(locale);
-        tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, "capacitoraccessibility" + System.currentTimeMillis());
-      }
+    tts = new TextToSpeech(getContext(), i -> {
+      tts.setLanguage(locale);
+      tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, "capacitoraccessibility" + System.currentTimeMillis());
     });
   }
 

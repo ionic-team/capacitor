@@ -87,7 +87,6 @@ public class MessageHandler {
       if (isValidCallbackId) {
         final String runScript = "window.Capacitor.fromNative(" + data.toString() + ")";
         final WebView webView = this.webView;
-
         webView.post(() -> webView.evaluateJavascript(runScript, null));
       } else {
         bridge.storeDanglingPluginResult(call, data);
