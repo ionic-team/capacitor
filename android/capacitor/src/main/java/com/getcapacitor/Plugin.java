@@ -160,13 +160,12 @@ public class Plugin {
    * @return
    */
   public String[] getUndefinedPermissions(String[] neededPermissions) {
-    ArrayList<String> undefinedPermissions =  new ArrayList<String>();
+    ArrayList<String> undefinedPermissions = new ArrayList<>();
     String[] requestedPermissions = getManifestPermissions();
     if (requestedPermissions != null && requestedPermissions.length > 0)
     {
       List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-      ArrayList<String> requestedPermissionsArrayList = new ArrayList<String>();
-      requestedPermissionsArrayList.addAll(requestedPermissionsList);
+      ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
       for (String permission: neededPermissions) {
         if (!requestedPermissionsArrayList.contains(permission)) {
           undefinedPermissions.add(permission);
@@ -191,8 +190,7 @@ public class Plugin {
     if (requestedPermissions != null && requestedPermissions.length > 0)
     {
       List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-      ArrayList<String> requestedPermissionsArrayList = new ArrayList<String>();
-      requestedPermissionsArrayList.addAll(requestedPermissionsList);
+      ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
       if (requestedPermissionsArrayList.contains(permission)) {
         hasPermission = true;
       }
@@ -303,7 +301,7 @@ public class Plugin {
   private void addEventListener(String eventName, PluginCall call) {
     List<PluginCall> listeners = eventListeners.get(eventName);
     if (listeners == null || listeners.isEmpty()) {
-      listeners = new ArrayList<PluginCall>();
+      listeners = new ArrayList<>();
       eventListeners.put(eventName, listeners);
 
       // Must add the call before sending retained arguments

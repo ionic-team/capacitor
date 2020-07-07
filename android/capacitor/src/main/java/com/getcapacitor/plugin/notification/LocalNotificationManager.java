@@ -247,8 +247,7 @@ public class LocalNotificationManager {
     String actionTypeId = localNotification.getActionTypeId();
     if (actionTypeId != null) {
       NotificationAction[] actionGroup = storage.getActionGroup(actionTypeId);
-      for (int i = 0; i < actionGroup.length; i++) {
-        NotificationAction notificationAction = actionGroup[i];
+      for (NotificationAction notificationAction : actionGroup) {
         // TODO Add custom icons to actions
         Intent actionIntent = buildIntent(localNotification, notificationAction.getId());
         PendingIntent actionPendingIntent = PendingIntent.getActivity(context, localNotification.getId() + notificationAction.getId().hashCode(), actionIntent, PendingIntent.FLAG_CANCEL_CURRENT);

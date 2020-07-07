@@ -70,7 +70,7 @@ class JSInjector {
       final int bufferSize = 1024;
       final char[] buffer = new char[bufferSize];
       final StringBuilder out = new StringBuilder();
-      Reader in = new InputStreamReader(stream, "UTF-8");
+      Reader in = new InputStreamReader(stream, StandardCharsets.UTF_8);
       for (; ; ) {
         int rsz = in.read(buffer, 0, buffer.length);
         if (rsz < 0)

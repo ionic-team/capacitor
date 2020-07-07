@@ -247,14 +247,11 @@ public class Splash {
         isVisible = true;
 
         if (autoHide) {
-          new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              Splash.hide(a, fadeOutDuration, isLaunchSplash);
+          new Handler().postDelayed(() -> {
+            Splash.hide(a, fadeOutDuration, isLaunchSplash);
 
-              if (splashListener != null) {
-                splashListener.completed();
-              }
+            if (splashListener != null) {
+              splashListener.completed();
             }
           }, showDuration);
         } else {
@@ -275,60 +272,57 @@ public class Splash {
 
     Handler mainHandler = new Handler(a.getMainLooper());
 
-    mainHandler.post(new Runnable() {
-      @Override
-      public void run() {
+    mainHandler.post(() -> {
 
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        params.gravity = Gravity.CENTER;
-        params.flags = a.getWindow().getAttributes().flags;
+      WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+      params.gravity = Gravity.CENTER;
+      params.flags = a.getWindow().getAttributes().flags;
 
-        // Required to enable the view to actually fade
-        params.format = PixelFormat.TRANSLUCENT;
+      // Required to enable the view to actually fade
+      params.format = PixelFormat.TRANSLUCENT;
 
-        try {
-          wm.addView(splashImage, params);
-        } catch (IllegalStateException | IllegalArgumentException ex) {
-          Logger.debug("Could not add splash view");
-          return;
+      try {
+        wm.addView(splashImage, params);
+      } catch (IllegalStateException | IllegalArgumentException ex) {
+        Logger.debug("Could not add splash view");
+        return;
+      }
+
+      splashImage.setAlpha(0f);
+
+      splashImage.animate()
+              .alpha(1f)
+              .setInterpolator(new LinearInterpolator())
+              .setDuration(fadeInDuration)
+              .setListener(listener)
+              .start();
+
+      splashImage.setVisibility(View.VISIBLE);
+
+      if (spinnerBar != null) {
+        Boolean showSpinner = config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
+
+        spinnerBar.setVisibility(View.INVISIBLE);
+
+        if (spinnerBar.getParent() != null) {
+          wm.removeView(spinnerBar);
         }
 
-        splashImage.setAlpha(0f);
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
 
-        splashImage.animate()
-                .alpha(1f)
-                .setInterpolator(new LinearInterpolator())
-                .setDuration(fadeInDuration)
-                .setListener(listener)
-                .start();
+        wm.addView(spinnerBar, params);
 
-        splashImage.setVisibility(View.VISIBLE);
+        if (showSpinner) {
+          spinnerBar.setAlpha(0f);
 
-        if (spinnerBar != null) {
-          Boolean showSpinner = config.getBoolean(CONFIG_KEY_PREFIX + "showSpinner", false);
+          spinnerBar.animate()
+                  .alpha(1f)
+                  .setInterpolator(new LinearInterpolator())
+                  .setDuration(fadeInDuration)
+                  .start();
 
-          spinnerBar.setVisibility(View.INVISIBLE);
-
-          if (spinnerBar.getParent() != null) {
-            wm.removeView(spinnerBar);
-          }
-
-          params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-          params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-
-          wm.addView(spinnerBar, params);
-
-          if (showSpinner) {
-            spinnerBar.setAlpha(0f);
-
-            spinnerBar.animate()
-                    .alpha(1f)
-                    .setInterpolator(new LinearInterpolator())
-                    .setDuration(fadeInDuration)
-                    .start();
-
-            spinnerBar.setVisibility(View.VISIBLE);
-          }
+          spinnerBar.setVisibility(View.VISIBLE);
         }
       }
     });
@@ -373,28 +367,25 @@ public class Splash {
 
     Handler mainHandler = new Handler(c.getMainLooper());
 
-    mainHandler.post(new Runnable() {
-      @Override
-      public void run() {
-        if (spinnerBar != null) {
-          spinnerBar.setAlpha(1f);
+    mainHandler.post(() -> {
+      if (spinnerBar != null) {
+        spinnerBar.setAlpha(1f);
 
-          spinnerBar.animate()
-                  .alpha(0)
-                  .setInterpolator(new LinearInterpolator())
-                  .setDuration(fadeOutDuration)
-                  .start();
-        }
-
-        splashImage.setAlpha(1f);
-
-        splashImage.animate()
+        spinnerBar.animate()
                 .alpha(0)
                 .setInterpolator(new LinearInterpolator())
                 .setDuration(fadeOutDuration)
-                .setListener(listener)
                 .start();
       }
+
+      splashImage.setAlpha(1f);
+
+      splashImage.animate()
+              .alpha(0)
+              .setInterpolator(new LinearInterpolator())
+              .setDuration(fadeOutDuration)
+              .setListener(listener)
+              .start();
     });
   }
 
@@ -402,7 +393,7 @@ public class Splash {
     if (spinnerBar != null && spinnerBar.getParent() != null) {
       spinnerBar.setVisibility(View.INVISIBLE);
 
-      if (removeSpinner == true) {
+      if (removeSpinner) {
         wm.removeView(spinnerBar);
       }
     }

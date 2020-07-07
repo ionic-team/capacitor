@@ -1,6 +1,5 @@
 package com.getcapacitor.plugin.background;
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.IntentFilter;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -24,6 +22,7 @@ public class BackgroundTask extends Plugin {
 
   private BroadcastReceiver taskReceiver;
 
+  @Override
   public void load() {
     IntentFilter intentFilter = new IntentFilter(TASK_BROADCAST_ACTION);
 

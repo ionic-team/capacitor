@@ -2,7 +2,6 @@ package com.getcapacitor;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.EditText;
@@ -55,32 +54,25 @@ public class Dialogs {
     final String alertTitle = title == null ? "Alert" : title;
     final String alertOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
 
-    new Handler(Looper.getMainLooper()).post(new Runnable() {
-      @Override
-      public void run() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    new Handler(Looper.getMainLooper()).post(() -> {
+      AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        builder
-            .setMessage(message)
-            // TODO: i18n
-            .setTitle(alertTitle)
-            .setPositiveButton(alertOkButtonTitle, new AlertDialog.OnClickListener() {
-              public void onClick(DialogInterface dialog, int buttonIndex) {
-                dialog.dismiss();
-                listener.onResult(true, false, null);
-              }
-            })
-            .setOnCancelListener(new AlertDialog.OnCancelListener() {
-              public void onCancel(DialogInterface dialog) {
-                dialog.dismiss();
-                listener.onResult(false, true, null);
-              }
-            });
+      builder
+          .setMessage(message)
+          // TODO: i18n
+          .setTitle(alertTitle)
+          .setPositiveButton(alertOkButtonTitle, (dialog, buttonIndex) -> {
+            dialog.dismiss();
+            listener.onResult(true, false, null);
+          })
+          .setOnCancelListener(dialog -> {
+            dialog.dismiss();
+            listener.onResult(false, true, null);
+          });
 
-        AlertDialog dialog = builder.create();
+      AlertDialog dialog = builder.create();
 
-        dialog.show();
-      }
+      dialog.show();
     });
 
   }
@@ -101,38 +93,29 @@ public class Dialogs {
     final String confirmOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
     final String confirmCancelButtonTitle = cancelButtonTitle == null ? "Cancel" : cancelButtonTitle;
 
-    new Handler(Looper.getMainLooper()).post(new Runnable() {
-      @Override
-      public void run() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    new Handler(Looper.getMainLooper()).post(() -> {
+      final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        builder
-            .setMessage(message)
-            .setTitle(confirmTitle)
-            .setPositiveButton(confirmOkButtonTitle, new AlertDialog.OnClickListener() {
-              public void onClick(DialogInterface dialog, int buttonIndex) {
-                dialog.dismiss();
-                listener.onResult(true, false, null);
-              }
-            })
-            .setNegativeButton(confirmCancelButtonTitle, new AlertDialog.OnClickListener() {
-              public void onClick(DialogInterface dialog, int buttonIndex) {
-                dialog.dismiss();
-                listener.onResult(false, false, null);
-              }
-            })
+      builder
+          .setMessage(message)
+          .setTitle(confirmTitle)
+          .setPositiveButton(confirmOkButtonTitle, (dialog, buttonIndex) -> {
+            dialog.dismiss();
+            listener.onResult(true, false, null);
+          })
+          .setNegativeButton(confirmCancelButtonTitle, (dialog, buttonIndex) -> {
+            dialog.dismiss();
+            listener.onResult(false, false, null);
+          })
 
-            .setOnCancelListener(new AlertDialog.OnCancelListener() {
-              public void onCancel(DialogInterface dialog) {
-                dialog.dismiss();
-                listener.onResult(false, true, null);
-              }
-            });
+          .setOnCancelListener(dialog -> {
+            dialog.dismiss();
+            listener.onResult(false, true, null);
+          });
 
-        AlertDialog dialog = builder.create();
+      AlertDialog dialog = builder.create();
 
-        dialog.show();
-      }
+      dialog.show();
     });
   }
 
@@ -157,44 +140,35 @@ public class Dialogs {
     final String promptInputPlaceholder = inputPlaceholder == null ? "" : inputPlaceholder;
     final String promptInputText = inputText == null ? "" : inputText;
 
-    new Handler(Looper.getMainLooper()).post(new Runnable() {
-      @Override
-      public void run() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        final EditText input = new EditText(context);
+    new Handler(Looper.getMainLooper()).post(() -> {
+      final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+      final EditText input = new EditText(context);
 
-        input.setHint(promptInputPlaceholder);
-        input.setText(promptInputText);
+      input.setHint(promptInputPlaceholder);
+      input.setText(promptInputText);
 
-        builder
-            .setMessage(message)
-            .setTitle(promptTitle)
-            .setView(input)
-            .setPositiveButton(promptOkButtonTitle, new AlertDialog.OnClickListener() {
-              public void onClick(DialogInterface dialog, int buttonIndex) {
-                dialog.dismiss();
+      builder
+          .setMessage(message)
+          .setTitle(promptTitle)
+          .setView(input)
+          .setPositiveButton(promptOkButtonTitle, (dialog, buttonIndex) -> {
+            dialog.dismiss();
 
-                String inputText = input.getText().toString().trim();
-                listener.onResult(true, false, inputText);
-              }
-            })
-            .setNegativeButton(promptCancelButtonTitle, new AlertDialog.OnClickListener() {
-              public void onClick(DialogInterface dialog, int buttonIndex) {
-                dialog.dismiss();
-                listener.onResult(false, true, null);
-              }
-            })
-            .setOnCancelListener(new AlertDialog.OnCancelListener() {
-              public void onCancel(DialogInterface dialog) {
-                dialog.dismiss();
-                listener.onResult(false, true, null);
-              }
-            });
+            String inputText1 = input.getText().toString().trim();
+            listener.onResult(true, false, inputText1);
+          })
+          .setNegativeButton(promptCancelButtonTitle, (dialog, buttonIndex) -> {
+            dialog.dismiss();
+            listener.onResult(false, true, null);
+          })
+          .setOnCancelListener(dialog -> {
+            dialog.dismiss();
+            listener.onResult(false, true, null);
+          });
 
-        AlertDialog dialog = builder.create();
+      AlertDialog dialog = builder.create();
 
-        dialog.show();
-      }
+      dialog.show();
     });
   }
 
@@ -211,12 +185,9 @@ public class Dialogs {
 
     final ModalsBottomSheetDialogFragment fragment = new ModalsBottomSheetDialogFragment();
     fragment.setOptions(optionsArray);
-    fragment.setOnSelectedListener(new ModalsBottomSheetDialogFragment.OnSelectedListener() {
-      @Override
-      public void onSelected(int index) {
-        listener.onSelect(index);
-        fragment.dismiss();
-      }
+    fragment.setOnSelectedListener(index -> {
+      listener.onSelect(index);
+      fragment.dismiss();
     });
     fragment.setOnCancelListener(cancelListener);
     fragment.show(activity.getSupportFragmentManager(), "capacitorModalsActionSheet");

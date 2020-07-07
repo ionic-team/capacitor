@@ -35,6 +35,7 @@ public class Network extends Plugin {
   /**
    * Monitor for network status changes and fire our event.
    */
+  @Override
   @SuppressWarnings("MissingPermission")
   public void load() {
     cm = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);

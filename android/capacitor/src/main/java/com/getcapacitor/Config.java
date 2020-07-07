@@ -34,32 +34,23 @@ public class Config {
   }
 
   private void loadConfig(Activity activity) {
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new InputStreamReader(activity.getAssets().open("capacitor.config.json")));
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(activity.getAssets().open("capacitor.config.json")))) {
 
-      // do reading, usually loop until end of file reading
-      StringBuilder b = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        //process line
-        b.append(line);
-      }
+          // do reading, usually loop until end of file reading
+          StringBuilder b = new StringBuilder();
+          String line;
+          while ((line = reader.readLine()) != null) {
+            //process line
+            b.append(line);
+          }
 
-      String jsonString = b.toString();
-      this.config = new JSONObject(jsonString);
-    } catch (IOException ex) {
-      Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
-    } catch (JSONException ex) {
-      Logger.error("Unable to parse capacitor.config.json. Make sure it's valid json", ex);
-    } finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        } catch (IOException e) {
-        }
+          String jsonString = b.toString();
+          this.config = new JSONObject(jsonString);
+      } catch (IOException ex) {
+          Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
+      } catch (JSONException ex) {
+          Logger.error("Unable to parse capacitor.config.json. Make sure it's valid json", ex);
       }
-    }
   }
 
   /**

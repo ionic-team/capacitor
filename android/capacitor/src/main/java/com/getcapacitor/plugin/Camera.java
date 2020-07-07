@@ -36,8 +36,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * The Camera plugin makes it easy to take a photo or have the user select a photo
@@ -115,23 +113,15 @@ public class Camera extends Plugin {
       takePicture
     };
 
-    Dialogs.actions(getActivity(), options, new Dialogs.OnSelectListener() {
-      @Override
-      public void onSelect(int index) {
-        if (index == 0) {
-          settings.setSource(CameraSource.PHOTOS);
-          openPhotos(call);
-        } else if (index == 1) {
-          settings.setSource(CameraSource.CAMERA);
-          openCamera(call);
-        }
+    Dialogs.actions(getActivity(), options, index -> {
+      if (index == 0) {
+        settings.setSource(CameraSource.PHOTOS);
+        openPhotos(call);
+      } else if (index == 1) {
+        settings.setSource(CameraSource.CAMERA);
+        openCamera(call);
       }
-    }, new Dialogs.OnCancelListener() {
-      @Override
-      public void onCancel() {
-        call.error("User cancelled photos app");
-      }
-    });
+    }, () -> call.error("User cancelled photos app"));
   }
 
   private void showCamera(final PluginCall call) {

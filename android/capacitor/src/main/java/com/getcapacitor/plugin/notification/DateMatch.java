@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class DateMatch {
 
-  private final static String separator = " ";
+  private static final String separator = " ";
 
   private Integer year;
   private Integer month;
