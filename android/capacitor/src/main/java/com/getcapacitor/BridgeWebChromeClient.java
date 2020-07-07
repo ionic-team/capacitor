@@ -42,11 +42,29 @@ public class BridgeWebChromeClient extends WebChromeClient {
   public BridgeWebChromeClient(Bridge bridge) {
     this.bridge = bridge;
   }
-  
+
+  /**
+   * Render web content in `view`.
+   *
+   * Both this method and {@link #onHideCustomView()} are required for
+   * rendering web content in full screen.
+   *
+   * @see <a href="https://developer.android.com/reference/android/webkit/WebChromeClient#onShowCustomView(android.view.View,%20android.webkit.WebChromeClient.CustomViewCallback)">onShowCustomView() docs</a>
+   */
   @Override
   public void onShowCustomView(View view, CustomViewCallback callback) {
     callback.onCustomViewHidden();
     super.onShowCustomView(view, callback);
+  }
+
+  /**
+   * Render web content in the original Web View again.
+   *
+   * Do not remove this method--@see #onShowCustomView(View, CustomViewCallback).
+   */
+  @Override
+  public void onHideCustomView() {
+    super.onHideCustomView();
   }
 
   @Override
