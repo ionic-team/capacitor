@@ -4,8 +4,8 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -48,16 +48,20 @@ public class Clipboard extends Plugin {
     ClipboardManager clipboard = (ClipboardManager)
         c.getSystemService(Context.CLIPBOARD_SERVICE);
 
-    CharSequence value = "";
-    if(clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-      Log.d(getLogTag(), "Got plaintxt");
-      ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-      value = item.getText();
-    } else {
-      Log.d(getLogTag(), "Not plaintext!");
-      ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-      value = item.coerceToText(this.getContext()).toString();
+    CharSequence value = null;
+
+    if (clipboard.hasPrimaryClip()) {
+      if(clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+        Logger.debug(getLogTag(), "Got plaintxt");
+        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+        value = item.getText();
+      } else {
+        Logger.debug(getLogTag(), "Not plaintext!");
+        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+        value = item.coerceToText(this.getContext()).toString();
+      }
     }
+
     JSObject ret = new JSObject();
     String type = "text/plain";
     ret.put("value", value != null ? value : "");
@@ -65,6 +69,7 @@ public class Clipboard extends Plugin {
       type = value.toString().split(";")[0].split(":")[1];
     }
     ret.put("type", type);
+
     call.success(ret);
   }
 }

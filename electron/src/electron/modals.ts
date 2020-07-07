@@ -25,13 +25,8 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
   }
 
   async alert(options: AlertOptions): Promise<void> {
-    const alert = (message: string, title: string = '') =>
-    {    
-        let buttons = [options.buttonTitle || 'OK']
-        dialog.showMessageBox(getCurrentWindow(), {message, title, buttons});       
-    }
-        alert(options.message, options.title);
-        return Promise.resolve();
+    const buttons = [options.buttonTitle || 'OK'];
+    return await dialog.showMessageBox(getCurrentWindow(), {message: options.message, title: options.title, buttons});
   }
 
   async prompt(options: PromptOptions): Promise<PromptResult> {
@@ -43,15 +38,9 @@ export class ModalsPluginElectron extends WebPlugin implements ModalsPlugin {
   }
 
   async confirm(options: ConfirmOptions): Promise<ConfirmResult> {
-    const confirm = (message: string, title: string='') =>
-    {
-      let buttons = [options.okButtonTitle || 'OK' , options.cancelButtonTitle || 'Cancel']
-      return !dialog.showMessageBox(getCurrentWindow(), {message, title, buttons});
-    }
-    const val = confirm(options.message,options.title);
-    return Promise.resolve({
-      value: val
-    });
+    const buttons = [options.okButtonTitle || 'OK' , options.cancelButtonTitle || 'Cancel'];
+    const value = await dialog.showMessageBox(getCurrentWindow(), {message: options.message, title: options.title, buttons})
+    return {value: value.response === 0};
   }
 
   async showActions(options: ActionSheetOptions): Promise<ActionSheetResult> {

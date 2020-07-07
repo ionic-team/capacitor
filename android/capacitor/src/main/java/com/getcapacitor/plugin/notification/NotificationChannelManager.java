@@ -7,13 +7,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
-import android.util.Log;
-
 
 import androidx.core.app.NotificationCompat;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import com.getcapacitor.Logger;
 import com.getcapacitor.PluginCall;
 
 import java.util.List;
@@ -33,15 +32,13 @@ public class NotificationChannelManager {
         this.notificationManager = manager;
     }
 
-    private static final String TAG = "NotificationChannel: ";
-
-
     private static String CHANNEL_ID = "id";
     private static String CHANNEL_NAME = "name";
     private static String CHANNEL_DESCRIPTION = "description";
     private static String CHANNEL_IMPORTANCE = "importance";
     private static String CHANNEL_VISIBILITY = "visibility";
     private static String CHANNEL_SOUND = "sound";
+    private static String CHANNEL_VIBRATE = "vibration";
     private static String CHANNEL_USE_LIGHTS = "lights";
     private static String CHANNEL_LIGHT_COLOR = "lightColor";
 
@@ -54,6 +51,7 @@ public class NotificationChannelManager {
             channel.put(CHANNEL_VISIBILITY, call.getInt(CHANNEL_VISIBILITY, NotificationCompat.VISIBILITY_PUBLIC));
             channel.put(CHANNEL_IMPORTANCE, call.getInt(CHANNEL_IMPORTANCE));
             channel.put(CHANNEL_SOUND, call.getString(CHANNEL_SOUND, null));
+            channel.put(CHANNEL_VIBRATE, call.getBoolean(CHANNEL_VIBRATE, false));
             channel.put(CHANNEL_USE_LIGHTS, call.getBoolean(CHANNEL_USE_LIGHTS, false));
             channel.put(CHANNEL_LIGHT_COLOR, call.getString(CHANNEL_LIGHT_COLOR, null));
             createChannel(channel);
@@ -67,13 +65,14 @@ public class NotificationChannelManager {
             NotificationChannel notificationChannel = new NotificationChannel(channel.getString(CHANNEL_ID), channel.getString(CHANNEL_NAME), channel.getInteger(CHANNEL_IMPORTANCE));
             notificationChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION));
             notificationChannel.setLockscreenVisibility(channel.getInteger(CHANNEL_VISIBILITY));
+            notificationChannel.enableVibration(channel.getBool(CHANNEL_VIBRATE));
             notificationChannel.enableLights(channel.getBool(CHANNEL_USE_LIGHTS));
             String lightColor = channel.getString(CHANNEL_LIGHT_COLOR);
             if (lightColor != null) {
                 try {
                     notificationChannel.setLightColor(Color.parseColor(lightColor));
                 } catch (IllegalArgumentException ex) {
-                    Log.e(TAG, "Invalid color provided for light color.");
+                    Logger.error(Logger.tags("NotificationChannel"), "Invalid color provided for light color.", null);
                 }
             }
             String sound = channel.getString(CHANNEL_SOUND, null);
@@ -113,10 +112,11 @@ public class NotificationChannelManager {
                 channel.put(CHANNEL_IMPORTANCE, notificationChannel.getImportance());
                 channel.put(CHANNEL_VISIBILITY, notificationChannel.getLockscreenVisibility());
                 channel.put(CHANNEL_SOUND, notificationChannel.getSound());
+                channel.put(CHANNEL_VIBRATE, notificationChannel.shouldVibrate());
                 channel.put(CHANNEL_USE_LIGHTS, notificationChannel.shouldShowLights());
                 channel.put(CHANNEL_LIGHT_COLOR, String.format("#%06X", (0xFFFFFF & notificationChannel.getLightColor())));
-                Log.d(TAG, "visibility " + notificationChannel.getLockscreenVisibility());
-                Log.d(TAG, "importance " + notificationChannel.getImportance());
+                Logger.debug(Logger.tags("NotificationChannel"), "visibility " + notificationChannel.getLockscreenVisibility());
+                Logger.debug(Logger.tags("NotificationChannel"), "importance " + notificationChannel.getImportance());
                 channels.put(channel);
             }
             JSObject result = new JSObject();

@@ -3,11 +3,10 @@ package com.getcapacitor.plugin.camera;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import androidx.core.content.FileProvider;
 
-import com.getcapacitor.LogUtils;
+import com.getcapacitor.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +35,6 @@ public class CameraUtils {
     }
 
     protected static String getLogTag() {
-        return LogUtils.getCoreTag("CameraUtils");
+        return Logger.tags("CameraUtils");
     }
 }

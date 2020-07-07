@@ -24,6 +24,13 @@
 - (void)addListener:(CAPPluginCall *)call;
 - (void)removeListener:(CAPPluginCall *)call;
 - (void)removeAllListeners:(CAPPluginCall *)call;
+/**
+ * Give the plugins a chance to take control when a URL is about to be loaded in the WebView.
+ * Returning true causes the WebView to abort loading the URL.
+ * Returning false causes the WebView to continue loading the URL.
+ * Returning nil will defer to the default Capacitor policy
+ */
+- (NSNumber *)shouldOverrideLoad:(WKNavigationAction *)navigationAction;
 
 // Called after init if the plugin wants to do
 // some loading so the plugin author doesn't
@@ -34,5 +41,6 @@
 -(NSString *) getString:(CAPPluginCall *)call field:(NSString *)field defaultValue:(NSString *)defaultValue;
 -(id)getConfigValue:(NSString *) key;
 -(void)setCenteredPopover:(UIViewController *) vc;
+-(BOOL)supportsPopover;
 
 @end

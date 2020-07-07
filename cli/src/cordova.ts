@@ -310,7 +310,7 @@ export async function checkAndInstallDependencies(config: Config, plugins: Plugi
     if (allDependencies) {
       await Promise.all(allDependencies.map(async (dep: any) => {
         let plugin = dep.$.id;
-        if (plugin.includes('@')) {
+        if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
           plugin = plugin.split('@')[0];
         }
         if (cordovaPlugins.filter(p => p.id === plugin || p.xml.$.id === plugin).length === 0) {
@@ -337,7 +337,7 @@ export function getIncompatibleCordovaPlugins(platform: string) {
   let pluginList = ['cordova-plugin-splashscreen', 'cordova-plugin-ionic-webview', 'cordova-plugin-crosswalk-webview',
   'cordova-plugin-wkwebview-engine', 'cordova-plugin-console', 'cordova-plugin-music-controls',
   'cordova-plugin-add-swift-support', 'cordova-plugin-ionic-keyboard', 'cordova-plugin-braintree',
-  '@ionic-enterprise/filesystem', '@ionic-enterprise/keyboard', '@ionic-enterprise/splashscreen'];
+  '@ionic-enterprise/filesystem', '@ionic-enterprise/keyboard', '@ionic-enterprise/splashscreen', 'cordova-support-google-services'];
   if (platform === 'ios') {
     pluginList.push('cordova-plugin-googlemaps', 'cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
   }
@@ -423,7 +423,7 @@ ${applicationXMLEntries.join('\n')}
 </application>
 ${rootXMLEntries.join('\n')}
 </manifest>`;
-  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), config.app.appId);
+  content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), '${applicationId}');
   if (existsSync(manifestPath)) {
     await writeFileAsync(manifestPath, content);
   }

@@ -1,7 +1,6 @@
 package com.getcapacitor;
 
 import android.app.Activity;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Management interface for accessing values in capacitor.config.json
+ * @deprecated use getBridge().getConfig() instead of the static Config
  */
 public class Config {
 
@@ -27,7 +26,9 @@ public class Config {
     return instance;
   }
 
-  // Load our capacitor.config.json
+  /**
+   * @deprecated
+   */
   public static void load(Activity activity) {
     Config.getInstance().loadConfig(activity);
   }
@@ -48,9 +49,9 @@ public class Config {
       String jsonString = b.toString();
       this.config = new JSONObject(jsonString);
     } catch (IOException ex) {
-      Log.e(LogUtils.getCoreTag(), "Unable to load capacitor.config.json. Run npx cap copy first", ex);
+      Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
     } catch (JSONException ex) {
-      Log.e(LogUtils.getCoreTag(), "Unable to parse capacitor.config.json. Make sure it's valid json", ex);
+      Logger.error("Unable to parse capacitor.config.json. Make sure it's valid json", ex);
     } finally {
       if (reader != null) {
         try {
@@ -61,6 +62,9 @@ public class Config {
     }
   }
 
+  /**
+   * @deprecated
+   */
   public static JSONObject getObject(String key) {
     try {
       return getInstance().config.getJSONObject(key);
@@ -82,10 +86,16 @@ public class Config {
     return o;
   }
 
+  /**
+   * @deprecated
+   */
   public static String getString(String key) {
     return getString(key, null);
   }
 
+  /**
+   * @deprecated
+   */
   public static String getString(String key, String defaultValue) {
     String k = getConfigKey(key);
     try {
@@ -100,6 +110,9 @@ public class Config {
     return defaultValue;
   }
 
+  /**
+   * @deprecated
+   */
   public static boolean getBoolean(String key, boolean defaultValue) {
     String k = getConfigKey(key);
     try {
@@ -110,6 +123,9 @@ public class Config {
     return defaultValue;
   }
 
+  /**
+   * @deprecated
+   */
   public static int getInt(String key, int defaultValue) {
     String k = getConfigKey(key);
     try {
@@ -121,6 +137,9 @@ public class Config {
     return defaultValue;
   }
 
+  /**
+   * @deprecated
+   */
   private static String getConfigKey(String key) {
     String[] parts = key.split("\\.");
     if (parts.length > 0) {
@@ -129,10 +148,16 @@ public class Config {
     return null;
   }
 
+  /**
+   * @deprecated
+   */
   public static String[] getArray(String key) {
     return getArray(key, null);
   }
 
+  /**
+   * @deprecated
+   */
   public static String[] getArray(String key, String[] defaultValue) {
     String k = getConfigKey(key);
     try {

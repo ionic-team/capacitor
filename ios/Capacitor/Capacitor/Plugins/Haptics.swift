@@ -58,7 +58,9 @@ public class CAPHapticsPlugin: CAPPlugin {
   }
   
   @objc public func selectionEnd(_ call: CAPPluginCall) {
-    selectionFeedbackGenerator = nil
+    DispatchQueue.main.async {
+      self.selectionFeedbackGenerator = nil
+    }
   }
   
   @objc public func vibrate(_ call: CAPPluginCall) {

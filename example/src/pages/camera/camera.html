@@ -15,9 +15,12 @@
 
 <ion-content padding>
   <img [src]="image" />
-  <button (click)="getPhoto()" ion-button color="primary">Prompt</button>
+  <button (click)="getPhotoPWAElements()" ion-button color="primary">Prompt (PWA Elements)</button>
+  <button (click)="getPhotoFront()" ion-button color="primary">From Camera (front facing)</button>
   <button (click)="takePicture()" ion-button color="primary">From Camera</button>
+  <button (click)="getFileInput()" ion-button color="primary">File Input</button>
   <button (click)="getFromPhotos()" ion-button color="primary">From Photos</button>
+  <button (click)="getBase64()" ion-button color="primary">Prompt (b64)</button>
   <button (click)="takePictureScaled()" ion-button color="primary">Scaled</button>
   <button (click)="takePictureCorrected()" ion-button color="primary">Orientation Corrected</button>
   <button (click)="takePictureFile()" ion-button color="primary">File URI</button>
