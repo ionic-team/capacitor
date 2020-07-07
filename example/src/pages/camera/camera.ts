@@ -36,11 +36,12 @@ export class CameraPage {
     console.log('ionViewDidLoad CameraPage');
   }
 
-  async getPhoto() {
+  async getFileInput() {
     const image = await Plugins.Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.DataUrl
+      resultType: CameraResultType.DataUrl,
+      webUseInput: true
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
@@ -72,7 +73,6 @@ export class CameraPage {
       quality: 90,
       allowEditing: true,
       resultType: CameraResultType.DataUrl,
-      webUseInput: false,
       source: CameraSource.Camera
     })
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);

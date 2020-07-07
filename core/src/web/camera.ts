@@ -19,7 +19,9 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
   async getPhoto(options: CameraOptions): Promise<CameraPhoto> {
     return new Promise<CameraPhoto>(async (resolve, reject) => {
-      if (options.webUseInput === false && options.source === CameraSource.Camera) {
+      if (options.webUseInput) {
+        this.fileInputExperience(options, resolve);
+      } else {
         if (customElements.get('pwa-camera-modal')) {
           const cameraModal: any = document.createElement('pwa-camera-modal');
           document.body.appendChild(cameraModal);
@@ -48,8 +50,6 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
           console.error(`Unable to load PWA Element 'pwa-camera-modal'. See the docs: https://capacitorjs.com/docs/pwa-elements.`);
           this.fileInputExperience(options, resolve);
         }
-      } else {
-        this.fileInputExperience(options, resolve);
       }
     });
   }

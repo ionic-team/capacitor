@@ -345,8 +345,11 @@ export interface CameraOptions {
   presentationStyle?: 'fullscreen' | 'popover';
 
   /**
-   * Web only: whether to use the PWA Element experience or file input. The default
-   * is to use file input experience. Learn more about PWA Elements: https://capacitorjs.com/docs/pwa-elements
+   * Web only: Whether to use the PWA Element experience or file input. The
+   * default is to use PWA Elements if installed and fall back to file input.
+   * To always use file input, set this to `true`.
+   *
+   * Learn more about PWA Elements: https://capacitorjs.com/docs/pwa-elements
    */
   webUseInput?: boolean;
 
