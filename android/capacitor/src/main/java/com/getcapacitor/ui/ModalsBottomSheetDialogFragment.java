@@ -114,14 +114,11 @@ public class ModalsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         tv.setPadding(layoutPaddingPx12, layoutPaddingPx12, layoutPaddingPx12, layoutPaddingPx12);
         //tv.setBackgroundColor(Color.parseColor("#80000000"));
         tv.setText(titleOption);
-        tv.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            Logger.debug("CliCKED: " + optionIndex);
+        tv.setOnClickListener(view -> {
+          Logger.debug("CliCKED: " + optionIndex);
 
-            if (listener != null) {
-              listener.onSelected(optionIndex);
-            }
+          if (listener != null) {
+            listener.onSelected(optionIndex);
           }
         });
         layout.addView(tv);

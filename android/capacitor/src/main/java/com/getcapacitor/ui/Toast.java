@@ -14,12 +14,9 @@ public class Toast {
   }
 
   public static void show(final Context c, final String text, final int duration) {
-    new Handler(Looper.getMainLooper()).post(new Runnable() {
-      @Override
-      public void run() {
-        android.widget.Toast toast = android.widget.Toast.makeText(c, text, duration);
-        toast.show();
-      }
+    new Handler(Looper.getMainLooper()).post(() -> {
+      android.widget.Toast toast = android.widget.Toast.makeText(c, text, duration);
+      toast.show();
     });
   }
 }

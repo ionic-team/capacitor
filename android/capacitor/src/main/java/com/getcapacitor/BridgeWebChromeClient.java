@@ -48,17 +48,12 @@ public class BridgeWebChromeClient extends WebChromeClient {
     callback.onCustomViewHidden();
     super.onShowCustomView(view, callback);
   }
-  
-  @Override
-  public void onHideCustomView() {
-    super.onHideCustomView();
-  }
 
   @Override
   public void onPermissionRequest(final PermissionRequest request) {
     boolean isRequestPermissionRequired = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M;
 
-    List<String> permissionList = new ArrayList<String>();
+    List<String> permissionList = new ArrayList<>();
     if (Arrays.asList(request.getResources()).contains("android.webkit.resource.VIDEO_CAPTURE")) {
       permissionList.add(Manifest.permission.CAMERA);
     }
@@ -67,7 +62,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
       permissionList.add(Manifest.permission.RECORD_AUDIO);
     }
     if (!permissionList.isEmpty() && isRequestPermissionRequired) {
-      String [] permissions = permissionList.toArray(new String[0]);;
+      String [] permissions = permissionList.toArray(new String[0]);
       bridge.cordovaInterface.requestPermissions(new CordovaPlugin(){
         @Override
         public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
@@ -101,14 +96,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
       return true;
     }
 
-    Dialogs.alert(view.getContext(), message, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        if(value) {
-          result.confirm();
-        } else {
-          result.cancel();
-        }
+    Dialogs.alert(view.getContext(), message, (value, didCancel, inputValue) -> {
+      if(value) {
+        result.confirm();
+      } else {
+        result.cancel();
       }
     });
 
@@ -129,14 +121,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
       return true;
     }
 
-    Dialogs.confirm(view.getContext(), message, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        if(value) {
-          result.confirm();
-        } else {
-          result.cancel();
-        }
+    Dialogs.confirm(view.getContext(), message, (value, didCancel, inputValue) -> {
+      if(value) {
+        result.confirm();
+      } else {
+        result.cancel();
       }
     });
 
@@ -158,14 +147,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
       return true;
     }
 
-    Dialogs.prompt(view.getContext(), message, new Dialogs.OnResultListener() {
-      @Override
-      public void onResult(boolean value, boolean didCancel, String inputValue) {
-        if(value) {
-          result.confirm(inputValue);
-        } else {
-          result.cancel();
-        }
+    Dialogs.prompt(view.getContext(), message, (value, didCancel, inputValue) -> {
+      if(value) {
+        result.confirm(inputValue);
+      } else {
+        result.cancel();
       }
     });
 

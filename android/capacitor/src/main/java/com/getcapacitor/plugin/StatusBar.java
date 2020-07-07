@@ -16,6 +16,7 @@ public class StatusBar extends Plugin {
 
   private int currentStatusbarColor;
 
+  @Override
   public void load() {
     // save initial color of the status bar
     currentStatusbarColor = getActivity().getWindow().getStatusBarColor();
@@ -29,21 +30,18 @@ public class StatusBar extends Plugin {
       return;
     }
 
-    getBridge().executeOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        Window window = getActivity().getWindow();
-        View decorView = window.getDecorView();
+    getBridge().executeOnMainThread(() -> {
+      Window window = getActivity().getWindow();
+      View decorView = window.getDecorView();
 
-        int visibilityFlags = decorView.getSystemUiVisibility();
+      int visibilityFlags = decorView.getSystemUiVisibility();
 
-        if (style.equals("DARK")) {
-          decorView.setSystemUiVisibility(visibilityFlags & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        } else {
-          decorView.setSystemUiVisibility(visibilityFlags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
-        call.success();
+      if (style.equals("DARK")) {
+        decorView.setSystemUiVisibility(visibilityFlags & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+      } else {
+        decorView.setSystemUiVisibility(visibilityFlags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
       }
+      call.success();
     });
   }
 
@@ -55,21 +53,18 @@ public class StatusBar extends Plugin {
       return;
     }
 
-    getBridge().executeOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        Window window = getActivity().getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        try {
-          final int parsedColor = Color.parseColor(color.toUpperCase());
-          window.setStatusBarColor(parsedColor);
-          // update the local color field as well
-          currentStatusbarColor = parsedColor;
-          call.success();
-        } catch (IllegalArgumentException ex) {
-          call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
-        }
+    getBridge().executeOnMainThread(() -> {
+      Window window = getActivity().getWindow();
+      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      try {
+        final int parsedColor = Color.parseColor(color.toUpperCase());
+        window.setStatusBarColor(parsedColor);
+        // update the local color field as well
+        currentStatusbarColor = parsedColor;
+        call.success();
+      } catch (IllegalArgumentException ex) {
+        call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
       }
     });
   }
@@ -77,32 +72,26 @@ public class StatusBar extends Plugin {
   @PluginMethod()
   public void hide(final PluginCall call) {
     // Hide the status bar.
-    getBridge().executeOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        View decorView = getActivity().getWindow().getDecorView();
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_VISIBLE;
-        decorView.setSystemUiVisibility(uiOptions);
-        call.success();
-      }
+    getBridge().executeOnMainThread(() -> {
+      View decorView = getActivity().getWindow().getDecorView();
+      int uiOptions = decorView.getSystemUiVisibility();
+      uiOptions = uiOptions | View.SYSTEM_UI_FLAG_FULLSCREEN;
+      uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_VISIBLE;
+      decorView.setSystemUiVisibility(uiOptions);
+      call.success();
     });
   }
 
   @PluginMethod()
   public void show(final PluginCall call) {
     // Show the status bar.
-    getBridge().executeOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        View decorView = getActivity().getWindow().getDecorView();
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_VISIBLE;
-        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-        call.success();
-      }
+    getBridge().executeOnMainThread(() -> {
+      View decorView = getActivity().getWindow().getDecorView();
+      int uiOptions = decorView.getSystemUiVisibility();
+      uiOptions = uiOptions | View.SYSTEM_UI_FLAG_VISIBLE;
+      uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_FULLSCREEN;
+      decorView.setSystemUiVisibility(uiOptions);
+      call.success();
     });
   }
 
@@ -129,31 +118,27 @@ public class StatusBar extends Plugin {
   @PluginMethod()
   public void setOverlaysWebView(final PluginCall call) {
     final Boolean overlays = call.getBoolean("overlay", true);
-    getBridge().executeOnMainThread(new Runnable() {
-      @Override
-      public void run() {
-        if (overlays) {
-          // Sets the layout to a fullscreen one that does not hide the actual status bar, so the webview is displayed behind it.
-          View decorView = getActivity().getWindow().getDecorView();
-          int uiOptions = decorView.getSystemUiVisibility();
-          uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-          decorView.setSystemUiVisibility(uiOptions);
-          currentStatusbarColor = getActivity().getWindow().getStatusBarColor();
-          getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
+    getBridge().executeOnMainThread(() -> {
+      if (overlays) {
+        // Sets the layout to a fullscreen one that does not hide the actual status bar, so the webview is displayed behind it.
+        View decorView = getActivity().getWindow().getDecorView();
+        int uiOptions = decorView.getSystemUiVisibility();
+        uiOptions = uiOptions | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        currentStatusbarColor = getActivity().getWindow().getStatusBarColor();
+        getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
 
-          call.success();
-        } else {
-          // Sets the layout to a normal one that displays the webview below the status bar.
-          View decorView = getActivity().getWindow().getDecorView();
-          int uiOptions = decorView.getSystemUiVisibility();
-          uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-          decorView.setSystemUiVisibility(uiOptions);
-          // recover the previous color of the status bar
-          getActivity().getWindow().setStatusBarColor(currentStatusbarColor);
+      } else {
+        // Sets the layout to a normal one that displays the webview below the status bar.
+        View decorView = getActivity().getWindow().getDecorView();
+        int uiOptions = decorView.getSystemUiVisibility();
+        uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        // recover the previous color of the status bar
+        getActivity().getWindow().setStatusBarColor(currentStatusbarColor);
 
-          call.success();
-        }
       }
+      call.success();
     });
   }
 }
