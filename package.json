@@ -2,14 +2,16 @@
   "name": "capacitor",
   "private": true,
   "scripts": {
+    "lint": "npm run prettier -- --check && npm run swiftlint -- lint",
+    "fmt": "npm run prettier -- --write && npm run swiftlint -- autocorrect",
     "prettier": "prettier '+(app-template/**/*.{css,html,js}|{cli,core,plugin-template}/src/**/*.{css,html,js,ts}|{android/capacitor,android-template/app,capacitor-cordova-android-plugins}/src/**/*.java)'",
-    "fmt": "npm run prettier -- --write",
+    "swiftlint": "swiftlint",
     "publish": "bash scripts/prerelease.sh && lerna run build && lerna publish --force-publish --skip-git && npm run publish-push",
     "publish-push": "bash scripts/deploy.sh"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run prettier -- --check"
+      "pre-commit": "npm run lint"
     }
   },
   "devDependencies": {
