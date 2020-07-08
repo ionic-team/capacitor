@@ -1,8 +1,8 @@
 package com.getcapacitor.plugin.camera;
 
-import android.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 
-import static android.media.ExifInterface.*;
+import static androidx.exifinterface.media.ExifInterface.*;
 
 import com.getcapacitor.JSObject;
 
@@ -22,7 +22,7 @@ public class ExifWrapper {
 
     // Commented fields are for API 24. Left in to save someone the wrist damage later
 
-    p(ret, TAG_APERTURE);
+    p(ret, TAG_APERTURE_VALUE);
     /*
     p(ret, TAG_ARTIST);
     p(ret, TAG_BITS_PER_SAMPLE);
@@ -105,7 +105,7 @@ public class ExifWrapper {
     p(ret, TAG_IMAGE_LENGTH);
     // p(ret, TAG_IMAGE_UNIQUE_ID);
     p(ret, TAG_IMAGE_WIDTH);
-    p(ret, TAG_ISO);
+    p(ret, TAG_ISO_SPEED);
     /*
     p(ret, TAG_INTEROPERABILITY_INDEX);
     p(ret, TAG_ISO_SPEED_RATINGS);
