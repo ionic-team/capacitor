@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
@@ -58,6 +59,18 @@ public class Splash {
 
       if (splash instanceof Animatable) {
         ((Animatable) splash).start();
+      }
+
+      if(splash instanceof LayerDrawable){
+        LayerDrawable layeredSplash = (LayerDrawable) splash;
+
+        for(int i = 0; i < layeredSplash.getNumberOfLayers(); i++){
+          Drawable layerDrawable = layeredSplash.getDrawable(i);
+
+          if(layerDrawable instanceof  Animatable) {
+            ((Animatable) layerDrawable).start();
+          }
+        }
       }
 
       splashImage = new ImageView(c);
