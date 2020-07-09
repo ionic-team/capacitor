@@ -27,27 +27,29 @@ public class Share extends Plugin {
       call.error("Must provide a URL or Message");
       return;
     }
+
+    if(url != null && !isFileUrl(url) && !isHttpUrl(url)) {
+      call.error("Unsupported url");
+      return;
+    }
+
     Intent intent = new Intent(Intent.ACTION_SEND);
+
     if (text != null) {
       // If they supplied both fields, concat em
-      if (url != null && url.startsWith("http")) {
-        text = text + " " + url;
-      }
+      if (url != null && isHttpUrl(url)) text = text + " " + url;
       intent.putExtra(Intent.EXTRA_TEXT, text);
       intent.setTypeAndNormalize("text/plain");
-    } else if (url != null) {
-      if (url.startsWith("http")) {
-        intent.putExtra(Intent.EXTRA_TEXT, url);
-        intent.setTypeAndNormalize("text/plain");
-      } else if (url.startsWith("file:")) {
-        String type = getMimeType(url);
-        intent.setType(type);
-        Uri fileUrl = FileProvider.getUriForFile(getActivity(), getContext().getPackageName() + ".fileprovider", new File(Uri.parse(url).getPath()));
-        intent.putExtra(Intent.EXTRA_STREAM, fileUrl);
-      } else {
-        call.error("Unsupported url");
-        return;
-      }
+    }
+
+    if(url != null && isHttpUrl(url) && text == null) {
+      intent.putExtra(Intent.EXTRA_TEXT, url);
+      intent.setTypeAndNormalize("text/plain");
+    } else if (url != null && isFileUrl(url)) {
+      String type = getMimeType(url);
+      intent.setType(type);
+      Uri fileUrl = FileProvider.getUriForFile(getActivity(), getContext().getPackageName() + ".fileprovider", new File(Uri.parse(url).getPath()));
+      intent.putExtra(Intent.EXTRA_STREAM, fileUrl);
     }
 
     if (title != null) {
@@ -68,5 +70,13 @@ public class Share extends Plugin {
       type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
     return type;
+  }
+
+  private boolean isFileUrl(String url) {
+    return url.startsWith("file:");
+  }
+
+  private boolean isHttpUrl(String url) {
+    return url.startsWith("http");
   }
 }
