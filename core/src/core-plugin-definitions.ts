@@ -334,7 +334,7 @@ export interface CameraOptions {
    */
   source?: CameraSource;
   /**
-   * iOS only: The default camera direction. By default the rear camera.
+   * iOS and Web only: The camera direction.
    * Default: CameraDirection.Rear
    */
   direction?: CameraDirection;
@@ -343,6 +343,15 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * Web only: Whether to use the PWA Element experience or file input. The
+   * default is to use PWA Elements if installed and fall back to file input.
+   * To always use file input, set this to `true`.
+   *
+   * Learn more about PWA Elements: https://capacitorjs.com/docs/pwa-elements
+   */
+  webUseInput?: boolean;
 
   /**
    * If use CameraSource.Prompt only, can change Prompt label.
@@ -393,7 +402,10 @@ export interface CameraPhoto {
    */
   exif?: any;
   /**
-   * The format of the image. Currently, only "jpeg" is supported.
+   * The format of the image, ex: jpeg, png, gif.
+   *
+   * iOS and Android only support jpeg.
+   * Web supports jpeg and png. gif is only supported if using file input.
    */
   format: string;
 }

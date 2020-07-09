@@ -82,7 +82,7 @@ public class NotificationChannelManager {
                 }
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_ALARM).build();
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
                 Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + sound);
                 notificationChannel.setSound(soundUri, audioAttributes);
             }

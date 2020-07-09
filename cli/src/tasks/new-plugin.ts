@@ -97,6 +97,7 @@ export async function newPlugin(config: Config) {
     const pluginPath = removeScope(answers.name);
     const domain = answers.domain;
     const className = answers.className;
+    const cliVersion = config.cli.package.version;
 
     if (await existsAsync(pluginPath)) {
       logFatal(`Directory ${pluginPath} already exists. Not overwriting.`);
@@ -112,7 +113,7 @@ export async function newPlugin(config: Config) {
     });
 
     await runTask('Writing package.json', () => {
-      return writePrettyJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers));
+      return writePrettyJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers, cliVersion));
     });
 
     await runTask('Installing NPM dependencies', async () => {
@@ -218,7 +219,7 @@ function generateAndroidManifest(domain: string, pluginPath: string) {
   `;
 }
 
-function generatePackageJSON(answers: NewPluginAnswers) {
+function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
   return {
     name: answers.name,
     version: '0.0.1',
@@ -234,13 +235,13 @@ function generatePackageJSON(answers: NewPluginAnswers) {
     author: answers.author,
     license: answers.license,
     dependencies: {
-      '@capacitor/core': 'latest'
+      '@capacitor/core': `^${cliVersion}`
     },
     devDependencies: {
       'rimraf': '^3.0.0',
       'typescript': '^3.2.4',
-      '@capacitor/ios': 'latest',
-      '@capacitor/android': 'latest'
+      '@capacitor/ios': `^${cliVersion}`,
+      '@capacitor/android': `^${cliVersion}`
     },
     files: [
       'dist/',
@@ -270,4 +271,3 @@ function generatePackageJSON(answers: NewPluginAnswers) {
     }
   };
 }
-
