@@ -46,19 +46,19 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'name',
-      message: 'Plugin NPM name (kebab-case):',
+      message: 'Plugin npm name (kebab-case. ex: capacitor-plugin-example):',
       validate: requiredInput
     },
     {
       type: 'input',
       name: 'domain',
-      message: 'Plugin id (domain-style syntax. ex: com.example.plugin)',
+      message: 'Plugin id (domain-style syntax. ex: com.example.plugins.example)',
       validate: requiredInput
     },
     {
       type: 'input',
       name: 'className',
-      message: 'Plugin class name (ex: AwesomePlugin)',
+      message: 'Plugin class name (ex: Example)',
       validate: requiredInput
     },
     {
