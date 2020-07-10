@@ -321,7 +321,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     if case .initialLoad(let isOpaque) = webViewLoadingState {
-      webView?.isOpaque = isOpaque
+      webView.isOpaque = isOpaque
       webViewLoadingState = .subsequentLoad
     }
     CAPLog.print("⚡️  WebView loaded")
@@ -329,7 +329,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     if case .initialLoad(let isOpaque) = webViewLoadingState {
-      webView?.isOpaque = isOpaque
+      webView.isOpaque = isOpaque
       webViewLoadingState = .subsequentLoad
     }
     CAPLog.print("⚡️  WebView failed to load")
