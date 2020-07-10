@@ -232,8 +232,8 @@ public class LocalNotification {
       localNotification.setChannelId(jsonObject.getString("channelId"));
       localNotification.setSchedule(new LocalNotificationSchedule(jsonObject));
       localNotification.setExtra(jsonObject.getJSObject("extra"));
-      localNotification.setOngoing(notification.getBoolean("ongoing", false));
-      localNotification.setAutoCancel(notification.getBoolean("autoCancel", true));
+      localNotification.setOngoing(jsonObject.getBoolean("ongoing", false));
+      localNotification.setAutoCancel(jsonObject.getBoolean("autoCancel", true));
 
       return localNotification;
   }
