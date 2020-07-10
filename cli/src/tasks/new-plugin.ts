@@ -239,7 +239,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     },
     devDependencies: {
       'rimraf': '^3.0.0',
-      'typescript': '^3.2.4',
+      'typescript': '~3.8.3',
       '@capacitor/ios': `^${cliVersion}`,
       '@capacitor/android': `^${cliVersion}`
     },
