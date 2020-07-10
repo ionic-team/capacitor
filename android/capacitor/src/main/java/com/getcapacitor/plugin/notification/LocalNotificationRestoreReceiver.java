@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.os.UserManager;
 
 import com.getcapacitor.CapConfig;
-import com.getcapacitor.PluginCall;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,7 +52,7 @@ public class LocalNotificationRestoreReceiver extends BroadcastReceiver {
             storage.appendNotifications(updatedNotifications);
         }
 
-        CapConfig config = new CapConfig(context.getAssets(), new JSONObject());
+        CapConfig config = new CapConfig(context.getAssets(), null);
         LocalNotificationManager localNotificationManager = new LocalNotificationManager(storage, null, context, config);
 
         localNotificationManager.schedule(null, notifications);
