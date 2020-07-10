@@ -186,31 +186,37 @@ public class LocalNotification {
         call.error("Invalid JSON object sent to NotificationPlugin", e);
         return null;
       }
-      LocalNotification activeLocalNotification = new LocalNotification();
-      activeLocalNotification.setSource(notification.toString());
-      activeLocalNotification.setId(notification.getInteger("id"));
-      activeLocalNotification.setBody(notification.getString("body"));
-      activeLocalNotification.setActionTypeId(notification.getString("actionTypeId"));
-      activeLocalNotification.setGroup(notification.getString("group"));
-      activeLocalNotification.setSound(notification.getString("sound"));
-      activeLocalNotification.setTitle(notification.getString("title"));
-      activeLocalNotification.setSmallIcon(notification.getString("smallIcon"));
-      activeLocalNotification.setIconColor(notification.getString("iconColor"));
-      activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
-      activeLocalNotification.setGroupSummary(notification.getBoolean("groupSummary", false));
-      activeLocalNotification.setChannelId(notification.getString("channelId"));
+
       try {
-        activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
+          LocalNotification activeLocalNotification = buildNotificationFromJSObject(notification);
+          resultLocalNotifications.add(activeLocalNotification);
       } catch (ParseException e) {
         call.error("Invalid date format sent to Notification plugin", e);
         return null;
       }
-      activeLocalNotification.setExtra(notification.getJSObject("extra"));
-      resultLocalNotifications.add(activeLocalNotification);
     }
     return resultLocalNotifications;
   }
 
+  public static LocalNotification buildNotificationFromJSObject(JSObject jsonObject) throws ParseException {
+      LocalNotification localNotification = new LocalNotification();
+      localNotification.setSource(jsonObject.toString());
+      localNotification.setId(jsonObject.getInteger("id"));
+      localNotification.setBody(jsonObject.getString("body"));
+      localNotification.setActionTypeId(jsonObject.getString("actionTypeId"));
+      localNotification.setGroup(jsonObject.getString("group"));
+      localNotification.setSound(jsonObject.getString("sound"));
+      localNotification.setTitle(jsonObject.getString("title"));
+      localNotification.setSmallIcon(jsonObject.getString("smallIcon"));
+      localNotification.setIconColor(jsonObject.getString("iconColor"));
+      localNotification.setAttachments(LocalNotificationAttachment.getAttachments(jsonObject));
+      localNotification.setGroupSummary(jsonObject.getBoolean("groupSummary", false));
+      localNotification.setChannelId(jsonObject.getString("channelId"));
+      localNotification.setSchedule(new LocalNotificationSchedule(jsonObject));
+      localNotification.setExtra(jsonObject.getJSObject("extra"));
+
+      return localNotification;
+  }
 
   public static List<Integer> getLocalNotificationPendingList(PluginCall call) {
     List<JSONObject> notifications = null;
