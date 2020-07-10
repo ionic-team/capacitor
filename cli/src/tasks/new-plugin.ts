@@ -221,44 +221,48 @@ function generateAndroidManifest(domain: string, pluginPath: string) {
 
 function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
   return {
-    name: answers.name,
-    version: '0.0.1',
-    description: answers.description,
-    main: 'dist/esm/index.js',
-    types: 'dist/esm/index.d.ts',
-    scripts: {
-      'build': 'npm run clean && tsc',
+    'name': answers.name,
+    'version': '0.0.1',
+    'description': answers.description,
+    'main': 'dist/plugin.js',
+    'module': 'dist/esm/index.js',
+    'types': 'dist/esm/index.d.ts',
+    'scripts': {
+      'build': 'npm run clean && tsc && rollup -c rollup.config.js',
       'clean': 'rimraf ./dist',
       'watch': 'tsc --watch',
       'prepublishOnly': 'npm run build'
     },
-    author: answers.author,
-    license: answers.license,
-    dependencies: {
+    'author': answers.author,
+    'license': answers.license,
+    'devDependencies': {
+      '@capacitor/android': `^${cliVersion}`,
+      '@capacitor/core': `^${cliVersion}`,
+      '@capacitor/ios': `^${cliVersion}`,
+      '@rollup/plugin-node-resolve': '^8.1.0',
+      'rimraf': '^3.0.0',
+      'rollup': '^2.21.0',
+      'typescript': '~3.8.3'
+    },
+    'peerDependencies': {
       '@capacitor/core': `^${cliVersion}`
     },
-    devDependencies: {
-      'rimraf': '^3.0.0',
-      'typescript': '~3.8.3',
-      '@capacitor/ios': `^${cliVersion}`,
-      '@capacitor/android': `^${cliVersion}`
-    },
-    files: [
+    'files': [
       'dist/',
       'ios/',
       'android/',
       `${fixName(answers.name)}.podspec`
     ],
-    keywords: [
+    'keywords': [
       'capacitor',
       'plugin',
       'native'
     ],
-    capacitor: {
-      ios: {
+    'capacitor': {
+      'ios': {
         src: 'ios',
       },
-      android: {
+      'android': {
         src: 'android'
       }
     },
