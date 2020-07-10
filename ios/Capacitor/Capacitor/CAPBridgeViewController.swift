@@ -98,9 +98,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       webView?.backgroundColor = UIColor(fromHex: backgroundColor)
       webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
     } else if #available(iOS 13, *) {
-        // Use the system background colors if background is not set by user
-        webView?.backgroundColor = UIColor.systemBackground
-        webView?.scrollView.backgroundColor = UIColor.systemBackground
+      // Use the system background colors if background is not set by user
+      webView?.backgroundColor = UIColor.systemBackground
+      webView?.scrollView.backgroundColor = UIColor.systemBackground
     }
     
     if let overrideUserAgent = (bridge!.config.getValue("ios.overrideUserAgent") as? String) ?? (bridge!.config.getValue("overrideUserAgent") as? String) {
