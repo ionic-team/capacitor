@@ -174,8 +174,8 @@ public class LocalNotificationManager {
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.context, channelId)
             .setContentTitle(localNotification.getTitle())
             .setContentText(localNotification.getBody())
-            .setAutoCancel(true)
-            .setOngoing(false)
+            .setAutoCancel( localNotification.isAutoCancel( ) )
+            .setOngoing( localNotification.isOngoing( ) )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setGroupSummary(localNotification.isGroupSummary());
 

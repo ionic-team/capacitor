@@ -33,6 +33,8 @@ public class LocalNotification {
   private String actionTypeId;
   private String group;
   private boolean groupSummary;
+  private boolean ongoing;
+  private boolean autoCancel;
   private JSObject extra;
   private List<LocalNotificationAttachment> attachments;
   private LocalNotificationSchedule schedule;
@@ -152,6 +154,22 @@ public class LocalNotification {
     this.groupSummary = groupSummary;
   }
 
+  public boolean isOngoing() {
+    return ongoing;
+  }
+
+  public void setOngoing(boolean ongoing) {
+    this.ongoing = ongoing;
+  }
+
+  public boolean isAutoCancel() {
+    return autoCancel;
+  }
+
+  public void setAutoCancel(boolean autoCancel) {
+    this.autoCancel = autoCancel;
+  }
+
   public String getChannelId() {
     return channelId;
   }
@@ -186,7 +204,7 @@ public class LocalNotification {
         call.error("Invalid JSON object sent to NotificationPlugin", e);
         return null;
       }
-
+      
       try {
           LocalNotification activeLocalNotification = buildNotificationFromJSObject(notification);
           resultLocalNotifications.add(activeLocalNotification);
@@ -214,6 +232,8 @@ public class LocalNotification {
       localNotification.setChannelId(jsonObject.getString("channelId"));
       localNotification.setSchedule(new LocalNotificationSchedule(jsonObject));
       localNotification.setExtra(jsonObject.getJSObject("extra"));
+      localNotification.setOngoing(jsonObject.getBoolean("ongoing", false));
+      localNotification.setAutoCancel(jsonObject.getBoolean("autoCancel", true));
 
       return localNotification;
   }
@@ -288,6 +308,8 @@ public class LocalNotification {
             ", attachments=" + attachments +
             ", schedule=" + schedule +
             ", groupSummary=" + groupSummary +
+            ", ongoing=" + ongoing +
+            ", autoCancel=" + autoCancel +
             '}';
   }
 
@@ -311,6 +333,8 @@ public class LocalNotification {
     if (attachments != null ? !attachments.equals(that.attachments) : that.attachments != null)
       return false;
     if (groupSummary != that.groupSummary) return false;
+    if( ongoing != that.ongoing ) return false;
+    if( autoCancel != that.autoCancel ) return false;
     return schedule != null ? schedule.equals(that.schedule) : that.schedule == null;
   }
 
@@ -325,6 +349,8 @@ public class LocalNotification {
     result = 31 * result + (actionTypeId != null ? actionTypeId.hashCode() : 0);
     result = 31 * result + (group != null ? group.hashCode() : 0);
     result = 31 * result + Boolean.hashCode(groupSummary);
+    result = 31 * result + Boolean.hashCode( ongoing );
+    result = 31 * result + Boolean.hashCode( autoCancel );
     result = 31 * result + (extra != null ? extra.hashCode() : 0);
     result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
     result = 31 * result + (schedule != null ? schedule.hashCode() : 0);
