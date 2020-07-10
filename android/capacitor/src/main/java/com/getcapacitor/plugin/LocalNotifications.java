@@ -74,7 +74,7 @@ public class LocalNotifications extends Plugin {
     }
     JSONArray ids = manager.schedule(call, localNotifications);
     if (ids != null) {
-      notificationStorage.appendNotificationIds(localNotifications);
+      notificationStorage.appendNotifications(localNotifications);
       JSObject result = new JSObject();
       JSArray jsArray = new JSArray();
       for (int i=0; i < ids.length(); i++) {

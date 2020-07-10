@@ -3,7 +3,14 @@ package com.getcapacitor.plugin.notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.getcapacitor.JSObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +38,12 @@ public class NotificationStorage {
   /**
    * Persist the id of currently scheduled notification
    */
-  public void appendNotificationIds(List<LocalNotification> localNotifications) {
+  public void appendNotifications(List<LocalNotification> localNotifications) {
     SharedPreferences storage = getStorage(NOTIFICATION_STORE_ID);
     SharedPreferences.Editor editor = storage.edit();
-    long creationTime = new Date().getTime();
     for (LocalNotification request : localNotifications) {
       String key = request.getId().toString();
-      editor.putLong(key, creationTime);
+      editor.putString(key, request.getSource());
     }
     editor.apply();
   }
@@ -49,6 +55,40 @@ public class NotificationStorage {
       return new ArrayList<>(all.keySet());
     }
     return new ArrayList<>();
+  }
+
+  public JSObject getSavedNotificationAsJSObject(String key) {
+    SharedPreferences storage = getStorage(NOTIFICATION_STORE_ID);
+    String notificationString = storage.getString(key, null);
+
+    if(notificationString == null){
+        return null;
+    }
+
+    JSObject jsNotification;
+    try {
+        jsNotification  = new JSObject(notificationString);
+    } catch (JSONException ex) {
+        return  null;
+    }
+
+    return jsNotification;
+  }
+
+  public LocalNotification getSavedNotification(String key) {
+    JSObject jsNotification = getSavedNotificationAsJSObject(key);
+    if(jsNotification == null) {
+        return null;
+    }
+
+    LocalNotification notification;
+    try {
+       notification = LocalNotification.buildNotificationFromJSObject(jsNotification);
+    } catch (ParseException ex) {
+       return  null;
+    }
+
+    return  notification;
   }
 
   /**
