@@ -35,7 +35,7 @@ export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
         const blob = await (await fetch(options.image)).blob();
         const clipboardItemInput = new ClipboardItem({[blob.type] : blob});
         await navigator.clipboard.write([clipboardItemInput]);
-      }catch(err) {
+      } catch (err) {
         return Promise.reject('Failed to write image');
       }
     } else {

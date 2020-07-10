@@ -4,7 +4,9 @@ import {
   CameraPlugin,
   CameraPhoto,
   CameraOptions,
-  CameraResultType
+  CameraResultType,
+  CameraDirection,
+  CameraSource
 } from '../core-plugin-definitions';
 
 export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
@@ -16,29 +18,108 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   }
 
   async getPhoto(options: CameraOptions): Promise<CameraPhoto> {
-    options;
-
     return new Promise<CameraPhoto>(async (resolve, reject) => {
-      const cameraModal: any = document.createElement('pwa-camera-modal');
-      document.body.appendChild(cameraModal);
-      await cameraModal.componentOnReady();
-      cameraModal.addEventListener('onPhoto', async (e: any) => {
-        const photo = e.detail;
+      if (options.webUseInput) {
+        this.fileInputExperience(options, resolve);
+      } else {
+        if (customElements.get('pwa-camera-modal')) {
+          const cameraModal: any = document.createElement('pwa-camera-modal');
+          document.body.appendChild(cameraModal);
+          try {
+            await cameraModal.componentOnReady();
+            cameraModal.addEventListener('onPhoto', async (e: any) => {
+              const photo = e.detail;
 
-        if (photo === null) {
-          reject('User cancelled photos app');
-        } else if (photo instanceof Error) {
-          reject(photo.message);
+              if (photo === null) {
+                reject('User cancelled photos app');
+              } else if (photo instanceof Error) {
+                reject(photo.message);
+              } else {
+                resolve(await this._getCameraPhoto(photo, options));
+              }
+
+              cameraModal.dismiss();
+              document.body.removeChild(cameraModal);
+            });
+
+            cameraModal.present();
+          } catch (e) {
+            this.fileInputExperience(options, resolve);
+          }
         } else {
-          resolve(await this._getCameraPhoto(photo, options));
+          console.error(`Unable to load PWA Element 'pwa-camera-modal'. See the docs: https://capacitorjs.com/docs/pwa-elements.`);
+          this.fileInputExperience(options, resolve);
         }
-
-        cameraModal.dismiss();
-        document.body.removeChild(cameraModal);
-      });
-
-      cameraModal.present();
+      }
     });
+  }
+
+  private fileInputExperience(options: CameraOptions, resolve: any) {
+    let input = document.querySelector('#_capacitor-camera-input') as HTMLInputElement;
+
+    const cleanup = () => {
+      input.parentNode && input.parentNode.removeChild(input);
+    };
+
+    if (!input) {
+      input = document.createElement('input') as HTMLInputElement;
+      input.id = '_capacitor-camera-input';
+      input.type = 'file';
+      document.body.appendChild(input);
+    }
+
+    input.accept = 'image/*';
+    (input as any).capture = true;
+
+    if (options.source === CameraSource.Photos || options.source === CameraSource.Prompt) {
+      input.removeAttribute('capture');
+    } else if (options.direction === CameraDirection.Front) {
+      (input as any).capture = 'user';
+    } else if (options.direction === CameraDirection.Rear) {
+      (input as any).capture = 'environment';
+    }
+
+    input.addEventListener('change', (_e: any) => {
+      const file = input.files[0];
+      let format = 'jpeg';
+
+      if (file.type === 'image/png') {
+        format = 'png';
+      } else if (file.type === 'image/gif') {
+        format = 'gif';
+      }
+
+      if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
+        const reader = new FileReader();
+
+        reader.addEventListener('load', () => {
+          if (options.resultType === CameraResultType.DataUrl) {
+            resolve({
+              dataUrl: reader.result,
+              format
+            } as CameraPhoto);
+          } else if (options.resultType === CameraResultType.Base64) {
+            const b64 = (reader.result as string).split(',')[1];
+            resolve({
+              base64String: b64,
+              format
+            } as CameraPhoto);
+          }
+
+          cleanup();
+        });
+
+        reader.readAsDataURL(file);
+      } else {
+        resolve({
+          webPath: URL.createObjectURL(file),
+          format: format
+        });
+        cleanup();
+      }
+    });
+
+    input.click();
   }
 
   private _getCameraPhoto(photo: Blob, options: CameraOptions) {

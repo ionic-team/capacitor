@@ -6,6 +6,6 @@ target 'IonicRunner' do
   use_frameworks!
 
   # Pods for IonicRunner
-  pod 'CapacitorCordova', :path => '../../../'
-  pod 'Capacitor', :path => '../../../'
+  pod 'CapacitorCordova', :path => '../../../ios/'
+  pod 'Capacitor', :path => '../../../ios/'
 end

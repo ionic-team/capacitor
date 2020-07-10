@@ -39,7 +39,7 @@ public class LocalNotifications extends Plugin {
   public void load() {
     super.load();
     notificationStorage = new NotificationStorage(getContext());
-    manager = new LocalNotificationManager(notificationStorage, getActivity(), getContext());
+    manager = new LocalNotificationManager(notificationStorage, getActivity(), getContext(), this.bridge.getConfig());
     manager.createNotificationChannel();
     notificationChannelManager = new NotificationChannelManager(getActivity());
   }

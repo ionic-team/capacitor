@@ -198,7 +198,7 @@ export interface AppRestoredResult {
    */
   error?: {
     message: string;
-  }
+  };
 }
 
 //
@@ -334,7 +334,7 @@ export interface CameraOptions {
    */
   source?: CameraSource;
   /**
-   * iOS only: The default camera direction. By default the rear camera.
+   * iOS and Web only: The camera direction.
    * Default: CameraDirection.Rear
    */
   direction?: CameraDirection;
@@ -343,6 +343,15 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * Web only: Whether to use the PWA Element experience or file input. The
+   * default is to use PWA Elements if installed and fall back to file input.
+   * To always use file input, set this to `true`.
+   *
+   * Learn more about PWA Elements: https://capacitorjs.com/docs/pwa-elements
+   */
+  webUseInput?: boolean;
 
   /**
    * If use CameraSource.Prompt only, can change Prompt label.
@@ -393,7 +402,10 @@ export interface CameraPhoto {
    */
   exif?: any;
   /**
-   * The format of the image. Currently, only "jpeg" is supported.
+   * The format of the image, ex: jpeg, png, gif.
+   *
+   * iOS and Android only support jpeg.
+   * Web supports jpeg and png. gif is only supported if using file input.
    */
   format: string;
 }
@@ -1104,7 +1116,7 @@ export interface LocalNotification {
   /**
    * Android only: set the color of the notification icon
    */
-  iconColor?: string
+  iconColor?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
@@ -1127,8 +1139,8 @@ export interface LocalNotification {
    */
   groupSummary?: boolean;
   /**
-   * Android only: set the notification channel on which local notification 
-   * will generate. If channel with the given name does not exist then the 
+   * Android only: set the notification channel on which local notification
+   * will generate. If channel with the given name does not exist then the
    * notification will not fire. If not provided, it will use the default channel.
    */
   channelId?: string;
@@ -1348,7 +1360,8 @@ export enum PermissionType {
   Geolocation = 'geolocation',
   Notifications = 'notifications',
   ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write'
+  ClipboardWrite = 'clipboard-write',
+  Microphone = 'microphone'
 }
 
 export interface PermissionsOptions {
@@ -1599,21 +1612,74 @@ export interface NotificationChannelList {
 }
 
 export interface PushNotificationsPlugin extends Plugin {
-  register(): Promise<void>;
-  requestPermission(): Promise<NotificationPermissionResponse>;
-  getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
-  removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
-  removeAllDeliveredNotifications(): Promise<void>;
-  createChannel(channel: NotificationChannel): Promise<void>;
-  deleteChannel(channel: NotificationChannel): Promise<void>;
-  listChannels(): Promise<NotificationChannelList>;
-  addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
-  addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
-
   /**
-   * Remove all native listeners for this plugin
+   * Register the app to receive push notifications.
+   * Will trigger registration event with the push token
+   * or registrationError if there was some problem.
+   * Doesn't prompt the user for notification permissions, use requestPermission() first.
+   */
+  register(): Promise<void>;
+  /**
+   * On iOS it prompts the user to allow displaying notifications
+   * and return if the permission was granted or not.
+   * On Android there is no such prompt, so just return as granted.
+   */
+  requestPermission(): Promise<NotificationPermissionResponse>;
+  /**
+   * Returns the notifications that are visible on the notifications screen.
+   */
+  getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
+  /**
+   * Removes the specified notifications from the notifications screen.
+   * @param delivered list of delivered notifications.
+   */
+  removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
+  /**
+   * Removes all the notifications from the notifications screen.
+   */
+  removeAllDeliveredNotifications(): Promise<void>;
+  /**
+   * On Android O or newer (SDK 26+) creates a notification channel.
+   * @param channel to create.
+   */
+  createChannel(channel: NotificationChannel): Promise<void>;
+  /**
+   * On Android O or newer (SDK 26+) deletes a notification channel.
+   * @param channel to delete.
+   */
+  deleteChannel(channel: NotificationChannel): Promise<void>;
+  /**
+   * On Android O or newer (SDK 26+) list the available notification channels.
+   */
+  listChannels(): Promise<NotificationChannelList>;
+  /**
+   * Event called when the push notification registration finished without problems.
+   * Provides the push notification token.
+   * @param eventName registration.
+   * @param listenerFunc callback with the push token.
+   */
+  addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
+  /**
+   * Event called when the push notification registration finished with problems.
+   * Provides an error with the registration problem.
+   * @param eventName registrationError.
+   * @param listenerFunc callback with the registration error.
+   */
+  addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
+  /**
+   * Event called when the device receives a push notification.
+   * @param eventName pushNotificationReceived.
+   * @param listenerFunc callback with the received notification.
+   */
+  addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
+  /**
+   * Event called when an action is performed on a pusn notification.
+   * @param eventName pushNotificationActionPerformed.
+   * @param listenerFunc callback with the notification action.
+   */
+  addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+  /**
+   * Remove all native listeners for this plugin.
    */
   removeAllListeners(): void;
 }
@@ -1638,7 +1704,7 @@ export interface ShareOptions {
    */
   text?: string;
   /**
-   * Set a URL to share
+   * Set a URL to share, can be http, https or file URL
    */
   url?: string;
   /**
