@@ -24,6 +24,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var basePath: String = ""
   private let assetsFolder = "public"
   
+  private enum WebViewLoadingState {
+    case unloaded
+    case initialLoad(isOpaque: Bool)
+    case subsequentLoad
+  }
+  private var webViewLoadingState = WebViewLoadingState.unloaded
+  
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
   private var statusBarAnimation: UIStatusBarAnimation = .slide
@@ -178,10 +185,15 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func loadWebView() {
-    // Set the webview to transparent when loaded
-    // This prevents any white flashes when loading content from the webview
-    // this gets set back on success or failure due to performance reasons
-    webView?.isOpaque = false
+    // Set the webview to be not opaque on the inital load. This prevents
+    // the webview from showing a white background, which is its default
+    // loading display, as that can appear as a screen flash. This might
+    // have already been set by something else, like a plugin, so we want
+    // to save the current value to reset it on success or failure.
+    if case .unloaded = webViewLoadingState {
+      webViewLoadingState = .initialLoad(isOpaque: webView.isOpaque)
+      webView?.isOpaque = false
+    }
     
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
@@ -308,12 +320,18 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    webView.isOpaque = true
+    if case .initialLoad(let isOpaque) = webViewLoadingState {
+      webView.isOpaque = isOpaque
+      webViewLoadingState = .subsequentLoad
+    }
     CAPLog.print("⚡️  WebView loaded")
   }
 
   public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-    webView.isOpaque = true
+    if case .initialLoad(let isOpaque) = webViewLoadingState {
+      webView.isOpaque = isOpaque
+      webViewLoadingState = .subsequentLoad
+    }
     CAPLog.print("⚡️  WebView failed to load")
     CAPLog.print("⚡️  Error: " + error.localizedDescription)
   }
