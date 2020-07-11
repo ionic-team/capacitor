@@ -18,6 +18,7 @@
     "husky": "^4.2.5",
     "lerna": "^2.4.0",
     "prettier": "^2.0.5",
-    "prettier-plugin-java": "^0.8.0"
+    "prettier-plugin-java": "^0.8.0",
+    "swiftlint": "^0.39.2"
   }
 }
