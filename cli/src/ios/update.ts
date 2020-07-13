@@ -78,7 +78,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   }
 
   const podfilePath = join(config.app.rootDir, 'ios', 'App');
-  const relativeCapacitoriOSPath = convertToUnixPath(relative(podfilePath, capacitoriOSPath));
+  const relativeCapacitoriOSPath = convertToUnixPath(relative(podfilePath, realpathSync(capacitoriOSPath)));
 
   const capacitorPlugins = plugins.filter(p => getPluginType(p, platform) === PluginType.Core);
   const pods = capacitorPlugins
