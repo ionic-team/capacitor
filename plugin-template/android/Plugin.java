@@ -6,10 +6,10 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
-@NativePlugin()
+@NativePlugin
 public class CLASS_NAME extends Plugin {
 
-    @PluginMethod()
+    @PluginMethod
     public void echo(PluginCall call) {
         String value = call.getString("value");
 

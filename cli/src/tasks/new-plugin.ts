@@ -228,6 +228,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     'module': 'dist/esm/index.js',
     'types': 'dist/esm/index.d.ts',
     'scripts': {
+      'prettier': 'prettier "**/*.{css,html,ts,js,java}"',
       'build': 'npm run clean && tsc && rollup -c rollup.config.js',
       'clean': 'rimraf ./dist',
       'watch': 'tsc --watch',
@@ -239,7 +240,10 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
       '@capacitor/android': `^${cliVersion}`,
       '@capacitor/core': `^${cliVersion}`,
       '@capacitor/ios': `^${cliVersion}`,
+      '@ionic/prettier-config': '^1.0.0',
       '@rollup/plugin-node-resolve': '^8.1.0',
+      'prettier': '^2.0.5',
+      'prettier-plugin-java': '^0.8.0',
       'rimraf': '^3.0.0',
       'rollup': '^2.21.0',
       'typescript': '~3.8.3'
@@ -266,6 +270,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
         src: 'android'
       }
     },
+    'prettier': '@ionic/prettier-config',
     'repository': {
       'type': 'git',
       'url': answers.git
