@@ -78,6 +78,10 @@ Made possible by the Capacitor community. 💖
 <!-- CONTRIBUTORS:START -->
 
 <p align="center">
+  <a href="https://github.com/DasNiels"><img src="https://github.com/DasNiels.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/tntwist"><img src="https://github.com/tntwist.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/dibyendusaha"><img src="https://github.com/dibyendusaha.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/asztal"><img src="https://github.com/asztal.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/ikeith"><img src="https://github.com/ikeith.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/friederbluemle"><img src="https://github.com/friederbluemle.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/sergiomilici"><img src="https://github.com/sergiomilici.png?size=100" width="50" height="50" /></a>

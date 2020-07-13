@@ -33,6 +33,8 @@ public class LocalNotification {
   private String actionTypeId;
   private String group;
   private boolean groupSummary;
+  private boolean ongoing;
+  private boolean autoCancel;
   private JSObject extra;
   private List<LocalNotificationAttachment> attachments;
   private LocalNotificationSchedule schedule;
@@ -152,6 +154,22 @@ public class LocalNotification {
     this.groupSummary = groupSummary;
   }
 
+  public boolean isOngoing() {
+    return ongoing;
+  }
+
+  public void setOngoing(boolean ongoing) {
+    this.ongoing = ongoing;
+  }
+
+  public boolean isAutoCancel() {
+    return autoCancel;
+  }
+
+  public void setAutoCancel(boolean autoCancel) {
+    this.autoCancel = autoCancel;
+  }
+
   public String getChannelId() {
     return channelId;
   }
@@ -186,31 +204,39 @@ public class LocalNotification {
         call.error("Invalid JSON object sent to NotificationPlugin", e);
         return null;
       }
-      LocalNotification activeLocalNotification = new LocalNotification();
-      activeLocalNotification.setSource(notification.toString());
-      activeLocalNotification.setId(notification.getInteger("id"));
-      activeLocalNotification.setBody(notification.getString("body"));
-      activeLocalNotification.setActionTypeId(notification.getString("actionTypeId"));
-      activeLocalNotification.setGroup(notification.getString("group"));
-      activeLocalNotification.setSound(notification.getString("sound"));
-      activeLocalNotification.setTitle(notification.getString("title"));
-      activeLocalNotification.setSmallIcon(notification.getString("smallIcon"));
-      activeLocalNotification.setIconColor(notification.getString("iconColor"));
-      activeLocalNotification.setAttachments(LocalNotificationAttachment.getAttachments(notification));
-      activeLocalNotification.setGroupSummary(notification.getBoolean("groupSummary", false));
-      activeLocalNotification.setChannelId(notification.getString("channelId"));
+      
       try {
-        activeLocalNotification.setSchedule(new LocalNotificationSchedule(notification));
+          LocalNotification activeLocalNotification = buildNotificationFromJSObject(notification);
+          resultLocalNotifications.add(activeLocalNotification);
       } catch (ParseException e) {
         call.error("Invalid date format sent to Notification plugin", e);
         return null;
       }
-      activeLocalNotification.setExtra(notification.getJSObject("extra"));
-      resultLocalNotifications.add(activeLocalNotification);
     }
     return resultLocalNotifications;
   }
 
+  public static LocalNotification buildNotificationFromJSObject(JSObject jsonObject) throws ParseException {
+      LocalNotification localNotification = new LocalNotification();
+      localNotification.setSource(jsonObject.toString());
+      localNotification.setId(jsonObject.getInteger("id"));
+      localNotification.setBody(jsonObject.getString("body"));
+      localNotification.setActionTypeId(jsonObject.getString("actionTypeId"));
+      localNotification.setGroup(jsonObject.getString("group"));
+      localNotification.setSound(jsonObject.getString("sound"));
+      localNotification.setTitle(jsonObject.getString("title"));
+      localNotification.setSmallIcon(jsonObject.getString("smallIcon"));
+      localNotification.setIconColor(jsonObject.getString("iconColor"));
+      localNotification.setAttachments(LocalNotificationAttachment.getAttachments(jsonObject));
+      localNotification.setGroupSummary(jsonObject.getBoolean("groupSummary", false));
+      localNotification.setChannelId(jsonObject.getString("channelId"));
+      localNotification.setSchedule(new LocalNotificationSchedule(jsonObject));
+      localNotification.setExtra(jsonObject.getJSObject("extra"));
+      localNotification.setOngoing(jsonObject.getBoolean("ongoing", false));
+      localNotification.setAutoCancel(jsonObject.getBoolean("autoCancel", true));
+
+      return localNotification;
+  }
 
   public static List<Integer> getLocalNotificationPendingList(PluginCall call) {
     List<JSONObject> notifications = null;
@@ -282,6 +308,8 @@ public class LocalNotification {
             ", attachments=" + attachments +
             ", schedule=" + schedule +
             ", groupSummary=" + groupSummary +
+            ", ongoing=" + ongoing +
+            ", autoCancel=" + autoCancel +
             '}';
   }
 
@@ -305,6 +333,8 @@ public class LocalNotification {
     if (attachments != null ? !attachments.equals(that.attachments) : that.attachments != null)
       return false;
     if (groupSummary != that.groupSummary) return false;
+    if( ongoing != that.ongoing ) return false;
+    if( autoCancel != that.autoCancel ) return false;
     return schedule != null ? schedule.equals(that.schedule) : that.schedule == null;
   }
 
@@ -319,6 +349,8 @@ public class LocalNotification {
     result = 31 * result + (actionTypeId != null ? actionTypeId.hashCode() : 0);
     result = 31 * result + (group != null ? group.hashCode() : 0);
     result = 31 * result + Boolean.hashCode(groupSummary);
+    result = 31 * result + Boolean.hashCode( ongoing );
+    result = 31 * result + Boolean.hashCode( autoCancel );
     result = 31 * result + (extra != null ? extra.hashCode() : 0);
     result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
     result = 31 * result + (schedule != null ? schedule.hashCode() : 0);

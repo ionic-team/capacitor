@@ -26,6 +26,8 @@ public class CAPDevicePlugin: CAPPlugin {
       "osVersion": UIDevice.current.systemVersion,
       "appVersion": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
       "appBuild": Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "",
+      "appId": Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String ?? "",
+      "appName": Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String ?? "",
       "platform": "ios",
       "manufacturer": "Apple",
       "uuid": UIDevice.current.identifierForVendor!.uuidString,
