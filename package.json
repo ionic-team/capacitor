@@ -14,7 +14,9 @@
       "pre-commit": "npm run lint"
     }
   },
+  "prettier": "@ionic/prettier-config",
   "devDependencies": {
+    "@ionic/prettier-config": "^1.0.0",
     "husky": "^4.2.5",
     "lerna": "^2.4.0",
     "prettier": "^2.0.5",
