@@ -228,7 +228,9 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     'module': 'dist/esm/index.js',
     'types': 'dist/esm/index.d.ts',
     'scripts': {
+      'lint': 'npm run prettier -- --check && npm run swiftlint -- lint',
       'prettier': 'prettier "**/*.{css,html,ts,js,java}"',
+      'swiftlint': 'swiftlint',
       'build': 'npm run clean && tsc && rollup -c rollup.config.js',
       'clean': 'rimraf ./dist',
       'watch': 'tsc --watch',
@@ -241,11 +243,13 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
       '@capacitor/core': `^${cliVersion}`,
       '@capacitor/ios': `^${cliVersion}`,
       '@ionic/prettier-config': '^1.0.0',
+      '@ionic/swiftlint-config': '^1.0.0',
       '@rollup/plugin-node-resolve': '^8.1.0',
       'prettier': '^2.0.5',
       'prettier-plugin-java': '^0.8.0',
       'rimraf': '^3.0.0',
       'rollup': '^2.21.0',
+      'swiftlint': '^0.39.4',
       'typescript': '~3.8.3'
     },
     'peerDependencies': {
@@ -271,6 +275,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
       }
     },
     'prettier': '@ionic/prettier-config',
+    'swiftlint': '@ionic/swiftlint-config',
     'repository': {
       'type': 'git',
       'url': answers.git
