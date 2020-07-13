@@ -488,6 +488,14 @@ export interface DeviceInfo {
    */
   appBuild: string;
   /**
+   * The bundle id of the app
+   */
+  appId: string;
+  /**
+   * The display name of the app
+   */
+  appName: string;
+  /**
    * The operating system of the device
    */
   operatingSystem: OperatingSystem;

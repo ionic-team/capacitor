@@ -3,6 +3,7 @@ package com.getcapacitor.plugin;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
+import android.content.pm.ApplicationInfo;
 import android.os.BatteryManager;
 import android.os.Environment;
 import android.os.StatFs;
@@ -32,6 +33,8 @@ public class Device extends Plugin {
     r.put("osVersion", android.os.Build.VERSION.RELEASE);
     r.put("appVersion", getAppVersion());
     r.put("appBuild", getAppBuild());
+    r.put("appId", getAppBundleId());
+    r.put("appName", getAppName());
     r.put("platform", getPlatform());
     r.put("manufacturer", android.os.Build.MANUFACTURER);
     r.put("uuid", getUuid());
@@ -86,6 +89,25 @@ public class Device extends Plugin {
     try {
       PackageInfo pinfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
       return Integer.toString(pinfo.versionCode);
+    } catch(Exception ex) {
+      return "";
+    }
+  }
+
+  private String getAppBundleId() {
+    try {
+      PackageInfo pinfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+      return pinfo.packageName;
+    } catch(Exception ex) {
+      return "";
+    }
+  }
+
+  private String getAppName() {
+    try {
+      ApplicationInfo applicationInfo = getContext().getApplicationInfo();
+      int stringId = applicationInfo.labelRes;
+      return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : getContext().getString(stringId);
     } catch(Exception ex) {
       return "";
     }

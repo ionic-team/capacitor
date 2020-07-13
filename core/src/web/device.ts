@@ -28,6 +28,8 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
       platform: <'web'> 'web',
       appVersion: '',
       appBuild: '',
+      appId: '',
+      appName: '',
       operatingSystem: uaFields.operatingSystem,
       osVersion: uaFields.osVersion,
       manufacturer: navigator.vendor,
