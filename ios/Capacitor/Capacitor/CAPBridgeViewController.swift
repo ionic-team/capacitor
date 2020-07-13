@@ -24,6 +24,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   private var basePath: String = ""
   private let assetsFolder = "public"
   
+  private enum WebViewLoadingState {
+    case unloaded
+    case initialLoad(isOpaque: Bool)
+    case subsequentLoad
+  }
+  private var webViewLoadingState = WebViewLoadingState.unloaded
+  
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
   private var statusBarAnimation: UIStatusBarAnimation = .slide
@@ -97,7 +104,12 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
       webView?.backgroundColor = UIColor(fromHex: backgroundColor)
       webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+    } else if #available(iOS 13, *) {
+      // Use the system background colors if background is not set by user
+      webView?.backgroundColor = UIColor.systemBackground
+      webView?.scrollView.backgroundColor = UIColor.systemBackground
     }
+    
     if let overrideUserAgent = (bridge!.config.getValue("ios.overrideUserAgent") as? String) ?? (bridge!.config.getValue("overrideUserAgent") as? String) {
       webView?.customUserAgent = overrideUserAgent
     }
@@ -173,6 +185,16 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func loadWebView() {
+    // Set the webview to be not opaque on the inital load. This prevents
+    // the webview from showing a white background, which is its default
+    // loading display, as that can appear as a screen flash. This might
+    // have already been set by something else, like a plugin, so we want
+    // to save the current value to reset it on success or failure.
+    if let webView = webView, case .unloaded = webViewLoadingState {
+      webViewLoadingState = .initialLoad(isOpaque: webView.isOpaque)
+      webView.isOpaque = false
+    }
+    
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
       fatalLoadError()
@@ -298,10 +320,18 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    if case .initialLoad(let isOpaque) = webViewLoadingState {
+      webView.isOpaque = isOpaque
+      webViewLoadingState = .subsequentLoad
+    }
     CAPLog.print("⚡️  WebView loaded")
   }
 
   public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    if case .initialLoad(let isOpaque) = webViewLoadingState {
+      webView.isOpaque = isOpaque
+      webViewLoadingState = .subsequentLoad
+    }
     CAPLog.print("⚡️  WebView failed to load")
     CAPLog.print("⚡️  Error: " + error.localizedDescription)
   }
