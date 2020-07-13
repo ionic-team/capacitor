@@ -17,10 +17,11 @@
   "prettier": "@ionic/prettier-config",
   "devDependencies": {
     "@ionic/prettier-config": "^1.0.0",
+    "@ionic/swiftlint-config": "0.0.1",
     "husky": "^4.2.5",
     "lerna": "^2.4.0",
     "prettier": "^2.0.5",
     "prettier-plugin-java": "^0.8.0",
-    "swiftlint": "^0.39.2"
+    "swiftlint": "^0.39.3"
   }
 }
