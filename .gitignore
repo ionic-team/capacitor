@@ -30,6 +30,7 @@ android-template/.gradle/
 android-template/app/app.iml
 *.js
 *.json
+!swiftlint.config.js
 /site/.env
 /site/.firebase
 .gradle/
