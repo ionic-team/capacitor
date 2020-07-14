@@ -2,6 +2,8 @@ package com.getcapacitor.plugin;
 
 import android.content.Intent;
 
+import androidx.core.app.NotificationManagerCompat;
+
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -91,9 +93,9 @@ public class LocalNotifications extends Plugin {
 
   @PluginMethod()
   public void requestPermission(PluginCall call) {
-    JSObject result = new JSObject();
-    result.put("granted", true);
-    call.success(result);
+    JSObject data = new JSObject();
+    data.put("granted", manager.areNotificationsEnabled());
+    call.success(data);
   }
 
   @PluginMethod()
