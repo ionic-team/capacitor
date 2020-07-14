@@ -20,6 +20,8 @@ export class DevicePluginElectron extends WebPlugin implements DevicePlugin {
       platform: <'electron'> 'electron',
       appVersion: app.getVersion(),
       appBuild: '',
+      appId: '',
+      appName: '',
       operatingSystem: info.operatingSystem,
       osVersion: info.osVersion,
       manufacturer: navigator.vendor,

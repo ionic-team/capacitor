@@ -488,6 +488,14 @@ export interface DeviceInfo {
    */
   appBuild: string;
   /**
+   * The bundle id of the app
+   */
+  appId: string;
+  /**
+   * The display name of the app
+   */
+  appName: string;
+  /**
    * The operating system of the device
    */
   operatingSystem: OperatingSystem;
@@ -1144,6 +1152,15 @@ export interface LocalNotification {
    * notification will not fire. If not provided, it will use the default channel.
    */
   channelId?: string;
+  /**
+   * Android only: set the notification ongoing.
+   * If set to true the notification can't be swiped away.
+   */
+   ongoing?: boolean;
+   /**
+    * Android only: set the notification to be removed automatically when the user clicks on it
+    */
+   autoCancel?: boolean;
 }
 
 export interface LocalNotificationSchedule {
