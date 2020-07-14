@@ -27,7 +27,8 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
           document.body.appendChild(cameraModal);
           try {
             await cameraModal.componentOnReady();
-            cameraModal.addEventListener('onPhoto', async (e: any) => {
+
+            const handlePhoto = async (e: any) => {
               const photo = e.detail;
 
               if (photo === null) {
@@ -40,7 +41,11 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
               cameraModal.dismiss();
               document.body.removeChild(cameraModal);
-            });
+            };
+
+            // Support old event name (pre 2.x of pwa elements)
+            cameraModal.addEventListener('onPhoto', handlePhoto);
+            cameraModal.addEventListener('photo', handlePhoto);
 
             cameraModal.present();
           } catch (e) {
