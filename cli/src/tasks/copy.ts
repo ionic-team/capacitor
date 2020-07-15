@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { checkWebDir, hasYarn, log, logError, logFatal, logInfo, resolveNode, resolvePlatform, runCommand, runPlatformHook, runTask } from '../common';
+import { checkWebDir, electronWarning, hasYarn, log, logError, logFatal, logInfo, resolveNode, resolvePlatform, runPlatformHook, runTask } from '../common';
 import { existsAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
@@ -58,6 +58,7 @@ export async function copy(config: Config, platformName: string) {
     } else if (platformName === config.electron.name) {
       await copyElectron(config);
       await copyCapacitorConfig(config, config.electron.platformDir);
+      electronWarning();
     } else {
       throw `Platform ${platformName} is not valid.`;
     }

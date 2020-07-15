@@ -5,7 +5,7 @@ import { addElectron } from '../electron/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
-import { check, checkAppConfig, checkPackage, checkWebDir, hasYarn, log, logError, logFatal, logInfo, logWarn, resolvePlatform, runCommand, runPlatformHook, runTask, writePrettyJSON } from '../common';
+import { check, checkAppConfig, checkPackage, checkWebDir, electronWarning, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runPlatformHook, runTask, writePrettyJSON } from '../common';
 import { sync } from './sync';
 
 import chalk from 'chalk';
@@ -133,9 +133,4 @@ function webWarning() {
   log(`\nIn Capacitor, the 'web' platform is just your web app!`);
   log(`For example, if you have a React or Angular project, the 'web' platform is that project.`);
   log(`To add Capacitor functionality to your web app, follow the Web Getting Started Guide: https://capacitorjs.com/docs/web`);
-}
-
-function electronWarning() {
-  logWarn(`The electron platform is deprecated!`);
-  log(`\nPlease use the Capacitor Community Electron Platform: https://github.com/capacitor-community/electron\n`);
 }

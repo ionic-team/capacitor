@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { log, readJSON, resolveNode, resolveNodeFrom, runCommand } from '../common';
+import { electronWarning, log, readJSON, resolveNode, resolveNodeFrom, runCommand } from '../common';
 import { doctorAndroid } from '../android/doctor';
 import { doctorElectron } from '../electron/doctor';
 import { doctorIOS } from '../ios/doctor';
@@ -67,6 +67,7 @@ export async function doctor(config: Config, platformName: string) {
     await doctorAndroid(config);
   } else if (platformName === config.electron.name) {
     await doctorElectron(config);
+    electronWarning();
   } else if (platformName === config.web.name) {
     return Promise.resolve();
   } else {

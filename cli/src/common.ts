@@ -516,3 +516,8 @@ export async function checkNPMVersion() {
   }
   return null;
 }
+
+export function electronWarning() {
+  logWarn(`The electron platform is deprecated!`);
+  log(`\nPlease use the Capacitor Community Electron Platform: https://github.com/capacitor-community/electron\n`);
+}
