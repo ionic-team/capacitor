@@ -52,7 +52,7 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'domain',
-      message: 'Plugin id (domain-style syntax. ex: com.example.plugins.example)',
+      message: 'Plugin id (domain-style syntax. ex: com.mycompany.plugins.example)',
       validate: requiredInput
     },
     {
