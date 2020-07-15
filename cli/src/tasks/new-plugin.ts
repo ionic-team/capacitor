@@ -268,10 +268,10 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     ],
     'capacitor': {
       'ios': {
-        src: 'ios',
+        'src': 'ios',
       },
       'android': {
-        src: 'android'
+        'src': 'android'
       }
     },
     'prettier': '@ionic/prettier-config',
