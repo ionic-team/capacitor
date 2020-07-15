@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runPlatformHook, runTask } from '../common';
+import { electronWarning, hasYarn, log, logError, logFatal, logInfo, resolvePlatform, runPlatformHook, runTask } from '../common';
 import { openAndroid } from '../android/open';
 import { openElectron } from '../electron/open';
 import { openIOS } from '../ios/open';
@@ -44,6 +44,7 @@ export async function open(config: Config, platformName: string) {
   } else if (platformName === config.web.name) {
     return Promise.resolve();
   } else if (platformName === config.electron.name) {
+    electronWarning();
     return openElectron(config);
   } else {
     throw `Platform ${platformName} is not valid.`;
