@@ -237,6 +237,7 @@ public class Splash {
     buildViews(a, config);
 
     if (isVisible) {
+      splashListener.completed();
       return;
     }
 
