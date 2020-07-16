@@ -824,6 +824,8 @@ public class Bridge {
     for (PluginHandle plugin : plugins.values()) {
       plugin.getInstance().handleOnDestroy();
     }
+
+    handlerThread.quitSafely();
   }
 
   public void onBackPressed() {
