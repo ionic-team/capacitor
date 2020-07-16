@@ -7,7 +7,7 @@ import UIKit
 import WebKit
 import Cordova
 
-public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScriptMessageHandler, WKUIDelegate, WKNavigationDelegate {
+public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUIDelegate, WKNavigationDelegate {
   
   private var webView: WKWebView?
   
@@ -58,6 +58,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
     HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
     let webViewConfiguration = WKWebViewConfiguration()
+    let messageHandler = CAPMessageHandlerWrapper()
     self.handler = CAPAssetHandler()
     self.handler!.setAssetPath(startPath)
     var specifiedScheme = CAPBridge.CAP_DEFAULT_SCHEME
@@ -67,11 +68,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
       specifiedScheme = configScheme.lowercased()
     }
     webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: specifiedScheme)
-
-    let o = WKUserContentController()
-    o.add(self, name: "bridge")
-
-    webViewConfiguration.userContentController = o
+    webViewConfiguration.userContentController = messageHandler.contentController
     
     configureWebView(configuration: webViewConfiguration)
 
@@ -99,7 +96,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
     
     setKeyboardRequiresUserInteraction(false)
     
-    bridge = CAPBridge(self, o, capConfig, specifiedScheme)
+    bridge = CAPBridge(self, messageHandler, capConfig, specifiedScheme)
 
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
       webView?.backgroundColor = UIColor(fromHex: backgroundColor)
@@ -347,13 +344,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
 
   public override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
     return false
-  }
-
-  public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    guard let bridge = bridge else {
-      return
-    }
-    self.userContentController(userContentController, didReceive: message, bridge: bridge)
   }
 
   typealias ClosureType =  @convention(c) (Any, Selector, UnsafeRawPointer, Bool, Bool, Any?) -> Void

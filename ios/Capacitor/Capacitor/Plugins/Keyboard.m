@@ -40,6 +40,10 @@ typedef enum : NSUInteger {
 
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wprotocol"
+// suppressing warnings of the type: "Class 'CAPKeyboard' does not conform to protocol 'CAPBridgedPlugin'"
+// protocol conformance for this class is implemented by a macro and clang isn't detecting that
 @implementation CAPKeyboard
 
 NSTimer *hideTimer;
@@ -196,8 +200,14 @@ NSString* UITraitsClassString;
   if (statusBarHeight == 40) {
     _paddingBottom = _paddingBottom + 20;
   }
-  CGRect f = [[[[UIApplication sharedApplication] delegate] window] bounds];
-  CGRect wf = self.webView.frame;
+  CGRect f, wf = CGRectZero;
+  id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
+  if (delegate != nil && [delegate respondsToSelector:@selector(window)]) {
+    f = [[delegate window] bounds];
+  }
+  if (self.webView != nil) {
+    wf = self.webView.frame;
+  }
   switch (self.keyboardResizes) {
     case ResizeBody:
     {
@@ -348,5 +358,5 @@ static IMP WKOriginalImp;
 }
 
 @end
-
+#pragma clang diagnostic pop
 

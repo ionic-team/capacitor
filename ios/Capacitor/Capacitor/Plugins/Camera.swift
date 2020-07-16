@@ -49,9 +49,9 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
     // Make sure they have all the necessary info.plist settings
     if let missingUsageDescription = checkUsageDescriptions() {
-      bridge.modulePrint(self, missingUsageDescription)
+      bridge?.modulePrint(self, missingUsageDescription)
       call.error(missingUsageDescription)
-      bridge.alert("Camera Error", "Missing required usage description. See console for more information")
+      bridge?.alert("Camera Error", "Missing required usage description. See console for more information")
       return
     }
 
@@ -120,40 +120,43 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }))
 
     self.setCenteredPopover(alert)
-    self.bridge.viewController.present(alert, animated: true, completion: nil)
+    self.bridge?.viewController?.present(alert, animated: true, completion: nil)
   }
 
   func showCamera(_ call: CAPPluginCall) {
-    if self.bridge.isSimulator() || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
-      self.bridge.modulePrint(self, "Camera not available in simulator")
-      self.bridge.alert("Camera Error", "Camera not available in Simulator")
+    if (self.bridge?.isSimulator() ?? false) || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
+      self.bridge?.modulePrint(self, "Camera not available in simulator")
+      self.bridge?.alert("Camera Error", "Camera not available in Simulator")
       call.error("Camera not available while running in Simulator")
       return
     }
 
-    AVCaptureDevice.requestAccess(for: .video) { granted in
+    AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
         if granted {
           DispatchQueue.main.async {
+            guard let strongSelf = self else {
+                return
+            }
             let presentationStyle = call.getString("presentationStyle")
             if presentationStyle != nil && presentationStyle == "popover" {
-              self.configurePicker()
+              strongSelf.configurePicker()
             } else {
-              self.imagePicker!.modalPresentationStyle = .fullScreen
+              strongSelf.imagePicker!.modalPresentationStyle = .fullScreen
             }
 
-            self.imagePicker!.sourceType = .camera
+            strongSelf.imagePicker!.sourceType = .camera
 
-            if self.settings.direction.rawValue == "REAR" {
+            if strongSelf.settings.direction.rawValue == "REAR" {
               if UIImagePickerController.isCameraDeviceAvailable(.rear) {
-                self.imagePicker!.cameraDevice = .rear
+                strongSelf.imagePicker!.cameraDevice = .rear
               }
-            } else if self.settings.direction.rawValue == "FRONT" {
+            } else if strongSelf.settings.direction.rawValue == "FRONT" {
               if UIImagePickerController.isCameraDeviceAvailable(.front) {
-                self.imagePicker!.cameraDevice = .front
+                strongSelf.imagePicker!.cameraDevice = .front
               }
             }
 
-            self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+            strongSelf.bridge?.viewController?.present(strongSelf.imagePicker!, animated: true, completion: nil)
           }
         } else {
             call.error("User denied access to camera")
@@ -182,7 +185,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   private func presentPhotos() {
     self.configurePicker()
     self.imagePicker!.sourceType = .photoLibrary
-    self.bridge.viewController.present(self.imagePicker!, animated: true, completion: nil)
+    self.bridge?.viewController?.present(self.imagePicker!, animated: true, completion: nil)
   }
 
   private func configurePicker() {
@@ -273,7 +276,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       ])
     } else if settings.resultType == CameraResultType.uri.rawValue {
       let path = try! saveTemporaryImage(jpeg)
-      guard let webPath = CAPFileManager.getPortablePath(host: bridge.getLocalUrl(), uri: URL(string: path)) else {
+      guard let webPath = CAPFileManager.getPortablePath(host: bridge?.getLocalUrl() ?? "", uri: URL(string: path)) else {
         call?.reject("Unable to get portable path to file")
         return
       }

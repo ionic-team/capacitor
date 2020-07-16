@@ -106,9 +106,9 @@ public class CAPGeolocationPlugin : CAPPlugin {
       CAPLog.print("Must supply id")
       return
     }
-    let savedCall = bridge.getSavedCall(callbackId)
+    let savedCall = bridge?.getSavedCall(callbackId)
     if savedCall != nil {
-      bridge.releaseCall(savedCall!)
+      bridge?.releaseCall(savedCall!)
       
       if self.watchLocationHandler != nil {
         self.watchLocationHandler?.stopUpdating()
