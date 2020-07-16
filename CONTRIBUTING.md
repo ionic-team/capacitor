@@ -48,6 +48,21 @@ On native, that means avoid adding any new Cocoapod or Gradle dependencies witho
 
 On web, this means do not add any third party libraries such as Firebase or Lodash. Strive for implementations that use pure Web APIs even if it means more work.
 
+### Local Setup
+
+1. Fork and clone the repo.
+1. Install the monorepo dependencies.
+
+    ```shell
+    npm install
+    ```
+
+1. Install package dependencies. [Lerna](https://github.com/lerna/lerna) can automatically install each package's dependencies.
+
+    ```shell
+    npx lerna bootstrap
+    ```
+
 ### Directory Structure
 
 The `ionic-team/capacitor` repo is a monorepo containing all of the standard Capacitor components. The current directory structure looks like this:
