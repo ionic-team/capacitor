@@ -1,3 +1,40 @@
+## [2.3.0](https://github.com/ionic-team/capacitor/compare/2.2.1...2.3.0) (2020-07-16)
+
+
+### Bug Fixes
+
+* fix(android): restore local notifications after device reboot (#3027) ([2a39a7d](https://github.com/ionic-team/capacitor/commit/2a39a7d)), closes [#3027](https://github.com/ionic-team/capacitor/issues/3027)
+* fix(android): Splash.show not resolving if splash is visible (#3262) ([bfd9884](https://github.com/ionic-team/capacitor/commit/bfd9884)), closes [#3262](https://github.com/ionic-team/capacitor/issues/3262)
+* fix(android): use notification sound for notifications, not alarm (#2743) ([b2d50f9](https://github.com/ionic-team/capacitor/commit/b2d50f9)), closes [#2743](https://github.com/ionic-team/capacitor/issues/2743)
+* fix(cli): Avoid duplicate usesCleartextTraffic attribute (#3245) ([861874f](https://github.com/ionic-team/capacitor/commit/861874f)), closes [#3245](https://github.com/ionic-team/capacitor/issues/3245)
+* fix(cordova): patch usages of webView superview (#3177) ([8241c81](https://github.com/ionic-team/capacitor/commit/8241c81)), closes [#3177](https://github.com/ionic-team/capacitor/issues/3177)
+
+
+### Features
+
+* feat: add appId and appName to device info (#3244) ([0d5e132](https://github.com/ionic-team/capacitor/commit/0d5e132)), closes [#3244](https://github.com/ionic-team/capacitor/issues/3244)
+* feat(android): add ability to share both text and file (#3233) ([4e8b59e](https://github.com/ionic-team/capacitor/commit/4e8b59e)), closes [#3233](https://github.com/ionic-team/capacitor/issues/3233)
+* feat(android): add option to make a notification ongoing (#3165) ([1ee51cd](https://github.com/ionic-team/capacitor/commit/1ee51cd)), closes [#3165](https://github.com/ionic-team/capacitor/issues/3165)
+* feat(android): start animatable layers when splash drawable is layered (#2733) ([606b59f](https://github.com/ionic-team/capacitor/commit/606b59f)), closes [#2733](https://github.com/ionic-team/capacitor/issues/2733)
+* feat(android): update to use androidx.exifinterface.media.ExifInterface ([6196907](https://github.com/ionic-team/capacitor/commit/6196907))
+* feat(cli): add hooks to capacitor commands for custom platforms (#3091) ([c2133c5](https://github.com/ionic-team/capacitor/commit/c2133c5)), closes [#3091](https://github.com/ionic-team/capacitor/issues/3091)
+* feat(ios): improve initial webview loading appearance (#2933) ([49720a5](https://github.com/ionic-team/capacitor/commit/49720a5)), closes [#2933](https://github.com/ionic-team/capacitor/issues/2933)
+* feat(web): add file input method for camera (#1856) ([25505d2](https://github.com/ionic-team/capacitor/commit/25505d2)), closes [#1856](https://github.com/ionic-team/capacitor/issues/1856)
+
+
+### Chores
+
+* chore: update ios and android peerDependencies (#3274) ([d8ee77b](https://github.com/ionic-team/capacitor/commit/d8ee77b)), closes [#3274](https://github.com/ionic-team/capacitor/issues/3274)
+* chore(android): improve error message when Filesystem.copy fails (#3148) ([598d7dc](https://github.com/ionic-team/capacitor/commit/598d7dc)), closes [#3148](https://github.com/ionic-team/capacitor/issues/3148)
+* chore(android): make androidx.exifinterface version configurable (#3236) ([3c64162](https://github.com/ionic-team/capacitor/commit/3c64162)), closes [#3236](https://github.com/ionic-team/capacitor/issues/3236)
+* chore(cli): add deprecation notice for all electron commands (#3268) ([5e84ce9](https://github.com/ionic-team/capacitor/commit/5e84ce9)), closes [#3268](https://github.com/ionic-team/capacitor/issues/3268)
+* chore(cli): add deprecation notice for electron (#3263) ([b7d5639](https://github.com/ionic-team/capacitor/commit/b7d5639)), closes [#3263](https://github.com/ionic-team/capacitor/issues/3263)
+* chore(cli): pin cli version instead of latest on plugin generation (#3201) ([8651ef1](https://github.com/ionic-team/capacitor/commit/8651ef1)), closes [#3201](https://github.com/ionic-team/capacitor/issues/3201)
+* chore(cli): update plugin generation and plugin template (#3241) ([97a5b9a](https://github.com/ionic-team/capacitor/commit/97a5b9a)), closes [#3241](https://github.com/ionic-team/capacitor/issues/3241)
+* chore(cli): use real path to Capacitor iOS Pods (#3249) ([618f9cf](https://github.com/ionic-team/capacitor/commit/618f9cf)), closes [#3249](https://github.com/ionic-team/capacitor/issues/3249)
+
+
+
 ## [2.2.1](https://github.com/ionic-team/capacitor/compare/2.2.0...2.2.1) (2020-07-01)
 
 
