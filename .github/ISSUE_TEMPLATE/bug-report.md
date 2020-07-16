@@ -42,7 +42,7 @@ Describe what the behavior should be.
 ### Code Reproduction
 <!--
 To isolate the cause of the problem, we ask you to provide a minimal sample application that demonstrates the issue.
-For full instructions, see: https://github.com/ionic-team/capacitor/blob/master/CONTRIBUTING.md#creating-a-code-reproduction
+For full instructions, see: https://github.com/ionic-team/capacitor/blob/HEAD/CONTRIBUTING.md#creating-a-code-reproduction
 -->
 
 

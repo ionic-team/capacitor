@@ -65,7 +65,7 @@ import org.json.JSONObject;
  * If you want to use this Bridge in an existing Android app, please
  * see the source for BridgeActivity for the methods you'll need to
  * pass through to Bridge:
- * <a href="https://github.com/ionic-team/capacitor/blob/master/android/capacitor/src/main/java/com/getcapacitor/BridgeActivity.java">
+ * <a href="https://github.com/ionic-team/capacitor/blob/HEAD/android/capacitor/src/main/java/com/getcapacitor/BridgeActivity.java">
  *   BridgeActivity.java</a>
  */
 public class Bridge {

@@ -12,7 +12,7 @@ xcuserdata
 
 
 
-# Based on Android gitignore template: https://github.com/github/gitignore/blob/master/Android.gitignore
+# Based on Android gitignore template: https://github.com/github/gitignore/blob/HEAD/Android.gitignore
 
 # Built application files
 *.apk

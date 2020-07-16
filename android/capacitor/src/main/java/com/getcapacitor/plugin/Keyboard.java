@@ -18,7 +18,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
 /**
- * Ported from https://github.com/ionic-team/cordova-plugin-ionic-keyboard/blob/master/src/android/IonicKeyboard.java
+ * Ported from https://github.com/ionic-team/cordova-plugin-ionic-keyboard/blob/HEAD/src/android/IonicKeyboard.java
  */
 @NativePlugin
 public class Keyboard extends Plugin {

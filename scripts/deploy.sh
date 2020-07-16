@@ -13,4 +13,4 @@ git add android/package.json
 git add ios/package.json
 git commit -m "Release v$LERNA_VERSION"
 git tag $LERNA_VERSION -m $LERNA_VERSION
-git push --follow-tags origin master
+git push --follow-tags origin main

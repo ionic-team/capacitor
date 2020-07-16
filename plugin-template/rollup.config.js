@@ -14,7 +14,7 @@ export default {
   plugins: [
     nodeResolve({
       // allowlist of dependencies to bundle in
-      // @see https://github.com/rollup/plugins/tree/master/packages/node-resolve#resolveonly
+      // @see https://github.com/rollup/plugins/tree/HEAD/packages/node-resolve#resolveonly
       resolveOnly: ['lodash'],
     }),
   ],
