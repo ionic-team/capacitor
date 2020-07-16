@@ -46,19 +46,19 @@ export async function newPlugin(config: Config) {
     {
       type: 'input',
       name: 'name',
-      message: 'Plugin NPM name (kebab-case):',
+      message: 'Plugin npm name (kebab-case. ex: capacitor-plugin-example):',
       validate: requiredInput
     },
     {
       type: 'input',
       name: 'domain',
-      message: 'Plugin id (domain-style syntax. ex: com.example.plugin)',
+      message: 'Plugin id (domain-style syntax. ex: com.mycompany.plugins.example)',
       validate: requiredInput
     },
     {
       type: 'input',
       name: 'className',
-      message: 'Plugin class name (ex: AwesomePlugin)',
+      message: 'Plugin class name (ex: Example)',
       validate: requiredInput
     },
     {
@@ -167,24 +167,24 @@ async function createIosPlugin(config: Config, pluginPath: string, domain: strin
 }
 
 function generatePodspec(config: Config, answers: NewPluginAnswers) {
-  return `
-  require 'json'
+  return `require 'json'
 
-  package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
+package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
-  Pod::Spec.new do |s|
-    s.name = '${fixName(answers.name)}'
-    s.version = package['version']
-    s.summary = package['description']
-    s.license = package['license']
-    s.homepage = package['repository']['url']
-    s.author = package['author']
-    s.source = { :git => package['repository']['url'], :tag => s.version.to_s }
-    s.source_files = 'ios/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
-    s.ios.deployment_target  = '${config.ios.minVersion}'
-    s.dependency 'Capacitor'
-    s.swift_version = '5.0'
-  end`;
+Pod::Spec.new do |s|
+  s.name = '${fixName(answers.name)}'
+  s.version = package['version']
+  s.summary = package['description']
+  s.license = package['license']
+  s.homepage = package['repository']['url']
+  s.author = package['author']
+  s.source = { :git => package['repository']['url'], :tag => s.version.to_s }
+  s.source_files = 'ios/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
+  s.ios.deployment_target  = '${config.ios.minVersion}'
+  s.dependency 'Capacitor'
+  s.swift_version = '5.1'
+end
+`;
 }
 
 async function createAndroidPlugin(config: Config, pluginPath: string, domain: string, className: string) {
@@ -221,47 +221,61 @@ function generateAndroidManifest(domain: string, pluginPath: string) {
 
 function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
   return {
-    name: answers.name,
-    version: '0.0.1',
-    description: answers.description,
-    main: 'dist/esm/index.js',
-    types: 'dist/esm/index.d.ts',
-    scripts: {
-      'build': 'npm run clean && tsc',
+    'name': answers.name,
+    'version': '0.0.1',
+    'description': answers.description,
+    'main': 'dist/plugin.js',
+    'module': 'dist/esm/index.js',
+    'types': 'dist/esm/index.d.ts',
+    'scripts': {
+      'lint': 'npm run prettier -- --check && npm run swiftlint -- lint',
+      'prettier': 'prettier "**/*.{css,html,ts,js,java}"',
+      'swiftlint': 'node-swiftlint',
+      'build': 'npm run clean && tsc && rollup -c rollup.config.js',
       'clean': 'rimraf ./dist',
       'watch': 'tsc --watch',
       'prepublishOnly': 'npm run build'
     },
-    author: answers.author,
-    license: answers.license,
-    dependencies: {
+    'author': answers.author,
+    'license': answers.license,
+    'devDependencies': {
+      '@capacitor/android': `^${cliVersion}`,
+      '@capacitor/core': `^${cliVersion}`,
+      '@capacitor/ios': `^${cliVersion}`,
+      '@ionic/prettier-config': '^1.0.0',
+      '@ionic/swiftlint-config': '^1.0.0',
+      '@rollup/plugin-node-resolve': '^8.1.0',
+      'prettier': '^2.0.5',
+      'prettier-plugin-java': '^0.8.0',
+      'rimraf': '^3.0.0',
+      'rollup': '^2.21.0',
+      'swiftlint': '^1.0.1',
+      'typescript': '~3.8.3'
+    },
+    'peerDependencies': {
       '@capacitor/core': `^${cliVersion}`
     },
-    devDependencies: {
-      'rimraf': '^3.0.0',
-      'typescript': '^3.2.4',
-      '@capacitor/ios': `^${cliVersion}`,
-      '@capacitor/android': `^${cliVersion}`
-    },
-    files: [
+    'files': [
       'dist/',
       'ios/',
       'android/',
       `${fixName(answers.name)}.podspec`
     ],
-    keywords: [
+    'keywords': [
       'capacitor',
       'plugin',
       'native'
     ],
-    capacitor: {
-      ios: {
-        src: 'ios',
+    'capacitor': {
+      'ios': {
+        'src': 'ios',
       },
-      android: {
-        src: 'android'
+      'android': {
+        'src': 'android'
       }
     },
+    'prettier': '@ionic/prettier-config',
+    'swiftlint': '@ionic/swiftlint-config',
     'repository': {
       'type': 'git',
       'url': answers.git
