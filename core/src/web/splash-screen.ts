@@ -3,22 +3,29 @@ import { WebPlugin } from './index';
 import {
   SplashScreenPlugin,
   SplashScreenHideOptions,
-  SplashScreenShowOptions
+  SplashScreenShowOptions,
 } from '../core-plugin-definitions';
 
-export class SplashScreenPluginWeb extends WebPlugin implements SplashScreenPlugin {
+export class SplashScreenPluginWeb extends WebPlugin
+  implements SplashScreenPlugin {
   constructor() {
     super({
       name: 'SplashScreen',
-      platforms: ['web']
+      platforms: ['web'],
     });
   }
 
-  show(_options?: SplashScreenShowOptions, _callback?: Function): Promise<void> {
+  show(
+    _options?: SplashScreenShowOptions,
+    _callback?: Function,
+  ): Promise<void> {
     return Promise.resolve();
   }
 
-  hide(_options?: SplashScreenHideOptions, _callback?: Function): Promise<void> {
+  hide(
+    _options?: SplashScreenHideOptions,
+    _callback?: Function,
+  ): Promise<void> {
     return Promise.resolve();
   }
 }

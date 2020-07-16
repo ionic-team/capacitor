@@ -2,11 +2,10 @@ import { Config } from './config';
 import { join } from 'path';
 import { log, logFatal, readJSON, readXML, resolveNode } from './common';
 
-
 export const enum PluginType {
   Core,
   Cordova,
-  Incompatible
+  Incompatible,
 }
 export interface PluginManifest {
   ios: {
@@ -33,21 +32,28 @@ export interface Plugin {
   };
   android?: {
     type: PluginType;
-    path: string
+    path: string;
   };
 }
 
 export async function getPlugins(config: Config): Promise<Plugin[]> {
   const deps = getDependencies(config);
-  const plugins = await Promise.all(deps.map(async p => resolvePlugin(config, p)));
+  const plugins = await Promise.all(
+    deps.map(async p => resolvePlugin(config, p)),
+  );
   return plugins.filter(p => !!p) as Plugin[];
 }
 
-export async function resolvePlugin(config: Config, name: string): Promise<Plugin | null> {
+export async function resolvePlugin(
+  config: Config,
+  name: string,
+): Promise<Plugin | null> {
   try {
     const rootPath = resolveNode(config, name);
     if (!rootPath) {
-      logFatal(`Unable to find node_modules/${name}. Are you sure ${name} is installed?`);
+      logFatal(
+        `Unable to find node_modules/${name}. Are you sure ${name} is installed?`,
+      );
       return null;
     }
 
@@ -63,7 +69,7 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
         version: meta.version,
         rootPath: rootPath,
         repository: meta.repository,
-        manifest: meta.capacitor
+        manifest: meta.capacitor,
       };
     }
     const pluginXMLPath = join(rootPath, 'plugin.xml');
@@ -74,15 +80,19 @@ export async function resolvePlugin(config: Config, name: string): Promise<Plugi
       version: meta.version,
       rootPath: rootPath,
       repository: meta.repository,
-      xml: xmlMeta.plugin
+      xml: xmlMeta.plugin,
     };
-  } catch (e) { }
+  } catch (e) {}
   return null;
 }
 
 export function getDependencies(config: Config): string[] {
-  const dependencies = config.app.package.dependencies ? config.app.package.dependencies : [];
-  const devDependencies = config.app.package.devDependencies ? config.app.package.devDependencies : [];
+  const dependencies = config.app.package.dependencies
+    ? config.app.package.dependencies
+    : [];
+  const devDependencies = config.app.package.devDependencies
+    ? config.app.package.devDependencies
+    : [];
   return Object.keys(dependencies).concat(Object.keys(devDependencies));
 }
 
@@ -91,7 +101,7 @@ export function fixName(name: string): string {
     .replace(/\//g, '_')
     .replace(/-/g, '_')
     .replace(/@/g, '')
-    .replace(/_\w/g, (m) => m[1].toUpperCase());
+    .replace(/_\w/g, m => m[1].toUpperCase());
 
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
@@ -104,13 +114,19 @@ export function removeScope(name: string): string {
   return name;
 }
 
-export function printPlugins(plugins: Plugin[], platform: string, type: string = 'capacitor') {
+export function printPlugins(
+  plugins: Plugin[],
+  platform: string,
+  type: string = 'capacitor',
+) {
   const plural = plugins.length === 1 ? '' : 's';
 
   if (type === 'cordova') {
     log(`  Found ${plugins.length} Cordova plugin${plural} for ${platform}`);
   } else if (type === 'incompatible' && plugins.length > 0) {
-    log(`  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install`);
+    log(
+      `  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install`,
+    );
   } else if (type === 'capacitor') {
     log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
   }
@@ -123,13 +139,19 @@ export function printPlugins(plugins: Plugin[], platform: string, type: string =
 export function getPluginPlatform(p: Plugin, platform: string) {
   const platforms = p.xml.platform;
   if (platforms) {
-    const platforms = p.xml.platform.filter(function(item: any) { return item.$.name === platform; });
+    const platforms = p.xml.platform.filter(function (item: any) {
+      return item.$.name === platform;
+    });
     return platforms[0];
   }
   return [];
 }
 
-export function getPlatformElement(p: Plugin, platform: string, elementName: string) {
+export function getPlatformElement(
+  p: Plugin,
+  platform: string,
+  elementName: string,
+) {
   const platformTag = getPluginPlatform(p, platform);
   if (platformTag) {
     const element = platformTag[elementName];
@@ -168,7 +190,10 @@ export function getFilePath(config: Config, plugin: Plugin, path: string) {
   if (path.startsWith('node_modules')) {
     let pathSegments = path.split('/').slice(1);
     if (pathSegments[0].startsWith('@')) {
-      pathSegments = [pathSegments[0] + '/' + pathSegments[1], ...pathSegments.slice(2)];
+      pathSegments = [
+        pathSegments[0] + '/' + pathSegments[1],
+        ...pathSegments.slice(2),
+      ];
     }
 
     let filePath = resolveNode(config, ...pathSegments);
@@ -184,7 +209,11 @@ export function getFilePath(config: Config, plugin: Plugin, path: string) {
 /**
  * For a given plugin, return all the plugin.xml elements with elementName, checking root and specified platform
  */
-export function getAllElements(p: Plugin, platform: string, elementName: string) {
+export function getAllElements(
+  p: Plugin,
+  platform: string,
+  elementName: string,
+) {
   let modules: Array<string> = [];
   if (p.xml[elementName]) {
     modules = modules.concat(p.xml[elementName]);

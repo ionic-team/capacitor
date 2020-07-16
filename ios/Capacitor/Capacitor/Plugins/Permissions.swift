@@ -8,14 +8,14 @@ import UserNotifications
 @objc(CAPPermissionsPlugin)
 public class CAPPermissionsPlugin: CAPPlugin {
   fileprivate static let uknownPermissionValue = "Unknown permission value"
-  
+
   @objc func query(_ call: CAPPluginCall) {
     guard let name = call.getString("name") else {
       call.reject("Must provide a permission to check")
       return
     }
-    
-    switch (name) {
+
+    switch name {
     case "camera":
       return checkCamera(call)
     case "geolocation":
@@ -35,9 +35,9 @@ public class CAPPermissionsPlugin: CAPPlugin {
 
   func checkCamera(_ call: CAPPluginCall) {
     let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
-    
+
     let ret: String
-    switch (authStatus) {
+    switch authStatus {
     case .denied, .restricted:
       ret = "denied"
     case .authorized:
@@ -56,9 +56,9 @@ public class CAPPermissionsPlugin: CAPPlugin {
 
   func checkPhotos(_ call: CAPPluginCall) {
     let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-    
+
     let ret: String
-    switch (photoAuthorizationStatus) {
+    switch photoAuthorizationStatus {
     case .denied, .restricted:
       ret = "denied"
     case .authorized:
@@ -75,7 +75,7 @@ public class CAPPermissionsPlugin: CAPPlugin {
       call.reject(CAPPermissionsPlugin.uknownPermissionValue)
       return
     }
-    
+
     call.resolve([
       "state": ret
     ])
@@ -122,13 +122,13 @@ public class CAPPermissionsPlugin: CAPPlugin {
         call.reject(CAPPermissionsPlugin.uknownPermissionValue)
         return
       }
-      
+
       call.resolve([
         "state": ret
       ])
     })
   }
-  
+
   func checkClipboard(_ call: CAPPluginCall) {
     call.resolve([
       "state": "granted"
@@ -139,7 +139,7 @@ public class CAPPermissionsPlugin: CAPPlugin {
     let microStatus = AVCaptureDevice.authorizationStatus(for: .audio)
 
     let ret: String
-    switch (microStatus) {
+    switch microStatus {
     case .authorized:
       ret = "granted"
     case .denied, .restricted:

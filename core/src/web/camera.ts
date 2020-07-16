@@ -6,14 +6,14 @@ import {
   CameraOptions,
   CameraResultType,
   CameraDirection,
-  CameraSource
+  CameraSource,
 } from '../core-plugin-definitions';
 
 export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   constructor() {
     super({
       name: 'Camera',
-      platforms: ['web']
+      platforms: ['web'],
     });
   }
 
@@ -47,7 +47,9 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
             this.fileInputExperience(options, resolve);
           }
         } else {
-          console.error(`Unable to load PWA Element 'pwa-camera-modal'. See the docs: https://capacitorjs.com/docs/pwa-elements.`);
+          console.error(
+            `Unable to load PWA Element 'pwa-camera-modal'. See the docs: https://capacitorjs.com/docs/pwa-elements.`,
+          );
           this.fileInputExperience(options, resolve);
         }
       }
@@ -55,7 +57,9 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   }
 
   private fileInputExperience(options: CameraOptions, resolve: any) {
-    let input = document.querySelector('#_capacitor-camera-input') as HTMLInputElement;
+    let input = document.querySelector(
+      '#_capacitor-camera-input',
+    ) as HTMLInputElement;
 
     const cleanup = () => {
       input.parentNode && input.parentNode.removeChild(input);
@@ -71,7 +75,10 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
     input.accept = 'image/*';
     (input as any).capture = true;
 
-    if (options.source === CameraSource.Photos || options.source === CameraSource.Prompt) {
+    if (
+      options.source === CameraSource.Photos ||
+      options.source === CameraSource.Prompt
+    ) {
       input.removeAttribute('capture');
     } else if (options.direction === CameraDirection.Front) {
       (input as any).capture = 'user';
@@ -89,20 +96,23 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
         format = 'gif';
       }
 
-      if (options.resultType === CameraResultType.DataUrl || options.resultType === CameraResultType.Base64) {
+      if (
+        options.resultType === CameraResultType.DataUrl ||
+        options.resultType === CameraResultType.Base64
+      ) {
         const reader = new FileReader();
 
         reader.addEventListener('load', () => {
           if (options.resultType === CameraResultType.DataUrl) {
             resolve({
               dataUrl: reader.result,
-              format
+              format,
             } as CameraPhoto);
           } else if (options.resultType === CameraResultType.Base64) {
             const b64 = (reader.result as string).split(',')[1];
             resolve({
               base64String: b64,
-              format
+              format,
             } as CameraPhoto);
           }
 
@@ -113,7 +123,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
       } else {
         resolve({
           webPath: URL.createObjectURL(file),
-          format: format
+          format: format,
         });
         cleanup();
       }
@@ -129,7 +139,7 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
       if (options.resultType === CameraResultType.Uri) {
         resolve({
           webPath: URL.createObjectURL(photo),
-          format: format
+          format: format,
         });
       } else {
         reader.readAsDataURL(photo);
@@ -138,16 +148,16 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
           if (options.resultType === CameraResultType.DataUrl) {
             resolve({
               dataUrl: r,
-              format: format
+              format: format,
             });
           } else {
             resolve({
               base64String: r.split(',')[1],
-              format: format
+              format: format,
             });
           }
         };
-        reader.onerror = (e) => {
+        reader.onerror = e => {
           reject(e);
         };
       }

@@ -4,68 +4,66 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
-@NativePlugin()
+@NativePlugin
 public class BackgroundTask extends Plugin {
-  public static String TASK_BROADCAST_ACTION = "com.getcapacitor.app.BACKGROUND_TASK_BROADCAST";
+    public static String TASK_BROADCAST_ACTION = "com.getcapacitor.app.BACKGROUND_TASK_BROADCAST";
 
+    Intent serviceIntent = null;
 
-  Intent serviceIntent = null;
+    private BroadcastReceiver taskReceiver;
 
-  private BroadcastReceiver taskReceiver;
+    @Override
+    public void load() {
+        IntentFilter intentFilter = new IntentFilter(TASK_BROADCAST_ACTION);
 
-  @Override
-  public void load() {
-    IntentFilter intentFilter = new IntentFilter(TASK_BROADCAST_ACTION);
+        taskReceiver =
+            new BroadcastReceiver() {
 
-    taskReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        String taskId = intent.getStringExtra("taskId");
-        // no-op for now
-        // callTaskCallback(taskId);
-      }
-    };
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String taskId = intent.getStringExtra("taskId");
+                    // no-op for now
+                    // callTaskCallback(taskId);
+                }
+            };
 
-    LocalBroadcastManager.getInstance(getContext()).registerReceiver(taskReceiver, intentFilter);
-  }
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(taskReceiver, intentFilter);
+    }
 
-  private void callTaskCallback(String taskId) {
-  }
+    private void callTaskCallback(String taskId) {}
 
-  @PluginMethod(returnType=PluginMethod.RETURN_CALLBACK)
-  public void beforeExit(PluginCall call) {
-    String taskId = "";
+    @PluginMethod(returnType = PluginMethod.RETURN_CALLBACK)
+    public void beforeExit(PluginCall call) {
+        String taskId = "";
 
-    /*
+        /*
     serviceIntent = new Intent(getActivity(), BackgroundTaskService.class);
     serviceIntent.putExtra("taskId", call.getCallbackId());
     getActivity().startService(serviceIntent);
     */
 
-    // No-op for now as Android has less strict requirements for background tasks
+        // No-op for now as Android has less strict requirements for background tasks
 
-    JSObject ret = new JSObject();
-    ret.put("taskId", call.getCallbackId());
-    call.success(ret);
-  }
-
-  @PluginMethod()
-  public void finish(PluginCall call) {
-    String taskId = call.getString("taskId");
-    if (taskId == null) {
-      call.error("Must provide taskId");
-      return;
+        JSObject ret = new JSObject();
+        ret.put("taskId", call.getCallbackId());
+        call.success(ret);
     }
 
-    call.success();
-  }
+    @PluginMethod
+    public void finish(PluginCall call) {
+        String taskId = call.getString("taskId");
+        if (taskId == null) {
+            call.error("Must provide taskId");
+            return;
+        }
+
+        call.success();
+    }
 }

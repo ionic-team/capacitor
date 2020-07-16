@@ -16,12 +16,16 @@ export const checkInteractive = (...args: string[]) => {
   // Make sure none of the provided args are empty, otherwise print the interactive
   // warning and return false
   if (!!args.filter(arg => !!!arg).length) {
-    logError('Non-interactive shell detected. Run the command with --help to see a list of arguments that must be provided.');
+    logError(
+      'Non-interactive shell detected. Run the command with --help to see a list of arguments that must be provided.',
+    );
     return false;
   }
   return true;
 };
 
 export const isInteractive = () => {
-  return Boolean(process.stdin.isTTY && process.stdout.isTTY && process.stderr.isTTY);
+  return Boolean(
+    process.stdin.isTTY && process.stdout.isTTY && process.stderr.isTTY,
+  );
 };

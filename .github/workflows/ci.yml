@@ -27,7 +27,6 @@ jobs:
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
-      - run: npm run lint
       - run: npm test
   test-core:
     runs-on: ubuntu-latest
@@ -47,7 +46,6 @@ jobs:
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
-      - run: npm run lint
       - run: npm test
   test-ios:
     runs-on: macos-latest

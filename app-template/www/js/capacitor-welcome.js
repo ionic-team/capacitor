@@ -1,12 +1,14 @@
-window.customElements.define('capacitor-welcome', class extends HTMLElement {
-  constructor() {
-    super();
+window.customElements.define(
+  'capacitor-welcome',
+  class extends HTMLElement {
+    constructor() {
+      super();
 
-    Capacitor.Plugins.SplashScreen.hide();
-    
-    const root = this.attachShadow({ mode: 'open' });
+      Capacitor.Plugins.SplashScreen.hide();
 
-    root.innerHTML = `
+      const root = this.attachShadow({ mode: 'open' });
+
+      root.innerHTML = `
     <style>
       :host {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -81,38 +83,43 @@ window.customElements.define('capacitor-welcome', class extends HTMLElement {
         </p>
       </main>
     </div>
-    `
-  }
+    `;
+    }
 
-  connectedCallback() {
-    const self = this;
+    connectedCallback() {
+      const self = this;
 
-    self.shadowRoot.querySelector('#take-photo').addEventListener('click', async function(e) {
-      const { Camera } = Capacitor.Plugins;
+      self.shadowRoot
+        .querySelector('#take-photo')
+        .addEventListener('click', async function (e) {
+          const { Camera } = Capacitor.Plugins;
 
-      try {
-        const photo = await Camera.getPhoto({
-          resultType: "uri"
+          try {
+            const photo = await Camera.getPhoto({
+              resultType: 'uri',
+            });
+
+            const image = self.shadowRoot.querySelector('#image');
+            if (!image) {
+              return;
+            }
+
+            image.src = photo.webPath;
+          } catch (e) {
+            console.warn('User cancelled', e);
+          }
         });
+    }
+  },
+);
 
-        const image = self.shadowRoot.querySelector('#image');
-        if (!image) {
-          return;
-        }
-        
-        image.src = photo.webPath;
-      } catch (e) {
-        console.warn('User cancelled', e);
-      }
-    })
-  }
-});
-
-window.customElements.define('capacitor-welcome-titlebar', class extends HTMLElement {
-  constructor() {
-    super();
-    const root = this.attachShadow({ mode: 'open' });
-    root.innerHTML = `
+window.customElements.define(
+  'capacitor-welcome-titlebar',
+  class extends HTMLElement {
+    constructor() {
+      super();
+      const root = this.attachShadow({ mode: 'open' });
+      root.innerHTML = `
     <style>
       :host {
         position: relative;
@@ -131,5 +138,6 @@ window.customElements.define('capacitor-welcome-titlebar', class extends HTMLEle
     </style>
     <slot></slot>
     `;
-  }
-});
+    }
+  },
+);

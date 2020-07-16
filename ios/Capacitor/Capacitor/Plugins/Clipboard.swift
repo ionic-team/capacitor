@@ -1,7 +1,7 @@
 import Foundation
 
 @objc(CAPClipboardPlugin)
-public class CAPClipboardPlugin : CAPPlugin {
+public class CAPClipboardPlugin: CAPPlugin {
   @objc func write(_ call: CAPPluginCall) {
     if let string = call.options["string"] as? String {
       UIPasteboard.general.string = string
@@ -20,7 +20,7 @@ public class CAPClipboardPlugin : CAPPlugin {
     }
     call.success()
   }
-  
+
   // TODO - move to helper class
   func getCleanData(_ data: String) -> String {
     let dataParts = data.split(separator: ",")
@@ -60,6 +60,3 @@ public class CAPClipboardPlugin : CAPPlugin {
     }
   }
 }
-
-
-

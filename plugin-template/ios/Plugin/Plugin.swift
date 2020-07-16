@@ -7,7 +7,7 @@ import Capacitor
  */
 @objc(CLASS_NAME)
 public class CLASS_NAME: CAPPlugin {
-    
+
     @objc func echo(_ call: CAPPluginCall) {
         let value = call.getString("value") ?? ""
         call.success([

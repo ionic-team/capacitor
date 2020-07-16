@@ -8,11 +8,12 @@ let ExtConfig: ExternalConfig;
 
 export class Config implements CliConfig {
   windows = {
-    androidStudioPath: 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe'
+    androidStudioPath:
+      'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
   };
 
   linux = {
-    androidStudioPath: '/usr/local/android-studio/bin/studio.sh'
+    androidStudioPath: '/usr/local/android-studio/bin/studio.sh',
   };
 
   android = {
@@ -28,7 +29,7 @@ export class Config implements CliConfig {
       pluginsFolderName: 'capacitor-cordova-android-plugins',
       templateDir: '',
       pluginsDir: '',
-    }
+    },
   };
 
   ios = {
@@ -44,11 +45,11 @@ export class Config implements CliConfig {
       pluginsFolderName: 'capacitor-cordova-ios-plugins',
       templateDir: '',
       pluginsDir: '',
-    }
+    },
   };
 
   web = {
-    name: 'web'
+    name: 'web',
   };
 
   cli = {
@@ -58,7 +59,7 @@ export class Config implements CliConfig {
     assetsDir: '',
     package: Package,
     os: OS.Unknown,
-    npmClient: ''
+    npmClient: '',
   };
 
   app = {
@@ -68,7 +69,8 @@ export class Config implements CliConfig {
     webDir: 'www',
     webDirAbs: '',
     package: Package,
-    windowsAndroidStudioPath: 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
+    windowsAndroidStudioPath:
+      'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
     linuxAndroidStudioPath: '',
     extConfigName: 'capacitor.config.json',
     extConfigFilePath: '',
@@ -78,22 +80,21 @@ export class Config implements CliConfig {
     assets: {
       templateName: 'app-template',
       templateDir: '',
-      pluginsTemplateDir: ''
+      pluginsTemplateDir: '',
     },
     server: {
-      cleartext: false
-    }
+      cleartext: false,
+    },
   };
 
   plugins = {
     assets: {
       templateName: 'plugin-template',
-      templateDir: ''
-    }
+      templateDir: '',
+    },
   };
 
   platforms: string[] = [];
-
 
   constructor(os: string, currentWorkingDir: string, cliBinDir: string) {
     this.initOS(os);
@@ -141,44 +142,77 @@ export class Config implements CliConfig {
     this.cli.package = loadPackageJson(this.cli.rootDir);
   }
 
-
   private initAppConfig(currentWorkingDir: string) {
     this.app.rootDir = currentWorkingDir;
     this.app.package = loadPackageJson(currentWorkingDir);
-    this.app.assets.templateDir = join(this.cli.assetsDir, this.app.assets.templateName);
+    this.app.assets.templateDir = join(
+      this.cli.assetsDir,
+      this.app.assets.templateName,
+    );
   }
 
   async updateAppPackage() {
-    this.app.package = await readJSON(resolve(this.app.rootDir, 'package.json'));
+    this.app.package = await readJSON(
+      resolve(this.app.rootDir, 'package.json'),
+    );
   }
 
   private initAndroidConfig() {
     this.platforms.push(this.android.name);
     this.android.platformDir = resolve(this.app.rootDir, this.android.name);
-    this.android.assets.templateDir = resolve(this.cli.assetsDir, this.android.assets.templateName);
-    this.android.assets.pluginsDir = resolve(this.cli.assetsDir, this.android.assets.pluginsFolderName);
-    this.android.webDirAbs = resolve(this.android.platformDir, this.android.webDir);
-    this.android.resDirAbs = resolve(this.android.platformDir, this.android.resDir);
+    this.android.assets.templateDir = resolve(
+      this.cli.assetsDir,
+      this.android.assets.templateName,
+    );
+    this.android.assets.pluginsDir = resolve(
+      this.cli.assetsDir,
+      this.android.assets.pluginsFolderName,
+    );
+    this.android.webDirAbs = resolve(
+      this.android.platformDir,
+      this.android.webDir,
+    );
+    this.android.resDirAbs = resolve(
+      this.android.platformDir,
+      this.android.resDir,
+    );
   }
-
 
   private initIosConfig() {
     this.platforms.push(this.ios.name);
     this.ios.platformDir = resolve(this.app.rootDir, this.ios.name);
-    this.ios.assets.templateDir = resolve(this.cli.assetsDir, this.ios.assets.templateName);
-    this.ios.assets.pluginsDir = resolve(this.cli.assetsDir, this.ios.assets.pluginsFolderName);
-    this.ios.webDirAbs = resolve(this.ios.platformDir, this.ios.nativeProjectName, this.ios.webDir);
-    if (this.app.extConfig && this.app.extConfig.ios && this.app.extConfig.ios.cordovaSwiftVersion) {
+    this.ios.assets.templateDir = resolve(
+      this.cli.assetsDir,
+      this.ios.assets.templateName,
+    );
+    this.ios.assets.pluginsDir = resolve(
+      this.cli.assetsDir,
+      this.ios.assets.pluginsFolderName,
+    );
+    this.ios.webDirAbs = resolve(
+      this.ios.platformDir,
+      this.ios.nativeProjectName,
+      this.ios.webDir,
+    );
+    if (
+      this.app.extConfig &&
+      this.app.extConfig.ios &&
+      this.app.extConfig.ios.cordovaSwiftVersion
+    ) {
       this.ios.cordovaSwiftVersion = this.app.extConfig.ios.cordovaSwiftVersion;
     }
-    if (this.app.extConfig && this.app.extConfig.ios && this.app.extConfig.ios.minVersion) {
+    if (
+      this.app.extConfig &&
+      this.app.extConfig.ios &&
+      this.app.extConfig.ios.minVersion
+    ) {
       this.ios.minVersion = this.app.extConfig.ios.minVersion;
     }
   }
 
   private initWindowsConfig() {
     if (this.cli.os !== OS.Windows) {
-        return;
+      return;
     }
     this.windows.androidStudioPath = this.app.windowsAndroidStudioPath;
   }
@@ -190,7 +224,10 @@ export class Config implements CliConfig {
   }
 
   private initPluginsConfig() {
-    this.plugins.assets.templateDir = join(this.cli.assetsDir, this.plugins.assets.templateName);
+    this.plugins.assets.templateDir = join(
+      this.cli.assetsDir,
+      this.plugins.assets.templateName,
+    );
   }
 
   private mergeConfigData() {
@@ -215,7 +252,6 @@ export class Config implements CliConfig {
       } catch (e) {
         logFatal(`error parsing: ${basename(this.app.extConfigFilePath)}\n`, e);
       }
-
     } catch {
       // it's ok if there's no capacitor.json file
     }
@@ -232,7 +268,6 @@ export class Config implements CliConfig {
 
       if (!this.isValidPlatform(platformName)) {
         logFatal(`Invalid platform: ${platformName}`);
-
       } else if (!this.platformDirExists(platformName)) {
         this.platformNotCreatedError(platformName);
       }
@@ -246,8 +281,10 @@ export class Config implements CliConfig {
     return this.getExistingPlatforms();
   }
 
-
-  async askPlatform(selectedPlatformName: string, promptMessage: string): Promise<string> {
+  async askPlatform(
+    selectedPlatformName: string,
+    promptMessage: string,
+  ): Promise<string> {
     if (!selectedPlatformName) {
       const inquirer = await import('inquirer');
 
@@ -255,7 +292,7 @@ export class Config implements CliConfig {
         type: 'list',
         name: 'mode',
         message: promptMessage,
-        choices: this.platforms
+        choices: this.platforms,
       });
 
       return answer.mode.toLowerCase().trim();
@@ -264,12 +301,15 @@ export class Config implements CliConfig {
     const platformName = selectedPlatformName.toLowerCase().trim();
 
     if (!this.isValidPlatform(platformName)) {
-      logFatal(`Invalid platform: "${platformName}". Valid platforms include: ${this.platforms.join(', ')}`);
+      logFatal(
+        `Invalid platform: "${platformName}". Valid platforms include: ${this.platforms.join(
+          ', ',
+        )}`,
+      );
     }
 
     return platformName;
   }
-
 
   getExistingPlatforms() {
     const platforms: string[] = [];
@@ -309,9 +349,17 @@ export class Config implements CliConfig {
   platformNotCreatedError(platformName: string) {
     const chalk = require('chalk');
     if (platformName === 'web') {
-      logFatal(`Could not find the web platform directory. Make sure ${chalk.bold(this.app.webDir)} exists.`);
+      logFatal(
+        `Could not find the web platform directory. Make sure ${chalk.bold(
+          this.app.webDir,
+        )} exists.`,
+      );
     }
-    logFatal(`${chalk.bold(platformName)}" platform has not been created. Use "npx cap add ${platformName}" to add the platform project.`);
+    logFatal(
+      `${chalk.bold(
+        platformName,
+      )}" platform has not been created. Use "npx cap add ${platformName}" to add the platform project.`,
+    );
   }
 }
 

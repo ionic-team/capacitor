@@ -1,9 +1,6 @@
 import { WebPlugin } from './index';
 
-import {
-  StoragePlugin
-} from '../core-plugin-definitions';
-
+import { StoragePlugin } from '../core-plugin-definitions';
 
 export class StoragePluginWeb extends WebPlugin implements StoragePlugin {
   KEY_PREFIX = '_cap_';
@@ -11,19 +8,19 @@ export class StoragePluginWeb extends WebPlugin implements StoragePlugin {
   constructor() {
     super({
       name: 'Storage',
-      platforms: ['web']
+      platforms: ['web'],
     });
   }
 
-  get(options: { key: string }): Promise<{value: string}> {
+  get(options: { key: string }): Promise<{ value: string }> {
     return new Promise((resolve, _reject) => {
       resolve({
-        value: window.localStorage.getItem(this.makeKey(options.key))
+        value: window.localStorage.getItem(this.makeKey(options.key)),
       });
     });
   }
 
-  set(options: { key: string, value: string }): Promise<void> {
+  set(options: { key: string; value: string }): Promise<void> {
     return new Promise((resolve, _reject) => {
       window.localStorage.setItem(this.makeKey(options.key), options.value);
       resolve();
@@ -40,7 +37,9 @@ export class StoragePluginWeb extends WebPlugin implements StoragePlugin {
   keys(): Promise<{ keys: string[] }> {
     return new Promise((resolve, _reject) => {
       resolve({
-        keys: Object.keys(localStorage).filter(k => this.isKey(k)).map(k => this.getKey(k))
+        keys: Object.keys(localStorage)
+          .filter(k => this.isKey(k))
+          .map(k => this.getKey(k)),
       });
     });
   }

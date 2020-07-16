@@ -4,7 +4,7 @@ export enum OS {
   Unknown = 'unknown',
   Mac = 'mac',
   Windows = 'windows',
-  Linux = 'linux'
+  Linux = 'linux',
 }
 
 export interface PackageJson {

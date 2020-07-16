@@ -1,6 +1,6 @@
 import Foundation
 
-public typealias DeviceInfo = [String:Any]
+public typealias DeviceInfo = [String: Any]
 
 @objc(CAPDevicePlugin)
 public class CAPDevicePlugin: CAPPlugin {
@@ -52,12 +52,11 @@ public class CAPDevicePlugin: CAPPlugin {
       "value": code
     ])
   }
-  
+
   @objc func getAdvertisingIdentifier(_ call: CAPPluginCall) {
   }
-  
+
   @objc func getMemoryUsage(_ call: CAPPluginCall) {
   }
 
 }
-
