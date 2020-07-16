@@ -16,7 +16,6 @@
     "build": "npm run clean && npm run assets && tsc",
     "clean": "rimraf ./dist",
     "deploy": "np",
-    "lint": "tslint --project tsconfig.json",
     "assets": "node scripts/copy-assets.js",
     "prepublishOnly": "npm run build",
     "test": "jest -i",
@@ -72,8 +71,6 @@
     "rimraf": "^3.0.0",
     "tmp": "0.0.33",
     "ts-jest": "^23.10.4",
-    "tslint": "^5.8.0",
-    "tslint-ionic-rules": "0.0.11",
     "typescript": "~3.7.0"
   },
   "publishConfig": {
