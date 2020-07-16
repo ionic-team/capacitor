@@ -230,7 +230,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     'scripts': {
       'lint': 'npm run prettier -- --check && npm run swiftlint -- lint',
       'prettier': 'prettier "**/*.{css,html,ts,js,java}"',
-      'swiftlint': 'swiftlint',
+      'swiftlint': 'node-swiftlint',
       'build': 'npm run clean && tsc && rollup -c rollup.config.js',
       'clean': 'rimraf ./dist',
       'watch': 'tsc --watch',
@@ -249,7 +249,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
       'prettier-plugin-java': '^0.8.0',
       'rimraf': '^3.0.0',
       'rollup': '^2.21.0',
-      'swiftlint': '^0.39.4',
+      'swiftlint': '^1.0.1',
       'typescript': '~3.8.3'
     },
     'peerDependencies': {
