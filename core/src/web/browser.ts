@@ -3,7 +3,7 @@ import { WebPlugin } from './index';
 import {
   BrowserPlugin,
   BrowserOpenOptions,
-  BrowserPrefetchOptions
+  BrowserPrefetchOptions,
 } from '../core-plugin-definitions';
 
 export class BrowserPluginWeb extends WebPlugin implements BrowserPlugin {
@@ -12,7 +12,7 @@ export class BrowserPluginWeb extends WebPlugin implements BrowserPlugin {
   constructor() {
     super({
       name: 'Browser',
-      platforms: ['web']
+      platforms: ['web'],
     });
   }
 

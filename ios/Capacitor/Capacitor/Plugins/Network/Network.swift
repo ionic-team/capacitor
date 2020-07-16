@@ -1,10 +1,10 @@
 import Foundation
 
 @objc(CAPNetworkPlugin)
-public class CAPNetworkPlugin : CAPPlugin {
+public class CAPNetworkPlugin: CAPPlugin {
   let reachability = Reachability()!
-  
-  public override func load() {
+
+  override public func load() {
     CAPLog.print("Loading network plugin")
     reachability.whenReachable = { [weak self] reachability in
       if reachability.connection == .wifi {
@@ -19,14 +19,14 @@ public class CAPNetworkPlugin : CAPPlugin {
       CAPLog.print("Not reachable")
       self?.notifyStatusChangeListeners(connected: false, type: "none")
     }
-  
+
     do {
       try reachability.startNotifier()
     } catch {
       CAPLog.print("Unable to start notifier")
     }
   }
-  
+
   @objc func getStatus(_ call: CAPPluginCall) {
     var connected = false
     var type = ""
@@ -38,13 +38,13 @@ public class CAPNetworkPlugin : CAPPlugin {
       connected = true
       type = "cellular"
     }
-    
+
     call.success([
       "connected": connected,
       "connectionType": type
     ])
   }
-  
+
   func notifyStatusChangeListeners(connected: Bool, type: String) {
     notifyListeners("networkStatusChange", data: [
       "connected": connected,

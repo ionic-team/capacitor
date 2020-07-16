@@ -1,22 +1,42 @@
 import { Config } from '../config';
-import { TaskInfoProvider, copyTemplate, getCLIVersion, installDeps, resolveNode, runCommand, runTask } from '../common';
+import {
+  TaskInfoProvider,
+  copyTemplate,
+  getCLIVersion,
+  installDeps,
+  resolveNode,
+  runCommand,
+  runTask,
+} from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
 import { homedir } from 'os';
 import { join } from 'path';
 
 export async function addAndroid(config: Config) {
-
-  await runTask(`Installing android dependencies`, async (info: TaskInfoProvider) => {
-    if (resolveNode(config, '@capacitor/android')) {
-      info('Skipping: already installed');
-      return;
-    }
-    const cliVersion = await getCLIVersion(config);
-    return installDeps(config.app.rootDir, [`@capacitor/android@${cliVersion}`], config);
-  });
-  await runTask(`Adding native android project in: ${config.android.platformDir}`, async () => {
-    return copyTemplate(config.android.assets.templateDir, config.android.platformDir);
-  });
+  await runTask(
+    `Installing android dependencies`,
+    async (info: TaskInfoProvider) => {
+      if (resolveNode(config, '@capacitor/android')) {
+        info('Skipping: already installed');
+        return;
+      }
+      const cliVersion = await getCLIVersion(config);
+      return installDeps(
+        config.app.rootDir,
+        [`@capacitor/android@${cliVersion}`],
+        config,
+      );
+    },
+  );
+  await runTask(
+    `Adding native android project in: ${config.android.platformDir}`,
+    async () => {
+      return copyTemplate(
+        config.android.assets.templateDir,
+        config.android.platformDir,
+      );
+    },
+  );
 
   await runTask(`Syncing Gradle`, async () => {
     return createLocalProperties(config.android.platformDir);
@@ -38,7 +58,11 @@ async function createLocalProperties(platformDir: string) {
 # header note.
 sdk.dir=${defaultAndroidPath}
   `;
-    await writeFileAsync(join(platformDir, 'local.properties'), localSettings, 'utf8');
+    await writeFileAsync(
+      join(platformDir, 'local.properties'),
+      localSettings,
+      'utf8',
+    );
 
     // Only sync if we were able to create the local properties above, otherwise
     // this will fail
@@ -46,7 +70,9 @@ sdk.dir=${defaultAndroidPath}
       await gradleSync(platformDir);
     } catch (e) {
       console.error('Error running gradle sync', e);
-      console.error('Unable to infer default Android SDK settings. This is fine, just run npx cap open android and import and sync gradle manually');
+      console.error(
+        'Unable to infer default Android SDK settings. This is fine, just run npx cap open android and import and sync gradle manually',
+      );
     }
   }
 }

@@ -1,6 +1,6 @@
 public class CAPFile {
   var url: URL
-  
+
   public init(url: URL) {
     self.url = url
   }
@@ -12,7 +12,7 @@ public class CAPFile {
  */
 @objc public class CAPFileManager: NSObject {
   static func get(path: String) -> CAPFile? {
-    let handlers: [String:CAPFileResolver.Type] = [
+    let handlers: [String: CAPFileResolver.Type] = [
       "res://": CAPFileResolverResource.self,
       "file://": CAPFileResolverFile.self,
       "base64:": CAPFileResolverNotImplemented.self
@@ -23,10 +23,10 @@ public class CAPFile {
         return handler.resolve(path: path)
       }
     }
-    
+
     return nil
   }
-  
+
   public static func getPortablePath(host: String, uri: URL?) -> String? {
     if uri != nil {
         let uriWithoutFile = uri!.absoluteString.replacingOccurrences(of: "file://", with: "")
@@ -49,7 +49,7 @@ private class CAPFileResolverFile: CAPFileResolver {
     }
     return CAPFile(url: URL(fileURLWithPath: absPath))
   }
-  
+
 }
 
 private class CAPFileResolverResource: CAPFileResolver {
@@ -57,7 +57,7 @@ private class CAPFileResolverResource: CAPFileResolver {
     let manager = FileManager.default
     let bundle = Bundle.main
     let resourcePath = bundle.resourcePath
-    
+
     var absPath = path.replacingOccurrences(of: "res://", with: "")
     absPath = resourcePath! + "/" + absPath
     if !manager.fileExists(atPath: absPath) {

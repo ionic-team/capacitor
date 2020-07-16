@@ -5,10 +5,17 @@ import { join } from 'path';
 
 export async function copyWeb(config: Config) {
   if (config.app.bundledWebRuntime) {
-    const runtimePath = resolveNode(config, '@capacitor/core', 'dist', 'capacitor.js');
+    const runtimePath = resolveNode(
+      config,
+      '@capacitor/core',
+      'dist',
+      'capacitor.js',
+    );
     if (!runtimePath) {
-      logFatal(`Unable to find node_modules/@capacitor/core/dist/capacitor.js. Are you sure`,
-        '@capacitor/core is installed? This file is required for Capacitor to function');
+      logFatal(
+        `Unable to find node_modules/@capacitor/core/dist/capacitor.js. Are you sure`,
+        '@capacitor/core is installed? This file is required for Capacitor to function',
+      );
       return;
     }
 

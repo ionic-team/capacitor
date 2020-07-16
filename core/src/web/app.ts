@@ -6,11 +6,15 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
   constructor() {
     super({
       name: 'App',
-      platforms: ['web']
+      platforms: ['web'],
     });
 
     if (typeof document !== 'undefined') {
-      document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this), false);
+      document.addEventListener(
+        'visibilitychange',
+        this.handleVisibilityChange.bind(this),
+        false,
+      );
     }
   }
 
@@ -18,11 +22,11 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
     throw new Error('Method not implemented.');
   }
 
-  canOpenUrl(_options: { url: string; }): Promise<{ value: boolean; }> {
+  canOpenUrl(_options: { url: string }): Promise<{ value: boolean }> {
     return Promise.resolve({ value: true });
   }
 
-  openUrl(_options: { url: string; }): Promise<{ completed: boolean; }> {
+  openUrl(_options: { url: string }): Promise<{ completed: boolean }> {
     return Promise.resolve({ completed: true });
   }
 
@@ -36,7 +40,7 @@ export class AppPluginWeb extends WebPlugin implements AppPlugin {
 
   handleVisibilityChange(): void {
     const data = {
-      isActive: document.hidden !== true
+      isActive: document.hidden !== true,
     };
 
     this.notifyListeners('appStateChange', data);

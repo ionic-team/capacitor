@@ -8,13 +8,12 @@ export interface PluginListenerHandle {
 declare var window: any;
 
 export class NetworkPluginWeb extends WebPlugin implements NetworkPlugin {
-
   listenerFunction: any = null;
 
   constructor() {
     super({
       name: 'Network',
-      platforms: ['web']
+      platforms: ['web'],
     });
   }
 
@@ -26,23 +25,42 @@ export class NetworkPluginWeb extends WebPlugin implements NetworkPlugin {
       }
 
       let connected = window.navigator.onLine;
-      let connection = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection;
-      let connectionType = connection ? (connection.type || connection.effectiveType) : 'wifi';
+      let connection =
+        window.navigator.connection ||
+        window.navigator.mozConnection ||
+        window.navigator.webkitConnection;
+      let connectionType = connection
+        ? connection.type || connection.effectiveType
+        : 'wifi';
 
       resolve({
         connected: connected,
-        connectionType: connected ? connectionType : 'none'
+        connectionType: connected ? connectionType : 'none',
       } as NetworkStatus);
     });
   }
 
-  addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle {
+  addListener(
+    eventName: 'networkStatusChange',
+    listenerFunc: (status: NetworkStatus) => void,
+  ): PluginListenerHandle {
     let thisRef = this;
-    let connection = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection;
-    let connectionType = connection ? (connection.type || connection.effectiveType) : 'wifi';
+    let connection =
+      window.navigator.connection ||
+      window.navigator.mozConnection ||
+      window.navigator.webkitConnection;
+    let connectionType = connection
+      ? connection.type || connection.effectiveType
+      : 'wifi';
 
-    let onlineBindFunc = listenerFunc.bind(thisRef, { connected: true, connectionType: connectionType });
-    let offlineBindFunc = listenerFunc.bind(thisRef, { connected: false, connectionType: 'none' });
+    let onlineBindFunc = listenerFunc.bind(thisRef, {
+      connected: true,
+      connectionType: connectionType,
+    });
+    let offlineBindFunc = listenerFunc.bind(thisRef, {
+      connected: false,
+      connectionType: 'none',
+    });
 
     if (eventName.localeCompare('networkStatusChange') === 0) {
       window.addEventListener('online', onlineBindFunc);
@@ -51,7 +69,7 @@ export class NetworkPluginWeb extends WebPlugin implements NetworkPlugin {
         remove: () => {
           window.removeEventListener('online', onlineBindFunc);
           window.removeEventListener('offline', offlineBindFunc);
-        }
+        },
       };
     }
   }

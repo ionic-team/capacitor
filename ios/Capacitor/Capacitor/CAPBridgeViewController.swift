@@ -8,50 +8,50 @@ import WebKit
 import Cordova
 
 public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUIDelegate, WKNavigationDelegate {
-  
+
   private var webView: WKWebView?
-  
+
   public var bridgedWebView: WKWebView? {
     return webView
   }
-  
+
   public var bridgedViewController: UIViewController? {
     return self
   }
-  public let cordovaParser = CDVConfigParser.init();
+  public let cordovaParser = CDVConfigParser.init()
   private var hostname: String?
   private var allowNavigationConfig: [String]?
   private var basePath: String = ""
   private let assetsFolder = "public"
-  
+
   private enum WebViewLoadingState {
     case unloaded
     case initialLoad(isOpaque: Bool)
     case subsequentLoad
   }
   private var webViewLoadingState = WebViewLoadingState.unloaded
-  
+
   private var isStatusBarVisible = true
   private var statusBarStyle: UIStatusBarStyle = .default
   private var statusBarAnimation: UIStatusBarAnimation = .slide
-  @objc public var supportedOrientations: Array<Int> = []
-  
+  @objc public var supportedOrientations: [Int] = []
+
   @objc public var startDir = ""
   @objc public var config: String?
 
   // Construct the Capacitor runtime
   public var bridge: CAPBridge?
   private var handler: CAPAssetHandler?
-  
+
   override public func loadView() {
     let configUrl = Bundle.main.url(forResource: "config", withExtension: "xml")
-    let configParser = XMLParser(contentsOf: configUrl!)!;
+    let configParser = XMLParser(contentsOf: configUrl!)!
     configParser.delegate = cordovaParser
     configParser.parse()
     guard let startPath = self.getStartPath() else {
       return
     }
-    
+
     setStatusBarDefaults()
     setScreenOrientationDefaults()
     let capConfig = CAPConfig(self.config)
@@ -69,7 +69,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     }
     webViewConfiguration.setURLSchemeHandler(self.handler, forURLScheme: specifiedScheme)
     webViewConfiguration.userContentController = messageHandler.contentController
-    
+
     configureWebView(configuration: webViewConfiguration)
 
     if let appendUserAgent = (capConfig.getValue("ios.appendUserAgent") as? String) ?? (capConfig.getValue("appendUserAgent") as? String) {
@@ -93,9 +93,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     }
     webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
     view = webView
-    
+
     setKeyboardRequiresUserInteraction(false)
-    
+
     bridge = CAPBridge(self, messageHandler, capConfig, specifiedScheme)
 
     if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
@@ -106,7 +106,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
       webView?.backgroundColor = UIColor.systemBackground
       webView?.scrollView.backgroundColor = UIColor.systemBackground
     }
-    
+
     if let overrideUserAgent = (bridge!.config.getValue("ios.overrideUserAgent") as? String) ?? (bridge!.config.getValue("overrideUserAgent") as? String) {
       webView?.customUserAgent = overrideUserAgent
     }
@@ -126,7 +126,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     if !isDeployDisabled() && !isNewBinary() {
       let defaults = UserDefaults.standard
       let persistedPath = defaults.string(forKey: "serverBasePath")
-      if (persistedPath != nil && !persistedPath!.isEmpty) {
+      if persistedPath != nil && !persistedPath!.isEmpty {
         let libPath = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
         let cordovaDataDirectory = (libPath as NSString).appendingPathComponent("NoCloud")
         let snapshots = (cordovaDataDirectory as NSString).appendingPathComponent("ionic_built_snapshots")
@@ -169,13 +169,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
   func printLoadError() {
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir)
-    
+
     CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath.relativePath)/index.html")
     CAPLog.print("⚡️  This file is the root of your web app and must exist before")
     CAPLog.print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")
     CAPLog.print("⚡️  or, if embedding, that this directory exists as a resource directory.")
   }
-  
+
   func fatalLoadError() -> Never {
     printLoadError()
     exit(1)
@@ -191,14 +191,14 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
       webViewLoadingState = .initialLoad(isOpaque: webView.isOpaque)
       webView.isOpaque = false
     }
-    
+
     let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
     if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
       fatalLoadError()
     }
 
     hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
-    allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? Array<String>
+    allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? [String]
 
     if bridge!.isDevMode() && bridge!.config.getString("server.url") != nil {
       let toastPlugin = bridge!.getOrLoadPlugin(pluginName: "Toast") as? CAPToastPlugin
@@ -218,18 +218,18 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
   public func setStatusBarDefaults() {
     if let plist = Bundle.main.infoDictionary {
       if let statusBarHidden = plist["UIStatusBarHidden"] as? Bool {
-        if (statusBarHidden) {
+        if statusBarHidden {
           self.isStatusBarVisible = false
         }
       }
       if let statusBarStyle = plist["UIStatusBarStyle"] as? String {
-        if (statusBarStyle == "UIStatusBarStyleDarkContent") {
+        if statusBarStyle == "UIStatusBarStyleDarkContent" {
           if #available(iOS 13.0, *) {
             self.statusBarStyle = .darkContent
           } else {
             self.statusBarStyle = .default
           }
-        } else if (statusBarStyle != "UIStatusBarStyleDefault") {
+        } else if statusBarStyle != "UIStatusBarStyleDefault" {
           self.statusBarStyle = .lightContent
         }
       }
@@ -238,7 +238,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
   public func setScreenOrientationDefaults() {
     if let plist = Bundle.main.infoDictionary {
-      if let orientations = plist["UISupportedInterfaceOrientations"] as? Array<String> {
+      if let orientations = plist["UISupportedInterfaceOrientations"] as? [String] {
         for orientation in orientations {
           if orientation == "UIInterfaceOrientationPortrait" {
             self.supportedOrientations.append(UIInterfaceOrientation.portrait.rawValue)
@@ -275,7 +275,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
   public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
     let navUrl = navigationAction.request.url!
-    
+
     /*
      * Give plugins the chance to handle the url
      */
@@ -285,8 +285,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         let selector = NSSelectorFromString("shouldOverrideLoad:")
         if plugin.responds(to: selector) {
           let shouldOverrideLoad = plugin.shouldOverrideLoad(navigationAction)
-          if (shouldOverrideLoad != nil) {
-            if (shouldOverrideLoad == true) {
+          if shouldOverrideLoad != nil {
+            if shouldOverrideLoad == true {
               decisionHandler(.cancel)
               return
             } else if shouldOverrideLoad == false {
@@ -297,7 +297,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         }
       }
     }
-    
+
     if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
       for pattern in allowNavigation {
         if matchHost(host: requestHost, pattern: pattern.lowercased()) {
@@ -342,7 +342,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     webView.reload()
   }
 
-  public override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
+  override public func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
     return false
   }
 
@@ -393,7 +393,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     method_setImplementation(method, imp)
   }
 
-  func handleJSStartupError(_ error: [String:Any]) {
+  func handleJSStartupError(_ error: [String: Any]) {
     let message = error["message"] ?? "No message"
     let url = error["url"] as? String ?? ""
     let line = error["line"] ?? ""
@@ -477,7 +477,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
 
-    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
       completionHandler()
     }))
 
@@ -488,11 +488,11 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
 
-    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
       completionHandler(true)
     }))
 
-    alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+    alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
       completionHandler(false)
     }))
 
@@ -500,14 +500,14 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
   }
 
   public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-    
+
     let alertController = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
-    
+
     alertController.addTextField { (textField) in
       textField.text = defaultText
     }
 
-    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
       if let text = alertController.textFields?.first?.text {
         completionHandler(text)
       } else {
@@ -516,17 +516,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     }))
 
-    alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
-      
+    alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
+
       completionHandler(nil)
-      
+
     }))
 
     self.present(alertController, animated: true, completion: nil)
   }
 
   public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-    if (navigationAction.request.url != nil) {
+    if navigationAction.request.url != nil {
       UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
     }
     return nil
@@ -584,5 +584,5 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
    }
    }
    */
-  
+
 }

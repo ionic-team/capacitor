@@ -2,11 +2,10 @@ import { WebPlugin } from './index';
 import { ToastPlugin, ToastShowOptions } from '../core-plugin-definitions';
 
 export class ToastPluginWeb extends WebPlugin implements ToastPlugin {
-
   constructor() {
     super({
       name: 'Toast',
-      platforms: ['web']
+      platforms: ['web'],
     });
   }
 

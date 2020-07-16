@@ -8,7 +8,7 @@
   case DidRegisterForRemoteNotificationsWithDeviceToken
   case DidFailToRegisterForRemoteNotificationsWithError
   case DecidePolicyForNavigationAction
-  
+
   public func name() -> String {
     switch self {
       case .URLOpen: return "CAPNotificationsURLOpen"

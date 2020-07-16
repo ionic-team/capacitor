@@ -8,14 +8,14 @@ import {
   ConfirmOptions,
   ConfirmResult,
   ActionSheetOptions,
-  ActionSheetResult
+  ActionSheetResult,
 } from '../core-plugin-definitions';
 
 export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
   constructor() {
     super({
       name: 'Modals',
-      platforms: ['web']
+      platforms: ['web'],
     });
   }
 
@@ -28,14 +28,14 @@ export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
     const val = window.prompt(options.message, options.inputText || '');
     return Promise.resolve({
       value: val,
-      cancelled: val === null
+      cancelled: val === null,
     });
   }
 
   async confirm(options: ConfirmOptions): Promise<ConfirmResult> {
     const val = window.confirm(options.message);
     return Promise.resolve({
-      value: val
+      value: val,
     });
   }
 
@@ -52,7 +52,7 @@ export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
       actionSheet.addEventListener('onSelection', async (e: any) => {
         const selection = e.detail;
         resolve({
-          index: selection
+          index: selection,
         });
       });
     });

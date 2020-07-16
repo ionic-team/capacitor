@@ -10,7 +10,7 @@ enum JSProcessingError: LocalizedError {
   }
 }
 
-typealias JSObject = [String:Any]
+typealias JSObject = [String: Any]
 typealias JSArray = [JSObject]
 
 public class JSDate {
@@ -24,12 +24,12 @@ public class JSDate {
  * A call originating from JavaScript land
  */
 public class JSCall {
-  public var options: [String:Any] = [:]
+  public var options: [String: Any] = [:]
   public var pluginId: String = ""
   public var method: String = ""
   public var callbackId: String = ""
-  
-  public init(options: [String:Any], pluginId: String, method: String, callbackId: String) {
+
+  public init(options: [String: Any], pluginId: String, method: String, callbackId: String) {
     self.options = options
     self.pluginId = pluginId
     self.method = method
@@ -37,7 +37,7 @@ public class JSCall {
   }
 }
 
-public typealias JSResultBody = [String:Any]
+public typealias JSResultBody = [String: Any]
 
 /**
  * A result of processing a JSCall, contains
@@ -46,17 +46,17 @@ public typealias JSResultBody = [String:Any]
 public class JSResult {
   public var call: JSCall
   public var result: JSResultBody
-  
+
   public init(call: JSCall, result: JSResultBody) {
     self.call = call
     self.result = result
   }
-  
+
   public func toJson() throws -> String {
     do {
       if JSONSerialization.isValidJSONObject(result) {
         let theJSONData = try JSONSerialization.data(withJSONObject: result, options: [])
-        
+
         return String(data: theJSONData,
                       encoding: .utf8)!
       } else {
@@ -69,7 +69,7 @@ public class JSResult {
     } catch {
       CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
     }
-    
+
     return "{}"
   }
 }
@@ -97,24 +97,24 @@ public class JSResultError {
     guard let data = message.data(using: .utf8)?.base64EncodedString() else {
       return nil
     }
-    
+
     return "\(CAPBridge.CAP_SITE)error/ios?m=\(data)"
   }
-  
+
   public func toJson() -> String {
     var jsonResponse = "{}"
-    
+
     error["message"] = self.message
     error["code"] = self.code
     error["errorMessage"] = self.errorMessage
     //error["_exlink"] = getLinkableError(self.message)
-    
+
     if let theJSONData = try? JSONSerialization.data(withJSONObject: error, options: []) {
       jsonResponse = String(data: theJSONData,
                             encoding: .utf8)!
       CAPLog.print("ERROR MESSAGE: ", jsonResponse.prefix(512))
     }
-    
+
     return jsonResponse
   }
 }

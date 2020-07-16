@@ -20,19 +20,27 @@ export class CapacitorWeb {
         get: (target, prop) => {
           if (typeof target[prop] === 'undefined') {
             let thisRef = this;
-            return new Proxy<any>({}, {
-              get: (_target, _prop) => {
-                if (typeof _target[_prop] === 'undefined') {
-                  return thisRef.pluginMethodNoop.bind(thisRef, _target, _prop,  prop);
-                } else {
-                  return _target[_prop];
-                }
-              }
-            });
+            return new Proxy<any>(
+              {},
+              {
+                get: (_target, _prop) => {
+                  if (typeof _target[_prop] === 'undefined') {
+                    return thisRef.pluginMethodNoop.bind(
+                      thisRef,
+                      _target,
+                      _prop,
+                      prop,
+                    );
+                  } else {
+                    return _target[_prop];
+                  }
+                },
+              },
+            );
           } else {
             return target[prop];
           }
-        }
+        },
       });
     }
   }

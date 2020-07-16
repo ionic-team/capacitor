@@ -1,8 +1,21 @@
 import { Config } from '../config';
-import { log, logFatal, logInfo, logWarn, runCommand, runTask, writePrettyJSON } from '../common';
+import {
+  log,
+  logFatal,
+  logInfo,
+  logWarn,
+  runCommand,
+  runTask,
+  writePrettyJSON,
+} from '../common';
 import { OS } from '../definitions';
 import { emoji } from '../util/emoji';
-import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync } from '../util/fs';
+import {
+  existsAsync,
+  mkdirAsync,
+  readFileAsync,
+  writeFileAsync,
+} from '../util/fs';
 import { fixName, removeScope } from '../plugin';
 import { copy, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
@@ -31,7 +44,6 @@ export async function newPluginCommand(config: Config) {
   }
 }
 
-
 export async function newPlugin(config: Config) {
   log(`${emoji('✏️', '*')}  Creating new Capacitor plugin`);
 
@@ -42,54 +54,55 @@ export async function newPlugin(config: Config) {
     }
     return true;
   };
-  const answers: NewPluginAnswers = await inquirer.prompt([
+  const answers: NewPluginAnswers = (await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
       message: 'Plugin npm name (kebab-case. ex: capacitor-plugin-example):',
-      validate: requiredInput
+      validate: requiredInput,
     },
     {
       type: 'input',
       name: 'domain',
-      message: 'Plugin id (domain-style syntax. ex: com.mycompany.plugins.example)',
-      validate: requiredInput
+      message:
+        'Plugin id (domain-style syntax. ex: com.mycompany.plugins.example)',
+      validate: requiredInput,
     },
     {
       type: 'input',
       name: 'className',
       message: 'Plugin class name (ex: Example)',
-      validate: requiredInput
+      validate: requiredInput,
     },
     {
       type: 'input',
       name: 'description',
       message: 'description:',
-      validate: requiredInput
+      validate: requiredInput,
     },
     {
       type: 'input',
       name: 'git',
       message: 'git repository:',
-      validate: requiredInput
+      validate: requiredInput,
     },
     {
       type: 'input',
       name: 'author',
-      message: 'author:'
+      message: 'author:',
     },
     {
       type: 'input',
       name: 'license',
       message: 'license:',
-      default: 'MIT'
+      default: 'MIT',
     },
     {
       type: 'confirm',
       name: 'confirm',
-      message: `package.json will be created, do you want to continue?`
-    }
-  ]) as NewPluginAnswers;
+      message: `package.json will be created, do you want to continue?`,
+    },
+  ])) as NewPluginAnswers;
 
   console.log('\n');
 
@@ -113,56 +126,98 @@ export async function newPlugin(config: Config) {
     });
 
     await runTask('Writing package.json', () => {
-      return writePrettyJSON(join(pluginPath, 'package.json'), generatePackageJSON(answers, cliVersion));
+      return writePrettyJSON(
+        join(pluginPath, 'package.json'),
+        generatePackageJSON(answers, cliVersion),
+      );
     });
 
     await runTask('Installing NPM dependencies', async () => {
-      return  runCommand(`cd "${pluginPath}" && npm install`);
+      return runCommand(`cd "${pluginPath}" && npm install`);
     });
 
     if (config.cli.os === OS.Mac) {
       await runTask('Building iOS project', async () => {
         const iosPath = join(pluginPath, 'ios');
-        return  runCommand(`cd "${iosPath}" && pod install`);
+        return runCommand(`cd "${iosPath}" && pod install`);
       });
     }
 
     logInfo(`Your Capacitor plugin was created at ${pluginPath}`);
-
   } else {
     logInfo('Aborted');
   }
 }
 
-async function createTSPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: NewPluginAnswers) {
+async function createTSPlugin(
+  config: Config,
+  pluginPath: string,
+  domain: string,
+  className: string,
+  answers: NewPluginAnswers,
+) {
   const newPluginPath = join(pluginPath, 'src');
 
-  const originalDefinitions = await readFileAsync(join(newPluginPath, 'definitions.ts'), 'utf8');
-  const originalWeb  = await readFileAsync(join(newPluginPath, 'web.ts'), 'utf8');
+  const originalDefinitions = await readFileAsync(
+    join(newPluginPath, 'definitions.ts'),
+    'utf8',
+  );
+  const originalWeb = await readFileAsync(
+    join(newPluginPath, 'web.ts'),
+    'utf8',
+  );
   let definitions = originalDefinitions.replace(/Echo/g, className);
-  const web  = originalWeb.replace(/MyPlugin/g, className);
+  const web = originalWeb.replace(/MyPlugin/g, className);
 
-  await writeFileAsync(join(newPluginPath, `definitions.ts`), definitions, 'utf8');
+  await writeFileAsync(
+    join(newPluginPath, `definitions.ts`),
+    definitions,
+    'utf8',
+  );
   await writeFileAsync(join(newPluginPath, `web.ts`), web, 'utf8');
 }
 
-async function createIosPlugin(config: Config, pluginPath: string, domain: string, className: string, answers: NewPluginAnswers) {
+async function createIosPlugin(
+  config: Config,
+  pluginPath: string,
+  domain: string,
+  className: string,
+  answers: NewPluginAnswers,
+) {
   const newPluginPath = join(pluginPath, 'ios', 'Plugin');
 
-  const originalPluginSwift = await readFileAsync(join(newPluginPath, 'Plugin.swift'), 'utf8');
-  const originalPluginObjc  = await readFileAsync(join(newPluginPath, 'Plugin.m'), 'utf8');
+  const originalPluginSwift = await readFileAsync(
+    join(newPluginPath, 'Plugin.swift'),
+    'utf8',
+  );
+  const originalPluginObjc = await readFileAsync(
+    join(newPluginPath, 'Plugin.m'),
+    'utf8',
+  );
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
-  const pluginObjc  = originalPluginObjc.replace(/CLASS_NAME/g, className);
+  const pluginObjc = originalPluginObjc.replace(/CLASS_NAME/g, className);
 
   if (!answers.git) {
-    logWarn('You will need to add a homepage and git repo to your generated podspec before installing or CocoaPods will complain');
+    logWarn(
+      'You will need to add a homepage and git repo to your generated podspec before installing or CocoaPods will complain',
+    );
   }
   if (!answers.description) {
-    logWarn('You will need to add a summary to your generated podspec before installing or CocoaPods will complain');
+    logWarn(
+      'You will need to add a summary to your generated podspec before installing or CocoaPods will complain',
+    );
   }
 
-  await writeFileAsync(join(pluginPath, `${fixName(answers.name)}.podspec`), generatePodspec(config, answers), 'utf8');
-  await writeFileAsync(join(newPluginPath, 'Plugin.swift'), pluginSwift, 'utf8');
+  await writeFileAsync(
+    join(pluginPath, `${fixName(answers.name)}.podspec`),
+    generatePodspec(config, answers),
+    'utf8',
+  );
+  await writeFileAsync(
+    join(newPluginPath, 'Plugin.swift'),
+    pluginSwift,
+    'utf8',
+  );
   await writeFileAsync(join(newPluginPath, 'Plugin.m'), pluginObjc, 'utf8');
 }
 
@@ -187,21 +242,37 @@ end
 `;
 }
 
-async function createAndroidPlugin(config: Config, pluginPath: string, domain: string, className: string) {
+async function createAndroidPlugin(
+  config: Config,
+  pluginPath: string,
+  domain: string,
+  className: string,
+) {
   const domainPath = domain.split('.').join('/');
 
   // Android specific stuff
   const newPluginPath = join(pluginPath, 'android');
   // Update the AndroidManifest to point to our new package
-  await writeFileAsync(join(newPluginPath, 'src/main/AndroidManifest.xml'), generateAndroidManifest(domain, pluginPath));
+  await writeFileAsync(
+    join(newPluginPath, 'src/main/AndroidManifest.xml'),
+    generateAndroidManifest(domain, pluginPath),
+  );
 
   // Make the package source path to the new plugin Java file
-  const newPluginJavaPath = join(newPluginPath, `src/main/java/${domainPath}/${className}.java`);
+  const newPluginJavaPath = join(
+    newPluginPath,
+    `src/main/java/${domainPath}/${className}.java`,
+  );
   await mkdirs(dirname(newPluginJavaPath));
 
   // Read the original plugin java template and replace package/class names
-  const originalPluginJava = await readFileAsync(join(pluginPath, 'android/Plugin.java'), 'utf8');
-  const pluginJava = originalPluginJava.replace(/PACKAGE_NAME/g, domain).replace(/CLASS_NAME/g, className);
+  const originalPluginJava = await readFileAsync(
+    join(pluginPath, 'android/Plugin.java'),
+    'utf8',
+  );
+  const pluginJava = originalPluginJava
+    .replace(/PACKAGE_NAME/g, domain)
+    .replace(/CLASS_NAME/g, className);
 
   // Write the new plugin file
   await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
@@ -221,67 +292,55 @@ function generateAndroidManifest(domain: string, pluginPath: string) {
 
 function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
   return {
-    'name': answers.name,
-    'version': '0.0.1',
-    'description': answers.description,
-    'main': 'dist/plugin.js',
-    'module': 'dist/esm/index.js',
-    'types': 'dist/esm/index.d.ts',
-    'scripts': {
-      'lint': 'npm run prettier -- --check && npm run swiftlint -- lint',
-      'prettier': 'prettier "**/*.{css,html,ts,js,java}"',
-      'swiftlint': 'node-swiftlint',
-      'build': 'npm run clean && tsc && rollup -c rollup.config.js',
-      'clean': 'rimraf ./dist',
-      'watch': 'tsc --watch',
-      'prepublishOnly': 'npm run build'
+    name: answers.name,
+    version: '0.0.1',
+    description: answers.description,
+    main: 'dist/plugin.js',
+    module: 'dist/esm/index.js',
+    types: 'dist/esm/index.d.ts',
+    scripts: {
+      lint: 'npm run prettier -- --check && npm run swiftlint -- lint',
+      prettier: 'prettier "**/*.{css,html,ts,js,java}"',
+      swiftlint: 'node-swiftlint',
+      build: 'npm run clean && tsc && rollup -c rollup.config.js',
+      clean: 'rimraf ./dist',
+      watch: 'tsc --watch',
+      prepublishOnly: 'npm run build',
     },
-    'author': answers.author,
-    'license': answers.license,
-    'devDependencies': {
+    author: answers.author,
+    license: answers.license,
+    devDependencies: {
       '@capacitor/android': `^${cliVersion}`,
       '@capacitor/core': `^${cliVersion}`,
       '@capacitor/ios': `^${cliVersion}`,
       '@ionic/prettier-config': '^1.0.0',
       '@ionic/swiftlint-config': '^1.0.0',
       '@rollup/plugin-node-resolve': '^8.1.0',
-      'prettier': '^2.0.5',
+      prettier: '^2.0.5',
       'prettier-plugin-java': '^0.8.0',
-      'rimraf': '^3.0.0',
-      'rollup': '^2.21.0',
-      'swiftlint': '^1.0.1',
-      'typescript': '~3.8.3'
+      rimraf: '^3.0.0',
+      rollup: '^2.21.0',
+      swiftlint: '^1.0.1',
+      typescript: '~3.8.3',
     },
-    'peerDependencies': {
-      '@capacitor/core': `^${cliVersion}`
+    peerDependencies: {
+      '@capacitor/core': `^${cliVersion}`,
     },
-    'files': [
-      'dist/',
-      'ios/',
-      'android/',
-      `${fixName(answers.name)}.podspec`
-    ],
-    'keywords': [
-      'capacitor',
-      'plugin',
-      'native'
-    ],
-    'capacitor': {
-      'ios': {
-        'src': 'ios',
+    files: ['dist/', 'ios/', 'android/', `${fixName(answers.name)}.podspec`],
+    keywords: ['capacitor', 'plugin', 'native'],
+    capacitor: {
+      ios: {
+        src: 'ios',
       },
-      'android': {
-        'src': 'android'
-      }
+      android: {
+        src: 'android',
+      },
     },
-    'prettier': '@ionic/prettier-config',
-    'swiftlint': '@ionic/swiftlint-config',
-    'repository': {
-      'type': 'git',
-      'url': answers.git
+    prettier: '@ionic/prettier-config',
+    swiftlint: '@ionic/swiftlint-config',
+    repository: {
+      type: 'git',
+      url: answers.git,
     },
-    'bugs': {
-      'url': `${answers.git}/issues`
-    }
   };
 }

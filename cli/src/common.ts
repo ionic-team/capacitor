@@ -2,7 +2,13 @@ import { Config } from './config';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, parse, resolve } from 'path';
-import { copyAsync, existsAsync, readFileAsync, renameAsync, writeFileAsync } from './util/fs';
+import {
+  copyAsync,
+  existsAsync,
+  readFileAsync,
+  renameAsync,
+  writeFileAsync,
+} from './util/fs';
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
 import { isInteractive } from './util/term';
@@ -12,9 +18,15 @@ import * as inquirer from 'inquirer';
 
 const chalk = require('chalk');
 
-export type CheckFunction = (config: Config, ...args: any[]) => Promise<string | null>;
+export type CheckFunction = (
+  config: Config,
+  ...args: any[]
+) => Promise<string | null>;
 
-export async function check(config: Config, checks: CheckFunction[]): Promise<void> {
+export async function check(
+  config: Config,
+  checks: CheckFunction[],
+): Promise<void> {
   const results = await Promise.all(checks.map(f => f(config)));
   const errors = results.filter(r => r != null) as string[];
   if (errors.length > 0) {
@@ -27,7 +39,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   if (invalidFolders.includes(config.app.webDir)) {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
-  if (!await existsAsync(config.app.webDirAbs)) {
+  if (!(await existsAsync(config.app.webDirAbs))) {
     return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
     Please create it and make sure it has an index.html file. You can change
     the path of this directory in capacitor.config.json (webDir option).
@@ -35,7 +47,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     More info: https://capacitorjs.com/docs/basics/building-your-app`;
   }
 
-  if (!await existsAsync(join(config.app.webDirAbs, 'index.html'))) {
+  if (!(await existsAsync(join(config.app.webDirAbs, 'index.html')))) {
     return `The web directory (${config.app.webDirAbs}) must contain a "index.html".
     It will be the entry point for the web portion of the Capacitor app.`;
   }
@@ -43,7 +55,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 }
 
 export async function checkPackage(_config: Config): Promise<string | null> {
-  if (!await existsAsync('package.json')) {
+  if (!(await existsAsync('package.json'))) {
     return `Capacitor needs to run at the root of an npm package.
     Make sure you have a "package.json" in the directory where you run capacitor.
     More info: https://docs.npmjs.com/cli/init`;
@@ -77,14 +89,20 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkAppDir(config: Config, dir: string): Promise<string | null> {
+export async function checkAppDir(
+  config: Config,
+  dir: string,
+): Promise<string | null> {
   if (!/^\S*$/.test(dir)) {
     return `Your app directory should not contain spaces`;
   }
   return null;
 }
 
-export async function checkAppId(config: Config, id: string): Promise<string | null> {
+export async function checkAppId(
+  config: Config,
+  id: string,
+): Promise<string | null> {
   if (!id) {
     return `Invalid App ID. Must be in Java package form with no dashes (ex: com.example.app)`;
   }
@@ -94,7 +112,10 @@ export async function checkAppId(config: Config, id: string): Promise<string | n
   return `Invalid App ID "${id}". Must be in Java package form with no dashes (ex: com.example.app)`;
 }
 
-export async function checkAppName(config: Config, name: string): Promise<string | null> {
+export async function checkAppName(
+  config: Config,
+  name: string,
+): Promise<string | null> {
   // We allow pretty much anything right now, have fun
   if (!name || !name.length) {
     return `Must provide an app name. For example: 'Spacebook'`;
@@ -102,14 +123,16 @@ export async function checkAppName(config: Config, name: string): Promise<string
   return null;
 }
 
-export async function checkNpmClient(config: Config, client: string): Promise<string | null> {
+export async function checkNpmClient(
+  config: Config,
+  client: string,
+): Promise<string | null> {
   // npm client must be npm, yarn, or undefined
   if (client && client !== 'npm' && client !== 'yarn') {
     return `npm client must be "npm" or "yarn". If you are not sure, choose "npm"`;
   }
   return null;
 }
-
 
 export async function readJSON(path: string): Promise<any> {
   const data = await readFileAsync(path, 'utf8');
@@ -125,7 +148,6 @@ export function readXML(path: string): Promise<any> {
     readFile(path, 'utf8', async (err, xmlStr) => {
       if (err) {
         reject(`Unable to read: ${path}`);
-
       } else {
         const xml2js = await import('xml2js');
         xml2js.parseString(xmlStr, (err, result) => {
@@ -154,7 +176,11 @@ export function parseXML(xmlStr: string): any {
 export function writeXML(object: any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     const xml2js = await import('xml2js');
-    const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: 'deleteme' });
+    const builder = new xml2js.Builder({
+      headless: true,
+      explicitRoot: false,
+      rootName: 'deleteme',
+    });
     let xml = builder.buildObject(object);
     xml = xml.replace('<deleteme>', '').replace('</deleteme>', '');
     resolve(xml);
@@ -163,7 +189,11 @@ export function writeXML(object: any): Promise<any> {
 
 export function buildXmlElement(configElement: any, rootName: string) {
   const xml2js = require('xml2js');
-  const builder = new xml2js.Builder({ headless: true, explicitRoot: false, rootName: rootName });
+  const builder = new xml2js.Builder({
+    headless: true,
+    explicitRoot: false,
+    rootName: rootName,
+  });
   return builder.buildObject(configElement);
 }
 
@@ -184,10 +214,10 @@ export async function getOrCreateConfig(config: Config) {
     npmClient: config.cli.npmClient,
     webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
     plugins: {
-      SplashScreen : {
-        launchShowDuration: 0
-      }
-    }
+      SplashScreen: {
+        launchShowDuration: 0,
+      },
+    },
   });
 
   // Store our newly created or found external config as the default
@@ -199,7 +229,7 @@ export async function mergeConfig(config: Config, settings: any) {
 
   await writePrettyJSON(config.app.extConfigFilePath, {
     ...config.app.extConfig,
-    ...settings
+    ...settings,
   });
 
   // Store our newly created or found external config as the default
@@ -237,8 +267,8 @@ export function logFatal(...args: any[]): never {
 
 export async function isInstalled(command: string): Promise<boolean> {
   const which = await import('which');
-  return new Promise<boolean>((resolve) => {
-    which(command, (err) => {
+  return new Promise<boolean>(resolve => {
+    which(command, err => {
       if (err) {
         resolve(false);
       } else {
@@ -249,19 +279,19 @@ export async function isInstalled(command: string): Promise<boolean> {
 }
 
 export function wait(time: number) {
-  return new Promise((resolve) => setTimeout(resolve, time));
+  return new Promise(resolve => setTimeout(resolve, time));
 }
 
 export function runPlatformHook(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const cmd = spawn(command, {
       stdio: 'inherit',
-      shell: true
+      shell: true,
     });
-    cmd.on('close', (code) => {
+    cmd.on('close', code => {
       resolve('');
     });
-    cmd.on('error', (err) => {
+    cmd.on('error', err => {
       reject(err);
     });
   });
@@ -281,14 +311,17 @@ export function runCommand(command: string): Promise<string> {
 
 export type TaskInfoProvider = (messsage: string) => void;
 
-export async function runTask<T>(title: string, fn: (info: TaskInfoProvider) => Promise<T>): Promise<T> {
+export async function runTask<T>(
+  title: string,
+  fn: (info: TaskInfoProvider) => Promise<T>,
+): Promise<T> {
   const ora = require('ora');
   const spinner = ora(title).start();
 
   try {
     const start = process.hrtime();
     let taskInfoMessage;
-    const value = await fn((message: string) => taskInfoMessage = message);
+    const value = await fn((message: string) => (taskInfoMessage = message));
     const elapsed = process.hrtime(start);
     const chalk = require('chalk');
     if (taskInfoMessage) {
@@ -297,7 +330,6 @@ export async function runTask<T>(title: string, fn: (info: TaskInfoProvider) => 
       spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
     }
     return value;
-
   } catch (e) {
     spinner.fail(`${title}: ${e.message ? e.message : ''}`);
     spinner.stop();
@@ -307,9 +339,9 @@ export async function runTask<T>(title: string, fn: (info: TaskInfoProvider) => 
 
 const TIME_UNITS = ['s', 'ms', 'μp'];
 export function formatHrTime(hrtime: any) {
-  let time = (hrtime[0] + (hrtime[1] / 1e9)) as number;
+  let time = (hrtime[0] + hrtime[1] / 1e9) as number;
   let index = 0;
-  for (; index < TIME_UNITS.length - 1; index++ , time *= 1000) {
+  for (; index < TIME_UNITS.length - 1; index++, time *= 1000) {
     if (time >= 1) {
       break;
     }
@@ -319,12 +351,18 @@ export function formatHrTime(hrtime: any) {
 
 export async function getName(config: Config, name: string) {
   if (!name) {
-    const answers = await inquirer.prompt([{
-      type: 'input',
-      name: 'name',
-      default: config.app.appName ? config.app.appName : config.app.package && config.app.package.name ? config.app.package.name : 'App',
-      message: `App name`
-    }]);
+    const answers = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        default: config.app.appName
+          ? config.app.appName
+          : config.app.package && config.app.package.name
+          ? config.app.package.name
+          : 'App',
+        message: `App name`,
+      },
+    ]);
     return answers.name;
   }
   return name;
@@ -332,19 +370,24 @@ export async function getName(config: Config, name: string) {
 
 export async function getAppId(config: Config, id: string) {
   if (!id) {
-    const answers = await inquirer.prompt([{
-      type: 'input',
-      name: 'id',
-      default: config.app.appId ? config.app.appId : 'com.example.app',
-      message: 'App Package ID (in Java package format, no dashes)'
-    }]);
+    const answers = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'id',
+        default: config.app.appId ? config.app.appId : 'com.example.app',
+        message: 'App Package ID (in Java package format, no dashes)',
+      },
+    ]);
     return answers.id;
   }
   return id;
 }
 
-export function getNpmClient(config: Config, npmClient: string): Promise<string> {
-  return new Promise(async (resolve) => {
+export function getNpmClient(
+  config: Config,
+  npmClient: string,
+): Promise<string> {
+  return new Promise(async resolve => {
     if (!npmClient) {
       if (await hasYarn(config)) return resolve('yarn');
       exec('yarn --version', async (err, stdout) => {
@@ -352,12 +395,14 @@ export function getNpmClient(config: Config, npmClient: string): Promise<string>
         if (err || !isInteractive()) {
           resolve('npm');
         } else {
-          const answers = await inquirer.prompt([{
-            type: 'list',
-            name: 'npmClient',
-            message: 'Which npm client would you like to use?',
-            choices: ['npm', 'yarn']
-          }]);
+          const answers = await inquirer.prompt([
+            {
+              type: 'list',
+              name: 'npmClient',
+              message: 'Which npm client would you like to use?',
+              choices: ['npm', 'yarn'],
+            },
+          ]);
           resolve(answers.npmClient);
         }
       });
@@ -373,14 +418,21 @@ export async function copyTemplate(src: string, dst: string) {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
-  if ( await existsAsync(gitignorePath)) {
+  if (await existsAsync(gitignorePath)) {
     await renameAsync(gitignorePath, join(dst, '.gitignore'));
   }
 }
 
 export async function printNextSteps(config: Config, appDir: string) {
   log('\n');
-  log(`${chalk.bold(`${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e('🎉', '*')}`)}\n`);
+  log(
+    `${chalk.bold(
+      `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
+        '🎉',
+        '*',
+      )}`,
+    )}\n`,
+  );
   if (appDir !== '') {
     log(`Next steps:`);
     log('');
@@ -391,14 +443,24 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add android`);
   log(`  npx cap add ios`);
   log('');
-  log(`Follow the Developer Workflow guide to get building:\n${chalk.bold(`https://capacitorjs.com/docs/basics/workflow`)}\n`);
+  log(
+    `Follow the Developer Workflow guide to get building:\n${chalk.bold(
+      `https://capacitorjs.com/docs/basics/workflow`,
+    )}\n`,
+  );
 }
 
 export async function getCoreVersion(config: Config): Promise<string> {
-  const corePackagePath = resolveNode(config, '@capacitor/core', 'package.json');
+  const corePackagePath = resolveNode(
+    config,
+    '@capacitor/core',
+    'package.json',
+  );
   if (!corePackagePath) {
-    logFatal('Unable to find node_modules/@capacitor/core/package.json. Are you sure',
-      '@capacitor/core is installed? This file is currently required for Capacitor to function.');
+    logFatal(
+      'Unable to find node_modules/@capacitor/core/package.json. Are you sure',
+      '@capacitor/core is installed? This file is currently required for Capacitor to function.',
+    );
   }
 
   return (await readJSON(corePackagePath)).version;
@@ -407,18 +469,29 @@ export async function getCoreVersion(config: Config): Promise<string> {
 export async function getCLIVersion(config: Config): Promise<string> {
   const cliPackagePath = resolveNode(config, '@capacitor/cli', 'package.json');
   if (!cliPackagePath) {
-    logFatal('Unable to find node_modules/@capacitor/cli/package.json. Are you sure',
-      '@capacitor/cli is installed? This file is currently required for Capacitor to function.');
+    logFatal(
+      'Unable to find node_modules/@capacitor/cli/package.json. Are you sure',
+      '@capacitor/cli is installed? This file is currently required for Capacitor to function.',
+    );
   }
 
   return (await readJSON(cliPackagePath)).version;
 }
 
-export async function getPlatformVersion(config: Config, platform: string): Promise<string> {
-  const platformPackagePath = resolveNode(config, `@capacitor/${platform}`, 'package.json');
+export async function getPlatformVersion(
+  config: Config,
+  platform: string,
+): Promise<string> {
+  const platformPackagePath = resolveNode(
+    config,
+    `@capacitor/${platform}`,
+    'package.json',
+  );
   if (!platformPackagePath) {
-    logFatal(`Unable to find node_modules/@capacitor/${platform}/package.json. Are you sure`,
-      `@capacitor/${platform} is installed? This file is currently required for Capacitor to function.`);
+    logFatal(
+      `Unable to find node_modules/@capacitor/${platform}/package.json. Are you sure`,
+      `@capacitor/${platform} is installed? This file is currently required for Capacitor to function.`,
+    );
   }
 
   return (await readJSON(platformPackagePath)).version;
@@ -427,14 +500,24 @@ export async function getPlatformVersion(config: Config, platform: string): Prom
 export async function checkPlatformVersions(config: Config, platform: string) {
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getPlatformVersion(config, platform);
-  if (semver.diff(coreVersion, platformVersion) === 'minor' || semver.diff(coreVersion, platformVersion) === 'major') {
+  if (
+    semver.diff(coreVersion, platformVersion) === 'minor' ||
+    semver.diff(coreVersion, platformVersion) === 'major'
+  ) {
     log('\n');
-    logWarn(`Your @capacitor/core version doesn't match your @capacitor/${platform} version`);
-    log(`Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`);
+    logWarn(
+      `Your @capacitor/core version doesn't match your @capacitor/${platform} version`,
+    );
+    log(
+      `Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`,
+    );
   }
 }
 
-export function resolvePlatform(config: Config, platform: string): string | null {
+export function resolvePlatform(
+  config: Config,
+  platform: string,
+): string | null {
   if (platform[0] !== '@') {
     const core = resolveNode(config, `@capacitor/${platform}`);
 
@@ -453,7 +536,10 @@ export function resolvePlatform(config: Config, platform: string): string | null
   return resolveNode(config, platform);
 }
 
-export function resolveNode(config: Config, ...pathSegments: string[]): string | null {
+export function resolveNode(
+  config: Config,
+  ...pathSegments: string[]
+): string | null {
   const id = pathSegments[0];
   const path = pathSegments.slice(1);
 
@@ -502,8 +588,16 @@ export const hasYarn = async (config: Config, projectDir?: string) => {
 };
 
 // Install deps with NPM or Yarn
-export async function installDeps(projectDir: string, deps: string[], config: Config) {
-  return runCommand(`cd "${projectDir}" && ${await hasYarn(config, projectDir) ? 'yarn add' : 'npm install --save'} ${deps.join(' ')}`);
+export async function installDeps(
+  projectDir: string,
+  deps: string[],
+  config: Config,
+) {
+  return runCommand(
+    `cd "${projectDir}" && ${
+      (await hasYarn(config, projectDir)) ? 'yarn add' : 'npm install --save'
+    } ${deps.join(' ')}`,
+  );
 }
 
 export async function checkNPMVersion() {

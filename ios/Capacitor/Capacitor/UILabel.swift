@@ -2,7 +2,7 @@ extension UILabel {
   private struct AssociatedKeys {
     static var padding = UIEdgeInsets()
   }
-  
+
   public var padding: UIEdgeInsets? {
     get {
       return objc_getAssociatedObject(self, &AssociatedKeys.padding) as? UIEdgeInsets
@@ -13,7 +13,7 @@ extension UILabel {
       }
     }
   }
-  
+
   override open func draw(_ rect: CGRect) {
     if let insets = padding {
       self.drawText(in: rect.inset(by: insets))

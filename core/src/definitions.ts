@@ -21,7 +21,10 @@ export interface PluginResultError {
   message: string;
 }
 
-export type PluginCallback = (error: PluginResultError, data: PluginResultData) => void;
+export type PluginCallback = (
+  error: PluginResultError,
+  data: PluginResultData,
+) => void;
 
 /**
  * Data sent over to native
@@ -72,13 +75,33 @@ export interface Capacitor {
   isPluginAvailable: (name: string) => boolean;
   convertFileSrc: (filePath: string) => string;
   getPlatform: () => string;
-  toNative?: (pluginId: string, methodName: string, options: any, storedCallback?: StoredCallback) => void;
+  toNative?: (
+    pluginId: string,
+    methodName: string,
+    options: any,
+    storedCallback?: StoredCallback,
+  ) => void;
   fromNative?: (result: PluginResult) => void;
   withPlugin?: (pluginId: string, fn: Function) => void;
-  nativeCallback?: (pluginId: string, methodName: string, options?: any, callback?: any) => void;
-  nativePromise?: (pluginId: string, methodName: string, options?: any) => Promise<any>;
+  nativeCallback?: (
+    pluginId: string,
+    methodName: string,
+    options?: any,
+    callback?: any,
+  ) => void;
+  nativePromise?: (
+    pluginId: string,
+    methodName: string,
+    options?: any,
+  ) => Promise<any>;
   handleError?: (error: Error) => void;
-  handleWindowError?: (msg: string, url: string, lineNo: number, columnNo: number, error: Error) => void;
+  handleWindowError?: (
+    msg: string,
+    url: string,
+    lineNo: number,
+    columnNo: number,
+    error: Error,
+  ) => void;
   Plugins?: PluginRegistry;
 }
 

@@ -13,7 +13,7 @@ import {
 export class MotionPluginWeb extends WebPlugin implements MotionPlugin {
   constructor() {
     super({
-      name: 'Motion'
+      name: 'Motion',
     });
     this.registerWindowListener('devicemotion', 'accel');
     this.registerWindowListener('deviceorientation', 'orientation');

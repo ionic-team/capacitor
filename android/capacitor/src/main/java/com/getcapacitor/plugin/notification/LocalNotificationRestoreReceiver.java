@@ -1,17 +1,15 @@
 package com.getcapacitor.plugin.notification;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.UserManager;
-
 import com.getcapacitor.CapConfig;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static android.os.Build.VERSION.SDK_INT;
 
 public class LocalNotificationRestoreReceiver extends BroadcastReceiver {
 
@@ -29,14 +27,14 @@ public class LocalNotificationRestoreReceiver extends BroadcastReceiver {
         ArrayList<LocalNotification> updatedNotifications = new ArrayList<>();
         for (String id : ids) {
             LocalNotification notification = storage.getSavedNotification(id);
-            if(notification == null) {
+            if (notification == null) {
                 continue;
             }
 
             LocalNotificationSchedule schedule = notification.getSchedule();
-            if(schedule != null) {
+            if (schedule != null) {
                 Date at = schedule.getAt();
-                if(at != null && at.before(new Date())) {
+                if (at != null && at.before(new Date())) {
                     // modify the scheduled date in order to show notifications that would have been delivered while device was off.
                     long newDateTime = new Date().getTime() + 15 * 1000;
                     schedule.setAt(new Date(newDateTime));
@@ -48,7 +46,7 @@ public class LocalNotificationRestoreReceiver extends BroadcastReceiver {
             notifications.add(notification);
         }
 
-        if(updatedNotifications.size() > 0){
+        if (updatedNotifications.size() > 0) {
             storage.appendNotifications(updatedNotifications);
         }
 

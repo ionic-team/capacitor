@@ -1,7 +1,7 @@
 import Foundation
 
 @objc(CAPWebViewPlugin)
-public class CAPWebViewPlugin : CAPPlugin {
+public class CAPWebViewPlugin: CAPPlugin {
 
   @objc func setServerBasePath(_ call: CAPPluginCall) {
     let path = call.getString("path")

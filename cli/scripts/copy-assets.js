@@ -21,13 +21,18 @@ const PLUGIN_TEMPLATE_SRC = path.join(MONOREPO_ROOT, PLUGIN_TEMPLATE);
 const PLUGIN_TEMPLATE_DST = path.join(ASSETS_DIST, PLUGIN_TEMPLATE);
 
 const ANDROID_PLUGINS_FOLDER = 'capacitor-cordova-android-plugins';
-const ANDROID_PLUGINS_FOLDER_SRC = path.join(MONOREPO_ROOT, ANDROID_PLUGINS_FOLDER);
-const ANDROID_PLUGINS_FOLDER_DST = path.join(ASSETS_DIST, ANDROID_PLUGINS_FOLDER);
+const ANDROID_PLUGINS_FOLDER_SRC = path.join(
+  MONOREPO_ROOT,
+  ANDROID_PLUGINS_FOLDER,
+);
+const ANDROID_PLUGINS_FOLDER_DST = path.join(
+  ASSETS_DIST,
+  ANDROID_PLUGINS_FOLDER,
+);
 
 const IOS_PLUGINS_FOLDER = 'capacitor-cordova-ios-plugins';
 const IOS_PLUGINS_FOLDER_SRC = path.join(MONOREPO_ROOT, IOS_PLUGINS_FOLDER);
 const IOS_PLUGINS_FOLDER_DST = path.join(ASSETS_DIST, IOS_PLUGINS_FOLDER);
-
 
 fs.emptyDirSync(ASSETS_DIST);
 
@@ -42,13 +47,25 @@ fs.copySync(IOS_PLUGINS_FOLDER_SRC, IOS_PLUGINS_FOLDER_DST);
 
 function replaceAndroidModule() {
   if (fs.existsSync(path.join(ANDROID_TEMPLATE_DST, 'android-template.iml'))) {
-    fs.moveSync(path.join(ANDROID_TEMPLATE_DST, 'android-template.iml'), path.join(ANDROID_TEMPLATE_DST, 'android.iml'));
-    let imlContent = fs.readFileSync(path.join(ANDROID_TEMPLATE_DST, 'android.iml'), 'utf8');
+    fs.moveSync(
+      path.join(ANDROID_TEMPLATE_DST, 'android-template.iml'),
+      path.join(ANDROID_TEMPLATE_DST, 'android.iml'),
+    );
+    let imlContent = fs.readFileSync(
+      path.join(ANDROID_TEMPLATE_DST, 'android.iml'),
+      'utf8',
+    );
     imlContent = imlContent.replace(/android-template/g, 'android');
-    fs.writeFileSync(path.join(ANDROID_TEMPLATE_DST, 'android.iml'), imlContent);
+    fs.writeFileSync(
+      path.join(ANDROID_TEMPLATE_DST, 'android.iml'),
+      imlContent,
+    );
   }
   const modulesXmlPath = path.join(ANDROID_TEMPLATE_DST, '.idea/modules.xml');
-  const workspaceXmlPath = path.join(ANDROID_TEMPLATE_DST, '.idea/workspace.xml');
+  const workspaceXmlPath = path.join(
+    ANDROID_TEMPLATE_DST,
+    '.idea/workspace.xml',
+  );
   if (fs.existsSync(modulesXmlPath)) {
     let modulesXml = fs.readFileSync(modulesXmlPath, 'utf8');
     modulesXml = modulesXml.replace(/android-template/g, 'android');

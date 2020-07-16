@@ -32,7 +32,7 @@ struct CameraSettings {
 }
 
 @objc(CAPCameraPlugin)
-public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
+public class CAPCameraPlugin: CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
   let DEFAULT_SOURCE = CameraSource.prompt
   let DEFAULT_DIRECTION = CameraDirection.rear
 
@@ -42,7 +42,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   var imageCounter = 0
 
   var settings = CameraSettings()
-  
+
   @objc func getPhoto(_ call: CAPPluginCall) {
     self.call = call
     self.settings = getSettings(call)
@@ -60,7 +60,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       self.imagePicker!.delegate = self
       self.imagePicker!.allowsEditing = self.settings.allowEditing
     }
-    
+
     doShow(call: call, settings: settings)
   }
 
@@ -72,7 +72,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
     settings.resultType = call.get("resultType", String.self, "base64")!
     settings.saveToGallery = call.get("saveToGallery", Bool.self, false)!
-    
+
     // Get the new image dimensions if provided
     settings.width = Float(call.get("width", Int.self, 0)!)
     settings.height = Float(call.get("height", Int.self, 0)!)
@@ -105,17 +105,17 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     let promptLabelPhoto = call.getString("promptLabelPhoto") ?? "From Photos"
     let promptLabelPicture = call.getString("promptLabelPicture") ?? "Take Picture"
     let promptLabelCancel = call.getString("promptLabelCancel") ?? "Cancel"
-    
+
     let alert = UIAlertController(title: promptLabelHeader, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-    alert.addAction(UIAlertAction(title: promptLabelPhoto, style: .default, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: promptLabelPhoto, style: .default, handler: { (_: UIAlertAction) in
       self.showPhotos(call)
     }))
 
-    alert.addAction(UIAlertAction(title: promptLabelPicture, style: .default, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: promptLabelPicture, style: .default, handler: { (_: UIAlertAction) in
       self.showCamera(call)
     }))
 
-    alert.addAction(UIAlertAction(title: promptLabelCancel, style: .cancel, handler: { (action: UIAlertAction) in
+    alert.addAction(UIAlertAction(title: promptLabelCancel, style: .cancel, handler: { (_: UIAlertAction) in
       self.call?.error("User cancelled photos app")
     }))
 
@@ -166,9 +166,9 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
   func showPhotos(_ call: CAPPluginCall) {
     let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-    if (photoAuthorizationStatus != PHAuthorizationStatus.authorized) {
+    if photoAuthorizationStatus != PHAuthorizationStatus.authorized {
       PHPhotoLibrary.requestAuthorization({ (status) in
-        if (status != PHAuthorizationStatus.authorized) {
+        if status != PHAuthorizationStatus.authorized {
           call.error("User denied access to photos")
           return
         } else {
@@ -208,7 +208,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
   }
 
   public func imagePickerController(_ picker: UIImagePickerController,
-                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
     var image: UIImage?
     var isEdited = false
     var isGallery = true
@@ -246,13 +246,13 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
       }
       image = convertedImage
     }
-    
+
     if settings.saveToGallery {
       if !isGallery || isEdited {
-        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil);
+        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
       }
     }
-    
+
     guard let jpeg = image!.jpegData(compressionQuality: CGFloat(settings.quality/100)) else {
       self.call?.error("Unable to convert image to jpeg")
       return
@@ -291,7 +291,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     picker.dismiss(animated: true, completion: nil)
   }
 
-  func metadataFromImageData(data: NSData)-> [String: Any]? {
+  func metadataFromImageData(data: NSData) -> [String: Any]? {
     let options = [kCGImageSourceShouldCache as String: kCFBooleanFalse]
     if let imgSrc = CGImageSourceCreateWithData(data, options as CFDictionary) {
       let metadata = CGImageSourceCopyPropertiesAtIndex(imgSrc, 0, options as CFDictionary) as! [String: Any]
@@ -300,14 +300,14 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     return nil
   }
 
-  func getImageMeta(asset: PHAsset) -> [String:Any]?{
+  func getImageMeta(asset: PHAsset) -> [String: Any]? {
     let options = PHImageRequestOptions()
     options.isSynchronous = true
     options.resizeMode = .none
     options.isNetworkAccessAllowed = false
     options.version = .current
-    var meta:[String:Any]? = nil
-    _ = PHCachingImageManager().requestImageData(for: asset, options: options) { (imageData, dataUTI, orientation, info) in
+    var meta: [String: Any]?
+    _ = PHCachingImageManager().requestImageData(for: asset, options: options) { (imageData, _, _, _) in
       if let data = imageData {
         meta = self.metadataFromImageData(data: data as NSData)
       }
@@ -317,7 +317,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
 
   func resizeImage(_ image: UIImage) -> UIImage? {
     let isAspectScale = settings.width > 0 && settings.height == 0 || settings.height > 0 && settings.width == 0
-    let aspect = Float(image.size.width / image.size.height);
+    let aspect = Float(image.size.width / image.size.height)
 
     var size = CGSize.init(width: Int(settings.width), height: Int(settings.height))
     if isAspectScale {
@@ -336,8 +336,8 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     return scaledImage
   }
 
-  func makeExif(_ exif: [AnyHashable:Any]?) -> [AnyHashable:Any]? {
-    return exif?["{Exif}"] as? [AnyHashable:Any]
+  func makeExif(_ exif: [AnyHashable: Any]?) -> [AnyHashable: Any]? {
+    return exif?["{Exif}"] as? [AnyHashable: Any]
   }
 
   func correctOrientation(_ image: UIImage) -> UIImage? {

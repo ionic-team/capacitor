@@ -1,13 +1,13 @@
 import UserNotifications
 
-public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationCenterDelegate  {
+public class CAPUNUserNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
 
   public weak var bridge: CAPBridge?
   // Local list of notification id -> JSObject for storing options
   // between notification requets
-  var notificationRequestLookup = [String:JSObject]()
+  var notificationRequestLookup = [String: JSObject]()
 
-  public override init(){
+  override public init() {
     super.init()
     let center = UNUserNotificationCenter.current()
     if center.delegate == nil {
@@ -23,7 +23,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
    */
   public func requestPermissions(with completion: ((Bool, Error?) -> Void)? = nil) {
     let center = UNUserNotificationCenter.current()
-    center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+    center.requestAuthorization(options: [.badge, .alert, .sound]) { (granted, error) in
         completion?(granted, error)
     }
   }
@@ -39,10 +39,10 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
     let request = notification.request
     var plugin: CAPPlugin
     var action = "localNotificationReceived"
-    var presentationOptions: UNNotificationPresentationOptions = [];
+    var presentationOptions: UNNotificationPresentationOptions = []
 
     var notificationData = makeNotificationRequestJSObject(request)
-    if (request.trigger?.isKind(of: UNPushNotificationTrigger.self) ?? false) {
+    if request.trigger?.isKind(of: UNPushNotificationTrigger.self) ?? false {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
       let options = plugin.getConfigValue("presentationOptions") as? [String] ?? ["badge"]
 
@@ -113,7 +113,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
     var plugin: CAPPlugin
     var action = "localNotificationActionPerformed"
 
-    if (originalNotificationRequest.trigger?.isKind(of: UNPushNotificationTrigger.self) ?? false) {
+    if originalNotificationRequest.trigger?.isKind(of: UNPushNotificationTrigger.self) ?? false {
       plugin = (self.bridge?.getOrLoadPlugin(pluginName: "PushNotifications"))!
       data["notification"] = makePushNotificationRequestJSObject(originalNotificationRequest)
       action = "pushNotificationActionPerformed"
@@ -130,7 +130,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
    */
   func makePendingNotificationRequestJSObject(_ request: UNNotificationRequest) -> JSObject {
     return [
-      "id": request.identifier,
+      "id": request.identifier
     ]
   }
 
@@ -146,7 +146,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       "body": request.content.body,
       "extra": request.content.userInfo,
       "actionTypeId": request.content.categoryIdentifier,
-      "attachments": notificationRequest["attachments"]  ?? [],
+      "attachments": notificationRequest["attachments"]  ?? []
     ]
   }
 
@@ -161,7 +161,7 @@ public class CAPUNUserNotificationCenterDelegate : NSObject, UNUserNotificationC
       "subtitle": content.subtitle,
       "body": content.body,
       "badge": content.badge ?? 1,
-      "data": content.userInfo,
+      "data": content.userInfo
     ]
   }
 

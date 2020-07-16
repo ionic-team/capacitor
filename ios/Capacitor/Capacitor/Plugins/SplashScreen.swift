@@ -19,7 +19,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   let defaultShowDuration = 3000
   let defaultAutoHide = true
 
-  public override func load() {
+  override public func load() {
     buildViews()
     showOnLaunch()
   }
@@ -104,7 +104,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     imageView.contentMode = .scaleAspectFill
   }
 
-  public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change _: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+  override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change _: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
     updateSplashImageBounds()
   }
 
@@ -140,7 +140,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
       if backgroundColor != nil {
         strongSelf.imageView.backgroundColor = UIColor(fromHex: backgroundColor!)
       }
-      
+
       if strongSelf.showSpinner {
         if spinnerStyle != nil {
           switch spinnerStyle!.lowercased() {
@@ -174,7 +174,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
           if strongSelf.showSpinner {
             strongSelf.spinner.alpha = 1
           }
-        }) { (finished: Bool) in
+        }) { (_: Bool) in
         strongSelf.isVisible = true
 
         if autoHide {
@@ -209,7 +209,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
           if self.showSpinner {
             self.spinner.alpha = 0
           }
-        }) { (finished: Bool) in
+        }) { (_: Bool) in
         self.tearDown()
       }
     }

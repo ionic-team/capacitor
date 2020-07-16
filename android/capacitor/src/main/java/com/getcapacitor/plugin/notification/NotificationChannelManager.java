@@ -7,18 +7,14 @@ import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
-
 import androidx.core.app.NotificationCompat;
-
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
 import com.getcapacitor.PluginCall;
-
 import java.util.List;
 
 public class NotificationChannelManager {
-
     private Context context;
     private NotificationManager notificationManager;
 
@@ -60,9 +56,14 @@ public class NotificationChannelManager {
             call.unavailable();
         }
     }
+
     public void createChannel(JSObject channel) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(channel.getString(CHANNEL_ID), channel.getString(CHANNEL_NAME), channel.getInteger(CHANNEL_IMPORTANCE));
+            NotificationChannel notificationChannel = new NotificationChannel(
+                channel.getString(CHANNEL_ID),
+                channel.getString(CHANNEL_NAME),
+                channel.getInteger(CHANNEL_IMPORTANCE)
+            );
             notificationChannel.setDescription(channel.getString(CHANNEL_DESCRIPTION));
             notificationChannel.setLockscreenVisibility(channel.getInteger(CHANNEL_VISIBILITY));
             notificationChannel.enableVibration(channel.getBool(CHANNEL_VIBRATE));
@@ -81,8 +82,9 @@ public class NotificationChannelManager {
                     sound = sound.substring(0, sound.lastIndexOf('.'));
                 }
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
                 Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + sound);
                 notificationChannel.setSound(soundUri, audioAttributes);
             }

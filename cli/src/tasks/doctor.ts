@@ -6,15 +6,22 @@ import { emoji as _e } from '../util/emoji';
 
 import chalk from 'chalk';
 
-export async function doctorCommand(config: Config, selectedPlatform: string): Promise<void> {
-  log(`${_e('💊', '')}   ${chalk.bold('Capacitor Doctor')}  ${_e('💊', '')} \n`);
+export async function doctorCommand(
+  config: Config,
+  selectedPlatform: string,
+): Promise<void> {
+  log(
+    `${_e('💊', '')}   ${chalk.bold('Capacitor Doctor')}  ${_e('💊', '')} \n`,
+  );
 
   await doctorCore(config);
 
   const platforms = config.selectPlatforms(selectedPlatform);
-  await Promise.all(platforms.map(platformName => {
-    return doctor(config, platformName);
-  }));
+  await Promise.all(
+    platforms.map(platformName => {
+      return doctor(config, platformName);
+    }),
+  );
 }
 
 export async function doctorCore(config: Config) {
@@ -38,14 +45,24 @@ export async function doctorCore(config: Config) {
 }
 
 async function printInstalledPackages(config: Config) {
-  const packageNames = ['@capacitor/cli', '@capacitor/core', '@capacitor/android', '@capacitor/ios'];
-  await Promise.all(packageNames.map(async packageName => {
-    const packagePath = resolveNode(config, packageName, 'package.json');
-    await printPackageVersion(packageName, packagePath);
-  }));
+  const packageNames = [
+    '@capacitor/cli',
+    '@capacitor/core',
+    '@capacitor/android',
+    '@capacitor/ios',
+  ];
+  await Promise.all(
+    packageNames.map(async packageName => {
+      const packagePath = resolveNode(config, packageName, 'package.json');
+      await printPackageVersion(packageName, packagePath);
+    }),
+  );
 }
 
-async function printPackageVersion(packageName: string, packagePath: string | null) {
+async function printPackageVersion(
+  packageName: string,
+  packagePath: string | null,
+) {
   let version;
   if (packagePath) {
     version = (await readJSON(packagePath)).version;
@@ -64,4 +81,3 @@ export async function doctor(config: Config, platformName: string) {
     throw `Platform ${platformName} is not valid.`;
   }
 }
-
