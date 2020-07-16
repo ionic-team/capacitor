@@ -65,7 +65,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     }
 
     // Observe for changes on frame and bounds to handle rotation resizing
-    let parentView = bridge.viewController.view
+    let parentView = bridge?.viewController?.view
     parentView?.addObserver(self, forKeyPath: "frame", options: .new, context: nil)
     parentView?.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
 
@@ -79,7 +79,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
 
   func tearDown() {
     isVisible = false
-    bridge.viewController.view.isUserInteractionEnabled = true
+    bridge?.viewController?.view.isUserInteractionEnabled = true
     imageView.removeFromSuperview()
 
     if showSpinner {
@@ -91,12 +91,12 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   // the parent view observers fire
   func updateSplashImageBounds() {
     guard let delegate = UIApplication.shared.delegate else {
-      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
+      bridge?.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
 
     guard let window = delegate.window as? UIWindow else {
-      bridge.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
+      bridge?.modulePrint(self, "Unable to find root window object for SplashScreen bounds. Please file an issue")
       return
     }
     imageView.image = image
@@ -119,7 +119,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
       return
     }
 
-    let view = bridge.viewController.view
+    let view = bridge?.viewController?.view
     view?.addSubview(imageView)
 
     if showSpinner {
@@ -133,54 +133,55 @@ public class CAPSplashScreenPlugin: CAPPlugin {
   }
 
   func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, backgroundColor: String?, spinnerStyle: String?, spinnerColor: String?, completion: @escaping () -> Void, isLaunchSplash: Bool) {
-    DispatchQueue.main.async {
-      if backgroundColor != nil {
-        self.imageView.backgroundColor = UIColor(fromHex: backgroundColor!)
+    DispatchQueue.main.async { [weak self] in
+      guard let strongSelf = self, let view = strongSelf.bridge?.viewController?.view else {
+        return
       }
-
-      let view = self.bridge.viewController.view
-
-      if self.showSpinner {
+      if backgroundColor != nil {
+        strongSelf.imageView.backgroundColor = UIColor(fromHex: backgroundColor!)
+      }
+      
+      if strongSelf.showSpinner {
         if spinnerStyle != nil {
           switch spinnerStyle!.lowercased() {
           case "small":
-            self.spinner.style = .white
+            strongSelf.spinner.style = .white
           default:
-            self.spinner.style = .whiteLarge
+            strongSelf.spinner.style = .whiteLarge
           }
         }
 
         if spinnerColor != nil {
-          self.spinner.color = UIColor(fromHex: spinnerColor!)
+          strongSelf.spinner.color = UIColor(fromHex: spinnerColor!)
         }
       }
 
       if !isLaunchSplash {
-        view?.addSubview(self.imageView)
+        view.addSubview(strongSelf.imageView)
 
-        if self.showSpinner {
-          view?.addSubview(self.spinner)
-          self.spinner.centerXAnchor.constraint(equalTo: view!.centerXAnchor).isActive = true
-          self.spinner.centerYAnchor.constraint(equalTo: view!.centerYAnchor).isActive = true
+        if strongSelf.showSpinner {
+          view.addSubview(strongSelf.spinner)
+          strongSelf.spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+          strongSelf.spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         }
       }
 
-      view?.isUserInteractionEnabled = false
+      view.isUserInteractionEnabled = false
 
-      UIView.transition(with: self.imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
-          self.imageView.alpha = 1
+      UIView.transition(with: strongSelf.imageView, duration: TimeInterval(Double(fadeInDuration) / 1000), options: .curveLinear, animations: {
+          strongSelf.imageView.alpha = 1
 
-          if self.showSpinner {
-            self.spinner.alpha = 1
+          if strongSelf.showSpinner {
+            strongSelf.spinner.alpha = 1
           }
         }) { (finished: Bool) in
-        self.isVisible = true
+        strongSelf.isVisible = true
 
         if autoHide {
-          self.hideTask = DispatchQueue.main.asyncAfter(
+          strongSelf.hideTask = DispatchQueue.main.asyncAfter(
             deadline: DispatchTime.now() + (Double(showDuration) / 1000)
           ) {
-            self.hideSplash(fadeOutDuration: fadeOutDuration, isLaunchSplash: isLaunchSplash)
+            strongSelf.hideSplash(fadeOutDuration: fadeOutDuration, isLaunchSplash: isLaunchSplash)
             completion()
           }
         } else {

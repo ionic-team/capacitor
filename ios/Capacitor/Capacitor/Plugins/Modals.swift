@@ -18,8 +18,8 @@ public class CAPModalsPlugin : CAPPlugin {
       call.success()
     }))
     
-    DispatchQueue.main.async {
-      self.bridge.viewController.present(alert, animated: true, completion: nil)
+    DispatchQueue.main.async { [weak self] in
+      self?.bridge?.viewController?.present(alert, animated: true, completion: nil)
     }
   }
   
@@ -44,8 +44,8 @@ public class CAPModalsPlugin : CAPPlugin {
       ])
     }))
     
-    DispatchQueue.main.async {
-      self.bridge.viewController.present(alert, animated: true, completion: nil)
+    DispatchQueue.main.async { [weak self] in
+      self?.bridge?.viewController?.present(alert, animated: true, completion: nil)
     }
   }
   
@@ -62,7 +62,7 @@ public class CAPModalsPlugin : CAPPlugin {
     
     let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
     
-    DispatchQueue.main.async {
+    DispatchQueue.main.async { [weak self] in
       
       alert.addTextField { (textField) in
         textField.placeholder = inputPlaceholder
@@ -83,7 +83,7 @@ public class CAPModalsPlugin : CAPPlugin {
         ])
       }))
       
-      self.bridge.viewController.present(alert, animated: true, completion: nil)
+      self?.bridge?.viewController?.present(alert, animated: true, completion: nil)
     }
   }
   
@@ -96,10 +96,10 @@ public class CAPModalsPlugin : CAPPlugin {
 
     let options = call.getArray("options", JSObject.self) ?? []
     
-    DispatchQueue.main.async {
-      let alertController = self.buildActionSheet(call, title: title, message: message, options: options)
-
-      self.bridge.viewController.present(alertController, animated: true, completion: nil)
+    DispatchQueue.main.async { [weak self] in
+      if let alertController = self?.buildActionSheet(call, title: title, message: message, options: options) {
+        self?.bridge?.viewController?.present(alertController, animated: true, completion: nil)
+      }
     }
   }
   

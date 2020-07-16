@@ -33,7 +33,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    * Request notification permission
    */
   @objc func requestPermission(_ call: CAPPluginCall) {
-    self.bridge.notificationsDelegate.requestPermissions() { granted, error in
+    self.bridge?.notificationsDelegate.requestPermissions() { granted, error in
         guard error == nil else {
             call.error(error!.localizedDescription)
             return
@@ -46,9 +46,9 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    * Get notifications in Notification Center
    */
   @objc func getDeliveredNotifications(_ call: CAPPluginCall) {
-    UNUserNotificationCenter.current().getDeliveredNotifications(completionHandler: { (notifications) in
-      let ret = notifications.map({ (notification) -> [String:Any] in
-        return self.bridge.notificationsDelegate.makePushNotificationRequestJSObject(notification.request)
+    UNUserNotificationCenter.current().getDeliveredNotifications(completionHandler: { [weak self] (notifications) in
+      let ret = notifications.compactMap({ (notification) -> [String:Any]? in
+        return self?.bridge?.notificationsDelegate.makePushNotificationRequestJSObject(notification.request)
       })
       call.success([
         "notifications": ret

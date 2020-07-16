@@ -70,7 +70,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       // Schedule the request.
       let request = UNNotificationRequest(identifier: "\(identifier)", content: content, trigger: trigger)
       
-      self.bridge.notificationsDelegate.notificationRequestLookup[request.identifier] = notification
+      self.bridge?.notificationsDelegate.notificationRequestLookup[request.identifier] = notification
       
       let center = UNUserNotificationCenter.current()
       center.add(request) { (error : Error?) in
@@ -97,7 +97,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
    * Request notification permission
    */
   @objc func requestPermission(_ call: CAPPluginCall) {
-    self.bridge.notificationsDelegate.requestPermissions() { granted, error in
+    self.bridge?.notificationsDelegate.requestPermissions() { granted, error in
         guard error == nil else {
             call.error(error!.localizedDescription)
             return
@@ -129,8 +129,8 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
       CAPLog.print("num of pending notifications \(notifications.count)")
       CAPLog.print(notifications)
       
-      let ret = notifications.map({ (notification) -> [String:Any] in
-        return self.bridge.notificationsDelegate.makePendingNotificationRequestJSObject(notification)
+      let ret = notifications.compactMap({ [weak self] (notification) -> [String:Any]? in
+        return self?.bridge?.notificationsDelegate.makePendingNotificationRequestJSObject(notification)
       })
       call.success([
         "notifications": ret
@@ -340,7 +340,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     createdCategories.append(generalCategory)
     for type in actionTypes {
       guard let id = type["id"] as? String else {
-        bridge.modulePrint(self, "Action type must have an id field")
+        bridge?.modulePrint(self, "Action type must have an id field")
         continue
       }
       let hiddenBodyPlaceholder = type["iosHiddenPreviewsBodyPlaceholder"] as? String ?? ""
@@ -374,7 +374,7 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     
     for action in actions {
       guard let id = action["id"] as? String else {
-        bridge.modulePrint(self, "Action must have an id field")
+        bridge?.modulePrint(self, "Action must have an id field")
         continue
       }
       let title = action["title"] as? String ?? ""

@@ -8,8 +8,8 @@ import Foundation
 public class CAPStatusBarPlugin: CAPPlugin {
 
   public override func load() {
-    NotificationCenter.default.addObserver(forName: CAPBridge.statusBarTappedNotification.name, object: .none, queue: .none) { _ in
-      self.bridge.triggerJSEvent(eventName: "statusTap", target: "window")
+    NotificationCenter.default.addObserver(forName: CAPBridge.statusBarTappedNotification.name, object: .none, queue: .none) { [weak self] _ in
+      self?.bridge?.triggerJSEvent(eventName: "statusTap", target: "window")
     }
   }
 
@@ -18,12 +18,12 @@ public class CAPStatusBarPlugin: CAPPlugin {
 
     if let style = options["style"] as? String {
       if style == "DARK" {
-        bridge.setStatusBarStyle(.lightContent)
+        bridge?.setStatusBarStyle(.lightContent)
       } else if style == "LIGHT" {
         if #available(iOS 13.0, *) {
-          bridge.setStatusBarStyle(.darkContent)
+          bridge?.setStatusBarStyle(.darkContent)
         } else {
-          bridge.setStatusBarStyle(.default)
+          bridge?.setStatusBarStyle(.default)
         }
       }
     }
@@ -38,33 +38,36 @@ public class CAPStatusBarPlugin: CAPPlugin {
   func setAnimation(_ call: CAPPluginCall) {
     let animation = call.getString("animation", "SLIDE")
     if animation == "FADE" {
-      bridge.setStatusBarAnimation(.fade)
+      bridge?.setStatusBarAnimation(.fade)
     } else if animation == "NONE" {
-      bridge.setStatusBarAnimation(.none)
+      bridge?.setStatusBarAnimation(.none)
     } else {
-      bridge.setStatusBarAnimation(.slide)
+      bridge?.setStatusBarAnimation(.slide)
     }
   }
   
   @objc func hide(_ call: CAPPluginCall) {
     setAnimation(call)
-    bridge.setStatusBarVisible(false)
+    bridge?.setStatusBarVisible(false)
     call.success()
   }
   
   @objc func show(_ call: CAPPluginCall) {
     setAnimation(call)
-    bridge.setStatusBarVisible(true)
+    bridge?.setStatusBarVisible(true)
     call.success()
   }
 
   @objc func getInfo(_ call: CAPPluginCall) {
-    DispatchQueue.main.async {
+    DispatchQueue.main.async { [weak self] in
+      guard let bridge = self?.bridge else {
+        return
+      }
       let style: String
       if #available(iOS 13.0, *) {
-        switch self.bridge.getStatusBarStyle() {
+        switch bridge.getStatusBarStyle() {
         case .default:
-          if self.bridge.getUserInterfaceStyle() == UIUserInterfaceStyle.dark {
+            if bridge.getUserInterfaceStyle() == UIUserInterfaceStyle.dark {
             style = "DARK"
           } else {
             style = "LIGHT"
@@ -75,7 +78,7 @@ public class CAPStatusBarPlugin: CAPPlugin {
           style = "LIGHT"
         }
       } else {
-        if self.bridge.getStatusBarStyle() == .lightContent {
+        if bridge.getStatusBarStyle() == .lightContent {
           style = "DARK"
         } else {
           style = "LIGHT"
@@ -83,7 +86,7 @@ public class CAPStatusBarPlugin: CAPPlugin {
       }
 
       call.success([
-        "visible": self.bridge.getStatusBarVisible(),
+        "visible": bridge.getStatusBarVisible(),
         "style": style
       ])
     }

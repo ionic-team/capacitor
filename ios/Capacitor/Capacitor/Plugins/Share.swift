@@ -24,7 +24,7 @@ public class CAPSharePlugin : CAPPlugin {
       return
     }
     
-    DispatchQueue.main.async {
+    DispatchQueue.main.async { [weak self] in
       let actionController = UIActivityViewController(activityItems: items, applicationActivities: nil)
       
       if title != nil {
@@ -46,8 +46,8 @@ public class CAPSharePlugin : CAPPlugin {
         ])
       }
       
-      self.setCenteredPopover(actionController)
-      self.bridge.viewController.present(actionController, animated: true, completion: nil)
+      self?.setCenteredPopover(actionController)
+      self?.bridge?.viewController?.present(actionController, animated: true, completion: nil)
     }
   }
 }

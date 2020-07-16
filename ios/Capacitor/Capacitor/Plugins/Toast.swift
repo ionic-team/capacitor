@@ -12,9 +12,13 @@ public class CAPToastPlugin : CAPPlugin {
     }
     let durationType = call.get("duration", String.self, "short")!
     let duration = durationType == "long" ? 3500 : 2000
-    let position = call.get("position", String.self, "bottom")
-
-    showToast(vc: self.bridge!.viewController, text: text, duration: duration, position: position!, completion: {(isCompleted) in
+    let position = call.get("position", String.self, "bottom")!
+    
+    guard let vc = bridge?.viewController else {
+      call.error("Unable to display toast!")
+      return
+    }
+    showToast(vc: vc, text: text, duration: duration, position: position, completion: {(isCompleted) in
       call.success()
     });
   }
