@@ -48,7 +48,7 @@ enum BridgeError: Error {
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
 
-  public weak var notificationsDelegate: CAPUNUserNotificationCenterDelegate
+  public var notificationsDelegate: CAPUNUserNotificationCenterDelegate
 
   public init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
     self.bridgeDelegate = bridgeDelegate
