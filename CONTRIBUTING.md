@@ -57,6 +57,12 @@ On web, this means do not add any third party libraries such as Firebase or Loda
     npm install
     ```
 
+1. Install SwiftLint if you're on macOS. Contributions to iOS code will be linted in CI if you don't have macOS.
+
+    ```shell
+    brew install swiftlint
+    ```
+
 1. Install package dependencies. [Lerna](https://github.com/lerna/lerna) can automatically install each package's dependencies.
 
     ```shell
