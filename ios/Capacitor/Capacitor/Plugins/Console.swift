@@ -1,7 +1,7 @@
 import Foundation
 
 @objc(CAPConsolePlugin)
-public class CAPConsolePlugin : CAPPlugin {
+public class CAPConsolePlugin: CAPPlugin {
 
   @objc public func log(_ call: CAPPluginCall) {
     let message = call.getString("message") ?? ""
@@ -9,4 +9,3 @@ public class CAPConsolePlugin : CAPPlugin {
     CAPLog.print("⚡️  [\(level)] - \(message)")
   }
 }
-

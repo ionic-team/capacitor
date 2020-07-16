@@ -6,7 +6,7 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
   private var basePath: String = ""
 
   func setAssetPath(_ assetPath: String) {
-    self.basePath = assetPath;
+    self.basePath = assetPath
   }
 
   func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {

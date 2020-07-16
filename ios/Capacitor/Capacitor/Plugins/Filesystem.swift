@@ -1,10 +1,9 @@
 import Foundation
 
-
 @objc(CAPFilesystemPlugin)
-public class CAPFilesystemPlugin : CAPPlugin {
+public class CAPFilesystemPlugin: CAPPlugin {
   let DEFAULT_DIRECTORY = "DOCUMENTS"
-  
+
   /**
    * Get the SearchPathDirectory corresponding to the JS string
    */
@@ -18,7 +17,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       return .documentDirectory
     }
   }
-  
+
   /**
    * Get the URL for this file, supporting file:// paths and
    * files with directory mappings.
@@ -27,13 +26,13 @@ public class CAPFilesystemPlugin : CAPPlugin {
     if path.starts(with: "file://") {
       return URL(string: path)
     }
-    
+
     let directory = getDirectory(directory: directoryOption)
-    
+
     guard let dir = FileManager.default.urls(for: directory, in: .userDomainMask).first else {
       return nil
     }
-    
+
     return dir.appendingPathComponent(path)
   }
 
@@ -43,7 +42,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
   func handleError(_ call: CAPPluginCall, _ message: String, _ error: Error? = nil) {
     call.error(message, error)
   }
-  
+
   /**
    * Read a file from the filesystem.
    */
@@ -55,7 +54,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       return
     }
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
-    
+
     guard let fileUrl = getFileUrl(file, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -89,12 +88,12 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     guard let data = call.get("data", String.self) else {
       handleError(call, "Data must be provided and must be a string.")
       return
     }
-      
+
     let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
 
     guard let fileUrl = getFileUrl(file, directoryOption) else {
@@ -107,7 +106,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
         if recursive {
           try FileManager.default.createDirectory(at: fileUrl.deletingLastPathComponent(), withIntermediateDirectories: recursive, attributes: nil)
         } else {
-          handleError(call, "Parent folder doesn't exist");
+          handleError(call, "Parent folder doesn't exist")
           return
         }
       }
@@ -140,12 +139,12 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     guard let data = call.get("data", String.self) else {
       handleError(call, "Data must be provided and must be a string.")
       return
     }
-    
+
     let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
     guard let fileUrl = getFileUrl(file, directoryOption) else {
       handleError(call, "Invalid path")
@@ -155,7 +154,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
     do {
       if FileManager.default.fileExists(atPath: fileUrl.path) {
         let fileHandle = try FileHandle.init(forWritingTo: fileUrl)
-        var writeData: Data? = nil
+        var writeData: Data?
         if encoding != nil {
           guard let userData = data.data(using: .utf8) else {
             handleError(call, "Unable to encode data to utf-8")
@@ -204,15 +203,15 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
     guard let fileUrl = getFileUrl(file, directoryOption) else {
       handleError(call, "Invalid path")
       return
     }
-    
+
     do {
-      
+
       if FileManager.default.fileExists(atPath: fileUrl.path) {
         try FileManager.default.removeItem(atPath: fileUrl.path)
       }
@@ -221,7 +220,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
+
   /**
    * Make a new directory, optionally creating parent folders first.
    */
@@ -230,14 +229,14 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     let recursive = call.get("recursive", Bool.self, false)!
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
     }
-    
+
     do {
       try FileManager.default.createDirectory(at: fileUrl, withIntermediateDirectories: recursive, attributes: nil)
       call.success()
@@ -245,8 +244,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
-  
+
   /**
    * Remove a directory.
    */
@@ -255,25 +253,25 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
     }
-    
+
     let recursiveOption = call.get("recursive", Bool.self, false)!
-    
+
     do {
       let directoryContents = try FileManager.default.contentsOfDirectory(at: fileUrl, includingPropertiesForKeys: nil, options: [])
-      if (directoryContents.count != 0 && !recursiveOption) {
+      if directoryContents.count != 0 && !recursiveOption {
         handleError(call, "Folder is not empty")
         return
       }
     } catch {
       handleError(call, error.localizedDescription, error)
     }
-    
+
     do {
       try FileManager.default.removeItem(at: fileUrl)
       call.success()
@@ -281,8 +279,7 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
-  
+
   /**
    * Read the contents of a directory.
    */
@@ -291,21 +288,21 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
     }
-    
+
     do {
 
       let directoryContents = try FileManager.default.contentsOfDirectory(at: fileUrl, includingPropertiesForKeys: nil, options: [])
-      
+
       let directoryPathStrings = directoryContents.map {(url: URL) -> String in
         return url.lastPathComponent
       }
-      
+
       call.success([
         "files": directoryPathStrings
       ])
@@ -313,19 +310,19 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
+
   @objc func stat(_ call: CAPPluginCall) {
     guard let path = call.get("path", String.self) else {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
     }
-    
+
     do {
       let attr = try FileManager.default.attributesOfItem(atPath: fileUrl.path)
       call.success([
@@ -339,37 +336,37 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, error.localizedDescription, error)
     }
   }
-  
+
   @objc func getUri(_ call: CAPPluginCall) {
     guard let path = call.get("path", String.self) else {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    
+
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
     }
-    
+
     call.success([
       "uri": fileUrl.absoluteString
     ])
-    
+
   }
 
   /**
    * Rename a file or directory.
    */
   @objc func rename(_ call: CAPPluginCall) {
-    _copy(call: call, doRename: true);
+    _copy(call: call, doRename: true)
   }
-  
+
   /**
    * Copy a file or directory.
    */
   @objc func copy(_ call: CAPPluginCall) {
-    _copy(call: call, doRename: false);
+    _copy(call: call, doRename: false)
   }
 
   /**
@@ -380,41 +377,41 @@ public class CAPFilesystemPlugin : CAPPlugin {
       handleError(call, "Both to and from must be provided")
       return
     }
-    
+
     let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
     var toDirectoryOption = call.get("toDirectory", String.self, "")!
-    
-    if (toDirectoryOption == "") {
-      toDirectoryOption = directoryOption;
+
+    if toDirectoryOption == "" {
+      toDirectoryOption = directoryOption
     }
-    
+
     guard let fromUrl = getFileUrl(from, directoryOption) else {
       handleError(call, "Invalid from path")
       return
     }
-    
+
     guard let toUrl = getFileUrl(to, toDirectoryOption) else {
       handleError(call, "Invalid to path")
       return
     }
-    
-    if (fromUrl == toUrl) {
+
+    if fromUrl == toUrl {
       call.success()
       return
     }
-    
+
     do {
-      var isDir : ObjCBool = false
+      var isDir: ObjCBool = false
       if FileManager.default.fileExists(atPath: toUrl.path, isDirectory: &isDir) {
-        if (!isDir.boolValue) {
+        if !isDir.boolValue {
           try? FileManager.default.removeItem(at: toUrl)
         }
       }
-      
-      if (doRename) {
+
+      if doRename {
         try FileManager.default.moveItem(at: fromUrl, to: toUrl)
       } else {
-        try FileManager.default.copyItem(at: fromUrl, to: toUrl);
+        try FileManager.default.copyItem(at: fromUrl, to: toUrl)
       }
       call.success()
     } catch let error as NSError {
@@ -422,4 +419,3 @@ public class CAPFilesystemPlugin : CAPPlugin {
     }
   }
 }
-

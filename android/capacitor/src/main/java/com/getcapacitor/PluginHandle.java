@@ -11,112 +11,112 @@ import java.util.Map;
  * and indexed. Think of it as a Plugin instance with extra metadata goodies
  */
 public class PluginHandle {
-  private final Bridge bridge;
-  private final Class<? extends Plugin> pluginClass;
+    private final Bridge bridge;
+    private final Class<? extends Plugin> pluginClass;
 
-  private Map<String, PluginMethodHandle> pluginMethods = new HashMap<>();
+    private Map<String, PluginMethodHandle> pluginMethods = new HashMap<>();
 
-  private final String pluginId;
+    private final String pluginId;
 
-  private NativePlugin pluginAnnotation;
-  private Plugin instance;
+    private NativePlugin pluginAnnotation;
+    private Plugin instance;
 
-  public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException,
-                                                                                 PluginLoadException {
-    this.bridge = bridge;
-    this.pluginClass = pluginClass;
+    public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException, PluginLoadException {
+        this.bridge = bridge;
+        this.pluginClass = pluginClass;
 
-    NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
-    if(pluginAnnotation == null) {
-      throw new InvalidPluginException("No @NativePlugin annotation found for plugin " + pluginClass.getName());
+        NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+        if (pluginAnnotation == null) {
+            throw new InvalidPluginException("No @NativePlugin annotation found for plugin " + pluginClass.getName());
+        }
+
+        if (!pluginAnnotation.name().equals("")) {
+            this.pluginId = pluginAnnotation.name();
+        } else {
+            this.pluginId = pluginClass.getSimpleName();
+        }
+
+        this.pluginAnnotation = pluginAnnotation;
+
+        this.indexMethods(pluginClass);
+
+        this.load();
     }
 
-    if(!pluginAnnotation.name().equals("")) {
-      this.pluginId = pluginAnnotation.name();
-    } else {
-      this.pluginId = pluginClass.getSimpleName();
+    public Class<? extends Plugin> getPluginClass() {
+        return pluginClass;
     }
 
-    this.pluginAnnotation = pluginAnnotation;
-
-    this.indexMethods(pluginClass);
-
-    this.load();
-  }
-
-  public Class<? extends Plugin> getPluginClass() {
-    return pluginClass;
-  }
-
-  public String getId() {
-    return this.pluginId;
-  }
-  public NativePlugin getPluginAnnotation() { return this.pluginAnnotation; }
-  public Plugin getInstance() {
-    return this.instance;
-  }
-
-  public Collection<PluginMethodHandle> getMethods() {
-    return this.pluginMethods.values();
-  }
-
-  public Plugin load() throws PluginLoadException {
-    if(this.instance != null) {
-      return this.instance;
+    public String getId() {
+        return this.pluginId;
     }
 
-    try {
-      this.instance = this.pluginClass.newInstance();
-      this.instance.setPluginHandle(this);
-      this.instance.setBridge(this.bridge);
-      this.instance.load();
-      return this.instance;
-    } catch(InstantiationException | IllegalAccessException ex) {
-      throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
-    }
-  }
-
-  /**
-   * Call a method on a plugin.
-   * @param methodName the name of the method to call
-   * @param call the constructed PluginCall with parameters from the caller
-   * @throws InvalidPluginMethodException if no method was found on that plugin
-   */
-  public void invoke(String methodName, PluginCall call) throws PluginLoadException,
-                                                                InvalidPluginMethodException,
-                                                                InvocationTargetException,
-                                                                IllegalAccessException {
-    if(this.instance == null) {
-      // Can throw PluginLoadException
-      this.load();
+    public NativePlugin getPluginAnnotation() {
+        return this.pluginAnnotation;
     }
 
-    PluginMethodHandle methodMeta = pluginMethods.get(methodName);
-    if(methodMeta == null) {
-      throw new InvalidPluginMethodException("No method " + methodName + " found for plugin " + pluginClass.getName());
+    public Plugin getInstance() {
+        return this.instance;
     }
 
-    methodMeta.getMethod().invoke(this.instance, call);
-
-  }
-
-  /**
-   * Index all the known callable methods for a plugin for faster
-   * invocation later
-   */
-  private void indexMethods(Class<? extends Plugin> plugin) {
-    //Method[] methods = pluginClass.getDeclaredMethods();
-    Method[] methods = pluginClass.getMethods();
-
-    for(Method methodReflect: methods) {
-      PluginMethod method = methodReflect.getAnnotation(PluginMethod.class);
-
-      if(method == null) {
-        continue;
-      }
-
-      PluginMethodHandle methodMeta = new PluginMethodHandle(methodReflect, method);
-      pluginMethods.put(methodReflect.getName(), methodMeta);
+    public Collection<PluginMethodHandle> getMethods() {
+        return this.pluginMethods.values();
     }
-  }
+
+    public Plugin load() throws PluginLoadException {
+        if (this.instance != null) {
+            return this.instance;
+        }
+
+        try {
+            this.instance = this.pluginClass.newInstance();
+            this.instance.setPluginHandle(this);
+            this.instance.setBridge(this.bridge);
+            this.instance.load();
+            return this.instance;
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
+        }
+    }
+
+    /**
+     * Call a method on a plugin.
+     * @param methodName the name of the method to call
+     * @param call the constructed PluginCall with parameters from the caller
+     * @throws InvalidPluginMethodException if no method was found on that plugin
+     */
+    public void invoke(String methodName, PluginCall call)
+        throws PluginLoadException, InvalidPluginMethodException, InvocationTargetException, IllegalAccessException {
+        if (this.instance == null) {
+            // Can throw PluginLoadException
+            this.load();
+        }
+
+        PluginMethodHandle methodMeta = pluginMethods.get(methodName);
+        if (methodMeta == null) {
+            throw new InvalidPluginMethodException("No method " + methodName + " found for plugin " + pluginClass.getName());
+        }
+
+        methodMeta.getMethod().invoke(this.instance, call);
+    }
+
+    /**
+     * Index all the known callable methods for a plugin for faster
+     * invocation later
+     */
+    private void indexMethods(Class<? extends Plugin> plugin) {
+        //Method[] methods = pluginClass.getDeclaredMethods();
+        Method[] methods = pluginClass.getMethods();
+
+        for (Method methodReflect : methods) {
+            PluginMethod method = methodReflect.getAnnotation(PluginMethod.class);
+
+            if (method == null) {
+                continue;
+            }
+
+            PluginMethodHandle methodMeta = new PluginMethodHandle(methodReflect, method);
+            pluginMethods.put(methodReflect.getName(), methodMeta);
+        }
+    }
 }

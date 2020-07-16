@@ -1,7 +1,6 @@
 package com.getcapacitor.plugin.camera;
 
 public class CameraSettings {
-
     public static final int DEFAULT_QUALITY = 90;
     public static final boolean DEFAULT_SAVE_IMAGE_TO_GALLERY = false;
     public static final boolean DEFAULT_CORRECT_ORIENTATION = true;
@@ -56,9 +55,13 @@ public class CameraSettings {
         this.saveToGallery = saveToGallery;
     }
 
-    public boolean isAllowEditing() { return  allowEditing; }
+    public boolean isAllowEditing() {
+        return allowEditing;
+    }
 
-    public void setAllowEditing(boolean allowEditing) { this.allowEditing = allowEditing; }
+    public void setAllowEditing(boolean allowEditing) {
+        this.allowEditing = allowEditing;
+    }
 
     public int getWidth() {
         return width;

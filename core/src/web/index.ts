@@ -1,7 +1,7 @@
 import {
   Capacitor,
   PluginListenerHandle,
-  PermissionsRequestResult
+  PermissionsRequestResult,
 } from '../definitions';
 
 declare var Capacitor: Capacitor;
@@ -10,8 +10,7 @@ export class WebPluginRegistry {
   plugins: { [name: string]: WebPlugin } = {};
   loadedPlugins: { [name: string]: WebPlugin } = {};
 
-  constructor() {
-  }
+  constructor() {}
 
   addPlugin(plugin: WebPlugin) {
     this.plugins[plugin.config.name] = plugin;
@@ -70,7 +69,10 @@ export class WebPlugin {
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
-  constructor(public config: WebPluginConfig, pluginRegistry?: WebPluginRegistry) {
+  constructor(
+    public config: WebPluginConfig,
+    pluginRegistry?: WebPluginRegistry,
+  ) {
     if (!pluginRegistry) {
       WebPlugins.addPlugin(this);
     } else {
@@ -84,13 +86,18 @@ export class WebPlugin {
   }
 
   private removeWindowListener(handle: WindowListenerHandle): void {
-    if (!handle) { return; }
+    if (!handle) {
+      return;
+    }
 
     window.removeEventListener(handle.windowEventName, handle.handler);
     handle.registered = false;
   }
 
-  addListener(eventName: string, listenerFunc: ListenerCallback): PluginListenerHandle {
+  addListener(
+    eventName: string,
+    listenerFunc: ListenerCallback,
+  ): PluginListenerHandle {
     let listeners = this.listeners[eventName];
     if (!listeners) {
       this.listeners[eventName] = [];
@@ -108,11 +115,14 @@ export class WebPlugin {
     return {
       remove: () => {
         this.removeListener(eventName, listenerFunc);
-      }
+      },
     };
   }
 
-  private removeListener(eventName: string, listenerFunc: ListenerCallback): void {
+  private removeListener(
+    eventName: string,
+    listenerFunc: ListenerCallback,
+  ): void {
     let listeners = this.listeners[eventName];
     if (!listeners) {
       return;
@@ -152,15 +162,19 @@ export class WebPlugin {
       registered: false,
       windowEventName,
       pluginEventName,
-      handler: (event) => {
+      handler: event => {
         this.notifyListeners(pluginEventName, event);
-      }
+      },
     };
   }
 
   requestPermissions(): Promise<PermissionsRequestResult> {
     if (Capacitor.isNative) {
-      return Capacitor.nativePromise(this.config.name, 'requestPermissions', {});
+      return Capacitor.nativePromise(
+        this.config.name,
+        'requestPermissions',
+        {},
+      );
     } else {
       return Promise.resolve({ results: [] });
     }
@@ -172,7 +186,10 @@ export class WebPlugin {
 }
 
 const shouldMergeWebPlugin = (plugin: WebPlugin) => {
-  return plugin.config.platforms && plugin.config.platforms.indexOf(Capacitor.platform) >= 0;
+  return (
+    plugin.config.platforms &&
+    plugin.config.platforms.indexOf(Capacitor.platform) >= 0
+  );
 };
 
 /**
@@ -192,7 +209,12 @@ export const mergeWebPlugin = (knownPlugins: any, plugin: WebPlugin) => {
   // If we already have a plugin registered (meaning it was defined in the native layer),
   // then we should only overwrite it if the corresponding web plugin activates on
   // a certain platform. For example: Geolocation uses the WebPlugin on Android but not iOS
-  if (knownPlugins.hasOwnProperty(plugin.config.name) && !shouldMergeWebPlugin(plugin)) { return; }
+  if (
+    knownPlugins.hasOwnProperty(plugin.config.name) &&
+    !shouldMergeWebPlugin(plugin)
+  ) {
+    return;
+  }
 
   knownPlugins[plugin.config.name] = plugin;
 };

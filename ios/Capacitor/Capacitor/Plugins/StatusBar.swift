@@ -7,7 +7,7 @@ import Foundation
 @objc(CAPStatusBarPlugin)
 public class CAPStatusBarPlugin: CAPPlugin {
 
-  public override func load() {
+  override public func load() {
     NotificationCenter.default.addObserver(forName: CAPBridge.statusBarTappedNotification.name, object: .none, queue: .none) { [weak self] _ in
       self?.bridge?.triggerJSEvent(eventName: "statusTap", target: "window")
     }
@@ -27,14 +27,14 @@ public class CAPStatusBarPlugin: CAPPlugin {
         }
       }
     }
-    
+
     call.success([:])
   }
-  
+
   @objc func setBackgroundColor(_ call: CAPPluginCall) {
     call.unimplemented()
   }
-  
+
   func setAnimation(_ call: CAPPluginCall) {
     let animation = call.getString("animation", "SLIDE")
     if animation == "FADE" {
@@ -45,13 +45,13 @@ public class CAPStatusBarPlugin: CAPPlugin {
       bridge?.setStatusBarAnimation(.slide)
     }
   }
-  
+
   @objc func hide(_ call: CAPPluginCall) {
     setAnimation(call)
     bridge?.setStatusBarVisible(false)
     call.success()
   }
-  
+
   @objc func show(_ call: CAPPluginCall) {
     setAnimation(call)
     bridge?.setStatusBarVisible(true)
@@ -96,4 +96,3 @@ public class CAPStatusBarPlugin: CAPPlugin {
     call.unimplemented()
   }
 }
-

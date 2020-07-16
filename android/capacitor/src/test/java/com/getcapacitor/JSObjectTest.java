@@ -1,9 +1,9 @@
 package com.getcapacitor;
 
+import static org.junit.Assert.*;
+
 import org.json.JSONException;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class JSObjectTest {
 
@@ -140,17 +140,19 @@ public class JSObjectTest {
         String actualValue = jsObject.getJSObject("thisKeyExists").getString("innerObjectKey");
         String expectedValue = "innerObjectValue";
 
-        assertEquals(expectedValue,  actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
     public void getJSObjectReturnsDefaultValue_WhenJSObject_IsConstructed_WithNoInitialJSONObject() throws JSONException {
         JSObject jsObject = new JSObject();
 
-        String actualValue = jsObject.getJSObject("thisKeyExists", new JSObject("{\"thisKeyExists\": \"default string\"}")).getString("thisKeyExists");
+        String actualValue = jsObject
+            .getJSObject("thisKeyExists", new JSObject("{\"thisKeyExists\": \"default string\"}"))
+            .getString("thisKeyExists");
         String expectedValue = "default string";
 
-        assertEquals(expectedValue,  actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test

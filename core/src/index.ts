@@ -3,7 +3,7 @@ export {
   PluginListenerHandle,
   PluginResultData,
   PluginResultError,
-  PluginConfig
+  PluginConfig,
 } from './definitions';
 
 export * from './core-plugin-definitions';

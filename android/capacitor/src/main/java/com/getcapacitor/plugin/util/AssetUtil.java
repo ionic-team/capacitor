@@ -8,11 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.StrictMode;
-
 import androidx.core.content.FileProvider;
-
 import com.getcapacitor.Logger;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,7 +24,6 @@ import java.util.UUID;
  * Manager for assets.
  */
 public final class AssetUtil {
-
     public static final int RESOURCE_ID_ZERO_VALUE = 0;
     // Name of the storage folder
     private static final String STORAGE_FOLDER = "/capacitorassets";
@@ -59,7 +55,7 @@ public final class AssetUtil {
      *
      * @param path The given path.
      */
-    public Uri parse (String path) {
+    public Uri parse(String path) {
         if (path == null || path.isEmpty()) {
             return Uri.EMPTY;
         } else if (path.startsWith("res:")) {
@@ -68,9 +64,9 @@ public final class AssetUtil {
             return getUriFromPath(path);
         } else if (path.startsWith("file://")) {
             return getUriFromAsset(path);
-        } else if (path.startsWith("http")){
+        } else if (path.startsWith("http")) {
             return getUriFromRemote(path);
-        } else if (path.startsWith("content://")){
+        } else if (path.startsWith("content://")) {
             return Uri.parse(path);
         }
 
@@ -85,9 +81,8 @@ public final class AssetUtil {
      * @return URI pointing to the given path.
      */
     private Uri getUriFromPath(String path) {
-        String absPath = path.replaceFirst("file://", "")
-                .replaceFirst("\\?.*$", "");
-        File file      = new File(absPath);
+        String absPath = path.replaceFirst("file://", "").replaceFirst("\\?.*$", "");
+        File file = new File(absPath);
 
         if (!file.exists()) {
             Logger.error("File not found: " + file.getAbsolutePath());
@@ -105,17 +100,15 @@ public final class AssetUtil {
      * @return URI pointing to the given path.
      */
     private Uri getUriFromAsset(String path) {
-        String resPath  = path.replaceFirst("file:/", "www")
-                .replaceFirst("\\?.*$", "");
+        String resPath = path.replaceFirst("file:/", "www").replaceFirst("\\?.*$", "");
         String fileName = resPath.substring(resPath.lastIndexOf('/') + 1);
-        File file       = getTmpFile(fileName);
+        File file = getTmpFile(fileName);
 
-        if (file == null)
-            return Uri.EMPTY;
+        if (file == null) return Uri.EMPTY;
 
         try {
-            AssetManager assets  = context.getAssets();
-            InputStream in       = assets.open(resPath);
+            AssetManager assets = context.getAssets();
+            InputStream in = assets.open(resPath);
             FileOutputStream out = new FileOutputStream(file);
             copyFile(in, out);
         } catch (Exception e) {
@@ -134,9 +127,9 @@ public final class AssetUtil {
      * @return URI pointing to the given path.
      */
     private Uri getUriForResourcePath(String path) {
-        Resources res  = context.getResources();
+        Resources res = context.getResources();
         String resPath = path.replaceFirst("res://", "");
-        int resId      = getResId(resPath);
+        int resId = getResId(resPath);
 
         if (resId == 0) {
             Logger.error("File not found: " + resPath);
@@ -144,11 +137,11 @@ public final class AssetUtil {
         }
 
         return new Uri.Builder()
-                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-                .authority(res.getResourcePackageName(resId))
-                .appendPath(res.getResourceTypeName(resId))
-                .appendPath(res.getResourceEntryName(resId))
-                .build();
+            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+            .authority(res.getResourcePackageName(resId))
+            .appendPath(res.getResourceTypeName(resId))
+            .appendPath(res.getResourceEntryName(resId))
+            .build();
     }
 
     /**
@@ -161,15 +154,13 @@ public final class AssetUtil {
     private Uri getUriFromRemote(String path) {
         File file = getTmpFile();
 
-        if (file == null)
-            return Uri.EMPTY;
+        if (file == null) return Uri.EMPTY;
 
         try {
             URL url = new URL(path);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            StrictMode.ThreadPolicy policy =
-                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
             StrictMode.setThreadPolicy(policy);
 
@@ -177,7 +168,7 @@ public final class AssetUtil {
             connection.setConnectTimeout(5000);
             connection.connect();
 
-            InputStream in       = connection.getInputStream();
+            InputStream in = connection.getInputStream();
             FileOutputStream out = new FileOutputStream(file);
 
             copyFile(in, out);
@@ -272,7 +263,7 @@ public final class AssetUtil {
      *
      * @param resPath Resource path as string.
      */
-    private String getBaseName (String resPath) {
+    private String getBaseName(String resPath) {
         String drawable = resPath;
 
         if (drawable.contains("/")) {
@@ -291,7 +282,7 @@ public final class AssetUtil {
      *
      * @return File with a random UUID name.
      */
-    private File getTmpFile () {
+    private File getTmpFile() {
         return getTmpFile(UUID.randomUUID().toString());
     }
 
@@ -302,7 +293,7 @@ public final class AssetUtil {
      *
      * @return File with the provided name.
      */
-    private File getTmpFile (String name) {
+    private File getTmpFile(String name) {
         File dir = context.getExternalCacheDir();
 
         if (dir == null) {
@@ -314,7 +305,7 @@ public final class AssetUtil {
             return null;
         }
 
-        String storage  = dir.toString() + STORAGE_FOLDER;
+        String storage = dir.toString() + STORAGE_FOLDER;
 
         //noinspection ResultOfMethodCallIgnored
         new File(storage).mkdir();
@@ -342,15 +333,15 @@ public final class AssetUtil {
     /**
      * Package name specified by the resource bundle.
      */
-    private String getPkgName (Resources res) {
+    private String getPkgName(Resources res) {
         return res == Resources.getSystem() ? "android" : context.getPackageName();
     }
 
-    public static int getResourceID(Context context, String resourceName, String dir){
+    public static int getResourceID(Context context, String resourceName, String dir) {
         return context.getResources().getIdentifier(resourceName, dir, context.getPackageName());
     }
 
-    public static String getResourceBaseName (String resPath) {
+    public static String getResourceBaseName(String resPath) {
         if (resPath == null) return null;
 
         if (resPath.contains("/")) {
@@ -363,5 +354,4 @@ public final class AssetUtil {
 
         return resPath;
     }
-
 }

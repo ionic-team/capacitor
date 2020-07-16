@@ -2,9 +2,8 @@ package com.getcapacitor.util;
 
 import static org.junit.Assert.*;
 
-import org.junit.Test;
-
 import com.getcapacitor.util.HostMask.Util;
+import org.junit.Test;
 
 public class HostMaskTest {
 
@@ -26,7 +25,6 @@ public class HostMaskTest {
         assertFalse(mask.matches("www.another.org"));
         assertFalse(mask.matches(null));
     }
-
 
     @Test
     public void testSimple() {
@@ -65,6 +63,4 @@ public class HostMaskTest {
         assertFalse("Nothing matches null mask", Util.matches(null, "org"));
         assertFalse("Nothing matches null mask", Util.matches(null, null));
     }
-
-
 }

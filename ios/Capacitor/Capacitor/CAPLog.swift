@@ -1,7 +1,7 @@
 public class CAPLog {
 
   public static let config = CAPConfig()
-  
+
   public static func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
     if !self.hideLogs() {
       for i in 0..<items.count {

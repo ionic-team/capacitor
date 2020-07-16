@@ -6,9 +6,7 @@ export default {
     file: 'dist/plugin.js',
     format: 'iife',
     name: 'capacitorPlugin',
-    sourcemap: true
+    sourcemap: true,
   },
-  plugins: [
-    nodeResolve()
-  ]
+  plugins: [nodeResolve()],
 };

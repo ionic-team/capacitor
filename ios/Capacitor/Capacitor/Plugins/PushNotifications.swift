@@ -9,12 +9,12 @@ enum PushNotificationError: Error {
  * Implement Push Notifications
  */
 @objc(CAPPushNotificationsPlugin)
-public class CAPPushNotificationsPlugin : CAPPlugin {
+public class CAPPushNotificationsPlugin: CAPPlugin {
   // Local list of notification id -> JSObject for storing options
   // between notification requets
-  var notificationRequestLookup = [String:JSObject]()
+  var notificationRequestLookup = [String: JSObject]()
 
-  public override func load() {
+  override public func load() {
     NotificationCenter.default.addObserver(self, selector: #selector(self.didRegisterForRemoteNotificationsWithDeviceToken(notification:)), name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(self.didFailToRegisterForRemoteNotificationsWithError(notification:)), name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: nil)
   }
@@ -33,7 +33,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    * Request notification permission
    */
   @objc func requestPermission(_ call: CAPPluginCall) {
-    self.bridge?.notificationsDelegate.requestPermissions() { granted, error in
+    self.bridge?.notificationsDelegate.requestPermissions { granted, error in
         guard error == nil else {
             call.error(error!.localizedDescription)
             return
@@ -47,7 +47,7 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
    */
   @objc func getDeliveredNotifications(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().getDeliveredNotifications(completionHandler: { [weak self] (notifications) in
-      let ret = notifications.compactMap({ (notification) -> [String:Any]? in
+      let ret = notifications.compactMap({ (notification) -> [String: Any]? in
         return self?.bridge?.notificationsDelegate.makePushNotificationRequestJSObject(notification.request)
       })
       call.success([
@@ -94,14 +94,14 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
     call.unimplemented()
   }
 
-  @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification){
+  @objc public func didRegisterForRemoteNotificationsWithDeviceToken(notification: NSNotification) {
     if let deviceToken = notification.object as? Data {
       let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
-      notifyListeners("registration", data:[
+      notifyListeners("registration", data: [
         "value": deviceTokenString
       ])
     } else if let stringToken = notification.object as? String {
-      notifyListeners("registration", data:[
+      notifyListeners("registration", data: [
         "value": stringToken
       ])
     } else {
@@ -111,11 +111,11 @@ public class CAPPushNotificationsPlugin : CAPPlugin {
     }
   }
 
-  @objc public func didFailToRegisterForRemoteNotificationsWithError(notification: NSNotification){
+  @objc public func didFailToRegisterForRemoteNotificationsWithError(notification: NSNotification) {
     guard let error = notification.object as? Error else {
       return
     }
-    notifyListeners("registrationError", data:[
+    notifyListeners("registrationError", data: [
       "error": error.localizedDescription
     ])
   }

@@ -37,7 +37,10 @@ describe('Init', () => {
   });
 
   it('Should init a project with webDir set', async () => {
-    await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm --web-dir="build"`);
+    await run(
+      appDir,
+      `init "${APP_NAME}" "${APP_ID}" --npm-client npm --web-dir="build"`,
+    );
     expect(await FS.exists('capacitor.config.json')).toBe(true);
 
     const fileContents = await FS.read('capacitor.config.json');
@@ -49,7 +52,10 @@ describe('Init', () => {
   });
 
   it('Should init a project with webDir set', async () => {
-    await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm --web-dir=""`);
+    await run(
+      appDir,
+      `init "${APP_NAME}" "${APP_ID}" --npm-client npm --web-dir=""`,
+    );
     expect(await FS.exists('capacitor.config.json')).toBe(true);
 
     const fileContents = await FS.read('capacitor.config.json');
@@ -61,7 +67,10 @@ describe('Init', () => {
   });
 
   it('Should init a project with webDir passed without a value', async () => {
-    await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm --web-dir`);
+    await run(
+      appDir,
+      `init "${APP_NAME}" "${APP_ID}" --npm-client npm --web-dir`,
+    );
     expect(await FS.exists('capacitor.config.json')).toBe(true);
 
     const fileContents = await FS.read('capacitor.config.json');
@@ -72,8 +81,11 @@ describe('Init', () => {
     expect(jsonContents.webDir).toEqual('www');
   });
 
-  it.each(['yarn', 'npm'])('Should set npm client (%s)', async (npmClient) => {
-    await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client ${npmClient} --web-dir`);
+  it.each(['yarn', 'npm'])('Should set npm client (%s)', async npmClient => {
+    await run(
+      appDir,
+      `init "${APP_NAME}" "${APP_ID}" --npm-client ${npmClient} --web-dir`,
+    );
     expect(await FS.exists('capacitor.config.json')).toBe(true);
 
     const fileContents = await FS.read('capacitor.config.json');

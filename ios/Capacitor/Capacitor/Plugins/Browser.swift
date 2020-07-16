@@ -2,9 +2,9 @@ import Foundation
 import SafariServices
 
 @objc(CAPBrowserPlugin)
-public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
+public class CAPBrowserPlugin: CAPPlugin, SFSafariViewControllerDelegate {
   var vc: SFSafariViewController?
-  
+
   @objc func open(_ call: CAPPluginCall) {
     guard let urlString = call.getString("url") else {
       call.error("Must provide a URL to open")
@@ -33,7 +33,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
         if toolbarColor != nil {
           safariVC.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
         }
-        
+
         self?.bridge?.presentVC(safariVC, animated: true, completion: {
           call.success()
         })
@@ -43,7 +43,7 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
       call.error("Invalid URL")
     }
   }
-  
+
   @objc func close(_ call: CAPPluginCall) {
     if vc == nil {
       call.success()
@@ -54,18 +54,17 @@ public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
       }
     }
   }
-  
+
   @objc func prefetch(_ call: CAPPluginCall) {
     call.unimplemented()
   }
-  
+
   public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
     self.notifyListeners("browserFinished", data: [:])
     vc = nil
   }
-  
+
   public func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
     self.notifyListeners("browserPageLoaded", data: [:])
   }
 }
-

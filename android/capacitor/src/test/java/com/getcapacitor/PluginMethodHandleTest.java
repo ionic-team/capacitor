@@ -1,14 +1,14 @@
 package com.getcapacitor;
 
-import org.junit.Test;
-
-import java.lang.reflect.Method;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.lang.reflect.Method;
+import org.junit.Test;
+
 public class PluginMethodHandleTest {
+
     @Test
     public void getNameReturnsMethodName() {
         PluginMethod pluginMethod = mock(PluginMethod.class);
@@ -30,7 +30,6 @@ public class PluginMethodHandleTest {
 
         assertEquals(pluginMethodHandle.getReturnType(), "returnType");
     }
-
 
     @Test
     public void getMethodReturnsMethod() {
