@@ -150,7 +150,6 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        Config.load(getActivity());
         this.config = new CapConfig(getActivity().getAssets(), config);
         Logger.init(this.config);
 

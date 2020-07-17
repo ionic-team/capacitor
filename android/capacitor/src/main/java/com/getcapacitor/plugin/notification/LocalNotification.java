@@ -2,8 +2,7 @@ package com.getcapacitor.plugin.notification;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.net.Uri;
-import com.getcapacitor.Config;
+
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
