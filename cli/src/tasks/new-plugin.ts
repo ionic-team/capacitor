@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { log, logFatal, logInfo, logWarn, runCommand, runTask, writePrettyJSON } from '../common';
+import { log, logFatal, logInfo, logWarn, renameGitignore, runCommand, runTask, writePrettyJSON } from '../common';
 import { OS } from '../definitions';
 import { emoji } from '../util/emoji';
 import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync } from '../util/fs';
@@ -107,6 +107,7 @@ export async function newPlugin(config: Config) {
 
     await runTask('Adding plugin files', async () => {
       await copy(config.plugins.assets.templateDir, pluginPath);
+      await renameGitignore(pluginPath);
       await createTSPlugin(config, pluginPath, domain, className, answers);
       await createIosPlugin(config, pluginPath, domain, className, answers);
       await createAndroidPlugin(config, pluginPath, domain, className);
