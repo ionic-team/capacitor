@@ -5,8 +5,7 @@
     "./android/",
     "./ios/",
     "./cli/",
-    "./core/",
-    "./electron/"
+    "./core/"
   ],
   "version": "2.3.0"
 }
