@@ -2,7 +2,6 @@ package com.getcapacitor.plugin.notification;
 
 import android.content.ContentResolver;
 import android.content.Context;
-
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
