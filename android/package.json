@@ -6,7 +6,7 @@
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "scripts": {
-    "verify": "./gradlew clean build -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true"
+    "verify": "./gradlew clean build test -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true"
   },
   "repository": {
     "type": "git",
