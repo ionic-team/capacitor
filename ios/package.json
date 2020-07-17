@@ -5,6 +5,9 @@
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
+  "scripts": {
+    "verify": "pod lib lint --allow-warnings Capacitor.podspec && pod lib lint --allow-warnings CapacitorCordova.podspec"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ionic-team/capacitor.git"
