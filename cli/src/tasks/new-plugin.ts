@@ -4,6 +4,7 @@ import {
   logFatal,
   logInfo,
   logWarn,
+  renameGitignore,
   runCommand,
   runTask,
   writePrettyJSON,
@@ -120,6 +121,7 @@ export async function newPlugin(config: Config) {
 
     await runTask('Adding plugin files', async () => {
       await copy(config.plugins.assets.templateDir, pluginPath);
+      await renameGitignore(pluginPath);
       await createTSPlugin(config, pluginPath, domain, className, answers);
       await createIosPlugin(config, pluginPath, domain, className, answers);
       await createAndroidPlugin(config, pluginPath, domain, className);
