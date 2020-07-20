@@ -33,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 /**
  * The Camera plugin makes it easy to take a photo or have the user select a photo
@@ -175,6 +176,7 @@ public class Camera extends Plugin {
         settings.setHeight(call.getInt("height", 0));
         settings.setShouldResize(settings.getWidth() > 0 || settings.getHeight() > 0);
         settings.setShouldCorrectOrientation(call.getBoolean("correctOrientation", CameraSettings.DEFAULT_CORRECT_ORIENTATION));
+        settings.setPreserveAspectRatio(call.getBoolean("preserveAspectRatio", true));
         try {
             settings.setSource(CameraSource.valueOf(call.getString("source", CameraSource.PROMPT.getSource())));
         } catch (IllegalArgumentException ex) {
@@ -404,7 +406,7 @@ public class Camera extends Plugin {
         }
 
         if (settings.isShouldResize()) {
-            final Bitmap newBitmap = ImageUtils.resize(bitmap, settings.getWidth(), settings.getHeight());
+            final Bitmap newBitmap = ImageUtils.resize(bitmap, settings.getWidth(), settings.getHeight(), settings.getPreserveAspectRatio());
             bitmap = replaceBitmap(bitmap, newBitmap);
         }
         return bitmap;
