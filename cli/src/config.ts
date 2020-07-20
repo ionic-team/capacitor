@@ -95,6 +95,7 @@ export class Config implements CliConfig {
   };
 
   platforms: string[] = [];
+  knownCommunityPlatforms = ['electron'];
 
   constructor(os: string, currentWorkingDir: string, cliBinDir: string) {
     this.initOS(os);
