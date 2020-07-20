@@ -323,32 +323,32 @@ public class CAPCameraPlugin: CAPPlugin, UIImagePickerControllerDelegate, UINavi
     }
     return resizeImageWithoutPreservingAspectRatio(image)
   }
-  
+
   func resizeImagePreservingAspectRatio(_ image: UIImage) -> UIImage? {
     let imageHeight = Float(image.size.height)
     let imageWidth = Float(image.size.width)
-    
+
     // 0 is treated as 'no restriction'
     let maxHeight = settings.height == 0 ? imageHeight : settings.height
     let maxWidth = settings.width == 0 ? imageWidth : settings.width
-    
+
     // resize with preserved aspect ratio
     var newWidth = min(imageWidth, maxWidth)
     var newHeight = (imageHeight * newWidth) / imageWidth
-    if (newHeight > maxHeight) {
-      newWidth = (imageWidth * maxHeight) / imageHeight;
-      newHeight = maxHeight;
+    if newHeight > maxHeight {
+      newWidth = (imageWidth * maxHeight) / imageHeight
+      newHeight = maxHeight
     }
     let size = CGSize.init(width: Int(newWidth), height: Int(newHeight))
-    
+
     UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
     image.draw(in: CGRect(origin: CGPoint.zero, size: size))
-    
+
     let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
     return scaledImage
   }
-  
+
   func resizeImageWithoutPreservingAspectRatio(_ image: UIImage) -> UIImage? {
     let isAspectScale = settings.width > 0 && settings.height == 0 || settings.height > 0 && settings.width == 0
     let aspect = Float(image.size.width / image.size.height)

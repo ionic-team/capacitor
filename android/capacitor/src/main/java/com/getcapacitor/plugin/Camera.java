@@ -338,7 +338,12 @@ public class Camera extends Plugin {
         if (saveToGallery && (imageEditedFileSavePath != null || imageFileSavePath != null)) {
             try {
                 String fileToSave = imageEditedFileSavePath != null ? imageEditedFileSavePath : imageFileSavePath;
-                MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), fileToSave, "IMG" + UUID.randomUUID().toString(), "");
+                MediaStore.Images.Media.insertImage(
+                    getActivity().getContentResolver(),
+                    fileToSave,
+                    "IMG" + UUID.randomUUID().toString(),
+                    ""
+                );
             } catch (FileNotFoundException e) {
                 Logger.error(getLogTag(), IMAGE_GALLERY_SAVE_ERROR, e);
             }
@@ -406,7 +411,12 @@ public class Camera extends Plugin {
         }
 
         if (settings.isShouldResize()) {
-            final Bitmap newBitmap = ImageUtils.resize(bitmap, settings.getWidth(), settings.getHeight(), settings.getPreserveAspectRatio());
+            final Bitmap newBitmap = ImageUtils.resize(
+                bitmap,
+                settings.getWidth(),
+                settings.getHeight(),
+                settings.getPreserveAspectRatio()
+            );
             bitmap = replaceBitmap(bitmap, newBitmap);
         }
         return bitmap;
