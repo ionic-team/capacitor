@@ -2,7 +2,7 @@
   "name": "capacitor",
   "private": true,
   "scripts": {
-    "lint": "npm run prettier -- --check && npm run swiftlint --lint",
+    "lint": "npm run prettier -- --check && npm run swiftlint -- lint",
     "fmt": "npm run prettier -- --write && npm run swiftlint -- autocorrect",
     "prettier": "prettier \"**/*.{css,html,java,js,ts}\"",
     "swiftlint": "node-swiftlint",
