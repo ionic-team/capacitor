@@ -28,9 +28,6 @@ jobs:
   test-cli:
     runs-on: macos-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: ./cli
     steps:
       - uses: actions/setup-node@v1
         with:
@@ -43,13 +40,12 @@ jobs:
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
+        working-directory: ./cli
       - run: npm test
+        working-directory: ./cli
   test-core:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: ./core
     steps:
       - uses: actions/setup-node@v1
         with:
@@ -62,7 +58,9 @@ jobs:
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
       - run: npm install
       - run: npm run build
+        working-directory: ./core
       - run: npm test
+        working-directory: ./core
   test-ios:
     runs-on: macos-latest
     timeout-minutes: 30
@@ -83,6 +81,7 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+      - run: npm install
       - run: npm run verify
         working-directory: ./ios
   test-android:
@@ -98,5 +97,6 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-dependency-cache-${{ hashFiles('**/package.json') }}
+      - run: npm install
       - run: npm run verify
         working-directory: ./android
