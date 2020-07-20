@@ -10,7 +10,7 @@ import { Config } from '../src/config';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
 import { mkdirs } from 'fs-extra';
-const tmp = require('tmp');
+import * as tmp from 'tmp';
 
 const cwd = process.cwd();
 
