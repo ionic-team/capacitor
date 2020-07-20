@@ -12,11 +12,10 @@ import {
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
 import { isInteractive } from './util/term';
-import * as semver from 'semver';
-
-import * as inquirer from 'inquirer';
-
-const chalk = require('chalk');
+import semver from 'semver';
+import chalk from 'chalk';
+import which from 'which';
+import inquirer from 'inquirer';
 
 export type CheckFunction = (
   config: Config,
@@ -241,22 +240,18 @@ export function log(...args: any[]) {
 }
 
 export function logSuccess(...args: any[]) {
-  const chalk = require('chalk');
   console.log(chalk.green('[success]'), ...args);
 }
 
 export function logInfo(...args: any[]) {
-  const chalk = require('chalk');
   console.log(chalk.bold.cyan('[info]'), ...args);
 }
 
 export function logWarn(...args: any[]) {
-  const chalk = require('chalk');
   console.log(chalk.bold.yellow('[warn]'), ...args);
 }
 
 export function logError(...args: any[]) {
-  const chalk = require('chalk');
   console.error(chalk.red('[error]'), ...args);
 }
 
@@ -266,7 +261,6 @@ export function logFatal(...args: any[]): never {
 }
 
 export async function isInstalled(command: string): Promise<boolean> {
-  const which = await import('which');
   return new Promise<boolean>(resolve => {
     which(command, err => {
       if (err) {
@@ -323,7 +317,6 @@ export async function runTask<T>(
     let taskInfoMessage;
     const value = await fn((message: string) => (taskInfoMessage = message));
     const elapsed = process.hrtime(start);
-    const chalk = require('chalk');
     if (taskInfoMessage) {
       spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`);
     } else {

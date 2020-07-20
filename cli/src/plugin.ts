@@ -1,5 +1,7 @@
-import { Config } from './config';
 import { join } from 'path';
+import chalk from 'chalk';
+
+import { Config } from './config';
 import { log, logFatal, readJSON, readXML, resolveNode } from './common';
 
 export const enum PluginType {
@@ -130,7 +132,6 @@ export function printPlugins(
   } else if (type === 'capacitor') {
     log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
   }
-  const chalk = require('chalk');
   for (let p of plugins) {
     log(`    ${chalk.bold(`${p.id}`)} (${chalk.green(p.version)})`);
   }
