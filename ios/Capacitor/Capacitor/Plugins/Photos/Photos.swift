@@ -3,10 +3,10 @@ import Photos
 
 @objc(CAPPhotosPlugin)
 public class CAPPhotosPlugin: CAPPlugin {
-  static let DEFAULT_QUANTITY = 25
-  static let DEFAULT_TYPES = "photos"
-  static let DEFAULT_THUMBNAIL_WIDTH = 256
-  static let DEFAULT_THUMBNAIL_HEIGHT = 256
+  static let defaultQuantity = 25
+  static let defaultTypes = "photos"
+  static let defaultThumbnailWidth = 256
+  static let defaultThumbnailHeight = 256
 
   // Must be lazy here because it will prompt for permissions on instantiation without it
   lazy var imageManager = PHCachingImageManager()
@@ -123,31 +123,31 @@ public class CAPPhotosPlugin: CAPPlugin {
     // Load our smart albums
     var fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
     fetchResult.enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
-      var o = JSObject()
-      o["name"] = collection.localizedTitle
-      o["identifier"] = collection.localIdentifier
-      o["type"] = "smart"
-      albums.append(o)
+      var object = JSObject()
+      object["name"] = collection.localizedTitle
+      object["identifier"] = collection.localIdentifier
+      object["type"] = "smart"
+      albums.append(object)
     })
 
     if loadSharedAlbums {
       fetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumCloudShared, options: nil)
       fetchResult.enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
-        var o = JSObject()
-        o["name"] = collection.localizedTitle
-        o["identifier"] = collection.localIdentifier
-        o["type"] = "shared"
-        albums.append(o)
+        var object = JSObject()
+        object["name"] = collection.localizedTitle
+        object["identifier"] = collection.localIdentifier
+        object["type"] = "shared"
+        albums.append(object)
       })
     }
 
     // Load our user albums
     PHCollectionList.fetchTopLevelUserCollections(with: nil).enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
-      var o = JSObject()
-      o["name"] = collection.localizedTitle
-      o["identifier"] = collection.localIdentifier
-      o["type"] = "user"
-      albums.append(o)
+      var object = JSObject()
+      object["name"] = collection.localizedTitle
+      object["identifier"] = collection.localIdentifier
+      object["type"] = "user"
+      albums.append(object)
     })
 
     call.success([
@@ -160,7 +160,7 @@ public class CAPPhotosPlugin: CAPPlugin {
 
     let albumId = call.getString("albumIdentifier")
 
-    let quantity = call.getInt("quantity", CAPPhotosPlugin.DEFAULT_QUANTITY)!
+    let quantity = call.getInt("quantity", CAPPhotosPlugin.defaultQuantity)!
 
     var targetCollection: PHAssetCollection?
 
@@ -184,9 +184,9 @@ public class CAPPhotosPlugin: CAPPlugin {
 
     //let after = call.getString("after")
 
-    let types = call.getString("types") ?? CAPPhotosPlugin.DEFAULT_TYPES
-    let thumbnailWidth = call.getInt("thumbnailWidth", CAPPhotosPlugin.DEFAULT_THUMBNAIL_WIDTH)!
-    let thumbnailHeight = call.getInt("thumbnailHeight", CAPPhotosPlugin.DEFAULT_THUMBNAIL_HEIGHT)!
+    let types = call.getString("types") ?? CAPPhotosPlugin.defaultTypes
+    let thumbnailWidth = call.getInt("thumbnailWidth", CAPPhotosPlugin.defaultThumbnailWidth)!
+    let thumbnailHeight = call.getInt("thumbnailHeight", CAPPhotosPlugin.defaultThumbnailHeight)!
     let thumbnailSize = CGSize(width: thumbnailWidth, height: thumbnailHeight)
     let thumbnailQuality = call.getInt("thumbnailQuality", 95)!
 
@@ -205,28 +205,28 @@ public class CAPPhotosPlugin: CAPPlugin {
         return
       }
 
-      var a = JSObject()
+      var object = JSObject()
 
       self.imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: requestOptions, resultHandler: { (fetchedImage, _) in
         guard let image = fetchedImage else {
           return
         }
 
-        a["identifier"] = asset.localIdentifier
+        object["identifier"] = asset.localIdentifier
 
         // TODO: We need to know original type
-        a["data"] = image.jpegData(compressionQuality: CGFloat(thumbnailQuality) / 100.0)?.base64EncodedString()
+        object["data"] = image.jpegData(compressionQuality: CGFloat(thumbnailQuality) / 100.0)?.base64EncodedString()
 
         if asset.creationDate != nil {
-          a["creationDate"] = JSDate.toString(asset.creationDate!)
+          object["creationDate"] = JSDate.toString(asset.creationDate!)
         }
-        a["fullWidth"] = asset.pixelWidth
-        a["fullHeight"] = asset.pixelHeight
-        a["thumbnailWidth"] = image.size.width
-        a["thumbnailHeight"] = image.size.height
-        a["location"] = self.makeLocation(asset)
+        object["fullWidth"] = asset.pixelWidth
+        object["fullHeight"] = asset.pixelHeight
+        object["thumbnailWidth"] = image.size.width
+        object["thumbnailHeight"] = image.size.height
+        object["location"] = self.makeLocation(asset)
 
-        assets.append(a)
+        assets.append(object)
       })
     })
 

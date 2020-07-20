@@ -15,7 +15,7 @@ enum CameraDirection: String {
 enum CameraResultType: String {
   case base64 = "base64"
   case uri = "uri"
-  case DATA_URL = "dataUrl"
+  case dataURL = "dataUrl"
 }
 
 struct CameraSettings {
@@ -33,8 +33,8 @@ struct CameraSettings {
 
 @objc(CAPCameraPlugin)
 public class CAPCameraPlugin: CAPPlugin, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
-  let DEFAULT_SOURCE = CameraSource.prompt
-  let DEFAULT_DIRECTION = CameraDirection.rear
+  let defaultSource = CameraSource.prompt
+  let defaultDirection = CameraDirection.rear
 
   var imagePicker: UIImagePickerController?
   var call: CAPPluginCall?
@@ -68,8 +68,8 @@ public class CAPCameraPlugin: CAPPlugin, UIImagePickerControllerDelegate, UINavi
     var settings = CameraSettings()
     settings.quality = call.get("quality", Float.self, 100)!
     settings.allowEditing = call.get("allowEditing", Bool.self, false)!
-    settings.source = CameraSource(rawValue: call.getString("source") ?? DEFAULT_SOURCE.rawValue) ?? DEFAULT_SOURCE
-    settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
+    settings.source = CameraSource(rawValue: call.getString("source") ?? defaultSource.rawValue) ?? defaultSource
+    settings.direction = CameraDirection(rawValue: call.getString("direction") ?? defaultDirection.rawValue) ?? defaultDirection
     settings.resultType = call.get("resultType", String.self, "base64")!
     settings.saveToGallery = call.get("saveToGallery", Bool.self, false)!
 
@@ -266,7 +266,7 @@ public class CAPCameraPlugin: CAPPlugin, UIImagePickerControllerDelegate, UINavi
         "exif": makeExif(imageMetadata) ?? [:],
         "format": "jpeg"
       ])
-    } else if settings.resultType == CameraResultType.DATA_URL.rawValue {
+    } else if settings.resultType == CameraResultType.dataURL.rawValue {
       let base64String = jpeg.base64EncodedString()
 
       self.call?.success([
@@ -275,8 +275,7 @@ public class CAPCameraPlugin: CAPPlugin, UIImagePickerControllerDelegate, UINavi
         "format": "jpeg"
       ])
     } else if settings.resultType == CameraResultType.uri.rawValue {
-      let path = try! saveTemporaryImage(jpeg)
-      guard let webPath = CAPFileManager.getPortablePath(host: bridge?.getLocalUrl() ?? "", uri: URL(string: path)) else {
+      guard let path = try? saveTemporaryImage(jpeg), let webPath = CAPFileManager.getPortablePath(host: bridge?.getLocalUrl() ?? "", uri: URL(string: path)) else {
         call?.reject("Unable to get portable path to file")
         return
       }
@@ -293,8 +292,7 @@ public class CAPCameraPlugin: CAPPlugin, UIImagePickerControllerDelegate, UINavi
 
   func metadataFromImageData(data: NSData) -> [String: Any]? {
     let options = [kCGImageSourceShouldCache as String: kCFBooleanFalse]
-    if let imgSrc = CGImageSourceCreateWithData(data, options as CFDictionary) {
-      let metadata = CGImageSourceCopyPropertiesAtIndex(imgSrc, 0, options as CFDictionary) as! [String: Any]
+    if let imgSrc = CGImageSourceCreateWithData(data, options as CFDictionary), let metadata = CGImageSourceCopyPropertiesAtIndex(imgSrc, 0, options as CFDictionary) as? [String: Any] {
       return metadata
     }
     return nil

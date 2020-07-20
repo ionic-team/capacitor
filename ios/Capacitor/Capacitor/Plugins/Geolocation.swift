@@ -23,8 +23,8 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
     // TODO: Allow user to configure accuracy, request/authorization mode
     self.locationManager.delegate = self
     self.locationManager.requestWhenInUseAuthorization()
-    let shouldWatch = options["watch"] as! Bool
-    if call.getBool("enableHighAccuracy", false)! {
+    let shouldWatch = options["watch"] as? Bool ?? false
+    if call.getBool("enableHighAccuracy", false) == true {
       if shouldWatch {
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
       } else {

@@ -25,13 +25,14 @@ import SystemConfiguration
 import Foundation
 
 public enum ReachabilityError: Error {
-  case FailedToCreateWithAddress(sockaddr_in)
-  case FailedToCreateWithHostname(String)
-  case UnableToSetCallback
-  case UnableToSetDispatchQueue
+  case failedToCreateWithAddress(sockaddr_in)
+  case failedToCreateWithHostname(String)
+  case unableToSetCallback
+  case unableToSetDispatchQueue
 }
 
 @available(*, unavailable, renamed: "Notification.Name.reachabilityChanged")
+// swiftlint:disable:next identifier_name
 public let ReachabilityChangedNotification = NSNotification.Name("ReachabilityChangedNotification")
 
 extension Notification.Name {
@@ -77,7 +78,7 @@ public class Reachability {
   public var whenReachable: NetworkReachable?
   public var whenUnreachable: NetworkUnreachable?
 
-  @available(*, deprecated: 4.0, renamed: "allowsCellularConnection")
+  @available(swift, deprecated: 1.0, renamed: "allowsCellularConnection")
   public let reachableOnWWAN: Bool = true
 
   /// Set to `false` to force Reachability.connection to .none when on cellular connection (default value `true`)
@@ -86,7 +87,7 @@ public class Reachability {
   // The notification center on which "reachability changed" events are being posted
   public var notificationCenter: NotificationCenter = NotificationCenter.default
 
-  @available(*, deprecated: 4.0, renamed: "connection.description")
+  @available(swift, deprecated: 1.0, renamed: "connection.description")
   public var currentReachabilityString: String {
     return "\(connection)"
   }
@@ -180,12 +181,12 @@ public extension Reachability {
     context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())
     if !SCNetworkReachabilitySetCallback(reachabilityRef, callback, &context) {
       stopNotifier()
-      throw ReachabilityError.UnableToSetCallback
+      throw ReachabilityError.unableToSetCallback
     }
 
     if !SCNetworkReachabilitySetDispatchQueue(reachabilityRef, reachabilitySerialQueue) {
       stopNotifier()
-      throw ReachabilityError.UnableToSetDispatchQueue
+      throw ReachabilityError.unableToSetDispatchQueue
     }
 
     // Perform an initial check
@@ -204,7 +205,7 @@ public extension Reachability {
   }
 
   // MARK: - *** Connection test methods ***
-  @available(*, deprecated: 4.0, message: "Please use `connection != .none`")
+  @available(swift, deprecated: 1.0, message: "Please use `connection != .none`")
   var isReachable: Bool {
 
     guard isReachableFlagSet else { return false }
@@ -223,13 +224,13 @@ public extension Reachability {
     return true
   }
 
-  @available(*, deprecated: 4.0, message: "Please use `connection == .cellular`")
+  @available(swift, deprecated: 1.0, message: "Please use `connection == .cellular`")
   var isReachableViaWWAN: Bool {
     // Check we're not on the simulator, we're REACHABLE and check we're on WWAN
     return isRunningOnDevice && isReachableFlagSet && isOnWWANFlagSet
   }
 
-  @available(*, deprecated: 4.0, message: "Please use `connection == .wifi`")
+  @available(swift, deprecated: 1.0, message: "Please use `connection == .wifi`")
   var isReachableViaWiFi: Bool {
 
     // Check we're reachable
@@ -243,7 +244,7 @@ public extension Reachability {
   }
 
   var description: String {
-
+    // swiftlint:disable identifier_name
     let W = isRunningOnDevice ? (isOnWWANFlagSet ? "W" : "-") : "X"
     let R = isReachableFlagSet ? "R" : "-"
     let c = isConnectionRequiredFlagSet ? "c" : "-"
@@ -255,6 +256,7 @@ public extension Reachability {
     let d = isDirectFlagSet ? "d" : "-"
 
     return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)"
+    // swiftlint:enable identifier_name
   }
 }
 

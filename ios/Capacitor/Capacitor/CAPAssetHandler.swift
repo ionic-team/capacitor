@@ -14,8 +14,8 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
       let url = urlSchemeTask.request.url!
       let stringToLoad = url.path
 
-      if stringToLoad.starts(with: CAPBridge.CAP_FILE_START) {
-        startPath = stringToLoad.replacingOccurrences(of: CAPBridge.CAP_FILE_START, with: "")
+      if stringToLoad.starts(with: CAPBridge.fileStartIdentifier) {
+        startPath = stringToLoad.replacingOccurrences(of: CAPBridge.fileStartIdentifier, with: "")
       } else if stringToLoad.isEmpty || url.pathExtension.isEmpty {
         startPath.append("/index.html")
       } else {
