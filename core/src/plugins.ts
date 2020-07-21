@@ -26,7 +26,7 @@ const PLUGIN_REGISTRY = new (class {
  * e.g. 'android', 'ios', and 'web'. Each value must be an instance of a plugin
  * implementation for the respective platform.
  */
-export type RegisterPluginImplementations<T> = {
+export type PluginImplementations<T> = {
   [platform: string]: T;
 };
 
@@ -36,7 +36,7 @@ export type RegisterPluginImplementations<T> = {
 export class RegisteredPlugin<T> {
   constructor(
     readonly name: string,
-    readonly implementations: Readonly<RegisterPluginImplementations<T>>,
+    readonly implementations: Readonly<PluginImplementations<T>>,
   ) {}
 
   /**
@@ -69,7 +69,7 @@ export class RegisteredPlugin<T> {
  */
 export const registerPlugin = <T>(
   name: string,
-  implementations: Readonly<RegisterPluginImplementations<T>>,
+  implementations: Readonly<PluginImplementations<T>>,
 ): RegisteredPlugin<T> => {
   const plugin = new RegisteredPlugin(name, implementations);
   PLUGIN_REGISTRY.register(plugin);
@@ -89,7 +89,7 @@ export const registerWebPlugin = (plugin: WebPlugin) => {
 
   if (!PLUGIN_REGISTRY.has(plugin.config.name)) {
     const { name, platforms = ['web'] } = plugin.config;
-    const implementations: RegisterPluginImplementations<unknown> = {};
+    const implementations: PluginImplementations<unknown> = {};
 
     PLUGIN_REGISTRY.register(
       new RegisteredPlugin(

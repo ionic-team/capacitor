@@ -1,10 +1,21 @@
-import { Plugins, registerPlugin } from '@capacitor/core';
+import {
+  Plugins,
+  PluginImplementations,
+  registerPlugin,
+} from '@capacitor/core';
+
+import { MyPluginPlugin } from './definitions';
 import { MyPluginWeb } from './web';
 
-const MyPlugin = registerPlugin('ScreenReader', {
+const implementations: PluginImplementations<MyPluginPlugin> = {
   android: Plugins.MyPlugin,
   ios: Plugins.MyPlugin,
   web: new MyPluginWeb(),
-}).getImplementation();
+};
+
+const MyPlugin = registerPlugin(
+  'MyPlugin',
+  implementations,
+).getImplementation();
 
 export { MyPlugin };

@@ -171,7 +171,7 @@ async function createTSPlugin(
     'utf8',
   );
   const index = originalIndex.replace(/MyPlugin/g, className);
-  const definitions = originalDefinitions.replace(/Echo/g, className);
+  const definitions = originalDefinitions.replace(/MyPlugin/g, className);
   const web = originalWeb.replace(/MyPlugin/g, className);
 
   await writeFileAsync(join(newPluginPath, `index.ts`), index, 'utf8');
@@ -327,7 +327,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
       rimraf: '^3.0.0',
       rollup: '^2.21.0',
       swiftlint: '^1.0.1',
-      typescript: '~3.8.3',
+      typescript: '~3.9.7',
     },
     peerDependencies: {
       '@capacitor/core': `^${cliVersion}`,
