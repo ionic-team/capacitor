@@ -15,6 +15,7 @@ public class CameraSettings {
     private int width = 0;
     private int height = 0;
     private CameraSource source = CameraSource.PROMPT;
+    private boolean preserveAspectRatio = false;
 
     public CameraResultType getResultType() {
         return resultType;
@@ -82,5 +83,13 @@ public class CameraSettings {
 
     public void setSource(CameraSource source) {
         this.source = source;
+    }
+
+    public void setPreserveAspectRatio(boolean preserveAspectRatio) {
+        this.preserveAspectRatio = preserveAspectRatio;
+    }
+
+    public boolean getPreserveAspectRatio() {
+        return this.preserveAspectRatio;
     }
 }
