@@ -61,8 +61,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     let messageHandler = CAPMessageHandlerWrapper()
     self.handler = CAPAssetHandler()
     self.handler!.setAssetPath(startPath)
-    var specifiedScheme = CAPBridge.CAP_DEFAULT_SCHEME
-    let configScheme = capConfig.getString("server.iosScheme") ?? CAPBridge.CAP_DEFAULT_SCHEME
+    var specifiedScheme = CAPBridge.defaultScheme
+    let configScheme = capConfig.getString("server.iosScheme") ?? CAPBridge.defaultScheme
     // check if WebKit handles scheme and if it is valid according to Apple's documentation
     if !WKWebView.handlesURLScheme(configScheme) && configScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
       specifiedScheme = configScheme.lowercased()
@@ -202,7 +202,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     if bridge!.isDevMode() && bridge!.config.getString("server.url") != nil {
       let toastPlugin = bridge!.getOrLoadPlugin(pluginName: "Toast") as? CAPToastPlugin
-      toastPlugin!.showToast(vc: self, text: "Using app server \(hostname!)", duration: 3500)
+      toastPlugin!.showToast(in: self, text: "Using app server \(hostname!)", duration: 3500)
     }
 
     CAPLog.print("⚡️  Loading app at \(hostname!)...")

@@ -12,7 +12,7 @@ extension CAPBridgeDelegate {
       let type = dict["type"] as? String ?? ""
 
       if type == "js.error" {
-        if let error = dict["error"] as! [String: Any]? {
+        if let error = dict["error"] as? [String: Any] {
           handleJSStartupError(error)
         }
       } else if type == "message" {

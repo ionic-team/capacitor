@@ -42,7 +42,14 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     let spinnerColor = getConfigValue("spinnerColor") as? String ?? nil
     showSpinner = getConfigValue("showSpinner") as? Bool ?? false
 
-    showSplash(showDuration: showDuration, fadeInDuration: fadeInDuration, fadeOutDuration: fadeOutDuration, autoHide: autoHide, backgroundColor: backgroundColor, spinnerStyle: spinnerStyle, spinnerColor: spinnerColor, completion: {
+    showSplash(showDuration: showDuration,
+      fadeInDuration: fadeInDuration,
+      fadeOutDuration: fadeOutDuration,
+      autoHide: autoHide,
+      backgroundColor: backgroundColor,
+      spinnerStyle: spinnerStyle,
+      spinnerColor: spinnerColor,
+      completion: {
         call.success()
       }, isLaunchSplash: false)
   }
@@ -128,10 +135,20 @@ public class CAPSplashScreenPlugin: CAPPlugin {
       spinner.centerYAnchor.constraint(equalTo: view!.centerYAnchor).isActive = true
     }
 
-    showSplash(showDuration: launchShowDurationConfig, fadeInDuration: 0, fadeOutDuration: defaultFadeOutDuration, autoHide: launchAutoHideConfig, backgroundColor: launchBackgroundColorConfig, spinnerStyle: launchSpinnerStyleConfig, spinnerColor: launchSpinnerColorConfig, completion: {
-    }, isLaunchSplash: true)
+    showSplash(showDuration: launchShowDurationConfig,
+      fadeInDuration: 0,
+      fadeOutDuration: defaultFadeOutDuration,
+      autoHide: launchAutoHideConfig,
+      backgroundColor: launchBackgroundColorConfig,
+      spinnerStyle: launchSpinnerStyleConfig,
+      spinnerColor: launchSpinnerColorConfig,
+      completion: {},
+      isLaunchSplash: true)
   }
 
+  // disable linting for the large number of parameters, since this is meant to be an internal method.
+  // although a struct might be a better refactor in the future.
+  // swiftlint:disable:next function_parameter_count
   func showSplash(showDuration: Int, fadeInDuration: Int, fadeOutDuration: Int, autoHide: Bool, backgroundColor: String?, spinnerStyle: String?, spinnerColor: String?, completion: @escaping () -> Void, isLaunchSplash: Bool) {
     DispatchQueue.main.async { [weak self] in
       guard let strongSelf = self, let view = strongSelf.bridge?.viewController?.view else {

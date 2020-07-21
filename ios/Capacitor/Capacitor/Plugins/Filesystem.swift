@@ -2,7 +2,7 @@ import Foundation
 
 @objc(CAPFilesystemPlugin)
 public class CAPFilesystemPlugin: CAPPlugin {
-  let DEFAULT_DIRECTORY = "DOCUMENTS"
+  let defaultDirectory = "DOCUMENTS"
 
   /**
    * Get the SearchPathDirectory corresponding to the JS string
@@ -53,7 +53,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       handleError(call, "path must be provided and must be a string.")
       return
     }
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directoryOption = call.get("directory", String.self, defaultDirectory)!
 
     guard let fileUrl = getFileUrl(file, directoryOption) else {
       handleError(call, "Invalid path")
@@ -94,7 +94,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self) ?? defaultDirectory
 
     guard let fileUrl = getFileUrl(file, directoryOption) else {
       handleError(call, "Invalid path")
@@ -145,7 +145,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self) ?? defaultDirectory
     guard let fileUrl = getFileUrl(file, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -204,7 +204,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self) ?? DEFAULT_DIRECTORY
+    let directoryOption = call.get("directory", String.self) ?? defaultDirectory
     guard let fileUrl = getFileUrl(file, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -231,7 +231,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
     }
 
     let recursive = call.get("recursive", Bool.self, false)!
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directoryOption = call.get("directory", String.self, defaultDirectory)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -254,7 +254,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directoryOption = call.get("directory", String.self, defaultDirectory)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -289,7 +289,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directoryOption = call.get("directory", String.self, defaultDirectory)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -317,7 +317,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directoryOption = call.get("directory", String.self, defaultDirectory)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -326,10 +326,10 @@ public class CAPFilesystemPlugin: CAPPlugin {
     do {
       let attr = try FileManager.default.attributesOfItem(atPath: fileUrl.path)
       call.success([
-        "type": attr[.type] as! String,
-        "size": attr[.size] as! UInt64,
-        "ctime": (attr[.creationDate] as! Date).timeIntervalSince1970,
-        "mtime": (attr[.modificationDate] as! Date).timeIntervalSince1970,
+        "type": attr[.type] as? String ?? "",
+        "size": attr[.size] as? UInt64 ?? "",
+        "ctime": (attr[.creationDate] as? Date)?.timeIntervalSince1970 ?? "",
+        "mtime": (attr[.modificationDate] as? Date)?.timeIntervalSince1970 ?? "",
         "uri": fileUrl.absoluteString
       ])
     } catch {
@@ -343,7 +343,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directoryOption = call.get("directory", String.self, defaultDirectory)!
     guard let fileUrl = getFileUrl(path, directoryOption) else {
       handleError(call, "Invalid path")
       return
@@ -378,7 +378,7 @@ public class CAPFilesystemPlugin: CAPPlugin {
       return
     }
 
-    let directoryOption = call.get("directory", String.self, DEFAULT_DIRECTORY)!
+    let directoryOption = call.get("directory", String.self, defaultDirectory)!
     var toDirectoryOption = call.get("toDirectory", String.self, "")!
 
     if toDirectoryOption == "" {

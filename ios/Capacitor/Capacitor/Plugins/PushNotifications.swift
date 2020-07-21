@@ -15,8 +15,14 @@ public class CAPPushNotificationsPlugin: CAPPlugin {
   var notificationRequestLookup = [String: JSObject]()
 
   override public func load() {
-    NotificationCenter.default.addObserver(self, selector: #selector(self.didRegisterForRemoteNotificationsWithDeviceToken(notification:)), name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(self.didFailToRegisterForRemoteNotificationsWithError(notification:)), name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()), object: nil)
+    NotificationCenter.default.addObserver(self,
+      selector: #selector(self.didRegisterForRemoteNotificationsWithDeviceToken(notification:)),
+      name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()),
+      object: nil)
+    NotificationCenter.default.addObserver(self,
+      selector: #selector(self.didFailToRegisterForRemoteNotificationsWithError(notification:)),
+      name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()),
+      object: nil)
   }
 
   /**
@@ -33,7 +39,7 @@ public class CAPPushNotificationsPlugin: CAPPlugin {
    * Request notification permission
    */
   @objc func requestPermission(_ call: CAPPluginCall) {
-    self.bridge?.notificationsDelegate.requestPermissions { granted, error in
+    self.bridge?.notificationDelegationHandler.requestPermissions { granted, error in
         guard error == nil else {
             call.error(error!.localizedDescription)
             return
@@ -48,7 +54,7 @@ public class CAPPushNotificationsPlugin: CAPPlugin {
   @objc func getDeliveredNotifications(_ call: CAPPluginCall) {
     UNUserNotificationCenter.current().getDeliveredNotifications(completionHandler: { [weak self] (notifications) in
       let ret = notifications.compactMap({ (notification) -> [String: Any]? in
-        return self?.bridge?.notificationsDelegate.makePushNotificationRequestJSObject(notification.request)
+        return self?.bridge?.notificationDelegationHandler.makePushNotificationRequestJSObject(notification.request)
       })
       call.success([
         "notifications": ret

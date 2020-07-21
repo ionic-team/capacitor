@@ -70,9 +70,9 @@ public class CAPModalsPlugin: CAPPlugin {
       }
 
       alert.addAction(UIAlertAction(title: okButtonTitle, style: UIAlertAction.Style.default, handler: { (_) -> Void in
-        let textField = alert.textFields![0] as UITextField
+        let textField = alert.textFields?[0]
         call.success([
-          "value": textField.text ?? "",
+          "value": textField?.text ?? "",
           "cancelled": false
         ])
       }))
