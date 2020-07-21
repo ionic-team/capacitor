@@ -1,4 +1,4 @@
-import { Capacitor } from './global';
+import { Capacitor, Plugins } from './global';
 import { WebPlugin } from './web';
 
 const PLUGIN_REGISTRY = new (class {
@@ -8,6 +8,10 @@ const PLUGIN_REGISTRY = new (class {
 
   get(name: string): RegisteredPlugin<unknown> | undefined {
     return this.plugins[name];
+  }
+
+  getAll(): RegisteredPlugin<unknown>[] {
+    return Object.values(this.plugins);
   }
 
   has(name: string): boolean {
@@ -100,5 +104,25 @@ export const registerWebPlugin = (plugin: WebPlugin) => {
         }, implementations),
       ),
     );
+
+    mergeWebPlugin(plugin);
   }
+};
+
+const shouldMergeWebPlugin = (plugin: WebPlugin) => {
+  return (
+    plugin.config.platforms &&
+    plugin.config.platforms.indexOf(Capacitor.platform) >= 0
+  );
+};
+
+const mergeWebPlugin = (plugin: WebPlugin) => {
+  if (
+    Plugins.hasOwnProperty(plugin.config.name) &&
+    !shouldMergeWebPlugin(plugin)
+  ) {
+    return;
+  }
+
+  Plugins[plugin.config.name] = plugin;
 };
