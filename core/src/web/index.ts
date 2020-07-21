@@ -15,6 +15,13 @@ export interface WebPluginConfig {
    * The name of the plugin
    */
   readonly name: string;
+
+  /**
+   * TODO
+   *
+   * @deprecated Don't use this.
+   */
+  readonly platforms?: string[];
 }
 
 export class WebPlugin {

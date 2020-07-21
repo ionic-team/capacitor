@@ -10,6 +10,10 @@ const PLUGIN_REGISTRY = new (class {
     return this.plugins[name];
   }
 
+  has(name: string): boolean {
+    return !!this.get(name);
+  }
+
   register(plugin: RegisteredPlugin<unknown>): void {
     this.plugins[plugin.name] = plugin;
   }
@@ -23,7 +27,7 @@ const PLUGIN_REGISTRY = new (class {
  * implementation for the respective platform.
  */
 export type RegisterPluginImplementations<T> = {
-  readonly [platform: string]: T;
+  [platform: string]: T;
 };
 
 /**
@@ -32,7 +36,7 @@ export type RegisterPluginImplementations<T> = {
 export class RegisteredPlugin<T> {
   constructor(
     readonly name: string,
-    readonly implementations: RegisterPluginImplementations<T>,
+    readonly implementations: Readonly<RegisterPluginImplementations<T>>,
   ) {}
 
   /**
@@ -65,7 +69,7 @@ export class RegisteredPlugin<T> {
  */
 export const registerPlugin = <T>(
   name: string,
-  implementations: RegisterPluginImplementations<T>,
+  implementations: Readonly<RegisterPluginImplementations<T>>,
 ): RegisteredPlugin<T> => {
   const plugin = new RegisteredPlugin(name, implementations);
   PLUGIN_REGISTRY.register(plugin);
@@ -82,4 +86,19 @@ export const registerWebPlugin = (plugin: WebPlugin) => {
   console.warn(
     `Capacitor plugin ${plugin.config.name} is using deprecated method 'registerWebPlugin'`,
   ); // TODO: add link to upgrade guide
+
+  if (!PLUGIN_REGISTRY.has(plugin.config.name)) {
+    const { name, platforms = ['web'] } = plugin.config;
+    const implementations: RegisterPluginImplementations<unknown> = {};
+
+    PLUGIN_REGISTRY.register(
+      new RegisteredPlugin(
+        name,
+        platforms.reduce((acc, value) => {
+          acc[value] = plugin;
+          return acc;
+        }, implementations),
+      ),
+    );
+  }
 };
