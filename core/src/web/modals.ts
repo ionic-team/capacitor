@@ -13,10 +13,7 @@ import {
 
 export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
   constructor() {
-    super({
-      name: 'Modals',
-      platforms: ['web'],
-    });
+    super({ name: 'Modals' });
   }
 
   async alert(options: AlertOptions): Promise<void> {

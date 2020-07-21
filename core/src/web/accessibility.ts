@@ -9,10 +9,7 @@ import {
 export class AccessibilityPluginWeb extends WebPlugin
   implements AccessibilityPlugin {
   constructor() {
-    super({
-      name: 'Accessibility',
-      platforms: ['web'],
-    });
+    super({ name: 'Accessibility' });
   }
 
   isScreenReaderEnabled(): Promise<ScreenReaderEnabledResult> {

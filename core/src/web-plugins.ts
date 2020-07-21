@@ -1,6 +1,3 @@
-import { Plugins } from './global';
-import { mergeWebPlugins, mergeWebPlugin, WebPlugin } from './web/index';
-
 export * from './web/accessibility';
 export * from './web/app';
 export * from './web/browser';
@@ -18,9 +15,3 @@ export * from './web/permissions';
 export * from './web/splash-screen';
 export * from './web/storage';
 export * from './web/toast';
-
-mergeWebPlugins(Plugins);
-
-export const registerWebPlugin = (plugin: WebPlugin) => {
-  mergeWebPlugin(Plugins, plugin);
-};

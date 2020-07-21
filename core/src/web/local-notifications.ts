@@ -19,10 +19,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin
   private pending: LocalNotification[] = [];
 
   constructor() {
-    super({
-      name: 'LocalNotifications',
-      platforms: ['web'],
-    });
+    super({ name: 'LocalNotifications' });
   }
 
   createChannel(channel: NotificationChannel): Promise<void> {

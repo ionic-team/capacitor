@@ -6,10 +6,7 @@ declare var navigator: any;
 
 export class SharePluginWeb extends WebPlugin implements SharePlugin {
   constructor() {
-    super({
-      name: 'Share',
-      platforms: ['web'],
-    });
+    super({ name: 'Share' });
   }
 
   share(options?: ShareOptions): Promise<void> {
