@@ -2,7 +2,7 @@
   "name": "capacitor",
   "private": true,
   "scripts": {
-    "lint": "npm run prettier -- --check",
+    "lint": "npm run prettier -- --check && npm run swiftlint -- lint",
     "fmt": "npm run prettier -- --write && npm run swiftlint -- autocorrect",
     "prettier": "prettier \"**/*.{css,html,java,js,ts}\"",
     "swiftlint": "node-swiftlint",
@@ -17,7 +17,7 @@
   "prettier": "@ionic/prettier-config",
   "devDependencies": {
     "@ionic/prettier-config": "^1.0.0",
-    "@ionic/swiftlint-config": "^1.0.2",
+    "@ionic/swiftlint-config": "^1.1.1",
     "husky": "^4.2.5",
     "lerna": "^2.4.0",
     "prettier": "^2.0.5",

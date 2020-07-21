@@ -5,7 +5,7 @@ import Foundation
  */
 @objc(CAPStoragePlugin)
 public class CAPStoragePlugin: CAPPlugin {
-  let KEY_PREFIX = "_cap_"
+  let keyPrefix = "_cap_"
 
   override public func load() {
   }
@@ -71,15 +71,15 @@ public class CAPStoragePlugin: CAPPlugin {
   }
 
   func makeKey(_ key: String) -> String {
-    return KEY_PREFIX + key
+    return keyPrefix + key
   }
 
   func isKey(_ key: String) -> Bool {
-    return key.hasPrefix(KEY_PREFIX)
+    return key.hasPrefix(keyPrefix)
   }
 
   func getKey(_ key: String) -> String {
-    let prefixLen = KEY_PREFIX.count
+    let prefixLen = keyPrefix.count
     return String(key.dropFirst(prefixLen))
   }
 }

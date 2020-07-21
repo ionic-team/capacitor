@@ -12,9 +12,9 @@ enum BridgeError: Error {
   var tmpWindow: UIWindow?
   @objc public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   @objc public static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
-  public static var CAP_SITE = "https://capacitorjs.com/"
-  public static var CAP_FILE_START = "/_capacitor_file_"
-  public static let CAP_DEFAULT_SCHEME = "capacitor"
+  public static let capacitorSite = "https://capacitorjs.com/"
+  public static let fileStartIdentifier = "/_capacitor_file_"
+  public static let defaultScheme = "capacitor"
 
   // The last URL that caused the app to open
   private static var lastUrl: URL?
@@ -48,19 +48,19 @@ enum BridgeError: Error {
   // Background dispatch queue for plugin calls
   public var dispatchQueue = DispatchQueue(label: "bridge")
 
-  public var notificationsDelegate: CAPUNUserNotificationCenterDelegate
+  public var notificationDelegationHandler: CAPUNUserNotificationCenterDelegate
 
   public init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
     self.bridgeDelegate = bridgeDelegate
     self.messageHandlerWrapper = messageHandlerWrapper
-    self.notificationsDelegate = CAPUNUserNotificationCenterDelegate()
+    self.notificationDelegationHandler = CAPUNUserNotificationCenterDelegate()
     self.config = config
     self.scheme = scheme
 
     super.init()
 
     self.messageHandlerWrapper.bridge = self
-    self.notificationsDelegate.bridge = self
+    self.notificationDelegationHandler.bridge = self
     localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
     exportCoreJS(localUrl: localUrl!)
     registerPlugins()
@@ -268,16 +268,13 @@ enum BridgeError: Error {
     let releasingClasses = AutoreleasingUnsafeMutablePointer<AnyClass>(classes)
     let numClasses: Int32 = objc_getClassList(releasingClasses, classCount)
 
-    for i in 0..<Int(numClasses) {
-      if let c: AnyClass = classes[i] {
-        if class_getSuperclass(c) == CDVPlugin.self {
+    for classIndex in 0..<Int(numClasses) {
+      if let aClass: AnyClass = classes[classIndex] {
+        if class_getSuperclass(aClass) == CDVPlugin.self {
           injectCordovaFiles = true
         }
-        if class_conformsToProtocol(c, CAPBridgedPlugin.self) {
-          let pluginClassName = NSStringFromClass(c)
-          let pluginType = c as! CAPPlugin.Type
-          let bridgeType = c as! CAPBridgedPlugin.Type
-
+        if class_conformsToProtocol(aClass, CAPBridgedPlugin.self), let pluginType = aClass as? CAPPlugin.Type, let bridgeType = aClass as? CAPBridgedPlugin.Type {
+          let pluginClassName = NSStringFromClass(aClass)
           registerPlugin(pluginClassName, bridgeType.jsName(), pluginType)
         }
       }
@@ -311,16 +308,15 @@ enum BridgeError: Error {
   }
 
   public func loadPlugin(pluginName: String) -> CAPPlugin? {
-    guard let pluginType = knownPlugins[pluginName] else {
+    guard let pluginType = knownPlugins[pluginName], let bridgeType = pluginType as? CAPBridgedPlugin.Type else {
       CAPLog.print("⚡️  Unable to load plugin \(pluginName). No such module found.")
       return nil
     }
 
-    let bridgeType = pluginType as! CAPBridgedPlugin.Type
-    let p = pluginType.init(bridge: self, pluginId: bridgeType.pluginId(), pluginName: bridgeType.jsName())
-    p.load()
-    self.plugins[bridgeType.jsName()] = p
-    return p
+    let plugin = pluginType.init(bridge: self, pluginId: bridgeType.pluginId(), pluginName: bridgeType.jsName())
+    plugin.load()
+    self.plugins[bridgeType.jsName()] = plugin
+    return plugin
   }
 
   func savePluginCall(_ call: CAPPluginCall) {
@@ -392,7 +388,7 @@ enum BridgeError: Error {
   }
 
   func docLink(_ url: String) -> String {
-    return "\(CAPBridge.CAP_SITE)docs/\(url)"
+    return "\(CAPBridge.capacitorSite)docs/\(url)"
   }
 
   /**
@@ -412,8 +408,7 @@ enum BridgeError: Error {
     if call.method == "addListener" || call.method == "removeListener" {
       selector = NSSelectorFromString(call.method + ":")
     } else {
-      let bridgeType = pluginType as! CAPBridgedPlugin.Type
-      guard let method = bridgeType.getMethod(call.method) else {
+      guard let bridgeType = pluginType as? CAPBridgedPlugin.Type, let method = bridgeType.getMethod(call.method) else {
         CAPLog.print("⚡️  Error calling method \(call.method) on plugin \(call.pluginId): No method found.")
         CAPLog.print("⚡️  Ensure plugin method exists and uses @objc in its declaration, and has been defined")
         return
@@ -472,7 +467,7 @@ enum BridgeError: Error {
         return
       }
 
-      let arguments = call.options["options"] as! [Any]
+      let arguments: [Any] = call.options["options"] as? [Any] ?? []
       let pluginCall = CDVInvokedUrlCommand(arguments: arguments, callbackId: call.callbackId, className: plugin.className, methodName: call.method)
       plugin.perform(selector, with: pluginCall)
 
@@ -507,9 +502,7 @@ enum BridgeError: Error {
         }
       }
     } catch {
-      if let jsError = error as? JSProcessingError {
-        let appState = getOrLoadPlugin(pluginName: "App") as! CAPAppPlugin
-
+      if let jsError = error as? JSProcessingError, let appState = getOrLoadPlugin(pluginName: "App") as? CAPAppPlugin {
         appState.firePluginError(jsError)
       }
     }

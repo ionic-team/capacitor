@@ -43,11 +43,11 @@
   private func getConfigObjectDeepest(key: String) -> [String: Any?]? {
     let parts = key.split(separator: ".")
 
-    var o = self.config
-    for (_, k) in parts[0..<parts.count-1].enumerated() {
-      o = self.config![String(k)] as? [String: Any?]
+    var object = self.config
+    for (_, key) in parts[0..<parts.count-1].enumerated() {
+      object = self.config![String(key)] as? [String: Any?]
     }
-    return o
+    return object
   }
 
   private func getConfigKey(_ key: String) -> String {
@@ -74,9 +74,9 @@
   }
 
   @objc public func getValue(_ key: String) -> Any? {
-    let k = getConfigKey(key)
-    let o = getConfigObjectDeepest(key: key)
-    return o?[k] ?? nil
+    let key = getConfigKey(key)
+    let object = getConfigObjectDeepest(key: key)
+    return object?[key] ?? nil
   }
 
   @objc public func getString(_ key: String) -> String? {
