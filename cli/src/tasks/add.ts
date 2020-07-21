@@ -36,6 +36,16 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
       log(result);
     } else {
       logError(`platform ${selectedPlatformName} not found`);
+
+      if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
+        log(
+          `Try installing the platform first:\n` +
+            `   ${chalk.bold(
+              `npm install @capacitor-community/${selectedPlatformName}`,
+            )}\n` +
+            `Then, try adding it again.`,
+        );
+      }
     }
   } else {
     const platformName = await config.askPlatform(
