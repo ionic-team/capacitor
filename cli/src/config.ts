@@ -1,5 +1,7 @@
 import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
+import chalk from 'chalk';
+
 import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 
@@ -348,7 +350,6 @@ export class Config implements CliConfig {
   }
 
   platformNotCreatedError(platformName: string) {
-    const chalk = require('chalk');
     if (platformName === 'web') {
       logFatal(
         `Could not find the web platform directory. Make sure ${chalk.bold(

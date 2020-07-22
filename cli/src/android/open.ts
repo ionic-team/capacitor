@@ -3,6 +3,7 @@ import { OS } from '../definitions';
 import { logError, logInfo, runCommand } from '../common';
 import { existsAsync, existsSync } from '../util/fs';
 import { resolve } from 'path';
+import open from 'open';
 
 export async function openAndroid(config: Config) {
   logInfo(`Opening Android project at ${config.android.platformDir}`);
@@ -17,13 +18,11 @@ export async function openAndroid(config: Config) {
     );
   }
 
-  const opn = await import('open');
-
   const dir = config.android.platformDir;
 
   switch (config.cli.os) {
     case OS.Mac:
-      await opn(dir, { app: 'android studio', wait: false });
+      await open(dir, { app: 'android studio', wait: false });
       break;
     case OS.Windows:
       let androidStudioPath = config.windows.androidStudioPath;
@@ -43,7 +42,7 @@ export async function openAndroid(config: Config) {
         androidStudioPath = '';
       }
       if (androidStudioPath) {
-        opn(dir, { app: androidStudioPath, wait: false });
+        open(dir, { app: androidStudioPath, wait: false });
       } else {
         logError(
           'Android Studio not found. Make sure it\'s installed and configure "windowsAndroidStudioPath" ' +
@@ -68,7 +67,7 @@ export async function openAndroid(config: Config) {
       };
 
       try {
-        await opn(dir, { app: config.linux.androidStudioPath, wait: true });
+        await open(dir, { app: config.linux.androidStudioPath, wait: true });
       } catch (e) {
         linuxError();
       }

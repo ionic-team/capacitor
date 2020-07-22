@@ -10,9 +10,9 @@ import {
 import { updateCommand } from '../src/tasks/update';
 
 describe.each([false, true])('Update: iOS (monoRepoLike: %p)', monoRepoLike => {
-  let appDirObj;
-  let appDir;
-  let FS;
+  let appDirObj: any;
+  let appDir: string;
+  let FS: MappedFS;
 
   beforeAll(async () => {
     // These commands are slowww...

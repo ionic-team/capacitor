@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "experimentalDecorators": true,
-    "noEmitHelpers": true,
+    "esModuleInterop": true,
     "importHelpers": true,
-    "moduleResolution": "node",
-    "lib": [
-      "dom",
-      "es2015"
-    ],
+    "lib": ["dom", "es2015"],
     "module": "es2015",
+    "moduleResolution": "node",
+    "noEmitHelpers": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

@@ -1,6 +1,6 @@
-import * as fsExtra from 'fs-extra';
-import * as fs from 'fs';
-import * as util from 'util';
+import fsExtra from 'fs-extra';
+import fs from 'fs';
+import util from 'util';
 
 export const existsSync = (path: string) => {
   return fs.existsSync(path);

@@ -22,7 +22,7 @@ import { copyAsync, existsAsync, mkdirAsync } from '../util/fs';
 import { emoji as _e } from '../util/emoji';
 import { checkInteractive } from '../util/term';
 
-import * as inquirer from 'inquirer';
+import inquirer from 'inquirer';
 import chalk from 'chalk';
 
 export async function createCommand(
