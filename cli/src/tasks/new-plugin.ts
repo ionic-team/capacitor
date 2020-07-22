@@ -263,22 +263,40 @@ async function createAndroidPlugin(
     newPluginPath,
     `src/main/java/${domainPath}/${className}.java`,
   );
+  const newPluginJavaFunctionalityPath = join(
+    newPluginPath,
+    `src/main/java/${domainPath}/${className}Functionality.java`,
+  );
   await mkdirs(dirname(newPluginJavaPath));
 
-  // Read the original plugin java template and replace package/class names
+  // Read the original plugin java templates and replace package/class names
   const originalPluginJava = await readFileAsync(
     join(pluginPath, 'android/Plugin.java'),
     'utf8',
   );
+  const originalPluginJavaFunctionality = await readFileAsync(
+    join(pluginPath, 'android/PluginFunctionality.java'),
+    'utf8',
+  );
+
   const pluginJava = originalPluginJava
     .replace(/PACKAGE_NAME/g, domain)
     .replace(/CLASS_NAME/g, className);
+  const pluginJavaFunctionality = originalPluginJavaFunctionality
+    .replace(/PACKAGE_NAME/g, domain)
+    .replace(/CLASS_NAME/g, className);
 
-  // Write the new plugin file
+  // Write the new plugin files
   await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
+  await writeFileAsync(
+    newPluginJavaFunctionalityPath,
+    pluginJavaFunctionality,
+    'utf8',
+  );
 
-  // Remove the old template
+  // Remove the old templates
   await unlink(join(pluginPath, 'android/Plugin.java'));
+  await unlink(join(pluginPath, 'android/PluginFunctionality.java'));
 }
 
 function generateAndroidManifest(domain: string, pluginPath: string) {
