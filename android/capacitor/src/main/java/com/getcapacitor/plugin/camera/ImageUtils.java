@@ -18,6 +18,17 @@ import java.io.InputStream;
 public class ImageUtils {
 
   /**
+   * Resize an image to the given width and height.
+   * @param bitmap
+   * @param width
+   * @param height
+   * @return a new, scaled Bitmap
+   */
+  public static Bitmap resize(Bitmap bitmap, final int width, final int height) {
+    ImageUtils.resize(bitmap, width, height, false)
+  }
+
+  /**
    * Resize an image to the given width and height considering the preserveAspectRatio flag.
    * @param bitmap
    * @param width
