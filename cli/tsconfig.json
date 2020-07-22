@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-      "strict": true,
-      "lib": ["es2016"],
-      "outDir": "dist",
-      "module": "commonjs",
-      "target": "es2017",
-      "moduleResolution": "node",
-      "pretty": true,
-      //"noUnusedLocals": true,
-      //"noUnusedParameters": true
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "lib": ["es2019"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitHelpers": true,
+    "outDir": "dist",
+    "pretty": true,
+    "strict": true,
+    "target": "es2019"
   },
   "files": [
-      "src/index.ts"
+    "src/index.ts"
   ]
 }

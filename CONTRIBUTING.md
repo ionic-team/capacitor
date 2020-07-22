@@ -95,7 +95,6 @@ This monorepo contains core Capacitor components. The current directory structur
 * `android`: Capacitor Android Runtime
 * `android-template`: Default Android App installed by the CLI
 * `plugin-template`: The default plugin template when creating a new plugin
-* `scripts`: publish and task scripts
 
 ## Publishing Capacitor
 

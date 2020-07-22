@@ -1,5 +1,4 @@
 {
-  "lerna": "2.4.0",
   "gitVersionPrefix": "",
   "packages": [
     "./android/",
@@ -7,5 +6,14 @@
     "./cli/",
     "./core/"
   ],
+  "command": {
+    "bootstrap": {
+      "hoist": true
+    },
+    "version": {
+      "allowBranch": "main",
+      "message": "Release %s"
+    }
+  },
   "version": "2.3.0"
 }

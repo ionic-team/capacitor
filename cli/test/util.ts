@@ -10,7 +10,7 @@ import { Config } from '../src/config';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
 import { mkdirs } from 'fs-extra';
-const tmp = require('tmp');
+import tmp from 'tmp';
 
 const cwd = process.cwd();
 
@@ -218,11 +218,11 @@ async function makeCordovaPlugin(cordovaPluginPath: string) {
 }
 
 class MappedFS {
-  constructor(private rootDir) {}
-  async read(path) {
+  constructor(private rootDir: string) {}
+  async read(path: string) {
     return readFileAsync(resolve(this.rootDir, path), 'utf8');
   }
-  async exists(path) {
+  async exists(path: string) {
     return existsAsync(resolve(this.rootDir, path));
   }
 }

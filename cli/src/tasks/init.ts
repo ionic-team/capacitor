@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { Config } from '../config';
 import {
   check,
@@ -17,8 +18,6 @@ import {
 import { getCordovaPreferences } from '../cordova';
 import { emoji as _e } from '../util/emoji';
 import { checkInteractive } from '../util/term';
-
-const chalk = require('chalk');
 
 export async function initCommand(
   config: Config,

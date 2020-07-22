@@ -3,8 +3,8 @@
  * plugins and are responsible for proxying calls to our bridge.
  */
 public class JSExport {
-  static let CATCHALL_OPTIONS_PARAM = "_options"
-  static let CALLBACK_PARAM = "_callback"
+  static let catchallOptionsParameter = "_options"
+  static let callbackParameter = "_callback"
 
   public static func exportCapacitorGlobalJS(userContentController: WKUserContentController, isDebug: Bool, localUrl: String) throws {
     let data = "window.Capacitor = { DEBUG: \(isDebug), Plugins: {} }; window.WEBVIEW_SERVER_URL = '\(localUrl)';"
@@ -31,13 +31,13 @@ public class JSExport {
       CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
       throw BridgeError.errorExportingCoreJS
     }
-    guard let cordova_pluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
+    guard let cordovaPluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
       CAPLog.print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
       throw BridgeError.errorExportingCoreJS
     }
     do {
       try self.injectFile(fileURL: cordovaUrl, userContentController: userContentController)
-      try self.injectFile(fileURL: cordova_pluginsUrl, userContentController: userContentController)
+      try self.injectFile(fileURL: cordovaPluginsUrl, userContentController: userContentController)
     } catch {
       CAPLog.print("ERROR: Unable to read required cordova files. Cordova plugins will not function!")
       throw BridgeError.errorExportingCoreJS
@@ -61,10 +61,10 @@ public class JSExport {
         return w.Capacitor.addListener('\(pluginClassName)', eventName, callback);
       }
       """)
-    let bridgeType = pluginType as! CAPBridgedPlugin.Type
-    let methods = bridgeType.pluginMethods() as! [CAPPluginMethod]
-    for method in methods {
-      lines.append(generateMethod(pluginClassName: pluginClassName, method: method))
+    if let bridgeType = pluginType as? CAPBridgedPlugin.Type, let methods = bridgeType.pluginMethods() as? [CAPPluginMethod] {
+      for method in methods {
+        lines.append(generateMethod(pluginClassName: pluginClassName, method: method))
+      }
     }
 
     lines.append("""
@@ -85,18 +85,18 @@ public class JSExport {
     // add the catch-all
     // options argument which takes a full object and converts each
     // key/value pair into an option for plugin call.
-    paramList.append(CATCHALL_OPTIONS_PARAM)
+    paramList.append(catchallOptionsParameter)
 
     // Automatically add the _callback param if returning data through a callback
     if returnType == CAPPluginReturnCallback {
-      paramList.append(CALLBACK_PARAM)
+      paramList.append(callbackParameter)
     }
 
     // Create a param string of the form "param1, param2, param3"
     let paramString = paramList.joined(separator: ", ")
 
     // Generate the argument object that will be sent on each call
-    let argObjectString = CATCHALL_OPTIONS_PARAM
+    let argObjectString = catchallOptionsParameter
 
     var lines = [String]()
 
@@ -118,7 +118,7 @@ public class JSExport {
     } else if returnType == CAPPluginReturnCallback {
       // ...using a callback
       lines.append("""
-        return w.Capacitor.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(CALLBACK_PARAM));
+        return w.Capacitor.nativeCallback('\(pluginClassName)', '\(methodName)', \(argObjectString), \(callbackParameter));
         """)
     } else {
       CAPLog.print("Error: plugin method return type \(returnType) is not supported!")
