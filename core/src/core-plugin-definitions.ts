@@ -322,9 +322,9 @@ export interface CameraOptions {
    */
   height?: number;
   /**
-   * Wheter to preserve the aspect ratio of the image.
-   * If the this flag is true the width and height will be used as max values
-   * and the aspect ratio will be preserved
+   * Whether to preserve the aspect ratio of the image.
+   * If this flag is true, the width and height will be used as max values
+   * and the aspect ratio will be preserved.
    * Default: false
    */
   preserveAspectRatio?: boolean;
