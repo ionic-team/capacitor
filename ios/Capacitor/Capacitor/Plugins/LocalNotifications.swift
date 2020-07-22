@@ -69,7 +69,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
       // Schedule the request.
       let request = UNNotificationRequest(identifier: "\(identifier)", content: content, trigger: trigger)
 
-      self.bridge?.notificationsDelegate.notificationRequestLookup[request.identifier] = notification
+      self.bridge?.notificationDelegationHandler.notificationRequestLookup[request.identifier] = notification
 
       let center = UNUserNotificationCenter.current()
       center.add(request) { (error: Error?) in
@@ -96,7 +96,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
    * Request notification permission
    */
   @objc func requestPermission(_ call: CAPPluginCall) {
-    self.bridge?.notificationsDelegate.requestPermissions { granted, error in
+    self.bridge?.notificationDelegationHandler.requestPermissions { granted, error in
         guard error == nil else {
             call.error(error!.localizedDescription)
             return
@@ -129,7 +129,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
       CAPLog.print(notifications)
 
       let ret = notifications.compactMap({ [weak self] (notification) -> [String: Any]? in
-        return self?.bridge?.notificationsDelegate.makePendingNotificationRequestJSObject(notification)
+        return self?.bridge?.notificationDelegationHandler.makePendingNotificationRequestJSObject(notification)
       })
       call.success([
         "notifications": ret
@@ -455,18 +455,18 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
   func makeAttachments(_ attachments: JSArray) throws -> [UNNotificationAttachment] {
     var createdAttachments = [UNNotificationAttachment]()
 
-    for a in attachments {
-      guard let id = a["id"] as? String else {
+    for attachment in attachments {
+      guard let id = attachment["id"] as? String else {
         throw LocalNotificationError.attachmentNoId
       }
-      guard let url = a["url"] as? String else {
+      guard let url = attachment["url"] as? String else {
         throw LocalNotificationError.attachmentNoUrl
       }
       guard let urlObject = makeAttachmentUrl(url) else {
         throw LocalNotificationError.attachmentFileNotFound(path: url)
       }
 
-      let options = a["options"] as? JSObject ?? [:]
+      let options = attachment["options"] as? JSObject ?? [:]
 
       do {
         let newAttachment = try UNNotificationAttachment(identifier: id, url: urlObject, options: makeAttachmentOptions(options))

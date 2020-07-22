@@ -4,16 +4,15 @@ import Foundation
 public class CAPWebViewPlugin: CAPPlugin {
 
   @objc func setServerBasePath(_ call: CAPPluginCall) {
-    let path = call.getString("path")
-    if let vc = bridge?.viewController as? CAPBridgeViewController {
-      vc.setServerBasePath(path: path!)
+    if let path = call.getString("path"), let viewController = bridge?.viewController as? CAPBridgeViewController {
+      viewController.setServerBasePath(path: path)
       call.success()
     }
   }
 
   @objc func getServerBasePath(_ call: CAPPluginCall) {
-    if let vc = bridge?.viewController as? CAPBridgeViewController {
-      let path = vc.getServerBasePath()
+    if let viewController = bridge?.viewController as? CAPBridgeViewController {
+      let path = viewController.getServerBasePath()
       call.success([
         "path": path
       ])
@@ -21,8 +20,8 @@ public class CAPWebViewPlugin: CAPPlugin {
   }
 
   @objc func persistServerBasePath(_ call: CAPPluginCall) {
-    if let vc = bridge?.viewController as? CAPBridgeViewController {
-      let path = vc.getServerBasePath()
+    if let viewController = bridge?.viewController as? CAPBridgeViewController {
+      let path = viewController.getServerBasePath()
       let defaults = UserDefaults.standard
       defaults.set(path, forKey: "serverBasePath")
       call.success()

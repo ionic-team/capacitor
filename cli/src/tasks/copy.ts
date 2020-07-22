@@ -122,7 +122,6 @@ async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
-  var chalk = require('chalk');
   const webAbsDir = config.app.webDirAbs;
   const webRelDir = basename(webAbsDir);
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);

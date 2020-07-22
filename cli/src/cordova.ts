@@ -35,10 +35,10 @@ import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
-import * as inquirer from 'inquirer';
+import inquirer from 'inquirer';
+import chalk from 'chalk';
 
 const plist = require('plist');
-const chalk = require('chalk');
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.

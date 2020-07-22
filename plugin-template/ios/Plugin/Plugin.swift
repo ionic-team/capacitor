@@ -7,6 +7,7 @@ import Capacitor
  */
 @objc(CLASS_NAME)
 public class CLASS_NAME: CAPPlugin {
+// swiftlint:disable:previous type_name
 
     @objc func echo(_ call: CAPPluginCall) {
         let value = call.getString("value") ?? ""

@@ -4,8 +4,8 @@ public class CAPLog {
 
   public static func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
     if !self.hideLogs() {
-      for i in 0..<items.count {
-        Swift.print(items[i], terminator: i == items.count - 1 ? terminator : separator)
+      for (itemIndex, item) in items.enumerated() {
+        Swift.print(item, terminator: itemIndex == items.count - 1 ? terminator : separator)
       }
     }
   }

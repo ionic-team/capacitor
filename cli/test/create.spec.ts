@@ -3,7 +3,7 @@ import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';
 import { join } from 'path';
 
 describe('Create', () => {
-  let appDirObj;
+  let appDirObj: any;
 
   beforeAll(async () => {
     // These commands are slowww...
@@ -29,7 +29,7 @@ describe('Create', () => {
       expect(await FS.exists('ios')).toBe(true);
       await run(appDir, 'add android');
       expect(await FS.exists('android')).toBe(true);
-      const lockFileMap = {
+      const lockFileMap: { [key: string]: string } = {
         npm: 'package-lock.json',
         yarn: 'yarn.lock',
       };

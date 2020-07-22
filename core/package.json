@@ -24,16 +24,19 @@
   "module": "dist/esm/index.js",
   "unpkg": "dist/capacitor.js",
   "typings": "dist/esm/index.d.ts",
+  "dependencies": {
+    "tslib": "^1.9.0"
+  },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "jest": "^25.5.1",
-    "rimraf": "^2.6.1",
-    "rollup": "^1.12.3",
-    "rollup-plugin-node-resolve": "^5.0.0",
-    "terser": "^4.0.0",
-    "ts-jest": "^25.4.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "@types/jest": "^26.0.4",
+    "jest": "^26.1.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.21.0",
+    "terser": "^4.8.0",
+    "ts-jest": "^26.1.3",
     "typedoc": "^0.14.2",
-    "typescript": "~3.8.0"
+    "typescript": "~3.8.3"
   },
   "repository": {
     "type": "git",
@@ -47,9 +50,5 @@
   },
   "jest": {
     "preset": "ts-jest"
-  },
-  "dependencies": {
-    "tslib": "^1.9.0"
-  },
-  "gitHead": "844c0feba4a801ee5041429a82d0f805c9e665b0"
+  }
 }

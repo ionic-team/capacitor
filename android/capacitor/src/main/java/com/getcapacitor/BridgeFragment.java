@@ -76,6 +76,10 @@ public class BridgeFragment extends Fragment {
         loadConfig(this.getActivity().getApplicationContext(), this.getActivity());
     }
 
+    public void addPlugin(Class<? extends Plugin> plugin) {
+        this.initialPlugins.add(plugin);
+    }
+
     /**
      * Load the WebView and create the Bridge
      */
