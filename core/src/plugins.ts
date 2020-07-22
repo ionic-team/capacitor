@@ -116,7 +116,12 @@ const shouldMergeWebPlugin = (plugin: WebPlugin) => {
   );
 };
 
-const mergeWebPlugin = (plugin: WebPlugin) => {
+/**
+ * TODO
+ *
+ * @deprecated Don't use this.
+ */
+export const mergeWebPlugin = (plugin: WebPlugin) => {
   if (
     Plugins.hasOwnProperty(plugin.config.name) &&
     !shouldMergeWebPlugin(plugin)
