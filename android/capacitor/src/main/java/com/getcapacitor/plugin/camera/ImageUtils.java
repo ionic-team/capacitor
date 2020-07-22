@@ -25,7 +25,7 @@ public class ImageUtils {
    * @return a new, scaled Bitmap
    */
   public static Bitmap resize(Bitmap bitmap, final int width, final int height) {
-    return ImageUtils.resize(bitmap, width, height, false)
+    return ImageUtils.resize(bitmap, width, height, false);
   }
 
   /**
