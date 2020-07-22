@@ -28,9 +28,9 @@ public class CAPFile {
   }
 
   public static func getPortablePath(host: String, uri: URL?) -> String? {
-    if uri != nil {
-        let uriWithoutFile = uri!.absoluteString.replacingOccurrences(of: "file://", with: "")
-        return host + CAPBridge.CAP_FILE_START + uriWithoutFile
+    if let uri = uri {
+        let uriWithoutFile = uri.absoluteString.replacingOccurrences(of: "file://", with: "")
+        return host + CAPBridge.fileStartIdentifier + uriWithoutFile
     }
     return nil
   }
@@ -41,7 +41,7 @@ private protocol CAPFileResolver {
 }
 
 private class CAPFileResolverFile: CAPFileResolver {
-  public static func resolve(path: String) -> CAPFile? {
+  static func resolve(path: String) -> CAPFile? {
     let manager = FileManager.default
     let absPath = path.replacingOccurrences(of: "file:///", with: "")
     if !manager.fileExists(atPath: absPath) {
@@ -53,7 +53,7 @@ private class CAPFileResolverFile: CAPFileResolver {
 }
 
 private class CAPFileResolverResource: CAPFileResolver {
-  public static func resolve(path: String) -> CAPFile? {
+  static func resolve(path: String) -> CAPFile? {
     let manager = FileManager.default
     let bundle = Bundle.main
     let resourcePath = bundle.resourcePath
@@ -68,7 +68,7 @@ private class CAPFileResolverResource: CAPFileResolver {
 }
 
 private class CAPFileResolverNotImplemented: CAPFileResolver {
-  public static func resolve(path: String) -> CAPFile? {
+  static func resolve(path: String) -> CAPFile? {
     return nil
   }
 }

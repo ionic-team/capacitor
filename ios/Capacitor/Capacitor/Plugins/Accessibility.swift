@@ -3,7 +3,7 @@ import SafariServices
 
 @objc(CAPAccessibilityPlugin)
 public class CAPAccessibilityPlugin: CAPPlugin {
-  static let SCREEN_READER_STATE_CHANGE_EVENT = "accessibilityScreenReaderStateChange"
+  static let screenReaderStateChangeEvent = "accessibilityScreenReaderStateChange"
   override public func load() {
     NotificationCenter.default.addObserver(self,
                                            selector: #selector(self.onScreenReaderStateChanged(notification:)),
@@ -12,7 +12,7 @@ public class CAPAccessibilityPlugin: CAPPlugin {
   }
 
   @objc func onScreenReaderStateChanged(notification: NSNotification) {
-    notifyListeners(CAPAccessibilityPlugin.SCREEN_READER_STATE_CHANGE_EVENT, data: [
+    notifyListeners(CAPAccessibilityPlugin.screenReaderStateChangeEvent, data: [
       "value": UIAccessibility.isVoiceOverRunning
     ])
   }

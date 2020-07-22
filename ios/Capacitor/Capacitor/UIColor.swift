@@ -1,4 +1,6 @@
 extension UIColor {
+  // disable linting for the short variable names, since that's the point of the method
+  // swiftlint:disable:next identifier_name
   convenience init(r: Int, g: Int, b: Int, a: Int = 0xFF) {
     self.init(
       red: CGFloat(r) / 255.0,
@@ -25,28 +27,28 @@ extension UIColor {
 
     var argb: UInt32 = 0
 
-    var r: CGFloat = 0.0
-    var g: CGFloat = 0.0
-    var b: CGFloat = 0.0
-    var a: CGFloat = 1.0
+    var red: CGFloat = 0.0
+    var green: CGFloat = 0.0
+    var blue: CGFloat = 0.0
+    var alpha: CGFloat = 1.0
 
     guard Scanner(string: hexString).scanHexInt32(&argb) else { return nil }
 
     if hexString.count == 6 {
-      r = CGFloat((argb & 0xFF0000) >> 16) / 255.0
-      g = CGFloat((argb & 0x00FF00) >> 8) / 255.0
-      b = CGFloat(argb & 0x0000FF) / 255.0
+      red = CGFloat((argb & 0xFF0000) >> 16) / 255.0
+      green = CGFloat((argb & 0x00FF00) >> 8) / 255.0
+      blue = CGFloat(argb & 0x0000FF) / 255.0
 
     } else if hexString.count == 8 {
-      r = CGFloat((argb & 0xFF00_0000) >> 24) / 255.0
-      g = CGFloat((argb & 0x00FF0000) >> 16) / 255.0
-      b = CGFloat((argb & 0x0000FF00) >> 8) / 255.0
-      a = CGFloat(argb & 0x000000FF) / 255.0
+      red = CGFloat((argb & 0xFF00_0000) >> 24) / 255.0
+      green = CGFloat((argb & 0x00FF0000) >> 16) / 255.0
+      blue = CGFloat((argb & 0x0000FF00) >> 8) / 255.0
+      alpha = CGFloat(argb & 0x000000FF) / 255.0
 
     } else {
       return nil
     }
 
-    self.init(red: r, green: g, blue: b, alpha: a)
+    self.init(red: red, green: green, blue: blue, alpha: alpha)
   }
 }
