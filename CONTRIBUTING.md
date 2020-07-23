@@ -98,10 +98,20 @@ This monorepo contains core Capacitor components. The current directory structur
 
 ## Publishing Capacitor
 
-Capacitor packages are published together with a fixed version using [Lerna](https://github.com/lerna/lerna).
+Capacitor packages are published using [Lerna](https://github.com/lerna/lerna) with fixed versioning.
 
-To publish Capacitor, run the following:
+During Capacitor 3 development, the following workflow is used to create dev releases:
 
-```bash
-npm run publish
-```
+1. Create the next development version. The following command will:
+    * Create a release commit with a generated changelog
+    * Create a git tag
+    * Push to the `main` branch
+    * Create a GitHub release
+
+    <br>
+
+    ```
+    npx lerna version prerelease
+    ```
+
+1. Wait for CI to publish the new tagged version.
