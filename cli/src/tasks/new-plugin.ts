@@ -190,11 +190,19 @@ async function createIosPlugin(
     join(newPluginPath, 'Plugin.swift'),
     'utf8',
   );
+  const originalPluginFunctionalitySwift = await readFileAsync(
+    join(newPluginPath, 'PluginFunctionality.swift'),
+    'utf8',
+  );
   const originalPluginObjc = await readFileAsync(
     join(newPluginPath, 'Plugin.m'),
     'utf8',
   );
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
+  const pluginFunctionalitySwift = originalPluginFunctionalitySwift.replace(
+    /CLASS_NAME/g,
+    className,
+  );
   const pluginObjc = originalPluginObjc.replace(/CLASS_NAME/g, className);
 
   if (!answers.git) {
@@ -216,6 +224,11 @@ async function createIosPlugin(
   await writeFileAsync(
     join(newPluginPath, 'Plugin.swift'),
     pluginSwift,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(newPluginPath, 'PluginFunctionality.swift'),
+    pluginFunctionalitySwift,
     'utf8',
   );
   await writeFileAsync(join(newPluginPath, 'Plugin.m'), pluginObjc, 'utf8');

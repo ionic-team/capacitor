@@ -8,11 +8,12 @@ import Capacitor
 @objc(CLASS_NAME)
 public class CLASS_NAME: CAPPlugin {
 // swiftlint:disable:previous type_name
+    private let functionality = CLASS_NAMEFunctionality()
 
     @objc func echo(_ call: CAPPluginCall) {
         let value = call.getString("value") ?? ""
         call.success([
-            "value": value
+            "value": functionality.echo(value)
         ])
     }
 }
