@@ -17,7 +17,7 @@
     "minify": "terser --mangle --compress --source-map \"content='dist/capacitor.js.map',url='capacitor.js.map'\" --comments '/^/*!/' --output dist/capacitor.js dist/capacitor.js",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
-    "transpile": "tsc --module ES2015 --target ES5 --outDir dist/esm",
+    "transpile": "tsc",
     "test": "jest"
   },
   "main": "dist/index.js",
