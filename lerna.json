@@ -11,6 +11,8 @@
     },
     "version": {
       "allowBranch": "main",
+      "conventionalCommits": true,
+      "createRelease": "github",
       "message": "Release %s",
       "tagVersionPrefix": ""
     }
