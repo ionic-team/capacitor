@@ -11,10 +11,7 @@ import {
 
 export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
   constructor() {
-    super({
-      name: 'Camera',
-      platforms: ['web'],
-    });
+    super({ name: 'Camera' });
   }
 
   async getPhoto(options: CameraOptions): Promise<CameraPhoto> {

@@ -11,10 +11,7 @@ export class NetworkPluginWeb extends WebPlugin implements NetworkPlugin {
   listenerFunction: any = null;
 
   constructor() {
-    super({
-      name: 'Network',
-      platforms: ['web'],
-    });
+    super({ name: 'Network' });
   }
 
   getStatus(): Promise<NetworkStatus> {

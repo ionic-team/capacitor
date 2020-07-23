@@ -14,10 +14,7 @@ import { extend } from '../util';
 export class GeolocationPluginWeb extends WebPlugin
   implements GeolocationPlugin {
   constructor() {
-    super({
-      name: 'Geolocation',
-      platforms: ['web'],
-    });
+    super({ name: 'Geolocation' });
   }
 
   getCurrentPosition(

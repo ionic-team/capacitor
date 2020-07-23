@@ -37,10 +37,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   static _debug: boolean = true;
 
   constructor() {
-    super({
-      name: 'Filesystem',
-      platforms: ['web'],
-    });
+    super({ name: 'Filesystem' });
   }
 
   async initDb(): Promise<IDBDatabase> {

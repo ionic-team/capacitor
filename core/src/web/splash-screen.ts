@@ -9,10 +9,7 @@ import {
 export class SplashScreenPluginWeb extends WebPlugin
   implements SplashScreenPlugin {
   constructor() {
-    super({
-      name: 'SplashScreen',
-      platforms: ['web'],
-    });
+    super({ name: 'SplashScreen' });
   }
 
   show(

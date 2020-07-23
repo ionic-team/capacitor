@@ -1,9 +1,9 @@
 declare module '@capacitor/core' {
   interface PluginRegistry {
-    Echo: EchoPlugin;
+    MyPlugin: MyPluginPlugin;
   }
 }
 
-export interface EchoPlugin {
+export interface MyPluginPlugin {
   echo(options: { value: string }): Promise<{ value: string }>;
 }
