@@ -3,10 +3,7 @@ import { MyPluginPlugin } from './definitions';
 
 export class MyPluginWeb extends WebPlugin implements MyPluginPlugin {
   constructor() {
-    super({
-      name: 'MyPlugin',
-      platforms: ['web'],
-    });
+    super({ name: 'MyPlugin' });
   }
 
   async echo(options: { value: string }): Promise<{ value: string }> {
@@ -14,10 +11,3 @@ export class MyPluginWeb extends WebPlugin implements MyPluginPlugin {
     return options;
   }
 }
-
-const MyPlugin = new MyPluginWeb();
-
-export { MyPlugin };
-
-import { registerWebPlugin } from '@capacitor/core';
-registerWebPlugin(MyPlugin);

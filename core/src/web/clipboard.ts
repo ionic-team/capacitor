@@ -11,10 +11,7 @@ declare var ClipboardItem: any;
 
 export class ClipboardPluginWeb extends WebPlugin implements ClipboardPlugin {
   constructor() {
-    super({
-      name: 'Clipboard',
-      platforms: ['web'],
-    });
+    super({ name: 'Clipboard' });
   }
 
   async write(options: ClipboardWrite): Promise<void> {

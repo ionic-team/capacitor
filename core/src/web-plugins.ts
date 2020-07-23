@@ -1,26 +1,55 @@
-import { Plugins } from './global';
-import { mergeWebPlugins, mergeWebPlugin, WebPlugin } from './web/index';
+import { mergeWebPlugin } from './plugins';
+
+import { Accessibility } from './web/accessibility';
+import { App } from './web/app';
+import { Browser } from './web/browser';
+import { Camera } from './web/camera';
+import { Clipboard } from './web/clipboard';
+import { Device } from './web/device';
+import { Filesystem } from './web/filesystem';
+import { Geolocation } from './web/geolocation';
+import { LocalNotifications } from './web/local-notifications';
+import { Modals } from './web/modals';
+import { Motion } from './web/motion';
+import { Network } from './web/network';
+import { Permissions } from './web/permissions';
+import { Share } from './web/share';
+import { SplashScreen } from './web/splash-screen';
+import { Storage } from './web/storage';
+import { Toast } from './web/toast';
 
 export * from './web/accessibility';
 export * from './web/app';
 export * from './web/browser';
 export * from './web/camera';
 export * from './web/clipboard';
+export * from './web/device';
 export * from './web/filesystem';
 export * from './web/geolocation';
-export * from './web/device';
 export * from './web/local-notifications';
-export * from './web/share';
 export * from './web/modals';
 export * from './web/motion';
 export * from './web/network';
 export * from './web/permissions';
+export * from './web/share';
 export * from './web/splash-screen';
 export * from './web/storage';
 export * from './web/toast';
 
-mergeWebPlugins(Plugins);
-
-export const registerWebPlugin = (plugin: WebPlugin) => {
-  mergeWebPlugin(Plugins, plugin);
-};
+mergeWebPlugin(Accessibility);
+mergeWebPlugin(App);
+mergeWebPlugin(Browser);
+mergeWebPlugin(Camera);
+mergeWebPlugin(Clipboard);
+mergeWebPlugin(Device);
+mergeWebPlugin(Filesystem);
+mergeWebPlugin(Geolocation);
+mergeWebPlugin(LocalNotifications);
+mergeWebPlugin(Modals);
+mergeWebPlugin(Motion);
+mergeWebPlugin(Network);
+mergeWebPlugin(Permissions);
+mergeWebPlugin(Share);
+mergeWebPlugin(SplashScreen);
+mergeWebPlugin(Storage);
+mergeWebPlugin(Toast);

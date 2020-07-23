@@ -13,10 +13,7 @@ declare var navigator: any;
 
 export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   constructor() {
-    super({
-      name: 'Device',
-      platforms: ['web'],
-    });
+    super({ name: 'Device' });
   }
 
   async getInfo(): Promise<DeviceInfo> {

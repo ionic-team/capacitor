@@ -6,10 +6,7 @@ export class StoragePluginWeb extends WebPlugin implements StoragePlugin {
   KEY_PREFIX = '_cap_';
 
   constructor() {
-    super({
-      name: 'Storage',
-      platforms: ['web'],
-    });
+    super({ name: 'Storage' });
   }
 
   get(options: { key: string }): Promise<{ value: string }> {

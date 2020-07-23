@@ -4,10 +4,7 @@ import { AppPlugin, AppLaunchUrl, AppState } from '../core-plugin-definitions';
 
 export class AppPluginWeb extends WebPlugin implements AppPlugin {
   constructor() {
-    super({
-      name: 'App',
-      platforms: ['web'],
-    });
+    super({ name: 'App' });
 
     if (typeof document !== 'undefined') {
       document.addEventListener(
