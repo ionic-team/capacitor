@@ -10,9 +10,9 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "dist",
+    "outDir": "dist/esm",
     "sourceMap": true,
-    "target": "es2015"
+    "target": "es5"
   },
   "files": [
     "src/index.ts"
