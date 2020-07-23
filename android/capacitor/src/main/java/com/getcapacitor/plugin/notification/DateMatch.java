@@ -108,14 +108,9 @@ public class DateMatch {
         next.set(incrementUnit, next.get(incrementUnit) + 1);
       }
     }
-    // SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    // Logger.info(Logger.tags("LN"), "Next notification set to " + sdf.format(next.getTime()));
+    
     return next.getTimeInMillis();
   }
-
-  // private boolean matchesUnit(Integer unit, Calendar current, Calendar next) {
-  //     return next.get(unit) < current.get(unit);
-  // }
 
   private Calendar buildNextTriggerTime(Date date) {
     Calendar next = buildCalendar(date);
