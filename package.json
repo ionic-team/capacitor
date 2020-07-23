@@ -6,7 +6,7 @@
     "fmt": "npm run prettier -- --write && npm run swiftlint -- autocorrect",
     "prettier": "prettier \"**/*.{css,html,java,js,ts}\"",
     "swiftlint": "node-swiftlint",
-    "publish": "lerna run verify && lerna run build && lerna publish",
+    "publish": "lerna run verify && lerna publish",
     "postinstall": "lerna bootstrap"
   },
   "husky": {
