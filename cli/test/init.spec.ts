@@ -5,10 +5,10 @@ import { mkdirAsync } from '../src/util/fs';
 import { join } from 'path';
 
 describe('Init', () => {
-  let appDirObj;
-  let tmpDir;
-  let appDir;
-  let FS;
+  let appDirObj: any;
+  let tmpDir: string;
+  let appDir: string;
+  let FS: MappedFS;
 
   beforeAll(async () => {
     // These commands are slowww...
