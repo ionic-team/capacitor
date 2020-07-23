@@ -1,5 +1,4 @@
 {
-  "gitVersionPrefix": "",
   "packages": [
     "./android/",
     "./ios/",
@@ -12,7 +11,8 @@
     },
     "version": {
       "allowBranch": "main",
-      "message": "Release %s"
+      "message": "Release %s",
+      "tagVersionPrefix": ""
     }
   },
   "version": "2.3.0"
