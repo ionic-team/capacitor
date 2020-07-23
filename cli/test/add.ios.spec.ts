@@ -1,8 +1,8 @@
 import { APP_ID, APP_NAME, run, makeAppDir, MappedFS } from './util';
 
 describe.each([false, true])('Add: iOS (monoRepoLike: %p)', monoRepoLike => {
-  let appDirObj;
-  let FS;
+  let appDirObj: any;
+  let FS: MappedFS;
 
   beforeAll(async () => {
     // These commands are slowww...

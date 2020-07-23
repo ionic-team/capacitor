@@ -15,7 +15,6 @@
   "scripts": {
     "build": "npm run clean && npm run assets && tsc",
     "clean": "rimraf ./dist",
-    "deploy": "np",
     "assets": "node scripts/copy-assets.js",
     "prepublishOnly": "npm run build",
     "test": "jest -i",
@@ -43,58 +42,39 @@
   },
   "license": "MIT",
   "dependencies": {
-    "chalk": "^2.3.0",
+    "chalk": "^4.1.0",
     "commander": "^4.1.1",
     "compare-versions": "^3.1.0",
-    "fs-extra": "^4.0.3",
-    "inquirer": "6.3.1",
-    "open": "^6.1.0",
-    "ora": "^1.3.0",
+    "fs-extra": "^9.0.1",
+    "inquirer": "^7.3.2",
+    "open": "^7.1.0",
+    "ora": "^4.0.5",
     "plist": "^3.0.1",
-    "semver": "^5.4.1",
-    "which": "^1.3.0",
+    "semver": "^7.3.2",
+    "which": "^2.0.2",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "@types/fs-extra": "^4.0.5",
-    "@types/inquirer": "0.0.35",
-    "@types/jest": "^23.3.9",
+    "@types/fs-extra": "^9.0.1",
+    "@types/inquirer": "^6.5.0",
+    "@types/jest": "^26.0.4",
     "@types/mock-fs": "^3.6.30",
     "@types/open": "^6.1.0",
-    "@types/ora": "^1.3.1",
-    "@types/semver": "^5.4.0",
+    "@types/semver": "^7.3.1",
+    "@types/tmp": "^0.2.0",
     "@types/which": "^1.0.28",
     "@types/xml2js": "^0.4.2",
-    "jest": "^23.6.0",
+    "jest": "^26.1.0",
     "mock-fs": "^4.4.2",
-    "np": "^2.18.2",
-    "rimraf": "^3.0.0",
-    "tmp": "0.0.33",
-    "ts-jest": "^23.10.4",
-    "typescript": "~3.7.0"
+    "rimraf": "^3.0.2",
+    "tmp": "^0.2.1",
+    "ts-jest": "^26.1.3",
+    "typescript": "~3.8.3"
   },
   "publishConfig": {
     "access": "public"
   },
   "jest": {
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(ts)$": "ts-jest"
-    },
-    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/test/util.ts"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "test/tsconfig.json"
-      }
-    }
-  },
-  "gitHead": "844c0feba4a801ee5041429a82d0f805c9e665b0"
+    "preset": "ts-jest"
+  }
 }

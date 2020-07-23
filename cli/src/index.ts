@@ -1,4 +1,4 @@
-import * as program from 'commander';
+import program from 'commander';
 import chalk from 'chalk';
 
 import { createCommand } from './tasks/create';
@@ -16,7 +16,6 @@ import { doctorCommand } from './tasks/doctor';
 import { emoji as _e } from './util/emoji';
 
 process.on('unhandledRejection', error => {
-  const chalk = require('chalk');
   console.error(chalk.red('[fatal]'), error);
 });
 

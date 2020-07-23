@@ -1,4 +1,4 @@
-import nodeResolve from 'rollup-plugin-node-resolve';
+import nodeResolve from '@rollup/plugin-node-resolve';
 
 const banner =
   '/*! Capacitor: https://capacitor.ionicframework.com/ - MIT License */';

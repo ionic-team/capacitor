@@ -6,8 +6,8 @@
     "fmt": "npm run prettier -- --write && npm run swiftlint -- autocorrect",
     "prettier": "prettier \"**/*.{css,html,java,js,ts}\"",
     "swiftlint": "node-swiftlint",
-    "publish": "bash scripts/prerelease.sh && lerna run build && lerna publish --force-publish --skip-git && npm run publish-push",
-    "publish-push": "bash scripts/deploy.sh"
+    "publish": "lerna run verify && lerna run build && lerna publish",
+    "postinstall": "lerna bootstrap"
   },
   "husky": {
     "hooks": {
@@ -19,7 +19,7 @@
     "@ionic/prettier-config": "^1.0.0",
     "@ionic/swiftlint-config": "^1.1.1",
     "husky": "^4.2.5",
-    "lerna": "^2.4.0",
+    "lerna": "^3.22.1",
     "prettier": "^2.0.5",
     "prettier-plugin-java": "^0.8.0",
     "swiftlint": "^1.0.1"
