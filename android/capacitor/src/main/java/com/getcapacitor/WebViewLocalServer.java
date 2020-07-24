@@ -356,7 +356,7 @@ public class WebViewLocalServer {
   private int getStatusCode(InputStream stream, int defaultCode) {
     int finalStatusCode = defaultCode;
     try {
-      if (stream.available() == 0) {
+      if (stream.available() == -1) {
         finalStatusCode = 404;
       }
     } catch (IOException e) {
@@ -492,7 +492,7 @@ public class WebViewLocalServer {
     @Override
     public int available() throws IOException {
       InputStream is = getInputStream();
-      return (is != null) ? is.available() : 0;
+      return (is != null) ? is.available() : -1;
     }
 
     @Override
