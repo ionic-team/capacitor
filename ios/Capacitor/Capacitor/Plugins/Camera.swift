@@ -29,6 +29,7 @@ struct CameraSettings {
   var height: Float = 0
   var resultType = "base64"
   var saveToGallery = false
+  var preserveAspectRatio = false
 }
 
 @objc(CAPCameraPlugin)
@@ -72,7 +73,8 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     settings.direction = CameraDirection(rawValue: call.getString("direction") ?? DEFAULT_DIRECTION.rawValue) ?? DEFAULT_DIRECTION
     settings.resultType = call.get("resultType", String.self, "base64")!
     settings.saveToGallery = call.get("saveToGallery", Bool.self, false)!
-    
+    settings.preserveAspectRatio = call.get("preserveAspectRatio", Bool.self, false)!
+
     // Get the new image dimensions if provided
     settings.width = Float(call.get("width", Int.self, 0)!)
     settings.height = Float(call.get("height", Int.self, 0)!)
@@ -229,7 +231,7 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     }
 
     if settings.shouldResize {
-      guard let convertedImage = resizeImage(image!) else {
+      guard let convertedImage = resizeImage(image!, settings.preserveAspectRatio) else {
         self.call?.error("Error resizing image")
         return
       }
@@ -312,7 +314,14 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     return meta
   }
 
-  func resizeImage(_ image: UIImage) -> UIImage? {
+  func resizeImage(_ image: UIImage, _ preserveAspectRatio: Bool) -> UIImage? {
+    if preserveAspectRatio {
+      return resizeImagePreservingAspectRatio(image)
+    }
+    return resizeImageWithoutPreservingAspectRatio(image)
+  }
+
+  func resizeImageWithoutPreservingAspectRatio(_ image: UIImage) -> UIImage? {
     let isAspectScale = settings.width > 0 && settings.height == 0 || settings.height > 0 && settings.width == 0
     let aspect = Float(image.size.width / image.size.height);
 
@@ -324,6 +333,31 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
         size = CGSize.init(width: Int(settings.height * aspect), height: Int(settings.height))
       }
     }
+
+    UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
+    image.draw(in: CGRect(origin: CGPoint.zero, size: size))
+
+    let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return scaledImage
+  }
+
+  func resizeImagePreservingAspectRatio(_ image: UIImage) -> UIImage? {
+    let imageHeight = Float(image.size.height)
+    let imageWidth = Float(image.size.width)
+
+    // 0 is treated as 'no restriction'
+    let maxHeight = settings.height == 0 ? imageHeight : settings.height
+    let maxWidth = settings.width == 0 ? imageWidth : settings.width
+
+    // resize with preserved aspect ratio
+    var newWidth = min(imageWidth, maxWidth)
+    var newHeight = (imageHeight * newWidth) / imageWidth
+    if newHeight > maxHeight {
+      newWidth = (imageWidth * maxHeight) / imageHeight
+      newHeight = maxHeight
+    }
+    let size = CGSize.init(width: Int(newWidth), height: Int(newHeight))
 
     UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
     image.draw(in: CGRect(origin: CGPoint.zero, size: size))
