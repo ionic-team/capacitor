@@ -9,6 +9,7 @@ Pods/
 .DS_Store
 Podfile.lock
 Build/*
+build/
 Index/
 .*.sw*
 android-template.iml

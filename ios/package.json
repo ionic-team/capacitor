@@ -6,7 +6,11 @@
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "scripts": {
-    "verify": "pod lib lint --allow-warnings Capacitor.podspec && pod lib lint --allow-warnings CapacitorCordova.podspec"
+    "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova && npm run pod:lint:Capacitor && npm run pod:lint:CapacitorCordova",
+    "xc:build:Capacitor": "cd Capacitor && pod install && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd ..",
+    "xc:build:CapacitorCordova": "cd CapacitorCordova && xcodebuild && cd ..",
+    "pod:lint:Capacitor": "pod lib lint --allow-warnings Capacitor.podspec",
+    "pod:lint:CapacitorCordova": "pod lib lint --allow-warnings CapacitorCordova.podspec"
   },
   "repository": {
     "type": "git",
