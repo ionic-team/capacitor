@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "2.3.0",
+  "version": "3.0.0-alpha.0",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -9,7 +9,7 @@
     "cap": "./bin/capacitor"
   },
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=10.3.0"
   },
   "main": "./dist/index.js",
   "scripts": {
