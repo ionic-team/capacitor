@@ -73,6 +73,8 @@ public class DateMatch {
   private Calendar buildCalendar(Date date) {
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
+    cal.set(Calendar.MILLISECOND, 0);
+    cal.set(Calendar.SECOND, 0);
     return cal;
   }
 
@@ -108,7 +110,6 @@ public class DateMatch {
         next.set(incrementUnit, next.get(incrementUnit) + 1);
       }
     }
-    next.set(Calendar.SECOND, 0);
     return next.getTimeInMillis();
   }
 
