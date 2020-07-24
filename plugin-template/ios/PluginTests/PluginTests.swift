@@ -19,7 +19,7 @@ class PluginTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
 
         let value = "Hello, World!"
-        let plugin = MyPlugin()
+        let plugin = CLASS_NAMEPlugin()
 
         let call = CAPPluginCall(callbackId: "test", options: [
             "value": value

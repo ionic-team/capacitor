@@ -212,6 +212,11 @@ async function createIosPlugin(
     join(pluginPath, 'ios', 'Plugin.xcodeproj', 'project.pbxproj'),
     'utf8',
   );
+  const originalPluginTestsSwift = await readFileAsync(
+    join(pluginPath, 'ios', 'PluginTests', 'PluginTests.swift'),
+    'utf8',
+  );
+
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
   const pluginImplementationSwift = originalPluginImplementationSwift.replace(
     /CLASS_NAME/g,
@@ -223,6 +228,10 @@ async function createIosPlugin(
     className,
   );
   const pluginXcodeProj = originalXcodeProj.replace(/CLASS_NAME/g, className);
+  const pluginTestsSwift = originalPluginTestsSwift.replace(
+    /CLASS_NAME/g,
+    className,
+  );
 
   if (!answers.git) {
     logWarn(
@@ -263,6 +272,11 @@ async function createIosPlugin(
   await writeFileAsync(
     join(pluginPath, 'ios', 'Plugin.xcodeproj', 'project.pbxproj'),
     pluginXcodeProj,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(pluginPath, 'ios', 'PluginTests', 'PluginTests.swift'),
+    pluginTestsSwift,
     'utf8',
   );
 
