@@ -108,7 +108,7 @@ public class DateMatch {
         next.set(incrementUnit, next.get(incrementUnit) + 1);
       }
     }
-    
+    next.set(Calendar.SECOND, 0);
     return next.getTimeInMillis();
   }
 
