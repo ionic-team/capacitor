@@ -187,4 +187,19 @@ export class CameraPage {
     console.log('Got image back', image.path, image.webPath, image.format, image.exif);
     this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
   }
+
+  async takePicturePreservingAspectRatio() {
+    const image = await Plugins.Camera.getPhoto({
+      quality: 80,
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Camera,
+      saveToGallery: true,
+      correctOrientation: true,
+      height: 1920,
+      width: 1920,
+      preserveAspectRatio: true,
+    });
+    console.log('Got image back', image.path, image.webPath, image.format, image.exif);
+    this.image = this.sanitizer.bypassSecurityTrustResourceUrl(image.webPath);
+  }
 }
