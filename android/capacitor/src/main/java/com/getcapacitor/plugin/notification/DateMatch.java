@@ -73,6 +73,8 @@ public class DateMatch {
   private Calendar buildCalendar(Date date) {
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
+    cal.set(Calendar.MILLISECOND, 0);
+    cal.set(Calendar.SECOND, 0);
     return cal;
   }
 
@@ -92,46 +94,46 @@ public class DateMatch {
    * Postpone trigger if first schedule matches the past
    */
   private long postponeTriggerIfNeeded(Calendar current, Calendar next) {
-    int currentYear = current.get(Calendar.YEAR);
-    if (matchesUnit(Calendar.YEAR, current, next)) {
-      next.set(Calendar.YEAR, currentYear + 1);
-      this.unit = Calendar.YEAR;
-    } else if (matchesUnit(Calendar.MONTH, current, next)) {
-      next.set(Calendar.YEAR, currentYear + 1);
-      this.unit = Calendar.MONTH;
-    } else if (matchesUnit(Calendar.DAY_OF_MONTH, current, next)) {
-      next.set(Calendar.MONTH, current.get(Calendar.MONTH) + 1);
-      this.unit = Calendar.DAY_OF_MONTH;
-    } else if (matchesUnit(Calendar.HOUR_OF_DAY, current, next)) {
-      next.set(Calendar.DAY_OF_MONTH, current.get(Calendar.DAY_OF_MONTH) + 1);
-      this.unit = Calendar.DAY_OF_MONTH;
-    } else if (matchesUnit(Calendar.MINUTE, current, next)) {
-      next.set(Calendar.HOUR_OF_DAY, current.get(Calendar.HOUR_OF_DAY) + 1);
-      this.unit = Calendar.MINUTE;
+    if (next.getTimeInMillis() <= current.getTimeInMillis() && unit != -1) {
+      Integer incrementUnit = -1;
+      if (unit == Calendar.YEAR || unit == Calendar.MONTH) {
+        incrementUnit = Calendar.YEAR;
+      } else if (unit == Calendar.DAY_OF_MONTH) {
+        incrementUnit = Calendar.MONTH;
+      } else if (unit == Calendar.HOUR_OF_DAY) {
+        incrementUnit = Calendar.DAY_OF_MONTH;
+      } else if (unit == Calendar.MINUTE) {
+        incrementUnit = Calendar.HOUR_OF_DAY;
+      }
+
+      if (incrementUnit != -1) {
+        next.set(incrementUnit, next.get(incrementUnit) + 1);
+      }
     }
     return next.getTimeInMillis();
-  }
-
-  private boolean matchesUnit(Integer unit, Calendar current, Calendar next) {
-    return next.get(unit) < current.get(unit);
   }
 
   private Calendar buildNextTriggerTime(Date date) {
     Calendar next = buildCalendar(date);
     if (year != null) {
       next.set(Calendar.YEAR, year);
+      if (unit == -1) unit = Calendar.YEAR;
     }
     if (month != null) {
       next.set(Calendar.MONTH, month);
+      if (unit == -1) unit = Calendar.MONTH;
     }
     if (day != null) {
       next.set(Calendar.DAY_OF_MONTH, day);
+      if (unit == -1) unit = Calendar.DAY_OF_MONTH;
     }
     if (hour != null) {
       next.set(Calendar.HOUR_OF_DAY, hour);
+      if (unit == -1) unit = Calendar.HOUR_OF_DAY;
     }
     if (minute != null) {
       next.set(Calendar.MINUTE, minute);
+      if (unit == -1) unit = Calendar.MINUTE;
     }
     return next;
   }

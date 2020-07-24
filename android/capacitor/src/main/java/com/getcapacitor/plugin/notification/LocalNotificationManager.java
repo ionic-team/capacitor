@@ -32,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -338,9 +339,12 @@ public class LocalNotificationManager {
     // Cron like scheduler
     DateMatch on = schedule.getOn();
     if (on != null) {
+      long trigger = on.nextTrigger(new Date());
       notificationIntent.putExtra(TimedNotificationPublisher.CRON_KEY, on.toMatchString());
       pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-      alarmManager.setExact(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
+      alarmManager.setExact(AlarmManager.RTC, trigger, pendingIntent);
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+      Logger.debug(Logger.tags("LN"), "notification " + request.getId() + " will next fire at " + sdf.format(new Date(trigger)));
     }
   }
 
