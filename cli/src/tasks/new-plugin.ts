@@ -193,23 +193,36 @@ async function createIosPlugin(
   const newPluginPath = join(pluginPath, 'ios', 'Plugin');
 
   const originalPluginSwift = await readFileAsync(
-    join(newPluginPath, 'Plugin.swift'),
+    join(newPluginPath, 'CLASS_NAMEPlugin.swift'),
     'utf8',
   );
-  const originalPluginFunctionalitySwift = await readFileAsync(
-    join(newPluginPath, 'PluginFunctionality.swift'),
+  const originalPluginImplementationSwift = await readFileAsync(
+    join(newPluginPath, 'CLASS_NAME.swift'),
     'utf8',
   );
   const originalPluginObjc = await readFileAsync(
-    join(newPluginPath, 'Plugin.m'),
+    join(newPluginPath, 'CLASS_NAMEPlugin.m'),
+    'utf8',
+  );
+  const originalPluginObjcHeader = await readFileAsync(
+    join(newPluginPath, 'CLASS_NAMEPlugin.h'),
+    'utf8',
+  );
+  const originalXcodeProj = await readFileAsync(
+    join(pluginPath, 'ios', 'Plugin.xcodeproj', 'project.pbxproj'),
     'utf8',
   );
   const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
-  const pluginFunctionalitySwift = originalPluginFunctionalitySwift.replace(
+  const pluginImplementationSwift = originalPluginImplementationSwift.replace(
     /CLASS_NAME/g,
     className,
   );
   const pluginObjc = originalPluginObjc.replace(/CLASS_NAME/g, className);
+  const pluginObjcHeader = originalPluginObjcHeader.replace(
+    /CLASS_NAME/g,
+    className,
+  );
+  const pluginXcodeProj = originalXcodeProj.replace(/CLASS_NAME/g, className);
 
   if (!answers.git) {
     logWarn(
@@ -228,16 +241,36 @@ async function createIosPlugin(
     'utf8',
   );
   await writeFileAsync(
-    join(newPluginPath, 'Plugin.swift'),
+    join(newPluginPath, `${className}Plugin.swift`),
     pluginSwift,
     'utf8',
   );
   await writeFileAsync(
-    join(newPluginPath, 'PluginFunctionality.swift'),
-    pluginFunctionalitySwift,
+    join(newPluginPath, `${className}.swift`),
+    pluginImplementationSwift,
     'utf8',
   );
-  await writeFileAsync(join(newPluginPath, 'Plugin.m'), pluginObjc, 'utf8');
+  await writeFileAsync(
+    join(newPluginPath, `${className}Plugin.m`),
+    pluginObjc,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(newPluginPath, `${className}Plugin.h`),
+    pluginObjcHeader,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(pluginPath, 'ios', 'Plugin.xcodeproj', 'project.pbxproj'),
+    pluginXcodeProj,
+    'utf8',
+  );
+
+  // Remove the old templates
+  await unlink(join(newPluginPath, 'CLASS_NAMEPlugin.swift'));
+  await unlink(join(newPluginPath, 'CLASS_NAME.swift'));
+  await unlink(join(newPluginPath, 'CLASS_NAMEPlugin.m'));
+  await unlink(join(newPluginPath, 'CLASS_NAMEPlugin.h'));
 }
 
 function generatePodspec(config: Config, answers: NewPluginAnswers) {
@@ -282,7 +315,7 @@ async function createAndroidPlugin(
     newPluginPath,
     `src/main/java/${domainPath}/${className}Plugin.java`,
   );
-  const newPluginJavaFunctionalityPath = join(
+  const newPluginJavaImplementationPath = join(
     newPluginPath,
     `src/main/java/${domainPath}/${className}.java`,
   );
@@ -293,7 +326,7 @@ async function createAndroidPlugin(
     join(pluginPath, 'android/CLASS_NAMEPlugin.java'),
     'utf8',
   );
-  const originalPluginJavaFunctionality = await readFileAsync(
+  const originalPluginJavaImplementation = await readFileAsync(
     join(pluginPath, 'android/CLASS_NAME.java'),
     'utf8',
   );
@@ -301,15 +334,15 @@ async function createAndroidPlugin(
   const pluginJava = originalPluginJava
     .replace(/PACKAGE_NAME/g, domain)
     .replace(/CLASS_NAME/g, className);
-  const pluginJavaFunctionality = originalPluginJavaFunctionality
+  const pluginJavaImplementation = originalPluginJavaImplementation
     .replace(/PACKAGE_NAME/g, domain)
     .replace(/CLASS_NAME/g, className);
 
   // Write the new plugin files
   await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
   await writeFileAsync(
-    newPluginJavaFunctionalityPath,
-    pluginJavaFunctionality,
+    newPluginJavaImplementationPath,
+    pluginJavaImplementation,
     'utf8',
   );
 
