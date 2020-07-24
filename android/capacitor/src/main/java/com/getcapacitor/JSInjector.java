@@ -62,11 +62,17 @@ class JSInjector {
     } else {
       Logger.error("Unable to inject Capacitor, Plugins won't work");
     }
-    return new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
+    if (html.contains("iso-8859-1")) {
+      return new ByteArrayInputStream(html.getBytes(StandardCharsets.ISO_8859_1));
+    }
+    else {
+      return new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
+    }
   }
 
   private String readAssetStream(InputStream stream) {
     try {
+      stream.mark(0);
       final int bufferSize = 1024;
       final char[] buffer = new char[bufferSize];
       final StringBuilder out = new StringBuilder();
@@ -77,7 +83,22 @@ class JSInjector {
           break;
         out.append(buffer, 0, rsz);
       }
-      return out.toString();
+      if (out.toString().contains("iso-8859-1")) {
+        stream.reset();
+        final char[] buffer_iso = new char[bufferSize];
+        final StringBuilder out_iso = new StringBuilder();
+        Reader in_iso = new InputStreamReader(stream, "ISO-8859-1");
+        for (; ; ) {
+          int rsz = in_iso.read(buffer_iso, 0, buffer_iso.length);
+          if (rsz < 0)
+            break;
+          out_iso.append(buffer_iso, 0, rsz);
+        }
+        return out_iso.toString();
+      }
+      else {
+        return out.toString();
+      }
     } catch (Exception e) {
       Logger.error("Unable to process HTML asset file. This is a fatal error", e);
     }
