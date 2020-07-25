@@ -13,8 +13,8 @@ tasks:
   - name: add-contributors
     on:
       push:
-        branches: [master]
+        branches: [2.x]
     config:
-      base: master
+      base: 2.x
       commit-message: 'chore(readme): add new contributor'
       exclude-pattern: '^(?!Ionitron).+?(?<!\\[bot\\])$'

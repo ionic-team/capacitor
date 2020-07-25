@@ -2,7 +2,7 @@ name: Capacitor Bot
 
 on:
   push:
-    branches: [master]
+    branches: [2.x]
   issues:
     types: [opened, edited]
   issue_comment:
