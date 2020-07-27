@@ -2,6 +2,7 @@ import XCTest
 @testable import Plugin
 
 class CLASS_NAMETests: XCTestCase {
+// swiftlint:disable:previous type_name
 
     override func setUp() {
         super.setUp()
