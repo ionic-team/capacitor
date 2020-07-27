@@ -217,21 +217,19 @@ async function createIosPlugin(
     'utf8',
   );
 
-  const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
-  const pluginImplementationSwift = originalPluginImplementationSwift.replace(
-    /CLASS_NAME/g,
-    className,
+  const fillTemplate = (content: string): string =>
+    content
+      .replace(/CLASS_NAME/g, className)
+      .replace(/\/\/ swiftlint:disable:previous[^\n]+\n/g, '');
+
+  const pluginSwift = fillTemplate(originalPluginSwift);
+  const pluginImplementationSwift = fillTemplate(
+    originalPluginImplementationSwift,
   );
-  const pluginObjc = originalPluginObjc.replace(/CLASS_NAME/g, className);
-  const pluginObjcHeader = originalPluginObjcHeader.replace(
-    /CLASS_NAME/g,
-    className,
-  );
-  const pluginXcodeProj = originalXcodeProj.replace(/CLASS_NAME/g, className);
-  const pluginTestsSwift = originalPluginTestsSwift.replace(
-    /CLASS_NAME/g,
-    className,
-  );
+  const pluginObjc = fillTemplate(originalPluginObjc);
+  const pluginObjcHeader = fillTemplate(originalPluginObjcHeader);
+  const pluginXcodeProj = fillTemplate(originalXcodeProj);
+  const pluginTestsSwift = fillTemplate(originalPluginTestsSwift);
 
   if (!answers.git) {
     logWarn(
