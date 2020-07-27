@@ -1,3 +1,29 @@
+## [2.4.0](https://github.com/ionic-team/capacitor/compare/2.3.0...2.4.0) (2020-07-27)
+
+
+### Bug Fixes
+
+* fix(android): don't return 404 on empty files (#3323) ([cfbd1e3](https://github.com/ionic-team/capacitor/commit/cfbd1e3)), closes [#3323](https://github.com/ionic-team/capacitor/issues/3323)
+* fix(android): fix LocalNotification `on` functionality (#3307) ([15af432](https://github.com/ionic-team/capacitor/commit/15af432)), closes [#3307](https://github.com/ionic-team/capacitor/issues/3307)
+* fix(android): Provide a file name when an image is saved to the gallery to prevent crash (#3331) ([a7b9320](https://github.com/ionic-team/capacitor/commit/a7b9320)), closes [#3331](https://github.com/ionic-team/capacitor/issues/3331)
+* fix(cli): avoid npm gitignore rename on new plugins (#3292) ([2c9b5e1](https://github.com/ionic-team/capacitor/commit/2c9b5e1)), closes [#3292](https://github.com/ionic-team/capacitor/issues/3292)
+* fix(ios): only open a URL when the application is active (#3328) ([8d7c58b](https://github.com/ionic-team/capacitor/commit/8d7c58b)), closes [#3328](https://github.com/ionic-team/capacitor/issues/3328)
+
+
+### Features
+
+* feat(camera): add `preserveAspectRatio` resizing option (#3309) ([27a8bcb](https://github.com/ionic-team/capacitor/commit/27a8bcb)), closes [#3309](https://github.com/ionic-team/capacitor/issues/3309)
+
+
+### Chores
+
+* chore: bump peerDependencies for 2.4.0 (#3342) ([2ff7bc4](https://github.com/ionic-team/capacitor/commit/2ff7bc4)), closes [#3342](https://github.com/ionic-team/capacitor/issues/3342)
+* chore: make deploy script push to 2.x branch (#3337) ([d0d30d6](https://github.com/ionic-team/capacitor/commit/d0d30d6)), closes [#3337](https://github.com/ionic-team/capacitor/issues/3337)
+* chore(ci): hook up workflows for 2.x ([89f8ae8](https://github.com/ionic-team/capacitor/commit/89f8ae8))
+* chore(readme): add contributors manually ([519ead8](https://github.com/ionic-team/capacitor/commit/519ead8))
+
+
+
 ## [2.3.0](https://github.com/ionic-team/capacitor/compare/2.2.1...2.3.0) (2020-07-16)
 
 
