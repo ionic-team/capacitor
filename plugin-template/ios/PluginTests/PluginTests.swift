@@ -2,7 +2,7 @@ import XCTest
 import Capacitor
 @testable import Plugin
 
-class ScreenReaderTests: XCTestCase {
+class CLASS_NAMETests: XCTestCase {
 
     override func setUp() {
         super.setUp()
