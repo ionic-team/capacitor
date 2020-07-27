@@ -1,5 +1,7 @@
 package com.getcapacitor;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +42,7 @@ public class JSObject extends JSONObject {
     }
 
     @Override
+    @Nullable
     public String getString(String key) {
         return getString(key, null);
     }
