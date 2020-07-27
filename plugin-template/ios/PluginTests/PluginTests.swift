@@ -1,5 +1,4 @@
 import XCTest
-import Capacitor
 @testable import Plugin
 
 class CLASS_NAMETests: XCTestCase {
