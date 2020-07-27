@@ -341,8 +341,9 @@ public class Camera extends Plugin {
     boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
     if (saveToGallery && (imageEditedFileSavePath != null || imageFileSavePath != null)) {
       try {
-        String fileToSave = imageEditedFileSavePath != null ? imageEditedFileSavePath : imageFileSavePath;
-        MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), fileToSave, "", "");
+        String fileToSavePath = imageEditedFileSavePath != null ? imageEditedFileSavePath : imageFileSavePath;
+        File fileToSave = new File(fileToSavePath);
+        MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), fileToSavePath, fileToSave.getName(), "");
       } catch (FileNotFoundException e) {
         Logger.error(getLogTag(), IMAGE_GALLERY_SAVE_ERROR, e);
       }
