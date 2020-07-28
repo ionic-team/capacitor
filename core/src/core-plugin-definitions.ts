@@ -156,7 +156,7 @@ export interface AppPlugin extends Plugin {
    */
   addListener(
     eventName: 'backButton',
-    listenerFunc: (data: AppUrlOpen) => void,
+    listenerFunc: (data: BackButtonResult) => void,
   ): PluginListenerHandle;
 
   /**
@@ -164,6 +164,8 @@ export interface AppPlugin extends Plugin {
    */
   removeAllListeners(): void;
 }
+
+export interface BackButtonResult {}
 
 export interface AppState {
   isActive: boolean;
