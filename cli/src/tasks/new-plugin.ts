@@ -193,15 +193,43 @@ async function createIosPlugin(
   const newPluginPath = join(pluginPath, 'ios', 'Plugin');
 
   const originalPluginSwift = await readFileAsync(
-    join(newPluginPath, 'Plugin.swift'),
+    join(newPluginPath, 'CLASS_NAMEPlugin.swift'),
+    'utf8',
+  );
+  const originalPluginImplementationSwift = await readFileAsync(
+    join(newPluginPath, 'CLASS_NAME.swift'),
     'utf8',
   );
   const originalPluginObjc = await readFileAsync(
-    join(newPluginPath, 'Plugin.m'),
+    join(newPluginPath, 'CLASS_NAMEPlugin.m'),
     'utf8',
   );
-  const pluginSwift = originalPluginSwift.replace(/CLASS_NAME/g, className);
-  const pluginObjc = originalPluginObjc.replace(/CLASS_NAME/g, className);
+  const originalPluginObjcHeader = await readFileAsync(
+    join(newPluginPath, 'CLASS_NAMEPlugin.h'),
+    'utf8',
+  );
+  const originalXcodeProj = await readFileAsync(
+    join(pluginPath, 'ios', 'Plugin.xcodeproj', 'project.pbxproj'),
+    'utf8',
+  );
+  const originalPluginTestsSwift = await readFileAsync(
+    join(pluginPath, 'ios', 'PluginTests', 'PluginTests.swift'),
+    'utf8',
+  );
+
+  const fillTemplate = (content: string): string =>
+    content
+      .replace(/CLASS_NAME/g, className)
+      .replace(/\/\/ swiftlint:disable:previous[^\n]+\n/g, '');
+
+  const pluginSwift = fillTemplate(originalPluginSwift);
+  const pluginImplementationSwift = fillTemplate(
+    originalPluginImplementationSwift,
+  );
+  const pluginObjc = fillTemplate(originalPluginObjc);
+  const pluginObjcHeader = fillTemplate(originalPluginObjcHeader);
+  const pluginXcodeProj = fillTemplate(originalXcodeProj);
+  const pluginTestsSwift = fillTemplate(originalPluginTestsSwift);
 
   if (!answers.git) {
     logWarn(
@@ -220,11 +248,41 @@ async function createIosPlugin(
     'utf8',
   );
   await writeFileAsync(
-    join(newPluginPath, 'Plugin.swift'),
+    join(newPluginPath, `${className}Plugin.swift`),
     pluginSwift,
     'utf8',
   );
-  await writeFileAsync(join(newPluginPath, 'Plugin.m'), pluginObjc, 'utf8');
+  await writeFileAsync(
+    join(newPluginPath, `${className}.swift`),
+    pluginImplementationSwift,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(newPluginPath, `${className}Plugin.m`),
+    pluginObjc,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(newPluginPath, `${className}Plugin.h`),
+    pluginObjcHeader,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(pluginPath, 'ios', 'Plugin.xcodeproj', 'project.pbxproj'),
+    pluginXcodeProj,
+    'utf8',
+  );
+  await writeFileAsync(
+    join(pluginPath, 'ios', 'PluginTests', 'PluginTests.swift'),
+    pluginTestsSwift,
+    'utf8',
+  );
+
+  // Remove the old templates
+  await unlink(join(newPluginPath, 'CLASS_NAMEPlugin.swift'));
+  await unlink(join(newPluginPath, 'CLASS_NAME.swift'));
+  await unlink(join(newPluginPath, 'CLASS_NAMEPlugin.m'));
+  await unlink(join(newPluginPath, 'CLASS_NAMEPlugin.h'));
 }
 
 function generatePodspec(config: Config, answers: NewPluginAnswers) {
@@ -267,24 +325,42 @@ async function createAndroidPlugin(
   // Make the package source path to the new plugin Java file
   const newPluginJavaPath = join(
     newPluginPath,
+    `src/main/java/${domainPath}/${className}Plugin.java`,
+  );
+  const newPluginJavaImplementationPath = join(
+    newPluginPath,
     `src/main/java/${domainPath}/${className}.java`,
   );
   await mkdirs(dirname(newPluginJavaPath));
 
-  // Read the original plugin java template and replace package/class names
+  // Read the original plugin java templates and replace package/class names
   const originalPluginJava = await readFileAsync(
-    join(pluginPath, 'android/Plugin.java'),
+    join(pluginPath, 'android/CLASS_NAMEPlugin.java'),
     'utf8',
   );
+  const originalPluginJavaImplementation = await readFileAsync(
+    join(pluginPath, 'android/CLASS_NAME.java'),
+    'utf8',
+  );
+
   const pluginJava = originalPluginJava
     .replace(/PACKAGE_NAME/g, domain)
     .replace(/CLASS_NAME/g, className);
+  const pluginJavaImplementation = originalPluginJavaImplementation
+    .replace(/PACKAGE_NAME/g, domain)
+    .replace(/CLASS_NAME/g, className);
 
-  // Write the new plugin file
+  // Write the new plugin files
   await writeFileAsync(newPluginJavaPath, pluginJava, 'utf8');
+  await writeFileAsync(
+    newPluginJavaImplementationPath,
+    pluginJavaImplementation,
+    'utf8',
+  );
 
-  // Remove the old template
-  await unlink(join(pluginPath, 'android/Plugin.java'));
+  // Remove the old templates
+  await unlink(join(pluginPath, 'android/CLASS_NAMEPlugin.java'));
+  await unlink(join(pluginPath, 'android/CLASS_NAME.java'));
 }
 
 function generateAndroidManifest(domain: string, pluginPath: string) {
