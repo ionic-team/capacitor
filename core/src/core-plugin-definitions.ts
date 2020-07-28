@@ -269,17 +269,19 @@ export interface BrowserPlugin extends Plugin {
 
   addListener(
     eventName: 'browserFinished',
-    listenerFunc: (info: any) => void,
+    listenerFunc: (info: BrowserInfo) => void,
   ): PluginListenerHandle;
   addListener(
     eventName: 'browserPageLoaded',
-    listenerFunc: (info: any) => void,
+    listenerFunc: (info: BrowserInfo) => void,
   ): PluginListenerHandle;
   /**
    * Remove all native listeners for this plugin
    */
   removeAllListeners(): void;
 }
+
+export interface BrowserInfo {}
 
 export interface BrowserOpenOptions {
   /**
