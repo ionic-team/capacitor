@@ -1,8 +1,8 @@
 import XCTest
-import Capacitor
 @testable import Plugin
 
-class PluginTests: XCTestCase {
+class CLASS_NAMETests: XCTestCase {
+// swiftlint:disable:previous type_name
 
     override func setUp() {
         super.setUp()
@@ -18,18 +18,10 @@ class PluginTests: XCTestCase {
         // This is an example of a functional test case for a plugin.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
 
+        let implementation = CLASS_NAME()
         let value = "Hello, World!"
-        let plugin = MyPlugin()
+        let result = implementation.echo(value)
 
-        let call = CAPPluginCall(callbackId: "test", options: [
-            "value": value
-        ], success: { (result, _) in
-            let resultValue = result!.data["value"] as? String
-            XCTAssertEqual(value, resultValue)
-        }, error: { (_) in
-            XCTFail("Error shouldn't have been called")
-        })
-
-        plugin.echo(call!)
+        XCTAssertEqual(value, result)
     }
 }
