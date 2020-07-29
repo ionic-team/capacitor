@@ -68,8 +68,7 @@ jobs:
       matrix:
         xcode:
           - /Applications/Xcode_12_beta.app
-          - /Applications/Xcode_11.6_beta.app
-          - /Applications/Xcode_11.5.app
+          - /Applications/Xcode_11.6.app
     steps:
       - run: sudo xcode-select --switch ${{ matrix.xcode }}
       - uses: actions/setup-node@v1
