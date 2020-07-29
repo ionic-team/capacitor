@@ -382,6 +382,7 @@ function generatePackageJSON(answers: NewPluginAnswers, cliVersion: string) {
     types: 'dist/esm/index.d.ts',
     scripts: {
       lint: 'npm run prettier -- --check && npm run swiftlint -- lint',
+      fmt: 'npm run prettier -- --write && npm run swiftlint -- autocorrect',
       prettier: 'prettier "**/*.{css,html,ts,js,java}"',
       swiftlint: 'node-swiftlint',
       build: 'npm run clean && tsc && rollup -c rollup.config.js',
