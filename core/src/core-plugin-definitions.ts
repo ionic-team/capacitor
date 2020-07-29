@@ -156,7 +156,7 @@ export interface AppPlugin extends Plugin {
    */
   addListener(
     eventName: 'backButton',
-    listenerFunc: (data: AppUrlOpen) => void,
+    listenerFunc: (data: BackButtonResult) => void,
   ): PluginListenerHandle;
 
   /**
@@ -164,6 +164,8 @@ export interface AppPlugin extends Plugin {
    */
   removeAllListeners(): void;
 }
+
+export interface BackButtonResult {}
 
 export interface AppState {
   isActive: boolean;
@@ -267,17 +269,19 @@ export interface BrowserPlugin extends Plugin {
 
   addListener(
     eventName: 'browserFinished',
-    listenerFunc: (info: any) => void,
+    listenerFunc: (info: BrowserInfo) => void,
   ): PluginListenerHandle;
   addListener(
     eventName: 'browserPageLoaded',
-    listenerFunc: (info: any) => void,
+    listenerFunc: (info: BrowserInfo) => void,
   ): PluginListenerHandle;
   /**
    * Remove all native listeners for this plugin
    */
   removeAllListeners(): void;
 }
+
+export interface BrowserInfo {}
 
 export interface BrowserOpenOptions {
   /**
