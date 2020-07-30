@@ -74,9 +74,9 @@
   }
 
   @objc public func getValue(_ key: String) -> Any? {
-    let key = getConfigKey(key)
+    let deepestKey = getConfigKey(key)
     let object = getConfigObjectDeepest(key: key)
-    return object?[key] ?? nil
+    return object?[deepestKey] ?? nil
   }
 
   @objc public func getString(_ key: String) -> String? {
