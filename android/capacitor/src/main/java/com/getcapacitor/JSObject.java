@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,32 +41,37 @@ public class JSObject extends JSONObject {
     }
 
     @Override
+    @Nullable
     public String getString(String key) {
         return getString(key, null);
     }
 
-    public String getString(String key, String defaultValue) {
+    @Nullable
+    public String getString(String key, @Nullable String defaultValue) {
         try {
             String value = super.getString(key);
-            if (!super.isNull(key) && value != null) {
+            if (!super.isNull(key)) {
                 return value;
             }
         } catch (JSONException ex) {}
         return defaultValue;
     }
 
+    @Nullable
     public Integer getInteger(String key) {
         return getInteger(key, null);
     }
 
-    public Integer getInteger(String key, Integer defaultValue) {
+    @Nullable
+    public Integer getInteger(String key, @Nullable Integer defaultValue) {
         try {
             return super.getInt(key);
         } catch (JSONException e) {}
         return defaultValue;
     }
 
-    public Boolean getBoolean(String key, Boolean defaultValue) {
+    @Nullable
+    public Boolean getBoolean(String key, @Nullable Boolean defaultValue) {
         try {
             return super.getBoolean(key);
         } catch (JSONException e) {}
@@ -75,10 +81,12 @@ public class JSObject extends JSONObject {
     /**
      * Fetch boolean from jsonObject
      */
+    @Nullable
     public Boolean getBool(String key) {
         return getBoolean(key, null);
     }
 
+    @Nullable
     public JSObject getJSObject(String name) {
         try {
             return getJSObject(name, null);
@@ -86,7 +94,8 @@ public class JSObject extends JSONObject {
         return null;
     }
 
-    public JSObject getJSObject(String name, JSObject defaultValue) throws JSONException {
+    @Nullable
+    public JSObject getJSObject(String name, @Nullable JSObject defaultValue) throws JSONException {
         try {
             Object obj = get(name);
             if (obj instanceof JSONObject) {
