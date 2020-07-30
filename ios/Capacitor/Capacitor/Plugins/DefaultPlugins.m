@@ -2,12 +2,6 @@
 
 #import "CAPBridgedPlugin.h"
 
-CAP_PLUGIN(CAPAccessibilityPlugin, "Accessibility",
-  CAP_PLUGIN_METHOD(isScreenReaderEnabled, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(speak, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
 CAP_PLUGIN(CAPAppPlugin, "App",
   CAP_PLUGIN_METHOD(exitApp, CAPPluginReturnNone);
   CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
