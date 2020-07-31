@@ -7,7 +7,7 @@ import Capacitor
  */
 @objc(CLASS_NAMEPlugin)
 public class CLASS_NAMEPlugin: CAPPlugin {
-// swiftlint:disable:previous type_name
+    // swiftlint:disable:previous type_name
     private let implementation = CLASS_NAME()
 
     @objc func echo(_ call: CAPPluginCall) {

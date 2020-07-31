@@ -16,16 +16,16 @@ class MockBridgeViewController: BridgeViewController {
 }
 
 class MockBridge: Bridge {
-  override public func registerPlugins() {
-    print("REGISER PLUITTTINS")
-  }
+    override public func registerPlugins() {
+        print("REGISER PLUITTTINS")
+    }
 }
 class AvocadoTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-      var bridge = MockBridge(MockBridgeViewController(), MockWebView())
+        var bridge = MockBridge(MockBridgeViewController(), MockWebView())
     }
 
     override func tearDown() {
