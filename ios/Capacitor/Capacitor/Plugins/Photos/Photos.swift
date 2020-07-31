@@ -3,255 +3,255 @@ import Photos
 
 @objc(CAPPhotosPlugin)
 public class CAPPhotosPlugin: CAPPlugin {
-  static let defaultQuantity = 25
-  static let defaultTypes = "photos"
-  static let defaultThumbnailWidth = 256
-  static let defaultThumbnailHeight = 256
+    static let defaultQuantity = 25
+    static let defaultTypes = "photos"
+    static let defaultThumbnailWidth = 256
+    static let defaultThumbnailHeight = 256
 
-  // Must be lazy here because it will prompt for permissions on instantiation without it
-  lazy var imageManager = PHCachingImageManager()
+    // Must be lazy here because it will prompt for permissions on instantiation without it
+    lazy var imageManager = PHCachingImageManager()
 
-  @objc func getAlbums(_ call: CAPPluginCall) {
-    checkAuthorization(allowed: {
-      self.fetchAlbumsToJs(call)
-    }, notAllowed: {
-      call.error("Access to photos not allowed by user")
-    })
-  }
-
-  @objc func getPhotos(_ call: CAPPluginCall) {
-    checkAuthorization(allowed: {
-      self.fetchResultAssetsToJs(call)
-    }, notAllowed: {
-      call.error("Access to photos not allowed by user")
-    })
-  }
-
-  @objc func createAlbum(_ call: CAPPluginCall) {
-    guard let name = call.getString("name") else {
-      call.error("Must provide a name")
-      return
+    @objc func getAlbums(_ call: CAPPluginCall) {
+        checkAuthorization(allowed: {
+            self.fetchAlbumsToJs(call)
+        }, notAllowed: {
+            call.error("Access to photos not allowed by user")
+        })
     }
 
-    checkAuthorization(allowed: {
-      PHPhotoLibrary.shared().performChanges({
-        PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
-      }, completionHandler: { success, error in
-        if !success {
-          call.error("Unable to create album", error)
-          return
+    @objc func getPhotos(_ call: CAPPluginCall) {
+        checkAuthorization(allowed: {
+            self.fetchResultAssetsToJs(call)
+        }, notAllowed: {
+            call.error("Access to photos not allowed by user")
+        })
+    }
+
+    @objc func createAlbum(_ call: CAPPluginCall) {
+        guard let name = call.getString("name") else {
+            call.error("Must provide a name")
+            return
         }
-        call.success()
-      })
-    }, notAllowed: {
-      call.error("Access to photos not allowed by user")
-    })
-  }
 
-  @objc func savePhoto(_ call: CAPPluginCall) {
-    guard let data = call.getString("data") else {
-      call.error("Must provide data as base64 encoded string")
-      return
+        checkAuthorization(allowed: {
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
+            }, completionHandler: { success, error in
+                if !success {
+                    call.error("Unable to create album", error)
+                    return
+                }
+                call.success()
+            })
+        }, notAllowed: {
+            call.error("Access to photos not allowed by user")
+        })
     }
 
-    let albumId = call.getString("albumIdentifier")
-
-    let dataDecoded: Data = Data(base64Encoded: data, options: .ignoreUnknownCharacters)!
-    guard let image = UIImage(data: dataDecoded) else {
-      call.error("Unable to load image from base64 data")
-      return
-    }
-
-    var targetCollection: PHAssetCollection?
-
-    if albumId != nil {
-      let albumFetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [albumId!], options: nil)
-      albumFetchResult.enumerateObjects({ (collection, _, _) in
-        targetCollection = collection
-      })
-      if targetCollection == nil {
-        call.error("Unable to find that album")
-        return
-      }
-      if !targetCollection!.canPerform(.addContent) {
-        call.error("Album doesn't support adding content (is this a smart album?)")
-        return
-      }
-    }
-
-    checkAuthorization(allowed: {
-      // Add it to the photo library.
-      PHPhotoLibrary.shared().performChanges({
-        let creationRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
-
-        if let collection = targetCollection {
-          let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
-          addAssetRequest?.addAssets([creationRequest.placeholderForCreatedAsset!] as NSArray)
+    @objc func savePhoto(_ call: CAPPluginCall) {
+        guard let data = call.getString("data") else {
+            call.error("Must provide data as base64 encoded string")
+            return
         }
-      }, completionHandler: {success, error in
-        if !success {
-          call.error("Unable to save image to album", error)
+
+        let albumId = call.getString("albumIdentifier")
+
+        let dataDecoded: Data = Data(base64Encoded: data, options: .ignoreUnknownCharacters)!
+        guard let image = UIImage(data: dataDecoded) else {
+            call.error("Unable to load image from base64 data")
+            return
+        }
+
+        var targetCollection: PHAssetCollection?
+
+        if albumId != nil {
+            let albumFetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [albumId!], options: nil)
+            albumFetchResult.enumerateObjects({ (collection, _, _) in
+                targetCollection = collection
+            })
+            if targetCollection == nil {
+                call.error("Unable to find that album")
+                return
+            }
+            if !targetCollection!.canPerform(.addContent) {
+                call.error("Album doesn't support adding content (is this a smart album?)")
+                return
+            }
+        }
+
+        checkAuthorization(allowed: {
+            // Add it to the photo library.
+            PHPhotoLibrary.shared().performChanges({
+                let creationRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+
+                if let collection = targetCollection {
+                    let addAssetRequest = PHAssetCollectionChangeRequest(for: collection)
+                    addAssetRequest?.addAssets([creationRequest.placeholderForCreatedAsset!] as NSArray)
+                }
+            }, completionHandler: {success, error in
+                if !success {
+                    call.error("Unable to save image to album", error)
+                } else {
+                    call.success()
+                }
+            })
+        }, notAllowed: {
+            call.error("Access to photos not allowed by user")
+        })
+    }
+
+    func checkAuthorization(allowed: @escaping () -> Void, notAllowed: @escaping () -> Void) {
+        let status = PHPhotoLibrary.authorizationStatus()
+        if status == PHAuthorizationStatus.authorized {
+            allowed()
         } else {
-          call.success()
+            PHPhotoLibrary.requestAuthorization({ (newStatus) in
+                if newStatus == PHAuthorizationStatus.authorized {
+                    allowed()
+                } else {
+                    notAllowed()
+                }
+            })
         }
-      })
-    }, notAllowed: {
-      call.error("Access to photos not allowed by user")
-    })
-  }
+    }
 
-  func checkAuthorization(allowed: @escaping () -> Void, notAllowed: @escaping () -> Void) {
-    let status = PHPhotoLibrary.authorizationStatus()
-    if status == PHAuthorizationStatus.authorized {
-      allowed()
-    } else {
-      PHPhotoLibrary.requestAuthorization({ (newStatus) in
-        if newStatus == PHAuthorizationStatus.authorized {
-          allowed()
+    func fetchAlbumsToJs(_ call: CAPPluginCall) {
+        var albums = [JSObject]()
+
+        let loadSharedAlbums = call.getBool("loadShared", false)!
+
+        // Load our smart albums
+        var fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
+        fetchResult.enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
+            var object = JSObject()
+            object["name"] = collection.localizedTitle
+            object["identifier"] = collection.localIdentifier
+            object["type"] = "smart"
+            albums.append(object)
+        })
+
+        if loadSharedAlbums {
+            fetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumCloudShared, options: nil)
+            fetchResult.enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
+                var object = JSObject()
+                object["name"] = collection.localizedTitle
+                object["identifier"] = collection.localIdentifier
+                object["type"] = "shared"
+                albums.append(object)
+            })
+        }
+
+        // Load our user albums
+        PHCollectionList.fetchTopLevelUserCollections(with: nil).enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
+            var object = JSObject()
+            object["name"] = collection.localizedTitle
+            object["identifier"] = collection.localIdentifier
+            object["type"] = "user"
+            albums.append(object)
+        })
+
+        call.success([
+            "albums": albums
+        ])
+    }
+
+    func fetchResultAssetsToJs(_ call: CAPPluginCall) {
+        var assets: [JSObject] = []
+
+        let albumId = call.getString("albumIdentifier")
+
+        let quantity = call.getInt("quantity", CAPPhotosPlugin.defaultQuantity)!
+
+        var targetCollection: PHAssetCollection?
+
+        let options = PHFetchOptions()
+        options.fetchLimit = quantity
+        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+
+        if albumId != nil {
+            let albumFetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [albumId!], options: nil)
+            albumFetchResult.enumerateObjects({ (collection, _, _) in
+                targetCollection = collection
+            })
+        }
+
+        var fetchResult: PHFetchResult<PHAsset>
+        if targetCollection != nil {
+            fetchResult = PHAsset.fetchAssets(in: targetCollection!, options: options)
         } else {
-          notAllowed()
-        }
-      })
-    }
-  }
-
-  func fetchAlbumsToJs(_ call: CAPPluginCall) {
-    var albums = [JSObject]()
-
-    let loadSharedAlbums = call.getBool("loadShared", false)!
-
-    // Load our smart albums
-    var fetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
-    fetchResult.enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
-      var object = JSObject()
-      object["name"] = collection.localizedTitle
-      object["identifier"] = collection.localIdentifier
-      object["type"] = "smart"
-      albums.append(object)
-    })
-
-    if loadSharedAlbums {
-      fetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumCloudShared, options: nil)
-      fetchResult.enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
-        var object = JSObject()
-        object["name"] = collection.localizedTitle
-        object["identifier"] = collection.localIdentifier
-        object["type"] = "shared"
-        albums.append(object)
-      })
-    }
-
-    // Load our user albums
-    PHCollectionList.fetchTopLevelUserCollections(with: nil).enumerateObjects({ (collection, _, _: UnsafeMutablePointer<ObjCBool>) in
-      var object = JSObject()
-      object["name"] = collection.localizedTitle
-      object["identifier"] = collection.localIdentifier
-      object["type"] = "user"
-      albums.append(object)
-    })
-
-    call.success([
-      "albums": albums
-    ])
-  }
-
-  func fetchResultAssetsToJs(_ call: CAPPluginCall) {
-    var assets: [JSObject] = []
-
-    let albumId = call.getString("albumIdentifier")
-
-    let quantity = call.getInt("quantity", CAPPhotosPlugin.defaultQuantity)!
-
-    var targetCollection: PHAssetCollection?
-
-    let options = PHFetchOptions()
-    options.fetchLimit = quantity
-    options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-
-    if albumId != nil {
-      let albumFetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [albumId!], options: nil)
-      albumFetchResult.enumerateObjects({ (collection, _, _) in
-        targetCollection = collection
-      })
-    }
-
-    var fetchResult: PHFetchResult<PHAsset>
-    if targetCollection != nil {
-      fetchResult = PHAsset.fetchAssets(in: targetCollection!, options: options)
-    } else {
-      fetchResult = PHAsset.fetchAssets(with: options)
-    }
-
-    //let after = call.getString("after")
-
-    let types = call.getString("types") ?? CAPPhotosPlugin.defaultTypes
-    let thumbnailWidth = call.getInt("thumbnailWidth", CAPPhotosPlugin.defaultThumbnailWidth)!
-    let thumbnailHeight = call.getInt("thumbnailHeight", CAPPhotosPlugin.defaultThumbnailHeight)!
-    let thumbnailSize = CGSize(width: thumbnailWidth, height: thumbnailHeight)
-    let thumbnailQuality = call.getInt("thumbnailQuality", 95)!
-
-    let requestOptions = PHImageRequestOptions()
-    requestOptions.isNetworkAccessAllowed = true
-    requestOptions.version = .current
-    requestOptions.deliveryMode = .opportunistic
-    requestOptions.isSynchronous = true
-
-    fetchResult.enumerateObjects({ (asset, _: Int, _: UnsafeMutablePointer<ObjCBool>) in
-
-      if asset.mediaType == .image && types == "videos" {
-        return
-      }
-      if asset.mediaType == .video && types == "photos" {
-        return
-      }
-
-      var object = JSObject()
-
-      self.imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: requestOptions, resultHandler: { (fetchedImage, _) in
-        guard let image = fetchedImage else {
-          return
+            fetchResult = PHAsset.fetchAssets(with: options)
         }
 
-        object["identifier"] = asset.localIdentifier
+        //let after = call.getString("after")
 
-        // TODO: We need to know original type
-        object["data"] = image.jpegData(compressionQuality: CGFloat(thumbnailQuality) / 100.0)?.base64EncodedString()
+        let types = call.getString("types") ?? CAPPhotosPlugin.defaultTypes
+        let thumbnailWidth = call.getInt("thumbnailWidth", CAPPhotosPlugin.defaultThumbnailWidth)!
+        let thumbnailHeight = call.getInt("thumbnailHeight", CAPPhotosPlugin.defaultThumbnailHeight)!
+        let thumbnailSize = CGSize(width: thumbnailWidth, height: thumbnailHeight)
+        let thumbnailQuality = call.getInt("thumbnailQuality", 95)!
 
-        if asset.creationDate != nil {
-          object["creationDate"] = JSDate.toString(asset.creationDate!)
-        }
-        object["fullWidth"] = asset.pixelWidth
-        object["fullHeight"] = asset.pixelHeight
-        object["thumbnailWidth"] = image.size.width
-        object["thumbnailHeight"] = image.size.height
-        object["location"] = self.makeLocation(asset)
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isNetworkAccessAllowed = true
+        requestOptions.version = .current
+        requestOptions.deliveryMode = .opportunistic
+        requestOptions.isSynchronous = true
 
-        assets.append(object)
-      })
-    })
+        fetchResult.enumerateObjects({ (asset, _: Int, _: UnsafeMutablePointer<ObjCBool>) in
 
-    call.success([
-      "photos": assets
-    ])
-  }
+            if asset.mediaType == .image && types == "videos" {
+                return
+            }
+            if asset.mediaType == .video && types == "photos" {
+                return
+            }
 
-  func makeLocation(_ asset: PHAsset) -> JSObject {
-    var loc = JSObject()
-    guard let location = asset.location else {
-      return loc
+            var object = JSObject()
+
+            self.imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: requestOptions, resultHandler: { (fetchedImage, _) in
+                guard let image = fetchedImage else {
+                    return
+                }
+
+                object["identifier"] = asset.localIdentifier
+
+                // TODO: We need to know original type
+                object["data"] = image.jpegData(compressionQuality: CGFloat(thumbnailQuality) / 100.0)?.base64EncodedString()
+
+                if asset.creationDate != nil {
+                    object["creationDate"] = JSDate.toString(asset.creationDate!)
+                }
+                object["fullWidth"] = asset.pixelWidth
+                object["fullHeight"] = asset.pixelHeight
+                object["thumbnailWidth"] = image.size.width
+                object["thumbnailHeight"] = image.size.height
+                object["location"] = self.makeLocation(asset)
+
+                assets.append(object)
+            })
+        })
+
+        call.success([
+            "photos": assets
+        ])
     }
 
-    loc["latitude"] = location.coordinate.latitude
-    loc["longitude"] = location.coordinate.longitude
-    loc["altitude"] = location.altitude
-    loc["heading"] = location.course
-    loc["speed"] = location.speed
-    return loc
-  }
+    func makeLocation(_ asset: PHAsset) -> JSObject {
+        var loc = JSObject()
+        guard let location = asset.location else {
+            return loc
+        }
 
-  /*
-  deinit {
-    PHPhotoLibrary.shared().unregisterChangeObserver(self)
-  }
- */
+        loc["latitude"] = location.coordinate.latitude
+        loc["longitude"] = location.coordinate.longitude
+        loc["altitude"] = location.altitude
+        loc["heading"] = location.course
+        loc["speed"] = location.speed
+        return loc
+    }
+
+    /*
+     deinit {
+     PHPhotoLibrary.shared().unregisterChangeObserver(self)
+     }
+     */
 }

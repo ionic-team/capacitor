@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
@@ -140,11 +141,13 @@ public class PluginCall {
         return this.data;
     }
 
+    @Nullable
     public String getString(String name) {
         return this.getString(name, null);
     }
 
-    public String getString(String name, String defaultValue) {
+    @Nullable
+    public String getString(String name, @Nullable String defaultValue) {
         Object value = this.data.opt(name);
         if (value == null) {
             return defaultValue;
@@ -156,11 +159,13 @@ public class PluginCall {
         return defaultValue;
     }
 
+    @Nullable
     public Integer getInt(String name) {
         return this.getInt(name, null);
     }
 
-    public Integer getInt(String name, Integer defaultValue) {
+    @Nullable
+    public Integer getInt(String name, @Nullable Integer defaultValue) {
         Object value = this.data.opt(name);
         if (value == null) {
             return defaultValue;
@@ -172,11 +177,13 @@ public class PluginCall {
         return defaultValue;
     }
 
+    @Nullable
     public Float getFloat(String name) {
         return this.getFloat(name, null);
     }
 
-    public Float getFloat(String name, Float defaultValue) {
+    @Nullable
+    public Float getFloat(String name, @Nullable Float defaultValue) {
         Object value = this.data.opt(name);
         if (value == null) {
             return defaultValue;
@@ -194,11 +201,13 @@ public class PluginCall {
         return defaultValue;
     }
 
+    @Nullable
     public Double getDouble(String name) {
         return this.getDouble(name, null);
     }
 
-    public Double getDouble(String name, Double defaultValue) {
+    @Nullable
+    public Double getDouble(String name, @Nullable Double defaultValue) {
         Object value = this.data.opt(name);
         if (value == null) {
             return defaultValue;
@@ -216,11 +225,13 @@ public class PluginCall {
         return defaultValue;
     }
 
+    @Nullable
     public Boolean getBoolean(String name) {
         return this.getBoolean(name, null);
     }
 
-    public Boolean getBoolean(String name, Boolean defaultValue) {
+    @Nullable
+    public Boolean getBoolean(String name, @Nullable Boolean defaultValue) {
         Object value = this.data.opt(name);
         if (value == null) {
             return defaultValue;
@@ -236,6 +247,7 @@ public class PluginCall {
         return this.getObject(name, new JSObject());
     }
 
+    @Nullable
     public JSObject getObject(String name, JSObject defaultValue) {
         Object value = this.data.opt(name);
         if (value == null) {
@@ -262,6 +274,7 @@ public class PluginCall {
      * @param defaultValue
      * @return
      */
+    @Nullable
     public JSArray getArray(String name, JSArray defaultValue) {
         Object value = this.data.opt(name);
         if (value == null) {
