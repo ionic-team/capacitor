@@ -220,7 +220,7 @@ async function createIosPlugin(
   const fillTemplate = (content: string): string =>
     content
       .replace(/CLASS_NAME/g, className)
-      .replace(/\/\/ swiftlint:disable:previous[^\n]+\n/g, '');
+      .replace(/ +\/\/ swiftlint:disable:previous[^\n]+\n/g, '');
 
   const pluginSwift = fillTemplate(originalPluginSwift);
   const pluginImplementationSwift = fillTemplate(
