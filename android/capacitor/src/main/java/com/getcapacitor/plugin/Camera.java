@@ -175,6 +175,7 @@ public class Camera extends Plugin {
         settings.setHeight(call.getInt("height", 0));
         settings.setShouldResize(settings.getWidth() > 0 || settings.getHeight() > 0);
         settings.setShouldCorrectOrientation(call.getBoolean("correctOrientation", CameraSettings.DEFAULT_CORRECT_ORIENTATION));
+        settings.setPreserveAspectRatio(call.getBoolean("preserveAspectRatio", false));
         try {
             settings.setSource(CameraSource.valueOf(call.getString("source", CameraSource.PROMPT.getSource())));
         } catch (IllegalArgumentException ex) {
@@ -335,8 +336,9 @@ public class Camera extends Plugin {
         boolean saveToGallery = call.getBoolean("saveToGallery", CameraSettings.DEFAULT_SAVE_IMAGE_TO_GALLERY);
         if (saveToGallery && (imageEditedFileSavePath != null || imageFileSavePath != null)) {
             try {
-                String fileToSave = imageEditedFileSavePath != null ? imageEditedFileSavePath : imageFileSavePath;
-                MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), fileToSave, "", "");
+                String fileToSavePath = imageEditedFileSavePath != null ? imageEditedFileSavePath : imageFileSavePath;
+                File fileToSave = new File(fileToSavePath);
+                MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), fileToSavePath, fileToSave.getName(), "");
             } catch (FileNotFoundException e) {
                 Logger.error(getLogTag(), IMAGE_GALLERY_SAVE_ERROR, e);
             }
@@ -404,9 +406,15 @@ public class Camera extends Plugin {
         }
 
         if (settings.isShouldResize()) {
-            final Bitmap newBitmap = ImageUtils.resize(bitmap, settings.getWidth(), settings.getHeight());
+            final Bitmap newBitmap = ImageUtils.resize(
+                bitmap,
+                settings.getWidth(),
+                settings.getHeight(),
+                settings.getPreserveAspectRatio()
+            );
             bitmap = replaceBitmap(bitmap, newBitmap);
         }
+
         return bitmap;
     }
 

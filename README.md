@@ -79,6 +79,8 @@ Made possible by the Capacitor community. 💖
 
 <p align="center">
   <a href="https://github.com/cwoolum"><img src="https://github.com/cwoolum.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/kheftel"><img src="https://github.com/kheftel.png?size=100" width="50" height="50" /></a>
+  <a href="https://github.com/iphilgood"><img src="https://github.com/iphilgood.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/mahnuh"><img src="https://github.com/mahnuh.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/DasNiels"><img src="https://github.com/DasNiels.png?size=100" width="50" height="50" /></a>
   <a href="https://github.com/tntwist"><img src="https://github.com/tntwist.png?size=100" width="50" height="50" /></a>
