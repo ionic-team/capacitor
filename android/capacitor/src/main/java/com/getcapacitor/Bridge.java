@@ -20,7 +20,6 @@ import com.getcapacitor.plugin.Accessibility;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Browser;
 import com.getcapacitor.plugin.Camera;
-import com.getcapacitor.plugin.Clipboard;
 import com.getcapacitor.plugin.Device;
 import com.getcapacitor.plugin.Filesystem;
 import com.getcapacitor.plugin.Geolocation;
@@ -401,7 +400,6 @@ public class Bridge {
         this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(Browser.class);
         this.registerPlugin(Camera.class);
-        this.registerPlugin(Clipboard.class);
         this.registerPlugin(Device.class);
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(Filesystem.class);
