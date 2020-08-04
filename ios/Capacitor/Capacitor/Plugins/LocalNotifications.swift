@@ -32,7 +32,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Schedule a notification.
      */
     @objc func schedule(_ call: CAPPluginCall) {
-        guard let notifications = call.getArray("notifications", [String: Any].self) else {
+        guard let notifications = call.getArray("notifications", JSObject.self) else {
             call.error("Must provide notifications array as notifications option")
             return
         }
@@ -109,7 +109,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Cancel notifications by id
      */
     @objc func cancel(_ call: CAPPluginCall) {
-        guard let notifications = call.getArray("notifications", JSObject.self, []), notifications.count > 0 else {
+        guard let notifications = call.getArray("notifications", JSObject.self), notifications.count > 0 else {
             call.error("Must supply notifications to cancel")
             return
         }
@@ -338,6 +338,9 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
 
         createdCategories.append(generalCategory)
         for type in actionTypes {
+            guard let type = type as? JSObject else {
+              continue
+            }
             guard let id = type["id"] as? String else {
                 bridge?.modulePrint(self, "Action type must have an id field")
                 continue
@@ -370,6 +373,9 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
         var createdActions = [UNNotificationAction]()
 
         for action in actions {
+            guard let action = action as? JSObject else {
+                continue
+            }
             guard let id = action["id"] as? String else {
                 bridge?.modulePrint(self, "Action must have an id field")
                 continue
@@ -456,6 +462,9 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
         var createdAttachments = [UNNotificationAttachment]()
 
         for attachment in attachments {
+            guard let attachment = attachment as? JSObject else {
+                continue
+            }
             guard let id = attachment["id"] as? String else {
                 throw LocalNotificationError.attachmentNoId
             }
