@@ -16,6 +16,6 @@
     "url": "https://github.com/ionic-team/capacitor/issues"
   },
   "peerDependencies": {
-    "@capacitor/core": "~2.3.0"
+    "@capacitor/core": "~2.4.0"
   }
 }
