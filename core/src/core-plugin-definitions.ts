@@ -17,7 +17,6 @@ export interface PluginRegistry {
   Motion: MotionPlugin;
   Network: NetworkPlugin;
   Permissions: PermissionsPlugin;
-  Photos: PhotosPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
