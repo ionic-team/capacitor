@@ -112,10 +112,6 @@ CAP_PLUGIN(CAPNetworkPlugin, "Network",
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPPermissionsPlugin, "Permissions",
-  CAP_PLUGIN_METHOD(query, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(register, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(requestPermission, CAPPluginReturnPromise);

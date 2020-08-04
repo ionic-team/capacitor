@@ -16,7 +16,6 @@ export interface PluginRegistry {
   Modals: ModalsPlugin;
   Motion: MotionPlugin;
   Network: NetworkPlugin;
-  Permissions: PermissionsPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
@@ -1449,30 +1448,6 @@ export interface NetworkStatus {
 }
 
 export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
-
-//
-
-export enum PermissionType {
-  Camera = 'camera',
-  Photos = 'photos',
-  Geolocation = 'geolocation',
-  Notifications = 'notifications',
-  ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write',
-  Microphone = 'microphone',
-}
-
-export interface PermissionsOptions {
-  name: PermissionType;
-}
-
-export interface PermissionResult {
-  state: 'granted' | 'denied' | 'prompt';
-}
-
-export interface PermissionsPlugin extends Plugin {
-  query(options: PermissionsOptions): Promise<PermissionResult>;
-}
 
 //
 
