@@ -407,7 +407,10 @@ export function getNpmClient(
 
 export async function copyTemplate(src: string, dst: string) {
   await copyAsync(src, dst);
+  await renameGitignore(dst);
+}
 
+export async function renameGitignore(dst: string) {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');

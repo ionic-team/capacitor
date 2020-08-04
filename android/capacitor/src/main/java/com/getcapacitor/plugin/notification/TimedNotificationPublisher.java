@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import com.getcapacitor.Logger;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -41,7 +42,9 @@ public class TimedNotificationPublisher extends BroadcastReceiver {
             long trigger = date.nextTrigger(new Date());
             Intent clone = (Intent) intent.clone();
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, clone, PendingIntent.FLAG_CANCEL_CURRENT);
-            alarmManager.set(AlarmManager.RTC, trigger, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC, trigger, pendingIntent);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Logger.debug(Logger.tags("LN"), "notification " + id + " will next fire at " + sdf.format(new Date(trigger)));
         }
     }
 }
