@@ -10,9 +10,6 @@ enum JSProcessingError: LocalizedError {
     }
 }
 
-public typealias JSObject = [String: Any]
-public typealias JSArray = [JSObject]
-
 public class JSDate {
     static func toString(_ date: Date) -> String {
         let formatter = ISO8601DateFormatter()
