@@ -1,4 +1,14 @@
+## [1.5.3](https://github.com/ionic-team/capacitor/compare/1.5.2...1.5.3) (2020-08-04)
+
+### Bug Fixes
+
+* fix(ios): only open a URL when the application is active (#3382) ([f1792ff](https://github.com/ionic-team/capacitor/commit/f1792ff)), closes [#3382](https://github.com/ionic-team/capacitor/issues/3382)
+
+
+
 ## [1.5.2](https://github.com/ionic-team/capacitor/compare/1.5.1...1.5.2) (2020-03-27)
+
+### Bug Fixes
 
 * fix(ios): avoid crash on Xcode 11.4 (#2651) ([281c628](https://github.com/ionic-team/capacitor/commit/281c628)), closes [#2651](https://github.com/ionic-team/capacitor/issues/2651)
 
