@@ -45,32 +45,36 @@ public typealias JSResultBody = [String: Any]
  */
 public class JSResult {
     public var call: JSCall
-    public var result: JSResultBody
+    public var result: JSResultBody?
 
-    public init(call: JSCall, result: JSResultBody) {
+    public init(call: JSCall, result: JSResultBody?) {
         self.call = call
         self.result = result
     }
 
     public func toJson() throws -> String {
-        do {
-            if JSONSerialization.isValidJSONObject(result) {
-                let theJSONData = try JSONSerialization.data(withJSONObject: result, options: [])
+        if let result = result {
+            do {
+                if JSONSerialization.isValidJSONObject(result) {
+                    let theJSONData = try JSONSerialization.data(withJSONObject: result, options: [])
 
-                return String(data: theJSONData,
-                              encoding: .utf8)!
-            } else {
-                CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
-                    "Ensure that all data passed to success callback from module method is JSON serializable!")
-                throw JSProcessingError.jsonSerializeError(call: call)
+                    return String(data: theJSONData,
+                                  encoding: .utf8)!
+                } else {
+                    CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
+                        "Ensure that all data passed to success callback from module method is JSON serializable!")
+                    throw JSProcessingError.jsonSerializeError(call: call)
+                }
+            } catch let error as JSProcessingError {
+                throw error
+            } catch {
+                CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
             }
-        } catch let error as JSProcessingError {
-            throw error
-        } catch {
-            CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
-        }
 
-        return "{}"
+            return "{}"
+        } else {
+            return "undefined"
+        }
     }
 }
 

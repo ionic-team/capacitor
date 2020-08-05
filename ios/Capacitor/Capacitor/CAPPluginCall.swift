@@ -63,7 +63,7 @@ public typealias PluginEventListener = CAPPluginCall
     }
 
     func success() {
-        successHandler(CAPPluginCallResult(), self)
+        successHandler(CAPPluginCallResult([:]), self)
     }
 
     func success(_ data: PluginResultData = [:]) {
