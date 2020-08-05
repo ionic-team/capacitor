@@ -80,6 +80,7 @@ public typealias PluginEventListener = CAPPluginCall
         successHandler(CAPPluginCallResult(data), self)
     }
 
+    @available(*, deprecated, message: "Use `reject()`")
     func error(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
         errorHandler(CAPPluginCallError(message: message, code: nil, error: error, data: data))
     }

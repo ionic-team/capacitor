@@ -86,11 +86,28 @@ public class PluginCall {
         this.msgHandler.sendResponseMessage(this, null, errorResult);
     }
 
+    /**
+     * @deprecated Use `reject()`.
+     */
     public void error(String msg, Exception ex) {
-        error(msg, null, ex);
+        reject(msg, null, ex);
     }
 
+    /**
+     * @deprecated Use `reject()`.
+     */
     public void error(String msg, String code, Exception ex) {
+        reject(msg, code, ex);
+    }
+
+    /**
+     * @deprecated Use `reject()`.
+     */
+    public void error(String msg) {
+        reject(msg, null, null);
+    }
+
+    public void reject(String msg, String code, Exception ex) {
         PluginResult errorResult = new PluginResult();
 
         if (ex != null) {
@@ -107,28 +124,24 @@ public class PluginCall {
         this.msgHandler.sendResponseMessage(this, null, errorResult);
     }
 
-    public void error(String msg) {
-        error(msg, null);
-    }
-
     public void reject(String msg, Exception ex) {
-        error(msg, ex);
+        reject(msg, null, ex);
     }
 
     public void reject(String msg, String code) {
-        error(msg, code, null);
+        reject(msg, code, null);
     }
 
     public void reject(String msg) {
-        error(msg, null);
+        reject(msg, null, null);
     }
 
     public void unimplemented() {
-        error(UNIMPLEMENTED, null);
+        reject(UNIMPLEMENTED, null, null);
     }
 
     public void unavailable() {
-        error(UNAVAILABLE, null);
+        reject(UNAVAILABLE, null, null);
     }
 
     public String getPluginId() {
