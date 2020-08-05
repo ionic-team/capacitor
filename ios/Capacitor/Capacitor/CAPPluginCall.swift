@@ -62,10 +62,12 @@ public typealias PluginEventListener = CAPPluginCall
         return self.options.index(forKey: key) != nil
     }
 
+    @available(*, deprecated, message: "Use `resolve()`")
     func success() {
         successHandler(CAPPluginCallResult([:]), self)
     }
 
+    @available(*, deprecated, message: "Use `resolve()`")
     func success(_ data: PluginResultData = [:]) {
         successHandler(CAPPluginCallResult(data), self)
     }
