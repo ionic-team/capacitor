@@ -50,17 +50,11 @@ public class PluginCall {
         this.msgHandler.sendResponseMessage(this, successResult, null);
     }
 
-    /**
-     * @deprecated Use `resolve()`.
-     */
     public void success(JSObject data) {
         PluginResult result = new PluginResult(data);
         this.msgHandler.sendResponseMessage(this, result, null);
     }
 
-    /**
-     * @deprecated Use `resolve()`.
-     */
     public void success() {
         this.success(new JSObject());
     }
