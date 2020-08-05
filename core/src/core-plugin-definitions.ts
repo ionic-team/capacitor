@@ -15,8 +15,6 @@ export interface PluginRegistry {
   Modals: ModalsPlugin;
   Motion: MotionPlugin;
   Network: NetworkPlugin;
-  Permissions: PermissionsPlugin;
-  Photos: PhotosPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
@@ -347,6 +345,18 @@ export interface CameraOptions {
    * The height of the saved image
    */
   height?: number;
+  /**
+   * Whether to preserve the aspect ratio of the image.
+   * If this flag is true, the width and height will be used as max values
+   * and the aspect ratio will be preserved. This is only relevant when
+   * both a width and height are passed. When only width or height is provided
+   * the aspect ratio is always preserved (and this option is a no-op).
+   *
+   * A future major version will change this behavior to be default,
+   * and may also remove this option altogether.
+   * Default: false
+   */
+  preserveAspectRatio?: boolean;
   /**
    * Whether to automatically rotate the image "up" to correct for orientation
    * in portrait mode
@@ -1381,211 +1391,6 @@ export interface NetworkStatus {
 }
 
 export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
-
-//
-
-export enum PermissionType {
-  Camera = 'camera',
-  Photos = 'photos',
-  Geolocation = 'geolocation',
-  Notifications = 'notifications',
-  ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write',
-  Microphone = 'microphone',
-}
-
-export interface PermissionsOptions {
-  name: PermissionType;
-}
-
-export interface PermissionResult {
-  state: 'granted' | 'denied' | 'prompt';
-}
-
-export interface PermissionsPlugin extends Plugin {
-  query(options: PermissionsOptions): Promise<PermissionResult>;
-}
-
-//
-
-export interface PhotosPlugin extends Plugin {
-  /**
-   * Get photos from the user's photo library
-   */
-  getPhotos(options?: PhotosFetchOptions): Promise<PhotosResult>;
-  /**
-   * Get albums from the user's photo library
-   */
-  getAlbums(options?: PhotosAlbumsFetchOptions): Promise<PhotosAlbumsResult>;
-  /**
-   * Save a photo the the user's photo library
-   */
-  savePhoto(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
-  /**
-   * Create an album in the user's photo library
-   */
-  createAlbum(options: PhotosCreateAlbumOptions): Promise<void>;
-}
-
-export interface PhotosFetchOptions {
-  /**
-   * The number of photos to fetch, sorted by last created date descending
-   */
-  quantity?: number;
-  /**
-   * The width of thumbnail to return
-   */
-  thumbnailWidth?: number;
-  /**
-   * The height of thumbnail to return
-   */
-  thumbnailHeight?: number;
-  /**
-   * The quality of thumbnail to return as JPEG (0-100)
-   */
-  thumbnailQuality?: number;
-  /**
-   * Which types of assets to return (currently only supports "photos")
-   */
-  types?: string;
-  /**
-   * Which album identifier to query in (get identifier with getAlbums())
-   */
-  albumIdentifier?: string;
-}
-
-export interface PhotoAsset {
-  /**
-   * Platform-specific identifier
-   */
-  identifier: string;
-  /**
-   * Data for a photo asset as a base64 encoded string (JPEG only supported)
-   */
-  data: string;
-  /**
-   * ISO date string for creation date of asset
-   */
-  creationDate: string;
-  /**
-   * Full width of original asset
-   */
-  fullWidth: number;
-  /**
-   * Full height of original asset
-   */
-  fullHeight: number;
-  /**
-   * Width of thumbnail preview
-   */
-  thumbnailWidth: number;
-  /**
-   * Height of thumbnail preview
-   */
-  thumbnailHeight: number;
-  /**
-   * Location metadata for the asset
-   */
-  location: PhotoLocation;
-}
-
-export interface PhotoLocation {
-  /**
-   * GPS latitude image was taken at
-   */
-  latitude: number;
-  /**
-   * GPS longitude image was taken at
-   */
-  longitude: number;
-  /**
-   * Heading of user at time image was taken
-   */
-  heading: number;
-  /**
-   * Altitude of user at time image was taken
-   */
-  altitude: number;
-  /**
-   * Speed of user at time image was taken
-   */
-  speed: number;
-}
-
-export interface PhotosResult {
-  /**
-   * The list of photos returned from the library
-   */
-  photos: PhotoAsset[];
-}
-
-export interface PhotosSaveOptions {
-  /**
-   * The base64-encoded JPEG data for a photo (note: do not add HTML data-uri type prefix)
-   */
-  data: string;
-  /**
-   * The optional album identifier to save this photo in
-   */
-  albumIdentifier?: string;
-}
-
-export interface PhotosSaveResult {
-  /**
-   * Whether the photo was created
-   */
-  success: boolean;
-}
-
-export interface PhotosAlbumsFetchOptions {
-  /**
-   * Whether to load cloud shared albums
-   */
-  loadShared: boolean;
-}
-export interface PhotosAlbumsResult {
-  /**
-   * The list of albums returned from the query
-   */
-  albums: PhotosAlbum[];
-}
-export interface PhotosAlbum {
-  /**
-   * Local identifier for the album
-   */
-  identifier: string;
-  /**
-   * Name of the album
-   */
-  name: string;
-  /**
-   * Number of items in the album
-   */
-  count: number;
-  /**
-   * The type of album
-   */
-  type: PhotosAlbumType;
-}
-
-export interface PhotosCreateAlbumOptions {
-  name: string;
-}
-
-export enum PhotosAlbumType {
-  /**
-   * Album is a "smart" album (such as Favorites or Recently Added)
-   */
-  Smart = 'smart',
-  /**
-   * Album is a cloud-shared album
-   */
-  Shared = 'shared',
-  /**
-   * Album is a user-created album
-   */
-  User = 'user',
-}
 
 //
 
