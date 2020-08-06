@@ -92,7 +92,9 @@ public class MessageHandler {
                 Logger.debug("Sending plugin error: " + data.toString());
             } else {
                 data.put("success", true);
-                data.put("data", successResult);
+                if (successResult != null) {
+                    data.put("data", successResult);
+                }
             }
 
             boolean isValidCallbackId = !call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING);
