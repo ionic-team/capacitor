@@ -62,12 +62,12 @@ public typealias PluginEventListener = CAPPluginCall
         return self.options.index(forKey: key) != nil
     }
 
-    @available(*, deprecated, message: "Use `resolve()`")
+    @available(*, deprecated, renamed: "resolve")
     func success() {
         successHandler(CAPPluginCallResult([:]), self)
     }
 
-    @available(*, deprecated, message: "Use `resolve()`")
+    @available(*, deprecated, renamed: "resolve")
     func success(_ data: PluginResultData = [:]) {
         successHandler(CAPPluginCallResult(data), self)
     }
@@ -80,7 +80,7 @@ public typealias PluginEventListener = CAPPluginCall
         successHandler(CAPPluginCallResult(data), self)
     }
 
-    @available(*, deprecated, message: "Use `reject()`")
+    @available(*, deprecated, renamed: "reject")
     func error(_ message: String, _ error: Error? = nil, _ data: PluginCallErrorData = [:]) {
         errorHandler(CAPPluginCallError(message: message, code: nil, error: error, data: data))
     }

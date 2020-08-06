@@ -51,16 +51,20 @@ public class PluginCall {
     }
 
     /**
-     * @deprecated Use `resolve()`.
+     * @deprecated
+     * Use {@link #resolve(JSObject data)}
      */
+    @Deprecated
     public void success(JSObject data) {
         PluginResult result = new PluginResult(data);
         this.msgHandler.sendResponseMessage(this, result, null);
     }
 
     /**
-     * @deprecated Use `resolve()`.
+     * @deprecated
+     * Use {@link #resolve()}
      */
+    @Deprecated
     public void success() {
         this.success(new JSObject());
     }
@@ -87,22 +91,28 @@ public class PluginCall {
     }
 
     /**
-     * @deprecated Use `reject()`.
+     * @deprecated
+     * Use {@link #reject(String msg, Exception ex)}
      */
+    @Deprecated
     public void error(String msg, Exception ex) {
         reject(msg, null, ex);
     }
 
     /**
-     * @deprecated Use `reject()`.
+     * @deprecated
+     * Use {@link #reject(String msg, String code, Exception ex)}
      */
+    @Deprecated
     public void error(String msg, String code, Exception ex) {
         reject(msg, code, ex);
     }
 
     /**
-     * @deprecated Use `reject()`.
+     * @deprecated
+     * Use {@link #reject(String msg)}
      */
+    @Deprecated
     public void error(String msg) {
         reject(msg, null, null);
     }
