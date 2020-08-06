@@ -66,7 +66,7 @@ public class PluginCall {
      */
     @Deprecated
     public void success() {
-        this.success(new JSObject());
+        this.resolve(new JSObject());
     }
 
     public void resolve(JSObject data) {
