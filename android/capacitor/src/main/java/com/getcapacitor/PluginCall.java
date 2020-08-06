@@ -65,7 +65,7 @@ public class PluginCall {
     }
 
     public void resolve() {
-        this.success(new JSObject());
+        this.msgHandler.sendResponseMessage(this, null, null);
     }
 
     public void errorCallback(String msg) {
