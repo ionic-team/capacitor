@@ -16,6 +16,6 @@ public class CLASS_NAMEPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("value", implementation.echo(value));
-        call.success(ret);
+        call.resolve(ret);
     }
 }
