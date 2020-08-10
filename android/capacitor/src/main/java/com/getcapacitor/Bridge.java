@@ -135,7 +135,8 @@ public class Bridge {
         CordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
-        JSONObject config
+        JSONObject config,
+        String urlPath
     ) {
         this.context = context;
         this.webView = webView;
@@ -163,10 +164,10 @@ public class Bridge {
         // Register our core plugins
         this.registerAllPlugins();
 
-        this.loadWebView();
+        this.loadWebView(urlPath);
     }
 
-    private void loadWebView() {
+    private void loadWebView(String urlPath) {
         appUrlConfig = this.config.getString("server.url");
         String[] appAllowNavigationConfig = this.config.getArray("server.allowNavigation");
 
@@ -199,6 +200,9 @@ public class Bridge {
             if (!scheme.equals(Bridge.CAPACITOR_HTTP_SCHEME) && !scheme.equals(CAPACITOR_HTTPS_SCHEME)) {
                 appUrl += "/";
             }
+        }
+        if (urlPath != null) {
+            appUrl += urlPath;
         }
 
         final boolean html5mode = this.config.getBoolean("server.html5mode", true);

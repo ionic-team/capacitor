@@ -45,8 +45,7 @@ public class BridgeFragment extends Fragment {
     private PluginManager pluginManager;
     private CordovaPreferences preferences;
     private MockCordovaWebViewImpl mockWebView;
-    private int activityDepth = 0;
-    private String bridgeStartDir;
+    private String urlPath;
 
     private String lastActivityPlugin;
 
@@ -80,11 +79,15 @@ public class BridgeFragment extends Fragment {
         this.initialPlugins.add(plugin);
     }
 
+    public void setUrlPath(String urlPath) {
+        this.urlPath = urlPath;
+    }
+
     /**
      * Load the WebView and create the Bridge
      */
     protected void load(Bundle savedInstanceState) {
-        Logger.debug("Starting BridgeActivity");
+        Logger.debug("Starting BridgeFragment");
 
         Bundle args = getArguments();
         String startDir = null;
@@ -109,7 +112,7 @@ public class BridgeFragment extends Fragment {
             preferences = new CordovaPreferences();
         }
 
-        bridge = new Bridge(this.getActivity(), webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
+        bridge = new Bridge(this.getActivity(), webView, initialPlugins, cordovaInterface, pluginManager, preferences, config, urlPath);
 
         if (startDir != null) {
             bridge.setServerAssetPath(startDir);
