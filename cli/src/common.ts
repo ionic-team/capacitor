@@ -569,39 +569,3 @@ export function resolveNodeFrom(start: string, id: string): string | null {
     basePath = dirname(basePath);
   }
 }
-
-// Does the current project use yarn?
-export const hasYarn = async (config: Config, projectDir?: string) => {
-  // npmClient in config
-  const npmClient = config.cli.npmClient;
-  if (npmClient === 'yarn') {
-    return true;
-  } else if (npmClient === 'npm') {
-    return false;
-  }
-  // yarn.lock
-  return existsSync(join(projectDir || process.cwd(), 'yarn.lock'));
-};
-
-// Install deps with NPM or Yarn
-export async function installDeps(
-  projectDir: string,
-  deps: string[],
-  config: Config,
-) {
-  return runCommand(
-    `cd "${projectDir}" && ${
-      (await hasYarn(config, projectDir)) ? 'yarn add' : 'npm install --save'
-    } ${deps.join(' ')}`,
-  );
-}
-
-export async function checkNPMVersion() {
-  const minVersion = '5.5.0';
-  const version = await runCommand('npm -v');
-  const semver = await import('semver');
-  if (semver.gt(minVersion, version)) {
-    return `Capacitor CLI requires at least NPM ${minVersion}`;
-  }
-  return null;
-}

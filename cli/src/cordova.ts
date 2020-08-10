@@ -20,7 +20,6 @@ import {
 import { basename, extname, join, resolve } from 'path';
 import {
   buildXmlElement,
-  installDeps,
   log,
   logError,
   logFatal,
