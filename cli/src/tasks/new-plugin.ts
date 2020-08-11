@@ -134,10 +134,6 @@ export async function newPlugin(config: Config) {
       );
     });
 
-    await runTask('Installing NPM dependencies', async () => {
-      return runCommand(`cd "${pluginPath}" && npm install`);
-    });
-
     if (config.cli.os === OS.Mac) {
       await runTask('Building iOS project', async () => {
         const iosPath = join(pluginPath, 'ios');
@@ -145,7 +141,12 @@ export async function newPlugin(config: Config) {
       });
     }
 
-    logInfo(`Your Capacitor plugin was created at ${pluginPath}`);
+    logInfo(
+      `Your Capacitor plugin was created!\n` +
+        `Next steps:\n` +
+        `- cd ${pluginPath}\n` +
+        `- npm install`,
+    );
   } else {
     logInfo('Aborted');
   }

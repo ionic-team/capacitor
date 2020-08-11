@@ -6,12 +6,9 @@ import {
   checkAppDir,
   checkAppId,
   checkAppName,
-  checkNpmClient,
   getAppId,
   getName,
-  getNpmClient,
   getOrCreateConfig,
-  installDeps,
   log,
   logFatal,
   printNextSteps,
@@ -70,8 +67,6 @@ export async function createCommand(
 
     // Copy the starter project
     await create(config, appDir, appName, appId);
-    // Copy web and capacitor to web assets
-    await copy(config, config.web.name);
     // Say something nice
     printNextSteps(config, appDir);
   } catch (e) {

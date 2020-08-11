@@ -1,8 +1,6 @@
 import { Config } from '../config';
 import {
   checkWebDir,
-  hasYarn,
-  log,
   logError,
   logFatal,
   logInfo,
@@ -28,14 +26,9 @@ export async function copyCommand(
   selectedPlatformName: string,
 ) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
-    const platformFolder = resolvePlatform(config, selectedPlatformName);
-    if (platformFolder) {
-      const result = await runPlatformHook(
-        `cd "${platformFolder}" && ${
-          (await hasYarn(config)) ? 'yarn' : 'npm'
-        } run capacitor:copy`,
-      );
-      log(result);
+    const platformDir = resolvePlatform(config, selectedPlatformName);
+    if (platformDir) {
+      await runPlatformHook(platformDir, 'capacitor:copy');
     } else {
       logError(`platform ${selectedPlatformName} not found`);
     }

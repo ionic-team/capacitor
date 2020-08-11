@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { log, readJSON, resolveNode, runCommand } from '../common';
+import { log, readJSON, resolveNode } from '../common';
 import { doctorAndroid } from '../android/doctor';
 import { doctorIOS } from '../ios/doctor';
 import { emoji as _e } from '../util/emoji';
@@ -25,18 +25,6 @@ export async function doctorCommand(
 }
 
 export async function doctorCore(config: Config) {
-  let cliVersion = await runCommand(`npm info @capacitor/cli version`);
-  let coreVersion = await runCommand(`npm info @capacitor/core version`);
-  let androidVersion = await runCommand(`npm info @capacitor/android version`);
-  let iosVersion = await runCommand(`npm info @capacitor/ios version`);
-
-  log(`${chalk.bold.blue('Latest Dependencies:')}\n`);
-  log(`  ${chalk.bold('@capacitor/cli:')}`, cliVersion.trim());
-  log(`  ${chalk.bold('@capacitor/core:')}`, coreVersion.trim());
-  log(`  ${chalk.bold('@capacitor/android:')}`, androidVersion.trim());
-  log(`  ${chalk.bold('@capacitor/ios:')}`, iosVersion.trim());
-
-  log('');
   log(`${chalk.bold.blue('Installed Dependencies:')}\n`);
 
   await printInstalledPackages(config);

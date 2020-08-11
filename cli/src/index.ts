@@ -28,8 +28,8 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('create [directory] [name] [id]')
     .description('Creates a new Capacitor project')
-    .action((directory, name, id, { npmClient }) => {
-      return createCommand(config, directory, name, id, npmClient);
+    .action((directory, name, id) => {
+      return createCommand(config, directory, name, id);
     });
 
   program
@@ -40,8 +40,8 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
       'Optional: Directory of your projects built web assets',
       config.app.webDir ? config.app.webDir : 'www',
     )
-    .action((appName, appId, { webDir, npmClient }) => {
-      return initCommand(config, appName, appId, webDir, npmClient);
+    .action((appName, appId, { webDir }) => {
+      return initCommand(config, appName, appId, webDir);
     });
 
   program
