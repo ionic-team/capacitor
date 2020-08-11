@@ -1,4 +1,11 @@
-import { APP_ID, APP_NAME, run, makeAppDir, MappedFS } from './util';
+import {
+  APP_ID,
+  APP_NAME,
+  run,
+  makeAppDir,
+  MappedFS,
+  installPlatform,
+} from './util';
 
 describe.each([false, true])('Add: iOS (monoRepoLike: %p)', monoRepoLike => {
   let appDirObj: any;
@@ -11,6 +18,7 @@ describe.each([false, true])('Add: iOS (monoRepoLike: %p)', monoRepoLike => {
     const appDir = appDirObj.appDir;
     // Init in this directory so we can test add
     await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
+    await installPlatform(appDir, 'ios');
     await run(appDir, `add ios`);
     FS = new MappedFS(appDir);
   });

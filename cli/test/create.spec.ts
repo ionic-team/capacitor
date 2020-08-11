@@ -1,4 +1,11 @@
-import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';
+import {
+  APP_ID,
+  APP_NAME,
+  run,
+  mktmp,
+  MappedFS,
+  installPlatform,
+} from './util';
 
 import { join } from 'path';
 
@@ -20,8 +27,10 @@ describe('Create', () => {
     const FS = new MappedFS(appDir);
     await run(process.cwd(), `create "${appDir}" "${APP_NAME}" "${APP_ID}"`);
     expect(await FS.exists('capacitor.config.json')).toBe(true);
+    await installPlatform(appDir, 'ios');
     await run(appDir, 'add ios');
     expect(await FS.exists('ios')).toBe(true);
+    await installPlatform(appDir, 'android');
     await run(appDir, 'add android');
     expect(await FS.exists('android')).toBe(true);
   });
