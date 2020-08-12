@@ -1,9 +1,10 @@
 {
   "packages": [
-    "./android/",
-    "./ios/",
-    "./cli/",
-    "./core/"
+    "android",
+    "create-app",
+    "ios",
+    "cli",
+    "core"
   ],
   "command": {
     "bootstrap": {
