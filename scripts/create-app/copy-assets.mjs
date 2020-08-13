@@ -8,6 +8,8 @@ const run = async () => {
   const dest = resolve(root, 'create-app', 'assets', 'app-template.tar.gz');
 
   await tar.create({ gzip: true, file: dest, cwd: template }, ['.']);
+
+  console.log(`Assets copied to ${dest}!`);
 };
 
 run().catch(err => {

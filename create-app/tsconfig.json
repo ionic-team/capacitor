@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "lib": ["es2019"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitHelpers": true,
+    "outDir": "dist",
+    "pretty": true,
+    "strict": true,
+    "target": "es2019"
+  },
+  "files": [
+    "src/index.ts"
+  ]
+}

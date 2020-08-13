@@ -3,7 +3,6 @@ dist
 .sourcemaps
 xcuserdata/
 node_modules/
-cli/dist/commands/copy.js
 Pods/
 *.map
 .DS_Store
@@ -19,9 +18,6 @@ local.properties
 contents.xcworkspacedata
 android-template/.gradle/
 android-template/app/app.iml
-*.js
-*.json
-!swiftlint.config.js
 .gradle/
 .settings/
 .project
