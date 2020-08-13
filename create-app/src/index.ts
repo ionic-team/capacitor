@@ -12,6 +12,11 @@ import { gatherDetails } from './prompt';
 
 const debug = Debug('@capacitor/create-app');
 
+process.on('unhandledRejection', error => {
+  process.stderr.write(`ERR: ${error}\n`);
+  process.exit(1);
+});
+
 export const run = async () => {
   if (process.argv.find(arg => ['-h', '-?', '--help'].includes(arg))) {
     help.run();
