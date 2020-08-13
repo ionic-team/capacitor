@@ -7,7 +7,10 @@
   "engines": {
     "node": ">=10.3.0"
   },
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "bin": {
+    "create-capacitor-app": "./bin/create-capacitor-app"
+  },
   "scripts": {
     "copy-assets": "node ../scripts/create-app/copy-assets.mjs",
     "build": "npm run clean && npm run copy-assets && tsc",
@@ -17,6 +20,7 @@
   },
   "files": [
     "assets/",
+    "bin/",
     "dist/"
   ],
   "keywords": [

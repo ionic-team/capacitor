@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+'use strict';
+
+process.title = 'create-capacitor-app';
+
+if (process.argv.includes('--verbose')) {
+  process.env.DEBUG = '*';
+}
+
+var cli = require('..');
+
+cli.run().catch(err => {
+  process.stderr.write(String(err) + '\n');
+  process.exit(1);
+});

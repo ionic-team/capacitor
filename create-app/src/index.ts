@@ -1,9 +1,3 @@
-process.title = '@capacitor/create-app';
-
-if (process.argv.includes('--verbose')) {
-  process.env.DEBUG = '*';
-}
-
 import tar from 'tar';
 import { resolve } from 'path';
 import kleur from 'kleur';
@@ -18,7 +12,7 @@ import { gatherDetails } from './prompt';
 
 const debug = Debug('@capacitor/create-app');
 
-const run = async () => {
+export const run = async () => {
   if (process.argv.find(arg => ['-h', '-?', '--help'].includes(arg))) {
     help.run();
     process.exit();
@@ -68,8 +62,3 @@ Next steps:
   - npx cap sync
 `);
 };
-
-run().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
