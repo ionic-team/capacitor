@@ -416,9 +416,9 @@ export async function printNextSteps(config: Config, appDir: string) {
   if (appDir !== '') {
     log(`Next steps:`);
     log('');
-    log(chalk`  cd {bold ./${appDir}}`);
-    log(`  npm install`);
-    log(`  npx cap sync`);
+    log(`  ${chalk.bold(`cd ./${appDir}`)}`);
+    log(`  install dependencies (e.g. w/ ${chalk.bold('npm install')})`);
+    log(`  ${chalk.bold('npx cap sync')}`);
     log('');
   }
   log(`Add platforms using 'npx cap add':\n`);

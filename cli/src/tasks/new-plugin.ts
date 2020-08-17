@@ -21,6 +21,7 @@ import { fixName, removeScope } from '../plugin';
 import { copy, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
 import { isInteractive } from '../util/term';
+import chalk from 'chalk';
 
 interface NewPluginAnswers {
   name: string;
@@ -144,8 +145,8 @@ export async function newPlugin(config: Config) {
     logInfo(
       `Your Capacitor plugin was created!\n` +
         `Next steps:\n` +
-        `- cd ${pluginPath}\n` +
-        `- npm install`,
+        `- ${chalk.bold(`cd ${pluginPath}`)}\n` +
+        `- install dependencies (e.g. w/ ${chalk.bold('npm install')})`,
     );
   } else {
     logInfo('Aborted');
