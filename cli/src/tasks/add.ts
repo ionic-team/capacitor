@@ -33,11 +33,9 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
 
       if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
         log(
-          `Try installing the platform first:\n` +
-            `   ${chalk.bold(
-              `npm install @capacitor-community/${selectedPlatformName}`,
-            )}\n` +
-            `Then, try adding it again.`,
+          `Try installing ${chalk.bold(
+            `@capacitor-community/${selectedPlatformName}`,
+          )} and adding the platform again.`,
         );
       }
     }
