@@ -62,21 +62,16 @@ export async function checkPackage(_config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkCapacitorPackage(
+export async function checkCapacitorPlatform(
   config: Config,
-  packageName: string,
+  platform: string,
 ): Promise<string | null> {
-  const pkg = await getCapacitorPackage(config, packageName);
+  const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
-    return (
-      `Could not find the ${chalk.bold(
-        packageName,
-      )} platform. Does it need to be installed?\n\n` +
-      `    ${chalk.bold(`npm install @capacitor/${packageName}`)}${chalk.dim(
-        `@${config.cli.package.version}`,
-      )}`
-    );
+    return `Could not find the ${chalk.bold(
+      platform,
+    )} platform. Does it need to be installed?\n`;
   }
 
   return null;
