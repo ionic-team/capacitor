@@ -316,6 +316,16 @@ export function runCommand(command: string): Promise<string> {
   });
 }
 
+export async function getCommandOutput(
+  command: string,
+): Promise<string | null> {
+  try {
+    return (await runCommand(command)).trim();
+  } catch (e) {
+    return null;
+  }
+}
+
 export type TaskInfoProvider = (messsage: string) => void;
 
 export async function runTask<T>(
