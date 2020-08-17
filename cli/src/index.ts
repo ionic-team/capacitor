@@ -45,7 +45,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-    .command('serve')
+    .command('serve', { hidden: true })
     .description('Serves a Capacitor Progressive Web App in the browser')
     .action(() => {
       return serveCommand(config);
