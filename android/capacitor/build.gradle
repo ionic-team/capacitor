@@ -1,8 +1,8 @@
 ext {
-    androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.2.0'
+    androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.1.0'
     androidxCoreVersion =  project.hasProperty('androidxCoreVersion') ? rootProject.ext.androidxCoreVersion : '1.2.0'
     androidxMaterialVersion =  project.hasProperty('androidxMaterialVersion') ? rootProject.ext.androidxMaterialVersion : '1.1.0-rc02'
-    androidxBrowserVersion =  project.hasProperty('androidxBrowserVersion') ? rootProject.ext.androidxBrowserVersion : '1.1.0'
+    androidxBrowserVersion =  project.hasProperty('androidxBrowserVersion') ? rootProject.ext.androidxBrowserVersion : '1.2.0'
     androidxLocalbroadcastmanagerVersion =  project.hasProperty('androidxLocalbroadcastmanagerVersion') ? rootProject.ext.androidxLocalbroadcastmanagerVersion : '1.0.0'
     androidxExifInterfaceVersion =  project.hasProperty('androidxExifInterfaceVersion') ? rootProject.ext.androidxExifInterfaceVersion : '1.2.0'
     firebaseMessagingVersion =  project.hasProperty('firebaseMessagingVersion') ? rootProject.ext.firebaseMessagingVersion : '20.1.2'
