@@ -1,7 +1,6 @@
 import { checkCocoaPods, checkIOSProject } from './common';
 import {
   check,
-  checkNPMVersion,
   checkWebDir,
   isInstalled,
   logFatal,
@@ -27,7 +26,6 @@ export async function doctorIOS(config: Config) {
       checkCocoaPods,
       checkIOSProject,
       checkWebDir,
-      checkNPMVersion,
       checkXcode,
     ]);
     const plugins = await getPlugins(config);

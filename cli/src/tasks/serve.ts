@@ -1,15 +1,12 @@
 import { Config } from '../config';
-import { logFatal } from '../common';
-import { serveWeb } from '../web/serve';
+import { logFatal, logError } from '../common';
+import chalk from 'chalk';
 
 export async function serveCommand(config: Config) {
-  try {
-    await serve(config);
-  } catch (e) {
-    logFatal(e);
-  }
-}
-
-export async function serve(config: Config) {
-  return serveWeb(config);
+  logFatal(
+    `The serve command has been removed.\n` +
+      `Use a third-party tool for serving single page apps, such as ${chalk.yellow(
+        'serve',
+      )}: https://www.npmjs.com/package/serve`,
+  );
 }

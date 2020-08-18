@@ -22,7 +22,6 @@ export interface ExternalConfig {
     minVersion?: string;
     cordovaLinkerFlags?: string[];
   };
-  npmClient?: string;
   cordova?: any;
   server?: {
     cleartext?: boolean;
