@@ -1,6 +1,6 @@
 import { WebPlugin, AppPlugin, AppLaunchUrl } from '@capacitor/core';
 
-const { remote, shell } = require('electron');
+const { remote, shell, app } = require('electron');
 
 export class AppPluginElectron extends WebPlugin implements AppPlugin {
   constructor() {
@@ -14,6 +14,12 @@ export class AppPluginElectron extends WebPlugin implements AppPlugin {
     let w = remote.getCurrentWindow();
     w && w.close();
     throw new Error('App quit');
+  }
+  restartApp(): never {
+    // https://www.electronjs.org/docs/api/app#apprelaunchoptions
+    app.relaunch();
+    app.exit();
+    throw new Error('App restart');
   }
   canOpenUrl(_options: { url: string; }): Promise<{ value: boolean; }> {
     return Promise.resolve({ value: true });

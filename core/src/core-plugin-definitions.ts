@@ -93,6 +93,10 @@ export interface AppPlugin extends Plugin {
    */
   exitApp(): never;
   /**
+   * Restart the app
+   */
+  restartApp(): never;
+  /**
    * Check if an app can be opened with the given URL
    */
   canOpenUrl(options: { url: string }): Promise<{value: boolean}>;

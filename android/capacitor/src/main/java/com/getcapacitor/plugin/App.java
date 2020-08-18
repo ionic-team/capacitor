@@ -49,6 +49,17 @@ public class App extends Plugin {
   }
 
   @PluginMethod()
+  public void restartApp(PluginCall call) {
+    final PackageManager manager = getContext().getPackageManager();
+    Intent intent = manager.getLaunchIntentForPackage(getContext().getPackageName());
+
+    Intent restartIntent = Intent.makeRestartActivityTask(intent.getComponent());
+    getActivity().startActivity(restartIntent);
+
+    Runtime.getRuntime().exit(0);
+  }
+
+  @PluginMethod()
   public void getLaunchUrl(PluginCall call) {
     Uri launchUri = bridge.getIntentUri();
     if (launchUri != null) {
