@@ -20,7 +20,6 @@ import {
 import { basename, extname, join, resolve } from 'path';
 import {
   buildXmlElement,
-  installDeps,
   log,
   logError,
   logFatal,
@@ -409,12 +408,11 @@ function removeOuterTags(str: string) {
   return str.substring(start, end);
 }
 
-export async function checkAndInstallDependencies(
-  config: Config,
+export async function checkPluginDependencies(
   plugins: Plugin[],
   platform: string,
-) {
-  let needsUpdate = false;
+): Promise<void> {
+  const pluginDeps: Map<string, string[]> = new Map();
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
   );
@@ -440,8 +438,9 @@ export async function checkAndInstallDependencies(
         await Promise.all(
           allDependencies.map(async (dep: any) => {
             let plugin = dep.$.id;
+            let version = dep.$.version;
             if (plugin.includes('@') && plugin.indexOf('@') !== 0) {
-              plugin = plugin.split('@')[0];
+              [plugin, version] = plugin.split('@');
             }
             if (
               cordovaPlugins.filter(
@@ -450,23 +449,35 @@ export async function checkAndInstallDependencies(
             ) {
               if (dep.$.url && dep.$.url.startsWith('http')) {
                 plugin = dep.$.url;
+                version = dep.$.commit;
               }
-              logInfo(`installing missing dependency plugin ${plugin}`);
-              try {
-                await installDeps(config.app.rootDir, [plugin], config);
-                await config.updateAppPackage();
-                needsUpdate = true;
-              } catch (e) {
-                log('\n');
-                logError(`couldn't install dependency plugin ${plugin}`);
-              }
+              const deps = pluginDeps.get(p.id) || [];
+              deps.push(
+                `${plugin}${version ? chalk.dim(` (${version})`) : ''}`,
+              );
+              pluginDeps.set(p.id, deps);
             }
           }),
         );
       }
     }),
   );
-  return needsUpdate;
+
+  if (pluginDeps.size > 0) {
+    log();
+    let msg =
+      `${chalk.red.bold('Plugins are missing dependencies.')}\n\n` +
+      `  Cordova plugin dependencies must be installed in your\n` +
+      `  project (e.g. w/ ${chalk.bold('npm install')}).\n`;
+    for (const [plugin, deps] of pluginDeps.entries()) {
+      msg +=
+        `\n  ${chalk.bold(plugin)} is missing dependencies:\n` +
+        deps.map(d => `    - ${d}`).join('\n');
+    }
+
+    logWarn(msg);
+    log();
+  }
 }
 
 export function getIncompatibleCordovaPlugins(platform: string) {

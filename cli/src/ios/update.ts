@@ -29,7 +29,7 @@ import {
   printPlugins,
 } from '../plugin';
 import {
-  checkAndInstallDependencies,
+  checkPluginDependencies,
   handleCordovaPluginsJS,
   logCordovaManualSteps,
 } from '../cordova';
@@ -49,18 +49,6 @@ export async function updateIOS(config: Config, deployment: boolean) {
 
   printPlugins(capacitorPlugins, 'ios');
 
-  let needsPluginUpdate = true;
-  while (needsPluginUpdate) {
-    needsPluginUpdate = await checkAndInstallDependencies(
-      config,
-      plugins,
-      platform,
-    );
-    if (needsPluginUpdate) {
-      plugins = await getPluginsTask(config);
-    }
-  }
-
   removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
@@ -69,6 +57,7 @@ export async function updateIOS(config: Config, deployment: boolean) {
     copyPluginsNativeFiles(config, cordovaPlugins);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
+  await checkPluginDependencies(plugins, platform);
   await generateCordovaPodspecs(cordovaPlugins, config);
   await installCocoaPodsPlugins(config, plugins, deployment);
   await logCordovaManualSteps(cordovaPlugins, config, platform);
