@@ -6,6 +6,7 @@ import {
   makeAppDir,
   makeConfig,
   run,
+  installPlatform,
 } from './util';
 import { updateCommand } from '../src/tasks/update';
 
@@ -22,7 +23,8 @@ describe.each([false, true])(
       appDirObj = await makeAppDir(monoRepoLike);
       appDir = appDirObj.appDir;
       // Init in this directory so we can test add
-      await run(appDir, `init "${APP_NAME}" "${APP_ID}" --npm-client npm`);
+      await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
+      await installPlatform(appDir, 'android');
       await run(appDir, `add android`);
       // Redundant, because add does this, but called explicitly for thoroughness
       await updateCommand(makeConfig(appDir), 'android', false);

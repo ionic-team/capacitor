@@ -74,6 +74,14 @@ const APP_PACKAGE_JSON = `
 }
 `;
 
+export async function installPlatform(
+  appDir: string,
+  platform: string,
+): Promise<void> {
+  const platformPath = resolve(cwd, '..', platform);
+  await runCommand(`cd ${appDir} && npm install ${platformPath}`);
+}
+
 export async function makeAppDir(monoRepoLike: boolean = false) {
   const appDirObj: any = await mktmp();
   const tmpDir = appDirObj.path;
