@@ -23,6 +23,10 @@ Capacitor is a cross-platform API and code execution layer that makes it easy to
 
 Capacitor comes with a Plugin API for building native plugins. Plugins can be written inside Capacitor apps or packaged into an npm dependency for community use. Plugin authors are encouraged to use Swift to develop plugins in iOS and Kotlin (or Java) in Android.
 
+> ### Capacitor 3.0 development has begun! :sparkles: :rocket: :star:
+>
+> Interested in following Capacitor 3 development? We'd love your feedback! Use the [Capacitor 3 planning issue](https://github.com/ionic-team/capacitor/issues/3133) as a starting point. [Open a discussion](https://github.com/ionic-team/capacitor/discussions) if you have questions or suggestions. We'd love to hear from you. :blue_heart:
+
 ## Getting Started
 
 Capacitor was designed to drop-in to any existing modern web app. Run the following commands to initialize Capacitor in your app:
@@ -59,7 +63,7 @@ Capacitor and Cordova differ in that Capacitor:
 
 - takes a more modern approach to tooling and plugin development
 - treats native projects as source artifacts as opposed to build artifacts
-- is maintained by the Ionic Team itself 💙😊
+- is maintained by the Ionic Team 💙😊
 
 See [the docs](https://capacitorjs.com/docs/cordova#differences-between-capacitor-and-cordova) for more details.
 
