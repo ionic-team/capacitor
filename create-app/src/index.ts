@@ -57,8 +57,8 @@ export const run = async () => {
 ${kleur.bold(`${tada} Your Capacitor app is ready to go! ${tada}`)}
 
 Next steps:
-  - cd ${details.dir}
-  - npm install
-  - npx cap sync
+  - ${kleur.bold(`cd ${details.dir}/`)}
+  - install dependencies (e.g. w/ ${kleur.bold('npm install')})
+  - ${kleur.bold('npx cap sync')}
 `);
 };
