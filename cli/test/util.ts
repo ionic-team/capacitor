@@ -74,6 +74,21 @@ const APP_PACKAGE_JSON = `
 }
 `;
 
+const APP_CAPACITOR_CONFIG_JSON = `
+{
+  "appId": "${APP_ID}",
+  "appName": "${APP_NAME}",
+  "bundledWebRuntime": false,
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
+`;
+
 export async function installPlatform(
   appDir: string,
   platform: string,
@@ -99,6 +114,10 @@ export async function makeAppDir(monoRepoLike: boolean = false) {
   await writeFileAsync(join(appDir, 'www', 'index.html'), APP_INDEX);
   // Make a fake package.json
   await writeFileAsync(join(appDir, 'package.json'), APP_PACKAGE_JSON);
+  await writeFileAsync(
+    join(appDir, 'capacitor.config.json'),
+    APP_CAPACITOR_CONFIG_JSON,
+  );
 
   // We use 'npm install' to install @capacitor/core and @capacitor/cli
   // Otherwise later use of 'npm install --save @capacitor/android|ios' will wipe 'node_modules/@capacitor/'

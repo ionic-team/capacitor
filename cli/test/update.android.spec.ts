@@ -1,6 +1,4 @@
 import {
-  APP_ID,
-  APP_NAME,
   CORDOVA_PLUGIN_ID,
   MappedFS,
   makeAppDir,
@@ -22,8 +20,6 @@ describe.each([false, true])(
       jest.setTimeout(150000);
       appDirObj = await makeAppDir(monoRepoLike);
       appDir = appDirObj.appDir;
-      // Init in this directory so we can test add
-      await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
       await installPlatform(appDir, 'android');
       await run(appDir, `add android`);
       // Redundant, because add does this, but called explicitly for thoroughness
