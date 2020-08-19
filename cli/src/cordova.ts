@@ -339,7 +339,7 @@ export function getIncompatibleCordovaPlugins(platform: string) {
   'cordova-plugin-add-swift-support', 'cordova-plugin-ionic-keyboard', 'cordova-plugin-braintree',
   '@ionic-enterprise/filesystem', '@ionic-enterprise/keyboard', '@ionic-enterprise/splashscreen', 'cordova-support-google-services'];
   if (platform === 'ios') {
-    pluginList.push('cordova-plugin-googlemaps', 'cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
+    pluginList.push('cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
   }
   if (platform === 'android') {
     pluginList.push('cordova-plugin-compat');
