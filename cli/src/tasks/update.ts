@@ -6,13 +6,11 @@ import {
   CheckFunction,
   check,
   checkPackage,
-  hasYarn,
   log,
   logError,
   logFatal,
   logInfo,
   resolvePlatform,
-  runCommand,
   runPlatformHook,
   runTask,
 } from '../common';
@@ -25,14 +23,9 @@ export async function updateCommand(
   deployment: boolean,
 ) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
-    const platformFolder = resolvePlatform(config, selectedPlatformName);
-    if (platformFolder) {
-      const result = await runPlatformHook(
-        `cd "${platformFolder}" && ${
-          (await hasYarn(config)) ? 'yarn' : 'npm'
-        } run capacitor:update`,
-      );
-      log(result);
+    const platformDir = resolvePlatform(config, selectedPlatformName);
+    if (platformDir) {
+      await runPlatformHook(platformDir, 'capacitor:update');
     } else {
       logError(`platform ${selectedPlatformName} not found`);
     }
