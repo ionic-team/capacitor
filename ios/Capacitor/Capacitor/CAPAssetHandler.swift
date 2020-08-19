@@ -47,14 +47,10 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
 
           headers["Content-Type"] = mimeType
           headers["Cache-Control"] = "no-cache"
+          headers["Content-Length"] = String(expectedContentLength)
 
-          let urlResponse = URLResponse(url: localUrl, mimeType: mimeType, expectedContentLength: expectedContentLength, textEncodingName: nil)
           let httpResponse = HTTPURLResponse(url: localUrl, statusCode: 200, httpVersion: nil, headerFields: headers)
-          if isMediaExtension(pathExtension: url.pathExtension) {
-              urlSchemeTask.didReceive(urlResponse)
-          } else {
-              urlSchemeTask.didReceive(httpResponse!)
-          }
+          urlSchemeTask.didReceive(httpResponse!)
           urlSchemeTask.didReceive(data)
         case "OPTIONS":
           // CORS preflight
