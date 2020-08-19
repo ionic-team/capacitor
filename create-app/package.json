@@ -40,11 +40,13 @@
   "dependencies": {
     "debug": "^4.1.1",
     "kleur": "^4.0.3",
+    "mustache": "^4.0.1",
     "prompts": "^2.3.2",
     "tar": "^6.0.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.5",
+    "@types/mustache": "^4.0.1",
     "@types/prompts": "^2.0.8",
     "@types/tar": "^4.0.3",
     "rimraf": "^3.0.2",

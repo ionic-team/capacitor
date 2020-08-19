@@ -11,10 +11,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@capacitor/core": "^3.0.0-alpha.0"
+    "@capacitor/core": "{{ CAPACITOR_VERSION }}"
   },
   "devDependencies": {
-    "@capacitor/cli": "^3.0.0-alpha.0"
+    "@capacitor/cli": "{{ CAPACITOR_VERSION }}"
   },
   "author": "",
   "license": "ISC"

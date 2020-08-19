@@ -1,14 +1,13 @@
-import tar from 'tar';
 import { resolve } from 'path';
 import kleur from 'kleur';
 import Debug from 'debug';
 import * as help from './help';
 
 import { emoji, isTTY } from './cli';
-import { createConfigFile } from './config';
-import { exists, mkdir } from './fs';
+import { exists } from './fs';
 import { getOptions } from './options';
 import { gatherDetails } from './prompt';
+import { extractTemplate } from './template';
 
 const debug = Debug('@capacitor/create-app');
 
@@ -41,8 +40,6 @@ export const run = async () => {
   }
 
   const details = await gatherDetails(options);
-
-  const template = resolve(__dirname, '..', 'assets', 'app-template.tar.gz');
   const appdir = resolve(process.cwd(), details.dir);
 
   if (await exists(appdir)) {
@@ -52,9 +49,7 @@ export const run = async () => {
     process.exit(1);
   }
 
-  await mkdir(appdir, { recursive: true });
-  await tar.extract({ file: template, cwd: appdir });
-  await createConfigFile(details);
+  await extractTemplate(appdir, details);
 
   const tada = emoji('🎉', '*');
 
