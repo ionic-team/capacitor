@@ -25,7 +25,9 @@ Capacitor comes with a Plugin API for building native plugins. Plugins can be wr
 
 > ### Capacitor 3.0 development has begun! :sparkles: :rocket: :star:
 >
-> Interested in following Capacitor 3 development? We'd love your feedback! Use the [Capacitor 3 planning issue](https://github.com/ionic-team/capacitor/issues/3133) as a starting point. [Open a discussion](https://github.com/ionic-team/capacitor/discussions) if you have questions or suggestions. We'd love to hear from you. :blue_heart:
+> Interested in following Capacitor 3 development? We'd love your feedback! Use the [Capacitor 3 planning issue](https://github.com/ionic-team/capacitor/issues/3133) as a starting point. [Open a discussion](https://github.com/ionic-team/capacitor/discussions) if you have questions or suggestions.
+>
+> We'd love to hear from you. :blue_heart:
 
 ## Getting Started
 
