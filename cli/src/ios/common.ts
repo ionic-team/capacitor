@@ -1,5 +1,5 @@
 import { Config } from '../config';
-import { isInstalled } from '../common';
+import { isInstalled, checkCapacitorPlatform } from '../common';
 import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 import { getIncompatibleCordovaPlugins } from '../cordova';
@@ -24,8 +24,11 @@ export async function findXcodePath(config: Config): Promise<string | null> {
   }
 }
 
+export async function checkIOSPackage(config: Config): Promise<string | null> {
+  return checkCapacitorPlatform(config, 'ios');
+}
+
 export async function checkCocoaPods(config: Config): Promise<string | null> {
-  config;
   if (!(await isInstalled('pod')) && config.cli.os === 'mac') {
     return 'cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation';
   }
