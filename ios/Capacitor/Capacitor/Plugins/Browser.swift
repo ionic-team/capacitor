@@ -31,7 +31,7 @@ public class CAPBrowserPlugin: CAPPlugin, SFSafariViewControllerDelegate {
                 }
 
                 if toolbarColor != nil {
-                    safariVC.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
+                    safariVC.preferredBarTintColor = UIColor.capacitor.color(fromHex: toolbarColor!)
                 }
 
                 self?.bridge?.presentVC(safariVC, animated: true, completion: {

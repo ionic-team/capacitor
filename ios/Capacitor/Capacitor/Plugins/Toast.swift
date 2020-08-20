@@ -25,7 +25,7 @@ public class CAPToastPlugin: CAPPlugin {
         DispatchQueue.main.async {
             let maxSizeTitle: CGSize = CGSize(width: viewController.view.bounds.size.width-32, height: viewController.view.bounds.size.height)
 
-            let label = UILabel()
+            let label = UILabel() // TODO: Use a custom subclass here and deprecate the 'padding' extension of UILabel
             label.backgroundColor = UIColor.black.withAlphaComponent(0.6)
             label.textColor = UIColor.white
             label.textAlignment = .center
