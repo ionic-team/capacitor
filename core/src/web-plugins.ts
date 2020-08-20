@@ -2,7 +2,6 @@ import { mergeWebPlugin } from './plugins';
 
 import { Accessibility } from './web/accessibility';
 import { App } from './web/app';
-import { Browser } from './web/browser';
 import { Camera } from './web/camera';
 import { Clipboard } from './web/clipboard';
 import { Device } from './web/device';
@@ -19,7 +18,6 @@ import { Toast } from './web/toast';
 
 export * from './web/accessibility';
 export * from './web/app';
-export * from './web/browser';
 export * from './web/camera';
 export * from './web/clipboard';
 export * from './web/device';
@@ -36,7 +34,6 @@ export * from './web/toast';
 
 mergeWebPlugin(Accessibility);
 mergeWebPlugin(App);
-mergeWebPlugin(Browser);
 mergeWebPlugin(Camera);
 mergeWebPlugin(Clipboard);
 mergeWebPlugin(Device);

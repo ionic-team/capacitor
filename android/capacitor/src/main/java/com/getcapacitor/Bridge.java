@@ -18,7 +18,6 @@ import android.webkit.WebView;
 import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.Accessibility;
 import com.getcapacitor.plugin.App;
-import com.getcapacitor.plugin.Browser;
 import com.getcapacitor.plugin.Camera;
 import com.getcapacitor.plugin.Clipboard;
 import com.getcapacitor.plugin.Device;
@@ -397,7 +396,6 @@ public class Bridge {
         this.registerPlugin(App.class);
         this.registerPlugin(Accessibility.class);
         this.registerPlugin(BackgroundTask.class);
-        this.registerPlugin(Browser.class);
         this.registerPlugin(Camera.class);
         this.registerPlugin(Clipboard.class);
         this.registerPlugin(Device.class);
