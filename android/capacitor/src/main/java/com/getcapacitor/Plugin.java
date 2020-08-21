@@ -460,7 +460,7 @@ public class Plugin {
             for (String perm : missing) {
                 builder.append(perm + "\n");
             }
-            savedLastCall.error(builder.toString());
+            savedLastCall.reject(builder.toString());
             savedLastCall = null;
         }
     }

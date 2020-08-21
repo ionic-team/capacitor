@@ -6,12 +6,9 @@ import {
   checkAppDir,
   checkAppId,
   checkAppName,
-  checkNpmClient,
   getAppId,
   getName,
-  getNpmClient,
   getOrCreateConfig,
-  installDeps,
   log,
   logFatal,
   printNextSteps,
@@ -30,7 +27,6 @@ export async function createCommand(
   dir: string,
   name: string,
   id: string,
-  client: string,
 ) {
   try {
     if (!checkInteractive(dir, name, id)) {
@@ -43,14 +39,11 @@ export async function createCommand(
     const appId = await getAppId(config, id);
     // Prompt for app name if not provided
     const appDir = await getDir(config, dir);
-    // Get npm client
-    const npmClient = await getNpmClient(config, client);
 
     await check(config, [
       config => checkAppDir(config, dir),
       config => checkAppId(config, appId),
       config => checkAppName(config, appName),
-      config => checkNpmClient(config, npmClient),
     ]);
 
     const cliVersion = require('../../package.json').version;
@@ -69,24 +62,17 @@ export async function createCommand(
     config.app.appName = appName;
     config.app.appId = appId;
     config.app.bundledWebRuntime = true;
-    config.cli.npmClient = npmClient;
 
     await getOrCreateConfig(config);
 
     // Copy the starter project
     await create(config, appDir, appName, appId);
-    // npm install
-    await runTask(chalk`Installing dependencies`, () => {
-      return installDeps(appDir, ['@capacitor/cli', '@capacitor/core'], config);
-    });
-    // Copy web and capacitor to web assets
-    await copy(config, config.web.name);
     // Say something nice
     printNextSteps(config, appDir);
   } catch (e) {
     // String errors are our check errors (most likely)
     if (typeof e === 'string') {
-      log('Usage: npx @capacitor/cli create appDir appName appId npmClient?');
+      log('Usage: npx @capacitor/cli create appDir appName appId');
       log(
         'Example: npx @capacitor/cli create my-app "My App" "com.example.myapp"',
       );

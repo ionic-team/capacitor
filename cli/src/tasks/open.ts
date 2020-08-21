@@ -1,6 +1,5 @@
 import { Config } from '../config';
 import {
-  hasYarn,
   log,
   logError,
   logFatal,
@@ -17,14 +16,9 @@ export async function openCommand(
   selectedPlatformName: string,
 ) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
-    const platformFolder = resolvePlatform(config, selectedPlatformName);
-    if (platformFolder) {
-      const result = await runPlatformHook(
-        `cd "${platformFolder}" && ${
-          (await hasYarn(config)) ? 'yarn' : 'npm'
-        } run capacitor:open`,
-      );
-      log(result);
+    const platformDir = resolvePlatform(config, selectedPlatformName);
+    if (platformDir) {
+      await runPlatformHook(platformDir, 'capacitor:open');
     } else {
       logError(`platform ${selectedPlatformName} not found`);
     }

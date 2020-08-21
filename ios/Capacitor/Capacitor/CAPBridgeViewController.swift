@@ -308,7 +308,9 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         }
 
         if navUrl.absoluteString.range(of: hostname!) == nil && (navigationAction.targetFrame == nil || (navigationAction.targetFrame?.isMainFrame)!) {
-            UIApplication.shared.open(navUrl, options: [:], completionHandler: nil)
+            if UIApplication.shared.applicationState == .active {
+                UIApplication.shared.open(navUrl, options: [:], completionHandler: nil)
+            }
             decisionHandler(.cancel)
             return
         }

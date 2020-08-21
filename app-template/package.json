@@ -3,13 +3,19 @@
   "version": "1.0.0",
   "description": "An Amazing Capacitor App",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "capacitor",
     "mobile"
   ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@capacitor/core": "^3.0.0-alpha.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^3.0.0-alpha.0"
+  },
   "author": "",
   "license": "ISC"
 }

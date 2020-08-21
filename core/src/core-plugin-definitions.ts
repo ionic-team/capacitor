@@ -1,7 +1,6 @@
 import { Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
-  Accessibility: AccessibilityPlugin;
   App: AppPlugin;
   BackgroundTask: BackgroundTaskPlugin;
   Browser: BrowserPlugin;
@@ -9,19 +8,13 @@ export interface PluginRegistry {
   Device: DevicePlugin;
   Filesystem: FilesystemPlugin;
   Geolocation: GeolocationPlugin;
-  Haptics: HapticsPlugin;
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
-  Motion: MotionPlugin;
-  Network: NetworkPlugin;
-  Permissions: PermissionsPlugin;
-  Photos: PhotosPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
-  Storage: StoragePlugin;
   Toast: ToastPlugin;
   WebView: WebViewPlugin;
 
@@ -44,53 +37,6 @@ export interface CancellableCallback {
    */
   cancel: Function;
 }
-//
-
-export interface AccessibilityPlugin {
-  /**
-   * Check if a screen reader is enabled on the device
-   */
-  isScreenReaderEnabled(): Promise<ScreenReaderEnabledResult>;
-
-  /**
-   * Speak a string with a connected screen reader.
-   * @param value the string to speak
-   */
-  speak(options: AccessibilitySpeakOptions): Promise<void>;
-
-  /**
-   * Listen for screen reader state change (on/off)
-   */
-  addListener(
-    eventName: 'accessibilityScreenReaderStateChange',
-    listenerFunc: ScreenReaderStateChangeCallback,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export interface AccessibilitySpeakOptions {
-  /**
-   * The string to speak
-   */
-  value: string;
-  /**
-   * The language to speak the string in, as its [ISO 639-1 Code](https://www.loc.gov/standards/iso639-2/php/code_list.php) (ex: "en").
-   * Currently only supported on Android.
-   */
-  language?: string;
-}
-
-export interface ScreenReaderEnabledResult {
-  value: boolean;
-}
-export type ScreenReaderStateChangeCallback = (
-  state: ScreenReaderEnabledResult,
-) => void;
-
 //
 
 export interface AppPlugin extends Plugin {
@@ -347,6 +293,18 @@ export interface CameraOptions {
    * The height of the saved image
    */
   height?: number;
+  /**
+   * Whether to preserve the aspect ratio of the image.
+   * If this flag is true, the width and height will be used as max values
+   * and the aspect ratio will be preserved. This is only relevant when
+   * both a width and height are passed. When only width or height is provided
+   * the aspect ratio is always preserved (and this option is a no-op).
+   *
+   * A future major version will change this behavior to be default,
+   * and may also remove this option altogether.
+   * Default: false
+   */
+  preserveAspectRatio?: boolean;
   /**
    * Whether to automatically rotate the image "up" to correct for orientation
    * in portrait mode
@@ -941,62 +899,6 @@ export type GeolocationWatchCallback = (
 
 //
 
-export interface HapticsPlugin extends Plugin {
-  /**
-   * Trigger a haptics "impact" feedback
-   */
-  impact(options: HapticsImpactOptions): void;
-  /**
-   * Trigger a haptics "notification" feedback
-   */
-  notification(options: HapticsNotificationOptions): void;
-  /**
-   * Vibrate the device
-   */
-  vibrate(): void;
-  /**
-   * Trigger a selection started haptic hint
-   */
-  selectionStart(): void;
-  /**
-   * Trigger a selection changed haptic hint. If a selection was
-   * started already, this will cause the device to provide haptic
-   * feedback
-   */
-  selectionChanged(): void;
-  /**
-   * If selectionStart() was called, selectionEnd() ends the selection.
-   * For example, call this when a user has lifted their finger from a control
-   */
-  selectionEnd(): void;
-}
-
-export interface HapticsImpactOptions {
-  style: HapticsImpactStyle;
-}
-
-export enum HapticsImpactStyle {
-  Heavy = 'HEAVY',
-  Medium = 'MEDIUM',
-  Light = 'LIGHT',
-}
-
-export interface HapticsNotificationOptions {
-  type: HapticsNotificationType;
-}
-
-export enum HapticsNotificationType {
-  SUCCESS = 'SUCCESS',
-  WARNING = 'WARNING',
-  ERROR = 'ERROR',
-}
-
-export interface VibrateOptions {
-  duration?: number;
-}
-
-//
-
 export interface KeyboardPlugin extends Plugin {
   /**
    * Show the keyboard. This method is alpha and may have issues
@@ -1332,294 +1234,6 @@ export interface ActionSheetResult {
 
 //
 
-export interface MotionPlugin extends Plugin {
-  /**
-   * Listen for accelerometer data
-   */
-  addListener(
-    eventName: 'accel',
-    listenerFunc: (event: MotionEventResult) => void,
-  ): PluginListenerHandle;
-  /**
-   * Listen for device orientation change (compass heading, etc.)
-   */
-  addListener(
-    eventName: 'orientation',
-    listenerFunc: (event: MotionOrientationEventResult) => void,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export type MotionWatchOrientationCallback = (
-  accel: MotionOrientationEventResult,
-) => void;
-export type MotionWatchAccelCallback = (accel: MotionEventResult) => void;
-
-export interface MotionOrientationEventResult {
-  alpha: number;
-  beta: number;
-  gamma: number;
-}
-
-export interface MotionEventResult {
-  acceleration: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  accelerationIncludingGravity: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  rotationRate: {
-    alpha: number;
-    beta: number;
-    gamma: number;
-  };
-  interval: number;
-}
-
-//
-
-export interface NetworkPlugin extends Plugin {
-  /**
-   * Query the current network status
-   */
-  getStatus(): Promise<NetworkStatus>;
-
-  /**
-   * Listen for network status change events
-   */
-  addListener(
-    eventName: 'networkStatusChange',
-    listenerFunc: (status: NetworkStatus) => void,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export interface NetworkStatus {
-  connected: boolean;
-  connectionType: 'wifi' | 'cellular' | 'none' | 'unknown';
-}
-
-export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
-
-//
-
-export enum PermissionType {
-  Camera = 'camera',
-  Photos = 'photos',
-  Geolocation = 'geolocation',
-  Notifications = 'notifications',
-  ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write',
-  Microphone = 'microphone',
-}
-
-export interface PermissionsOptions {
-  name: PermissionType;
-}
-
-export interface PermissionResult {
-  state: 'granted' | 'denied' | 'prompt';
-}
-
-export interface PermissionsPlugin extends Plugin {
-  query(options: PermissionsOptions): Promise<PermissionResult>;
-}
-
-//
-
-export interface PhotosPlugin extends Plugin {
-  /**
-   * Get photos from the user's photo library
-   */
-  getPhotos(options?: PhotosFetchOptions): Promise<PhotosResult>;
-  /**
-   * Get albums from the user's photo library
-   */
-  getAlbums(options?: PhotosAlbumsFetchOptions): Promise<PhotosAlbumsResult>;
-  /**
-   * Save a photo the the user's photo library
-   */
-  savePhoto(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
-  /**
-   * Create an album in the user's photo library
-   */
-  createAlbum(options: PhotosCreateAlbumOptions): Promise<void>;
-}
-
-export interface PhotosFetchOptions {
-  /**
-   * The number of photos to fetch, sorted by last created date descending
-   */
-  quantity?: number;
-  /**
-   * The width of thumbnail to return
-   */
-  thumbnailWidth?: number;
-  /**
-   * The height of thumbnail to return
-   */
-  thumbnailHeight?: number;
-  /**
-   * The quality of thumbnail to return as JPEG (0-100)
-   */
-  thumbnailQuality?: number;
-  /**
-   * Which types of assets to return (currently only supports "photos")
-   */
-  types?: string;
-  /**
-   * Which album identifier to query in (get identifier with getAlbums())
-   */
-  albumIdentifier?: string;
-}
-
-export interface PhotoAsset {
-  /**
-   * Platform-specific identifier
-   */
-  identifier: string;
-  /**
-   * Data for a photo asset as a base64 encoded string (JPEG only supported)
-   */
-  data: string;
-  /**
-   * ISO date string for creation date of asset
-   */
-  creationDate: string;
-  /**
-   * Full width of original asset
-   */
-  fullWidth: number;
-  /**
-   * Full height of original asset
-   */
-  fullHeight: number;
-  /**
-   * Width of thumbnail preview
-   */
-  thumbnailWidth: number;
-  /**
-   * Height of thumbnail preview
-   */
-  thumbnailHeight: number;
-  /**
-   * Location metadata for the asset
-   */
-  location: PhotoLocation;
-}
-
-export interface PhotoLocation {
-  /**
-   * GPS latitude image was taken at
-   */
-  latitude: number;
-  /**
-   * GPS longitude image was taken at
-   */
-  longitude: number;
-  /**
-   * Heading of user at time image was taken
-   */
-  heading: number;
-  /**
-   * Altitude of user at time image was taken
-   */
-  altitude: number;
-  /**
-   * Speed of user at time image was taken
-   */
-  speed: number;
-}
-
-export interface PhotosResult {
-  /**
-   * The list of photos returned from the library
-   */
-  photos: PhotoAsset[];
-}
-
-export interface PhotosSaveOptions {
-  /**
-   * The base64-encoded JPEG data for a photo (note: do not add HTML data-uri type prefix)
-   */
-  data: string;
-  /**
-   * The optional album identifier to save this photo in
-   */
-  albumIdentifier?: string;
-}
-
-export interface PhotosSaveResult {
-  /**
-   * Whether the photo was created
-   */
-  success: boolean;
-}
-
-export interface PhotosAlbumsFetchOptions {
-  /**
-   * Whether to load cloud shared albums
-   */
-  loadShared: boolean;
-}
-export interface PhotosAlbumsResult {
-  /**
-   * The list of albums returned from the query
-   */
-  albums: PhotosAlbum[];
-}
-export interface PhotosAlbum {
-  /**
-   * Local identifier for the album
-   */
-  identifier: string;
-  /**
-   * Name of the album
-   */
-  name: string;
-  /**
-   * Number of items in the album
-   */
-  count: number;
-  /**
-   * The type of album
-   */
-  type: PhotosAlbumType;
-}
-
-export interface PhotosCreateAlbumOptions {
-  name: string;
-}
-
-export enum PhotosAlbumType {
-  /**
-   * Album is a "smart" album (such as Favorites or Recently Added)
-   */
-  Smart = 'smart',
-  /**
-   * Album is a cloud-shared album
-   */
-  Shared = 'shared',
-  /**
-   * Album is a user-created album
-   */
-  User = 'user',
-}
-
-//
-
 export interface PushNotification {
   title?: string;
   subtitle?: string;
@@ -1908,29 +1522,6 @@ export interface StatusBarInfoResult {
 
 export interface StatusBarOverlaysWebviewOptions {
   overlay: boolean;
-}
-
-export interface StoragePlugin extends Plugin {
-  /**
-   * Get the value with the given key.
-   */
-  get(options: { key: string }): Promise<{ value: string | null }>;
-  /**
-   * Set the value for the given key
-   */
-  set(options: { key: string; value: string }): Promise<void>;
-  /**
-   * Remove the value for this key (if any)
-   */
-  remove(options: { key: string }): Promise<void>;
-  /**
-   * Clear stored keys and values.
-   */
-  clear(): Promise<void>;
-  /**
-   * Return the list of known keys
-   */
-  keys(): Promise<{ keys: string[] }>;
 }
 
 export interface ToastPlugin extends Plugin {
