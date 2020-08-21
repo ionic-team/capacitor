@@ -12,7 +12,6 @@ export interface PluginRegistry {
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
-  Network: NetworkPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
@@ -1258,35 +1257,6 @@ export interface ActionSheetOption {
 export interface ActionSheetResult {
   index: number;
 }
-
-//
-
-export interface NetworkPlugin extends Plugin {
-  /**
-   * Query the current network status
-   */
-  getStatus(): Promise<NetworkStatus>;
-
-  /**
-   * Listen for network status change events
-   */
-  addListener(
-    eventName: 'networkStatusChange',
-    listenerFunc: (status: NetworkStatus) => void,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export interface NetworkStatus {
-  connected: boolean;
-  connectionType: 'wifi' | 'cellular' | 'none' | 'unknown';
-}
-
-export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
 
 //
 
