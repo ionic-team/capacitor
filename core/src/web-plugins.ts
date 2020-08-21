@@ -12,7 +12,6 @@ import { Modals } from './web/modals';
 import { Network } from './web/network';
 import { Share } from './web/share';
 import { SplashScreen } from './web/splash-screen';
-import { Storage } from './web/storage';
 import { Toast } from './web/toast';
 
 export * from './web/app';
@@ -27,7 +26,6 @@ export * from './web/modals';
 export * from './web/network';
 export * from './web/share';
 export * from './web/splash-screen';
-export * from './web/storage';
 export * from './web/toast';
 
 mergeWebPlugin(App);
@@ -42,5 +40,4 @@ mergeWebPlugin(Modals);
 mergeWebPlugin(Network);
 mergeWebPlugin(Share);
 mergeWebPlugin(SplashScreen);
-mergeWebPlugin(Storage);
 mergeWebPlugin(Toast);
