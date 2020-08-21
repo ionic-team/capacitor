@@ -5,20 +5,16 @@ export interface PluginRegistry {
   BackgroundTask: BackgroundTaskPlugin;
   Browser: BrowserPlugin;
   Camera: CameraPlugin;
-  Clipboard: ClipboardPlugin;
   Device: DevicePlugin;
   Filesystem: FilesystemPlugin;
   Geolocation: GeolocationPlugin;
-  Haptics: HapticsPlugin;
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
-  Network: NetworkPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
-  Storage: StoragePlugin;
   Toast: ToastPlugin;
   WebView: WebViewPlugin;
 
@@ -402,31 +398,6 @@ export enum CameraResultType {
   Uri = 'uri',
   Base64 = 'base64',
   DataUrl = 'dataUrl',
-}
-
-//
-
-export interface ClipboardPlugin extends Plugin {
-  /**
-   * Write a value to the clipboard (the "copy" action)
-   */
-  write(options: ClipboardWrite): Promise<void>;
-  /**
-   * Read a value from the clipboard (the "paste" action)
-   */
-  read(): Promise<ClipboardReadResult>;
-}
-
-export interface ClipboardWrite {
-  string?: string;
-  image?: string;
-  url?: string;
-  label?: string; // Android only
-}
-
-export interface ClipboardReadResult {
-  value: string;
-  type: string;
 }
 
 //
@@ -928,62 +899,6 @@ export type GeolocationWatchCallback = (
 
 //
 
-export interface HapticsPlugin extends Plugin {
-  /**
-   * Trigger a haptics "impact" feedback
-   */
-  impact(options: HapticsImpactOptions): void;
-  /**
-   * Trigger a haptics "notification" feedback
-   */
-  notification(options: HapticsNotificationOptions): void;
-  /**
-   * Vibrate the device
-   */
-  vibrate(): void;
-  /**
-   * Trigger a selection started haptic hint
-   */
-  selectionStart(): void;
-  /**
-   * Trigger a selection changed haptic hint. If a selection was
-   * started already, this will cause the device to provide haptic
-   * feedback
-   */
-  selectionChanged(): void;
-  /**
-   * If selectionStart() was called, selectionEnd() ends the selection.
-   * For example, call this when a user has lifted their finger from a control
-   */
-  selectionEnd(): void;
-}
-
-export interface HapticsImpactOptions {
-  style: HapticsImpactStyle;
-}
-
-export enum HapticsImpactStyle {
-  Heavy = 'HEAVY',
-  Medium = 'MEDIUM',
-  Light = 'LIGHT',
-}
-
-export interface HapticsNotificationOptions {
-  type: HapticsNotificationType;
-}
-
-export enum HapticsNotificationType {
-  SUCCESS = 'SUCCESS',
-  WARNING = 'WARNING',
-  ERROR = 'ERROR',
-}
-
-export interface VibrateOptions {
-  duration?: number;
-}
-
-//
-
 export interface KeyboardPlugin extends Plugin {
   /**
    * Show the keyboard. This method is alpha and may have issues
@@ -1319,35 +1234,6 @@ export interface ActionSheetResult {
 
 //
 
-export interface NetworkPlugin extends Plugin {
-  /**
-   * Query the current network status
-   */
-  getStatus(): Promise<NetworkStatus>;
-
-  /**
-   * Listen for network status change events
-   */
-  addListener(
-    eventName: 'networkStatusChange',
-    listenerFunc: (status: NetworkStatus) => void,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export interface NetworkStatus {
-  connected: boolean;
-  connectionType: 'wifi' | 'cellular' | 'none' | 'unknown';
-}
-
-export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
-
-//
-
 export interface PushNotification {
   title?: string;
   subtitle?: string;
@@ -1636,29 +1522,6 @@ export interface StatusBarInfoResult {
 
 export interface StatusBarOverlaysWebviewOptions {
   overlay: boolean;
-}
-
-export interface StoragePlugin extends Plugin {
-  /**
-   * Get the value with the given key.
-   */
-  get(options: { key: string }): Promise<{ value: string | null }>;
-  /**
-   * Set the value for the given key
-   */
-  set(options: { key: string; value: string }): Promise<void>;
-  /**
-   * Remove the value for this key (if any)
-   */
-  remove(options: { key: string }): Promise<void>;
-  /**
-   * Clear stored keys and values.
-   */
-  clear(): Promise<void>;
-  /**
-   * Return the list of known keys
-   */
-  keys(): Promise<{ keys: string[] }>;
 }
 
 export interface ToastPlugin extends Plugin {
