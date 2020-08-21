@@ -1,6 +1,5 @@
 import { mergeWebPlugin } from './plugins';
 
-import { Accessibility } from './web/accessibility';
 import { App } from './web/app';
 import { Browser } from './web/browser';
 import { Camera } from './web/camera';
@@ -17,7 +16,6 @@ import { SplashScreen } from './web/splash-screen';
 import { Storage } from './web/storage';
 import { Toast } from './web/toast';
 
-export * from './web/accessibility';
 export * from './web/app';
 export * from './web/browser';
 export * from './web/camera';
@@ -34,7 +32,6 @@ export * from './web/splash-screen';
 export * from './web/storage';
 export * from './web/toast';
 
-mergeWebPlugin(Accessibility);
 mergeWebPlugin(App);
 mergeWebPlugin(Browser);
 mergeWebPlugin(Camera);
