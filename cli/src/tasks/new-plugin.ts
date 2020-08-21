@@ -4,6 +4,7 @@ import {
   logFatal,
   logInfo,
   logWarn,
+  renameGitignore,
   runCommand,
   runTask,
   writePrettyJSON,
@@ -20,6 +21,7 @@ import { fixName, removeScope } from '../plugin';
 import { copy, mkdirs, unlink } from 'fs-extra';
 import { dirname, join } from 'path';
 import { isInteractive } from '../util/term';
+import chalk from 'chalk';
 
 interface NewPluginAnswers {
   name: string;
@@ -120,6 +122,7 @@ export async function newPlugin(config: Config) {
 
     await runTask('Adding plugin files', async () => {
       await copy(config.plugins.assets.templateDir, pluginPath);
+      await renameGitignore(pluginPath);
       await createTSPlugin(config, pluginPath, domain, className, answers);
       await createIosPlugin(config, pluginPath, domain, className, answers);
       await createAndroidPlugin(config, pluginPath, domain, className);
@@ -132,10 +135,6 @@ export async function newPlugin(config: Config) {
       );
     });
 
-    await runTask('Installing NPM dependencies', async () => {
-      return runCommand(`cd "${pluginPath}" && npm install`);
-    });
-
     if (config.cli.os === OS.Mac) {
       await runTask('Building iOS project', async () => {
         const iosPath = join(pluginPath, 'ios');
@@ -143,7 +142,12 @@ export async function newPlugin(config: Config) {
       });
     }
 
-    logInfo(`Your Capacitor plugin was created at ${pluginPath}`);
+    logInfo(
+      `Your Capacitor plugin was created!\n` +
+        `Next steps:\n` +
+        `- ${chalk.bold(`cd ${pluginPath}`)}\n` +
+        `- install dependencies (e.g. w/ ${chalk.bold('npm install')})`,
+    );
   } else {
     logInfo('Aborted');
   }

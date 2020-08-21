@@ -106,10 +106,6 @@ CAP_PLUGIN(CAPNetworkPlugin, "Network",
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPPermissionsPlugin, "Permissions",
-  CAP_PLUGIN_METHOD(query, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(register, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(requestPermission, CAPPluginReturnPromise);
@@ -120,13 +116,6 @@ CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(deleteChannel, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(listChannels, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
-CAP_PLUGIN(CAPPhotosPlugin, "Photos",
-  CAP_PLUGIN_METHOD(getPhotos, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(getAlbums, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(createAlbum, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(savePhoto, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPSharePlugin, "Share",

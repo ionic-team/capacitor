@@ -14,6 +14,7 @@ import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
 import { emoji as _e } from './util/emoji';
+import { logFatal } from './common';
 
 process.on('unhandledRejection', error => {
   console.error(chalk.red('[fatal]'), error);
@@ -27,12 +28,8 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('create [directory] [name] [id]')
     .description('Creates a new Capacitor project')
-    .option(
-      '--npm-client [npmClient]',
-      'Optional: npm client to use for dependency installation',
-    )
-    .action((directory, name, id, { npmClient }) => {
-      return createCommand(config, directory, name, id, npmClient);
+    .action((directory, name, id) => {
+      return createCommand(config, directory, name, id);
     });
 
   program
@@ -43,16 +40,12 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
       'Optional: Directory of your projects built web assets',
       config.app.webDir ? config.app.webDir : 'www',
     )
-    .option(
-      '--npm-client [npmClient]',
-      'Optional: npm client to use for dependency installation',
-    )
-    .action((appName, appId, { webDir, npmClient }) => {
-      return initCommand(config, appName, appId, webDir, npmClient);
+    .action((appName, appId, { webDir }) => {
+      return initCommand(config, appName, appId, webDir);
     });
 
   program
-    .command('serve')
+    .command('serve', { hidden: true })
     .description('Serves a Capacitor Progressive Web App in the browser')
     .action(() => {
       return serveCommand(config);
@@ -124,20 +117,18 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
       return newPluginCommand(config);
     });
 
-  program.arguments('<command>').action(cmd => {
-    program.outputHelp();
-    console.log(`  ` + chalk.red(`\n  Unknown command ${chalk.yellow(cmd)}.`));
-    console.log();
+  program.arguments('[command]').action(cmd => {
+    if (typeof cmd === 'undefined') {
+      console.log(
+        `\n  ${_e('⚡️', '--')}  ${chalk.bold(
+          'Capacitor - Cross-Platform apps with JavaScript and the Web',
+        )}  ${_e('⚡️', '--')}\n`,
+      );
+      program.outputHelp();
+    } else {
+      logFatal(`Unknown command: ${cmd}`);
+    }
   });
 
   program.parse(process.argv);
-
-  if (program.rawArgs.length < 3) {
-    console.log(
-      `\n  ${_e('⚡️', '--')}  ${chalk.bold(
-        'Capacitor - Cross-Platform apps with JavaScript and the Web',
-      )}  ${_e('⚡️', '--')}`,
-    );
-    program.help();
-  }
 }

@@ -432,7 +432,7 @@ enum BridgeError: Error {
 
             let pluginCall = CAPPluginCall(callbackId: call.callbackId, options: call.options, success: {(result: CAPPluginCallResult?, pluginCall: CAPPluginCall?) -> Void in
                 if result != nil {
-                    self?.toJs(result: JSResult(call: call, result: result!.data ?? [:]), save: pluginCall?.isSaved ?? false)
+                    self?.toJs(result: JSResult(call: call, result: result!.data), save: pluginCall?.isSaved ?? false)
                 } else {
                     self?.toJs(result: JSResult(call: call, result: [:]), save: pluginCall?.isSaved ?? false)
                 }

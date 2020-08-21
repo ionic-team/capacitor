@@ -7,7 +7,7 @@ import {
 } from '../common';
 import { getAndroidPlugins } from './common';
 import {
-  checkAndInstallDependencies,
+  checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
@@ -41,18 +41,6 @@ export async function updateAndroid(config: Config) {
     p => getPluginType(p, platform) === PluginType.Core,
   );
 
-  let needsPluginUpdate = true;
-  while (needsPluginUpdate) {
-    needsPluginUpdate = await checkAndInstallDependencies(
-      config,
-      plugins,
-      platform,
-    );
-    if (needsPluginUpdate) {
-      plugins = await getPluginsTask(config);
-    }
-  }
-
   printPlugins(capacitorPlugins, 'android');
 
   removePluginsNativeFiles(config);
@@ -63,6 +51,7 @@ export async function updateAndroid(config: Config) {
     copyPluginsNativeFiles(config, cordovaPlugins);
   }
   await handleCordovaPluginsJS(cordovaPlugins, config, platform);
+  await checkPluginDependencies(plugins, platform);
   await installGradlePlugins(config, capacitorPlugins, cordovaPlugins);
   await handleCordovaPluginsGradle(config, cordovaPlugins);
   await writeCordovaAndroidManifest(cordovaPlugins, config, platform);

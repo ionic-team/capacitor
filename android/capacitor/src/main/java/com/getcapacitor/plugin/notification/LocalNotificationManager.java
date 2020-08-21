@@ -24,6 +24,7 @@ import com.getcapacitor.Logger;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.android.R;
 import com.getcapacitor.plugin.util.AssetUtil;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import org.json.JSONArray;
@@ -341,9 +342,12 @@ public class LocalNotificationManager {
         // Cron like scheduler
         DateMatch on = schedule.getOn();
         if (on != null) {
+            long trigger = on.nextTrigger(new Date());
             notificationIntent.putExtra(TimedNotificationPublisher.CRON_KEY, on.toMatchString());
             pendingIntent = PendingIntent.getBroadcast(context, request.getId(), notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-            alarmManager.setExact(AlarmManager.RTC, on.nextTrigger(new Date()), pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC, trigger, pendingIntent);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Logger.debug(Logger.tags("LN"), "notification " + request.getId() + " will next fire at " + sdf.format(new Date(trigger)));
         }
     }
 
