@@ -1,7 +1,6 @@
 import { Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
-  Accessibility: AccessibilityPlugin;
   App: AppPlugin;
   BackgroundTask: BackgroundTaskPlugin;
   Browser: BrowserPlugin;
@@ -10,11 +9,9 @@ export interface PluginRegistry {
   Device: DevicePlugin;
   Filesystem: FilesystemPlugin;
   Geolocation: GeolocationPlugin;
-  Haptics: HapticsPlugin;
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
-  Motion: MotionPlugin;
   Network: NetworkPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
@@ -42,53 +39,6 @@ export interface CancellableCallback {
    */
   cancel: Function;
 }
-//
-
-export interface AccessibilityPlugin {
-  /**
-   * Check if a screen reader is enabled on the device
-   */
-  isScreenReaderEnabled(): Promise<ScreenReaderEnabledResult>;
-
-  /**
-   * Speak a string with a connected screen reader.
-   * @param value the string to speak
-   */
-  speak(options: AccessibilitySpeakOptions): Promise<void>;
-
-  /**
-   * Listen for screen reader state change (on/off)
-   */
-  addListener(
-    eventName: 'accessibilityScreenReaderStateChange',
-    listenerFunc: ScreenReaderStateChangeCallback,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export interface AccessibilitySpeakOptions {
-  /**
-   * The string to speak
-   */
-  value: string;
-  /**
-   * The language to speak the string in, as its [ISO 639-1 Code](https://www.loc.gov/standards/iso639-2/php/code_list.php) (ex: "en").
-   * Currently only supported on Android.
-   */
-  language?: string;
-}
-
-export interface ScreenReaderEnabledResult {
-  value: boolean;
-}
-export type ScreenReaderStateChangeCallback = (
-  state: ScreenReaderEnabledResult,
-) => void;
-
 //
 
 export interface AppPlugin extends Plugin {
@@ -976,62 +926,6 @@ export type GeolocationWatchCallback = (
 
 //
 
-export interface HapticsPlugin extends Plugin {
-  /**
-   * Trigger a haptics "impact" feedback
-   */
-  impact(options: HapticsImpactOptions): void;
-  /**
-   * Trigger a haptics "notification" feedback
-   */
-  notification(options: HapticsNotificationOptions): void;
-  /**
-   * Vibrate the device
-   */
-  vibrate(): void;
-  /**
-   * Trigger a selection started haptic hint
-   */
-  selectionStart(): void;
-  /**
-   * Trigger a selection changed haptic hint. If a selection was
-   * started already, this will cause the device to provide haptic
-   * feedback
-   */
-  selectionChanged(): void;
-  /**
-   * If selectionStart() was called, selectionEnd() ends the selection.
-   * For example, call this when a user has lifted their finger from a control
-   */
-  selectionEnd(): void;
-}
-
-export interface HapticsImpactOptions {
-  style: HapticsImpactStyle;
-}
-
-export enum HapticsImpactStyle {
-  Heavy = 'HEAVY',
-  Medium = 'MEDIUM',
-  Light = 'LIGHT',
-}
-
-export interface HapticsNotificationOptions {
-  type: HapticsNotificationType;
-}
-
-export enum HapticsNotificationType {
-  SUCCESS = 'SUCCESS',
-  WARNING = 'WARNING',
-  ERROR = 'ERROR',
-}
-
-export interface VibrateOptions {
-  duration?: number;
-}
-
-//
-
 export interface KeyboardPlugin extends Plugin {
   /**
    * Show the keyboard. This method is alpha and may have issues
@@ -1363,60 +1257,6 @@ export interface ActionSheetOption {
 
 export interface ActionSheetResult {
   index: number;
-}
-
-//
-
-export interface MotionPlugin extends Plugin {
-  /**
-   * Listen for accelerometer data
-   */
-  addListener(
-    eventName: 'accel',
-    listenerFunc: (event: MotionEventResult) => void,
-  ): PluginListenerHandle;
-  /**
-   * Listen for device orientation change (compass heading, etc.)
-   */
-  addListener(
-    eventName: 'orientation',
-    listenerFunc: (event: MotionOrientationEventResult) => void,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export type MotionWatchOrientationCallback = (
-  accel: MotionOrientationEventResult,
-) => void;
-export type MotionWatchAccelCallback = (accel: MotionEventResult) => void;
-
-export interface MotionOrientationEventResult {
-  alpha: number;
-  beta: number;
-  gamma: number;
-}
-
-export interface MotionEventResult {
-  acceleration: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  accelerationIncludingGravity: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  rotationRate: {
-    alpha: number;
-    beta: number;
-    gamma: number;
-  };
-  interval: number;
 }
 
 //

@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
-import { addAndroid } from '../android/add';
+import { addAndroid, addAndroidChecks } from '../android/add';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import { editProjectSettingsIOS } from '../ios/common';
@@ -9,7 +9,6 @@ import {
   checkAppConfig,
   checkPackage,
   checkWebDir,
-  hasYarn,
   log,
   logError,
   logFatal,
@@ -26,24 +25,17 @@ import { resolve } from 'path';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
-    const platformFolder = resolvePlatform(config, selectedPlatformName);
-    if (platformFolder) {
-      const result = await runPlatformHook(
-        `cd "${platformFolder}" && ${
-          (await hasYarn(config)) ? 'yarn' : 'npm'
-        } run capacitor:add`,
-      );
-      log(result);
+    const platformDir = resolvePlatform(config, selectedPlatformName);
+    if (platformDir) {
+      await runPlatformHook(platformDir, 'capacitor:add');
     } else {
       logError(`platform ${selectedPlatformName} not found`);
 
       if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
         log(
-          `Try installing the platform first:\n` +
-            `   ${chalk.bold(
-              `npm install @capacitor-community/${selectedPlatformName}`,
-            )}\n` +
-            `Then, try adding it again.`,
+          `Try installing ${chalk.bold(
+            `@capacitor-community/${selectedPlatformName}`,
+          )} and adding the platform again.`,
         );
       }
     }
@@ -128,7 +120,7 @@ export function addChecks(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
     return addIOSChecks;
   } else if (platformName === config.android.name) {
-    return [];
+    return addAndroidChecks;
   } else if (platformName === config.web.name) {
     return [];
   } else {

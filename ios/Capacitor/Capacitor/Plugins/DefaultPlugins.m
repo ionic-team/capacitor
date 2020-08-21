@@ -2,12 +2,6 @@
 
 #import "CAPBridgedPlugin.h"
 
-CAP_PLUGIN(CAPAccessibilityPlugin, "Accessibility",
-  CAP_PLUGIN_METHOD(isScreenReaderEnabled, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(speak, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
 CAP_PLUGIN(CAPAppPlugin, "App",
   CAP_PLUGIN_METHOD(exitApp, CAPPluginReturnNone);
   CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
@@ -66,15 +60,6 @@ CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
   CAP_PLUGIN_METHOD(getCurrentPosition, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(watchPosition, CAPPluginReturnCallback);
   CAP_PLUGIN_METHOD(clearWatch, CAPPluginReturnPromise);
-)
-
-CAP_PLUGIN(CAPHapticsPlugin, "Haptics",
-  CAP_PLUGIN_METHOD(impact, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(notification, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionStart, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionChanged, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionEnd, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(vibrate, CAPPluginReturnNone);
 )
 
 CAP_PLUGIN(CAPKeyboard, "Keyboard",
