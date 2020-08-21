@@ -4,8 +4,7 @@
     "declaration": true,
     "esModuleInterop": true,
     "lib": [
-      "dom",
-      "es2015"
+      "dom"
     ],
     "module": "es2015",
     "moduleResolution": "node",
@@ -16,7 +15,7 @@
     "pretty": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2015"
+    "target": "es2017"
   },
   "files": [
     "src/index.ts"
