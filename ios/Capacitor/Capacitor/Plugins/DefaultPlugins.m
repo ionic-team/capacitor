@@ -62,15 +62,6 @@ CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
   CAP_PLUGIN_METHOD(clearWatch, CAPPluginReturnPromise);
 )
 
-CAP_PLUGIN(CAPHapticsPlugin, "Haptics",
-  CAP_PLUGIN_METHOD(impact, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(notification, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionStart, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionChanged, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(selectionEnd, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(vibrate, CAPPluginReturnNone);
-)
-
 CAP_PLUGIN(CAPKeyboard, "Keyboard",
   CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
