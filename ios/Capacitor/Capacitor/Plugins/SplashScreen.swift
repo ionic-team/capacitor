@@ -155,7 +155,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
                 return
             }
             if backgroundColor != nil {
-                strongSelf.imageView.backgroundColor = UIColor(fromHex: backgroundColor!)
+                strongSelf.imageView.backgroundColor = UIColor.capacitor.color(fromHex: backgroundColor!)
             }
 
             if strongSelf.showSpinner {
@@ -169,7 +169,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
                 }
 
                 if spinnerColor != nil {
-                    strongSelf.spinner.color = UIColor(fromHex: spinnerColor!)
+                    strongSelf.spinner.color = UIColor.capacitor.color(fromHex: spinnerColor!)
                 }
             }
 

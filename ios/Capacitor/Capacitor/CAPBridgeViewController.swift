@@ -99,8 +99,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         bridge = CAPBridge(self, messageHandler, capConfig, specifiedScheme)
 
         if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
-            webView?.backgroundColor = UIColor(fromHex: backgroundColor)
-            webView?.scrollView.backgroundColor = UIColor(fromHex: backgroundColor)
+            webView?.backgroundColor = UIColor.capacitor.color(fromHex: backgroundColor)
+            webView?.scrollView.backgroundColor = UIColor.capacitor.color(fromHex: backgroundColor)
         } else if #available(iOS 13, *) {
             // Use the system background colors if background is not set by user
             webView?.backgroundColor = UIColor.systemBackground
