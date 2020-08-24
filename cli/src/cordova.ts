@@ -509,40 +509,6 @@ export function getIncompatibleCordovaPlugins(platform: string) {
   return pluginList;
 }
 
-export async function getCordovaPreferences(config: Config) {
-  const configXml = join(config.app.rootDir, 'config.xml');
-  let cordova: any = {};
-  if (existsSync(configXml)) {
-    cordova.preferences = {};
-    const xmlMeta = await readXML(configXml);
-    if (xmlMeta.widget.preference) {
-      xmlMeta.widget.preference.map((pref: any) => {
-        cordova.preferences[pref.$.name] = pref.$.value;
-      });
-    }
-  }
-  if (
-    config.app.extConfig &&
-    config.app.extConfig.cordova &&
-    config.app.extConfig.cordova.preferences &&
-    cordova.preferences
-  ) {
-    const answer = await inquirer.prompt({
-      type: 'confirm',
-      name: 'confirm',
-      message:
-        'capacitor.config.json already contains cordova preferences. Overwrite with values from config.xml?',
-    });
-    if (!answer.confirm) {
-      cordova = config.app.extConfig.cordova;
-    }
-  }
-  if (config.app.extConfig && !cordova.preferences) {
-    cordova = config.app.extConfig.cordova;
-  }
-  return cordova;
-}
-
 export async function writeCordovaAndroidManifest(
   cordovaPlugins: Plugin[],
   config: Config,

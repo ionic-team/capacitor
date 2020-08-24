@@ -98,16 +98,6 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkAppDir(
-  config: Config,
-  dir: string,
-): Promise<string | null> {
-  if (!/^\S*$/.test(dir)) {
-    return `Your app directory should not contain spaces`;
-  }
-  return null;
-}
-
 export async function checkAppId(
   config: Config,
   id: string,
@@ -193,44 +183,6 @@ export function buildXmlElement(configElement: any, rootName: string) {
     rootName: rootName,
   });
   return builder.buildObject(configElement);
-}
-
-/**
- * Check for or create our main configuration file.
- * @param config
- */
-export async function getOrCreateConfig(config: Config) {
-  const configPath = join(config.app.rootDir, config.app.extConfigName);
-  if (await existsAsync(configPath)) {
-    return configPath;
-  }
-
-  await writePrettyJSON(config.app.extConfigFilePath, {
-    appId: config.app.appId,
-    appName: config.app.appName,
-    bundledWebRuntime: config.app.bundledWebRuntime,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
-    plugins: {
-      SplashScreen: {
-        launchShowDuration: 0,
-      },
-    },
-  });
-
-  // Store our newly created or found external config as the default
-  config.loadExternalConfig();
-}
-
-export async function mergeConfig(config: Config, settings: any) {
-  const configPath = join(config.app.rootDir, config.app.extConfigName);
-
-  await writePrettyJSON(config.app.extConfigFilePath, {
-    ...config.app.extConfig,
-    ...settings,
-  });
-
-  // Store our newly created or found external config as the default
-  config.loadExternalConfig();
 }
 
 export function log(...args: any[]) {
@@ -365,40 +317,6 @@ export function formatHrTime(hrtime: any) {
   return time.toFixed(2) + TIME_UNITS[index];
 }
 
-export async function getName(config: Config, name: string) {
-  if (!name) {
-    const answers = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'name',
-        default: config.app.appName
-          ? config.app.appName
-          : config.app.package && config.app.package.name
-          ? config.app.package.name
-          : 'App',
-        message: `App name`,
-      },
-    ]);
-    return answers.name;
-  }
-  return name;
-}
-
-export async function getAppId(config: Config, id: string) {
-  if (!id) {
-    const answers = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'id',
-        default: config.app.appId ? config.app.appId : 'com.example.app',
-        message: 'App Package ID (in Java package format, no dashes)',
-      },
-    ]);
-    return answers.id;
-  }
-  return id;
-}
-
 export async function copyTemplate(src: string, dst: string) {
   await copyAsync(src, dst);
   await renameGitignore(dst);
@@ -411,35 +329,6 @@ export async function renameGitignore(dst: string) {
   if (await existsAsync(gitignorePath)) {
     await renameAsync(gitignorePath, join(dst, '.gitignore'));
   }
-}
-
-export async function printNextSteps(config: Config, appDir: string) {
-  log('\n');
-  log(
-    `${chalk.bold(
-      `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
-        '🎉',
-        '*',
-      )}`,
-    )}\n`,
-  );
-  if (appDir !== '') {
-    log(`Next steps:`);
-    log('');
-    log(`  ${chalk.bold(`cd ./${appDir}`)}`);
-    log(`  install dependencies (e.g. w/ ${chalk.bold('npm install')})`);
-    log(`  ${chalk.bold('npx cap sync')}`);
-    log('');
-  }
-  log(`Add platforms using 'npx cap add':\n`);
-  log(`  npx cap add android`);
-  log(`  npx cap add ios`);
-  log('');
-  log(
-    `Follow the Developer Workflow guide to get building:\n${chalk.bold(
-      `https://capacitorjs.com/docs/basics/workflow`,
-    )}\n`,
-  );
 }
 
 export async function getCapacitorPackage(
