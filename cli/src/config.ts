@@ -78,11 +78,6 @@ export class Config implements CliConfig {
     extConfig: ExtConfig,
     bundledWebRuntime: false,
     plugins: {},
-    assets: {
-      templateName: 'app-template',
-      templateDir: '',
-      pluginsTemplateDir: '',
-    },
     server: {
       cleartext: false,
     },
@@ -101,24 +96,7 @@ export class Config implements CliConfig {
   constructor(os: string, currentWorkingDir: string, cliBinDir: string) {
     this.initOS(os);
     this.initCliConfig(cliBinDir);
-    this.setCurrentWorkingDir(currentWorkingDir);
-  }
 
-  initOS(os: string) {
-    switch (os) {
-      case 'darwin':
-        this.cli.os = OS.Mac;
-        break;
-      case 'win32':
-        this.cli.os = OS.Windows;
-        break;
-      case 'linux':
-        this.cli.os = OS.Linux;
-        break;
-    }
-  }
-
-  setCurrentWorkingDir(currentWorkingDir: string) {
     try {
       this.initAppConfig(resolve(currentWorkingDir));
       this.initPluginsConfig();
@@ -137,6 +115,20 @@ export class Config implements CliConfig {
     }
   }
 
+  initOS(os: string) {
+    switch (os) {
+      case 'darwin':
+        this.cli.os = OS.Mac;
+        break;
+      case 'win32':
+        this.cli.os = OS.Windows;
+        break;
+      case 'linux':
+        this.cli.os = OS.Linux;
+        break;
+    }
+  }
+
   private initCliConfig(cliBinDir: string) {
     this.cli.binDir = cliBinDir;
     this.cli.rootDir = join(cliBinDir, '../');
@@ -147,10 +139,6 @@ export class Config implements CliConfig {
   private initAppConfig(currentWorkingDir: string) {
     this.app.rootDir = currentWorkingDir;
     this.app.package = loadPackageJson(currentWorkingDir);
-    this.app.assets.templateDir = join(
-      this.cli.assetsDir,
-      this.app.assets.templateName,
-    );
   }
 
   async updateAppPackage() {

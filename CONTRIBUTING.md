@@ -87,7 +87,6 @@ On web, this means do not add any third party libraries such as Firebase or Loda
 
 This monorepo contains core Capacitor components. The current directory structure looks like this:
 
-* `app-template`: The default app template used during `create`
 * `cli`: Capacitor CLI/Build scripts
 * `core`: Capacitor Core JS library
 * `ios`: Capacitor iOS Runtime
