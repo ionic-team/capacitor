@@ -72,3 +72,13 @@ private class CAPFileResolverNotImplemented: CAPFileResolver {
         return nil
     }
 }
+
+@objc public class CAPFileUtils: NSObject {
+    public static func getCleanData(_ data: String) -> String {
+        let dataParts = data.split(separator: ",")
+        if let part = dataParts.last {
+            return String(part)
+        }
+        return data
+    }
+}
