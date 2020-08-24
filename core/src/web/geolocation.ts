@@ -11,7 +11,8 @@ import { PermissionsRequestResult } from '../definitions';
 
 import { extend } from '../util';
 
-export class GeolocationPluginWeb extends WebPlugin
+export class GeolocationPluginWeb
+  extends WebPlugin
   implements GeolocationPlugin {
   constructor() {
     super({ name: 'Geolocation' });
