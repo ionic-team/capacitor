@@ -61,7 +61,6 @@ export class Config implements CliConfig {
     assetsDir: '',
     package: Package,
     os: OS.Unknown,
-    npmClient: '',
   };
 
   app = {
@@ -79,11 +78,6 @@ export class Config implements CliConfig {
     extConfig: ExtConfig,
     bundledWebRuntime: false,
     plugins: {},
-    assets: {
-      templateName: 'app-template',
-      templateDir: '',
-      pluginsTemplateDir: '',
-    },
     server: {
       cleartext: false,
     },
@@ -96,13 +90,29 @@ export class Config implements CliConfig {
     },
   };
 
-  platforms: string[] = [];
+  knownPlatforms: string[] = [];
   knownCommunityPlatforms = ['electron'];
 
   constructor(os: string, currentWorkingDir: string, cliBinDir: string) {
     this.initOS(os);
     this.initCliConfig(cliBinDir);
-    this.setCurrentWorkingDir(currentWorkingDir);
+
+    try {
+      this.initAppConfig(resolve(currentWorkingDir));
+      this.initPluginsConfig();
+      this.loadExternalConfig();
+      this.mergeConfigData();
+
+      // Post-merge
+      this.initAndroidConfig();
+      this.initIosConfig();
+      this.initWindowsConfig();
+      this.initLinuxConfig();
+
+      this.knownPlatforms.push(this.web.name);
+    } catch (e) {
+      logFatal(`Unable to load config`, e);
+    }
   }
 
   initOS(os: string) {
@@ -119,25 +129,6 @@ export class Config implements CliConfig {
     }
   }
 
-  setCurrentWorkingDir(currentWorkingDir: string) {
-    try {
-      this.initAppConfig(resolve(currentWorkingDir));
-      this.initPluginsConfig();
-      this.loadExternalConfig();
-      this.mergeConfigData();
-
-      // Post-merge
-      this.initAndroidConfig();
-      this.initIosConfig();
-      this.initWindowsConfig();
-      this.initLinuxConfig();
-
-      this.platforms.push(this.web.name);
-    } catch (e) {
-      logFatal(`Unable to load config`, e);
-    }
-  }
-
   private initCliConfig(cliBinDir: string) {
     this.cli.binDir = cliBinDir;
     this.cli.rootDir = join(cliBinDir, '../');
@@ -148,10 +139,6 @@ export class Config implements CliConfig {
   private initAppConfig(currentWorkingDir: string) {
     this.app.rootDir = currentWorkingDir;
     this.app.package = loadPackageJson(currentWorkingDir);
-    this.app.assets.templateDir = join(
-      this.cli.assetsDir,
-      this.app.assets.templateName,
-    );
   }
 
   async updateAppPackage() {
@@ -161,7 +148,7 @@ export class Config implements CliConfig {
   }
 
   private initAndroidConfig() {
-    this.platforms.push(this.android.name);
+    this.knownPlatforms.push(this.android.name);
     this.android.platformDir = resolve(this.app.rootDir, this.android.name);
     this.android.assets.templateDir = resolve(
       this.cli.assetsDir,
@@ -182,7 +169,7 @@ export class Config implements CliConfig {
   }
 
   private initIosConfig() {
-    this.platforms.push(this.ios.name);
+    this.knownPlatforms.push(this.ios.name);
     this.ios.platformDir = resolve(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = resolve(
       this.cli.assetsDir,
@@ -251,7 +238,6 @@ export class Config implements CliConfig {
       try {
         // we've got an capacitor.json file, let's parse it
         this.app.extConfig = JSON.parse(extConfigStr);
-        this.cli.npmClient = this.app.extConfig.npmClient || '';
       } catch (e) {
         logFatal(`error parsing: ${basename(this.app.extConfigFilePath)}\n`, e);
       }
@@ -295,7 +281,7 @@ export class Config implements CliConfig {
         type: 'list',
         name: 'mode',
         message: promptMessage,
-        choices: this.platforms,
+        choices: this.knownPlatforms,
       });
 
       return answer.mode.toLowerCase().trim();
@@ -305,7 +291,7 @@ export class Config implements CliConfig {
 
     if (!this.isValidPlatform(platformName)) {
       logFatal(
-        `Invalid platform: "${platformName}". Valid platforms include: ${this.platforms.join(
+        `Invalid platform: "${platformName}". Valid platforms include: ${this.knownPlatforms.join(
           ', ',
         )}`,
       );
@@ -346,7 +332,7 @@ export class Config implements CliConfig {
   }
 
   isValidPlatform(platform: any) {
-    return this.platforms.includes(platform);
+    return this.knownPlatforms.includes(platform);
   }
 
   platformNotCreatedError(platformName: string) {

@@ -4,10 +4,8 @@ import {
   check,
   checkAppId,
   checkAppName,
-  checkNpmClient,
   getAppId,
   getName,
-  getNpmClient,
   getOrCreateConfig,
   log,
   logFatal,
@@ -24,7 +22,6 @@ export async function initCommand(
   name: string,
   id: string,
   webDir: string,
-  client: string,
 ) {
   if (webDir === '') {
     webDir = 'www';
@@ -37,13 +34,10 @@ export async function initCommand(
     const appName = await getName(config, name);
     // Get app identifier
     const appId = await getAppId(config, id);
-    // Get npm client
-    const npmClient = await getNpmClient(config, client);
 
     await check(config, [
       config => checkAppName(config, appName),
       config => checkAppId(config, appId),
-      config => checkNpmClient(config, npmClient),
     ]);
 
     const cordova = await getCordovaPreferences(config);
@@ -54,7 +48,6 @@ export async function initCommand(
         config.app.appId = appId;
         config.app.appName = appName;
         config.app.webDir = webDir;
-        config.cli.npmClient = npmClient;
 
         // Get or create our config
         await getOrCreateConfig(config);
@@ -62,7 +55,6 @@ export async function initCommand(
           appId,
           appName,
           webDir,
-          npmClient,
           cordova,
         });
       },
