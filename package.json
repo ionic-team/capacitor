@@ -19,7 +19,7 @@
     "@ionic/swiftlint-config": "^1.1.1",
     "husky": "^4.2.5",
     "lerna": "^3.22.1",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.0",
     "prettier-plugin-java": "^0.8.0",
     "swiftlint": "^1.0.1"
   }
