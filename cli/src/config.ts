@@ -83,13 +83,6 @@ export class Config implements CliConfig {
     },
   };
 
-  plugins = {
-    assets: {
-      templateName: 'plugin-template',
-      templateDir: '',
-    },
-  };
-
   knownPlatforms: string[] = [];
   knownCommunityPlatforms = ['electron'];
 
@@ -99,7 +92,6 @@ export class Config implements CliConfig {
 
     try {
       this.initAppConfig(resolve(currentWorkingDir));
-      this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
 
@@ -211,13 +203,6 @@ export class Config implements CliConfig {
     if (this.app.linuxAndroidStudioPath) {
       this.linux.androidStudioPath = this.app.linuxAndroidStudioPath;
     }
-  }
-
-  private initPluginsConfig() {
-    this.plugins.assets.templateDir = join(
-      this.cli.assetsDir,
-      this.plugins.assets.templateName,
-    );
   }
 
   private mergeConfigData() {

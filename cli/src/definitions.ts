@@ -88,10 +88,6 @@ export interface CliConfigApp {
   bundledWebRuntime: boolean;
 }
 
-export interface CliConfigPlugins {
-  assets: CliConfigPlatformAssets;
-}
-
 export interface CliConfig {
   windows: CliConfigWindows;
   linux: CliConfigLinux;
@@ -100,5 +96,4 @@ export interface CliConfig {
   ios: CliConfigPlatform;
   cli: CliConfigCli;
   app: CliConfigApp;
-  plugins: CliConfigPlugins;
 }
