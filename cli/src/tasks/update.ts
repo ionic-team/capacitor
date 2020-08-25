@@ -15,7 +15,7 @@ import {
   runTask,
 } from '../common';
 
-import chalk from 'chalk';
+import kleur from 'kleur';
 
 export async function updateCommand(
   config: Config,
@@ -80,16 +80,13 @@ export async function update(
   deployment: boolean,
 ) {
   try {
-    await runTask(
-      chalk`{green {bold update}} {bold ${platformName}}`,
-      async () => {
-        if (platformName === config.ios.name) {
-          await updateIOS(config, deployment);
-        } else if (platformName === config.android.name) {
-          await updateAndroid(config);
-        }
-      },
-    );
+    await runTask(kleur.green().bold(`update ${platformName}`), async () => {
+      if (platformName === config.ios.name) {
+        await updateIOS(config, deployment);
+      } else if (platformName === config.android.name) {
+        await updateAndroid(config);
+      }
+    });
   } catch (e) {
     logError('Error running update:', e);
   }
