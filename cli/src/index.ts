@@ -111,7 +111,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-    .command('plugin:generate')
+    .command('plugin:generate', { hidden: true })
     .description('start a new Capacitor plugin')
     .action(() => {
       return newPluginCommand(config);
