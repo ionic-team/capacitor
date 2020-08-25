@@ -86,11 +86,6 @@ export interface CliConfigApp {
    * module imports, set this to "true" and import "capacitor.js" manually.
    */
   bundledWebRuntime: boolean;
-  assets: CliConfigPlatformAssets;
-}
-
-export interface CliConfigPlugins {
-  assets: CliConfigPlatformAssets;
 }
 
 export interface CliConfig {
@@ -101,5 +96,4 @@ export interface CliConfig {
   ios: CliConfigPlatform;
   cli: CliConfigCli;
   app: CliConfigApp;
-  plugins: CliConfigPlugins;
 }

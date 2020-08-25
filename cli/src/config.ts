@@ -78,20 +78,8 @@ export class Config implements CliConfig {
     extConfig: ExtConfig,
     bundledWebRuntime: false,
     plugins: {},
-    assets: {
-      templateName: 'app-template',
-      templateDir: '',
-      pluginsTemplateDir: '',
-    },
     server: {
       cleartext: false,
-    },
-  };
-
-  plugins = {
-    assets: {
-      templateName: 'plugin-template',
-      templateDir: '',
     },
   };
 
@@ -101,7 +89,22 @@ export class Config implements CliConfig {
   constructor(os: string, currentWorkingDir: string, cliBinDir: string) {
     this.initOS(os);
     this.initCliConfig(cliBinDir);
-    this.setCurrentWorkingDir(currentWorkingDir);
+
+    try {
+      this.initAppConfig(resolve(currentWorkingDir));
+      this.loadExternalConfig();
+      this.mergeConfigData();
+
+      // Post-merge
+      this.initAndroidConfig();
+      this.initIosConfig();
+      this.initWindowsConfig();
+      this.initLinuxConfig();
+
+      this.knownPlatforms.push(this.web.name);
+    } catch (e) {
+      logFatal(`Unable to load config`, e);
+    }
   }
 
   initOS(os: string) {
@@ -118,25 +121,6 @@ export class Config implements CliConfig {
     }
   }
 
-  setCurrentWorkingDir(currentWorkingDir: string) {
-    try {
-      this.initAppConfig(resolve(currentWorkingDir));
-      this.initPluginsConfig();
-      this.loadExternalConfig();
-      this.mergeConfigData();
-
-      // Post-merge
-      this.initAndroidConfig();
-      this.initIosConfig();
-      this.initWindowsConfig();
-      this.initLinuxConfig();
-
-      this.knownPlatforms.push(this.web.name);
-    } catch (e) {
-      logFatal(`Unable to load config`, e);
-    }
-  }
-
   private initCliConfig(cliBinDir: string) {
     this.cli.binDir = cliBinDir;
     this.cli.rootDir = join(cliBinDir, '../');
@@ -147,10 +131,6 @@ export class Config implements CliConfig {
   private initAppConfig(currentWorkingDir: string) {
     this.app.rootDir = currentWorkingDir;
     this.app.package = loadPackageJson(currentWorkingDir);
-    this.app.assets.templateDir = join(
-      this.cli.assetsDir,
-      this.app.assets.templateName,
-    );
   }
 
   async updateAppPackage() {
@@ -223,13 +203,6 @@ export class Config implements CliConfig {
     if (this.app.linuxAndroidStudioPath) {
       this.linux.androidStudioPath = this.app.linuxAndroidStudioPath;
     }
-  }
-
-  private initPluginsConfig() {
-    this.plugins.assets.templateDir = join(
-      this.cli.assetsDir,
-      this.plugins.assets.templateName,
-    );
   }
 
   private mergeConfigData() {

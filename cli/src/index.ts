@@ -26,10 +26,10 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program.version(config.cli.package.version);
 
   program
-    .command('create [directory] [name] [id]')
+    .command('create [directory] [name] [id]', { hidden: true })
     .description('Creates a new Capacitor project')
-    .action((directory, name, id) => {
-      return createCommand(config, directory, name, id);
+    .action(() => {
+      return createCommand(config);
     });
 
   program
@@ -111,7 +111,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-    .command('plugin:generate')
+    .command('plugin:generate', { hidden: true })
     .description('start a new Capacitor plugin')
     .action(() => {
       return newPluginCommand(config);

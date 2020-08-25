@@ -6,7 +6,8 @@ import {
   SplashScreenShowOptions,
 } from '../core-plugin-definitions';
 
-export class SplashScreenPluginWeb extends WebPlugin
+export class SplashScreenPluginWeb
+  extends WebPlugin
   implements SplashScreenPlugin {
   constructor() {
     super({ name: 'SplashScreen' });
