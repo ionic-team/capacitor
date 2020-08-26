@@ -328,8 +328,6 @@ export async function getCommandOutput(
   }
 }
 
-export type TaskInfoProvider = (messsage: string) => void;
-
 export async function runTask<T>(
   title: string,
   fn: () => Promise<T>,
