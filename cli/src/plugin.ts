@@ -1,5 +1,5 @@
 import { join } from 'path';
-import chalk from 'chalk';
+import kleur from 'kleur';
 
 import { Config } from './config';
 import { log, logFatal, readJSON, readXML, resolveNode } from './common';
@@ -125,7 +125,7 @@ export function printPlugins(
     log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
   }
   for (let p of plugins) {
-    log(`    ${chalk.bold(`${p.id}`)} (${chalk.green(p.version)})`);
+    log(`    ${kleur.bold(`${p.id}`)} (${kleur.green(p.version)})`);
   }
 }
 

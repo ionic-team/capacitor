@@ -1,5 +1,5 @@
 import program from 'commander';
-import chalk from 'chalk';
+import kleur from 'kleur';
 
 import { createCommand } from './tasks/create';
 import { initCommand } from './tasks/init';
@@ -17,7 +17,7 @@ import { emoji as _e } from './util/emoji';
 import { logFatal } from './common';
 
 process.on('unhandledRejection', error => {
-  console.error(chalk.red('[fatal]'), error);
+  console.error(kleur.red('[fatal]'), error);
 });
 
 export function run(process: NodeJS.Process, cliBinDir: string) {
@@ -120,7 +120,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program.arguments('[command]').action(cmd => {
     if (typeof cmd === 'undefined') {
       console.log(
-        `\n  ${_e('⚡️', '--')}  ${chalk.bold(
+        `\n  ${_e('⚡️', '--')}  ${kleur.bold(
           'Capacitor - Cross-Platform apps with JavaScript and the Web',
         )}  ${_e('⚡️', '--')}\n`,
       );
