@@ -1,4 +1,6 @@
+import { LogUpdateOutputStrategy } from '@ionic/cli-framework-output';
 import { Config } from './config';
+import { COLORS } from './colors';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, parse, resolve } from 'path';
@@ -330,39 +332,20 @@ export type TaskInfoProvider = (messsage: string) => void;
 
 export async function runTask<T>(
   title: string,
-  fn: (info: TaskInfoProvider) => Promise<T>,
+  fn: () => Promise<T>,
 ): Promise<T> {
-  const ora = require('ora');
-  const spinner = ora(title).start();
+  const output = new LogUpdateOutputStrategy({ colors: COLORS });
+  const chain = output.createTaskChain();
+  chain.next(title);
 
   try {
-    const start = process.hrtime();
-    let taskInfoMessage;
-    const value = await fn((message: string) => (taskInfoMessage = message));
-    const elapsed = process.hrtime(start);
-    if (taskInfoMessage) {
-      spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`);
-    } else {
-      spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
-    }
+    const value = await fn();
+    chain.end();
     return value;
   } catch (e) {
-    spinner.fail(`${title}: ${e.message ? e.message : ''}`);
-    spinner.stop();
+    chain.fail();
     throw e;
   }
-}
-
-const TIME_UNITS = ['s', 'ms', 'μp'];
-export function formatHrTime(hrtime: any) {
-  let time = (hrtime[0] + hrtime[1] / 1e9) as number;
-  let index = 0;
-  for (; index < TIME_UNITS.length - 1; index++, time *= 1000) {
-    if (time >= 1) {
-      break;
-    }
-  }
-  return time.toFixed(2) + TIME_UNITS[index];
 }
 
 export async function getName(config: Config, name: string) {
