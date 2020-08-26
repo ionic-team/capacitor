@@ -20,8 +20,9 @@ import {
 } from '../common';
 import { sync } from './sync';
 
-import chalk from 'chalk';
+import kleur from 'kleur';
 import { resolve } from 'path';
+import prompts from 'prompts';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
@@ -33,7 +34,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
 
       if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
         log(
-          `Try installing ${chalk.bold(
+          `Try installing ${kleur.bold(
             `@capacitor-community/${selectedPlatformName}`,
           )} and adding the platform again.`,
         );
@@ -77,7 +78,9 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
         platformName === config.android.name
       ) {
         log(
-          chalk`\nNow you can run {green {bold npx cap open ${platformName}}} to launch ${
+          `\nNow you can run ${kleur.bold(
+            `npx cap open ${platformName}`,
+          )} to launch ${
             platformName === config.ios.name ? 'Xcode' : 'Android Studio'
           }`,
         );
@@ -93,16 +96,18 @@ export async function generateCapacitorConfig(config: Config) {
     return;
   }
 
-  const inquirer = await import('inquirer');
-  const answers = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'webDir',
-      message:
-        'What directory are your web assets in? (index.html, built JavaScript, etc.):',
-      default: 'www',
-    },
-  ]);
+  const answers = await prompts(
+    [
+      {
+        type: 'text',
+        name: 'webDir',
+        message:
+          'What directory are your web assets in? (index.html, built JavaScript, etc.):',
+        initial: 'www',
+      },
+    ],
+    { onCancel: () => process.exit(1) },
+  );
   const webDir = answers.webDir;
   await runTask(`Creating ${config.app.extConfigName}`, () => {
     return writePrettyJSON(config.app.extConfigFilePath, {
@@ -129,7 +134,7 @@ export function addChecks(config: Config, platformName: string) {
 }
 
 export async function doAdd(config: Config, platformName: string) {
-  await runTask(chalk`{green {bold add}}`, async () => {
+  await runTask(kleur.green().bold('add'), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);
     } else if (platformName === config.android.name) {
@@ -155,7 +160,7 @@ function shouldSync(config: Config, platformName: string) {
 }
 
 function webWarning() {
-  logError(`Not adding platform ${chalk.bold('web')}`);
+  logError(`Not adding platform ${kleur.bold('web')}`);
   log(`\nIn Capacitor, the 'web' platform is just your web app!`);
   log(
     `For example, if you have a React or Angular project, the 'web' platform is that project.`,

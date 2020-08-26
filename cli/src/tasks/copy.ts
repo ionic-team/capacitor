@@ -19,7 +19,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import chalk from 'chalk';
+import kleur from 'kleur';
 
 export async function copyCommand(
   config: Config,
@@ -51,7 +51,7 @@ export async function copyCommand(
 }
 
 export async function copy(config: Config, platformName: string) {
-  await runTask(chalk`{green {bold copy}}`, async () => {
+  await runTask(kleur.green().bold('copy'), async () => {
     const result = await checkWebDir(config);
     if (result) {
       throw result;
@@ -120,7 +120,7 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
   await runTask(
-    `Copying web assets from ${chalk.bold(webRelDir)} to ${chalk.bold(
+    `Copying web assets from ${kleur.bold(webRelDir)} to ${kleur.bold(
       nativeRelDir,
     )}`,
     async () => {
