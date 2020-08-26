@@ -22,6 +22,7 @@ import { sync } from './sync';
 
 import chalk from 'chalk';
 import { resolve } from 'path';
+import prompts from 'prompts';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
@@ -93,16 +94,18 @@ export async function generateCapacitorConfig(config: Config) {
     return;
   }
 
-  const inquirer = await import('inquirer');
-  const answers = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'webDir',
-      message:
-        'What directory are your web assets in? (index.html, built JavaScript, etc.):',
-      default: 'www',
-    },
-  ]);
+  const answers = await prompts(
+    [
+      {
+        type: 'text',
+        name: 'webDir',
+        message:
+          'What directory are your web assets in? (index.html, built JavaScript, etc.):',
+        initial: 'www',
+      },
+    ],
+    { onCancel: () => process.exit(1) },
+  );
   const webDir = answers.webDir;
   await runTask(`Creating ${config.app.extConfigName}`, () => {
     return writePrettyJSON(config.app.extConfigFilePath, {

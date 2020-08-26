@@ -34,7 +34,7 @@ import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
-import inquirer from 'inquirer';
+import prompts from 'prompts';
 import chalk from 'chalk';
 
 const plist = require('plist');
@@ -527,13 +527,18 @@ export async function getCordovaPreferences(config: Config) {
     config.app.extConfig.cordova.preferences &&
     cordova.preferences
   ) {
-    const answer = await inquirer.prompt({
-      type: 'confirm',
-      name: 'confirm',
-      message:
-        'capacitor.config.json already contains cordova preferences. Overwrite with values from config.xml?',
-    });
-    if (!answer.confirm) {
+    const answers = await prompts(
+      [
+        {
+          type: 'confirm',
+          name: 'confirm',
+          message:
+            'capacitor.config.json already contains cordova preferences. Overwrite with values from config.xml?',
+        },
+      ],
+      { onCancel: () => process.exit(1) },
+    );
+    if (!answers.confirm) {
       cordova = config.app.extConfig.cordova;
     }
   }

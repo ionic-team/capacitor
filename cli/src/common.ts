@@ -14,7 +14,7 @@ import { emoji as _e } from './util/emoji';
 import semver from 'semver';
 import chalk from 'chalk';
 import which from 'which';
-import inquirer from 'inquirer';
+import prompts from 'prompts';
 import { PackageJson } from './definitions';
 
 export type CheckFunction = (
@@ -367,18 +367,21 @@ export function formatHrTime(hrtime: any) {
 
 export async function getName(config: Config, name: string) {
   if (!name) {
-    const answers = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'name',
-        default: config.app.appName
-          ? config.app.appName
-          : config.app.package && config.app.package.name
-          ? config.app.package.name
-          : 'App',
-        message: `App name`,
-      },
-    ]);
+    const answers = await prompts(
+      [
+        {
+          type: 'text',
+          name: 'name',
+          message: `App name`,
+          initial: config.app.appName
+            ? config.app.appName
+            : config.app.package && config.app.package.name
+            ? config.app.package.name
+            : 'App',
+        },
+      ],
+      { onCancel: () => process.exit(1) },
+    );
     return answers.name;
   }
   return name;
@@ -386,14 +389,17 @@ export async function getName(config: Config, name: string) {
 
 export async function getAppId(config: Config, id: string) {
   if (!id) {
-    const answers = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'id',
-        default: config.app.appId ? config.app.appId : 'com.example.app',
-        message: 'App Package ID (in Java package format, no dashes)',
-      },
-    ]);
+    const answers = await prompts(
+      [
+        {
+          type: 'text',
+          name: 'id',
+          message: 'App Package ID (in Java package format, no dashes)',
+          initial: config.app.appId ? config.app.appId : 'com.example.app',
+        },
+      ],
+      { onCancel: () => process.exit(1) },
+    );
     return answers.id;
   }
   return id;

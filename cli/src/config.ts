@@ -1,6 +1,7 @@
 import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
 import chalk from 'chalk';
+import prompts from 'prompts';
 
 import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
@@ -260,16 +261,19 @@ export class Config implements CliConfig {
     promptMessage: string,
   ): Promise<string> {
     if (!selectedPlatformName) {
-      const inquirer = await import('inquirer');
+      const answers = await prompts(
+        [
+          {
+            type: 'select',
+            name: 'mode',
+            message: promptMessage,
+            choices: this.knownPlatforms.map(p => ({ title: p, value: p })),
+          },
+        ],
+        { onCancel: () => process.exit(1) },
+      );
 
-      const answer = await inquirer.prompt({
-        type: 'list',
-        name: 'mode',
-        message: promptMessage,
-        choices: this.knownPlatforms,
-      });
-
-      return answer.mode.toLowerCase().trim();
+      return answers.mode.toLowerCase().trim();
     }
 
     const platformName = selectedPlatformName.toLowerCase().trim();
