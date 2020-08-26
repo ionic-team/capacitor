@@ -34,8 +34,8 @@ import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
+import kleur from 'kleur';
 import prompts from 'prompts';
-import chalk from 'chalk';
 
 const plist = require('plist');
 
@@ -370,7 +370,7 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
         logWarn(
           `Plugin ${
             plugin.id
-          } requires you to add \n${xml} in the existing ${chalk.bold(
+          } requires you to add \n${xml} in the existing ${kleur.bold(
             configElement.$.parent,
           )} array of your Info.plist to work`,
         );
@@ -388,7 +388,7 @@ function logPossibleMissingItem(configElement: any, plugin: Plugin) {
   logWarn(
     `Plugin ${
       plugin.id
-    } might require you to add ${xml} in the existing ${chalk.bold(
+    } might require you to add ${xml} in the existing ${kleur.bold(
       configElement.$.parent,
     )} entry of your Info.plist to work`,
   );
@@ -453,7 +453,7 @@ export async function checkPluginDependencies(
               }
               const deps = pluginDeps.get(p.id) || [];
               deps.push(
-                `${plugin}${version ? chalk.dim(` (${version})`) : ''}`,
+                `${plugin}${version ? kleur.dim(` (${version})`) : ''}`,
               );
               pluginDeps.set(p.id, deps);
             }
@@ -466,12 +466,12 @@ export async function checkPluginDependencies(
   if (pluginDeps.size > 0) {
     log();
     let msg =
-      `${chalk.red.bold('Plugins are missing dependencies.')}\n\n` +
+      `${kleur.red().bold('Plugins are missing dependencies.')}\n\n` +
       `  Cordova plugin dependencies must be installed in your\n` +
-      `  project (e.g. w/ ${chalk.bold('npm install')}).\n`;
+      `  project (e.g. w/ ${kleur.bold('npm install')}).\n`;
     for (const [plugin, deps] of pluginDeps.entries()) {
       msg +=
-        `\n  ${chalk.bold(plugin)} is missing dependencies:\n` +
+        `\n  ${kleur.bold(plugin)} is missing dependencies:\n` +
         deps.map(d => `    - ${d}`).join('\n');
     }
 

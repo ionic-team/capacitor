@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import kleur from 'kleur';
 import { Config } from '../config';
 import {
   check,
@@ -43,7 +43,7 @@ export async function initCommand(
     const cordova = await getCordovaPreferences(config);
 
     await runTask(
-      `Initializing Capacitor project in ${chalk.blue(config.app.rootDir)}`,
+      `Initializing Capacitor project in ${kleur.blue(config.app.rootDir)}`,
       async () => {
         config.app.appId = appId;
         config.app.appName = appName;

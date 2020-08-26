@@ -42,10 +42,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "chalk": "^4.1.0",
     "commander": "^6.0.0",
     "compare-versions": "^3.1.0",
     "fs-extra": "^9.0.1",
+    "kleur": "^4.1.1",
     "open": "^7.1.0",
     "ora": "^4.0.5",
     "plist": "^3.0.1",
