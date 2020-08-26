@@ -12,7 +12,7 @@ import {
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
 import semver from 'semver';
-import chalk from 'chalk';
+import kleur from 'kleur';
 import which from 'which';
 import prompts from 'prompts';
 import { PackageJson } from './definitions';
@@ -69,7 +69,7 @@ export async function checkCapacitorPlatform(
   const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
-    return `Could not find the ${chalk.bold(
+    return `Could not find the ${kleur.bold(
       platform,
     )} platform. Does it need to be installed?\n`;
   }
@@ -238,19 +238,19 @@ export function log(...args: any[]) {
 }
 
 export function logSuccess(...args: any[]) {
-  console.log(chalk.green('[success]'), ...args);
+  console.log(kleur.green('[success]'), ...args);
 }
 
 export function logInfo(...args: any[]) {
-  console.log(chalk.bold.cyan('[info]'), ...args);
+  console.log(kleur.cyan().bold('[info]'), ...args);
 }
 
 export function logWarn(...args: any[]) {
-  console.log(chalk.bold.yellow('[warn]'), ...args);
+  console.log(kleur.yellow().bold('[warn]'), ...args);
 }
 
 export function logError(...args: any[]) {
-  console.error(chalk.red('[error]'), ...args);
+  console.error(kleur.red('[error]'), ...args);
 }
 
 export function logFatal(...args: any[]): never {
@@ -341,9 +341,9 @@ export async function runTask<T>(
     const value = await fn((message: string) => (taskInfoMessage = message));
     const elapsed = process.hrtime(start);
     if (taskInfoMessage) {
-      spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`);
+      spinner.info(`${title} ${kleur.dim('– ' + taskInfoMessage)}`);
     } else {
-      spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
+      spinner.succeed(`${title} ${kleur.dim('in ' + formatHrTime(elapsed))}`);
     }
     return value;
   } catch (e) {
@@ -422,7 +422,7 @@ export async function renameGitignore(dst: string) {
 export async function printNextSteps(config: Config, appDir: string) {
   log('\n');
   log(
-    `${chalk.bold(
+    `${kleur.bold(
       `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
         '🎉',
         '*',
@@ -432,9 +432,9 @@ export async function printNextSteps(config: Config, appDir: string) {
   if (appDir !== '') {
     log(`Next steps:`);
     log('');
-    log(`  ${chalk.bold(`cd ./${appDir}`)}`);
-    log(`  install dependencies (e.g. w/ ${chalk.bold('npm install')})`);
-    log(`  ${chalk.bold('npx cap sync')}`);
+    log(`  ${kleur.bold(`cd ./${appDir}`)}`);
+    log(`  install dependencies (e.g. w/ ${kleur.bold('npm install')})`);
+    log(`  ${kleur.bold('npx cap sync')}`);
     log('');
   }
   log(`Add platforms using 'npx cap add':\n`);
@@ -442,7 +442,7 @@ export async function printNextSteps(config: Config, appDir: string) {
   log(`  npx cap add ios`);
   log('');
   log(
-    `Follow the Developer Workflow guide to get building:\n${chalk.bold(
+    `Follow the Developer Workflow guide to get building:\n${kleur.bold(
       `https://capacitorjs.com/docs/basics/workflow`,
     )}\n`,
   );
@@ -503,7 +503,9 @@ export async function checkPlatformVersions(config: Config, platform: string) {
       `Your @capacitor/core version doesn't match your @capacitor/${platform} version`,
     );
     log(
-      `Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`,
+      `Consider updating to matching version ${kleur.bold(
+        `npm install @capacitor/core@${platformVersion}`,
+      )}`,
     );
   }
 }
