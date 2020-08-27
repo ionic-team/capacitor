@@ -1,4 +1,7 @@
-import { LogUpdateOutputStrategy } from '@ionic/cli-framework-output';
+import {
+  StreamOutputStrategy,
+  TTYOutputStrategy,
+} from '@ionic/cli-framework-output';
 import { Config } from './config';
 import { COLORS } from './colors';
 import { exec, spawn } from 'child_process';
@@ -18,6 +21,7 @@ import kleur from 'kleur';
 import which from 'which';
 import prompts from 'prompts';
 import { PackageJson } from './definitions';
+import { isInteractive } from './util/term';
 
 export type CheckFunction = (
   config: Config,
@@ -332,7 +336,10 @@ export async function runTask<T>(
   title: string,
   fn: () => Promise<T>,
 ): Promise<T> {
-  const output = new LogUpdateOutputStrategy({ colors: COLORS });
+  const options = { colors: COLORS, stream: process.stdout };
+  const output = isInteractive()
+    ? new TTYOutputStrategy(options)
+    : new StreamOutputStrategy(options);
   const chain = output.createTaskChain();
   chain.next(title);
 
