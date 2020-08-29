@@ -239,27 +239,27 @@ export async function mergeConfig(config: Config, settings: any) {
   config.loadExternalConfig();
 }
 
-export function log(...args: any[]) {
+export function log(...args: string[]) {
   console.log(...args);
 }
 
-export function logSuccess(...args: any[]) {
+export function logSuccess(...args: string[]) {
   console.log(kleur.green('[success]'), ...args);
 }
 
-export function logInfo(...args: any[]) {
+export function logInfo(...args: string[]) {
   console.log(kleur.cyan().bold('[info]'), ...args);
 }
 
-export function logWarn(...args: any[]) {
+export function logWarn(...args: string[]) {
   console.log(kleur.yellow().bold('[warn]'), ...args);
 }
 
-export function logError(...args: any[]) {
+export function logError(...args: string[]) {
   console.error(kleur.red('[error]'), ...args);
 }
 
-export function logFatal(...args: any[]): never {
+export function logFatal(...args: string[]): never {
   logError(...args);
   return process.exit(1);
 }
