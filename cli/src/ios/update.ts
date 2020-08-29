@@ -117,8 +117,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
   if (!capacitoriOSPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/ios. Are you sure`,
-      `@capacitor/ios is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/ios. Are you sure @capacitor/ios is installed? This file is currently required for Capacitor to function.`,
     );
     return;
   }

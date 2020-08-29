@@ -181,8 +181,7 @@ export async function copyCordovaJS(config: Config, platform: string) {
   const cordovaPath = resolveNode(config, '@capacitor/core', 'cordova.js');
   if (!cordovaPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/core/cordova.js. Are you sure`,
-      '@capacitor/core is installed? This file is currently required for Capacitor to function.',
+      `Unable to find node_modules/@capacitor/core/cordova.js. Are you sure @capacitor/core is installed? This file is currently required for Capacitor to function.`,
     );
     return;
   }

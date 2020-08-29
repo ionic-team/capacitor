@@ -38,10 +38,10 @@ export async function doctorCore(config: Config) {
   ]);
 
   log(`${kleur.blue().bold('Latest Dependencies:')}\n`);
-  log(`  ${kleur.bold('@capacitor/cli:')}`, cliVersion ?? 'unknown');
-  log(`  ${kleur.bold('@capacitor/core:')}`, coreVersion ?? 'unknown');
-  log(`  ${kleur.bold('@capacitor/android:')}`, androidVersion ?? 'unknown');
-  log(`  ${kleur.bold('@capacitor/ios:')}`, iosVersion ?? 'unknown');
+  log(`  ${kleur.bold('@capacitor/cli')}: ${cliVersion ?? 'unknown'}`);
+  log(`  ${kleur.bold('@capacitor/core')}: ${coreVersion ?? 'unknown'}`);
+  log(`  ${kleur.bold('@capacitor/android')}: ${androidVersion ?? 'unknown'}`);
+  log(`  ${kleur.bold('@capacitor/ios')}: ${iosVersion ?? 'unknown'}`);
 
   log(`${kleur.blue().bold('Installed Dependencies:')}\n`);
 
@@ -73,7 +73,7 @@ async function printPackageVersion(
   if (packagePath) {
     version = (await readJSON(packagePath)).version;
   }
-  log(`  ${kleur.bold(packageName)}`, version || 'not installed');
+  log(`  ${kleur.bold(packageName)}: ${version || 'not installed'}`);
 }
 
 export async function doctor(config: Config, platformName: string) {

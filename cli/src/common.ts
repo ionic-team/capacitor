@@ -1,9 +1,4 @@
-import {
-  StreamOutputStrategy,
-  TTYOutputStrategy,
-} from '@ionic/cli-framework-output';
 import { Config } from './config';
-import { COLORS } from './colors';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, parse, resolve } from 'path';
@@ -16,12 +11,12 @@ import {
 } from './util/fs';
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
+import { output, logger } from './util/log';
 import semver from 'semver';
 import kleur from 'kleur';
 import which from 'which';
 import prompts from 'prompts';
 import { PackageJson } from './definitions';
-import { isInteractive } from './util/term';
 
 export type CheckFunction = (
   config: Config,
@@ -239,28 +234,28 @@ export async function mergeConfig(config: Config, settings: any) {
   config.loadExternalConfig();
 }
 
-export function log(...args: string[]) {
-  console.log(...args);
+export function log(msg = '') {
+  logger.msg(msg);
 }
 
-export function logSuccess(...args: string[]) {
-  console.log(kleur.green('[success]'), ...args);
+export function logSuccess(msg: string) {
+  logger.msg(`${kleur.green('[success]')} ${msg}`);
 }
 
-export function logInfo(...args: string[]) {
-  console.log(kleur.cyan().bold('[info]'), ...args);
+export function logInfo(msg: string) {
+  logger.info(msg);
 }
 
-export function logWarn(...args: string[]) {
-  console.log(kleur.yellow().bold('[warn]'), ...args);
+export function logWarn(msg: string) {
+  logger.warn(msg);
 }
 
-export function logError(...args: string[]) {
-  console.error(kleur.red('[error]'), ...args);
+export function logError(msg: string) {
+  logger.error(msg);
 }
 
-export function logFatal(...args: string[]): never {
-  logError(...args);
+export function logFatal(msg: string): never {
+  logError(msg);
   return process.exit(1);
 }
 
@@ -336,10 +331,6 @@ export async function runTask<T>(
   title: string,
   fn: () => Promise<T>,
 ): Promise<T> {
-  const options = { colors: COLORS, stream: process.stdout };
-  const output = isInteractive()
-    ? new TTYOutputStrategy(options)
-    : new StreamOutputStrategy(options);
   const chain = output.createTaskChain();
   chain.next(title);
 
@@ -457,8 +448,7 @@ export async function requireCapacitorPackage(
 
   if (!pkg) {
     logFatal(
-      `Unable to find node_modules/@capacitor/${name}/package.json. Are you sure`,
-      `@capacitor/${name} is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/${name}/package.json. Are you sure @capacitor/${name} is installed? This file is currently required for Capacitor to function.`,
     );
   }
   return pkg;
