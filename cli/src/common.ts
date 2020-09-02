@@ -11,9 +11,9 @@ import {
 } from './util/fs';
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
-import { output, logger } from './util/log';
+import c from './colors';
+import { output, logger } from './log';
 import semver from 'semver';
-import kleur from 'kleur';
 import which from 'which';
 import prompts from 'prompts';
 import { PackageJson } from './definitions';
@@ -70,7 +70,7 @@ export async function checkCapacitorPlatform(
   const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
-    return `Could not find the ${kleur.bold(
+    return `Could not find the ${c.input(
       platform,
     )} platform. Does it need to be installed?\n`;
   }
@@ -234,28 +234,12 @@ export async function mergeConfig(config: Config, settings: any) {
   config.loadExternalConfig();
 }
 
-export function log(msg = '') {
-  logger.msg(msg);
-}
-
 export function logSuccess(msg: string) {
-  logger.msg(`${kleur.green('[success]')} ${msg}`);
-}
-
-export function logInfo(msg: string) {
-  logger.info(msg);
-}
-
-export function logWarn(msg: string) {
-  logger.warn(msg);
-}
-
-export function logError(msg: string) {
-  logger.error(msg);
+  logger.msg(`${c.success('[success]')} ${msg}`);
 }
 
 export function logFatal(msg: string): never {
-  logError(msg);
+  logger.error(msg);
   return process.exit(1);
 }
 
@@ -399,9 +383,8 @@ export async function renameGitignore(dst: string) {
 }
 
 export async function printNextSteps(config: Config, appDir: string) {
-  log('\n');
-  log(
-    `${kleur.bold(
+  output.stream.write(
+    `\n${c.strong(
       `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
         '🎉',
         '*',
@@ -409,21 +392,20 @@ export async function printNextSteps(config: Config, appDir: string) {
     )}\n`,
   );
   if (appDir !== '') {
-    log(`Next steps:`);
-    log('');
-    log(`  ${kleur.bold(`cd ./${appDir}`)}`);
-    log(`  install dependencies (e.g. w/ ${kleur.bold('npm install')})`);
-    log(`  ${kleur.bold('npx cap sync')}`);
-    log('');
+    output.stream.write(
+      `Next steps:\n` +
+        `  ${c.input(`cd ./${appDir}`)}\n` +
+        `  install dependencies (e.g. w/ ${c.input('npm install')})\n` +
+        `  ${c.input('npx cap sync')}\n\n`,
+    );
   }
-  log(`Add platforms using 'npx cap add':\n`);
-  log(`  npx cap add android`);
-  log(`  npx cap add ios`);
-  log('');
-  log(
-    `Follow the Developer Workflow guide to get building:\n${kleur.bold(
-      `https://capacitorjs.com/docs/basics/workflow`,
-    )}\n`,
+  output.stream.write(
+    `Add platforms using 'npx cap add':\n` +
+      `  npx cap add android\n` +
+      `  npx cap add ios\n\n` +
+      `Follow the Developer Workflow guide to get building:\n${c.strong(
+        `https://capacitorjs.com/docs/basics/workflow`,
+      )}\n`,
   );
 }
 
@@ -476,14 +458,15 @@ export async function checkPlatformVersions(config: Config, platform: string) {
     semver.diff(coreVersion, platformVersion) === 'minor' ||
     semver.diff(coreVersion, platformVersion) === 'major'
   ) {
-    log('\n');
-    logWarn(
-      `Your @capacitor/core version doesn't match your @capacitor/${platform} version`,
-    );
-    log(
-      `Consider updating to matching version ${kleur.bold(
-        `npm install @capacitor/core@${platformVersion}`,
-      )}`,
+    logger.warn(
+      `${c.strong('@capacitor/core')}${c.weak(
+        `@${coreVersion}`,
+      )} version doesn't match ${c.strong(`@capacitor/${platform}`)}${c.weak(
+        `@${platformVersion}`,
+      )} version.\n` +
+        `Consider updating to a matching version, e.g. w/ ${c.input(
+          `npm install @capacitor/core@${platformVersion}`,
+        )}`,
     );
   }
 }

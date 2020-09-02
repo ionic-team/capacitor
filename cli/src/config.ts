@@ -1,8 +1,8 @@
 import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
-import kleur from 'kleur';
 import prompts from 'prompts';
 
+import c from './colors';
 import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 
@@ -331,13 +331,13 @@ export class Config implements CliConfig {
   platformNotCreatedError(platformName: string) {
     if (platformName === 'web') {
       logFatal(
-        `Could not find the web platform directory. Make sure ${kleur.bold(
+        `Could not find the web platform directory. Make sure ${c.strong(
           this.app.webDir,
         )} exists.`,
       );
     }
     logFatal(
-      `${kleur.bold(
+      `${c.strong(
         platformName,
       )}" platform has not been created. Use "npx cap add ${platformName}" to add the platform project.`,
     );

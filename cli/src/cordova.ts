@@ -18,23 +18,20 @@ import {
   writeFileAsync,
 } from './util/fs';
 import { basename, extname, join, resolve } from 'path';
+import c from './colors';
 import {
   buildXmlElement,
-  log,
-  logError,
   logFatal,
-  logInfo,
-  logWarn,
   parseXML,
   readXML,
   resolveNode,
   writeXML,
 } from './common';
+import { logger } from './log';
 import { copy as fsCopy, existsSync } from 'fs-extra';
 import { getAndroidPlugins } from './android/common';
 import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
-import kleur from 'kleur';
 import prompts from 'prompts';
 
 const plist = require('plist');
@@ -350,8 +347,10 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   if (!dict.key.includes(configElement.$.parent)) {
     let xml = buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
-    logWarn(
-      `Plugin ${plugin.id} requires you to add \n  ${xml} to your Info.plist to work`,
+    logger.warn(
+      `Plugin ${c.strong(
+        plugin.id,
+      )} requires you to add \n  ${xml} to your Info.plist`,
     );
   } else if (configElement.array || configElement.dict) {
     if (
@@ -366,12 +365,12 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
         }
       });
       if (xml.length > 0) {
-        logWarn(
-          `Plugin ${
-            plugin.id
-          } requires you to add \n${xml} in the existing ${kleur.bold(
+        logger.warn(
+          `Plugin ${c.strong(
+            plugin.id,
+          )} requires you to add \n${xml} in the existing ${c.strong(
             configElement.$.parent,
-          )} array of your Info.plist to work`,
+          )} array of your Info.plist`,
         );
       }
     } else {
@@ -384,12 +383,12 @@ function logPossibleMissingItem(configElement: any, plugin: Plugin) {
   let xml = buildConfigFileXml(configElement);
   xml = getConfigFileTagContent(xml);
   xml = removeOuterTags(xml);
-  logWarn(
-    `Plugin ${
-      plugin.id
-    } might require you to add ${xml} in the existing ${kleur.bold(
+  logger.warn(
+    `Plugin ${c.strong(
+      plugin.id,
+    )} might require you to add ${xml} in the existing ${c.strong(
       configElement.$.parent,
-    )} entry of your Info.plist to work`,
+    )} entry of your Info.plist`,
   );
 }
 
@@ -451,9 +450,7 @@ export async function checkPluginDependencies(
                 version = dep.$.commit;
               }
               const deps = pluginDeps.get(p.id) || [];
-              deps.push(
-                `${plugin}${version ? kleur.dim(` (${version})`) : ''}`,
-              );
+              deps.push(`${plugin}${version ? c.weak(` (${version})`) : ''}`);
               pluginDeps.set(p.id, deps);
             }
           }),
@@ -463,19 +460,18 @@ export async function checkPluginDependencies(
   );
 
   if (pluginDeps.size > 0) {
-    log();
     let msg =
-      `${kleur.red().bold('Plugins are missing dependencies.')}\n\n` +
-      `  Cordova plugin dependencies must be installed in your\n` +
-      `  project (e.g. w/ ${kleur.bold('npm install')}).\n`;
+      `${c.failure(c.strong('Plugins are missing dependencies.'))}\n` +
+      `Cordova plugin dependencies must be installed in your project (e.g. w/ ${c.input(
+        'npm install',
+      )}).\n`;
     for (const [plugin, deps] of pluginDeps.entries()) {
       msg +=
-        `\n  ${kleur.bold(plugin)} is missing dependencies:\n` +
+        `\n  ${c.strong(plugin)} is missing dependencies:\n` +
         deps.map(d => `    - ${d}`).join('\n');
     }
 
-    logWarn(msg);
-    log();
+    logger.warn(`${msg}\n`);
   }
 }
 
@@ -601,8 +597,10 @@ export async function writeCordovaAndroidManifest(
                   applicationXMLEntries.push(xmlElement);
                 }
               } else {
-                logInfo(
-                  `plugin ${p.id} requires to add \n  ${xmlElement} to your AndroidManifest.xml to work`,
+                logger.info(
+                  `Plugin ${c.strong(
+                    p.id,
+                  )} requires to add \n  ${xmlElement} to your AndroidManifest.xml`,
                 );
               }
             } else {

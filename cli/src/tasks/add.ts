@@ -1,3 +1,4 @@
+import c from '../colors';
 import { Config } from '../config';
 import { OS } from '../definitions';
 import { addAndroid, addAndroidChecks } from '../android/add';
@@ -9,10 +10,7 @@ import {
   checkAppConfig,
   checkPackage,
   checkWebDir,
-  log,
-  logError,
   logFatal,
-  logInfo,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -20,9 +18,9 @@ import {
 } from '../common';
 import { sync } from './sync';
 
-import kleur from 'kleur';
 import { resolve } from 'path';
 import prompts from 'prompts';
+import { logger } from '../log';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
@@ -30,15 +28,15 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:add');
     } else {
-      logError(`platform ${selectedPlatformName} not found`);
+      let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
       if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
-        log(
-          `Try installing ${kleur.bold(
-            `@capacitor-community/${selectedPlatformName}`,
-          )} and adding the platform again.`,
-        );
+        msg += `\nTry installing ${c.strong(
+          `@capacitor-community/${selectedPlatformName}`,
+        )} and adding the platform again.`;
       }
+
+      logger.error(msg);
     }
   } else {
     const platformName = await config.askPlatform(
@@ -77,8 +75,8 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
         platformName === config.ios.name ||
         platformName === config.android.name
       ) {
-        log(
-          `\nNow you can run ${kleur.bold(
+        logger.info(
+          `\nNow you can run ${c.input(
             `npx cap open ${platformName}`,
           )} to launch ${
             platformName === config.ios.name ? 'Xcode' : 'Android Studio'
@@ -86,7 +84,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
         );
       }
     } catch (e) {
-      logFatal(e);
+      logFatal(e.stack ?? e);
     }
   }
 }
@@ -114,8 +112,8 @@ export async function generateCapacitorConfig(config: Config) {
       webDir: webDir,
     });
   });
-  logInfo(
-    `💡 You can change the web directory anytime by modifing ${config.app.extConfigName}`,
+  logger.info(
+    `You can change the web directory anytime by modifying ${config.app.extConfigName}`,
   );
   config.app.webDir = webDir;
   config.app.webDirAbs = resolve(config.app.rootDir, webDir);
@@ -134,7 +132,7 @@ export function addChecks(config: Config, platformName: string) {
 }
 
 export async function doAdd(config: Config, platformName: string) {
-  await runTask(kleur.green().bold('add'), async () => {
+  await runTask(c.success(c.strong('add')), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);
     } else if (platformName === config.android.name) {
@@ -160,12 +158,11 @@ function shouldSync(config: Config, platformName: string) {
 }
 
 function webWarning() {
-  logError(`Not adding platform ${kleur.bold('web')}`);
-  log(`\nIn Capacitor, the 'web' platform is just your web app!`);
-  log(
-    `For example, if you have a React or Angular project, the 'web' platform is that project.`,
-  );
-  log(
-    `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: https://capacitorjs.com/docs/web`,
+  logger.error(
+    `Not adding platform ${c.strong('web')}.\n` +
+      `In Capacitor, the 'web' platform is just your web app! For example, if you have a React or Angular project, the 'web' platform is that project.\n` +
+      `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: ${c.strong(
+        'https://capacitorjs.com/docs/web',
+      )}`,
   );
 }

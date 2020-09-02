@@ -1,8 +1,9 @@
 import { join } from 'path';
-import kleur from 'kleur';
 
+import c from './colors';
 import { Config } from './config';
-import { log, logFatal, readJSON, readXML, resolveNode } from './common';
+import { logFatal, readJSON, readXML, resolveNode } from './common';
+import { logger, output } from './log';
 
 export const enum PluginType {
   Core,
@@ -111,22 +112,32 @@ export function fixName(name: string): string {
 export function printPlugins(
   plugins: Plugin[],
   platform: string,
-  type: string = 'capacitor',
+  type: 'capacitor' | 'cordova' | 'incompatible' = 'capacitor',
 ) {
+  if (plugins.length === 0) {
+    return;
+  }
+
+  let msg: string;
   const plural = plugins.length === 1 ? '' : 's';
 
-  if (type === 'cordova') {
-    log(`  Found ${plugins.length} Cordova plugin${plural} for ${platform}`);
-  } else if (type === 'incompatible' && plugins.length > 0) {
-    log(
-      `  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install`,
-    );
-  } else if (type === 'capacitor') {
-    log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
+  switch (type) {
+    case 'cordova':
+      msg = `Found ${plugins.length} Cordova plugin${plural} for ${platform}:`;
+      break;
+    case 'incompatible':
+      msg = `Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install:`;
+      break;
+    case 'capacitor':
+      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`;
+      break;
   }
-  for (let p of plugins) {
-    log(`    ${kleur.bold(`${p.id}`)} (${kleur.green(p.version)})`);
-  }
+
+  msg += plugins
+    .map(p => `    ${c.strong(`${p.id}`)} (${c.success(p.version)})`)
+    .join('\n');
+
+  logger.info(msg);
 }
 
 export function getPluginPlatform(p: Plugin, platform: string) {

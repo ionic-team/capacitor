@@ -1,9 +1,8 @@
+import c from '../colors';
 import { Config } from '../config';
 import {
   checkWebDir,
-  logError,
   logFatal,
-  logInfo,
   resolveNode,
   resolvePlatform,
   runPlatformHook,
@@ -19,7 +18,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import kleur from 'kleur';
+import { logger } from '../log';
 
 export async function copyCommand(
   config: Config,
@@ -30,13 +29,15 @@ export async function copyCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:copy');
     } else {
-      logError(`platform ${selectedPlatformName} not found`);
+      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
   } else {
     const platforms = config.selectPlatforms(selectedPlatformName);
     if (platforms.length === 0) {
-      logInfo(
-        `There are no platforms to copy yet. Create one with \`capacitor create\`.`,
+      logger.info(
+        `There are no platforms to copy yet. Add platforms with ${c.input(
+          'npx cap add',
+        )}`,
       );
       return;
     }
@@ -45,13 +46,13 @@ export async function copyCommand(
         platforms.map(platformName => () => copy(config, platformName)),
       );
     } catch (e) {
-      logError(e);
+      logger.error(e.stack ?? e);
     }
   }
 }
 
 export async function copy(config: Config, platformName: string) {
-  await runTask(kleur.green().bold('copy'), async () => {
+  await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
     if (result) {
       throw result;
@@ -119,7 +120,7 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
   await runTask(
-    `Copying web assets from ${kleur.bold(webRelDir)} to ${kleur.bold(
+    `Copying web assets from ${c.strong(webRelDir)} to ${c.strong(
       nativeRelDir,
     )}`,
     async () => {

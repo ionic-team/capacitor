@@ -5,12 +5,11 @@ import {
   TTYOutputStrategy,
   createDefaultLogger,
 } from '@ionic/cli-framework-output';
-import kleur from 'kleur';
 
-import { COLORS } from './colors';
-import { isInteractive } from './term';
+import colors from './colors';
+import { isInteractive } from './util/term';
 
-const options = { colors: COLORS, stream: process.stdout };
+const options = { colors, stream: process.stdout };
 
 export const output = isInteractive()
   ? new TTYOutputStrategy(options)
@@ -21,10 +20,10 @@ export const logger = createDefaultLogger({
   formatterOptions: {
     titleize: false,
     tags: new Map<LoggerLevelWeight, string>([
-      [LOGGER_LEVELS.DEBUG, kleur.magenta('[debug]')],
-      [LOGGER_LEVELS.INFO, kleur.cyan('[info]')],
-      [LOGGER_LEVELS.WARN, kleur.yellow('[warn]')],
-      [LOGGER_LEVELS.ERROR, kleur.red('[error]')],
+      [LOGGER_LEVELS.DEBUG, colors.log.DEBUG('[debug]')],
+      [LOGGER_LEVELS.INFO, colors.log.INFO('[info]')],
+      [LOGGER_LEVELS.WARN, colors.log.WARN('[warn]')],
+      [LOGGER_LEVELS.ERROR, colors.log.ERROR('[error]')],
     ]),
   },
 });
