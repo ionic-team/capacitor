@@ -10,7 +10,7 @@ export async function doctorCommand(
   config: Config,
   selectedPlatform: string,
 ): Promise<void> {
-  output.stream.write(
+  output.write(
     `${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
   );
 
@@ -37,7 +37,7 @@ export async function doctorCore(config: Config) {
     getCommandOutput(`npm info @capacitor/ios version`),
   ]);
 
-  output.stream.write(
+  output.write(
     `${c.strong('Latest Dependencies:')}\n\n` +
       `  @capacitor/cli: ${c.weak(cliVersion ?? 'unknown')}\n` +
       `  @capacitor/core: ${c.weak(coreVersion ?? 'unknown')}\n` +
@@ -48,7 +48,7 @@ export async function doctorCore(config: Config) {
 
   await printInstalledPackages(config);
 
-  output.stream.write('\n');
+  output.write('\n');
 }
 
 async function printInstalledPackages(config: Config) {
@@ -74,9 +74,7 @@ async function printPackageVersion(
   if (packagePath) {
     version = (await readJSON(packagePath)).version;
   }
-  output.stream.write(
-    `  ${packageName}: ${c.weak(version || 'not installed')}\n`,
-  );
+  output.write(`  ${packageName}: ${c.weak(version || 'not installed')}\n`);
 }
 
 export async function doctor(config: Config, platformName: string) {

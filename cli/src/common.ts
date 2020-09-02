@@ -383,7 +383,7 @@ export async function renameGitignore(dst: string) {
 }
 
 export async function printNextSteps(config: Config, appDir: string) {
-  output.stream.write(
+  output.write(
     `\n${c.strong(
       `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
         '🎉',
@@ -392,14 +392,14 @@ export async function printNextSteps(config: Config, appDir: string) {
     )}\n`,
   );
   if (appDir !== '') {
-    output.stream.write(
+    output.write(
       `Next steps:\n` +
         `  ${c.input(`cd ./${appDir}`)}\n` +
         `  install dependencies (e.g. w/ ${c.input('npm install')})\n` +
         `  ${c.input('npx cap sync')}\n\n`,
     );
   }
-  output.stream.write(
+  output.write(
     `Add platforms using 'npx cap add':\n` +
       `  npx cap add android\n` +
       `  npx cap add ios\n\n` +

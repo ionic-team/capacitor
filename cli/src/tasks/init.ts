@@ -62,7 +62,7 @@ export async function initCommand(
 
     await printNextSteps(config, '');
   } catch (e) {
-    output.stream.write(
+    output.write(
       'Usage: npx cap init appName appId\n' +
         'Example: npx cap init "My App" "com.example.myapp"\n\n',
     );
