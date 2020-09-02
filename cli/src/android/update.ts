@@ -79,8 +79,7 @@ export async function installGradlePlugins(
   );
   if (!capacitorAndroidPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/android/capacitor. Are you sure`,
-      `@capacitor/android is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/android/capacitor. Are you sure @capacitor/android is installed? This file is currently required for Capacitor to function.`,
     );
     return;
   }

@@ -88,6 +88,6 @@ export async function update(
       }
     });
   } catch (e) {
-    logError('Error running update:', e);
+    logError(`Error running update: ${e.stack ? e.stack : e}`);
   }
 }

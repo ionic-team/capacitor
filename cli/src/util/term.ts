@@ -1,3 +1,4 @@
+import { TERMINAL_INFO } from '@ionic/utils-terminal';
 import { logError } from '../common';
 
 // Given input variables to a command, make sure all are provided if the terminal
@@ -24,8 +25,5 @@ export const checkInteractive = (...args: string[]) => {
   return true;
 };
 
-export const isInteractive = () => {
-  return Boolean(
-    process.stdin.isTTY && process.stdout.isTTY && process.stderr.isTTY,
-  );
-};
+export const isInteractive = (): boolean =>
+  TERMINAL_INFO.tty && !TERMINAL_INFO.ci;
