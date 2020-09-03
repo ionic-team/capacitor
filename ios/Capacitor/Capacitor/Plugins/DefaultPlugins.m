@@ -23,10 +23,6 @@ CAP_PLUGIN(CAPBrowserPlugin, "Browser",
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPCameraPlugin, "Camera",
-  CAP_PLUGIN_METHOD(getPhoto, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPConsolePlugin, "Console",
   CAP_PLUGIN_METHOD(log, CAPPluginReturnNone);
 )
