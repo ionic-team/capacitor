@@ -13,7 +13,6 @@ import { Toast } from './web/toast';
 
 export * from './web/app';
 export * from './web/browser';
-export * from './web/camera';
 export * from './web/device';
 export * from './web/filesystem';
 export * from './web/geolocation';
