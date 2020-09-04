@@ -19,9 +19,8 @@ export async function listCommand(
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
     logger.info(
-      `There are no platforms to list yet. Add platforms with ${c.input(
-        'npx cap add',
-      )}`,
+      `There are no platforms to list yet.\n` +
+        `Add platforms with ${c.input('npx cap add')}.`,
     );
     return;
   }

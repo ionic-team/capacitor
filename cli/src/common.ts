@@ -40,25 +40,41 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
   if (!(await existsAsync(config.app.webDirAbs))) {
-    return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
-    Please create it and make sure it has an index.html file. You can change
-    the path of this directory in capacitor.config.json (webDir option).
-    You may need to compile the web assets for your app (typically 'npm run build').
-    More info: https://capacitorjs.com/docs/basics/building-your-app`;
+    return (
+      `Could not find the web assets directory: ${config.app.webDirAbs}.\n` +
+      `Please create it and make sure it has an ${c.strong(
+        'index.html',
+      )} file. You can change the path of this directory in ${c.strong(
+        'capacitor.config.json',
+      )} (${c.input(
+        'webDir',
+      )} option). You may need to compile the web assets for your app (typically ${c.input(
+        'npm run build',
+      )}).\n` +
+      `More info: ${c.strong(
+        'https://capacitorjs.com/docs/basics/building-your-app',
+      )}`
+    );
   }
 
   if (!(await existsAsync(join(config.app.webDirAbs, 'index.html')))) {
-    return `The web directory (${config.app.webDirAbs}) must contain a "index.html".
-    It will be the entry point for the web portion of the Capacitor app.`;
+    return (
+      `The web assets directory (${
+        config.app.webDirAbs
+      }) must contain an ${c.strong('index.html')} file.\n` +
+      `It will be the entry point for the web portion of the Capacitor app.`
+    );
   }
   return null;
 }
 
 export async function checkPackage(_config: Config): Promise<string | null> {
   if (!(await existsAsync('package.json'))) {
-    return `Capacitor needs to run at the root of an npm package.
-    Make sure you have a "package.json" in the directory where you run capacitor.
-    More info: https://docs.npmjs.com/cli/init`;
+    return (
+      `The Capacitor CLI needs to run at the root of an npm package.\n` +
+      `Make sure you have a package.json file in the directory where you run the Capacitor CLI.\n` +
+      `More info: ${c.strong('https://docs.npmjs.com/cli/init')}`
+    );
   }
   return null;
 }
@@ -80,10 +96,20 @@ export async function checkCapacitorPlatform(
 
 export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appId) {
-    return 'Missing appId for new platform. Please add it in capacitor.config.json or run npx cap init.';
+    return (
+      `Missing ${c.input('appId')} for new platform.\n` +
+      `Please add it in capacitor.config.json or run ${c.input(
+        'npx cap init',
+      )}.`
+    );
   }
   if (!config.app.appName) {
-    return 'Missing appName for new platform. Please add it in capacitor.config.json or run npx cap init.';
+    return (
+      `Missing ${c.input('appName')} for new platform.\n` +
+      `Please add it in capacitor.config.json or run ${c.input(
+        'npx cap init',
+      )}.`
+    );
   }
 
   const appIdError = await checkAppId(config, config.app.appId);
@@ -400,9 +426,9 @@ export async function printNextSteps(config: Config, appDir: string) {
     );
   }
   output.write(
-    `Add platforms using 'npx cap add':\n` +
-      `  npx cap add android\n` +
-      `  npx cap add ios\n\n` +
+    `Add platforms using ${c.input('npx cap add')}:\n` +
+      `  ${c.input('npx cap add android')}\n` +
+      `  ${c.input('npx cap add ios')}\n\n` +
       `Follow the Developer Workflow guide to get building:\n${c.strong(
         `https://capacitorjs.com/docs/basics/workflow`,
       )}\n`,
@@ -430,7 +456,9 @@ export async function requireCapacitorPackage(
 
   if (!pkg) {
     logFatal(
-      `Unable to find node_modules/@capacitor/${name}/package.json. Are you sure @capacitor/${name} is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find ${c.strong(
+        `@capacitor/${name}`,
+      )} in your project. Is it installed?`,
     );
   }
   return pkg;

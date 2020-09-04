@@ -31,9 +31,8 @@ export async function updateCommand(
     const platforms = config.selectPlatforms(selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
-        `There are no platforms to update yet. Add platforms with ${c.input(
-          'npx cap add',
-        )}`,
+        `There are no platforms to update yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
       );
       return;
     }
@@ -49,7 +48,7 @@ export async function updateCommand(
       const diff = (now - then) / 1000;
       logger.info(`Update finished in ${diff}s`);
     } catch (e) {
-      logFatal(e);
+      logFatal(e.stack ?? e);
     }
   }
 }
@@ -87,6 +86,6 @@ export async function update(
       }
     });
   } catch (e) {
-    logger.error(`Error running update: ${e.stack ?? e}`);
+    logger.error(`Error running update:\n` + e.stack ?? e);
   }
 }

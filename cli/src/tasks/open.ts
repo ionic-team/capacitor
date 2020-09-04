@@ -21,9 +21,8 @@ export async function openCommand(
     let platformName: string;
     if (platforms.length === 0) {
       logger.info(
-        `There are no platforms to open yet. Add platforms with ${c.input(
-          'npx cap add',
-        )}`,
+        `There are no platforms to open yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
       );
       return;
     } else if (platforms.length === 1) {
@@ -38,7 +37,7 @@ export async function openCommand(
     try {
       await open(config, platformName);
     } catch (e) {
-      logFatal(e);
+      logFatal(e.stack ?? e);
     }
   }
 }

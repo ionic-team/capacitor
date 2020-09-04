@@ -1,3 +1,4 @@
+import c from '../colors';
 import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import {
   CheckFunction,
@@ -117,9 +118,10 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
   const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
   if (!capacitoriOSPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/ios. Are you sure @capacitor/ios is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find ${c.strong(
+        '@capacitor/ios',
+      )} in your project. Is it installed?`,
     );
-    return;
   }
 
   const podfilePath = join(config.app.rootDir, 'ios', 'App');

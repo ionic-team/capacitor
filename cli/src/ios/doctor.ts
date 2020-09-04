@@ -32,7 +32,7 @@ export async function doctorIOS(config: Config) {
     printPlugins(plugins, 'ios');
     logSuccess('iOS looking great! 👌');
   } catch (e) {
-    logFatal(e);
+    logFatal(e.stack ?? e);
   }
 }
 

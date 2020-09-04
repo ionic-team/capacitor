@@ -51,9 +51,13 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
 
     const existingPlatformDir = config.platformDirExists(platformName);
     if (existingPlatformDir) {
-      logFatal(`"${platformName}" platform already exists.
-      To add a new "${platformName}" platform, please remove "${existingPlatformDir}" and run this command again.
-      WARNING! your native IDE project will be completely removed.`);
+      logFatal(
+        `${c.input(platformName)} platform already exists.\n` +
+          `To re-add this platform, first remove ${existingPlatformDir}, then run this command again.\n` +
+          `${c.strong(
+            'WARNING',
+          )}: Your native project will be completely removed.`,
+      );
     }
 
     try {
@@ -113,7 +117,9 @@ export async function generateCapacitorConfig(config: Config) {
     });
   });
   logger.info(
-    `You can change the web directory anytime by modifying ${config.app.extConfigName}`,
+    `You can change the web directory anytime by modifying ${c.strong(
+      config.app.extConfigName,
+    )}`,
   );
   config.app.webDir = webDir;
   config.app.webDirAbs = resolve(config.app.rootDir, webDir);
@@ -160,7 +166,7 @@ function shouldSync(config: Config, platformName: string) {
 function webWarning() {
   logger.error(
     `Not adding platform ${c.strong('web')}.\n` +
-      `In Capacitor, the 'web' platform is just your web app! For example, if you have a React or Angular project, the 'web' platform is that project.\n` +
+      `In Capacitor, the web platform is just your web app! For example, if you have a React or Angular project, the web platform is that project.\n` +
       `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: ${c.strong(
         'https://capacitorjs.com/docs/web',
       )}`,

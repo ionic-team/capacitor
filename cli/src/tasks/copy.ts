@@ -35,9 +35,8 @@ export async function copyCommand(
     const platforms = config.selectPlatforms(selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
-        `There are no platforms to copy yet. Add platforms with ${c.input(
-          'npx cap add',
-        )}`,
+        `There are no platforms to copy yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
       );
       return;
     }
@@ -93,9 +92,9 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
   let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
   if (!bridgePath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/core/native-bridge.js. Are you sure @capacitor/core is installed? This file is required for Capacitor to function`,
+      `Unable to find node_modules/@capacitor/core/native-bridge.js.\n` +
+        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
     );
-    return;
   }
 
   await runTask('Copying native bridge', async () => {

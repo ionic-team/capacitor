@@ -27,9 +27,8 @@ export async function syncCommand(
     const platforms = config.selectPlatforms(selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
-        `There are no platforms to sync yet. Add platforms with ${c.input(
-          'npx cap add',
-        )}`,
+        `There are no platforms to sync yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
       );
       return;
     }
@@ -48,7 +47,7 @@ export async function syncCommand(
       const diff = (now - then) / 1000;
       logger.info(`Sync finished in ${diff}s`);
     } catch (e) {
-      logFatal(e);
+      logFatal(e.stack ?? e);
     }
   }
 }

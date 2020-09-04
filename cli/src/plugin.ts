@@ -3,7 +3,7 @@ import { join } from 'path';
 import c from './colors';
 import { Config } from './config';
 import { logFatal, readJSON, readXML, resolveNode } from './common';
-import { logger, output } from './log';
+import { logger } from './log';
 
 export const enum PluginType {
   Core,
@@ -57,7 +57,6 @@ export async function resolvePlugin(
       logFatal(
         `Unable to find node_modules/${name}. Are you sure ${name} is installed?`,
       );
-      return null;
     }
 
     const packagePath = join(rootPath, 'package.json');

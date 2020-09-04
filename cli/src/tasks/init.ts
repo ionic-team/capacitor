@@ -66,6 +66,6 @@ export async function initCommand(
       'Usage: npx cap init appName appId\n' +
         'Example: npx cap init "My App" "com.example.myapp"\n\n',
     );
-    logFatal(e);
+    logFatal(e.stack ?? e);
   }
 }

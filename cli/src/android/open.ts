@@ -1,23 +1,12 @@
 import { Config } from '../config';
 import { OS } from '../definitions';
 import { runCommand } from '../common';
-import { existsAsync, existsSync } from '../util/fs';
-import { resolve } from 'path';
+import { existsSync } from '../util/fs';
 import open from 'open';
 import { logger } from '../log';
 
 export async function openAndroid(config: Config) {
   logger.info(`Opening Android project at ${config.android.platformDir}.`);
-
-  if (
-    !(await existsAsync(
-      resolve(config.app.rootDir, config.android.platformDir),
-    ))
-  ) {
-    throw new Error(
-      'Android project does not exist. Create one with "npx cap add android"',
-    );
-  }
 
   const dir = config.android.platformDir;
 
@@ -58,7 +47,7 @@ export async function openAndroid(config: Config) {
     case OS.Linux:
       const linuxError = () => {
         logger.error(
-          'Unable to launch Android Studio.' +
+          'Unable to launch Android Studio.\n' +
             'You must configure "linuxAndroidStudioPath" in your capacitor.config.json to point to the location of studio.sh, using JavaScript-escaped paths:\n' +
             'Example:\n' +
             '{\n' +

@@ -126,7 +126,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
       );
       program.outputHelp();
     } else {
-      logFatal(`Unknown command: ${cmd}`);
+      logFatal(`Unknown command: ${c.input(cmd)}`);
     }
   });
 

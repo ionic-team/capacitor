@@ -178,9 +178,9 @@ export async function copyCordovaJS(config: Config, platform: string) {
   const cordovaPath = resolveNode(config, '@capacitor/core', 'cordova.js');
   if (!cordovaPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/core/cordova.js. Are you sure @capacitor/core is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/core/cordova.js.\n` +
+        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
     );
-    return;
   }
 
   return fsCopy(cordovaPath, join(getWebDir(config, platform), 'cordova.js'));
@@ -348,9 +348,9 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
     let xml = buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
     logger.warn(
-      `Plugin ${c.strong(
-        plugin.id,
-      )} requires you to add \n  ${xml} to your Info.plist`,
+      `Configuration required for ${c.strong(plugin.id)}.\n` +
+        `Add the following to Info.plist:\n` +
+        xml,
     );
   } else if (configElement.array || configElement.dict) {
     if (
@@ -366,11 +366,11 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
       });
       if (xml.length > 0) {
         logger.warn(
-          `Plugin ${c.strong(
-            plugin.id,
-          )} requires you to add \n${xml} in the existing ${c.strong(
-            configElement.$.parent,
-          )} array of your Info.plist`,
+          `Configuration required for ${c.strong(plugin.id)}.\n` +
+            `Add the following in the existing ${c.strong(
+              configElement.$.parent,
+            )} array of your Info.plist:\n` +
+            xml,
         );
       }
     } else {
@@ -384,11 +384,11 @@ function logPossibleMissingItem(configElement: any, plugin: Plugin) {
   xml = getConfigFileTagContent(xml);
   xml = removeOuterTags(xml);
   logger.warn(
-    `Plugin ${c.strong(
-      plugin.id,
-    )} might require you to add ${xml} in the existing ${c.strong(
-      configElement.$.parent,
-    )} entry of your Info.plist`,
+    `Configuration might be missing for ${c.strong(plugin.id)}.\n` +
+      `Add the following to the existing ${c.strong(
+        configElement.$.parent,
+      )} entry of Info.plist:\n` +
+      xml,
   );
 }
 
@@ -597,10 +597,10 @@ export async function writeCordovaAndroidManifest(
                   applicationXMLEntries.push(xmlElement);
                 }
               } else {
-                logger.info(
-                  `Plugin ${c.strong(
-                    p.id,
-                  )} requires to add \n  ${xmlElement} to your AndroidManifest.xml`,
+                logger.warn(
+                  `Configuration required for ${c.strong(p.id)}.\n` +
+                    `Add the following to AndroidManifest.xml:\n` +
+                    xmlElement,
                 );
               }
             } else {

@@ -7,6 +7,6 @@ export async function serveCommand(config: Config) {
     `The serve command has been removed.\n` +
       `Use a third-party tool for serving single page apps, such as ${c.strong(
         'serve',
-      )}: https://www.npmjs.com/package/serve`,
+      )}: ${c.strong('https://www.npmjs.com/package/serve')}`,
   );
 }
