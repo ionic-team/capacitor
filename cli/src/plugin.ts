@@ -3,7 +3,7 @@ import { join } from 'path';
 import c from './colors';
 import { Config } from './config';
 import { logFatal, readJSON, readXML, resolveNode } from './common';
-import { logger } from './log';
+import { logger, output } from './log';
 
 export const enum PluginType {
   Core,
@@ -122,19 +122,25 @@ export function printPlugins(
 
   switch (type) {
     case 'cordova':
-      msg = `Found ${plugins.length} Cordova plugin${plural} for ${platform}:`;
+      msg = `Found ${plugins.length} Cordova plugin${plural} for ${c.strong(
+        platform,
+      )}:\n`;
       break;
     case 'incompatible':
-      msg = `Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install:`;
+      msg = `Found ${
+        plugins.length
+      } incompatible Cordova plugin${plural} for ${c.strong(
+        platform,
+      )}, skipped install:\n`;
       break;
     case 'capacitor':
-      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`;
+      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${c.strong(
+        platform,
+      )}:\n`;
       break;
   }
 
-  msg += plugins
-    .map(p => `    ${c.strong(`${p.id}`)} (${c.success(p.version)})`)
-    .join('\n');
+  msg += plugins.map(p => `${p.id}${c.weak(`@${p.version}`)}`).join('\n');
 
   logger.info(msg);
 }

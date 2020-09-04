@@ -152,7 +152,7 @@ async function checkAndroidManifestData(
   );
 
   if (!mainApplicationNode) {
-    return `Missing ${c.input('<activity>')} XML node in ${appSrcMainDir}`;
+    return `Missing main ${c.input('<activity>')} XML node in ${appSrcMainDir}`;
   }
 
   if (!mainActivityClassPath) {

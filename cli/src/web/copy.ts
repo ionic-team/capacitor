@@ -19,7 +19,7 @@ export async function copyWeb(config: Config) {
       );
     }
 
-    return runTask(`Copying capacitor.js to web dir`, () => {
+    return runTask(`Copying ${c.strong('capacitor.js')} to web dir`, () => {
       return copy(runtimePath, join(config.app.webDirAbs, 'capacitor.js'));
     });
   }

@@ -89,6 +89,7 @@ export async function copy(config: Config, platformName: string) {
 }
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
+  const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
   let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
   if (!bridgePath) {
     logFatal(
@@ -97,20 +98,27 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
     );
   }
 
-  await runTask('Copying native bridge', async () => {
-    return fsCopy(bridgePath!, join(nativeAbsDir, 'native-bridge.js'));
-  });
+  await runTask(
+    `Copying ${c.strong('native-bridge.js')} to ${nativeRelDir}`,
+    async () => {
+      return fsCopy(bridgePath!, join(nativeAbsDir, 'native-bridge.js'));
+    },
+  );
 }
 
 async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
+  const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
   const configPath = resolve(config.app.extConfigFilePath);
   if (!(await existsAsync(configPath))) {
     return;
   }
 
-  await runTask('Copying capacitor.config.json', async () => {
-    return fsCopy(configPath, join(nativeAbsDir, 'capacitor.config.json'));
-  });
+  await runTask(
+    `Copying ${c.strong('capacitor.config.json')} to ${nativeRelDir}`,
+    async () => {
+      return fsCopy(configPath, join(nativeAbsDir, 'capacitor.config.json'));
+    },
+  );
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
@@ -119,9 +127,7 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
   await runTask(
-    `Copying web assets from ${c.strong(webRelDir)} to ${c.strong(
-      nativeRelDir,
-    )}`,
+    `Copying web assets from ${c.strong(webRelDir)} to ${nativeRelDir}`,
     async () => {
       await remove(nativeAbsDir);
       return fsCopy(webAbsDir, nativeAbsDir);

@@ -80,9 +80,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
         platformName === config.android.name
       ) {
         logger.info(
-          `\nNow you can run ${c.input(
-            `npx cap open ${platformName}`,
-          )} to launch ${
+          `Run ${c.input(`npx cap open ${platformName}`)} to launch ${
             platformName === config.ios.name ? 'Xcode' : 'Android Studio'
           }`,
         );
@@ -111,7 +109,7 @@ export async function generateCapacitorConfig(config: Config) {
     { onCancel: () => process.exit(1) },
   );
   const webDir = answers.webDir;
-  await runTask(`Creating ${config.app.extConfigName}`, () => {
+  await runTask(`Creating ${c.strong(config.app.extConfigName)}`, () => {
     return writePrettyJSON(config.app.extConfigFilePath, {
       webDir: webDir,
     });

@@ -76,7 +76,7 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
 ) {
   await runTask(
-    'Updating iOS native dependencies with "pod install" (may take several minutes)',
+    `Updating iOS native dependencies with ${c.input('pod install')}`,
     () => {
       return updatePodfile(config, plugins, deployment);
     },
