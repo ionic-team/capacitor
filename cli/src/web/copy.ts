@@ -13,8 +13,7 @@ export async function copyWeb(config: Config) {
     );
     if (!runtimePath) {
       logFatal(
-        `Unable to find node_modules/@capacitor/core/dist/capacitor.js. Are you sure`,
-        '@capacitor/core is installed? This file is required for Capacitor to function',
+        `Unable to find node_modules/@capacitor/core/dist/capacitor.js. Are you sure @capacitor/core is installed? This file is required for Capacitor to function`,
       );
       return;
     }

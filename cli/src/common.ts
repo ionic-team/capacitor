@@ -11,6 +11,7 @@ import {
 } from './util/fs';
 import { existsSync, readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
+import { output, logger } from './util/log';
 import semver from 'semver';
 import kleur from 'kleur';
 import which from 'which';
@@ -233,28 +234,28 @@ export async function mergeConfig(config: Config, settings: any) {
   config.loadExternalConfig();
 }
 
-export function log(...args: any[]) {
-  console.log(...args);
+export function log(msg = '') {
+  logger.msg(msg);
 }
 
-export function logSuccess(...args: any[]) {
-  console.log(kleur.green('[success]'), ...args);
+export function logSuccess(msg: string) {
+  logger.msg(`${kleur.green('[success]')} ${msg}`);
 }
 
-export function logInfo(...args: any[]) {
-  console.log(kleur.cyan().bold('[info]'), ...args);
+export function logInfo(msg: string) {
+  logger.info(msg);
 }
 
-export function logWarn(...args: any[]) {
-  console.log(kleur.yellow().bold('[warn]'), ...args);
+export function logWarn(msg: string) {
+  logger.warn(msg);
 }
 
-export function logError(...args: any[]) {
-  console.error(kleur.red('[error]'), ...args);
+export function logError(msg: string) {
+  logger.error(msg);
 }
 
-export function logFatal(...args: any[]): never {
-  logError(...args);
+export function logFatal(msg: string): never {
+  logError(msg);
   return process.exit(1);
 }
 
@@ -326,43 +327,21 @@ export async function getCommandOutput(
   }
 }
 
-export type TaskInfoProvider = (messsage: string) => void;
-
 export async function runTask<T>(
   title: string,
-  fn: (info: TaskInfoProvider) => Promise<T>,
+  fn: () => Promise<T>,
 ): Promise<T> {
-  const ora = require('ora');
-  const spinner = ora(title).start();
+  const chain = output.createTaskChain();
+  chain.next(title);
 
   try {
-    const start = process.hrtime();
-    let taskInfoMessage;
-    const value = await fn((message: string) => (taskInfoMessage = message));
-    const elapsed = process.hrtime(start);
-    if (taskInfoMessage) {
-      spinner.info(`${title} ${kleur.dim('– ' + taskInfoMessage)}`);
-    } else {
-      spinner.succeed(`${title} ${kleur.dim('in ' + formatHrTime(elapsed))}`);
-    }
+    const value = await fn();
+    chain.end();
     return value;
   } catch (e) {
-    spinner.fail(`${title}: ${e.message ? e.message : ''}`);
-    spinner.stop();
+    chain.fail();
     throw e;
   }
-}
-
-const TIME_UNITS = ['s', 'ms', 'μp'];
-export function formatHrTime(hrtime: any) {
-  let time = (hrtime[0] + hrtime[1] / 1e9) as number;
-  let index = 0;
-  for (; index < TIME_UNITS.length - 1; index++, time *= 1000) {
-    if (time >= 1) {
-      break;
-    }
-  }
-  return time.toFixed(2) + TIME_UNITS[index];
 }
 
 export async function getName(config: Config, name: string) {
@@ -469,8 +448,7 @@ export async function requireCapacitorPackage(
 
   if (!pkg) {
     logFatal(
-      `Unable to find node_modules/@capacitor/${name}/package.json. Are you sure`,
-      `@capacitor/${name} is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/${name}/package.json. Are you sure @capacitor/${name} is installed? This file is currently required for Capacitor to function.`,
     );
   }
   return pkg;

@@ -92,8 +92,7 @@ async function copyNativeBridge(config: Config, nativeAbsDir: string) {
   let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
   if (!bridgePath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/core/native-bridge.js. Are you sure`,
-      '@capacitor/core is installed? This file is required for Capacitor to function',
+      `Unable to find node_modules/@capacitor/core/native-bridge.js. Are you sure @capacitor/core is installed? This file is required for Capacitor to function`,
     );
     return;
   }
