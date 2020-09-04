@@ -2,7 +2,6 @@ import { mergeWebPlugin } from './plugins';
 
 import { App } from './web/app';
 import { Browser } from './web/browser';
-import { Camera } from './web/camera';
 import { Device } from './web/device';
 import { Filesystem } from './web/filesystem';
 import { Geolocation } from './web/geolocation';
@@ -26,7 +25,6 @@ export * from './web/toast';
 
 mergeWebPlugin(App);
 mergeWebPlugin(Browser);
-mergeWebPlugin(Camera);
 mergeWebPlugin(Device);
 mergeWebPlugin(Filesystem);
 mergeWebPlugin(Geolocation);
