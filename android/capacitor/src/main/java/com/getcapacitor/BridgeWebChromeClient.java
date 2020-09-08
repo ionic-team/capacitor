@@ -20,8 +20,9 @@ import android.webkit.WebView;
 import com.getcapacitor.plugin.camera.CameraUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import org.apache.cordova.CordovaPlugin;
+import java.util.Set;
 import org.json.JSONException;
 
 /**
@@ -29,12 +30,14 @@ import org.json.JSONException;
  * WebView instance.
  */
 public class BridgeWebChromeClient extends WebChromeClient {
-    private Bridge bridge;
     static final int FILE_CHOOSER = PluginRequestCodes.FILE_CHOOSER;
     static final int FILE_CHOOSER_IMAGE_CAPTURE = PluginRequestCodes.FILE_CHOOSER_IMAGE_CAPTURE;
     static final int FILE_CHOOSER_VIDEO_CAPTURE = PluginRequestCodes.FILE_CHOOSER_VIDEO_CAPTURE;
     static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
     static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
+
+    private Bridge bridge;
+    private Plugin geoLocationPlugin;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -190,6 +193,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
         return true;
     }
 
+    public void registerGeolocationPlugin(Plugin geolocationPlugin) {
+        this.geoLocationPlugin = geolocationPlugin;
+    }
+
     /**
      * Handle the browser geolocation prompt
      * @param origin
@@ -203,11 +210,14 @@ public class BridgeWebChromeClient extends WebChromeClient {
         // Set that we want geolocation perms for this origin
         callback.invoke(origin, true, false);
 
-        Plugin geo = bridge.getPlugin("Geolocation").getInstance();
-        if (!geo.hasRequiredPermissions()) {
-            geo.pluginRequestAllPermissions();
+        if (geoLocationPlugin == null) {
+            Logger.error("onGeolocationPermissionsShowPrompt: no geolocation plugin has been registered");
         } else {
-            Logger.debug("onGeolocationPermissionsShowPrompt: has required permis");
+            if (!geoLocationPlugin.hasRequiredPermissions()) {
+                geoLocationPlugin.pluginRequestAllPermissions();
+            } else {
+                Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
+            }
         }
     }
 

@@ -14,7 +14,8 @@ import {
 
 import { PermissionsRequestResult } from '../definitions';
 
-export class LocalNotificationsPluginWeb extends WebPlugin
+export class LocalNotificationsPluginWeb
+  extends WebPlugin
   implements LocalNotificationsPlugin {
   private pending: LocalNotification[] = [];
 
