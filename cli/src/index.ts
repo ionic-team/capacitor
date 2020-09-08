@@ -1,5 +1,4 @@
 import program from 'commander';
-import kleur from 'kleur';
 
 import { createCommand } from './tasks/create';
 import { initCommand } from './tasks/init';
@@ -10,6 +9,7 @@ import { openCommand } from './tasks/open';
 import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
 import { Config } from './config';
+import c from './colors';
 import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
@@ -17,7 +17,7 @@ import { emoji as _e } from './util/emoji';
 import { logFatal } from './common';
 
 process.on('unhandledRejection', error => {
-  console.error(kleur.red('[fatal]'), error);
+  console.error(c.failure('[fatal]'), error);
 });
 
 export function run(process: NodeJS.Process, cliBinDir: string) {
@@ -120,13 +120,13 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program.arguments('[command]').action(cmd => {
     if (typeof cmd === 'undefined') {
       console.log(
-        `\n  ${_e('⚡️', '--')}  ${kleur.bold(
+        `\n  ${_e('⚡️', '--')}  ${c.strong(
           'Capacitor - Cross-Platform apps with JavaScript and the Web',
         )}  ${_e('⚡️', '--')}\n`,
       );
       program.outputHelp();
     } else {
-      logFatal(`Unknown command: ${cmd}`);
+      logFatal(`Unknown command: ${c.input(cmd)}`);
     }
   });
 

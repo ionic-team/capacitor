@@ -1,9 +1,8 @@
+import c from '../colors';
 import { Config } from '../config';
 import {
   checkWebDir,
-  logError,
   logFatal,
-  logInfo,
   resolveNode,
   resolvePlatform,
   runPlatformHook,
@@ -19,7 +18,7 @@ import {
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import kleur from 'kleur';
+import { logger } from '../log';
 
 export async function copyCommand(
   config: Config,
@@ -30,13 +29,14 @@ export async function copyCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:copy');
     } else {
-      logError(`platform ${selectedPlatformName} not found`);
+      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
   } else {
     const platforms = config.selectPlatforms(selectedPlatformName);
     if (platforms.length === 0) {
-      logInfo(
-        `There are no platforms to copy yet. Create one with \`capacitor create\`.`,
+      logger.info(
+        `There are no platforms to copy yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
       );
       return;
     }
@@ -45,13 +45,13 @@ export async function copyCommand(
         platforms.map(platformName => () => copy(config, platformName)),
       );
     } catch (e) {
-      logError(e);
+      logger.error(e.stack ?? e);
     }
   }
 }
 
 export async function copy(config: Config, platformName: string) {
-  await runTask(kleur.green().bold('copy'), async () => {
+  await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
     if (result) {
       throw result;
@@ -89,28 +89,36 @@ export async function copy(config: Config, platformName: string) {
 }
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
+  const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
   let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
   if (!bridgePath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/core/native-bridge.js. Are you sure @capacitor/core is installed? This file is required for Capacitor to function`,
+      `Unable to find node_modules/@capacitor/core/native-bridge.js.\n` +
+        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
     );
-    return;
   }
 
-  await runTask('Copying native bridge', async () => {
-    return fsCopy(bridgePath!, join(nativeAbsDir, 'native-bridge.js'));
-  });
+  await runTask(
+    `Copying ${c.strong('native-bridge.js')} to ${nativeRelDir}`,
+    async () => {
+      return fsCopy(bridgePath!, join(nativeAbsDir, 'native-bridge.js'));
+    },
+  );
 }
 
 async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
+  const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
   const configPath = resolve(config.app.extConfigFilePath);
   if (!(await existsAsync(configPath))) {
     return;
   }
 
-  await runTask('Copying capacitor.config.json', async () => {
-    return fsCopy(configPath, join(nativeAbsDir, 'capacitor.config.json'));
-  });
+  await runTask(
+    `Copying ${c.strong('capacitor.config.json')} to ${nativeRelDir}`,
+    async () => {
+      return fsCopy(configPath, join(nativeAbsDir, 'capacitor.config.json'));
+    },
+  );
 }
 
 async function copyWebDir(config: Config, nativeAbsDir: string) {
@@ -119,9 +127,7 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
   await runTask(
-    `Copying web assets from ${kleur.bold(webRelDir)} to ${kleur.bold(
-      nativeRelDir,
-    )}`,
+    `Copying web assets from ${c.strong(webRelDir)} to ${nativeRelDir}`,
     async () => {
       await remove(nativeAbsDir);
       return fsCopy(webAbsDir, nativeAbsDir);

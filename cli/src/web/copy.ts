@@ -1,3 +1,4 @@
+import c from '../colors';
 import { logFatal, resolveNode, runTask } from '../common';
 import { Config } from '../config';
 import { copy } from 'fs-extra';
@@ -13,12 +14,12 @@ export async function copyWeb(config: Config) {
     );
     if (!runtimePath) {
       logFatal(
-        `Unable to find node_modules/@capacitor/core/dist/capacitor.js. Are you sure @capacitor/core is installed? This file is required for Capacitor to function`,
+        `Unable to find node_modules/@capacitor/core/dist/capacitor.js.\n` +
+          `Are you sure ${c.strong('@capacitor/core')} is installed?`,
       );
-      return;
     }
 
-    return runTask(`Copying capacitor.js to web dir`, () => {
+    return runTask(`Copying ${c.strong('capacitor.js')} to web dir`, () => {
       return copy(runtimePath, join(config.app.webDirAbs, 'capacitor.js'));
     });
   }

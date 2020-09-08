@@ -1,3 +1,4 @@
+import c from '../colors';
 import { Config } from '../config';
 import {
   checkPlatformVersions,
@@ -79,9 +80,9 @@ export async function installGradlePlugins(
   );
   if (!capacitorAndroidPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/android/capacitor. Are you sure @capacitor/android is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/android/capacitor\n` +
+        `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );
-    return;
   }
 
   const settingsPath = join(config.app.rootDir, 'android');

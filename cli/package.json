@@ -42,7 +42,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ionic/cli-framework-output": "^2.1.0",
+    "@ionic/cli-framework-output": "^2.2.0",
     "@ionic/utils-terminal": "^2.2.1",
     "commander": "^6.0.0",
     "fs-extra": "^9.0.1",

@@ -1,12 +1,12 @@
+import c from '../colors';
 import { Config } from '../config';
-import { logFatal, logError } from '../common';
-import kleur from 'kleur';
+import { logFatal } from '../common';
 
 export async function serveCommand(config: Config) {
   logFatal(
     `The serve command has been removed.\n` +
-      `Use a third-party tool for serving single page apps, such as ${kleur.yellow(
+      `Use a third-party tool for serving single page apps, such as ${c.strong(
         'serve',
-      )}: https://www.npmjs.com/package/serve`,
+      )}: ${c.strong('https://www.npmjs.com/package/serve')}`,
   );
 }

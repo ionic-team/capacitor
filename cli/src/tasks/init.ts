@@ -1,4 +1,4 @@
-import kleur from 'kleur';
+import c from '../colors';
 import { Config } from '../config';
 import {
   check,
@@ -7,7 +7,6 @@ import {
   getAppId,
   getName,
   getOrCreateConfig,
-  log,
   logFatal,
   mergeConfig,
   printNextSteps,
@@ -16,6 +15,7 @@ import {
 import { getCordovaPreferences } from '../cordova';
 import { emoji as _e } from '../util/emoji';
 import { checkInteractive } from '../util/term';
+import { output } from '../log';
 
 export async function initCommand(
   config: Config,
@@ -43,7 +43,7 @@ export async function initCommand(
     const cordova = await getCordovaPreferences(config);
 
     await runTask(
-      `Initializing Capacitor project in ${kleur.blue(config.app.rootDir)}`,
+      `Initializing Capacitor project in ${c.input(config.app.rootDir)}`,
       async () => {
         config.app.appId = appId;
         config.app.appName = appName;
@@ -62,8 +62,10 @@ export async function initCommand(
 
     await printNextSteps(config, '');
   } catch (e) {
-    log('Usage: npx cap init appName appId\n');
-    log('Example: npx cap init "My App" "com.example.myapp"\n');
-    logFatal(e);
+    output.write(
+      'Usage: npx cap init appName appId\n' +
+        'Example: npx cap init "My App" "com.example.myapp"\n\n',
+    );
+    logFatal(e.stack ?? e);
   }
 }
