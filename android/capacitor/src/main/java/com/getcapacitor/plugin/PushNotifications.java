@@ -98,6 +98,7 @@ public class PushNotifications extends Plugin {
                 JSObject jsNotif = new JSObject();
 
                 jsNotif.put("id", notif.getId());
+                jsNotif.put("tag", notif.getTag());
 
                 Notification notification = notif.getNotification();
                 if (notification != null) {
@@ -134,17 +135,14 @@ public class PushNotifications extends Plugin {
                 if (o instanceof JSONObject) {
                     JSObject notif = JSObject.fromJSONObject((JSONObject) o);
                     Integer id = notif.getInteger("id");
-                    ids.add(id);
+                    String tag = notif.getString("tag");
+                    notificationManager.cancel(tag, id);
                 } else {
                     call.reject("Expected notifications to be a list of notification objects");
                 }
             }
         } catch (JSONException e) {
             call.reject(e.getMessage());
-        }
-
-        for (int id : ids) {
-            notificationManager.cancel(id);
         }
 
         call.resolve();
