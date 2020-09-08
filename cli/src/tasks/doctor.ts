@@ -4,14 +4,14 @@ import { doctorAndroid } from '../android/doctor';
 import { doctorIOS } from '../ios/doctor';
 import { emoji as _e } from '../util/emoji';
 
-import chalk from 'chalk';
+import kleur from 'kleur';
 
 export async function doctorCommand(
   config: Config,
   selectedPlatform: string,
 ): Promise<void> {
   log(
-    `${_e('💊', '')}   ${chalk.bold('Capacitor Doctor')}  ${_e('💊', '')} \n`,
+    `${_e('💊', '')}   ${kleur.bold('Capacitor Doctor')}  ${_e('💊', '')} \n`,
   );
 
   await doctorCore(config);
@@ -37,13 +37,13 @@ export async function doctorCore(config: Config) {
     getCommandOutput(`npm info @capacitor/ios version`),
   ]);
 
-  log(`${chalk.bold.blue('Latest Dependencies:')}\n`);
-  log(`  ${chalk.bold('@capacitor/cli:')}`, cliVersion ?? 'unknown');
-  log(`  ${chalk.bold('@capacitor/core:')}`, coreVersion ?? 'unknown');
-  log(`  ${chalk.bold('@capacitor/android:')}`, androidVersion ?? 'unknown');
-  log(`  ${chalk.bold('@capacitor/ios:')}`, iosVersion ?? 'unknown');
+  log(`${kleur.blue().bold('Latest Dependencies:')}\n`);
+  log(`  ${kleur.bold('@capacitor/cli:')}`, cliVersion ?? 'unknown');
+  log(`  ${kleur.bold('@capacitor/core:')}`, coreVersion ?? 'unknown');
+  log(`  ${kleur.bold('@capacitor/android:')}`, androidVersion ?? 'unknown');
+  log(`  ${kleur.bold('@capacitor/ios:')}`, iosVersion ?? 'unknown');
 
-  log(`${chalk.bold.blue('Installed Dependencies:')}\n`);
+  log(`${kleur.blue().bold('Installed Dependencies:')}\n`);
 
   await printInstalledPackages(config);
 
@@ -73,7 +73,7 @@ async function printPackageVersion(
   if (packagePath) {
     version = (await readJSON(packagePath)).version;
   }
-  log(`  ${chalk.bold(packageName)}`, version || 'not installed');
+  log(`  ${kleur.bold(packageName)}`, version || 'not installed');
 }
 
 export async function doctor(config: Config, platformName: string) {
