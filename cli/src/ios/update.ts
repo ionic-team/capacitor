@@ -4,7 +4,7 @@ import { convertToUnixPath, copySync, readFileAsync, readFileSync, removeSync, w
 import { Config } from '../config';
 import { join, relative, resolve } from 'path';
 import { realpathSync } from 'fs';
-import { Plugin, PluginType, getFilePath, getPlatformElement, getPluginType, getPlugins, printPlugins } from '../plugin';
+import { Plugin, PluginType, getAllElements, getFilePath, getPlatformElement, getPluginType, getPlugins, printPlugins } from '../plugin';
 import { checkAndInstallDependencies, handleCordovaPluginsJS, logCordovaManualSteps } from '../cordova';
 
 
@@ -132,6 +132,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
   let sourceFrameworks: Array<string> = [];
   let frameworkDeps: Array<string> = [];
   let compilerFlags: Array<string> = [];
+  let prefsArray: Array<any> = [];
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';
   if (isStatic) {
@@ -174,6 +175,7 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
         }
       }
     });
+    prefsArray = prefsArray.concat(getAllElements(plugin, platform, 'preference'));
     const podspecs = getPlatformElement(plugin, platform, 'podspec');
     podspecs.map((podspec: any) => {
       podspec.pods.map((pods: any) => {
@@ -234,7 +236,8 @@ async function generateCordovaPodspec(cordovaPlugins: Plugin[], config: Config, 
       sna.source_files = 'noarc/**/*.{swift,h,m,c,cc,mm,cpp}'
     end`);
   }
-  const frameworksString = frameworkDeps.join('\n    ');
+  let frameworksString = frameworkDeps.join('\n    ');
+  frameworksString = await replaceFrameworkVariables(config, prefsArray, frameworksString);
   const content = `
   Pod::Spec.new do |s|
     s.name = '${name}'
@@ -359,4 +362,11 @@ async function getPluginsTask(config: Config) {
     const iosPlugins = getIOSPlugins(allPlugins);
     return iosPlugins;
   });
+}
+
+async function replaceFrameworkVariables(config: Config, prefsArray: Array<any>, frameworkString: string) {
+  prefsArray.map((preference: any) => {
+    frameworkString = frameworkString.replace(new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
+  });
+  return frameworkString;
 }
