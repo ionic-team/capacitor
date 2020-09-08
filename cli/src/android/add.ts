@@ -22,9 +22,14 @@ export async function addAndroid(config: Config) {
     },
   );
 
-  await runTask(`Syncing Gradle with ${c.input('./gradlew')}`, async () => {
-    return createLocalProperties(config.android.platformDir);
-  });
+  await runTask(
+    `Syncing Gradle with ${c.input(
+      process.platform === 'win32' ? 'gradlew.bat' : './gradlew',
+    )}`,
+    async () => {
+      return createLocalProperties(config.android.platformDir);
+    },
+  );
 }
 
 async function createLocalProperties(platformDir: string) {
