@@ -9,8 +9,8 @@ import {
   getOrCreateConfig,
   logFatal,
   mergeConfig,
-  printNextSteps,
   runTask,
+  logSuccess,
 } from '../common';
 import { getCordovaPreferences } from '../cordova';
 import { emoji as _e } from '../util/emoji';
@@ -41,7 +41,9 @@ export async function initCommand(
     const cordova = await getCordovaPreferences(config);
 
     await runTask(
-      `Initializing Capacitor project in ${c.input(config.app.rootDir)}`,
+      `Creating ${c.strong('capacitor.config.json')} in ${c.input(
+        config.app.rootDir,
+      )}`,
       async () => {
         config.app.appId = appId;
         config.app.appName = appName;
@@ -57,7 +59,7 @@ export async function initCommand(
       },
     );
 
-    await printNextSteps(config, '');
+    printNextSteps();
   } catch (e) {
     output.write(
       'Usage: npx cap init appName appId\n' +
@@ -65,4 +67,16 @@ export async function initCommand(
     );
     logFatal(e.stack ?? e);
   }
+}
+
+function printNextSteps() {
+  logSuccess(`${c.strong('capacitor.config.json')} created!`);
+  output.write(
+    `\nAdd platforms using ${c.input('npx cap add')}:\n` +
+      `  ${c.input('npx cap add android')}\n` +
+      `  ${c.input('npx cap add ios')}\n\n` +
+      `Follow the Developer Workflow guide to get building:\n${c.strong(
+        `https://capacitorjs.com/docs/basics/workflow`,
+      )}\n`,
+  );
 }

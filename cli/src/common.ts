@@ -357,12 +357,16 @@ export async function runTask<T>(
 
 export async function getName(config: Config, name: string) {
   if (!name) {
+    logger.info(
+      `What is the name of your app?\n` +
+        `This should be a human-friendly app name, like what you'd see in the App Store.`,
+    );
     const answers = await prompts(
       [
         {
           type: 'text',
           name: 'name',
-          message: `What is the name of your app?\n`,
+          message: `Name`,
           initial: config.app.appName
             ? config.app.appName
             : config.app.package && config.app.package.name
@@ -379,18 +383,16 @@ export async function getName(config: Config, name: string) {
 
 export async function getAppId(config: Config, id: string) {
   if (!id) {
+    logger.info(
+      `What should be the Package ID for your app?\n` +
+        `Package IDs (aka Bundle ID in iOS and Application ID in Android) are unique identifiers for apps. They must be in reverse domain name notation, generally representing a domain name that you or your company owns.`,
+    );
     const answers = await prompts(
       [
         {
           type: 'text',
           name: 'id',
-          message:
-            `What should be the Package ID for your app?\n\n` +
-            `${kleur.reset(
-              `    Package IDs (aka Bundle ID in iOS and Application ID in Android) are unique\n` +
-                `    identifiers for apps. They must be in reverse domain name notation, generally\n` +
-                `    representing a domain name that you or your company owns.\n`,
-            )}\n`,
+          message: `Package ID`,
           initial: config.app.appId ? config.app.appId : 'com.example.app',
         },
       ],
@@ -413,33 +415,6 @@ export async function renameGitignore(dst: string) {
   if (await existsAsync(gitignorePath)) {
     await renameAsync(gitignorePath, join(dst, '.gitignore'));
   }
-}
-
-export async function printNextSteps(config: Config, appDir: string) {
-  output.write(
-    `\n${c.strong(
-      `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
-        '🎉',
-        '*',
-      )}`,
-    )}\n`,
-  );
-  if (appDir !== '') {
-    output.write(
-      `Next steps:\n` +
-        `  ${c.input(`cd ./${appDir}`)}\n` +
-        `  install dependencies (e.g. w/ ${c.input('npm install')})\n` +
-        `  ${c.input('npx cap sync')}\n\n`,
-    );
-  }
-  output.write(
-    `Add platforms using ${c.input('npx cap add')}:\n` +
-      `  ${c.input('npx cap add android')}\n` +
-      `  ${c.input('npx cap add ios')}\n\n` +
-      `Follow the Developer Workflow guide to get building:\n${c.strong(
-        `https://capacitorjs.com/docs/basics/workflow`,
-      )}\n`,
-  );
 }
 
 export async function getCapacitorPackage(
