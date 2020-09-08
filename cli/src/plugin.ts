@@ -55,7 +55,8 @@ export async function resolvePlugin(
     const rootPath = resolveNode(config, name);
     if (!rootPath) {
       logFatal(
-        `Unable to find node_modules/${name}. Are you sure ${name} is installed?`,
+        `Unable to find node_modules/${name}.\n` +
+          `Are you sure ${c.strong(name)} is installed?`,
       );
     }
 

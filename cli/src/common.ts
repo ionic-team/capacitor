@@ -456,9 +456,8 @@ export async function requireCapacitorPackage(
 
   if (!pkg) {
     logFatal(
-      `Unable to find ${c.strong(
-        `@capacitor/${name}`,
-      )} in your project. Is it installed?`,
+      `Unable to find node_modules/@capacitor/${name}.\n` +
+        `Are you sure ${c.strong(`@capacitor/${name}`)} is installed?`,
     );
   }
   return pkg;
