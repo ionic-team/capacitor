@@ -1,3 +1,4 @@
+import kleur from 'kleur';
 import { Config } from './config';
 import {
   Plugin,
@@ -516,28 +517,55 @@ export async function getCordovaPreferences(config: Config) {
       });
     }
   }
-  if (
-    config.app.extConfig &&
-    config.app.extConfig.cordova &&
-    config.app.extConfig.cordova.preferences &&
-    cordova.preferences
-  ) {
+  const preferencesFound = Object.keys(cordova.preferences).length > 0;
+  if (preferencesFound) {
+    logger.info(
+      `Cordova preferences can be automatically ported to ${c.strong(
+        'capacitor.config.json',
+      )}.\n` +
+        `Keep in mind: Not all values can be automatically migrated from ${c.strong(
+          'config.xml',
+        )}. There may be more work to do.\n` +
+        `More info: ${c.strong(
+          'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
+        )}`,
+    );
     const answers = await prompts(
       [
         {
           type: 'confirm',
           name: 'confirm',
-          message:
-            'capacitor.config.json already contains cordova preferences. Overwrite with values from config.xml?',
+          message: `Migrate Cordova preferences from config.xml?`,
+          initial: true,
         },
       ],
       { onCancel: () => process.exit(1) },
     );
-    if (!answers.confirm) {
+    if (answers.confirm) {
+      if (
+        config.app.extConfig &&
+        config.app.extConfig.cordova &&
+        config.app.extConfig.cordova.preferences
+      ) {
+        const answers = await prompts(
+          [
+            {
+              type: 'confirm',
+              name: 'confirm',
+              message:
+                'capacitor.config.json already contains Cordova preferences. Overwrite?',
+            },
+          ],
+          { onCancel: () => process.exit(1) },
+        );
+        if (!answers.confirm) {
+          cordova = config.app.extConfig.cordova;
+        }
+      }
+    } else {
       cordova = config.app.extConfig.cordova;
     }
-  }
-  if (config.app.extConfig && !cordova.preferences) {
+  } else {
     cordova = config.app.extConfig.cordova;
   }
   return cordova;

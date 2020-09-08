@@ -30,9 +30,7 @@ export async function initCommand(
     if (!checkInteractive(name, id)) {
       return;
     }
-    // Get app name
     const appName = await getName(config, name);
-    // Get app identifier
     const appId = await getAppId(config, id);
 
     await check(config, [
@@ -49,7 +47,6 @@ export async function initCommand(
         config.app.appName = appName;
         config.app.webDir = webDir;
 
-        // Get or create our config
         await getOrCreateConfig(config);
         await mergeConfig(config, {
           appId,
