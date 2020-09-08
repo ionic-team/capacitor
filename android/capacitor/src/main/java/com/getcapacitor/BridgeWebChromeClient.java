@@ -20,8 +20,8 @@ import android.webkit.WebView;
 import com.getcapacitor.plugin.camera.CameraUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.apache.cordova.CordovaPlugin;
 import java.util.List;
+import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
 
 /**
