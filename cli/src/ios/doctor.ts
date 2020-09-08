@@ -7,7 +7,6 @@ import {
   logSuccess,
 } from '../common';
 import { Config } from '../config';
-import { getPlugins, printPlugins } from '../plugin';
 
 export async function doctorIOS(config: Config) {
   // DOCTOR ideas for iOS:
@@ -28,11 +27,9 @@ export async function doctorIOS(config: Config) {
       checkWebDir,
       checkXcode,
     ]);
-    const plugins = await getPlugins(config);
-    printPlugins(plugins, 'ios');
     logSuccess('iOS looking great! 👌');
   } catch (e) {
-    logFatal(e);
+    logFatal(e.stack ?? e);
   }
 }
 

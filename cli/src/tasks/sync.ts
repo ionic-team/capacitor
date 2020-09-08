@@ -1,17 +1,11 @@
+import c from '../colors';
 import { Config } from '../config';
 import { copy, copyCommand } from './copy';
 import { update, updateChecks, updateCommand } from './update';
-import {
-  check,
-  checkPackage,
-  checkWebDir,
-  log,
-  logError,
-  logFatal,
-  logInfo,
-} from '../common';
+import { check, checkPackage, checkWebDir, logFatal } from '../common';
 
 import { allSerial } from '../util/promise';
+import { logger } from '../log';
 
 /**
  * Sync is a copy and an update in one.
@@ -25,15 +19,16 @@ export async function syncCommand(
     try {
       await copyCommand(config, selectedPlatformName);
     } catch (e) {
-      logError(e);
+      logger.error(e.stack ?? e);
     }
     await updateCommand(config, selectedPlatformName, deployment);
   } else {
     const then = +new Date();
     const platforms = config.selectPlatforms(selectedPlatformName);
     if (platforms.length === 0) {
-      logInfo(
-        `There are no platforms to sync yet. Create one with "capacitor create".`,
+      logger.info(
+        `There are no platforms to sync yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
       );
       return;
     }
@@ -50,9 +45,9 @@ export async function syncCommand(
       );
       const now = +new Date();
       const diff = (now - then) / 1000;
-      log(`Sync finished in ${diff}s`);
+      logger.info(`Sync finished in ${diff}s`);
     } catch (e) {
-      logFatal(e);
+      logFatal(e.stack ?? e);
     }
   }
 }
@@ -65,7 +60,7 @@ export async function sync(
   try {
     await copy(config, platformName);
   } catch (e) {
-    logError(e);
+    logger.error(e.stack ?? e);
   }
   await update(config, platformName, deployment);
 }

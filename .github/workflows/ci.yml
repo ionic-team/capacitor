@@ -115,6 +115,8 @@ jobs:
         with:
           node-version: 14.x
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Restore Dependency Cache
         uses: actions/cache@v1
         with:

@@ -1,3 +1,4 @@
+import c from '../colors';
 import { Config } from '../config';
 import { isInstalled, checkCapacitorPlatform } from '../common';
 import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
@@ -30,7 +31,12 @@ export async function checkIOSPackage(config: Config): Promise<string | null> {
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
   if (!(await isInstalled('pod')) && config.cli.os === 'mac') {
-    return 'cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation';
+    return (
+      `CocoaPods is not installed.\n` +
+      `See this install guide: ${c.strong(
+        'https://guides.cocoapods.org/using/getting-started.html#installation',
+      )}`
+    );
   }
   return null;
 }
@@ -38,7 +44,10 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
 export async function checkIOSProject(config: Config): Promise<string | null> {
   const exists = config.platformDirExists('ios');
   if (exists === null) {
-    return 'iOS was not created yet. Run `capacitor create ios`.';
+    return (
+      `${c.strong('ios')} platform has not been added yet.\n` +
+      `Use ${c.input(`npx cap add ios`)} to add the platform to your project.`
+    );
   }
   return null;
 }

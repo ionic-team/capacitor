@@ -1,4 +1,6 @@
-import { logError } from '../common';
+import { TERMINAL_INFO } from '@ionic/utils-terminal';
+import c from '../colors';
+import { logger } from '../log';
 
 // Given input variables to a command, make sure all are provided if the terminal
 // is not interactive (because we won't be able to prompt the user)
@@ -16,16 +18,16 @@ export const checkInteractive = (...args: string[]) => {
   // Make sure none of the provided args are empty, otherwise print the interactive
   // warning and return false
   if (!!args.filter(arg => !!!arg).length) {
-    logError(
-      'Non-interactive shell detected. Run the command with --help to see a list of arguments that must be provided.',
+    logger.error(
+      `Non-interactive shell detected.\n` +
+        `Run the command with ${c.input(
+          '--help',
+        )} to see a list of arguments that must be provided.`,
     );
     return false;
   }
   return true;
 };
 
-export const isInteractive = () => {
-  return Boolean(
-    process.stdin.isTTY && process.stdout.isTTY && process.stderr.isTTY,
-  );
-};
+export const isInteractive = (): boolean =>
+  TERMINAL_INFO.tty && !TERMINAL_INFO.ci;
