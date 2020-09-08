@@ -1,3 +1,4 @@
+import kleur from 'kleur';
 import { Config } from './config';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
@@ -361,7 +362,7 @@ export async function getName(config: Config, name: string) {
         {
           type: 'text',
           name: 'name',
-          message: `App name`,
+          message: `What is the name of your app?\n`,
           initial: config.app.appName
             ? config.app.appName
             : config.app.package && config.app.package.name
@@ -383,7 +384,13 @@ export async function getAppId(config: Config, id: string) {
         {
           type: 'text',
           name: 'id',
-          message: 'App Package ID (in Java package format, no dashes)',
+          message:
+            `What should be the Package ID for your app?\n\n` +
+            `${kleur.reset(
+              `    Package IDs (aka Bundle ID in iOS and Application ID in Android) are unique\n` +
+                `    identifiers for apps. They must be in reverse domain name notation, generally\n` +
+                `    representing a domain name that you or your company owns.\n`,
+            )}\n`,
           initial: config.app.appId ? config.app.appId : 'com.example.app',
         },
       ],
