@@ -39,7 +39,6 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .option(
       '--web-dir [value]',
       'Optional: Directory of your projects built web assets',
-      config.app.webDir ? config.app.webDir : 'www',
     )
     .action((appName, appId, { webDir }) => {
       return initCommand(config, appName, appId, webDir);

@@ -1,4 +1,3 @@
-import kleur from 'kleur';
 import { Config } from './config';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
@@ -16,7 +15,6 @@ import c from './colors';
 import { output, logger } from './log';
 import semver from 'semver';
 import which from 'which';
-import prompts from 'prompts';
 import { PackageJson } from './definitions';
 
 export type CheckFunction = (
@@ -353,54 +351,6 @@ export async function runTask<T>(
     chain.fail();
     throw e;
   }
-}
-
-export async function getName(config: Config, name: string) {
-  if (!name) {
-    logger.info(
-      `What is the name of your app?\n` +
-        `This should be a human-friendly app name, like what you'd see in the App Store.`,
-    );
-    const answers = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'name',
-          message: `Name`,
-          initial: config.app.appName
-            ? config.app.appName
-            : config.app.package && config.app.package.name
-            ? config.app.package.name
-            : 'App',
-        },
-      ],
-      { onCancel: () => process.exit(1) },
-    );
-    return answers.name;
-  }
-  return name;
-}
-
-export async function getAppId(config: Config, id: string) {
-  if (!id) {
-    logger.info(
-      `What should be the Package ID for your app?\n` +
-        `Package IDs (aka Bundle ID in iOS and Application ID in Android) are unique identifiers for apps. They must be in reverse domain name notation, generally representing a domain name that you or your company owns.`,
-    );
-    const answers = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'id',
-          message: `Package ID`,
-          initial: config.app.appId ? config.app.appId : 'com.example.app',
-        },
-      ],
-      { onCancel: () => process.exit(1) },
-    );
-    return answers.id;
-  }
-  return id;
 }
 
 export async function copyTemplate(src: string, dst: string) {
