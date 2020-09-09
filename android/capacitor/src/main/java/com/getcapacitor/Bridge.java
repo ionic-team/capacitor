@@ -26,7 +26,6 @@ import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.PushNotifications;
-import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.background.BackgroundTask;
