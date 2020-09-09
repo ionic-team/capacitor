@@ -1,4 +1,3 @@
-import kleur from 'kleur';
 import { Config } from './config';
 import {
   Plugin,
