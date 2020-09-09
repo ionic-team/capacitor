@@ -1,9 +1,9 @@
-import { join } from 'path';
+import { dirname, join } from 'path';
 
 import c from './colors';
 import { Config } from './config';
 import { logFatal, readJSON, readXML, resolveNode } from './common';
-import { logger, output } from './log';
+import { logger } from './log';
 
 export const enum PluginType {
   Core,
@@ -52,15 +52,15 @@ export async function resolvePlugin(
   name: string,
 ): Promise<Plugin | null> {
   try {
-    const rootPath = resolveNode(config, name);
-    if (!rootPath) {
+    const packagePath = resolveNode(config.app.rootDir, name, 'package');
+    if (!packagePath) {
       logFatal(
         `Unable to find node_modules/${name}.\n` +
           `Are you sure ${c.strong(name)} is installed?`,
       );
     }
 
-    const packagePath = join(rootPath, 'package.json');
+    const rootPath = dirname(packagePath);
     const meta = await readJSON(packagePath);
     if (!meta) {
       return null;
@@ -70,7 +70,7 @@ export async function resolvePlugin(
         id: name,
         name: fixName(name),
         version: meta.version,
-        rootPath: rootPath,
+        rootPath,
         repository: meta.repository,
         manifest: meta.capacitor,
       };
@@ -206,7 +206,7 @@ export function getFilePath(config: Config, plugin: Plugin, path: string) {
       ];
     }
 
-    let filePath = resolveNode(config, ...pathSegments);
+    const filePath = resolveNode(config.app.rootDir, ...pathSegments);
     if (!filePath) {
       throw new Error(`Can't resolve module ${pathSegments[0]}`);
     }

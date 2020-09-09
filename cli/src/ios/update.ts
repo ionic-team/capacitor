@@ -17,7 +17,7 @@ import {
   writeFileSync,
 } from '../util/fs';
 import { Config } from '../config';
-import { join, relative, resolve } from 'path';
+import { dirname, join, relative, resolve } from 'path';
 import { realpathSync } from 'fs';
 import {
   Plugin,
@@ -111,7 +111,11 @@ export async function updatePodfile(
 }
 
 export function generatePodFile(config: Config, plugins: Plugin[]) {
-  const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
+  const capacitoriOSPath = resolveNode(
+    config.app.rootDir,
+    '@capacitor/ios',
+    'package',
+  );
   if (!capacitoriOSPath) {
     logFatal(
       `Unable to find node_modules/@capacitor/ios.\n` +
@@ -121,7 +125,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
 
   const podfilePath = join(config.app.rootDir, 'ios', 'App');
   const relativeCapacitoriOSPath = convertToUnixPath(
-    relative(podfilePath, realpathSync(capacitoriOSPath)),
+    relative(podfilePath, realpathSync(dirname(capacitoriOSPath))),
   );
 
   const capacitorPlugins = plugins.filter(

@@ -377,7 +377,11 @@ export async function getCapacitorPackage(
   config: Config,
   name: string,
 ): Promise<PackageJson | null> {
-  const packagePath = resolveNode(config, `@capacitor/${name}`, 'package.json');
+  const packagePath = resolveNode(
+    config.app.rootDir,
+    `@capacitor/${name}`,
+    'package',
+  );
 
   if (!packagePath) {
     return null;
@@ -441,57 +445,44 @@ export function resolvePlatform(
   platform: string,
 ): string | null {
   if (platform[0] !== '@') {
-    const core = resolveNode(config, `@capacitor/${platform}`);
+    const core = resolveNode(
+      config.app.rootDir,
+      `@capacitor/${platform}`,
+      'package',
+    );
 
     if (core) {
-      return core;
+      return dirname(core);
     }
 
-    const community = resolveNode(config, `@capacitor-community/${platform}`);
+    const community = resolveNode(
+      config.app.rootDir,
+      `@capacitor-community/${platform}`,
+      'package',
+    );
 
     if (community) {
-      return community;
+      return dirname(community);
     }
   }
 
   // third-party
-  return resolveNode(config, platform);
+  const thirdParty = resolveNode(config.app.rootDir, platform, 'package');
+
+  if (thirdParty) {
+    return dirname(thirdParty);
+  }
+
+  return null;
 }
 
 export function resolveNode(
-  config: Config,
+  root: string,
   ...pathSegments: string[]
 ): string | null {
-  const id = pathSegments[0];
-  const path = pathSegments.slice(1);
-
-  let modulePath;
-  const starts = [config.app.rootDir];
-  for (let start of starts) {
-    modulePath = resolveNodeFrom(start, id);
-    if (modulePath) {
-      break;
-    }
-  }
-  if (!modulePath) {
+  try {
+    return require.resolve(pathSegments.join('/'), { paths: [root] });
+  } catch (e) {
     return null;
-  }
-
-  return join(modulePath, ...path);
-}
-
-export function resolveNodeFrom(start: string, id: string): string | null {
-  const rootPath = parse(start).root;
-  let basePath = resolve(start);
-  let modulePath;
-  while (true) {
-    modulePath = join(basePath, 'node_modules', id);
-    if (existsSync(modulePath)) {
-      return modulePath;
-    }
-    if (basePath === rootPath) {
-      return null;
-    }
-    basePath = dirname(basePath);
   }
 }

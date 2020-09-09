@@ -60,7 +60,11 @@ async function printInstalledPackages(config: Config) {
   ];
   await Promise.all(
     packageNames.map(async packageName => {
-      const packagePath = resolveNode(config, packageName, 'package.json');
+      const packagePath = resolveNode(
+        config.app.rootDir,
+        packageName,
+        'package',
+      );
       await printPackageVersion(packageName, packagePath);
     }),
   );

@@ -7,7 +7,7 @@ import { join } from 'path';
 export async function copyWeb(config: Config) {
   if (config.app.bundledWebRuntime) {
     const runtimePath = resolveNode(
-      config,
+      config.app.rootDir,
       '@capacitor/core',
       'dist',
       'capacitor.js',

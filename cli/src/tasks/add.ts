@@ -69,8 +69,8 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
         () => checkPackage(config),
         () => checkAppConfig(config),
         ...addChecks(config, platformName),
-        () => checkWebDir(config),
       ]);
+      await check([() => checkWebDir(config)]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
