@@ -1,3 +1,4 @@
+import { wordWrap } from '@ionic/cli-framework-output';
 import { Config } from './config';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
@@ -15,6 +16,7 @@ import c from './colors';
 import { output, logger } from './log';
 import semver from 'semver';
 import which from 'which';
+import prompts, { Answers, PromptObject } from 'prompts';
 import { PackageJson } from './definitions';
 
 export type CheckFunction = (
@@ -257,6 +259,18 @@ export async function mergeConfig(config: Config, settings: any) {
 
   // Store our newly created or found external config as the default
   config.loadExternalConfig();
+}
+
+export async function logPrompt<T extends string>(
+  msg: string,
+  prompt: PromptObject<T>,
+): Promise<Answers<T>> {
+  logger.log({
+    msg: `${c.input('[?]')} ${wordWrap(msg, { indentation: 4 })}`,
+    logger,
+    format: false,
+  });
+  return prompts(prompt, { onCancel: () => process.exit(1) });
 }
 
 export function logSuccess(msg: string) {

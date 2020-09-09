@@ -23,6 +23,7 @@ import c from './colors';
 import {
   buildXmlElement,
   logFatal,
+  logPrompt,
   parseXML,
   readXML,
   resolveNode,
@@ -518,27 +519,24 @@ export async function getCordovaPreferences(config: Config) {
     }
   }
   if (cordova.preferences && Object.keys(cordova.preferences).length > 0) {
-    logger.info(
-      `Cordova preferences can be automatically ported to ${c.strong(
-        'capacitor.config.json',
-      )}.\n` +
+    const answers = await logPrompt(
+      `${c.strong(
+        `Cordova preferences can be automatically ported to ${c.strong(
+          'capacitor.config.json',
+        )}.`,
+      )}\n` +
         `Keep in mind: Not all values can be automatically migrated from ${c.strong(
           'config.xml',
         )}. There may be more work to do.\n` +
         `More info: ${c.strong(
           'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
         )}`,
-    );
-    const answers = await prompts(
-      [
-        {
-          type: 'confirm',
-          name: 'confirm',
-          message: `Migrate Cordova preferences from config.xml?`,
-          initial: true,
-        },
-      ],
-      { onCancel: () => process.exit(1) },
+      {
+        type: 'confirm',
+        name: 'confirm',
+        message: `Migrate Cordova preferences from config.xml?`,
+        initial: true,
+      },
     );
     if (answers.confirm) {
       if (

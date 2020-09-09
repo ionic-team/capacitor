@@ -9,6 +9,7 @@ import {
   mergeConfig,
   runTask,
   logSuccess,
+  logPrompt,
 } from '../common';
 import { getCordovaPreferences } from '../cordova';
 import { emoji as _e } from '../util/emoji';
@@ -82,24 +83,19 @@ function printNextSteps() {
 
 async function getName(config: Config, name: string) {
   if (!name) {
-    logger.info(
-      `What is the name of your app?\n` +
+    const answers = await logPrompt(
+      `${c.strong(`What is the name of your app?`)}\n` +
         `This should be a human-friendly app name, like what you'd see in the App Store.`,
-    );
-    const answers = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'name',
-          message: `Name`,
-          initial: config.app.appName
-            ? config.app.appName
-            : config.app.package && config.app.package.name
-            ? config.app.package.name
-            : 'App',
-        },
-      ],
-      { onCancel: () => process.exit(1) },
+      {
+        type: 'text',
+        name: 'name',
+        message: `Name`,
+        initial: config.app.appName
+          ? config.app.appName
+          : config.app.package && config.app.package.name
+          ? config.app.package.name
+          : 'App',
+      },
     );
     return answers.name;
   }
@@ -108,20 +104,15 @@ async function getName(config: Config, name: string) {
 
 async function getAppId(config: Config, id: string) {
   if (!id) {
-    logger.info(
-      `What should be the Package ID for your app?\n` +
+    const answers = await logPrompt(
+      `${c.strong(`What should be the Package ID for your app?`)}\n` +
         `Package IDs (aka Bundle ID in iOS and Application ID in Android) are unique identifiers for apps. They must be in reverse domain name notation, generally representing a domain name that you or your company owns.`,
-    );
-    const answers = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'id',
-          message: `Package ID`,
-          initial: config.app.appId ? config.app.appId : 'com.example.app',
-        },
-      ],
-      { onCancel: () => process.exit(1) },
+      {
+        type: 'text',
+        name: 'id',
+        message: `Package ID`,
+        initial: config.app.appId ? config.app.appId : 'com.example.app',
+      },
     );
     return answers.id;
   }
@@ -130,22 +121,17 @@ async function getAppId(config: Config, id: string) {
 
 async function getWebDir(config: Config, webDir: string) {
   if (!webDir) {
-    logger.info(
-      `What is the web asset directory for your app?\n` +
+    const answers = await logPrompt(
+      `${c.strong(`What is the web asset directory for your app?`)}\n` +
         `This directory should contain the final ${c.strong(
           'index.html',
         )} of your app.`,
-    );
-    const answers = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'webDir',
-          message: `Web asset directory`,
-          initial: config.app.webDir ? config.app.webDir : 'www',
-        },
-      ],
-      { onCancel: () => process.exit(1) },
+      {
+        type: 'text',
+        name: 'webDir',
+        message: `Web asset directory`,
+        initial: config.app.webDir ? config.app.webDir : 'www',
+      },
     );
     return answers.webDir;
   }
