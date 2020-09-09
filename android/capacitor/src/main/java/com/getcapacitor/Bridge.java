@@ -400,7 +400,6 @@ public class Bridge {
         this.registerPlugin(Keyboard.class);
         this.registerPlugin(Modals.class);
         this.registerPlugin(PushNotifications.class);
-        this.registerPlugin(Share.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(StatusBar.class);
         this.registerPlugin(com.getcapacitor.plugin.Toast.class);
