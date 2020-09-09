@@ -493,11 +493,7 @@ export function getIncompatibleCordovaPlugins(platform: string) {
     'cordova-support-google-services',
   ];
   if (platform === 'ios') {
-    pluginList.push(
-      'cordova-plugin-googlemaps',
-      'cordova-plugin-statusbar',
-      '@ionic-enterprise/statusbar',
-    );
+    pluginList.push('cordova-plugin-statusbar', '@ionic-enterprise/statusbar');
   }
   if (platform === 'android') {
     pluginList.push('cordova-plugin-compat');
