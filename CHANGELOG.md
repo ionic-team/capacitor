@@ -1,3 +1,18 @@
+## [2.4.1](https://github.com/ionic-team/capacitor/compare/2.4.0...2.4.1) (2020-09-09)
+
+
+### Bug Fixes
+
+* fix(cli): replace SDK variables with default values on Cordova plugins (#3525) ([090427a](https://github.com/ionic-team/capacitor/commit/090427a)), closes [#3525](https://github.com/ionic-team/capacitor/issues/3525)
+* fix(cordova): add CDVPlugin+Resources category for better plugin support (#3380) ([8d89b91](https://github.com/ionic-team/capacitor/commit/8d89b91)), closes [#3380](https://github.com/ionic-team/capacitor/issues/3380)
+
+
+### Chores
+
+* chore(cli): remove cordova-plugin-googlemaps from skip list (#3436) ([cfb74af](https://github.com/ionic-team/capacitor/commit/cfb74af)), closes [#3436](https://github.com/ionic-team/capacitor/issues/3436)
+
+
+
 ## [2.4.0](https://github.com/ionic-team/capacitor/compare/2.3.0...2.4.0) (2020-07-27)
 
 
