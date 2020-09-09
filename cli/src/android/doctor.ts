@@ -7,7 +7,11 @@ import { join } from 'path';
 
 export async function doctorAndroid(config: Config) {
   try {
-    await check(config, [checkAndroidInstalled, checkGradlew, checkAppSrcDirs]);
+    await check([
+      checkAndroidInstalled,
+      () => checkGradlew(config),
+      () => checkAppSrcDirs(config),
+    ]);
     logSuccess('Android looking great! 👌');
   } catch (e) {
     logFatal(e.stack ?? e);

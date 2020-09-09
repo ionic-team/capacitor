@@ -1,7 +1,6 @@
 import c from '../colors';
-import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
+import { getIOSPlugins } from './common';
 import {
-  CheckFunction,
   checkPlatformVersions,
   logFatal,
   resolveNode,
@@ -36,10 +35,6 @@ import {
   logCordovaManualSteps,
 } from '../cordova';
 
-export const updateIOSChecks: CheckFunction[] = [
-  checkCocoaPods,
-  checkIOSProject,
-];
 const platform = 'ios';
 
 export async function updateIOS(config: Config, deployment: boolean) {

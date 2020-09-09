@@ -3,12 +3,8 @@ import { join, relative } from 'path';
 
 import c from '../colors';
 import { Config } from '../config';
-import { copyTemplate, runCommand, runTask, CheckFunction } from '../common';
+import { copyTemplate, runCommand, runTask } from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
-
-import { checkAndroidPackage } from './common';
-
-export const addAndroidChecks: CheckFunction[] = [checkAndroidPackage];
 
 export async function addAndroid(config: Config) {
   const nativeRelDir = relative(config.app.rootDir, config.android.platformDir);

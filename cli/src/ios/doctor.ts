@@ -21,10 +21,10 @@ export async function doctorIOS(config: Config) {
   // check online datebase of common errors
   // check if www folder is empty (index.html does not exist)
   try {
-    await check(config, [
-      checkCocoaPods,
-      checkIOSProject,
-      checkWebDir,
+    await check([
+      () => checkCocoaPods(config),
+      () => checkIOSProject(config),
+      () => checkWebDir(config),
       checkXcode,
     ]);
     logSuccess('iOS looking great! 👌');

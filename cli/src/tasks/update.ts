@@ -1,7 +1,7 @@
 import c from '../colors';
 import { Config } from '../config';
 import { updateAndroid } from '../android/update';
-import { updateIOS, updateIOSChecks } from '../ios/update';
+import { updateIOS } from '../ios/update';
 import { allSerial } from '../util/promise';
 import {
   CheckFunction,
@@ -13,6 +13,7 @@ import {
   runTask,
 } from '../common';
 import { logger } from '../log';
+import { checkCocoaPods, checkIOSProject } from '../ios/common';
 
 export async function updateCommand(
   config: Config,
@@ -37,7 +38,10 @@ export async function updateCommand(
       return;
     }
     try {
-      await check(config, [checkPackage, ...updateChecks(config, platforms)]);
+      await check([
+        () => checkPackage(config),
+        ...updateChecks(config, platforms),
+      ]);
 
       await allSerial(
         platforms.map(platformName => async () =>
@@ -60,7 +64,10 @@ export function updateChecks(
   const checks: CheckFunction[] = [];
   for (let platformName of platforms) {
     if (platformName === config.ios.name) {
-      checks.push(...updateIOSChecks);
+      checks.push(
+        () => checkCocoaPods(config),
+        () => checkIOSProject(config),
+      );
     } else if (platformName === config.android.name) {
       return [];
     } else if (platformName === config.web.name) {

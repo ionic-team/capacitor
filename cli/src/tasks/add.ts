@@ -1,11 +1,19 @@
 import c from '../colors';
 import { Config } from '../config';
 import { OS } from '../definitions';
-import { addAndroid, addAndroidChecks } from '../android/add';
-import { addIOS, addIOSChecks } from '../ios/add';
-import { editProjectSettingsAndroid } from '../android/common';
-import { editProjectSettingsIOS } from '../ios/common';
+import { addAndroid } from '../android/add';
+import { addIOS } from '../ios/add';
 import {
+  editProjectSettingsAndroid,
+  checkAndroidPackage,
+} from '../android/common';
+import {
+  editProjectSettingsIOS,
+  checkIOSPackage,
+  checkCocoaPods,
+} from '../ios/common';
+import {
+  CheckFunction,
   check,
   checkAppConfig,
   checkPackage,
@@ -14,12 +22,8 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
-  writePrettyJSON,
 } from '../common';
 import { sync } from './sync';
-
-import { resolve } from 'path';
-import prompts from 'prompts';
 import { logger } from '../log';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
@@ -61,12 +65,12 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     }
 
     try {
-      await check(config, [
-        checkPackage,
-        checkAppConfig,
+      await check([
+        () => checkPackage(config),
+        () => checkAppConfig(config),
         ...addChecks(config, platformName),
+        () => checkWebDir(config),
       ]);
-      await check(config, [checkWebDir]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
@@ -90,11 +94,14 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   }
 }
 
-export function addChecks(config: Config, platformName: string) {
+export function addChecks(
+  config: Config,
+  platformName: string,
+): CheckFunction[] {
   if (platformName === config.ios.name) {
-    return addIOSChecks;
+    return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
   } else if (platformName === config.android.name) {
-    return addAndroidChecks;
+    return [() => checkAndroidPackage(config)];
   } else if (platformName === config.web.name) {
     return [];
   } else {

@@ -33,9 +33,9 @@ export async function syncCommand(
       return;
     }
     try {
-      await check(config, [
-        checkPackage,
-        checkWebDir,
+      await check([
+        () => checkPackage(config),
+        () => checkWebDir(config),
         ...updateChecks(config, platforms),
       ]);
       await allSerial(

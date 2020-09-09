@@ -19,16 +19,10 @@ import which from 'which';
 import prompts, { Answers, PromptObject } from 'prompts';
 import { PackageJson } from './definitions';
 
-export type CheckFunction = (
-  config: Config,
-  ...args: any[]
-) => Promise<string | null>;
+export type CheckFunction = () => Promise<string | null>;
 
-export async function check(
-  config: Config,
-  checks: CheckFunction[],
-): Promise<void> {
-  const results = await Promise.all(checks.map(f => f(config)));
+export async function check(checks: CheckFunction[]): Promise<void> {
+  const results = await Promise.all(checks.map(f => f()));
   const errors = results.filter(r => r != null) as string[];
   if (errors.length > 0) {
     throw errors.join('\n');
@@ -250,8 +244,6 @@ export async function getOrCreateConfig(config: Config) {
 }
 
 export async function mergeConfig(config: Config, settings: any) {
-  const configPath = join(config.app.rootDir, config.app.extConfigName);
-
   await writePrettyJSON(config.app.extConfigFilePath, {
     ...config.app.extConfig,
     ...settings,

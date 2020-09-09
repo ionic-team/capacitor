@@ -14,8 +14,7 @@ import {
 import { getCordovaPreferences } from '../cordova';
 import { emoji as _e } from '../util/emoji';
 import { checkInteractive, isInteractive } from '../util/term';
-import { logger, output } from '../log';
-import prompts from 'prompts';
+import { output } from '../log';
 
 export async function initCommand(
   config: Config,
@@ -33,9 +32,9 @@ export async function initCommand(
       ? await getWebDir(config, webDirFromCLI)
       : webDirFromCLI;
 
-    await check(config, [
-      config => checkAppName(config, appName),
-      config => checkAppId(config, appId),
+    await check([
+      () => checkAppName(config, appName),
+      () => checkAppId(config, appId),
     ]);
 
     const cordova = await getCordovaPreferences(config);
