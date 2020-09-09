@@ -37,7 +37,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .command('init [appName] [appId]')
     .description('create a capacitor.config.json file')
     .option(
-      '--web-dir [value]',
+      '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
     )
     .action((appName, appId, { webDir }) => {

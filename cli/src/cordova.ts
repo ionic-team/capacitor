@@ -517,8 +517,7 @@ export async function getCordovaPreferences(config: Config) {
       });
     }
   }
-  const preferencesFound = Object.keys(cordova.preferences).length > 0;
-  if (preferencesFound) {
+  if (cordova.preferences && Object.keys(cordova.preferences).length > 0) {
     logger.info(
       `Cordova preferences can be automatically ported to ${c.strong(
         'capacitor.config.json',
@@ -559,14 +558,14 @@ export async function getCordovaPreferences(config: Config) {
           { onCancel: () => process.exit(1) },
         );
         if (!answers.confirm) {
-          cordova = config.app.extConfig.cordova;
+          cordova = config.app.extConfig?.cordova;
         }
       }
     } else {
-      cordova = config.app.extConfig.cordova;
+      cordova = config.app.extConfig?.cordova;
     }
   } else {
-    cordova = config.app.extConfig.cordova;
+    cordova = config.app.extConfig?.cordova;
   }
   return cordova;
 }

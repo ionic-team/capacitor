@@ -12,7 +12,7 @@ import {
 } from '../common';
 import { getCordovaPreferences } from '../cordova';
 import { emoji as _e } from '../util/emoji';
-import { checkInteractive } from '../util/term';
+import { checkInteractive, isInteractive } from '../util/term';
 import { logger, output } from '../log';
 import prompts from 'prompts';
 
@@ -20,7 +20,7 @@ export async function initCommand(
   config: Config,
   name: string,
   id: string,
-  webDirFromCLI: string,
+  webDirFromCLI = 'www',
 ) {
   try {
     if (!checkInteractive(name, id)) {
@@ -28,7 +28,9 @@ export async function initCommand(
     }
     const appName = await getName(config, name);
     const appId = await getAppId(config, id);
-    const webDir = await getWebDir(config, webDirFromCLI);
+    const webDir = isInteractive()
+      ? await getWebDir(config, webDirFromCLI)
+      : webDirFromCLI;
 
     await check(config, [
       config => checkAppName(config, appName),
