@@ -1,15 +1,9 @@
+import c from '../colors';
 import { Config } from '../config';
-import {
-  log,
-  logError,
-  logFatal,
-  logInfo,
-  resolvePlatform,
-  runPlatformHook,
-  runTask,
-} from '../common';
+import { logFatal, resolvePlatform, runPlatformHook, runTask } from '../common';
 import { openAndroid } from '../android/open';
 import { openIOS } from '../ios/open';
+import { logger } from '../log';
 
 export async function openCommand(
   config: Config,
@@ -20,14 +14,15 @@ export async function openCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:open');
     } else {
-      logError(`platform ${selectedPlatformName} not found`);
+      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
   } else {
     const platforms = config.selectPlatforms(selectedPlatformName);
     let platformName: string;
     if (platforms.length === 0) {
-      logInfo(
-        `There are no platforms to open yet. Create one with "capacitor add".`,
+      logger.info(
+        `There are no platforms to open yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
       );
       return;
     } else if (platforms.length === 1) {
@@ -42,7 +37,7 @@ export async function openCommand(
     try {
       await open(config, platformName);
     } catch (e) {
-      logFatal(e);
+      logFatal(e.stack ?? e);
     }
   }
 }

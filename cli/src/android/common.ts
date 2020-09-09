@@ -1,4 +1,4 @@
-import { runCommand, checkCapacitorPlatform } from '../common';
+import { checkCapacitorPlatform } from '../common';
 import { Config } from '../config';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { mkdirs } from 'fs-extra';
@@ -18,10 +18,6 @@ export async function checkAndroidPackage(
   config: Config,
 ): Promise<string | null> {
   return checkCapacitorPlatform(config, 'android');
-}
-
-export async function gradleClean(config: Config) {
-  await runCommand(`cd ${config.android.platformDir} && ./gradlew clean`);
 }
 
 export function getAndroidPlugins(allPlugins: Plugin[]): Plugin[] {
