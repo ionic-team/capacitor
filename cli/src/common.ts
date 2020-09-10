@@ -2,14 +2,8 @@ import { wordWrap } from '@ionic/cli-framework-output';
 import { Config, PackageJson, ExternalConfig } from './definitions';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
-import { basename, dirname, join, resolve } from 'path';
-import {
-  copyAsync,
-  existsAsync,
-  readFileAsync,
-  renameAsync,
-  writeFileAsync,
-} from './util/fs';
+import { dirname, join } from 'path';
+import { copyAsync, existsAsync, readFileAsync, renameAsync } from './util/fs';
 import { readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
 import c from './colors';
@@ -17,6 +11,7 @@ import { output, logger } from './log';
 import semver from 'semver';
 import which from 'which';
 import prompts, { Answers, PromptObject } from 'prompts';
+import { writeJSON } from 'fs-extra';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -158,10 +153,6 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
-export function writePrettyJSON(path: string, data: any) {
-  return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
-}
-
 export function readXML(path: string): Promise<any> {
   return new Promise((resolve, reject) => {
     readFile(path, 'utf8', async (err, xmlStr) => {
@@ -217,15 +208,19 @@ export function buildXmlElement(configElement: any, rootName: string) {
 }
 
 export async function mergeConfig(config: Config, extConfig: ExternalConfig) {
-  await writePrettyJSON(config.app.extConfigFilePath, {
-    plugins: {
-      SplashScreen: {
-        launchShowDuration: 0,
+  await writeJSON(
+    config.app.extConfigFilePath,
+    {
+      plugins: {
+        SplashScreen: {
+          launchShowDuration: 0,
+        },
       },
+      ...config.app.extConfig,
+      ...extConfig,
     },
-    ...config.app.extConfig,
-    ...extConfig,
-  });
+    { spaces: 2 },
+  );
 }
 
 export async function logPrompt<T extends string>(

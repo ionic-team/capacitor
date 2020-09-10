@@ -20,7 +20,7 @@ import {
   removeSync,
   writeFileAsync,
 } from '../util/fs';
-import { join, relative, resolve } from 'path';
+import { dirname, join, relative, resolve } from 'path';
 import {
   Plugin,
   PluginType,
@@ -73,17 +73,22 @@ export async function installGradlePlugins(
   capacitorPlugins: Plugin[],
   cordovaPlugins: Plugin[],
 ) {
-  const capacitorAndroidPath = resolveNode(
+  const capacitorAndroidPackagePath = resolveNode(
     config.app.rootDir,
     '@capacitor/android',
-    'capacitor',
+    'package',
   );
-  if (!capacitorAndroidPath) {
+  if (!capacitorAndroidPackagePath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/android/capacitor\n` +
+      `Unable to find node_modules/@capacitor/android\n` +
         `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );
   }
+
+  const capacitorAndroidPath = resolve(
+    dirname(capacitorAndroidPackagePath),
+    'capacitor',
+  );
 
   const settingsPath = join(config.app.rootDir, 'android');
   const dependencyPath = join(config.app.rootDir, 'android', 'app');

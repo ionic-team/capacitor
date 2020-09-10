@@ -19,7 +19,7 @@ export async function initCommand(
   config: Config,
   name: string,
   id: string,
-  webDirFromCLI = 'www',
+  webDirFromCLI?: string,
 ) {
   try {
     if (!checkInteractive(name, id)) {
@@ -112,7 +112,7 @@ async function getAppId(config: Config, id: string) {
   return id;
 }
 
-async function getWebDir(config: Config, webDir: string) {
+async function getWebDir(config: Config, webDir?: string) {
   if (!webDir) {
     const answers = await logPrompt(
       `${c.strong(`What is the web asset directory for your app?`)}\n` +
