@@ -350,7 +350,7 @@ export async function getCapacitorPackage(
   const packagePath = resolveNode(
     config.app.rootDir,
     `@capacitor/${name}`,
-    'package',
+    'package.json',
   );
 
   if (!packagePath) {
@@ -394,7 +394,7 @@ export async function getPlatformDirectory(
   config: Config,
   platform: string,
 ): Promise<string | null> {
-  const platformDir = platform === 'web' ? 'www' : platform;
+  const platformDir = platform === 'web' ? config.app.webDir : platform;
   const platformPath = join(config.app.rootDir, platformDir);
 
   if (await existsAsync(platformPath)) {
@@ -534,7 +534,7 @@ export function resolvePlatform(
     const core = resolveNode(
       config.app.rootDir,
       `@capacitor/${platform}`,
-      'package',
+      'package.json',
     );
 
     if (core) {
@@ -544,7 +544,7 @@ export function resolvePlatform(
     const community = resolveNode(
       config.app.rootDir,
       `@capacitor-community/${platform}`,
-      'package',
+      'package.json',
     );
 
     if (community) {
@@ -553,7 +553,7 @@ export function resolvePlatform(
   }
 
   // third-party
-  const thirdParty = resolveNode(config.app.rootDir, platform, 'package');
+  const thirdParty = resolveNode(config.app.rootDir, platform, 'package.json');
 
   if (thirdParty) {
     return dirname(thirdParty);

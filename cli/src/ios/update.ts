@@ -114,7 +114,7 @@ function generatePodFile(config: Config, plugins: Plugin[]) {
   const capacitoriOSPath = resolveNode(
     config.app.rootDir,
     '@capacitor/ios',
-    'package',
+    'package.json',
   );
   if (!capacitoriOSPath) {
     logFatal(

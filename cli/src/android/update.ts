@@ -76,7 +76,7 @@ export async function installGradlePlugins(
   const capacitorAndroidPackagePath = resolveNode(
     config.app.rootDir,
     '@capacitor/android',
-    'package',
+    'package.json',
   );
   if (!capacitorAndroidPackagePath) {
     logFatal(

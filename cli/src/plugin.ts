@@ -52,7 +52,7 @@ export async function resolvePlugin(
   name: string,
 ): Promise<Plugin | null> {
   try {
-    const packagePath = resolveNode(config.app.rootDir, name, 'package');
+    const packagePath = resolveNode(config.app.rootDir, name, 'package.json');
     if (!packagePath) {
       logFatal(
         `Unable to find node_modules/${name}.\n` +

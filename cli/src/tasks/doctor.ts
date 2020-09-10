@@ -68,7 +68,7 @@ async function printInstalledPackages(config: Config) {
       const packagePath = resolveNode(
         config.app.rootDir,
         packageName,
-        'package',
+        'package.json',
       );
       await printPackageVersion(packageName, packagePath);
     }),
