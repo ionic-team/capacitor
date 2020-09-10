@@ -96,7 +96,7 @@ export async function updatePodfile(
   const podfileLockPath = join(projectRoot, 'Podfile.lock');
   let podfileContent = await readFileAsync(podfilePath, 'utf8');
   podfileContent = podfileContent.replace(
-    /(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/, // eslint-disable-line no-irregular-whitespace
+    /(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/,
     '$1' + dependenciesContent + '\n  $2',
   );
   podfileContent = podfileContent.replace(
