@@ -15,6 +15,7 @@ import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
 import { emoji as _e } from './util/emoji';
 import { logFatal } from './common';
+import { output } from './log';
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
@@ -34,11 +35,10 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .command('init [appName] [appId]')
-    .description('Initializes a new Capacitor project in the current directory')
+    .description('create a capacitor.config.json file')
     .option(
-      '--web-dir [value]',
+      '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
-      config.app.webDir ? config.app.webDir : 'www',
     )
     .action((appName, appId, { webDir }) => {
       return initCommand(config, appName, appId, webDir);
@@ -119,10 +119,10 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program.arguments('[command]').action(cmd => {
     if (typeof cmd === 'undefined') {
-      console.log(
+      output.write(
         `\n  ${_e('⚡️', '--')}  ${c.strong(
           'Capacitor - Cross-Platform apps with JavaScript and the Web',
-        )}  ${_e('⚡️', '--')}\n`,
+        )}  ${_e('⚡️', '--')}\n\n`,
       );
       program.outputHelp();
     } else {

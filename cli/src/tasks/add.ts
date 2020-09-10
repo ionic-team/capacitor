@@ -66,7 +66,6 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
         checkAppConfig,
         ...addChecks(config, platformName),
       ]);
-      await generateCapacitorConfig(config);
       await check(config, [checkWebDir]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
@@ -89,38 +88,6 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
       logFatal(e.stack ?? e);
     }
   }
-}
-
-export async function generateCapacitorConfig(config: Config) {
-  if (config.foundExternalConfig()) {
-    return;
-  }
-
-  const answers = await prompts(
-    [
-      {
-        type: 'text',
-        name: 'webDir',
-        message:
-          'What directory are your web assets in? (index.html, built JavaScript, etc.):',
-        initial: 'www',
-      },
-    ],
-    { onCancel: () => process.exit(1) },
-  );
-  const webDir = answers.webDir;
-  await runTask(`Creating ${c.strong(config.app.extConfigName)}`, () => {
-    return writePrettyJSON(config.app.extConfigFilePath, {
-      webDir: webDir,
-    });
-  });
-  logger.info(
-    `You can change the web directory anytime by modifying ${c.strong(
-      config.app.extConfigName,
-    )}`,
-  );
-  config.app.webDir = webDir;
-  config.app.webDirAbs = resolve(config.app.rootDir, webDir);
 }
 
 export function addChecks(config: Config, platformName: string) {

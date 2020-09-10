@@ -1,3 +1,4 @@
+import { wordWrap } from '@ionic/cli-framework-output';
 import { Config } from './config';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
@@ -15,7 +16,7 @@ import c from './colors';
 import { output, logger } from './log';
 import semver from 'semver';
 import which from 'which';
-import prompts from 'prompts';
+import prompts, { Answers, PromptObject } from 'prompts';
 import { PackageJson } from './definitions';
 
 export type CheckFunction = (
@@ -260,6 +261,18 @@ export async function mergeConfig(config: Config, settings: any) {
   config.loadExternalConfig();
 }
 
+export async function logPrompt<T extends string>(
+  msg: string,
+  prompt: PromptObject<T>,
+): Promise<Answers<T>> {
+  logger.log({
+    msg: `${c.input('[?]')} ${wordWrap(msg, { indentation: 4 })}`,
+    logger,
+    format: false,
+  });
+  return prompts(prompt, { onCancel: () => process.exit(1) });
+}
+
 export function logSuccess(msg: string) {
   logger.msg(`${c.success('[success]')} ${msg}`);
 }
@@ -354,46 +367,6 @@ export async function runTask<T>(
   }
 }
 
-export async function getName(config: Config, name: string) {
-  if (!name) {
-    const answers = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'name',
-          message: `App name`,
-          initial: config.app.appName
-            ? config.app.appName
-            : config.app.package && config.app.package.name
-            ? config.app.package.name
-            : 'App',
-        },
-      ],
-      { onCancel: () => process.exit(1) },
-    );
-    return answers.name;
-  }
-  return name;
-}
-
-export async function getAppId(config: Config, id: string) {
-  if (!id) {
-    const answers = await prompts(
-      [
-        {
-          type: 'text',
-          name: 'id',
-          message: 'App Package ID (in Java package format, no dashes)',
-          initial: config.app.appId ? config.app.appId : 'com.example.app',
-        },
-      ],
-      { onCancel: () => process.exit(1) },
-    );
-    return answers.id;
-  }
-  return id;
-}
-
 export async function copyTemplate(src: string, dst: string) {
   await copyAsync(src, dst);
   await renameGitignore(dst);
@@ -406,33 +379,6 @@ export async function renameGitignore(dst: string) {
   if (await existsAsync(gitignorePath)) {
     await renameAsync(gitignorePath, join(dst, '.gitignore'));
   }
-}
-
-export async function printNextSteps(config: Config, appDir: string) {
-  output.write(
-    `\n${c.strong(
-      `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
-        '🎉',
-        '*',
-      )}`,
-    )}\n`,
-  );
-  if (appDir !== '') {
-    output.write(
-      `Next steps:\n` +
-        `  ${c.input(`cd ./${appDir}`)}\n` +
-        `  install dependencies (e.g. w/ ${c.input('npm install')})\n` +
-        `  ${c.input('npx cap sync')}\n\n`,
-    );
-  }
-  output.write(
-    `Add platforms using ${c.input('npx cap add')}:\n` +
-      `  ${c.input('npx cap add android')}\n` +
-      `  ${c.input('npx cap add ios')}\n\n` +
-      `Follow the Developer Workflow guide to get building:\n${c.strong(
-        `https://capacitorjs.com/docs/basics/workflow`,
-      )}\n`,
-  );
 }
 
 export async function getCapacitorPackage(
