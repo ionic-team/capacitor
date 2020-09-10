@@ -2,7 +2,7 @@ import { homedir } from 'os';
 import { join, relative } from 'path';
 
 import c from '../colors';
-import { Config } from '../config';
+import { Config } from '../definitions';
 import { copyTemplate, runCommand, runTask } from '../common';
 import { existsAsync, writeFileAsync } from '../util/fs';
 

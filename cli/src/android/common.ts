@@ -1,5 +1,5 @@
 import { checkCapacitorPlatform } from '../common';
-import { Config } from '../config';
+import { Config } from '../definitions';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { mkdirs } from 'fs-extra';
 import {

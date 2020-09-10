@@ -16,7 +16,7 @@ import {
   writeFileAsync,
   writeFileSync,
 } from '../util/fs';
-import { Config } from '../config';
+import { Config } from '../definitions';
 import { dirname, join, relative, resolve } from 'path';
 import { realpathSync } from 'fs';
 import {

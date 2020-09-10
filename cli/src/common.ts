@@ -1,5 +1,5 @@
 import { wordWrap } from '@ionic/cli-framework-output';
-import { Config } from './config';
+import { Config, PackageJson } from './definitions';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, resolve } from 'path';
@@ -17,7 +17,6 @@ import { output, logger } from './log';
 import semver from 'semver';
 import which from 'which';
 import prompts, { Answers, PromptObject } from 'prompts';
-import { PackageJson } from './definitions';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -238,9 +237,6 @@ export async function getOrCreateConfig(config: Config) {
       },
     },
   });
-
-  // Store our newly created or found external config as the default
-  config.loadExternalConfig();
 }
 
 export async function mergeConfig(config: Config, settings: any) {
@@ -248,9 +244,6 @@ export async function mergeConfig(config: Config, settings: any) {
     ...config.app.extConfig,
     ...settings,
   });
-
-  // Store our newly created or found external config as the default
-  config.loadExternalConfig();
 }
 
 export async function logPrompt<T extends string>(

@@ -6,7 +6,7 @@ import {
   logFatal,
   logSuccess,
 } from '../common';
-import { Config } from '../config';
+import { Config } from '../definitions';
 
 export async function doctorIOS(config: Config) {
   // DOCTOR ideas for iOS:

@@ -13,47 +13,39 @@ export interface PackageJson {
 }
 
 export interface ExternalConfig {
+  appId?: string;
+  appName?: string;
+  webDir?: string;
+  bundledWebRuntime?: boolean;
   ios?: {
     cordovaSwiftVersion?: string;
     minVersion?: string;
     cordovaLinkerFlags?: string[];
   };
   cordova?: {
-    preferences: { [key: string]: string | undefined };
+    preferences?: { [key: string]: string | undefined };
   };
   server?: {
     cleartext?: boolean;
   };
 }
 
-export interface CliConfigWindows {
-  androidStudioPath?: string;
+export interface WindowsConfig {
+  androidStudioPath: string;
 }
 
-export interface CliConfigLinux {
-  androidStudioPath?: string;
+export interface LinuxConfig {
+  androidStudioPath: string;
 }
 
-export interface CliConfigPlatformAssets {
+export interface PlatformAssetsConfig {
   templateName: string;
-  templateDir?: string;
+  pluginsFolderName: string;
+  templateDir: string;
+  pluginsDir: string;
 }
 
-export interface CliConfigPlatform {
-  name: string;
-  minVersion?: string;
-  platformDir?: string;
-  webDir?: string;
-  assets?: CliConfigPlatformAssets;
-}
-
-export interface CliConfigPlatformIOS extends CliConfigPlatform {
-  // The directory inside of app/ios/ that has the full xcode project files
-  nativeProjectDir: string;
-}
-
-export interface CliConfigCli {
-  binDir: string;
+export interface CLIConfig {
   rootDir: string;
   assetsName: string;
   assetsDir: string;
@@ -61,7 +53,7 @@ export interface CliConfigCli {
   os: OS;
 }
 
-export interface CliConfigApp {
+export interface AppConfig {
   rootDir: string;
   appId: string;
   appName: string;
@@ -79,12 +71,36 @@ export interface CliConfigApp {
   bundledWebRuntime: boolean;
 }
 
-export interface CliConfig {
-  windows: CliConfigWindows;
-  linux: CliConfigLinux;
-  android: CliConfigPlatform;
-  web: CliConfigPlatform;
-  ios: CliConfigPlatform;
-  cli: CliConfigCli;
-  app: CliConfigApp;
+export interface AndroidConfig {
+  name: string;
+  minVersion: string;
+  platformDir: string;
+  webDir: string;
+  webDirAbs: string;
+  resDir: string;
+  resDirAbs: string;
+  assets: PlatformAssetsConfig;
+}
+
+export interface IOSConfig {
+  name: string;
+  minVersion: string;
+  cordovaSwiftVersion: string;
+  platformDir: string;
+  webDir: string;
+  webDirAbs: string;
+  nativeProjectName: string;
+  assets: PlatformAssetsConfig;
+}
+
+export interface Config {
+  windows: WindowsConfig;
+  linux: LinuxConfig;
+  android: AndroidConfig;
+  ios: IOSConfig;
+  web: {
+    name: string;
+  };
+  cli: CLIConfig;
+  app: AppConfig;
 }

@@ -8,7 +8,7 @@ import { updateCommand } from './tasks/update';
 import { openCommand } from './tasks/open';
 import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
-import { Config } from './config';
+import { loadConfig } from './config';
 import c from './colors';
 import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
@@ -21,8 +21,8 @@ process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
 });
 
-export function run(process: NodeJS.Process, cliBinDir: string) {
-  const config = new Config(process.platform, process.cwd(), cliBinDir);
+export async function run() {
+  const config = await loadConfig();
 
   program.version(config.cli.package.version);
 

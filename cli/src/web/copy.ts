@@ -1,6 +1,6 @@
 import c from '../colors';
 import { logFatal, resolveNode, runTask } from '../common';
-import { Config } from '../config';
+import { Config } from '../definitions';
 import { copy } from 'fs-extra';
 import { join } from 'path';
 

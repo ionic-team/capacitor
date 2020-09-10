@@ -1,7 +1,7 @@
 import { dirname, join } from 'path';
 
 import c from './colors';
-import { Config } from './config';
+import { Config } from './definitions';
 import { logFatal, readJSON, readXML, resolveNode } from './common';
 import { logger } from './log';
 

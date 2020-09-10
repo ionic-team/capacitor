@@ -1,5 +1,4 @@
-import { Config } from '../config';
-import { OS } from '../definitions';
+import { Config, OS } from '../definitions';
 import { runCommand } from '../common';
 import { existsSync } from '../util/fs';
 import open from 'open';

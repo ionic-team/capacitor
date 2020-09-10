@@ -1,6 +1,6 @@
 import open from 'open';
 import c from '../colors';
-import { Config } from '../config';
+import { Config } from '../definitions';
 import { findXcodePath } from './common';
 import { wait, logFatal } from '../common';
 

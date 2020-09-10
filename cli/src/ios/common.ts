@@ -1,5 +1,5 @@
 import c from '../colors';
-import { Config } from '../config';
+import { Config } from '../definitions';
 import {
   isInstalled,
   checkCapacitorPlatform,

@@ -1,6 +1,5 @@
 import c from '../colors';
-import { Config } from '../config';
-import { OS } from '../definitions';
+import { Config, OS } from '../definitions';
 import { addAndroid } from '../android/add';
 import { addIOS } from '../ios/add';
 import {

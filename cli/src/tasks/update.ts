@@ -1,5 +1,5 @@
 import c from '../colors';
-import { Config } from '../config';
+import { Config } from '../definitions';
 import { updateAndroid } from '../android/update';
 import { updateIOS } from '../ios/update';
 import { allSerial } from '../util/promise';
