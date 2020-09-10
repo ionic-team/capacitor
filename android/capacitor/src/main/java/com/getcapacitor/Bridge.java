@@ -885,7 +885,7 @@ public class Bridge {
         this.webViewClient = client;
     }
 
-    public void registerGeolocationPlugin(GeolocationPromptListener listener) {
+    public void registerGeolocationPromptListener(GeolocationPromptListener listener) {
         this.webChromeClient.registerGeolocationPromptListener(listener);
     }
 }

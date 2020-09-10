@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import com.getcapacitor.util.GeolocationPromptListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -383,6 +384,10 @@ public class Plugin {
 
         notifyListeners(eventName, retained);
         retainedEventArguments.remove(eventName);
+    }
+
+    public void registerGeolocationPromptListener(GeolocationPromptListener listener) {
+        this.bridge.registerGeolocationPromptListener(listener);
     }
 
     /**
