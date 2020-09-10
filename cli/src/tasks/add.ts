@@ -22,19 +22,23 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
+  isValidPlatform,
+  getPlatformDirectory,
+  promptForPlatform,
+  isValidCommunityPlatform,
 } from '../common';
 import { sync } from './sync';
 import { logger } from '../log';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:add');
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
-      if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
+      if (await isValidCommunityPlatform(selectedPlatformName)) {
         msg += `\nTry installing ${c.strong(
           `@capacitor-community/${selectedPlatformName}`,
         )} and adding the platform again.`;
@@ -43,7 +47,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
       logger.error(msg);
     }
   } else {
-    const platformName = await config.askPlatform(
+    const platformName = await promptForPlatform(
       selectedPlatformName,
       `Please choose a platform to add:`,
     );
@@ -53,7 +57,11 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
       return;
     }
 
-    const existingPlatformDir = config.platformDirExists(platformName);
+    const existingPlatformDir = await getPlatformDirectory(
+      config,
+      platformName,
+    );
+
     if (existingPlatformDir) {
       logFatal(
         `${c.input(platformName)} platform already exists.\n` +

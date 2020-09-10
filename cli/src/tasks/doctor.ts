@@ -1,6 +1,11 @@
 import c from '../colors';
 import { Config } from '../config';
-import { readJSON, resolveNode, getCommandOutput } from '../common';
+import {
+  readJSON,
+  resolveNode,
+  getCommandOutput,
+  selectPlatforms,
+} from '../common';
 import { doctorAndroid } from '../android/doctor';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
@@ -8,7 +13,7 @@ import { emoji as _e } from '../util/emoji';
 
 export async function doctorCommand(
   config: Config,
-  selectedPlatform: string,
+  selectedPlatformName: string,
 ): Promise<void> {
   output.write(
     `${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
@@ -16,7 +21,7 @@ export async function doctorCommand(
 
   await doctorCore(config);
 
-  const platforms = config.selectPlatforms(selectedPlatform);
+  const platforms = await selectPlatforms(config, selectedPlatformName);
   await Promise.all(
     platforms.map(platformName => {
       return doctor(config, platformName);

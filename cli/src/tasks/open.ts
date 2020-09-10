@@ -1,6 +1,14 @@
 import c from '../colors';
 import { Config } from '../config';
-import { logFatal, resolvePlatform, runPlatformHook, runTask } from '../common';
+import {
+  logFatal,
+  resolvePlatform,
+  runPlatformHook,
+  runTask,
+  selectPlatforms,
+  isValidPlatform,
+  promptForPlatform,
+} from '../common';
 import { openAndroid } from '../android/open';
 import { openIOS } from '../ios/open';
 import { logger } from '../log';
@@ -9,7 +17,7 @@ export async function openCommand(
   config: Config,
   selectedPlatformName: string,
 ) {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:open');
@@ -17,7 +25,7 @@ export async function openCommand(
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
   } else {
-    const platforms = config.selectPlatforms(selectedPlatformName);
+    const platforms = await selectPlatforms(config, selectedPlatformName);
     let platformName: string;
     if (platforms.length === 0) {
       logger.info(
@@ -28,7 +36,7 @@ export async function openCommand(
     } else if (platforms.length === 1) {
       platformName = platforms[0];
     } else {
-      platformName = await config.askPlatform(
+      platformName = await promptForPlatform(
         '',
         `Please choose a platform to open:`,
       );

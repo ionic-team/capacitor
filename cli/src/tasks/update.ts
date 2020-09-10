@@ -11,6 +11,8 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
+  selectPlatforms,
+  isValidPlatform,
 } from '../common';
 import { logger } from '../log';
 import { checkCocoaPods, checkIOSProject } from '../ios/common';
@@ -20,7 +22,7 @@ export async function updateCommand(
   selectedPlatformName: string,
   deployment: boolean,
 ) {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:update');
@@ -29,7 +31,7 @@ export async function updateCommand(
     }
   } else {
     const then = +new Date();
-    const platforms = config.selectPlatforms(selectedPlatformName);
+    const platforms = await selectPlatforms(config, selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to update yet.\n` +

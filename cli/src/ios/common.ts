@@ -1,10 +1,15 @@
 import c from '../colors';
 import { Config } from '../config';
-import { isInstalled, checkCapacitorPlatform } from '../common';
+import {
+  isInstalled,
+  checkCapacitorPlatform,
+  getPlatformDirectory,
+} from '../common';
 import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import { Plugin, PluginType, getPluginPlatform } from '../plugin';
+import { OS } from '../definitions';
 
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
@@ -30,7 +35,7 @@ export async function checkIOSPackage(config: Config): Promise<string | null> {
 }
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
-  if (!(await isInstalled('pod')) && config.cli.os === 'mac') {
+  if (!(await isInstalled('pod')) && config.cli.os === OS.Mac) {
     return (
       `CocoaPods is not installed.\n` +
       `See this install guide: ${c.strong(
@@ -42,8 +47,8 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
 }
 
 export async function checkIOSProject(config: Config): Promise<string | null> {
-  const exists = config.platformDirExists('ios');
-  if (exists === null) {
+  const platformDir = await getPlatformDirectory(config, 'ios');
+  if (!platformDir) {
     return (
       `${c.strong('ios')} platform has not been added yet.\n` +
       `Use ${c.input(`npx cap add ios`)} to add the platform to your project.`

@@ -1,8 +1,6 @@
-import { accessSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
-import prompts from 'prompts';
 
-import c from './colors';
 import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 
@@ -71,23 +69,17 @@ export class Config implements CliConfig {
     webDir: 'www',
     webDirAbs: '',
     package: Package,
-    windowsAndroidStudioPath:
-      'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
-    linuxAndroidStudioPath: '',
     extConfigName: 'capacitor.config.json',
     extConfigFilePath: '',
     extConfig: ExtConfig,
     bundledWebRuntime: false,
-    plugins: {},
-    server: {
-      cleartext: false,
-    },
   };
 
-  knownPlatforms: string[] = [];
-  knownCommunityPlatforms = ['electron'];
-
-  constructor(os: string, currentWorkingDir: string, cliBinDir: string) {
+  constructor(
+    os: NodeJS.Platform,
+    currentWorkingDir: string,
+    cliBinDir: string,
+  ) {
     this.initOS(os);
     this.initCliConfig(cliBinDir);
 
@@ -99,10 +91,6 @@ export class Config implements CliConfig {
       // Post-merge
       this.initAndroidConfig();
       this.initIosConfig();
-      this.initWindowsConfig();
-      this.initLinuxConfig();
-
-      this.knownPlatforms.push(this.web.name);
     } catch (e) {
       logFatal(`Unable to load config\n` + e.stack ?? e);
     }
@@ -134,14 +122,7 @@ export class Config implements CliConfig {
     this.app.package = loadPackageJson(currentWorkingDir);
   }
 
-  async updateAppPackage() {
-    this.app.package = await readJSON(
-      resolve(this.app.rootDir, 'package.json'),
-    );
-  }
-
   private initAndroidConfig() {
-    this.knownPlatforms.push(this.android.name);
     this.android.platformDir = resolve(this.app.rootDir, this.android.name);
     this.android.assets.templateDir = resolve(
       this.cli.assetsDir,
@@ -162,7 +143,6 @@ export class Config implements CliConfig {
   }
 
   private initIosConfig() {
-    this.knownPlatforms.push(this.ios.name);
     this.ios.platformDir = resolve(this.app.rootDir, this.ios.name);
     this.ios.assets.templateDir = resolve(
       this.cli.assetsDir,
@@ -193,19 +173,6 @@ export class Config implements CliConfig {
     }
   }
 
-  private initWindowsConfig() {
-    if (this.cli.os !== OS.Windows) {
-      return;
-    }
-    this.windows.androidStudioPath = this.app.windowsAndroidStudioPath;
-  }
-
-  private initLinuxConfig() {
-    if (this.app.linuxAndroidStudioPath) {
-      this.linux.androidStudioPath = this.app.linuxAndroidStudioPath;
-    }
-  }
-
   private mergeConfigData() {
     const extConfig: ExternalConfig = this.app.extConfig || {};
 
@@ -233,112 +200,6 @@ export class Config implements CliConfig {
     } catch {
       // it's ok if there's no capacitor.json file
     }
-  }
-
-  foundExternalConfig(): boolean {
-    return !!this.app.extConfig;
-  }
-
-  selectPlatforms(selectedPlatformName?: string) {
-    if (selectedPlatformName) {
-      // already passed in a platform name
-      const platformName = selectedPlatformName.toLowerCase().trim();
-
-      if (!this.isValidPlatform(platformName)) {
-        logFatal(`Invalid platform: ${c.input(platformName)}`);
-      } else if (!this.platformDirExists(platformName)) {
-        this.platformNotCreatedError(platformName);
-      }
-
-      // return the platform in an string array
-      return [platformName];
-    }
-
-    // wasn't given a platform name, so let's
-    // get the platforms that have already been created
-    return this.getExistingPlatforms();
-  }
-
-  async askPlatform(
-    selectedPlatformName: string,
-    promptMessage: string,
-  ): Promise<string> {
-    if (!selectedPlatformName) {
-      const answers = await prompts(
-        [
-          {
-            type: 'select',
-            name: 'mode',
-            message: promptMessage,
-            choices: this.knownPlatforms.map(p => ({ title: p, value: p })),
-          },
-        ],
-        { onCancel: () => process.exit(1) },
-      );
-
-      return answers.mode.toLowerCase().trim();
-    }
-
-    const platformName = selectedPlatformName.toLowerCase().trim();
-
-    if (!this.isValidPlatform(platformName)) {
-      logFatal(
-        `Invalid platform: ${c.input(platformName)}.\n` +
-          `Valid platforms include: ${this.knownPlatforms.join(', ')}`,
-      );
-    }
-
-    return platformName;
-  }
-
-  getExistingPlatforms() {
-    const platforms: string[] = [];
-
-    if (this.platformDirExists(this.android.name)) {
-      platforms.push(this.android.name);
-    }
-
-    if (this.platformDirExists(this.ios.name)) {
-      platforms.push(this.ios.name);
-    }
-
-    platforms.push(this.web.name);
-
-    return platforms;
-  }
-
-  platformDirExists(platformName: any): string {
-    let platformDir: any = null;
-
-    try {
-      let testDir = join(this.app.rootDir, platformName);
-      if (platformName === 'web') {
-        testDir = this.app.webDirAbs;
-      }
-      accessSync(testDir);
-      platformDir = testDir;
-    } catch (e) {}
-
-    return platformDir;
-  }
-
-  isValidPlatform(platform: any) {
-    return this.knownPlatforms.includes(platform);
-  }
-
-  platformNotCreatedError(platformName: string) {
-    if (platformName === 'web') {
-      logFatal(
-        `Could not find the web platform directory.\n` +
-          `Make sure ${c.strong(this.app.webDir)} exists.`,
-      );
-    }
-    logFatal(
-      `${c.strong(platformName)} platform has not been added yet.\n` +
-        `Use ${c.input(
-          `npx cap add ${platformName}`,
-        )} to add the platform to your project.`,
-    );
   }
 }
 

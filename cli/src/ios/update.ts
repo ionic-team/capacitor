@@ -79,7 +79,7 @@ export async function installCocoaPodsPlugins(
   );
 }
 
-export async function updatePodfile(
+async function updatePodfile(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
@@ -110,7 +110,7 @@ export async function updatePodfile(
   );
 }
 
-export function generatePodFile(config: Config, plugins: Plugin[]) {
+function generatePodFile(config: Config, plugins: Plugin[]) {
   const capacitoriOSPath = resolveNode(
     config.app.rootDir,
     '@capacitor/ios',

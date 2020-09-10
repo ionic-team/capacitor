@@ -11,12 +11,13 @@ import {
 import { getAndroidPlugins } from '../android/common';
 import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
+import { selectPlatforms } from '../common';
 
 export async function listCommand(
   config: Config,
   selectedPlatformName: string,
 ) {
-  const platforms = config.selectPlatforms(selectedPlatformName);
+  const platforms = await selectPlatforms(config, selectedPlatformName);
   if (platforms.length === 0) {
     logger.info(
       `There are no platforms to list yet.\n` +

@@ -258,10 +258,10 @@ export async function autoGenerateConfig(
     config.app.extConfig.cordova.preferences
   ) {
     pluginPreferencesString = await Promise.all(
-      Object.keys(config.app.extConfig.cordova.preferences).map(
-        async (key): Promise<string> => {
+      Object.entries(config.app.extConfig.cordova.preferences).map(
+        async ([key, value]): Promise<string> => {
           return `
-  <preference name="${key}" value="${config.app.extConfig.cordova.preferences[key]}" />`;
+  <preference name="${key}" value="${value}" />`;
         },
       ),
     );

@@ -2,7 +2,7 @@ import { wordWrap } from '@ionic/cli-framework-output';
 import { Config } from './config';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
-import { basename, dirname, join, parse, resolve } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import {
   copyAsync,
   existsAsync,
@@ -10,7 +10,7 @@ import {
   renameAsync,
   writeFileAsync,
 } from './util/fs';
-import { existsSync, readFile } from 'fs';
+import { readFile } from 'fs';
 import { emoji as _e } from './util/emoji';
 import c from './colors';
 import { output, logger } from './log';
@@ -418,6 +418,122 @@ export async function getCoreVersion(config: Config): Promise<string> {
 
 export async function getCLIVersion(config: Config): Promise<string> {
   return getCapacitorPackageVersion(config, 'cli');
+}
+
+export async function getPlatformDirectory(
+  config: Config,
+  platform: string,
+): Promise<string | null> {
+  const platformDir = platform === 'web' ? 'www' : platform;
+  const platformPath = join(config.app.rootDir, platformDir);
+
+  if (await existsAsync(platformPath)) {
+    return platformPath;
+  }
+
+  return null;
+}
+
+export async function selectPlatforms(
+  config: Config,
+  selectedPlatformName?: string,
+) {
+  if (selectedPlatformName) {
+    // already passed in a platform name
+    const platformName = selectedPlatformName.toLowerCase().trim();
+
+    if (!(await isValidPlatform(platformName))) {
+      logFatal(`Invalid platform: ${c.input(platformName)}`);
+    } else if (!(await getPlatformDirectory(config, platformName))) {
+      if (platformName === 'web') {
+        logFatal(
+          `Could not find the web platform directory.\n` +
+            `Make sure ${c.strong(config.app.webDir)} exists.`,
+        );
+      }
+      logFatal(
+        `${c.strong(platformName)} platform has not been added yet.\n` +
+          `Use ${c.input(
+            `npx cap add ${platformName}`,
+          )} to add the platform to your project.`,
+      );
+    }
+
+    // return the platform in an string array
+    return [platformName];
+  }
+
+  // wasn't given a platform name, so let's
+  // get the platforms that have already been created
+  return getAddedPlatforms(config);
+}
+
+export async function getKnownPlatforms(): Promise<string[]> {
+  return ['web', 'android', 'ios'];
+}
+
+export async function isValidPlatform(platform: string): Promise<boolean> {
+  return (await getKnownPlatforms()).includes(platform);
+}
+
+export async function getKnownCommunityPlatforms(): Promise<string[]> {
+  return ['electron'];
+}
+
+export async function isValidCommunityPlatform(
+  platform: string,
+): Promise<boolean> {
+  return (await getKnownCommunityPlatforms()).includes(platform);
+}
+
+export async function promptForPlatform(
+  selectedPlatformName: string,
+  promptMessage: string,
+): Promise<string> {
+  const knownPlatforms = await getKnownPlatforms();
+
+  if (!selectedPlatformName) {
+    const answers = await prompts(
+      [
+        {
+          type: 'select',
+          name: 'mode',
+          message: promptMessage,
+          choices: knownPlatforms.map(p => ({ title: p, value: p })),
+        },
+      ],
+      { onCancel: () => process.exit(1) },
+    );
+
+    return answers.mode.toLowerCase().trim();
+  }
+
+  const platformName = selectedPlatformName.toLowerCase().trim();
+
+  if (!(await isValidPlatform(platformName))) {
+    logFatal(
+      `Invalid platform: ${c.input(platformName)}.\n` +
+        `Valid platforms include: ${knownPlatforms.join(', ')}`,
+    );
+  }
+
+  return platformName;
+}
+
+export async function getAddedPlatforms(config: Config): Promise<string[]> {
+  const platforms: string[] = [];
+
+  if (await getPlatformDirectory(config, config.android.name)) {
+    platforms.push(config.android.name);
+  }
+
+  if (await getPlatformDirectory(config, config.ios.name)) {
+    platforms.push(config.ios.name);
+  }
+
+  platforms.push(config.web.name);
+
+  return platforms;
 }
 
 export async function checkPlatformVersions(config: Config, platform: string) {

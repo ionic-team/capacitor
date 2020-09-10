@@ -1,6 +1,4 @@
-export type PlatformName = '' | 'mac' | 'windows' | 'linux';
-
-export enum OS {
+export const enum OS {
   Unknown = 'unknown',
   Mac = 'mac',
   Windows = 'windows',
@@ -10,26 +8,22 @@ export enum OS {
 export interface PackageJson {
   name: string;
   version: string;
-  dependencies: any;
-  devDependencies: any;
+  dependencies?: { [key: string]: string | undefined };
+  devDependencies?: { [key: string]: string | undefined };
 }
 
 export interface ExternalConfig {
-  webDir?: string;
-  startPage?: string;
   ios?: {
     cordovaSwiftVersion?: string;
     minVersion?: string;
     cordovaLinkerFlags?: string[];
   };
-  cordova?: any;
+  cordova?: {
+    preferences: { [key: string]: string | undefined };
+  };
   server?: {
     cleartext?: boolean;
   };
-}
-
-export interface AppPluginsConfig {
-  [key: string]: any;
 }
 
 export interface CliConfigWindows {
@@ -77,9 +71,6 @@ export interface CliConfigApp {
   extConfigName: string;
   extConfigFilePath: string;
   extConfig: ExternalConfig;
-  plugins: AppPluginsConfig;
-  windowsAndroidStudioPath: string;
-  linuxAndroidStudioPath: string;
   /**
    * Whether to use a bundled web runtime instead of relying on a bundler/module
    * loader. If you're not using something like rollup or webpack or dynamic ES
