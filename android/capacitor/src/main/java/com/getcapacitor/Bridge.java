@@ -30,6 +30,7 @@ import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.background.BackgroundTask;
 import com.getcapacitor.ui.Toast;
+import com.getcapacitor.util.GeolocationPromptListener;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
 import java.net.SocketTimeoutException;
@@ -884,7 +885,7 @@ public class Bridge {
         this.webViewClient = client;
     }
 
-    public void registerGeolocationPlugin(Plugin geolocationPlugin) {
-        this.webChromeClient.registerGeolocationPlugin(geolocationPlugin);
+    public void registerGeolocationPlugin(GeolocationPromptListener listener) {
+        this.webChromeClient.registerGeolocationPromptListener(listener);
     }
 }

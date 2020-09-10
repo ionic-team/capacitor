@@ -18,6 +18,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import com.getcapacitor.plugin.camera.CameraUtils;
+import com.getcapacitor.util.GeolocationPromptListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +37,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
 
     private Bridge bridge;
-    private Plugin geoLocationPlugin;
+    private GeolocationPromptListener geolocationPromptListener;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -192,8 +193,8 @@ public class BridgeWebChromeClient extends WebChromeClient {
         return true;
     }
 
-    public void registerGeolocationPlugin(Plugin geolocationPlugin) {
-        this.geoLocationPlugin = geolocationPlugin;
+    public void registerGeolocationPromptListener(GeolocationPromptListener listener) {
+        this.geolocationPromptListener = listener;
     }
 
     /**
@@ -209,11 +210,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
         // Set that we want geolocation perms for this origin
         callback.invoke(origin, true, false);
 
-        if (geoLocationPlugin == null) {
+        if (geolocationPromptListener == null) {
             Logger.error("onGeolocationPermissionsShowPrompt: no geolocation plugin has been registered");
         } else {
-            if (!geoLocationPlugin.hasRequiredPermissions()) {
-                geoLocationPlugin.pluginRequestAllPermissions();
+            if (!geolocationPromptListener.hasRequiredPermissions()) {
+                geolocationPromptListener.requestPermissions();
             } else {
                 Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
             }
@@ -223,7 +224,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     @Override
     public boolean onShowFileChooser(
         WebView webView,
-        final ValueCallback<Uri[]> filePathCallback,
+        final ValueCallback<Uri[]> filePathCalback,
         final FileChooserParams fileChooserParams
     ) {
         List<String> acceptTypes = Arrays.asList(fileChooserParams.getAcceptTypes());
