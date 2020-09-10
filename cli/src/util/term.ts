@@ -17,7 +17,7 @@ export const checkInteractive = (...args: string[]) => {
 
   // Make sure none of the provided args are empty, otherwise print the interactive
   // warning and return false
-  if (!!args.filter(arg => !!!arg).length) {
+  if (args.filter(arg => !arg).length) {
     logger.error(
       `Non-interactive shell detected.\n` +
         `Run the command with ${c.input(

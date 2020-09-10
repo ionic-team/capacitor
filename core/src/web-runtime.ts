@@ -19,7 +19,7 @@ export class CapacitorWeb {
       this.Plugins = new Proxy<any>(this.Plugins, {
         get: (target, prop) => {
           if (typeof target[prop] === 'undefined') {
-            let thisRef = this;
+            const thisRef = this;
             return new Proxy<any>(
               {},
               {
@@ -54,7 +54,7 @@ export class CapacitorWeb {
   }
 
   isPluginAvailable(name: string) {
-    return this.Plugins.hasOwnProperty(name);
+    return Object.prototype.hasOwnProperty.call(this.Plugins, name);
   }
 
   convertFileSrc(filePath: string) {

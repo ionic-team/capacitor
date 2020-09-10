@@ -58,7 +58,7 @@ export function updateChecks(
   platforms: string[],
 ): CheckFunction[] {
   const checks: CheckFunction[] = [];
-  for (let platformName of platforms) {
+  for (const platformName of platforms) {
     if (platformName === config.ios.name) {
       checks.push(...updateIOSChecks);
     } else if (platformName === config.android.name) {

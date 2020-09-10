@@ -25,7 +25,7 @@ export interface WebPluginConfig {
 }
 
 export class WebPlugin {
-  loaded: boolean = false;
+  loaded = false;
 
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
@@ -50,7 +50,7 @@ export class WebPlugin {
     eventName: string,
     listenerFunc: ListenerCallback,
   ): PluginListenerHandle {
-    let listeners = this.listeners[eventName];
+    const listeners = this.listeners[eventName];
     if (!listeners) {
       this.listeners[eventName] = [];
     }
@@ -59,7 +59,7 @@ export class WebPlugin {
 
     // If we haven't added a window listener for this event and it requires one,
     // go ahead and add it
-    let windowListener = this.windowListeners[eventName];
+    const windowListener = this.windowListeners[eventName];
     if (windowListener && !windowListener.registered) {
       this.addWindowListener(windowListener);
     }
@@ -75,12 +75,12 @@ export class WebPlugin {
     eventName: string,
     listenerFunc: ListenerCallback,
   ): void {
-    let listeners = this.listeners[eventName];
+    const listeners = this.listeners[eventName];
     if (!listeners) {
       return;
     }
 
-    let index = listeners.indexOf(listenerFunc);
+    const index = listeners.indexOf(listenerFunc);
     this.listeners[eventName].splice(index, 1);
 
     // If there are no more listeners for this type of event,
@@ -99,7 +99,7 @@ export class WebPlugin {
   }
 
   notifyListeners(eventName: string, data: any): void {
-    let listeners = this.listeners[eventName];
+    const listeners = this.listeners[eventName];
     if (listeners) {
       listeners.forEach(listener => listener(data));
     }

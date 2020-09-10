@@ -186,7 +186,7 @@ async function checkPackage(
   let checkPath = appSrcMainJavaDir;
   const packageParts = packageId.split('.');
 
-  for (var i = 0; i < packageParts.length; i++) {
+  for (let i = 0; i < packageParts.length; i++) {
     try {
       accessSync(join(checkPath, packageParts[i]));
       checkPath = join(checkPath, packageParts[i]);

@@ -35,13 +35,11 @@ describe.each([false, true])(
       //appDirObj.cleanupCallback();
     });
 
-    it('Should update', async () => {});
-
     it('Should install Cordova plugin JS', async () => {
       const cordovaPluginJSContent = await FS.read(
         'android/app/src/main/assets/public/cordova_plugins.js',
       );
-      let regex = new RegExp(CORDOVA_PLUGIN_ID);
+      const regex = new RegExp(CORDOVA_PLUGIN_ID);
       expect(regex.test(cordovaPluginJSContent)).toBe(true);
     });
 

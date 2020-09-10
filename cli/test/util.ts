@@ -82,7 +82,7 @@ export async function installPlatform(
   await runCommand(`cd ${appDir} && npm install ${platformPath}`);
 }
 
-export async function makeAppDir(monoRepoLike: boolean = false) {
+export async function makeAppDir(monoRepoLike = false) {
   const appDirObj: any = await mktmp();
   const tmpDir = appDirObj.path;
   const rootDir = monoRepoLike

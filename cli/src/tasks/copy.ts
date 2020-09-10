@@ -90,7 +90,7 @@ export async function copy(config: Config, platformName: string) {
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
-  let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
+  const bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
   if (!bridgePath) {
     logFatal(
       `Unable to find node_modules/@capacitor/core/native-bridge.js.\n` +

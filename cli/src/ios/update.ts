@@ -43,7 +43,7 @@ export const updateIOSChecks: CheckFunction[] = [
 const platform = 'ios';
 
 export async function updateIOS(config: Config, deployment: boolean) {
-  let plugins = await getPluginsTask(config);
+  const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
@@ -96,7 +96,7 @@ export async function updatePodfile(
   const podfileLockPath = join(projectRoot, 'Podfile.lock');
   let podfileContent = await readFileAsync(podfilePath, 'utf8');
   podfileContent = podfileContent.replace(
-    /(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/,
+    /(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/, // eslint-disable-line no-irregular-whitespace
     '$1' + dependenciesContent + '\n  $2',
   );
   podfileContent = podfileContent.replace(
@@ -202,13 +202,13 @@ async function generateCordovaPodspec(
     'ios',
     config.ios.assets.pluginsFolderName,
   );
-  let weakFrameworks: Array<string> = [];
-  let linkedFrameworks: Array<string> = [];
-  let customFrameworks: Array<string> = [];
-  let systemLibraries: Array<string> = [];
-  let sourceFrameworks: Array<string> = [];
-  let frameworkDeps: Array<string> = [];
-  let compilerFlags: Array<string> = [];
+  const weakFrameworks: Array<string> = [];
+  const linkedFrameworks: Array<string> = [];
+  const customFrameworks: Array<string> = [];
+  const systemLibraries: Array<string> = [];
+  const sourceFrameworks: Array<string> = [];
+  const frameworkDeps: Array<string> = [];
+  const compilerFlags: Array<string> = [];
   let prefsArray: Array<any> = [];
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';

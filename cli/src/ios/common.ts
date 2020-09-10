@@ -106,7 +106,7 @@ export async function editProjectSettingsIOS(config: Config) {
   let plistContent = await readFileAsync(plistPath, 'utf8');
 
   plistContent = plistContent.replace(
-    /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^\<]*)<\/string>/,
+    /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^<]*)<\/string>/,
     `<key>CFBundleDisplayName</key>\n        <string>${appName}</string>`,
   );
 

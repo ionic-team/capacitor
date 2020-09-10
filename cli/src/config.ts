@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
 import prompts from 'prompts';

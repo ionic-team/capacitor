@@ -15,14 +15,14 @@ export class SplashScreenPluginWeb
 
   show(
     _options?: SplashScreenShowOptions,
-    _callback?: Function,
+    _callback?: (...args: any[]) => any,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   hide(
     _options?: SplashScreenHideOptions,
-    _callback?: Function,
+    _callback?: (...args: any[]) => any,
   ): Promise<void> {
     return Promise.resolve();
   }

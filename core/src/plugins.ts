@@ -172,7 +172,7 @@ const shouldMergeWebPlugin = (plugin: WebPlugin) => {
  */
 export const mergeWebPlugin = (plugin: WebPlugin) => {
   if (
-    Plugins.hasOwnProperty(plugin.config.name) &&
+    Object.prototype.hasOwnProperty.call(Plugins, plugin.config.name) &&
     !shouldMergeWebPlugin(plugin)
   ) {
     return;

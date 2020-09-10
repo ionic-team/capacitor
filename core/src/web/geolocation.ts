@@ -49,7 +49,7 @@ export class GeolocationPluginWeb
     options: GeolocationOptions,
     callback: GeolocationWatchCallback,
   ): string {
-    let id = window.navigator.geolocation.watchPosition(
+    const id = window.navigator.geolocation.watchPosition(
       pos => {
         callback(pos);
       },

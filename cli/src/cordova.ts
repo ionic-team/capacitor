@@ -35,7 +35,7 @@ import { getIOSPlugins } from './ios/common';
 import { copy } from './tasks/copy';
 import prompts from 'prompts';
 
-const plist = require('plist');
+import plist, { PlistObject } from 'plist';
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
@@ -45,14 +45,14 @@ export function generateCordovaPluginsJSFile(
   plugins: Plugin[],
   platform: string,
 ) {
-  let pluginModules: Array<any> = [];
-  let pluginExports: Array<string> = [];
+  const pluginModules: Array<any> = [];
+  const pluginExports: Array<string> = [];
   plugins.map(p => {
     const pluginId = p.xml.$.id;
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
-      let clobbers: Array<string> = [];
-      let merges: Array<string> = [];
+      const clobbers: Array<string> = [];
+      const merges: Array<string> = [];
       let clobbersModule = '';
       let mergesModule = '';
       let runsModule = '';
@@ -89,7 +89,7 @@ export function generateCordovaPluginsJSFile(
           "id": "${
             pluginId +
             '.' +
-            (jsModule.$.name || jsModule.$.src.match(/([^\/]+)\.js/)[1])
+            (jsModule.$.name || jsModule.$.src.match(/([^/]+)\.js/)[1])
           }",
           "file": "plugins/${pluginId}/${jsModule.$.src}",
           "pluginId": "${pluginId}"${clobbersModule}${mergesModule}${runsModule}
@@ -220,7 +220,7 @@ export async function autoGenerateConfig(
   ensureDirSync(xmlDir);
   const cordovaConfigXMLFile = join(xmlDir, fileName);
   removeSync(cordovaConfigXMLFile);
-  let pluginEntries: Array<any> = [];
+  const pluginEntries: Array<any> = [];
   cordovaPlugins.map(p => {
     const currentPlatform = getPluginPlatform(p, platform);
     if (currentPlatform) {
@@ -342,8 +342,8 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
     'Info.plist',
   );
   const xmlMeta = await readXML(plistPath);
-  let data = await readFileAsync(plistPath, 'utf8');
-  var plistData = plist.parse(data);
+  const data = await readFileAsync(plistPath, 'utf8');
+  const plistData = plist.parse(data) as PlistObject;
   const dict = xmlMeta.plist.dict.pop();
   if (!dict.key.includes(configElement.$.parent)) {
     let xml = buildConfigFileXml(configElement);
@@ -359,9 +359,10 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
       configElement.array[0] &&
       configElement.array[0].string
     ) {
-      var xml = '';
+      let xml = '';
       configElement.array[0].string.map((element: any) => {
-        if (!plistData[configElement.$.parent].includes(element)) {
+        const d = plistData[configElement.$.parent];
+        if (Array.isArray(d) && !d.includes(element)) {
           xml = xml.concat(`<string>${element}</string>\n`);
         }
       });
@@ -398,12 +399,12 @@ function buildConfigFileXml(configElement: any) {
 }
 
 function getConfigFileTagContent(str: string) {
-  return str.replace(/\<config-file.+\"\>|\<\/config-file>/g, '');
+  return str.replace(/<config-file.+">|<\/config-file>/g, '');
 }
 
 function removeOuterTags(str: string) {
-  var start = str.indexOf('>') + 1;
-  var end = str.lastIndexOf('<');
+  const start = str.indexOf('>') + 1;
+  const end = str.lastIndexOf('<');
   return str.substring(start, end);
 }
 
@@ -477,7 +478,7 @@ export async function checkPluginDependencies(
 }
 
 export function getIncompatibleCordovaPlugins(platform: string) {
-  let pluginList = [
+  const pluginList = [
     'cordova-plugin-splashscreen',
     'cordova-plugin-ionic-webview',
     'cordova-plugin-crosswalk-webview',
@@ -579,9 +580,9 @@ export async function writeCordovaAndroidManifest(
     'main',
     'AndroidManifest.xml',
   );
-  let rootXMLEntries: Array<any> = [];
-  let applicationXMLEntries: Array<any> = [];
-  let applicationXMLAttributes: Array<any> = [];
+  const rootXMLEntries: Array<any> = [];
+  const applicationXMLEntries: Array<any> = [];
+  const applicationXMLAttributes: Array<any> = [];
   cordovaPlugins.map(async p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
@@ -636,8 +637,8 @@ export async function writeCordovaAndroidManifest(
       }
     });
   });
-  let cleartextString = 'android:usesCleartextTraffic="true"';
-  let cleartext =
+  const cleartextString = 'android:usesCleartextTraffic="true"';
+  const cleartext =
     config.app.extConfig.server?.cleartext &&
     !applicationXMLAttributes.includes(cleartextString)
       ? cleartextString
@@ -663,7 +664,7 @@ ${rootXMLEntries.join('\n')}
 function getPathParts(path: string) {
   const rootPath = 'manifest';
   path = path.replace('/*', rootPath);
-  let parts = path.split('/').filter(part => part !== '');
+  const parts = path.split('/').filter(part => part !== '');
   if (parts.length > 1 || parts.includes(rootPath)) {
     return parts;
   }
@@ -672,7 +673,7 @@ function getPathParts(path: string) {
 
 function contains(a: Array<any>, obj: any, k: string) {
   const element = parseXML(obj);
-  for (var i = 0; i < a.length; i++) {
+  for (let i = 0; i < a.length; i++) {
     const current = parseXML(a[i]);
     if (
       element &&

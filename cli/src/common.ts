@@ -17,6 +17,7 @@ import { output, logger } from './log';
 import semver from 'semver';
 import which from 'which';
 import prompts, { Answers, PromptObject } from 'prompts';
+import xml2js from 'xml2js';
 import { PackageJson } from './definitions';
 
 export type CheckFunction = (
@@ -175,7 +176,6 @@ export function readXML(path: string): Promise<any> {
       if (err) {
         reject(`Unable to read: ${path}`);
       } else {
-        const xml2js = await import('xml2js');
         xml2js.parseString(xmlStr, (err, result) => {
           if (err) {
             reject(`Error parsing: ${path}, ${err}`);
@@ -189,9 +189,8 @@ export function readXML(path: string): Promise<any> {
 }
 
 export function parseXML(xmlStr: string): any {
-  const parseString = require('xml2js').parseString;
-  var xmlObj;
-  parseString(xmlStr, (err: any, result: any) => {
+  let xmlObj;
+  xml2js.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
       xmlObj = result;
     }
@@ -199,9 +198,8 @@ export function parseXML(xmlStr: string): any {
   return xmlObj;
 }
 
-export function writeXML(object: any): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    const xml2js = await import('xml2js');
+export async function writeXML(object: any): Promise<any> {
+  return new Promise((resolve, reject) => {
     const builder = new xml2js.Builder({
       headless: true,
       explicitRoot: false,
@@ -214,7 +212,6 @@ export function writeXML(object: any): Promise<any> {
 }
 
 export function buildXmlElement(configElement: any, rootName: string) {
-  const xml2js = require('xml2js');
   const builder = new xml2js.Builder({
     headless: true,
     explicitRoot: false,
@@ -475,7 +472,7 @@ export function resolveNode(
 
   let modulePath;
   const starts = [config.app.rootDir];
-  for (let start of starts) {
+  for (const start of starts) {
     modulePath = resolveNodeFrom(start, id);
     if (modulePath) {
       break;
@@ -492,6 +489,7 @@ export function resolveNodeFrom(start: string, id: string): string | null {
   const rootPath = parse(start).root;
   let basePath = resolve(start);
   let modulePath;
+  // eslint-disable-next-line
   while (true) {
     modulePath = join(basePath, 'node_modules', id);
     if (existsSync(modulePath)) {

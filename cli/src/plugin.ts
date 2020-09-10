@@ -85,7 +85,9 @@ export async function resolvePlugin(
       repository: meta.repository,
       xml: xmlMeta.plugin,
     };
-  } catch (e) {}
+  } catch (e) {
+    // ignore
+  }
   return null;
 }
 
@@ -206,7 +208,7 @@ export function getFilePath(config: Config, plugin: Plugin, path: string) {
       ];
     }
 
-    let filePath = resolveNode(config, ...pathSegments);
+    const filePath = resolveNode(config, ...pathSegments);
     if (!filePath) {
       throw new Error(`Can't resolve module ${pathSegments[0]}`);
     }

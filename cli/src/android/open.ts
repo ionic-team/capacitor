@@ -11,10 +11,11 @@ export async function openAndroid(config: Config) {
   const dir = config.android.platformDir;
 
   switch (config.cli.os) {
-    case OS.Mac:
+    case OS.Mac: {
       await open(dir, { app: 'android studio', wait: false });
       break;
-    case OS.Windows:
+    }
+    case OS.Windows: {
       let androidStudioPath = config.windows.androidStudioPath;
       try {
         if (!existsSync(androidStudioPath)) {
@@ -44,7 +45,8 @@ export async function openAndroid(config: Config) {
         );
       }
       break;
-    case OS.Linux:
+    }
+    case OS.Linux: {
       const linuxError = () => {
         logger.error(
           'Unable to launch Android Studio.\n' +
@@ -62,5 +64,6 @@ export async function openAndroid(config: Config) {
         linuxError();
       }
       break;
+    }
   }
 }
