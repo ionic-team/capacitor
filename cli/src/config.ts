@@ -1,7 +1,6 @@
 import { readJSON } from 'fs-extra';
-import { basename, dirname, join, resolve } from 'path';
+import { dirname, join, resolve } from 'path';
 
-import { logFatal } from './common';
 import {
   Config,
   ExternalConfig,
@@ -9,6 +8,7 @@ import {
   CLIConfig,
   AndroidConfig,
   IOSConfig,
+  PackageJson,
 } from './definitions';
 
 export const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
@@ -20,6 +20,8 @@ export async function loadConfig(): Promise<Config> {
     resolve(appRootDir, EXTERNAL_CONFIG_FILE),
   );
 
+  const appId = extConfig.appId ?? '';
+  const appName = extConfig.appName ?? '';
   const webDir = extConfig.webDir ?? 'www';
   const cli = await loadCLIConfig(cliRootDir);
 
@@ -39,11 +41,14 @@ export async function loadConfig(): Promise<Config> {
     cli,
     app: {
       rootDir: appRootDir,
-      appId: extConfig.appId ?? '',
-      appName: extConfig.appName ?? '',
+      appId,
+      appName,
       webDir,
       webDirAbs: resolve(appRootDir, webDir),
-      package: await readJSON(resolve(appRootDir, 'package.json')),
+      package: (await readPackageJSON(resolve(appRootDir, 'package.json'))) ?? {
+        name: appName,
+        version: '1.0.0',
+      },
       extConfigName: EXTERNAL_CONFIG_FILE,
       extConfigFilePath: resolve(appRootDir, EXTERNAL_CONFIG_FILE),
       extConfig,
@@ -139,5 +144,13 @@ async function loadExternalConfig(p: string): Promise<ExternalConfig> {
     return await readJSON(p);
   } catch (e) {
     return {};
+  }
+}
+
+async function readPackageJSON(p: string): Promise<PackageJson | null> {
+  try {
+    return await readJSON(p);
+  } catch (e) {
+    return null;
   }
 }

@@ -29,7 +29,7 @@ export async function initCommand(
     const appId = await getAppId(config, id);
     const webDir = isInteractive()
       ? await getWebDir(config, webDirFromCLI)
-      : webDirFromCLI;
+      : webDirFromCLI ?? config.app.extConfig.webDir ?? 'www';
 
     await check([
       () => checkAppName(config, appName),
@@ -47,6 +47,7 @@ export async function initCommand(
           appId,
           appName,
           webDir,
+          bundledWebRuntime: false,
           cordova,
         });
       },

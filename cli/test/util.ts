@@ -3,10 +3,10 @@ import {
   mkdirAsync,
   readFileAsync,
   writeFileAsync,
-  copyAsync,
 } from '../src/util/fs';
 import { runCommand } from '../src/common';
-import { Config } from '../src/config';
+import { loadConfig } from '../src/config';
+import { Config } from '../src/definitions';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
 import { mkdirs } from 'fs-extra';
@@ -18,8 +18,11 @@ export const CORDOVA_PLUGIN_ID = 'cool-cordova-plugin';
 export const APP_ID = 'com.getcapacitor.cli.test';
 export const APP_NAME = 'Capacitor CLI Test';
 
-export function makeConfig(appRoot: string): Config {
-  return new Config(process.platform, appRoot, `${cwd}/bin`);
+export async function makeConfig(appRoot: string): Promise<Config> {
+  process.chdir(appRoot);
+  const config = await loadConfig();
+  process.chdir(cwd);
+  return config;
 }
 
 export async function run(appRoot: string, capCommand: string) {
