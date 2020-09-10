@@ -1,5 +1,5 @@
 import { wordWrap } from '@ionic/cli-framework-output';
-import { Config, PackageJson } from './definitions';
+import { Config, PackageJson, ExternalConfig } from './definitions';
 import { exec, spawn } from 'child_process';
 import { setTimeout } from 'timers';
 import { basename, dirname, join, resolve } from 'path';
@@ -216,33 +216,15 @@ export function buildXmlElement(configElement: any, rootName: string) {
   return builder.buildObject(configElement);
 }
 
-/**
- * Check for or create our main configuration file.
- * @param config
- */
-export async function getOrCreateConfig(config: Config) {
-  const configPath = join(config.app.rootDir, config.app.extConfigName);
-  if (await existsAsync(configPath)) {
-    return configPath;
-  }
-
+export async function mergeConfig(config: Config, extConfig: ExternalConfig) {
   await writePrettyJSON(config.app.extConfigFilePath, {
-    appId: config.app.appId,
-    appName: config.app.appName,
-    bundledWebRuntime: config.app.bundledWebRuntime,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
     plugins: {
       SplashScreen: {
         launchShowDuration: 0,
       },
     },
-  });
-}
-
-export async function mergeConfig(config: Config, settings: any) {
-  await writePrettyJSON(config.app.extConfigFilePath, {
     ...config.app.extConfig,
-    ...settings,
+    ...extConfig,
   });
 }
 

@@ -136,8 +136,8 @@ function determineOS(os: NodeJS.Platform): OS {
 
 async function loadExternalConfig(p: string): Promise<ExternalConfig> {
   try {
-    return readJSON(p);
+    return await readJSON(p);
   } catch (e) {
-    logFatal(`Error parsing ${basename(p)}\n` + e.stack ?? e);
+    return {};
   }
 }

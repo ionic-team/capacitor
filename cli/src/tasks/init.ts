@@ -4,7 +4,6 @@ import {
   check,
   checkAppId,
   checkAppName,
-  getOrCreateConfig,
   logFatal,
   mergeConfig,
   runTask,
@@ -44,11 +43,6 @@ export async function initCommand(
         config.app.rootDir,
       )}`,
       async () => {
-        config.app.appId = appId;
-        config.app.appName = appName;
-        config.app.webDir = webDir;
-
-        await getOrCreateConfig(config);
         await mergeConfig(config, {
           appId,
           appName,
