@@ -224,7 +224,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     @Override
     public boolean onShowFileChooser(
         WebView webView,
-        final ValueCallback<Uri[]> filePathCalback,
+        final ValueCallback<Uri[]> filePathCallback,
         final FileChooserParams fileChooserParams
     ) {
         List<String> acceptTypes = Arrays.asList(fileChooserParams.getAcceptTypes());
