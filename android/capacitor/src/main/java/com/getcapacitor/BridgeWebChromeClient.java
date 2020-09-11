@@ -20,7 +20,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import com.getcapacitor.plugin.camera.CameraUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,17 +193,19 @@ public class BridgeWebChromeClient extends WebChromeClient {
         return true;
     }
 
-
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         WebView targetWebView = new WebView(bridge.getActivity());
-        targetWebView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading (WebView view, String url) {
-                Log.d("Web","url: " + url);
-                return true;
+        targetWebView.setWebViewClient(
+            new WebViewClient() {
+
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    Log.d("Web", "url: " + url);
+                    return true;
+                }
             }
-        });
+        );
 
         WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
         transport.setWebView(targetWebView);
