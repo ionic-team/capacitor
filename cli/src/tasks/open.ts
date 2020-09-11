@@ -1,7 +1,7 @@
 import { openAndroid } from '../android/open';
 import c from '../colors';
 import { logFatal, resolvePlatform, runPlatformHook, runTask } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { openIOS } from '../ios/open';
 import { logger } from '../log';
 

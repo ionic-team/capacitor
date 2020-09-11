@@ -5,7 +5,7 @@ import {
   logFatal,
   logSuccess,
 } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 
 import { checkCocoaPods, checkIOSProject } from './common';
 

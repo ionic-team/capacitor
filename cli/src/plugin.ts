@@ -2,7 +2,7 @@ import { join } from 'path';
 
 import c from './colors';
 import { logFatal, readJSON, readXML, resolveNode } from './common';
-import { Config } from './config';
+import type { Config } from './config';
 import { logger, output } from './log';
 
 export const enum PluginType {

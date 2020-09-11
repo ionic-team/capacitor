@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import c from '../colors';
 import { logFatal, resolveNode, runTask } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 
 export async function copyWeb(config: Config): Promise<void> {
   if (config.app.bundledWebRuntime) {

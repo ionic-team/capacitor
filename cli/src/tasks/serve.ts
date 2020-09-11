@@ -1,6 +1,6 @@
 import c from '../colors';
 import { logFatal } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 
 export async function serveCommand(config: Config): Promise<void> {
   logFatal(

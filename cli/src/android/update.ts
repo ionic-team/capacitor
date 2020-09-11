@@ -7,14 +7,14 @@ import {
   resolveNode,
   runTask,
 } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import type { Plugin } from '../plugin';
 import {
-  Plugin,
   PluginType,
   getAllElements,
   getFilePath,

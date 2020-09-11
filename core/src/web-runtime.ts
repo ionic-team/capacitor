@@ -1,4 +1,4 @@
-import { PluginRegistry } from './definitions';
+import type { PluginRegistry } from './definitions';
 
 export class CapacitorWeb {
   Plugins: PluginRegistry;

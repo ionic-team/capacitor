@@ -1,7 +1,7 @@
 import { updateAndroid } from '../android/update';
 import c from '../colors';
+import type { CheckFunction } from '../common';
 import {
-  CheckFunction,
   check,
   checkPackage,
   logFatal,
@@ -9,7 +9,7 @@ import {
   runPlatformHook,
   runTask,
 } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';

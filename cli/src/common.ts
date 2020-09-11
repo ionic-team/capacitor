@@ -2,15 +2,16 @@ import { wordWrap } from '@ionic/cli-framework-output';
 import { exec, spawn } from 'child_process';
 import { existsSync, readFile } from 'fs';
 import { basename, dirname, join, parse, resolve } from 'path';
-import prompts, { Answers, PromptObject } from 'prompts';
+import type { Answers, PromptObject } from 'prompts';
+import prompts from 'prompts';
 import semver from 'semver';
 import { setTimeout } from 'timers';
 import which from 'which';
 import xml2js from 'xml2js';
 
 import c from './colors';
-import { Config } from './config';
-import { PackageJson } from './definitions';
+import type { Config } from './config';
+import type { PackageJson } from './definitions';
 import { output, logger } from './log';
 import { emoji as _e } from './util/emoji';
 import {

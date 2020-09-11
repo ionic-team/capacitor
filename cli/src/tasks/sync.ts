@@ -1,6 +1,6 @@
 import c from '../colors';
 import { check, checkPackage, checkWebDir, logFatal } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 

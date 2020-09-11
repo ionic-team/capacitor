@@ -2,8 +2,9 @@ import { homedir } from 'os';
 import { join, relative } from 'path';
 
 import c from '../colors';
-import { copyTemplate, runCommand, runTask, CheckFunction } from '../common';
-import { Config } from '../config';
+import type { CheckFunction } from '../common';
+import { copyTemplate, runCommand, runTask } from '../common';
+import type { Config } from '../config';
 import { existsAsync, writeFileAsync } from '../util/fs';
 
 import { checkAndroidPackage } from './common';

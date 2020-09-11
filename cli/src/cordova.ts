@@ -1,6 +1,7 @@
 import { copy as fsCopy, existsSync } from 'fs-extra';
 import { basename, extname, join, resolve } from 'path';
-import plist, { PlistObject } from 'plist';
+import type { PlistObject } from 'plist';
+import plist from 'plist';
 import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
@@ -14,11 +15,11 @@ import {
   resolveNode,
   writeXML,
 } from './common';
-import { Config } from './config';
+import type { Config } from './config';
 import { getIOSPlugins } from './ios/common';
 import { logger } from './log';
+import type { Plugin } from './plugin';
 import {
-  Plugin,
   PluginType,
   getAssets,
   getJSModules,

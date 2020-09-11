@@ -1,4 +1,7 @@
-import { PluginListenerHandle, PermissionsRequestResult } from '../definitions';
+import type {
+  PluginListenerHandle,
+  PermissionsRequestResult,
+} from '../definitions';
 import { Capacitor } from '../global';
 
 export type ListenerCallback = (err: any, ...args: any[]) => void;

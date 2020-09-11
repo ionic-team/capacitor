@@ -1,8 +1,9 @@
 import { relative } from 'path';
 
 import c from '../colors';
-import { CheckFunction, copyTemplate, runTask } from '../common';
-import { Config } from '../config';
+import type { CheckFunction } from '../common';
+import { copyTemplate, runTask } from '../common';
+import type { Config } from '../config';
 
 import { checkCocoaPods, checkIOSPackage } from './common';
 

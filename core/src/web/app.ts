@@ -1,4 +1,8 @@
-import { AppPlugin, AppLaunchUrl, AppState } from '../core-plugin-definitions';
+import type {
+  AppPlugin,
+  AppLaunchUrl,
+  AppState,
+} from '../core-plugin-definitions';
 
 import { WebPlugin } from './index';
 

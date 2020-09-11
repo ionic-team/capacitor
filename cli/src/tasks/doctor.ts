@@ -1,7 +1,7 @@
 import { doctorAndroid } from '../android/doctor';
 import c from '../colors';
 import { readJSON, resolveNode, getCommandOutput } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';

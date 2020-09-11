@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import c from '../colors';
 import { check, logFatal, logSuccess, readXML } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { existsAsync, readFileAsync } from '../util/fs';
 
 export async function doctorAndroid(config: Config): Promise<void> {

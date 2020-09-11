@@ -1,4 +1,4 @@
-import { SharePlugin, ShareOptions } from '../core-plugin-definitions';
+import type { SharePlugin, ShareOptions } from '../core-plugin-definitions';
 
 import { WebPlugin } from './index';
 

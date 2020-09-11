@@ -2,9 +2,10 @@ import { join, resolve } from 'path';
 
 import c from '../colors';
 import { isInstalled, checkCapacitorPlatform } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-import { Plugin, PluginType, getPluginPlatform } from '../plugin';
+import type { Plugin } from '../plugin';
+import { PluginType, getPluginPlatform } from '../plugin';
 import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 
 export async function findXcodePath(config: Config): Promise<string | null> {

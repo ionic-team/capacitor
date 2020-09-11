@@ -1,6 +1,7 @@
 import { addAndroid, addAndroidChecks } from '../android/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import c from '../colors';
+import type { CheckFunction } from '../common';
 import {
   check,
   checkAppConfig,
@@ -10,9 +11,8 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
-  CheckFunction,
 } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { OS } from '../definitions';
 import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsIOS } from '../ios/common';

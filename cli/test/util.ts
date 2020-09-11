@@ -1,7 +1,8 @@
 import { exec } from 'child_process';
 import { mkdirs } from 'fs-extra';
 import { join, resolve } from 'path';
-import tmp, { DirCallback } from 'tmp';
+import type { DirCallback } from 'tmp';
+import tmp from 'tmp';
 
 import { runCommand } from '../src/common';
 import { Config } from '../src/config';

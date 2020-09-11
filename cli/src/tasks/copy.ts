@@ -10,7 +10,7 @@ import {
   runPlatformHook,
   runTask,
 } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import {
   getCordovaPlugins,
   handleCordovaPluginsJS,

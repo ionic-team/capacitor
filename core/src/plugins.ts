@@ -1,5 +1,5 @@
 import { Capacitor, Plugins } from './global';
-import { WebPlugin } from './web';
+import type { WebPlugin } from './web';
 
 export enum ExceptionCodes {
   UNSUPPORTED_BROWSER = 'UNSUPPORTED_BROWSER',

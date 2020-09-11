@@ -2,7 +2,7 @@ import open from 'open';
 
 import c from '../colors';
 import { wait, logFatal } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 
 import { findXcodePath } from './common';
 

@@ -2,22 +2,22 @@ import { realpathSync } from 'fs';
 import { join, relative, resolve } from 'path';
 
 import c from '../colors';
+import type { CheckFunction } from '../common';
 import {
-  CheckFunction,
   checkPlatformVersions,
   logFatal,
   resolveNode,
   runCommand,
   runTask,
 } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   logCordovaManualSteps,
 } from '../cordova';
+import type { Plugin } from '../plugin';
 import {
-  Plugin,
   PluginType,
   getAllElements,
   getFilePath,

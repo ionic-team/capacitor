@@ -12,7 +12,7 @@ import {
   logSuccess,
   logPrompt,
 } from '../common';
-import { Config } from '../config';
+import type { Config } from '../config';
 import { getCordovaPreferences } from '../cordova';
 import { logger, output } from '../log';
 import { emoji as _e } from '../util/emoji';
