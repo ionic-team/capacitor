@@ -357,7 +357,11 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
         xml,
     );
   } else if (configElement.array || configElement.dict) {
-    if (configElement.array && configElement.array.length > 0) {
+    if (
+      configElement.array &&
+      configElement.array.length > 0 &&
+      configElement.array[0].string
+    ) {
       let xml = '';
       configElement.array[0].string.map((element: any) => {
         const d = plistData[configElement.$.parent];
