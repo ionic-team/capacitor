@@ -37,7 +37,7 @@ import { getAndroidPlugins } from './common';
 
 const platform = 'android';
 
-export async function updateAndroid(config: Config) {
+export async function updateAndroid(config: Config): Promise<void> {
   const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter(
@@ -74,7 +74,7 @@ export async function installGradlePlugins(
   config: Config,
   capacitorPlugins: Plugin[],
   cordovaPlugins: Plugin[],
-) {
+): Promise<void> {
   const capacitorAndroidPath = resolveNode(
     config,
     '@capacitor/android',
@@ -177,7 +177,7 @@ if (hasProperty('postBuildExtras')) {
 export async function handleCordovaPluginsGradle(
   config: Config,
   cordovaPlugins: Plugin[],
-) {
+): Promise<void> {
   const pluginsFolder = resolve(
     config.app.rootDir,
     'android',

@@ -63,7 +63,9 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
  * This is a little trickier for Android because the appId becomes
  * the package name.
  */
-export async function editProjectSettingsAndroid(config: Config) {
+export async function editProjectSettingsAndroid(
+  config: Config,
+): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 

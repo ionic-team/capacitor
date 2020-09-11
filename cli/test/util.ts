@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import { mkdirs } from 'fs-extra';
 import { join, resolve } from 'path';
-import tmp from 'tmp';
+import tmp, { DirCallback } from 'tmp';
 
 import { runCommand } from '../src/common';
 import { Config } from '../src/config';
@@ -23,7 +23,7 @@ export function makeConfig(appRoot: string): Config {
   return new Config(process.platform, appRoot, `${cwd}/bin`);
 }
 
-export async function run(appRoot: string, capCommand: string) {
+export async function run(appRoot: string, capCommand: string): Promise<void> {
   return new Promise((resolve, reject) => {
     exec(
       `cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`,
@@ -38,8 +38,11 @@ export async function run(appRoot: string, capCommand: string) {
   });
 }
 
-export function mktmp() {
-  return new Promise((resolve, reject) => {
+export function mktmp(): Promise<{
+  cleanupCallback: DirCallback;
+  path: string;
+}> {
+  return new Promise(resolve => {
     tmp.dir((err, path, cleanupCallback) => {
       if (err) {
         throw err;
@@ -83,7 +86,7 @@ export async function installPlatform(
   await runCommand(`cd ${appDir} && npm install ${platformPath}`);
 }
 
-export async function makeAppDir(monoRepoLike = false) {
+export async function makeAppDir(monoRepoLike = false): Promise<void> {
   const appDirObj: any = await mktmp();
   const tmpDir = appDirObj.path;
   const rootDir = monoRepoLike
@@ -228,10 +231,10 @@ async function makeCordovaPlugin(cordovaPluginPath: string) {
 
 class MappedFS {
   constructor(private rootDir: string) {}
-  async read(path: string) {
+  async read(path: string): Promise<string> {
     return readFileAsync(resolve(this.rootDir, path), 'utf8');
   }
-  async exists(path: string) {
+  async exists(path: string): Promise<boolean> {
     return existsAsync(resolve(this.rootDir, path));
   }
 }

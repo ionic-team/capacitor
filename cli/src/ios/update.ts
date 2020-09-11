@@ -44,7 +44,10 @@ export const updateIOSChecks: CheckFunction[] = [
 ];
 const platform = 'ios';
 
-export async function updateIOS(config: Config, deployment: boolean) {
+export async function updateIOS(
+  config: Config,
+  deployment: boolean,
+): Promise<void> {
   const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter(
@@ -77,7 +80,7 @@ export async function installCocoaPodsPlugins(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
-) {
+): Promise<void> {
   await runTask(
     `Updating iOS native dependencies with ${c.input('pod install')}`,
     () => {
@@ -90,7 +93,7 @@ export async function updatePodfile(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
-) {
+): Promise<void> {
   const dependenciesContent = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
   const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
@@ -117,7 +120,7 @@ export async function updatePodfile(
   );
 }
 
-export function generatePodFile(config: Config, plugins: Plugin[]) {
+export function generatePodFile(config: Config, plugins: Plugin[]): string {
   const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
   if (!capacitoriOSPath) {
     logFatal(

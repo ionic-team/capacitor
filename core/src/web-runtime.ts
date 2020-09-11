@@ -45,23 +45,27 @@ export class CapacitorWeb {
     }
   }
 
-  pluginMethodNoop(_target: any, _prop: PropertyKey, pluginName: string) {
+  private pluginMethodNoop(
+    _target: any,
+    _prop: PropertyKey,
+    pluginName: string,
+  ) {
     return Promise.reject(`${pluginName} does not have web implementation.`);
   }
 
-  getPlatform() {
+  getPlatform(): string {
     return this.platform;
   }
 
-  isPluginAvailable(name: string) {
+  isPluginAvailable(name: string): boolean {
     return Object.prototype.hasOwnProperty.call(this.Plugins, name);
   }
 
-  convertFileSrc(filePath: string) {
+  convertFileSrc(filePath: string): string {
     return filePath;
   }
 
-  handleError(e: Error) {
+  handleError(e: Error): void {
     console.error(e);
   }
 }

@@ -87,7 +87,7 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
 /**
  * Update the native project files with the desired app id and app name
  */
-export async function editProjectSettingsIOS(config: Config) {
+export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 

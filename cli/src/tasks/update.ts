@@ -18,7 +18,7 @@ export async function updateCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -76,7 +76,7 @@ export async function update(
   config: Config,
   platformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   try {
     await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
       if (platformName === config.ios.name) {

@@ -6,7 +6,7 @@ import { OS } from '../definitions';
 import { logger } from '../log';
 import { existsSync } from '../util/fs';
 
-export async function openAndroid(config: Config) {
+export async function openAndroid(config: Config): Promise<void> {
   logger.info(`Opening Android project at ${config.android.platformDir}.`);
 
   const dir = config.android.platformDir;

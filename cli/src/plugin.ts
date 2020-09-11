@@ -115,7 +115,7 @@ export function printPlugins(
   plugins: Plugin[],
   platform: string,
   type: 'capacitor' | 'cordova' | 'incompatible' = 'capacitor',
-) {
+): void {
   if (plugins.length === 0) {
     return;
   }
@@ -148,7 +148,7 @@ export function printPlugins(
   logger.info(msg);
 }
 
-export function getPluginPlatform(p: Plugin, platform: string) {
+export function getPluginPlatform(p: Plugin, platform: string): any {
   const platforms = p.xml.platform;
   if (platforms) {
     const platforms = p.xml.platform.filter(function (item: any) {
@@ -163,7 +163,7 @@ export function getPlatformElement(
   p: Plugin,
   platform: string,
   elementName: string,
-) {
+): any {
   const platformTag = getPluginPlatform(p, platform);
   if (platformTag) {
     const element = platformTag[elementName];
@@ -187,18 +187,22 @@ export function getPluginType(p: Plugin, platform: string): PluginType {
 /**
  * Get each JavaScript Module for the given plugin
  */
-export function getJSModules(p: Plugin, platform: string) {
+export function getJSModules(p: Plugin, platform: string): any {
   return getAllElements(p, platform, 'js-module');
 }
 
 /**
  * Get each asset tag for the given plugin
  */
-export function getAssets(p: Plugin, platform: string) {
+export function getAssets(p: Plugin, platform: string): any {
   return getAllElements(p, platform, 'asset');
 }
 
-export function getFilePath(config: Config, plugin: Plugin, path: string) {
+export function getFilePath(
+  config: Config,
+  plugin: Plugin,
+  path: string,
+): string {
   if (path.startsWith('node_modules')) {
     let pathSegments = path.split('/').slice(1);
     if (pathSegments[0].startsWith('@')) {
@@ -225,7 +229,7 @@ export function getAllElements(
   p: Plugin,
   platform: string,
   elementName: string,
-) {
+): any {
   let modules: string[] = [];
   if (p.xml[elementName]) {
     modules = modules.concat(p.xml[elementName]);

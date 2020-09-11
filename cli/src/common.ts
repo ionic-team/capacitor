@@ -167,8 +167,8 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
-export function writePrettyJSON(path: string, data: any) {
-  return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
+export async function writePrettyJSON(path: string, data: any): Promise<void> {
+  await writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
 }
 
 export function readXML(path: string): Promise<any> {
@@ -212,7 +212,7 @@ export async function writeXML(object: any): Promise<any> {
   });
 }
 
-export function buildXmlElement(configElement: any, rootName: string) {
+export function buildXmlElement(configElement: any, rootName: string): string {
   const builder = new xml2js.Builder({
     headless: true,
     explicitRoot: false,
@@ -225,7 +225,9 @@ export function buildXmlElement(configElement: any, rootName: string) {
  * Check for or create our main configuration file.
  * @param config
  */
-export async function getOrCreateConfig(config: Config) {
+export async function getOrCreateConfig(
+  config: Config,
+): Promise<string | undefined> {
   const configPath = join(config.app.rootDir, config.app.extConfigName);
   if (await existsAsync(configPath)) {
     return configPath;
@@ -247,7 +249,10 @@ export async function getOrCreateConfig(config: Config) {
   config.loadExternalConfig();
 }
 
-export async function mergeConfig(config: Config, settings: any) {
+export async function mergeConfig(
+  config: Config,
+  settings: any,
+): Promise<void> {
   const configPath = join(config.app.rootDir, config.app.extConfigName);
 
   await writePrettyJSON(config.app.extConfigFilePath, {
@@ -271,7 +276,7 @@ export async function logPrompt<T extends string>(
   return prompts(prompt, { onCancel: () => process.exit(1) });
 }
 
-export function logSuccess(msg: string) {
+export function logSuccess(msg: string): void {
   logger.msg(`${c.success('[success]')} ${msg}`);
 }
 
@@ -292,7 +297,7 @@ export async function isInstalled(command: string): Promise<boolean> {
   });
 }
 
-export function wait(time: number) {
+export async function wait(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -365,12 +370,12 @@ export async function runTask<T>(
   }
 }
 
-export async function copyTemplate(src: string, dst: string) {
+export async function copyTemplate(src: string, dst: string): Promise<void> {
   await copyAsync(src, dst);
   await renameGitignore(dst);
 }
 
-export async function renameGitignore(dst: string) {
+export async function renameGitignore(dst: string): Promise<void> {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
@@ -422,7 +427,10 @@ export async function getCLIVersion(config: Config): Promise<string> {
   return getCapacitorPackageVersion(config, 'cli');
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+export async function checkPlatformVersions(
+  config: Config,
+  platform: string,
+): Promise<void> {
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getCapacitorPackageVersion(config, platform);
   if (

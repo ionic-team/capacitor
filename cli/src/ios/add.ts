@@ -8,7 +8,7 @@ import { checkCocoaPods, checkIOSPackage } from './common';
 
 export const addIOSChecks: CheckFunction[] = [checkIOSPackage, checkCocoaPods];
 
-export async function addIOS(config: Config) {
+export async function addIOS(config: Config): Promise<void> {
   const nativeRelDir = relative(config.app.rootDir, config.ios.platformDir);
   await runTask(
     `Adding native Xcode project in ${c.strong(nativeRelDir)}`,

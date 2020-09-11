@@ -15,7 +15,7 @@ import { allSerial } from '../util/promise';
 export async function listCommand(
   config: Config,
   selectedPlatformName: string,
-) {
+): Promise<void> {
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
     logger.info(
@@ -33,7 +33,7 @@ export async function listCommand(
   }
 }
 
-export async function list(config: Config, platform: string) {
+export async function list(config: Config, platform: string): Promise<void> {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {

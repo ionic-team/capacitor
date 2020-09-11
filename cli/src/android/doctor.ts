@@ -6,14 +6,13 @@ import { check, logFatal, logSuccess, readXML } from '../common';
 import { Config } from '../config';
 import { existsAsync, readFileAsync } from '../util/fs';
 
-export async function doctorAndroid(config: Config) {
+export async function doctorAndroid(config: Config): Promise<void> {
   try {
     await check(config, [checkAndroidInstalled, checkGradlew, checkAppSrcDirs]);
     logSuccess('Android looking great! 👌');
   } catch (e) {
     logFatal(e.stack ?? e);
   }
-  return Promise.resolve();
 }
 
 async function checkAppSrcDirs(config: Config) {

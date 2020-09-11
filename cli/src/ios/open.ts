@@ -6,7 +6,7 @@ import { Config } from '../config';
 
 import { findXcodePath } from './common';
 
-export async function openIOS(config: Config) {
+export async function openIOS(config: Config): Promise<void> {
   const xcodeProject = await findXcodePath(config);
 
   if (!xcodeProject) {

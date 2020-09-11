@@ -21,7 +21,7 @@ process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
 });
 
-export function run(process: NodeJS.Process, cliBinDir: string) {
+export function run(process: NodeJS.Process, cliBinDir: string): void {
   const config = new Config(process.platform, process.cwd(), cliBinDir);
 
   program.version(config.cli.package.version);

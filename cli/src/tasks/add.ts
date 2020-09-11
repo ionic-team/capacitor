@@ -1,6 +1,3 @@
-import { resolve } from 'path';
-import prompts from 'prompts';
-
 import { addAndroid, addAndroidChecks } from '../android/add';
 import { editProjectSettingsAndroid } from '../android/common';
 import c from '../colors';
@@ -13,7 +10,7 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
-  writePrettyJSON,
+  CheckFunction,
 } from '../common';
 import { Config } from '../config';
 import { OS } from '../definitions';
@@ -23,7 +20,10 @@ import { logger } from '../log';
 
 import { sync } from './sync';
 
-export async function addCommand(config: Config, selectedPlatformName: string) {
+export async function addCommand(
+  config: Config,
+  selectedPlatformName: string,
+): Promise<void> {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -91,7 +91,10 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   }
 }
 
-export function addChecks(config: Config, platformName: string) {
+export function addChecks(
+  config: Config,
+  platformName: string,
+): CheckFunction[] {
   if (platformName === config.ios.name) {
     return addIOSChecks;
   } else if (platformName === config.android.name) {
@@ -103,7 +106,10 @@ export function addChecks(config: Config, platformName: string) {
   }
 }
 
-export async function doAdd(config: Config, platformName: string) {
+export async function doAdd(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   await runTask(c.success(c.strong('add')), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);

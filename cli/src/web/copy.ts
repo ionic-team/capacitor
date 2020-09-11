@@ -5,7 +5,7 @@ import c from '../colors';
 import { logFatal, resolveNode, runTask } from '../common';
 import { Config } from '../config';
 
-export async function copyWeb(config: Config) {
+export async function copyWeb(config: Config): Promise<void> {
   if (config.app.bundledWebRuntime) {
     const runtimePath = resolveNode(
       config,

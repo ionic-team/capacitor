@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { ToastPlugin, ToastShowOptions } from '../core-plugin-definitions';
 
 import { WebPlugin } from './index';

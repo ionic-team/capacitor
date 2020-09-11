@@ -44,7 +44,7 @@ export function generateCordovaPluginsJSFile(
   config: Config,
   plugins: Plugin[],
   platform: string,
-) {
+): string {
   const pluginModules: any[] = [];
   const pluginExports: string[] = [];
   plugins.map(p => {
@@ -131,7 +131,7 @@ export async function copyPluginsJS(
   config: Config,
   cordovaPlugins: Plugin[],
   platform: string,
-) {
+): Promise<void> {
   const webDir = getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
@@ -175,7 +175,10 @@ export async function copyPluginsJS(
   );
 }
 
-export async function copyCordovaJS(config: Config, platform: string) {
+export async function copyCordovaJS(
+  config: Config,
+  platform: string,
+): Promise<void> {
   const cordovaPath = resolveNode(config, '@capacitor/core', 'cordova.js');
   if (!cordovaPath) {
     logFatal(
@@ -187,7 +190,10 @@ export async function copyCordovaJS(config: Config, platform: string) {
   return fsCopy(cordovaPath, join(getWebDir(config, platform), 'cordova.js'));
 }
 
-export async function createEmptyCordovaJS(config: Config, platform: string) {
+export async function createEmptyCordovaJS(
+  config: Config,
+  platform: string,
+): Promise<void> {
   await writeFileAsync(join(getWebDir(config, platform), 'cordova.js'), '');
   await writeFileAsync(
     join(getWebDir(config, platform), 'cordova_plugins.js'),
@@ -195,7 +201,7 @@ export async function createEmptyCordovaJS(config: Config, platform: string) {
   );
 }
 
-export function removePluginFiles(config: Config, platform: string) {
+export function removePluginFiles(config: Config, platform: string): void {
   const webDir = getWebDir(config, platform);
   const pluginsDir = join(webDir, 'plugins');
   const cordovaPluginsJSFile = join(webDir, 'cordova_plugins.js');
@@ -207,7 +213,7 @@ export async function autoGenerateConfig(
   config: Config,
   cordovaPlugins: Plugin[],
   platform: string,
-) {
+): Promise<void> {
   let xmlDir = join(config.android.resDirAbs, 'xml');
   const fileName = 'config.xml';
   if (platform === 'ios') {
@@ -285,7 +291,7 @@ export async function handleCordovaPluginsJS(
   cordovaPlugins: Plugin[],
   config: Config,
   platform: string,
-) {
+): Promise<void> {
   if (!existsSync(getWebDir(config, platform))) {
     await copy(config, platform);
   }
@@ -318,7 +324,7 @@ export async function logCordovaManualSteps(
   cordovaPlugins: Plugin[],
   config: Config,
   platform: string,
-) {
+): Promise<void> {
   cordovaPlugins.map(p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
@@ -477,7 +483,7 @@ export async function checkPluginDependencies(
   }
 }
 
-export function getIncompatibleCordovaPlugins(platform: string) {
+export function getIncompatibleCordovaPlugins(platform: string): string[] {
   const pluginList = [
     'cordova-plugin-splashscreen',
     'cordova-plugin-ionic-webview',
@@ -502,7 +508,7 @@ export function getIncompatibleCordovaPlugins(platform: string) {
   return pluginList;
 }
 
-export async function getCordovaPreferences(config: Config) {
+export async function getCordovaPreferences(config: Config): Promise<any> {
   const configXml = join(config.app.rootDir, 'config.xml');
   let cordova: any = {};
   if (existsSync(configXml)) {
@@ -568,7 +574,7 @@ export async function writeCordovaAndroidManifest(
   cordovaPlugins: Plugin[],
   config: Config,
   platform: string,
-) {
+): Promise<void> {
   const pluginsFolder = resolve(
     config.app.rootDir,
     'android',

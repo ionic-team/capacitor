@@ -23,7 +23,7 @@ export async function initCommand(
   name: string,
   id: string,
   webDirFromCLI = 'www',
-) {
+): Promise<void> {
   try {
     if (!checkInteractive(name, id)) {
       return;

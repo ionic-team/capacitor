@@ -24,7 +24,7 @@ import { copyWeb } from '../web/copy';
 export async function copyCommand(
   config: Config,
   selectedPlatformName: string,
-) {
+): Promise<void> {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -51,7 +51,10 @@ export async function copyCommand(
   }
 }
 
-export async function copy(config: Config, platformName: string) {
+export async function copy(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
     if (result) {

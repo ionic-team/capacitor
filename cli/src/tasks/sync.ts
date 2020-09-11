@@ -14,7 +14,7 @@ export async function syncCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     try {
       await copyCommand(config, selectedPlatformName);
@@ -56,7 +56,7 @@ export async function sync(
   config: Config,
   platformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   try {
     await copy(config, platformName);
   } catch (e) {

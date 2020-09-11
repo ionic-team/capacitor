@@ -109,7 +109,10 @@ export class WebPlugin {
     return !!this.listeners[eventName].length;
   }
 
-  registerWindowListener(windowEventName: string, pluginEventName: string) {
+  registerWindowListener(
+    windowEventName: string,
+    pluginEventName: string,
+  ): void {
     this.windowListeners[pluginEventName] = {
       registered: false,
       windowEventName,

@@ -5,7 +5,7 @@ import { logger } from '../log';
 
 // Given input variables to a command, make sure all are provided if the terminal
 // is not interactive (because we won't be able to prompt the user)
-export const checkInteractive = (...args: string[]) => {
+export const checkInteractive = (...args: string[]): boolean => {
   if (isInteractive()) {
     return true;
   }

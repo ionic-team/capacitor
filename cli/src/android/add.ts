@@ -10,7 +10,7 @@ import { checkAndroidPackage } from './common';
 
 export const addAndroidChecks: CheckFunction[] = [checkAndroidPackage];
 
-export async function addAndroid(config: Config) {
+export async function addAndroid(config: Config): Promise<void> {
   const nativeRelDir = relative(config.app.rootDir, config.android.platformDir);
   await runTask(
     `Adding native android project in ${c.strong(nativeRelDir)}`,
