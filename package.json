@@ -16,10 +16,10 @@
   },
   "prettier": "@ionic/prettier-config",
   "eslintConfig": {
-    "extends": "@ionic"
+    "extends": "@ionic/eslint-config/recommended"
   },
   "devDependencies": {
-    "@ionic/eslint-config": "^0.1.0",
+    "@ionic/eslint-config": "^0.2.0",
     "@ionic/prettier-config": "^1.0.0",
     "@ionic/swiftlint-config": "^1.1.1",
     "eslint": "^7.8.1",
