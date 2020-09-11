@@ -86,6 +86,6 @@ export async function update(
       }
     });
   } catch (e) {
-    logger.error(`Error running update:\n` + e.stack ?? e);
+    logger.error(`Error running update:\n` + (e.stack ?? e));
   }
 }

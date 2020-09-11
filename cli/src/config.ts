@@ -105,7 +105,7 @@ export class Config implements CliConfig {
 
       this.knownPlatforms.push(this.web.name);
     } catch (e) {
-      logFatal(`Unable to load config\n` + e.stack ?? e);
+      logFatal(`Unable to load config\n` + (e.stack ?? e));
     }
   }
 
@@ -227,8 +227,8 @@ export class Config implements CliConfig {
         this.app.extConfig = JSON.parse(extConfigStr);
       } catch (e) {
         logFatal(
-          `Error parsing ${basename(this.app.extConfigFilePath)}\n` + e.stack ??
-            e,
+          `Error parsing ${basename(this.app.extConfigFilePath)}\n` +
+            (e.stack ?? e),
         );
       }
     } catch {
