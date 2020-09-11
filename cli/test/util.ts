@@ -11,7 +11,6 @@ import {
   mkdirAsync,
   readFileAsync,
   writeFileAsync,
-  copyAsync,
 } from '../src/util/fs';
 
 const cwd = process.cwd();
@@ -24,7 +23,10 @@ export function makeConfig(appRoot: string): Config {
   return new Config(process.platform, appRoot, `${cwd}/bin`);
 }
 
-export async function run(appRoot: string, capCommand: string): Promise<void> {
+export async function run(
+  appRoot: string,
+  capCommand: string,
+): Promise<string> {
   return new Promise((resolve, reject) => {
     exec(
       `cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`,
