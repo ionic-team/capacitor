@@ -1,15 +1,13 @@
-import { WebPlugin } from './index';
-
 import {
   GeolocationPlugin,
   GeolocationOptions,
   GeolocationPosition,
   GeolocationWatchCallback,
 } from '../core-plugin-definitions';
-
 import { PermissionsRequestResult } from '../definitions';
-
 import { extend } from '../util';
+
+import { WebPlugin } from './index';
 
 export class GeolocationPluginWeb
   extends WebPlugin

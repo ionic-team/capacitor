@@ -1,13 +1,12 @@
-import { WebPlugin } from './index';
-
 import {
   DeviceBatteryInfo,
   DeviceInfo,
   DevicePlugin,
   DeviceLanguageCodeResult,
 } from '../core-plugin-definitions';
-
 import { uuid4 } from '../util';
+
+import { WebPlugin } from './index';
 
 declare let navigator: any;
 

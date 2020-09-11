@@ -1,7 +1,10 @@
+import { mkdirs } from 'fs-extra';
+import { join, resolve } from 'path';
+
 import { checkCapacitorPlatform } from '../common';
 import { Config } from '../config';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-import { mkdirs } from 'fs-extra';
+import { Plugin, PluginType, getPluginPlatform } from '../plugin';
 import {
   convertToUnixPath,
   copyAsync,
@@ -11,8 +14,6 @@ import {
   removeAsync,
   writeFileAsync,
 } from '../util/fs';
-import { join, resolve } from 'path';
-import { Plugin, PluginType, getPluginPlatform } from '../plugin';
 
 export async function checkAndroidPackage(
   config: Config,

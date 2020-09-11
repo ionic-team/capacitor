@@ -1,6 +1,6 @@
-import { WebPlugin } from './index';
-
 import { SharePlugin, ShareOptions } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 declare let navigator: any;
 

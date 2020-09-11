@@ -1,9 +1,10 @@
 import { accessSync } from 'fs';
+import { join } from 'path';
+
 import c from '../colors';
 import { check, logFatal, logSuccess, readXML } from '../common';
-import { existsAsync, readFileAsync } from '../util/fs';
 import { Config } from '../config';
-import { join } from 'path';
+import { existsAsync, readFileAsync } from '../util/fs';
 
 export async function doctorAndroid(config: Config) {
   try {

@@ -1,8 +1,5 @@
-import c from '../colors';
-import { Config } from '../config';
 import { updateAndroid } from '../android/update';
-import { updateIOS, updateIOSChecks } from '../ios/update';
-import { allSerial } from '../util/promise';
+import c from '../colors';
 import {
   CheckFunction,
   check,
@@ -12,7 +9,10 @@ import {
   runPlatformHook,
   runTask,
 } from '../common';
+import { Config } from '../config';
+import { updateIOS, updateIOSChecks } from '../ios/update';
 import { logger } from '../log';
+import { allSerial } from '../util/promise';
 
 export async function updateCommand(
   config: Config,

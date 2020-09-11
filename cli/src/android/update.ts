@@ -1,26 +1,18 @@
+import { join, relative, resolve } from 'path';
+
 import c from '../colors';
-import { Config } from '../config';
 import {
   checkPlatformVersions,
   logFatal,
   resolveNode,
   runTask,
 } from '../common';
-import { getAndroidPlugins } from './common';
+import { Config } from '../config';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
-import {
-  convertToUnixPath,
-  copySync,
-  existsSync,
-  readFileAsync,
-  removeSync,
-  writeFileAsync,
-} from '../util/fs';
-import { join, relative, resolve } from 'path';
 import {
   Plugin,
   PluginType,
@@ -32,6 +24,16 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import {
+  convertToUnixPath,
+  copySync,
+  existsSync,
+  readFileAsync,
+  removeSync,
+  writeFileAsync,
+} from '../util/fs';
+
+import { getAndroidPlugins } from './common';
 
 const platform = 'android';
 
@@ -107,9 +109,9 @@ project(':${getGradlePackageName(
   })
   .join('')}`;
 
-  const applyArray: Array<any> = [];
-  const frameworksArray: Array<any> = [];
-  let prefsArray: Array<any> = [];
+  const applyArray: any[] = [];
+  const frameworksArray: any[] = [];
+  let prefsArray: any[] = [];
   cordovaPlugins.map(p => {
     const relativePluginPath = convertToUnixPath(
       relative(dependencyPath, p.rootPath),
@@ -182,9 +184,9 @@ export async function handleCordovaPluginsGradle(
     config.android.assets.pluginsFolderName,
   );
   const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
-  const frameworksArray: Array<any> = [];
-  let prefsArray: Array<any> = [];
-  const applyArray: Array<any> = [];
+  const frameworksArray: any[] = [];
+  let prefsArray: any[] = [];
+  const applyArray: any[] = [];
   applyArray.push(`apply from: "cordova.variables.gradle"`);
   cordovaPlugins.map(p => {
     const relativePluginPath = convertToUnixPath(
@@ -315,7 +317,7 @@ async function getPluginsTask(config: Config) {
 
 async function replaceFrameworkVariables(
   config: Config,
-  prefsArray: Array<any>,
+  prefsArray: any[],
   frameworkString: string,
 ) {
   const variablesFile = resolve(

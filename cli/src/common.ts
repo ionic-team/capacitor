@@ -1,8 +1,18 @@
 import { wordWrap } from '@ionic/cli-framework-output';
-import { Config } from './config';
 import { exec, spawn } from 'child_process';
-import { setTimeout } from 'timers';
+import { existsSync, readFile } from 'fs';
 import { basename, dirname, join, parse, resolve } from 'path';
+import prompts, { Answers, PromptObject } from 'prompts';
+import semver from 'semver';
+import { setTimeout } from 'timers';
+import which from 'which';
+import xml2js from 'xml2js';
+
+import c from './colors';
+import { Config } from './config';
+import { PackageJson } from './definitions';
+import { output, logger } from './log';
+import { emoji as _e } from './util/emoji';
 import {
   copyAsync,
   existsAsync,
@@ -10,15 +20,6 @@ import {
   renameAsync,
   writeFileAsync,
 } from './util/fs';
-import { existsSync, readFile } from 'fs';
-import { emoji as _e } from './util/emoji';
-import c from './colors';
-import { output, logger } from './log';
-import semver from 'semver';
-import which from 'which';
-import prompts, { Answers, PromptObject } from 'prompts';
-import xml2js from 'xml2js';
-import { PackageJson } from './definitions';
 
 export type CheckFunction = (
   config: Config,

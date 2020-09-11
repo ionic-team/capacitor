@@ -1,6 +1,8 @@
+import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
 import { Config } from '../config';
-import { allSerial } from '../util/promise';
+import { getIOSPlugins } from '../ios/common';
+import { logger } from '../log';
 import {
   Plugin,
   PluginType,
@@ -8,9 +10,7 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
-import { getAndroidPlugins } from '../android/common';
-import { getIOSPlugins } from '../ios/common';
-import { logger } from '../log';
+import { allSerial } from '../util/promise';
 
 export async function listCommand(
   config: Config,

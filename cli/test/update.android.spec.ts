@@ -1,3 +1,5 @@
+import { updateCommand } from '../src/tasks/update';
+
 import {
   APP_ID,
   APP_NAME,
@@ -8,7 +10,6 @@ import {
   run,
   installPlatform,
 } from './util';
-import { updateCommand } from '../src/tasks/update';
 
 describe.each([false, true])(
   'Update: Android (monoRepoLike: %p)',

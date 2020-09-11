@@ -1,4 +1,22 @@
+import { copy as fsCopy, existsSync } from 'fs-extra';
+import { basename, extname, join, resolve } from 'path';
+import plist, { PlistObject } from 'plist';
+import prompts from 'prompts';
+
+import { getAndroidPlugins } from './android/common';
+import c from './colors';
+import {
+  buildXmlElement,
+  logFatal,
+  logPrompt,
+  parseXML,
+  readXML,
+  resolveNode,
+  writeXML,
+} from './common';
 import { Config } from './config';
+import { getIOSPlugins } from './ios/common';
+import { logger } from './log';
 import {
   Plugin,
   PluginType,
@@ -10,6 +28,7 @@ import {
   getPlugins,
   printPlugins,
 } from './plugin';
+import { copy } from './tasks/copy';
 import {
   copySync,
   ensureDirSync,
@@ -17,25 +36,6 @@ import {
   removeSync,
   writeFileAsync,
 } from './util/fs';
-import { basename, extname, join, resolve } from 'path';
-import c from './colors';
-import {
-  buildXmlElement,
-  logFatal,
-  logPrompt,
-  parseXML,
-  readXML,
-  resolveNode,
-  writeXML,
-} from './common';
-import { logger } from './log';
-import { copy as fsCopy, existsSync } from 'fs-extra';
-import { getAndroidPlugins } from './android/common';
-import { getIOSPlugins } from './ios/common';
-import { copy } from './tasks/copy';
-import prompts from 'prompts';
-
-import plist, { PlistObject } from 'plist';
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
@@ -45,14 +45,14 @@ export function generateCordovaPluginsJSFile(
   plugins: Plugin[],
   platform: string,
 ) {
-  const pluginModules: Array<any> = [];
-  const pluginExports: Array<string> = [];
+  const pluginModules: any[] = [];
+  const pluginExports: string[] = [];
   plugins.map(p => {
     const pluginId = p.xml.$.id;
     const jsModules = getJSModules(p, platform);
     jsModules.map((jsModule: any) => {
-      const clobbers: Array<string> = [];
-      const merges: Array<string> = [];
+      const clobbers: string[] = [];
+      const merges: string[] = [];
       let clobbersModule = '';
       let mergesModule = '';
       let runsModule = '';
@@ -220,7 +220,7 @@ export async function autoGenerateConfig(
   ensureDirSync(xmlDir);
   const cordovaConfigXMLFile = join(xmlDir, fileName);
   removeSync(cordovaConfigXMLFile);
-  const pluginEntries: Array<any> = [];
+  const pluginEntries: any[] = [];
   cordovaPlugins.map(p => {
     const currentPlatform = getPluginPlatform(p, platform);
     if (currentPlatform) {
@@ -239,7 +239,7 @@ export async function autoGenerateConfig(
     }
   });
 
-  const pluginEntriesString: Array<string> = await Promise.all(
+  const pluginEntriesString: string[] = await Promise.all(
     pluginEntries.map(
       async (item): Promise<string> => {
         const xmlString = await writeXML(item);
@@ -247,7 +247,7 @@ export async function autoGenerateConfig(
       },
     ),
   );
-  let pluginPreferencesString: Array<string> = [];
+  let pluginPreferencesString: string[] = [];
   if (
     config.app.extConfig &&
     config.app.extConfig.cordova &&
@@ -421,7 +421,7 @@ export async function checkPluginDependencies(
   );
   await Promise.all(
     cordovaPlugins.map(async p => {
-      let allDependencies: Array<string> = [];
+      let allDependencies: string[] = [];
       allDependencies = allDependencies.concat(
         getPlatformElement(p, platform, 'dependency'),
       );
@@ -580,9 +580,9 @@ export async function writeCordovaAndroidManifest(
     'main',
     'AndroidManifest.xml',
   );
-  const rootXMLEntries: Array<any> = [];
-  const applicationXMLEntries: Array<any> = [];
-  const applicationXMLAttributes: Array<any> = [];
+  const rootXMLEntries: any[] = [];
+  const applicationXMLEntries: any[] = [];
+  const applicationXMLAttributes: any[] = [];
   cordovaPlugins.map(async p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
@@ -671,7 +671,7 @@ function getPathParts(path: string) {
   return [rootPath, path];
 }
 
-function contains(a: Array<any>, obj: any, k: string) {
+function contains(a: any[], obj: any, k: string) {
   const element = parseXML(obj);
   for (let i = 0; i < a.length; i++) {
     const current = parseXML(a[i]);

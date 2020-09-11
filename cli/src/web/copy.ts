@@ -1,8 +1,9 @@
+import { copy } from 'fs-extra';
+import { join } from 'path';
+
 import c from '../colors';
 import { logFatal, resolveNode, runTask } from '../common';
 import { Config } from '../config';
-import { copy } from 'fs-extra';
-import { join } from 'path';
 
 export async function copyWeb(config: Config) {
   if (config.app.bundledWebRuntime) {

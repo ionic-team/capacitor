@@ -1,5 +1,6 @@
-import { WebPlugin } from './index';
 import { ToastPlugin, ToastShowOptions } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 export class ToastPluginWeb extends WebPlugin implements ToastPlugin {
   constructor() {

@@ -1,10 +1,10 @@
-import { WebPlugin } from './index';
-
 import {
   BrowserPlugin,
   BrowserOpenOptions,
   BrowserPrefetchOptions,
 } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 export class BrowserPluginWeb extends WebPlugin implements BrowserPlugin {
   _lastWindow: Window;

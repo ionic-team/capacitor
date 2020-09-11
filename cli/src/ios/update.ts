@@ -1,5 +1,7 @@
+import { realpathSync } from 'fs';
+import { join, relative, resolve } from 'path';
+
 import c from '../colors';
-import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import {
   CheckFunction,
   checkPlatformVersions,
@@ -8,18 +10,12 @@ import {
   runCommand,
   runTask,
 } from '../common';
-import {
-  convertToUnixPath,
-  copySync,
-  readFileAsync,
-  readFileSync,
-  removeSync,
-  writeFileAsync,
-  writeFileSync,
-} from '../util/fs';
 import { Config } from '../config';
-import { join, relative, resolve } from 'path';
-import { realpathSync } from 'fs';
+import {
+  checkPluginDependencies,
+  handleCordovaPluginsJS,
+  logCordovaManualSteps,
+} from '../cordova';
 import {
   Plugin,
   PluginType,
@@ -31,10 +27,16 @@ import {
   printPlugins,
 } from '../plugin';
 import {
-  checkPluginDependencies,
-  handleCordovaPluginsJS,
-  logCordovaManualSteps,
-} from '../cordova';
+  convertToUnixPath,
+  copySync,
+  readFileAsync,
+  readFileSync,
+  removeSync,
+  writeFileAsync,
+  writeFileSync,
+} from '../util/fs';
+
+import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 
 export const updateIOSChecks: CheckFunction[] = [
   checkCocoaPods,
@@ -202,14 +204,14 @@ async function generateCordovaPodspec(
     'ios',
     config.ios.assets.pluginsFolderName,
   );
-  const weakFrameworks: Array<string> = [];
-  const linkedFrameworks: Array<string> = [];
-  const customFrameworks: Array<string> = [];
-  const systemLibraries: Array<string> = [];
-  const sourceFrameworks: Array<string> = [];
-  const frameworkDeps: Array<string> = [];
-  const compilerFlags: Array<string> = [];
-  let prefsArray: Array<any> = [];
+  const weakFrameworks: string[] = [];
+  const linkedFrameworks: string[] = [];
+  const customFrameworks: string[] = [];
+  const systemLibraries: string[] = [];
+  const sourceFrameworks: string[] = [];
+  const frameworkDeps: string[] = [];
+  const compilerFlags: string[] = [];
+  let prefsArray: any[] = [];
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';
   if (isStatic) {
@@ -492,7 +494,7 @@ function filterARCFiles(plugin: Plugin) {
   return sourcesARC.length > 0;
 }
 
-function removeNoSystem(library: string, sourceFrameworks: Array<string>) {
+function removeNoSystem(library: string, sourceFrameworks: string[]) {
   const libraries = sourceFrameworks.filter(framework =>
     framework.includes(library),
   );
@@ -509,7 +511,7 @@ async function getPluginsTask(config: Config) {
 
 async function replaceFrameworkVariables(
   config: Config,
-  prefsArray: Array<any>,
+  prefsArray: any[],
   frameworkString: string,
 ) {
   prefsArray.map((preference: any) => {

@@ -1,10 +1,10 @@
-import { WebPlugin } from './index';
-
 import {
   SplashScreenPlugin,
   SplashScreenHideOptions,
   SplashScreenShowOptions,
 } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 export class SplashScreenPluginWeb
   extends WebPlugin

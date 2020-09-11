@@ -1,5 +1,6 @@
+import prompts from 'prompts';
+
 import c from '../colors';
-import { Config } from '../config';
 import {
   check,
   checkAppId,
@@ -11,11 +12,11 @@ import {
   logSuccess,
   logPrompt,
 } from '../common';
+import { Config } from '../config';
 import { getCordovaPreferences } from '../cordova';
+import { logger, output } from '../log';
 import { emoji as _e } from '../util/emoji';
 import { checkInteractive, isInteractive } from '../util/term';
-import { logger, output } from '../log';
-import prompts from 'prompts';
 
 export async function initCommand(
   config: Config,

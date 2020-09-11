@@ -1,9 +1,10 @@
+import open from 'open';
+
+import { runCommand } from '../common';
 import { Config } from '../config';
 import { OS } from '../definitions';
-import { runCommand } from '../common';
-import { existsSync } from '../util/fs';
-import open from 'open';
 import { logger } from '../log';
+import { existsSync } from '../util/fs';
 
 export async function openAndroid(config: Config) {
   logger.info(`Opening Android project at ${config.android.platformDir}.`);

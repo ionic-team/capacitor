@@ -1,10 +1,9 @@
-import c from '../colors';
-import { Config } from '../config';
-import { OS } from '../definitions';
+import { resolve } from 'path';
+import prompts from 'prompts';
+
 import { addAndroid, addAndroidChecks } from '../android/add';
-import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
-import { editProjectSettingsIOS } from '../ios/common';
+import c from '../colors';
 import {
   check,
   checkAppConfig,
@@ -16,11 +15,13 @@ import {
   runTask,
   writePrettyJSON,
 } from '../common';
-import { sync } from './sync';
-
-import { resolve } from 'path';
-import prompts from 'prompts';
+import { Config } from '../config';
+import { OS } from '../definitions';
+import { addIOS, addIOSChecks } from '../ios/add';
+import { editProjectSettingsIOS } from '../ios/common';
 import { logger } from '../log';
+
+import { sync } from './sync';
 
 export async function addCommand(config: Config, selectedPlatformName: string) {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {

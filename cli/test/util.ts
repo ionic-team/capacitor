@@ -1,3 +1,10 @@
+import { exec } from 'child_process';
+import { mkdirs } from 'fs-extra';
+import { join, resolve } from 'path';
+import tmp from 'tmp';
+
+import { runCommand } from '../src/common';
+import { Config } from '../src/config';
 import {
   existsAsync,
   mkdirAsync,
@@ -5,12 +12,6 @@ import {
   writeFileAsync,
   copyAsync,
 } from '../src/util/fs';
-import { runCommand } from '../src/common';
-import { Config } from '../src/config';
-import { exec } from 'child_process';
-import { join, resolve } from 'path';
-import { mkdirs } from 'fs-extra';
-import tmp from 'tmp';
 
 const cwd = process.cwd();
 

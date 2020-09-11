@@ -1,6 +1,6 @@
 import c from '../colors';
-import { Config } from '../config';
 import { logFatal } from '../common';
+import { Config } from '../config';
 
 export async function newPluginCommand(config: Config) {
   logFatal(

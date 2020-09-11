@@ -1,4 +1,3 @@
-import { checkCocoaPods, checkIOSProject } from './common';
 import {
   check,
   checkWebDir,
@@ -7,6 +6,8 @@ import {
   logSuccess,
 } from '../common';
 import { Config } from '../config';
+
+import { checkCocoaPods, checkIOSProject } from './common';
 
 export async function doctorIOS(config: Config) {
   // DOCTOR ideas for iOS:

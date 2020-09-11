@@ -1,5 +1,7 @@
+import { copy as fsCopy, remove } from 'fs-extra';
+import { basename, join, relative, resolve } from 'path';
+
 import c from '../colors';
-import { Config } from '../config';
 import {
   checkWebDir,
   logFatal,
@@ -8,17 +10,16 @@ import {
   runPlatformHook,
   runTask,
 } from '../common';
-import { existsAsync } from '../util/fs';
-import { allSerial } from '../util/promise';
-import { copyWeb } from '../web/copy';
-import { basename, join, relative, resolve } from 'path';
-import { copy as fsCopy, remove } from 'fs-extra';
+import { Config } from '../config';
 import {
   getCordovaPlugins,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
 import { logger } from '../log';
+import { existsAsync } from '../util/fs';
+import { allSerial } from '../util/promise';
+import { copyWeb } from '../web/copy';
 
 export async function copyCommand(
   config: Config,

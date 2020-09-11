@@ -1,5 +1,3 @@
-import { WebPlugin } from './index';
-
 import {
   ModalsPlugin,
   AlertOptions,
@@ -10,6 +8,8 @@ import {
   ActionSheetOptions,
   ActionSheetResult,
 } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
   constructor() {

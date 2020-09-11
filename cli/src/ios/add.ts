@@ -1,9 +1,10 @@
 import { relative } from 'path';
 
 import c from '../colors';
-import { checkCocoaPods, checkIOSPackage } from './common';
 import { CheckFunction, copyTemplate, runTask } from '../common';
 import { Config } from '../config';
+
+import { checkCocoaPods, checkIOSPackage } from './common';
 
 export const addIOSChecks: CheckFunction[] = [checkIOSPackage, checkCocoaPods];
 

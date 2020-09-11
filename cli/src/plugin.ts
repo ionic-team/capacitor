@@ -1,8 +1,8 @@
 import { join } from 'path';
 
 import c from './colors';
-import { Config } from './config';
 import { logFatal, readJSON, readXML, resolveNode } from './common';
+import { Config } from './config';
 import { logger, output } from './log';
 
 export const enum PluginType {
@@ -226,7 +226,7 @@ export function getAllElements(
   platform: string,
   elementName: string,
 ) {
-  let modules: Array<string> = [];
+  let modules: string[] = [];
   if (p.xml[elementName]) {
     modules = modules.concat(p.xml[elementName]);
   }

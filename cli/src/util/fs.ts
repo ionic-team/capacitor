@@ -1,5 +1,5 @@
-import fsExtra from 'fs-extra';
 import fs from 'fs';
+import fsExtra from 'fs-extra';
 import util from 'util';
 
 export const existsSync = (path: string) => {

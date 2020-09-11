@@ -1,4 +1,5 @@
 import { TERMINAL_INFO } from '@ionic/utils-terminal';
+
 import c from '../colors';
 import { logger } from '../log';
 
