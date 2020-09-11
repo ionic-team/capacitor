@@ -677,10 +677,10 @@ function getPathParts(path: string) {
   return [rootPath, path];
 }
 
-function contains(a: any[], obj: any, k: string) {
+function contains(entries: any[], obj: any, k: string) {
   const element = parseXML(obj);
-  for (let i = 0; i < a.length; i++) {
-    const current = parseXML(a[i]);
+  for (const entry of entries) {
+    const current = parseXML(entry);
     if (
       element &&
       current &&

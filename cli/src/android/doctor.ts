@@ -186,13 +186,13 @@ async function checkPackage(
   let checkPath = appSrcMainJavaDir;
   const packageParts = packageId.split('.');
 
-  for (let i = 0; i < packageParts.length; i++) {
+  for (const packagePart of packageParts) {
     try {
-      accessSync(join(checkPath, packageParts[i]));
-      checkPath = join(checkPath, packageParts[i]);
+      accessSync(join(checkPath, packagePart));
+      checkPath = join(checkPath, packagePart);
     } catch (e) {
       return (
-        `${c.strong(packageParts[i])} is missing in ${checkPath}.\n` +
+        `${c.strong(packagePart)} is missing in ${checkPath}.\n` +
         `Please create a directory structure matching the Package ID ${c.input(
           packageId,
         )} within the ${appSrcMainJavaDir} directory.`
