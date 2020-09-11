@@ -93,9 +93,7 @@ async function getName(config: Config, name: string) {
         message: `Name`,
         initial: config.app.appName
           ? config.app.appName
-          : config.app.package && config.app.package.name
-          ? config.app.package.name
-          : 'App',
+          : config.app.package.name ?? 'App',
       },
     );
     return answers.name;

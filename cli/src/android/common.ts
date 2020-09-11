@@ -29,7 +29,7 @@ export function getAndroidPlugins(allPlugins: Plugin[]): Plugin[] {
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
   const platform = 'android';
-  if (plugin.manifest && plugin.manifest.android) {
+  if (plugin.manifest?.android) {
     let pluginFilesPath = plugin.manifest.android.src
       ? plugin.manifest.android.src
       : platform;

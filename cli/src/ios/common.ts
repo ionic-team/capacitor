@@ -61,11 +61,11 @@ export function getIOSPlugins(allPlugins: Plugin[]): Plugin[] {
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
   const platform = 'ios';
-  if (plugin.manifest && plugin.manifest.ios) {
+  if (plugin.manifest?.ios) {
     plugin.ios = {
       name: plugin.name,
       type: PluginType.Core,
-      path: plugin.manifest.ios.src ? plugin.manifest.ios.src : platform,
+      path: plugin.manifest.ios.src ?? platform,
     };
   } else if (plugin.xml) {
     plugin.ios = {

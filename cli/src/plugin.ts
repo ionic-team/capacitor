@@ -92,12 +92,8 @@ export async function resolvePlugin(
 }
 
 export function getDependencies(config: Config): string[] {
-  const dependencies = config.app.package.dependencies
-    ? config.app.package.dependencies
-    : [];
-  const devDependencies = config.app.package.devDependencies
-    ? config.app.package.devDependencies
-    : [];
+  const dependencies = config.app.package.dependencies ?? [];
+  const devDependencies = config.app.package.devDependencies ?? [];
   return Object.keys(dependencies).concat(Object.keys(devDependencies));
 }
 
@@ -235,7 +231,7 @@ export function getAllElements(
     modules = modules.concat(p.xml[elementName]);
   }
   const platformModules = getPluginPlatform(p, platform);
-  if (platformModules && platformModules[elementName]) {
+  if (platformModules?.[elementName]) {
     modules = modules.concat(platformModules[elementName]);
   }
   return modules;

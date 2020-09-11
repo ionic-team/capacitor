@@ -234,7 +234,7 @@ export async function autoGenerateConfig(
       const configFiles = currentPlatform['config-file'];
       if (configFiles) {
         const configXMLEntries = configFiles.filter(function (item: any) {
-          return item.$ && item.$.target.includes(fileName);
+          return item.$?.target.includes(fileName);
         });
         configXMLEntries.map((entry: any) => {
           if (entry.feature) {
@@ -255,11 +255,7 @@ export async function autoGenerateConfig(
     ),
   );
   let pluginPreferencesString: string[] = [];
-  if (
-    config.app.extConfig &&
-    config.app.extConfig.cordova &&
-    config.app.extConfig.cordova.preferences
-  ) {
+  if (config.app.extConfig?.cordova?.preferences) {
     pluginPreferencesString = await Promise.all(
       Object.keys(config.app.extConfig.cordova.preferences).map(
         async (key): Promise<string> => {
@@ -361,11 +357,7 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
         xml,
     );
   } else if (configElement.array || configElement.dict) {
-    if (
-      configElement.array &&
-      configElement.array[0] &&
-      configElement.array[0].string
-    ) {
+    if (configElement.array && configElement.array.length > 0) {
       let xml = '';
       configElement.array[0].string.map((element: any) => {
         const d = plistData[configElement.$.parent];
@@ -454,7 +446,7 @@ export async function checkPluginDependencies(
                 p => p.id === plugin || p.xml.$.id === plugin,
               ).length === 0
             ) {
-              if (dep.$.url && dep.$.url.startsWith('http')) {
+              if (dep.$.url?.startsWith('http')) {
                 plugin = dep.$.url;
                 version = dep.$.commit;
               }
@@ -542,11 +534,7 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
       },
     );
     if (answers.confirm) {
-      if (
-        config.app.extConfig &&
-        config.app.extConfig.cordova &&
-        config.app.extConfig.cordova.preferences
-      ) {
+      if (config.app.extConfig?.cordova?.preferences) {
         const answers = await prompts(
           [
             {
@@ -596,10 +584,8 @@ export async function writeCordovaAndroidManifest(
     editConfig.concat(configFile).map(async (configElement: any) => {
       if (
         configElement.$ &&
-        ((configElement.$.target &&
-          configElement.$.target.includes('AndroidManifest.xml')) ||
-          (configElement.$.file &&
-            configElement.$.file.includes('AndroidManifest.xml')))
+        (configElement.$.target?.includes('AndroidManifest.xml') ||
+          configElement.$.file?.includes('AndroidManifest.xml'))
       ) {
         const keys = Object.keys(configElement).filter(k => k !== '$');
         keys.map(k => {

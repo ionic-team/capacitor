@@ -356,7 +356,7 @@ async function generateCordovaPodspec(
 }
 
 function getLinkerFlags(config: Config) {
-  if (config.app.extConfig.ios && config.app.extConfig.ios.cordovaLinkerFlags) {
+  if (config.app.extConfig.ios?.cordovaLinkerFlags) {
     return `\n    s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '${config.app.extConfig.ios.cordovaLinkerFlags.join(
       ' ',
     )}' }`;
