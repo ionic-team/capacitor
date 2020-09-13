@@ -167,6 +167,21 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         loadWebView()
     }
 
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // https://stackoverflow.com/questions/49911060/how-to-disable-ios-11-and-ios-12-drag-drop-in-wkwebview
+        for subview in webView!.scrollView.subviews {
+            if subview.interactions.count > 1 {
+                for interaction in subview.interactions {
+                    if interaction is UIDragInteraction {
+                        (interaction as! UIDragInteraction).isEnabled = false
+                    }
+                }
+            }
+        }
+    }
+
     func printLoadError() {
         let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir)
 
