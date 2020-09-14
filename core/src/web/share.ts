@@ -1,18 +1,12 @@
 import { WebPlugin } from './index';
 
-import {
-  SharePlugin,
-  ShareOptions
-} from '../core-plugin-definitions';
+import { SharePlugin, ShareOptions } from '../core-plugin-definitions';
 
 declare var navigator: any;
 
 export class SharePluginWeb extends WebPlugin implements SharePlugin {
   constructor() {
-    super({
-      name: 'Share',
-      platforms: ['web']
-    });
+    super({ name: 'Share' });
   }
 
   share(options?: ShareOptions): Promise<void> {
@@ -23,7 +17,7 @@ export class SharePluginWeb extends WebPlugin implements SharePlugin {
     return navigator.share({
       title: options.title,
       text: options.text,
-      url: options.url
+      url: options.url,
     });
   }
 }

@@ -1,0 +1,17 @@
+ext {
+    minSdkVersion = 21
+    compileSdkVersion = 29
+    targetSdkVersion = 29
+    androidxAppCompatVersion = '1.1.0'
+    androidxCoreVersion =  '1.2.0'
+    androidxMaterialVersion =  '1.1.0-rc02'
+    androidxBrowserVersion =  '1.2.0'
+    androidxLocalbroadcastmanagerVersion =  '1.0.0'
+    androidxExifInterfaceVersion = '1.2.0'
+    firebaseMessagingVersion =  '20.1.2'
+    playServicesLocationVersion =  '17.0.0'
+    junitVersion =  '4.12'
+    androidxJunitVersion =  '1.1.1'
+    androidxEspressoCoreVersion =  '3.2.0'
+    cordovaAndroidVersion =  '7.0.0'
+}

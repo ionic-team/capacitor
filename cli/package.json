@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "1.3.0",
+  "version": "3.0.0-alpha.2",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -9,14 +9,12 @@
     "cap": "./bin/capacitor"
   },
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=10.3.0"
   },
   "main": "./dist/index.js",
   "scripts": {
     "build": "npm run clean && npm run assets && tsc",
-    "clean": "rm -rf ./dist",
-    "deploy": "np",
-    "lint": "tslint --project tsconfig.json",
+    "clean": "rimraf ./dist",
     "assets": "node scripts/copy-assets.js",
     "prepublishOnly": "npm run build",
     "test": "jest -i",
@@ -44,59 +42,40 @@
   },
   "license": "MIT",
   "dependencies": {
-    "chalk": "^2.3.0",
-    "commander": "^2.12.2",
-    "compare-versions": "^3.1.0",
-    "fs-extra": "^4.0.3",
-    "inquirer": "6.3.1",
-    "open": "^6.1.0",
-    "ora": "^1.3.0",
+    "@ionic/cli-framework-output": "^2.2.0",
+    "@ionic/utils-terminal": "^2.2.1",
+    "commander": "^6.0.0",
+    "fs-extra": "^9.0.1",
+    "kleur": "^4.1.1",
+    "open": "^7.1.0",
     "plist": "^3.0.1",
-    "semver": "^5.4.1",
-    "which": "^1.3.0",
+    "prompts": "^2.3.2",
+    "semver": "^7.3.2",
+    "which": "^2.0.2",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "@types/fs-extra": "^4.0.5",
-    "@types/inquirer": "0.0.35",
-    "@types/jest": "^23.3.9",
+    "@types/fs-extra": "^9.0.1",
+    "@types/jest": "^26.0.4",
     "@types/mock-fs": "^3.6.30",
     "@types/open": "^6.1.0",
-    "@types/ora": "^1.3.1",
-    "@types/semver": "^5.4.0",
+    "@types/prompts": "^2.0.8",
+    "@types/semver": "^7.3.1",
+    "@types/slice-ansi": "^4.0.0",
+    "@types/tmp": "^0.2.0",
     "@types/which": "^1.0.28",
     "@types/xml2js": "^0.4.2",
-    "jest": "^23.6.0",
+    "jest": "^26.1.0",
     "mock-fs": "^4.4.2",
-    "np": "^2.18.2",
-    "tmp": "0.0.33",
-    "ts-jest": "^23.10.4",
-    "tslint": "^5.8.0",
-    "tslint-ionic-rules": "0.0.11",
-    "typescript": "^3.2.4"
+    "rimraf": "^3.0.2",
+    "tmp": "^0.2.1",
+    "ts-jest": "^26.1.3",
+    "typescript": "~3.8.3"
   },
   "publishConfig": {
     "access": "public"
   },
   "jest": {
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(ts)$": "ts-jest"
-    },
-    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/test/util.ts"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "test/tsconfig.json"
-      }
-    }
-  },
-  "gitHead": "844c0feba4a801ee5041429a82d0f805c9e665b0"
+    "preset": "ts-jest"
+  }
 }

@@ -1,29 +1,46 @@
+import c from '../colors';
 import { Config } from '../config';
-import { logFatal, logInfo, runTask } from '../common';
+import { logFatal, resolvePlatform, runPlatformHook, runTask } from '../common';
 import { openAndroid } from '../android/open';
-import { openElectron } from '../electron/open';
 import { openIOS } from '../ios/open';
+import { logger } from '../log';
 
-export async function openCommand(config: Config, selectedPlatform: string) {
-  const platforms = config.selectPlatforms(selectedPlatform);
-  let platformName: string;
-  if (platforms.length === 0) {
-    logInfo(`There are no platforms to open yet. Create one with "capacitor add".`);
-    return;
-  } else if (platforms.length === 1) {
-    platformName = platforms[0];
+export async function openCommand(
+  config: Config,
+  selectedPlatformName: string,
+) {
+  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+    const platformDir = resolvePlatform(config, selectedPlatformName);
+    if (platformDir) {
+      await runPlatformHook(platformDir, 'capacitor:open');
+    } else {
+      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
+    }
   } else {
-    platformName = await config.askPlatform('', `Please choose a platform to open:`);
-  }
+    const platforms = config.selectPlatforms(selectedPlatformName);
+    let platformName: string;
+    if (platforms.length === 0) {
+      logger.info(
+        `There are no platforms to open yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
+      );
+      return;
+    } else if (platforms.length === 1) {
+      platformName = platforms[0];
+    } else {
+      platformName = await config.askPlatform(
+        '',
+        `Please choose a platform to open:`,
+      );
+    }
 
-  try {
-    await open(config, platformName);
-
-  } catch (e) {
-    logFatal(e);
+    try {
+      await open(config, platformName);
+    } catch (e) {
+      logFatal(e.stack ?? e);
+    }
   }
 }
-
 
 export async function open(config: Config, platformName: string) {
   if (platformName === config.ios.name) {
@@ -34,8 +51,6 @@ export async function open(config: Config, platformName: string) {
     return openAndroid(config);
   } else if (platformName === config.web.name) {
     return Promise.resolve();
-  } else if (platformName === config.electron.name) {
-    return openElectron(config);
   } else {
     throw `Platform ${platformName} is not valid.`;
   }

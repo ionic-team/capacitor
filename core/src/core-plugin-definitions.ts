@@ -1,28 +1,20 @@
 import { Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
-  Accessibility: AccessibilityPlugin;
   App: AppPlugin;
   BackgroundTask: BackgroundTaskPlugin;
   Browser: BrowserPlugin;
   Camera: CameraPlugin;
-  Clipboard: ClipboardPlugin;
   Device: DevicePlugin;
   Filesystem: FilesystemPlugin;
   Geolocation: GeolocationPlugin;
-  Haptics: HapticsPlugin;
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
-  Motion: MotionPlugin;
-  Network: NetworkPlugin;
-  Permissions: PermissionsPlugin;
-  Photos: PhotosPlugin;
   PushNotifications: PushNotificationsPlugin;
   Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
-  Storage: StoragePlugin;
   Toast: ToastPlugin;
   WebView: WebViewPlugin;
 
@@ -47,43 +39,6 @@ export interface CancellableCallback {
 }
 //
 
-export interface AccessibilityPlugin {
-  /**
-   * Check if a screen reader is enabled on the device
-   */
-  isScreenReaderEnabled(): Promise<ScreenReaderEnabledResult>;
-
-  /**
-   * Speak a string with a connected screen reader.
-   * @param value the string to speak
-   */
-  speak(options: AccessibilitySpeakOptions): Promise<void>;
-
-  /**
-   * Listen for screen reader state change (on/off)
-   */
-  addListener(eventName: 'accessibilityScreenReaderStateChange', listenerFunc: ScreenReaderStateChangeCallback): PluginListenerHandle;
-}
-
-export interface AccessibilitySpeakOptions {
-  /**
-   * The string to speak
-   */
-  value: string;
-  /**
-   * The language to speak the string in, as its [ISO 639-1 Code](https://www.loc.gov/standards/iso639-2/php/code_list.php) (ex: "en").
-   * Currently only supported on Android.
-   */
-  language?: string;
-}
-
-export interface ScreenReaderEnabledResult {
-  value: boolean;
-}
-export type ScreenReaderStateChangeCallback = (state: ScreenReaderEnabledResult) => void;
-
-//
-
 export interface AppPlugin extends Plugin {
   /**
    * Force exit the app. This should only be used in conjunction with the `backButton` handler for Android to
@@ -99,12 +54,17 @@ export interface AppPlugin extends Plugin {
   /**
    * Check if an app can be opened with the given URL
    */
-  canOpenUrl(options: { url: string }): Promise<{value: boolean}>;
+  canOpenUrl(options: { url: string }): Promise<{ value: boolean }>;
 
   /**
    * Open an app with the given URL
    */
-  openUrl(options: { url: string }): Promise<{completed: boolean}>;
+  openUrl(options: { url: string }): Promise<{ completed: boolean }>;
+
+  /**
+   * Gets the current app state
+   */
+  getState(): Promise<AppState>;
 
   /**
    * Get the URL the app was launched with, if any
@@ -114,28 +74,47 @@ export interface AppPlugin extends Plugin {
   /**
    * Listen for changes in the App's active state (whether the app is in the foreground or background)
    */
-  addListener(eventName: 'appStateChange', listenerFunc: (state: AppState) => void): PluginListenerHandle;
+  addListener(
+    eventName: 'appStateChange',
+    listenerFunc: (state: AppState) => void,
+  ): PluginListenerHandle;
 
   /**
    * Listen for url open events for the app. This handles both custom URL scheme links as well
    * as URLs your app handles (Universal Links on iOS and App Links on Android)
    */
-  addListener(eventName: 'appUrlOpen', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+  addListener(
+    eventName: 'appUrlOpen',
+    listenerFunc: (data: AppUrlOpen) => void,
+  ): PluginListenerHandle;
 
   /**
    * If the app was launched with previously persisted plugin call data, such as on Android
    * when an activity returns to an app that was closed, this call will return any data
    * the app was launched with, converted into the form of a result from a plugin call.
    */
-  addListener(eventName: 'appRestoredResult', listenerFunc: (data: AppRestoredResult) => void): PluginListenerHandle;
+  addListener(
+    eventName: 'appRestoredResult',
+    listenerFunc: (data: AppRestoredResult) => void,
+  ): PluginListenerHandle;
 
   /**
    * Listen for the hardware back button event (Android only). Listening for this event will disable the
    * default back button behaviour, so you might want to call `window.history.back()` manually.
    * If you want to close the app, call `App.exitApp()`.
    */
-  addListener(eventName: 'backButton', listenerFunc: (data: AppUrlOpen) => void): PluginListenerHandle;
+  addListener(
+    eventName: 'backButton',
+    listenerFunc: (data: BackButtonResult) => void,
+  ): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
+
+export interface BackButtonResult {}
 
 export interface AppState {
   isActive: boolean;
@@ -177,7 +156,17 @@ export interface AppRestoredResult {
    * The result data passed from the plugin. This would be the result you'd
    * expect from normally calling the plugin method. For example, `CameraPhoto`
    */
-  data: any;
+  data?: any;
+  /**
+   * Boolean indicating if the plugin call succeeded
+   */
+  success: boolean;
+  /**
+   * If the plugin call didn't succeed, it will contain the error message
+   */
+  error?: {
+    message: string;
+  };
 }
 
 //
@@ -203,7 +192,7 @@ export interface BackgroundTaskPlugin extends Plugin {
    * Notify the OS that the given task is finished and the OS can continue
    * backgrounding the app.
    */
-  finish(options: {taskId: CallbackID}): void;
+  finish(options: { taskId: CallbackID }): void;
 }
 
 //
@@ -223,13 +212,25 @@ export interface BrowserPlugin extends Plugin {
   prefetch(options: BrowserPrefetchOptions): Promise<void>;
 
   /**
-   * Close an open browser. Only works on iOS, otherwise is a no-op
+   * Close an open browser. Only works on iOS and Web environment, otherwise is a no-op
    */
   close(): Promise<void>;
 
-  addListener(eventName: 'browserFinished', listenerFunc: (info: any) => void): PluginListenerHandle;
-  addListener(eventName: 'browserPageLoaded', listenerFunc: (info: any) => void): PluginListenerHandle;
+  addListener(
+    eventName: 'browserFinished',
+    listenerFunc: (info: BrowserInfo) => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'browserPageLoaded',
+    listenerFunc: (info: BrowserInfo) => void,
+  ): PluginListenerHandle;
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
+
+export interface BrowserInfo {}
 
 export interface BrowserOpenOptions {
   /**
@@ -249,7 +250,7 @@ export interface BrowserOpenOptions {
    */
   toolbarColor?: string;
 
-   /**
+  /**
    * iOS only: The presentation style of the browser. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
@@ -283,7 +284,9 @@ export interface CameraOptions {
    */
   resultType: CameraResultType;
   /**
-   * Whether to save the photo to the gallery/photostream
+   * Whether to save the photo to the gallery.
+   * If the photo was picked from the gallery, it will only be saved if edited.
+   * Default: false
    */
   saveToGallery?: boolean;
   /**
@@ -294,6 +297,18 @@ export interface CameraOptions {
    * The height of the saved image
    */
   height?: number;
+  /**
+   * Whether to preserve the aspect ratio of the image.
+   * If this flag is true, the width and height will be used as max values
+   * and the aspect ratio will be preserved. This is only relevant when
+   * both a width and height are passed. When only width or height is provided
+   * the aspect ratio is always preserved (and this option is a no-op).
+   *
+   * A future major version will change this behavior to be default,
+   * and may also remove this option altogether.
+   * Default: false
+   */
+  preserveAspectRatio?: boolean;
   /**
    * Whether to automatically rotate the image "up" to correct for orientation
    * in portrait mode
@@ -307,7 +322,7 @@ export interface CameraOptions {
    */
   source?: CameraSource;
   /**
-   * iOS only: The default camera direction. By default the rear camera.
+   * iOS and Web only: The camera direction.
    * Default: CameraDirection.Rear
    */
   direction?: CameraDirection;
@@ -316,12 +331,34 @@ export interface CameraOptions {
    * iOS only: The presentation style of the Camera. Defaults to fullscreen.
    */
   presentationStyle?: 'fullscreen' | 'popover';
+
+  /**
+   * Web only: Whether to use the PWA Element experience or file input. The
+   * default is to use PWA Elements if installed and fall back to file input.
+   * To always use file input, set this to `true`.
+   *
+   * Learn more about PWA Elements: https://capacitorjs.com/docs/pwa-elements
+   */
+  webUseInput?: boolean;
+
+  /**
+   * If use CameraSource.Prompt only, can change Prompt label.
+   * default:
+   *   promptLabelHeader  : 'Photo'       // iOS only
+   *   promptLabelCancel  : 'Cancel'      // iOS only
+   *   promptLabelPhoto   : 'From Photos'
+   *   promptLabelPicture : 'Take Picture'
+   */
+  promptLabelHeader?: string;
+  promptLabelCancel?: string;
+  promptLabelPhoto?: string;
+  promptLabelPicture?: string;
 }
 
 export enum CameraSource {
   Prompt = 'PROMPT',
   Camera = 'CAMERA',
-  Photos = 'PHOTOS'
+  Photos = 'PHOTOS',
 }
 
 export enum CameraDirection {
@@ -353,7 +390,10 @@ export interface CameraPhoto {
    */
   exif?: any;
   /**
-   * The format of the image. Currently, only "jpeg" is supported.
+   * The format of the image, ex: jpeg, png, gif.
+   *
+   * iOS and Android only support jpeg.
+   * Web supports jpeg and png. gif is only supported if using file input.
    */
   format: string;
 }
@@ -361,35 +401,7 @@ export interface CameraPhoto {
 export enum CameraResultType {
   Uri = 'uri',
   Base64 = 'base64',
-  DataUrl = 'dataUrl'
-}
-
-//
-
-export interface ClipboardPlugin extends Plugin {
-  /**
-   * Write a value to the clipboard (the "copy" action)
-   */
-  write(options: ClipboardWrite): Promise<void>;
-  /**
-   * Read a value from the clipboard (the "paste" action)
-   */
-  read(options: ClipboardRead): Promise<ClipboardReadResult>;
-}
-
-export interface ClipboardWrite {
-  string?: string;
-  image?: string;
-  url?: string;
-  label?: string; // Android only
-}
-
-export interface ClipboardRead {
-  type: 'string' | 'url' | 'image';
-}
-
-export interface ClipboardReadResult {
-  value: string;
+  DataUrl = 'dataUrl',
 }
 
 //
@@ -400,12 +412,23 @@ export interface DevicePlugin extends Plugin {
    */
   getInfo(): Promise<DeviceInfo>;
   /**
+   * Return information about the battery
+   */
+  getBatteryInfo(): Promise<DeviceBatteryInfo>;
+  /**
    * Get the device's current language locale code
    */
   getLanguageCode(): Promise<DeviceLanguageCodeResult>;
 }
 
+export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown';
+
 export interface DeviceInfo {
+  /**
+   * Note: this property is iOS only.
+   * The name of the device. For example, "John's iPhone"
+   */
+  name?: string;
   /**
    * The device model. For example, "iPhone"
    */
@@ -413,7 +436,7 @@ export interface DeviceInfo {
   /**
    * The device platform (lowercase).
    */
-  platform: 'ios' | 'android' | 'electron' | 'web';
+  platform: 'ios' | 'android' | 'web';
   /**
    * The UUID of the device as available to the app. This identifier may change
    * on modern mobile platforms that only allow per-app install UUIDs.
@@ -427,6 +450,18 @@ export interface DeviceInfo {
    * The current bundle build of the app
    */
   appBuild: string;
+  /**
+   * The bundle id of the app
+   */
+  appId: string;
+  /**
+   * The display name of the app
+   */
+  appName: string;
+  /**
+   * The operating system of the device
+   */
+  operatingSystem: OperatingSystem;
   /**
    * The version of the device OS
    */
@@ -453,6 +488,9 @@ export interface DeviceInfo {
    * The total size of the normal data storage path for the OS, in bytes
    */
   diskTotal?: number;
+}
+
+export interface DeviceBatteryInfo {
   /**
    * A percentage (0 to 1) indicating how much the battery is charged
    */
@@ -548,35 +586,53 @@ export interface FilesystemPlugin extends Plugin {
 
 export enum FilesystemDirectory {
   /**
-   * The Application directory
-   */
-  Application = 'APPLICATION',
-  /**
    * The Documents directory
+   * On iOS it's the app's documents directory.
+   * Use this directory to store user-generated content.
+   * On Android it's the Public Documents folder, so it's accessible from other apps.
+   * It's not accesible on Android 10 unless the app enables legacy External Storage
+   * by adding `android:requestLegacyExternalStorage="true"` in the `application` tag
+   * in the `AndroidManifest.xml`
    */
   Documents = 'DOCUMENTS',
   /**
    * The Data directory
+   * On iOS it will use the Documents directory
+   * On Android it's the directory holding application files.
+   * Files will be deleted when the application is uninstalled.
    */
   Data = 'DATA',
   /**
    * The Cache directory
+   * Can be deleted in cases of low memory, so use this directory to write app-specific files
+   * that your app can re-create easily.
    */
   Cache = 'CACHE',
   /**
-   * The external directory (Android only)
+   * The external directory
+   * On iOS it will use the Documents directory
+   * On Android it's the directory on the primary shared/external
+   * storage device where the application can place persistent files it owns.
+   * These files are internal to the applications, and not typically visible
+   * to the user as media.
+   * Files will be deleted when the application is uninstalled.
    */
   External = 'EXTERNAL',
   /**
-   * The external storage directory (Android only)
+   * The external storage directory
+   * On iOS it will use the Documents directory
+   * On Android it's the primary shared/external storage directory.
+   * It's not accesible on Android 10 unless the app enables legacy External Storage
+   * by adding `android:requestLegacyExternalStorage="true"` in the `application` tag
+   * in the `AndroidManifest.xml`
    */
-  ExternalStorage = 'EXTERNAL_STORAGE'
+  ExternalStorage = 'EXTERNAL_STORAGE',
 }
 
 export enum FilesystemEncoding {
   UTF8 = 'utf8',
   ASCII = 'ascii',
-  UTF16 = 'utf16'
+  UTF16 = 'utf16',
 }
 
 export interface FileWriteOptions {
@@ -599,6 +655,11 @@ export interface FileWriteOptions {
    * Pass FilesystemEncoding.UTF8 to write data as string
    */
   encoding?: FilesystemEncoding;
+  /**
+   * Whether to create any missing parent directories.
+   * Defaults to false
+   */
+  recursive?: boolean;
 }
 
 export interface FileAppendOptions {
@@ -661,12 +722,6 @@ export interface MkdirOptions {
    * The FilesystemDirectory to make the new directory in
    */
   directory?: FilesystemDirectory;
-  /**
-   * @deprecated - use recursive
-   * Whether to create any missing parent directories as well
-   * Defaults to false
-   */
-  createIntermediateDirectories?: boolean;
   /**
    * Whether to create any missing parent directories as well.
    * Defaults to false
@@ -748,20 +803,15 @@ export interface RenameOptions extends CopyOptions {}
 export interface FileReadResult {
   data: string;
 }
-export interface FileDeleteResult {
-}
+export interface FileDeleteResult {}
 export interface FileWriteResult {
+  uri: string;
 }
-export interface FileAppendResult {
-}
-export interface MkdirResult {
-}
-export interface RmdirResult {
-}
-export interface RenameResult {
-}
-export interface CopyResult {
-}
+export interface FileAppendResult {}
+export interface MkdirResult {}
+export interface RmdirResult {}
+export interface RenameResult {}
+export interface CopyResult {}
 export interface ReaddirResult {
   files: string[];
 }
@@ -782,12 +832,17 @@ export interface GeolocationPlugin extends Plugin {
   /**
    * Get the current GPS location of the device
    */
-  getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition>;
+  getCurrentPosition(
+    options?: GeolocationOptions,
+  ): Promise<GeolocationPosition>;
   /**
    * Set up a watch for location changes. Note that watching for location changes
    * can consume a large amount of energy. Be smart about listening only when you need to.
    */
-  watchPosition(options: GeolocationOptions, callback: GeolocationWatchCallback): CallbackID;
+  watchPosition(
+    options: GeolocationOptions,
+    callback: GeolocationWatchCallback,
+  ): CallbackID;
 
   /**
    * Clear a given watch
@@ -837,78 +892,14 @@ export interface GeolocationPosition {
 
 export interface GeolocationOptions {
   enableHighAccuracy?: boolean; // default: false
-  timeout?: number; // default: 10000,
+  timeout?: number; // default: 10000
   maximumAge?: number; // default: 0
-  /**
-   * Whether your app needs altitude data or not. This can impact the
-   * sensor the device uses, increasing energy consumption.
-   * Note: altitude information may not be available even when
-   * passing true here. Similarly, altitude data maybe be returned
-   * even if this value is false, in the case where doing so requires
-   * no increased energy consumption.
-   *
-   * Default: false
-   */
-  requireAltitude?: boolean; // default: false
 }
 
-export type GeolocationWatchCallback = (position: GeolocationPosition, err?: any) => void;
-
-//
-
-export interface HapticsPlugin extends Plugin {
-  /**
-   * Trigger a haptics "impact" feedback
-   */
-  impact(options: HapticsImpactOptions): void;
-  /**
-   * Trigger a haptics "notification" feedback
-   */
-  notification(options: HapticsNotificationOptions): void;
-  /**
-   * Vibrate the device
-   */
-  vibrate(): void;
-  /**
-   * Trigger a selection started haptic hint
-   */
-  selectionStart(): void;
-  /**
-   * Trigger a selection changed haptic hint. If a selection was
-   * started already, this will cause the device to provide haptic
-   * feedback (on iOS at least)
-   */
-  selectionChanged(): void;
-  /**
-   * If selectionStart() was called, selectionEnd() ends the selection.
-   * For example, call this when a user has lifted their finger from a control
-   */
-  selectionEnd(): void;
-}
-
-export interface HapticsImpactOptions {
-  style: HapticsImpactStyle;
-}
-
-export enum HapticsImpactStyle {
-  Heavy = 'HEAVY',
-  Medium = 'MEDIUM',
-  Light = 'LIGHT'
-}
-
-export interface HapticsNotificationOptions {
-  type: HapticsNotificationType;
-}
-
-export enum HapticsNotificationType {
-  SUCCESS = 'SUCCESS',
-  WARNING = 'WARNING',
-  ERROR = 'ERROR'
-}
-
-export interface VibrateOptions {
-  duration?: number;
-}
+export type GeolocationWatchCallback = (
+  position: GeolocationPosition,
+  err?: any,
+) => void;
 
 //
 
@@ -939,10 +930,27 @@ export interface KeyboardPlugin extends Plugin {
    */
   setResizeMode(options: KeyboardResizeOptions): Promise<void>;
 
-  addListener(eventName: 'keyboardWillShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
-  addListener(eventName: 'keyboardDidShow', listenerFunc: (info: KeyboardInfo) => void): PluginListenerHandle;
-  addListener(eventName: 'keyboardWillHide', listenerFunc: () => void): PluginListenerHandle;
-  addListener(eventName: 'keyboardDidHide', listenerFunc: () => void): PluginListenerHandle;
+  addListener(
+    eventName: 'keyboardWillShow',
+    listenerFunc: (info: KeyboardInfo) => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'keyboardDidShow',
+    listenerFunc: (info: KeyboardInfo) => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'keyboardWillHide',
+    listenerFunc: () => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'keyboardDidHide',
+    listenerFunc: () => void,
+  ): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
 }
 
 export interface KeyboardInfo {
@@ -955,7 +963,7 @@ export interface KeyboardStyleOptions {
 
 export enum KeyboardStyle {
   Dark = 'DARK',
-  Light = 'LIGHT'
+  Light = 'LIGHT',
 }
 
 export interface KeyboardResizeOptions {
@@ -966,7 +974,7 @@ export enum KeyboardResize {
   Body = 'body',
   Ionic = 'ionic',
   Native = 'native',
-  None = 'none'
+  None = 'none',
 }
 
 //
@@ -979,8 +987,8 @@ export interface LocalNotificationPendingList {
   notifications: LocalNotificationRequest[];
 }
 
-export interface LocalNotificationScheduleResult extends LocalNotificationPendingList {
-}
+export interface LocalNotificationScheduleResult
+  extends LocalNotificationPendingList {}
 
 export interface LocalNotificationActionType {
   id: string;
@@ -1021,21 +1029,74 @@ export interface LocalNotification {
   body: string;
   id: number;
   schedule?: LocalNotificationSchedule;
+  /**
+   * Name of the audio file with extension.
+   * On iOS the file should be in the app bundle.
+   * On Android the file should be on res/raw folder.
+   * Doesn't work on Android version 26+ (Android O and newer), for
+   * Recommended format is .wav because is supported by both platforms.
+   */
   sound?: string;
   /**
    * Android-only: set a custom statusbar icon.
    * If set, it overrides default icon from capacitor.config.json
    */
   smallIcon?: string;
+  /**
+   * Android only: set the color of the notification icon
+   */
+  iconColor?: string;
   attachments?: LocalNotificationAttachment[];
   actionTypeId?: string;
   extra?: any;
+  /**
+   * iOS only: set the thread identifier for notification grouping
+   */
+  threadIdentifier?: string;
+  /**
+   * iOS 12+ only: set the summary argument for notification grouping
+   */
+  summaryArgument?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
+  /**
+   * Android only: set the notification channel on which local notification
+   * will generate. If channel with the given name does not exist then the
+   * notification will not fire. If not provided, it will use the default channel.
+   */
+  channelId?: string;
+  /**
+   * Android only: set the notification ongoing.
+   * If set to true the notification can't be swiped away.
+   */
+  ongoing?: boolean;
+  /**
+   * Android only: set the notification to be removed automatically when the user clicks on it
+   */
+  autoCancel?: boolean;
 }
 
 export interface LocalNotificationSchedule {
   at?: Date;
   repeats?: boolean;
-  every?: 'year'|'month'|'two-weeks'|'week'|'day'|'hour'|'minute'|'second';
+  every?:
+    | 'year'
+    | 'month'
+    | 'two-weeks'
+    | 'week'
+    | 'day'
+    | 'hour'
+    | 'minute'
+    | 'second';
+  count?: number;
   on?: {
     year?: number;
     month?: number;
@@ -1058,16 +1119,40 @@ export interface LocalNotificationEnabledResult {
   value: boolean;
 }
 
-export interface LocalNotificationsPlugin extends Plugin {
-  schedule(options: { notifications: LocalNotification[] }): Promise<LocalNotificationScheduleResult>;
-  getPending(): Promise<LocalNotificationPendingList>;
-  registerActionTypes(options: { types: LocalNotificationActionType[] }): Promise<void>;
-  cancel(pending: LocalNotificationPendingList): Promise<void>;
-  areEnabled(): Promise<LocalNotificationEnabledResult>;
-  addListener(eventName: 'localNotificationReceived', listenerFunc: (notification: LocalNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'localNotificationActionPerformed', listenerFunc: (notificationAction: LocalNotificationActionPerformed) => void): PluginListenerHandle;
+export interface NotificationPermissionResponse {
+  granted: boolean;
 }
 
+export interface LocalNotificationsPlugin extends Plugin {
+  schedule(options: {
+    notifications: LocalNotification[];
+  }): Promise<LocalNotificationScheduleResult>;
+  getPending(): Promise<LocalNotificationPendingList>;
+  registerActionTypes(options: {
+    types: LocalNotificationActionType[];
+  }): Promise<void>;
+  cancel(pending: LocalNotificationPendingList): Promise<void>;
+  areEnabled(): Promise<LocalNotificationEnabledResult>;
+  createChannel(channel: NotificationChannel): Promise<void>;
+  deleteChannel(channel: NotificationChannel): Promise<void>;
+  listChannels(): Promise<NotificationChannelList>;
+  requestPermission(): Promise<NotificationPermissionResponse>;
+  addListener(
+    eventName: 'localNotificationReceived',
+    listenerFunc: (notification: LocalNotification) => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'localNotificationActionPerformed',
+    listenerFunc: (
+      notificationAction: LocalNotificationActionPerformed,
+    ) => void,
+  ): PluginListenerHandle;
+
+  /**
+   * Remove all native listeners for this plugin
+   */
+  removeAllListeners(): void;
+}
 
 //
 
@@ -1104,6 +1189,7 @@ export interface PromptOptions {
   okButtonTitle?: string;
   cancelButtonTitle?: string;
   inputPlaceholder?: string;
+  inputText?: string;
 }
 
 export interface ConfirmOptions {
@@ -1124,6 +1210,9 @@ export interface ConfirmResult {
 
 export interface ActionSheetOptions {
   title: string;
+  /**
+   * iOS only
+   */
   message?: string;
   options: ActionSheetOption[];
 }
@@ -1131,7 +1220,7 @@ export interface ActionSheetOptions {
 export enum ActionSheetOptionStyle {
   Default = 'DEFAULT',
   Destructive = 'DESTRUCTIVE',
-  Cancel = 'CANCEL'
+  Cancel = 'CANCEL',
 }
 
 export interface ActionSheetOption {
@@ -1149,273 +1238,6 @@ export interface ActionSheetResult {
 
 //
 
-export interface MotionPlugin extends Plugin {
-  /**
-   * Listen for accelerometer data
-   */
-  addListener(eventName: 'accel', listenerFunc: (event: MotionEventResult) => void): PluginListenerHandle;
-  /**
-   * Listen for device orientation change (compass heading, etc.)
-   */
-  addListener(eventName: 'orientation', listenerFunc: (event: MotionOrientationEventResult) => void): PluginListenerHandle;
-}
-
-export type MotionWatchOrientationCallback = (accel: MotionOrientationEventResult) => void;
-export type MotionWatchAccelCallback = (accel: MotionEventResult) => void;
-
-export interface MotionOrientationEventResult {
-  alpha: number;
-  beta: number;
-  gamma: number;
-}
-
-export interface MotionEventResult {
-  acceleration: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  accelerationIncludingGravity: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  rotationRate: {
-    alpha: number;
-    beta: number;
-    gamma: number;
-  };
-  interval: number;
-}
-
-
-//
-
-export interface NetworkPlugin extends Plugin {
-  /**
-   * Query the current network status
-   */
-  getStatus(): Promise<NetworkStatus>;
-
-  /**
-   * Listen for network status change events
-   */
-  addListener(eventName: 'networkStatusChange', listenerFunc: (status: NetworkStatus) => void): PluginListenerHandle;
-}
-
-export interface NetworkStatus {
-  connected: boolean;
-  connectionType: 'wifi' | 'cellular' | 'none' | 'unknown';
-}
-
-export type NetworkStatusChangeCallback = (status: NetworkStatus) => void;
-
-//
-
-export enum PermissionType {
-  Camera = 'camera',
-  Photos = 'photos',
-  Geolocation = 'geolocation',
-  Notifications = 'notifications',
-  ClipboardRead = 'clipboard-read',
-  ClipboardWrite = 'clipboard-write'
-}
-
-export interface PermissionsOptions {
-  name: PermissionType;
-}
-
-export interface PermissionResult {
-  state: 'granted' | 'denied' | 'prompt';
-}
-
-export interface PermissionsPlugin extends Plugin {
-  query(options: PermissionsOptions): Promise<PermissionResult>;
-}
-
-//
-
-export interface PhotosPlugin extends Plugin {
-  /**
-   * Get photos from the user's photo library
-   */
-  getPhotos(options?: PhotosFetchOptions): Promise<PhotosResult>;
-  /**
-   * Get albums from the user's photo library
-   */
-  getAlbums(options?: PhotosAlbumsFetchOptions): Promise<PhotosAlbumsResult>;
-  /**
-   * Save a photo the the user's photo library
-   */
-  savePhoto(options?: PhotosSaveOptions): Promise<PhotosSaveResult>;
-  /**
-   * Create an album in the user's photo library
-   */
-  createAlbum(options: PhotosCreateAlbumOptions): Promise<void>;
-}
-
-export interface PhotosFetchOptions {
-  /**
-   * The number of photos to fetch, sorted by last created date descending
-   */
-  quantity?: number;
-  /**
-   * The width of thumbnail to return
-   */
-  thumbnailWidth?: number;
-  /**
-   * The height of thumbnail to return
-   */
-  thumbnailHeight?: number;
-  /**
-   * The quality of thumbnail to return as JPEG (0-100)
-   */
-  thumbnailQuality?: number;
-  /**
-   * Which types of assets to return (currently only supports "photos")
-   */
-  types?: string;
-  /**
-   * Which album identifier to query in (get identifier with getAlbums())
-   */
-  albumIdentifier?: string;
-}
-
-export interface PhotoAsset {
-  /**
-   * Platform-specific identifier
-   */
-  identifier: string;
-  /**
-   * Data for a photo asset as a base64 encoded string (JPEG only supported)
-   */
-  data: string;
-  /**
-   * ISO date string for creation date of asset
-   */
-  creationDate: string;
-  /**
-   * Full width of original asset
-   */
-  fullWidth: number;
-  /**
-   * Full height of original asset
-   */
-  fullHeight: number;
-  /**
-   * Width of thumbnail preview
-   */
-  thumbnailWidth: number;
-  /**
-   * Height of thumbnail preview
-   */
-  thumbnailHeight: number;
-  /**
-   * Location metadata for the asset
-   */
-  location: PhotoLocation;
-}
-
-export interface PhotoLocation {
-  /**
-   * GPS latitude image was taken at
-   */
-  latitude: number;
-  /**
-   * GPS longitude image was taken at
-   */
-  longitude: number;
-  /**
-   * Heading of user at time image was taken
-   */
-  heading: number;
-  /**
-   * Altitude of user at time image was taken
-   */
-  altitude: number;
-  /**
-   * Speed of user at time image was taken
-   */
-  speed: number;
-}
-
-export interface PhotosResult {
-  /**
-   * The list of photos returned from the library
-   */
-  photos: PhotoAsset[];
-}
-
-export interface PhotosSaveOptions {
-  /**
-   * The base64-encoded JPEG data for a photo (note: do not add HTML data-uri type prefix)
-   */
-  data: string;
-  /**
-   * The optional album identifier to save this photo in
-   */
-  albumIdentifier?: string;
-}
-
-export interface PhotosSaveResult {
-  /**
-   * Whether the photo was created
-   */
-  success: boolean;
-}
-
-export interface PhotosAlbumsFetchOptions {
-  /**
-   * Whether to load cloud shared albums
-   */
-  loadShared: boolean;
-}
-export interface PhotosAlbumsResult {
-  /**
-   * The list of albums returned from the query
-   */
-  albums: PhotosAlbum[];
-}
-export interface PhotosAlbum {
-  /**
-   * Local identifier for the album
-   */
-  identifier: string;
-  /**
-   * Name of the album
-   */
-  name: string;
-  /**
-   * Number of items in the album
-   */
-  count: number;
-  /**
-   * The type of album
-   */
-  type: PhotosAlbumType;
-}
-
-export interface PhotosCreateAlbumOptions {
-  name: string;
-}
-
-export enum PhotosAlbumType {
-  /**
-   * Album is a "smart" album (such as Favorites or Recently Added)
-   */
-  Smart = 'smart',
-  /**
-   * Album is a cloud-shared album
-   */
-  Shared = 'shared',
-  /**
-   * Album is a user-created album
-   */
-  User = 'user'
-}
-
-//
-
 export interface PushNotification {
   title?: string;
   subtitle?: string;
@@ -1426,6 +1248,16 @@ export interface PushNotification {
   data: any;
   click_action?: string;
   link?: string;
+  /**
+   * Android only: set the group identifier for notification grouping, like
+   * threadIdentifier on iOS.
+   */
+  group?: string;
+  /**
+   * Android only: designate this notification as the summary for a group
+   * (should be used with the `group` property).
+   */
+  groupSummary?: boolean;
 }
 
 export interface PushNotificationActionPerformed {
@@ -1442,30 +1274,107 @@ export interface PushNotificationDeliveredList {
   notifications: PushNotification[];
 }
 
-export interface PushNotificationChannel {
+export interface NotificationChannel {
   id: string;
   name: string;
-  description: string;
-  importance: 1 | 2 | 3 | 4 | 5;
-  visibility?: -1 | 0 | 1 ;
+  description?: string;
+  sound?: string;
+  importance: 1 | 2 | 3 | 4 | 5;
+  visibility?: -1 | 0 | 1;
+  lights?: boolean;
+  lightColor?: string;
+  vibration?: boolean;
 }
 
-export interface PushNotificationChannelList {
-  channels: PushNotificationChannel[];
+export interface NotificationChannelList {
+  channels: NotificationChannel[];
 }
 
 export interface PushNotificationsPlugin extends Plugin {
+  /**
+   * Register the app to receive push notifications.
+   * Will trigger registration event with the push token
+   * or registrationError if there was some problem.
+   * Doesn't prompt the user for notification permissions, use requestPermission() first.
+   */
   register(): Promise<void>;
+  /**
+   * On iOS it prompts the user to allow displaying notifications
+   * and return if the permission was granted or not.
+   * On Android there is no such prompt, so just return as granted.
+   */
+  requestPermission(): Promise<NotificationPermissionResponse>;
+  /**
+   * Returns the notifications that are visible on the notifications screen.
+   */
   getDeliveredNotifications(): Promise<PushNotificationDeliveredList>;
-  removeDeliveredNotifications(delivered: PushNotificationDeliveredList): Promise<void>;
+  /**
+   * Removes the specified notifications from the notifications screen.
+   * @param delivered list of delivered notifications.
+   */
+  removeDeliveredNotifications(
+    delivered: PushNotificationDeliveredList,
+  ): Promise<void>;
+  /**
+   * Removes all the notifications from the notifications screen.
+   */
   removeAllDeliveredNotifications(): Promise<void>;
-  createChannel(channel: PushNotificationChannel): Promise<void>;
-  deleteChannel(channel: PushNotificationChannel): Promise<void>;
-  listChannels(): Promise<PushNotificationChannelList>;
-  addListener(eventName: 'registration', listenerFunc: (token: PushNotificationToken) => void): PluginListenerHandle;
-  addListener(eventName: 'registrationError', listenerFunc: (error: any) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationReceived', listenerFunc: (notification: PushNotification) => void): PluginListenerHandle;
-  addListener(eventName: 'pushNotificationActionPerformed', listenerFunc: (notification: PushNotificationActionPerformed) => void): PluginListenerHandle;
+  /**
+   * On Android O or newer (SDK 26+) creates a notification channel.
+   * @param channel to create.
+   */
+  createChannel(channel: NotificationChannel): Promise<void>;
+  /**
+   * On Android O or newer (SDK 26+) deletes a notification channel.
+   * @param channel to delete.
+   */
+  deleteChannel(channel: NotificationChannel): Promise<void>;
+  /**
+   * On Android O or newer (SDK 26+) list the available notification channels.
+   */
+  listChannels(): Promise<NotificationChannelList>;
+  /**
+   * Event called when the push notification registration finished without problems.
+   * Provides the push notification token.
+   * @param eventName registration.
+   * @param listenerFunc callback with the push token.
+   */
+  addListener(
+    eventName: 'registration',
+    listenerFunc: (token: PushNotificationToken) => void,
+  ): PluginListenerHandle;
+  /**
+   * Event called when the push notification registration finished with problems.
+   * Provides an error with the registration problem.
+   * @param eventName registrationError.
+   * @param listenerFunc callback with the registration error.
+   */
+  addListener(
+    eventName: 'registrationError',
+    listenerFunc: (error: any) => void,
+  ): PluginListenerHandle;
+  /**
+   * Event called when the device receives a push notification.
+   * @param eventName pushNotificationReceived.
+   * @param listenerFunc callback with the received notification.
+   */
+  addListener(
+    eventName: 'pushNotificationReceived',
+    listenerFunc: (notification: PushNotification) => void,
+  ): PluginListenerHandle;
+  /**
+   * Event called when an action is performed on a pusn notification.
+   * @param eventName pushNotificationActionPerformed.
+   * @param listenerFunc callback with the notification action.
+   */
+  addListener(
+    eventName: 'pushNotificationActionPerformed',
+    listenerFunc: (notification: PushNotificationActionPerformed) => void,
+  ): PluginListenerHandle;
+  /**
+   * Remove all native listeners for this plugin.
+   */
+  removeAllListeners(): void;
 }
 
 //
@@ -1488,7 +1397,7 @@ export interface ShareOptions {
    */
   text?: string;
   /**
-   * Set a URL to share
+   * Set a URL to share, can be http, https or file URL
    */
   url?: string;
   /**
@@ -1524,9 +1433,9 @@ export interface SplashScreenShowOptions {
    */
   fadeOutDuration?: number;
   /**
-  * How long to show the splash screen when autoHide is enabled (in ms)
-  * Default is 3000ms
-  */
+   * How long to show the splash screen when autoHide is enabled (in ms)
+   * Default is 3000ms
+   */
   showDuration?: number;
 }
 
@@ -1551,15 +1460,20 @@ export interface StatusBarPlugin extends Plugin {
   /**
    * Show the status bar
    */
-  show(): Promise<void>;
+  show(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Hide the status bar
    */
-  hide(): Promise<void>;
+  hide(options?: StatusBarAnimationOptions): Promise<void>;
   /**
    *  Get info about the current state of the status bar
    */
   getInfo(): Promise<StatusBarInfoResult>;
+  /**
+   *  Set whether or not the status bar should overlay the webview to allow usage of the space
+   *  around a device "notch"
+   */
+  setOverlaysWebView(options: StatusBarOverlaysWebviewOptions): Promise<void>;
 }
 
 export interface StatusBarStyleOptions {
@@ -1574,7 +1488,29 @@ export enum StatusBarStyle {
   /**
    * Dark text for light backgrounds.
    */
-  Light = 'LIGHT'
+  Light = 'LIGHT',
+}
+
+export interface StatusBarAnimationOptions {
+  /**
+   * iOS only. The type of status bar animation used when showing or hiding.
+   */
+  animation: StatusBarAnimation;
+}
+
+export enum StatusBarAnimation {
+  /**
+   * No animation during show/hide.
+   */
+  None = 'NONE',
+  /**
+   * Slide animation during show/hide.
+   */
+  Slide = 'SLIDE',
+  /**
+   * Fade animation during show/hide.
+   */
+  Fade = 'FADE',
 }
 
 export interface StatusBarBackgroundColorOptions {
@@ -1585,29 +1521,11 @@ export interface StatusBarInfoResult {
   visible: boolean;
   style: StatusBarStyle;
   color?: string;
+  overlays?: boolean;
 }
 
-export interface StoragePlugin extends Plugin {
-  /**
-   * Get the value with the given key.
-   */
-  get(options: { key: string }): Promise<{ value: string | null }>;
-  /**
-   * Set the value for the given key
-   */
-  set(options: { key: string, value: string }): Promise<void>;
-  /**
-   * Remove the value for this key (if any)
-   */
-  remove(options: { key: string }): Promise<void>;
-  /**
-   * Clear stored keys and values.
-   */
-  clear(): Promise<void>;
-  /**
-   * Return the list of known keys
-   */
-  keys(): Promise<{ keys: string[] }>;
+export interface StatusBarOverlaysWebviewOptions {
+  overlay: boolean;
 }
 
 export interface ToastPlugin extends Plugin {
@@ -1616,7 +1534,11 @@ export interface ToastPlugin extends Plugin {
 
 export interface ToastShowOptions {
   text: string;
+  /**
+   * Duration of the toast, either 'short' (2000ms, default) or 'long' (3500ms)
+   */
   duration?: 'short' | 'long';
+  position?: 'top' | 'center' | 'bottom';
 }
 
 export interface WebViewPlugin extends Plugin {

@@ -12,4 +12,4 @@ Consult the Getting Started guide for information on using the CLI and Capacitor
 
 ### License
 
-* [MIT](https://github.com/ionic-team/capacitor/blob/master/LICENSE)
+* [MIT](https://github.com/ionic-team/capacitor/blob/HEAD/LICENSE)

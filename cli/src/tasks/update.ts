@@ -1,34 +1,62 @@
+import c from '../colors';
 import { Config } from '../config';
 import { updateAndroid } from '../android/update';
 import { updateIOS, updateIOSChecks } from '../ios/update';
 import { allSerial } from '../util/promise';
-import { CheckFunction, check, checkPackage, log, logError, logFatal, logInfo, runTask } from '../common';
+import {
+  CheckFunction,
+  check,
+  checkPackage,
+  logFatal,
+  resolvePlatform,
+  runPlatformHook,
+  runTask,
+} from '../common';
+import { logger } from '../log';
 
-import chalk from 'chalk';
+export async function updateCommand(
+  config: Config,
+  selectedPlatformName: string,
+  deployment: boolean,
+) {
+  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+    const platformDir = resolvePlatform(config, selectedPlatformName);
+    if (platformDir) {
+      await runPlatformHook(platformDir, 'capacitor:update');
+    } else {
+      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
+    }
+  } else {
+    const then = +new Date();
+    const platforms = config.selectPlatforms(selectedPlatformName);
+    if (platforms.length === 0) {
+      logger.info(
+        `There are no platforms to update yet.\n` +
+          `Add platforms with ${c.input('npx cap add')}.`,
+      );
+      return;
+    }
+    try {
+      await check(config, [checkPackage, ...updateChecks(config, platforms)]);
 
-export async function updateCommand(config: Config, selectedPlatformName: string, deployment: boolean) {
-  const then = +new Date;
-  const platforms = config.selectPlatforms(selectedPlatformName);
-  if (platforms.length === 0) {
-    logInfo(`There are no platforms to update yet. Create one with "capacitor create".`);
-    return;
-  }
-  try {
-    await check(
-      config,
-      [checkPackage, ...updateChecks(config, platforms)]
-    );
-
-    await allSerial(platforms.map(platformName => async () => await update(config, platformName, deployment)));
-    const now = +new Date;
-    const diff = (now - then) / 1000;
-    log(`Update finished in ${diff}s`);
-  } catch (e) {
-    logFatal(e);
+      await allSerial(
+        platforms.map(platformName => async () =>
+          await update(config, platformName, deployment),
+        ),
+      );
+      const now = +new Date();
+      const diff = (now - then) / 1000;
+      logger.info(`Update finished in ${diff}s`);
+    } catch (e) {
+      logFatal(e.stack ?? e);
+    }
   }
 }
 
-export function updateChecks(config: Config, platforms: string[]): CheckFunction[] {
+export function updateChecks(
+  config: Config,
+  platforms: string[],
+): CheckFunction[] {
   const checks: CheckFunction[] = [];
   for (let platformName of platforms) {
     if (platformName === config.ios.name) {
@@ -37,8 +65,6 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
       return [];
     } else if (platformName === config.web.name) {
       return [];
-    } else if (platformName === config.electron.name) {
-      return [];
     } else {
       throw `Platform ${platformName} is not valid.`;
     }
@@ -46,9 +72,13 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
   return checks;
 }
 
-export async function update(config: Config, platformName: string, deployment: boolean) {
+export async function update(
+  config: Config,
+  platformName: string,
+  deployment: boolean,
+) {
   try {
-    await runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
+    await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
       if (platformName === config.ios.name) {
         await updateIOS(config, deployment);
       } else if (platformName === config.android.name) {
@@ -56,6 +86,6 @@ export async function update(config: Config, platformName: string, deployment: b
       }
     });
   } catch (e) {
-    logError('Error running update:', e);
+    logger.error(`Error running update:\n` + e.stack ?? e);
   }
 }

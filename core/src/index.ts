@@ -3,10 +3,11 @@ export {
   PluginListenerHandle,
   PluginResultData,
   PluginResultError,
-  PluginConfig
+  PluginConfig,
 } from './definitions';
 
 export * from './core-plugin-definitions';
 export * from './global';
+export * from './plugins';
 export * from './web-plugins';
-export * from './web/index';
+export * from './web';

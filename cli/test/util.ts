@@ -1,10 +1,16 @@
-import { existsAsync, mkdirAsync, readFileAsync, writeFileAsync, copyAsync } from '../src/util/fs';
+import {
+  existsAsync,
+  mkdirAsync,
+  readFileAsync,
+  writeFileAsync,
+  copyAsync,
+} from '../src/util/fs';
 import { runCommand } from '../src/common';
 import { Config } from '../src/config';
 import { exec } from 'child_process';
 import { join, resolve } from 'path';
 import { mkdirs } from 'fs-extra';
-const tmp = require('tmp');
+import tmp from 'tmp';
 
 const cwd = process.cwd();
 
@@ -18,13 +24,16 @@ export function makeConfig(appRoot: string): Config {
 
 export async function run(appRoot: string, capCommand: string) {
   return new Promise((resolve, reject) => {
-    exec(`cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`, (error, stdout, stderr) => {
-      if (error) {
-        reject(stdout + stderr);
-      } else {
-        resolve(stdout);
-      }
-    });
+    exec(
+      `cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`,
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(stdout + stderr);
+        } else {
+          resolve(stdout);
+        }
+      },
+    );
   });
 }
 
@@ -37,7 +46,7 @@ export function mktmp() {
 
       resolve({
         cleanupCallback,
-        path
+        path,
       });
     });
   });
@@ -54,7 +63,7 @@ const APP_INDEX = `
   <capacitor-welcome></capacitor-welcome>
 </body>
 </html>
-`
+`;
 
 const APP_PACKAGE_JSON = `
 {
@@ -63,12 +72,22 @@ const APP_PACKAGE_JSON = `
     "${CORDOVA_PLUGIN_ID}": "latest"
   }
 }
-`
+`;
+
+export async function installPlatform(
+  appDir: string,
+  platform: string,
+): Promise<void> {
+  const platformPath = resolve(cwd, '..', platform);
+  await runCommand(`cd ${appDir} && npm install ${platformPath}`);
+}
 
 export async function makeAppDir(monoRepoLike: boolean = false) {
   const appDirObj: any = await mktmp();
   const tmpDir = appDirObj.path;
-  const rootDir = monoRepoLike ? join(tmpDir, 'test-root') : join(tmpDir, 'test-app');
+  const rootDir = monoRepoLike
+    ? join(tmpDir, 'test-root')
+    : join(tmpDir, 'test-app');
   if (monoRepoLike) {
     await mkdirAsync(rootDir);
   }
@@ -85,14 +104,21 @@ export async function makeAppDir(monoRepoLike: boolean = false) {
   // Otherwise later use of 'npm install --save @capacitor/android|ios' will wipe 'node_modules/@capacitor/'
   const corePath = resolve(cwd, '../core');
   const cliPath = resolve(cwd, '../cli');
-  await runCommand(`cd "${rootDir}" && npm install --save ${corePath} ${cliPath}`);
+  await runCommand(
+    `cd "${rootDir}" && npm install --save ${corePath} ${cliPath}`,
+  );
 
   // Make a fake cordova plugin
-  await makeCordovaPlugin(appDir);
+  const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
+  await makeCordovaPlugin(cordovaPluginPath);
+
+  await runCommand(
+    `cd "${rootDir}" && npm install --save ${cordovaPluginPath}`,
+  );
 
   return {
     ...appDirObj,
-     appDir
+    appDir,
   };
 }
 
@@ -157,9 +183,9 @@ Pod::Spec.new do |s|
   s.name = 'CordovaPluginsResources'
   s.version = '0.0.105'
   s.summary = 'Resources for Cordova plugins'
-  s.social_media_url = 'http://twitter.com/getcapacitor'
+  s.social_media_url = 'https://twitter.com/capacitorjs'
   s.license = 'MIT'
-  s.homepage = 'https://capacitor.ionicframework.com/'
+  s.homepage = 'https://capacitorjs.com/'
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version.to_s }
   s.resources = ['resources/*']
@@ -180,14 +206,19 @@ Pod::Spec.new do |s|
   s.dependency 'CapacitorCordova'
 end`;
 
-async function makeCordovaPlugin(appDir: string) {
-  const cordovaPluginPath = join(appDir, 'node_modules', CORDOVA_PLUGIN_ID);
+async function makeCordovaPlugin(cordovaPluginPath: string) {
   const iosPath = join(cordovaPluginPath, 'src', 'ios');
   const androidPath = join(cordovaPluginPath, 'android/com/getcapacitor');
   await mkdirs(cordovaPluginPath);
   await writeFileAsync(join(cordovaPluginPath, 'plugin.js'), CODOVA_PLUGIN_JS);
-  await writeFileAsync(join(cordovaPluginPath, 'plugin.xml'), CORDOVA_PLUGIN_XML);
-  await writeFileAsync(join(cordovaPluginPath, 'package.json'), JSON.stringify(CORDOVA_PLUGIN_PACKAGE));
+  await writeFileAsync(
+    join(cordovaPluginPath, 'plugin.xml'),
+    CORDOVA_PLUGIN_XML,
+  );
+  await writeFileAsync(
+    join(cordovaPluginPath, 'package.json'),
+    CORDOVA_PLUGIN_PACKAGE,
+  );
   await mkdirs(iosPath);
   await mkdirs(androidPath);
   await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');
@@ -195,12 +226,11 @@ async function makeCordovaPlugin(appDir: string) {
 }
 
 class MappedFS {
-  constructor(private rootDir) {
-  }
-  async read (path) {
+  constructor(private rootDir: string) {}
+  async read(path: string) {
     return readFileAsync(resolve(this.rootDir, path), 'utf8');
   }
-  async exists(path) {
+  async exists(path: string) {
     return existsAsync(resolve(this.rootDir, path));
   }
 }

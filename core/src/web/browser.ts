@@ -3,17 +3,14 @@ import { WebPlugin } from './index';
 import {
   BrowserPlugin,
   BrowserOpenOptions,
-  BrowserPrefetchOptions
+  BrowserPrefetchOptions,
 } from '../core-plugin-definitions';
 
 export class BrowserPluginWeb extends WebPlugin implements BrowserPlugin {
   _lastWindow: Window;
 
   constructor() {
-    super({
-      name: 'Browser',
-      platforms: ['web']
-    });
+    super({ name: 'Browser' });
   }
 
   async open(options: BrowserOpenOptions): Promise<void> {

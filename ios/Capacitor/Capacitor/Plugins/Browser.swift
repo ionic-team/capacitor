@@ -2,69 +2,69 @@ import Foundation
 import SafariServices
 
 @objc(CAPBrowserPlugin)
-public class CAPBrowserPlugin : CAPPlugin, SFSafariViewControllerDelegate {
-  var vc: SFSafariViewController?
-  
-  @objc func open(_ call: CAPPluginCall) {
-    guard let urlString = call.getString("url") else {
-      call.error("Must provide a URL to open")
-      return
-    }
+public class CAPBrowserPlugin: CAPPlugin, SFSafariViewControllerDelegate {
+    var vc: SFSafariViewController?
 
-    if urlString.isEmpty {
-      call.error("URL must not be empty")
-      return
-    }
+    @objc func open(_ call: CAPPluginCall) {
+        guard let urlString = call.getString("url") else {
+            call.error("Must provide a URL to open")
+            return
+        }
 
-    let toolbarColor = call.getString("toolbarColor")
-    let url = URL(string: urlString)
-    if let scheme = url?.scheme, ["http", "https"].contains(scheme.lowercased()) {
-      DispatchQueue.main.async {
-        self.vc = SFSafariViewController.init(url: url!)
-        self.vc!.delegate = self
-        let presentationStyle = call.getString("presentationStyle")
-        if presentationStyle != nil && presentationStyle == "popover" {
-          self.vc!.modalPresentationStyle = .popover
-          self.setCenteredPopover(self.vc)
+        if urlString.isEmpty {
+            call.error("URL must not be empty")
+            return
+        }
+
+        let toolbarColor = call.getString("toolbarColor")
+        let url = URL(string: urlString)
+        if let scheme = url?.scheme, ["http", "https"].contains(scheme.lowercased()) {
+            DispatchQueue.main.async { [weak self] in
+                let safariVC = SFSafariViewController.init(url: url!)
+                safariVC.delegate = self
+                let presentationStyle = call.getString("presentationStyle")
+                if presentationStyle != nil && presentationStyle == "popover" && (self?.supportsPopover() ?? false) {
+                    safariVC.modalPresentationStyle = .popover
+                    self?.setCenteredPopover(safariVC)
+                } else {
+                    safariVC.modalPresentationStyle = .fullScreen
+                }
+
+                if toolbarColor != nil {
+                    safariVC.preferredBarTintColor = UIColor.capacitor.color(fromHex: toolbarColor!)
+                }
+
+                self?.bridge?.presentVC(safariVC, animated: true, completion: {
+                    call.success()
+                })
+                self?.vc = safariVC
+            }
         } else {
-          self.vc!.modalPresentationStyle = .fullScreen
+            call.error("Invalid URL")
         }
+    }
 
-        if toolbarColor != nil {
-          self.vc!.preferredBarTintColor = UIColor(fromHex: toolbarColor!)
+    @objc func close(_ call: CAPPluginCall) {
+        if vc == nil {
+            call.success()
         }
+        DispatchQueue.main.async {
+            self.bridge?.dismissVC(animated: true) {
+                call.success()
+            }
+        }
+    }
 
-        self.bridge.viewController.present(self.vc!, animated: true, completion: {
-          call.success()
-        })
-      }
-    } else {
-      call.error("Invalid URL")
+    @objc func prefetch(_ call: CAPPluginCall) {
+        call.unimplemented()
     }
-  }
-  
-  @objc func close(_ call: CAPPluginCall) {
-    if vc == nil {
-      call.success()
+
+    public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        self.notifyListeners("browserFinished", data: [:])
+        vc = nil
     }
-    DispatchQueue.main.async {
-      self.bridge.viewController.dismiss(animated: true) {
-        call.success()
-      }
+
+    public func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
+        self.notifyListeners("browserPageLoaded", data: [:])
     }
-  }
-  
-  @objc func prefetch(_ call: CAPPluginCall) {
-    call.unimplemented()
-  }
-  
-  public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-    self.notifyListeners("browserFinished", data: [:])
-    vc = nil
-  }
-  
-  public func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
-    self.notifyListeners("browserPageLoaded", data: [:])
-  }
 }
-

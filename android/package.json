@@ -1,10 +1,13 @@
 {
   "name": "@capacitor/android",
-  "version": "1.3.0",
+  "version": "3.0.0-alpha.2",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
+  "scripts": {
+    "verify": "./gradlew clean build test -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ionic-team/capacitor.git"
@@ -12,11 +15,7 @@
   "bugs": {
     "url": "https://github.com/ionic-team/capacitor/issues"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "peerDependencies": {
-    "@capacitor/core": "^1.2.1"
-  },
-  "gitHead": "844c0feba4a801ee5041429a82d0f805c9e665b0"
+    "@capacitor/core": "^3.0.0-alpha.2"
+  }
 }

@@ -120,6 +120,10 @@
   [self.bridge releaseCallWithCallbackId:callbackId];
 }
 
+- (void)removeAllListeners:(CAPPluginCall *)call {
+  [self.eventListeners removeAllObjects];
+}
+
 - (NSArray<CAPPluginCall *>*)getListeners:(NSString *)eventName {
   NSArray<CAPPluginCall *>* listeners = [self.eventListeners objectForKey:eventName];
   return listeners;
@@ -138,9 +142,23 @@
  * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered
  */
 -(void)setCenteredPopover:(UIViewController *) vc {
-  vc.popoverPresentationController.sourceRect = CGRectMake(self.bridge.viewController.view.center.x, self.bridge.viewController.view.center.y, 0, 0);
-  vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
-  vc.popoverPresentationController.permittedArrowDirections = 0;
+  if (self.bridge.viewController != nil) {
+    vc.popoverPresentationController.sourceRect = CGRectMake(self.bridge.viewController.view.center.x, self.bridge.viewController.view.center.y, 0, 0);
+    vc.popoverPresentationController.sourceView = self.bridge.viewController.view;
+    vc.popoverPresentationController.permittedArrowDirections = 0;
+  }
+}
+
+-(BOOL)supportsPopover {
+  if (@available(iOS 13, *)) {
+    return YES;
+  } else {
+    return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
+  }
+}
+
+- (NSNumber*)shouldOverrideLoad:(WKNavigationAction*)navigationAction {
+    return nil;
 }
 
 @end

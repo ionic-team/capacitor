@@ -6,24 +6,38 @@ import {
   LocalNotificationPendingList,
   LocalNotificationActionType,
   LocalNotification,
-  LocalNotificationScheduleResult
+  LocalNotificationScheduleResult,
+  NotificationPermissionResponse,
+  NotificationChannel,
+  NotificationChannelList,
 } from '../core-plugin-definitions';
 
 import { PermissionsRequestResult } from '../definitions';
 
-export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotificationsPlugin {
+export class LocalNotificationsPluginWeb
+  extends WebPlugin
+  implements LocalNotificationsPlugin {
   private pending: LocalNotification[] = [];
 
   constructor() {
-    super({
-      name: 'LocalNotifications',
-      platforms: ['web']
-    });
+    super({ name: 'LocalNotifications' });
+  }
+
+  createChannel(channel: NotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+
+  deleteChannel(channel: NotificationChannel): Promise<void> {
+    throw new Error('Feature not available in the browser. ' + channel.id);
+  }
+
+  listChannels(): Promise<NotificationChannelList> {
+    throw new Error('Feature not available in the browser');
   }
 
   sendPending() {
     const toRemove: LocalNotification[] = [];
-    const now = +new Date;
+    const now = +new Date();
     this.pending.forEach(localNotification => {
       if (localNotification.schedule && localNotification.schedule.at) {
         if (+localNotification.schedule.at <= now) {
@@ -34,14 +48,16 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     });
     console.log('Sent pending, removing', toRemove);
 
-    this.pending = this.pending.filter(localNotification => !toRemove.find(ln => ln === localNotification));
+    this.pending = this.pending.filter(
+      localNotification => !toRemove.find(ln => ln === localNotification),
+    );
   }
 
   sendNotification(localNotification: LocalNotification): Notification {
     const l = localNotification;
 
     if (localNotification.schedule && localNotification.schedule.at) {
-      const diff = +localNotification.schedule.at - +new Date;
+      const diff = +localNotification.schedule.at - +new Date();
       this.pending.push(l);
       setTimeout(() => {
         this.sendPending();
@@ -55,18 +71,22 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
   buildNotification(localNotification: LocalNotification) {
     const l = localNotification;
     return new Notification(l.title, {
-      body: l.body
+      body: l.body,
     });
   }
 
-  schedule(options: { notifications: LocalNotification[]; }): Promise<LocalNotificationScheduleResult> {
+  schedule(options: {
+    notifications: LocalNotification[];
+  }): Promise<LocalNotificationScheduleResult> {
     const notifications: Notification[] = [];
     options.notifications.forEach(notification => {
       notifications.push(this.sendNotification(notification));
     });
 
     return Promise.resolve({
-      notifications: notifications.map(_ => { return { id: '' }; })
+      notifications: options.notifications.map(notification => {
+        return { id: '' + notification.id };
+      }),
     });
   }
 
@@ -74,40 +94,55 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
     return Promise.resolve({
       notifications: this.pending.map(localNotification => {
         return {
-          id: '' + localNotification.id
+          id: '' + localNotification.id,
         };
-      })
+      }),
     });
   }
 
-  registerActionTypes(_options: { types: LocalNotificationActionType[]; }): Promise<void> {
+  registerActionTypes(_options: {
+    types: LocalNotificationActionType[];
+  }): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
   cancel(pending: LocalNotificationPendingList): Promise<void> {
     console.log('Cancel these', pending);
     this.pending = this.pending.filter(
-      localNotification => !pending.notifications.find(ln => ln.id === '' + localNotification.id));
+      localNotification =>
+        !pending.notifications.find(ln => ln.id === '' + localNotification.id),
+    );
     return Promise.resolve();
   }
 
   areEnabled(): Promise<LocalNotificationEnabledResult> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve({
+      value: Notification.permission === 'granted',
+    });
   }
 
+  requestPermission(): Promise<NotificationPermissionResponse> {
+    return new Promise(resolve => {
+      Notification.requestPermission(result => {
+        let granted = true;
+        if (result === 'denied' || result === 'default') {
+          granted = false;
+        }
+        resolve({ granted });
+      });
+    });
+  }
 
   requestPermissions(): Promise<PermissionsRequestResult> {
     return new Promise((resolve, reject) => {
-      Notification.requestPermission().then((result) => {
+      Notification.requestPermission(result => {
         if (result === 'denied' || result === 'default') {
           reject(result);
           return;
         }
         resolve({
-          results: [ result ]
+          results: [result],
         });
-      }).catch((e) => {
-        reject(e);
       });
     });
   }

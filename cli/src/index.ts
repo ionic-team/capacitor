@@ -1,5 +1,4 @@
-import * as program from 'commander';
-import chalk from 'chalk';
+import program from 'commander';
 
 import { createCommand } from './tasks/create';
 import { initCommand } from './tasks/init';
@@ -10,41 +9,43 @@ import { openCommand } from './tasks/open';
 import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
 import { Config } from './config';
+import c from './colors';
 import { addCommand } from './tasks/add';
 import { newPluginCommand } from './tasks/new-plugin';
 import { doctorCommand } from './tasks/doctor';
 import { emoji as _e } from './util/emoji';
+import { logFatal } from './common';
+import { output } from './log';
 
 process.on('unhandledRejection', error => {
-  const chalk = require('chalk');
-  console.error(chalk.red('[fatal]'), error);
+  console.error(c.failure('[fatal]'), error);
 });
 
 export function run(process: NodeJS.Process, cliBinDir: string) {
   const config = new Config(process.platform, process.cwd(), cliBinDir);
 
-  program
-    .version(config.cli.package.version);
+  program.version(config.cli.package.version);
 
   program
-    .command('create [directory] [name] [id]')
+    .command('create [directory] [name] [id]', { hidden: true })
     .description('Creates a new Capacitor project')
-    .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
-    .action((directory, name, id, { npmClient }) => {
-      return createCommand(config, directory, name, id, npmClient);
+    .action(() => {
+      return createCommand(config);
     });
 
   program
     .command('init [appName] [appId]')
-    .description('Initializes a new Capacitor project in the current directory')
-    .option('--web-dir [value]', 'Optional: Directory of your projects built web assets', 'www')
-    .option('--npm-client [npmClient]', 'Optional: npm client to use for dependency installation')
-    .action((appName, appId, { webDir, npmClient }) => {
-      return initCommand(config, appName, appId, webDir, npmClient);
+    .description('create a capacitor.config.json file')
+    .option(
+      '--web-dir <value>',
+      'Optional: Directory of your projects built web assets',
+    )
+    .action((appName, appId, { webDir }) => {
+      return initCommand(config, appName, appId, webDir);
     });
 
   program
-    .command('serve')
+    .command('serve', { hidden: true })
     .description('Serves a Capacitor Progressive Web App in the browser')
     .action(() => {
       return serveCommand(config);
@@ -53,15 +54,23 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('sync [platform]')
     .description('copy + update')
-    .option('--deployment', 'Optional: if provided, Podfile.lock won\'t be deleted and pod install will use --deployment option')
+    .option(
+      '--deployment',
+      "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
+    )
     .action((platform, { deployment }) => {
       return syncCommand(config, platform, deployment);
     });
 
   program
     .command('update [platform]')
-    .description(`updates the native plugins and dependencies based in package.json`)
-    .option('--deployment', 'Optional: if provided, Podfile.lock won\'t be deleted and pod install will use --deployment option')
+    .description(
+      `updates the native plugins and dependencies based in package.json`,
+    )
+    .option(
+      '--deployment',
+      "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
+    )
     .action((platform, { deployment }) => {
       return updateCommand(config, platform, deployment);
     });
@@ -83,7 +92,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
   program
     .command('add [platform]')
     .description('add a native platform project')
-    .action((platform) => {
+    .action(platform => {
       return addCommand(config, platform);
     });
 
@@ -102,24 +111,24 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     });
 
   program
-    .command('plugin:generate')
+    .command('plugin:generate', { hidden: true })
     .description('start a new Capacitor plugin')
     .action(() => {
       return newPluginCommand(config);
     });
 
-  program
-    .arguments('<command>')
-    .action((cmd) => {
+  program.arguments('[command]').action(cmd => {
+    if (typeof cmd === 'undefined') {
+      output.write(
+        `\n  ${_e('⚡️', '--')}  ${c.strong(
+          'Capacitor - Cross-Platform apps with JavaScript and the Web',
+        )}  ${_e('⚡️', '--')}\n\n`,
+      );
       program.outputHelp();
-      console.log(`  ` + chalk.red(`\n  Unknown command ${chalk.yellow(cmd)}.`));
-      console.log();
-    });
+    } else {
+      logFatal(`Unknown command: ${c.input(cmd)}`);
+    }
+  });
 
   program.parse(process.argv);
-
-  if (!program.args.length) {
-    console.log(`\n  ${_e('⚡️', '--')}  ${chalk.bold('Capacitor - Cross-Platform apps with JavaScript and the Web')}  ${_e('⚡️', '--')}`);
-    program.help();
-  }
 }
