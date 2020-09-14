@@ -1,10 +1,7 @@
-import c from '../colors';
-import { Config } from '../config';
-import { OS } from '../definitions';
 import { addAndroid, addAndroidChecks } from '../android/add';
-import { addIOS, addIOSChecks } from '../ios/add';
 import { editProjectSettingsAndroid } from '../android/common';
-import { editProjectSettingsIOS } from '../ios/common';
+import c from '../colors';
+import type { CheckFunction } from '../common';
 import {
   check,
   checkAppConfig,
@@ -14,15 +11,19 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
-  writePrettyJSON,
 } from '../common';
-import { sync } from './sync';
-
-import { resolve } from 'path';
-import prompts from 'prompts';
+import type { Config } from '../config';
+import { OS } from '../definitions';
+import { addIOS, addIOSChecks } from '../ios/add';
+import { editProjectSettingsIOS } from '../ios/common';
 import { logger } from '../log';
 
-export async function addCommand(config: Config, selectedPlatformName: string) {
+import { sync } from './sync';
+
+export async function addCommand(
+  config: Config,
+  selectedPlatformName: string,
+): Promise<void> {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -90,7 +91,10 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   }
 }
 
-export function addChecks(config: Config, platformName: string) {
+export function addChecks(
+  config: Config,
+  platformName: string,
+): CheckFunction[] {
   if (platformName === config.ios.name) {
     return addIOSChecks;
   } else if (platformName === config.android.name) {
@@ -102,7 +106,10 @@ export function addChecks(config: Config, platformName: string) {
   }
 }
 
-export async function doAdd(config: Config, platformName: string) {
+export async function doAdd(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   await runTask(c.success(c.strong('add')), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);

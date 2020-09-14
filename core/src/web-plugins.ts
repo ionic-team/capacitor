@@ -1,5 +1,4 @@
 import { mergeWebPlugin } from './plugins';
-
 import { App } from './web/app';
 import { Browser } from './web/browser';
 import { Camera } from './web/camera';
