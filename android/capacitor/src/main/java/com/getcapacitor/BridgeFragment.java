@@ -51,7 +51,7 @@ public class BridgeFragment extends Fragment {
     private String lastActivityPlugin;
 
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    private JSONObject config = new JSONObject();
+    private JSONObject config;
 
     public BridgeFragment() {
         // Required empty public constructor
