@@ -23,6 +23,13 @@ android {
     }
 }
 
+afterEvaluate {
+    preBuild.dependsOn(preBuildScript)
+}
+task preBuildScript(type: Exec) {
+    commandLine './prebuild.sh'
+}
+
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
