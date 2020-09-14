@@ -1,8 +1,8 @@
+import type { SharePlugin, ShareOptions } from '../core-plugin-definitions';
+
 import { WebPlugin } from './index';
 
-import { SharePlugin, ShareOptions } from '../core-plugin-definitions';
-
-declare var navigator: any;
+declare let navigator: any;
 
 export class SharePluginWeb extends WebPlugin implements SharePlugin {
   constructor() {

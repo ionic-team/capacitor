@@ -1,3 +1,5 @@
+import { updateCommand } from '../src/tasks/update';
+
 import {
   APP_ID,
   APP_NAME,
@@ -8,7 +10,6 @@ import {
   run,
   installPlatform,
 } from './util';
-import { updateCommand } from '../src/tasks/update';
 
 describe.each([false, true])('Update: iOS (monoRepoLike: %p)', monoRepoLike => {
   let appDirObj: any;
@@ -33,13 +34,11 @@ describe.each([false, true])('Update: iOS (monoRepoLike: %p)', monoRepoLike => {
     //appDirObj.cleanupCallback();
   });
 
-  it('Should update', async () => {});
-
   it('Should install Cordova plugin JS', async () => {
     const cordovaPluginJSContent = await FS.read(
       'ios/App/public/cordova_plugins.js',
     );
-    let regex = new RegExp(CORDOVA_PLUGIN_ID);
+    const regex = new RegExp(CORDOVA_PLUGIN_ID);
     expect(regex.test(cordovaPluginJSContent)).toBe(true);
   });
 

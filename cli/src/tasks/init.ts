@@ -1,5 +1,4 @@
 import c from '../colors';
-import { Config } from '../definitions';
 import {
   check,
   checkAppId,
@@ -11,16 +10,17 @@ import {
   logPrompt,
 } from '../common';
 import { getCordovaPreferences } from '../cordova';
+import type { Config } from '../definitions';
+import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
 import { checkInteractive, isInteractive } from '../util/term';
-import { output } from '../log';
 
 export async function initCommand(
   config: Config,
   name: string,
   id: string,
   webDirFromCLI?: string,
-) {
+): Promise<void> {
   try {
     if (!checkInteractive(name, id)) {
       return;
@@ -86,9 +86,7 @@ async function getName(config: Config, name: string) {
         message: `Name`,
         initial: config.app.appName
           ? config.app.appName
-          : config.app.package && config.app.package.name
-          ? config.app.package.name
-          : 'App',
+          : config.app.package.name ?? 'App',
       },
     );
     return answers.name;

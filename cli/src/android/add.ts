@@ -2,11 +2,11 @@ import { homedir } from 'os';
 import { join, relative } from 'path';
 
 import c from '../colors';
-import { Config } from '../definitions';
 import { copyTemplate, runCommand, runTask } from '../common';
+import type { Config } from '../definitions';
 import { existsAsync, writeFileAsync } from '../util/fs';
 
-export async function addAndroid(config: Config) {
+export async function addAndroid(config: Config): Promise<void> {
   const nativeRelDir = relative(config.app.rootDir, config.android.platformDir);
   await runTask(
     `Adding native android project in ${c.strong(nativeRelDir)}`,

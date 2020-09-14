@@ -1,10 +1,11 @@
-import { WebPlugin } from './index';
-
+/* eslint-disable */
 import {
   BrowserPlugin,
   BrowserOpenOptions,
   BrowserPrefetchOptions,
 } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 export class BrowserPluginWeb extends WebPlugin implements BrowserPlugin {
   _lastWindow: Window;

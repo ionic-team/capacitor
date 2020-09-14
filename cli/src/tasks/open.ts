@@ -1,22 +1,22 @@
+import { openAndroid } from '../android/open';
 import c from '../colors';
-import { Config } from '../definitions';
 import {
   logFatal,
   resolvePlatform,
   runPlatformHook,
   runTask,
-  selectPlatforms,
   isValidPlatform,
+  selectPlatforms,
   promptForPlatform,
 } from '../common';
-import { openAndroid } from '../android/open';
+import type { Config } from '../definitions';
 import { openIOS } from '../ios/open';
 import { logger } from '../log';
 
 export async function openCommand(
   config: Config,
   selectedPlatformName: string,
-) {
+): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -50,7 +50,10 @@ export async function openCommand(
   }
 }
 
-export async function open(config: Config, platformName: string) {
+export async function open(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   if (platformName === config.ios.name) {
     await runTask('Opening the Xcode workspace...', () => {
       return openIOS(config);

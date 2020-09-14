@@ -1,7 +1,4 @@
 import c from '../colors';
-import { Config } from '../definitions';
-import { copy, copyCommand } from './copy';
-import { update, updateChecks, updateCommand } from './update';
 import {
   check,
   checkPackage,
@@ -10,9 +7,12 @@ import {
   selectPlatforms,
   isValidPlatform,
 } from '../common';
-
-import { allSerial } from '../util/promise';
+import type { Config } from '../definitions';
 import { logger } from '../log';
+import { allSerial } from '../util/promise';
+
+import { copy, copyCommand } from './copy';
+import { update, updateChecks, updateCommand } from './update';
 
 /**
  * Sync is a copy and an update in one.
@@ -21,7 +21,7 @@ export async function syncCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     try {
       await copyCommand(config, selectedPlatformName);
@@ -63,7 +63,7 @@ export async function sync(
   config: Config,
   platformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   try {
     await copy(config, platformName);
   } catch (e) {

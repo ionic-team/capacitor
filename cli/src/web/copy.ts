@@ -1,10 +1,11 @@
-import c from '../colors';
-import { logFatal, resolveNode, runTask } from '../common';
-import { Config } from '../definitions';
 import { copy } from 'fs-extra';
 import { join } from 'path';
 
-export async function copyWeb(config: Config) {
+import c from '../colors';
+import { logFatal, resolveNode, runTask } from '../common';
+import type { Config } from '../definitions';
+
+export async function copyWeb(config: Config): Promise<void> {
   if (config.app.bundledWebRuntime) {
     const runtimePath = resolveNode(
       config.app.rootDir,

@@ -1,15 +1,15 @@
 import { readJSON } from 'fs-extra';
 import { dirname, join, resolve } from 'path';
 
-import {
+import type {
   Config,
   ExternalConfig,
-  OS,
   CLIConfig,
   AndroidConfig,
   IOSConfig,
   PackageJson,
 } from './definitions';
+import { OS } from './definitions';
 
 export const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
 

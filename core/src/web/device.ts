@@ -1,15 +1,15 @@
-import { WebPlugin } from './index';
-
+/* eslint-disable */
 import {
   DeviceBatteryInfo,
   DeviceInfo,
   DevicePlugin,
   DeviceLanguageCodeResult,
 } from '../core-plugin-definitions';
-
 import { uuid4 } from '../util';
 
-declare var navigator: any;
+import { WebPlugin } from './index';
+
+declare let navigator: any;
 
 export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   constructor() {
@@ -22,7 +22,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
 
     return Promise.resolve({
       model: uaFields.model,
-      platform: <'web'>'web',
+      platform: <const>'web',
       appVersion: '',
       appBuild: '',
       appId: '',
@@ -57,7 +57,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
   }
 
   parseUa(_ua: string) {
-    let uaFields: any = {};
+    const uaFields: any = {};
     const start = _ua.indexOf('(') + 1;
     let end = _ua.indexOf(') AppleWebKit');
     if (_ua.indexOf(') Gecko') !== -1) {
@@ -79,7 +79,7 @@ export class DevicePluginWeb extends WebPlugin implements DevicePlugin {
         if (_ua.indexOf('Windows') !== -1) {
           uaFields.osVersion = fields;
         } else {
-          let lastParts = fields
+          const lastParts = fields
             .split('; ')
             .pop()
             .replace(' like Mac OS X', '')

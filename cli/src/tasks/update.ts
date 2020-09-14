@@ -1,10 +1,7 @@
-import c from '../colors';
-import { Config } from '../definitions';
 import { updateAndroid } from '../android/update';
-import { updateIOS } from '../ios/update';
-import { allSerial } from '../util/promise';
+import c from '../colors';
+import type { CheckFunction } from '../common';
 import {
-  CheckFunction,
   check,
   checkPackage,
   logFatal,
@@ -14,14 +11,17 @@ import {
   selectPlatforms,
   isValidPlatform,
 } from '../common';
-import { logger } from '../log';
+import type { Config } from '../definitions';
 import { checkCocoaPods, checkIOSProject } from '../ios/common';
+import { updateIOS } from '../ios/update';
+import { logger } from '../log';
+import { allSerial } from '../util/promise';
 
 export async function updateCommand(
   config: Config,
   selectedPlatformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -64,7 +64,7 @@ export function updateChecks(
   platforms: string[],
 ): CheckFunction[] {
   const checks: CheckFunction[] = [];
-  for (let platformName of platforms) {
+  for (const platformName of platforms) {
     if (platformName === config.ios.name) {
       checks.push(
         () => checkCocoaPods(config),
@@ -85,7 +85,7 @@ export async function update(
   config: Config,
   platformName: string,
   deployment: boolean,
-) {
+): Promise<void> {
   try {
     await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
       if (platformName === config.ios.name) {
@@ -95,6 +95,6 @@ export async function update(
       }
     });
   } catch (e) {
-    logger.error(`Error running update:\n` + e.stack ?? e);
+    logger.error(`Error running update:\n` + (e.stack ?? e));
   }
 }

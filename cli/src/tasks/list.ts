@@ -1,22 +1,17 @@
-import c from '../colors';
-import { Config } from '../definitions';
-import { allSerial } from '../util/promise';
-import {
-  Plugin,
-  PluginType,
-  getPluginType,
-  getPlugins,
-  printPlugins,
-} from '../plugin';
 import { getAndroidPlugins } from '../android/common';
+import c from '../colors';
+import { selectPlatforms } from '../common';
+import type { Config } from '../definitions';
 import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
-import { selectPlatforms } from '../common';
+import type { Plugin } from '../plugin';
+import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
+import { allSerial } from '../util/promise';
 
 export async function listCommand(
   config: Config,
   selectedPlatformName: string,
-) {
+): Promise<void> {
   const platforms = await selectPlatforms(config, selectedPlatformName);
   if (platforms.length === 0) {
     logger.info(
@@ -34,7 +29,7 @@ export async function listCommand(
   }
 }
 
-export async function list(config: Config, platform: string) {
+export async function list(config: Config, platform: string): Promise<void> {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {

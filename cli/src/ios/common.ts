@@ -1,15 +1,17 @@
+import { join, resolve } from 'path';
+
 import c from '../colors';
-import { Config } from '../definitions';
 import {
   isInstalled,
   checkCapacitorPlatform,
   getPlatformDirectory,
 } from '../common';
-import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
-import { join, resolve } from 'path';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-import { Plugin, PluginType, getPluginPlatform } from '../plugin';
+import type { Config } from '../definitions';
 import { OS } from '../definitions';
+import type { Plugin } from '../plugin';
+import { PluginType, getPluginPlatform } from '../plugin';
+import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
@@ -64,11 +66,11 @@ export function getIOSPlugins(allPlugins: Plugin[]): Plugin[] {
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
   const platform = 'ios';
-  if (plugin.manifest && plugin.manifest.ios) {
+  if (plugin.manifest?.ios) {
     plugin.ios = {
       name: plugin.name,
       type: PluginType.Core,
-      path: plugin.manifest.ios.src ? plugin.manifest.ios.src : platform,
+      path: plugin.manifest.ios.src ?? platform,
     };
   } else if (plugin.xml) {
     plugin.ios = {
@@ -91,7 +93,7 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
 /**
  * Update the native project files with the desired app id and app name
  */
-export async function editProjectSettingsIOS(config: Config) {
+export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 
@@ -111,7 +113,7 @@ export async function editProjectSettingsIOS(config: Config) {
   let plistContent = await readFileAsync(plistPath, 'utf8');
 
   plistContent = plistContent.replace(
-    /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^\<]*)<\/string>/,
+    /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^<]*)<\/string>/,
     `<key>CFBundleDisplayName</key>\n        <string>${appName}</string>`,
   );
 

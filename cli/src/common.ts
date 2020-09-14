@@ -1,17 +1,20 @@
 import { wordWrap } from '@ionic/cli-framework-output';
-import { Config, PackageJson, ExternalConfig } from './definitions';
 import { exec, spawn } from 'child_process';
-import { setTimeout } from 'timers';
-import { dirname, join } from 'path';
-import { copyAsync, existsAsync, readFileAsync, renameAsync } from './util/fs';
 import { readFile } from 'fs';
-import { emoji as _e } from './util/emoji';
-import c from './colors';
-import { output, logger } from './log';
-import semver from 'semver';
-import which from 'which';
-import prompts, { Answers, PromptObject } from 'prompts';
 import { writeJSON } from 'fs-extra';
+import { dirname, join } from 'path';
+import type { Answers, PromptObject } from 'prompts';
+import prompts from 'prompts';
+import semver from 'semver';
+import { setTimeout } from 'timers';
+import which from 'which';
+import xml2js from 'xml2js';
+
+import c from './colors';
+import type { Config, PackageJson, ExternalConfig } from './definitions';
+import { output, logger } from './log';
+import { emoji as _e } from './util/emoji';
+import { copyAsync, existsAsync, readFileAsync, renameAsync } from './util/fs';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -159,7 +162,6 @@ export function readXML(path: string): Promise<any> {
       if (err) {
         reject(`Unable to read: ${path}`);
       } else {
-        const xml2js = await import('xml2js');
         xml2js.parseString(xmlStr, (err, result) => {
           if (err) {
             reject(`Error parsing: ${path}, ${err}`);
@@ -173,9 +175,8 @@ export function readXML(path: string): Promise<any> {
 }
 
 export function parseXML(xmlStr: string): any {
-  const parseString = require('xml2js').parseString;
-  var xmlObj;
-  parseString(xmlStr, (err: any, result: any) => {
+  let xmlObj;
+  xml2js.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
       xmlObj = result;
     }
@@ -183,9 +184,8 @@ export function parseXML(xmlStr: string): any {
   return xmlObj;
 }
 
-export function writeXML(object: any): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    const xml2js = await import('xml2js');
+export async function writeXML(object: any): Promise<any> {
+  return new Promise((resolve, reject) => {
     const builder = new xml2js.Builder({
       headless: true,
       explicitRoot: false,
@@ -197,8 +197,7 @@ export function writeXML(object: any): Promise<any> {
   });
 }
 
-export function buildXmlElement(configElement: any, rootName: string) {
-  const xml2js = require('xml2js');
+export function buildXmlElement(configElement: any, rootName: string): string {
   const builder = new xml2js.Builder({
     headless: true,
     explicitRoot: false,
@@ -207,7 +206,10 @@ export function buildXmlElement(configElement: any, rootName: string) {
   return builder.buildObject(configElement);
 }
 
-export async function mergeConfig(config: Config, extConfig: ExternalConfig) {
+export async function mergeConfig(
+  config: Config,
+  extConfig: ExternalConfig,
+): Promise<void> {
   await writeJSON(
     config.app.extConfigFilePath,
     {
@@ -235,7 +237,7 @@ export async function logPrompt<T extends string>(
   return prompts(prompt, { onCancel: () => process.exit(1) });
 }
 
-export function logSuccess(msg: string) {
+export function logSuccess(msg: string): void {
   logger.msg(`${c.success('[success]')} ${msg}`);
 }
 
@@ -256,7 +258,7 @@ export async function isInstalled(command: string): Promise<boolean> {
   });
 }
 
-export function wait(time: number) {
+export async function wait(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -329,12 +331,12 @@ export async function runTask<T>(
   }
 }
 
-export async function copyTemplate(src: string, dst: string) {
+export async function copyTemplate(src: string, dst: string): Promise<void> {
   await copyAsync(src, dst);
   await renameGitignore(dst);
 }
 
-export async function renameGitignore(dst: string) {
+export async function renameGitignore(dst: string): Promise<void> {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
@@ -407,7 +409,7 @@ export async function getPlatformDirectory(
 export async function selectPlatforms(
   config: Config,
   selectedPlatformName?: string,
-) {
+): Promise<string[]> {
   if (selectedPlatformName) {
     // already passed in a platform name
     const platformName = selectedPlatformName.toLowerCase().trim();
@@ -506,7 +508,10 @@ export async function getAddedPlatforms(config: Config): Promise<string[]> {
   return platforms;
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+export async function checkPlatformVersions(
+  config: Config,
+  platform: string,
+): Promise<void> {
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getCapacitorPackageVersion(config, platform);
   if (

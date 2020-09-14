@@ -1,6 +1,4 @@
-import { WebPlugin } from './index';
-
-import {
+import type {
   ModalsPlugin,
   AlertOptions,
   PromptOptions,
@@ -10,6 +8,8 @@ import {
   ActionSheetOptions,
   ActionSheetResult,
 } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
   constructor() {
@@ -37,8 +37,8 @@ export class ModalsPluginWeb extends WebPlugin implements ModalsPlugin {
   }
 
   async showActions(options: ActionSheetOptions): Promise<ActionSheetResult> {
-    return new Promise<ActionSheetResult>(async (resolve, _reject) => {
-      var actionSheet: any = document.querySelector('pwa-action-sheet');
+    return new Promise<ActionSheetResult>((resolve, _reject) => {
+      let actionSheet: any = document.querySelector('pwa-action-sheet');
       if (!actionSheet) {
         actionSheet = document.createElement('pwa-action-sheet');
         document.body.appendChild(actionSheet);

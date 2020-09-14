@@ -1,8 +1,8 @@
-import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';
+import { join } from 'path';
 
 import { mkdirAsync } from '../src/util/fs';
 
-import { join } from 'path';
+import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';
 
 describe('Init', () => {
   let appDirObj: any;

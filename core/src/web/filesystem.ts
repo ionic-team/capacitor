@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { WebPlugin } from './index';
 
 import {
@@ -34,7 +35,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
 
   private _writeCmds: string[] = ['add', 'put', 'delete'];
   private _db: IDBDatabase;
-  static _debug: boolean = true;
+  static _debug = true;
 
   constructor() {
     super({ name: 'Filesystem' });
@@ -63,7 +64,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   }
 
   static doUpgrade(event: IDBVersionChangeEvent) {
-    let eventTarget = event.target as IDBOpenDBRequest;
+    const eventTarget = event.target as IDBOpenDBRequest;
     const db = eventTarget.result;
     switch (event.oldVersion) {
       case 0:
@@ -72,7 +73,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
         if (db.objectStoreNames.contains('FileStorage')) {
           db.deleteObjectStore('FileStorage');
         }
-        let store = db.createObjectStore('FileStorage', { keyPath: 'path' });
+        const store = db.createObjectStore('FileStorage', { keyPath: 'path' });
         store.createIndex('by_folder', 'folder');
     }
   }
@@ -115,7 +116,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     uriPath: string | undefined,
   ): string {
     directory = directory || this.DEFAULT_DIRECTORY;
-    let cleanedUriPath =
+    const cleanedUriPath =
       uriPath !== undefined ? uriPath.replace(/^[/]+|[/]+$/g, '') : '';
     let fsPath = '/' + directory;
     if (uriPath !== '') fsPath += '/' + cleanedUriPath;
@@ -139,7 +140,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     const path: string = this.getPath(options.directory, options.path);
     // const encoding = options.encoding;
 
-    let entry = (await this.dbRequest('get', [path])) as EntryObj;
+    const entry = (await this.dbRequest('get', [path])) as EntryObj;
     if (entry === undefined) throw Error('File does not exist.');
     return { data: entry.content };
   }
@@ -154,14 +155,14 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     const data = options.data;
     const doRecursive = options.recursive;
 
-    let occupiedEntry = (await this.dbRequest('get', [path])) as EntryObj;
+    const occupiedEntry = (await this.dbRequest('get', [path])) as EntryObj;
     if (occupiedEntry && occupiedEntry.type === 'directory')
       throw 'The supplied path is a directory.';
 
     const encoding = options.encoding;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
-    let parentEntry = (await this.dbRequest('get', [parentPath])) as EntryObj;
+    const parentEntry = (await this.dbRequest('get', [parentPath])) as EntryObj;
     if (parentEntry === undefined) {
       const subDirIndex = parentPath.indexOf('/', 1);
       if (subDirIndex !== -1) {
@@ -203,11 +204,11 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     const now = Date.now();
     let ctime = now;
 
-    let occupiedEntry = (await this.dbRequest('get', [path])) as EntryObj;
+    const occupiedEntry = (await this.dbRequest('get', [path])) as EntryObj;
     if (occupiedEntry && occupiedEntry.type === 'directory')
       throw 'The supplied path is a directory.';
 
-    let parentEntry = (await this.dbRequest('get', [parentPath])) as EntryObj;
+    const parentEntry = (await this.dbRequest('get', [parentPath])) as EntryObj;
     if (parentEntry === undefined) {
       const parentArgPathIndex = parentPath.indexOf('/', 1);
       const parentArgPath =
@@ -244,9 +245,9 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   async deleteFile(options: FileDeleteOptions): Promise<FileDeleteResult> {
     const path: string = this.getPath(options.directory, options.path);
 
-    let entry = (await this.dbRequest('get', [path])) as EntryObj;
+    const entry = (await this.dbRequest('get', [path])) as EntryObj;
     if (entry === undefined) throw Error('File does not exist.');
-    let entries = await this.dbIndexRequest('by_folder', 'getAllKeys', [
+    const entries = await this.dbIndexRequest('by_folder', 'getAllKeys', [
       IDBKeyRange.only(path),
     ]);
     if (entries.length !== 0) throw Error('Folder is not empty.');
@@ -265,9 +266,9 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     const doRecursive = options.recursive;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
 
-    let depth = (path.match(/\//g) || []).length;
-    let parentEntry = (await this.dbRequest('get', [parentPath])) as EntryObj;
-    let occupiedEntry = (await this.dbRequest('get', [path])) as EntryObj;
+    const depth = (path.match(/\//g) || []).length;
+    const parentEntry = (await this.dbRequest('get', [parentPath])) as EntryObj;
+    const occupiedEntry = (await this.dbRequest('get', [path])) as EntryObj;
     if (depth === 1) throw Error('Cannot create Root directory');
     if (occupiedEntry !== undefined)
       throw Error('Current directory does already exist.');
@@ -300,24 +301,24 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @param options the options for the directory remove
    */
   async rmdir(options: RmdirOptions): Promise<RmdirResult> {
-    let { path, directory, recursive } = options;
+    const { path, directory, recursive } = options;
     const fullPath: string = this.getPath(directory, path);
 
-    let entry = (await this.dbRequest('get', [fullPath])) as EntryObj;
+    const entry = (await this.dbRequest('get', [fullPath])) as EntryObj;
 
     if (entry === undefined) throw Error('Folder does not exist.');
 
     if (entry.type !== 'directory')
       throw Error('Requested path is not a directory');
 
-    let readDirResult = await this.readdir({ path, directory });
+    const readDirResult = await this.readdir({ path, directory });
 
     if (readDirResult.files.length !== 0 && !recursive)
       throw Error('Folder is not empty');
 
     for (const entry of readDirResult.files) {
-      let entryPath = `${path}/${entry}`;
-      let entryObj = await this.stat({ path: entryPath, directory });
+      const entryPath = `${path}/${entry}`;
+      const entryObj = await this.stat({ path: entryPath, directory });
       if (entryObj.type === 'file') {
         await this.deleteFile({ path: entryPath, directory });
       } else {
@@ -337,16 +338,16 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
   async readdir(options: ReaddirOptions): Promise<ReaddirResult> {
     const path: string = this.getPath(options.directory, options.path);
 
-    let entry = (await this.dbRequest('get', [path])) as EntryObj;
+    const entry = (await this.dbRequest('get', [path])) as EntryObj;
     if (options.path !== '' && entry === undefined)
       throw Error('Folder does not exist.');
 
-    let entries: string[] = await this.dbIndexRequest(
+    const entries: string[] = await this.dbIndexRequest(
       'by_folder',
       'getAllKeys',
       [IDBKeyRange.only(path)],
     );
-    let names = entries.map(e => {
+    const names = entries.map(e => {
       return e.substring(path.length + 1);
     });
     return { files: names };
@@ -358,7 +359,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the file stat result
    */
   async getUri(options: GetUriOptions): Promise<GetUriResult> {
-    let path: string = this.getPath(options.directory, options.path);
+    const path: string = this.getPath(options.directory, options.path);
 
     let entry = (await this.dbRequest('get', [path])) as EntryObj;
     if (entry === undefined) {
@@ -377,7 +378,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    * @return a promise that resolves with the file stat result
    */
   async stat(options: StatOptions): Promise<StatResult> {
-    let path: string = this.getPath(options.directory, options.path);
+    const path: string = this.getPath(options.directory, options.path);
 
     let entry = (await this.dbRequest('get', [path])) as EntryObj;
     if (entry === undefined) {
@@ -420,7 +421,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
    */
   private async _copy(
     options: CopyOptions,
-    doRename: boolean = false,
+    doRename = false,
   ): Promise<CopyResult> {
     let { to, from, directory: fromDirectory, toDirectory } = options;
 
@@ -433,8 +434,8 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       toDirectory = fromDirectory;
     }
 
-    let fromPath = this.getPath(fromDirectory, from);
-    let toPath = this.getPath(toDirectory, to);
+    const fromPath = this.getPath(fromDirectory, from);
+    const toPath = this.getPath(toDirectory, to);
 
     // Test that the "to" and "from" locations are different
     if (fromPath === toPath) {
@@ -454,13 +455,13 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       });
     } catch (e) {
       // To location does not exist, ensure the directory containing "to" location exists and is a directory
-      let toPathComponents = to.split('/');
+      const toPathComponents = to.split('/');
       toPathComponents.pop();
-      let toPath = toPathComponents.join('/');
+      const toPath = toPathComponents.join('/');
 
       // Check the containing directory of the "to" location exists
       if (toPathComponents.length > 0) {
-        let toParentDirectory = await this.stat({
+        const toParentDirectory = await this.stat({
           path: toPath,
           directory: toDirectory,
         });
@@ -477,15 +478,15 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
     }
 
     // Ensure the "from" object exists
-    let fromObj = await this.stat({
+    const fromObj = await this.stat({
       path: from,
       directory: fromDirectory,
     });
 
     // Set the mtime/ctime of the supplied path
-    let updateTime = async (path: string, ctime: number, mtime: number) => {
-      let fullPath: string = this.getPath(toDirectory, path);
-      let entry = (await this.dbRequest('get', [fullPath])) as EntryObj;
+    const updateTime = async (path: string, ctime: number, mtime: number) => {
+      const fullPath: string = this.getPath(toDirectory, path);
+      const entry = (await this.dbRequest('get', [fullPath])) as EntryObj;
       entry.ctime = ctime;
       entry.mtime = mtime;
       await this.dbRequest('put', [entry]);
@@ -495,7 +496,7 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
       // The "from" object is a file
       case 'file':
         // Read the file
-        let file = await this.readFile({
+        const file = await this.readFile({
           path: from,
           directory: fromDirectory,
         });
@@ -543,14 +544,14 @@ export class FilesystemPluginWeb extends WebPlugin implements FilesystemPlugin {
         } catch (e) {}
 
         // Iterate over the contents of the from location
-        let contents = (
+        const contents = (
           await this.readdir({
             path: from,
             directory: fromDirectory,
           })
         ).files;
 
-        for (let filename of contents) {
+        for (const filename of contents) {
           // Move item from the from directory to the to directory
           await this._copy(
             {
