@@ -33,8 +33,6 @@ import org.json.JSONObject;
 public class BridgeFragment extends Fragment {
     private static final String ARG_START_DIR = "startDir";
 
-    private String startDir;
-
     private OnFragmentInteractionListener mListener;
 
     private WebView webView;
@@ -45,13 +43,8 @@ public class BridgeFragment extends Fragment {
     private PluginManager pluginManager;
     private CordovaPreferences preferences;
     private MockCordovaWebViewImpl mockWebView;
-    private int activityDepth = 0;
-    private String bridgeStartDir;
-
-    private String lastActivityPlugin;
 
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    private JSONObject config;
 
     public BridgeFragment() {
         // Required empty public constructor
@@ -109,7 +102,7 @@ public class BridgeFragment extends Fragment {
             preferences = new CordovaPreferences();
         }
 
-        bridge = new Bridge(this.getActivity(), webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
+        bridge = new Bridge(this.getActivity(), webView, initialPlugins, cordovaInterface, pluginManager, preferences, null);
 
         if (startDir != null) {
             bridge.setServerAssetPath(startDir);
