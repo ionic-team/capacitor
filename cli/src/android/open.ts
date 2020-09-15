@@ -1,30 +1,22 @@
-import { Config } from '../config';
-import { OS } from '../definitions';
-import { logError, logInfo, runCommand } from '../common';
-import { existsAsync, existsSync } from '../util/fs';
-import { resolve } from 'path';
 import open from 'open';
 
-export async function openAndroid(config: Config) {
-  logInfo(`Opening Android project at ${config.android.platformDir}`);
+import { runCommand } from '../common';
+import type { Config } from '../config';
+import { OS } from '../definitions';
+import { logger } from '../log';
+import { existsSync } from '../util/fs';
 
-  if (
-    !(await existsAsync(
-      resolve(config.app.rootDir, config.android.platformDir),
-    ))
-  ) {
-    throw new Error(
-      'Android project does not exist. Create one with "npx cap add android"',
-    );
-  }
+export async function openAndroid(config: Config): Promise<void> {
+  logger.info(`Opening Android project at ${config.android.platformDir}.`);
 
   const dir = config.android.platformDir;
 
   switch (config.cli.os) {
-    case OS.Mac:
+    case OS.Mac: {
       await open(dir, { app: 'android studio', wait: false });
       break;
-    case OS.Windows:
+    }
+    case OS.Windows: {
       let androidStudioPath = config.windows.androidStudioPath;
       try {
         if (!existsSync(androidStudioPath)) {
@@ -44,9 +36,9 @@ export async function openAndroid(config: Config) {
       if (androidStudioPath) {
         open(dir, { app: androidStudioPath, wait: false });
       } else {
-        logError(
-          'Android Studio not found. Make sure it\'s installed and configure "windowsAndroidStudioPath" ' +
-            'in your capacitor.config.json to point to the location of studio64.exe, using JavaScript-escaped paths:\n' +
+        logger.error(
+          'Android Studio not found.\n' +
+            'Make sure it\'s installed and configure "windowsAndroidStudioPath" in your capacitor.config.json to point to the location of studio64.exe, using JavaScript-escaped paths:\n' +
             'Example:\n' +
             '{\n' +
             '  "windowsAndroidStudioPath": "C:\\\\Program Files\\\\Android\\\\Android Studio\\\\bin\\\\studio64.exe"\n' +
@@ -54,11 +46,12 @@ export async function openAndroid(config: Config) {
         );
       }
       break;
-    case OS.Linux:
+    }
+    case OS.Linux: {
       const linuxError = () => {
-        logError(
-          'Unable to launch Android Studio. You must configure "linuxAndroidStudioPath" ' +
-            'in your capacitor.config.json to point to the location of studio.sh, using JavaScript-escaped paths:\n' +
+        logger.error(
+          'Unable to launch Android Studio.\n' +
+            'You must configure "linuxAndroidStudioPath" in your capacitor.config.json to point to the location of studio.sh, using JavaScript-escaped paths:\n' +
             'Example:\n' +
             '{\n' +
             '  "linuxAndroidStudioPath": "/usr/local/android-studio/bin/studio.sh"\n' +
@@ -72,5 +65,6 @@ export async function openAndroid(config: Config) {
         linuxError();
       }
       break;
+    }
   }
 }

@@ -1,12 +1,31 @@
-import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
+import { realpathSync } from 'fs';
+import { join, relative, resolve } from 'path';
+
+import c from '../colors';
+import type { CheckFunction } from '../common';
 import {
-  CheckFunction,
   checkPlatformVersions,
   logFatal,
   resolveNode,
   runCommand,
   runTask,
 } from '../common';
+import type { Config } from '../config';
+import {
+  checkPluginDependencies,
+  handleCordovaPluginsJS,
+  logCordovaManualSteps,
+} from '../cordova';
+import type { Plugin } from '../plugin';
+import {
+  PluginType,
+  getAllElements,
+  getFilePath,
+  getPlatformElement,
+  getPluginType,
+  getPlugins,
+  printPlugins,
+} from '../plugin';
 import {
   convertToUnixPath,
   copySync,
@@ -16,23 +35,8 @@ import {
   writeFileAsync,
   writeFileSync,
 } from '../util/fs';
-import { Config } from '../config';
-import { join, relative, resolve } from 'path';
-import { realpathSync } from 'fs';
-import {
-  Plugin,
-  PluginType,
-  getFilePath,
-  getPlatformElement,
-  getPluginType,
-  getPlugins,
-  printPlugins,
-} from '../plugin';
-import {
-  checkPluginDependencies,
-  handleCordovaPluginsJS,
-  logCordovaManualSteps,
-} from '../cordova';
+
+import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 
 export const updateIOSChecks: CheckFunction[] = [
   checkCocoaPods,
@@ -40,8 +44,11 @@ export const updateIOSChecks: CheckFunction[] = [
 ];
 const platform = 'ios';
 
-export async function updateIOS(config: Config, deployment: boolean) {
-  let plugins = await getPluginsTask(config);
+export async function updateIOS(
+  config: Config,
+  deployment: boolean,
+): Promise<void> {
+  const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
@@ -73,9 +80,9 @@ export async function installCocoaPodsPlugins(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
-) {
+): Promise<void> {
   await runTask(
-    'Updating iOS native dependencies with "pod install" (may take several minutes)',
+    `Updating iOS native dependencies with ${c.input('pod install')}`,
     () => {
       return updatePodfile(config, plugins, deployment);
     },
@@ -86,7 +93,7 @@ export async function updatePodfile(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
-) {
+): Promise<void> {
   const dependenciesContent = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
   const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
@@ -94,8 +101,8 @@ export async function updatePodfile(
   const podfileLockPath = join(projectRoot, 'Podfile.lock');
   let podfileContent = await readFileAsync(podfilePath, 'utf8');
   podfileContent = podfileContent.replace(
-    /(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/,
-    '$1' + dependenciesContent + '\n  $2',
+    /(def capacitor_pods)[\s\S]+?(\nend)/,
+    `$1${dependenciesContent}$2`,
   );
   podfileContent = podfileContent.replace(
     /platform :ios, '[^']*'/,
@@ -113,14 +120,13 @@ export async function updatePodfile(
   );
 }
 
-export function generatePodFile(config: Config, plugins: Plugin[]) {
+export function generatePodFile(config: Config, plugins: Plugin[]): string {
   const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
   if (!capacitoriOSPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/ios. Are you sure`,
-      `@capacitor/ios is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/ios.\n` +
+        `Are you sure ${c.strong('@capacitor/ios')} is installed?`,
     );
-    return;
   }
 
   const podfilePath = join(config.app.rootDir, 'ios', 'App');
@@ -201,13 +207,14 @@ async function generateCordovaPodspec(
     'ios',
     config.ios.assets.pluginsFolderName,
   );
-  let weakFrameworks: Array<string> = [];
-  let linkedFrameworks: Array<string> = [];
-  let customFrameworks: Array<string> = [];
-  let systemLibraries: Array<string> = [];
-  let sourceFrameworks: Array<string> = [];
-  let frameworkDeps: Array<string> = [];
-  let compilerFlags: Array<string> = [];
+  const weakFrameworks: string[] = [];
+  const linkedFrameworks: string[] = [];
+  const customFrameworks: string[] = [];
+  const systemLibraries: string[] = [];
+  const sourceFrameworks: string[] = [];
+  const frameworkDeps: string[] = [];
+  const compilerFlags: string[] = [];
+  let prefsArray: any[] = [];
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';
   if (isStatic) {
@@ -250,6 +257,9 @@ async function generateCordovaPodspec(
         }
       }
     });
+    prefsArray = prefsArray.concat(
+      getAllElements(plugin, platform, 'preference'),
+    );
     const podspecs = getPlatformElement(plugin, platform, 'podspec');
     podspecs.map((podspec: any) => {
       podspec.pods.map((pods: any) => {
@@ -318,7 +328,12 @@ async function generateCordovaPodspec(
       sna.source_files = 'noarc/**/*.{swift,h,m,c,cc,mm,cpp}'
     end`);
   }
-  const frameworksString = frameworkDeps.join('\n    ');
+  let frameworksString = frameworkDeps.join('\n    ');
+  frameworksString = await replaceFrameworkVariables(
+    config,
+    prefsArray,
+    frameworksString,
+  );
   const content = `
   Pod::Spec.new do |s|
     s.name = '${name}'
@@ -341,7 +356,7 @@ async function generateCordovaPodspec(
 }
 
 function getLinkerFlags(config: Config) {
-  if (config.app.extConfig.ios && config.app.extConfig.ios.cordovaLinkerFlags) {
+  if (config.app.extConfig.ios?.cordovaLinkerFlags) {
     return `\n    s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '${config.app.extConfig.ios.cordovaLinkerFlags.join(
       ' ',
     )}' }`;
@@ -482,7 +497,7 @@ function filterARCFiles(plugin: Plugin) {
   return sourcesARC.length > 0;
 }
 
-function removeNoSystem(library: string, sourceFrameworks: Array<string>) {
+function removeNoSystem(library: string, sourceFrameworks: string[]) {
   const libraries = sourceFrameworks.filter(framework =>
     framework.includes(library),
   );
@@ -495,4 +510,18 @@ async function getPluginsTask(config: Config) {
     const iosPlugins = getIOSPlugins(allPlugins);
     return iosPlugins;
   });
+}
+
+async function replaceFrameworkVariables(
+  config: Config,
+  prefsArray: any[],
+  frameworkString: string,
+) {
+  prefsArray.map((preference: any) => {
+    frameworkString = frameworkString.replace(
+      new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'),
+      preference.$.default,
+    );
+  });
+  return frameworkString;
 }

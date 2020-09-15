@@ -49,7 +49,7 @@ public extension CapacitorExtensionTypeWrapper where T: UIColor {
         } else {
             return nil
         }
-        
+
         return T(red: red, green: green, blue: blue, alpha: alpha)
     }
 }

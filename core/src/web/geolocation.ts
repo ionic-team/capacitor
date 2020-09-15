@@ -1,15 +1,14 @@
-import { WebPlugin } from './index';
-
+/* eslint-disable */
 import {
   GeolocationPlugin,
   GeolocationOptions,
   GeolocationPosition,
   GeolocationWatchCallback,
 } from '../core-plugin-definitions';
-
 import { PermissionsRequestResult } from '../definitions';
-
 import { extend } from '../util';
+
+import { WebPlugin } from './index';
 
 export class GeolocationPluginWeb
   extends WebPlugin
@@ -49,7 +48,7 @@ export class GeolocationPluginWeb
     options: GeolocationOptions,
     callback: GeolocationWatchCallback,
   ): string {
-    let id = window.navigator.geolocation.watchPosition(
+    const id = window.navigator.geolocation.watchPosition(
       pos => {
         callback(pos);
       },

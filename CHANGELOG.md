@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.1...3.0.0-alpha.2) (2020-08-31)
+
+
+### Features
+
+* Add extension for creating data from data url ([#3474](https://github.com/ionic-team/capacitor/issues/3474)) ([2909fd0](https://github.com/ionic-team/capacitor/commit/2909fd0ac0d9fdb2cdb7fd25e38742451aa05fb1))
+
+
+
+
+
 # [3.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/2.4.0...3.0.0-alpha.1) (2020-08-21)
 
 
@@ -31,7 +42,18 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **core:** add `registerPlugin` for importing from plugin packages ([#3305](https://github.com/ionic-team/capacitor/issues/3305)) ([95475cc](https://github.com/ionic-team/capacitor/commit/95475cceb4cbd5be2cc7e18f2cf3045eb6c6f7fd))
 
 
+## [2.4.1](https://github.com/ionic-team/capacitor/compare/2.4.0...2.4.1) (2020-09-09)
 
+
+### Bug Fixes
+
+* fix(cli): replace SDK variables with default values on Cordova plugins (#3525) ([090427a](https://github.com/ionic-team/capacitor/commit/090427a)), closes [#3525](https://github.com/ionic-team/capacitor/issues/3525)
+* fix(cordova): add CDVPlugin+Resources category for better plugin support (#3380) ([8d89b91](https://github.com/ionic-team/capacitor/commit/8d89b91)), closes [#3380](https://github.com/ionic-team/capacitor/issues/3380)
+
+
+### Chores
+
+* chore(cli): remove cordova-plugin-googlemaps from skip list (#3436) ([cfb74af](https://github.com/ionic-team/capacitor/commit/cfb74af)), closes [#3436](https://github.com/ionic-team/capacitor/issues/3436)
 
 
 ## [2.4.0](https://github.com/ionic-team/capacitor/compare/2.3.0...2.4.0) (2020-07-27)

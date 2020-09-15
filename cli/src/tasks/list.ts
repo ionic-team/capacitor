@@ -1,24 +1,21 @@
-import { Config } from '../config';
-import { logError, logInfo } from '../common';
-import { allSerial } from '../util/promise';
-import {
-  Plugin,
-  PluginType,
-  getPluginType,
-  getPlugins,
-  printPlugins,
-} from '../plugin';
 import { getAndroidPlugins } from '../android/common';
+import c from '../colors';
+import type { Config } from '../config';
 import { getIOSPlugins } from '../ios/common';
+import { logger } from '../log';
+import type { Plugin } from '../plugin';
+import { PluginType, getPluginType, getPlugins, printPlugins } from '../plugin';
+import { allSerial } from '../util/promise';
 
 export async function listCommand(
   config: Config,
   selectedPlatformName: string,
-) {
+): Promise<void> {
   const platforms = config.selectPlatforms(selectedPlatformName);
   if (platforms.length === 0) {
-    logInfo(
-      `There are no platforms to list yet. Create one with \`capacitor create\`.`,
+    logger.info(
+      `There are no platforms to list yet.\n` +
+        `Add platforms with ${c.input('npx cap add')}.`,
     );
     return;
   }
@@ -27,11 +24,11 @@ export async function listCommand(
       platforms.map(platformName => () => list(config, platformName)),
     );
   } catch (e) {
-    logError(e);
+    logger.error(e.stack ?? e);
   }
 }
 
-export async function list(config: Config, platform: string) {
+export async function list(config: Config, platform: string): Promise<void> {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
@@ -39,10 +36,10 @@ export async function list(config: Config, platform: string) {
   } else if (platform === config.android.name) {
     plugins = getAndroidPlugins(allPlugins);
   } else if (platform === config.web.name) {
-    logInfo(`Listing plugins for ${platform} is not possible`);
+    logger.info(`Listing plugins for ${c.input(platform)} is not possible.`);
     return;
   } else {
-    throw `Platform ${platform} is not valid.`;
+    throw `Platform ${c.input(platform)} is not valid.`;
   }
 
   const capacitorPlugins = plugins.filter(

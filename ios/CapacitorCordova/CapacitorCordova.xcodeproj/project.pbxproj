@@ -25,6 +25,8 @@
 		2F856C00203DEB320047344A /* CDVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F856BFE203DEB320047344A /* CDVViewController.m */; };
 		2F8AC283217F3A20008C2C33 /* CDVURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F8AC281217F3A20008C2C33 /* CDVURLProtocol.m */; };
 		2F8AC284217F3A20008C2C33 /* CDVURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F8AC282217F3A20008C2C33 /* CDVURLProtocol.h */; };
+		2F92AB5224D9ABA000954A4A /* CDVPlugin+Resources.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F92AB5024D9ABA000954A4A /* CDVPlugin+Resources.m */; };
+		2F92AB5324D9ABA000954A4A /* CDVPlugin+Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F92AB5124D9ABA000954A4A /* CDVPlugin+Resources.h */; };
 		2FAD9772203C77B9000D30F8 /* CDVConfigParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FAD9770203C77B8000D30F8 /* CDVConfigParser.h */; };
 		2FAD9773203C77B9000D30F8 /* CDVConfigParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */; };
 		2FE19E2A20473160002A4E89 /* AppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FE19E2820473160002A4E89 /* AppDelegate.h */; };
@@ -52,6 +54,8 @@
 		2F856BFE203DEB320047344A /* CDVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVViewController.m; sourceTree = "<group>"; };
 		2F8AC281217F3A20008C2C33 /* CDVURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVURLProtocol.m; sourceTree = "<group>"; };
 		2F8AC282217F3A20008C2C33 /* CDVURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVURLProtocol.h; sourceTree = "<group>"; };
+		2F92AB5024D9ABA000954A4A /* CDVPlugin+Resources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CDVPlugin+Resources.m"; sourceTree = "<group>"; };
+		2F92AB5124D9ABA000954A4A /* CDVPlugin+Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CDVPlugin+Resources.h"; sourceTree = "<group>"; };
 		2FAD9770203C77B8000D30F8 /* CDVConfigParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDVConfigParser.h; sourceTree = "<group>"; };
 		2FAD9771203C77B9000D30F8 /* CDVConfigParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVConfigParser.m; sourceTree = "<group>"; };
 		2FE19E2820473160002A4E89 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -106,6 +110,8 @@
 		2F5C86E81FE94861004B09C7 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				2F92AB5124D9ABA000954A4A /* CDVPlugin+Resources.h */,
+				2F92AB5024D9ABA000954A4A /* CDVPlugin+Resources.m */,
 				2F8AC282217F3A20008C2C33 /* CDVURLProtocol.h */,
 				2F8AC281217F3A20008C2C33 /* CDVURLProtocol.m */,
 				2F4F657B2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.h */,
@@ -147,6 +153,7 @@
 				2F5C87271FE98418004B09C7 /* CDVPlugin.h in Headers */,
 				2F856BFF203DEB320047344A /* CDVViewController.h in Headers */,
 				2F5C87231FE98418004B09C7 /* CDVCommandDelegateImpl.h in Headers */,
+				2F92AB5324D9ABA000954A4A /* CDVPlugin+Resources.h in Headers */,
 				2F8AC284217F3A20008C2C33 /* CDVURLProtocol.h in Headers */,
 				2F5C87241FE98418004B09C7 /* CDVInvokedUrlCommand.h in Headers */,
 				2FE19E2A20473160002A4E89 /* AppDelegate.h in Headers */,
@@ -226,6 +233,7 @@
 				2F5C871D1FE98418004B09C7 /* CDVPluginResult.m in Sources */,
 				2F4F657C2091F1FD00EAA994 /* NSDictionary+CordovaPreferences.m in Sources */,
 				2F5C87211FE98418004B09C7 /* CDVPlugin.m in Sources */,
+				2F92AB5224D9ABA000954A4A /* CDVPlugin+Resources.m in Sources */,
 				2FAD9773203C77B9000D30F8 /* CDVConfigParser.m in Sources */,
 				2F856C00203DEB320047344A /* CDVViewController.m in Sources */,
 				2F5C87201FE98418004B09C7 /* CDVInvokedUrlCommand.m in Sources */,

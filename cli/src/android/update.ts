@@ -1,27 +1,20 @@
-import { Config } from '../config';
+import { join, relative, resolve } from 'path';
+
+import c from '../colors';
 import {
   checkPlatformVersions,
   logFatal,
   resolveNode,
   runTask,
 } from '../common';
-import { getAndroidPlugins } from './common';
+import type { Config } from '../config';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import type { Plugin } from '../plugin';
 import {
-  convertToUnixPath,
-  copySync,
-  existsSync,
-  readFileAsync,
-  removeSync,
-  writeFileAsync,
-} from '../util/fs';
-import { join, relative, resolve } from 'path';
-import {
-  Plugin,
   PluginType,
   getAllElements,
   getFilePath,
@@ -31,11 +24,21 @@ import {
   getPlugins,
   printPlugins,
 } from '../plugin';
+import {
+  convertToUnixPath,
+  copySync,
+  existsSync,
+  readFileAsync,
+  removeSync,
+  writeFileAsync,
+} from '../util/fs';
+
+import { getAndroidPlugins } from './common';
 
 const platform = 'android';
 
-export async function updateAndroid(config: Config) {
-  let plugins = await getPluginsTask(config);
+export async function updateAndroid(config: Config): Promise<void> {
+  const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
@@ -71,7 +74,7 @@ export async function installGradlePlugins(
   config: Config,
   capacitorPlugins: Plugin[],
   cordovaPlugins: Plugin[],
-) {
+): Promise<void> {
   const capacitorAndroidPath = resolveNode(
     config,
     '@capacitor/android',
@@ -79,10 +82,9 @@ export async function installGradlePlugins(
   );
   if (!capacitorAndroidPath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/android/capacitor. Are you sure`,
-      `@capacitor/android is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/android/capacitor\n` +
+        `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );
-    return;
   }
 
   const settingsPath = join(config.app.rootDir, 'android');
@@ -107,9 +109,9 @@ project(':${getGradlePackageName(
   })
   .join('')}`;
 
-  let applyArray: Array<any> = [];
-  let frameworksArray: Array<any> = [];
-  let prefsArray: Array<any> = [];
+  const applyArray: any[] = [];
+  const frameworksArray: any[] = [];
+  let prefsArray: any[] = [];
   cordovaPlugins.map(p => {
     const relativePluginPath = convertToUnixPath(
       relative(dependencyPath, p.rootPath),
@@ -175,16 +177,16 @@ if (hasProperty('postBuildExtras')) {
 export async function handleCordovaPluginsGradle(
   config: Config,
   cordovaPlugins: Plugin[],
-) {
+): Promise<void> {
   const pluginsFolder = resolve(
     config.app.rootDir,
     'android',
     config.android.assets.pluginsFolderName,
   );
   const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
-  let frameworksArray: Array<any> = [];
-  let prefsArray: Array<any> = [];
-  let applyArray: Array<any> = [];
+  const frameworksArray: any[] = [];
+  let prefsArray: any[] = [];
+  const applyArray: any[] = [];
   applyArray.push(`apply from: "cordova.variables.gradle"`);
   cordovaPlugins.map(p => {
     const relativePluginPath = convertToUnixPath(
@@ -217,7 +219,7 @@ export async function handleCordovaPluginsGradle(
     prefsArray,
     frameworkString,
   );
-  let applyString = applyArray.join('\n');
+  const applyString = applyArray.join('\n');
   let buildGradle = await readFileAsync(pluginsGradlePath, 'utf8');
   buildGradle = buildGradle.replace(
     /(SUB-PROJECT DEPENDENCIES START)[\s\S]*(\/\/ SUB-PROJECT DEPENDENCIES END)/,
@@ -315,7 +317,7 @@ async function getPluginsTask(config: Config) {
 
 async function replaceFrameworkVariables(
   config: Config,
-  prefsArray: Array<any>,
+  prefsArray: any[],
   frameworkString: string,
 ) {
   const variablesFile = resolve(

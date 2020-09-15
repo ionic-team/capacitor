@@ -17,7 +17,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.App;
-import com.getcapacitor.plugin.Browser;
 import com.getcapacitor.plugin.Camera;
 import com.getcapacitor.plugin.Device;
 import com.getcapacitor.plugin.Geolocation;
@@ -25,7 +24,6 @@ import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.PushNotifications;
-import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.background.BackgroundTask;
@@ -390,7 +388,6 @@ public class Bridge {
     private void registerAllPlugins() {
         this.registerPlugin(App.class);
         this.registerPlugin(BackgroundTask.class);
-        this.registerPlugin(Browser.class);
         this.registerPlugin(Camera.class);
         this.registerPlugin(Device.class);
         this.registerPlugin(LocalNotifications.class);
@@ -398,7 +395,6 @@ public class Bridge {
         this.registerPlugin(Keyboard.class);
         this.registerPlugin(Modals.class);
         this.registerPlugin(PushNotifications.class);
-        this.registerPlugin(Share.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(StatusBar.class);
         this.registerPlugin(com.getcapacitor.plugin.Toast.class);

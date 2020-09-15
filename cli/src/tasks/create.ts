@@ -1,10 +1,10 @@
-import { Config } from '../config';
+import c from '../colors';
 import { logFatal } from '../common';
-import chalk from 'chalk';
+import type { Config } from '../config';
 
-export async function createCommand(config: Config) {
+export async function createCommand(config: Config): Promise<void> {
   logFatal(
     `The create command has been removed.\n` +
-      `Use ${chalk.bold('npm init @capacitor/app')}`,
+      `Use ${c.input('npm init @capacitor/app')}`,
   );
 }

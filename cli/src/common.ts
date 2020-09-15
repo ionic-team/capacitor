@@ -1,7 +1,19 @@
-import { Config } from './config';
+import { wordWrap } from '@ionic/cli-framework-output';
 import { exec, spawn } from 'child_process';
-import { setTimeout } from 'timers';
+import { existsSync, readFile } from 'fs';
 import { basename, dirname, join, parse, resolve } from 'path';
+import type { Answers, PromptObject } from 'prompts';
+import prompts from 'prompts';
+import semver from 'semver';
+import { setTimeout } from 'timers';
+import which from 'which';
+import xml2js from 'xml2js';
+
+import c from './colors';
+import type { Config } from './config';
+import type { PackageJson } from './definitions';
+import { output, logger } from './log';
+import { emoji as _e } from './util/emoji';
 import {
   copyAsync,
   existsAsync,
@@ -9,13 +21,6 @@ import {
   renameAsync,
   writeFileAsync,
 } from './util/fs';
-import { existsSync, readFile } from 'fs';
-import { emoji as _e } from './util/emoji';
-import semver from 'semver';
-import chalk from 'chalk';
-import which from 'which';
-import inquirer from 'inquirer';
-import { PackageJson } from './definitions';
 
 export type CheckFunction = (
   config: Config,
@@ -39,25 +44,41 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
   if (!(await existsAsync(config.app.webDirAbs))) {
-    return `Capacitor could not find the web assets directory "${config.app.webDirAbs}".
-    Please create it and make sure it has an index.html file. You can change
-    the path of this directory in capacitor.config.json (webDir option).
-    You may need to compile the web assets for your app (typically 'npm run build').
-    More info: https://capacitorjs.com/docs/basics/building-your-app`;
+    return (
+      `Could not find the web assets directory: ${config.app.webDirAbs}.\n` +
+      `Please create it and make sure it has an ${c.strong(
+        'index.html',
+      )} file. You can change the path of this directory in ${c.strong(
+        'capacitor.config.json',
+      )} (${c.input(
+        'webDir',
+      )} option). You may need to compile the web assets for your app (typically ${c.input(
+        'npm run build',
+      )}).\n` +
+      `More info: ${c.strong(
+        'https://capacitorjs.com/docs/basics/building-your-app',
+      )}`
+    );
   }
 
   if (!(await existsAsync(join(config.app.webDirAbs, 'index.html')))) {
-    return `The web directory (${config.app.webDirAbs}) must contain a "index.html".
-    It will be the entry point for the web portion of the Capacitor app.`;
+    return (
+      `The web assets directory (${
+        config.app.webDirAbs
+      }) must contain an ${c.strong('index.html')} file.\n` +
+      `It will be the entry point for the web portion of the Capacitor app.`
+    );
   }
   return null;
 }
 
 export async function checkPackage(_config: Config): Promise<string | null> {
   if (!(await existsAsync('package.json'))) {
-    return `Capacitor needs to run at the root of an npm package.
-    Make sure you have a "package.json" in the directory where you run capacitor.
-    More info: https://docs.npmjs.com/cli/init`;
+    return (
+      `The Capacitor CLI needs to run at the root of an npm package.\n` +
+      `Make sure you have a package.json file in the directory where you run the Capacitor CLI.\n` +
+      `More info: ${c.strong('https://docs.npmjs.com/cli/init')}`
+    );
   }
   return null;
 }
@@ -69,7 +90,7 @@ export async function checkCapacitorPlatform(
   const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
-    return `Could not find the ${chalk.bold(
+    return `Could not find the ${c.input(
       platform,
     )} platform. Does it need to be installed?\n`;
   }
@@ -79,10 +100,20 @@ export async function checkCapacitorPlatform(
 
 export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appId) {
-    return 'Missing appId for new platform. Please add it in capacitor.config.json or run npx cap init.';
+    return (
+      `Missing ${c.input('appId')} for new platform.\n` +
+      `Please add it in capacitor.config.json or run ${c.input(
+        'npx cap init',
+      )}.`
+    );
   }
   if (!config.app.appName) {
-    return 'Missing appName for new platform. Please add it in capacitor.config.json or run npx cap init.';
+    return (
+      `Missing ${c.input('appName')} for new platform.\n` +
+      `Please add it in capacitor.config.json or run ${c.input(
+        'npx cap init',
+      )}.`
+    );
   }
 
   const appIdError = await checkAppId(config, config.app.appId);
@@ -137,8 +168,8 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
-export function writePrettyJSON(path: string, data: any) {
-  return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
+export async function writePrettyJSON(path: string, data: any): Promise<void> {
+  await writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
 }
 
 export function readXML(path: string): Promise<any> {
@@ -147,7 +178,6 @@ export function readXML(path: string): Promise<any> {
       if (err) {
         reject(`Unable to read: ${path}`);
       } else {
-        const xml2js = await import('xml2js');
         xml2js.parseString(xmlStr, (err, result) => {
           if (err) {
             reject(`Error parsing: ${path}, ${err}`);
@@ -161,9 +191,8 @@ export function readXML(path: string): Promise<any> {
 }
 
 export function parseXML(xmlStr: string): any {
-  const parseString = require('xml2js').parseString;
-  var xmlObj;
-  parseString(xmlStr, (err: any, result: any) => {
+  let xmlObj;
+  xml2js.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
       xmlObj = result;
     }
@@ -171,9 +200,8 @@ export function parseXML(xmlStr: string): any {
   return xmlObj;
 }
 
-export function writeXML(object: any): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    const xml2js = await import('xml2js');
+export async function writeXML(object: any): Promise<any> {
+  return new Promise((resolve, reject) => {
     const builder = new xml2js.Builder({
       headless: true,
       explicitRoot: false,
@@ -185,8 +213,7 @@ export function writeXML(object: any): Promise<any> {
   });
 }
 
-export function buildXmlElement(configElement: any, rootName: string) {
-  const xml2js = require('xml2js');
+export function buildXmlElement(configElement: any, rootName: string): string {
   const builder = new xml2js.Builder({
     headless: true,
     explicitRoot: false,
@@ -199,7 +226,9 @@ export function buildXmlElement(configElement: any, rootName: string) {
  * Check for or create our main configuration file.
  * @param config
  */
-export async function getOrCreateConfig(config: Config) {
+export async function getOrCreateConfig(
+  config: Config,
+): Promise<string | undefined> {
   const configPath = join(config.app.rootDir, config.app.extConfigName);
   if (await existsAsync(configPath)) {
     return configPath;
@@ -221,7 +250,10 @@ export async function getOrCreateConfig(config: Config) {
   config.loadExternalConfig();
 }
 
-export async function mergeConfig(config: Config, settings: any) {
+export async function mergeConfig(
+  config: Config,
+  settings: any,
+): Promise<void> {
   const configPath = join(config.app.rootDir, config.app.extConfigName);
 
   await writePrettyJSON(config.app.extConfigFilePath, {
@@ -233,28 +265,24 @@ export async function mergeConfig(config: Config, settings: any) {
   config.loadExternalConfig();
 }
 
-export function log(...args: any[]) {
-  console.log(...args);
+export async function logPrompt<T extends string>(
+  msg: string,
+  prompt: PromptObject<T>,
+): Promise<Answers<T>> {
+  logger.log({
+    msg: `${c.input('[?]')} ${wordWrap(msg, { indentation: 4 })}`,
+    logger,
+    format: false,
+  });
+  return prompts(prompt, { onCancel: () => process.exit(1) });
 }
 
-export function logSuccess(...args: any[]) {
-  console.log(chalk.green('[success]'), ...args);
+export function logSuccess(msg: string): void {
+  logger.msg(`${c.success('[success]')} ${msg}`);
 }
 
-export function logInfo(...args: any[]) {
-  console.log(chalk.bold.cyan('[info]'), ...args);
-}
-
-export function logWarn(...args: any[]) {
-  console.log(chalk.bold.yellow('[warn]'), ...args);
-}
-
-export function logError(...args: any[]) {
-  console.error(chalk.red('[error]'), ...args);
-}
-
-export function logFatal(...args: any[]): never {
-  logError(...args);
+export function logFatal(msg: string): never {
+  logger.error(msg);
   return process.exit(1);
 }
 
@@ -270,7 +298,7 @@ export async function isInstalled(command: string): Promise<boolean> {
   });
 }
 
-export function wait(time: number) {
+export async function wait(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -326,120 +354,35 @@ export async function getCommandOutput(
   }
 }
 
-export type TaskInfoProvider = (messsage: string) => void;
-
 export async function runTask<T>(
   title: string,
-  fn: (info: TaskInfoProvider) => Promise<T>,
+  fn: () => Promise<T>,
 ): Promise<T> {
-  const ora = require('ora');
-  const spinner = ora(title).start();
+  const chain = output.createTaskChain();
+  chain.next(title);
 
   try {
-    const start = process.hrtime();
-    let taskInfoMessage;
-    const value = await fn((message: string) => (taskInfoMessage = message));
-    const elapsed = process.hrtime(start);
-    if (taskInfoMessage) {
-      spinner.info(`${title} ${chalk.dim('– ' + taskInfoMessage)}`);
-    } else {
-      spinner.succeed(`${title} ${chalk.dim('in ' + formatHrTime(elapsed))}`);
-    }
+    const value = await fn();
+    chain.end();
     return value;
   } catch (e) {
-    spinner.fail(`${title}: ${e.message ? e.message : ''}`);
-    spinner.stop();
+    chain.fail();
     throw e;
   }
 }
 
-const TIME_UNITS = ['s', 'ms', 'μp'];
-export function formatHrTime(hrtime: any) {
-  let time = (hrtime[0] + hrtime[1] / 1e9) as number;
-  let index = 0;
-  for (; index < TIME_UNITS.length - 1; index++, time *= 1000) {
-    if (time >= 1) {
-      break;
-    }
-  }
-  return time.toFixed(2) + TIME_UNITS[index];
-}
-
-export async function getName(config: Config, name: string) {
-  if (!name) {
-    const answers = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'name',
-        default: config.app.appName
-          ? config.app.appName
-          : config.app.package && config.app.package.name
-          ? config.app.package.name
-          : 'App',
-        message: `App name`,
-      },
-    ]);
-    return answers.name;
-  }
-  return name;
-}
-
-export async function getAppId(config: Config, id: string) {
-  if (!id) {
-    const answers = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'id',
-        default: config.app.appId ? config.app.appId : 'com.example.app',
-        message: 'App Package ID (in Java package format, no dashes)',
-      },
-    ]);
-    return answers.id;
-  }
-  return id;
-}
-
-export async function copyTemplate(src: string, dst: string) {
+export async function copyTemplate(src: string, dst: string): Promise<void> {
   await copyAsync(src, dst);
   await renameGitignore(dst);
 }
 
-export async function renameGitignore(dst: string) {
+export async function renameGitignore(dst: string): Promise<void> {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
   if (await existsAsync(gitignorePath)) {
     await renameAsync(gitignorePath, join(dst, '.gitignore'));
   }
-}
-
-export async function printNextSteps(config: Config, appDir: string) {
-  log('\n');
-  log(
-    `${chalk.bold(
-      `${_e('🎉', '*')}   Your Capacitor project is ready to go!  ${_e(
-        '🎉',
-        '*',
-      )}`,
-    )}\n`,
-  );
-  if (appDir !== '') {
-    log(`Next steps:`);
-    log('');
-    log(`  ${chalk.bold(`cd ./${appDir}`)}`);
-    log(`  install dependencies (e.g. w/ ${chalk.bold('npm install')})`);
-    log(`  ${chalk.bold('npx cap sync')}`);
-    log('');
-  }
-  log(`Add platforms using 'npx cap add':\n`);
-  log(`  npx cap add android`);
-  log(`  npx cap add ios`);
-  log('');
-  log(
-    `Follow the Developer Workflow guide to get building:\n${chalk.bold(
-      `https://capacitorjs.com/docs/basics/workflow`,
-    )}\n`,
-  );
 }
 
 export async function getCapacitorPackage(
@@ -463,8 +406,8 @@ export async function requireCapacitorPackage(
 
   if (!pkg) {
     logFatal(
-      `Unable to find node_modules/@capacitor/${name}/package.json. Are you sure`,
-      `@capacitor/${name} is installed? This file is currently required for Capacitor to function.`,
+      `Unable to find node_modules/@capacitor/${name}.\n` +
+        `Are you sure ${c.strong(`@capacitor/${name}`)} is installed?`,
     );
   }
   return pkg;
@@ -485,19 +428,25 @@ export async function getCLIVersion(config: Config): Promise<string> {
   return getCapacitorPackageVersion(config, 'cli');
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+export async function checkPlatformVersions(
+  config: Config,
+  platform: string,
+): Promise<void> {
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getCapacitorPackageVersion(config, platform);
   if (
     semver.diff(coreVersion, platformVersion) === 'minor' ||
     semver.diff(coreVersion, platformVersion) === 'major'
   ) {
-    log('\n');
-    logWarn(
-      `Your @capacitor/core version doesn't match your @capacitor/${platform} version`,
-    );
-    log(
-      `Consider updating to matching version ${chalk`{bold npm install @capacitor/core@${platformVersion}}`}`,
+    logger.warn(
+      `${c.strong('@capacitor/core')}${c.weak(
+        `@${coreVersion}`,
+      )} version doesn't match ${c.strong(`@capacitor/${platform}`)}${c.weak(
+        `@${platformVersion}`,
+      )} version.\n` +
+        `Consider updating to a matching version, e.g. w/ ${c.input(
+          `npm install @capacitor/core@${platformVersion}`,
+        )}`,
     );
   }
 }
@@ -533,7 +482,7 @@ export function resolveNode(
 
   let modulePath;
   const starts = [config.app.rootDir];
-  for (let start of starts) {
+  for (const start of starts) {
     modulePath = resolveNodeFrom(start, id);
     if (modulePath) {
       break;
@@ -550,6 +499,7 @@ export function resolveNodeFrom(start: string, id: string): string | null {
   const rootPath = parse(start).root;
   let basePath = resolve(start);
   let modulePath;
+  // eslint-disable-next-line
   while (true) {
     modulePath = join(basePath, 'node_modules', id);
     if (existsSync(modulePath)) {

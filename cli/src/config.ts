@@ -1,7 +1,9 @@
+/* eslint-disable */
 import { accessSync, readFileSync } from 'fs';
 import { basename, join, resolve } from 'path';
-import chalk from 'chalk';
+import prompts from 'prompts';
 
+import c from './colors';
 import { logFatal, readJSON } from './common';
 import { CliConfig, ExternalConfig, OS, PackageJson } from './definitions';
 
@@ -83,13 +85,6 @@ export class Config implements CliConfig {
     },
   };
 
-  plugins = {
-    assets: {
-      templateName: 'plugin-template',
-      templateDir: '',
-    },
-  };
-
   knownPlatforms: string[] = [];
   knownCommunityPlatforms = ['electron'];
 
@@ -99,7 +94,6 @@ export class Config implements CliConfig {
 
     try {
       this.initAppConfig(resolve(currentWorkingDir));
-      this.initPluginsConfig();
       this.loadExternalConfig();
       this.mergeConfigData();
 
@@ -111,7 +105,7 @@ export class Config implements CliConfig {
 
       this.knownPlatforms.push(this.web.name);
     } catch (e) {
-      logFatal(`Unable to load config`, e);
+      logFatal(`Unable to load config\n` + (e.stack ?? e));
     }
   }
 
@@ -213,13 +207,6 @@ export class Config implements CliConfig {
     }
   }
 
-  private initPluginsConfig() {
-    this.plugins.assets.templateDir = join(
-      this.cli.assetsDir,
-      this.plugins.assets.templateName,
-    );
-  }
-
   private mergeConfigData() {
     const extConfig: ExternalConfig = this.app.extConfig || {};
 
@@ -239,7 +226,10 @@ export class Config implements CliConfig {
         // we've got an capacitor.json file, let's parse it
         this.app.extConfig = JSON.parse(extConfigStr);
       } catch (e) {
-        logFatal(`error parsing: ${basename(this.app.extConfigFilePath)}\n`, e);
+        logFatal(
+          `Error parsing ${basename(this.app.extConfigFilePath)}\n` +
+            (e.stack ?? e),
+        );
       }
     } catch {
       // it's ok if there's no capacitor.json file
@@ -256,7 +246,7 @@ export class Config implements CliConfig {
       const platformName = selectedPlatformName.toLowerCase().trim();
 
       if (!this.isValidPlatform(platformName)) {
-        logFatal(`Invalid platform: ${platformName}`);
+        logFatal(`Invalid platform: ${c.input(platformName)}`);
       } else if (!this.platformDirExists(platformName)) {
         this.platformNotCreatedError(platformName);
       }
@@ -275,25 +265,27 @@ export class Config implements CliConfig {
     promptMessage: string,
   ): Promise<string> {
     if (!selectedPlatformName) {
-      const inquirer = await import('inquirer');
+      const answers = await prompts(
+        [
+          {
+            type: 'select',
+            name: 'mode',
+            message: promptMessage,
+            choices: this.knownPlatforms.map(p => ({ title: p, value: p })),
+          },
+        ],
+        { onCancel: () => process.exit(1) },
+      );
 
-      const answer = await inquirer.prompt({
-        type: 'list',
-        name: 'mode',
-        message: promptMessage,
-        choices: this.knownPlatforms,
-      });
-
-      return answer.mode.toLowerCase().trim();
+      return answers.mode.toLowerCase().trim();
     }
 
     const platformName = selectedPlatformName.toLowerCase().trim();
 
     if (!this.isValidPlatform(platformName)) {
       logFatal(
-        `Invalid platform: "${platformName}". Valid platforms include: ${this.knownPlatforms.join(
-          ', ',
-        )}`,
+        `Invalid platform: ${c.input(platformName)}.\n` +
+          `Valid platforms include: ${this.knownPlatforms.join(', ')}`,
       );
     }
 
@@ -338,15 +330,15 @@ export class Config implements CliConfig {
   platformNotCreatedError(platformName: string) {
     if (platformName === 'web') {
       logFatal(
-        `Could not find the web platform directory. Make sure ${chalk.bold(
-          this.app.webDir,
-        )} exists.`,
+        `Could not find the web platform directory.\n` +
+          `Make sure ${c.strong(this.app.webDir)} exists.`,
       );
     }
     logFatal(
-      `${chalk.bold(
-        platformName,
-      )}" platform has not been created. Use "npx cap add ${platformName}" to add the platform project.`,
+      `${c.strong(platformName)} platform has not been added yet.\n` +
+        `Use ${c.input(
+          `npx cap add ${platformName}`,
+        )} to add the platform to your project.`,
     );
   }
 }

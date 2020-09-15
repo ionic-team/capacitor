@@ -1,4 +1,3 @@
-import { checkCocoaPods, checkIOSProject } from './common';
 import {
   check,
   checkWebDir,
@@ -6,10 +5,11 @@ import {
   logFatal,
   logSuccess,
 } from '../common';
-import { Config } from '../config';
-import { getPlugins, printPlugins } from '../plugin';
+import type { Config } from '../config';
 
-export async function doctorIOS(config: Config) {
+import { checkCocoaPods, checkIOSProject } from './common';
+
+export async function doctorIOS(config: Config): Promise<void> {
   // DOCTOR ideas for iOS:
   // plugin specific warnings
   // check cocoapods installed
@@ -28,11 +28,9 @@ export async function doctorIOS(config: Config) {
       checkWebDir,
       checkXcode,
     ]);
-    const plugins = await getPlugins(config);
-    printPlugins(plugins, 'ios');
     logSuccess('iOS looking great! 👌');
   } catch (e) {
-    logFatal(e);
+    logFatal(e.stack ?? e);
   }
 }
 
