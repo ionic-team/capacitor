@@ -13,7 +13,6 @@ export interface PluginRegistry {
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
   PushNotifications: PushNotificationsPlugin;
-  Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
   Toast: ToastPlugin;
@@ -1371,35 +1370,6 @@ export interface PushNotificationsPlugin extends Plugin {
    * Remove all native listeners for this plugin.
    */
   removeAllListeners(): void;
-}
-
-//
-
-export interface SharePlugin extends Plugin {
-  /**
-   * Show a Share modal for sharing content in your app with other apps
-   */
-  share(options: ShareOptions): Promise<any>;
-}
-
-export interface ShareOptions {
-  /**
-   * Set a title for any message. This will be the subject
-   * if sharing to email
-   */
-  title?: string;
-  /**
-   * Set some text to share
-   */
-  text?: string;
-  /**
-   * Set a URL to share, can be http, https or file URL
-   */
-  url?: string;
-  /**
-   * Set a title for the share modal. Android only
-   */
-  dialogTitle?: string;
 }
 
 //

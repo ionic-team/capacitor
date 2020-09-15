@@ -99,10 +99,6 @@ CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPSharePlugin, "Share",
-  CAP_PLUGIN_METHOD(share, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPSplashScreenPlugin, "SplashScreen",
   CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
