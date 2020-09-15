@@ -16,13 +16,6 @@ CAP_PLUGIN(CAPBackgroundTaskPlugin, "BackgroundTask",
   CAP_PLUGIN_METHOD(finish, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPBrowserPlugin, "Browser",
-  CAP_PLUGIN_METHOD(open, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(close, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(prefetch, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
 CAP_PLUGIN(CAPCameraPlugin, "Camera",
   CAP_PLUGIN_METHOD(getPhoto, CAPPluginReturnPromise);
 )

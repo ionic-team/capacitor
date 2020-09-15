@@ -4,7 +4,6 @@ import { Plugin, PluginListenerHandle } from './definitions';
 export interface PluginRegistry {
   App: AppPlugin;
   BackgroundTask: BackgroundTaskPlugin;
-  Browser: BrowserPlugin;
   Camera: CameraPlugin;
   Device: DevicePlugin;
   Filesystem: FilesystemPlugin;
@@ -189,71 +188,6 @@ export interface BackgroundTaskPlugin extends Plugin {
    * backgrounding the app.
    */
   finish(options: { taskId: CallbackID }): void;
-}
-
-//
-
-export interface BrowserPlugin extends Plugin {
-  /**
-   * Open a page with the given URL
-   */
-  open(options: BrowserOpenOptions): Promise<void>;
-
-  /**
-   * Hint to the browser that the given URLs will be accessed
-   * to improve initial loading times.
-   *
-   * Only functional on Android, is a no-op on iOS
-   */
-  prefetch(options: BrowserPrefetchOptions): Promise<void>;
-
-  /**
-   * Close an open browser. Only works on iOS and Web environment, otherwise is a no-op
-   */
-  close(): Promise<void>;
-
-  addListener(
-    eventName: 'browserFinished',
-    listenerFunc: (info: BrowserInfo) => void,
-  ): PluginListenerHandle;
-  addListener(
-    eventName: 'browserPageLoaded',
-    listenerFunc: (info: BrowserInfo) => void,
-  ): PluginListenerHandle;
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export interface BrowserInfo {}
-
-export interface BrowserOpenOptions {
-  /**
-   * The URL to open the browser to
-   */
-  url: string;
-
-  /**
-   * Web only: Optional target for browser open. Follows
-   * the `target` property for window.open. Defaults
-   * to _blank
-   */
-  windowName?: string;
-
-  /**
-   * A hex color to set the toolbar color to.
-   */
-  toolbarColor?: string;
-
-  /**
-   * iOS only: The presentation style of the browser. Defaults to fullscreen.
-   */
-  presentationStyle?: 'fullscreen' | 'popover';
-}
-
-export interface BrowserPrefetchOptions {
-  urls: string[];
 }
 
 //
