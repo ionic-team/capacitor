@@ -1,20 +1,22 @@
-import { Config } from '../config';
-import { OS } from '../definitions';
-import { runCommand } from '../common';
-import { existsSync } from '../util/fs';
 import open from 'open';
-import { logger } from '../log';
 
-export async function openAndroid(config: Config) {
+import { runCommand } from '../common';
+import type { Config } from '../config';
+import { OS } from '../definitions';
+import { logger } from '../log';
+import { existsSync } from '../util/fs';
+
+export async function openAndroid(config: Config): Promise<void> {
   logger.info(`Opening Android project at ${config.android.platformDir}.`);
 
   const dir = config.android.platformDir;
 
   switch (config.cli.os) {
-    case OS.Mac:
+    case OS.Mac: {
       await open(dir, { app: 'android studio', wait: false });
       break;
-    case OS.Windows:
+    }
+    case OS.Windows: {
       let androidStudioPath = config.windows.androidStudioPath;
       try {
         if (!existsSync(androidStudioPath)) {
@@ -44,7 +46,8 @@ export async function openAndroid(config: Config) {
         );
       }
       break;
-    case OS.Linux:
+    }
+    case OS.Linux: {
       const linuxError = () => {
         logger.error(
           'Unable to launch Android Studio.\n' +
@@ -62,5 +65,6 @@ export async function openAndroid(config: Config) {
         linuxError();
       }
       break;
+    }
   }
 }

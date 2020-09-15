@@ -1,6 +1,6 @@
+import type { LoggerLevelWeight } from '@ionic/cli-framework-output';
 import {
   LOGGER_LEVELS,
-  LoggerLevelWeight,
   StreamOutputStrategy,
   TTYOutputStrategy,
   createDefaultLogger,

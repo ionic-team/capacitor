@@ -1,5 +1,7 @@
+import { copy as fsCopy, remove } from 'fs-extra';
+import { basename, join, relative, resolve } from 'path';
+
 import c from '../colors';
-import { Config } from '../config';
 import {
   checkWebDir,
   logFatal,
@@ -8,22 +10,21 @@ import {
   runPlatformHook,
   runTask,
 } from '../common';
-import { existsAsync } from '../util/fs';
-import { allSerial } from '../util/promise';
-import { copyWeb } from '../web/copy';
-import { basename, join, relative, resolve } from 'path';
-import { copy as fsCopy, remove } from 'fs-extra';
+import type { Config } from '../config';
 import {
   getCordovaPlugins,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
 import { logger } from '../log';
+import { existsAsync } from '../util/fs';
+import { allSerial } from '../util/promise';
+import { copyWeb } from '../web/copy';
 
 export async function copyCommand(
   config: Config,
   selectedPlatformName: string,
-) {
+): Promise<void> {
   if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
@@ -50,7 +51,10 @@ export async function copyCommand(
   }
 }
 
-export async function copy(config: Config, platformName: string) {
+export async function copy(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
     if (result) {
@@ -90,7 +94,7 @@ export async function copy(config: Config, platformName: string) {
 
 async function copyNativeBridge(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
-  let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
+  const bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
   if (!bridgePath) {
     logFatal(
       `Unable to find node_modules/@capacitor/core/native-bridge.js.\n` +

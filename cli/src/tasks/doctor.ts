@@ -1,7 +1,7 @@
-import c from '../colors';
-import { Config } from '../config';
-import { readJSON, resolveNode, getCommandOutput } from '../common';
 import { doctorAndroid } from '../android/doctor';
+import c from '../colors';
+import { readJSON, resolveNode, getCommandOutput } from '../common';
+import type { Config } from '../config';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
@@ -24,7 +24,7 @@ export async function doctorCommand(
   );
 }
 
-export async function doctorCore(config: Config) {
+export async function doctorCore(config: Config): Promise<void> {
   const [
     cliVersion,
     coreVersion,
@@ -77,7 +77,10 @@ async function printPackageVersion(
   output.write(`  ${packageName}: ${c.weak(version || 'not installed')}\n`);
 }
 
-export async function doctor(config: Config, platformName: string) {
+export async function doctor(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   if (platformName === config.ios.name) {
     await doctorIOS(config);
   } else if (platformName === config.android.name) {

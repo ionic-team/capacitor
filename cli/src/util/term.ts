@@ -1,10 +1,11 @@
 import { TERMINAL_INFO } from '@ionic/utils-terminal';
+
 import c from '../colors';
 import { logger } from '../log';
 
 // Given input variables to a command, make sure all are provided if the terminal
 // is not interactive (because we won't be able to prompt the user)
-export const checkInteractive = (...args: string[]) => {
+export const checkInteractive = (...args: string[]): boolean => {
   if (isInteractive()) {
     return true;
   }
@@ -17,7 +18,7 @@ export const checkInteractive = (...args: string[]) => {
 
   // Make sure none of the provided args are empty, otherwise print the interactive
   // warning and return false
-  if (!!args.filter(arg => !!!arg).length) {
+  if (args.filter(arg => !arg).length) {
     logger.error(
       `Non-interactive shell detected.\n` +
         `Run the command with ${c.input(

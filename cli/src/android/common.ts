@@ -1,7 +1,11 @@
-import { checkCapacitorPlatform } from '../common';
-import { Config } from '../config';
-import { getIncompatibleCordovaPlugins } from '../cordova';
 import { mkdirs } from 'fs-extra';
+import { join, resolve } from 'path';
+
+import { checkCapacitorPlatform } from '../common';
+import type { Config } from '../config';
+import { getIncompatibleCordovaPlugins } from '../cordova';
+import type { Plugin } from '../plugin';
+import { PluginType, getPluginPlatform } from '../plugin';
 import {
   convertToUnixPath,
   copyAsync,
@@ -11,8 +15,6 @@ import {
   removeAsync,
   writeFileAsync,
 } from '../util/fs';
-import { join, resolve } from 'path';
-import { Plugin, PluginType, getPluginPlatform } from '../plugin';
 
 export async function checkAndroidPackage(
   config: Config,
@@ -27,7 +29,7 @@ export function getAndroidPlugins(allPlugins: Plugin[]): Plugin[] {
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
   const platform = 'android';
-  if (plugin.manifest && plugin.manifest.android) {
+  if (plugin.manifest?.android) {
     let pluginFilesPath = plugin.manifest.android.src
       ? plugin.manifest.android.src
       : platform;
@@ -62,7 +64,9 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
  * This is a little trickier for Android because the appId becomes
  * the package name.
  */
-export async function editProjectSettingsAndroid(config: Config) {
+export async function editProjectSettingsAndroid(
+  config: Config,
+): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 

@@ -1,5 +1,5 @@
 import { Capacitor, Plugins } from './global';
-import { WebPlugin } from './web';
+import type { WebPlugin } from './web';
 
 export enum ExceptionCodes {
   UNSUPPORTED_BROWSER = 'UNSUPPORTED_BROWSER',
@@ -135,7 +135,7 @@ export const registerPlugin = <T>(
  *
  * @deprecated Don't use this.
  */
-export const registerWebPlugin = (plugin: WebPlugin) => {
+export const registerWebPlugin = (plugin: WebPlugin): void => {
   console.warn(
     `Capacitor plugin ${plugin.config.name} is using deprecated method 'registerWebPlugin'`,
   ); // TODO: add link to upgrade guide
@@ -158,7 +158,7 @@ export const registerWebPlugin = (plugin: WebPlugin) => {
   }
 };
 
-const shouldMergeWebPlugin = (plugin: WebPlugin) => {
+const shouldMergeWebPlugin = (plugin: WebPlugin): boolean => {
   return (
     plugin.config.platforms &&
     plugin.config.platforms.indexOf(Capacitor.platform) >= 0
@@ -170,9 +170,9 @@ const shouldMergeWebPlugin = (plugin: WebPlugin) => {
  *
  * @deprecated Don't use this.
  */
-export const mergeWebPlugin = (plugin: WebPlugin) => {
+export const mergeWebPlugin = (plugin: WebPlugin): void => {
   if (
-    Plugins.hasOwnProperty(plugin.config.name) &&
+    Object.prototype.hasOwnProperty.call(Plugins, plugin.config.name) &&
     !shouldMergeWebPlugin(plugin)
   ) {
     return;

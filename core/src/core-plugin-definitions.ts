@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
@@ -11,7 +12,6 @@ export interface PluginRegistry {
   LocalNotifications: LocalNotificationsPlugin;
   Modals: ModalsPlugin;
   PushNotifications: PushNotificationsPlugin;
-  Share: SharePlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
   Toast: ToastPlugin;
@@ -728,7 +728,7 @@ export interface CopyOptions {
   toDirectory?: FilesystemDirectory;
 }
 
-export interface RenameOptions extends CopyOptions {}
+export type RenameOptions = CopyOptions;
 
 export interface FileReadResult {
   data: string;
@@ -917,8 +917,7 @@ export interface LocalNotificationPendingList {
   notifications: LocalNotificationRequest[];
 }
 
-export interface LocalNotificationScheduleResult
-  extends LocalNotificationPendingList {}
+export type LocalNotificationScheduleResult = LocalNotificationPendingList;
 
 export interface LocalNotificationActionType {
   id: string;
@@ -1305,35 +1304,6 @@ export interface PushNotificationsPlugin extends Plugin {
    * Remove all native listeners for this plugin.
    */
   removeAllListeners(): void;
-}
-
-//
-
-export interface SharePlugin extends Plugin {
-  /**
-   * Show a Share modal for sharing content in your app with other apps
-   */
-  share(options: ShareOptions): Promise<any>;
-}
-
-export interface ShareOptions {
-  /**
-   * Set a title for any message. This will be the subject
-   * if sharing to email
-   */
-  title?: string;
-  /**
-   * Set some text to share
-   */
-  text?: string;
-  /**
-   * Set a URL to share, can be http, https or file URL
-   */
-  url?: string;
-  /**
-   * Set a title for the share modal. Android only
-   */
-  dialogTitle?: string;
 }
 
 //
