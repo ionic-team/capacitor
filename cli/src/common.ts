@@ -1,8 +1,19 @@
 import { wordWrap } from '@ionic/cli-framework-output';
-import { Config } from './config';
 import { exec, spawn } from 'child_process';
-import { setTimeout } from 'timers';
+import { existsSync, readFile } from 'fs';
 import { basename, dirname, join, parse, resolve } from 'path';
+import type { Answers, PromptObject } from 'prompts';
+import prompts from 'prompts';
+import semver from 'semver';
+import { setTimeout } from 'timers';
+import which from 'which';
+import xml2js from 'xml2js';
+
+import c from './colors';
+import type { Config } from './config';
+import type { PackageJson } from './definitions';
+import { output, logger } from './log';
+import { emoji as _e } from './util/emoji';
 import {
   copyAsync,
   existsAsync,
@@ -10,14 +21,6 @@ import {
   renameAsync,
   writeFileAsync,
 } from './util/fs';
-import { existsSync, readFile } from 'fs';
-import { emoji as _e } from './util/emoji';
-import c from './colors';
-import { output, logger } from './log';
-import semver from 'semver';
-import which from 'which';
-import prompts, { Answers, PromptObject } from 'prompts';
-import { PackageJson } from './definitions';
 
 export type CheckFunction = (
   config: Config,
@@ -165,8 +168,8 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
-export function writePrettyJSON(path: string, data: any) {
-  return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
+export async function writePrettyJSON(path: string, data: any): Promise<void> {
+  await writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
 }
 
 export function readXML(path: string): Promise<any> {
@@ -175,7 +178,6 @@ export function readXML(path: string): Promise<any> {
       if (err) {
         reject(`Unable to read: ${path}`);
       } else {
-        const xml2js = await import('xml2js');
         xml2js.parseString(xmlStr, (err, result) => {
           if (err) {
             reject(`Error parsing: ${path}, ${err}`);
@@ -189,9 +191,8 @@ export function readXML(path: string): Promise<any> {
 }
 
 export function parseXML(xmlStr: string): any {
-  const parseString = require('xml2js').parseString;
-  var xmlObj;
-  parseString(xmlStr, (err: any, result: any) => {
+  let xmlObj;
+  xml2js.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
       xmlObj = result;
     }
@@ -199,9 +200,8 @@ export function parseXML(xmlStr: string): any {
   return xmlObj;
 }
 
-export function writeXML(object: any): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    const xml2js = await import('xml2js');
+export async function writeXML(object: any): Promise<any> {
+  return new Promise((resolve, reject) => {
     const builder = new xml2js.Builder({
       headless: true,
       explicitRoot: false,
@@ -213,8 +213,7 @@ export function writeXML(object: any): Promise<any> {
   });
 }
 
-export function buildXmlElement(configElement: any, rootName: string) {
-  const xml2js = require('xml2js');
+export function buildXmlElement(configElement: any, rootName: string): string {
   const builder = new xml2js.Builder({
     headless: true,
     explicitRoot: false,
@@ -227,7 +226,9 @@ export function buildXmlElement(configElement: any, rootName: string) {
  * Check for or create our main configuration file.
  * @param config
  */
-export async function getOrCreateConfig(config: Config) {
+export async function getOrCreateConfig(
+  config: Config,
+): Promise<string | undefined> {
   const configPath = join(config.app.rootDir, config.app.extConfigName);
   if (await existsAsync(configPath)) {
     return configPath;
@@ -249,7 +250,10 @@ export async function getOrCreateConfig(config: Config) {
   config.loadExternalConfig();
 }
 
-export async function mergeConfig(config: Config, settings: any) {
+export async function mergeConfig(
+  config: Config,
+  settings: any,
+): Promise<void> {
   const configPath = join(config.app.rootDir, config.app.extConfigName);
 
   await writePrettyJSON(config.app.extConfigFilePath, {
@@ -273,7 +277,7 @@ export async function logPrompt<T extends string>(
   return prompts(prompt, { onCancel: () => process.exit(1) });
 }
 
-export function logSuccess(msg: string) {
+export function logSuccess(msg: string): void {
   logger.msg(`${c.success('[success]')} ${msg}`);
 }
 
@@ -294,7 +298,7 @@ export async function isInstalled(command: string): Promise<boolean> {
   });
 }
 
-export function wait(time: number) {
+export async function wait(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -367,12 +371,12 @@ export async function runTask<T>(
   }
 }
 
-export async function copyTemplate(src: string, dst: string) {
+export async function copyTemplate(src: string, dst: string): Promise<void> {
   await copyAsync(src, dst);
   await renameGitignore(dst);
 }
 
-export async function renameGitignore(dst: string) {
+export async function renameGitignore(dst: string): Promise<void> {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
@@ -424,7 +428,10 @@ export async function getCLIVersion(config: Config): Promise<string> {
   return getCapacitorPackageVersion(config, 'cli');
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+export async function checkPlatformVersions(
+  config: Config,
+  platform: string,
+): Promise<void> {
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getCapacitorPackageVersion(config, platform);
   if (
@@ -475,7 +482,7 @@ export function resolveNode(
 
   let modulePath;
   const starts = [config.app.rootDir];
-  for (let start of starts) {
+  for (const start of starts) {
     modulePath = resolveNodeFrom(start, id);
     if (modulePath) {
       break;
@@ -492,6 +499,7 @@ export function resolveNodeFrom(start: string, id: string): string | null {
   const rootPath = parse(start).root;
   let basePath = resolve(start);
   let modulePath;
+  // eslint-disable-next-line
   while (true) {
     modulePath = join(basePath, 'node_modules', id);
     if (existsSync(modulePath)) {

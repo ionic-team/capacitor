@@ -1,4 +1,4 @@
-import { Capacitor as _Capacitor } from './definitions';
+import type { Capacitor as _Capacitor } from './definitions';
 import { CapacitorWeb } from './web-runtime';
 
 // Create our default Capacitor instance, which will be

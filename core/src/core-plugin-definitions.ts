@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
@@ -793,7 +794,7 @@ export interface CopyOptions {
   toDirectory?: FilesystemDirectory;
 }
 
-export interface RenameOptions extends CopyOptions {}
+export type RenameOptions = CopyOptions;
 
 export interface FileReadResult {
   data: string;
@@ -982,8 +983,7 @@ export interface LocalNotificationPendingList {
   notifications: LocalNotificationRequest[];
 }
 
-export interface LocalNotificationScheduleResult
-  extends LocalNotificationPendingList {}
+export type LocalNotificationScheduleResult = LocalNotificationPendingList;
 
 export interface LocalNotificationActionType {
   id: string;

@@ -2,15 +2,16 @@ import { homedir } from 'os';
 import { join, relative } from 'path';
 
 import c from '../colors';
-import { Config } from '../config';
-import { copyTemplate, runCommand, runTask, CheckFunction } from '../common';
+import type { CheckFunction } from '../common';
+import { copyTemplate, runCommand, runTask } from '../common';
+import type { Config } from '../config';
 import { existsAsync, writeFileAsync } from '../util/fs';
 
 import { checkAndroidPackage } from './common';
 
 export const addAndroidChecks: CheckFunction[] = [checkAndroidPackage];
 
-export async function addAndroid(config: Config) {
+export async function addAndroid(config: Config): Promise<void> {
   const nativeRelDir = relative(config.app.rootDir, config.android.platformDir);
   await runTask(
     `Adding native android project in ${c.strong(nativeRelDir)}`,
