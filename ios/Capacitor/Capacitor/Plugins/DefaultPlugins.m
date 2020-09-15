@@ -30,20 +30,6 @@ CAP_PLUGIN(CAPDevicePlugin, "Device",
   CAP_PLUGIN_METHOD(getLanguageCode, CAPPluginReturnPromise);
 )
 
-CAP_PLUGIN(CAPFilesystemPlugin, "Filesystem",
-  CAP_PLUGIN_METHOD(readFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(writeFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(appendFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(deleteFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(mkdir, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(rmdir, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(readdir, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(getUri, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(stat, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(rename, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(copy, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
   CAP_PLUGIN_METHOD(getCurrentPosition, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(watchPosition, CAPPluginReturnCallback);
