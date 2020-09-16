@@ -17,7 +17,11 @@ export interface ExternalConfig {
   readonly appName?: string;
   readonly webDir?: string;
   readonly bundledWebRuntime?: boolean;
+  readonly android?: {
+    readonly path?: string;
+  };
   readonly ios?: {
+    readonly path?: string;
     readonly cordovaSwiftVersion?: string;
     readonly minVersion?: string;
     readonly cordovaLinkerFlags?: string[];

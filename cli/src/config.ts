@@ -34,8 +34,8 @@ export async function loadConfig(): Promise<Config> {
     linux: {
       androidStudioPath: '/usr/local/android-studio/bin/studio.sh',
     },
-    android: await loadAndroidConfig(appRootDir, cli.assetsDir),
-    ios: await loadIOSConfig(appRootDir, cli.assetsDir),
+    android: await loadAndroidConfig(appRootDir, extConfig, cli.assetsDir),
+    ios: await loadIOSConfig(appRootDir, extConfig, cli.assetsDir),
     web: await loadWebConfig(appRootDir, webDir),
     cli,
     app: {
@@ -70,10 +70,11 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
 
 async function loadAndroidConfig(
   rootDir: string,
+  extConfig: ExternalConfig,
   assetDir: string,
 ): Promise<AndroidConfig> {
   const name = 'android';
-  const platformDir = 'android';
+  const platformDir = extConfig.android?.path ?? 'android';
   const platformDirAbs = resolve(rootDir, platformDir);
   const webDir = 'app/src/main/assets/public';
   const resDir = 'app/src/main/res';
@@ -101,10 +102,11 @@ async function loadAndroidConfig(
 
 async function loadIOSConfig(
   rootDir: string,
+  extConfig: ExternalConfig,
   assetDir: string,
 ): Promise<IOSConfig> {
   const name = 'ios';
-  const platformDir = 'ios';
+  const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const webDir = 'public';
   const nativeProjectName = 'App';
