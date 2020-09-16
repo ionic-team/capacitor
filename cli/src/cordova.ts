@@ -223,7 +223,7 @@ export async function autoGenerateConfig(
   const fileName = 'config.xml';
   if (platform === 'ios') {
     xmlDir = join(
-      config.ios.platformDir,
+      config.ios.platformDirAbs,
       config.ios.nativeProjectName,
       config.ios.nativeProjectName,
     );
@@ -343,7 +343,7 @@ export async function logCordovaManualSteps(
 
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   const plistPath = resolve(
-    config.ios.platformDir,
+    config.ios.platformDirAbs,
     config.ios.nativeProjectName,
     config.ios.nativeProjectName,
     'Info.plist',

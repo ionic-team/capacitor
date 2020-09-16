@@ -9,7 +9,7 @@ import { existsSync } from '../util/fs';
 export async function openAndroid(config: Config): Promise<void> {
   logger.info(`Opening Android project at ${config.android.platformDir}.`);
 
-  const dir = config.android.platformDir;
+  const dir = config.android.platformDirAbs;
 
   switch (config.cli.os) {
     case OS.Mac: {

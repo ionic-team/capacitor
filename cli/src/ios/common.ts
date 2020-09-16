@@ -4,7 +4,7 @@ import c from '../colors';
 import {
   isInstalled,
   checkCapacitorPlatform,
-  getPlatformDirectory,
+  getProjectPlatformDirectory,
 } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
@@ -16,12 +16,12 @@ import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
     const files = await readdirAsync(
-      join(config.ios.platformDir, config.ios.nativeProjectName),
+      join(config.ios.platformDirAbs, config.ios.nativeProjectName),
     );
     const xcodeProject = files.find(file => file.endsWith('.xcworkspace'));
     if (xcodeProject) {
       return join(
-        config.ios.platformDir,
+        config.ios.platformDirAbs,
         config.ios.nativeProjectName,
         xcodeProject,
       );
@@ -49,7 +49,7 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
 }
 
 export async function checkIOSProject(config: Config): Promise<string | null> {
-  const platformDir = await getPlatformDirectory(config, 'ios');
+  const platformDir = await getProjectPlatformDirectory(config, 'ios');
   if (!platformDir) {
     return (
       `${c.strong('ios')} platform has not been added yet.\n` +
@@ -98,14 +98,12 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appName = config.app.appName;
 
   const pbxPath = resolve(
-    config.app.rootDir,
-    config.ios.platformDir,
+    config.ios.platformDirAbs,
     config.ios.nativeProjectName,
     'App.xcodeproj/project.pbxproj',
   );
   const plistPath = resolve(
-    config.app.rootDir,
-    config.ios.platformDir,
+    config.ios.platformDirAbs,
     config.ios.nativeProjectName,
     'App/Info.plist',
   );
