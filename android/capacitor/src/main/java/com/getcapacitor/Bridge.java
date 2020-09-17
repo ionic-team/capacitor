@@ -24,7 +24,6 @@ import com.getcapacitor.plugin.Filesystem;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
-import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
@@ -398,7 +397,6 @@ public class Bridge {
         this.registerPlugin(Filesystem.class);
         this.registerPlugin(Geolocation.class);
         this.registerPlugin(Keyboard.class);
-        this.registerPlugin(Modals.class);
         this.registerPlugin(PushNotifications.class);
         this.registerPlugin(Share.class);
         this.registerPlugin(SplashScreen.class);
