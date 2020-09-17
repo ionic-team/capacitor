@@ -305,15 +305,25 @@ public class Plugin {
      * @return
      */
     @PluginMethod
-    public Map<String, Boolean> checkPermissions() {
-        Map<String, Boolean> permissions = new HashMap<>();
+    public void checkPermissions(PluginCall pluginCall) {
+        JSObject permissionsResult = getPermissionsResults();
+        pluginCall.resolve(permissionsResult);
+    }
+
+    /**
+     * Helper to check all permissions and see the current states of each permission.
+     *
+     * @return
+     */
+    public JSObject getPermissionsResults() {
+        JSObject permissionsResults = new JSObject();
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
             String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
-            permissions.put(key, hasPermission(perm.permission()));
+            permissionsResults.put(key, String.valueOf(hasPermission(perm.permission())));
         }
 
-        return permissions;
+        return permissionsResults;
     }
 
     /**
@@ -326,11 +336,8 @@ public class Plugin {
     }
 
     /**
-     * @deprecated As of release 3.0, replaced by {@link #requestPermissions()}
-     *
-     * Request all of the specified permissions in the NativePlugin annotation (if any)
+     * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
      */
-    @Deprecated
     public void pluginRequestAllPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
