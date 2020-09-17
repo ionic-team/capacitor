@@ -420,18 +420,27 @@ public class Bridge {
      * @param pluginClass a class inheriting from Plugin
      */
     public void registerPlugin(Class<? extends Plugin> pluginClass) {
-        NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+        String pluginName;
 
+        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            Logger.error("NativePlugin doesn't have the @NativePlugin annotation. Please add it");
-            return;
+            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+
+            if (legacyPluginAnnotation == null) {
+                Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+                return;
+            }
+
+            pluginName = legacyPluginAnnotation.name();
+        } else {
+            pluginName = pluginAnnotation.name();
         }
 
         String pluginId = pluginClass.getSimpleName();
 
         // Use the supplied name as the id if available
-        if (!pluginAnnotation.name().equals("")) {
-            pluginId = pluginAnnotation.name();
+        if (!pluginName.equals("")) {
+            pluginId = pluginName;
         }
 
         Logger.debug("Registering plugin: " + pluginId);
@@ -442,7 +451,7 @@ public class Bridge {
             Logger.error(
                 "NativePlugin " +
                 pluginClass.getName() +
-                " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
+                " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
                 " the class extends Plugin"
             );
         } catch (PluginLoadException ex) {
