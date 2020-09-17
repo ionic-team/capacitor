@@ -527,26 +527,16 @@ public class Plugin {
      * @param grantResults
      */
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        JSObject permissionResponse = new JSObject();
-
-        for (String perm : permissions) {
-            String key = perm;
-            CapacitorPlugin annotation = handle.getPluginAnnotation();
-            if (annotation != null) {
-                // if using new annotation alias, get the alias
-                for (Permission annotatedPerm : annotation.permissions()) {
-                    if (annotatedPerm.permission().equals(perm)) {
-                        key = annotatedPerm.alias().isEmpty() ? key : annotatedPerm.alias();
-                        break;
-                    }
-                }
+        if (!hasDefinedPermissions(permissions)) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
+            String[] missing = getUndefinedPermissions(permissions);
+            for (String perm : missing) {
+                builder.append(perm + "\n");
             }
-
-            permissionResponse.put(key, hasDefinedPermission(perm));
+            savedLastCall.reject(builder.toString());
+            savedLastCall = null;
         }
-
-        savedLastCall.resolve(permissionResponse);
-        savedLastCall = null;
     }
 
     /**
