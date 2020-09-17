@@ -352,6 +352,7 @@ public class Bridge {
         settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setSupportMultipleWindows(true);
         if (this.config.getBoolean("android.allowMixedContent", false)) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
@@ -462,19 +463,31 @@ public class Bridge {
      */
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
-            NativePlugin pluginAnnotation = handle.getPluginAnnotation();
+            int[] requestCodes;
+            int permissionRequestCode;
+
+            CapacitorPlugin pluginAnnotation = handle.getPluginAnnotation();
             if (pluginAnnotation == null) {
-                continue;
+                // Check for legacy plugin annotation, @NativePlugin
+                NativePlugin legacyPluginAnnotation = handle.getLegacyPluginAnnotation();
+                if (legacyPluginAnnotation == null) {
+                    continue;
+                }
+
+                requestCodes = legacyPluginAnnotation.requestCodes();
+                permissionRequestCode = legacyPluginAnnotation.permissionRequestCode();
+            } else {
+                requestCodes = pluginAnnotation.requestCodes();
+                permissionRequestCode = pluginAnnotation.permissionRequestCode();
             }
 
-            int[] requestCodes = pluginAnnotation.requestCodes();
             for (int rc : requestCodes) {
                 if (rc == requestCode) {
                     return handle;
                 }
             }
 
-            if (pluginAnnotation.permissionRequestCode() == requestCode) {
+            if (permissionRequestCode == requestCode) {
                 return handle;
             }
         }

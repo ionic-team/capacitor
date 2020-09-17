@@ -233,11 +233,31 @@ public class Plugin {
     }
 
     /**
+     * Check whether any of the given permissions has been defined in the AndroidManifest.xml
+     * @param permissions
+     * @return
+     */
+    public boolean hasDefinedPermissions(Permission[] permissions) {
+        for (Permission permission : permissions) {
+            if (!hasDefinedPermission(permission.permission())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Check whether any of annotation permissions has been defined in the AndroidManifest.xml
      * @return
      */
     public boolean hasDefinedRequiredPermissions() {
-        NativePlugin annotation = handle.getPluginAnnotation();
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            // Check for legacy plugin annotation, @NativePlugin
+            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
+            return hasDefinedPermissions(legacyAnnotation.permissions());
+        }
+
         return hasDefinedPermissions(annotation.permissions());
     }
 
@@ -258,13 +278,42 @@ public class Plugin {
      * @return
      */
     public boolean hasRequiredPermissions() {
-        NativePlugin annotation = handle.getPluginAnnotation();
-        for (String perm : annotation.permissions()) {
-            if (!hasPermission(perm)) {
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            // Check for legacy plugin annotation, @NativePlugin
+            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
+            for (String perm : legacyAnnotation.permissions()) {
+                if (!hasPermission(perm)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        for (Permission perm : annotation.permissions()) {
+            if (!hasPermission(perm.permission())) {
                 return false;
             }
         }
+
         return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @PluginMethod
+    public Map<String, Boolean> checkPermissions() {
+        Map<String, Boolean> permissions = new HashMap<>();
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        for (Permission perm : annotation.permissions()) {
+            String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
+            permissions.put(key, hasPermission(perm.permission()));
+        }
+
+        return permissions;
     }
 
     /**
@@ -277,11 +326,25 @@ public class Plugin {
     }
 
     /**
+     * @deprecated As of release 3.0, replaced by {@link #requestPermissions()}
+     *
      * Request all of the specified permissions in the NativePlugin annotation (if any)
      */
+    @Deprecated
     public void pluginRequestAllPermissions() {
-        NativePlugin annotation = handle.getPluginAnnotation();
-        ActivityCompat.requestPermissions(getActivity(), annotation.permissions(), annotation.permissionRequestCode());
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
+            ActivityCompat.requestPermissions(getActivity(), legacyAnnotation.permissions(), legacyAnnotation.permissionRequestCode());
+            return;
+        }
+
+        String[] perms = new String[annotation.permissions().length];
+        for (int i = 0; i < perms.length; i++) {
+            perms[i] = annotation.permissions()[i].permission();
+        }
+
+        ActivityCompat.requestPermissions(getActivity(), perms, annotation.permissionRequestCode());
     }
 
     /**
@@ -427,20 +490,31 @@ public class Plugin {
      * Exported plugin call to request all permissions for this plugin
      * @param call
      */
-    @SuppressWarnings("unused")
     @PluginMethod
     public void requestPermissions(PluginCall call) {
-        // Should be overridden, does nothing by default
-        NativePlugin annotation = this.handle.getPluginAnnotation();
-        String[] perms = annotation.permissions();
+        String[] perms;
+        int permissionRequestCode;
+
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
+            perms = legacyAnnotation.permissions();
+            permissionRequestCode = legacyAnnotation.permissionRequestCode();
+        } else {
+            perms = new String[annotation.permissions().length];
+            for (int i = 0; i < perms.length; i++) {
+                perms[i] = annotation.permissions()[i].permission();
+            }
+            permissionRequestCode = annotation.permissionRequestCode();
+        }
 
         if (perms.length > 0) {
             // Save the call so we can return data back once the permission request has completed
             saveCall(call);
 
-            pluginRequestPermissions(perms, annotation.permissionRequestCode());
+            pluginRequestPermissions(perms, permissionRequestCode);
         } else {
-            call.success();
+            call.resolve();
         }
     }
 
@@ -453,16 +527,26 @@ public class Plugin {
      * @param grantResults
      */
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (!hasDefinedPermissions(permissions)) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-            String[] missing = getUndefinedPermissions(permissions);
-            for (String perm : missing) {
-                builder.append(perm + "\n");
+        JSObject permissionResponse = new JSObject();
+
+        for (String perm : permissions) {
+            String key = perm;
+            CapacitorPlugin annotation = handle.getPluginAnnotation();
+            if (annotation != null) {
+                // if using new annotation alias, get the alias
+                for (Permission annotatedPerm : annotation.permissions()) {
+                    if (annotatedPerm.permission().equals(perm)) {
+                        key = annotatedPerm.alias().isEmpty() ? key : annotatedPerm.alias();
+                        break;
+                    }
+                }
             }
-            savedLastCall.reject(builder.toString());
-            savedLastCall = null;
+
+            permissionResponse.put(key, hasDefinedPermission(perm));
         }
+
+        savedLastCall.resolve(permissionResponse);
+        savedLastCall = null;
     }
 
     /**

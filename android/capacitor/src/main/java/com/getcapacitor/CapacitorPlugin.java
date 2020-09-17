@@ -7,8 +7,7 @@ import java.lang.annotation.RetentionPolicy;
  * Base annotation for all Plugins
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface NativePlugin {
+public @interface CapacitorPlugin {
     /**
      * Request codes this plugin uses and responds to, in order to tie
      * Android events back the plugin to handle
@@ -19,7 +18,7 @@ public @interface NativePlugin {
      * Permissions this plugin needs, in order to make permission requests
      * easy if the plugin only needs basic permission prompting
      */
-    String[] permissions() default {};
+    Permission[] permissions() default {};
 
     /**
      * The request code to use when automatically requesting permissions
