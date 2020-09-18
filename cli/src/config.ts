@@ -112,7 +112,7 @@ async function loadIOSConfig(
   return {
     name,
     minVersion: '11.0',
-    cordovaSwiftVersion: '5.0',
+    cordovaSwiftVersion: '5.1',
     platformDir,
     webDir,
     webDirAbs: resolve(platformDir, nativeProjectName, webDir),
