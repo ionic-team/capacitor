@@ -306,7 +306,7 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        JSObject permissionsResult = getPermissionsResults();
+        JSObject permissionsResult = getPermissionStates();
         pluginCall.resolve(permissionsResult);
     }
 
@@ -315,7 +315,7 @@ public class Plugin {
      *
      * @return
      */
-    public JSObject getPermissionsResults() {
+    public JSObject getPermissionStates() {
         JSObject permissionsResults = new JSObject();
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
