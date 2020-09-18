@@ -28,10 +28,13 @@ export async function loadConfig(): Promise<Config> {
   return {
     windows: {
       androidStudioPath:
+        extConfig.windowsAndroidStudioPath ??
         'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
     },
     linux: {
-      androidStudioPath: '/usr/local/android-studio/bin/studio.sh',
+      androidStudioPath:
+        extConfig.linuxAndroidStudioPath ??
+        '/usr/local/android-studio/bin/studio.sh',
     },
     android: await loadAndroidConfig(appRootDir, cli.assetsDir),
     ios: await loadIOSConfig(appRootDir, cli.assetsDir),

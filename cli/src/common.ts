@@ -210,15 +210,20 @@ export async function mergeConfig(
   config: Config,
   extConfig: ExternalConfig,
 ): Promise<void> {
+  const oldConfig = { ...config.app.extConfig };
+
+  if (!oldConfig.plugins) {
+    oldConfig.plugins = {
+      SplashScreen: {
+        launchShowDuration: 0,
+      },
+    };
+  }
+
   await writeJSON(
     config.app.extConfigFilePath,
     {
-      plugins: {
-        SplashScreen: {
-          launchShowDuration: 0,
-        },
-      },
-      ...config.app.extConfig,
+      ...oldConfig,
       ...extConfig,
     },
     { spaces: 2 },

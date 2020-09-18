@@ -13,6 +13,8 @@ export interface PackageJson {
 }
 
 export interface ExternalConfig {
+  readonly windowsAndroidStudioPath?: string;
+  readonly linuxAndroidStudioPath?: string;
   readonly appId?: string;
   readonly appName?: string;
   readonly webDir?: string;
@@ -25,6 +27,7 @@ export interface ExternalConfig {
   readonly cordova?: {
     readonly preferences?: { readonly [key: string]: string | undefined };
   };
+  readonly plugins?: { readonly [key: string]: any };
   readonly server?: {
     readonly cleartext?: boolean;
   };
