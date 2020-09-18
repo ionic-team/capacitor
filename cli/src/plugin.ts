@@ -13,7 +13,6 @@ export const enum PluginType {
 export interface PluginManifest {
   ios: {
     src: string;
-    doctor?: any[];
   };
   android: {
     src: string;
