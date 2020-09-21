@@ -1,20 +1,18 @@
 import { wordWrap } from '@ionic/cli-framework-output';
+import { copy, move, writeJSON, readFile, pathExists } from '@ionic/utils-fs';
+import { which } from '@ionic/utils-subprocess';
 import { exec, spawn } from 'child_process';
-import { readFile } from 'fs';
-import { writeJSON } from 'fs-extra';
 import { dirname, join } from 'path';
 import type { Answers, PromptObject } from 'prompts';
 import prompts from 'prompts';
 import semver from 'semver';
 import { setTimeout } from 'timers';
-import which from 'which';
 import xml2js from 'xml2js';
 
 import c from './colors';
 import type { Config, PackageJson, ExternalConfig } from './definitions';
 import { output, logger } from './log';
 import { emoji as _e } from './util/emoji';
-import { copyAsync, existsAsync, readFileAsync, renameAsync } from './util/fs';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -31,7 +29,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   if (invalidFolders.includes(config.app.webDir)) {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
-  if (!(await existsAsync(config.app.webDirAbs))) {
+  if (!(await pathExists(config.app.webDirAbs))) {
     return (
       `Could not find the web assets directory: ${config.app.webDirAbs}.\n` +
       `Please create it and make sure it has an ${c.strong(
@@ -49,7 +47,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     );
   }
 
-  if (!(await existsAsync(join(config.app.webDirAbs, 'index.html')))) {
+  if (!(await pathExists(join(config.app.webDirAbs, 'index.html')))) {
     return (
       `The web assets directory (${
         config.app.webDirAbs
@@ -61,7 +59,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 }
 
 export async function checkPackage(_config: Config): Promise<string | null> {
-  if (!(await existsAsync('package.json'))) {
+  if (!(await pathExists('package.json'))) {
     return (
       `The Capacitor CLI needs to run at the root of an npm package.\n` +
       `Make sure you have a package.json file in the directory where you run the Capacitor CLI.\n` +
@@ -152,26 +150,21 @@ export async function checkAppName(
 }
 
 export async function readJSON(path: string): Promise<any> {
-  const data = await readFileAsync(path, 'utf8');
+  const data = await readFile(path, { encoding: 'utf-8' });
   return JSON.parse(data);
 }
 
-export function readXML(path: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    readFile(path, 'utf8', async (err, xmlStr) => {
-      if (err) {
-        reject(`Unable to read: ${path}`);
-      } else {
-        xml2js.parseString(xmlStr, (err, result) => {
-          if (err) {
-            reject(`Error parsing: ${path}, ${err}`);
-          } else {
-            resolve(result);
-          }
-        });
-      }
-    });
-  });
+export async function readXML(path: string): Promise<any> {
+  try {
+    const xmlStr = await readFile(path, { encoding: 'utf-8' });
+    try {
+      return await xml2js.parseStringPromise(xmlStr);
+    } catch (e) {
+      throw `Error parsing: ${path}, ${e.stack ?? e}`;
+    }
+  } catch (e) {
+    throw `Unable to read: ${path}`;
+  }
 }
 
 export function parseXML(xmlStr: string): any {
@@ -248,15 +241,13 @@ export function logFatal(msg: string): never {
 }
 
 export async function isInstalled(command: string): Promise<boolean> {
-  return new Promise<boolean>(resolve => {
-    which(command, err => {
-      if (err) {
-        resolve(false);
-      } else {
-        resolve(true);
-      }
-    });
-  });
+  try {
+    await which(command);
+  } catch (e) {
+    return false;
+  }
+
+  return true;
 }
 
 export async function wait(time: number): Promise<void> {
@@ -333,7 +324,7 @@ export async function runTask<T>(
 }
 
 export async function copyTemplate(src: string, dst: string): Promise<void> {
-  await copyAsync(src, dst);
+  await copy(src, dst);
   await renameGitignore(dst);
 }
 
@@ -341,8 +332,8 @@ export async function renameGitignore(dst: string): Promise<void> {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
-  if (await existsAsync(gitignorePath)) {
-    await renameAsync(gitignorePath, join(dst, '.gitignore'));
+  if (await pathExists(gitignorePath)) {
+    await move(gitignorePath, join(dst, '.gitignore'));
   }
 }
 
@@ -400,7 +391,7 @@ export async function getPlatformDirectory(
   const platformDir = platform === 'web' ? config.app.webDir : platform;
   const platformPath = join(config.app.rootDir, platformDir);
 
-  if (await existsAsync(platformPath)) {
+  if (await pathExists(platformPath)) {
     return platformPath;
   }
 

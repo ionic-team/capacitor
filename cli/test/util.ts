@@ -1,5 +1,11 @@
+import {
+  mkdir,
+  mkdirp,
+  readFile,
+  pathExists,
+  writeFile,
+} from '@ionic/utils-fs';
 import { exec } from 'child_process';
-import { mkdirs } from 'fs-extra';
 import { join, resolve } from 'path';
 import type { DirCallback } from 'tmp';
 import tmp from 'tmp';
@@ -7,12 +13,6 @@ import tmp from 'tmp';
 import { runCommand } from '../src/common';
 import { loadConfig } from '../src/config';
 import type { Config } from '../src/definitions';
-import {
-  existsAsync,
-  mkdirAsync,
-  readFileAsync,
-  writeFileAsync,
-} from '../src/util/fs';
 
 const cwd = process.cwd();
 
@@ -100,16 +100,16 @@ export async function makeAppDir(monoRepoLike = false): Promise<void> {
     ? join(tmpDir, 'test-root')
     : join(tmpDir, 'test-app');
   if (monoRepoLike) {
-    await mkdirAsync(rootDir);
+    await mkdir(rootDir);
   }
   const appDir = monoRepoLike ? join(rootDir, 'test-app') : rootDir;
-  await mkdirAsync(appDir);
+  await mkdir(appDir);
   // Make the web dir
-  await mkdirAsync(join(appDir, 'www'));
+  await mkdir(join(appDir, 'www'));
   // Make a fake index.html
-  await writeFileAsync(join(appDir, 'www', 'index.html'), APP_INDEX);
+  await writeFile(join(appDir, 'www', 'index.html'), APP_INDEX);
   // Make a fake package.json
-  await writeFileAsync(join(appDir, 'package.json'), APP_PACKAGE_JSON);
+  await writeFile(join(appDir, 'package.json'), APP_PACKAGE_JSON);
 
   // We use 'npm install' to install @capacitor/core and @capacitor/cli
   // Otherwise later use of 'npm install --save @capacitor/android|ios' will wipe 'node_modules/@capacitor/'
@@ -220,29 +220,26 @@ end`;
 async function makeCordovaPlugin(cordovaPluginPath: string) {
   const iosPath = join(cordovaPluginPath, 'src', 'ios');
   const androidPath = join(cordovaPluginPath, 'android/com/getcapacitor');
-  await mkdirs(cordovaPluginPath);
-  await writeFileAsync(join(cordovaPluginPath, 'plugin.js'), CODOVA_PLUGIN_JS);
-  await writeFileAsync(
-    join(cordovaPluginPath, 'plugin.xml'),
-    CORDOVA_PLUGIN_XML,
-  );
-  await writeFileAsync(
+  await mkdirp(cordovaPluginPath);
+  await writeFile(join(cordovaPluginPath, 'plugin.js'), CODOVA_PLUGIN_JS);
+  await writeFile(join(cordovaPluginPath, 'plugin.xml'), CORDOVA_PLUGIN_XML);
+  await writeFile(
     join(cordovaPluginPath, 'package.json'),
     CORDOVA_PLUGIN_PACKAGE,
   );
-  await mkdirs(iosPath);
-  await mkdirs(androidPath);
-  await writeFileAsync(join(iosPath, 'CoolPlugin.m'), '');
-  await writeFileAsync(join(androidPath, 'CoolPlugin.java'), '');
+  await mkdirp(iosPath);
+  await mkdirp(androidPath);
+  await writeFile(join(iosPath, 'CoolPlugin.m'), '');
+  await writeFile(join(androidPath, 'CoolPlugin.java'), '');
 }
 
 class MappedFS {
   constructor(private rootDir: string) {}
   async read(path: string): Promise<string> {
-    return readFileAsync(resolve(this.rootDir, path), 'utf8');
+    return await readFile(resolve(this.rootDir, path), { encoding: 'utf-8' });
   }
   async exists(path: string): Promise<boolean> {
-    return existsAsync(resolve(this.rootDir, path));
+    return await pathExists(resolve(this.rootDir, path));
   }
 }
 

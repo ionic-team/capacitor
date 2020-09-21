@@ -1,4 +1,4 @@
-import { copy as fsCopy, remove } from 'fs-extra';
+import { copy as fsCopy, pathExists, remove } from '@ionic/utils-fs';
 import { basename, join, relative, resolve } from 'path';
 
 import c from '../colors';
@@ -19,7 +19,6 @@ import {
 } from '../cordova';
 import type { Config } from '../definitions';
 import { logger } from '../log';
-import { existsAsync } from '../util/fs';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 
@@ -119,7 +118,7 @@ async function copyNativeBridge(rootDir: string, nativeAbsDir: string) {
 async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
   const configPath = resolve(config.app.extConfigFilePath);
-  if (!(await existsAsync(configPath))) {
+  if (!(await pathExists(configPath))) {
     return;
   }
 
