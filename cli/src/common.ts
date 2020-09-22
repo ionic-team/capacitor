@@ -1,6 +1,5 @@
 import { wordWrap } from '@ionic/cli-framework-output';
 import { copy, move, writeJSON, readFile, pathExists } from '@ionic/utils-fs';
-import type { SubprocessOptions } from '@ionic/utils-subprocess';
 import { Subprocess, SubprocessError, which } from '@ionic/utils-subprocess';
 import { spawn } from 'child_process';
 import { dirname, join } from 'path';
@@ -12,7 +11,7 @@ import xml2js from 'xml2js';
 
 import c from './colors';
 import type { Config, PackageJson, ExternalConfig } from './definitions';
-import { output, logger } from './log';
+import { output, logger, nonInteractiveOutput } from './log';
 import { emoji as _e } from './util/emoji';
 
 export type CheckFunction = () => Promise<string | null>;
@@ -285,10 +284,14 @@ export async function runPlatformHook(
   });
 }
 
+export interface RunCommandOptions {
+  cwd?: string;
+}
+
 export async function runCommand(
   command: string,
   args: readonly string[],
-  options: SubprocessOptions = {},
+  options: RunCommandOptions = {},
 ): Promise<string> {
   const p = new Subprocess(command, args, options);
 
@@ -297,7 +300,7 @@ export async function runCommand(
   } catch (e) {
     if (e instanceof SubprocessError) {
       // old behavior of just throwing the stdout/stderr strings
-      throw e.output;
+      throw e.output ? e.output : e.code;
     }
 
     throw e;
@@ -315,11 +318,16 @@ export async function getCommandOutput(
   }
 }
 
+export interface RunTaskOptions {
+  spinner?: boolean;
+}
+
 export async function runTask<T>(
   title: string,
   fn: () => Promise<T>,
+  { spinner = true }: RunTaskOptions = {},
 ): Promise<T> {
-  const chain = output.createTaskChain();
+  const chain = (spinner ? output : nonInteractiveOutput).createTaskChain();
   chain.next(title);
 
   try {

@@ -12,6 +12,8 @@ import type { Config } from '../definitions';
 import { runIOS } from '../ios/run';
 import { logger } from '../log';
 
+import { copy } from './copy';
+
 export async function runCommand(
   config: Config,
   selectedPlatformName: string,
@@ -42,6 +44,7 @@ export async function runCommand(
     }
 
     try {
+      await copy(config, platformName);
       await run(config, platformName);
     } catch (e) {
       logFatal(e.stack ?? e);
