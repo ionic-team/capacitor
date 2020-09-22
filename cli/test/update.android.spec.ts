@@ -28,7 +28,7 @@ describe.each([false, true])(
       await installPlatform(appDir, 'android');
       await run(appDir, `add android`);
       // Redundant, because add does this, but called explicitly for thoroughness
-      await updateCommand(makeConfig(appDir), 'android', false);
+      await updateCommand(await makeConfig(appDir), 'android', false);
       FS = new MappedFS(appDir);
     });
 

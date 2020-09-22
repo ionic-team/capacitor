@@ -1,8 +1,7 @@
 import { realpathSync } from 'fs';
-import { join, relative, resolve } from 'path';
+import { dirname, join, relative, resolve } from 'path';
 
 import c from '../colors';
-import type { CheckFunction } from '../common';
 import {
   checkPlatformVersions,
   logFatal,
@@ -10,12 +9,12 @@ import {
   runCommand,
   runTask,
 } from '../common';
-import type { Config } from '../config';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   logCordovaManualSteps,
 } from '../cordova';
+import type { Config } from '../definitions';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -36,12 +35,8 @@ import {
   writeFileSync,
 } from '../util/fs';
 
-import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
+import { getIOSPlugins } from './common';
 
-export const updateIOSChecks: CheckFunction[] = [
-  checkCocoaPods,
-  checkIOSProject,
-];
 const platform = 'ios';
 
 export async function updateIOS(
@@ -89,7 +84,7 @@ export async function installCocoaPodsPlugins(
   );
 }
 
-export async function updatePodfile(
+async function updatePodfile(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
@@ -120,8 +115,12 @@ export async function updatePodfile(
   );
 }
 
-export function generatePodFile(config: Config, plugins: Plugin[]): string {
-  const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
+function generatePodFile(config: Config, plugins: Plugin[]): string {
+  const capacitoriOSPath = resolveNode(
+    config.app.rootDir,
+    '@capacitor/ios',
+    'package.json',
+  );
   if (!capacitoriOSPath) {
     logFatal(
       `Unable to find node_modules/@capacitor/ios.\n` +
@@ -131,7 +130,7 @@ export function generatePodFile(config: Config, plugins: Plugin[]): string {
 
   const podfilePath = join(config.app.rootDir, 'ios', 'App');
   const relativeCapacitoriOSPath = convertToUnixPath(
-    relative(podfilePath, realpathSync(capacitoriOSPath)),
+    relative(podfilePath, realpathSync(dirname(capacitoriOSPath))),
   );
 
   const capacitorPlugins = plugins.filter(
