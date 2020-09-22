@@ -58,15 +58,11 @@ export function updateChecks(config: Config, platforms: string[]): CheckFunction
 }
 
 export async function update(config: Config, platformName: string, deployment: boolean) {
-  try {
-    await runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
-      if (platformName === config.ios.name) {
-        await updateIOS(config, deployment);
-      } else if (platformName === config.android.name) {
-        await updateAndroid(config);
-      }
-    });
-  } catch (e) {
-    logError('Error running update:', e);
-  }
+  await runTask(chalk`{green {bold update}} {bold ${platformName}}`, async () => {
+    if (platformName === config.ios.name) {
+      await updateIOS(config, deployment);
+    } else if (platformName === config.android.name) {
+      await updateAndroid(config);
+    }
+  });
 }
