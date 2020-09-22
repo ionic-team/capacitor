@@ -143,6 +143,8 @@ public class Bridge {
         this.config = new CapConfig(getActivity().getAssets(), config);
         Logger.init(this.config);
 
+        Splash.showOnLaunch((BridgeActivity) context, getConfig());
+
         // Initialize web view and message handler for it
         this.initWebView();
         this.msgHandler = new MessageHandler(this, webView, pluginManager);
