@@ -29,10 +29,13 @@ export async function loadConfig(): Promise<Config> {
   return {
     windows: {
       androidStudioPath:
+        extConfig.windowsAndroidStudioPath ??
         'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
     },
     linux: {
-      androidStudioPath: '/usr/local/android-studio/bin/studio.sh',
+      androidStudioPath:
+        extConfig.linuxAndroidStudioPath ??
+        '/usr/local/android-studio/bin/studio.sh',
     },
     android: await loadAndroidConfig(appRootDir, extConfig, cli.assetsDir),
     ios: await loadIOSConfig(appRootDir, extConfig, cli.assetsDir),
@@ -116,7 +119,7 @@ async function loadIOSConfig(
   return {
     name,
     minVersion: '11.0',
-    cordovaSwiftVersion: '5.0',
+    cordovaSwiftVersion: '5.1',
     platformDir,
     platformDirAbs,
     webDir,

@@ -10,8 +10,8 @@ enum JSProcessingError: LocalizedError {
     }
 }
 
-typealias JSObject = [String: Any]
-typealias JSArray = [JSObject]
+public typealias JSObject = [String: Any]
+public typealias JSArray = [JSObject]
 
 public class JSDate {
     static func toString(_ date: Date) -> String {
