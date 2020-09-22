@@ -1,6 +1,5 @@
+import { mkdir } from '@ionic/utils-fs';
 import { join } from 'path';
-
-import { mkdirAsync } from '../src/util/fs';
 
 import { APP_ID, APP_NAME, run, mktmp, MappedFS } from './util';
 
@@ -16,7 +15,7 @@ describe('Init', () => {
     appDirObj = await mktmp();
     tmpDir = appDirObj.path;
     appDir = join(tmpDir, 'test-app');
-    await mkdirAsync(appDir);
+    await mkdir(appDir);
     FS = new MappedFS(appDir);
   });
 
