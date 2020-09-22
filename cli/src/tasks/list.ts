@@ -1,6 +1,7 @@
 import { getAndroidPlugins } from '../android/common';
 import c from '../colors';
-import type { Config } from '../config';
+import { selectPlatforms } from '../common';
+import type { Config } from '../definitions';
 import { getIOSPlugins } from '../ios/common';
 import { logger } from '../log';
 import type { Plugin } from '../plugin';
@@ -11,7 +12,7 @@ export async function listCommand(
   config: Config,
   selectedPlatformName: string,
 ): Promise<void> {
-  const platforms = config.selectPlatforms(selectedPlatformName);
+  const platforms = await selectPlatforms(config, selectedPlatformName);
   if (platforms.length === 0) {
     logger.info(
       `There are no platforms to list yet.\n` +

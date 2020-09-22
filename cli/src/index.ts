@@ -2,7 +2,7 @@ import program from 'commander';
 
 import c from './colors';
 import { logFatal } from './common';
-import { Config } from './config';
+import { loadConfig } from './config';
 import { output } from './log';
 import { addCommand } from './tasks/add';
 import { copyCommand } from './tasks/copy';
@@ -21,8 +21,8 @@ process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
 });
 
-export function run(process: NodeJS.Process, cliBinDir: string): void {
-  const config = new Config(process.platform, process.cwd(), cliBinDir);
+export async function run(): Promise<void> {
+  const config = await loadConfig();
 
   program.version(config.cli.package.version);
 

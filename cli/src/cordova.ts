@@ -15,7 +15,7 @@ import {
   resolveNode,
   writeXML,
 } from './common';
-import type { Config } from './config';
+import type { Config } from './definitions';
 import { getIOSPlugins } from './ios/common';
 import { logger } from './log';
 import type { Plugin } from './plugin';
@@ -180,7 +180,11 @@ export async function copyCordovaJS(
   config: Config,
   platform: string,
 ): Promise<void> {
-  const cordovaPath = resolveNode(config, '@capacitor/core', 'cordova.js');
+  const cordovaPath = resolveNode(
+    config.app.rootDir,
+    '@capacitor/core',
+    'cordova.js',
+  );
   if (!cordovaPath) {
     logFatal(
       `Unable to find node_modules/@capacitor/core/cordova.js.\n` +
@@ -257,10 +261,10 @@ export async function autoGenerateConfig(
   let pluginPreferencesString: string[] = [];
   if (config.app.extConfig?.cordova?.preferences) {
     pluginPreferencesString = await Promise.all(
-      Object.keys(config.app.extConfig.cordova.preferences).map(
-        async (key): Promise<string> => {
+      Object.entries(config.app.extConfig.cordova.preferences).map(
+        async ([key, value]): Promise<string> => {
           return `
-  <preference name="${key}" value="${config.app.extConfig.cordova.preferences[key]}" />`;
+  <preference name="${key}" value="${value}" />`;
         },
       ),
     );

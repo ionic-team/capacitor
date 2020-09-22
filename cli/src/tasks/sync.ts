@@ -1,6 +1,13 @@
 import c from '../colors';
-import { check, checkPackage, checkWebDir, logFatal } from '../common';
-import type { Config } from '../config';
+import {
+  check,
+  checkPackage,
+  checkWebDir,
+  logFatal,
+  selectPlatforms,
+  isValidPlatform,
+} from '../common';
+import type { Config } from '../definitions';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
@@ -15,7 +22,7 @@ export async function syncCommand(
   selectedPlatformName: string,
   deployment: boolean,
 ): Promise<void> {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     try {
       await copyCommand(config, selectedPlatformName);
     } catch (e) {
@@ -24,7 +31,7 @@ export async function syncCommand(
     await updateCommand(config, selectedPlatformName, deployment);
   } else {
     const then = +new Date();
-    const platforms = config.selectPlatforms(selectedPlatformName);
+    const platforms = await selectPlatforms(config, selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to sync yet.\n` +
@@ -33,9 +40,9 @@ export async function syncCommand(
       return;
     }
     try {
-      await check(config, [
-        checkPackage,
-        checkWebDir,
+      await check([
+        () => checkPackage(config),
+        () => checkWebDir(config),
         ...updateChecks(config, platforms),
       ]);
       await allSerial(

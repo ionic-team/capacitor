@@ -2,8 +2,8 @@ import { mkdirs } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import { checkCapacitorPlatform } from '../common';
-import type { Config } from '../config';
 import { getIncompatibleCordovaPlugins } from '../cordova';
+import type { Config } from '../definitions';
 import type { Plugin } from '../plugin';
 import { PluginType, getPluginPlatform } from '../plugin';
 import {

@@ -1,5 +1,8 @@
-import { addAndroid, addAndroidChecks } from '../android/add';
-import { editProjectSettingsAndroid } from '../android/common';
+import { addAndroid } from '../android/add';
+import {
+  editProjectSettingsAndroid,
+  checkAndroidPackage,
+} from '../android/common';
 import c from '../colors';
 import type { CheckFunction } from '../common';
 import {
@@ -11,11 +14,19 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
+  isValidPlatform,
+  isValidCommunityPlatform,
+  promptForPlatform,
+  getPlatformDirectory,
 } from '../common';
-import type { Config } from '../config';
+import type { Config } from '../definitions';
 import { OS } from '../definitions';
-import { addIOS, addIOSChecks } from '../ios/add';
-import { editProjectSettingsIOS } from '../ios/common';
+import { addIOS } from '../ios/add';
+import {
+  editProjectSettingsIOS,
+  checkIOSPackage,
+  checkCocoaPods,
+} from '../ios/common';
 import { logger } from '../log';
 
 import { sync } from './sync';
@@ -24,14 +35,14 @@ export async function addCommand(
   config: Config,
   selectedPlatformName: string,
 ): Promise<void> {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:add');
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
-      if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
+      if (await isValidCommunityPlatform(selectedPlatformName)) {
         msg += `\nTry installing ${c.strong(
           `@capacitor-community/${selectedPlatformName}`,
         )} and adding the platform again.`;
@@ -40,7 +51,7 @@ export async function addCommand(
       logger.error(msg);
     }
   } else {
-    const platformName = await config.askPlatform(
+    const platformName = await promptForPlatform(
       selectedPlatformName,
       `Please choose a platform to add:`,
     );
@@ -50,7 +61,11 @@ export async function addCommand(
       return;
     }
 
-    const existingPlatformDir = config.platformDirExists(platformName);
+    const existingPlatformDir = await getPlatformDirectory(
+      config,
+      platformName,
+    );
+
     if (existingPlatformDir) {
       logFatal(
         `${c.input(platformName)} platform already exists.\n` +
@@ -62,12 +77,12 @@ export async function addCommand(
     }
 
     try {
-      await check(config, [
-        checkPackage,
-        checkAppConfig,
+      await check([
+        () => checkPackage(config),
+        () => checkAppConfig(config),
         ...addChecks(config, platformName),
       ]);
-      await check(config, [checkWebDir]);
+      await check([() => checkWebDir(config)]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
@@ -96,9 +111,9 @@ export function addChecks(
   platformName: string,
 ): CheckFunction[] {
   if (platformName === config.ios.name) {
-    return addIOSChecks;
+    return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
   } else if (platformName === config.android.name) {
-    return addAndroidChecks;
+    return [() => checkAndroidPackage(config)];
   } else if (platformName === config.web.name) {
     return [];
   } else {
