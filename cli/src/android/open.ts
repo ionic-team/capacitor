@@ -1,7 +1,7 @@
 import open from 'open';
 
 import { runCommand } from '../common';
-import type { Config } from '../config';
+import type { Config } from '../definitions';
 import { OS } from '../definitions';
 import { logger } from '../log';
 import { existsSync } from '../util/fs';

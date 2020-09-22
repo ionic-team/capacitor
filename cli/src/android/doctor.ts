@@ -3,12 +3,16 @@ import { join } from 'path';
 
 import c from '../colors';
 import { check, logFatal, logSuccess, readXML } from '../common';
-import type { Config } from '../config';
+import type { Config } from '../definitions';
 import { existsAsync, readFileAsync } from '../util/fs';
 
 export async function doctorAndroid(config: Config): Promise<void> {
   try {
-    await check(config, [checkAndroidInstalled, checkGradlew, checkAppSrcDirs]);
+    await check([
+      checkAndroidInstalled,
+      () => checkGradlew(config),
+      () => checkAppSrcDirs(config),
+    ]);
     logSuccess('Android looking great! 👌');
   } catch (e) {
     logFatal(e.stack ?? e);

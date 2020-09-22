@@ -1,4 +1,4 @@
-import { join, relative, resolve } from 'path';
+import { dirname, join, relative, resolve } from 'path';
 
 import c from '../colors';
 import {
@@ -7,12 +7,12 @@ import {
   resolveNode,
   runTask,
 } from '../common';
-import type { Config } from '../config';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import type { Config } from '../definitions';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -75,17 +75,22 @@ export async function installGradlePlugins(
   capacitorPlugins: Plugin[],
   cordovaPlugins: Plugin[],
 ): Promise<void> {
-  const capacitorAndroidPath = resolveNode(
-    config,
+  const capacitorAndroidPackagePath = resolveNode(
+    config.app.rootDir,
     '@capacitor/android',
-    'capacitor',
+    'package.json',
   );
-  if (!capacitorAndroidPath) {
+  if (!capacitorAndroidPackagePath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/android/capacitor\n` +
+      `Unable to find node_modules/@capacitor/android\n` +
         `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );
   }
+
+  const capacitorAndroidPath = resolve(
+    dirname(capacitorAndroidPackagePath),
+    'capacitor',
+  );
 
   const settingsPath = join(config.app.rootDir, 'android');
   const dependencyPath = join(config.app.rootDir, 'android', 'app');

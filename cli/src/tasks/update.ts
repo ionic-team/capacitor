@@ -8,9 +8,12 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
+  selectPlatforms,
+  isValidPlatform,
 } from '../common';
-import type { Config } from '../config';
-import { updateIOS, updateIOSChecks } from '../ios/update';
+import type { Config } from '../definitions';
+import { checkCocoaPods, checkIOSProject } from '../ios/common';
+import { updateIOS } from '../ios/update';
 import { logger } from '../log';
 import { allSerial } from '../util/promise';
 
@@ -19,7 +22,7 @@ export async function updateCommand(
   selectedPlatformName: string,
   deployment: boolean,
 ): Promise<void> {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:update');
@@ -28,7 +31,7 @@ export async function updateCommand(
     }
   } else {
     const then = +new Date();
-    const platforms = config.selectPlatforms(selectedPlatformName);
+    const platforms = await selectPlatforms(config, selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to update yet.\n` +
@@ -37,7 +40,10 @@ export async function updateCommand(
       return;
     }
     try {
-      await check(config, [checkPackage, ...updateChecks(config, platforms)]);
+      await check([
+        () => checkPackage(config),
+        ...updateChecks(config, platforms),
+      ]);
 
       await allSerial(
         platforms.map(platformName => async () =>
@@ -60,7 +66,10 @@ export function updateChecks(
   const checks: CheckFunction[] = [];
   for (const platformName of platforms) {
     if (platformName === config.ios.name) {
-      checks.push(...updateIOSChecks);
+      checks.push(
+        () => checkCocoaPods(config),
+        () => checkIOSProject(config),
+      );
     } else if (platformName === config.android.name) {
       return [];
     } else if (platformName === config.web.name) {
