@@ -451,11 +451,10 @@ export async function isValidCommunityPlatform(
 }
 
 export async function promptForPlatform(
-  selectedPlatformName: string,
+  platforms: string[],
   promptMessage: string,
+  selectedPlatformName?: string,
 ): Promise<string> {
-  const knownPlatforms = await getKnownPlatforms();
-
   if (!selectedPlatformName) {
     const answers = await prompts(
       [
@@ -463,7 +462,7 @@ export async function promptForPlatform(
           type: 'select',
           name: 'mode',
           message: promptMessage,
-          choices: knownPlatforms.map(p => ({ title: p, value: p })),
+          choices: platforms.map(p => ({ title: p, value: p })),
         },
       ],
       { onCancel: () => process.exit(1) },
@@ -475,6 +474,8 @@ export async function promptForPlatform(
   const platformName = selectedPlatformName.toLowerCase().trim();
 
   if (!(await isValidPlatform(platformName))) {
+    const knownPlatforms = await getKnownPlatforms();
+
     logFatal(
       `Invalid platform: ${c.input(platformName)}.\n` +
         `Valid platforms include: ${knownPlatforms.join(', ')}`,
