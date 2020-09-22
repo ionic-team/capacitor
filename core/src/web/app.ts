@@ -1,6 +1,10 @@
-import { WebPlugin } from './index';
+import type {
+  AppPlugin,
+  AppLaunchUrl,
+  AppState,
+} from '../core-plugin-definitions';
 
-import { AppPlugin, AppLaunchUrl, AppState } from '../core-plugin-definitions';
+import { WebPlugin } from './index';
 
 export class AppPluginWeb extends WebPlugin implements AppPlugin {
   constructor() {

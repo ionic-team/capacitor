@@ -1,10 +1,10 @@
-import { Config } from '../config';
+import c from '../colors';
 import { logFatal } from '../common';
-import kleur from 'kleur';
+import type { Config } from '../definitions';
 
-export async function createCommand(config: Config) {
+export async function createCommand(config: Config): Promise<void> {
   logFatal(
     `The create command has been removed.\n` +
-      `Use ${kleur.bold('npm init @capacitor/app')}`,
+      `Use ${c.input('npm init @capacitor/app')}`,
   );
 }

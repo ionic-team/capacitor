@@ -1,8 +1,9 @@
-import { join } from 'path';
-import kleur from 'kleur';
+import { dirname, join } from 'path';
 
-import { Config } from './config';
-import { log, logFatal, readJSON, readXML, resolveNode } from './common';
+import c from './colors';
+import { logFatal, readJSON, readXML, resolveNode } from './common';
+import type { Config } from './definitions';
+import { logger } from './log';
 
 export const enum PluginType {
   Core,
@@ -12,7 +13,6 @@ export const enum PluginType {
 export interface PluginManifest {
   ios: {
     src: string;
-    doctor?: any[];
   };
   android: {
     src: string;
@@ -51,15 +51,15 @@ export async function resolvePlugin(
   name: string,
 ): Promise<Plugin | null> {
   try {
-    const rootPath = resolveNode(config, name);
-    if (!rootPath) {
+    const packagePath = resolveNode(config.app.rootDir, name, 'package.json');
+    if (!packagePath) {
       logFatal(
-        `Unable to find node_modules/${name}. Are you sure ${name} is installed?`,
+        `Unable to find node_modules/${name}.\n` +
+          `Are you sure ${c.strong(name)} is installed?`,
       );
-      return null;
     }
 
-    const packagePath = join(rootPath, 'package.json');
+    const rootPath = dirname(packagePath);
     const meta = await readJSON(packagePath);
     if (!meta) {
       return null;
@@ -69,7 +69,7 @@ export async function resolvePlugin(
         id: name,
         name: fixName(name),
         version: meta.version,
-        rootPath: rootPath,
+        rootPath,
         repository: meta.repository,
         manifest: meta.capacitor,
       };
@@ -84,17 +84,15 @@ export async function resolvePlugin(
       repository: meta.repository,
       xml: xmlMeta.plugin,
     };
-  } catch (e) {}
+  } catch (e) {
+    // ignore
+  }
   return null;
 }
 
 export function getDependencies(config: Config): string[] {
-  const dependencies = config.app.package.dependencies
-    ? config.app.package.dependencies
-    : [];
-  const devDependencies = config.app.package.devDependencies
-    ? config.app.package.devDependencies
-    : [];
+  const dependencies = config.app.package.dependencies ?? [];
+  const devDependencies = config.app.package.devDependencies ?? [];
   return Object.keys(dependencies).concat(Object.keys(devDependencies));
 }
 
@@ -111,25 +109,41 @@ export function fixName(name: string): string {
 export function printPlugins(
   plugins: Plugin[],
   platform: string,
-  type: string = 'capacitor',
-) {
+  type: 'capacitor' | 'cordova' | 'incompatible' = 'capacitor',
+): void {
+  if (plugins.length === 0) {
+    return;
+  }
+
+  let msg: string;
   const plural = plugins.length === 1 ? '' : 's';
 
-  if (type === 'cordova') {
-    log(`  Found ${plugins.length} Cordova plugin${plural} for ${platform}`);
-  } else if (type === 'incompatible' && plugins.length > 0) {
-    log(
-      `  Found ${plugins.length} incompatible Cordova plugin${plural} for ${platform}, skipped install`,
-    );
-  } else if (type === 'capacitor') {
-    log(`  Found ${plugins.length} Capacitor plugin${plural} for ${platform}:`);
+  switch (type) {
+    case 'cordova':
+      msg = `Found ${plugins.length} Cordova plugin${plural} for ${c.strong(
+        platform,
+      )}:\n`;
+      break;
+    case 'incompatible':
+      msg = `Found ${
+        plugins.length
+      } incompatible Cordova plugin${plural} for ${c.strong(
+        platform,
+      )}, skipped install:\n`;
+      break;
+    case 'capacitor':
+      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${c.strong(
+        platform,
+      )}:\n`;
+      break;
   }
-  for (let p of plugins) {
-    log(`    ${kleur.bold(`${p.id}`)} (${kleur.green(p.version)})`);
-  }
+
+  msg += plugins.map(p => `${p.id}${c.weak(`@${p.version}`)}`).join('\n');
+
+  logger.info(msg);
 }
 
-export function getPluginPlatform(p: Plugin, platform: string) {
+export function getPluginPlatform(p: Plugin, platform: string): any {
   const platforms = p.xml.platform;
   if (platforms) {
     const platforms = p.xml.platform.filter(function (item: any) {
@@ -144,7 +158,7 @@ export function getPlatformElement(
   p: Plugin,
   platform: string,
   elementName: string,
-) {
+): any {
   const platformTag = getPluginPlatform(p, platform);
   if (platformTag) {
     const element = platformTag[elementName];
@@ -168,18 +182,22 @@ export function getPluginType(p: Plugin, platform: string): PluginType {
 /**
  * Get each JavaScript Module for the given plugin
  */
-export function getJSModules(p: Plugin, platform: string) {
+export function getJSModules(p: Plugin, platform: string): any {
   return getAllElements(p, platform, 'js-module');
 }
 
 /**
  * Get each asset tag for the given plugin
  */
-export function getAssets(p: Plugin, platform: string) {
+export function getAssets(p: Plugin, platform: string): any {
   return getAllElements(p, platform, 'asset');
 }
 
-export function getFilePath(config: Config, plugin: Plugin, path: string) {
+export function getFilePath(
+  config: Config,
+  plugin: Plugin,
+  path: string,
+): string {
   if (path.startsWith('node_modules')) {
     let pathSegments = path.split('/').slice(1);
     if (pathSegments[0].startsWith('@')) {
@@ -189,7 +207,7 @@ export function getFilePath(config: Config, plugin: Plugin, path: string) {
       ];
     }
 
-    let filePath = resolveNode(config, ...pathSegments);
+    const filePath = resolveNode(config.app.rootDir, ...pathSegments);
     if (!filePath) {
       throw new Error(`Can't resolve module ${pathSegments[0]}`);
     }
@@ -206,13 +224,13 @@ export function getAllElements(
   p: Plugin,
   platform: string,
   elementName: string,
-) {
-  let modules: Array<string> = [];
+): any {
+  let modules: string[] = [];
   if (p.xml[elementName]) {
     modules = modules.concat(p.xml[elementName]);
   }
   const platformModules = getPluginPlatform(p, platform);
-  if (platformModules && platformModules[elementName]) {
+  if (platformModules?.[elementName]) {
     modules = modules.concat(platformModules[elementName]);
   }
   return modules;

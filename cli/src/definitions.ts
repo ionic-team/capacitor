@@ -1,6 +1,4 @@
-export type PlatformName = '' | 'mac' | 'windows' | 'linux';
-
-export enum OS {
+export const enum OS {
   Unknown = 'unknown',
   Mac = 'mac',
   Windows = 'windows',
@@ -8,92 +6,104 @@ export enum OS {
 }
 
 export interface PackageJson {
-  name: string;
-  version: string;
-  dependencies: any;
-  devDependencies: any;
+  readonly name: string;
+  readonly version: string;
+  readonly dependencies?: { readonly [key: string]: string | undefined };
+  readonly devDependencies?: { readonly [key: string]: string | undefined };
 }
 
 export interface ExternalConfig {
-  webDir?: string;
-  startPage?: string;
-  ios?: {
-    cordovaSwiftVersion?: string;
-    minVersion?: string;
-    cordovaLinkerFlags?: string[];
+  readonly windowsAndroidStudioPath?: string;
+  readonly linuxAndroidStudioPath?: string;
+  readonly appId?: string;
+  readonly appName?: string;
+  readonly webDir?: string;
+  readonly bundledWebRuntime?: boolean;
+  readonly ios?: {
+    readonly cordovaSwiftVersion?: string;
+    readonly minVersion?: string;
+    readonly cordovaLinkerFlags?: string[];
   };
-  cordova?: any;
-  server?: {
-    cleartext?: boolean;
+  readonly cordova?: {
+    readonly preferences?: { readonly [key: string]: string | undefined };
+  };
+  readonly plugins?: { readonly [key: string]: any };
+  readonly server?: {
+    readonly cleartext?: boolean;
   };
 }
 
-export interface AppPluginsConfig {
-  [key: string]: any;
+export interface WindowsConfig {
+  readonly androidStudioPath: string;
 }
 
-export interface CliConfigWindows {
-  androidStudioPath?: string;
+export interface LinuxConfig {
+  readonly androidStudioPath: string;
 }
 
-export interface CliConfigLinux {
-  androidStudioPath?: string;
+export interface PlatformAssetsConfig {
+  readonly templateName: string;
+  readonly pluginsFolderName: string;
+  readonly templateDir: string;
+  readonly pluginsDir: string;
 }
 
-export interface CliConfigPlatformAssets {
-  templateName: string;
-  templateDir?: string;
+export interface CLIConfig {
+  readonly rootDir: string;
+  readonly assetsName: string;
+  readonly assetsDir: string;
+  readonly package: PackageJson;
+  readonly os: OS;
 }
 
-export interface CliConfigPlatform {
-  name: string;
-  minVersion?: string;
-  platformDir?: string;
-  webDir?: string;
-  assets?: CliConfigPlatformAssets;
-}
-
-export interface CliConfigPlatformIOS extends CliConfigPlatform {
-  // The directory inside of app/ios/ that has the full xcode project files
-  nativeProjectDir: string;
-}
-
-export interface CliConfigCli {
-  binDir: string;
-  rootDir: string;
-  assetsName: string;
-  assetsDir: string;
-  package: PackageJson;
-  os: OS;
-}
-
-export interface CliConfigApp {
-  rootDir: string;
-  appId: string;
-  appName: string;
-  webDir: string;
-  webDirAbs: string;
-  package: PackageJson;
-  extConfigName: string;
-  extConfigFilePath: string;
-  extConfig: ExternalConfig;
-  plugins: AppPluginsConfig;
-  windowsAndroidStudioPath: string;
-  linuxAndroidStudioPath: string;
+export interface AppConfig {
+  readonly rootDir: string;
+  readonly appId: string;
+  readonly appName: string;
+  readonly webDir: string;
+  readonly webDirAbs: string;
+  readonly package: PackageJson;
+  readonly extConfigName: string;
+  readonly extConfigFilePath: string;
+  readonly extConfig: ExternalConfig;
   /**
    * Whether to use a bundled web runtime instead of relying on a bundler/module
    * loader. If you're not using something like rollup or webpack or dynamic ES
    * module imports, set this to "true" and import "capacitor.js" manually.
    */
-  bundledWebRuntime: boolean;
+  readonly bundledWebRuntime: boolean;
 }
 
-export interface CliConfig {
-  windows: CliConfigWindows;
-  linux: CliConfigLinux;
-  android: CliConfigPlatform;
-  web: CliConfigPlatform;
-  ios: CliConfigPlatform;
-  cli: CliConfigCli;
-  app: CliConfigApp;
+export interface AndroidConfig {
+  readonly name: string;
+  readonly minVersion: string;
+  readonly platformDir: string;
+  readonly webDir: string;
+  readonly webDirAbs: string;
+  readonly resDir: string;
+  readonly resDirAbs: string;
+  readonly assets: PlatformAssetsConfig;
+}
+
+export interface IOSConfig {
+  readonly name: string;
+  readonly minVersion: string;
+  readonly cordovaSwiftVersion: string;
+  readonly platformDir: string;
+  readonly webDir: string;
+  readonly webDirAbs: string;
+  readonly nativeProjectName: string;
+  readonly assets: PlatformAssetsConfig;
+}
+
+export interface Config {
+  readonly windows: WindowsConfig;
+  readonly linux: LinuxConfig;
+  readonly android: AndroidConfig;
+  readonly ios: IOSConfig;
+  readonly web: {
+    readonly name: string;
+  };
+  readonly cli: CLIConfig;
+  readonly app: AppConfig;
 }

@@ -1,27 +1,28 @@
 import program from 'commander';
-import kleur from 'kleur';
 
-import { createCommand } from './tasks/create';
-import { initCommand } from './tasks/init';
+import c from './colors';
+import { logFatal } from './common';
+import { loadConfig } from './config';
+import { output } from './log';
+import { addCommand } from './tasks/add';
 import { copyCommand } from './tasks/copy';
+import { createCommand } from './tasks/create';
+import { doctorCommand } from './tasks/doctor';
+import { initCommand } from './tasks/init';
 import { listCommand } from './tasks/list';
-import { updateCommand } from './tasks/update';
+import { newPluginCommand } from './tasks/new-plugin';
 import { openCommand } from './tasks/open';
 import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
-import { Config } from './config';
-import { addCommand } from './tasks/add';
-import { newPluginCommand } from './tasks/new-plugin';
-import { doctorCommand } from './tasks/doctor';
+import { updateCommand } from './tasks/update';
 import { emoji as _e } from './util/emoji';
-import { logFatal } from './common';
 
 process.on('unhandledRejection', error => {
-  console.error(kleur.red('[fatal]'), error);
+  console.error(c.failure('[fatal]'), error);
 });
 
-export function run(process: NodeJS.Process, cliBinDir: string) {
-  const config = new Config(process.platform, process.cwd(), cliBinDir);
+export async function run(): Promise<void> {
+  const config = await loadConfig();
 
   program.version(config.cli.package.version);
 
@@ -34,11 +35,10 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program
     .command('init [appName] [appId]')
-    .description('Initializes a new Capacitor project in the current directory')
+    .description('create a capacitor.config.json file')
     .option(
-      '--web-dir [value]',
+      '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
-      config.app.webDir ? config.app.webDir : 'www',
     )
     .action((appName, appId, { webDir }) => {
       return initCommand(config, appName, appId, webDir);
@@ -119,14 +119,14 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
 
   program.arguments('[command]').action(cmd => {
     if (typeof cmd === 'undefined') {
-      console.log(
-        `\n  ${_e('⚡️', '--')}  ${kleur.bold(
+      output.write(
+        `\n  ${_e('⚡️', '--')}  ${c.strong(
           'Capacitor - Cross-Platform apps with JavaScript and the Web',
-        )}  ${_e('⚡️', '--')}\n`,
+        )}  ${_e('⚡️', '--')}\n\n`,
       );
       program.outputHelp();
     } else {
-      logFatal(`Unknown command: ${cmd}`);
+      logFatal(`Unknown command: ${c.input(cmd)}`);
     }
   });
 
