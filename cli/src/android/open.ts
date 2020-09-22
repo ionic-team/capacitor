@@ -20,9 +20,12 @@ export async function openAndroid(config: Config): Promise<void> {
       let androidStudioPath = config.windows.androidStudioPath;
       try {
         if (!(await pathExists(androidStudioPath))) {
-          let commandResult = await runCommand(
-            'REG QUERY "HKEY_LOCAL_MACHINE\\SOFTWARE\\Android Studio" /v Path',
-          );
+          let commandResult = await runCommand('REG', [
+            'QUERY',
+            'HKEY_LOCAL_MACHINE\\SOFTWARE\\Android Studio',
+            '/v',
+            'Path',
+          ]);
           commandResult = commandResult.replace(/(\r\n|\n|\r)/gm, '');
           const ix = commandResult.indexOf('REG_SZ');
           if (ix > 0) {

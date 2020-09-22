@@ -90,7 +90,7 @@ export async function installPlatform(
   platform: string,
 ): Promise<void> {
   const platformPath = resolve(cwd, '..', platform);
-  await runCommand(`cd ${appDir} && npm install ${platformPath}`);
+  await runCommand('npm', ['install', platformPath], { cwd: appDir });
 }
 
 export async function makeAppDir(monoRepoLike = false): Promise<void> {
@@ -115,17 +115,17 @@ export async function makeAppDir(monoRepoLike = false): Promise<void> {
   // Otherwise later use of 'npm install --save @capacitor/android|ios' will wipe 'node_modules/@capacitor/'
   const corePath = resolve(cwd, '../core');
   const cliPath = resolve(cwd, '../cli');
-  await runCommand(
-    `cd "${rootDir}" && npm install --save ${corePath} ${cliPath}`,
-  );
+  await runCommand('npm', ['install', '--save', corePath, cliPath], {
+    cwd: rootDir,
+  });
 
   // Make a fake cordova plugin
   const cordovaPluginPath = join(tmpDir, CORDOVA_PLUGIN_ID);
   await makeCordovaPlugin(cordovaPluginPath);
 
-  await runCommand(
-    `cd "${rootDir}" && npm install --save ${cordovaPluginPath}`,
-  );
+  await runCommand('npm', ['install', '--save', cordovaPluginPath], {
+    cwd: rootDir,
+  });
 
   return {
     ...appDirObj,

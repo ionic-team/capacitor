@@ -1,7 +1,8 @@
 import { wordWrap } from '@ionic/cli-framework-output';
 import { copy, move, writeJSON, readFile, pathExists } from '@ionic/utils-fs';
-import { which } from '@ionic/utils-subprocess';
-import { exec, spawn } from 'child_process';
+import type { SubprocessOptions } from '@ionic/utils-subprocess';
+import { Subprocess, SubprocessError, which } from '@ionic/utils-subprocess';
+import { spawn } from 'child_process';
 import { dirname, join } from 'path';
 import type { Answers, PromptObject } from 'prompts';
 import prompts from 'prompts';
@@ -284,23 +285,31 @@ export async function runPlatformHook(
   });
 }
 
-export function runCommand(command: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(stdout + stderr);
-      } else {
-        resolve(stdout);
-      }
-    });
-  });
+export async function runCommand(
+  command: string,
+  args: readonly string[],
+  options: SubprocessOptions = {},
+): Promise<string> {
+  const p = new Subprocess(command, args, options);
+
+  try {
+    return await p.output();
+  } catch (e) {
+    if (e instanceof SubprocessError) {
+      // old behavior of just throwing the stdout/stderr strings
+      throw e.output;
+    }
+
+    throw e;
+  }
 }
 
 export async function getCommandOutput(
   command: string,
+  args: readonly string[],
 ): Promise<string | null> {
   try {
-    return (await runCommand(command)).trim();
+    return (await runCommand(command, args)).trim();
   } catch (e) {
     return null;
   }

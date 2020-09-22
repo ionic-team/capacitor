@@ -96,18 +96,17 @@ async function updatePodfile(
     `platform :ios, '${config.ios.minVersion}'`,
   );
   await writeFile(podfilePath, podfileContent, { encoding: 'utf-8' });
-  let installCommand = 'pod install';
   if (!deployment) {
     await remove(podfileLockPath);
-  } else {
-    installCommand += ' --deployment';
   }
   await runCommand(
-    `cd "${resolve(
-      config.ios.platformDirAbs,
-      projectName,
-    )}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`,
+    'pod',
+    ['install', ...(deployment ? ['--deployment'] : [])],
+    { cwd: projectRoot },
   );
+  await runCommand('xcodebuild', ['-project', 'App.xcodeproj', 'clean'], {
+    cwd: projectRoot,
+  });
 }
 
 async function generatePodFile(
