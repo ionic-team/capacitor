@@ -18,7 +18,7 @@ import {
   isValidPlatform,
   isValidCommunityPlatform,
   promptForPlatform,
-  getPlatformDirectory,
+  getProjectPlatformDirectory,
 } from '../common';
 import type { Config } from '../definitions';
 import { OS } from '../definitions';
@@ -64,7 +64,7 @@ export async function addCommand(
       return;
     }
 
-    const existingPlatformDir = await getPlatformDirectory(
+    const existingPlatformDir = await getProjectPlatformDirectory(
       config,
       platformName,
     );

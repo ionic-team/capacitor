@@ -1,25 +1,24 @@
 import { pathExists, writeFile } from '@ionic/utils-fs';
 import { homedir } from 'os';
-import { join, relative } from 'path';
+import { join } from 'path';
 
 import c from '../colors';
 import { copyTemplate, runCommand, runTask } from '../common';
 import type { Config } from '../definitions';
 
 export async function addAndroid(config: Config): Promise<void> {
-  const nativeRelDir = relative(config.app.rootDir, config.android.platformDir);
   await runTask(
-    `Adding native android project in ${c.strong(nativeRelDir)}`,
+    `Adding native android project in ${c.strong(config.android.platformDir)}`,
     async () => {
       return copyTemplate(
         config.android.assets.templateDir,
-        config.android.platformDir,
+        config.android.platformDirAbs,
       );
     },
   );
 
   await runTask('Syncing Gradle', async () => {
-    return createLocalProperties(config.android.platformDir);
+    return createLocalProperties(config.android.platformDirAbs);
   });
 }
 

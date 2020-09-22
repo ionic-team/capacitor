@@ -83,7 +83,7 @@ async function updatePodfile(
 ): Promise<void> {
   const dependenciesContent = await generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
-  const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
+  const projectRoot = resolve(config.ios.platformDirAbs, projectName);
   const podfilePath = join(projectRoot, 'Podfile');
   const podfileLockPath = join(projectRoot, 'Podfile.lock');
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
@@ -103,7 +103,10 @@ async function updatePodfile(
     installCommand += ' --deployment';
   }
   await runCommand(
-    `cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`,
+    `cd "${resolve(
+      config.ios.platformDirAbs,
+      projectName,
+    )}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`,
   );
 }
 
@@ -123,7 +126,7 @@ async function generatePodFile(
     );
   }
 
-  const podfilePath = join(config.app.rootDir, 'ios', 'App');
+  const podfilePath = join(config.ios.platformDirAbs, 'App');
   const relativeCapacitoriOSPath = convertToUnixPath(
     relative(podfilePath, await realpath(dirname(capacitoriOSPath))),
   );
@@ -199,8 +202,7 @@ async function generateCordovaPodspec(
   isStatic: boolean,
 ) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   const weakFrameworks: string[] = [];
@@ -365,8 +367,7 @@ async function copyPluginsNativeFiles(
   cordovaPlugins: Plugin[],
 ) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   for (const p of cordovaPlugins) {
@@ -464,8 +465,7 @@ async function copyPluginsNativeFiles(
 
 async function removePluginsNativeFiles(config: Config) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   await remove(pluginsPath);

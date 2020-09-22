@@ -74,13 +74,11 @@ export async function editProjectSettingsAndroid(
   const appName = config.app.appName;
 
   const manifestPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     'app/src/main/AndroidManifest.xml',
   );
   const buildGradlePath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     'app/build.gradle',
   );
 
@@ -95,8 +93,7 @@ export async function editProjectSettingsAndroid(
   const domainPath = appId.split('.').join('/');
   // Make the package source path to the new plugin Java file
   const newJavaPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     `app/src/main/java/${domainPath}`,
   );
 
@@ -106,8 +103,7 @@ export async function editProjectSettingsAndroid(
 
   await copy(
     resolve(
-      config.app.rootDir,
-      config.android.platformDir,
+      config.android.platformDirAbs,
       'app/src/main/java/com/getcapacitor/myapp/MainActivity.java',
     ),
     resolve(newJavaPath, 'MainActivity.java'),
@@ -116,8 +112,7 @@ export async function editProjectSettingsAndroid(
   if (appId.split('.')[1] !== 'getcapacitor') {
     await remove(
       resolve(
-        config.app.rootDir,
-        config.android.platformDir,
+        config.android.platformDirAbs,
         'app/src/main/java/com/getcapacitor',
       ),
     );
@@ -126,18 +121,13 @@ export async function editProjectSettingsAndroid(
   // Remove our template 'com' folder if their ID doesn't have it
   if (appId.split('.')[0] !== 'com') {
     await remove(
-      resolve(
-        config.app.rootDir,
-        config.android.platformDir,
-        'app/src/main/java/com/',
-      ),
+      resolve(config.android.platformDirAbs, 'app/src/main/java/com/'),
     );
   }
 
   // Update the package in the MainActivity java file
   const activityPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     newJavaPath,
     'MainActivity.java',
   );
@@ -160,8 +150,7 @@ export async function editProjectSettingsAndroid(
 
   // Update the settings in res/values/strings.xml
   const stringsPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     'app/src/main/res/values/strings.xml',
   );
   let stringsContent = await readFile(stringsPath, { encoding: 'utf-8' });
