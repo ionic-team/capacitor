@@ -18,7 +18,6 @@ import android.webkit.WebView;
 import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Camera;
-import com.getcapacitor.plugin.Device;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
@@ -389,7 +388,6 @@ public class Bridge {
         this.registerPlugin(App.class);
         this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(Camera.class);
-        this.registerPlugin(Device.class);
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(Geolocation.class);
         this.registerPlugin(Keyboard.class);
