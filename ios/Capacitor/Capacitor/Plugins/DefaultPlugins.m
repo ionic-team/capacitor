@@ -16,10 +16,6 @@ CAP_PLUGIN(CAPBackgroundTaskPlugin, "BackgroundTask",
   CAP_PLUGIN_METHOD(finish, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPCameraPlugin, "Camera",
-  CAP_PLUGIN_METHOD(getPhoto, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPConsolePlugin, "Console",
   CAP_PLUGIN_METHOD(log, CAPPluginReturnNone);
 )
