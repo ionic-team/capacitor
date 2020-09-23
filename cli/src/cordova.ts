@@ -15,7 +15,7 @@ import {
   resolveNode,
   writeXML,
 } from './common';
-import type { Config } from './config';
+import type { Config } from './definitions';
 import { getIOSPlugins } from './ios/common';
 import { logger } from './log';
 import type { Plugin } from './plugin';
@@ -180,7 +180,11 @@ export async function copyCordovaJS(
   config: Config,
   platform: string,
 ): Promise<void> {
-  const cordovaPath = resolveNode(config, '@capacitor/core', 'cordova.js');
+  const cordovaPath = resolveNode(
+    config.app.rootDir,
+    '@capacitor/core',
+    'cordova.js',
+  );
   if (!cordovaPath) {
     logFatal(
       `Unable to find node_modules/@capacitor/core/cordova.js.\n` +
@@ -219,7 +223,7 @@ export async function autoGenerateConfig(
   const fileName = 'config.xml';
   if (platform === 'ios') {
     xmlDir = join(
-      config.ios.platformDir,
+      config.ios.platformDirAbs,
       config.ios.nativeProjectName,
       config.ios.nativeProjectName,
     );
@@ -257,10 +261,10 @@ export async function autoGenerateConfig(
   let pluginPreferencesString: string[] = [];
   if (config.app.extConfig?.cordova?.preferences) {
     pluginPreferencesString = await Promise.all(
-      Object.keys(config.app.extConfig.cordova.preferences).map(
-        async (key): Promise<string> => {
+      Object.entries(config.app.extConfig.cordova.preferences).map(
+        async ([key, value]): Promise<string> => {
           return `
-  <preference name="${key}" value="${config.app.extConfig.cordova.preferences[key]}" />`;
+  <preference name="${key}" value="${value}" />`;
         },
       ),
     );
@@ -339,7 +343,7 @@ export async function logCordovaManualSteps(
 
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   const plistPath = resolve(
-    config.ios.platformDir,
+    config.ios.platformDirAbs,
     config.ios.nativeProjectName,
     config.ios.nativeProjectName,
     'Info.plist',
@@ -569,8 +573,7 @@ export async function writeCordovaAndroidManifest(
   platform: string,
 ): Promise<void> {
   const pluginsFolder = resolve(
-    config.app.rootDir,
-    'android',
+    config.android.platformDirAbs,
     config.android.assets.pluginsFolderName,
   );
   const manifestPath = join(

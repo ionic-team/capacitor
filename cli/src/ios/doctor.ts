@@ -5,7 +5,7 @@ import {
   logFatal,
   logSuccess,
 } from '../common';
-import type { Config } from '../config';
+import type { Config } from '../definitions';
 
 import { checkCocoaPods, checkIOSProject } from './common';
 
@@ -22,10 +22,10 @@ export async function doctorIOS(config: Config): Promise<void> {
   // check online datebase of common errors
   // check if www folder is empty (index.html does not exist)
   try {
-    await check(config, [
-      checkCocoaPods,
-      checkIOSProject,
-      checkWebDir,
+    await check([
+      () => checkCocoaPods(config),
+      () => checkIOSProject(config),
+      () => checkWebDir(config),
       checkXcode,
     ]);
     logSuccess('iOS looking great! 👌');

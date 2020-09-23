@@ -26,7 +26,7 @@ describe.each([false, true])('Update: iOS (monoRepoLike: %p)', monoRepoLike => {
     await installPlatform(appDir, 'ios');
     await run(appDir, `add ios`);
     // Redundant, because add does this, but called explicitly for thoroughness
-    await updateCommand(makeConfig(appDir), 'ios', false);
+    await updateCommand(await makeConfig(appDir), 'ios', false);
     FS = new MappedFS(appDir);
   });
 
