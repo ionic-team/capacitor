@@ -23,7 +23,6 @@ import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.background.BackgroundTask;
-import com.getcapacitor.util.GeolocationPromptListener;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
 import java.net.SocketTimeoutException;
@@ -82,7 +81,6 @@ public class Bridge {
     public final CordovaInterfaceImpl cordovaInterface;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
-    private BridgeWebChromeClient webChromeClient;
 
     // Our MessageHandler for sending and receiving data to the WebView
     private final MessageHandler msgHandler;
@@ -126,7 +124,6 @@ public class Bridge {
         this.context = context;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
-        this.webChromeClient = new BridgeWebChromeClient(this);
         this.initialPlugins = initialPlugins;
         this.cordovaInterface = cordovaInterface;
         this.preferences = preferences;
@@ -193,7 +190,6 @@ public class Bridge {
 
         Logger.debug("Loading app at " + appUrl);
 
-        webView.setWebChromeClient(this.webChromeClient);
         webView.setWebViewClient(this.webViewClient);
 
         if (!isDeployDisabled() && !isNewBinary()) {
@@ -861,9 +857,5 @@ public class Bridge {
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
-    }
-
-    public void registerGeolocationPromptListener(GeolocationPromptListener listener) {
-        this.webChromeClient.registerGeolocationPromptListener(listener);
     }
 }

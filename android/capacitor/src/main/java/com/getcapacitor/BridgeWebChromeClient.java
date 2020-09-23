@@ -18,7 +18,6 @@ import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import com.getcapacitor.util.GeolocationPromptListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -40,7 +39,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
 
     private Bridge bridge;
-    private GeolocationPromptListener geolocationPromptListener;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -194,10 +192,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         );
 
         return true;
-    }
-
-    public void registerGeolocationPromptListener(GeolocationPromptListener listener) {
-        this.geolocationPromptListener = listener;
     }
 
     /**
