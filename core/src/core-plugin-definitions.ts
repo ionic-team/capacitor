@@ -13,7 +13,6 @@ export interface PluginRegistry {
   PushNotifications: PushNotificationsPlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
-  Toast: ToastPlugin;
   WebView: WebViewPlugin;
 
   [pluginName: string]: {
@@ -1104,19 +1103,6 @@ export interface StatusBarInfoResult {
 
 export interface StatusBarOverlaysWebviewOptions {
   overlay: boolean;
-}
-
-export interface ToastPlugin extends Plugin {
-  show(options: ToastShowOptions): Promise<void>;
-}
-
-export interface ToastShowOptions {
-  text: string;
-  /**
-   * Duration of the toast, either 'short' (2000ms, default) or 'long' (3500ms)
-   */
-  duration?: 'short' | 'long';
-  position?: 'top' | 'center' | 'bottom';
 }
 
 export interface WebViewPlugin extends Plugin {

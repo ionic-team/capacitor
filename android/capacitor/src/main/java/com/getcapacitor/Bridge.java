@@ -397,7 +397,6 @@ public class Bridge {
         this.registerPlugin(PushNotifications.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(StatusBar.class);
-        this.registerPlugin(com.getcapacitor.plugin.Toast.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
