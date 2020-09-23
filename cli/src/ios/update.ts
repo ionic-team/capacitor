@@ -91,7 +91,7 @@ async function updatePodfile(
 ): Promise<void> {
   const dependenciesContent = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
-  const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
+  const projectRoot = resolve(config.ios.platformDirAbs, projectName);
   const podfilePath = join(projectRoot, 'Podfile');
   const podfileLockPath = join(projectRoot, 'Podfile.lock');
   let podfileContent = await readFileAsync(podfilePath, 'utf8');
@@ -111,7 +111,10 @@ async function updatePodfile(
     installCommand += ' --deployment';
   }
   await runCommand(
-    `cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`,
+    `cd "${resolve(
+      config.ios.platformDirAbs,
+      projectName,
+    )}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`,
   );
 }
 
@@ -128,7 +131,7 @@ function generatePodFile(config: Config, plugins: Plugin[]): string {
     );
   }
 
-  const podfilePath = join(config.app.rootDir, 'ios', 'App');
+  const podfilePath = join(config.ios.platformDirAbs, 'App');
   const relativeCapacitoriOSPath = convertToUnixPath(
     relative(podfilePath, realpathSync(dirname(capacitoriOSPath))),
   );
@@ -202,8 +205,7 @@ async function generateCordovaPodspec(
   isStatic: boolean,
 ) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   const weakFrameworks: string[] = [];
@@ -365,8 +367,7 @@ function getLinkerFlags(config: Config) {
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   cordovaPlugins.map(p => {
@@ -464,8 +465,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 
 function removePluginsNativeFiles(config: Config) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   removeSync(pluginsPath);
