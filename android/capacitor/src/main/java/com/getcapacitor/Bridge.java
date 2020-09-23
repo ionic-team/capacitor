@@ -15,7 +15,6 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Camera;
 import com.getcapacitor.plugin.Device;
@@ -27,7 +26,6 @@ import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.background.BackgroundTask;
-import com.getcapacitor.ui.Toast;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
 import java.net.SocketTimeoutException;
@@ -182,9 +180,6 @@ public class Bridge {
             } catch (Exception ex) {}
             localUrl = appUrlConfig;
             appUrl = appUrlConfig;
-            if (BuildConfig.DEBUG) {
-                Toast.show(getContext(), "Using app server " + appUrlConfig);
-            }
         } else {
             appUrl = localUrl;
             // custom URL schemes requires path ending with /
@@ -275,9 +270,6 @@ public class Bridge {
 
     public void handleAppUrlLoadError(Exception ex) {
         if (ex instanceof SocketTimeoutException) {
-            if (BuildConfig.DEBUG) {
-                Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + appUrl + "?");
-            }
             Logger.error(
                 "Unable to load app. Ensure the server is running at " +
                 appUrl +
