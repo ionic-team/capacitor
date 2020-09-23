@@ -1,7 +1,10 @@
 import { PluginRegistry } from './core-plugin-definitions';
 
 export interface Plugin {
-  addListener(eventName: string, listenerFunc: Function): PluginListenerHandle;
+  addListener(
+    eventName: string,
+    listenerFunc: (...args: any[]) => any,
+  ): PluginListenerHandle;
   requestPermissions?: () => Promise<PermissionsRequestResult>;
 }
 
@@ -42,8 +45,8 @@ export interface PluginCall {
  */
 export interface StoredCallback {
   callback?: PluginCallback;
-  resolve?: Function;
-  reject?: Function;
+  resolve?: (...args: any[]) => any;
+  reject?: (...args: any[]) => any;
 }
 
 /**
@@ -82,7 +85,7 @@ export interface Capacitor {
     storedCallback?: StoredCallback,
   ) => void;
   fromNative?: (result: PluginResult) => void;
-  withPlugin?: (pluginId: string, fn: Function) => void;
+  withPlugin?: (pluginId: string, fn: (...args: any[]) => any) => void;
   nativeCallback?: (
     pluginId: string,
     methodName: string,
@@ -118,7 +121,7 @@ export interface WindowCapacitor {
     };
   };
   console: {
-    [level: string]: Function;
+    [level: string]: (...args: any[]) => any;
   };
   window: any;
 }

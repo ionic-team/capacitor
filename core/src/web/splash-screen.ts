@@ -1,10 +1,10 @@
-import { WebPlugin } from './index';
-
-import {
+import type {
   SplashScreenPlugin,
   SplashScreenHideOptions,
   SplashScreenShowOptions,
 } from '../core-plugin-definitions';
+
+import { WebPlugin } from './index';
 
 export class SplashScreenPluginWeb
   extends WebPlugin
@@ -15,14 +15,14 @@ export class SplashScreenPluginWeb
 
   show(
     _options?: SplashScreenShowOptions,
-    _callback?: Function,
+    _callback?: (...args: any[]) => any,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   hide(
     _options?: SplashScreenHideOptions,
-    _callback?: Function,
+    _callback?: (...args: any[]) => any,
   ): Promise<void> {
     return Promise.resolve();
   }

@@ -1,22 +1,26 @@
 import { accessSync } from 'fs';
-import c from '../colors';
-import { check, logFatal, logSuccess, readXML } from '../common';
-import { existsAsync, readFileAsync } from '../util/fs';
-import { Config } from '../config';
 import { join } from 'path';
 
-export async function doctorAndroid(config: Config) {
+import c from '../colors';
+import { check, logFatal, logSuccess, readXML } from '../common';
+import type { Config } from '../definitions';
+import { existsAsync, readFileAsync } from '../util/fs';
+
+export async function doctorAndroid(config: Config): Promise<void> {
   try {
-    await check(config, [checkAndroidInstalled, checkGradlew, checkAppSrcDirs]);
+    await check([
+      checkAndroidInstalled,
+      () => checkGradlew(config),
+      () => checkAppSrcDirs(config),
+    ]);
     logSuccess('Android looking great! 👌');
   } catch (e) {
     logFatal(e.stack ?? e);
   }
-  return Promise.resolve();
 }
 
 async function checkAppSrcDirs(config: Config) {
-  const appDir = join(config.android.platformDir, 'app');
+  const appDir = join(config.android.platformDirAbs, 'app');
   if (!(await existsAsync(appDir))) {
     return `${c.strong('app')} directory is missing in ${
       config.android.platformDir
@@ -186,13 +190,13 @@ async function checkPackage(
   let checkPath = appSrcMainJavaDir;
   const packageParts = packageId.split('.');
 
-  for (var i = 0; i < packageParts.length; i++) {
+  for (const packagePart of packageParts) {
     try {
-      accessSync(join(checkPath, packageParts[i]));
-      checkPath = join(checkPath, packageParts[i]);
+      accessSync(join(checkPath, packagePart));
+      checkPath = join(checkPath, packagePart);
     } catch (e) {
       return (
-        `${c.strong(packageParts[i])} is missing in ${checkPath}.\n` +
+        `${c.strong(packagePart)} is missing in ${checkPath}.\n` +
         `Please create a directory structure matching the Package ID ${c.input(
           packageId,
         )} within the ${appSrcMainJavaDir} directory.`
@@ -212,7 +216,7 @@ async function checkPackage(
 }
 
 async function checkBuildGradle(config: Config, packageId: string) {
-  const appDir = join(config.android.platformDir, 'app');
+  const appDir = join(config.android.platformDirAbs, 'app');
   const fileName = 'build.gradle';
   const filePath = join(appDir, fileName);
 
@@ -237,7 +241,7 @@ async function checkBuildGradle(config: Config, packageId: string) {
 
 async function checkGradlew(config: Config) {
   const fileName = 'gradlew';
-  const filePath = join(config.android.platformDir, fileName);
+  const filePath = join(config.android.platformDirAbs, fileName);
 
   if (!(await existsAsync(filePath))) {
     return `${c.strong(fileName)} file is missing in ${

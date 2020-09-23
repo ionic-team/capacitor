@@ -1,8 +1,8 @@
-import fsExtra from 'fs-extra';
 import fs from 'fs';
+import fsExtra from 'fs-extra';
 import util from 'util';
 
-export const existsSync = (path: string) => {
+export const existsSync = (path: string): boolean => {
   return fs.existsSync(path);
 };
 
@@ -22,7 +22,7 @@ export const ensureDirSync = fsExtra.ensureDirSync;
 export const copySync = fsExtra.copySync;
 export const readFileSync = fsExtra.readFileSync;
 export const writeFileSync = fsExtra.writeFileSync;
-export const existsAsync = async (path: string) => {
+export const existsAsync = async (path: string): Promise<boolean> => {
   try {
     const stat = await statAsync(path);
     return true;
@@ -30,6 +30,6 @@ export const existsAsync = async (path: string) => {
     return false;
   }
 };
-export const convertToUnixPath = (path: string) => {
+export const convertToUnixPath = (path: string): string => {
   return path.replace(/\\/g, '/');
 };
