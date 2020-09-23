@@ -19,7 +19,11 @@ export interface ExternalConfig {
   readonly appName?: string;
   readonly webDir?: string;
   readonly bundledWebRuntime?: boolean;
+  readonly android?: {
+    readonly path?: string;
+  };
   readonly ios?: {
+    readonly path?: string;
     readonly cordovaSwiftVersion?: string;
     readonly minVersion?: string;
     readonly cordovaLinkerFlags?: string[];
@@ -39,6 +43,12 @@ export interface WindowsConfig {
 
 export interface LinuxConfig {
   readonly androidStudioPath: string;
+}
+
+export interface PlatformConfig {
+  readonly name: string;
+  readonly platformDir: string;
+  readonly platformDirAbs: string;
 }
 
 export interface PlatformAssetsConfig {
@@ -74,10 +84,8 @@ export interface AppConfig {
   readonly bundledWebRuntime: boolean;
 }
 
-export interface AndroidConfig {
-  readonly name: string;
+export interface AndroidConfig extends PlatformConfig {
   readonly minVersion: string;
-  readonly platformDir: string;
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly resDir: string;
@@ -85,25 +93,23 @@ export interface AndroidConfig {
   readonly assets: PlatformAssetsConfig;
 }
 
-export interface IOSConfig {
-  readonly name: string;
+export interface IOSConfig extends PlatformConfig {
   readonly minVersion: string;
   readonly cordovaSwiftVersion: string;
-  readonly platformDir: string;
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly nativeProjectName: string;
   readonly assets: PlatformAssetsConfig;
 }
 
+export type WebConfig = PlatformConfig;
+
 export interface Config {
   readonly windows: WindowsConfig;
   readonly linux: LinuxConfig;
   readonly android: AndroidConfig;
   readonly ios: IOSConfig;
-  readonly web: {
-    readonly name: string;
-  };
+  readonly web: WebConfig;
   readonly cli: CLIConfig;
   readonly app: AppConfig;
 }

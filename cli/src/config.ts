@@ -8,6 +8,7 @@ import type {
   AndroidConfig,
   IOSConfig,
   PackageJson,
+  WebConfig,
 } from './definitions';
 import { OS } from './definitions';
 
@@ -36,11 +37,9 @@ export async function loadConfig(): Promise<Config> {
         extConfig.linuxAndroidStudioPath ??
         '/usr/local/android-studio/bin/studio.sh',
     },
-    android: await loadAndroidConfig(appRootDir, cli.assetsDir),
-    ios: await loadIOSConfig(appRootDir, cli.assetsDir),
-    web: {
-      name: 'web',
-    },
+    android: await loadAndroidConfig(appRootDir, extConfig, cli.assetsDir),
+    ios: await loadIOSConfig(appRootDir, extConfig, cli.assetsDir),
+    web: await loadWebConfig(appRootDir, webDir),
     cli,
     app: {
       rootDir: appRootDir,
@@ -74,10 +73,12 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
 
 async function loadAndroidConfig(
   rootDir: string,
+  extConfig: ExternalConfig,
   assetDir: string,
 ): Promise<AndroidConfig> {
   const name = 'android';
-  const platformDir = resolve(rootDir, name);
+  const platformDir = extConfig.android?.path ?? 'android';
+  const platformDirAbs = resolve(rootDir, platformDir);
   const webDir = 'app/src/main/assets/public';
   const resDir = 'app/src/main/res';
 
@@ -88,6 +89,7 @@ async function loadAndroidConfig(
     name,
     minVersion: '21',
     platformDir,
+    platformDirAbs,
     webDir,
     webDirAbs: resolve(platformDir, webDir),
     resDir,
@@ -103,10 +105,12 @@ async function loadAndroidConfig(
 
 async function loadIOSConfig(
   rootDir: string,
+  extConfig: ExternalConfig,
   assetDir: string,
 ): Promise<IOSConfig> {
   const name = 'ios';
-  const platformDir = resolve(rootDir, name);
+  const platformDir = extConfig.ios?.path ?? 'ios';
+  const platformDirAbs = resolve(rootDir, platformDir);
   const webDir = 'public';
   const nativeProjectName = 'App';
   const templateName = 'ios-template';
@@ -117,6 +121,7 @@ async function loadIOSConfig(
     minVersion: '11.0',
     cordovaSwiftVersion: '5.1',
     platformDir,
+    platformDirAbs,
     webDir,
     webDirAbs: resolve(platformDir, nativeProjectName, webDir),
     nativeProjectName,
@@ -126,6 +131,20 @@ async function loadIOSConfig(
       templateDir: resolve(assetDir, templateName),
       pluginsDir: resolve(assetDir, pluginsFolderName),
     },
+  };
+}
+
+async function loadWebConfig(
+  rootDir: string,
+  webDir: string,
+): Promise<WebConfig> {
+  const platformDir = webDir;
+  const platformDirAbs = resolve(rootDir, platformDir);
+
+  return {
+    name: 'web',
+    platformDir,
+    platformDirAbs,
   };
 }
 

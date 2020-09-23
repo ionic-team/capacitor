@@ -69,7 +69,7 @@ export async function copy(
       await copyCapacitorConfig(
         config,
         join(
-          config.ios.platformDir,
+          config.ios.platformDirAbs,
           config.ios.nativeProjectName,
           config.ios.nativeProjectName,
         ),
@@ -81,7 +81,7 @@ export async function copy(
       await copyNativeBridge(config.app.rootDir, config.android.webDirAbs);
       await copyCapacitorConfig(
         config,
-        join(config.android.platformDir, 'app/src/main/assets'),
+        join(config.android.platformDirAbs, 'app/src/main/assets'),
       );
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
