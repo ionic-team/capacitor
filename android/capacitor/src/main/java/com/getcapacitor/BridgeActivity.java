@@ -82,8 +82,6 @@ public class BridgeActivity extends AppCompatActivity {
     cordovaInterface.onCordovaInit(pluginManager);
     bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, pluginManager, preferences, this.config);
 
-    Splash.showOnLaunch(this, bridge.getConfig());
-
     if (savedInstanceState != null) {
       bridge.restoreInstanceState(savedInstanceState);
     }
