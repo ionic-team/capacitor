@@ -18,7 +18,8 @@ import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -28,9 +29,6 @@ import java.util.Date;
 import java.util.List;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 /**
  * Custom WebChromeClient handler, required for showing dialogs, confirms, etc. in our
