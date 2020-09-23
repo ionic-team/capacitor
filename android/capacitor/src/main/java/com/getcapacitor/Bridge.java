@@ -190,6 +190,7 @@ public class Bridge {
 
         Logger.debug("Loading app at " + appUrl);
 
+        webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
 
         if (!isDeployDisabled() && !isNewBinary()) {
