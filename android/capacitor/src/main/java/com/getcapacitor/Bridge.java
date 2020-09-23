@@ -152,6 +152,7 @@ public class Bridge {
     this.config = new CapConfig(getActivity().getAssets(), config);
     Logger.init(this.config);
 
+    // Display splash screen if configured
     if (context instanceof BridgeActivity) {
       Splash.showOnLaunch((BridgeActivity) context, this.config);
     }
