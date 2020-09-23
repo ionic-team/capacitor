@@ -18,6 +18,7 @@ import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import androidx.core.app.ActivityCompat;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final int FILE_CHOOSER_VIDEO_CAPTURE = PluginRequestCodes.FILE_CHOOSER_VIDEO_CAPTURE;
     static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
     static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
+    static final int GEOLOCATION_REQUEST_PERMISSIONS = PluginRequestCodes.GEOLOCATION_REQUEST_PERMISSIONS;
 
     private Bridge bridge;
 
@@ -207,14 +209,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
         // Set that we want geolocation perms for this origin
         callback.invoke(origin, true, false);
 
-        if (geolocationPromptListener == null) {
-            Logger.error("onGeolocationPermissionsShowPrompt: no geolocation plugin has been registered");
+        String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
+        if (!hasPermissions(geoPermissions)) {
+            requestPermissions(geoPermissions, GEOLOCATION_REQUEST_PERMISSIONS);
         } else {
-            if (!geolocationPromptListener.hasRequiredPermissions()) {
-                geolocationPromptListener.requestPermissions();
-            } else {
-                Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
-            }
+            Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
         }
     }
 
@@ -444,5 +443,20 @@ public class BridgeWebChromeClient extends WebChromeClient {
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         return image;
+    }
+
+    private boolean hasPermissions(String[] permissions) {
+        for (String perm : permissions) {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getActivity(), perm) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void requestPermissions(String[] permissions, int requestCode) {
+        if (permissions != null) {
+            ActivityCompat.requestPermissions(this.bridge.getActivity(), permissions, requestCode);
+        }
     }
 }
