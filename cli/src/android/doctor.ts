@@ -20,7 +20,7 @@ export async function doctorAndroid(config: Config): Promise<void> {
 }
 
 async function checkAppSrcDirs(config: Config) {
-  const appDir = join(config.android.platformDir, 'app');
+  const appDir = join(config.android.platformDirAbs, 'app');
   if (!(await existsAsync(appDir))) {
     return `${c.strong('app')} directory is missing in ${
       config.android.platformDir
@@ -216,7 +216,7 @@ async function checkPackage(
 }
 
 async function checkBuildGradle(config: Config, packageId: string) {
-  const appDir = join(config.android.platformDir, 'app');
+  const appDir = join(config.android.platformDirAbs, 'app');
   const fileName = 'build.gradle';
   const filePath = join(appDir, fileName);
 
@@ -241,7 +241,7 @@ async function checkBuildGradle(config: Config, packageId: string) {
 
 async function checkGradlew(config: Config) {
   const fileName = 'gradlew';
-  const filePath = join(config.android.platformDir, fileName);
+  const filePath = join(config.android.platformDirAbs, fileName);
 
   if (!(await existsAsync(filePath))) {
     return `${c.strong(fileName)} file is missing in ${
