@@ -4,7 +4,6 @@ import { Plugin, PluginListenerHandle } from './definitions';
 export interface PluginRegistry {
   App: AppPlugin;
   BackgroundTask: BackgroundTaskPlugin;
-  Device: DevicePlugin;
   Geolocation: GeolocationPlugin;
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
@@ -12,7 +11,6 @@ export interface PluginRegistry {
   PushNotifications: PushNotificationsPlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
-  Toast: ToastPlugin;
   WebView: WebViewPlugin;
 
   [pluginName: string]: {
@@ -186,107 +184,6 @@ export interface BackgroundTaskPlugin extends Plugin {
    * backgrounding the app.
    */
   finish(options: { taskId: CallbackID }): void;
-}
-
-//
-
-export interface DevicePlugin extends Plugin {
-  /**
-   * Return information about the underlying device/os/platform
-   */
-  getInfo(): Promise<DeviceInfo>;
-  /**
-   * Return information about the battery
-   */
-  getBatteryInfo(): Promise<DeviceBatteryInfo>;
-  /**
-   * Get the device's current language locale code
-   */
-  getLanguageCode(): Promise<DeviceLanguageCodeResult>;
-}
-
-export type OperatingSystem = 'ios' | 'android' | 'windows' | 'mac' | 'unknown';
-
-export interface DeviceInfo {
-  /**
-   * Note: this property is iOS only.
-   * The name of the device. For example, "John's iPhone"
-   */
-  name?: string;
-  /**
-   * The device model. For example, "iPhone"
-   */
-  model: string;
-  /**
-   * The device platform (lowercase).
-   */
-  platform: 'ios' | 'android' | 'web';
-  /**
-   * The UUID of the device as available to the app. This identifier may change
-   * on modern mobile platforms that only allow per-app install UUIDs.
-   */
-  uuid: string;
-  /**
-   * The current bundle verison of the app
-   */
-  appVersion: string;
-  /**
-   * The current bundle build of the app
-   */
-  appBuild: string;
-  /**
-   * The bundle id of the app
-   */
-  appId: string;
-  /**
-   * The display name of the app
-   */
-  appName: string;
-  /**
-   * The operating system of the device
-   */
-  operatingSystem: OperatingSystem;
-  /**
-   * The version of the device OS
-   */
-  osVersion: string;
-  /**
-   * The manufacturer of the device
-   */
-  manufacturer: string;
-  /**
-   * Whether the app is running in a simulator/emulator
-   */
-  isVirtual: boolean;
-  /**
-   * Approximate memory used by the current app, in bytes. Divide by
-   * 1048576 to get the number of MBs used.
-   */
-  memUsed?: number;
-  /**
-   * How much free disk space is available on the the normal data storage
-   * path for the os, in bytes
-   */
-  diskFree?: number;
-  /**
-   * The total size of the normal data storage path for the OS, in bytes
-   */
-  diskTotal?: number;
-}
-
-export interface DeviceBatteryInfo {
-  /**
-   * A percentage (0 to 1) indicating how much the battery is charged
-   */
-  batteryLevel?: number;
-  /**
-   * Whether the device is charging
-   */
-  isCharging?: boolean;
-}
-
-export interface DeviceLanguageCodeResult {
-  value: string;
 }
 
 //
@@ -959,19 +856,6 @@ export interface StatusBarInfoResult {
 
 export interface StatusBarOverlaysWebviewOptions {
   overlay: boolean;
-}
-
-export interface ToastPlugin extends Plugin {
-  show(options: ToastShowOptions): Promise<void>;
-}
-
-export interface ToastShowOptions {
-  text: string;
-  /**
-   * Duration of the toast, either 'short' (2000ms, default) or 'long' (3500ms)
-   */
-  duration?: 'short' | 'long';
-  position?: 'top' | 'center' | 'bottom';
 }
 
 export interface WebViewPlugin extends Plugin {

@@ -393,14 +393,26 @@ export async function getCLIVersion(config: Config): Promise<string> {
   return getCapacitorPackageVersion(config, 'cli');
 }
 
-export async function getPlatformDirectory(
+function getPlatformDirectory(config: Config, platform: string): string | null {
+  switch (platform) {
+    case 'android':
+      return config.android.platformDirAbs;
+    case 'ios':
+      return config.ios.platformDirAbs;
+    case 'web':
+      return config.web.platformDirAbs;
+  }
+
+  return null;
+}
+
+export async function getProjectPlatformDirectory(
   config: Config,
   platform: string,
 ): Promise<string | null> {
-  const platformDir = platform === 'web' ? config.app.webDir : platform;
-  const platformPath = join(config.app.rootDir, platformDir);
+  const platformPath = getPlatformDirectory(config, platform);
 
-  if (await existsAsync(platformPath)) {
+  if (platformPath && (await existsAsync(platformPath))) {
     return platformPath;
   }
 
@@ -417,7 +429,7 @@ export async function selectPlatforms(
 
     if (!(await isValidPlatform(platformName))) {
       logFatal(`Invalid platform: ${c.input(platformName)}`);
-    } else if (!(await getPlatformDirectory(config, platformName))) {
+    } else if (!(await getProjectPlatformDirectory(config, platformName))) {
       if (platformName === 'web') {
         logFatal(
           `Could not find the web platform directory.\n` +
@@ -496,11 +508,11 @@ export async function promptForPlatform(
 export async function getAddedPlatforms(config: Config): Promise<string[]> {
   const platforms: string[] = [];
 
-  if (await getPlatformDirectory(config, config.android.name)) {
+  if (await getProjectPlatformDirectory(config, config.android.name)) {
     platforms.push(config.android.name);
   }
 
-  if (await getPlatformDirectory(config, config.ios.name)) {
+  if (await getProjectPlatformDirectory(config, config.ios.name)) {
     platforms.push(config.ios.name);
   }
 
