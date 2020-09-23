@@ -86,10 +86,6 @@ CAP_PLUGIN(CAPStatusBarPlugin, "StatusBar",
   CAP_PLUGIN_METHOD(setOverlaysWebView, CAPPluginReturnPromise);
 )
 
-CAP_PLUGIN(CAPToastPlugin, "Toast",
-  CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPWebViewPlugin, "WebView",
   CAP_PLUGIN_METHOD(setServerBasePath, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(getServerBasePath, CAPPluginReturnPromise);
