@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.webkit.ConsoleMessage;
@@ -17,9 +18,14 @@ import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import com.getcapacitor.plugin.camera.CameraUtils;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
@@ -284,7 +290,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         final Uri imageFileUri;
         try {
-            imageFileUri = CameraUtils.createImageFileUri(bridge.getActivity(), bridge.getContext().getPackageName());
+            imageFileUri = createImageFileUri();
         } catch (Exception ex) {
             Logger.error("Unable to create temporary media capture file: " + ex.getMessage());
             return false;
@@ -420,5 +426,22 @@ public class BridgeWebChromeClient extends WebChromeClient {
             msg.equalsIgnoreCase("[object Object]") ||
             msg.equalsIgnoreCase("console.groupEnd")
         );
+    }
+
+    private Uri createImageFileUri() throws IOException {
+        Activity activity = bridge.getActivity();
+        File photoFile = createImageFile(activity);
+        return FileProvider.getUriForFile(activity, bridge.getContext().getPackageName() + ".fileprovider", photoFile);
+    }
+
+    private File createImageFile(Activity activity) throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        return image;
     }
 }
