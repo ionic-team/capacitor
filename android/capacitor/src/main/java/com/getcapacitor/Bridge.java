@@ -32,6 +32,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.cordova.CordovaInterfaceImpl;
+import org.apache.cordova.CordovaPreferences;
+import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
