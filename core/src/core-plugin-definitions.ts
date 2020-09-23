@@ -190,10 +190,6 @@ export interface BackgroundTaskPlugin extends Plugin {
 
 //
 
-}
-
-//
-
 export interface DevicePlugin extends Plugin {
   /**
    * Return information about the underlying device/os/platform
