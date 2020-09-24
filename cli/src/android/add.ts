@@ -1,29 +1,24 @@
 import { homedir } from 'os';
-import { join, relative } from 'path';
+import { join } from 'path';
 
 import c from '../colors';
-import { Config } from '../config';
-import { copyTemplate, runCommand, runTask, CheckFunction } from '../common';
+import { copyTemplate, runCommand, runTask } from '../common';
+import type { Config } from '../definitions';
 import { existsAsync, writeFileAsync } from '../util/fs';
 
-import { checkAndroidPackage } from './common';
-
-export const addAndroidChecks: CheckFunction[] = [checkAndroidPackage];
-
-export async function addAndroid(config: Config) {
-  const nativeRelDir = relative(config.app.rootDir, config.android.platformDir);
+export async function addAndroid(config: Config): Promise<void> {
   await runTask(
-    `Adding native android project in ${c.strong(nativeRelDir)}`,
+    `Adding native android project in ${c.strong(config.android.platformDir)}`,
     async () => {
       return copyTemplate(
         config.android.assets.templateDir,
-        config.android.platformDir,
+        config.android.platformDirAbs,
       );
     },
   );
 
   await runTask('Syncing Gradle', async () => {
-    return createLocalProperties(config.android.platformDir);
+    return createLocalProperties(config.android.platformDirAbs);
   });
 }
 

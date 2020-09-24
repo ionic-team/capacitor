@@ -1,6 +1,6 @@
 {
   "name": "@capacitor/cli",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.4",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
   "homepage": "https://capacitor.ionicframework.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
@@ -59,6 +59,7 @@
     "@types/jest": "^26.0.4",
     "@types/mock-fs": "^3.6.30",
     "@types/open": "^6.1.0",
+    "@types/plist": "^3.0.2",
     "@types/prompts": "^2.0.8",
     "@types/semver": "^7.3.1",
     "@types/slice-ansi": "^4.0.0",

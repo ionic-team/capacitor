@@ -12,18 +12,18 @@ class MockPlugin extends WebPlugin {
 }
 
 describe('Web Plugin', () => {
-  var plugin: MockPlugin;
+  let plugin: MockPlugin;
 
   beforeEach(() => {
     plugin = new MockPlugin();
   });
 
   it('Should add event listeners', () => {
-    let lf = (event: any) => {
+    const lf = (event: any) => {
       console.log(event);
     };
 
-    let handle = plugin.addListener('test', lf);
+    const handle = plugin.addListener('test', lf);
 
     const listener = plugin.listeners['test'];
     expect(listener).not.toBe(undefined);
@@ -32,18 +32,18 @@ describe('Web Plugin', () => {
   });
 
   it('Should manage multiple event listeners', () => {
-    let lf1 = (event: any) => {
+    const lf1 = (event: any) => {
       console.log(event);
     };
-    let lf2 = (event: any) => {
+    const lf2 = (event: any) => {
       console.log(event);
     };
-    let lf3 = (event: any) => {
+    const lf3 = (event: any) => {
       console.log(event);
     };
-    let handle1 = plugin.addListener('test', lf1);
-    let handle2 = plugin.addListener('test', lf2);
-    let handle3 = plugin.addListener('test', lf3);
+    const handle1 = plugin.addListener('test', lf1);
+    const handle2 = plugin.addListener('test', lf2);
+    const handle3 = plugin.addListener('test', lf3);
 
     const listener = plugin.listeners['test'];
     expect(listener.length).toEqual(3);
@@ -56,10 +56,10 @@ describe('Web Plugin', () => {
   });
 
   it('Should remove event listeners', () => {
-    let lf = (event: any) => {
+    const lf = (event: any) => {
       console.log(event);
     };
-    let handle = plugin.addListener('test', lf);
+    const handle = plugin.addListener('test', lf);
     handle.remove();
 
     const listener = plugin.listeners['test'];
@@ -67,8 +67,8 @@ describe('Web Plugin', () => {
   });
 
   it('Should notify listeners', () => {
-    let lf = jest.fn();
-    let handle = plugin.addListener('test', lf);
+    const lf = jest.fn();
+    const handle = plugin.addListener('test', lf);
 
     plugin.trigger();
 
@@ -80,14 +80,14 @@ describe('Web Plugin', () => {
   });
 
   it('Should register and remove window listeners', () => {
-    let pluginAddWindowListener = jest.spyOn(
+    const pluginAddWindowListener = jest.spyOn(
       MockPlugin.prototype as any,
       'addWindowListener',
     );
     plugin.registerWindowListener('fake', 'test');
 
-    let lf = jest.fn();
-    let handle = plugin.addListener('test', lf);
+    const lf = jest.fn();
+    const handle = plugin.addListener('test', lf);
 
     // Make sure the window listener was added
     let windowListener = plugin.windowListeners['test'];
@@ -95,7 +95,7 @@ describe('Web Plugin', () => {
     expect(pluginAddWindowListener.mock.calls.length).toEqual(1);
 
     // Trigger a custom window event
-    var event = new CustomEvent('fake', {
+    const event = new CustomEvent('fake', {
       detail: { value: 'Capacitors on top of toast!' },
     });
     window.dispatchEvent(event);
@@ -118,9 +118,9 @@ describe('Web Plugin', () => {
 
     expect(windowListener.registered).toEqual(false);
 
-    let handlerFunction = jest.spyOn(windowListener, 'handler');
+    const handlerFunction = jest.spyOn(windowListener, 'handler');
     // Trigger a custom window event
-    var event = new CustomEvent('fake', {
+    const event = new CustomEvent('fake', {
       detail: { value: 'Capacitors on top of toast!' },
     });
     window.dispatchEvent(event);
