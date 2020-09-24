@@ -2,10 +2,12 @@ package com.getcapacitor;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.webkit.ConsoleMessage;
@@ -17,9 +19,15 @@ import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import com.getcapacitor.plugin.camera.CameraUtils;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
@@ -116,17 +124,27 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return true;
         }
 
-        Dialogs.alert(
-            view.getContext(),
-            message,
-            (value, didCancel, inputValue) -> {
-                if (value) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        builder
+            .setMessage(message)
+            .setTitle("Alert")
+            .setPositiveButton(
+                "OK",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.confirm();
-                } else {
+                }
+            )
+            .setOnCancelListener(
+                dialog -> {
+                    dialog.dismiss();
                     result.cancel();
                 }
-            }
-        );
+            );
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
 
         return true;
     }
@@ -145,17 +163,35 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return true;
         }
 
-        Dialogs.confirm(
-            view.getContext(),
-            message,
-            (value, didCancel, inputValue) -> {
-                if (value) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+
+        builder
+            .setMessage(message)
+            .setTitle("Confirm")
+            .setPositiveButton(
+                "OK",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.confirm();
-                } else {
+                }
+            )
+            .setNegativeButton(
+                "Cancel",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.cancel();
                 }
-            }
-        );
+            )
+            .setOnCancelListener(
+                dialog -> {
+                    dialog.dismiss();
+                    result.cancel();
+                }
+            );
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
 
         return true;
     }
@@ -175,17 +211,39 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return true;
         }
 
-        Dialogs.prompt(
-            view.getContext(),
-            message,
-            (value, didCancel, inputValue) -> {
-                if (value) {
-                    result.confirm(inputValue);
-                } else {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        final EditText input = new EditText(view.getContext());
+
+        builder
+            .setMessage(message)
+            .setTitle("Prompt")
+            .setView(input)
+            .setPositiveButton(
+                "OK",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
+
+                    String inputText1 = input.getText().toString().trim();
+                    result.confirm(inputText1);
+                }
+            )
+            .setNegativeButton(
+                "Cancel",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.cancel();
                 }
-            }
-        );
+            )
+            .setOnCancelListener(
+                dialog -> {
+                    dialog.dismiss();
+                    result.cancel();
+                }
+            );
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
 
         return true;
     }
@@ -284,7 +342,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         final Uri imageFileUri;
         try {
-            imageFileUri = CameraUtils.createImageFileUri(bridge.getActivity(), bridge.getContext().getPackageName());
+            imageFileUri = createImageFileUri();
         } catch (Exception ex) {
             Logger.error("Unable to create temporary media capture file: " + ex.getMessage());
             return false;
@@ -420,5 +478,22 @@ public class BridgeWebChromeClient extends WebChromeClient {
             msg.equalsIgnoreCase("[object Object]") ||
             msg.equalsIgnoreCase("console.groupEnd")
         );
+    }
+
+    private Uri createImageFileUri() throws IOException {
+        Activity activity = bridge.getActivity();
+        File photoFile = createImageFile(activity);
+        return FileProvider.getUriForFile(activity, bridge.getContext().getPackageName() + ".fileprovider", photoFile);
+    }
+
+    private File createImageFile(Activity activity) throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        return image;
     }
 }

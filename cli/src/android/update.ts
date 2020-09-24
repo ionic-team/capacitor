@@ -1,4 +1,4 @@
-import { join, relative, resolve } from 'path';
+import { dirname, join, relative, resolve } from 'path';
 
 import c from '../colors';
 import {
@@ -7,12 +7,12 @@ import {
   resolveNode,
   runTask,
 } from '../common';
-import type { Config } from '../config';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import type { Config } from '../definitions';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -75,20 +75,25 @@ export async function installGradlePlugins(
   capacitorPlugins: Plugin[],
   cordovaPlugins: Plugin[],
 ): Promise<void> {
-  const capacitorAndroidPath = resolveNode(
-    config,
+  const capacitorAndroidPackagePath = resolveNode(
+    config.app.rootDir,
     '@capacitor/android',
-    'capacitor',
+    'package.json',
   );
-  if (!capacitorAndroidPath) {
+  if (!capacitorAndroidPackagePath) {
     logFatal(
-      `Unable to find node_modules/@capacitor/android/capacitor\n` +
+      `Unable to find node_modules/@capacitor/android\n` +
         `Are you sure ${c.strong('@capacitor/android')} is installed?`,
     );
   }
 
-  const settingsPath = join(config.app.rootDir, 'android');
-  const dependencyPath = join(config.app.rootDir, 'android', 'app');
+  const capacitorAndroidPath = resolve(
+    dirname(capacitorAndroidPackagePath),
+    'capacitor',
+  );
+
+  const settingsPath = config.android.platformDirAbs;
+  const dependencyPath = join(config.android.platformDirAbs, 'app');
   const relativeCapcitorAndroidPath = convertToUnixPath(
     relative(settingsPath, capacitorAndroidPath),
   );
@@ -179,8 +184,7 @@ export async function handleCordovaPluginsGradle(
   cordovaPlugins: Plugin[],
 ): Promise<void> {
   const pluginsFolder = resolve(
-    config.app.rootDir,
-    'android',
+    config.android.platformDirAbs,
     config.android.assets.pluginsFolderName,
   );
   const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
@@ -244,8 +248,7 @@ ext {
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
   const pluginsRoot = resolve(
-    config.app.rootDir,
-    'android',
+    config.android.platformDirAbs,
     config.android.assets.pluginsFolderName,
   );
   const pluginsPath = join(pluginsRoot, 'src', 'main');
@@ -299,8 +302,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 
 function removePluginsNativeFiles(config: Config) {
   const pluginsRoot = resolve(
-    config.app.rootDir,
-    'android',
+    config.android.platformDirAbs,
     config.android.assets.pluginsFolderName,
   );
   removeSync(pluginsRoot);
@@ -321,8 +323,7 @@ async function replaceFrameworkVariables(
   frameworkString: string,
 ) {
   const variablesFile = resolve(
-    config.app.rootDir,
-    'android',
+    config.android.platformDirAbs,
     'variables.gradle',
   );
   let variablesGradle = '';
