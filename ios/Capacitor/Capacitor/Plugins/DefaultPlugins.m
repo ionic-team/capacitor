@@ -49,13 +49,6 @@ CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPModalsPlugin, "Modals",
-  CAP_PLUGIN_METHOD(alert, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(prompt, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(confirm, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(showActions, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(register, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(requestPermission, CAPPluginReturnPromise);

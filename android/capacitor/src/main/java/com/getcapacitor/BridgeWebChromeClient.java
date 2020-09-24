@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +20,8 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import androidx.core.app.ActivityCompat;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.IOException;
@@ -124,17 +127,27 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return true;
         }
 
-        Dialogs.alert(
-            view.getContext(),
-            message,
-            (value, didCancel, inputValue) -> {
-                if (value) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        builder
+            .setMessage(message)
+            .setTitle("Alert")
+            .setPositiveButton(
+                "OK",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.confirm();
-                } else {
+                }
+            )
+            .setOnCancelListener(
+                dialog -> {
+                    dialog.dismiss();
                     result.cancel();
                 }
-            }
-        );
+            );
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
 
         return true;
     }
@@ -153,17 +166,35 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return true;
         }
 
-        Dialogs.confirm(
-            view.getContext(),
-            message,
-            (value, didCancel, inputValue) -> {
-                if (value) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+
+        builder
+            .setMessage(message)
+            .setTitle("Confirm")
+            .setPositiveButton(
+                "OK",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.confirm();
-                } else {
+                }
+            )
+            .setNegativeButton(
+                "Cancel",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.cancel();
                 }
-            }
-        );
+            )
+            .setOnCancelListener(
+                dialog -> {
+                    dialog.dismiss();
+                    result.cancel();
+                }
+            );
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
 
         return true;
     }
@@ -183,17 +214,39 @@ public class BridgeWebChromeClient extends WebChromeClient {
             return true;
         }
 
-        Dialogs.prompt(
-            view.getContext(),
-            message,
-            (value, didCancel, inputValue) -> {
-                if (value) {
-                    result.confirm(inputValue);
-                } else {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        final EditText input = new EditText(view.getContext());
+
+        builder
+            .setMessage(message)
+            .setTitle("Prompt")
+            .setView(input)
+            .setPositiveButton(
+                "OK",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
+
+                    String inputText1 = input.getText().toString().trim();
+                    result.confirm(inputText1);
+                }
+            )
+            .setNegativeButton(
+                "Cancel",
+                (dialog, buttonIndex) -> {
+                    dialog.dismiss();
                     result.cancel();
                 }
-            }
-        );
+            )
+            .setOnCancelListener(
+                dialog -> {
+                    dialog.dismiss();
+                    result.cancel();
+                }
+            );
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
 
         return true;
     }
