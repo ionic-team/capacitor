@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { WebPlugin } from './index';
 
 import {
@@ -131,8 +132,8 @@ export class CameraPluginWeb extends WebPlugin implements CameraPlugin {
 
   private _getCameraPhoto(photo: Blob, options: CameraOptions) {
     return new Promise<CameraPhoto>((resolve, reject) => {
-      var reader = new FileReader();
-      var format = photo.type.split('/')[1];
+      const reader = new FileReader();
+      const format = photo.type.split('/')[1];
       if (options.resultType === CameraResultType.Uri) {
         resolve({
           webPath: URL.createObjectURL(photo),

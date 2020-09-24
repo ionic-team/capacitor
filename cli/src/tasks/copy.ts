@@ -1,5 +1,7 @@
+import { copy as fsCopy, remove } from 'fs-extra';
+import { basename, join, relative, resolve } from 'path';
+
 import c from '../colors';
-import { Config } from '../config';
 import {
   checkWebDir,
   logFatal,
@@ -7,24 +9,25 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
+  isValidPlatform,
+  selectPlatforms,
 } from '../common';
-import { existsAsync } from '../util/fs';
-import { allSerial } from '../util/promise';
-import { copyWeb } from '../web/copy';
-import { basename, join, relative, resolve } from 'path';
-import { copy as fsCopy, remove } from 'fs-extra';
 import {
   getCordovaPlugins,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
+import type { Config } from '../definitions';
 import { logger } from '../log';
+import { existsAsync } from '../util/fs';
+import { allSerial } from '../util/promise';
+import { copyWeb } from '../web/copy';
 
 export async function copyCommand(
   config: Config,
   selectedPlatformName: string,
-) {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+): Promise<void> {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:copy');
@@ -32,7 +35,7 @@ export async function copyCommand(
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
   } else {
-    const platforms = config.selectPlatforms(selectedPlatformName);
+    const platforms = await selectPlatforms(config, selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to copy yet.\n` +
@@ -50,7 +53,10 @@ export async function copyCommand(
   }
 }
 
-export async function copy(config: Config, platformName: string) {
+export async function copy(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
     if (result) {
@@ -59,11 +65,11 @@ export async function copy(config: Config, platformName: string) {
 
     if (platformName === config.ios.name) {
       await copyWebDir(config, config.ios.webDirAbs);
-      await copyNativeBridge(config, config.ios.webDirAbs);
+      await copyNativeBridge(config.app.rootDir, config.ios.webDirAbs);
       await copyCapacitorConfig(
         config,
         join(
-          config.ios.platformDir,
+          config.ios.platformDirAbs,
           config.ios.nativeProjectName,
           config.ios.nativeProjectName,
         ),
@@ -72,10 +78,10 @@ export async function copy(config: Config, platformName: string) {
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
       await copyWebDir(config, config.android.webDirAbs);
-      await copyNativeBridge(config, config.android.webDirAbs);
+      await copyNativeBridge(config.app.rootDir, config.android.webDirAbs);
       await copyCapacitorConfig(
         config,
-        join(config.android.platformDir, 'app/src/main/assets'),
+        join(config.android.platformDirAbs, 'app/src/main/assets'),
       );
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
@@ -88,9 +94,13 @@ export async function copy(config: Config, platformName: string) {
   });
 }
 
-async function copyNativeBridge(config: Config, nativeAbsDir: string) {
-  const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
-  let bridgePath = resolveNode(config, '@capacitor/core', 'native-bridge.js');
+async function copyNativeBridge(rootDir: string, nativeAbsDir: string) {
+  const nativeRelDir = relative(rootDir, nativeAbsDir);
+  const bridgePath = resolveNode(
+    rootDir,
+    '@capacitor/core',
+    'native-bridge.js',
+  );
   if (!bridgePath) {
     logFatal(
       `Unable to find node_modules/@capacitor/core/native-bridge.js.\n` +

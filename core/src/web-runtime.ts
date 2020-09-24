@@ -1,4 +1,4 @@
-import { PluginRegistry } from './definitions';
+import type { PluginRegistry } from './definitions';
 
 export class CapacitorWeb {
   Plugins: PluginRegistry;
@@ -19,7 +19,7 @@ export class CapacitorWeb {
       this.Plugins = new Proxy<any>(this.Plugins, {
         get: (target, prop) => {
           if (typeof target[prop] === 'undefined') {
-            let thisRef = this;
+            const thisRef = this;
             return new Proxy<any>(
               {},
               {
@@ -45,23 +45,27 @@ export class CapacitorWeb {
     }
   }
 
-  pluginMethodNoop(_target: any, _prop: PropertyKey, pluginName: string) {
+  private pluginMethodNoop(
+    _target: any,
+    _prop: PropertyKey,
+    pluginName: string,
+  ) {
     return Promise.reject(`${pluginName} does not have web implementation.`);
   }
 
-  getPlatform() {
+  getPlatform(): string {
     return this.platform;
   }
 
-  isPluginAvailable(name: string) {
-    return this.Plugins.hasOwnProperty(name);
+  isPluginAvailable(name: string): boolean {
+    return Object.prototype.hasOwnProperty.call(this.Plugins, name);
   }
 
-  convertFileSrc(filePath: string) {
+  convertFileSrc(filePath: string): string {
     return filePath;
   }
 
-  handleError(e: Error) {
+  handleError(e: Error): void {
     console.error(e);
   }
 }

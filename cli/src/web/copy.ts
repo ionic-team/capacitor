@@ -1,13 +1,14 @@
-import c from '../colors';
-import { logFatal, resolveNode, runTask } from '../common';
-import { Config } from '../config';
 import { copy } from 'fs-extra';
 import { join } from 'path';
 
-export async function copyWeb(config: Config) {
+import c from '../colors';
+import { logFatal, resolveNode, runTask } from '../common';
+import type { Config } from '../definitions';
+
+export async function copyWeb(config: Config): Promise<void> {
   if (config.app.bundledWebRuntime) {
     const runtimePath = resolveNode(
-      config,
+      config.app.rootDir,
       '@capacitor/core',
       'dist',
       'capacitor.js',

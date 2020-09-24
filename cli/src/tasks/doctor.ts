@@ -1,14 +1,19 @@
-import c from '../colors';
-import { Config } from '../config';
-import { readJSON, resolveNode, getCommandOutput } from '../common';
 import { doctorAndroid } from '../android/doctor';
+import c from '../colors';
+import {
+  readJSON,
+  resolveNode,
+  getCommandOutput,
+  selectPlatforms,
+} from '../common';
+import type { Config } from '../definitions';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
 
 export async function doctorCommand(
   config: Config,
-  selectedPlatform: string,
+  selectedPlatformName: string,
 ): Promise<void> {
   output.write(
     `${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
@@ -16,7 +21,7 @@ export async function doctorCommand(
 
   await doctorCore(config);
 
-  const platforms = config.selectPlatforms(selectedPlatform);
+  const platforms = await selectPlatforms(config, selectedPlatformName);
   await Promise.all(
     platforms.map(platformName => {
       return doctor(config, platformName);
@@ -24,7 +29,7 @@ export async function doctorCommand(
   );
 }
 
-export async function doctorCore(config: Config) {
+export async function doctorCore(config: Config): Promise<void> {
   const [
     cliVersion,
     coreVersion,
@@ -60,7 +65,11 @@ async function printInstalledPackages(config: Config) {
   ];
   await Promise.all(
     packageNames.map(async packageName => {
-      const packagePath = resolveNode(config, packageName, 'package.json');
+      const packagePath = resolveNode(
+        config.app.rootDir,
+        packageName,
+        'package.json',
+      );
       await printPackageVersion(packageName, packagePath);
     }),
   );
@@ -77,7 +86,10 @@ async function printPackageVersion(
   output.write(`  ${packageName}: ${c.weak(version || 'not installed')}\n`);
 }
 
-export async function doctor(config: Config, platformName: string) {
+export async function doctor(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   if (platformName === config.ios.name) {
     await doctorIOS(config);
   } else if (platformName === config.android.name) {
