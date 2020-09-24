@@ -19,7 +19,6 @@ import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
-import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
@@ -381,7 +380,6 @@ public class Bridge {
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(Geolocation.class);
         this.registerPlugin(Keyboard.class);
-        this.registerPlugin(Modals.class);
         this.registerPlugin(PushNotifications.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(StatusBar.class);

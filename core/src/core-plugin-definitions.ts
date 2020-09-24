@@ -7,7 +7,6 @@ export interface PluginRegistry {
   Geolocation: GeolocationPlugin;
   Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
-  Modals: ModalsPlugin;
   PushNotifications: PushNotificationsPlugin;
   SplashScreen: SplashScreenPlugin;
   StatusBar: StatusBarPlugin;
@@ -511,88 +510,6 @@ export interface LocalNotificationsPlugin extends Plugin {
    * Remove all native listeners for this plugin
    */
   removeAllListeners(): void;
-}
-
-//
-
-export interface ModalsPlugin extends Plugin {
-  /**
-   * Show an alert modal
-   */
-  alert(options: AlertOptions): Promise<void>;
-  /**
-   * Show a prompt modal
-   */
-  prompt(options: PromptOptions): Promise<PromptResult>;
-  /**
-   * Show a confirmation modal
-   */
-  confirm(options: ConfirmOptions): Promise<ConfirmResult>;
-
-  /**
-   * Show an Action Sheet style modal with various options for the user
-   * to select.
-   */
-  showActions(options: ActionSheetOptions): Promise<ActionSheetResult>;
-}
-
-export interface AlertOptions {
-  title: string;
-  message: string;
-  buttonTitle?: string;
-}
-
-export interface PromptOptions {
-  title: string;
-  message: string;
-  okButtonTitle?: string;
-  cancelButtonTitle?: string;
-  inputPlaceholder?: string;
-  inputText?: string;
-}
-
-export interface ConfirmOptions {
-  title: string;
-  message: string;
-  okButtonTitle?: string;
-  cancelButtonTitle?: string;
-}
-
-export interface PromptResult {
-  value: string;
-  cancelled: boolean;
-}
-
-export interface ConfirmResult {
-  value: boolean;
-}
-
-export interface ActionSheetOptions {
-  title: string;
-  /**
-   * iOS only
-   */
-  message?: string;
-  options: ActionSheetOption[];
-}
-
-export enum ActionSheetOptionStyle {
-  Default = 'DEFAULT',
-  Destructive = 'DESTRUCTIVE',
-  Cancel = 'CANCEL',
-}
-
-export interface ActionSheetOption {
-  title: string;
-  style?: ActionSheetOptionStyle;
-  /**
-   * Icon for web (ionicon naming convention)
-   */
-  icon?: string;
-}
-
-export interface ActionSheetResult {
-  index: number;
 }
 
 //
