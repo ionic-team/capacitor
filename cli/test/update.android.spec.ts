@@ -1,12 +1,9 @@
-import { updateCommand } from '../src/tasks/update';
-
 import {
   APP_ID,
   APP_NAME,
   CORDOVA_PLUGIN_ID,
   MappedFS,
   makeAppDir,
-  makeConfig,
   run,
   installPlatform,
 } from './util';
@@ -27,8 +24,6 @@ describe.each([false, true])(
       await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
       await installPlatform(appDir, 'android');
       await run(appDir, `add android`);
-      // Redundant, because add does this, but called explicitly for thoroughness
-      await updateCommand(await makeConfig(appDir), 'android', false);
       FS = new MappedFS(appDir);
     });
 
