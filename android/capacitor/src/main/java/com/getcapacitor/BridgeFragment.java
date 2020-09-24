@@ -153,7 +153,9 @@ public class BridgeFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.bridge.onDestroy();
+        if (this.bridge != null) {
+            this.bridge.onDestroy();
+        }
         if (this.mockWebView != null) {
             mockWebView.handleDestroy();
         }
