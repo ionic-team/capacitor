@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.4](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.3...3.0.0-alpha.4) (2020-09-23)
+
+
+### Features
+
+* **cli:** ability to specify custom platform directories ([#3565](https://github.com/ionic-team/capacitor/issues/3565)) ([c6eda55](https://github.com/ionic-team/capacitor/commit/c6eda55482ef56abdfe9a33444e828b771af9386))
+
+
+
+# [3.0.0-alpha.3](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.2...3.0.0-alpha.3) (2020-09-15)
+
+
+### Bug Fixes
+
+* **android:** allow directories beginning with underscore in assets dir to be packaged ([c23d993](https://github.com/ionic-team/capacitor/commit/c23d99315acea2f0894e5ff8a08dd42a867b2982))
+
+
 # [3.0.0-alpha.2](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.1...3.0.0-alpha.2) (2020-08-31)
 
 
@@ -12,9 +29,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-
-
-# [3.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/2.4.0...3.0.0-alpha.1) (2020-08-21)
+# [3.0.0-alpha.1](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.0...3.0.0-alpha.1) (2020-08-21)
 
 
 ### Bug Fixes
@@ -33,13 +48,28 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.3.0...3.0.0-alpha.0) (2020-07-23)
+# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.2...3.0.0-alpha.0) (2020-07-23)
 
 
 ### Features
 
 * **android:** add custom plugins to BridgeFragment ([#3280](https://github.com/ionic-team/capacitor/issues/3280)) ([d131a5f](https://github.com/ionic-team/capacitor/commit/d131a5fed2b9ae29b6952397ec2f81104545b749))
 * **core:** add `registerPlugin` for importing from plugin packages ([#3305](https://github.com/ionic-team/capacitor/issues/3305)) ([95475cc](https://github.com/ionic-team/capacitor/commit/95475cceb4cbd5be2cc7e18f2cf3045eb6c6f7fd))
+
+### Chores
+
+* refactor(android): remove unused interaction listener on BridgeFragment (#3552) ([fae50b6](https://github.com/ionic-team/capacitor/commit/fae50b6)), closes [#3552](https://github.com/ionic-team/capacitor/issues/3552)
+
+
+## [2.4.2](https://github.com/ionic-team/capacitor/compare/2.4.1...2.4.2) (2020-09-24)
+
+
+### Bug Fixes
+
+* fix(android): BridgeFragment NullPointerException (#3553) ([5133e2e](https://github.com/ionic-team/capacitor/commit/5133e2e)), closes [#3553](https://github.com/ionic-team/capacitor/issues/3553)
+* fix(android): move splash screen trigger before the webview render to prevent flicker (2.x) (#3608) ([cbab54c](https://github.com/ionic-team/capacitor/commit/cbab54c)), closes [#3608](https://github.com/ionic-team/capacitor/issues/3608)
+* fix(cli): halt update upon failure (#3595) ([ec086b0](https://github.com/ionic-team/capacitor/commit/ec086b0)), closes [#3595](https://github.com/ionic-team/capacitor/issues/3595)
+* fix(ios): iterate listeners to avoid mutated while being enumerated (#3572) ([fbaab54](https://github.com/ionic-team/capacitor/commit/fbaab54)), closes [#3572](https://github.com/ionic-team/capacitor/issues/3572)
 
 
 ## [2.4.1](https://github.com/ionic-team/capacitor/compare/2.4.0...2.4.1) (2020-09-09)

@@ -12,4 +12,4 @@ if (!semver.satisfies(currentNodeVersion, requiresNodeVersion)) {
 }
 
 var cli = require('../dist/index');
-cli.run(process, __dirname);
+cli.run();

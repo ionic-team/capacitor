@@ -15,22 +15,14 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import com.getcapacitor.android.BuildConfig;
 import com.getcapacitor.plugin.App;
-import com.getcapacitor.plugin.Browser;
-import com.getcapacitor.plugin.Camera;
-import com.getcapacitor.plugin.Device;
-import com.getcapacitor.plugin.Filesystem;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
-import com.getcapacitor.plugin.Modals;
 import com.getcapacitor.plugin.PushNotifications;
-import com.getcapacitor.plugin.Share;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.background.BackgroundTask;
-import com.getcapacitor.ui.Toast;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
 import java.net.SocketTimeoutException;
@@ -146,6 +138,11 @@ public class Bridge {
         this.config = new CapConfig(getActivity().getAssets(), config);
         Logger.init(this.config);
 
+        // Display splash screen if configured
+        if (context instanceof BridgeActivity) {
+            Splash.showOnLaunch((BridgeActivity) context, this.config);
+        }
+
         // Initialize web view and message handler for it
         this.initWebView();
         this.msgHandler = new MessageHandler(this, webView, pluginManager);
@@ -185,9 +182,6 @@ public class Bridge {
             } catch (Exception ex) {}
             localUrl = appUrlConfig;
             appUrl = appUrlConfig;
-            if (BuildConfig.DEBUG) {
-                Toast.show(getContext(), "Using app server " + appUrlConfig);
-            }
         } else {
             appUrl = localUrl;
             // custom URL schemes requires path ending with /
@@ -278,9 +272,6 @@ public class Bridge {
 
     public void handleAppUrlLoadError(Exception ex) {
         if (ex instanceof SocketTimeoutException) {
-            if (BuildConfig.DEBUG) {
-                Toast.show(getContext(), "Unable to load app. Are you sure the server is running at " + appUrl + "?");
-            }
             Logger.error(
                 "Unable to load app. Ensure the server is running at " +
                 appUrl +
@@ -391,19 +382,12 @@ public class Bridge {
     private void registerAllPlugins() {
         this.registerPlugin(App.class);
         this.registerPlugin(BackgroundTask.class);
-        this.registerPlugin(Browser.class);
-        this.registerPlugin(Camera.class);
-        this.registerPlugin(Device.class);
         this.registerPlugin(LocalNotifications.class);
-        this.registerPlugin(Filesystem.class);
         this.registerPlugin(Geolocation.class);
         this.registerPlugin(Keyboard.class);
-        this.registerPlugin(Modals.class);
         this.registerPlugin(PushNotifications.class);
-        this.registerPlugin(Share.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(StatusBar.class);
-        this.registerPlugin(com.getcapacitor.plugin.Toast.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {

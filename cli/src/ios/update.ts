@@ -1,7 +1,8 @@
+import { realpathSync } from 'fs';
+import { dirname, join, relative, resolve } from 'path';
+
 import c from '../colors';
-import { checkCocoaPods, checkIOSProject, getIOSPlugins } from './common';
 import {
-  CheckFunction,
   checkPlatformVersions,
   logFatal,
   resolveNode,
@@ -9,19 +10,13 @@ import {
   runTask,
 } from '../common';
 import {
-  convertToUnixPath,
-  copySync,
-  readFileAsync,
-  readFileSync,
-  removeSync,
-  writeFileAsync,
-  writeFileSync,
-} from '../util/fs';
-import { Config } from '../config';
-import { join, relative, resolve } from 'path';
-import { realpathSync } from 'fs';
+  checkPluginDependencies,
+  handleCordovaPluginsJS,
+  logCordovaManualSteps,
+} from '../cordova';
+import type { Config } from '../definitions';
+import type { Plugin } from '../plugin';
 import {
-  Plugin,
   PluginType,
   getAllElements,
   getFilePath,
@@ -31,19 +26,24 @@ import {
   printPlugins,
 } from '../plugin';
 import {
-  checkPluginDependencies,
-  handleCordovaPluginsJS,
-  logCordovaManualSteps,
-} from '../cordova';
+  convertToUnixPath,
+  copySync,
+  readFileAsync,
+  readFileSync,
+  removeSync,
+  writeFileAsync,
+  writeFileSync,
+} from '../util/fs';
 
-export const updateIOSChecks: CheckFunction[] = [
-  checkCocoaPods,
-  checkIOSProject,
-];
+import { getIOSPlugins } from './common';
+
 const platform = 'ios';
 
-export async function updateIOS(config: Config, deployment: boolean) {
-  let plugins = await getPluginsTask(config);
+export async function updateIOS(
+  config: Config,
+  deployment: boolean,
+): Promise<void> {
+  const plugins = await getPluginsTask(config);
 
   const capacitorPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Core,
@@ -75,7 +75,7 @@ export async function installCocoaPodsPlugins(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
-) {
+): Promise<void> {
   await runTask(
     `Updating iOS native dependencies with ${c.input('pod install')}`,
     () => {
@@ -84,20 +84,20 @@ export async function installCocoaPodsPlugins(
   );
 }
 
-export async function updatePodfile(
+async function updatePodfile(
   config: Config,
   plugins: Plugin[],
   deployment: boolean,
-) {
+): Promise<void> {
   const dependenciesContent = generatePodFile(config, plugins);
   const projectName = config.ios.nativeProjectName;
-  const projectRoot = resolve(config.app.rootDir, config.ios.name, projectName);
+  const projectRoot = resolve(config.ios.platformDirAbs, projectName);
   const podfilePath = join(projectRoot, 'Podfile');
   const podfileLockPath = join(projectRoot, 'Podfile.lock');
   let podfileContent = await readFileAsync(podfilePath, 'utf8');
   podfileContent = podfileContent.replace(
-    /(Automatic Capacitor Pod dependencies, do not delete)[\s\S]*(# Do not delete)/,
-    '$1' + dependenciesContent + '\n  $2',
+    /(def capacitor_pods)[\s\S]+?(\nend)/,
+    `$1${dependenciesContent}$2`,
   );
   podfileContent = podfileContent.replace(
     /platform :ios, '[^']*'/,
@@ -111,12 +111,19 @@ export async function updatePodfile(
     installCommand += ' --deployment';
   }
   await runCommand(
-    `cd "${config.app.rootDir}" && cd "${config.ios.name}" && cd "${projectName}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`,
+    `cd "${resolve(
+      config.ios.platformDirAbs,
+      projectName,
+    )}" && ${installCommand} && xcodebuild -project App.xcodeproj clean`,
   );
 }
 
-export function generatePodFile(config: Config, plugins: Plugin[]) {
-  const capacitoriOSPath = resolveNode(config, '@capacitor/ios');
+function generatePodFile(config: Config, plugins: Plugin[]): string {
+  const capacitoriOSPath = resolveNode(
+    config.app.rootDir,
+    '@capacitor/ios',
+    'package.json',
+  );
   if (!capacitoriOSPath) {
     logFatal(
       `Unable to find node_modules/@capacitor/ios.\n` +
@@ -124,9 +131,9 @@ export function generatePodFile(config: Config, plugins: Plugin[]) {
     );
   }
 
-  const podfilePath = join(config.app.rootDir, 'ios', 'App');
+  const podfilePath = join(config.ios.platformDirAbs, 'App');
   const relativeCapacitoriOSPath = convertToUnixPath(
-    relative(podfilePath, realpathSync(capacitoriOSPath)),
+    relative(podfilePath, realpathSync(dirname(capacitoriOSPath))),
   );
 
   const capacitorPlugins = plugins.filter(
@@ -198,18 +205,17 @@ async function generateCordovaPodspec(
   isStatic: boolean,
 ) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
-  let weakFrameworks: Array<string> = [];
-  let linkedFrameworks: Array<string> = [];
-  let customFrameworks: Array<string> = [];
-  let systemLibraries: Array<string> = [];
-  let sourceFrameworks: Array<string> = [];
-  let frameworkDeps: Array<string> = [];
-  let compilerFlags: Array<string> = [];
-  let prefsArray: Array<any> = [];
+  const weakFrameworks: string[] = [];
+  const linkedFrameworks: string[] = [];
+  const customFrameworks: string[] = [];
+  const systemLibraries: string[] = [];
+  const sourceFrameworks: string[] = [];
+  const frameworkDeps: string[] = [];
+  const compilerFlags: string[] = [];
+  let prefsArray: any[] = [];
   let name = 'CordovaPlugins';
   let sourcesFolderName = 'sources';
   if (isStatic) {
@@ -351,7 +357,7 @@ async function generateCordovaPodspec(
 }
 
 function getLinkerFlags(config: Config) {
-  if (config.app.extConfig.ios && config.app.extConfig.ios.cordovaLinkerFlags) {
+  if (config.app.extConfig.ios?.cordovaLinkerFlags) {
     return `\n    s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '${config.app.extConfig.ios.cordovaLinkerFlags.join(
       ' ',
     )}' }`;
@@ -361,8 +367,7 @@ function getLinkerFlags(config: Config) {
 
 function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   cordovaPlugins.map(p => {
@@ -460,8 +465,7 @@ function copyPluginsNativeFiles(config: Config, cordovaPlugins: Plugin[]) {
 
 function removePluginsNativeFiles(config: Config) {
   const pluginsPath = resolve(
-    config.app.rootDir,
-    'ios',
+    config.ios.platformDirAbs,
     config.ios.assets.pluginsFolderName,
   );
   removeSync(pluginsPath);
@@ -492,7 +496,7 @@ function filterARCFiles(plugin: Plugin) {
   return sourcesARC.length > 0;
 }
 
-function removeNoSystem(library: string, sourceFrameworks: Array<string>) {
+function removeNoSystem(library: string, sourceFrameworks: string[]) {
   const libraries = sourceFrameworks.filter(framework =>
     framework.includes(library),
   );
@@ -509,7 +513,7 @@ async function getPluginsTask(config: Config) {
 
 async function replaceFrameworkVariables(
   config: Config,
-  prefsArray: Array<any>,
+  prefsArray: any[],
   frameworkString: string,
 ) {
   prefsArray.map((preference: any) => {

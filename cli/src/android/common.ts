@@ -1,7 +1,11 @@
-import { checkCapacitorPlatform } from '../common';
-import { Config } from '../config';
-import { getIncompatibleCordovaPlugins } from '../cordova';
 import { mkdirs } from 'fs-extra';
+import { join, resolve } from 'path';
+
+import { checkCapacitorPlatform } from '../common';
+import { getIncompatibleCordovaPlugins } from '../cordova';
+import type { Config } from '../definitions';
+import type { Plugin } from '../plugin';
+import { PluginType, getPluginPlatform } from '../plugin';
 import {
   convertToUnixPath,
   copyAsync,
@@ -11,8 +15,6 @@ import {
   removeAsync,
   writeFileAsync,
 } from '../util/fs';
-import { join, resolve } from 'path';
-import { Plugin, PluginType, getPluginPlatform } from '../plugin';
 
 export async function checkAndroidPackage(
   config: Config,
@@ -27,7 +29,7 @@ export function getAndroidPlugins(allPlugins: Plugin[]): Plugin[] {
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
   const platform = 'android';
-  if (plugin.manifest && plugin.manifest.android) {
+  if (plugin.manifest?.android) {
     let pluginFilesPath = plugin.manifest.android.src
       ? plugin.manifest.android.src
       : platform;
@@ -62,18 +64,18 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
  * This is a little trickier for Android because the appId becomes
  * the package name.
  */
-export async function editProjectSettingsAndroid(config: Config) {
+export async function editProjectSettingsAndroid(
+  config: Config,
+): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 
   const manifestPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     'app/src/main/AndroidManifest.xml',
   );
   const buildGradlePath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     'app/build.gradle',
   );
 
@@ -88,8 +90,7 @@ export async function editProjectSettingsAndroid(config: Config) {
   const domainPath = appId.split('.').join('/');
   // Make the package source path to the new plugin Java file
   const newJavaPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     `app/src/main/java/${domainPath}`,
   );
 
@@ -99,8 +100,7 @@ export async function editProjectSettingsAndroid(config: Config) {
 
   await copyAsync(
     resolve(
-      config.app.rootDir,
-      config.android.platformDir,
+      config.android.platformDirAbs,
       'app/src/main/java/com/getcapacitor/myapp/MainActivity.java',
     ),
     resolve(newJavaPath, 'MainActivity.java'),
@@ -109,8 +109,7 @@ export async function editProjectSettingsAndroid(config: Config) {
   if (appId.split('.')[1] !== 'getcapacitor') {
     await removeAsync(
       resolve(
-        config.app.rootDir,
-        config.android.platformDir,
+        config.android.platformDirAbs,
         'app/src/main/java/com/getcapacitor',
       ),
     );
@@ -119,18 +118,13 @@ export async function editProjectSettingsAndroid(config: Config) {
   // Remove our template 'com' folder if their ID doesn't have it
   if (appId.split('.')[0] !== 'com') {
     await removeAsync(
-      resolve(
-        config.app.rootDir,
-        config.android.platformDir,
-        'app/src/main/java/com/',
-      ),
+      resolve(config.android.platformDirAbs, 'app/src/main/java/com/'),
     );
   }
 
   // Update the package in the MainActivity java file
   const activityPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     newJavaPath,
     'MainActivity.java',
   );
@@ -153,8 +147,7 @@ export async function editProjectSettingsAndroid(config: Config) {
 
   // Update the settings in res/values/strings.xml
   const stringsPath = resolve(
-    config.app.rootDir,
-    config.android.platformDir,
+    config.android.platformDirAbs,
     'app/src/main/res/values/strings.xml',
   );
   let stringsContent = await readFileAsync(stringsPath, 'utf8');
