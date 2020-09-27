@@ -1,20 +1,27 @@
-import c from '../colors';
-import { Config } from '../config';
-import { isInstalled, checkCapacitorPlatform } from '../common';
-import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 import { join, resolve } from 'path';
+
+import c from '../colors';
+import {
+  isInstalled,
+  checkCapacitorPlatform,
+  getProjectPlatformDirectory,
+} from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
-import { Plugin, PluginType, getPluginPlatform } from '../plugin';
+import type { Config } from '../definitions';
+import { OS } from '../definitions';
+import type { Plugin } from '../plugin';
+import { PluginType, getPluginPlatform } from '../plugin';
+import { readFileAsync, readdirAsync, writeFileAsync } from '../util/fs';
 
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
     const files = await readdirAsync(
-      join(config.ios.platformDir, config.ios.nativeProjectName),
+      join(config.ios.platformDirAbs, config.ios.nativeProjectName),
     );
     const xcodeProject = files.find(file => file.endsWith('.xcworkspace'));
     if (xcodeProject) {
       return join(
-        config.ios.platformDir,
+        config.ios.platformDirAbs,
         config.ios.nativeProjectName,
         xcodeProject,
       );
@@ -30,7 +37,7 @@ export async function checkIOSPackage(config: Config): Promise<string | null> {
 }
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
-  if (!(await isInstalled('pod')) && config.cli.os === 'mac') {
+  if (!(await isInstalled('pod')) && config.cli.os === OS.Mac) {
     return (
       `CocoaPods is not installed.\n` +
       `See this install guide: ${c.strong(
@@ -42,8 +49,8 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
 }
 
 export async function checkIOSProject(config: Config): Promise<string | null> {
-  const exists = config.platformDirExists('ios');
-  if (exists === null) {
+  const platformDir = await getProjectPlatformDirectory(config, 'ios');
+  if (!platformDir) {
     return (
       `${c.strong('ios')} platform has not been added yet.\n` +
       `Use ${c.input(`npx cap add ios`)} to add the platform to your project.`
@@ -59,11 +66,11 @@ export function getIOSPlugins(allPlugins: Plugin[]): Plugin[] {
 
 export function resolvePlugin(plugin: Plugin): Plugin | null {
   const platform = 'ios';
-  if (plugin.manifest && plugin.manifest.ios) {
+  if (plugin.manifest?.ios) {
     plugin.ios = {
       name: plugin.name,
       type: PluginType.Core,
-      path: plugin.manifest.ios.src ? plugin.manifest.ios.src : platform,
+      path: plugin.manifest.ios.src ?? platform,
     };
   } else if (plugin.xml) {
     plugin.ios = {
@@ -86,19 +93,17 @@ export function resolvePlugin(plugin: Plugin): Plugin | null {
 /**
  * Update the native project files with the desired app id and app name
  */
-export async function editProjectSettingsIOS(config: Config) {
+export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 
   const pbxPath = resolve(
-    config.app.rootDir,
-    config.ios.platformDir,
+    config.ios.platformDirAbs,
     config.ios.nativeProjectName,
     'App.xcodeproj/project.pbxproj',
   );
   const plistPath = resolve(
-    config.app.rootDir,
-    config.ios.platformDir,
+    config.ios.platformDirAbs,
     config.ios.nativeProjectName,
     'App/Info.plist',
   );
@@ -106,7 +111,7 @@ export async function editProjectSettingsIOS(config: Config) {
   let plistContent = await readFileAsync(plistPath, 'utf8');
 
   plistContent = plistContent.replace(
-    /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^\<]*)<\/string>/,
+    /<key>CFBundleDisplayName<\/key>[\s\S]?\s+<string>([^<]*)<\/string>/,
     `<key>CFBundleDisplayName</key>\n        <string>${appName}</string>`,
   );
 

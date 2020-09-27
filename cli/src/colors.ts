@@ -1,4 +1,4 @@
-import { Colors } from '@ionic/cli-framework-output';
+import type { Colors } from '@ionic/cli-framework-output';
 import kleur from 'kleur';
 
 export const strong = kleur.bold;

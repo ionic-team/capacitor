@@ -4,11 +4,9 @@ import {
   CORDOVA_PLUGIN_ID,
   MappedFS,
   makeAppDir,
-  makeConfig,
   run,
   installPlatform,
 } from './util';
-import { updateCommand } from '../src/tasks/update';
 
 describe.each([false, true])(
   'Update: Android (monoRepoLike: %p)',
@@ -26,8 +24,6 @@ describe.each([false, true])(
       await run(appDir, `init "${APP_NAME}" "${APP_ID}"`);
       await installPlatform(appDir, 'android');
       await run(appDir, `add android`);
-      // Redundant, because add does this, but called explicitly for thoroughness
-      await updateCommand(makeConfig(appDir), 'android', false);
       FS = new MappedFS(appDir);
     });
 
@@ -35,13 +31,11 @@ describe.each([false, true])(
       //appDirObj.cleanupCallback();
     });
 
-    it('Should update', async () => {});
-
     it('Should install Cordova plugin JS', async () => {
       const cordovaPluginJSContent = await FS.read(
         'android/app/src/main/assets/public/cordova_plugins.js',
       );
-      let regex = new RegExp(CORDOVA_PLUGIN_ID);
+      const regex = new RegExp(CORDOVA_PLUGIN_ID);
       expect(regex.test(cordovaPluginJSContent)).toBe(true);
     });
 

@@ -99,10 +99,13 @@
     }
     return;
   }
-  
-  for(CAPPluginCall *call in listenersForEvent) {
-    CAPPluginCallResult *result = [[CAPPluginCallResult alloc] init:data];
-    call.successHandler(result, call);
+
+  for (int i=0; i < listenersForEvent.count; i++) {
+    CAPPluginCall *call = listenersForEvent[i];
+    if (call != nil) {
+      CAPPluginCallResult *result = [[CAPPluginCallResult alloc] init:data];
+      call.successHandler(result, call);
+    }
   }
 }
 

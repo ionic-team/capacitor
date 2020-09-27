@@ -16,39 +16,8 @@ CAP_PLUGIN(CAPBackgroundTaskPlugin, "BackgroundTask",
   CAP_PLUGIN_METHOD(finish, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPBrowserPlugin, "Browser",
-  CAP_PLUGIN_METHOD(open, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(close, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(prefetch, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
-CAP_PLUGIN(CAPCameraPlugin, "Camera",
-  CAP_PLUGIN_METHOD(getPhoto, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPConsolePlugin, "Console",
   CAP_PLUGIN_METHOD(log, CAPPluginReturnNone);
-)
-
-CAP_PLUGIN(CAPDevicePlugin, "Device",
-  CAP_PLUGIN_METHOD(getInfo, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(getBatteryInfo, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(getLanguageCode, CAPPluginReturnPromise);
-)
-
-CAP_PLUGIN(CAPFilesystemPlugin, "Filesystem",
-  CAP_PLUGIN_METHOD(readFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(writeFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(appendFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(deleteFile, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(mkdir, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(rmdir, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(readdir, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(getUri, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(stat, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(rename, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(copy, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
@@ -80,13 +49,6 @@ CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPModalsPlugin, "Modals",
-  CAP_PLUGIN_METHOD(alert, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(prompt, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(confirm, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(showActions, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(register, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(requestPermission, CAPPluginReturnPromise);
@@ -97,10 +59,6 @@ CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
   CAP_PLUGIN_METHOD(deleteChannel, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(listChannels, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
-CAP_PLUGIN(CAPSharePlugin, "Share",
-  CAP_PLUGIN_METHOD(share, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPSplashScreenPlugin, "SplashScreen",
@@ -115,10 +73,6 @@ CAP_PLUGIN(CAPStatusBarPlugin, "StatusBar",
   CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(getInfo, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(setOverlaysWebView, CAPPluginReturnPromise);
-)
-
-CAP_PLUGIN(CAPToastPlugin, "Toast",
-  CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPWebViewPlugin, "WebView",

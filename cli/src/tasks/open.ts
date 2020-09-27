@@ -1,15 +1,23 @@
-import c from '../colors';
-import { Config } from '../config';
-import { logFatal, resolvePlatform, runPlatformHook, runTask } from '../common';
 import { openAndroid } from '../android/open';
+import c from '../colors';
+import {
+  logFatal,
+  resolvePlatform,
+  runPlatformHook,
+  runTask,
+  isValidPlatform,
+  selectPlatforms,
+  promptForPlatform,
+} from '../common';
+import type { Config } from '../definitions';
 import { openIOS } from '../ios/open';
 import { logger } from '../log';
 
 export async function openCommand(
   config: Config,
   selectedPlatformName: string,
-) {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+): Promise<void> {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:open');
@@ -17,7 +25,7 @@ export async function openCommand(
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
   } else {
-    const platforms = config.selectPlatforms(selectedPlatformName);
+    const platforms = await selectPlatforms(config, selectedPlatformName);
     let platformName: string;
     if (platforms.length === 0) {
       logger.info(
@@ -28,7 +36,7 @@ export async function openCommand(
     } else if (platforms.length === 1) {
       platformName = platforms[0];
     } else {
-      platformName = await config.askPlatform(
+      platformName = await promptForPlatform(
         '',
         `Please choose a platform to open:`,
       );
@@ -42,7 +50,10 @@ export async function openCommand(
   }
 }
 
-export async function open(config: Config, platformName: string) {
+export async function open(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   if (platformName === config.ios.name) {
     await runTask('Opening the Xcode workspace...', () => {
       return openIOS(config);
