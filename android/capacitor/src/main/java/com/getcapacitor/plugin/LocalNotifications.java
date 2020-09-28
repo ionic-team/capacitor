@@ -7,7 +7,6 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-import com.getcapacitor.PluginRequestCodes;
 import com.getcapacitor.plugin.notification.LocalNotification;
 import com.getcapacitor.plugin.notification.LocalNotificationManager;
 import com.getcapacitor.plugin.notification.NotificationAction;
@@ -22,7 +21,7 @@ import org.json.JSONArray;
  * Plugins allows to create and trigger various types of notifications an specific times
  * Please refer to individual documentation for reference
  */
-@NativePlugin(requestCodes = PluginRequestCodes.NOTIFICATION_OPEN)
+@NativePlugin(requestCodes = 9006)
 public class LocalNotifications extends Plugin {
     private LocalNotificationManager manager;
     private NotificationStorage notificationStorage;

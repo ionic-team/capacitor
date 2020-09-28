@@ -11,7 +11,6 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-import com.getcapacitor.PluginRequestCodes;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -23,7 +22,7 @@ import java.util.Map;
 
 @NativePlugin(
     permissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
-    permissionRequestCode = PluginRequestCodes.GEOLOCATION_REQUEST_PERMISSIONS
+    permissionRequestCode = 9004
 )
 public class Geolocation extends Plugin {
     private Map<String, PluginCall> watchingCalls = new HashMap<>();

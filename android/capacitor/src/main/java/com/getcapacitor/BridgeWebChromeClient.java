@@ -38,11 +38,11 @@ import org.json.JSONException;
  */
 public class BridgeWebChromeClient extends WebChromeClient {
     private Bridge bridge;
-    static final int FILE_CHOOSER = PluginRequestCodes.FILE_CHOOSER;
-    static final int FILE_CHOOSER_IMAGE_CAPTURE = PluginRequestCodes.FILE_CHOOSER_IMAGE_CAPTURE;
-    static final int FILE_CHOOSER_VIDEO_CAPTURE = PluginRequestCodes.FILE_CHOOSER_VIDEO_CAPTURE;
-    static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
-    static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
+    static final int FILE_CHOOSER = 9007;
+    static final int FILE_CHOOSER_IMAGE_CAPTURE = 9008;
+    static final int FILE_CHOOSER_VIDEO_CAPTURE = 9009;
+    static final int FILE_CHOOSER_CAMERA_PERMISSION = 9010;
+    static final int GET_USER_MEDIA_PERMISSIONS = 9011;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
