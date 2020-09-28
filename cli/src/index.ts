@@ -87,9 +87,13 @@ export async function run(): Promise<void> {
 
   program
     .command(`run [platform]`)
-    .description(`runs ${c.input('copy')}, then builds and deploys the app`)
-    .action(platform => {
-      return runCommand(config, platform);
+    .description(
+      `runs ${c.input('copy')}, then builds and deploys the native app`,
+    )
+    .option('--list', 'list targets, then quit')
+    .option('--target <id>', 'use a specific target')
+    .action((platform, { list, target }) => {
+      return runCommand(config, platform, { list, target });
     });
 
   program

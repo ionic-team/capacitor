@@ -1,3 +1,5 @@
+import { columnar } from '@ionic/utils-terminal';
+
 import { runAndroid } from '../android/run';
 import c from '../colors';
 import {
@@ -7,21 +9,29 @@ import {
   selectPlatforms,
   promptForPlatform,
   logFatal,
+  getPlatformTargets,
+  getPlatformTargetName,
 } from '../common';
 import type { Config } from '../definitions';
 import { runIOS } from '../ios/run';
-import { logger } from '../log';
+import { logger, output } from '../log';
 
 import { copy } from './copy';
+
+export interface RunCommandOptions {
+  list?: boolean;
+  target?: string;
+}
 
 export async function runCommand(
   config: Config,
   selectedPlatformName: string,
+  options: RunCommandOptions,
 ): Promise<void> {
   if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
-      await runPlatformHook(platformDir, 'capacitor:update');
+      await runPlatformHook(platformDir, 'capacitor:run');
     } else {
       logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
     }
@@ -43,12 +53,46 @@ export async function runCommand(
       );
     }
 
+    if (options.list) {
+      const targets = await getPlatformTargets(platformName);
+      const rows = targets.map(t => [
+        getPlatformTargetName(t),
+        `${t.platform === 'ios' ? 'iOS' : 'API'} ${t.sdkVersion}`,
+        t.id ?? '?',
+      ]);
+
+      output.write(
+        `${columnar(rows, {
+          headers: ['Name', 'API', 'Target ID'],
+          vsep: ' ',
+        })}\n`,
+      );
+
+      return;
+    }
+
     try {
       await copy(config, platformName);
-      await run(config, platformName);
+      await run(config, platformName, options);
     } catch (e) {
       logFatal(e.stack ?? e);
     }
+  }
+}
+
+export async function run(
+  config: Config,
+  platformName: string,
+  options: RunCommandOptions,
+): Promise<void> {
+  if (platformName == config.ios.name) {
+    await runIOS(config, options);
+  } else if (platformName === config.android.name) {
+    await runAndroid(config, options);
+  } else if (platformName === config.web.name) {
+    return;
+  } else {
+    throw `Platform ${platformName} is not valid.`;
   }
 }
 
@@ -57,16 +101,4 @@ function createRunnablePlatformFilter(
 ): (platform: string) => boolean {
   return platform =>
     platform === config.ios.name || platform === config.android.name;
-}
-
-export async function run(config: Config, platformName: string): Promise<void> {
-  if (platformName == config.ios.name) {
-    await runIOS(config);
-  } else if (platformName === config.android.name) {
-    await runAndroid(config);
-  } else if (platformName === config.web.name) {
-    return;
-  } else {
-    throw `Platform ${platformName} is not valid.`;
-  }
 }

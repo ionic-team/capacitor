@@ -514,6 +514,45 @@ export async function promptForPlatform(
   return platformName;
 }
 
+export async function promptForPlatformTarget(
+  targets: PlatformTarget[],
+  selectedTarget?: string,
+): Promise<string> {
+  if (!selectedTarget) {
+    if (targets.length === 1) {
+      return targets[0].id!;
+    } else {
+      const answers = await prompts(
+        [
+          {
+            type: 'select',
+            name: 'target',
+            message: 'Please choose a target device:',
+            choices: targets.map(t => ({
+              title: `${getPlatformTargetName(t)} (${t.id})`,
+              value: t.id,
+            })),
+          },
+        ],
+        { onCancel: () => process.exit(1) },
+      );
+
+      return answers.target;
+    }
+  }
+
+  const target = selectedTarget.trim();
+
+  if (!targets.some(t => t.id === target)) {
+    logFatal(
+      `Invalid target ID: ${c.input(target)}.\n` +
+        `Valid targets are: ${targets.map(t => t.id).join(', ')}`,
+    );
+  }
+
+  return target;
+}
+
 export async function getAddedPlatforms(config: Config): Promise<string[]> {
   const platforms: string[] = [];
 
@@ -551,6 +590,44 @@ export async function checkPlatformVersions(
         )}`,
     );
   }
+}
+
+export interface PlatformTarget {
+  platform: string;
+  virtual: boolean;
+  sdkVersion: string;
+  name?: string;
+  model?: string;
+  id?: string;
+}
+
+export async function getPlatformTargets(
+  platformName: string,
+): Promise<PlatformTarget[]> {
+  const output = await getCommandOutput('native-run', [
+    platformName,
+    '--list',
+    '--json',
+  ]);
+
+  if (!output) {
+    logFatal('native-run is not installed');
+  }
+
+  const parsedOutput = JSON.parse(output);
+
+  return [
+    ...parsedOutput.devices.map((t: any) => ({ ...t, virtual: false })),
+    ...parsedOutput.virtualDevices.map((t: any) => ({ ...t, virtual: true })),
+  ];
+}
+
+export function getPlatformTargetName(target: PlatformTarget): string {
+  return `${target.name ?? target.model ?? target.id ?? '?'}${
+    target.virtual
+      ? ` (${target.platform === 'ios' ? 'simulator' : 'emulator'})`
+      : ''
+  }`;
 }
 
 export function resolvePlatform(
