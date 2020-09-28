@@ -517,10 +517,10 @@ export async function promptForPlatform(
 export async function promptForPlatformTarget(
   targets: PlatformTarget[],
   selectedTarget?: string,
-): Promise<string> {
+): Promise<PlatformTarget> {
   if (!selectedTarget) {
     if (targets.length === 1) {
-      return targets[0].id!;
+      return targets[0];
     } else {
       const answers = await prompts(
         [
@@ -530,7 +530,7 @@ export async function promptForPlatformTarget(
             message: 'Please choose a target device:',
             choices: targets.map(t => ({
               title: `${getPlatformTargetName(t)} (${t.id})`,
-              value: t.id,
+              value: t,
             })),
           },
         ],
@@ -541,11 +541,12 @@ export async function promptForPlatformTarget(
     }
   }
 
-  const target = selectedTarget.trim();
+  const targetID = selectedTarget.trim();
+  const target = targets.find(t => t.id === targetID);
 
-  if (!targets.some(t => t.id === target)) {
+  if (!target) {
     logFatal(
-      `Invalid target ID: ${c.input(target)}.\n` +
+      `Invalid target ID: ${c.input(targetID)}.\n` +
         `Valid targets are: ${targets.map(t => t.id).join(', ')}`,
     );
   }
@@ -593,12 +594,12 @@ export async function checkPlatformVersions(
 }
 
 export interface PlatformTarget {
+  id: string;
   platform: string;
   virtual: boolean;
   sdkVersion: string;
   name?: string;
   model?: string;
-  id?: string;
 }
 
 export async function getPlatformTargets(

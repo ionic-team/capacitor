@@ -1,3 +1,4 @@
+import Debug from 'debug';
 import { resolve } from 'path';
 
 import c from '../colors';
@@ -10,6 +11,8 @@ import {
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
 
+const debug = Debug('capacitor:android:run');
+
 export async function runAndroid(
   config: Config,
   { target: selectedTarget }: RunCommandOptions,
@@ -19,24 +22,25 @@ export async function runAndroid(
     selectedTarget,
   );
 
-  const projectRoot = config.android.platformDir;
+  const gradleArgs = ['assembleDebug'];
+
+  debug('Invoking ./gradlew with args: %O', gradleArgs);
 
   await runTask('Running Gradle build', async () =>
-    runCommand('./gradlew', ['assembleDebug'], { cwd: projectRoot }),
+    runCommand('./gradlew', gradleArgs, {
+      cwd: config.android.platformDirAbs,
+    }),
   );
 
   const apkName = 'app-debug.apk';
   const apkPath = resolve(config.android.buildOutputDirAbs, apkName);
 
+  const nativeRunArgs = ['android', '--app', apkPath, '--target', target.id];
+
+  debug('Invoking native-run with args: %O', nativeRunArgs);
+
   await runTask(
-    `Deploying ${c.strong(apkName)} to ${c.input(target)}`,
-    async () =>
-      runCommand('native-run', [
-        'android',
-        '--app',
-        apkPath,
-        '--target',
-        target,
-      ]),
+    `Deploying ${c.strong(apkName)} to ${c.input(target.id)}`,
+    async () => runCommand('native-run', nativeRunArgs),
   );
 }
