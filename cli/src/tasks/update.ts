@@ -40,10 +40,7 @@ export async function updateCommand(
       return;
     }
     try {
-      await check([
-        () => checkPackage(config),
-        ...updateChecks(config, platforms),
-      ]);
+      await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
       await allSerial(
         platforms.map(platformName => async () =>
