@@ -15,6 +15,7 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.Keyboard;
