@@ -40,10 +40,7 @@ export async function updateCommand(
       return;
     }
     try {
-      await check([
-        () => checkPackage(config),
-        ...updateChecks(config, platforms),
-      ]);
+      await check([() => checkPackage(), ...updateChecks(config, platforms)]);
 
       await allSerial(
         platforms.map(platformName => async () =>
@@ -86,15 +83,11 @@ export async function update(
   platformName: string,
   deployment: boolean,
 ): Promise<void> {
-  try {
-    await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
-      if (platformName === config.ios.name) {
-        await updateIOS(config, deployment);
-      } else if (platformName === config.android.name) {
-        await updateAndroid(config);
-      }
-    });
-  } catch (e) {
-    logger.error(`Error running update:\n` + (e.stack ?? e));
-  }
+  await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
+    if (platformName === config.ios.name) {
+      await updateIOS(config, deployment);
+    } else if (platformName === config.android.name) {
+      await updateAndroid(config);
+    }
+  });
 }

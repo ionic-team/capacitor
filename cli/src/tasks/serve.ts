@@ -1,8 +1,7 @@
 import c from '../colors';
 import { logFatal } from '../common';
-import type { Config } from '../definitions';
 
-export async function serveCommand(config: Config): Promise<void> {
+export async function serveCommand(): Promise<void> {
   logFatal(
     `The serve command has been removed.\n` +
       `Use a third-party tool for serving single page apps, such as ${c.strong(

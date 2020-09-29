@@ -41,7 +41,7 @@ export async function syncCommand(
     }
     try {
       await check([
-        () => checkPackage(config),
+        () => checkPackage(),
         () => checkWebDir(config),
         ...updateChecks(config, platforms),
       ]);
