@@ -30,7 +30,7 @@ export async function run(): Promise<void> {
     .command('create [directory] [name] [id]', { hidden: true })
     .description('Creates a new Capacitor project')
     .action(() => {
-      return createCommand(config);
+      return createCommand();
     });
 
   program
@@ -48,7 +48,7 @@ export async function run(): Promise<void> {
     .command('serve', { hidden: true })
     .description('Serves a Capacitor Progressive Web App in the browser')
     .action(() => {
-      return serveCommand(config);
+      return serveCommand();
     });
 
   program
@@ -114,7 +114,7 @@ export async function run(): Promise<void> {
     .command('plugin:generate', { hidden: true })
     .description('start a new Capacitor plugin')
     .action(() => {
-      return newPluginCommand(config);
+      return newPluginCommand();
     });
 
   program.arguments('[command]').action(cmd => {

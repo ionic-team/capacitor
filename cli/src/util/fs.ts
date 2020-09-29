@@ -24,7 +24,7 @@ export const readFileSync = fsExtra.readFileSync;
 export const writeFileSync = fsExtra.writeFileSync;
 export const existsAsync = async (path: string): Promise<boolean> => {
   try {
-    const stat = await statAsync(path);
+    await statAsync(path);
     return true;
   } catch {
     return false;

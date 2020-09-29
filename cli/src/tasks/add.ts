@@ -78,7 +78,7 @@ export async function addCommand(
 
     try {
       await check([
-        () => checkPackage(config),
+        () => checkPackage(),
         () => checkAppConfig(config),
         ...addChecks(config, platformName),
       ]);
