@@ -14,8 +14,10 @@ import com.getcapacitor.annotation.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -240,8 +242,8 @@ public class Plugin {
      * @return
      */
     public boolean hasDefinedPermissions(Permission[] permissions) {
-        for (Permission permission : permissions) {
-            if (!hasDefinedPermission(permission.permission())) {
+        for (Permission perm : permissions) {
+            if (!hasDefinedPermission(perm.permission())) {
                 return false;
             }
         }
@@ -504,16 +506,37 @@ public class Plugin {
         String[] perms;
         int permissionRequestCode;
 
+        // If call was made with a list of permissions to request, save them to be requested
+        //  instead of all permissions
+        JSArray providedPerms = call.getArray("permissions");
+        List<String> providedPermsList = null;
+
+        try {
+            providedPermsList = providedPerms.toList();
+        } catch (JSONException e) {}
+
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
             NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
             perms = legacyAnnotation.permissions();
             permissionRequestCode = legacyAnnotation.permissionRequestCode();
         } else {
-            perms = new String[annotation.permissions().length];
-            for (int i = 0; i < perms.length; i++) {
-                perms[i] = annotation.permissions()[i].permission();
+            // If call was made without any custom permissions, request all from plugin annotation
+            if (providedPermsList == null || providedPermsList.isEmpty()) {
+                perms = new String[annotation.permissions().length];
+                for (int i = 0; i < perms.length; i++) {
+                    perms[i] = annotation.permissions()[i].permission();
+                }
+            } else {
+                Set<String> permsSet = new HashSet<>();
+                for (Permission perm : annotation.permissions()) {
+                    if (providedPermsList.contains(perm.alias())) {
+                        permsSet.add(perm.permission());
+                    }
+                }
+                perms = permsSet.toArray(new String[0]);
             }
+
             permissionRequestCode = annotation.permissionRequestCode();
         }
 
@@ -531,10 +554,13 @@ public class Plugin {
      * Handle request permissions result. A plugin can override this to handle the result
      * themselves, or this method will handle the result for our convenient requestPermissions
      * call.
+     * @deprecated
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
      */
+    @Deprecated
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (!hasDefinedPermissions(permissions)) {
             StringBuilder builder = new StringBuilder();
@@ -546,6 +572,25 @@ public class Plugin {
             savedLastCall.reject(builder.toString());
             savedLastCall = null;
         }
+    }
+
+    /**
+     * Handle request permissions result. A plugin can override this to handle the result
+     * themselves, or this method will handle the result for our convenient requestPermissions
+     * call.
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    protected void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        PluginCall savedCall = getSavedCall();
+        if (savedCall == null) {
+            return;
+        }
+
+        savedCall.resolve(getPermissionStates());
+        savedCall.release(bridge);
     }
 
     /**

@@ -712,7 +712,6 @@ public class Bridge {
      * @param permissions the permissions requested
      * @param grantResults the set of granted/denied permissions
      */
-
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
@@ -726,7 +725,12 @@ public class Bridge {
             return;
         }
 
-        plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (plugin.getPluginAnnotation() != null) {
+            plugin.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        } else {
+            // Call deprecated method if using deprecated NativePlugin annotation
+            plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     /**
