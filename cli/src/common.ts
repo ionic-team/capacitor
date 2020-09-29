@@ -16,7 +16,7 @@ import xml2js from 'xml2js';
 
 import c from './colors';
 import type { Config, PackageJson, ExternalConfig } from './definitions';
-import { output, logger, nonInteractiveOutput } from './log';
+import { output, logger } from './log';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -347,9 +347,8 @@ export interface RunTaskOptions {
 export async function runTask<T>(
   title: string,
   fn: () => Promise<T>,
-  { spinner = true }: RunTaskOptions = {},
 ): Promise<T> {
-  const chain = (spinner ? output : nonInteractiveOutput).createTaskChain();
+  const chain = output.createTaskChain();
   chain.next(title);
 
   try {

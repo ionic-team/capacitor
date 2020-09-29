@@ -11,10 +11,9 @@ import { isInteractive } from './util/term';
 
 const options = { colors, stream: process.stdout };
 
-export const nonInteractiveOutput = new StreamOutputStrategy(options);
 export const output = isInteractive()
   ? new TTYOutputStrategy(options)
-  : nonInteractiveOutput;
+  : new StreamOutputStrategy(options);
 
 export const logger = createDefaultLogger({
   output,
