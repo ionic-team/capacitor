@@ -1,6 +1,11 @@
 import { wordWrap } from '@ionic/cli-framework-output';
 import { copy, move, writeJSON, readFile, pathExists } from '@ionic/utils-fs';
-import { Subprocess, SubprocessError, which } from '@ionic/utils-subprocess';
+import {
+  ERROR_COMMAND_NOT_FOUND,
+  Subprocess,
+  SubprocessError,
+  which,
+} from '@ionic/utils-subprocess';
 import { spawn } from 'child_process';
 import { dirname, join } from 'path';
 import type { Answers, PromptObject } from 'prompts';
@@ -306,6 +311,24 @@ export async function runCommand(
   }
 }
 
+export async function runNativeRun(
+  args: readonly string[],
+  options: RunCommandOptions = {},
+): Promise<string> {
+  try {
+    return await runCommand('native-run', args, options);
+  } catch (e) {
+    if (e === ERROR_COMMAND_NOT_FOUND) {
+      logFatal(
+        `${c.input('native-run')} not found in PATH\n` +
+          `Are you sure ${c.strong('native-run')} is installed?`,
+      );
+    }
+
+    throw e;
+  }
+}
+
 export async function getCommandOutput(
   command: string,
   args: readonly string[],
@@ -604,16 +627,7 @@ export interface PlatformTarget {
 export async function getPlatformTargets(
   platformName: string,
 ): Promise<PlatformTarget[]> {
-  const output = await getCommandOutput('native-run', [
-    platformName,
-    '--list',
-    '--json',
-  ]);
-
-  if (!output) {
-    logFatal('native-run is not installed');
-  }
-
+  const output = await runNativeRun([platformName, '--list', '--json']);
   const parsedOutput = JSON.parse(output);
 
   return [

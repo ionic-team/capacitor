@@ -3,9 +3,10 @@ import { resolve } from 'path';
 
 import c from '../colors';
 import {
-  runCommand,
-  promptForPlatformTarget,
   getPlatformTargets,
+  promptForPlatformTarget,
+  runCommand,
+  runNativeRun,
   runTask,
 } from '../common';
 import type { Config } from '../definitions';
@@ -63,6 +64,6 @@ export async function runIOS(
 
   await runTask(
     `Deploying ${c.strong(appName)} to ${c.input(target.id)}`,
-    async () => runCommand('native-run', nativeRunArgs),
+    async () => runNativeRun(nativeRunArgs),
   );
 }

@@ -3,10 +3,11 @@ import { resolve } from 'path';
 
 import c from '../colors';
 import {
-  runCommand,
-  runTask,
-  promptForPlatformTarget,
   getPlatformTargets,
+  promptForPlatformTarget,
+  runCommand,
+  runNativeRun,
+  runTask,
 } from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
@@ -41,6 +42,6 @@ export async function runAndroid(
 
   await runTask(
     `Deploying ${c.strong(apkName)} to ${c.input(target.id)}`,
-    async () => runCommand('native-run', nativeRunArgs),
+    async () => runNativeRun(nativeRunArgs),
   );
 }
