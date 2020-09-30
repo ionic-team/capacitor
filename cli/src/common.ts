@@ -13,7 +13,6 @@ import xml2js from 'xml2js';
 import c from './colors';
 import type { Config, PackageJson, ExternalConfig } from './definitions';
 import { output, logger } from './log';
-import { emoji as _e } from './util/emoji';
 import { copyAsync, existsAsync, readFileAsync, renameAsync } from './util/fs';
 
 export type CheckFunction = () => Promise<string | null>;
@@ -60,7 +59,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkPackage(_config: Config): Promise<string | null> {
+export async function checkPackage(): Promise<string | null> {
   if (!(await existsAsync('package.json'))) {
     return (
       `The Capacitor CLI needs to run at the root of an npm package.\n` +
@@ -185,7 +184,7 @@ export function parseXML(xmlStr: string): any {
 }
 
 export async function writeXML(object: any): Promise<any> {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const builder = new xml2js.Builder({
       headless: true,
       explicitRoot: false,
