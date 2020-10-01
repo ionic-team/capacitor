@@ -17,7 +17,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Geolocation;
-import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
@@ -384,7 +383,6 @@ public class Bridge {
         this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(Geolocation.class);
-        this.registerPlugin(Keyboard.class);
         this.registerPlugin(PushNotifications.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(StatusBar.class);
