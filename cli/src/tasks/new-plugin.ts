@@ -1,8 +1,7 @@
 import c from '../colors';
-import { Config } from '../config';
 import { logFatal } from '../common';
 
-export async function newPluginCommand(config: Config) {
+export async function newPluginCommand(): Promise<void> {
   logFatal(
     `The plugin:generate command has been removed.\n` +
       `Use ${c.input('npm init @capacitor/plugin')}`,

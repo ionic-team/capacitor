@@ -1,28 +1,28 @@
 import program from 'commander';
 
-import { createCommand } from './tasks/create';
-import { initCommand } from './tasks/init';
+import c from './colors';
+import { logFatal } from './common';
+import { loadConfig } from './config';
+import { output } from './log';
+import { addCommand } from './tasks/add';
 import { copyCommand } from './tasks/copy';
+import { createCommand } from './tasks/create';
+import { doctorCommand } from './tasks/doctor';
+import { initCommand } from './tasks/init';
 import { listCommand } from './tasks/list';
-import { updateCommand } from './tasks/update';
+import { newPluginCommand } from './tasks/new-plugin';
 import { openCommand } from './tasks/open';
 import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
-import { Config } from './config';
-import c from './colors';
-import { addCommand } from './tasks/add';
-import { newPluginCommand } from './tasks/new-plugin';
-import { doctorCommand } from './tasks/doctor';
+import { updateCommand } from './tasks/update';
 import { emoji as _e } from './util/emoji';
-import { logFatal } from './common';
-import { output } from './log';
 
 process.on('unhandledRejection', error => {
   console.error(c.failure('[fatal]'), error);
 });
 
-export function run(process: NodeJS.Process, cliBinDir: string) {
-  const config = new Config(process.platform, process.cwd(), cliBinDir);
+export async function run(): Promise<void> {
+  const config = await loadConfig();
 
   program.version(config.cli.package.version);
 
@@ -30,7 +30,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .command('create [directory] [name] [id]', { hidden: true })
     .description('Creates a new Capacitor project')
     .action(() => {
-      return createCommand(config);
+      return createCommand();
     });
 
   program
@@ -48,7 +48,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .command('serve', { hidden: true })
     .description('Serves a Capacitor Progressive Web App in the browser')
     .action(() => {
-      return serveCommand(config);
+      return serveCommand();
     });
 
   program
@@ -114,7 +114,7 @@ export function run(process: NodeJS.Process, cliBinDir: string) {
     .command('plugin:generate', { hidden: true })
     .description('start a new Capacitor plugin')
     .action(() => {
-      return newPluginCommand(config);
+      return newPluginCommand();
     });
 
   program.arguments('[command]').action(cmd => {

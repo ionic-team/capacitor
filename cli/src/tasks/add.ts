@@ -1,10 +1,10 @@
+import { addAndroid } from '../android/add';
+import {
+  editProjectSettingsAndroid,
+  checkAndroidPackage,
+} from '../android/common';
 import c from '../colors';
-import { Config } from '../config';
-import { OS } from '../definitions';
-import { addAndroid, addAndroidChecks } from '../android/add';
-import { addIOS, addIOSChecks } from '../ios/add';
-import { editProjectSettingsAndroid } from '../android/common';
-import { editProjectSettingsIOS } from '../ios/common';
+import type { CheckFunction } from '../common';
 import {
   check,
   checkAppConfig,
@@ -14,23 +14,35 @@ import {
   resolvePlatform,
   runPlatformHook,
   runTask,
-  writePrettyJSON,
+  isValidPlatform,
+  isValidCommunityPlatform,
+  promptForPlatform,
+  getProjectPlatformDirectory,
 } from '../common';
-import { sync } from './sync';
-
-import { resolve } from 'path';
-import prompts from 'prompts';
+import type { Config } from '../definitions';
+import { OS } from '../definitions';
+import { addIOS } from '../ios/add';
+import {
+  editProjectSettingsIOS,
+  checkIOSPackage,
+  checkCocoaPods,
+} from '../ios/common';
 import { logger } from '../log';
 
-export async function addCommand(config: Config, selectedPlatformName: string) {
-  if (selectedPlatformName && !config.isValidPlatform(selectedPlatformName)) {
+import { sync } from './sync';
+
+export async function addCommand(
+  config: Config,
+  selectedPlatformName: string,
+): Promise<void> {
+  if (selectedPlatformName && !(await isValidPlatform(selectedPlatformName))) {
     const platformDir = resolvePlatform(config, selectedPlatformName);
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:add');
     } else {
       let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
 
-      if (config.knownCommunityPlatforms.includes(selectedPlatformName)) {
+      if (await isValidCommunityPlatform(selectedPlatformName)) {
         msg += `\nTry installing ${c.strong(
           `@capacitor-community/${selectedPlatformName}`,
         )} and adding the platform again.`;
@@ -39,7 +51,7 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
       logger.error(msg);
     }
   } else {
-    const platformName = await config.askPlatform(
+    const platformName = await promptForPlatform(
       selectedPlatformName,
       `Please choose a platform to add:`,
     );
@@ -49,7 +61,11 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
       return;
     }
 
-    const existingPlatformDir = config.platformDirExists(platformName);
+    const existingPlatformDir = await getProjectPlatformDirectory(
+      config,
+      platformName,
+    );
+
     if (existingPlatformDir) {
       logFatal(
         `${c.input(platformName)} platform already exists.\n` +
@@ -61,12 +77,12 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
     }
 
     try {
-      await check(config, [
-        checkPackage,
-        checkAppConfig,
+      await check([
+        () => checkPackage(),
+        () => checkAppConfig(config),
         ...addChecks(config, platformName),
       ]);
-      await check(config, [checkWebDir]);
+      await check([() => checkWebDir(config)]);
       await doAdd(config, platformName);
       await editPlatforms(config, platformName);
 
@@ -90,11 +106,14 @@ export async function addCommand(config: Config, selectedPlatformName: string) {
   }
 }
 
-export function addChecks(config: Config, platformName: string) {
+export function addChecks(
+  config: Config,
+  platformName: string,
+): CheckFunction[] {
   if (platformName === config.ios.name) {
-    return addIOSChecks;
+    return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
   } else if (platformName === config.android.name) {
-    return addAndroidChecks;
+    return [() => checkAndroidPackage(config)];
   } else if (platformName === config.web.name) {
     return [];
   } else {
@@ -102,7 +121,10 @@ export function addChecks(config: Config, platformName: string) {
   }
 }
 
-export async function doAdd(config: Config, platformName: string) {
+export async function doAdd(
+  config: Config,
+  platformName: string,
+): Promise<void> {
   await runTask(c.success(c.strong('add')), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);

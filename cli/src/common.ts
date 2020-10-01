@@ -1,34 +1,24 @@
 import { wordWrap } from '@ionic/cli-framework-output';
-import { Config } from './config';
 import { exec, spawn } from 'child_process';
-import { setTimeout } from 'timers';
-import { basename, dirname, join, parse, resolve } from 'path';
-import {
-  copyAsync,
-  existsAsync,
-  readFileAsync,
-  renameAsync,
-  writeFileAsync,
-} from './util/fs';
-import { existsSync, readFile } from 'fs';
-import { emoji as _e } from './util/emoji';
-import c from './colors';
-import { output, logger } from './log';
+import { readFile } from 'fs';
+import { writeJSON } from 'fs-extra';
+import { dirname, join } from 'path';
+import type { Answers, PromptObject } from 'prompts';
+import prompts from 'prompts';
 import semver from 'semver';
+import { setTimeout } from 'timers';
 import which from 'which';
-import prompts, { Answers, PromptObject } from 'prompts';
-import { PackageJson } from './definitions';
+import xml2js from 'xml2js';
 
-export type CheckFunction = (
-  config: Config,
-  ...args: any[]
-) => Promise<string | null>;
+import c from './colors';
+import type { Config, PackageJson, ExternalConfig } from './definitions';
+import { output, logger } from './log';
+import { copyAsync, existsAsync, readFileAsync, renameAsync } from './util/fs';
 
-export async function check(
-  config: Config,
-  checks: CheckFunction[],
-): Promise<void> {
-  const results = await Promise.all(checks.map(f => f(config)));
+export type CheckFunction = () => Promise<string | null>;
+
+export async function check(checks: CheckFunction[]): Promise<void> {
+  const results = await Promise.all(checks.map(f => f()));
   const errors = results.filter(r => r != null) as string[];
   if (errors.length > 0) {
     throw errors.join('\n');
@@ -69,7 +59,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   return null;
 }
 
-export async function checkPackage(_config: Config): Promise<string | null> {
+export async function checkPackage(): Promise<string | null> {
   if (!(await existsAsync('package.json'))) {
     return (
       `The Capacitor CLI needs to run at the root of an npm package.\n` +
@@ -165,17 +155,12 @@ export async function readJSON(path: string): Promise<any> {
   return JSON.parse(data);
 }
 
-export function writePrettyJSON(path: string, data: any) {
-  return writeFileAsync(path, JSON.stringify(data, null, '  ') + '\n');
-}
-
 export function readXML(path: string): Promise<any> {
   return new Promise((resolve, reject) => {
     readFile(path, 'utf8', async (err, xmlStr) => {
       if (err) {
         reject(`Unable to read: ${path}`);
       } else {
-        const xml2js = await import('xml2js');
         xml2js.parseString(xmlStr, (err, result) => {
           if (err) {
             reject(`Error parsing: ${path}, ${err}`);
@@ -189,9 +174,8 @@ export function readXML(path: string): Promise<any> {
 }
 
 export function parseXML(xmlStr: string): any {
-  const parseString = require('xml2js').parseString;
-  var xmlObj;
-  parseString(xmlStr, (err: any, result: any) => {
+  let xmlObj;
+  xml2js.parseString(xmlStr, (err: any, result: any) => {
     if (!err) {
       xmlObj = result;
     }
@@ -199,9 +183,8 @@ export function parseXML(xmlStr: string): any {
   return xmlObj;
 }
 
-export function writeXML(object: any): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    const xml2js = await import('xml2js');
+export async function writeXML(object: any): Promise<any> {
+  return new Promise(resolve => {
     const builder = new xml2js.Builder({
       headless: true,
       explicitRoot: false,
@@ -213,8 +196,7 @@ export function writeXML(object: any): Promise<any> {
   });
 }
 
-export function buildXmlElement(configElement: any, rootName: string) {
-  const xml2js = require('xml2js');
+export function buildXmlElement(configElement: any, rootName: string): string {
   const builder = new xml2js.Builder({
     headless: true,
     explicitRoot: false,
@@ -223,42 +205,24 @@ export function buildXmlElement(configElement: any, rootName: string) {
   return builder.buildObject(configElement);
 }
 
-/**
- * Check for or create our main configuration file.
- * @param config
- */
-export async function getOrCreateConfig(config: Config) {
-  const configPath = join(config.app.rootDir, config.app.extConfigName);
-  if (await existsAsync(configPath)) {
-    return configPath;
-  }
+export async function mergeConfig(
+  config: Config,
+  extConfig: ExternalConfig,
+): Promise<void> {
+  const oldConfig = { ...config.app.extConfig };
 
-  await writePrettyJSON(config.app.extConfigFilePath, {
-    appId: config.app.appId,
-    appName: config.app.appName,
-    bundledWebRuntime: config.app.bundledWebRuntime,
-    webDir: basename(resolve(config.app.rootDir, config.app.webDir)),
-    plugins: {
-      SplashScreen: {
-        launchShowDuration: 0,
+  await writeJSON(
+    config.app.extConfigFilePath,
+    {
+      ...oldConfig,
+      ...extConfig,
+      ...{
+        plugins: extConfig.plugins ??
+          oldConfig.plugins ?? { SplashScreen: { launchShowDuration: 0 } },
       },
     },
-  });
-
-  // Store our newly created or found external config as the default
-  config.loadExternalConfig();
-}
-
-export async function mergeConfig(config: Config, settings: any) {
-  const configPath = join(config.app.rootDir, config.app.extConfigName);
-
-  await writePrettyJSON(config.app.extConfigFilePath, {
-    ...config.app.extConfig,
-    ...settings,
-  });
-
-  // Store our newly created or found external config as the default
-  config.loadExternalConfig();
+    { spaces: 2 },
+  );
 }
 
 export async function logPrompt<T extends string>(
@@ -273,7 +237,7 @@ export async function logPrompt<T extends string>(
   return prompts(prompt, { onCancel: () => process.exit(1) });
 }
 
-export function logSuccess(msg: string) {
+export function logSuccess(msg: string): void {
   logger.msg(`${c.success('[success]')} ${msg}`);
 }
 
@@ -294,7 +258,7 @@ export async function isInstalled(command: string): Promise<boolean> {
   });
 }
 
-export function wait(time: number) {
+export async function wait(time: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
@@ -367,12 +331,12 @@ export async function runTask<T>(
   }
 }
 
-export async function copyTemplate(src: string, dst: string) {
+export async function copyTemplate(src: string, dst: string): Promise<void> {
   await copyAsync(src, dst);
   await renameGitignore(dst);
 }
 
-export async function renameGitignore(dst: string) {
+export async function renameGitignore(dst: string): Promise<void> {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
@@ -385,7 +349,11 @@ export async function getCapacitorPackage(
   config: Config,
   name: string,
 ): Promise<PackageJson | null> {
-  const packagePath = resolveNode(config, `@capacitor/${name}`, 'package.json');
+  const packagePath = resolveNode(
+    config.app.rootDir,
+    `@capacitor/${name}`,
+    'package.json',
+  );
 
   if (!packagePath) {
     return null;
@@ -424,7 +392,138 @@ export async function getCLIVersion(config: Config): Promise<string> {
   return getCapacitorPackageVersion(config, 'cli');
 }
 
-export async function checkPlatformVersions(config: Config, platform: string) {
+function getPlatformDirectory(config: Config, platform: string): string | null {
+  switch (platform) {
+    case 'android':
+      return config.android.platformDirAbs;
+    case 'ios':
+      return config.ios.platformDirAbs;
+    case 'web':
+      return config.web.platformDirAbs;
+  }
+
+  return null;
+}
+
+export async function getProjectPlatformDirectory(
+  config: Config,
+  platform: string,
+): Promise<string | null> {
+  const platformPath = getPlatformDirectory(config, platform);
+
+  if (platformPath && (await existsAsync(platformPath))) {
+    return platformPath;
+  }
+
+  return null;
+}
+
+export async function selectPlatforms(
+  config: Config,
+  selectedPlatformName?: string,
+): Promise<string[]> {
+  if (selectedPlatformName) {
+    // already passed in a platform name
+    const platformName = selectedPlatformName.toLowerCase().trim();
+
+    if (!(await isValidPlatform(platformName))) {
+      logFatal(`Invalid platform: ${c.input(platformName)}`);
+    } else if (!(await getProjectPlatformDirectory(config, platformName))) {
+      if (platformName === 'web') {
+        logFatal(
+          `Could not find the web platform directory.\n` +
+            `Make sure ${c.strong(config.app.webDir)} exists.`,
+        );
+      }
+      logFatal(
+        `${c.strong(platformName)} platform has not been added yet.\n` +
+          `Use ${c.input(
+            `npx cap add ${platformName}`,
+          )} to add the platform to your project.`,
+      );
+    }
+
+    // return the platform in an string array
+    return [platformName];
+  }
+
+  // wasn't given a platform name, so let's
+  // get the platforms that have already been created
+  return getAddedPlatforms(config);
+}
+
+export async function getKnownPlatforms(): Promise<string[]> {
+  return ['web', 'android', 'ios'];
+}
+
+export async function isValidPlatform(platform: string): Promise<boolean> {
+  return (await getKnownPlatforms()).includes(platform);
+}
+
+export async function getKnownCommunityPlatforms(): Promise<string[]> {
+  return ['electron'];
+}
+
+export async function isValidCommunityPlatform(
+  platform: string,
+): Promise<boolean> {
+  return (await getKnownCommunityPlatforms()).includes(platform);
+}
+
+export async function promptForPlatform(
+  selectedPlatformName: string,
+  promptMessage: string,
+): Promise<string> {
+  const knownPlatforms = await getKnownPlatforms();
+
+  if (!selectedPlatformName) {
+    const answers = await prompts(
+      [
+        {
+          type: 'select',
+          name: 'mode',
+          message: promptMessage,
+          choices: knownPlatforms.map(p => ({ title: p, value: p })),
+        },
+      ],
+      { onCancel: () => process.exit(1) },
+    );
+
+    return answers.mode.toLowerCase().trim();
+  }
+
+  const platformName = selectedPlatformName.toLowerCase().trim();
+
+  if (!(await isValidPlatform(platformName))) {
+    logFatal(
+      `Invalid platform: ${c.input(platformName)}.\n` +
+        `Valid platforms include: ${knownPlatforms.join(', ')}`,
+    );
+  }
+
+  return platformName;
+}
+
+export async function getAddedPlatforms(config: Config): Promise<string[]> {
+  const platforms: string[] = [];
+
+  if (await getProjectPlatformDirectory(config, config.android.name)) {
+    platforms.push(config.android.name);
+  }
+
+  if (await getProjectPlatformDirectory(config, config.ios.name)) {
+    platforms.push(config.ios.name);
+  }
+
+  platforms.push(config.web.name);
+
+  return platforms;
+}
+
+export async function checkPlatformVersions(
+  config: Config,
+  platform: string,
+): Promise<void> {
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getCapacitorPackageVersion(config, platform);
   if (
@@ -449,57 +548,44 @@ export function resolvePlatform(
   platform: string,
 ): string | null {
   if (platform[0] !== '@') {
-    const core = resolveNode(config, `@capacitor/${platform}`);
+    const core = resolveNode(
+      config.app.rootDir,
+      `@capacitor/${platform}`,
+      'package.json',
+    );
 
     if (core) {
-      return core;
+      return dirname(core);
     }
 
-    const community = resolveNode(config, `@capacitor-community/${platform}`);
+    const community = resolveNode(
+      config.app.rootDir,
+      `@capacitor-community/${platform}`,
+      'package.json',
+    );
 
     if (community) {
-      return community;
+      return dirname(community);
     }
   }
 
   // third-party
-  return resolveNode(config, platform);
+  const thirdParty = resolveNode(config.app.rootDir, platform, 'package.json');
+
+  if (thirdParty) {
+    return dirname(thirdParty);
+  }
+
+  return null;
 }
 
 export function resolveNode(
-  config: Config,
+  root: string,
   ...pathSegments: string[]
 ): string | null {
-  const id = pathSegments[0];
-  const path = pathSegments.slice(1);
-
-  let modulePath;
-  const starts = [config.app.rootDir];
-  for (let start of starts) {
-    modulePath = resolveNodeFrom(start, id);
-    if (modulePath) {
-      break;
-    }
-  }
-  if (!modulePath) {
+  try {
+    return require.resolve(pathSegments.join('/'), { paths: [root] });
+  } catch (e) {
     return null;
-  }
-
-  return join(modulePath, ...path);
-}
-
-export function resolveNodeFrom(start: string, id: string): string | null {
-  const rootPath = parse(start).root;
-  let basePath = resolve(start);
-  let modulePath;
-  while (true) {
-    modulePath = join(basePath, 'node_modules', id);
-    if (existsSync(modulePath)) {
-      return modulePath;
-    }
-    if (basePath === rootPath) {
-      return null;
-    }
-    basePath = dirname(basePath);
   }
 }

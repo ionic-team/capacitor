@@ -1,20 +1,14 @@
-import { relative } from 'path';
-
 import c from '../colors';
-import { checkCocoaPods, checkIOSPackage } from './common';
-import { CheckFunction, copyTemplate, runTask } from '../common';
-import { Config } from '../config';
+import { copyTemplate, runTask } from '../common';
+import type { Config } from '../definitions';
 
-export const addIOSChecks: CheckFunction[] = [checkIOSPackage, checkCocoaPods];
-
-export async function addIOS(config: Config) {
-  const nativeRelDir = relative(config.app.rootDir, config.ios.platformDir);
+export async function addIOS(config: Config): Promise<void> {
   await runTask(
-    `Adding native Xcode project in ${c.strong(nativeRelDir)}`,
+    `Adding native Xcode project in ${c.strong(config.ios.platformDir)}`,
     () => {
       return copyTemplate(
         config.ios.assets.templateDir,
-        config.ios.platformDir,
+        config.ios.platformDirAbs,
       );
     },
   );

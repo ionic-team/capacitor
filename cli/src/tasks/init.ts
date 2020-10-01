@@ -1,10 +1,8 @@
 import c from '../colors';
-import { Config } from '../config';
 import {
   check,
   checkAppId,
   checkAppName,
-  getOrCreateConfig,
   logFatal,
   mergeConfig,
   runTask,
@@ -12,17 +10,16 @@ import {
   logPrompt,
 } from '../common';
 import { getCordovaPreferences } from '../cordova';
-import { emoji as _e } from '../util/emoji';
+import type { Config } from '../definitions';
+import { output } from '../log';
 import { checkInteractive, isInteractive } from '../util/term';
-import { logger, output } from '../log';
-import prompts from 'prompts';
 
 export async function initCommand(
   config: Config,
   name: string,
   id: string,
-  webDirFromCLI = 'www',
-) {
+  webDirFromCLI?: string,
+): Promise<void> {
   try {
     if (!checkInteractive(name, id)) {
       return;
@@ -31,11 +28,11 @@ export async function initCommand(
     const appId = await getAppId(config, id);
     const webDir = isInteractive()
       ? await getWebDir(config, webDirFromCLI)
-      : webDirFromCLI;
+      : webDirFromCLI ?? config.app.extConfig.webDir ?? 'www';
 
-    await check(config, [
-      config => checkAppName(config, appName),
-      config => checkAppId(config, appId),
+    await check([
+      () => checkAppName(config, appName),
+      () => checkAppId(config, appId),
     ]);
 
     const cordova = await getCordovaPreferences(config);
@@ -45,15 +42,11 @@ export async function initCommand(
         config.app.rootDir,
       )}`,
       async () => {
-        config.app.appId = appId;
-        config.app.appName = appName;
-        config.app.webDir = webDir;
-
-        await getOrCreateConfig(config);
         await mergeConfig(config, {
           appId,
           appName,
           webDir,
+          bundledWebRuntime: false,
           cordova,
         });
       },
@@ -92,9 +85,7 @@ async function getName(config: Config, name: string) {
         message: `Name`,
         initial: config.app.appName
           ? config.app.appName
-          : config.app.package && config.app.package.name
-          ? config.app.package.name
-          : 'App',
+          : config.app.package.name ?? 'App',
       },
     );
     return answers.name;
@@ -119,7 +110,7 @@ async function getAppId(config: Config, id: string) {
   return id;
 }
 
-async function getWebDir(config: Config, webDir: string) {
+async function getWebDir(config: Config, webDir?: string) {
   if (!webDir) {
     const answers = await logPrompt(
       `${c.strong(`What is the web asset directory for your app?`)}\n` +
