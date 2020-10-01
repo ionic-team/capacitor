@@ -1,11 +1,13 @@
 package com.getcapacitor;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -18,6 +20,7 @@ import android.webkit.MimeTypeMap;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.getcapacitor.plugin.camera.CameraUtils;
@@ -195,13 +198,22 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-        WebView targetWebView = new WebView(bridge.getActivity());
+        WebView targetWebView = new WebView(view.getContext());
         targetWebView.setWebViewClient(
             new WebViewClient() {
 
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, request.getUrl());
+                    bridge.getActivity().startActivity(browserIntent);
+                    return true;
+                }
+
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    Log.d("Web", "url: " + url);
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    bridge.getActivity().startActivity(browserIntent);
                     return true;
                 }
             }
@@ -210,6 +222,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
         transport.setWebView(targetWebView);
         resultMsg.sendToTarget();
+
         return true;
     }
 
