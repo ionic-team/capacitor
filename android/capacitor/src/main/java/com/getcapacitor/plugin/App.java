@@ -55,9 +55,9 @@ public class App extends Plugin {
         if (launchUri != null) {
             JSObject d = new JSObject();
             d.put("url", launchUri.toString());
-            call.success(d);
+            call.resolve(d);
         } else {
-            call.success();
+            call.resolve();
         }
     }
 
@@ -65,14 +65,14 @@ public class App extends Plugin {
     public void getState(PluginCall call) {
         JSObject data = new JSObject();
         data.put("isActive", this.isActive);
-        call.success(data);
+        call.resolve(data);
     }
 
     @PluginMethod
     public void canOpenUrl(PluginCall call) {
         String url = call.getString("url");
         if (url == null) {
-            call.error("Must supply a url");
+            call.reject("Must supply a url");
             return;
         }
 
@@ -83,21 +83,21 @@ public class App extends Plugin {
         try {
             pm.getPackageInfo(url, PackageManager.GET_ACTIVITIES);
             ret.put("value", true);
-            call.success(ret);
+            call.resolve(ret);
             return;
         } catch (PackageManager.NameNotFoundException e) {
             Logger.error(getLogTag(), "Package name '" + url + "' not found!", null);
         }
 
         ret.put("value", false);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod
     public void openUrl(PluginCall call) {
         String url = call.getString("url");
         if (url == null) {
-            call.error("Must provide a url to open");
+            call.reject("Must provide a url to open");
             return;
         }
 
@@ -118,7 +118,7 @@ public class App extends Plugin {
                 ret.put("completed", false);
             }
         }
-        call.success(ret);
+        call.resolve(ret);
     }
 
     /**

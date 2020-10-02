@@ -74,7 +74,7 @@ public class Geolocation extends Plugin {
         if (watchingCalls.size() == 0) {
             clearLocationUpdates();
         }
-        call.success();
+        call.resolve();
     }
 
     /**
@@ -83,7 +83,7 @@ public class Geolocation extends Plugin {
      */
     private void processLocation(Location location) {
         for (Map.Entry<String, PluginCall> watch : watchingCalls.entrySet()) {
-            watch.getValue().success(getJSObjectForLocation(location));
+            watch.getValue().resolve(getJSObjectForLocation(location));
         }
     }
 
@@ -98,7 +98,7 @@ public class Geolocation extends Plugin {
 
         for (int result : grantResults) {
             if (result == PackageManager.PERMISSION_DENIED) {
-                savedCall.error("User denied location permission");
+                savedCall.reject("User denied location permission");
                 return;
             }
         }
@@ -160,16 +160,16 @@ public class Geolocation extends Plugin {
                     }
                     Location lastLocation = locationResult.getLastLocation();
                     if (lastLocation == null) {
-                        call.error("location unavailable");
+                        call.reject("location unavailable");
                     } else {
-                        call.success(getJSObjectForLocation(lastLocation));
+                        call.resolve(getJSObjectForLocation(lastLocation));
                     }
                 }
 
                 @Override
                 public void onLocationAvailability(LocationAvailability availability) {
                     if (!availability.isLocationAvailable()) {
-                        call.error("location unavailable");
+                        call.reject("location unavailable");
                         clearLocationUpdates();
                     }
                 }

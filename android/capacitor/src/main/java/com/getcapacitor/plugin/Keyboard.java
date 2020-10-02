@@ -108,7 +108,7 @@ public class Keyboard extends Plugin {
                                     0,
                                     InputMethodManager.HIDE_IMPLICIT_ONLY
                                 );
-                            call.success(); // Thread-safe.
+                            call.resolve(); // Thread-safe.
                         },
                         350
                     )
@@ -124,10 +124,10 @@ public class Keyboard extends Plugin {
                 View v = getActivity().getCurrentFocus();
 
                 if (v == null) {
-                    call.error("Can't close keyboard, not currently focused");
+                    call.reject("Can't close keyboard, not currently focused");
                 } else {
                     inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    call.success(); // Thread-safe.
+                    call.resolve(); // Thread-safe.
                 }
             }
         );

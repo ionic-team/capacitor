@@ -51,7 +51,7 @@ public class NotificationChannelManager {
             channel.put(CHANNEL_USE_LIGHTS, call.getBoolean(CHANNEL_USE_LIGHTS, false));
             channel.put(CHANNEL_LIGHT_COLOR, call.getString(CHANNEL_LIGHT_COLOR, null));
             createChannel(channel);
-            call.success();
+            call.resolve();
         } else {
             call.unavailable();
         }
@@ -96,7 +96,7 @@ public class NotificationChannelManager {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String channelId = call.getString("id");
             notificationManager.deleteNotificationChannel(channelId);
-            call.success();
+            call.resolve();
         } else {
             call.unavailable();
         }
@@ -123,7 +123,7 @@ public class NotificationChannelManager {
             }
             JSObject result = new JSObject();
             result.put("channels", channels);
-            call.success(result);
+            call.resolve(result);
         } else {
             call.unavailable();
         }

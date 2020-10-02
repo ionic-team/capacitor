@@ -17,7 +17,7 @@ public class WebView extends Plugin {
     public void setServerBasePath(PluginCall call) {
         String path = call.getString("path");
         bridge.setServerBasePath(path);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod
@@ -25,7 +25,7 @@ public class WebView extends Plugin {
         String path = bridge.getServerBasePath();
         JSObject ret = new JSObject();
         ret.put("path", path);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod
@@ -35,6 +35,6 @@ public class WebView extends Plugin {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(CAP_SERVER_PATH, path);
         editor.apply();
-        call.success();
+        call.resolve();
     }
 }

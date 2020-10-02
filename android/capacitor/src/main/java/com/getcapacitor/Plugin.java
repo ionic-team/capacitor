@@ -344,7 +344,7 @@ public class Plugin {
         }
 
         for (PluginCall call : listeners) {
-            call.success(data);
+            call.resolve(data);
         }
     }
 
@@ -440,7 +440,7 @@ public class Plugin {
 
             pluginRequestPermissions(perms, annotation.permissionRequestCode());
         } else {
-            call.success();
+            call.resolve();
         }
     }
 

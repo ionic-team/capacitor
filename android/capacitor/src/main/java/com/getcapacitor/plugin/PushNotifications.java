@@ -78,14 +78,14 @@ public class PushNotifications extends Plugin {
             .getInstanceId()
             .addOnSuccessListener(getActivity(), instanceIdResult -> sendToken(instanceIdResult.getToken()));
         FirebaseInstanceId.getInstance().getInstanceId().addOnFailureListener(e -> sendError(e.getLocalizedMessage()));
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod
     public void requestPermission(PluginCall call) {
         JSObject result = new JSObject();
         result.put("granted", true);
-        call.success(result);
+        call.resolve(result);
     }
 
     @PluginMethod
@@ -153,7 +153,7 @@ public class PushNotifications extends Plugin {
     @PluginMethod
     public void removeAllDeliveredNotifications(PluginCall call) {
         notificationManager.cancelAll();
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod

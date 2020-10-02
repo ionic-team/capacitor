@@ -53,17 +53,17 @@ public class BackgroundTask extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("taskId", call.getCallbackId());
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod
     public void finish(PluginCall call) {
         String taskId = call.getString("taskId");
         if (taskId == null) {
-            call.error("Must provide taskId");
+            call.reject("Must provide taskId");
             return;
         }
 
-        call.success();
+        call.resolve();
     }
 }

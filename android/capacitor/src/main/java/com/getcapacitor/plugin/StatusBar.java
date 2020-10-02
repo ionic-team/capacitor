@@ -24,7 +24,7 @@ public class StatusBar extends Plugin {
     public void setStyle(final PluginCall call) {
         final String style = call.getString("style");
         if (style == null) {
-            call.error("Style must be provided");
+            call.reject("Style must be provided");
             return;
         }
 
@@ -41,7 +41,7 @@ public class StatusBar extends Plugin {
                     } else {
                         decorView.setSystemUiVisibility(visibilityFlags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                     }
-                    call.success();
+                    call.resolve();
                 }
             );
     }
@@ -50,7 +50,7 @@ public class StatusBar extends Plugin {
     public void setBackgroundColor(final PluginCall call) {
         final String color = call.getString("color");
         if (color == null) {
-            call.error("Color must be provided");
+            call.reject("Color must be provided");
             return;
         }
 
@@ -65,9 +65,9 @@ public class StatusBar extends Plugin {
                         window.setStatusBarColor(parsedColor);
                         // update the local color field as well
                         currentStatusbarColor = parsedColor;
-                        call.success();
+                        call.resolve();
                     } catch (IllegalArgumentException ex) {
-                        call.error("Invalid color provided. Must be a hex string (ex: #ff0000");
+                        call.reject("Invalid color provided. Must be a hex string (ex: #ff0000");
                     }
                 }
             );
@@ -84,7 +84,7 @@ public class StatusBar extends Plugin {
                     uiOptions = uiOptions | View.SYSTEM_UI_FLAG_FULLSCREEN;
                     uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_VISIBLE;
                     decorView.setSystemUiVisibility(uiOptions);
-                    call.success();
+                    call.resolve();
                 }
             );
     }
@@ -100,7 +100,7 @@ public class StatusBar extends Plugin {
                     uiOptions = uiOptions | View.SYSTEM_UI_FLAG_VISIBLE;
                     uiOptions = uiOptions & ~View.SYSTEM_UI_FLAG_FULLSCREEN;
                     decorView.setSystemUiVisibility(uiOptions);
-                    call.success();
+                    call.resolve();
                 }
             );
     }
@@ -151,7 +151,7 @@ public class StatusBar extends Plugin {
                         // recover the previous color of the status bar
                         getActivity().getWindow().setStatusBarColor(currentStatusbarColor);
                     }
-                    call.success();
+                    call.resolve();
                 }
             );
     }

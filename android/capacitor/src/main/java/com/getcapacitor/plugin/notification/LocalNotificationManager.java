@@ -360,7 +360,7 @@ public class LocalNotificationManager {
                 storage.deleteNotification(Integer.toString(id));
             }
         }
-        call.success();
+        call.resolve();
     }
 
     private void cancelTimerForNotification(Integer notificationId) {

@@ -26,12 +26,12 @@ public class SplashScreen extends Plugin {
 
                 @Override
                 public void completed() {
-                    call.success();
+                    call.resolve();
                 }
 
                 @Override
                 public void error() {
-                    call.error("An error occurred while showing splash");
+                    call.reject("An error occurred while showing splash");
                 }
             },
             bridge.getConfig()
@@ -42,6 +42,6 @@ public class SplashScreen extends Plugin {
     public void hide(PluginCall call) {
         int fadeDuration = call.getInt("fadeOutDuration", Splash.DEFAULT_FADE_OUT_DURATION);
         Splash.hide(getContext(), fadeDuration);
-        call.success();
+        call.resolve();
     }
 }

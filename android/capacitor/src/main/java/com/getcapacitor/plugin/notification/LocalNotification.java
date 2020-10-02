@@ -9,6 +9,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.plugin.util.AssetUtil;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -174,16 +175,16 @@ public class LocalNotification {
     public static List<LocalNotification> buildNotificationList(PluginCall call) {
         JSArray notificationArray = call.getArray("notifications");
         if (notificationArray == null) {
-            call.error("Must provide notifications array as notifications option");
-            return null;
+            call.reject("Must provide notifications array as notifications option");
+            return Collections.emptyList();
         }
         List<LocalNotification> resultLocalNotifications = new ArrayList<>(notificationArray.length());
         List<JSONObject> notificationsJson;
         try {
             notificationsJson = notificationArray.toList();
         } catch (JSONException e) {
-            call.error("Provided notification format is invalid");
-            return null;
+            call.reject("Provided notification format is invalid");
+            return Collections.emptyList();
         }
 
         for (JSONObject jsonNotification : notificationsJson) {
@@ -191,16 +192,16 @@ public class LocalNotification {
             try {
                 notification = JSObject.fromJSONObject(jsonNotification);
             } catch (JSONException e) {
-                call.error("Invalid JSON object sent to NotificationPlugin", e);
-                return null;
+                call.reject("Invalid JSON object sent to NotificationPlugin", e);
+                return Collections.emptyList();
             }
 
             try {
                 LocalNotification activeLocalNotification = buildNotificationFromJSObject(notification);
                 resultLocalNotifications.add(activeLocalNotification);
             } catch (ParseException e) {
-                call.error("Invalid date format sent to Notification plugin", e);
-                return null;
+                call.reject("Invalid date format sent to Notification plugin", e);
+                return Collections.emptyList();
             }
         }
         return resultLocalNotifications;
