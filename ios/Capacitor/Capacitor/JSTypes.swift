@@ -12,8 +12,8 @@ extension Array: JSValue {}
 extension Dictionary: JSValue where Key == String, Value == JSValue {}
 
 // convenience aliases
-public typealias JSObject = Dictionary<String, JSValue>
-public typealias JSArray = Array<JSValue>
+public typealias JSObject = [String: JSValue]
+public typealias JSArray = [JSValue]
 
 // string types
 public protocol JSStringContainer {
@@ -98,7 +98,7 @@ extension JSArrayContainer {
     public func getArray(_ key: String, _ defaultValue: JSArray) -> JSArray {
         return getArray(key) ?? defaultValue
     }
-    
+
     public func getArray<T>(_ key: String, _ ofType: T.Type) -> [T]? {
         return getArray(key) as? [T]
     }
@@ -116,7 +116,7 @@ extension JSObjectContainer {
     }
 }
 
-public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntContainer, JSFloatContainer, JSDoubleContainer, JSDateContainer, JSArrayContainer, JSObjectContainer  {
+public protocol JSValueContainer: JSStringContainer, JSBoolContainer, JSIntContainer, JSFloatContainer, JSDoubleContainer, JSDateContainer, JSArrayContainer, JSObjectContainer {
     static var jsDateFormatter: ISO8601DateFormatter { get }
     var jsObjectRepresentation: JSObject { get }
 }
@@ -125,40 +125,39 @@ extension JSValueContainer {
     public func getString(_ key: String) -> String? {
         return jsObjectRepresentation[key] as? String
     }
-    
+
     public func getBool(_ key: String) -> Bool? {
         return jsObjectRepresentation[key] as? Bool
     }
-    
+
     public func getInt(_ key: String) -> Int? {
         return jsObjectRepresentation[key] as? Int
     }
-    
+
     public func getFloat(_ key: String) -> Float? {
         if let floatValue = jsObjectRepresentation[key] as? Float {
             return floatValue
-        }
-        else if let doubleValue = jsObjectRepresentation[key] as? Double {
+        } else if let doubleValue = jsObjectRepresentation[key] as? Double {
             return Float(doubleValue)
         }
         return nil
     }
-    
+
     public func getDouble(_ key: String) -> Double? {
         return jsObjectRepresentation[key] as? Double
     }
-    
+
     public func getDate(_ key: String) -> Date? {
         if let isoString = jsObjectRepresentation[key] as? String {
             return Self.jsDateFormatter.date(from: isoString)
         }
         return nil
     }
-    
+
     public func getArray(_ key: String) -> JSArray? {
         return jsObjectRepresentation[key] as? JSArray
     }
-    
+
     public func getObject(_ key: String) -> JSObject? {
         return jsObjectRepresentation[key] as? JSObject
     }
