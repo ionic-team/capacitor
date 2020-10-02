@@ -1,6 +1,8 @@
 package com.getcapacitor.plugin;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.webkit.MimeTypeMap;
 
@@ -12,6 +14,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
 import java.io.File;
+import java.util.List;
 
 @NativePlugin()
 public class Share extends Plugin {
@@ -42,13 +45,15 @@ public class Share extends Plugin {
       intent.setTypeAndNormalize("text/plain");
     }
 
+    Uri fileUrl = null;
+    
     if(url != null && isHttpUrl(url) && text == null) {
       intent.putExtra(Intent.EXTRA_TEXT, url);
       intent.setTypeAndNormalize("text/plain");
     } else if (url != null && isFileUrl(url)) {
       String type = getMimeType(url);
       intent.setType(type);
-      Uri fileUrl = FileProvider.getUriForFile(getActivity(), getContext().getPackageName() + ".fileprovider", new File(Uri.parse(url).getPath()));
+      fileUrl = FileProvider.getUriForFile(getActivity(), getContext().getPackageName() + ".fileprovider", new File(Uri.parse(url).getPath()));
       intent.putExtra(Intent.EXTRA_STREAM, fileUrl);
     }
 
@@ -59,6 +64,15 @@ public class Share extends Plugin {
     Intent chooser = Intent.createChooser(intent, dialogTitle);
     chooser.addCategory(Intent.CATEGORY_DEFAULT);
 
+    if (fileUrl != null) {
+      List<ResolveInfo> resInfoList = getContext().getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+
+      for (ResolveInfo resolveInfo : resInfoList) {
+        String packageName = resolveInfo.activityInfo.packageName;
+        getContext().grantUriPermission(packageName, fileUrl, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      }
+    }
+    
     getActivity().startActivity(chooser);
     call.success();
   }
