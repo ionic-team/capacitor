@@ -21,7 +21,7 @@ public class Logger {
     }
 
     private void loadConfig(CapConfig config) {
-        this.config = config;
+        Logger.config = config;
     }
 
     public static String tags(String... subtags) {

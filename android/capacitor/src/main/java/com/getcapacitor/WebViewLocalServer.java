@@ -281,7 +281,7 @@ public class WebViewLocalServer {
 
         int periodIndex = path.lastIndexOf(".");
         if (periodIndex >= 0) {
-            String ext = path.substring(path.lastIndexOf("."), path.length());
+            String ext = path.substring(path.lastIndexOf("."));
 
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
 
