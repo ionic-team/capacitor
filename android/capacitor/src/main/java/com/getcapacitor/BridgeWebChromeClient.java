@@ -312,8 +312,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     private boolean isMediaCaptureSupported() {
         Plugin camera = bridge.getPlugin("Camera").getInstance();
-        boolean isSupported = camera.hasPermission(Manifest.permission.CAMERA) || !camera.hasDefinedPermission(Manifest.permission.CAMERA);
-        return isSupported;
+        return camera.hasPermission(Manifest.permission.CAMERA) || !camera.hasDefinedPermission(Manifest.permission.CAMERA);
     }
 
     private void showMediaCaptureOrFilePicker(ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams, boolean isVideo) {
@@ -492,8 +491,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-
-        return image;
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 }
