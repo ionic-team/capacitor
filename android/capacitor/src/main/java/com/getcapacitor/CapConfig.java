@@ -25,7 +25,6 @@ public class CapConfig {
 
     private void loadConfig(AssetManager assetManager) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.config.json")))) {
-
             // do reading, usually loop until end of file reading
             StringBuilder b = new StringBuilder();
             String line;
