@@ -354,8 +354,6 @@ public class WebViewLocalServer {
                         responseStream
                     );
                 }
-            } catch (SocketTimeoutException ex) {
-                bridge.handleAppUrlLoadError(ex);
             } catch (Exception ex) {
                 bridge.handleAppUrlLoadError(ex);
             }
