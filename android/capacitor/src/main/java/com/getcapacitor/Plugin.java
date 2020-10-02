@@ -367,7 +367,7 @@ public class Plugin {
         if (listeners == null) {
             return false;
         }
-        return listeners.size() > 0;
+        return !listeners.isEmpty();
     }
 
     /**

@@ -143,7 +143,7 @@ public class WebViewLocalServer {
             return null;
         }
         String path = uri.getPath();
-        if (path == null || path.length() == 0) {
+        if (path == null || path.isEmpty()) {
             Logger.error("URL does not have a path: " + url);
             return null;
         }

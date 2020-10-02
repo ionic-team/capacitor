@@ -46,7 +46,7 @@ public class LocalNotificationRestoreReceiver extends BroadcastReceiver {
             notifications.add(notification);
         }
 
-        if (updatedNotifications.size() > 0) {
+        if (!updatedNotifications.isEmpty()) {
             storage.appendNotifications(updatedNotifications);
         }
 

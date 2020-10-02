@@ -71,7 +71,7 @@ public class Geolocation extends Plugin {
                 removed.release(bridge);
             }
         }
-        if (watchingCalls.size() == 0) {
+        if (watchingCalls.isEmpty()) {
             clearLocationUpdates();
         }
         call.resolve();

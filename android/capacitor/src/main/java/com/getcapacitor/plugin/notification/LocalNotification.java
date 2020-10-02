@@ -234,7 +234,7 @@ public class LocalNotification {
         try {
             notifications = call.getArray("notifications").toList();
         } catch (JSONException e) {}
-        if (notifications == null || notifications.size() == 0) {
+        if (notifications == null || notifications.isEmpty()) {
             call.error("Must provide notifications array as notifications option");
             return null;
         }
