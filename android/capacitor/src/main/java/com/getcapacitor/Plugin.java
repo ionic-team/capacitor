@@ -315,6 +315,16 @@ public class Plugin {
     }
 
     /**
+     *
+     * @return
+     */
+    @PluginMethod
+    public void shouldShowRequestPermissionRationale(PluginCall pluginCall) {
+        JSObject permissionsResult = getRationaleStates();
+        pluginCall.resolve(permissionsResult);
+    }
+
+    /**
      * Helper to check all permissions and see the current states of each permission.
      *
      * @return
@@ -324,7 +334,25 @@ public class Plugin {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
             String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
-            permissionsResults.put(key, String.valueOf(hasPermission(perm.permission())));
+            String permissionStatus = hasPermission(perm.permission()) ? "granted" : "denied";
+            permissionsResults.put(key, permissionStatus);
+        }
+
+        return permissionsResults;
+    }
+
+    /**
+     * Helper to check all permissions to see if rationale should be displayed to the user.
+     *
+     * @return
+     */
+    public JSObject getRationaleStates() {
+        JSObject permissionsResults = new JSObject();
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        for (Permission perm : annotation.permissions()) {
+            String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
+            boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), perm.permission());
+            permissionsResults.put(key, showRationale);
         }
 
         return permissionsResults;
