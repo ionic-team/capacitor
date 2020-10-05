@@ -305,8 +305,11 @@ public class Plugin {
     }
 
     /**
+     * Exported plugin call for checking the granted status for each permission
+     * declared on the plugin. This plugin call responds with a mapping of permissions to
+     * the associated granted status.
      *
-     * @return
+     * @since 3.0.0
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
@@ -315,8 +318,12 @@ public class Plugin {
     }
 
     /**
+     * Exported plugin call for checking the status for showing rationale for each
+     * permission declared on the plugin. This plugin call responds with a mapping of permissions
+     * to the associated rationale display status.
      *
-     * @return
+     * @since 3.0.0
+     * @link https://developer.android.com/training/permissions/requesting
      */
     @PluginMethod
     public void shouldShowRequestPermissionRationale(PluginCall pluginCall) {
@@ -327,7 +334,8 @@ public class Plugin {
     /**
      * Helper to check all permissions and see the current states of each permission.
      *
-     * @return
+     * @since 3.0.0
+     * @return A mapping of permissions to the associated granted status.
      */
     public JSObject getPermissionStates() {
         JSObject permissionsResults = new JSObject();
@@ -344,7 +352,7 @@ public class Plugin {
     /**
      * Helper to check all permissions to see if rationale should be displayed to the user.
      *
-     * @return
+     * @return A mapping of permissions to the associated permission rationale display status.
      */
     public JSObject getRationaleStates() {
         JSObject permissionsResults = new JSObject();
