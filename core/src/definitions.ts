@@ -5,12 +5,28 @@ export interface Plugin {
     eventName: string,
     listenerFunc: (...args: any[]) => any,
   ): PluginListenerHandle;
-  requestPermissions?: () => Promise<PermissionsRequestResult>;
+  checkPermissions?: () => Promise<PermissionResults>;
+  shouldShowRequestPermissionRationale?: () => Promise<
+    PermissionRationaleResults
+  >;
+  requestPermissions?: () => Promise<PermissionResults>;
 }
 
-export interface PermissionsRequestResult {
-  results: any[];
+export interface PermissionResults {
+  [key: string]: PermissionResult;
 }
+
+/**
+ * Android only: checks if a rationale should be shown for the permission.
+ */
+export interface PermissionRationaleResults {
+  [key: string]: boolean;
+}
+
+/**
+ * Android only uses granted and denied.
+ */
+export type PermissionResult = 'granted' | 'denied';
 
 export interface PluginListenerHandle {
   remove: () => void;
