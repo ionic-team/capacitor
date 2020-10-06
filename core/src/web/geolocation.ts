@@ -5,7 +5,7 @@ import {
   GeolocationPosition,
   GeolocationWatchCallback,
 } from '../core-plugin-definitions';
-import { PermissionsRequestResult } from '../definitions';
+import { LegacyPermissionResults } from '../definitions';
 import { extend } from '../util';
 
 import { WebPlugin } from './index';
@@ -22,7 +22,7 @@ export class GeolocationPluginWeb
   ): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       return this.requestPermissions().then(
-        (_result: PermissionsRequestResult) => {
+        (_result: LegacyPermissionResults) => {
           window.navigator.geolocation.getCurrentPosition(
             pos => {
               resolve(pos);

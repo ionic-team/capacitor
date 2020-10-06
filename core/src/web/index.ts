@@ -1,6 +1,6 @@
 import type {
   PluginListenerHandle,
-  PermissionsRequestResult,
+  LegacyPermissionResults,
 } from '../definitions';
 import { Capacitor } from '../global';
 
@@ -126,7 +126,7 @@ export class WebPlugin {
     };
   }
 
-  requestPermissions(): Promise<PermissionsRequestResult> {
+  requestPermissions(): Promise<LegacyPermissionResults> {
     if (Capacitor.isNative) {
       return Capacitor.nativePromise(
         this.config.name,

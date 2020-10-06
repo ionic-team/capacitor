@@ -9,7 +9,13 @@ export interface Plugin {
   shouldShowRequestPermissionRationale?: () => Promise<
     PermissionRationaleResults
   >;
-  requestPermissions?: () => Promise<PermissionResults>;
+  requestPermissions?: () => Promise<
+    PermissionResults | LegacyPermissionResults
+  >;
+}
+
+export interface LegacyPermissionResults {
+  results: any[];
 }
 
 export interface PermissionResults {
