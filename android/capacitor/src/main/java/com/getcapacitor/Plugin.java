@@ -343,7 +343,12 @@ public class Plugin {
         for (Permission perm : annotation.permissions()) {
             String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
             String permissionStatus = hasPermission(perm.permission()) ? "granted" : "denied";
-            permissionsResults.put(key, permissionStatus);
+            String existingResult = permissionsResults.getString(key);
+
+            // multiple permissions with the same alias must all be true, otherwise all false.
+            if (existingResult == null || existingResult.equals("granted")) {
+                permissionsResults.put(key, permissionStatus);
+            }
         }
 
         return permissionsResults;
@@ -360,7 +365,12 @@ public class Plugin {
         for (Permission perm : annotation.permissions()) {
             String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
             boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), perm.permission());
-            permissionsResults.put(key, showRationale);
+            Boolean existingResult = permissionsResults.getBool(key);
+
+            // multiple permissions with the same alias must all be true, otherwise all false.
+            if (existingResult == null || existingResult) {
+                permissionsResults.put(key, showRationale);
+            }
         }
 
         return permissionsResults;
@@ -566,7 +576,7 @@ public class Plugin {
             } else {
                 Set<String> permsSet = new HashSet<>();
                 for (Permission perm : annotation.permissions()) {
-                    if (providedPermsList.contains(perm.alias())) {
+                    if (providedPermsList.contains(perm.alias()) || providedPermsList.contains(perm.permission())) {
                         permsSet.add(perm.permission());
                     }
                 }
