@@ -236,7 +236,7 @@ public class BridgeActivity extends AppCompatActivity {
         if (this.bridge == null) {
             return;
         }
-        this.bridge.onActivityResult(requestCode, resultCode, data);
+        this.bridge.onConfigurationChanged(newConfig);
     }
 
     public void loadConfig(Context context, Activity activity) {
