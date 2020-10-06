@@ -19,6 +19,9 @@ import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.json.JSONObject;
 
+/**
+ * The container Activity for typical Capacitor apps.
+ */
 public class BridgeActivity extends AppCompatActivity {
     protected Bridge bridge;
     private WebView webView;
@@ -31,8 +34,6 @@ public class BridgeActivity extends AppCompatActivity {
     private JSONObject config;
 
     private int activityDepth = 0;
-
-    private String lastActivityPlugin;
 
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
 

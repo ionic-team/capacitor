@@ -22,9 +22,7 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONObject;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link BridgeFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A Fragment container for embedding Capacitor in an existing native app.
  */
 public class BridgeFragment extends Fragment {
     private static final String ARG_START_DIR = "startDir";
@@ -47,10 +45,10 @@ public class BridgeFragment extends Fragment {
 
     /**
      * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * a BridgeFragment using the provided parameters.
      *
      * @param startDir the directory to serve content from
-     * @return A new instance of fragment BridgeFragment.
+     * @return A new instance of BridgeFragment.
      */
     public static BridgeFragment newInstance(String startDir) {
         BridgeFragment fragment = new BridgeFragment();
@@ -64,6 +62,15 @@ public class BridgeFragment extends Fragment {
         loadConfig(this.getActivity().getApplicationContext(), this.getActivity());
     }
 
+    /**
+     * Adds a plugin to the instance of Capacitor used in this BridgeFragment.
+     *
+     * Call before inflating the Fragment in a transaction or in an overridden lifecycle method
+     * preceding {@link #onActivityCreated(Bundle)}, since this is where plugins are
+     * registered in Capacitor.
+     *
+     * @param plugin
+     */
     public void addPlugin(Class<? extends Plugin> plugin) {
         this.initialPlugins.add(plugin);
     }
@@ -130,11 +137,6 @@ public class BridgeFragment extends Fragment {
             args.putString(ARG_START_DIR, startDir);
             setArguments(args);
         }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
