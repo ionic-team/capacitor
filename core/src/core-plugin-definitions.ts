@@ -5,7 +5,6 @@ export interface PluginRegistry {
   App: AppPlugin;
   BackgroundTask: BackgroundTaskPlugin;
   Geolocation: GeolocationPlugin;
-  Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   PushNotifications: PushNotificationsPlugin;
   SplashScreen: SplashScreenPlugin;
@@ -258,82 +257,6 @@ export type GeolocationWatchCallback = (
   position: GeolocationPosition,
   err?: any,
 ) => void;
-
-//
-
-export interface KeyboardPlugin extends Plugin {
-  /**
-   * Show the keyboard. This method is alpha and may have issues
-   */
-  show(): Promise<void>;
-  /**
-   * Hide the keyboard.
-   */
-  hide(): Promise<void>;
-  /**
-   * Set whether the accessory bar should be visible on the keyboard. We recommend disabling
-   * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
-   */
-  setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
-  /**
-   * Programmatically enable or disable the WebView scroll
-   */
-  setScroll(options: { isDisabled: boolean }): Promise<void>;
-  /**
-   * Programmatically set the keyboard style
-   */
-  setStyle(options: KeyboardStyleOptions): Promise<void>;
-  /**
-   * Programmatically set the resize mode
-   */
-  setResizeMode(options: KeyboardResizeOptions): Promise<void>;
-
-  addListener(
-    eventName: 'keyboardWillShow',
-    listenerFunc: (info: KeyboardInfo) => void,
-  ): PluginListenerHandle;
-  addListener(
-    eventName: 'keyboardDidShow',
-    listenerFunc: (info: KeyboardInfo) => void,
-  ): PluginListenerHandle;
-  addListener(
-    eventName: 'keyboardWillHide',
-    listenerFunc: () => void,
-  ): PluginListenerHandle;
-  addListener(
-    eventName: 'keyboardDidHide',
-    listenerFunc: () => void,
-  ): PluginListenerHandle;
-
-  /**
-   * Remove all native listeners for this plugin
-   */
-  removeAllListeners(): void;
-}
-
-export interface KeyboardInfo {
-  keyboardHeight: number;
-}
-
-export interface KeyboardStyleOptions {
-  style: KeyboardStyle;
-}
-
-export enum KeyboardStyle {
-  Dark = 'DARK',
-  Light = 'LIGHT',
-}
-
-export interface KeyboardResizeOptions {
-  mode: KeyboardResize;
-}
-
-export enum KeyboardResize {
-  Body = 'body',
-  Ionic = 'ionic',
-  Native = 'native',
-  None = 'none',
-}
 
 //
 
