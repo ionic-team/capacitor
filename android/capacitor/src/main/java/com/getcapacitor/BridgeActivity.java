@@ -3,6 +3,7 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.webkit.WebView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -227,6 +228,14 @@ public class BridgeActivity extends AppCompatActivity {
         }
 
         this.bridge.onBackPressed();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        if (this.bridge == null) {
+            return;
+        }
+        this.bridge.onActivityResult(requestCode, resultCode, data);
     }
 
     public void loadConfig(Context context, Activity activity) {

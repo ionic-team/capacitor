@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -513,6 +514,12 @@ public class Plugin {
      * @param intent
      */
     protected void handleOnNewIntent(Intent intent) {}
+
+    /**
+     * Handle onConfigurationChanged
+     * @param newConfig
+     */
+    protected void handleOnConfigurationChanged(Configuration newConfig) {}
 
     /**
      * Handle onStart
