@@ -45,7 +45,5 @@ typedef NSURL* (^ UrlTransformerBlock)(NSURL*);
 - (void)evalJsHelper2:(NSString*)js;
 // Runs the given block on a background thread using a shared thread-pool.
 - (void)runInBackground:(void (^)())block;
-// Returns the User-Agent of the associated UIWebView.
-- (NSString*)userAgent;
 
 @end
