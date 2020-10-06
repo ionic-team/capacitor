@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -161,5 +162,22 @@ public class BridgeFragment extends Fragment {
         if (this.mockWebView != null) {
             mockWebView.handleDestroy();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (this.bridge == null) {
+            return;
+        }
+        this.bridge.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (this.bridge == null) {
+            return;
+        }
+
+        this.bridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
