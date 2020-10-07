@@ -116,7 +116,7 @@ public class Splash {
                     break;
                 }
             } catch (IllegalArgumentException ex) {
-                Log.d(LogUtils.getCoreTag(), "Background color not applied");
+                Logger.debug("Background color not applied");
             }
 
             String scaleTypeName = config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
