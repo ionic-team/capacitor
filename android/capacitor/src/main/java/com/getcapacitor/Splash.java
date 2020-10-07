@@ -98,8 +98,8 @@ public class Splash {
             // https://stackoverflow.com/a/21847579/32140
             splashImage.setDrawingCacheEnabled(true);
 
-            String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
-            String backgroundColorDarkMode = Config.getString(CONFIG_KEY_PREFIX + "backgroundColorDarkMode");
+            String backgroundColor = config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
+            String backgroundColorDarkMode = config.getString(CONFIG_KEY_PREFIX + "backgroundColorDarkMode");
             try {
                 int currentNightMode  = c.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
                 
