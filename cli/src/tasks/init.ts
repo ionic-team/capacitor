@@ -12,7 +12,6 @@ import {
 import { getCordovaPreferences } from '../cordova';
 import type { Config } from '../definitions';
 import { output } from '../log';
-import { emoji as _e } from '../util/emoji';
 import { checkInteractive, isInteractive } from '../util/term';
 
 export async function initCommand(
