@@ -1,5 +1,3 @@
-import { relative } from 'path';
-
 import c from '../colors';
 import { copyTemplate, runTask } from '../common';
 import type { Config } from '../definitions';

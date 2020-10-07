@@ -26,16 +26,6 @@ CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
   CAP_PLUGIN_METHOD(clearWatch, CAPPluginReturnPromise);
 )
 
-CAP_PLUGIN(CAPKeyboard, "Keyboard",
-  CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(setAccessoryBarVisible, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(setStyle, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(setResizeMode, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(setScroll, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
 CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",
   CAP_PLUGIN_METHOD(schedule, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(requestPermission, CAPPluginReturnPromise);
@@ -64,15 +54,6 @@ CAP_PLUGIN(CAPPushNotificationsPlugin, "PushNotifications",
 CAP_PLUGIN(CAPSplashScreenPlugin, "SplashScreen",
   CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
-)
-
-CAP_PLUGIN(CAPStatusBarPlugin, "StatusBar",
-  CAP_PLUGIN_METHOD(setStyle, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(setBackgroundColor, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(show, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(hide, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(getInfo, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(setOverlaysWebView, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPWebViewPlugin, "WebView",
