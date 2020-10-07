@@ -18,11 +18,9 @@ import android.webkit.WebView;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Geolocation;
-import com.getcapacitor.plugin.Keyboard;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
-import com.getcapacitor.plugin.StatusBar;
 import com.getcapacitor.plugin.background.BackgroundTask;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
@@ -385,10 +383,8 @@ public class Bridge {
         this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(Geolocation.class);
-        this.registerPlugin(Keyboard.class);
         this.registerPlugin(PushNotifications.class);
         this.registerPlugin(SplashScreen.class);
-        this.registerPlugin(StatusBar.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
