@@ -98,13 +98,25 @@ public class Splash {
             // https://stackoverflow.com/a/21847579/32140
             splashImage.setDrawingCacheEnabled(true);
 
-            String backgroundColor = config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
+            String backgroundColor = Config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
+            String backgroundColorDarkMode = Config.getString(CONFIG_KEY_PREFIX + "backgroundColorDarkMode");
             try {
-                if (backgroundColor != null) {
-                    splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+                int currentNightMode  = c.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                
+                switch (currentNightMode) {
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        if(backgroundColor != null){
+                            splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+                        }
+                        break;
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        if(backgroundColorDarkMode != null){
+                            splashImage.setBackgroundColor(Color.parseColor(backgroundColorDarkMode));
+                        }
+                    break;
                 }
             } catch (IllegalArgumentException ex) {
-                Logger.debug("Background color not applied");
+                Log.d(LogUtils.getCoreTag(), "Background color not applied");
             }
 
             String scaleTypeName = config.getString(CONFIG_KEY_PREFIX + "androidScaleType", "FIT_XY");
