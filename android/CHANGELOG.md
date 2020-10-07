@@ -5,10 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [3.0.0-alpha.5](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.4...3.0.0-alpha.5) (2020-10-06)
 
-
-### Bug Fixes
-
-* **android:** BridgeFragment NullPointerException ([#3553](https://github.com/ionic-team/capacitor/issues/3553)) ([8ea982a](https://github.com/ionic-team/capacitor/commit/8ea982a1136ece4f491cb5c60319ac0a6421ebbd))
+**Note:** Version bump only for package @capacitor/android
 
 
 
