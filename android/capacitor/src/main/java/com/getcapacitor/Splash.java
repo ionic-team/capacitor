@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.content.res.Configuration;
 
 /**
  * A Splash Screen service for showing and hiding a splash screen in the app.
