@@ -2,6 +2,7 @@ package com.getcapacitor.plugin;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.webkit.MimeTypeMap;
 
 import androidx.core.content.FileProvider;
@@ -50,6 +51,10 @@ public class Share extends Plugin {
       intent.setType(type);
       Uri fileUrl = FileProvider.getUriForFile(getActivity(), getContext().getPackageName() + ".fileprovider", new File(Uri.parse(url).getPath()));
       intent.putExtra(Intent.EXTRA_STREAM, fileUrl);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        intent.setData(fileUrl);
+      }
+      intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
     }
 
     if (title != null) {
