@@ -69,26 +69,10 @@ public class App extends Plugin {
     call.success(data);
   }
 
-  @PluginMethod()
+  @PluginMethod
   public void canOpenUrl(PluginCall call) {
-    String url = call.getString("url");
-    if (url == null) {
-      call.error("Must supply a url");
-      return;
-    }
-
-    Context ctx = this.getActivity().getApplicationContext();
-    final PackageManager pm = ctx.getPackageManager();
-
+    // Note: Usual functionality removed to satisfy Google privacy rules. Temporary patch.
     JSObject ret = new JSObject();
-    try {
-      pm.getPackageInfo(url, PackageManager.GET_ACTIVITIES);
-      ret.put("value", true);
-      call.success(ret);
-      return;
-    } catch(PackageManager.NameNotFoundException e) {
-      Logger.error(getLogTag(), "Package name '"+url+"' not found!", null);
-    }
 
     ret.put("value", false);
     call.success(ret);
