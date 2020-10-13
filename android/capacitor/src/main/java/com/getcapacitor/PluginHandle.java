@@ -11,6 +11,7 @@ import java.util.Map;
  * and indexed. Think of it as a Plugin instance with extra metadata goodies
  */
 public class PluginHandle {
+
     private final Bridge bridge;
     private final Class<? extends Plugin> pluginClass;
 

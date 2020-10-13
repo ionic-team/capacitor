@@ -16,6 +16,7 @@ import java.util.Date;
  * Note: Class is being registered in Android manifest as broadcast receiver
  */
 public class TimedNotificationPublisher extends BroadcastReceiver {
+
     public static String NOTIFICATION_KEY = "NotificationPublisher.notification";
     public static String CRON_KEY = "NotificationPublisher.cron";
 
