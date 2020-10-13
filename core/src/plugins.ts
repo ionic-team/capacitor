@@ -1,13 +1,6 @@
+import { ExceptionCode } from './definitions';
 import { Capacitor, Plugins } from './global';
 import type { WebPlugin } from './web';
-
-export enum ExceptionCodes {
-  UNSUPPORTED_BROWSER = 'UNSUPPORTED_BROWSER',
-}
-
-export class Exception extends Error {
-  readonly code: ExceptionCodes;
-}
 
 /**
  * Feature unavailable for the current browser (or all browsers).
@@ -19,8 +12,8 @@ export class Exception extends Error {
  *
  * Error code: `UNSUPPORTED_BROWSER`
  */
-export class UnsupportedBrowserException extends Exception {
-  code = ExceptionCodes.UNSUPPORTED_BROWSER;
+export class UnsupportedBrowserException extends Capacitor.Exception {
+  code = ExceptionCode.UnsupportedBrowser;
 }
 
 const PLUGIN_REGISTRY = new (class {

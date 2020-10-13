@@ -72,7 +72,23 @@ export interface PluginConfig {
   name: string;
 }
 
+export enum ExceptionCode {
+  Unimplemented = 'UNIMPLEMENTED',
+  Unavailable = 'UNAVAILABLE',
+  UnsupportedBrowser = 'UNSUPPORTED_BROWSER',
+}
+
+export interface CapacitorException extends Error {
+  code: ExceptionCode;
+}
+
+declare const CapacitorException: {
+  prototype: CapacitorException;
+  new (message: string): CapacitorException;
+};
+
 export interface Capacitor {
+  Exception: typeof CapacitorException;
   isNative?: boolean;
   platform?: string;
   isPluginAvailable: (name: string) => boolean;

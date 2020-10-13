@@ -148,11 +148,11 @@ public class PluginCall {
     }
 
     public void unimplemented() {
-        reject(UNIMPLEMENTED, null, null);
+        reject(UNIMPLEMENTED, "UNIMPLEMENTED", null);
     }
 
     public void unavailable() {
-        reject(UNAVAILABLE, null, null);
+        reject(UNAVAILABLE, "UNAVAILABLE", null);
     }
 
     public String getPluginId() {

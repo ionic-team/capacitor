@@ -90,6 +90,6 @@ public typealias PluginEventListener = CAPPluginCall
     }
 
     func unimplemented() {
-        errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, code: nil, error: nil, data: [:]))
+        errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, code: "UNIMPLEMENTED", error: nil, data: [:]))
     }
 }
