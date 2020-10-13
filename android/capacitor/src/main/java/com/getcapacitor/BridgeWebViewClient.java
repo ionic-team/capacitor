@@ -7,6 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class BridgeWebViewClient extends WebViewClient {
+
     private Bridge bridge;
 
     public BridgeWebViewClient(Bridge bridge) {

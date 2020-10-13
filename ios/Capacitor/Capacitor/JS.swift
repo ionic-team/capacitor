@@ -62,7 +62,7 @@ public class JSResult {
                                   encoding: .utf8)!
                 } else {
                     CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
-                        "Ensure that all data passed to success callback from module method is JSON serializable!")
+                                    "Ensure that all data passed to success callback from module method is JSON serializable!")
                     throw JSProcessingError.jsonSerializeError(call: call)
                 }
             } catch let error as JSProcessingError {

@@ -243,7 +243,6 @@ public class Splash {
         }
 
         final Animator.AnimatorListener listener = new Animator.AnimatorListener() {
-
             @Override
             public void onAnimationEnd(Animator animator) {
                 isVisible = true;
@@ -356,7 +355,6 @@ public class Splash {
         isHiding = true;
 
         final Animator.AnimatorListener listener = new Animator.AnimatorListener() {
-
             @Override
             public void onAnimationEnd(Animator animator) {
                 tearDown(false);

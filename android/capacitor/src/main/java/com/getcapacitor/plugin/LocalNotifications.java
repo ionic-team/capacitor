@@ -24,6 +24,7 @@ import org.json.JSONArray;
  */
 @NativePlugin(requestCodes = PluginRequestCodes.NOTIFICATION_OPEN)
 public class LocalNotifications extends Plugin {
+
     private LocalNotificationManager manager;
     private NotificationStorage notificationStorage;
     private NotificationChannelManager notificationChannelManager;

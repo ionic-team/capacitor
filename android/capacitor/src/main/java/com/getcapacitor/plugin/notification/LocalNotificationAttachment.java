@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LocalNotificationAttachment {
+
     private String id;
     private String url;
     private JSONObject options;

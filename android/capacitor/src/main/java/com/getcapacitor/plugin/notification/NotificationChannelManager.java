@@ -15,6 +15,7 @@ import com.getcapacitor.PluginCall;
 import java.util.List;
 
 public class NotificationChannelManager {
+
     private Context context;
     private NotificationManager notificationManager;
 

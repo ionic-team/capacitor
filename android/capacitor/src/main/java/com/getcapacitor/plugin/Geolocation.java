@@ -26,6 +26,7 @@ import java.util.Map;
     permissionRequestCode = PluginRequestCodes.GEOLOCATION_REQUEST_PERMISSIONS
 )
 public class Geolocation extends Plugin {
+
     private Map<String, PluginCall> watchingCalls = new HashMap<>();
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -152,7 +153,6 @@ public class Geolocation extends Plugin {
 
         locationCallback =
             new LocationCallback() {
-
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
                     if (call.getMethodName().equals("getCurrentPosition")) {
