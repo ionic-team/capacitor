@@ -9,8 +9,6 @@ import type { WebPlugin } from './web';
  *
  * This can happen particularly for the web platform when implementation is
  * uncertain due to the plethora of browsers available to end users.
- *
- * Error code: `UNSUPPORTED_BROWSER`
  */
 export class UnsupportedBrowserException extends Capacitor.Exception {
   code = ExceptionCode.UnsupportedBrowser;
