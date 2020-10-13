@@ -5,8 +5,8 @@ import {
 } from '../android/common';
 import c from '../colors';
 import type { CheckFunction } from '../common';
-import { getKnownPlatforms } from '../common';
 import {
+  getKnownPlatforms,
   check,
   checkAppConfig,
   checkPackage,
