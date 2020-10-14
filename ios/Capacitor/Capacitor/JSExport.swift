@@ -2,7 +2,7 @@
  * PluginExport handles defining JS APIs that map to registered
  * plugins and are responsible for proxying calls to our bridge.
  */
-public class JSExport {
+internal class JSExport {
     static let catchallOptionsParameter = "_options"
     static let callbackParameter = "_callback"
 

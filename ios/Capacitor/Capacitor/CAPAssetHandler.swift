@@ -1,7 +1,7 @@
 import Foundation
 import MobileCoreServices
 
-class CAPAssetHandler: NSObject, WKURLSchemeHandler {
+internal class CAPAssetHandler: NSObject, WKURLSchemeHandler {
 
     private var basePath: String = ""
 

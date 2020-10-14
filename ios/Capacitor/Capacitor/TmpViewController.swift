@@ -1,6 +1,6 @@
 import UIKit
 
-class TmpViewController: UIViewController {
+internal class TmpViewController: UIViewController {
     var count = 0
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
