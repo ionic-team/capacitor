@@ -3,11 +3,11 @@ import Foundation
 @available(*, deprecated, message: "CAPBridge is deprecated. statusBarTappedNotification has been moved to Notification.Name.capacitorStatusBarTapped. Application delegate methods have been moved to ApplicationDelegateProxy.")
 @objc public class CAPBridge: NSObject {
     @objc public static let statusBarTappedNotification = Notification(name: .capacitorStatusBarTapped)
-    
+
     public static func handleOpenUrl(_ url: URL, _ options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
         return ApplicationDelegateProxy.shared.application(UIApplication.shared, open: url, options: options)
     }
-    
+
     public static func handleContinueActivity(_ userActivity: NSUserActivity, _ restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         return ApplicationDelegateProxy.shared.application(UIApplication.shared, continue: userActivity, restorationHandler: restorationHandler)
     }

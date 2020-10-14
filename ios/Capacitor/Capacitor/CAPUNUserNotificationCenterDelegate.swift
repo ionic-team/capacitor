@@ -14,7 +14,7 @@ public class CAPUNUserNotificationCenterDelegate: NSObject, UNUserNotificationCe
             center.delegate = self
         }
     }
-    
+
     /**
      * Request permissions to send notifications
      */

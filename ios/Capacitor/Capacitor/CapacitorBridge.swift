@@ -13,13 +13,13 @@ import Cordova
 //}
 
 internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
-    
+
     // MARK: - CAPBridgeProtocol Properties
-    
+
     public var webView: WKWebView? {
         return bridgeDelegate?.bridgedWebView
     }
-    
+
     public var isSimEnvironment: Bool {
         #if targetEnvironment(simulator)
         return true
@@ -27,7 +27,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return false
         #endif
     }
-    
+
     public var isDevEnvironment: Bool {
         #if DEBUG
         return true
@@ -35,12 +35,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return false
         #endif
     }
-    
+
     @available(iOS 12.0, *)
     public var userInterfaceStyle: UIUserInterfaceStyle {
         return viewController?.traitCollection.userInterfaceStyle ?? .unspecified
     }
-    
+
     public var statusBarVisible: Bool {
         get {
             return !(viewController?.prefersStatusBarHidden ?? true)
@@ -51,7 +51,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-    
+
     public var statusBarStyle: UIStatusBarStyle {
         get {
             return viewController?.preferredStatusBarStyle ?? .default
@@ -62,7 +62,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-    
+
     public var statusBarAnimation: UIStatusBarAnimation {
         get {
             return (viewController as? CAPBridgeViewController)?.statusBarAnimation ?? .slide
@@ -73,13 +73,13 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-    
+
     var tmpWindow: UIWindow?
     static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
     public static let capacitorSite = "https://capacitorjs.com/"
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let defaultScheme = "capacitor"
-    
+
     var messageHandlerWrapper: CAPMessageHandlerWrapper
     weak var bridgeDelegate: CAPBridgeDelegate?
     @objc public var viewController: UIViewController? {
@@ -136,49 +136,49 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         // the message handler needs to removed to avoid any retain cycles
         messageHandlerWrapper.cleanUp()
     }
-    
+
     // MARK: - Deprecated
-    
+
     public func getWebView() -> WKWebView? {
         return webView
     }
-    
+
     public func isSimulator() -> Bool {
         return isSimEnvironment
     }
-    
+
     public func isDevMode() -> Bool {
         return isDevEnvironment
     }
-    
+
     public func getStatusBarVisible() -> Bool {
         return statusBarVisible
     }
-    
-    @nonobjc public func setStatusBarVisible(_ visible:Bool) {
+
+    @nonobjc public func setStatusBarVisible(_ visible: Bool) {
         statusBarVisible = visible
     }
-    
+
     public func getStatusBarStyle() -> UIStatusBarStyle {
         return statusBarStyle
     }
-    @nonobjc public func setStatusBarStyle(_ style:UIStatusBarStyle) {
+    @nonobjc public func setStatusBarStyle(_ style: UIStatusBarStyle) {
         statusBarStyle = style
     }
-    
+
     @available(iOS 12.0, *)
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
         return userInterfaceStyle
     }
-    
-    @nonobjc public func setStatusBarAnimation(_ animation:UIStatusBarAnimation) {
+
+    @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
         statusBarAnimation = animation
     }
-    
+
     public func getLastUrl() -> URL? {
         return ApplicationDelegateProxy.shared.lastURL
     }
-    
+
     /**
      * Print a hopefully informative error message to the log when something
      * particularly dreadful happens.
@@ -376,7 +376,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func print(message: String, for plugin: CAPPlugin) {
         CAPLog.print("⚡️ ", plugin.pluginId, "-", message)
     }
-    
+
     public func showAlertWith(title: String, message: String, buttonTitle: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))

@@ -1,13 +1,12 @@
-
 import Foundation
 
 @objc(CAPApplicationDelegateProxy)
 public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
     static let shared = ApplicationDelegateProxy()
-    
+
     private(set) var lastURL: URL?
-    
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         NotificationCenter.default.post(name: .capacitorOpenURL, object: [
             "url": url,
             "options": options
@@ -16,7 +15,7 @@ public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
         lastURL = url
         return true
     }
-    
+
     public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // TODO: Support other types, emit to rest of plugins
         if userActivity.activityType != NSUserActivityTypeBrowsingWeb || userActivity.webpageURL == nil {

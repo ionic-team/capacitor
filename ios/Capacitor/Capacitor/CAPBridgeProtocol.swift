@@ -14,51 +14,51 @@ import WebKit
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
     var statusBarAnimation: UIStatusBarAnimation { get set }
-    
+
     // MARK: - Deprecated
     @available(*, deprecated, renamed: "webView")
     func getWebView() -> WKWebView?
-    
+
     @available(*, deprecated, renamed: "isSimEnvironment")
     func isSimulator() -> Bool
-    
+
     @available(*, deprecated, renamed: "isDevEnvironment")
     func isDevMode() -> Bool
-    
+
     @available(*, deprecated, renamed: "statusBarVisible")
     func getStatusBarVisible() -> Bool
-    
+
     @available(*, deprecated, renamed: "statusBarStyle")
     func getStatusBarStyle() -> UIStatusBarStyle
-    
+
     @available(iOS 12.0, *)
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
-    
+
     @available(*, deprecated, message: "Moved to ApplicationDelegateProxy")
     func getLastUrl() -> URL?
-    
+
     // MARK: Call Management
     func getSavedCall(_ callbackId: String) -> CAPPluginCall?
     func releaseCall(_ call: CAPPluginCall)
     func releaseCall(callbackId: String)
-    
+
     // MARK: JavaScript Handling
     func evalWithPlugin(_ plugin: CAPPlugin, js: String)
     func eval(js: String)
-    
+
     func triggerJSEvent(eventName: String, target: String)
     func triggerJSEvent(eventName: String, target: String, data: String)
-    
+
     func triggerWindowJSEvent(eventName: String)
     func triggerWindowJSEvent(eventName: String, data: String)
-    
+
     func triggerDocumentJSEvent(eventName: String)
     func triggerDocumentJSEvent(eventName: String, data: String)
-    
+
     // MARK: - Logging
     func print(message: String, for plugin: CAPPlugin)
-    
+
     // MARK: View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
@@ -68,7 +68,7 @@ import WebKit
 /*
  Extensions to Obj-C protocols are not exposed to Obj-C code because of limitations in the runtime. Therefore these methods
  are implicitly Swift-only.
-  
+
  The methods marked as deprecated are here because they can be declared without interfering with the synthesized Obj-C setters
  for the respective properties (e.g. `setStatusBarVisible:` for 'statusBarVisible`).
  */
@@ -78,24 +78,24 @@ extension CAPBridgeProtocol {
         let output = items.map { String(describing: $0) }.joined(separator: " ")
         print(message: output, for: plugin)
     }
-    
+
     // default arguments are not permitted in protocol declarations
     func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
         showAlertWith(title: title, message: message, buttonTitle: buttonTitle)
     }
-    
+
     @available(*, deprecated, renamed: "statusBarVisible")
-    public func setStatusBarVisible(_ visible:Bool) {
+    public func setStatusBarVisible(_ visible: Bool) {
         statusBarVisible = visible
     }
-    
+
     @available(*, deprecated, renamed: "statusBarStyle")
-    public func setStatusBarStyle(_ style:UIStatusBarStyle) {
+    public func setStatusBarStyle(_ style: UIStatusBarStyle) {
         statusBarStyle = style
     }
-    
+
     @available(*, deprecated, renamed: "statusBarAnimation")
-    public func setStatusBarAnimation(_ animation:UIStatusBarAnimation) {
+    public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
         statusBarAnimation = animation
     }
 }
@@ -109,7 +109,7 @@ public enum CapacitorBridgeError: Error {
 }
 
 extension CapacitorBridgeError: CustomNSError {
-    static public var errorDomain: String { "CapacitorBridge" }
+    public static var errorDomain: String { "CapacitorBridge" }
     public var errorCode: Int {
         switch self {
         case .errorExportingCoreJS:

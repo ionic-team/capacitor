@@ -40,7 +40,7 @@ extension Notification.Name {
     @available(*, deprecated, renamed: "Notification.Name.capacitorDecidePolicyForNavigationAction")
     case DecidePolicyForNavigationAction
     // swiftlint:enable identifier_name
-    
+
     public func name() -> String {
         switch self {
         case .URLOpen:

@@ -339,7 +339,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
         createdCategories.append(generalCategory)
         for type in actionTypes {
             guard let type = type as? JSObject else {
-              continue
+                continue
             }
             guard let id = type["id"] as? String else {
                 bridge?.modulePrint(self, "Action type must have an id field")
