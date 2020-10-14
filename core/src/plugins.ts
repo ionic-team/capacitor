@@ -2,7 +2,7 @@ import { Capacitor, Plugins } from './global';
 import type { WebPlugin } from './web';
 
 export enum ExceptionCodes {
-  UNSUPPORTED_BROWSER = 'UNSUPPORTED_BROWSER',
+  UnsupportedBrowser = 'UNSUPPORTED_BROWSER',
 }
 
 export class Exception extends Error {
@@ -16,11 +16,9 @@ export class Exception extends Error {
  *
  * This can happen particularly for the web platform when implementation is
  * uncertain due to the plethora of browsers available to end users.
- *
- * Error code: `UNSUPPORTED_BROWSER`
  */
 export class UnsupportedBrowserException extends Exception {
-  code = ExceptionCodes.UNSUPPORTED_BROWSER;
+  code = ExceptionCodes.UnsupportedBrowser;
 }
 
 const PLUGIN_REGISTRY = new (class {
