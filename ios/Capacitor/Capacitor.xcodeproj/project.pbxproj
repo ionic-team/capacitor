@@ -54,6 +54,7 @@
 		62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B152524DA7700A3D7F1 /* CAPNotifications.swift */; };
 		62959BA52526475A00A3D7F1 /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62959BA02526474300A3D7F1 /* Cordova.framework */; };
 		62959BA62526475A00A3D7F1 /* Cordova.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62959BA02526474300A3D7F1 /* Cordova.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62C0A97925377AED004384F8 /* CapacitorBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C0A97825377AED004384F8 /* CapacitorBridge.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +140,7 @@
 		62959B8225253A9500A3D7F1 /* Capacitor.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = Capacitor.modulemap; sourceTree = "<group>"; };
 		62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CapacitorCordova.xcodeproj; path = ../CapacitorCordova/CapacitorCordova.xcodeproj; sourceTree = "<group>"; };
 		62959BBD2526510200A3D7F1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62C0A97825377AED004384F8 /* CapacitorBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorBridge.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +211,7 @@
 				62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */,
 				62959B062524DA7700A3D7F1 /* CAPPluginCall.m */,
 				620943092527C87D0072A562 /* CAPBridgeProtocol.swift */,
+				62C0A97825377AED004384F8 /* CapacitorBridge.swift */,
 				62959B142524DA7700A3D7F1 /* CAPBridge.swift */,
 				626B289625364A6500FFF7CB /* CAPApplicationDelegateProxy.swift */,
 				62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */,
@@ -424,6 +427,7 @@
 				62959B1A2524DA7800A3D7F1 /* CAPPluginCall.swift in Sources */,
 				62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */,
 				62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */,
+				62C0A97925377AED004384F8 /* CapacitorBridge.swift in Sources */,
 				62959B3D2524DA7800A3D7F1 /* CAPMessageHandlerWrapper.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,

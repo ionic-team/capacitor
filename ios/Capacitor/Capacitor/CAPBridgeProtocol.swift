@@ -1,16 +1,11 @@
 import Foundation
 import WebKit
 
-public enum CAPBridgeError: Error {
-    case errorExportingCoreJS
-}
-
 @objc public protocol CAPBridgeProtocol: NSObjectProtocol {
     // MARK: Environment Properties
     var viewController: UIViewController? { get }
     var config: CAPConfig { get }
     var webView: WKWebView? { get }
-    var lastUrl: URL? { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
     @available(iOS 12.0, *)
@@ -40,6 +35,9 @@ public enum CAPBridgeError: Error {
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
     
+    @available(*, deprecated, message: "Moved to ApplicationDelegateProxy")
+    func getLastUrl() -> URL?
+    
     // MARK: Call Management
     func getSavedCall(_ callbackId: String) -> CAPPluginCall?
     func releaseCall(_ call: CAPPluginCall)
@@ -58,6 +56,9 @@ public enum CAPBridgeError: Error {
     func triggerDocumentJSEvent(eventName: String)
     func triggerDocumentJSEvent(eventName: String, data: String)
     
+    // MARK: - Logging
+    func print(message: String, for plugin: CAPPlugin)
+    
     // MARK: View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
@@ -68,13 +69,17 @@ public enum CAPBridgeError: Error {
  Extensions to Obj-C protocols are not exposed to Obj-C code because of limitations in the runtime. Therefore these methods
  are implicitly Swift-only.
   
- The ones marked as deprecated are here because they can be declared without interfering with the synthesized Obj-C setters
+ The methods marked as deprecated are here because they can be declared without interfering with the synthesized Obj-C setters
  for the respective properties (e.g. `setStatusBarVisible:` for 'statusBarVisible`).
  */
 extension CAPBridgeProtocol {
+    // varidic parameters cannot be exposed to Obj-C
     func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
+        let output = items.map { String(describing: $0) }.joined(separator: " ")
+        print(message: output, for: plugin)
     }
     
+    // default arguments are not permitted in protocol declarations
     func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
         showAlertWith(title: title, message: message, buttonTitle: buttonTitle)
     }
@@ -95,7 +100,15 @@ extension CAPBridgeProtocol {
     }
 }
 
-extension CAPBridgeError: CustomNSError {
+/*
+ Error(s) potentially exported by the bridge.
+ */
+
+public enum CapacitorBridgeError: Error {
+    case errorExportingCoreJS
+}
+
+extension CapacitorBridgeError: CustomNSError {
     static public var errorDomain: String { "CapacitorBridge" }
     public var errorCode: Int {
         switch self {
@@ -108,7 +121,7 @@ extension CAPBridgeError: CustomNSError {
     }
 }
 
-extension CAPBridgeError: LocalizedError {
+extension CapacitorBridgeError: LocalizedError {
     public var errorDescription: String? {
         return NSLocalizedString("Unable to export JavaScript bridge code to webview", comment: "Capacitor bridge initialization error")
     }
