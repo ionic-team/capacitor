@@ -44,6 +44,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final int FILE_CHOOSER_VIDEO_CAPTURE = 9009;
     static final int FILE_CHOOSER_CAMERA_PERMISSION = 9010;
     static final int GET_USER_MEDIA_PERMISSIONS = 9011;
+    static final int GEOLOCATION_REQUEST_PERMISSIONS = 9004;
 
     private Bridge bridge;
 
