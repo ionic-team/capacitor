@@ -17,11 +17,11 @@ public class CAPPushNotificationsPlugin: CAPPlugin {
     override public func load() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(self.didRegisterForRemoteNotificationsWithDeviceToken(notification:)),
-                                               name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()),
+                                               name: .capacitorDidRegisterForRemoteNotifications,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(self.didFailToRegisterForRemoteNotificationsWithError(notification:)),
-                                               name: Notification.Name(CAPNotifications.DidFailToRegisterForRemoteNotificationsWithError.name()),
+                                               name: .capacitorDidFailToRegisterForRemoteNotifications,
                                                object: nil)
     }
 

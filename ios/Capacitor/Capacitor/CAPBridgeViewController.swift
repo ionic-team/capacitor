@@ -275,7 +275,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     }
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
+        NotificationCenter.default.post(name: .capacitorDecidePolicyForNavigationAction, object: navigationAction)
         let navUrl = navigationAction.request.url!
 
         /*

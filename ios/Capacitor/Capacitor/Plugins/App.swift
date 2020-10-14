@@ -5,8 +5,8 @@ public class CAPAppPlugin: CAPPlugin {
     var lastUrlOpenOptions: [String: Any?]?
 
     override public func load() {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.handleUrlOpened(notification:)), name: Notification.Name(CAPNotifications.URLOpen.name()), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.handleUniversalLink(notification:)), name: Notification.Name(CAPNotifications.UniversalLinkOpen.name()), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleUrlOpened(notification:)), name: .capacitorOpenURL, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleUniversalLink(notification:)), name: .capacitorOpenUniversalLink, object: nil)
     }
 
     @objc func handleUrlOpened(notification: NSNotification) {

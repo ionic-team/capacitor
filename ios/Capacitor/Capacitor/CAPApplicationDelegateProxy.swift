@@ -1,13 +1,14 @@
 
 import Foundation
 
-@objc public class CAPApplicationDelegateProxy: NSObject, UIApplicationDelegate {
-    static let shared = CAPApplicationDelegateProxy()
+@objc(CAPApplicationDelegateProxy)
+public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
+    static let shared = ApplicationDelegateProxy()
     
     private(set) var lastURL: URL?
     
     public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        NotificationCenter.default.post(name: Notification.Name(CAPNotifications.URLOpen.name()), object: [
+        NotificationCenter.default.post(name: .capacitorOpenURL, object: [
             "url": url,
             "options": options
         ])
@@ -24,7 +25,7 @@ import Foundation
 
         let url = userActivity.webpageURL
         lastURL = url
-        NotificationCenter.default.post(name: Notification.Name(CAPNotifications.UniversalLinkOpen.name()), object: [
+        NotificationCenter.default.post(name: .capacitorOpenUniversalLink, object: [
             "url": url
         ])
         return true
