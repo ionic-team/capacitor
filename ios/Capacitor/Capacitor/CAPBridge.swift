@@ -7,8 +7,68 @@ enum BridgeError: Error {
     case errorExportingCoreJS
 }
 
-@objc public class CAPBridge: NSObject {
-
+internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
+    
+    // MARK: - CAPBridgeProtocol Properties
+    
+    public var webView: WKWebView? {
+        return bridgeDelegate?.bridgedWebView
+    }
+    
+    public var isSimEnvironment: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }
+    
+    public var isDevEnvironment: Bool {
+        #if DEBUG
+        return true
+        #else
+        return false
+        #endif
+    }
+    
+    @available(iOS 12.0, *)
+    public var userInterfaceStyle: UIUserInterfaceStyle {
+        return viewController?.traitCollection.userInterfaceStyle ?? .unspecified
+    }
+    
+    public var statusBarVisible: Bool {
+        get {
+            return !(viewController?.prefersStatusBarHidden ?? true)
+        }
+        set {
+            DispatchQueue.main.async { [weak self] in
+                (self?.viewController as? CAPBridgeViewController)?.setStatusBarVisible(newValue)
+            }
+        }
+    }
+    
+    public var statusBarStyle: UIStatusBarStyle {
+        get {
+            return viewController?.preferredStatusBarStyle ?? .default
+        }
+        set {
+            DispatchQueue.main.async { [weak self] in
+                (self?.viewController as? CAPBridgeViewController)?.setStatusBarStyle(newValue)
+            }
+        }
+    }
+    
+    public var statusBarAnimation: UIStatusBarAnimation {
+        get {
+            return (viewController as? CAPBridgeViewController)?.statusBarAnimation ?? .slide
+        }
+        set {
+            DispatchQueue.main.async { [weak self] in
+                (self?.viewController as? CAPBridgeViewController)?.setStatusBarAnimation(newValue)
+            }
+        }
+    }
+    
     var tmpWindow: UIWindow?
     @objc public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
     @objc public static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
@@ -17,7 +77,7 @@ enum BridgeError: Error {
     public static let defaultScheme = "capacitor"
 
     // The last URL that caused the app to open
-    private static var lastUrl: URL?
+    public var lastUrl: URL?
 
     public var messageHandlerWrapper: CAPMessageHandlerWrapper
     public weak var bridgeDelegate: CAPBridgeDelegate?
@@ -66,7 +126,7 @@ enum BridgeError: Error {
         registerPlugins()
         setupCordovaCompatibility()
         bindObservers()
-        NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
+        NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
             self?.tmpWindow = nil
         }
     }
@@ -75,60 +135,51 @@ enum BridgeError: Error {
         // the message handler needs to removed to avoid any retain cycles
         messageHandlerWrapper.cleanUp()
     }
-
-    public func setStatusBarVisible(_ isStatusBarVisible: Bool) {
-        guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
-            return
-        }
-        DispatchQueue.main.async {
-            bridgeVC.setStatusBarVisible(isStatusBarVisible)
-        }
+    
+    // MARK: - Deprecated
+    
+    public func getWebView() -> WKWebView? {
+        return webView
     }
-
-    public func setStatusBarStyle(_ statusBarStyle: UIStatusBarStyle) {
-        guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
-            return
-        }
-        DispatchQueue.main.async {
-            bridgeVC.setStatusBarStyle(statusBarStyle)
-        }
+    
+    public func isSimulator() -> Bool {
+        return isSimEnvironment
     }
-
-    public func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
-        guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
-            return
-        }
-        DispatchQueue.main.async {
-            bridgeVC.setStatusBarAnimation(statusBarAnimation)
-        }
+    
+    public func isDevMode() -> Bool {
+        return isDevEnvironment
     }
-
+    
     public func getStatusBarVisible() -> Bool {
-        guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
-            return false
-        }
-        return !bridgeVC.prefersStatusBarHidden
+        return statusBarVisible
     }
-
+    
+    @nonobjc public func setStatusBarVisible(_ visible:Bool) {
+        statusBarVisible = visible
+    }
+    
     public func getStatusBarStyle() -> UIStatusBarStyle {
-        guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
-            return UIStatusBarStyle.default
-        }
-        return bridgeVC.preferredStatusBarStyle
+        return statusBarStyle
     }
-
+    @nonobjc public func setStatusBarStyle(_ style:UIStatusBarStyle) {
+        statusBarStyle = style
+    }
+    
     @available(iOS 12.0, *)
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
-        guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
-            return UIUserInterfaceStyle.unspecified
-        }
-        return bridgeVC.traitCollection.userInterfaceStyle
+        return userInterfaceStyle
     }
-
+    
+    @nonobjc public func setStatusBarAnimation(_ animation:UIStatusBarAnimation) {
+        statusBarAnimation = animation
+    }
+    
+    
+ 
     /**
      * Get the last URL that triggered an open or continue activity event.
      */
-    public static func getLastUrl() -> URL? {
+    public func getLastUrl() -> URL? {
         return lastUrl
     }
 
@@ -141,7 +192,7 @@ enum BridgeError: Error {
             "options": options
         ])
         NotificationCenter.default.post(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url)
-        CAPBridge.lastUrl = url
+        //CAPBridge.lastUrl = url
         return true
     }
 
@@ -155,7 +206,7 @@ enum BridgeError: Error {
         }
 
         let url = userActivity.webpageURL
-        CAPBridge.lastUrl = url
+        //CAPBridge.lastUrl = url
         NotificationCenter.default.post(name: Notification.Name(CAPNotifications.UniversalLinkOpen.name()), object: [
             "url": url
         ])
@@ -224,7 +275,7 @@ enum BridgeError: Error {
             try JSExport.exportCapacitorGlobalJS(userContentController: self.messageHandlerWrapper.contentController, isDebug: isDevMode(), localUrl: localUrl)
             try JSExport.exportCapacitorJS(userContentController: self.messageHandlerWrapper.contentController)
         } catch {
-            CAPBridge.fatalError(error, error)
+            type(of: self).fatalError(error, error)
         }
     }
 
@@ -246,7 +297,7 @@ enum BridgeError: Error {
         do {
             try JSExport.exportCordovaJS(userContentController: self.messageHandlerWrapper.contentController)
         } catch {
-            CAPBridge.fatalError(error, error)
+            type(of: self).fatalError(error, error)
         }
     }
 
@@ -352,24 +403,8 @@ enum BridgeError: Error {
         do {
             try JSExport.exportCordovaPluginsJS(userContentController: self.messageHandlerWrapper.contentController)
         } catch {
-            CAPBridge.fatalError(error, error)
+            type(of: self).fatalError(error, error)
         }
-    }
-
-    public func isSimulator() -> Bool {
-        var isSimulator = false
-        #if arch(i386) || arch(x86_64)
-        isSimulator = true
-        #endif
-        return isSimulator
-    }
-
-    public func isDevMode() -> Bool {
-        #if DEBUG
-        return true
-        #else
-        return false
-        #endif
     }
 
     public func reload() {
@@ -380,15 +415,15 @@ enum BridgeError: Error {
         let output = items.map { "\($0)" }.joined(separator: " ")
         CAPLog.print("⚡️ ", plugin.pluginId, "-", output)
     }
-
-    public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
+    
+    public func showAlertWith(title: String, message: String, buttonTitle: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
         self.viewController?.present(alert, animated: true, completion: nil)
     }
 
     func docLink(_ url: String) -> String {
-        return "\(CAPBridge.capacitorSite)docs/\(url)"
+        return "\(type(of: self).capacitorSite)docs/\(url)"
     }
 
     /**
@@ -587,10 +622,6 @@ enum BridgeError: Error {
                 }
             }
         }
-    }
-
-    @objc public func getWebView() -> WKWebView? {
-        return self.bridgeDelegate?.bridgedWebView
     }
 
     public func getLocalUrl() -> String {

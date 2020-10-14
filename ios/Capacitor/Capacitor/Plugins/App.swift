@@ -55,12 +55,12 @@ public class CAPAppPlugin: CAPPlugin {
     }
 
     @objc func getLaunchUrl(_ call: CAPPluginCall) {
-        if let lastUrl = CAPBridge.getLastUrl() {
-            let urlValue = lastUrl.absoluteString
-            call.resolve([
-                "url": urlValue
-            ])
-        }
+//        if let lastUrl = CAPBridge.getLastUrl() {
+//            let urlValue = lastUrl.absoluteString
+//            call.resolve([
+//                "url": urlValue
+//            ])
+//        }
         call.resolve()
     }
 

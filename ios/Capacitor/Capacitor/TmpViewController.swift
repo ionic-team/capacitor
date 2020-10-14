@@ -14,7 +14,7 @@ class TmpViewController: UIViewController {
             count += 1
         }
         if count > 1 {
-            NotificationCenter.default.post(CAPBridge.tmpVCAppeared)
+            NotificationCenter.default.post(CapacitorBridge.tmpVCAppeared)
         }
     }
 }

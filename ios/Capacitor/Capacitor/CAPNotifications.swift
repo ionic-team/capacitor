@@ -10,7 +10,8 @@
     case DidFailToRegisterForRemoteNotificationsWithError
     case DecidePolicyForNavigationAction
     // swiftlint:enable identifier_name
-
+    
+    @available(*, deprecated, message: "Notifications have been moved")
     public func name() -> String {
         switch self {
         case .URLOpen:
@@ -28,3 +29,7 @@
         }
     }
 }
+
+
+//    @objc public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
+

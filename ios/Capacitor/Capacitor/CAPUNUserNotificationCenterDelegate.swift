@@ -2,7 +2,7 @@ import UserNotifications
 
 public class CAPUNUserNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
 
-    public weak var bridge: CAPBridge?
+    internal weak var bridge: CapacitorBridge?
     // Local list of notification id -> JSObject for storing options
     // between notification requets
     var notificationRequestLookup = [String: JSObject]()
@@ -14,10 +14,7 @@ public class CAPUNUserNotificationCenterDelegate: NSObject, UNUserNotificationCe
             center.delegate = self
         }
     }
-
-    public func setBridge(bridge: CAPBridge) {
-        self.bridge = bridge
-    }
+    
     /**
      * Request permissions to send notifications
      */
