@@ -10,7 +10,6 @@ import {
   NotificationChannel,
   NotificationChannelList,
 } from '../core-plugin-definitions';
-import { LegacyPermissionResults } from '../definitions';
 
 import { WebPlugin } from './index';
 
@@ -133,7 +132,7 @@ export class LocalNotificationsPluginWeb
     });
   }
 
-  requestPermissions(): Promise<LegacyPermissionResults> {
+  requestPermissions(): Promise<{ results: [any] }> {
     return new Promise((resolve, reject) => {
       Notification.requestPermission(result => {
         if (result === 'denied' || result === 'default') {

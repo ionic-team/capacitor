@@ -38,6 +38,7 @@ import org.json.JSONException;
  * WebView instance.
  */
 public class BridgeWebChromeClient extends WebChromeClient {
+
     static final int FILE_CHOOSER = 9007;
     static final int FILE_CHOOSER_IMAGE_CAPTURE = 9008;
     static final int FILE_CHOOSER_VIDEO_CAPTURE = 9009;
@@ -90,7 +91,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
             String[] permissions = permissionList.toArray(new String[0]);
             bridge.cordovaInterface.requestPermissions(
                 new CordovaPlugin() {
-
                     @Override
                     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
                         if (GET_USER_MEDIA_PERMISSIONS == requestCode) {
@@ -287,7 +287,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
             } else {
                 this.bridge.cordovaInterface.requestPermission(
                         new CordovaPlugin() {
-
                             @Override
                             public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
                                 throws JSONException {
@@ -353,7 +352,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         bridge.cordovaInterface.startActivityForResult(
             new CordovaPlugin() {
-
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent intent) {
                     Uri[] result = null;
@@ -378,7 +376,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         bridge.cordovaInterface.startActivityForResult(
             new CordovaPlugin() {
-
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent intent) {
                     Uri[] result = null;
@@ -407,7 +404,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         try {
             bridge.cordovaInterface.startActivityForResult(
                 new CordovaPlugin() {
-
                     @Override
                     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
                         Uri[] result;

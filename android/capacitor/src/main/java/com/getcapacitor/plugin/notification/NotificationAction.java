@@ -13,6 +13,7 @@ import org.json.JSONObject;
  * Action types that will be registered for the notifications
  */
 public class NotificationAction {
+
     private String id;
     private String title;
     private Boolean input;

@@ -17,6 +17,7 @@ import org.json.JSONObject;
  * Local notification object mapped from json plugin
  */
 public class LocalNotification {
+
     private String title;
     private String body;
     private Integer id;

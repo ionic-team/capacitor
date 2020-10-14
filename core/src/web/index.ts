@@ -1,8 +1,4 @@
-import type {
-  PluginListenerHandle,
-  LegacyPermissionResults,
-} from '../definitions';
-import { Capacitor } from '../global';
+import type { PluginListenerHandle } from '../definitions';
 
 export type ListenerCallback = (err: any, ...args: any[]) => void;
 
@@ -124,18 +120,6 @@ export class WebPlugin {
         this.notifyListeners(pluginEventName, event);
       },
     };
-  }
-
-  requestPermissions(): Promise<LegacyPermissionResults> {
-    if (Capacitor.isNative) {
-      return Capacitor.nativePromise(
-        this.config.name,
-        'requestPermissions',
-        {},
-      );
-    } else {
-      return Promise.resolve({ results: [] });
-    }
   }
 
   load(): void {

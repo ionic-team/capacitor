@@ -23,6 +23,7 @@ import org.json.JSONArray;
  */
 @NativePlugin(requestCodes = 9006)
 public class LocalNotifications extends Plugin {
+
     private LocalNotificationManager manager;
     private NotificationStorage notificationStorage;
     private NotificationChannelManager notificationChannelManager;

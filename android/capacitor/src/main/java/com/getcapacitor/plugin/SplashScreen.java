@@ -23,7 +23,6 @@ public class SplashScreen extends Plugin {
             fadeOutDuration,
             autoHide,
             new Splash.SplashListener() {
-
                 @Override
                 public void completed() {
                     call.success();
