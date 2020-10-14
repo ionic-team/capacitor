@@ -4,7 +4,7 @@ import { Plugin, PluginListenerHandle } from './definitions';
 export interface PluginRegistry {
   App: AppPlugin;
   BackgroundTask: BackgroundTaskPlugin;
-  Geolocation: GeolocationPlugin;
+  Keyboard: KeyboardPlugin;
   LocalNotifications: LocalNotificationsPlugin;
   PushNotifications: PushNotificationsPlugin;
   SplashScreen: SplashScreenPlugin;
@@ -185,78 +185,79 @@ export interface BackgroundTaskPlugin extends Plugin {
 
 //
 
-export interface GeolocationPlugin extends Plugin {
+export interface KeyboardPlugin extends Plugin {
   /**
-   * Get the current GPS location of the device
+   * Show the keyboard. This method is alpha and may have issues
    */
-  getCurrentPosition(
-    options?: GeolocationOptions,
-  ): Promise<GeolocationPosition>;
+  show(): Promise<void>;
   /**
-   * Set up a watch for location changes. Note that watching for location changes
-   * can consume a large amount of energy. Be smart about listening only when you need to.
+   * Hide the keyboard.
    */
-  watchPosition(
-    options: GeolocationOptions,
-    callback: GeolocationWatchCallback,
-  ): CallbackID;
+  hide(): Promise<void>;
+  /**
+   * Set whether the accessory bar should be visible on the keyboard. We recommend disabling
+   * the accessory bar for short forms (login, signup, etc.) to provide a cleaner UI
+   */
+  setAccessoryBarVisible(options: { isVisible: boolean }): Promise<void>;
+  /**
+   * Programmatically enable or disable the WebView scroll
+   */
+  setScroll(options: { isDisabled: boolean }): Promise<void>;
+  /**
+   * Programmatically set the keyboard style
+   */
+  setStyle(options: KeyboardStyleOptions): Promise<void>;
+  /**
+   * Programmatically set the resize mode
+   */
+  setResizeMode(options: KeyboardResizeOptions): Promise<void>;
+
+  addListener(
+    eventName: 'keyboardWillShow',
+    listenerFunc: (info: KeyboardInfo) => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'keyboardDidShow',
+    listenerFunc: (info: KeyboardInfo) => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'keyboardWillHide',
+    listenerFunc: () => void,
+  ): PluginListenerHandle;
+  addListener(
+    eventName: 'keyboardDidHide',
+    listenerFunc: () => void,
+  ): PluginListenerHandle;
 
   /**
-   * Clear a given watch
+   * Remove all native listeners for this plugin
    */
-  clearWatch(options: { id: string }): Promise<void>;
+  removeAllListeners(): void;
 }
 
-export interface GeolocationPosition {
-  /**
-   * Creation timestamp for coords
-   */
-  timestamp: number;
-  /**
-   * The GPS coordinates along with the accuracy of the data
-   */
-  coords: {
-    /**
-     * Latitude in decimal degrees
-     */
-    latitude: number;
-    /**
-     * longitude in decimal degrees
-     */
-    longitude: number;
-    /**
-     * Accuracy level of the latitude and longitude coordinates in meters
-     */
-    accuracy: number;
-    /**
-     * Accuracy level of the altitude coordinate in meters (if available)
-     */
-    altitudeAccuracy?: number;
-    /**
-     * The altitude the user is at (if available)
-     */
-    altitude?: number;
-    /**
-     * The speed the user is traveling (if available)
-     */
-    speed?: number;
-    /**
-     * The heading the user is facing (if available)
-     */
-    heading?: number;
-  };
+export interface KeyboardInfo {
+  keyboardHeight: number;
 }
 
-export interface GeolocationOptions {
-  enableHighAccuracy?: boolean; // default: false
-  timeout?: number; // default: 10000
-  maximumAge?: number; // default: 0
+export interface KeyboardStyleOptions {
+  style: KeyboardStyle;
 }
 
-export type GeolocationWatchCallback = (
-  position: GeolocationPosition,
-  err?: any,
-) => void;
+export enum KeyboardStyle {
+  Dark = 'DARK',
+  Light = 'LIGHT',
+}
+
+export interface KeyboardResizeOptions {
+  mode: KeyboardResize;
+}
+
+export enum KeyboardResize {
+  Body = 'body',
+  Ionic = 'ionic',
+  Native = 'native',
+  None = 'none',
+}
 
 //
 
