@@ -320,8 +320,10 @@ export async function runNativeRun(
   } catch (e) {
     if (e === ERROR_COMMAND_NOT_FOUND) {
       logFatal(
-        `${c.input('native-run')} not found in PATH\n` +
-          `Are you sure ${c.strong('native-run')} is installed?`,
+        `${c.input('native-run')} not found in PATH.\n` +
+          `Are you sure ${c.strong(
+            'native-run',
+          )} is installed (e.g. w/ ${c.input('npm install -g native-run')})?`,
       );
     }
 
