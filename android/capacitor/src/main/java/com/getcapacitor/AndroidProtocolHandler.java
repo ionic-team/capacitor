@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 
 public class AndroidProtocolHandler {
+
     private Context context;
 
     public AndroidProtocolHandler(Context context) {

@@ -9,6 +9,7 @@ public interface HostMask {
     boolean matches(String host);
 
     class Parser {
+
         private static HostMask NOTHING = new Nothing();
 
         public static HostMask parse(String[] masks) {
@@ -21,6 +22,7 @@ public interface HostMask {
     }
 
     class Simple implements HostMask {
+
         private final List<String> maskParts;
 
         private Simple(List<String> maskParts) {
@@ -61,6 +63,7 @@ public interface HostMask {
     }
 
     class Any implements HostMask {
+
         private final List<? extends HostMask> masks;
 
         Any(List<? extends HostMask> masks) {

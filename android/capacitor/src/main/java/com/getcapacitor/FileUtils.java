@@ -42,6 +42,7 @@ import java.io.InputStream;
  * creating portable web paths from low-level files
  */
 public class FileUtils {
+
     private static String CapacitorFileScheme = Bridge.CAPACITOR_FILE_START;
 
     public enum Type {

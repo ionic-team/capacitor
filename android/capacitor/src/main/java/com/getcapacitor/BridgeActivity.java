@@ -19,6 +19,7 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONObject;
 
 public class BridgeActivity extends AppCompatActivity {
+
     protected Bridge bridge;
     private WebView webView;
     protected MockCordovaInterfaceImpl cordovaInterface;

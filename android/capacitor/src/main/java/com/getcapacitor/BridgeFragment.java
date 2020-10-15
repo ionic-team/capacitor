@@ -27,6 +27,7 @@ import org.json.JSONObject;
  * create an instance of this fragment.
  */
 public class BridgeFragment extends Fragment {
+
     private static final String ARG_START_DIR = "startDir";
 
     private WebView webView;

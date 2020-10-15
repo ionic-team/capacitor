@@ -3,6 +3,7 @@ package com.getcapacitor;
 import java.lang.reflect.Method;
 
 public class PluginMethodHandle {
+
     // The reflect method reference
     private final Method method;
     // The name of the method
