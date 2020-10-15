@@ -184,7 +184,7 @@ extension JSTypes {
     }
 }
 
-fileprivate func coerceToJSValue(_ value: Any?) -> JSValue? {
+private func coerceToJSValue(_ value: Any?) -> JSValue? {
     guard let value = value else {
         return nil
     }
