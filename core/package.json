@@ -25,7 +25,7 @@
   "unpkg": "dist/capacitor.js",
   "typings": "dist/esm/index.d.ts",
   "dependencies": {
-    "tslib": "^1.9.0"
+    "tslib": "^2.0.3"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^8.4.0",
