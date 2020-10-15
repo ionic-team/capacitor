@@ -57,7 +57,6 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.4",
-    "@types/mock-fs": "^3.6.30",
     "@types/open": "^6.1.0",
     "@types/plist": "^3.0.2",
     "@types/prompts": "^2.0.8",
@@ -67,7 +66,6 @@
     "@types/which": "^1.0.28",
     "@types/xml2js": "^0.4.2",
     "jest": "^26.1.0",
-    "mock-fs": "^4.4.2",
     "rimraf": "^3.0.2",
     "tmp": "^0.2.1",
     "ts-jest": "^26.1.3",
