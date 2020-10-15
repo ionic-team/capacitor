@@ -1,11 +1,6 @@
 import { wordWrap } from '@ionic/cli-framework-output';
 import { copy, move, writeJSON, readFile, pathExists } from '@ionic/utils-fs';
-import {
-  ERROR_COMMAND_NOT_FOUND,
-  Subprocess,
-  SubprocessError,
-  which,
-} from '@ionic/utils-subprocess';
+import { Subprocess, SubprocessError, which } from '@ionic/utils-subprocess';
 import { spawn } from 'child_process';
 import { dirname, join } from 'path';
 import type { Answers, PromptObject } from 'prompts';
@@ -315,20 +310,17 @@ export async function runNativeRun(
   args: readonly string[],
   options: RunCommandOptions = {},
 ): Promise<string> {
-  try {
-    return await runCommand('native-run', args, options);
-  } catch (e) {
-    if (e === ERROR_COMMAND_NOT_FOUND) {
-      logFatal(
-        `${c.input('native-run')} not found in PATH.\n` +
-          `Are you sure ${c.strong(
-            'native-run',
-          )} is installed (e.g. w/ ${c.input('npm install -g native-run')})?`,
-      );
-    }
+  const p = resolveNode(
+    __dirname,
+    dirname('native-run/package'),
+    'bin/native-run',
+  );
 
-    throw e;
+  if (!p) {
+    logFatal(`${c.input('native-run')} not found.`);
   }
+
+  return await runCommand(p, args, options);
 }
 
 export async function getCommandOutput(

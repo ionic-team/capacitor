@@ -49,6 +49,7 @@
     "commander": "^6.0.0",
     "debug": "^4.2.0",
     "kleur": "^4.1.1",
+    "native-run": "^1.2.1",
     "open": "^7.1.0",
     "plist": "^3.0.1",
     "prompts": "^2.3.2",
