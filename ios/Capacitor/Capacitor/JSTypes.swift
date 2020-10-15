@@ -167,3 +167,50 @@ extension JSValueContainer {
     static var jsDateFormatter: ISO8601DateFormatter { get }
     var dictionaryRepresentation: NSDictionary { get }
 }
+
+/*
+ Simply casting objects from foundation class clusters (such as __NSArrayM)
+ doesn't work with the JSValue protocol and will always fail. So we need to
+ recursively and explicitly convert each value in the dictionary.
+ */
+public enum JSTypes {}
+extension JSTypes {
+    public static func coerceDictionaryToJSObject(_ dictionary: NSDictionary?) -> JSObject? {
+        return coerceToJSValue(dictionary) as? JSObject
+    }
+
+    public static func coerceDictionaryToJSObject(_ dictionary: [AnyHashable: Any]?) -> JSObject? {
+        return coerceToJSValue(dictionary) as? JSObject
+    }
+}
+
+fileprivate func coerceToJSValue(_ value: Any?) -> JSValue? {
+    guard let value = value else {
+        return nil
+    }
+    switch value {
+    case let stringValue as String:
+        return stringValue
+    case let numberValue as NSNumber:
+        return numberValue
+    case let boolValue as Bool:
+        return boolValue
+    case let intValue as Int:
+        return intValue
+    case let floatValue as Float:
+        return floatValue
+    case let doubleValue as Double:
+        return doubleValue
+    case let arrayValue as NSArray:
+        return arrayValue.compactMap { coerceToJSValue($0) }
+    case let dictionaryValue as NSDictionary:
+        let keys = dictionaryValue.allKeys.compactMap { $0 as? String }
+        var result: JSObject = [:]
+        for key in keys {
+            result[key] = coerceToJSValue(dictionaryValue[key])
+        }
+        return result
+    default:
+        return nil
+    }
+}
