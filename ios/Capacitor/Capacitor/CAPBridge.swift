@@ -2,7 +2,7 @@ import Foundation
 
 // the @available compiler directive does not provide an easy way to split apart string literals, so ignore the line length
 // swiftlint:disable line_length
-@available(*, deprecated, message: "CAPBridge is deprecated. statusBarTappedNotification has been moved to Notification.Name.capacitorStatusBarTapped. Application delegate methods have been moved to ApplicationDelegateProxy.")
+@available(*, deprecated, message: "statusBarTappedNotification has been moved to Notification.Name.capacitorStatusBarTapped. Application delegate methods have been moved to ApplicationDelegateProxy.")
 // swiftlint:enable line_length
 @objc public class CAPBridge: NSObject {
     @objc public static let statusBarTappedNotification = Notification(name: .capacitorStatusBarTapped)
