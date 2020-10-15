@@ -37,4 +37,6 @@ tasks:
     config:
       base: main
       commit-message: 'chore(readme): add new contributor'
-      exclude-pattern: '^(?!Ionitron).+?(?<!\\[bot\\])$'
+      exclude-patterns:
+        - '^Ionitron$'
+        - '\[bot\]$'
