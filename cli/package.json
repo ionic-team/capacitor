@@ -57,7 +57,7 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.4",
-    "@types/mock-fs": "^3.6.30",
+    "@types/mock-fs": "^4.13.0",
     "@types/open": "^6.1.0",
     "@types/plist": "^3.0.2",
     "@types/prompts": "^2.0.8",
