@@ -6,6 +6,7 @@ import {
 import c from '../colors';
 import type { CheckFunction } from '../common';
 import {
+  getKnownPlatforms,
   check,
   checkAppConfig,
   checkPackage,
@@ -51,9 +52,11 @@ export async function addCommand(
       logger.error(msg);
     }
   } else {
+    const knownPlatforms = await getKnownPlatforms();
     const platformName = await promptForPlatform(
-      selectedPlatformName,
+      knownPlatforms,
       `Please choose a platform to add:`,
+      selectedPlatformName,
     );
 
     if (platformName === config.web.name) {

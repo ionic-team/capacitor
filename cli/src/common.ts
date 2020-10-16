@@ -1,19 +1,17 @@
 import { wordWrap } from '@ionic/cli-framework-output';
-import { exec, spawn } from 'child_process';
-import { readFile } from 'fs';
-import { writeJSON } from 'fs-extra';
+import { copy, move, writeJSON, readFile, pathExists } from '@ionic/utils-fs';
+import { Subprocess, SubprocessError, which } from '@ionic/utils-subprocess';
+import { spawn } from 'child_process';
 import { dirname, join } from 'path';
 import type { Answers, PromptObject } from 'prompts';
 import prompts from 'prompts';
 import semver from 'semver';
 import { setTimeout } from 'timers';
-import which from 'which';
 import xml2js from 'xml2js';
 
 import c from './colors';
 import type { Config, PackageJson, ExternalConfig } from './definitions';
 import { output, logger } from './log';
-import { copyAsync, existsAsync, readFileAsync, renameAsync } from './util/fs';
 
 export type CheckFunction = () => Promise<string | null>;
 
@@ -30,7 +28,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   if (invalidFolders.includes(config.app.webDir)) {
     return `"${config.app.webDir}" is not a valid value for webDir`;
   }
-  if (!(await existsAsync(config.app.webDirAbs))) {
+  if (!(await pathExists(config.app.webDirAbs))) {
     return (
       `Could not find the web assets directory: ${config.app.webDirAbs}.\n` +
       `Please create it and make sure it has an ${c.strong(
@@ -48,7 +46,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     );
   }
 
-  if (!(await existsAsync(join(config.app.webDirAbs, 'index.html')))) {
+  if (!(await pathExists(join(config.app.webDirAbs, 'index.html')))) {
     return (
       `The web assets directory (${
         config.app.webDirAbs
@@ -60,7 +58,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
 }
 
 export async function checkPackage(): Promise<string | null> {
-  if (!(await existsAsync('package.json'))) {
+  if (!(await pathExists('package.json'))) {
     return (
       `The Capacitor CLI needs to run at the root of an npm package.\n` +
       `Make sure you have a package.json file in the directory where you run the Capacitor CLI.\n` +
@@ -151,26 +149,21 @@ export async function checkAppName(
 }
 
 export async function readJSON(path: string): Promise<any> {
-  const data = await readFileAsync(path, 'utf8');
+  const data = await readFile(path, { encoding: 'utf-8' });
   return JSON.parse(data);
 }
 
-export function readXML(path: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    readFile(path, 'utf8', async (err, xmlStr) => {
-      if (err) {
-        reject(`Unable to read: ${path}`);
-      } else {
-        xml2js.parseString(xmlStr, (err, result) => {
-          if (err) {
-            reject(`Error parsing: ${path}, ${err}`);
-          } else {
-            resolve(result);
-          }
-        });
-      }
-    });
-  });
+export async function readXML(path: string): Promise<any> {
+  try {
+    const xmlStr = await readFile(path, { encoding: 'utf-8' });
+    try {
+      return await xml2js.parseStringPromise(xmlStr);
+    } catch (e) {
+      throw `Error parsing: ${path}, ${e.stack ?? e}`;
+    }
+  } catch (e) {
+    throw `Unable to read: ${path}`;
+  }
 }
 
 export function parseXML(xmlStr: string): any {
@@ -247,15 +240,13 @@ export function logFatal(msg: string): never {
 }
 
 export async function isInstalled(command: string): Promise<boolean> {
-  return new Promise<boolean>(resolve => {
-    which(command, err => {
-      if (err) {
-        resolve(false);
-      } else {
-        resolve(true);
-      }
-    });
-  });
+  try {
+    await which(command);
+  } catch (e) {
+    return false;
+  }
+
+  return true;
 }
 
 export async function wait(time: number): Promise<void> {
@@ -292,26 +283,59 @@ export async function runPlatformHook(
   });
 }
 
-export function runCommand(command: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(stdout + stderr);
-      } else {
-        resolve(stdout);
-      }
-    });
-  });
+export interface RunCommandOptions {
+  cwd?: string;
+}
+
+export async function runCommand(
+  command: string,
+  args: readonly string[],
+  options: RunCommandOptions = {},
+): Promise<string> {
+  const p = new Subprocess(command, args, options);
+
+  try {
+    return await p.output();
+  } catch (e) {
+    if (e instanceof SubprocessError) {
+      // old behavior of just throwing the stdout/stderr strings
+      throw e.output ? e.output : e.code;
+    }
+
+    throw e;
+  }
+}
+
+export async function runNativeRun(
+  args: readonly string[],
+  options: RunCommandOptions = {},
+): Promise<string> {
+  const p = resolveNode(
+    __dirname,
+    dirname('native-run/package'),
+    'bin/native-run',
+  );
+
+  if (!p) {
+    logFatal(`${c.input('native-run')} not found.`);
+  }
+
+  return await runCommand(p, args, options);
 }
 
 export async function getCommandOutput(
   command: string,
+  args: readonly string[],
 ): Promise<string | null> {
   try {
-    return (await runCommand(command)).trim();
+    return (await runCommand(command, args)).trim();
   } catch (e) {
     return null;
   }
+}
+
+export interface RunTaskOptions {
+  spinner?: boolean;
 }
 
 export async function runTask<T>(
@@ -332,7 +356,7 @@ export async function runTask<T>(
 }
 
 export async function copyTemplate(src: string, dst: string): Promise<void> {
-  await copyAsync(src, dst);
+  await copy(src, dst);
   await renameGitignore(dst);
 }
 
@@ -340,8 +364,8 @@ export async function renameGitignore(dst: string): Promise<void> {
   // npm renames .gitignore to something else, so our templates
   // have .gitignore as gitignore, we need to rename it here.
   const gitignorePath = join(dst, 'gitignore');
-  if (await existsAsync(gitignorePath)) {
-    await renameAsync(gitignorePath, join(dst, '.gitignore'));
+  if (await pathExists(gitignorePath)) {
+    await move(gitignorePath, join(dst, '.gitignore'));
   }
 }
 
@@ -411,7 +435,7 @@ export async function getProjectPlatformDirectory(
 ): Promise<string | null> {
   const platformPath = getPlatformDirectory(config, platform);
 
-  if (platformPath && (await existsAsync(platformPath))) {
+  if (platformPath && (await pathExists(platformPath))) {
     return platformPath;
   }
 
@@ -471,11 +495,10 @@ export async function isValidCommunityPlatform(
 }
 
 export async function promptForPlatform(
-  selectedPlatformName: string,
+  platforms: string[],
   promptMessage: string,
+  selectedPlatformName?: string,
 ): Promise<string> {
-  const knownPlatforms = await getKnownPlatforms();
-
   if (!selectedPlatformName) {
     const answers = await prompts(
       [
@@ -483,7 +506,7 @@ export async function promptForPlatform(
           type: 'select',
           name: 'mode',
           message: promptMessage,
-          choices: knownPlatforms.map(p => ({ title: p, value: p })),
+          choices: platforms.map(p => ({ title: p, value: p })),
         },
       ],
       { onCancel: () => process.exit(1) },
@@ -495,6 +518,8 @@ export async function promptForPlatform(
   const platformName = selectedPlatformName.toLowerCase().trim();
 
   if (!(await isValidPlatform(platformName))) {
+    const knownPlatforms = await getKnownPlatforms();
+
     logFatal(
       `Invalid platform: ${c.input(platformName)}.\n` +
         `Valid platforms include: ${knownPlatforms.join(', ')}`,
@@ -502,6 +527,46 @@ export async function promptForPlatform(
   }
 
   return platformName;
+}
+
+export async function promptForPlatformTarget(
+  targets: PlatformTarget[],
+  selectedTarget?: string,
+): Promise<PlatformTarget> {
+  if (!selectedTarget) {
+    if (targets.length === 1) {
+      return targets[0];
+    } else {
+      const answers = await prompts(
+        [
+          {
+            type: 'select',
+            name: 'target',
+            message: 'Please choose a target device:',
+            choices: targets.map(t => ({
+              title: `${getPlatformTargetName(t)} (${t.id})`,
+              value: t,
+            })),
+          },
+        ],
+        { onCancel: () => process.exit(1) },
+      );
+
+      return answers.target;
+    }
+  }
+
+  const targetID = selectedTarget.trim();
+  const target = targets.find(t => t.id === targetID);
+
+  if (!target) {
+    logFatal(
+      `Invalid target ID: ${c.input(targetID)}.\n` +
+        `Valid targets are: ${targets.map(t => t.id).join(', ')}`,
+    );
+  }
+
+  return target;
 }
 
 export async function getAddedPlatforms(config: Config): Promise<string[]> {
@@ -541,6 +606,35 @@ export async function checkPlatformVersions(
         )}`,
     );
   }
+}
+
+export interface PlatformTarget {
+  id: string;
+  platform: string;
+  virtual: boolean;
+  sdkVersion: string;
+  name?: string;
+  model?: string;
+}
+
+export async function getPlatformTargets(
+  platformName: string,
+): Promise<PlatformTarget[]> {
+  const output = await runNativeRun([platformName, '--list', '--json']);
+  const parsedOutput = JSON.parse(output);
+
+  return [
+    ...parsedOutput.devices.map((t: any) => ({ ...t, virtual: false })),
+    ...parsedOutput.virtualDevices.map((t: any) => ({ ...t, virtual: true })),
+  ];
+}
+
+export function getPlatformTargetName(target: PlatformTarget): string {
+  return `${target.name ?? target.model ?? target.id ?? '?'}${
+    target.virtual
+      ? ` (${target.platform === 'ios' ? 'simulator' : 'emulator'})`
+      : ''
+  }`;
 }
 
 export function resolvePlatform(
