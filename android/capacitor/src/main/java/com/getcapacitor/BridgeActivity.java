@@ -118,7 +118,7 @@ public class BridgeActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        bridge.getApp().fireChange(true);
+        bridge.getApp().fireStatusChange(true);
 
         this.bridge.onResume();
 
@@ -146,7 +146,7 @@ public class BridgeActivity extends AppCompatActivity {
 
         activityDepth = Math.max(0, activityDepth - 1);
         if (activityDepth == 0) {
-            bridge.getApp().fireChange(false);
+            bridge.getApp().fireStatusChange(false);
         }
 
         this.bridge.onStop();

@@ -28,8 +28,12 @@ public class App {
     @Nullable
     private AppStatusChangeListener statusChangeListener;
 
+    @Nullable
     private BackButtonListener backButtonListener;
+
+    @Nullable
     private AppRestoredListener appRestoredListener;
+
     private boolean isActive = false;
 
     public boolean isActive() {
@@ -66,7 +70,7 @@ public class App {
         }
     }
 
-    public void fireChange(boolean isActive) {
+    public void fireStatusChange(boolean isActive) {
         this.isActive = isActive;
         if (statusChangeListener != null) {
             statusChangeListener.onAppStatusChanged(isActive);
