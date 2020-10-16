@@ -87,11 +87,19 @@ public typealias PluginEventListener = CAPPluginCall
         errorHandler(CAPPluginCallError(message: message, code: code, error: error, data: data))
     }
 
-    func unimplemented(_ message: String = "not implemented") {
+    func unimplemented() {
+        unimplemented("not implemented")
+    }
+
+    func unimplemented(_ message: String) {
         errorHandler(CAPPluginCallError(message: message, code: "UNIMPLEMENTED", error: nil, data: [:]))
     }
 
-    func unavailable(_ message: String = "not available") {
+    func unavailable() {
+        unavailable("not available")
+    }
+
+    func unavailable(_ message: String) {
         errorHandler(CAPPluginCallError(message: message, code: "UNAVAILABLE", error: nil, data: [:]))
     }
 }
