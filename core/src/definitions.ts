@@ -73,9 +73,23 @@ export interface PluginConfig {
 }
 
 export enum ExceptionCode {
+  /**
+   * API is not implemented.
+   *
+   * This means the API can't be used because:
+   *   - it is not implemented at all
+   *   - it is not implemented for the current platform
+   */
   Unimplemented = 'UNIMPLEMENTED',
+
+  /**
+   * API is not available.
+   *
+   * This means the API can't be used right now because:
+   *   - it is currently missing a prerequisite, such as network connectivity
+   *   - it requires a particular platform or browser version
+   */
   Unavailable = 'UNAVAILABLE',
-  UnsupportedBrowser = 'UNSUPPORTED_BROWSER',
 }
 
 export interface CapacitorException extends Error {
@@ -84,7 +98,7 @@ export interface CapacitorException extends Error {
 
 declare const CapacitorException: {
   prototype: CapacitorException;
-  new (message: string): CapacitorException;
+  new (message: string, code: ExceptionCode): CapacitorException;
 };
 
 export interface Capacitor {

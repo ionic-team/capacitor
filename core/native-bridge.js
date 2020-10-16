@@ -13,8 +13,11 @@
   // Add any legacy handlers to keep Cordova compat 100% good
   addLegacyHandlers(win);
 
-  capacitor.Exception = function CapacitorException() {
-    return Error.apply(this, arguments);
+  capacitor.Exception = function CapacitorException(message, code) {
+    var e = Error.call(this, message);
+    e.code = code;
+
+    return e;
   };
 
   capacitor.Exception.prototype = Error.prototype;

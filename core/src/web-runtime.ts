@@ -1,9 +1,7 @@
 import type { Capacitor, PluginRegistry, ExceptionCode } from './definitions';
 
 class CapacitorException extends Error {
-  code: ExceptionCode;
-
-  constructor(readonly message: string) {
+  constructor(readonly message: string, readonly code: ExceptionCode) {
     super(message);
   }
 }
