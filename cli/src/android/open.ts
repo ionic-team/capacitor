@@ -1,10 +1,10 @@
+import { pathExists } from '@ionic/utils-fs';
 import open from 'open';
 
 import { runCommand } from '../common';
 import type { Config } from '../definitions';
 import { OS } from '../definitions';
 import { logger } from '../log';
-import { existsSync } from '../util/fs';
 
 export async function openAndroid(config: Config): Promise<void> {
   logger.info(`Opening Android project at ${config.android.platformDir}.`);
@@ -19,10 +19,13 @@ export async function openAndroid(config: Config): Promise<void> {
     case OS.Windows: {
       let androidStudioPath = config.windows.androidStudioPath;
       try {
-        if (!existsSync(androidStudioPath)) {
-          let commandResult = await runCommand(
-            'REG QUERY "HKEY_LOCAL_MACHINE\\SOFTWARE\\Android Studio" /v Path',
-          );
+        if (!(await pathExists(androidStudioPath))) {
+          let commandResult = await runCommand('REG', [
+            'QUERY',
+            'HKEY_LOCAL_MACHINE\\SOFTWARE\\Android Studio',
+            '/v',
+            'Path',
+          ]);
           commandResult = commandResult.replace(/(\r\n|\n|\r)/gm, '');
           const ix = commandResult.indexOf('REG_SZ');
           if (ix > 0) {
