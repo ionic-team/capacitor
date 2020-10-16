@@ -1,12 +1,14 @@
 package com.getcapacitor;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
@@ -45,8 +47,11 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final int FILE_CHOOSER_CAMERA_PERMISSION = 9010;
     static final int GET_USER_MEDIA_PERMISSIONS = 9011;
     static final int GEOLOCATION_REQUEST_PERMISSIONS = 9004;
+    static final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
     private Bridge bridge;
+    private GeolocationPermissions.Callback geoLocationCallback;
+    private String geolocationRequestOrigin;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -252,7 +257,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     /**
-     * Handle the browser geolocation prompt
+     * Handle the browser geolocation permission prompt
      * @param origin
      * @param callback
      */
@@ -261,14 +266,40 @@ public class BridgeWebChromeClient extends WebChromeClient {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
 
-        // Set that we want geolocation perms for this origin
-        callback.invoke(origin, true, false);
-
-        String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
         if (!hasPermissions(geoPermissions)) {
+            // save the callback and prompt for permissions
+            geoLocationCallback = callback;
+            geolocationRequestOrigin = origin;
             requestPermissions(geoPermissions, GEOLOCATION_REQUEST_PERMISSIONS);
         } else {
+            // permission is already granted
+            callback.invoke(origin, true, false);
             Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
+        }
+    }
+
+    /**
+     * Handle the browser geolocation permission prompt results
+     * @param permissions
+     * @param grantResults
+     */
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
+    public void onGeolocationPermissionsResult(String[] permissions, int[] grantResults) {
+        List<String> list = Arrays.asList(permissions);
+
+        if (list.contains(geoPermissions[0]) || list.contains(geoPermissions[1])) {
+            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (geoLocationCallback != null && geolocationRequestOrigin != null) {
+                    geoLocationCallback.invoke(geolocationRequestOrigin, true, false);
+                }
+            } else {
+                if (geoLocationCallback != null) {
+                    geoLocationCallback.invoke(geolocationRequestOrigin, false, false);
+                }
+            }
+
+            geoLocationCallback = null;
+            geolocationRequestOrigin = null;
         }
     }
 
