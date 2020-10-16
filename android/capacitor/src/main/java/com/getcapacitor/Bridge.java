@@ -82,6 +82,7 @@ public class Bridge {
     public final CordovaInterfaceImpl cordovaInterface;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
+    private BridgeWebChromeClient webChromeClient;
 
     // Our MessageHandler for sending and receiving data to the WebView
     private final MessageHandler msgHandler;
@@ -125,6 +126,7 @@ public class Bridge {
         this.context = context;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
+        this.webChromeClient = new BridgeWebChromeClient(this);
         this.initialPlugins = initialPlugins;
         this.cordovaInterface = cordovaInterface;
         this.preferences = preferences;
@@ -196,7 +198,7 @@ public class Bridge {
 
         Logger.debug("Loading app at " + appUrl);
 
-        webView.setWebChromeClient(new BridgeWebChromeClient(this));
+        webView.setWebChromeClient(this.webChromeClient);
         webView.setWebViewClient(this.webViewClient);
 
         if (!isDeployDisabled() && !isNewBinary()) {
@@ -687,6 +689,11 @@ public class Bridge {
      */
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == BridgeWebChromeClient.GEOLOCATION_REQUEST_PERMISSIONS) {
+            webChromeClient.onGeolocationPermissionsResult(permissions, grantResults);
+            return;
+        }
+
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
         if (plugin == null) {
