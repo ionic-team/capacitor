@@ -36,10 +36,10 @@ export async function doctorCore(config: Config): Promise<void> {
     androidVersion,
     iosVersion,
   ] = await Promise.all([
-    getCommandOutput(`npm info @capacitor/cli version`),
-    getCommandOutput(`npm info @capacitor/core version`),
-    getCommandOutput(`npm info @capacitor/android version`),
-    getCommandOutput(`npm info @capacitor/ios version`),
+    getCommandOutput('npm', ['info', '@capacitor/cli', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/core', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/android', 'version']),
+    getCommandOutput('npm', ['info', '@capacitor/ios', 'version']),
   ]);
 
   output.write(
