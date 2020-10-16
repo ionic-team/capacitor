@@ -33,9 +33,9 @@ export async function list(config: Config, platform: string): Promise<void> {
   const allPlugins = await getPlugins(config);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
-    plugins = getIOSPlugins(allPlugins);
+    plugins = await getIOSPlugins(allPlugins);
   } else if (platform === config.android.name) {
-    plugins = getAndroidPlugins(allPlugins);
+    plugins = await getAndroidPlugins(allPlugins);
   } else if (platform === config.web.name) {
     logger.info(`Listing plugins for ${c.input(platform)} is not possible.`);
     return;
