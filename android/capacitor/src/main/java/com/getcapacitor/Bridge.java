@@ -15,7 +15,6 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.PushNotifications;
@@ -83,6 +82,7 @@ public class Bridge {
     public final CordovaInterfaceImpl cordovaInterface;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
+    private App app;
 
     // Our MessageHandler for sending and receiving data to the WebView
     private final MessageHandler msgHandler;
@@ -123,6 +123,7 @@ public class Bridge {
         CordovaPreferences preferences,
         JSONObject config
     ) {
+        this.app = new App();
         this.context = context;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
@@ -155,6 +156,10 @@ public class Bridge {
         this.registerAllPlugins();
 
         this.loadWebView();
+    }
+
+    public App getApp() {
+        return app;
     }
 
     private void loadWebView() {
@@ -379,7 +384,6 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
-        this.registerPlugin(App.class);
         this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(Geolocation.class);
@@ -617,12 +621,6 @@ public class Bridge {
         return null;
     }
 
-    protected void storeDanglingPluginResult(PluginCall call, PluginResult result) {
-        PluginHandle appHandle = getPlugin("App");
-        App appPlugin = (App) appHandle.getInstance();
-        appPlugin.fireRestoredResult(result);
-    }
-
     /**
      * Restore any saved bundle state data
      * @param savedInstanceState
@@ -805,18 +803,14 @@ public class Bridge {
     }
 
     public void onBackPressed() {
-        PluginHandle appHandle = getPlugin("App");
-        if (appHandle != null) {
-            App appPlugin = (App) appHandle.getInstance();
-
-            // If there are listeners, don't do the default action, as this means the user
-            // wants to override the back button
-            if (appPlugin.hasBackButtonListeners()) {
-                appPlugin.fireBackButton();
-            } else {
-                if (webView.canGoBack()) {
-                    webView.goBack();
-                }
+        // If there are listeners, don't do the default action, as this means the user
+        // wants to override the back button
+        if (app.hasBackButtonListeners()) {
+            app.fireBackButton();
+            triggerJSEvent("backbutton", "document");
+        } else {
+            if (webView.canGoBack()) {
+                webView.goBack();
             }
         }
     }
