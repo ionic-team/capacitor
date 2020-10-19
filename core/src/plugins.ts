@@ -1,26 +1,6 @@
 import { Capacitor, Plugins } from './global';
 import type { WebPlugin } from './web';
 
-export enum ExceptionCodes {
-  UnsupportedBrowser = 'UNSUPPORTED_BROWSER',
-}
-
-export class Exception extends Error {
-  readonly code: ExceptionCodes;
-}
-
-/**
- * Feature unavailable for the current browser (or all browsers).
- *
- * This error is thrown when the requested API is not supported in the browser.
- *
- * This can happen particularly for the web platform when implementation is
- * uncertain due to the plethora of browsers available to end users.
- */
-export class UnsupportedBrowserException extends Exception {
-  code = ExceptionCodes.UnsupportedBrowser;
-}
-
 const PLUGIN_REGISTRY = new (class {
   protected readonly plugins: {
     [plugin: string]: RegisteredPlugin<unknown>;

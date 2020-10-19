@@ -7,8 +7,6 @@ public typealias PluginEventListener = CAPPluginCall
  */
 @objc public extension CAPPluginCall {
 
-    private static let UNIMPLEMENTED = "not implemented"
-
     @nonobjc func get<T>(_ key: String, _ ofType: T.Type, _ defaultValue: T? = nil) -> T? {
         return self.options[key] as? T ?? defaultValue
     }
@@ -90,6 +88,18 @@ public typealias PluginEventListener = CAPPluginCall
     }
 
     func unimplemented() {
-        errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, code: nil, error: nil, data: [:]))
+        unimplemented("not implemented")
+    }
+
+    func unimplemented(_ message: String) {
+        errorHandler(CAPPluginCallError(message: message, code: "UNIMPLEMENTED", error: nil, data: [:]))
+    }
+
+    func unavailable() {
+        unavailable("not available")
+    }
+
+    func unavailable(_ message: String) {
+        errorHandler(CAPPluginCallError(message: message, code: "UNAVAILABLE", error: nil, data: [:]))
     }
 }
