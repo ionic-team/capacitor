@@ -92,12 +92,12 @@ export enum ExceptionCode {
 }
 
 export interface CapacitorException extends Error {
-  code: ExceptionCode;
+  code?: ExceptionCode;
 }
 
 declare const CapacitorException: {
   prototype: CapacitorException;
-  new (message: string, code: ExceptionCode): CapacitorException;
+  new (message: string, code?: ExceptionCode): CapacitorException;
 };
 
 export interface Capacitor {
