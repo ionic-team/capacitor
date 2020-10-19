@@ -81,6 +81,7 @@ async function loadAndroidConfig(
   const platformDirAbs = resolve(rootDir, platformDir);
   const webDir = 'app/src/main/assets/public';
   const resDir = 'app/src/main/res';
+  const buildOutputDir = 'app/build/outputs/apk/debug';
 
   const templateName = 'android-template';
   const pluginsFolderName = 'capacitor-cordova-android-plugins';
@@ -94,6 +95,8 @@ async function loadAndroidConfig(
     webDirAbs: resolve(platformDir, webDir),
     resDir,
     resDirAbs: resolve(platformDir, resDir),
+    buildOutputDir,
+    buildOutputDirAbs: resolve(platformDir, buildOutputDir),
     assets: {
       templateName,
       pluginsFolderName,
