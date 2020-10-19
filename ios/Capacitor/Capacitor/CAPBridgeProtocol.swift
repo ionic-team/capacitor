@@ -35,9 +35,6 @@ import WebKit
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
 
-    @available(*, deprecated, message: "Moved to ApplicationDelegateProxy")
-    func getLastUrl() -> URL?
-
     // MARK: Call Management
     func getSavedCall(_ callbackId: String) -> CAPPluginCall?
     func releaseCall(_ call: CAPPluginCall)
