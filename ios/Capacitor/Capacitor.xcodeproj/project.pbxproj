@@ -57,6 +57,8 @@
 		6296A785253A2E49005A202A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A783253A2E49005A202A /* Main.storyboard */; };
 		6296A787253A2E49005A202A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6296A786253A2E49005A202A /* Assets.xcassets */; };
 		6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A788253A2E49005A202A /* LaunchScreen.storyboard */; };
+		62A02168253A342D00A93582 /* BridgedTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A02167253A342D00A93582 /* BridgedTypesTests.swift */; };
+		62A0216F253A3F8000A93582 /* JSONSerializationWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A0216E253A3F8000A93582 /* JSONSerializationWrapper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,6 +156,10 @@
 		6296A786253A2E49005A202A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6296A789253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6296A78B253A2E49005A202A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62A02167253A342D00A93582 /* BridgedTypesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesTests.swift; sourceTree = "<group>"; };
+		62A0216C253A3F8000A93582 /* CapacitorTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CapacitorTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		62A0216D253A3F8000A93582 /* JSONSerializationWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONSerializationWrapper.h; sourceTree = "<group>"; };
+		62A0216E253A3F8000A93582 /* JSONSerializationWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSONSerializationWrapper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,7 +225,11 @@
 			isa = PBXGroup;
 			children = (
 				50503EED1FC08595003606DC /* CapacitorTests.swift */,
+				62A02167253A342D00A93582 /* BridgedTypesTests.swift */,
 				62959BBD2526510200A3D7F1 /* Info.plist */,
+				62A0216D253A3F8000A93582 /* JSONSerializationWrapper.h */,
+				62A0216E253A3F8000A93582 /* JSONSerializationWrapper.m */,
+				62A0216C253A3F8000A93582 /* CapacitorTests-Bridging-Header.h */,
 			);
 			path = CapacitorTests;
 			sourceTree = "<group>";
@@ -394,6 +404,7 @@
 					};
 					50503EE71FC08595003606DC = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1200;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 6296A77A253A2E49005A202A;
 					};
@@ -512,6 +523,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
+				62A0216F253A3F8000A93582 /* JSONSerializationWrapper.m in Sources */,
+				62A02168253A342D00A93582 /* BridgedTypesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,12 +746,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CapacitorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";
@@ -749,12 +765,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CapacitorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";
