@@ -10,9 +10,9 @@ class MockBridgeMessageHandler: CAPMessageHandlerWrapper {
 class MockConfig: CAPConfig {
 }
 
-class MockBridge: CAPBridge {
+class MockBridge: CapacitorBridge {
     override public func registerPlugins() {
-        print("REGISTER PLUGINS")
+        Swift.print("REGISTER PLUGINS")
     }
 }
 class CapacitorTests: XCTestCase {
