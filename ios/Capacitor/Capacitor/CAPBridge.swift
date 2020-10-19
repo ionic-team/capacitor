@@ -40,8 +40,6 @@ enum BridgeError: Error {
     public var storedCalls = [String: CAPPluginCall]()
     // Scheme to use when serving content
     public var scheme: String
-    // Whether the app is active
-    private var isActive = true
     // Wheter to inject the Cordova files
     private var injectCordovaFiles = false
 
@@ -65,7 +63,6 @@ enum BridgeError: Error {
         exportCoreJS(localUrl: localUrl!)
         registerPlugins()
         setupCordovaCompatibility()
-        bindObservers()
         NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
             self?.tmpWindow = nil
         }
@@ -185,35 +182,6 @@ enum BridgeError: Error {
         }
 
         CAPLog.print("⚡️ ❌  Please verify your installation or file an issue")
-    }
-
-    /**
-     * Bind notification center observers to watch for app active/inactive status
-     */
-    func bindObservers() {
-        let appStatePlugin = getOrLoadPlugin(pluginName: "App") as? CAPAppPlugin
-
-        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self, weak appStatePlugin] (_) in
-            CAPLog.print("APP ACTIVE")
-            self?.isActive = true
-            if let strongSelf = self {
-                appStatePlugin?.fireChange(isActive: strongSelf.isActive)
-            }
-        }
-        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self, weak appStatePlugin] (_) in
-            CAPLog.print("APP INACTIVE")
-            self?.isActive = false
-            if let strongSelf = self {
-                appStatePlugin?.fireChange(isActive: strongSelf.isActive)
-            }
-        }
-    }
-
-    /**
-     * - Returns: whether the app is currently active
-     */
-    func isAppActive() -> Bool {
-        return isActive
     }
 
     /**
@@ -481,32 +449,25 @@ enum BridgeError: Error {
      * Send a successful result to the JavaScript layer.
      */
     public func toJs(result: JSResult, save: Bool) {
-        do {
-            let resultJson = try result.toJson()
-            CAPLog.print("⚡️  TO JS", resultJson.prefix(256))
+        let resultJson = result.toJson()
+        CAPLog.print("⚡️  TO JS", resultJson.prefix(256))
 
-            DispatchQueue.main.async {
-                self.getWebView()?.evaluateJavaScript("""
-                    window.Capacitor.fromNative({
-                    callbackId: '\(result.call.callbackId)',
-                    pluginId: '\(result.call.pluginId)',
-                    methodName: '\(result.call.method)',
-                    save: \(save),
-                    success: true,
-                    data: \(resultJson)
-                    })
-                """) { (result, error) in
-                    if error != nil && result != nil {
-                        CAPLog.print(result!)
-                    }
+        DispatchQueue.main.async {
+            self.getWebView()?.evaluateJavaScript("""
+                window.Capacitor.fromNative({
+                callbackId: '\(result.call.callbackId)',
+                pluginId: '\(result.call.pluginId)',
+                methodName: '\(result.call.method)',
+                save: \(save),
+                success: true,
+                data: \(resultJson)
+                })
+            """) { (result, error) in
+                if error != nil && result != nil {
+                    CAPLog.print(result!)
                 }
             }
-        } catch {
-            if let jsError = error as? JSProcessingError, let appState = getOrLoadPlugin(pluginName: "App") as? CAPAppPlugin {
-                appState.firePluginError(jsError)
-            }
         }
-
     }
 
     /**

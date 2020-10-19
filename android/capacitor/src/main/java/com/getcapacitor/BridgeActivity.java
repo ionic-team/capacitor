@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.android.R;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
-import com.getcapacitor.plugin.App;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.cordova.ConfigXmlParser;
@@ -90,22 +89,6 @@ public class BridgeActivity extends AppCompatActivity {
         return this.bridge;
     }
 
-    /**
-     * Notify the App plugin that the current state changed
-     * @param isActive
-     */
-    private void fireAppStateChanged(boolean isActive) {
-        PluginHandle handle = bridge.getPlugin("App");
-        if (handle == null) {
-            return;
-        }
-
-        App appState = (App) handle.getInstance();
-        if (appState != null) {
-            appState.fireChange(isActive);
-        }
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -135,7 +118,7 @@ public class BridgeActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        fireAppStateChanged(true);
+        bridge.getApp().fireStatusChange(true);
 
         this.bridge.onResume();
 
@@ -163,7 +146,7 @@ public class BridgeActivity extends AppCompatActivity {
 
         activityDepth = Math.max(0, activityDepth - 1);
         if (activityDepth == 0) {
-            fireAppStateChanged(false);
+            bridge.getApp().fireStatusChange(false);
         }
 
         this.bridge.onStop();
