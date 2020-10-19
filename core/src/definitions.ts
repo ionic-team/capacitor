@@ -76,9 +76,8 @@ export enum ExceptionCode {
   /**
    * API is not implemented.
    *
-   * This means the API can't be used because:
-   *   - it is not implemented at all
-   *   - it is not implemented for the current platform
+   * This usually means the API can't be used because it is not implemented for
+   * the current platform.
    */
   Unimplemented = 'UNIMPLEMENTED',
 
