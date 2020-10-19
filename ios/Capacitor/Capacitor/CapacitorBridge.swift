@@ -8,13 +8,9 @@ import Dispatch
 import WebKit
 import Cordova
 
-//enum BridgeError: Error {
-//    case errorExportingCoreJS
-//}
-
 internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
-    // MARK: - CAPBridgeProtocol Properties
+    // MARK: - CAPBridgeProtocol: Properties
 
     public var webView: WKWebView? {
         return bridgeDelegate?.bridgedWebView
@@ -108,33 +104,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var dispatchQueue = DispatchQueue(label: "bridge")
 
     public var notificationDelegationHandler: CAPUNUserNotificationCenterDelegate
-
-    init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
-        self.bridgeDelegate = bridgeDelegate
-        self.messageHandlerWrapper = messageHandlerWrapper
-        self.notificationDelegationHandler = CAPUNUserNotificationCenterDelegate()
-        self.config = config
-        self.scheme = scheme
-
-        super.init()
-
-        self.messageHandlerWrapper.bridge = self
-        self.notificationDelegationHandler.bridge = self
-        localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
-        exportCoreJS(localUrl: localUrl!)
-        registerPlugins()
-        setupCordovaCompatibility()
-        NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
-            self?.tmpWindow = nil
-        }
-    }
-
-    deinit {
-        // the message handler needs to removed to avoid any retain cycles
-        messageHandlerWrapper.cleanUp()
-    }
-
-    // MARK: - Deprecated
+    
+    // MARK: - CAPBridgeProtocol: Deprecated
 
     public func getWebView() -> WKWebView? {
         return webView
@@ -171,11 +142,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
         statusBarAnimation = animation
     }
-
-    public func getLastUrl() -> URL? {
-        return ApplicationDelegateProxy.shared.lastURL
-    }
-
+    
+    // MARK: - Static Methods
+    
     /**
      * Print a hopefully informative error message to the log when something
      * particularly dreadful happens.
@@ -197,6 +166,35 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         CAPLog.print("⚡️ ❌  Please verify your installation or file an issue")
     }
 
+    
+    // MARK: - Initialization
+    
+    init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
+        self.bridgeDelegate = bridgeDelegate
+        self.messageHandlerWrapper = messageHandlerWrapper
+        self.notificationDelegationHandler = CAPUNUserNotificationCenterDelegate()
+        self.config = config
+        self.scheme = scheme
+
+        super.init()
+
+        self.messageHandlerWrapper.bridge = self
+        self.notificationDelegationHandler.bridge = self
+        localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
+        exportCoreJS(localUrl: localUrl!)
+        registerPlugins()
+        setupCordovaCompatibility()
+        NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
+            self?.tmpWindow = nil
+        }
+    }
+
+    deinit {
+        // the message handler needs to removed to avoid any retain cycles
+        messageHandlerWrapper.cleanUp()
+    }
+
+    // MARK: - Plugins
     /**
      * Export core JavaScript to the webview
      */
@@ -277,18 +275,18 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      * - parameter pluginId: the ID of the plugin
      * - returns: the plugin, if found
      */
-    public func getOrLoadPlugin(pluginName: String) -> CAPPlugin? {
+    func getOrLoadPlugin(pluginName: String) -> CAPPlugin? {
         guard let plugin = self.getPlugin(pluginName: pluginName) ?? self.loadPlugin(pluginName: pluginName) else {
             return nil
         }
         return plugin
     }
 
-    public func getPlugin(pluginName: String) -> CAPPlugin? {
+    func getPlugin(pluginName: String) -> CAPPlugin? {
         return self.plugins[pluginName]
     }
 
-    public func loadPlugin(pluginName: String) -> CAPPlugin? {
+    func loadPlugin(pluginName: String) -> CAPPlugin? {
         guard let pluginType = knownPlugins[pluginName], let bridgeType = pluginType as? CAPBridgedPlugin.Type else {
             CAPLog.print("⚡️  Unable to load plugin \(pluginName). No such module found.")
             return nil
@@ -303,7 +301,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     func savePluginCall(_ call: CAPPluginCall) {
         storedCalls[call.callbackId] = call
     }
-
+    
+    // MARK: - CAPBridgeProtocol: Call Management
+    
     @objc public func getSavedCall(_ callbackId: String) -> CAPPluginCall? {
         return storedCalls[callbackId]
     }
@@ -316,7 +316,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         storedCalls.removeValue(forKey: callbackId)
     }
 
-    public func getDispatchQueue() -> DispatchQueue {
+    func getDispatchQueue() -> DispatchQueue {
         return self.dispatchQueue
     }
 
@@ -337,18 +337,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
-    public func reload() {
+    func reload() {
         self.getWebView()?.reload()
-    }
-
-    public func print(message: String, for plugin: CAPPlugin) {
-        CAPLog.print("⚡️ ", plugin.pluginId, "-", message)
-    }
-
-    public func showAlertWith(title: String, message: String, buttonTitle: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
-        alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
-        self.viewController?.present(alert, animated: true, completion: nil)
     }
 
     func docLink(_ url: String) -> String {
@@ -359,7 +349,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      * Handle a call from JavaScript. First, find the corresponding plugin,
      * construct a selector, and perform that selector on the plugin instance.
      */
-    public func handleJSCall(call: JSCall) {
+    func handleJSCall(call: JSCall) {
         guard let plugin = self.getPlugin(pluginName: call.pluginId) ?? self.loadPlugin(pluginName: call.pluginId) else {
             CAPLog.print("⚡️  Error loading plugin \(call.pluginId) for call. Check that the pluginId is correct")
             return
@@ -420,7 +410,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      * Handle a Cordova call from JavaScript. First, find the corresponding plugin,
      * construct a selector, and perform that selector on the plugin instance.
      */
-    public func handleCordovaJSCall(call: JSCall) {
+    func handleCordovaJSCall(call: JSCall) {
         // Create a selector to send to the plugin
 
         if let plugin = self.cordovaPluginManager?.getCommandInstance(call.pluginId.lowercased()) {
@@ -444,7 +434,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     /**
      * Send a successful result to the JavaScript layer.
      */
-    public func toJs(result: JSResult, save: Bool) {
+    func toJs(result: JSResult, save: Bool) {
         let resultJson = result.toJson()
         CAPLog.print("⚡️  TO JS", resultJson.prefix(256))
         
@@ -469,7 +459,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     /**
      * Send an error result to the JavaScript layer.
      */
-    public func toJsError(error: JSResultError) {
+    func toJsError(error: JSResultError) {
         DispatchQueue.main.async {
             self.getWebView()?.evaluateJavaScript("window.Capacitor.fromNative({ callbackId: '\(error.call.callbackId)', pluginId: '\(error.call.pluginId)', methodName: '\(error.call.method)', success: false, error: \(error.toJson())})") { (result, error) in
                 if error != nil && result != nil {
@@ -478,7 +468,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-
+    
+    // MARK: - CAPBridgeProtocol: JavaScript Handling
+    
     /**
      * Eval JS for a specific plugin.
      */
@@ -549,7 +541,21 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func getLocalUrl() -> String {
         return localUrl!
     }
-
+    
+    // MARK: - CAPBridgeProtocol: Logging
+    
+    public func print(message: String, for plugin: CAPPlugin) {
+        CAPLog.print("⚡️ ", plugin.pluginId, "-", message)
+    }
+    
+    // MARK: - CAPBridgeProtocol: View Presentation
+    
+    @objc public func showAlertWith(title: String, message: String, buttonTitle: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default, handler: nil))
+        self.viewController?.present(alert, animated: true, completion: nil)
+    }
+    
     @objc public func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         if viewControllerToPresent.modalPresentationStyle == .popover {
             self.viewController?.present(viewControllerToPresent, animated: flag, completion: completion)
