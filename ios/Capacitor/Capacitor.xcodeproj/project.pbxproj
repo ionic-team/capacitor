@@ -28,7 +28,6 @@
 		62959B282524DA7800A3D7F1 /* BackgroundTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */; };
 		62959B292524DA7800A3D7F1 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF62524DA7700A3D7F1 /* SplashScreen.swift */; };
 		62959B2C2524DA7800A3D7F1 /* LocalNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */; };
-		62959B2D2524DA7800A3D7F1 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFB2524DA7700A3D7F1 /* App.swift */; };
 		62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */; };
 		62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */; };
 		62959B312524DA7800A3D7F1 /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFF2524DA7700A3D7F1 /* JS.swift */; };
@@ -54,6 +53,13 @@
 		62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B152524DA7700A3D7F1 /* CAPNotifications.swift */; };
 		62959BA52526475A00A3D7F1 /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62959BA02526474300A3D7F1 /* Cordova.framework */; };
 		62959BA62526475A00A3D7F1 /* Cordova.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62959BA02526474300A3D7F1 /* Cordova.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6296A77E253A2E49005A202A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A77D253A2E49005A202A /* AppDelegate.swift */; };
+		6296A782253A2E49005A202A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6296A781253A2E49005A202A /* ViewController.swift */; };
+		6296A785253A2E49005A202A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A783253A2E49005A202A /* Main.storyboard */; };
+		6296A787253A2E49005A202A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6296A786253A2E49005A202A /* Assets.xcassets */; };
+		6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A788253A2E49005A202A /* LaunchScreen.storyboard */; };
+		62A02168253A342D00A93582 /* BridgedTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A02167253A342D00A93582 /* BridgedTypesTests.swift */; };
+		62A0216F253A3F8000A93582 /* JSONSerializationWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 62A0216E253A3F8000A93582 /* JSONSerializationWrapper.m */; };
 		62C0A97925377AED004384F8 /* CapacitorBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C0A97825377AED004384F8 /* CapacitorBridge.swift */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +77,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 2F5C86DC1FE94845004B09C7;
 			remoteInfo = Cordova;
+		};
+		6296A796253A2EAE005A202A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 50503ED61FC08594003606DC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6296A77A253A2E49005A202A;
+			remoteInfo = TestsHostApp;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -111,7 +124,6 @@
 		62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundTask.swift; sourceTree = "<group>"; };
 		62959AF62524DA7700A3D7F1 /* SplashScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalNotifications.swift; sourceTree = "<group>"; };
-		62959AFB2524DA7700A3D7F1 /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPlugins.m; sourceTree = "<group>"; };
 		62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIStatusBarManager+CAPHandleTapAction.m"; sourceTree = "<group>"; };
 		62959AFF2524DA7700A3D7F1 /* JS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
@@ -141,6 +153,17 @@
 		62959B9B2526474300A3D7F1 /* CapacitorCordova.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CapacitorCordova.xcodeproj; path = ../CapacitorCordova/CapacitorCordova.xcodeproj; sourceTree = "<group>"; };
 		62959BBD2526510200A3D7F1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62C0A97825377AED004384F8 /* CapacitorBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorBridge.swift; sourceTree = "<group>"; };
+		6296A77B253A2E49005A202A /* TestsHostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestsHostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6296A77D253A2E49005A202A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6296A781253A2E49005A202A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		6296A784253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		6296A786253A2E49005A202A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6296A789253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		6296A78B253A2E49005A202A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62A02167253A342D00A93582 /* BridgedTypesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgedTypesTests.swift; sourceTree = "<group>"; };
+		62A0216C253A3F8000A93582 /* CapacitorTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CapacitorTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		62A0216D253A3F8000A93582 /* JSONSerializationWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONSerializationWrapper.h; sourceTree = "<group>"; };
+		62A0216E253A3F8000A93582 /* JSONSerializationWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSONSerializationWrapper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +181,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6296A778253A2E49005A202A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,6 +209,7 @@
 			children = (
 				62959AE12524DA7700A3D7F1 /* Capacitor */,
 				50503EEC1FC08595003606DC /* CapacitorTests */,
+				6296A77C253A2E49005A202A /* TestsHostApp */,
 				50503EE01FC08594003606DC /* Products */,
 				501CBAA51FC0A723009B0D4D /* Frameworks */,
 			);
@@ -189,6 +220,7 @@
 			children = (
 				50503EDF1FC08594003606DC /* Capacitor.framework */,
 				50503EE81FC08595003606DC /* CapacitorTests.xctest */,
+				6296A77B253A2E49005A202A /* TestsHostApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -197,7 +229,11 @@
 			isa = PBXGroup;
 			children = (
 				50503EED1FC08595003606DC /* CapacitorTests.swift */,
+				62A02167253A342D00A93582 /* BridgedTypesTests.swift */,
 				62959BBD2526510200A3D7F1 /* Info.plist */,
+				62A0216D253A3F8000A93582 /* JSONSerializationWrapper.h */,
+				62A0216E253A3F8000A93582 /* JSONSerializationWrapper.m */,
+				62A0216C253A3F8000A93582 /* CapacitorTests-Bridging-Header.h */,
 			);
 			path = CapacitorTests;
 			sourceTree = "<group>";
@@ -248,11 +284,10 @@
 		62959AEA2524DA7700A3D7F1 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				62959AF02524DA7700A3D7F1 /* DefaultPlugins.h */,
-				62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */,
-				62959AFB2524DA7700A3D7F1 /* App.swift */,
 				62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */,
 				62959AEF2524DA7700A3D7F1 /* Console.swift */,
+				62959AF02524DA7700A3D7F1 /* DefaultPlugins.h */,
+				62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */,
 				62959AF12524DA7700A3D7F1 /* Geolocation.swift */,
 				62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */,
 				62959AF22524DA7700A3D7F1 /* PushNotifications.swift */,
@@ -268,6 +303,19 @@
 				62959BA02526474300A3D7F1 /* Cordova.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6296A77C253A2E49005A202A /* TestsHostApp */ = {
+			isa = PBXGroup;
+			children = (
+				6296A77D253A2E49005A202A /* AppDelegate.swift */,
+				6296A781253A2E49005A202A /* ViewController.swift */,
+				6296A783253A2E49005A202A /* Main.storyboard */,
+				6296A786253A2E49005A202A /* Assets.xcassets */,
+				6296A788253A2E49005A202A /* LaunchScreen.storyboard */,
+				6296A78B253A2E49005A202A /* Info.plist */,
+			);
+			path = TestsHostApp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -321,11 +369,29 @@
 			);
 			dependencies = (
 				50503EEB1FC08595003606DC /* PBXTargetDependency */,
+				6296A797253A2EAE005A202A /* PBXTargetDependency */,
 			);
 			name = CapacitorTests;
 			productName = AvocadoTests;
 			productReference = 50503EE81FC08595003606DC /* CapacitorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6296A77A253A2E49005A202A /* TestsHostApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6296A78F253A2E49005A202A /* Build configuration list for PBXNativeTarget "TestsHostApp" */;
+			buildPhases = (
+				6296A777253A2E49005A202A /* Sources */,
+				6296A778253A2E49005A202A /* Frameworks */,
+				6296A779253A2E49005A202A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestsHostApp;
+			productName = TestsHostApp;
+			productReference = 6296A77B253A2E49005A202A /* TestsHostApp.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -333,7 +399,7 @@
 		50503ED61FC08594003606DC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0900;
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Drifty Co.";
 				TargetAttributes = {
@@ -344,6 +410,12 @@
 					};
 					50503EE71FC08595003606DC = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1200;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 6296A77A253A2E49005A202A;
+					};
+					6296A77A253A2E49005A202A = {
+						CreatedOnToolsVersion = 12.0;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -354,6 +426,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 50503ED51FC08594003606DC;
 			productRefGroup = 50503EE01FC08594003606DC /* Products */;
@@ -368,6 +441,7 @@
 			targets = (
 				50503EDE1FC08594003606DC /* Capacitor */,
 				50503EE71FC08595003606DC /* CapacitorTests */,
+				6296A77A253A2E49005A202A /* TestsHostApp */,
 			);
 		};
 /* End PBXProject section */
@@ -394,6 +468,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6296A779253A2E49005A202A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */,
+				6296A787253A2E49005A202A /* Assets.xcassets in Resources */,
+				6296A785253A2E49005A202A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,7 +515,6 @@
 				62959B3D2524DA7800A3D7F1 /* CAPMessageHandlerWrapper.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
-				62959B2D2524DA7800A3D7F1 /* App.swift in Sources */,
 				62959B3F2524DA7800A3D7F1 /* CAPAssetHandler.swift in Sources */,
 				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
 				62959B2C2524DA7800A3D7F1 /* LocalNotifications.swift in Sources */,
@@ -448,6 +531,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
+				62A0216F253A3F8000A93582 /* JSONSerializationWrapper.m in Sources */,
+				62A02168253A342D00A93582 /* BridgedTypesTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6296A777253A2E49005A202A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6296A782253A2E49005A202A /* ViewController.swift in Sources */,
+				6296A77E253A2E49005A202A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,7 +553,31 @@
 			target = 50503EDE1FC08594003606DC /* Capacitor */;
 			targetProxy = 50503EEA1FC08595003606DC /* PBXContainerItemProxy */;
 		};
+		6296A797253A2EAE005A202A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6296A77A253A2E49005A202A /* TestsHostApp */;
+			targetProxy = 6296A796253A2EAE005A202A /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		6296A783253A2E49005A202A /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6296A784253A2E49005A202A /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		6296A788253A2E49005A202A /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6296A789253A2E49005A202A /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		50503EF11FC08595003606DC /* Debug */ = {
@@ -638,14 +756,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CapacitorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";
 			};
 			name = Debug;
 		};
@@ -653,11 +775,59 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CapacitorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";
+			};
+			name = Release;
+		};
+		6296A78C253A2E49005A202A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9YN2HU59K8;
+				INFOPLIST_FILE = TestsHostApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.TestsHostApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6296A78D253A2E49005A202A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9YN2HU59K8;
+				INFOPLIST_FILE = TestsHostApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.TestsHostApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -690,6 +860,15 @@
 			buildConfigurations = (
 				50503EF71FC08595003606DC /* Debug */,
 				50503EF81FC08595003606DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6296A78F253A2E49005A202A /* Build configuration list for PBXNativeTarget "TestsHostApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6296A78C253A2E49005A202A /* Debug */,
+				6296A78D253A2E49005A202A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

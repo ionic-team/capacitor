@@ -1,15 +1,5 @@
 import Foundation
 
-enum JSProcessingError: LocalizedError {
-    case jsonSerializeError(call: JSCall)
-    var errorDescription: String? {
-        switch self {
-        case .jsonSerializeError(call: let call):
-            return "Unable to JSON serialize plugin data result for plugin \(call.pluginId) and method \(call.method)"
-        }
-    }
-}
-
 public class JSDate {
     static func toString(_ date: Date) -> String {
         let formatter = ISO8601DateFormatter()
@@ -49,7 +39,7 @@ public class JSResult {
         self.result = result
     }
 
-    public func toJson() throws -> String {
+    public func toJson() -> String {
         if let result = result {
             do {
                 if JSONSerialization.isValidJSONObject(result) {
@@ -60,10 +50,7 @@ public class JSResult {
                 } else {
                     CAPLog.print("[Capacitor Plugin Error] - \(call.pluginId) - \(call.method) - Unable to serialize plugin response as JSON." +
                                     "Ensure that all data passed to success callback from module method is JSON serializable!")
-                    throw JSProcessingError.jsonSerializeError(call: call)
                 }
-            } catch let error as JSProcessingError {
-                throw error
             } catch {
                 CAPLog.print("Unable to serialize plugin response as JSON: \(error.localizedDescription)")
             }
