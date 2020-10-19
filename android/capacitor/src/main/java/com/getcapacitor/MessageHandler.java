@@ -104,7 +104,7 @@ public class MessageHandler {
                 final WebView webView = this.webView;
                 webView.post(() -> webView.evaluateJavascript(runScript, null));
             } else {
-                bridge.storeDanglingPluginResult(call, data);
+                bridge.getApp().fireRestoredResult(data);
             }
         } catch (Exception ex) {
             Logger.error("sendResponseMessage: error: " + ex);
