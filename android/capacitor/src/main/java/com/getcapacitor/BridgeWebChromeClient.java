@@ -47,8 +47,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
     private Bridge bridge;
-    private GeolocationPermissions.Callback geoLocationCallback;
-    private String geolocationRequestOrigin;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -264,38 +262,31 @@ public class BridgeWebChromeClient extends WebChromeClient {
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
 
         if (!hasPermissions(geoPermissions)) {
-            // save the callback and prompt for permissions
-            geoLocationCallback = callback;
-            geolocationRequestOrigin = origin;
-            requestPermissions(geoPermissions, GEOLOCATION_REQUEST_PERMISSIONS);
+            this.bridge.cordovaInterface.requestPermissions(
+                    new CordovaPlugin() {
+                        @Override
+                        public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
+                            throws JSONException {
+                            if (GEOLOCATION_REQUEST_PERMISSIONS == requestCode) {
+                                List<String> list = Arrays.asList(permissions);
+
+                                if (list.contains(geoPermissions[0]) || list.contains(geoPermissions[1])) {
+                                    if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                                        callback.invoke(origin, true, false);
+                                    } else {
+                                        callback.invoke(origin, false, false);
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    GEOLOCATION_REQUEST_PERMISSIONS,
+                    geoPermissions
+                );
         } else {
             // permission is already granted
             callback.invoke(origin, true, false);
             Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
-        }
-    }
-
-    /**
-     * Handle the browser geolocation permission prompt results
-     * @param permissions
-     * @param grantResults
-     */
-    public void onGeolocationPermissionsResult(String[] permissions, int[] grantResults) {
-        List<String> list = Arrays.asList(permissions);
-
-        if (list.contains(geoPermissions[0]) || list.contains(geoPermissions[1])) {
-            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (geoLocationCallback != null && geolocationRequestOrigin != null) {
-                    geoLocationCallback.invoke(geolocationRequestOrigin, true, false);
-                }
-            } else {
-                if (geoLocationCallback != null) {
-                    geoLocationCallback.invoke(geolocationRequestOrigin, false, false);
-                }
-            }
-
-            geoLocationCallback = null;
-            geolocationRequestOrigin = null;
         }
     }
 
