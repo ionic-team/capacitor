@@ -1,14 +1,12 @@
 package com.getcapacitor;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
@@ -282,7 +280,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
      * @param permissions
      * @param grantResults
      */
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     public void onGeolocationPermissionsResult(String[] permissions, int[] grantResults) {
         List<String> list = Arrays.asList(permissions);
 
