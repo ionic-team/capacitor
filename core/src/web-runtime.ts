@@ -1,6 +1,13 @@
-import type { PluginRegistry } from './definitions';
+import type { Capacitor, PluginRegistry, ExceptionCode } from './definitions';
 
-export class CapacitorWeb {
+class CapacitorException extends Error {
+  constructor(readonly message: string, readonly code: ExceptionCode) {
+    super(message);
+  }
+}
+
+export class CapacitorWeb implements Capacitor {
+  Exception = CapacitorException;
   Plugins: PluginRegistry;
   platform = 'web';
   isNative = false;

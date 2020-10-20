@@ -23,8 +23,6 @@ extension CAPPluginCall: JSValueContainer {
 }
 
 @objc public extension CAPPluginCall {
-    private static let UNIMPLEMENTED = "not implemented"
-
     func hasOption(_ key: String) -> Bool {
         return self.options.index(forKey: key) != nil
     }
@@ -57,6 +55,18 @@ extension CAPPluginCall: JSValueContainer {
     }
 
     func unimplemented() {
-        errorHandler(CAPPluginCallError(message: CAPPluginCall.UNIMPLEMENTED, code: nil, error: nil, data: [:]))
+        unimplemented("not implemented")
+    }
+
+    func unimplemented(_ message: String) {
+        errorHandler(CAPPluginCallError(message: message, code: "UNIMPLEMENTED", error: nil, data: [:]))
+    }
+
+    func unavailable() {
+        unavailable("not available")
+    }
+
+    func unavailable(_ message: String) {
+        errorHandler(CAPPluginCallError(message: message, code: "UNAVAILABLE", error: nil, data: [:]))
     }
 }
