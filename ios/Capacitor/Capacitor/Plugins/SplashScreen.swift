@@ -51,7 +51,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
                    spinnerColor: spinnerColor,
                    completion: {
                     call.success()
-        }, isLaunchSplash: false)
+                   }, isLaunchSplash: false)
     }
 
     // Hide the splash screen
@@ -215,8 +215,8 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     func hideSplash(fadeOutDuration: Int, isLaunchSplash: Bool) {
         if isLaunchSplash, isVisible {
             CAPLog.print("SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. " +
-                "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). " +
-                "Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen")
+                            "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). " +
+                            "Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen")
         }
         if !isVisible { return }
         DispatchQueue.main.async {

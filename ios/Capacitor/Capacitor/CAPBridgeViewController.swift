@@ -80,7 +80,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         webView?.scrollView.bounces = false
         let availableInsets = ["automatic", "scrollableAxes", "never", "always"]
         if let contentInset = (capConfig.getValue("ios.contentInset") as? String),
-            let index = availableInsets.firstIndex(of: contentInset) {
+           let index = availableInsets.firstIndex(of: contentInset) {
             webView?.scrollView.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.init(rawValue: index)!
         } else {
             webView?.scrollView.contentInsetAdjustmentBehavior = .never
