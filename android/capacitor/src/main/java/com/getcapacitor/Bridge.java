@@ -15,7 +15,6 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import com.getcapacitor.plugin.Geolocation;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
@@ -386,7 +385,6 @@ public class Bridge {
     private void registerAllPlugins() {
         this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(LocalNotifications.class);
-        this.registerPlugin(Geolocation.class);
         this.registerPlugin(PushNotifications.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);

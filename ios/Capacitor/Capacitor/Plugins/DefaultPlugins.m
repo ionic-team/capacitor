@@ -11,12 +11,6 @@ CAP_PLUGIN(CAPConsolePlugin, "Console",
   CAP_PLUGIN_METHOD(log, CAPPluginReturnNone);
 )
 
-CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
-  CAP_PLUGIN_METHOD(getCurrentPosition, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(watchPosition, CAPPluginReturnCallback);
-  CAP_PLUGIN_METHOD(clearWatch, CAPPluginReturnPromise);
-)
-
 CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",
   CAP_PLUGIN_METHOD(schedule, CAPPluginReturnPromise);
   CAP_PLUGIN_METHOD(requestPermission, CAPPluginReturnPromise);
