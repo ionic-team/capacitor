@@ -18,7 +18,6 @@
 		62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */; };
 		62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE92524DA7700A3D7F1 /* UIColor.swift */; };
 		62959B222524DA7800A3D7F1 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AEF2524DA7700A3D7F1 /* Console.swift */; };
-		62959B232524DA7800A3D7F1 /* DefaultPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AF02524DA7700A3D7F1 /* DefaultPlugins.h */; };
 		62959B252524DA7800A3D7F1 /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF22524DA7700A3D7F1 /* PushNotifications.swift */; };
 		62959B262524DA7800A3D7F1 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF32524DA7700A3D7F1 /* WebView.swift */; };
 		62959B282524DA7800A3D7F1 /* BackgroundTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */; };
@@ -105,7 +104,6 @@
 		62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPluginMethod.m; sourceTree = "<group>"; };
 		62959AE92524DA7700A3D7F1 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		62959AEF2524DA7700A3D7F1 /* Console.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
-		62959AF02524DA7700A3D7F1 /* DefaultPlugins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPlugins.h; sourceTree = "<group>"; };
 		62959AF22524DA7700A3D7F1 /* PushNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotifications.swift; sourceTree = "<group>"; };
 		62959AF32524DA7700A3D7F1 /* WebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundTask.swift; sourceTree = "<group>"; };
@@ -256,7 +254,6 @@
 			children = (
 				62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */,
 				62959AEF2524DA7700A3D7F1 /* Console.swift */,
-				62959AF02524DA7700A3D7F1 /* DefaultPlugins.h */,
 				62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */,
 				62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */,
 				62959AF22524DA7700A3D7F1 /* PushNotifications.swift */,
@@ -299,7 +296,6 @@
 				62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */,
 				62959B3B2524DA7800A3D7F1 /* CAPPluginMethod.h in Headers */,
 				62959B192524DA7800A3D7F1 /* CAPBridgedPlugin.h in Headers */,
-				62959B232524DA7800A3D7F1 /* DefaultPlugins.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
