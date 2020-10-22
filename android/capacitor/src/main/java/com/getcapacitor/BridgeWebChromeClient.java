@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
@@ -331,9 +332,8 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     private boolean isMediaCaptureSupported() {
-        Plugin camera = bridge.getPlugin("Camera").getInstance();
-        boolean isSupported = camera.hasPermission(Manifest.permission.CAMERA) || !camera.hasDefinedPermission(Manifest.permission.CAMERA);
-        return isSupported;
+        String[] permissions = { Manifest.permission.CAMERA };
+        return hasPermissions(permissions) || !hasDefinedPermission(Manifest.permission.CAMERA);
     }
 
     private void showMediaCaptureOrFilePicker(ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams, boolean isVideo) {
@@ -523,9 +523,29 @@ public class BridgeWebChromeClient extends WebChromeClient {
         return true;
     }
 
-    private void requestPermissions(String[] permissions, int requestCode) {
-        if (permissions != null) {
-            ActivityCompat.requestPermissions(this.bridge.getActivity(), permissions, requestCode);
+    private boolean hasDefinedPermission(String permission) {
+        boolean hasPermission = false;
+        String[] requestedPermissions = getManifestPermissions();
+        if (requestedPermissions != null && requestedPermissions.length > 0) {
+            List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
+            ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
+            if (requestedPermissionsArrayList.contains(permission)) {
+                hasPermission = true;
+            }
         }
+        return hasPermission;
+    }
+
+    private String[] getManifestPermissions() {
+        String[] requestedPermissions = null;
+        try {
+            PackageManager pm = bridge.getContext().getPackageManager();
+            PackageInfo packageInfo = pm.getPackageInfo(bridge.getContext().getPackageName(), PackageManager.GET_PERMISSIONS);
+
+            if (packageInfo != null) {
+                requestedPermissions = packageInfo.requestedPermissions;
+            }
+        } catch (Exception ex) {}
+        return requestedPermissions;
     }
 }
