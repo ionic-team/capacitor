@@ -15,11 +15,6 @@
     NSError* error = nil;
     NSData* serializedData = [NSJSONSerialization dataWithJSONObject:[self dictionary] options:NSJSONWritingPrettyPrinted error:&error];
     if (serializedData != nil) {
-        NSString* output = [[NSString alloc] initWithData:serializedData encoding:NSUTF8StringEncoding];
-        NSLog(@"%@",output);
-        
-        
-        
         NSDictionary* result = [NSJSONSerialization JSONObjectWithData:serializedData options:0 error:&error];
         return result;
     }
