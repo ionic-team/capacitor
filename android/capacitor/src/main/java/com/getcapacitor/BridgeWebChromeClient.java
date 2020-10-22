@@ -46,11 +46,8 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final int FILE_CHOOSER_CAMERA_PERMISSION = 9010;
     static final int GET_USER_MEDIA_PERMISSIONS = 9011;
     static final int GEOLOCATION_REQUEST_PERMISSIONS = 9004;
-    static final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
     private Bridge bridge;
-    private GeolocationPermissions.Callback geoLocationCallback;
-    private String geolocationRequestOrigin;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -264,6 +261,8 @@ public class BridgeWebChromeClient extends WebChromeClient {
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
+
+        final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
         if (!hasPermissions(geoPermissions)) {
             this.bridge.cordovaInterface.requestPermissions(
