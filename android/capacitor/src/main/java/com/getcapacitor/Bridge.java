@@ -13,10 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import com.getcapacitor.annotation.CapacitorPlugin;
-import com.getcapacitor.plugin.App;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
@@ -83,7 +83,7 @@ public class Bridge {
     public final CordovaInterfaceImpl cordovaInterface;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
-    private BridgeWebChromeClient webChromeClient;
+    private App app;
 
     // Our MessageHandler for sending and receiving data to the WebView
     private final MessageHandler msgHandler;
@@ -124,10 +124,10 @@ public class Bridge {
         CordovaPreferences preferences,
         JSONObject config
     ) {
+        this.app = new App();
         this.context = context;
         this.webView = webView;
         this.webViewClient = new BridgeWebViewClient(this);
-        this.webChromeClient = new BridgeWebChromeClient(this);
         this.initialPlugins = initialPlugins;
         this.cordovaInterface = cordovaInterface;
         this.preferences = preferences;
@@ -157,6 +157,10 @@ public class Bridge {
         this.registerAllPlugins();
 
         this.loadWebView();
+    }
+
+    public App getApp() {
+        return app;
     }
 
     private void loadWebView() {
@@ -199,7 +203,7 @@ public class Bridge {
 
         Logger.debug("Loading app at " + appUrl);
 
-        webView.setWebChromeClient(this.webChromeClient);
+        webView.setWebChromeClient(new BridgeWebChromeClient(this));
         webView.setWebViewClient(this.webViewClient);
 
         if (!isDeployDisabled() && !isNewBinary()) {
@@ -381,7 +385,6 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
-        this.registerPlugin(App.class);
         this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(PushNotifications.class);
@@ -639,12 +642,6 @@ public class Bridge {
         return null;
     }
 
-    protected void storeDanglingPluginResult(PluginCall call, PluginResult result) {
-        PluginHandle appHandle = getPlugin("App");
-        App appPlugin = (App) appHandle.getInstance();
-        appPlugin.fireRestoredResult(result);
-    }
-
     /**
      * Restore any saved bundle state data
      * @param savedInstanceState
@@ -710,11 +707,6 @@ public class Bridge {
      * @param grantResults the set of granted/denied permissions
      */
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == BridgeWebChromeClient.GEOLOCATION_REQUEST_PERMISSIONS) {
-            webChromeClient.onGeolocationPermissionsResult(permissions, grantResults);
-            return;
-        }
-
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
         if (plugin == null) {
@@ -836,18 +828,14 @@ public class Bridge {
     }
 
     public void onBackPressed() {
-        PluginHandle appHandle = getPlugin("App");
-        if (appHandle != null) {
-            App appPlugin = (App) appHandle.getInstance();
-
-            // If there are listeners, don't do the default action, as this means the user
-            // wants to override the back button
-            if (appPlugin.hasBackButtonListeners()) {
-                appPlugin.fireBackButton();
-            } else {
-                if (webView.canGoBack()) {
-                    webView.goBack();
-                }
+        // If there are listeners, don't do the default action, as this means the user
+        // wants to override the back button
+        if (app.hasBackButtonListeners()) {
+            app.fireBackButton();
+            triggerJSEvent("backbutton", "document");
+        } else {
+            if (webView.canGoBack()) {
+                webView.goBack();
             }
         }
     }

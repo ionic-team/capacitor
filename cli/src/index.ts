@@ -12,6 +12,7 @@ import { initCommand } from './tasks/init';
 import { listCommand } from './tasks/list';
 import { newPluginCommand } from './tasks/new-plugin';
 import { openCommand } from './tasks/open';
+import { runCommand } from './tasks/run';
 import { serveCommand } from './tasks/serve';
 import { syncCommand } from './tasks/sync';
 import { updateCommand } from './tasks/update';
@@ -35,7 +36,7 @@ export async function run(): Promise<void> {
 
   program
     .command('init [appName] [appId]')
-    .description('create a capacitor.config.json file')
+    .description(`create a ${c.strong('capacitor.config.json')} file`)
     .option(
       '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
@@ -53,7 +54,7 @@ export async function run(): Promise<void> {
 
   program
     .command('sync [platform]')
-    .description('copy + update')
+    .description(`${c.input('copy')} + ${c.input('update')}`)
     .option(
       '--deployment',
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
@@ -65,7 +66,9 @@ export async function run(): Promise<void> {
   program
     .command('update [platform]')
     .description(
-      `updates the native plugins and dependencies based in package.json`,
+      `updates the native plugins and dependencies based on ${c.strong(
+        'package.json',
+      )}`,
     )
     .option(
       '--deployment',
@@ -83,8 +86,19 @@ export async function run(): Promise<void> {
     });
 
   program
+    .command(`run [platform]`)
+    .description(
+      `runs ${c.input('copy')}, then builds and deploys the native app`,
+    )
+    .option('--list', 'list targets, then quit')
+    .option('--target <id>', 'use a specific target')
+    .action((platform, { list, target }) => {
+      return runCommand(config, platform, { list, target });
+    });
+
+  program
     .command('open [platform]')
-    .description('opens the native project workspace (xcode for iOS)')
+    .description('opens the native project workspace (Xcode for iOS)')
     .action(platform => {
       return openCommand(config, platform);
     });

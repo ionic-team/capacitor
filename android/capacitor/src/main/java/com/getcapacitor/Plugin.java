@@ -429,7 +429,7 @@ public class Plugin {
         }
 
         for (PluginCall call : listeners) {
-            call.success(data);
+            call.resolve(data);
         }
     }
 
