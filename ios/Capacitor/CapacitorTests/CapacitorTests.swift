@@ -1,31 +1,27 @@
-//
-//  AvocadoTests.swift
-//  AvocadoTests
-//
-//  Created by Max Lynch on 11/18/17.
-//  Copyright © 2017 Drifty Co. All rights reserved.
-//
-
 import XCTest
 @testable import Capacitor
 
-class MockWebView: WKWebView {
+class MockBridgeViewController: CAPBridgeViewController {
 }
 
-class MockBridgeViewController: BridgeViewController {
+class MockBridgeMessageHandler: CAPMessageHandlerWrapper {
 }
 
-class MockBridge: Bridge {
+class MockConfig: CAPConfig {
+}
+
+class MockBridge: CAPBridge {
     override public func registerPlugins() {
-        print("REGISER PLUITTTINS")
+        print("REGISTER PLUGINS")
     }
 }
-class AvocadoTests: XCTestCase {
-
+class CapacitorTests: XCTestCase {
+    var bridge: MockBridge?
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        var bridge = MockBridge(MockBridgeViewController(), MockWebView())
+        bridge = MockBridge(MockBridgeViewController(), MockBridgeMessageHandler(), MockConfig(), MockBridge.defaultScheme)
     }
 
     override func tearDown() {
