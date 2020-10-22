@@ -11,6 +11,7 @@ Pod::Spec.new do |s|
   s.authors = { 'Ionic Team' => 'hi@ionicframework.com' }
   s.source = { :git => 'https://github.com/ionic-team/capacitor.git', :tag => s.version.to_s }
   s.source_files = 'Capacitor/Capacitor/*.{swift,h,m}', 'Capacitor/Capacitor/Plugins/*.{swift,h,m}', 'Capacitor/Capacitor/Plugins/**/*.{swift,h,m}'
+  s.module_map = 'Capacitor/Capacitor/Capacitor.modulemap'
   s.dependency 'CapacitorCordova'
   s.swift_version = '5.0'
 end
