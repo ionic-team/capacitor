@@ -44,6 +44,24 @@ public class Splash {
     private static boolean isVisible = false;
     private static boolean isHiding = false;
 
+    private static int parseColor(String color) {
+        // Color.parseColor() reads colors as ARGB instead of RGBA, which is the CSS standard. Brilliant!
+        // So we have to move the alpha value if it exists. Also, if the color does not have a "#" prefix
+        // (which is allowed on iOS), add it, because parseColor() expects it.
+        if (color.length() > 1) {
+            if (color.charAt(0) != '#') {
+                color = "#" + color;
+            }
+
+            // If the length is 9, assume it's #RRGGBBAA
+            if (color.length() == 9) {
+                color = "#" + color.substring(7) + color.substring(1, 7);
+            }
+        }
+
+        return Color.parseColor(color);
+    }
+
     private static void buildViews(Context c, CapConfig config) {
         if (splashImage == null) {
             String splashResourceName = config.getString(CONFIG_KEY_PREFIX + "androidSplashResourceName", "splash");
@@ -101,7 +119,7 @@ public class Splash {
             String backgroundColor = config.getString(CONFIG_KEY_PREFIX + "backgroundColor");
             try {
                 if (backgroundColor != null) {
-                    splashImage.setBackgroundColor(Color.parseColor(backgroundColor));
+                    splashImage.setBackgroundColor(parseColor(backgroundColor));
                 }
             } catch (IllegalArgumentException ex) {
                 Logger.debug("Background color not applied");
@@ -160,7 +178,7 @@ public class Splash {
                         new int[] { -android.R.attr.state_checked }, // unchecked
                         new int[] { android.R.attr.state_pressed } // pressed
                     };
-                    int spinnerBarColor = Color.parseColor(spinnerColor);
+                    int spinnerBarColor = parseColor(spinnerColor);
                     int[] colors = new int[] { spinnerBarColor, spinnerBarColor, spinnerBarColor, spinnerBarColor };
                     ColorStateList colorStateList = new ColorStateList(states, colors);
                     spinnerBar.setIndeterminateTintList(colorStateList);
