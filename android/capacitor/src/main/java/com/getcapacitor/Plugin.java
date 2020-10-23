@@ -3,7 +3,6 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.util.PermissionHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -165,72 +164,13 @@ public class Plugin {
     }
 
     /**
-     * Given a list of permissions, return a new list with the ones not present in AndroidManifest.xml
-     * @param neededPermissions
-     * @return
-     */
-    public String[] getUndefinedPermissions(String[] neededPermissions) {
-        ArrayList<String> undefinedPermissions = new ArrayList<>();
-        String[] requestedPermissions = getManifestPermissions();
-        if (requestedPermissions != null && requestedPermissions.length > 0) {
-            List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-            ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
-            for (String permission : neededPermissions) {
-                if (!requestedPermissionsArrayList.contains(permission)) {
-                    undefinedPermissions.add(permission);
-                }
-            }
-            String[] undefinedPermissionArray = new String[undefinedPermissions.size()];
-            undefinedPermissionArray = undefinedPermissions.toArray(undefinedPermissionArray);
-
-            return undefinedPermissionArray;
-        }
-        return neededPermissions;
-    }
-
-    /**
-     * Check whether the given permission has been defined in the AndroidManifest.xml
-     * @param permission
-     * @return
-     */
-    public boolean hasDefinedPermission(String permission) {
-        boolean hasPermission = false;
-        String[] requestedPermissions = getManifestPermissions();
-        if (requestedPermissions != null && requestedPermissions.length > 0) {
-            List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-            ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
-            if (requestedPermissionsArrayList.contains(permission)) {
-                hasPermission = true;
-            }
-        }
-        return hasPermission;
-    }
-
-    /**
-     * Get the permissions defined in AndroidManifest.xml
-     * @return
-     */
-    private String[] getManifestPermissions() {
-        String[] requestedPermissions = null;
-        try {
-            PackageManager pm = getContext().getPackageManager();
-            PackageInfo packageInfo = pm.getPackageInfo(getAppId(), PackageManager.GET_PERMISSIONS);
-
-            if (packageInfo != null) {
-                requestedPermissions = packageInfo.requestedPermissions;
-            }
-        } catch (Exception ex) {}
-        return requestedPermissions;
-    }
-
-    /**
      * Check whether any of the given permissions has been defined in the AndroidManifest.xml
      * @param permissions
      * @return
      */
     public boolean hasDefinedPermissions(String[] permissions) {
         for (String permission : permissions) {
-            if (!hasDefinedPermission(permission)) {
+            if (!PermissionHelper.hasDefinedPermission(getContext(), permission)) {
                 return false;
             }
         }
@@ -244,7 +184,7 @@ public class Plugin {
      */
     public boolean hasDefinedPermissions(Permission[] permissions) {
         for (Permission perm : permissions) {
-            if (!hasDefinedPermission(perm.permission())) {
+            if (!PermissionHelper.hasDefinedPermission(getContext(), perm.permission())) {
                 return false;
             }
         }
@@ -576,7 +516,7 @@ public class Plugin {
         if (!hasDefinedPermissions(permissions)) {
             StringBuilder builder = new StringBuilder();
             builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-            String[] missing = getUndefinedPermissions(permissions);
+            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
             for (String perm : missing) {
                 builder.append(perm + "\n");
             }
