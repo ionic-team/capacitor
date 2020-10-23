@@ -1,0 +1,6 @@
+framework module Capacitor {
+  umbrella header "Capacitor.h"
+  
+  export *
+  module * { export * }
+}
