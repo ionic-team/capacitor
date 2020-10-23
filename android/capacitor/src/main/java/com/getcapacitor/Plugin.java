@@ -3,6 +3,7 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,9 @@ public class Plugin {
     // The key we will use inside of a persisted Bundle for the JSON blob
     // for a plugin call options.
     private static final String BUNDLE_PERSISTED_OPTIONS_JSON_KEY = "_json";
+
+    // The name of the Shared Preferences file for permission use
+    private static final String PERMISSION_PREFS = "PluginPermStates";
 
     // Reference to the Bridge
     protected Bridge bridge;
@@ -269,7 +273,18 @@ public class Plugin {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
             String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
-            String permissionStatus = hasPermission(perm.permission()) ? "granted" : "denied";
+            String permissionStatus = hasPermission(perm.permission()) ? "granted" : "prompt";
+
+            // Check if there is a cached permission state for the "Never ask again" state
+            if (permissionStatus.equals("prompt")) {
+                SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
+                String state = prefs.getString(perm.permission(), null);
+
+                if (state != null) {
+                    permissionStatus = state;
+                }
+            }
+
             String existingResult = permissionsResults.getString(key);
 
             // multiple permissions with the same alias must all be true, otherwise all false.
@@ -538,6 +553,29 @@ public class Plugin {
         PluginCall savedCall = getSavedCall();
         if (savedCall == null) {
             return;
+        }
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted. If previously denied, remove cached state
+            SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
+            for (String permission : permissions) {
+                String state = prefs.getString(permission, null);
+                if (state != null) {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.remove(permission);
+                    editor.apply();
+                }
+            }
+        } else {
+            for (String permission : permissions) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+                    // Permission denied permanently, store this state for future reference
+                    SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString(permission, "denied");
+                    editor.apply();
+                }
+            }
         }
 
         savedCall.resolve(getPermissionStates());
