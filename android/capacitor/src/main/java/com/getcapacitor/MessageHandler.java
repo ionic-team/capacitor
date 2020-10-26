@@ -9,6 +9,7 @@ import org.apache.cordova.PluginManager;
  * to plugins.
  */
 public class MessageHandler {
+
     private Bridge bridge;
     private WebView webView;
     private PluginManager cordovaPluginManager;

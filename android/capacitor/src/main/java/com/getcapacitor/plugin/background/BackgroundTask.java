@@ -13,6 +13,7 @@ import com.getcapacitor.PluginMethod;
 
 @NativePlugin
 public class BackgroundTask extends Plugin {
+
     public static String TASK_BROADCAST_ACTION = "com.getcapacitor.app.BACKGROUND_TASK_BROADCAST";
 
     Intent serviceIntent = null;
@@ -25,7 +26,6 @@ public class BackgroundTask extends Plugin {
 
         taskReceiver =
             new BroadcastReceiver() {
-
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     String taskId = intent.getStringExtra("taskId");

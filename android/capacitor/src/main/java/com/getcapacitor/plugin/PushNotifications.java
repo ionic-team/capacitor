@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 @NativePlugin
 public class PushNotifications extends Plugin {
+
     public static Bridge staticBridge = null;
     public static RemoteMessage lastMessage = null;
     public NotificationManager notificationManager;

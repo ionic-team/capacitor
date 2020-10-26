@@ -17,6 +17,7 @@ import org.json.JSONObject;
  * Class used to abstract storage for notification data
  */
 public class NotificationStorage {
+
     // Key for private preferences
     private static final String NOTIFICATION_STORE_ID = "NOTIFICATION_STORE";
 

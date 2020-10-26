@@ -8,6 +8,7 @@ import java.util.Date;
  * (Specific time)
  */
 public class DateMatch {
+
     private static final String separator = " ";
 
     private Integer year;

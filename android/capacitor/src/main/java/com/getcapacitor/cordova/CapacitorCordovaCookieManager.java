@@ -5,6 +5,7 @@ import android.webkit.WebView;
 import org.apache.cordova.ICordovaCookieManager;
 
 class CapacitorCordovaCookieManager implements ICordovaCookieManager {
+
     protected final WebView webView;
     private final CookieManager cookieManager;
 

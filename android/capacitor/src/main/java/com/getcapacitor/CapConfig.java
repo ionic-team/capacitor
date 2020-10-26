@@ -12,6 +12,7 @@ import org.json.JSONObject;
  * Management interface for accessing values in capacitor.config.json
  */
 public class CapConfig {
+
     private JSONObject config = new JSONObject();
 
     public CapConfig(AssetManager assetManager, JSONObject config) {

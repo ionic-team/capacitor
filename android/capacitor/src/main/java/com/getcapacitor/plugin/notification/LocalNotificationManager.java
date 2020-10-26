@@ -35,6 +35,7 @@ import org.json.JSONObject;
  * Contains implementations for all notification actions
  */
 public class LocalNotificationManager {
+
     private static final String CONFIG_KEY_PREFIX = "plugins.LocalNotifications.";
     private static int defaultSoundID = AssetUtil.RESOURCE_ID_ZERO_VALUE;
     private static int defaultSmallIconID = AssetUtil.RESOURCE_ID_ZERO_VALUE;

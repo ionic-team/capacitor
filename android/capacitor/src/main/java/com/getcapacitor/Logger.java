@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class Logger {
+
     public static final String LOG_TAG_CORE = "Capacitor";
     public static CapConfig config;
 
