@@ -80,7 +80,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         webView?.scrollView.bounces = false
         let availableInsets = ["automatic", "scrollableAxes", "never", "always"]
         if let contentInset = (capConfig.getValue("ios.contentInset") as? String),
-            let index = availableInsets.firstIndex(of: contentInset) {
+           let index = availableInsets.firstIndex(of: contentInset) {
             webView?.scrollView.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.init(rawValue: index)!
         } else {
             webView?.scrollView.contentInsetAdjustmentBehavior = .never
@@ -97,6 +97,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         setKeyboardRequiresUserInteraction(false)
 
         bridge = CAPBridge(self, messageHandler, capConfig, specifiedScheme)
+
+        if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
+            webView?.scrollView.isScrollEnabled = scrollEnabled
+        }
 
         if let backgroundColor = (bridge!.config.getValue("ios.backgroundColor") as? String) ?? (bridge!.config.getValue("backgroundColor") as? String) {
             webView?.backgroundColor = UIColor.capacitor.color(fromHex: backgroundColor)

@@ -70,7 +70,7 @@
 - (void)evalJsHelper2:(NSString*)js
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_webView evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
+        [self->_webView evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
         // TODO: obj can be something other than string
         if ([obj isKindOfClass:[NSString class]]) {
             NSString* commandsJSON = (NSString*)obj;
@@ -136,14 +136,9 @@
     return [_manager getCommandInstance:pluginName];
 }
 
-- (void)runInBackground:(void (^)())block
+- (void)runInBackground:(void (^)(void))block
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
-}
-
-- (NSString*)userAgent
-{
-    return nil;
 }
 
 - (NSDictionary*)settings
