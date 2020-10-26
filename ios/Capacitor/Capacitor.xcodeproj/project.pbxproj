@@ -10,6 +10,11 @@
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
 		50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
 		50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* CapacitorTests.swift */; };
+		621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */; };
+		621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */; };
+		621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCBB2542046400D3D615 /* JSTypes.swift */; };
+		621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */; };
+		621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */; };
 		622BB9C42541FE3000A5DBCA /* capacitor.config.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */; };
 		62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE32524DA7700A3D7F1 /* JSExport.swift */; };
@@ -107,6 +112,13 @@
 		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EED1FC08595003606DC /* CapacitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorTests.swift; sourceTree = "<group>"; };
+		621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
+		621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedJSTypes.h; sourceTree = "<group>"; };
+		621ECCBB2542046400D3D615 /* JSTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSTypes.swift; sourceTree = "<group>"; };
+		621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BridgedTypesTests.swift; sourceTree = "<group>"; };
+		621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONSerializationWrapper.m; sourceTree = "<group>"; };
+		621ECCC7254204BE00D3D615 /* JSONSerializationWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONSerializationWrapper.h; sourceTree = "<group>"; };
+		621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CapacitorTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginCall.h; sourceTree = "<group>"; };
 		62959AE32524DA7700A3D7F1 /* JSExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
@@ -219,6 +231,10 @@
 			isa = PBXGroup;
 			children = (
 				50503EED1FC08595003606DC /* CapacitorTests.swift */,
+				621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */,
+				621ECCC7254204BE00D3D615 /* JSONSerializationWrapper.h */,
+				621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */,
+				621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */,
 				62959BBD2526510200A3D7F1 /* Info.plist */,
 			);
 			path = CapacitorTests;
@@ -237,6 +253,9 @@
 				62959AE72524DA7700A3D7F1 /* CAPFile.swift */,
 				62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */,
 				62959AE92524DA7700A3D7F1 /* UIColor.swift */,
+				621ECCBB2542046400D3D615 /* JSTypes.swift */,
+				621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */,
+				621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */,
 				62959AEA2524DA7700A3D7F1 /* Plugins */,
 				62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */,
 				62959AFF2524DA7700A3D7F1 /* JS.swift */,
@@ -308,6 +327,7 @@
 				62959B452524DA7800A3D7F1 /* CAPPlugin.h in Headers */,
 				62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */,
 				62959B3B2524DA7800A3D7F1 /* CAPPluginMethod.h in Headers */,
+				621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */,
 				62959B192524DA7800A3D7F1 /* CAPBridgedPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,6 +408,7 @@
 					};
 					50503EE71FC08595003606DC = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1200;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 6296A77A253A2E49005A202A;
 					};
@@ -466,9 +487,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,
+				621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */,
 				62959B402524DA7800A3D7F1 /* TmpViewController.swift in Sources */,
 				62959B372524DA7800A3D7F1 /* CAPConfig.swift in Sources */,
 				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
+				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
 				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
 				62959B1B2524DA7800A3D7F1 /* CAPFile.swift in Sources */,
 				62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */,
@@ -502,6 +525,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
+				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
+				621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,12 +748,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CapacitorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";
@@ -739,12 +767,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CapacitorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.capacitorjs.ios.CapacitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "CapacitorTests/CapacitorTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestsHostApp.app/TestsHostApp";

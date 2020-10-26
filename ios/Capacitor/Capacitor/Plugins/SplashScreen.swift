@@ -33,10 +33,10 @@ public class CAPSplashScreenPlugin: CAPPlugin {
             return
         }
 
-        let showDuration = call.get("showDuration", Int.self, defaultShowDuration)!
-        let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
-        let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
-        let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
+        let showDuration = call.getInt("showDuration", defaultShowDuration)
+        let fadeInDuration = call.getInt("fadeInDuration", defaultFadeInDuration)
+        let fadeOutDuration = call.getInt("fadeOutDuration", defaultFadeOutDuration)
+        let autoHide = call.getBool("autoHide", defaultAutoHide)
         let backgroundColor = getConfigValue("backgroundColor") as? String ?? nil
         let spinnerStyle = getConfigValue("iosSpinnerStyle") as? String ?? nil
         let spinnerColor = getConfigValue("spinnerColor") as? String ?? nil
@@ -57,7 +57,7 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     // Hide the splash screen
     @objc public func hide(_ call: CAPPluginCall) {
         self.call = call
-        let fadeDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
+        let fadeDuration = call.getInt("fadeOutDuration", defaultFadeOutDuration)
         hideSplash(fadeOutDuration: fadeDuration)
         call.success()
     }

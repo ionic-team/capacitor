@@ -1,8 +1,5 @@
 import Foundation
 
-public typealias JSObject = [String: Any]
-public typealias JSArray = [JSObject]
-
 public class JSDate {
     static func toString(_ date: Date) -> String {
         let formatter = ISO8601DateFormatter()
@@ -14,13 +11,13 @@ public class JSDate {
  * A call originating from JavaScript land
  */
 public class JSCall {
-    public var options: [String: Any] = [:]
+    public var options: JSObject = [:]
     public var pluginId: String = ""
     public var method: String = ""
     public var callbackId: String = ""
 
     public init(options: [String: Any], pluginId: String, method: String, callbackId: String) {
-        self.options = options
+        self.options = JSTypes.coerceDictionaryToJSObject(options) ?? [:]
         self.pluginId = pluginId
         self.method = method
         self.callbackId = callbackId
