@@ -357,7 +357,7 @@ export interface PushNotificationsPlugin extends Plugin {
     listenerFunc: (notification: PushNotification) => void,
   ): PluginListenerHandle;
   /**
-   * Event called when an action is performed on a pusn notification.
+   * Event called when an action is performed on a push notification.
    * @param eventName pushNotificationActionPerformed.
    * @param listenerFunc callback with the notification action.
    */
