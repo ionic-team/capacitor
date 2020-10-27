@@ -2,11 +2,6 @@
 
 #import "CAPBridgedPlugin.h"
 
-CAP_PLUGIN(CAPBackgroundTaskPlugin, "BackgroundTask",
-  CAP_PLUGIN_METHOD(beforeExit, CAPPluginReturnCallback);
-  CAP_PLUGIN_METHOD(finish, CAPPluginReturnNone);
-)
-
 CAP_PLUGIN(CAPConsolePlugin, "Console",
   CAP_PLUGIN_METHOD(log, CAPPluginReturnNone);
 )
