@@ -26,7 +26,6 @@
 		62959B222524DA7800A3D7F1 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AEF2524DA7700A3D7F1 /* Console.swift */; };
 		62959B252524DA7800A3D7F1 /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF22524DA7700A3D7F1 /* PushNotifications.swift */; };
 		62959B262524DA7800A3D7F1 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF32524DA7700A3D7F1 /* WebView.swift */; };
-		62959B282524DA7800A3D7F1 /* BackgroundTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */; };
 		62959B292524DA7800A3D7F1 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF62524DA7700A3D7F1 /* SplashScreen.swift */; };
 		62959B2C2524DA7800A3D7F1 /* LocalNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */; };
 		62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */; };
@@ -130,7 +129,6 @@
 		62959AEF2524DA7700A3D7F1 /* Console.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
 		62959AF22524DA7700A3D7F1 /* PushNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotifications.swift; sourceTree = "<group>"; };
 		62959AF32524DA7700A3D7F1 /* WebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
-		62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundTask.swift; sourceTree = "<group>"; };
 		62959AF62524DA7700A3D7F1 /* SplashScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalNotifications.swift; sourceTree = "<group>"; };
 		62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPlugins.m; sourceTree = "<group>"; };
@@ -283,7 +281,6 @@
 		62959AEA2524DA7700A3D7F1 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				62959AF52524DA7700A3D7F1 /* BackgroundTask.swift */,
 				62959AEF2524DA7700A3D7F1 /* Console.swift */,
 				62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */,
 				62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */,
@@ -496,7 +493,6 @@
 				62959B1B2524DA7800A3D7F1 /* CAPFile.swift in Sources */,
 				62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */,
 				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
-				62959B282524DA7800A3D7F1 /* BackgroundTask.swift in Sources */,
 				62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */,
 				62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */,
 				62959B342524DA7800A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift in Sources */,
