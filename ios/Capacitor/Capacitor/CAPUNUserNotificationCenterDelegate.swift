@@ -144,7 +144,7 @@ public class CAPUNUserNotificationCenterDelegate: NSObject, UNUserNotificationCe
             "title": request.content.title,
             "sound": notificationRequest["sound"]  ?? "",
             "body": request.content.body,
-            "extra": request.content.userInfo,
+            "extra": request.content.userInfo as? JSObject ?? [:],
             "actionTypeId": request.content.categoryIdentifier,
             "attachments": notificationRequest["attachments"]  ?? []
         ]
@@ -161,7 +161,7 @@ public class CAPUNUserNotificationCenterDelegate: NSObject, UNUserNotificationCe
             "subtitle": content.subtitle,
             "body": content.body,
             "badge": content.badge ?? 1,
-            "data": content.userInfo
+            "data": content.userInfo as? JSObject ?? [:]
         ]
     }
 

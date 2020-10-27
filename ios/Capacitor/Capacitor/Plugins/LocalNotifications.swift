@@ -32,7 +32,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Schedule a notification.
      */
     @objc func schedule(_ call: CAPPluginCall) {
-        guard let notifications = call.getArray("notifications", [String: Any].self) else {
+        guard let notifications = call.getArray("notifications", JSObject.self) else {
             call.error("Must provide notifications array as notifications option")
             return
         }
@@ -58,7 +58,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
             var trigger: UNNotificationTrigger?
 
             do {
-                if let schedule = notification["schedule"] as? [String: Any] {
+                if let schedule = notification["schedule"] as? JSObject {
                     try trigger = handleScheduledNotification(call, schedule)
                 }
             } catch {
@@ -82,7 +82,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
             ids.append(request.identifier)
         }
 
-        let ret = ids.map({ (id) -> [String: String] in
+        let ret = ids.map({ (id) -> JSObject in
             return [
                 "id": id
             ]
@@ -109,7 +109,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Cancel notifications by id
      */
     @objc func cancel(_ call: CAPPluginCall) {
-        guard let notifications = call.getArray("notifications", JSObject.self, []), notifications.count > 0 else {
+        guard let notifications = call.getArray("notifications", JSObject.self), notifications.count > 0 else {
             call.error("Must supply notifications to cancel")
             return
         }
@@ -128,7 +128,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
             CAPLog.print("num of pending notifications \(notifications.count)")
             CAPLog.print(notifications)
 
-            let ret = notifications.compactMap({ [weak self] (notification) -> [String: Any]? in
+            let ret = notifications.compactMap({ [weak self] (notification) -> JSObject? in
                 return self?.bridge?.notificationDelegationHandler.makePendingNotificationRequestJSObject(notification)
             })
             call.success([
@@ -141,7 +141,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Register allowed action types that a notification may present.
      */
     @objc func registerActionTypes(_ call: CAPPluginCall) {
-        guard let types = call.getArray("types", Any.self) as? JSArray else {
+        guard let types = call.getArray("types", JSObject.self) else {
             return
         }
 
@@ -175,37 +175,31 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
             throw LocalNotificationError.contentNoBody
         }
 
-        let actionTypeId = notification["actionTypeId"] as? String
-        let sound = notification["sound"] as? String
-        let attachments = notification["attachments"] as? JSArray
         let extra = notification["extra"] as? JSObject ?? [:]
-        let threadIdentifier = notification["threadIdentifier"] as? String
-        let summaryArgument = notification["summaryArgument"] as? String
-
         let content = UNMutableNotificationContent()
         content.title = NSString.localizedUserNotificationString(forKey: title, arguments: nil)
         content.body = NSString.localizedUserNotificationString(forKey: body,
                                                                 arguments: nil)
 
         content.userInfo = extra
-        if actionTypeId != nil {
-            content.categoryIdentifier = actionTypeId!
+        if let actionTypeId = notification["actionTypeId"] as? String {
+            content.categoryIdentifier = actionTypeId
         }
 
-        if let threadIdentifier = threadIdentifier {
+        if let threadIdentifier = notification["threadIdentifier"] as? String {
             content.threadIdentifier = threadIdentifier
         }
 
-        if let summaryArgument = summaryArgument, #available(iOS 12, *) {
+        if #available(iOS 12, *), let summaryArgument = notification["summaryArgument"] as? String {
             content.summaryArgument = summaryArgument
         }
 
-        if sound != nil {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(sound!))
+        if let sound = notification["sound"] as? String {
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
         }
-
-        if attachments != nil {
-            content.attachments = try makeAttachments(attachments!)
+        
+        if let attachments = notification["attachments"] as? [JSObject] {
+            content.attachments = try makeAttachments(attachments)
         }
 
         return content
@@ -215,16 +209,19 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Build a notification trigger, such as triggering each N seconds, or
      * on a certain date "shape" (such as every first of the month)
      */
-    func handleScheduledNotification(_ call: CAPPluginCall, _ schedule: [String: Any]) throws -> UNNotificationTrigger? {
-        let at = schedule["at"] as? Date
+    func handleScheduledNotification(_ call: CAPPluginCall, _ schedule: JSObject) throws -> UNNotificationTrigger? {
+        var at: Date?
+        if let dateString = schedule["at"] as? String, let date = CAPPluginCall.jsDateFormatter.date(from: dateString) {
+            at = date
+        }
         let every = schedule["every"] as? String
         let count = schedule["count"] as? Int ?? 1
-        let on = schedule["on"] as? [String: Int]
+        let on = schedule["on"] as? JSObject
         let repeats = schedule["repeats"] as? Bool ?? false
 
         // If there's a specific date for this notificiation
-        if at != nil {
-            let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: at!)
+        if let at = at {
+            let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: at)
 
             if dateInfo.date! < Date() {
                 call.error("Scheduled time must be *after* current time")
@@ -243,13 +240,13 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
 
         // If this notification should repeat every count of day/month/week/etc. or on a certain
         // matching set of date components
-        if on != nil {
-            let dateComponents = getDateComponents(on!)
+        if let on = on {
+            let dateComponents = getDateComponents(on)
             return UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         }
 
-        if every != nil {
-            if let repeatDateInterval = getRepeatDateInterval(every!, count) {
+        if let every = every {
+            if let repeatDateInterval = getRepeatDateInterval(every, count) {
                 return UNTimeIntervalNotificationTrigger(timeInterval: repeatDateInterval.duration, repeats: true)
             }
         }
@@ -261,27 +258,27 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Given our schedule format, return a DateComponents object
      * that only contains the components passed in.
      */
-    func getDateComponents(_ at: [String: Int]) -> DateComponents {
+    func getDateComponents(_ at: JSObject) -> DateComponents {
         //var dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: Date())
         //dateInfo.calendar = Calendar.current
         var dateInfo = DateComponents()
 
-        if let year = at["year"] {
+        if let year = at["year"] as? Int {
             dateInfo.year = year
         }
-        if let month = at["month"] {
+        if let month = at["month"] as? Int {
             dateInfo.month = month
         }
-        if let day = at["day"] {
+        if let day = at["day"] as? Int {
             dateInfo.day = day
         }
-        if let hour = at["hour"] {
+        if let hour = at["hour"] as? Int {
             dateInfo.hour = hour
         }
-        if let minute = at["minute"] {
+        if let minute = at["minute"] as? Int {
             dateInfo.minute = minute
         }
-        if let second = at["second"] {
+        if let second = at["second"] as? Int {
             dateInfo.second = second
         }
         return dateInfo
@@ -328,7 +325,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
     /**
      * Make required UNNotificationCategory entries for action types
      */
-    func makeActionTypes(_ actionTypes: JSArray) {
+    func makeActionTypes(_ actionTypes: [JSObject]) {
         var createdCategories = [UNNotificationCategory]()
 
         let generalCategory = UNNotificationCategory(identifier: "GENERAL",
@@ -343,7 +340,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
                 continue
             }
             let hiddenBodyPlaceholder = type["iosHiddenPreviewsBodyPlaceholder"] as? String ?? ""
-            let actions = type["actions"] as? JSArray ?? []
+            let actions = type["actions"] as? [JSObject] ?? []
 
             let newActions = makeActions(actions)
 
@@ -366,7 +363,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
     /**
      * Build the required UNNotificationAction objects for each action type registered.
      */
-    func makeActions(_ actions: JSArray) -> [UNNotificationAction] {
+    func makeActions(_ actions: [JSObject]) -> [UNNotificationAction] {
         var createdActions = [UNNotificationAction]()
 
         for action in actions {
@@ -406,7 +403,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
     /**
      * Make options for UNNotificationActions
      */
-    func makeActionOptions(_ action: [String: Any]) -> UNNotificationActionOptions {
+    func makeActionOptions(_ action: JSObject) -> UNNotificationActionOptions {
         let foreground = action["foreground"] as? Bool ?? false
         let destructive = action["destructive"] as? Bool ?? false
         let requiresAuthentication = action["requiresAuthentication"] as? Bool ?? false
@@ -452,7 +449,7 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
     /**
      * Build the UNNotificationAttachment object for each attachment supplied.
      */
-    func makeAttachments(_ attachments: JSArray) throws -> [UNNotificationAttachment] {
+    func makeAttachments(_ attachments: [JSObject]) throws -> [UNNotificationAttachment] {
         var createdAttachments = [UNNotificationAttachment]()
 
         for attachment in attachments {
@@ -491,8 +488,8 @@ public class CAPLocalNotificationsPlugin: CAPPlugin {
      * Build the options for the attachment, if any. (For example: the clipping rectangle to use
      * for image attachments)
      */
-    func makeAttachmentOptions(_ options: JSObject) -> [AnyHashable: Any] {
-        var opts = [AnyHashable: Any]()
+    func makeAttachmentOptions(_ options: JSObject) -> JSObject {
+        var opts: JSObject = [:]
 
         if let iosUNNotificationAttachmentOptionsTypeHintKey = options["iosUNNotificationAttachmentOptionsTypeHintKey"] as? String {
             opts[UNNotificationAttachmentOptionsTypeHintKey] = iosUNNotificationAttachmentOptionsTypeHintKey

@@ -66,7 +66,7 @@ public class CAPPushNotificationsPlugin: CAPPlugin {
      * Remove specified notifications from Notification Center
      */
     @objc func removeDeliveredNotifications(_ call: CAPPluginCall) {
-        guard let notifications = call.getArray("notifications", JSObject.self, []) else {
+        guard let notifications = call.getArray("notifications", JSObject.self) else {
             call.error("Must supply notifications to remove")
             return
         }
