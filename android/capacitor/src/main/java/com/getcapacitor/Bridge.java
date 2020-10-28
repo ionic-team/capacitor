@@ -17,8 +17,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import com.getcapacitor.annotation.CapacitorPlugin;
-import com.getcapacitor.plugin.LocalNotifications;
-import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
@@ -384,8 +382,6 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
-        this.registerPlugin(LocalNotifications.class);
-        this.registerPlugin(PushNotifications.class);
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 

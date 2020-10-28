@@ -24,15 +24,12 @@
 		62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */; };
 		62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE92524DA7700A3D7F1 /* UIColor.swift */; };
 		62959B222524DA7800A3D7F1 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AEF2524DA7700A3D7F1 /* Console.swift */; };
-		62959B252524DA7800A3D7F1 /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF22524DA7700A3D7F1 /* PushNotifications.swift */; };
 		62959B262524DA7800A3D7F1 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF32524DA7700A3D7F1 /* WebView.swift */; };
 		62959B292524DA7800A3D7F1 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AF62524DA7700A3D7F1 /* SplashScreen.swift */; };
-		62959B2C2524DA7800A3D7F1 /* LocalNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */; };
 		62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */; };
 		62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */; };
 		62959B312524DA7800A3D7F1 /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFF2524DA7700A3D7F1 /* JS.swift */; };
 		62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B012524DA7700A3D7F1 /* CAPPlugin.m */; };
-		62959B342524DA7800A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B022524DA7700A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift */; };
 		62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */; };
 		62959B372524DA7800A3D7F1 /* CAPConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B052524DA7700A3D7F1 /* CAPConfig.swift */; };
 		62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B062524DA7700A3D7F1 /* CAPPluginCall.m */; };
@@ -127,15 +124,12 @@
 		62959AE82524DA7700A3D7F1 /* CAPPluginMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPluginMethod.m; sourceTree = "<group>"; };
 		62959AE92524DA7700A3D7F1 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		62959AEF2524DA7700A3D7F1 /* Console.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
-		62959AF22524DA7700A3D7F1 /* PushNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotifications.swift; sourceTree = "<group>"; };
 		62959AF32524DA7700A3D7F1 /* WebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		62959AF62524DA7700A3D7F1 /* SplashScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
-		62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalNotifications.swift; sourceTree = "<group>"; };
 		62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPlugins.m; sourceTree = "<group>"; };
 		62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIStatusBarManager+CAPHandleTapAction.m"; sourceTree = "<group>"; };
 		62959AFF2524DA7700A3D7F1 /* JS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		62959B012524DA7700A3D7F1 /* CAPPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPlugin.m; sourceTree = "<group>"; };
-		62959B022524DA7700A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPUNUserNotificationCenterDelegate.swift; sourceTree = "<group>"; };
 		62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeViewController.swift; sourceTree = "<group>"; };
 		62959B052524DA7700A3D7F1 /* CAPConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPConfig.swift; sourceTree = "<group>"; };
 		62959B062524DA7700A3D7F1 /* CAPPluginCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPluginCall.m; sourceTree = "<group>"; };
@@ -258,7 +252,6 @@
 				62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */,
 				62959AFF2524DA7700A3D7F1 /* JS.swift */,
 				62959B012524DA7700A3D7F1 /* CAPPlugin.m */,
-				62959B022524DA7700A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift */,
 				62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */,
 				62959B052524DA7700A3D7F1 /* CAPConfig.swift */,
 				62959B062524DA7700A3D7F1 /* CAPPluginCall.m */,
@@ -283,8 +276,6 @@
 			children = (
 				62959AEF2524DA7700A3D7F1 /* Console.swift */,
 				62959AFD2524DA7700A3D7F1 /* DefaultPlugins.m */,
-				62959AFA2524DA7700A3D7F1 /* LocalNotifications.swift */,
-				62959AF22524DA7700A3D7F1 /* PushNotifications.swift */,
 				62959AF62524DA7700A3D7F1 /* SplashScreen.swift */,
 				62959AF32524DA7700A3D7F1 /* WebView.swift */,
 			);
@@ -495,10 +486,8 @@
 				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
 				62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */,
 				62959B1C2524DA7800A3D7F1 /* CAPPluginMethod.m in Sources */,
-				62959B342524DA7800A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift in Sources */,
 				62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */,
 				62959B312524DA7800A3D7F1 /* JS.swift in Sources */,
-				62959B252524DA7800A3D7F1 /* PushNotifications.swift in Sources */,
 				62959B292524DA7800A3D7F1 /* SplashScreen.swift in Sources */,
 				62959B1A2524DA7800A3D7F1 /* CAPPluginCall.swift in Sources */,
 				62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */,
@@ -508,7 +497,6 @@
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
 				62959B3F2524DA7800A3D7F1 /* CAPAssetHandler.swift in Sources */,
 				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
-				62959B2C2524DA7800A3D7F1 /* LocalNotifications.swift in Sources */,
 				62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */,
 				62959B222524DA7800A3D7F1 /* Console.swift in Sources */,
 				62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */,
