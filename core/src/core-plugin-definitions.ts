@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { Plugin, PluginListenerHandle } from './definitions';
 
 export interface PluginRegistry {
   SplashScreen: SplashScreenPlugin;
