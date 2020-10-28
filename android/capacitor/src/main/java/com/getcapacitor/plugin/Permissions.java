@@ -2,7 +2,7 @@ package com.getcapacitor.plugin;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-
+import android.app.Activity;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
