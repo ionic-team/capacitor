@@ -18,7 +18,6 @@ import android.webkit.WebView;
 import com.getcapacitor.plugin.LocalNotifications;
 import com.getcapacitor.plugin.PushNotifications;
 import com.getcapacitor.plugin.SplashScreen;
-import com.getcapacitor.plugin.background.BackgroundTask;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
 import java.net.SocketTimeoutException;
@@ -383,7 +382,6 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
-        this.registerPlugin(BackgroundTask.class);
         this.registerPlugin(LocalNotifications.class);
         this.registerPlugin(PushNotifications.class);
         this.registerPlugin(SplashScreen.class);
