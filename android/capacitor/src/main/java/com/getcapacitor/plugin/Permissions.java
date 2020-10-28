@@ -14,6 +14,7 @@ import com.getcapacitor.PluginMethod;
 import android.os.Build;
 
 import org.json.JSONArray;
+import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
 
 @NativePlugin()
 public class Permissions extends Plugin {
