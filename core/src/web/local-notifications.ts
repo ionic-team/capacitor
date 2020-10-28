@@ -132,7 +132,7 @@ export class LocalNotificationsPluginWeb
     });
   }
 
-  requestPermissions(): Promise<{ results: [any] }> {
+  requestPermissions(): Promise<{ results: any[] }> {
     return new Promise((resolve, reject) => {
       Notification.requestPermission(result => {
         if (result === 'denied' || result === 'default') {
