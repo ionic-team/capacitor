@@ -29,6 +29,9 @@
 
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation CDVViewController
 
 @end
+#pragma clang diagnostic pop

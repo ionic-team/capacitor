@@ -37,7 +37,7 @@ export async function openCommand(
       platformName = platforms[0];
     } else {
       platformName = await promptForPlatform(
-        '',
+        platforms.filter(createOpenablePlatformFilter(config)),
         `Please choose a platform to open:`,
       );
     }
@@ -48,6 +48,13 @@ export async function openCommand(
       logFatal(e.stack ?? e);
     }
   }
+}
+
+function createOpenablePlatformFilter(
+  config: Config,
+): (platform: string) => boolean {
+  return platform =>
+    platform === config.ios.name || platform === config.android.name;
 }
 
 export async function open(

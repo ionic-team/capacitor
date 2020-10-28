@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
@@ -20,7 +21,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.IOException;
@@ -37,12 +38,16 @@ import org.json.JSONException;
  * WebView instance.
  */
 public class BridgeWebChromeClient extends WebChromeClient {
-    private Bridge bridge;
+
     static final int FILE_CHOOSER = PluginRequestCodes.FILE_CHOOSER;
     static final int FILE_CHOOSER_IMAGE_CAPTURE = PluginRequestCodes.FILE_CHOOSER_IMAGE_CAPTURE;
     static final int FILE_CHOOSER_VIDEO_CAPTURE = PluginRequestCodes.FILE_CHOOSER_VIDEO_CAPTURE;
     static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
     static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
+    static final int GEOLOCATION_REQUEST_PERMISSIONS = PluginRequestCodes.GEOLOCATION_REQUEST_PERMISSIONS;
+    static final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
+
+    private Bridge bridge;
 
     public BridgeWebChromeClient(Bridge bridge) {
         this.bridge = bridge;
@@ -88,7 +93,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
             String[] permissions = permissionList.toArray(new String[0]);
             bridge.cordovaInterface.requestPermissions(
                 new CordovaPlugin() {
-
                     @Override
                     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
                         if (GET_USER_MEDIA_PERMISSIONS == requestCode) {
@@ -249,7 +253,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     /**
-     * Handle the browser geolocation prompt
+     * Handle the browser geolocation permission prompt
      * @param origin
      * @param callback
      */
@@ -258,14 +262,32 @@ public class BridgeWebChromeClient extends WebChromeClient {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
 
-        // Set that we want geolocation perms for this origin
-        callback.invoke(origin, true, false);
+        if (!hasPermissions(geoPermissions)) {
+            this.bridge.cordovaInterface.requestPermissions(
+                    new CordovaPlugin() {
+                        @Override
+                        public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
+                            throws JSONException {
+                            if (GEOLOCATION_REQUEST_PERMISSIONS == requestCode) {
+                                List<String> list = Arrays.asList(permissions);
 
-        Plugin geo = bridge.getPlugin("Geolocation").getInstance();
-        if (!geo.hasRequiredPermissions()) {
-            geo.pluginRequestAllPermissions();
+                                if (list.contains(geoPermissions[0]) || list.contains(geoPermissions[1])) {
+                                    if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                                        callback.invoke(origin, true, false);
+                                    } else {
+                                        callback.invoke(origin, false, false);
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    GEOLOCATION_REQUEST_PERMISSIONS,
+                    geoPermissions
+                );
         } else {
-            Logger.debug("onGeolocationPermissionsShowPrompt: has required permis");
+            // permission is already granted
+            callback.invoke(origin, true, false);
+            Logger.debug("onGeolocationPermissionsShowPrompt: has required permission");
         }
     }
 
@@ -285,7 +307,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
             } else {
                 this.bridge.cordovaInterface.requestPermission(
                         new CordovaPlugin() {
-
                             @Override
                             public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
                                 throws JSONException {
@@ -311,9 +332,8 @@ public class BridgeWebChromeClient extends WebChromeClient {
     }
 
     private boolean isMediaCaptureSupported() {
-        Plugin camera = bridge.getPlugin("Camera").getInstance();
-        boolean isSupported = camera.hasPermission(Manifest.permission.CAMERA) || !camera.hasDefinedPermission(Manifest.permission.CAMERA);
-        return isSupported;
+        String[] permissions = { Manifest.permission.CAMERA };
+        return hasPermissions(permissions) || !hasDefinedPermission(Manifest.permission.CAMERA);
     }
 
     private void showMediaCaptureOrFilePicker(ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams, boolean isVideo) {
@@ -351,7 +371,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         bridge.cordovaInterface.startActivityForResult(
             new CordovaPlugin() {
-
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent intent) {
                     Uri[] result = null;
@@ -376,7 +395,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         bridge.cordovaInterface.startActivityForResult(
             new CordovaPlugin() {
-
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent intent) {
                     Uri[] result = null;
@@ -405,7 +423,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         try {
             bridge.cordovaInterface.startActivityForResult(
                 new CordovaPlugin() {
-
                     @Override
                     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
                         Uri[] result;
@@ -495,5 +512,40 @@ public class BridgeWebChromeClient extends WebChromeClient {
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         return image;
+    }
+
+    private boolean hasPermissions(String[] permissions) {
+        for (String perm : permissions) {
+            if (ActivityCompat.checkSelfPermission(this.bridge.getActivity(), perm) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean hasDefinedPermission(String permission) {
+        boolean hasPermission = false;
+        String[] requestedPermissions = getManifestPermissions();
+        if (requestedPermissions != null && requestedPermissions.length > 0) {
+            List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
+            ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
+            if (requestedPermissionsArrayList.contains(permission)) {
+                hasPermission = true;
+            }
+        }
+        return hasPermission;
+    }
+
+    private String[] getManifestPermissions() {
+        String[] requestedPermissions = null;
+        try {
+            PackageManager pm = bridge.getContext().getPackageManager();
+            PackageInfo packageInfo = pm.getPackageInfo(bridge.getContext().getPackageName(), PackageManager.GET_PERMISSIONS);
+
+            if (packageInfo != null) {
+                requestedPermissions = packageInfo.requestedPermissions;
+            }
+        } catch (Exception ex) {}
+        return requestedPermissions;
     }
 }

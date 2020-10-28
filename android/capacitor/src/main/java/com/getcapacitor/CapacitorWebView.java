@@ -9,6 +9,7 @@ import android.view.inputmethod.InputConnection;
 import android.webkit.WebView;
 
 public class CapacitorWebView extends WebView {
+
     private BaseInputConnection capInputConnection;
 
     public CapacitorWebView(Context context, AttributeSet attrs) {

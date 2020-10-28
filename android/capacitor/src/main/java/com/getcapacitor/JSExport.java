@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class JSExport {
+
     private static String CATCHALL_OPTIONS_PARAM = "_options";
     private static String CALLBACK_PARAM = "_callback";
 

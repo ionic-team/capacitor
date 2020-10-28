@@ -27,6 +27,7 @@ import org.json.JSONObject;
  * metadata about the Plugin
  */
 public class Plugin {
+
     // The key we will use inside of a persisted Bundle for the JSON blob
     // for a plugin call options.
     private static final String BUNDLE_PERSISTED_OPTIONS_JSON_KEY = "_json";
@@ -344,7 +345,7 @@ public class Plugin {
         }
 
         for (PluginCall call : listeners) {
-            call.success(data);
+            call.resolve(data);
         }
     }
 
@@ -440,7 +441,7 @@ public class Plugin {
 
             pluginRequestPermissions(perms, annotation.permissionRequestCode());
         } else {
-            call.success();
+            call.resolve();
         }
     }
 

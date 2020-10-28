@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class LocalNotificationSchedule {
+
     public static String JS_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     private Date at;

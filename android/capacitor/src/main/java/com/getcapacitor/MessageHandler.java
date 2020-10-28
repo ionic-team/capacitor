@@ -9,6 +9,7 @@ import org.apache.cordova.PluginManager;
  * to plugins.
  */
 public class MessageHandler {
+
     private Bridge bridge;
     private WebView webView;
     private PluginManager cordovaPluginManager;
@@ -103,7 +104,7 @@ public class MessageHandler {
                 final WebView webView = this.webView;
                 webView.post(() -> webView.evaluateJavascript(runScript, null));
             } else {
-                bridge.storeDanglingPluginResult(call, data);
+                bridge.getApp().fireRestoredResult(data);
             }
         } catch (Exception ex) {
             Logger.error("sendResponseMessage: error: " + ex);

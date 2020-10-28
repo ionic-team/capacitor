@@ -43,6 +43,7 @@ import java.util.Map;
  * methods.
  */
 public class WebViewLocalServer {
+
     private static final String capacitorFileStart = Bridge.CAPACITOR_FILE_START;
     private static final String capacitorContentStart = Bridge.CAPACITOR_CONTENT_START;
     private String basePath;
@@ -71,6 +72,7 @@ public class WebViewLocalServer {
      * minimum.
      */
     public abstract static class PathHandler {
+
         protected String mimeType;
         private String encoding;
         private String charset;
@@ -454,7 +456,6 @@ public class WebViewLocalServer {
         }
 
         PathHandler handler = new PathHandler() {
-
             @Override
             public InputStream handle(Uri url) {
                 InputStream stream = null;
@@ -506,6 +507,7 @@ public class WebViewLocalServer {
      * parallelize loading.
      */
     private abstract static class LazyInputStream extends InputStream {
+
         protected final PathHandler handler;
         private InputStream is = null;
 
@@ -555,6 +557,7 @@ public class WebViewLocalServer {
 
     // For L and above.
     private static class LollipopLazyInputStream extends LazyInputStream {
+
         private WebResourceRequest request;
         private InputStream is;
 

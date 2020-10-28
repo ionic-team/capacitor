@@ -2,28 +2,8 @@
 
 #import "CAPBridgedPlugin.h"
 
-CAP_PLUGIN(CAPAppPlugin, "App",
-  CAP_PLUGIN_METHOD(exitApp, CAPPluginReturnNone);
-  CAP_PLUGIN_METHOD(getLaunchUrl, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(getState, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(canOpenUrl, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(openUrl, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(removeAllListeners, CAPPluginReturnNone);
-)
-
-CAP_PLUGIN(CAPBackgroundTaskPlugin, "BackgroundTask",
-  CAP_PLUGIN_METHOD(beforeExit, CAPPluginReturnCallback);
-  CAP_PLUGIN_METHOD(finish, CAPPluginReturnNone);
-)
-
 CAP_PLUGIN(CAPConsolePlugin, "Console",
   CAP_PLUGIN_METHOD(log, CAPPluginReturnNone);
-)
-
-CAP_PLUGIN(CAPGeolocationPlugin, "Geolocation",
-  CAP_PLUGIN_METHOD(getCurrentPosition, CAPPluginReturnPromise);
-  CAP_PLUGIN_METHOD(watchPosition, CAPPluginReturnCallback);
-  CAP_PLUGIN_METHOD(clearWatch, CAPPluginReturnPromise);
 )
 
 CAP_PLUGIN(CAPLocalNotificationsPlugin, "LocalNotifications",

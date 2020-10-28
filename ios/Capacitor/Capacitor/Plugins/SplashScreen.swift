@@ -33,10 +33,10 @@ public class CAPSplashScreenPlugin: CAPPlugin {
             return
         }
 
-        let showDuration = call.get("showDuration", Int.self, defaultShowDuration)!
-        let fadeInDuration = call.get("fadeInDuration", Int.self, defaultFadeInDuration)!
-        let fadeOutDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
-        let autoHide = call.get("autoHide", Bool.self, defaultAutoHide)!
+        let showDuration = call.getInt("showDuration", defaultShowDuration)
+        let fadeInDuration = call.getInt("fadeInDuration", defaultFadeInDuration)
+        let fadeOutDuration = call.getInt("fadeOutDuration", defaultFadeOutDuration)
+        let autoHide = call.getBool("autoHide", defaultAutoHide)
         let backgroundColor = getConfigValue("backgroundColor") as? String ?? nil
         let spinnerStyle = getConfigValue("iosSpinnerStyle") as? String ?? nil
         let spinnerColor = getConfigValue("spinnerColor") as? String ?? nil
@@ -51,13 +51,13 @@ public class CAPSplashScreenPlugin: CAPPlugin {
                    spinnerColor: spinnerColor,
                    completion: {
                     call.success()
-        }, isLaunchSplash: false)
+                   }, isLaunchSplash: false)
     }
 
     // Hide the splash screen
     @objc public func hide(_ call: CAPPluginCall) {
         self.call = call
-        let fadeDuration = call.get("fadeOutDuration", Int.self, defaultFadeOutDuration)!
+        let fadeDuration = call.getInt("fadeOutDuration", defaultFadeOutDuration)
         hideSplash(fadeOutDuration: fadeDuration)
         call.success()
     }
@@ -215,8 +215,8 @@ public class CAPSplashScreenPlugin: CAPPlugin {
     func hideSplash(fadeOutDuration: Int, isLaunchSplash: Bool) {
         if isLaunchSplash, isVisible {
             CAPLog.print("SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. " +
-                "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). " +
-                "Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen")
+                            "You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). " +
+                            "Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen")
         }
         if !isVisible { return }
         DispatchQueue.main.async {

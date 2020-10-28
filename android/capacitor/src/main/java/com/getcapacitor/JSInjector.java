@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
  * to the client.
  */
 class JSInjector {
+
     private String globalJS;
     private String coreJS;
     private String pluginJS;

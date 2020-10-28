@@ -9,6 +9,7 @@ import java.util.TimeZone;
  * Wraps a result for web from calling a native plugin.
  */
 public class PluginResult {
+
     private final JSObject json;
 
     public PluginResult() {

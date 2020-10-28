@@ -11,14 +11,13 @@ import org.json.JSONObject;
  * Wraps a call from the web layer to native
  */
 public class PluginCall {
+
     /**
      * A special callback id that indicates there is no matching callback
      * on the client to associate any PluginCall results back to. This is used
      * in the case of an app resuming with saved instance data, for example.
      */
     public static final String CALLBACK_ID_DANGLING = "-1";
-    private static final String UNIMPLEMENTED = "not implemented";
-    private static final String UNAVAILABLE = "not available";
 
     private final MessageHandler msgHandler;
     private final String pluginId;
@@ -147,11 +146,19 @@ public class PluginCall {
     }
 
     public void unimplemented() {
-        reject(UNIMPLEMENTED, null, null);
+        unimplemented("not implemented");
+    }
+
+    public void unimplemented(String msg) {
+        reject(msg, "UNIMPLEMENTED", null);
     }
 
     public void unavailable() {
-        reject(UNAVAILABLE, null, null);
+        unavailable("not available");
+    }
+
+    public void unavailable(String msg) {
+        reject(msg, "UNAVAILABLE", null);
     }
 
     public String getPluginId() {

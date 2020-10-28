@@ -1,4 +1,5 @@
 export {
+  ExceptionCode,
   PluginCallback,
   PluginListenerHandle,
   PluginResultData,
