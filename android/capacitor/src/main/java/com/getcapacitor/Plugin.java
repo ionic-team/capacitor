@@ -555,11 +555,13 @@ public class Plugin {
             return;
         }
 
+        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
+
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // Permission granted. If previously denied, remove cached state
-            SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
             for (String permission : permissions) {
                 String state = prefs.getString(permission, null);
+
                 if (state != null) {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.remove(permission);
@@ -568,13 +570,17 @@ public class Plugin {
             }
         } else {
             for (String permission : permissions) {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+                SharedPreferences.Editor editor = prefs.edit();
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+                    // Permission denied, can prompt again with rationale
+                    editor.putString(permission, "prompt-with-rationale");
+                } else {
                     // Permission denied permanently, store this state for future reference
-                    SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
                     editor.putString(permission, "denied");
-                    editor.apply();
                 }
+
+                editor.apply();
             }
         }
 
