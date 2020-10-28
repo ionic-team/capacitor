@@ -48,7 +48,12 @@ public class Permissions extends Plugin {
   private void checkPerm(String perm, PluginCall call) {
     JSObject ret = new JSObject();
     if (ContextCompat.checkSelfPermission(getContext(), perm) == PackageManager.PERMISSION_DENIED) {
-      ret.put("state", "denied");
+      // Checks to see if permission has already been requested
+      if(shouldShowRequestPermissionRationale((Activity) getContext(), perm) == true){
+        ret.put("state", "denied");
+      }else{
+        ret.put("state", "prompt");
+      }
     } else if (ContextCompat.checkSelfPermission(getContext(), perm) == PackageManager.PERMISSION_GRANTED) {
       ret.put("state", "granted");
     } else {
