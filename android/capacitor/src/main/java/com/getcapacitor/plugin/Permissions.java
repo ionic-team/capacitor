@@ -11,6 +11,7 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import android.os.Build;
 
 import org.json.JSONArray;
 
