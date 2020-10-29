@@ -12,7 +12,7 @@ export const initBridge = (
   gbl: GlobalInstance,
   instance: CapacitorInstance,
   state: InternalState,
-) => {
+): void => {
   // keep a collection of callbacks for native response data
   const callbacks = new Map<string, StoredCallback>();
 

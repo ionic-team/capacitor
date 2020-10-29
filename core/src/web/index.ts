@@ -137,15 +137,14 @@ export class WebPlugin {
   }
 
   requestPermissions(): Promise<PermissionsRequestResult> {
-    if (Capacitor.isNative) {
+    if (Capacitor.isNativePlatform()) {
       return Capacitor.nativePromise(
         this.config.name,
         'requestPermissions',
         {},
       );
-    } else {
-      return Promise.resolve({ results: [] });
     }
+    return Promise.resolve({ results: [] });
   }
 
   load(): void {

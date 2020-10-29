@@ -1,6 +1,6 @@
 import type { Capacitor, GlobalInstance } from './definitions';
 
-export const initVendor = (gbl: GlobalInstance, instance: Capacitor) => {
+export const initVendor = (gbl: GlobalInstance, instance: Capacitor): void => {
   const Ionic = (gbl.Ionic = gbl.Ionic || {});
   const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
   const WebViewPlugin = instance.Plugins.WebView;

@@ -3,7 +3,7 @@ import type { CapacitorInstance, GlobalInstance } from './definitions';
 export const initEvents = (
   gbl: GlobalInstance,
   instance: CapacitorInstance,
-) => {
+): void => {
   const doc: Document = gbl.document;
   const cordova = gbl.cordova;
 
@@ -43,7 +43,7 @@ export const initEvents = (
       const ev = doc.createEvent('Events');
       ev.initEvent(eventName, false, false);
       if (eventData && typeof eventData === 'object') {
-        for (let i in eventData) {
+        for (const i in eventData) {
           if (eventData.hasOwnProperty(i)) {
             (ev as any)[i] = eventData[i];
           }

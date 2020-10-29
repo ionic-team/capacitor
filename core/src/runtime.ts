@@ -1,3 +1,4 @@
+import { initBridge } from './bridge';
 import type {
   CapacitorInstance,
   PluginRegistry,
@@ -5,11 +6,10 @@ import type {
   InternalState,
   GlobalInstance,
 } from './definitions';
-import { convertFileSrcServerUrl, noop, uuidv4 } from './util';
-import { initBridge } from './bridge';
 import { initEvents } from './events';
 import { initLegacy } from './legacy/legacy';
 import { initPluginRegistry } from './plugins';
+import { convertFileSrcServerUrl, noop, uuidv4 } from './util';
 import { initVendor } from './vendor';
 
 export const createCapacitor = (gbl: GlobalInstance) => {
@@ -62,7 +62,7 @@ export const createCapacitor = (gbl: GlobalInstance) => {
   return instance;
 };
 
-const initPluginProxy = (instance: CapacitorInstance) => {
+const initPluginProxy = (instance: CapacitorInstance): void => {
   // Gracefully degrade in non-Proxy supporting engines, e.g. IE11. This
   // effectively means that trying to access an unavailable plugin will
   // locally throw, but this is still better than throwing a syntax error.

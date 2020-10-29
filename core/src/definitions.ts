@@ -180,7 +180,7 @@ export interface Capacitor {
   ) => void;
 
   /**
-   * @deprecated Please import the plugin directly instead
+   * Registry of all the plugins.
    */
   Plugins: PluginRegistry;
 

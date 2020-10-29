@@ -5,7 +5,7 @@ export const initLegacy = (
   gbl: GlobalInstance,
   instance: Capacitor,
   state: InternalState,
-) => {
+): void => {
   // define cordova if it's not there already
   gbl.cordova = gbl.cordova || {};
 

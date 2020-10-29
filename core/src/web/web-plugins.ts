@@ -1,6 +1,7 @@
-import type { WebPlugin } from './web';
-import { Capacitor, Plugins } from './global';
-import { SplashScreen } from './web/splash-screen';
+import { Capacitor, Plugins } from '../global';
+
+import type { WebPlugin } from '.';
+import { SplashScreen } from './splash-screen';
 
 /**
  * TODO
