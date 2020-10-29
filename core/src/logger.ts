@@ -1,13 +1,13 @@
 import type {
   CallData,
-  Capacitor,
+  CapacitorInstance,
   GlobalInstance,
   InternalState,
 } from './definitions';
 
 export const initLogger = (
   gbl: GlobalInstance,
-  instance: Capacitor,
+  instance: CapacitorInstance,
   state: InternalState,
   postToNative: (data: any) => void | null,
 ) => {
