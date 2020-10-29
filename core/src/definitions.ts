@@ -57,7 +57,7 @@ export interface PluginConfig {
   name: string;
 }
 
-export enum ExceptionCode {
+export const enum ExceptionCode {
   /**
    * API is not implemented.
    *
