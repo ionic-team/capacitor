@@ -469,7 +469,7 @@ public class Plugin {
      */
     @PluginMethod
     public void requestPermissions(PluginCall call) {
-        String[] perms;
+        String[] perms = null;
         int permissionRequestCode;
 
         // If call was made with a list of permissions to request, save them to be requested
@@ -500,13 +500,18 @@ public class Plugin {
                         permsSet.add(perm.permission());
                     }
                 }
-                perms = permsSet.toArray(new String[0]);
+
+                if (permsSet.isEmpty()) {
+                    call.reject("No valid permission or permission alias was requested.");
+                } else {
+                    perms = permsSet.toArray(new String[0]);
+                }
             }
 
             permissionRequestCode = annotation.permissionRequestCode();
         }
 
-        if (perms.length > 0) {
+        if (perms != null && perms.length > 0) {
             // Save the call so we can return data back once the permission request has completed
             saveCall(call);
 
