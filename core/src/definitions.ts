@@ -1,4 +1,4 @@
-import { PluginRegistry } from './core-plugin-definitions';
+import type { PluginRegistry } from './legacy/core-plugin-definitions';
 
 export interface Plugin {
   addListener(
@@ -25,19 +25,9 @@ export interface PluginResultError {
 }
 
 export type PluginCallback = (
-  error: PluginResultError,
   data: PluginResultData,
+  error?: PluginResultError,
 ) => void;
-
-/**
- * Data sent over to native
- */
-export interface PluginCall {
-  callbackId: string;
-  pluginId: string;
-  methodName: string;
-  options: any;
-}
 
 /**
  * Callback data kept on the client
@@ -50,21 +40,16 @@ export interface StoredCallback {
 }
 
 /**
- * Collection of all the callback data
- */
-export interface StoredCallbacks {
-  [callbackId: string]: StoredCallback;
-}
-
-/**
  * A resulting call back from the native layer.
  */
 export interface PluginResult {
   callbackId?: string;
-  methodName: string;
+  methodName?: string;
   data: PluginResultData;
   success: boolean;
   error?: PluginResultError;
+  pluginId?: string;
+  save?: boolean;
 }
 
 export interface PluginConfig {
@@ -101,32 +86,91 @@ declare const CapacitorException: {
 };
 
 export interface Capacitor {
-  Exception: typeof CapacitorException;
-  isNative?: boolean;
-  platform?: string;
-  isPluginAvailable: (name: string) => boolean;
+  /**
+   * Utility function to convert a file path into
+   * a useful src depending on the value and environment.
+   */
   convertFileSrc: (filePath: string) => string;
+
+  /**
+   * The Exception class used when generating plugin Exceptions
+   * from bridge calls.
+   */
+  Exception: typeof CapacitorException;
+
+  /**
+   * Boolean if the platform is native or not. `android` and `ios`
+   * would return `true`, otherwise `false`.
+   */
+  isNativePlatform: () => boolean;
+
+  /**
+   * Used to check if a platform is registered and available.
+   */
+  isPluginAvailable: (name: string) => boolean;
+
+  /**
+   * Gets the name of the platform, such as `android`, `ios`, or `web`.
+   */
   getPlatform: () => string;
-  toNative?: (
-    pluginId: string,
-    methodName: string,
-    options: any,
-    storedCallback?: StoredCallback,
-  ) => void;
-  fromNative?: (result: PluginResult) => void;
-  withPlugin?: (pluginId: string, fn: (...args: any[]) => any) => void;
+
+  /**
+   * Sends data over the bridge to the native layer.
+   * Returns the Callback Id.
+   */
   nativeCallback?: (
     pluginId: string,
     methodName: string,
     options?: any,
-    callback?: any,
-  ) => void;
+    callback?: PluginCallback,
+  ) => string;
+
+  /**
+   * Sends data over the bridge to the native layer and
+   * resolves the promise when it receives the data from
+   * the native implementation.
+   */
   nativePromise?: (
     pluginId: string,
     methodName: string,
     options?: any,
   ) => Promise<any>;
+
+  /**
+   * Add a listener for a plugin event.
+   */
+  addListener?: (
+    pluginId: string,
+    eventName: string,
+    callback: PluginCallback,
+  ) => { remove: () => void };
+
+  /**
+   * Remove a listener to a plugin event.
+   */
+  removeListener?: (
+    pluginId: string,
+    callbackId: string,
+    eventName: string,
+    callback: PluginCallback,
+  ) => void;
+
+  /**
+   * Called when a plugin method is not available. Defaults to console
+   * logging a warning.
+   */
+  pluginMethodNoop: (
+    target: any,
+    key: PropertyKey,
+    pluginName: PropertyKey,
+  ) => void;
+
+  logToNative?: (data: CallData) => void;
+
+  logFromNative?: (results: PluginResult) => void;
+
   handleError?: (error: Error) => void;
+
   handleWindowError?: (
     msg: string,
     url: string,
@@ -134,7 +178,140 @@ export interface Capacitor {
     columnNo: number,
     error: Error,
   ) => void;
-  Plugins?: PluginRegistry;
+
+  Plugins: PluginRegistry;
+
+  /**
+   * Register plugin implementations with Capacitor.
+   *
+   * This function will create and register an instance that contains the
+   * implementations of the plugin.
+   *
+   * Each plugin has multiple implementations, one per platform. Each
+   * implementation must adhere to a common interface to ensure client code
+   * behaves consistently across each platform.
+   *
+   * @param pluginName The unique CamelCase name of this plugin.
+   * @param implementations The map of plugin implementations.
+   */
+  registerPlugin<T>(
+    pluginName: string,
+    implementations: Readonly<PluginImplementations<T>>,
+  ): T;
+
+  uuidv4: () => string;
+
+  DEBUG?: boolean;
+
+  /**
+   * @deprecated Use `getPlatform()` instead
+   */
+  platform?: string;
+  /**
+   * @deprecated Use `isNativePlatform()` instead
+   */
+  isNative?: boolean;
+}
+
+/**
+ * Has all instance properties that are available and used
+ * by the native layer. The "Capacitor" interface it extends
+ * is the public one.
+ */
+export interface CapacitorInstance extends Capacitor {
+  /**
+   * Low-level API to send data to the native layer.
+   * Prefer using `nativeCallback()` or `nativePromise()` instead.
+   * Returns the Callback Id.
+   */
+  toNative?: (
+    pluginId: string,
+    methodName: string,
+    options: any,
+    storedCallback?: StoredCallback,
+  ) => string;
+
+  /**
+   * Low-level API used by the native layers to send
+   * data back to the webview runtime.
+   */
+  fromNative?: (result: PluginResult) => void;
+
+  /**
+   * Low-level API for backwards compatibility.
+   */
+  createEvent?: (eventName: string, eventData: any) => Event;
+
+  /**
+   * Low-level API triggered from native implementations.
+   */
+  triggerEvent?: (eventName: string, target: string, eventData: any) => void;
+
+  /**
+   * Low-level API used by the native bridge.
+   */
+  withPlugin: (pluginId: string, fn: (...args: any[]) => any) => void;
+
+  /**
+   * Low-level API used by the native bridge to log messages.
+   */
+  logJs?: (message: string, level: string) => void;
+}
+
+/**
+ * A map of plugin implementations.
+ *
+ * Each key should be the lowercased platform name as recognized by Capacitor,
+ * e.g. 'android', 'ios', and 'web'. Each value must be an instance of a plugin
+ * implementation for the respective platform.
+ */
+export type PluginImplementations<T> = {
+  [platform: string]: T;
+};
+
+export interface PlatformImplementation {}
+
+export interface InternalState {
+  platform: string;
+  isNative: boolean;
+}
+
+export interface GlobalInstance {
+  androidBridge?: {
+    postMessage(data: string): void;
+  };
+  webkit?: {
+    messageHandlers?: {
+      bridge: {
+        postMessage(data: any): void;
+      };
+    };
+  };
+  cordova?: any;
+  document?: any;
+  navigator?: {
+    app?: {
+      exitApp?: () => void;
+    };
+  };
+  console?: any;
+  WEBVIEW_SERVER_URL?: string;
+  Ionic?: {
+    WebView?: {
+      getServerBasePath?: any;
+      setServerBasePath?: any;
+      persistServerBasePath?: any;
+      convertFileSrc?: any;
+    };
+  };
+  dispatchEvent?: any;
+}
+
+export interface CallData {
+  callbackId: string;
+  pluginId: string;
+  methodName: string;
+  options: any;
 }
 
 export interface WindowCapacitor {

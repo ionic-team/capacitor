@@ -18,7 +18,8 @@
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "test.watch": "jest --watchAll"
   },
   "main": "dist/index.js",
   "module": "dist/esm/index.js",

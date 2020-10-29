@@ -9,11 +9,6 @@
     "swiftlint": "node-swiftlint",
     "postinstall": "lerna bootstrap"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  },
   "prettier": "@ionic/prettier-config",
   "eslintConfig": {
     "extends": "@ionic/eslint-config/recommended"

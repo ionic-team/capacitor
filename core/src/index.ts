@@ -7,8 +7,19 @@ export {
   PluginConfig,
 } from './definitions';
 
-export * from './core-plugin-definitions';
-export * from './global';
-export * from './plugins';
+export type {
+  PluginRegistry,
+  ISODateString,
+  CallbackID,
+  CancellableCallback,
+  SplashScreenPlugin,
+  SplashScreenShowOptions,
+  SplashScreenHideOptions,
+  WebViewPlugin,
+  WebViewPath,
+} from './legacy/core-plugin-definitions';
+
+export { Capacitor, Plugins, registerPlugin } from './global';
+
 export * from './web-plugins';
 export * from './web';

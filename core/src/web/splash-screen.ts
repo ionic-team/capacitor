@@ -2,7 +2,7 @@ import type {
   SplashScreenPlugin,
   SplashScreenHideOptions,
   SplashScreenShowOptions,
-} from '../core-plugin-definitions';
+} from '../legacy/core-plugin-definitions';
 
 import { WebPlugin } from './index';
 
