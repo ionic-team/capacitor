@@ -1,4 +1,4 @@
-export {
+export type {
   ExceptionCode,
   PluginCallback,
   PluginListenerHandle,
@@ -21,5 +21,6 @@ export type {
 
 export { Capacitor, Plugins, registerPlugin } from './global';
 
-export * from './web-plugins';
-export * from './web';
+export { mergeWebPlugin, registerWebPlugin } from './web-plugins';
+export { SplashScreen, SplashScreenPluginWeb } from './web/splash-screen';
+export { WebPlugin, WebPluginConfig, ListenerCallback } from './web';

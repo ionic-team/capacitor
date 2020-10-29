@@ -51,5 +51,3 @@ export const registerWebPlugin = (_plugin: WebPlugin): void => {
 };
 
 mergeWebPlugin(SplashScreen);
-
-export * from './web/splash-screen';

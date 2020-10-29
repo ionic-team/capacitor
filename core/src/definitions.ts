@@ -179,6 +179,9 @@ export interface Capacitor {
     error: Error,
   ) => void;
 
+  /**
+   * @deprecated Please import the plugin directly instead
+   */
   Plugins: PluginRegistry;
 
   /**

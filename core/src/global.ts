@@ -22,6 +22,9 @@ const Capacitor = ((gbl: any): CapacitorType => {
     : {},
 );
 
+/**
+ * @deprecated Please import the plugin in directly instead.
+ */
 const Plugins = Capacitor.Plugins;
 
 const registerPlugin = Capacitor.registerPlugin;
