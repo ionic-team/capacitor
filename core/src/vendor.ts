@@ -5,7 +5,7 @@ export const initVendor = (gbl: GlobalInstance, instance: Capacitor): void => {
   const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
   const WebViewPlugin = instance.Plugins.WebView;
 
-  IonicWebView.getServerBasePath = (callback: Function) => {
+  IonicWebView.getServerBasePath = (callback: (path: string) => void) => {
     if (WebViewPlugin) {
       WebViewPlugin.getServerBasePath().then(result => {
         callback(result.path);

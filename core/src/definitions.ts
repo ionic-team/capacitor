@@ -85,6 +85,24 @@ declare const CapacitorException: {
   new (message: string, code?: ExceptionCode): CapacitorException;
 };
 
+/**
+ * Register plugin implementations with Capacitor.
+ *
+ * This function will create and register an instance that contains the
+ * implementations of the plugin.
+ *
+ * Each plugin has multiple implementations, one per platform. Each
+ * implementation must adhere to a common interface to ensure client code
+ * behaves consistently across each platform.
+ *
+ * @param pluginName The unique CamelCase name of this plugin.
+ * @param implementations The map of plugin implementations.
+ */
+export type RegisterPlugin = <T>(
+  pluginName: string,
+  implementations: Readonly<PluginImplementations<T>>,
+) => T;
+
 export interface Capacitor {
   /**
    * Utility function to convert a file path into
@@ -184,23 +202,7 @@ export interface Capacitor {
    */
   Plugins: PluginRegistry;
 
-  /**
-   * Register plugin implementations with Capacitor.
-   *
-   * This function will create and register an instance that contains the
-   * implementations of the plugin.
-   *
-   * Each plugin has multiple implementations, one per platform. Each
-   * implementation must adhere to a common interface to ensure client code
-   * behaves consistently across each platform.
-   *
-   * @param pluginName The unique CamelCase name of this plugin.
-   * @param implementations The map of plugin implementations.
-   */
-  registerPlugin<T>(
-    pluginName: string,
-    implementations: Readonly<PluginImplementations<T>>,
-  ): T;
+  registerPlugin: RegisterPlugin;
 
   uuidv4: () => string;
 

@@ -5,6 +5,7 @@ export type {
   PluginResultData,
   PluginResultError,
   PluginConfig,
+  PluginImplementations,
 } from './definitions';
 
 export type {

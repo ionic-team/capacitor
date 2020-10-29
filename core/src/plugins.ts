@@ -1,9 +1,13 @@
-import type { InternalState, PluginImplementations } from './definitions';
+import type {
+  InternalState,
+  PluginImplementations,
+  RegisterPlugin,
+} from './definitions';
 
-export const initPluginRegistry = (state: InternalState) => {
+export const initPluginRegistry = (state: InternalState): RegisterPlugin => {
   const plugins = new Map();
 
-  const registerPlugin = (
+  return (
     pluginName: string,
     implementations: Readonly<PluginImplementations<unknown>>,
   ): any => {
@@ -15,7 +19,6 @@ export const initPluginRegistry = (state: InternalState) => {
     plugins.set(pluginName, registeredPlugin);
     return registeredPlugin;
   };
-  return registerPlugin;
 };
 
 const createRegisteredPlugin = (

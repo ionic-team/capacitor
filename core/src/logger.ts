@@ -10,7 +10,7 @@ export const initLogger = (
   instance: CapacitorInstance,
   state: InternalState,
   postToNative: (data: any) => void | null,
-) => {
+): void => {
   // patch window.console on iOS and store original console fns
   const isIos = state.platform === 'ios';
   const orgConsole = (isIos ? {} : gbl.console) as any;

@@ -21,9 +21,9 @@ export const initLegacy = (
 
   if (doc) {
     const docAddEventListener = doc.addEventListener;
-    doc.addEventListener = function () {
-      const eventName = arguments[0];
-      const handler = arguments[1];
+    doc.addEventListener = (...args: any[]) => {
+      const eventName = args[0];
+      const handler = args[1];
       if (eventName === 'deviceready' && handler) {
         Promise.resolve(handler);
       } else if (eventName === 'backbutton' && instance.Plugins.App) {
@@ -31,7 +31,7 @@ export const initLegacy = (
         // back button action
         instance.Plugins.App.addListener('backButton', noop);
       }
-      return docAddEventListener.apply(doc, arguments);
+      return docAddEventListener.apply(doc, args);
     };
   }
 

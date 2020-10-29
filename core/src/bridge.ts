@@ -31,11 +31,7 @@ export const initBridge = (
     };
     state.isNative = true;
     state.platform = 'android';
-  } else if (
-    gbl.webkit &&
-    gbl.webkit.messageHandlers &&
-    gbl.webkit.messageHandlers.bridge
-  ) {
+  } else if (gbl.webkit?.messageHandlers?.bridge) {
     // ios platform
     postToNative = (data: any) => {
       data.type = 'message';

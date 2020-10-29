@@ -1,4 +1,8 @@
-import type { Capacitor as CapacitorType } from './definitions';
+import type {
+  Capacitor as CapacitorType,
+  PluginRegistry,
+  RegisterPlugin,
+} from './definitions';
 import { createCapacitor } from './runtime';
 
 // Create our default Capacitor instance, which will be
@@ -25,8 +29,8 @@ const Capacitor = ((gbl: any): CapacitorType => {
 /**
  * @deprecated Please import the plugin in directly instead.
  */
-const Plugins = Capacitor.Plugins;
+const Plugins: PluginRegistry = Capacitor.Plugins as any;
 
-const registerPlugin = Capacitor.registerPlugin;
+const registerPlugin: RegisterPlugin = Capacitor.registerPlugin as any;
 
 export { Capacitor, Plugins, registerPlugin };
