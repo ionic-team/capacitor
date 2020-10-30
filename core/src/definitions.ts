@@ -1,6 +1,8 @@
 /* eslint-disable */
 import type { PluginRegistry } from './legacy/core-plugin-definitions';
 
+export { PluginRegistry };
+
 export interface Plugin {
   addListener(
     eventName: string,
@@ -247,12 +249,16 @@ export interface CapacitorInstance extends Capacitor {
   /**
    * Low-level API for backwards compatibility.
    */
-  createEvent?: (eventName: string, eventData: any) => Event;
+  createEvent?: (eventName: string, eventData?: any) => Event;
 
   /**
    * Low-level API triggered from native implementations.
    */
-  triggerEvent?: (eventName: string, target: string, eventData: any) => void;
+  triggerEvent?: (
+    eventName: string,
+    target: string,
+    eventData?: any,
+  ) => boolean;
 
   /**
    * Low-level API used by the native bridge.
@@ -297,7 +303,9 @@ export interface GlobalInstance {
       };
     };
   };
-  cordova?: any;
+  cordova?: {
+    fireDocumentEvent?: (eventName: string, eventData: any) => void;
+  };
   document?: any;
   navigator?: {
     app?: {

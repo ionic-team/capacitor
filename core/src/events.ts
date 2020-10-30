@@ -61,17 +61,19 @@ export const initEvents = (
       if (target === 'document') {
         if (cordova?.fireDocumentEvent) {
           cordova.fireDocumentEvent(eventName, eventData);
+          return true;
         } else if (doc?.dispatchEvent) {
-          doc.dispatchEvent(ev);
+          return doc.dispatchEvent(ev);
         }
       } else if (target === 'window' && gbl.dispatchEvent) {
-        (gbl as Window).dispatchEvent(ev);
+        return (gbl as Window).dispatchEvent(ev);
       } else if (doc?.querySelector) {
         const targetEl: Element = doc.querySelector(target);
         if (targetEl) {
-          targetEl.dispatchEvent(ev);
+          return targetEl.dispatchEvent(ev);
         }
       }
     }
+    return false;
   };
 };

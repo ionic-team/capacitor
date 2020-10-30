@@ -6,7 +6,7 @@ import type {
 } from '../definitions';
 import { createCapacitor } from '../runtime';
 
-describe('register plugin', () => {
+describe('plugin', () => {
   let instance: CapacitorInstance;
   let gbl: GlobalInstance;
 
