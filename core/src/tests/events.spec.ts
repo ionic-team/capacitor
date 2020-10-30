@@ -55,16 +55,16 @@ describe('plugin', () => {
   });
 
   it('triggerEvent, document, cordova fireDocumentEvent', () => {
-    let cordoveTrigger = false;
+    let cordovaTrigger = false;
     gbl.cordova = {
       fireDocumentEvent() {
-        cordoveTrigger = true;
+        cordovaTrigger = true;
       },
     };
     instance = createCapacitor(gbl);
     const ev = instance.triggerEvent('eventName', 'document');
     expect(ev).toBe(true);
-    expect(ev).toBe(cordoveTrigger);
+    expect(ev).toBe(cordovaTrigger);
   });
 
   it('triggerEvent, document true', () => {

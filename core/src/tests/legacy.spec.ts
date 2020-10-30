@@ -19,6 +19,15 @@ describe('legacy', () => {
     expect(gbl.cordova).toBeDefined();
   });
 
+  it('use existing cordova global', () => {
+    const existingCordova: any = {};
+    gbl = {
+      cordova: existingCordova,
+    };
+    instance = createCapacitor(gbl);
+    expect(gbl.cordova).toBe(existingCordova);
+  });
+
   it('deprecated props', () => {
     expect((instance as any).platform).toBe('web');
     expect((instance as any).isNative).toBe(false);
