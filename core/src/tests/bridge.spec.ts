@@ -73,7 +73,7 @@ describe('bridge', () => {
     expect(instance.getPlatform()).toBe('ios');
     expect(instance.isNativePlatform()).toBe(true);
 
-    instance.nativeCallback('pluginId', 'methodName', {}, (data, err) => {
+    instance.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
       try {
         expect(data).toEqual(null);
         expect(err.message).toBe('darn it');
@@ -94,7 +94,7 @@ describe('bridge', () => {
     expect(instance.getPlatform()).toBe('ios');
     expect(instance.isNativePlatform()).toBe(true);
 
-    instance.nativeCallback('pluginId', 'methodName', {}, (data, err) => {
+    instance.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
       try {
         expect(data).toEqual({ mph: 88 });
         expect(err).toBe(undefined);

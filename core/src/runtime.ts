@@ -1,31 +1,29 @@
 import { initBridge } from './bridge';
 import type {
   CapacitorInstance,
-  PluginRegistry,
   ExceptionCode,
   InternalState,
   GlobalInstance,
 } from './definitions';
 import { initEvents } from './events';
-import { initLegacy } from './legacy/legacy';
-import { initPluginRegistry } from './plugins';
+import { initLegacyHandlers } from './legacy/legacy-handlers';
+import { initPluginProxy, initPluginRegister } from './plugins';
 import { convertFileSrcServerUrl, noop, uuidv4 } from './util';
 import { initVendor } from './vendor';
 
-export const createCapacitor = (gbl: GlobalInstance) => {
+export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
   const state: InternalState = {
     platform: 'web',
     isNative: false,
+    plugins: {} as any,
   };
-
-  const Plugins: PluginRegistry = {} as any;
 
   const getPlatform = () => state.platform;
 
   const isNativePlatform = () => state.isNative;
 
   const isPluginAvailable = (pluginName: string) =>
-    Object.prototype.hasOwnProperty.call(Plugins, pluginName);
+    Object.prototype.hasOwnProperty.call(state.plugins, pluginName);
 
   const convertFileSrc = (filePath: string) =>
     convertFileSrcServerUrl(gbl.WEBVIEW_SERVER_URL, filePath);
@@ -45,49 +43,22 @@ export const createCapacitor = (gbl: GlobalInstance) => {
     getPlatform,
     isNativePlatform,
     isPluginAvailable,
-    registerPlugin: initPluginRegistry(state),
-    Plugins,
+    registerPlugin: null,
+    Plugins: null,
     pluginMethodNoop,
     withPlugin: noop,
     uuidv4,
     Exception: CapacitorException,
   };
 
-  initPluginProxy(instance);
+  initPluginRegister(instance, state);
+  initPluginProxy(instance, state);
   initBridge(gbl, instance, state);
   initEvents(gbl, instance);
   initVendor(gbl, instance);
-  initLegacy(gbl, instance, state);
+  initLegacyHandlers(gbl, instance, state);
 
   return instance;
-};
-
-const initPluginProxy = (instance: CapacitorInstance): void => {
-  // Gracefully degrade in non-Proxy supporting engines, e.g. IE11. This
-  // effectively means that trying to access an unavailable plugin will
-  // locally throw, but this is still better than throwing a syntax error.
-  if (typeof Proxy !== 'undefined') {
-    // Build a proxy for the Plugins object that returns the "Noop Plugin"
-    // if a plugin isn't available
-    instance.Plugins = new Proxy<any>(instance.Plugins, {
-      get(Plugins, pluginName) {
-        if (typeof Plugins[pluginName] === 'undefined') {
-          return new Proxy<any>(
-            {},
-            {
-              get(target, prop) {
-                if (typeof target[prop] === 'undefined') {
-                  return instance.pluginMethodNoop(target, prop, pluginName);
-                }
-                return target[prop];
-              },
-            },
-          );
-        }
-        return Plugins[pluginName];
-      },
-    });
-  }
 };
 
 class CapacitorException extends Error {

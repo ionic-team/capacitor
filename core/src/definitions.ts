@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type { PluginRegistry } from './legacy/core-plugin-definitions';
 
 export interface Plugin {
@@ -5,6 +6,7 @@ export interface Plugin {
     eventName: string,
     listenerFunc: (...args: any[]) => any,
   ): PluginListenerHandle;
+  removeAllListeners(): void;
   requestPermissions?: () => Promise<PermissionsRequestResult>;
 }
 
@@ -100,7 +102,7 @@ declare const CapacitorException: {
  */
 export type RegisterPlugin = <T>(
   pluginName: string,
-  implementations: Readonly<PluginImplementations<T>>,
+  implementations: Readonly<PluginImplementations>,
 ) => T;
 
 export interface Capacitor {
@@ -137,7 +139,7 @@ export interface Capacitor {
    * Returns the Callback Id.
    */
   nativeCallback?: (
-    pluginId: string,
+    pluginName: string,
     methodName: string,
     options?: any,
     callback?: PluginCallback,
@@ -149,7 +151,7 @@ export interface Capacitor {
    * the native implementation.
    */
   nativePromise?: (
-    pluginId: string,
+    pluginName: string,
     methodName: string,
     options?: any,
   ) => Promise<any>;
@@ -158,16 +160,16 @@ export interface Capacitor {
    * Add a listener for a plugin event.
    */
   addListener?: (
-    pluginId: string,
+    pluginName: string,
     eventName: string,
     callback: PluginCallback,
-  ) => { remove: () => void };
+  ) => PluginListenerHandle;
 
   /**
    * Remove a listener to a plugin event.
    */
   removeListener?: (
-    pluginId: string,
+    pluginName: string,
     callbackId: string,
     eventName: string,
     callback: PluginCallback,
@@ -230,7 +232,7 @@ export interface CapacitorInstance extends Capacitor {
    * Returns the Callback Id.
    */
   toNative?: (
-    pluginId: string,
+    pluginName: string,
     methodName: string,
     options: any,
     storedCallback?: StoredCallback,
@@ -255,7 +257,7 @@ export interface CapacitorInstance extends Capacitor {
   /**
    * Low-level API used by the native bridge.
    */
-  withPlugin: (pluginId: string, fn: (...args: any[]) => any) => void;
+  withPlugin: (pluginName: string, fn: (...args: any[]) => any) => void;
 
   /**
    * Low-level API used by the native bridge to log messages.
@@ -270,8 +272,10 @@ export interface CapacitorInstance extends Capacitor {
  * e.g. 'android', 'ios', and 'web'. Each value must be an instance of a plugin
  * implementation for the respective platform.
  */
-export type PluginImplementations<T> = {
-  [platform: string]: T;
+export type PluginImplementations = {
+  [platform: string]:
+    | (() => Promise<PlatformImplementation>)
+    | PlatformImplementation;
 };
 
 export interface PlatformImplementation {}
@@ -279,6 +283,7 @@ export interface PlatformImplementation {}
 export interface InternalState {
   platform: string;
   isNative: boolean;
+  plugins: { [pluginName: string]: Plugin };
 }
 
 export interface GlobalInstance {
@@ -319,22 +324,4 @@ export interface CallData {
   options: any;
 }
 
-export interface WindowCapacitor {
-  capacitor: Capacitor;
-  androidBridge: {
-    postMessage: (data: any) => void;
-  };
-  webkit: {
-    messageHandlers: {
-      bridge: {
-        postMessage: (data: any) => void;
-      };
-    };
-  };
-  console: {
-    [level: string]: (...args: any[]) => any;
-  };
-  window: any;
-}
-
-export { PluginRegistry };
+export type Logger = (msg: any, level: string) => void;

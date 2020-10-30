@@ -1,23 +1,23 @@
 export type {
   ExceptionCode,
   PluginCallback,
+  PluginConfig,
+  PluginImplementations,
   PluginListenerHandle,
   PluginResultData,
   PluginResultError,
-  PluginConfig,
-  PluginImplementations,
 } from './definitions';
 
 export type {
-  PluginRegistry,
-  ISODateString,
   CallbackID,
   CancellableCallback,
-  SplashScreenPlugin,
-  SplashScreenShowOptions,
+  ISODateString,
+  PluginRegistry,
   SplashScreenHideOptions,
-  WebViewPlugin,
+  SplashScreenShowOptions,
+  SplashScreenPlugin,
   WebViewPath,
+  WebViewPlugin,
 } from './legacy/core-plugin-definitions';
 
 export { Capacitor, Plugins, registerPlugin } from './global';

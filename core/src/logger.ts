@@ -3,6 +3,7 @@ import type {
   CapacitorInstance,
   GlobalInstance,
   InternalState,
+  Logger,
 } from './definitions';
 
 export const initLogger = (
@@ -10,7 +11,7 @@ export const initLogger = (
   instance: CapacitorInstance,
   state: InternalState,
   postToNative: (data: any) => void | null,
-): void => {
+): Logger => {
   // patch window.console on iOS and store original console fns
   const isIos = state.platform === 'ios';
   const orgConsole = (isIos ? {} : gbl.console) as any;
@@ -36,8 +37,8 @@ export const initLogger = (
       if (typeof gbl.console[level] === 'function') {
         // loop through all the console functions and keep references to the original
         orgConsole[level] = gbl.console[level];
-        gbl.console[level] = function capacitorConsole() {
-          let msgs: any[] = Array.prototype.slice.call(arguments);
+        gbl.console[level] = (...args: any[]) => {
+          let msgs: any[] = Array.prototype.slice.call(args);
 
           // console log to browser
           orgConsole[level].apply(gbl.console, msgs);
@@ -50,7 +51,9 @@ export const initLogger = (
                 if (typeof arg === 'object') {
                   try {
                     arg = JSON.stringify(arg);
-                  } catch (e) {}
+                  } catch (e) {
+                    /**/
+                  }
                 }
                 // convert to string
                 return String(arg);

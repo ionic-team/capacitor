@@ -1,7 +1,7 @@
 import type { Capacitor, GlobalInstance, InternalState } from '../definitions';
 import { noop } from '../util';
 
-export const initLegacy = (
+export const initLegacyHandlers = (
   gbl: GlobalInstance,
   instance: Capacitor,
   state: InternalState,

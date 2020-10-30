@@ -7,9 +7,9 @@ export const initEvents = (
   const doc: Document = gbl.document;
   const cordova = gbl.cordova;
 
-  instance.addListener = (pluginId, eventName, callback) => {
+  instance.addListener = (pluginName, eventName, callback) => {
     const callbackId = instance.nativeCallback(
-      pluginId,
+      pluginName,
       'addListener',
       {
         eventName: eventName,
@@ -18,17 +18,15 @@ export const initEvents = (
     );
     return {
       remove: () => {
-        if (gbl.console && gbl.console.debug) {
-          gbl.console.debug('Removing listener', pluginId, eventName);
-        }
-        instance.removeListener(pluginId, callbackId, eventName, callback);
+        gbl?.console?.debug('Removing listener', pluginName, eventName);
+        instance.removeListener(pluginName, callbackId, eventName, callback);
       },
     };
   };
 
-  instance.removeListener = (pluginId, callbackId, eventName, callback) => {
+  instance.removeListener = (pluginName, callbackId, eventName, callback) => {
     instance.nativeCallback(
-      pluginId,
+      pluginName,
       'removeListener',
       {
         callbackId: callbackId,
@@ -44,6 +42,7 @@ export const initEvents = (
       ev.initEvent(eventName, false, false);
       if (eventData && typeof eventData === 'object') {
         for (const i in eventData) {
+          // eslint-disable-next-line no-prototype-builtins
           if (eventData.hasOwnProperty(i)) {
             (ev as any)[i] = eventData[i];
           }
@@ -60,14 +59,14 @@ export const initEvents = (
 
     if (ev) {
       if (target === 'document') {
-        if (cordova && cordova.fireDocumentEvent) {
+        if (cordova?.fireDocumentEvent) {
           cordova.fireDocumentEvent(eventName, eventData);
-        } else if (doc && doc.dispatchEvent) {
+        } else if (doc?.dispatchEvent) {
           doc.dispatchEvent(ev);
         }
       } else if (target === 'window' && gbl.dispatchEvent) {
         (gbl as Window).dispatchEvent(ev);
-      } else if (doc && doc.querySelector) {
+      } else if (doc?.querySelector) {
         const targetEl: Element = doc.querySelector(target);
         if (targetEl) {
           targetEl.dispatchEvent(ev);

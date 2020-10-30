@@ -47,7 +47,7 @@ export const initBridge = (
    * Send a plugin method call to the native layer
    */
   instance.toNative = (
-    pluginId: string,
+    pluginName: string,
     methodName: string,
     options: any,
     storedCallback: StoredCallback,
@@ -68,14 +68,14 @@ export const initBridge = (
 
         const callData: CallData = {
           callbackId: callbackId,
-          pluginId: pluginId,
+          pluginId: pluginName,
           methodName: methodName,
           options: options || {},
         };
 
         if (
           instance.DEBUG &&
-          pluginId !== 'Console' &&
+          pluginName !== 'Console' &&
           typeof instance.logToNative === 'function'
         ) {
           instance.logToNative(callData);
@@ -86,7 +86,7 @@ export const initBridge = (
 
         return callbackId;
       } else {
-        logger('warn', `implementation unavailable for: ${pluginId}`);
+        logger('warn', `implementation unavailable for: ${pluginName}`);
       }
     } catch (e) {
       logger('error', e);
@@ -159,19 +159,19 @@ export const initBridge = (
     delete result.error;
   };
 
-  instance.nativeCallback = (pluginId, methodName, options, callback) => {
+  instance.nativeCallback = (pluginName, methodName, options, callback) => {
     if (typeof options === 'function') {
       callback = options;
       options = null;
     }
-    return instance.toNative(pluginId, methodName, options, {
+    return instance.toNative(pluginName, methodName, options, {
       callback: callback,
     });
   };
 
-  instance.nativePromise = (pluginId, methodName, options) => {
+  instance.nativePromise = (pluginName, methodName, options) => {
     return new Promise((resolve, reject) => {
-      instance.toNative(pluginId, methodName, options, {
+      instance.toNative(pluginName, methodName, options, {
         resolve: resolve,
         reject: reject,
       });
