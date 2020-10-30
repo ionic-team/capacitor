@@ -4,8 +4,6 @@ import { basename, join, relative, resolve } from 'path';
 import c from '../colors';
 import {
   checkWebDir,
-  logFatal,
-  resolveNode,
   resolvePlatform,
   runPlatformHook,
   runTask,

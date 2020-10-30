@@ -89,7 +89,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
   return instance;
 };
 
-export const initGlobal = (gbl: GlobalInstance) =>
+export const initGlobal = (gbl: GlobalInstance): CapacitorInstance =>
   (gbl.Capacitor = createCapacitor(gbl));
 
 class CapacitorException extends Error {
