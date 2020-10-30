@@ -2,8 +2,8 @@ import { initBridge } from './bridge';
 import type {
   CapacitorInstance,
   ExceptionCode,
-  InternalState,
   GlobalInstance,
+  InternalState,
 } from './definitions';
 import { initEvents } from './events';
 import { initLegacyHandlers } from './legacy/legacy-handlers';
@@ -15,7 +15,8 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
   const state: InternalState = {
     platform: 'web',
     isNative: false,
-    plugins: {} as any,
+    plugins: gbl?.Capacitor?.Plugins || ({} as any),
+    serverUrl: gbl.WEBVIEW_SERVER_URL || '/',
   };
 
   const getPlatform = () => state.platform;
@@ -26,7 +27,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     Object.prototype.hasOwnProperty.call(state.plugins, pluginName);
 
   const convertFileSrc = (filePath: string) =>
-    convertFileSrcServerUrl(gbl.WEBVIEW_SERVER_URL, filePath);
+    convertFileSrcServerUrl(state.serverUrl, filePath);
 
   const pluginMethodNoop = (
     _target: any,
@@ -66,7 +67,10 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     pluginMethodNoop,
     withPlugin: noop,
     uuidv4,
+    getServerUrl: () => state.serverUrl,
+    setServerUrl: url => (state.serverUrl = url),
     Exception: CapacitorException,
+    DEBUG: !!gbl?.Capacitor?.DEBUG,
     // values to be set later
     logFromNative: null,
     logToNative: null,
@@ -84,6 +88,9 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
 
   return instance;
 };
+
+export const initGlobal = (gbl: GlobalInstance) =>
+  (gbl.Capacitor = createCapacitor(gbl));
 
 class CapacitorException extends Error {
   constructor(readonly message: string, readonly code: ExceptionCode) {

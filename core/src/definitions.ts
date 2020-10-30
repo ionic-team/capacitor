@@ -208,6 +208,10 @@ export interface Capacitor {
 
   registerPlugin: RegisterPlugin;
 
+  getServerUrl: () => void;
+
+  setServerUrl: (url: string) => void;
+
   uuidv4: () => string;
 
   DEBUG?: boolean;
@@ -290,6 +294,7 @@ export interface InternalState {
   platform: string;
   isNative: boolean;
   plugins: { [pluginName: string]: Plugin };
+  serverUrl: string;
 }
 
 export interface GlobalInstance {
@@ -323,6 +328,7 @@ export interface GlobalInstance {
     };
   };
   dispatchEvent?: any;
+  Capacitor?: Capacitor;
 }
 
 export interface CallData {
