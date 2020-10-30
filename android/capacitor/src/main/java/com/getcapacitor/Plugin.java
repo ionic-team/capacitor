@@ -522,10 +522,10 @@ public class Plugin {
     }
 
     /**
-     * Handle request permissions result. A plugin can override this to handle the result
-     * themselves, or this method will handle the result for our convenient requestPermissions
-     * call.
-     * @deprecated
+     * Handle request permissions result. A plugin using the deprecated {@link NativePlugin}
+     * should override this to handle the result, or this method will handle the result
+     * for our convenient requestPermissions call.
+     * @deprecated in favor of using {@link #onRequestPermissionsResult} in conjunction with {@link CapacitorPlugin}
      *
      * @param requestCode
      * @param permissions
@@ -546,9 +546,9 @@ public class Plugin {
     }
 
     /**
-     * Handle request permissions result. A plugin can override this to handle the result
-     * themselves, or this method will handle the result for our convenient requestPermissions
-     * call.
+     * Handle request permissions result. A plugin using the {@link CapacitorPlugin} annotation
+     * can override this to handle the result, or this method will handle the result for
+     * our convenient requestPermissions call.
      *
      * @param requestCode
      * @param permissions

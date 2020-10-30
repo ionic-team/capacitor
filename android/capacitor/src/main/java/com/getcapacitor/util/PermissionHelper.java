@@ -3,16 +3,33 @@ package com.getcapacitor.util;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * A helper class containing methods for checking the presence of Permissions in the Manifest.
+ * A helper class for checking permissions.
  *
  * @since 3.0.0
  */
 public class PermissionHelper {
+
+    /**
+     * Checks if a list of given permissions are all granted by the user
+     *
+     * @since 3.0.0
+     * @param permissions Permissions to check.
+     * @return True if all permissions are granted, false if at least one is not.
+     */
+    public static boolean hasPermissions(Context context, String[] permissions) {
+        for (String perm : permissions) {
+            if (ActivityCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Check whether the given permission has been defined in the AndroidManifest.xml

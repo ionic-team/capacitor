@@ -20,7 +20,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import com.getcapacitor.util.PermissionHelper;
 import java.io.File;
@@ -263,7 +262,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
         final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
-        if (!hasPermissions(geoPermissions)) {
+        if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
             this.bridge.cordovaInterface.requestPermissions(
                     new CordovaPlugin() {
                         @Override
@@ -334,7 +333,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     private boolean isMediaCaptureSupported() {
         String[] permissions = { Manifest.permission.CAMERA };
-        return hasPermissions(permissions) || !PermissionHelper.hasDefinedPermission(bridge.getContext(), Manifest.permission.CAMERA);
+        return (
+            PermissionHelper.hasPermissions(bridge.getContext(), permissions) ||
+            !PermissionHelper.hasDefinedPermission(bridge.getContext(), Manifest.permission.CAMERA)
+        );
     }
 
     private void showMediaCaptureOrFilePicker(ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams, boolean isVideo) {
@@ -513,14 +515,5 @@ public class BridgeWebChromeClient extends WebChromeClient {
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         return image;
-    }
-
-    private boolean hasPermissions(String[] permissions) {
-        for (String perm : permissions) {
-            if (ActivityCompat.checkSelfPermission(this.bridge.getActivity(), perm) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
     }
 }
