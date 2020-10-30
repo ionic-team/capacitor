@@ -186,7 +186,6 @@ enum BridgeError: Error {
     func exportCoreJS(localUrl: String) {
         do {
             try JSExport.exportCapacitorGlobalJS(userContentController: self.messageHandlerWrapper.contentController, isDebug: isDevMode(), localUrl: localUrl)
-            try JSExport.exportCapacitorJS(userContentController: self.messageHandlerWrapper.contentController)
         } catch {
             CAPBridge.fatalError(error, error)
         }

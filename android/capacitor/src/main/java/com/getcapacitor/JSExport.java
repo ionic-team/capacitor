@@ -18,14 +18,6 @@ public class JSExport {
         return "window.Capacitor = { DEBUG: " + isDebug + " };";
     }
 
-    public static String getCoreJS(Context context) throws JSExportException {
-        try {
-            return getJS(context, "public/native-bridge.js");
-        } catch (IOException ex) {
-            throw new JSExportException("Unable to load native-bridge.js. Capacitor will not function!", ex);
-        }
-    }
-
     private static String getJS(Context context, String fileName) throws IOException {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));

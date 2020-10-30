@@ -599,7 +599,6 @@ public class Bridge {
     private JSInjector getJSInjector() {
         try {
             String globalJS = JSExport.getGlobalJS(context, isDevMode());
-            String coreJS = JSExport.getCoreJS(context);
             String pluginJS = JSExport.getPluginJS(plugins.values());
             String cordovaJS = JSExport.getCordovaJS(context);
             String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
