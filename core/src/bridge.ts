@@ -27,7 +27,11 @@ export const initBridge = (
   if (gbl.androidBridge) {
     // android platform
     postToNative = (data: any) => {
-      gbl.androidBridge.postMessage(JSON.stringify(data));
+      try {
+        gbl.androidBridge.postMessage(JSON.stringify(data));
+      } catch (e) {
+        gbl?.console?.error(e);
+      }
     };
     state.isNative = true;
     state.platform = 'android';
@@ -35,7 +39,11 @@ export const initBridge = (
     // ios platform
     postToNative = (data: any) => {
       data.type = 'message';
-      gbl.webkit.messageHandlers.bridge.postMessage(data);
+      try {
+        gbl.webkit.messageHandlers.bridge.postMessage(data);
+      } catch (e) {
+        gbl?.console?.error(e);
+      }
     };
     state.isNative = true;
     state.platform = 'ios';

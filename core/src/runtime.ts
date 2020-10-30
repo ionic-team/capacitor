@@ -38,17 +38,41 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     );
   };
 
+  const logJs = (msg: string, level: 'error' | 'warn' | 'info' | 'log') => {
+    switch (level) {
+      case 'error':
+        gbl.console.error(msg);
+        break;
+      case 'warn':
+        gbl.console.warn(msg);
+        break;
+      case 'info':
+        gbl.console.info(msg);
+        break;
+      default:
+        gbl.console.log(msg);
+    }
+  };
+
+  const handleError = (e: Error) => gbl.console.error(e);
+
   const instance: CapacitorInstance = {
     convertFileSrc,
     getPlatform,
+    handleError,
     isNativePlatform,
     isPluginAvailable,
-    registerPlugin: null,
-    Plugins: null,
+    logJs,
     pluginMethodNoop,
     withPlugin: noop,
     uuidv4,
     Exception: CapacitorException,
+    // values to be set later
+    logFromNative: null,
+    logToNative: null,
+    handleWindowError: null,
+    registerPlugin: null,
+    Plugins: null,
   };
 
   initPluginRegister(instance, state);

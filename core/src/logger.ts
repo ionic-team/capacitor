@@ -72,24 +72,6 @@ export const initLogger = (
     });
   }
 
-  instance.logJs = (message, level) => {
-    switch (level) {
-      case 'error':
-        gbl.console.error(message);
-        break;
-      case 'warn':
-        gbl.console.warn(message);
-        break;
-      case 'info':
-        gbl.console.info(message);
-        break;
-      default:
-        gbl.console.log(message);
-    }
-  };
-
-  instance.handleError = (e: Error) => gbl.console.error(e);
-
   instance.handleWindowError = (msg, url, lineNo, columnNo, error) => {
     const str = msg.toLowerCase();
     const substring = 'script error';

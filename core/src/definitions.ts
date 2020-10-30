@@ -187,13 +187,13 @@ export interface Capacitor {
     pluginName: PropertyKey,
   ) => void;
 
-  logToNative?: (data: CallData) => void;
+  logToNative: (data: CallData) => void;
 
-  logFromNative?: (results: PluginResult) => void;
+  logFromNative: (results: PluginResult) => void;
 
-  handleError?: (error: Error) => void;
+  handleError: (error: Error) => void;
 
-  handleWindowError?: (
+  handleWindowError: (
     msg: string,
     url: string,
     lineNo: number,
@@ -268,7 +268,7 @@ export interface CapacitorInstance extends Capacitor {
   /**
    * Low-level API used by the native bridge to log messages.
    */
-  logJs?: (message: string, level: string) => void;
+  logJs: (message: string, level: 'error' | 'warn' | 'info' | 'log') => void;
 }
 
 /**
@@ -332,4 +332,7 @@ export interface CallData {
   options: any;
 }
 
-export type Logger = (msg: any, level: string) => void;
+export type Logger = (
+  level: 'debug' | 'error' | 'info' | 'log' | 'trace' | 'warn',
+  msg: any,
+) => void;
