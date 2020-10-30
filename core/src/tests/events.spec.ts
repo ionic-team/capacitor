@@ -1,9 +1,4 @@
-import type {
-  CapacitorInstance,
-  GlobalInstance,
-  Plugin,
-  PluginResultError,
-} from '../definitions';
+import type { CapacitorInstance, GlobalInstance } from '../definitions';
 import { createCapacitor } from '../runtime';
 
 describe('plugin', () => {
@@ -15,7 +10,9 @@ describe('plugin', () => {
       document: {
         createEvent() {
           return {
-            initEvent() {},
+            initEvent() {
+              return true;
+            },
           };
         },
         dispatchEvent() {

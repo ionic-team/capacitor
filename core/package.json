@@ -21,6 +21,7 @@
   },
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
+  "unpkg": "dist/capacitor.js",
   "dependencies": {
     "tslib": "^2.0.3"
   },
@@ -30,6 +31,7 @@
     "jest": "^26.1.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.21.0",
+    "rollup-plugin-terser": "^7.0.2",
     "typescript": "^4.0.5"
   },
   "repository": {
