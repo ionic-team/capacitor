@@ -15,6 +15,7 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
 import java.io.File;
@@ -403,18 +404,27 @@ public class Bridge {
      * @param pluginClass a class inheriting from Plugin
      */
     public void registerPlugin(Class<? extends Plugin> pluginClass) {
-        NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+        String pluginName;
 
+        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            Logger.error("NativePlugin doesn't have the @NativePlugin annotation. Please add it");
-            return;
+            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+
+            if (legacyPluginAnnotation == null) {
+                Logger.error("Plugin doesn't have the @CapacitorPlugin annotation. Please add it");
+                return;
+            }
+
+            pluginName = legacyPluginAnnotation.name();
+        } else {
+            pluginName = pluginAnnotation.name();
         }
 
         String pluginId = pluginClass.getSimpleName();
 
         // Use the supplied name as the id if available
-        if (!pluginAnnotation.name().equals("")) {
-            pluginId = pluginAnnotation.name();
+        if (!pluginName.equals("")) {
+            pluginId = pluginName;
         }
 
         Logger.debug("Registering plugin: " + pluginId);
@@ -425,7 +435,7 @@ public class Bridge {
             Logger.error(
                 "NativePlugin " +
                 pluginClass.getName() +
-                " is invalid. Ensure the @NativePlugin annotation exists on the plugin class and" +
+                " is invalid. Ensure the @CapacitorPlugin annotation exists on the plugin class and" +
                 " the class extends Plugin"
             );
         } catch (PluginLoadException ex) {
@@ -445,19 +455,31 @@ public class Bridge {
      */
     public PluginHandle getPluginWithRequestCode(int requestCode) {
         for (PluginHandle handle : this.plugins.values()) {
-            NativePlugin pluginAnnotation = handle.getPluginAnnotation();
+            int[] requestCodes;
+            int permissionRequestCode;
+
+            CapacitorPlugin pluginAnnotation = handle.getPluginAnnotation();
             if (pluginAnnotation == null) {
-                continue;
+                // Check for legacy plugin annotation, @NativePlugin
+                NativePlugin legacyPluginAnnotation = handle.getLegacyPluginAnnotation();
+                if (legacyPluginAnnotation == null) {
+                    continue;
+                }
+
+                requestCodes = legacyPluginAnnotation.requestCodes();
+                permissionRequestCode = legacyPluginAnnotation.permissionRequestCode();
+            } else {
+                requestCodes = pluginAnnotation.requestCodes();
+                permissionRequestCode = pluginAnnotation.permissionRequestCode();
             }
 
-            int[] requestCodes = pluginAnnotation.requestCodes();
             for (int rc : requestCodes) {
                 if (rc == requestCode) {
                     return handle;
                 }
             }
 
-            if (pluginAnnotation.permissionRequestCode() == requestCode) {
+            if (permissionRequestCode == requestCode) {
                 return handle;
             }
         }
@@ -677,7 +699,6 @@ public class Bridge {
      * @param permissions the permissions requested
      * @param grantResults the set of granted/denied permissions
      */
-
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PluginHandle plugin = getPluginWithRequestCode(requestCode);
 
@@ -691,7 +712,12 @@ public class Bridge {
             return;
         }
 
-        plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (plugin.getPluginAnnotation() != null) {
+            plugin.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        } else {
+            // Call deprecated method if using deprecated NativePlugin annotation
+            plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     /**

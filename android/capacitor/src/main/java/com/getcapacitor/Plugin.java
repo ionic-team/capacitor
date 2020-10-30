@@ -3,17 +3,21 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.util.PermissionHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,6 +35,9 @@ public class Plugin {
     // The key we will use inside of a persisted Bundle for the JSON blob
     // for a plugin call options.
     private static final String BUNDLE_PERSISTED_OPTIONS_JSON_KEY = "_json";
+
+    // The name of the Shared Preferences file for permission use
+    private static final String PERMISSION_PREFS = "PluginPermStates";
 
     // Reference to the Bridge
     protected Bridge bridge;
@@ -161,62 +168,17 @@ public class Plugin {
     }
 
     /**
-     * Given a list of permissions, return a new list with the ones not present in AndroidManifest.xml
-     * @param neededPermissions
+     * Check whether any of the given permissions has been defined in the AndroidManifest.xml
+     * @param permissions
      * @return
      */
-    public String[] getUndefinedPermissions(String[] neededPermissions) {
-        ArrayList<String> undefinedPermissions = new ArrayList<>();
-        String[] requestedPermissions = getManifestPermissions();
-        if (requestedPermissions != null && requestedPermissions.length > 0) {
-            List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-            ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
-            for (String permission : neededPermissions) {
-                if (!requestedPermissionsArrayList.contains(permission)) {
-                    undefinedPermissions.add(permission);
-                }
-            }
-            String[] undefinedPermissionArray = new String[undefinedPermissions.size()];
-            undefinedPermissionArray = undefinedPermissions.toArray(undefinedPermissionArray);
-
-            return undefinedPermissionArray;
-        }
-        return neededPermissions;
-    }
-
-    /**
-     * Check whether the given permission has been defined in the AndroidManifest.xml
-     * @param permission
-     * @return
-     */
-    public boolean hasDefinedPermission(String permission) {
-        boolean hasPermission = false;
-        String[] requestedPermissions = getManifestPermissions();
-        if (requestedPermissions != null && requestedPermissions.length > 0) {
-            List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-            ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
-            if (requestedPermissionsArrayList.contains(permission)) {
-                hasPermission = true;
+    public boolean hasDefinedPermissions(String[] permissions) {
+        for (String permission : permissions) {
+            if (!PermissionHelper.hasDefinedPermission(getContext(), permission)) {
+                return false;
             }
         }
-        return hasPermission;
-    }
-
-    /**
-     * Get the permissions defined in AndroidManifest.xml
-     * @return
-     */
-    private String[] getManifestPermissions() {
-        String[] requestedPermissions = null;
-        try {
-            PackageManager pm = getContext().getPackageManager();
-            PackageInfo packageInfo = pm.getPackageInfo(getAppId(), PackageManager.GET_PERMISSIONS);
-
-            if (packageInfo != null) {
-                requestedPermissions = packageInfo.requestedPermissions;
-            }
-        } catch (Exception ex) {}
-        return requestedPermissions;
+        return true;
     }
 
     /**
@@ -224,9 +186,9 @@ public class Plugin {
      * @param permissions
      * @return
      */
-    public boolean hasDefinedPermissions(String[] permissions) {
-        for (String permission : permissions) {
-            if (!hasDefinedPermission(permission)) {
+    public boolean hasDefinedPermissions(Permission[] permissions) {
+        for (Permission perm : permissions) {
+            if (!PermissionHelper.hasDefinedPermission(getContext(), perm.permission())) {
                 return false;
             }
         }
@@ -238,7 +200,13 @@ public class Plugin {
      * @return
      */
     public boolean hasDefinedRequiredPermissions() {
-        NativePlugin annotation = handle.getPluginAnnotation();
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            // Check for legacy plugin annotation, @NativePlugin
+            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
+            return hasDefinedPermissions(legacyAnnotation.permissions());
+        }
+
         return hasDefinedPermissions(annotation.permissions());
     }
 
@@ -259,13 +227,73 @@ public class Plugin {
      * @return
      */
     public boolean hasRequiredPermissions() {
-        NativePlugin annotation = handle.getPluginAnnotation();
-        for (String perm : annotation.permissions()) {
-            if (!hasPermission(perm)) {
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            // Check for legacy plugin annotation, @NativePlugin
+            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
+            for (String perm : legacyAnnotation.permissions()) {
+                if (!hasPermission(perm)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        for (Permission perm : annotation.permissions()) {
+            if (!hasPermission(perm.permission())) {
                 return false;
             }
         }
+
         return true;
+    }
+
+    /**
+     * Exported plugin call for checking the granted status for each permission
+     * declared on the plugin. This plugin call responds with a mapping of permissions to
+     * the associated granted status.
+     *
+     * @since 3.0.0
+     */
+    @PluginMethod
+    public void checkPermissions(PluginCall pluginCall) {
+        JSObject permissionsResult = getPermissionStates();
+        pluginCall.resolve(permissionsResult);
+    }
+
+    /**
+     * Helper to check all permissions and see the current states of each permission.
+     *
+     * @since 3.0.0
+     * @return A mapping of permissions to the associated granted status.
+     */
+    public JSObject getPermissionStates() {
+        JSObject permissionsResults = new JSObject();
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        for (Permission perm : annotation.permissions()) {
+            String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
+            String permissionStatus = hasPermission(perm.permission()) ? "granted" : "prompt";
+
+            // Check if there is a cached permission state for the "Never ask again" state
+            if (permissionStatus.equals("prompt")) {
+                SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
+                String state = prefs.getString(perm.permission(), null);
+
+                if (state != null) {
+                    permissionStatus = state;
+                }
+            }
+
+            String existingResult = permissionsResults.getString(key);
+
+            // multiple permissions with the same alias must all be true, otherwise all false.
+            if (existingResult == null || existingResult.equals("granted")) {
+                permissionsResults.put(key, permissionStatus);
+            }
+        }
+
+        return permissionsResults;
     }
 
     /**
@@ -278,11 +306,22 @@ public class Plugin {
     }
 
     /**
-     * Request all of the specified permissions in the NativePlugin annotation (if any)
+     * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
      */
     public void pluginRequestAllPermissions() {
-        NativePlugin annotation = handle.getPluginAnnotation();
-        ActivityCompat.requestPermissions(getActivity(), annotation.permissions(), annotation.permissionRequestCode());
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
+            ActivityCompat.requestPermissions(getActivity(), legacyAnnotation.permissions(), legacyAnnotation.permissionRequestCode());
+            return;
+        }
+
+        String[] perms = new String[annotation.permissions().length];
+        for (int i = 0; i < perms.length; i++) {
+            perms[i] = annotation.permissions()[i].permission();
+        }
+
+        ActivityCompat.requestPermissions(getActivity(), perms, annotation.permissionRequestCode());
     }
 
     /**
@@ -428,42 +467,130 @@ public class Plugin {
      * Exported plugin call to request all permissions for this plugin
      * @param call
      */
-    @SuppressWarnings("unused")
     @PluginMethod
     public void requestPermissions(PluginCall call) {
-        // Should be overridden, does nothing by default
-        NativePlugin annotation = this.handle.getPluginAnnotation();
-        String[] perms = annotation.permissions();
+        String[] perms = null;
+        int permissionRequestCode;
 
-        if (perms.length > 0) {
+        // If call was made with a list of permissions to request, save them to be requested
+        //  instead of all permissions
+        JSArray providedPerms = call.getArray("permissions");
+        List<String> providedPermsList = null;
+
+        try {
+            providedPermsList = providedPerms.toList();
+        } catch (JSONException e) {}
+
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            NativePlugin legacyAnnotation = this.handle.getLegacyPluginAnnotation();
+            perms = legacyAnnotation.permissions();
+            permissionRequestCode = legacyAnnotation.permissionRequestCode();
+        } else {
+            // If call was made without any custom permissions, request all from plugin annotation
+            if (providedPermsList == null || providedPermsList.isEmpty()) {
+                perms = new String[annotation.permissions().length];
+                for (int i = 0; i < perms.length; i++) {
+                    perms[i] = annotation.permissions()[i].permission();
+                }
+            } else {
+                Set<String> permsSet = new HashSet<>();
+                for (Permission perm : annotation.permissions()) {
+                    if (providedPermsList.contains(perm.alias()) || providedPermsList.contains(perm.permission())) {
+                        permsSet.add(perm.permission());
+                    }
+                }
+
+                if (permsSet.isEmpty()) {
+                    call.reject("No valid permission or permission alias was requested.");
+                } else {
+                    perms = permsSet.toArray(new String[0]);
+                }
+            }
+
+            permissionRequestCode = annotation.permissionRequestCode();
+        }
+
+        if (perms != null && perms.length > 0) {
             // Save the call so we can return data back once the permission request has completed
             saveCall(call);
 
-            pluginRequestPermissions(perms, annotation.permissionRequestCode());
+            pluginRequestPermissions(perms, permissionRequestCode);
         } else {
             call.resolve();
         }
     }
 
     /**
-     * Handle request permissions result. A plugin can override this to handle the result
-     * themselves, or this method will handle the result for our convenient requestPermissions
-     * call.
+     * Handle request permissions result. A plugin using the deprecated {@link NativePlugin}
+     * should override this to handle the result, or this method will handle the result
+     * for our convenient requestPermissions call.
+     * @deprecated in favor of using {@link #onRequestPermissionsResult} in conjunction with {@link CapacitorPlugin}
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
      */
+    @Deprecated
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (!hasDefinedPermissions(permissions)) {
             StringBuilder builder = new StringBuilder();
             builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-            String[] missing = getUndefinedPermissions(permissions);
+            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
             for (String perm : missing) {
                 builder.append(perm + "\n");
             }
             savedLastCall.reject(builder.toString());
             savedLastCall = null;
         }
+    }
+
+    /**
+     * Handle request permissions result. A plugin using the {@link CapacitorPlugin} annotation
+     * can override this to handle the result, or this method will handle the result for
+     * our convenient requestPermissions call.
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    protected void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        PluginCall savedCall = getSavedCall();
+        if (savedCall == null) {
+            return;
+        }
+
+        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted. If previously denied, remove cached state
+            for (String permission : permissions) {
+                String state = prefs.getString(permission, null);
+
+                if (state != null) {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.remove(permission);
+                    editor.apply();
+                }
+            }
+        } else {
+            for (String permission : permissions) {
+                SharedPreferences.Editor editor = prefs.edit();
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+                    // Permission denied, can prompt again with rationale
+                    editor.putString(permission, "prompt-with-rationale");
+                } else {
+                    // Permission denied permanently, store this state for future reference
+                    editor.putString(permission, "denied");
+                }
+
+                editor.apply();
+            }
+        }
+
+        savedCall.resolve(getPermissionStates());
+        savedCall.release(bridge);
     }
 
     /**

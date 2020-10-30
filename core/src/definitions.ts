@@ -5,12 +5,13 @@ export interface Plugin {
     eventName: string,
     listenerFunc: (...args: any[]) => any,
   ): PluginListenerHandle;
-  requestPermissions?: () => Promise<PermissionsRequestResult>;
 }
 
-export interface PermissionsRequestResult {
-  results: any[];
-}
+export type PermissionState =
+  | 'prompt'
+  | 'prompt-with-rationale'
+  | 'granted'
+  | 'denied';
 
 export interface PluginListenerHandle {
   remove: () => void;

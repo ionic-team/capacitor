@@ -1,17 +1,13 @@
-package com.getcapacitor;
+package com.getcapacitor.annotation;
 
-import com.getcapacitor.annotation.CapacitorPlugin;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
  * Base annotation for all Plugins
- * @deprecated
- * <p> Use {@link CapacitorPlugin} instead
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface NativePlugin {
+public @interface CapacitorPlugin {
     /**
      * Request codes this plugin uses and responds to, in order to tie
      * Android events back the plugin to handle
@@ -22,12 +18,12 @@ public @interface NativePlugin {
      * Permissions this plugin needs, in order to make permission requests
      * easy if the plugin only needs basic permission prompting
      */
-    String[] permissions() default {};
+    Permission[] permissions() default {};
 
     /**
      * The request code to use when automatically requesting permissions
      */
-    int permissionRequestCode() default PluginRequestCodes.DEFAULT_CAPACITOR_REQUEST_PERMISSIONS;
+    int permissionRequestCode() default 9000;
 
     /**
      * A custom name for the plugin, otherwise uses the
