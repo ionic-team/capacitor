@@ -4,10 +4,11 @@ import { dirname, join, resolve } from 'path';
 
 import { runCommand } from './common';
 import type {
+  AndroidConfig,
+  AppConfig,
+  CLIConfig,
   Config,
   ExternalConfig,
-  CLIConfig,
-  AndroidConfig,
   IOSConfig,
   PackageJson,
   WebConfig,
@@ -21,18 +22,16 @@ const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
 export async function loadConfig(): Promise<Config> {
   const appRootDir = process.cwd();
   const cliRootDir = dirname(__dirname);
-  const extConfig = await loadExternalConfig(
-    resolve(appRootDir, EXTERNAL_CONFIG_FILE),
-  );
+  const conf = await loadExtConfig(appRootDir);
 
-  const appId = extConfig.appId ?? '';
-  const appName = extConfig.appName ?? '';
-  const webDir = extConfig.webDir ?? 'www';
+  const appId = conf.extConfig.appId ?? '';
+  const appName = conf.extConfig.appName ?? '';
+  const webDir = conf.extConfig.webDir ?? 'www';
   const cli = await loadCLIConfig(cliRootDir);
 
-  const config = {
-    android: await loadAndroidConfig(appRootDir, extConfig, cli),
-    ios: await loadIOSConfig(appRootDir, extConfig, cli),
+  const config: Config = {
+    android: await loadAndroidConfig(appRootDir, conf.extConfig, cli),
+    ios: await loadIOSConfig(appRootDir, conf.extConfig, cli),
     web: await loadWebConfig(appRootDir, webDir),
     cli,
     app: {
@@ -45,16 +44,28 @@ export async function loadConfig(): Promise<Config> {
         name: appName,
         version: '1.0.0',
       },
-      extConfigName: EXTERNAL_CONFIG_FILE,
-      extConfigFilePath: resolve(appRootDir, EXTERNAL_CONFIG_FILE),
-      extConfig,
-      bundledWebRuntime: extConfig.bundledWebRuntime ?? false,
+      ...conf,
+      bundledWebRuntime: conf.extConfig.bundledWebRuntime ?? false,
     },
   };
 
   debug('config: %O', config);
 
   return config;
+}
+
+type ExtConfigPairs = Pick<
+  AppConfig,
+  'extConfigType' | 'extConfigName' | 'extConfigFilePath' | 'extConfig'
+>;
+
+async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
+  return {
+    extConfigType: 'json',
+    extConfigName: EXTERNAL_CONFIG_FILE,
+    extConfigFilePath: resolve(rootDir, EXTERNAL_CONFIG_FILE),
+    extConfig: await loadExternalConfig(resolve(rootDir, EXTERNAL_CONFIG_FILE)),
+  };
 }
 
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {

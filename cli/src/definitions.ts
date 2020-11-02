@@ -73,6 +73,7 @@ export interface AppConfig {
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly package: PackageJson;
+  readonly extConfigType: 'json' | 'js';
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
