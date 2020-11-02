@@ -10,7 +10,6 @@ import WebKit
     var isDevEnvironment: Bool { get }
     @available(iOS 12.0, *)
     var userInterfaceStyle: UIUserInterfaceStyle { get }
-    var notificationDelegationHandler: CAPUNUserNotificationCenterDelegate { get }
     var statusBarVisible: Bool { get set }
     var statusBarStyle: UIStatusBarStyle { get set }
     var statusBarAnimation: UIStatusBarAnimation { get set }

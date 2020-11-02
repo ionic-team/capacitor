@@ -102,8 +102,6 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // Background dispatch queue for plugin calls
     var dispatchQueue = DispatchQueue(label: "bridge")
-
-    public var notificationDelegationHandler: CAPUNUserNotificationCenterDelegate
     
     // MARK: - CAPBridgeProtocol: Deprecated
 
@@ -172,14 +170,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
         self.bridgeDelegate = bridgeDelegate
         self.messageHandlerWrapper = messageHandlerWrapper
-        self.notificationDelegationHandler = CAPUNUserNotificationCenterDelegate()
         self.config = config
         self.scheme = scheme
 
         super.init()
 
         self.messageHandlerWrapper.bridge = self
-        self.notificationDelegationHandler.bridge = self
         localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
         exportCoreJS(localUrl: localUrl!)
         registerPlugins()
