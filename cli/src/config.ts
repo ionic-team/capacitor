@@ -30,7 +30,7 @@ export async function loadConfig(): Promise<Config> {
   const webDir = extConfig.webDir ?? 'www';
   const cli = await loadCLIConfig(cliRootDir);
 
-  return {
+  const config = {
     android: await loadAndroidConfig(appRootDir, extConfig, cli),
     ios: await loadIOSConfig(appRootDir, extConfig, cli),
     web: await loadWebConfig(appRootDir, webDir),
@@ -51,6 +51,10 @@ export async function loadConfig(): Promise<Config> {
       bundledWebRuntime: extConfig.bundledWebRuntime ?? false,
     },
   };
+
+  debug('config: %O', config);
+
+  return config;
 }
 
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
@@ -195,8 +199,6 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
     case OS.Linux:
       return '/usr/local/android-studio/bin/studio.sh';
   }
-
-  debug('No Android Studio path could be determined.');
 
   return '';
 }
