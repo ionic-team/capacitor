@@ -27,7 +27,7 @@ import org.json.JSONObject;
  * plugin permissions, tracking lifecycle events, and more.
  *
  * You should inherit from this class when creating new plugins, along with
- * adding the {@link NativePlugin} annotation to add additional required
+ * adding the {@link CapacitorPlugin} annotation to add additional required
  * metadata about the Plugin
  */
 public class Plugin {
@@ -101,7 +101,7 @@ public class Plugin {
     /**
      * Set the wrapper {@link PluginHandle} instance for this plugin that
      * contains additional metadata about the Plugin instance (such
-     * as indexed methods for reflection, and {@link NativePlugin} annotation data).
+     * as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
      * @param pluginHandle
      */
     public void setPluginHandle(PluginHandle pluginHandle) {
@@ -112,7 +112,7 @@ public class Plugin {
      * Return the wrapper {@link PluginHandle} for this plugin.
      *
      * This wrapper contains additional metadata about the plugin instance,
-     * such as indexed methods for reflection, and {@link NativePlugin} annotation data).
+     * such as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
      * @return
      */
     public PluginHandle getPluginHandle() {
@@ -220,7 +220,7 @@ public class Plugin {
     }
 
     /**
-     * If the {@link NativePlugin} annotation specified a set of permissions,
+     * If the {@link CapacitorPlugin} annotation specified a set of permissions,
      * this method checks if each is granted. Note: if you are okay
      * with a limited subset of the permissions being granted, check
      * each one individually instead with hasPermission
