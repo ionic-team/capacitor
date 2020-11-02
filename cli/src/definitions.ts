@@ -85,6 +85,7 @@ export interface AppConfig {
 }
 
 export interface AndroidConfig extends PlatformConfig {
+  readonly studioPath: string;
   readonly minVersion: string;
   readonly webDir: string;
   readonly webDirAbs: string;
@@ -107,8 +108,6 @@ export interface IOSConfig extends PlatformConfig {
 export type WebConfig = PlatformConfig;
 
 export interface Config {
-  readonly windows: WindowsConfig;
-  readonly linux: LinuxConfig;
   readonly android: AndroidConfig;
   readonly ios: IOSConfig;
   readonly web: WebConfig;

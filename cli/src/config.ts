@@ -1,6 +1,8 @@
-import { readJSON } from 'fs-extra';
+import { pathExists, readJSON } from '@ionic/utils-fs';
+import Debug from 'debug';
 import { dirname, join, resolve } from 'path';
 
+import { runCommand } from './common';
 import type {
   Config,
   ExternalConfig,
@@ -11,6 +13,8 @@ import type {
   WebConfig,
 } from './definitions';
 import { OS } from './definitions';
+
+const debug = Debug('capacitor:config');
 
 export const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
 
@@ -27,18 +31,8 @@ export async function loadConfig(): Promise<Config> {
   const cli = await loadCLIConfig(cliRootDir);
 
   return {
-    windows: {
-      androidStudioPath:
-        extConfig.windowsAndroidStudioPath ??
-        'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe',
-    },
-    linux: {
-      androidStudioPath:
-        extConfig.linuxAndroidStudioPath ??
-        '/usr/local/android-studio/bin/studio.sh',
-    },
-    android: await loadAndroidConfig(appRootDir, extConfig, cli.assetsDir),
-    ios: await loadIOSConfig(appRootDir, extConfig, cli.assetsDir),
+    android: await loadAndroidConfig(appRootDir, extConfig, cli),
+    ios: await loadIOSConfig(appRootDir, extConfig, cli),
     web: await loadWebConfig(appRootDir, webDir),
     cli,
     app: {
@@ -74,7 +68,7 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
 async function loadAndroidConfig(
   rootDir: string,
   extConfig: ExternalConfig,
-  assetDir: string,
+  cliConfig: CLIConfig,
 ): Promise<AndroidConfig> {
   const name = 'android';
   const platformDir = extConfig.android?.path ?? 'android';
@@ -85,10 +79,12 @@ async function loadAndroidConfig(
 
   const templateName = 'android-template';
   const pluginsFolderName = 'capacitor-cordova-android-plugins';
+  const studioPath = await determineAndroidStudioPath(cliConfig.os);
 
   return {
     name,
     minVersion: '21',
+    studioPath,
     platformDir,
     platformDirAbs,
     webDir,
@@ -100,8 +96,8 @@ async function loadAndroidConfig(
     assets: {
       templateName,
       pluginsFolderName,
-      templateDir: resolve(assetDir, templateName),
-      pluginsDir: resolve(assetDir, pluginsFolderName),
+      templateDir: resolve(cliConfig.assetsDir, templateName),
+      pluginsDir: resolve(cliConfig.assetsDir, pluginsFolderName),
     },
   };
 }
@@ -109,7 +105,7 @@ async function loadAndroidConfig(
 async function loadIOSConfig(
   rootDir: string,
   extConfig: ExternalConfig,
-  assetDir: string,
+  cliConfig: CLIConfig,
 ): Promise<IOSConfig> {
   const name = 'ios';
   const platformDir = extConfig.ios?.path ?? 'ios';
@@ -131,8 +127,8 @@ async function loadIOSConfig(
     assets: {
       templateName,
       pluginsFolderName,
-      templateDir: resolve(assetDir, templateName),
-      pluginsDir: resolve(assetDir, pluginsFolderName),
+      templateDir: resolve(cliConfig.assetsDir, templateName),
+      pluginsDir: resolve(cliConfig.assetsDir, pluginsFolderName),
     },
   };
 }
@@ -162,6 +158,47 @@ function determineOS(os: NodeJS.Platform): OS {
   }
 
   return OS.Unknown;
+}
+
+async function determineAndroidStudioPath(os: OS): Promise<string> {
+  if (process.env.STUDIO_PATH) {
+    return process.env.STUDIO_PATH;
+  }
+
+  switch (os) {
+    case OS.Mac:
+      return '/Applications/Android Studio.app';
+    case OS.Windows: {
+      let p = 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe';
+
+      try {
+        if (!(await pathExists(p))) {
+          let commandResult = await runCommand('REG', [
+            'QUERY',
+            'HKEY_LOCAL_MACHINE\\SOFTWARE\\Android Studio',
+            '/v',
+            'Path',
+          ]);
+          commandResult = commandResult.replace(/(\r\n|\n|\r)/gm, '');
+          const i = commandResult.indexOf('REG_SZ');
+          if (i > 0) {
+            p = commandResult.substring(i + 6).trim() + '\\bin\\studio64.exe';
+          }
+        }
+      } catch (e) {
+        debug(`Error checking registry for Android Studio path: %O`, e);
+        break;
+      }
+
+      return p;
+    }
+    case OS.Linux:
+      return '/usr/local/android-studio/bin/studio.sh';
+  }
+
+  debug('No Android Studio path could be determined.');
+
+  return '';
 }
 
 async function loadExternalConfig(p: string): Promise<ExternalConfig> {
