@@ -16,7 +16,7 @@ import { OS } from './definitions';
 
 const debug = Debug('capacitor:config');
 
-export const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
+const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
 
 export async function loadConfig(): Promise<Config> {
   const appRootDir = process.cwd();

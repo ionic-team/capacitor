@@ -34,7 +34,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
       `Please create it and make sure it has an ${c.strong(
         'index.html',
       )} file. You can change the path of this directory in ${c.strong(
-        'capacitor.config.json',
+        config.app.extConfigName,
       )} (${c.input(
         'webDir',
       )} option). You may need to compile the web assets for your app (typically ${c.input(
@@ -87,7 +87,7 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appId) {
     return (
       `Missing ${c.input('appId')} for new platform.\n` +
-      `Please add it in capacitor.config.json or run ${c.input(
+      `Please add it in ${config.app.extConfigName} or run ${c.input(
         'npx cap init',
       )}.`
     );
@@ -95,7 +95,7 @@ export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appName) {
     return (
       `Missing ${c.input('appName')} for new platform.\n` +
-      `Please add it in capacitor.config.json or run ${c.input(
+      `Please add it in ${config.app.extConfigName} or run ${c.input(
         'npx cap init',
       )}.`
     );

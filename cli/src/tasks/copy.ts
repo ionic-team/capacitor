@@ -123,9 +123,9 @@ async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
   }
 
   await runTask(
-    `Copying ${c.strong('capacitor.config.json')} to ${nativeRelDir}`,
+    `Copying ${c.strong(config.app.extConfigName)} to ${nativeRelDir}`,
     async () => {
-      return fsCopy(configPath, join(nativeAbsDir, 'capacitor.config.json'));
+      return fsCopy(configPath, join(nativeAbsDir, config.app.extConfigName));
     },
   );
 }
