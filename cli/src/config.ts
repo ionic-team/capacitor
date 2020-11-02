@@ -10,14 +10,12 @@ import type {
   Config,
   ExternalConfig,
   IOSConfig,
-  PackageJson,
   WebConfig,
 } from './definitions';
 import { OS } from './definitions';
+import { tryFn } from './util/fn';
 
 const debug = Debug('capacitor:config');
-
-const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
 
 export async function loadConfig(): Promise<Config> {
   const appRootDir = process.cwd();
@@ -40,7 +38,7 @@ export async function loadConfig(): Promise<Config> {
       appName,
       webDir,
       webDirAbs: resolve(appRootDir, webDir),
-      package: (await readPackageJSON(resolve(appRootDir, 'package.json'))) ?? {
+      package: (await tryFn(readJSON, resolve(appRootDir, 'package.json'))) ?? {
         name: appName,
         version: '1.0.0',
       },
@@ -60,11 +58,28 @@ type ExtConfigPairs = Pick<
 >;
 
 async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
+  try {
+    const extConfigName = 'capacitor.config.js';
+    const extConfigFilePath = resolve(rootDir, extConfigName);
+
+    return {
+      extConfigType: 'js',
+      extConfigName,
+      extConfigFilePath: extConfigFilePath,
+      extConfig: require(extConfigFilePath),
+    };
+  } catch {
+    // ignore
+  }
+
+  const extConfigName = 'capacitor.config.json';
+  const extConfigFilePath = resolve(rootDir, extConfigName);
+
   return {
     extConfigType: 'json',
-    extConfigName: EXTERNAL_CONFIG_FILE,
-    extConfigFilePath: resolve(rootDir, EXTERNAL_CONFIG_FILE),
-    extConfig: await loadExternalConfig(resolve(rootDir, EXTERNAL_CONFIG_FILE)),
+    extConfigName,
+    extConfigFilePath: extConfigFilePath,
+    extConfig: (await tryFn(readJSON, extConfigFilePath)) ?? {},
   };
 }
 
@@ -212,20 +227,4 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   }
 
   return '';
-}
-
-async function loadExternalConfig(p: string): Promise<ExternalConfig> {
-  try {
-    return await readJSON(p);
-  } catch (e) {
-    return {};
-  }
-}
-
-async function readPackageJSON(p: string): Promise<PackageJson | null> {
-  try {
-    return await readJSON(p);
-  } catch (e) {
-    return null;
-  }
 }
