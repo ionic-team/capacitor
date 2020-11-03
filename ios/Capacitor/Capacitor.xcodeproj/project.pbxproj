@@ -41,7 +41,6 @@
 		62959B312524DA7800A3D7F1 /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFF2524DA7700A3D7F1 /* JS.swift */; };
 		62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B012524DA7700A3D7F1 /* CAPPlugin.m */; };
 		62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */; };
-		62959B372524DA7800A3D7F1 /* CAPConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B052524DA7700A3D7F1 /* CAPConfig.swift */; };
 		62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B062524DA7700A3D7F1 /* CAPPluginCall.m */; };
 		62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B072524DA7700A3D7F1 /* CapacitorExtension.swift */; };
 		62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B082524DA7700A3D7F1 /* CAPLog.swift */; };
@@ -152,7 +151,6 @@
 		62959AFF2524DA7700A3D7F1 /* JS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		62959B012524DA7700A3D7F1 /* CAPPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPlugin.m; sourceTree = "<group>"; };
 		62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeViewController.swift; sourceTree = "<group>"; };
-		62959B052524DA7700A3D7F1 /* CAPConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPConfig.swift; sourceTree = "<group>"; };
 		62959B062524DA7700A3D7F1 /* CAPPluginCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPluginCall.m; sourceTree = "<group>"; };
 		62959B072524DA7700A3D7F1 /* CapacitorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorExtension.swift; sourceTree = "<group>"; };
 		62959B082524DA7700A3D7F1 /* CAPLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPLog.swift; sourceTree = "<group>"; };
@@ -287,7 +285,6 @@
 				621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */,
 				62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */,
 				62959AEA2524DA7700A3D7F1 /* Plugins */,
-				62959B052524DA7700A3D7F1 /* CAPConfig.swift */,
 				623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */,
 				623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */,
 				623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */,
@@ -297,7 +294,6 @@
 				62959B082524DA7700A3D7F1 /* CAPLog.swift */,
 				62959AE72524DA7700A3D7F1 /* CAPFile.swift */,
 				62959B0B2524DA7700A3D7F1 /* CAPMessageHandlerWrapper.swift */,
-				62959B022524DA7700A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift */,
 				62959B0D2524DA7700A3D7F1 /* CAPAssetHandler.swift */,
 				62959B0E2524DA7700A3D7F1 /* TmpViewController.swift */,
 				62959B102524DA7700A3D7F1 /* DocLinks.swift */,
@@ -520,7 +516,6 @@
 				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,
 				621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */,
 				62959B402524DA7800A3D7F1 /* TmpViewController.swift in Sources */,
-				62959B372524DA7800A3D7F1 /* CAPConfig.swift in Sources */,
 				621ECCD6254205BD00D3D615 /* CAPBridgeProtocol.swift in Sources */,
 				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
 				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
