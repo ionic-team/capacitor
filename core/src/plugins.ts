@@ -6,6 +6,7 @@ import type {
   PluginImplementations,
   PluginListenerHandle,
 } from './definitions';
+import { NativePlugin } from './definitions';
 import { noop } from './util';
 
 export const initPluginProxy = (
@@ -53,6 +54,11 @@ export const initPluginRegister = (
     pluginName: string,
     implementations: PluginImplementations,
   ): any => {
+    if (implementations == null) {
+      throw new instance.Exception(
+        `Plugin implementations missing for ${pluginName}`,
+      );
+    }
     const plugin = createPlugin(instance, state, pluginName, implementations);
     state.plugins[pluginName] = plugin;
     return plugin;
@@ -95,14 +101,39 @@ const createPlugin = (
           };
         }
 
-        const impl = implementations[state.platform];
-        if (impl) {
-          if (typeof impl === 'function') {
+        const pltImplementation = implementations[state.platform];
+        if (pltImplementation != null) {
+          if (pltImplementation === NativePlugin) {
+            // using NativePlugin symbol to identify that the
+            // native build will place the JS methods on the global
+            // Capacitor.Plugins.PLUGINNAME.method();
+            const nativePluginImpl = instance.Plugins[pluginName];
+            if (nativePluginImpl == null) {
+              throw new instance.Exception(
+                `"${pluginName}" "${state.platform}" plugin implementation missing`,
+              );
+            }
+
+            if (typeof (nativePluginImpl as any)[prop] === 'function') {
+              return (...args: any[]) => {
+                return (nativePluginImpl as any)[prop].apply(
+                  nativePluginImpl,
+                  args,
+                );
+              };
+            }
+
+            throw new instance.Exception(
+              `"${pluginName}" "${state.platform}" plugin implementation missing`,
+            );
+          }
+
+          if (typeof pltImplementation === 'function') {
             // implementation loader fn returning a promise
             // probably something like () => import('./web.js')
             return (...args: any[]) => {
               // begin lazy load the platform's implementation module
-              return impl().then((loadedImpl: any) => {
+              return pltImplementation().then((loadedImpl: any) => {
                 // platform implementation now loaded
                 // replace the implementation loader fn w/ the loaded module
                 implementations[state.platform] = loadedImpl;
@@ -118,16 +149,20 @@ const createPlugin = (
             };
           }
 
-          // platform implementation already loaded and module ready to go
-          return (...args: any[]) => {
-            if (typeof (impl as any)[prop] === 'function') {
-              // call the plugin method, Plugin.method(args)
-              return (impl as any)[prop].apply(impl, args);
-            }
-            throw new instance.Exception(
-              `"${pluginName}" plugin implementation missing "${prop as any}"`,
-            );
-          };
+          if (typeof (pltImplementation as any)[prop] === 'function') {
+            // call the plugin method, Plugin.method(args)
+            // platform implementation already loaded and module ready to go
+            return (...args: any[]) => {
+              return (pltImplementation as any)[prop].apply(
+                pltImplementation,
+                args,
+              );
+            };
+          }
+
+          throw new instance.Exception(
+            `"${pluginName}" plugin implementation missing "${prop as any}"`,
+          );
         }
 
         throw new instance.Exception(

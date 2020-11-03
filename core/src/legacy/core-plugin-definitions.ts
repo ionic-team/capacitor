@@ -1,6 +1,9 @@
 /* eslint-disable */
 import { Plugin } from '../definitions';
 
+/**
+ * @deprecated
+ */
 export interface PluginRegistry {
   SplashScreen: SplashScreenPlugin;
   WebView: WebViewPlugin;

@@ -16,7 +16,8 @@ const Capacitor = initGlobal(
 );
 
 /**
- * @deprecated Please import the plugin in directly instead.
+ * @deprecated Provided for backwards compatibility for Capacitor v2 plugins.
+ * Capacitor v3 plugins should import the plugin directly.
  */
 const Plugins: PluginRegistry = Capacitor.Plugins as any;
 

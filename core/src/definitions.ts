@@ -285,8 +285,11 @@ export interface CapacitorInstance extends Capacitor {
 export type PluginImplementations = {
   [platform: string]:
     | (() => Promise<PlatformImplementation>)
-    | PlatformImplementation;
+    | PlatformImplementation
+    | typeof NativePlugin;
 };
+
+export const NativePlugin = Symbol('NativePlugin');
 
 export interface PlatformImplementation {}
 

@@ -20,6 +20,8 @@ export type {
   WebViewPlugin,
 } from './legacy/core-plugin-definitions';
 
+export { NativePlugin } from './plugins';
+
 export { Capacitor, Plugins, registerPlugin } from './global';
 
 export { mergeWebPlugin, registerWebPlugin } from './web/web-plugins';
