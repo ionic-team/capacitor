@@ -36,7 +36,7 @@ export async function run(): Promise<void> {
 
   program
     .command('init [appName] [appId]')
-    .description(`create a Capacitor configuration file`)
+    .description(`create a ${c.strong('capacitor.config.json')} file`)
     .option(
       '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
