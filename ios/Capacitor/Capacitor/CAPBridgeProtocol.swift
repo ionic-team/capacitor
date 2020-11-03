@@ -4,7 +4,7 @@ import WebKit
 @objc public protocol CAPBridgeProtocol: NSObjectProtocol {
     // MARK: Environment Properties
     var viewController: UIViewController? { get }
-    var config: CAPConfig { get }
+    var config: InstanceConfiguration { get }
     var webView: WKWebView? { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
