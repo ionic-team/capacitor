@@ -1,22 +1,22 @@
 export interface CapacitorConfig {
-  readonly appId?: string;
-  readonly appName?: string;
-  readonly webDir?: string;
-  readonly bundledWebRuntime?: boolean;
-  readonly android?: {
-    readonly path?: string;
+  appId?: string;
+  appName?: string;
+  webDir?: string;
+  bundledWebRuntime?: boolean;
+  android?: {
+    path?: string;
   };
-  readonly ios?: {
-    readonly path?: string;
-    readonly cordovaSwiftVersion?: string;
-    readonly minVersion?: string;
-    readonly cordovaLinkerFlags?: string[];
+  ios?: {
+    path?: string;
+    cordovaSwiftVersion?: string;
+    minVersion?: string;
+    cordovaLinkerFlags?: string[];
   };
-  readonly cordova?: {
-    readonly preferences?: { readonly [key: string]: string | undefined };
+  cordova?: {
+    preferences?: { [key: string]: string | undefined };
   };
-  readonly plugins?: { readonly [key: string]: any };
-  readonly server?: {
-    readonly cleartext?: boolean;
+  plugins?: { [key: string]: any };
+  server?: {
+    cleartext?: boolean;
   };
 }

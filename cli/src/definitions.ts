@@ -1,6 +1,8 @@
 import type { CapacitorConfig } from './declarations';
 
-export type ExternalConfig = CapacitorConfig;
+type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
+
+export type ExternalConfig = DeepReadonly<CapacitorConfig>;
 
 export const enum OS {
   Unknown = 'unknown',
