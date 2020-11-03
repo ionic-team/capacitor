@@ -24,6 +24,16 @@ export async function initCommand(
     if (!checkInteractive(name, id)) {
       return;
     }
+
+    if (config.app.extConfigType !== 'json') {
+      logFatal(
+        `Cannot run ${c.input(
+          'init',
+        )} for a project using a non-JSON configuration file.\n` +
+          `Delete ${c.strong(config.app.extConfigName)} and try again.`,
+      );
+    }
+
     const appName = await getName(config, name);
     const appId = await getAppId(config, id);
     const webDir = isInteractive()
