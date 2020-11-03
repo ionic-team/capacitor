@@ -2,7 +2,8 @@ import { pathExists, readJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
 import { dirname, join, resolve } from 'path';
 
-import { runCommand } from './common';
+import c from './colors';
+import { logFatal, resolveNode, runCommand } from './common';
 import type {
   AndroidConfig,
   AppConfig,
@@ -14,6 +15,7 @@ import type {
 } from './definitions';
 import { OS } from './definitions';
 import { tryFn } from './util/fn';
+import { requireTS } from './util/node';
 
 const debug = Debug('capacitor:config');
 
@@ -57,19 +59,68 @@ type ExtConfigPairs = Pick<
   'extConfigType' | 'extConfigName' | 'extConfigFilePath' | 'extConfig'
 >;
 
-async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
+async function loadExtConfigTS(
+  rootDir: string,
+  extConfigName: string,
+  extConfigFilePath: string,
+): Promise<ExtConfigPairs> {
   try {
-    const extConfigName = 'capacitor.config.js';
-    const extConfigFilePath = resolve(rootDir, extConfigName);
+    const tsPath = resolveNode(rootDir, 'typescript');
 
+    if (!tsPath) {
+      logFatal(
+        'Could not find installation of TypeScript.\n' +
+          `To use ${c.strong(
+            extConfigName,
+          )} files, you must install TypeScript in your project, e.g. w/ ${c.input(
+            'npm install -D typescript',
+          )}`,
+      );
+    }
+
+    const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
+
+    return {
+      extConfigType: 'ts',
+      extConfigName,
+      extConfigFilePath: extConfigFilePath,
+      extConfig: requireTS(ts, extConfigFilePath) as any,
+    };
+  } catch (e) {
+    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+  }
+}
+
+async function loadExtConfigJS(
+  rootDir: string,
+  extConfigName: string,
+  extConfigFilePath: string,
+): Promise<ExtConfigPairs> {
+  try {
     return {
       extConfigType: 'js',
       extConfigName,
       extConfigFilePath: extConfigFilePath,
       extConfig: require(extConfigFilePath),
     };
-  } catch {
-    // ignore
+  } catch (e) {
+    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+  }
+}
+
+async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
+  const extConfigNameTS = 'capacitor.config.ts';
+  const extConfigFilePathTS = resolve(rootDir, extConfigNameTS);
+
+  if (await pathExists(extConfigFilePathTS)) {
+    return loadExtConfigTS(rootDir, extConfigNameTS, extConfigFilePathTS);
+  }
+
+  const extConfigNameJS = 'capacitor.config.js';
+  const extConfigFilePathJS = resolve(rootDir, extConfigNameJS);
+
+  if (await pathExists(extConfigFilePathJS)) {
+    return loadExtConfigJS(rootDir, extConfigNameJS, extConfigFilePathJS);
   }
 
   const extConfigName = 'capacitor.config.json';
