@@ -23,7 +23,7 @@
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
   "unpkg": "dist/capacitor.js",
-  "types": "dist/esm/index.d.ts",
+  "typings": "dist/esm/index.d.ts",
   "dependencies": {
     "tslib": "^2.0.3"
   },
