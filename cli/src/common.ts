@@ -10,7 +10,7 @@ import { setTimeout } from 'timers';
 import xml2js from 'xml2js';
 
 import c from './colors';
-import type { Config, PackageJson, ExternalConfig } from './definitions';
+import type { Config, ExternalConfig, PackageJson } from './definitions';
 import { output, logger } from './log';
 
 export type CheckFunction = () => Promise<string | null>;
