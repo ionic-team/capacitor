@@ -26,7 +26,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, copy, nullable) NSString *appendedUserAgentString;
 @property (nonatomic, copy, nullable) NSString *overridenUserAgentString;
 @property (nonatomic, retain, nullable) UIColor *backgroundColor;
-@property (nonatomic, copy, nonnull) NSArray *allowedNavigationHostnames;
+@property (nonatomic, copy, nonnull) NSArray<NSString*> *allowedNavigationHostnames;
 @property (nonatomic, copy, nullable) NSString *urlScheme;
 @property (nonatomic, copy, nullable) NSString *urlHostname;
 @property (nonatomic, copy, nullable) NSString *serverURL;
