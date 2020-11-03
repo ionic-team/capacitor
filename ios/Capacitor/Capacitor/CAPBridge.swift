@@ -6,11 +6,11 @@ import Foundation
 // swiftlint:enable line_length
 @objc public class CAPBridge: NSObject {
     @objc public static let statusBarTappedNotification = Notification(name: .capacitorStatusBarTapped)
-    
+
     public static func getLastUrl() -> URL? {
         return ApplicationDelegateProxy.shared.lastURL
     }
-    
+
     public static func handleOpenUrl(_ url: URL, _ options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
         return ApplicationDelegateProxy.shared.application(UIApplication.shared, open: url, options: options)
     }

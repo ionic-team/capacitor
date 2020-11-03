@@ -26,7 +26,7 @@ extension Notification.Name {
  Deprecated, will be removed
  */
 @objc public enum CAPNotifications: Int {
-    // swiftlint:disable identifier_name    
+    // swiftlint:disable identifier_name
     @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorOpenURL'")
     case URLOpen
     @available(*, deprecated, message: "renamed to 'Notification.Name.capacitorOpenUniversalLink'")
