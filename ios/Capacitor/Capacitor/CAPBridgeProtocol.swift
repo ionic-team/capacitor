@@ -65,11 +65,11 @@ import WebKit
  Extensions to Obj-C protocols are not exposed to Obj-C code because of limitations in the runtime. Therefore these methods
  are implicitly Swift-only.
 
- The methods marked as deprecated are here because they can be declared without interfering with the synthesized Obj-C setters
+ The deprecated methods are declared here because they can be defined without colliding with the synthesized Obj-C setters
  for the respective properties (e.g. `setStatusBarVisible:` for 'statusBarVisible`).
  */
 extension CAPBridgeProtocol {
-    // varidic parameters cannot be exposed to Obj-C
+    // variadic parameters cannot be exposed to Obj-C
     func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
         let output = items.map { String(describing: $0) }.joined(separator: " ")
         print(message: output, for: plugin)
@@ -99,7 +99,6 @@ extension CAPBridgeProtocol {
 /*
  Error(s) potentially exported by the bridge.
  */
-
 public enum CapacitorBridgeError: Error {
     case errorExportingCoreJS
 }
