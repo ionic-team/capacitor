@@ -7,10 +7,15 @@ import type {
   PluginImplementations,
   PluginListenerHandle,
 } from './definitions';
-import { ExceptionCode, NativePlugin } from './definitions';
 import { initEvents } from './events';
 import { initLegacyHandlers } from './legacy/legacy-handlers';
-import { convertFileSrcServerUrl, noop, uuidv4 } from './util';
+import {
+  convertFileSrcServerUrl,
+  ExceptionCode,
+  NativePlugin,
+  noop,
+  uuidv4,
+} from './util';
 import { initVendor } from './vendor';
 
 export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {

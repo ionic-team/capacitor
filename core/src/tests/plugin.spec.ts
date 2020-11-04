@@ -4,8 +4,8 @@ import type {
   Plugin,
   PluginResultError,
 } from '../definitions';
-import { NativePlugin } from '../definitions';
 import { createCapacitor } from '../runtime';
+import { NativePlugin } from '../util';
 
 describe('plugin', () => {
   let instance: CapacitorInstance;

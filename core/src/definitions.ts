@@ -1,7 +1,6 @@
 /* eslint-disable */
-import type { PluginRegistry } from './legacy/core-plugin-definitions';
-
-export { PluginRegistry };
+import type { PluginRegistry } from './legacy/legacy-definitions';
+import type { ExceptionCode, NativePlugin } from './util';
 
 export interface Plugin {
   addListener(
@@ -59,25 +58,6 @@ export interface PluginResult {
 export interface PluginConfig {
   id: string;
   name: string;
-}
-
-export const enum ExceptionCode {
-  /**
-   * API is not implemented.
-   *
-   * This usually means the API can't be used because it is not implemented for
-   * the current platform.
-   */
-  Unimplemented = 'UNIMPLEMENTED',
-
-  /**
-   * API is not available.
-   *
-   * This means the API can't be used right now because:
-   *   - it is currently missing a prerequisite, such as network connectivity
-   *   - it requires a particular platform or browser version
-   */
-  Unavailable = 'UNAVAILABLE',
 }
 
 export interface CapacitorException extends Error {
@@ -203,7 +183,8 @@ export interface Capacitor {
   ) => void;
 
   /**
-   * Registry of all the plugins.
+   * @deprecated Plugins should be imported instead. Deprecated in
+   * v3 and Capacitor.Plugins property definition will not be exported in v4.
    */
   Plugins: PluginRegistry;
 
@@ -233,6 +214,13 @@ export interface Capacitor {
  * is the public one.
  */
 export interface CapacitorInstance extends Capacitor {
+  /**
+   * Internal registry for all plugins assigned to the Capacitor global.
+   * Legacy Capacitor referenced this property directly, but as of v3
+   * it should be an internal API. Still exporting on the Capacitor
+   * type, but with the deprecated JSDoc tag.
+   */
+  Plugins: PluginRegistry;
   /**
    * Low-level API to send data to the native layer.
    * Prefer using `nativeCallback()` or `nativePromise()` instead.
@@ -289,8 +277,6 @@ export type PluginImplementations = {
     | PlatformImplementation
     | typeof NativePlugin;
 };
-
-export const NativePlugin = Symbol('NativePlugin');
 
 export interface PlatformImplementation {}
 

@@ -1,5 +1,6 @@
+// Type Definitions
 export type {
-  ExceptionCode,
+  Plugin,
   PluginCallback,
   PluginConfig,
   PluginImplementations,
@@ -8,22 +9,28 @@ export type {
   PluginResultError,
 } from './definitions';
 
-export { NativePlugin } from './definitions';
+// Global APIs
+export { Capacitor, registerPlugin } from './global';
 
+// Base WebPlugin
+export { WebPlugin, WebPluginConfig, ListenerCallback } from './web-plugin';
+
+// Core Plugins APIs
+export { WebView } from './core-plugins';
+
+// Core Plugin definitions
+export type { WebViewPath, WebViewPlugin } from './core-plugins';
+
+// Constants
+export { ExceptionCode, NativePlugin } from './util';
+
+// Legcay Global APIs
+export { Plugins, mergeWebPlugin, registerWebPlugin } from './global';
+
+// Legacy Type Definitions
 export type {
   CallbackID,
   CancellableCallback,
   ISODateString,
   PluginRegistry,
-  SplashScreenHideOptions,
-  SplashScreenShowOptions,
-  SplashScreenPlugin,
-  WebViewPath,
-  WebViewPlugin,
-} from './legacy/core-plugin-definitions';
-
-export { Capacitor, Plugins, registerPlugin } from './global';
-
-export { mergeWebPlugin, registerWebPlugin } from './web/web-plugins';
-export { SplashScreen, SplashScreenPluginWeb } from './web/splash-screen';
-export { WebPlugin, WebPluginConfig, ListenerCallback } from './web';
+} from './legacy/legacy-definitions';

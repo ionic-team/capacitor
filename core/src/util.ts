@@ -64,3 +64,9 @@ export const enum ExceptionCode {
    */
   Unavailable = 'UNAVAILABLE',
 }
+
+/**
+ * Symbol used by the registerPlugin() function to identify
+ * if a platform has a native plugin implementation.
+ */
+export const NativePlugin = Symbol('NativePlugin');
