@@ -2,7 +2,6 @@ import type {
   CallData,
   CapacitorInstance,
   GlobalInstance,
-  InternalState,
   PluginResult,
   StoredCallback,
 } from './definitions';
@@ -21,7 +20,6 @@ export const getPlatformId = (gbl: GlobalInstance): string => {
 export const initBridge = (
   gbl: GlobalInstance,
   instance: CapacitorInstance,
-  state: InternalState,
 ): void => {
   // keep a collection of callbacks for native response data
   const callbacks = new Map<string, StoredCallback>();
@@ -55,7 +53,7 @@ export const initBridge = (
     };
   }
 
-  const logger = initLogger(gbl, instance, state, postToNative);
+  const logger = initLogger(gbl, instance, postToNative);
 
   /**
    * Send a plugin method call to the native layer

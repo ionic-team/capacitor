@@ -2,18 +2,16 @@ import type {
   CallData,
   CapacitorInstance,
   GlobalInstance,
-  InternalState,
   Logger,
 } from './definitions';
 
 export const initLogger = (
   gbl: GlobalInstance,
   instance: CapacitorInstance,
-  state: InternalState,
   postToNative: (data: any) => void | null,
 ): Logger => {
   // patch window.console on iOS and store original console fns
-  const isIos = state.platform === 'ios';
+  const isIos = instance.getPlatform() === 'ios';
   const orgConsole = (isIos ? {} : gbl.console) as any;
 
   const useFallbackLogging =
@@ -123,7 +121,7 @@ export const initLogger = (
       orgConsole.groupEnd();
     } else {
       gbl.console.log('LOG TO NATIVE: ', call);
-      if (state.platform === 'ios') {
+      if (instance.getPlatform() === 'ios') {
         try {
           instance.toNative('Console', 'log', {
             message: JSON.stringify(call),

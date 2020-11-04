@@ -1,4 +1,3 @@
-import type { PluginListenerHandle } from '../../../index';
 import { WebPlugin } from '../../../index';
 
 import type { NetworkPlugin } from './definitions';

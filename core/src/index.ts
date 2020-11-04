@@ -25,7 +25,7 @@ export type { WebViewPath, WebViewPlugin } from './core-plugins';
 export { ExceptionCode, NativePlugin } from './util';
 
 // Legcay Global APIs
-export { Plugins, mergeWebPlugin, registerWebPlugin } from './global';
+export { Plugins, registerWebPlugin } from './global';
 
 // Legacy Type Definitions
 export type {

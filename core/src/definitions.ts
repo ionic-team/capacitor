@@ -280,10 +280,6 @@ export type PluginImplementations = {
 
 export interface PlatformImplementation {}
 
-export interface InternalState {
-  serverUrl: string;
-}
-
 export interface GlobalInstance {
   androidBridge?: {
     postMessage(data: string): void;

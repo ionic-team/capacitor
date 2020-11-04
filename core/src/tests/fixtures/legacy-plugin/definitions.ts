@@ -1,4 +1,4 @@
-import type { PluginListenerHandle } from '../../../index';
+import '../../../index';
 
 declare module '../../../index' {
   interface PluginRegistry {

@@ -17,7 +17,7 @@ export class LegacyPluginWeb extends WebPlugin implements LegacyPlugin {
   }
 
   getStatus(): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       resolve('all good');
     });
   }

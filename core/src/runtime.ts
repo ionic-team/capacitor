@@ -2,7 +2,6 @@ import { getPlatformId, initBridge } from './bridge';
 import type {
   CapacitorInstance,
   GlobalInstance,
-  InternalState,
   PluginCallback,
   PluginImplementations,
   PluginListenerHandle,
@@ -19,13 +18,7 @@ import {
 import { initVendor } from './vendor';
 
 export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
-  if (typeof Proxy === 'undefined') {
-    throw new Error(`Capacitor is not supported on this browser`);
-  }
-
-  const state: InternalState = {
-    serverUrl: gbl.WEBVIEW_SERVER_URL || '/',
-  };
+  let serverUrl = gbl.WEBVIEW_SERVER_URL || '/';
 
   const Plugins = gbl?.Capacitor?.Plugins || ({} as any);
 
@@ -37,7 +30,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     Object.prototype.hasOwnProperty.call(Plugins, pluginName);
 
   const convertFileSrc = (filePath: string) =>
-    convertFileSrcServerUrl(state.serverUrl, filePath);
+    convertFileSrcServerUrl(serverUrl, filePath);
 
   /**
    * Provided for backwards compatibility
@@ -83,8 +76,8 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     Plugins,
     withPlugin: noop,
     uuidv4,
-    getServerUrl: () => state.serverUrl,
-    setServerUrl: url => (state.serverUrl = url),
+    getServerUrl: () => serverUrl,
+    setServerUrl: url => (serverUrl = url),
     Exception: CapacitorException,
     DEBUG: !!gbl?.Capacitor?.DEBUG,
     // values to be set later
@@ -223,7 +216,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     );
   };
 
-  initBridge(gbl, instance, state);
+  initBridge(gbl, instance);
   initEvents(gbl, instance);
   initVendor(gbl, instance);
   initLegacyHandlers(gbl, instance);

@@ -1,28 +1,26 @@
-import type { Capacitor, GlobalInstance } from './definitions';
+import type { WebViewPlugin } from './core-plugins';
+import type { CapacitorInstance, GlobalInstance } from './definitions';
 
-export const initVendor = (gbl: GlobalInstance, instance: Capacitor): void => {
+export const initVendor = (
+  gbl: GlobalInstance,
+  instance: CapacitorInstance,
+): void => {
   const Ionic = (gbl.Ionic = gbl.Ionic || {});
   const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
-  const WebViewPlugin = instance.Plugins.WebView;
+  const Plugins = (instance.Plugins as any) as { WebView: WebViewPlugin };
 
   IonicWebView.getServerBasePath = (callback: (path: string) => void) => {
-    if (WebViewPlugin) {
-      WebViewPlugin.getServerBasePath().then(result => {
-        callback(result.path);
-      });
-    }
+    Plugins?.WebView?.getServerBasePath().then(result => {
+      callback(result.path);
+    });
   };
 
   IonicWebView.setServerBasePath = (path: string) => {
-    if (WebViewPlugin) {
-      WebViewPlugin.setServerBasePath({ path });
-    }
+    Plugins?.WebView?.setServerBasePath({ path });
   };
 
   IonicWebView.persistServerBasePath = () => {
-    if (WebViewPlugin) {
-      WebViewPlugin.persistServerBasePath();
-    }
+    Plugins?.WebView?.persistServerBasePath();
   };
 
   IonicWebView.convertFileSrc = (url: string) => instance.convertFileSrc(url);
