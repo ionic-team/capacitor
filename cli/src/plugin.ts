@@ -39,11 +39,17 @@ export interface Plugin {
 }
 
 export async function getPlugins(config: Config): Promise<Plugin[]> {
-  const deps = getDependencies(config);
-  const plugins = await Promise.all(
-    deps.map(async p => resolvePlugin(config, p)),
+  const { plugins } = config.app.extConfig;
+
+  const possiblePlugins = Array.isArray(plugins)
+    ? plugins
+    : getDependencies(config);
+
+  const resolvedPlugins = await Promise.all(
+    possiblePlugins.map(async p => resolvePlugin(config, p)),
   );
-  return plugins.filter(p => !!p) as Plugin[];
+
+  return resolvedPlugins.filter((p): p is Plugin => !!p);
 }
 
 export async function resolvePlugin(
@@ -91,9 +97,10 @@ export async function resolvePlugin(
 }
 
 export function getDependencies(config: Config): string[] {
-  const dependencies = config.app.package.dependencies ?? [];
-  const devDependencies = config.app.package.devDependencies ?? [];
-  return Object.keys(dependencies).concat(Object.keys(devDependencies));
+  return [
+    ...Object.keys(config.app.package.dependencies ?? {}),
+    ...Object.keys(config.app.package.devDependencies ?? {}),
+  ];
 }
 
 export function fixName(name: string): string {
