@@ -19,7 +19,6 @@
 		621ECCD6254205BD00D3D615 /* CAPBridgeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */; };
 		621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCD9254205C400D3D615 /* CapacitorBridge.swift */; };
 		621ECCE3254206A600D3D615 /* CAPApplicationDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */; };
-		622BB9C42541FE3000A5DBCA /* capacitor.config.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */; };
 		623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D68F9254C5037002D01D1 /* KeyPath.swift */; };
 		623D6909254C6FDF002D01D1 /* CAPInstanceDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		623D690A254C6FDF002D01D1 /* CAPInstanceDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */; };
@@ -62,6 +61,12 @@
 		6296A785253A2E49005A202A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A783253A2E49005A202A /* Main.storyboard */; };
 		6296A787253A2E49005A202A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6296A786253A2E49005A202A /* Assets.xcassets */; };
 		6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A788253A2E49005A202A /* LaunchScreen.storyboard */; };
+		62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A91C3325535F5700861508 /* ConfigurationTests.swift */; };
+		62A91C3F2553710E00861508 /* nonjson.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62A91C392553710300861508 /* nonjson.json */; };
+		62E0736125535E8700BAAADB /* server.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735225535E6500BAAADB /* server.json */; };
+		62E0736225535E8700BAAADB /* bad.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735325535E6500BAAADB /* bad.json */; };
+		62E0736325535E8700BAAADB /* flat.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735425535E6500BAAADB /* flat.json */; };
+		62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735525535E6500BAAADB /* hierarchy.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,10 +97,14 @@
 		622BB9C32541FE1900A5DBCA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
+			dstPath = configurations;
 			dstSubfolderSpec = 1;
 			files = (
-				622BB9C42541FE3000A5DBCA /* capacitor.config.json in CopyFiles */,
+				62A91C3F2553710E00861508 /* nonjson.json in CopyFiles */,
+				62E0736125535E8700BAAADB /* server.json in CopyFiles */,
+				62E0736225535E8700BAAADB /* bad.json in CopyFiles */,
+				62E0736325535E8700BAAADB /* flat.json in CopyFiles */,
+				62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,7 +137,6 @@
 		621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeProtocol.swift; sourceTree = "<group>"; };
 		621ECCD9254205C400D3D615 /* CapacitorBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorBridge.swift; sourceTree = "<group>"; };
 		621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPApplicationDelegateProxy.swift; sourceTree = "<group>"; };
-		622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		623D68F9254C5037002D01D1 /* KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPath.swift; sourceTree = "<group>"; };
 		623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPInstanceDescriptor.h; sourceTree = "<group>"; };
 		623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceDescriptor.m; sourceTree = "<group>"; };
@@ -177,6 +185,12 @@
 		6296A786253A2E49005A202A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6296A789253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6296A78B253A2E49005A202A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62A91C3325535F5700861508 /* ConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
+		62A91C392553710300861508 /* nonjson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nonjson.json; sourceTree = "<group>"; };
+		62E0735225535E6500BAAADB /* server.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = server.json; sourceTree = "<group>"; };
+		62E0735325535E6500BAAADB /* bad.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bad.json; sourceTree = "<group>"; };
+		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
+		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,6 +258,7 @@
 			children = (
 				50503EED1FC08595003606DC /* CapacitorTests.swift */,
 				621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */,
+				62A91C3325535F5700861508 /* ConfigurationTests.swift */,
 				621ECCC7254204BE00D3D615 /* JSONSerializationWrapper.h */,
 				621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */,
 				621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */,
@@ -332,13 +347,25 @@
 			children = (
 				6296A77D253A2E49005A202A /* AppDelegate.swift */,
 				6296A781253A2E49005A202A /* ViewController.swift */,
-				622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */,
+				62E0735125535E6500BAAADB /* configurations */,
 				6296A783253A2E49005A202A /* Main.storyboard */,
 				6296A786253A2E49005A202A /* Assets.xcassets */,
 				6296A788253A2E49005A202A /* LaunchScreen.storyboard */,
 				6296A78B253A2E49005A202A /* Info.plist */,
 			);
 			path = TestsHostApp;
+			sourceTree = "<group>";
+		};
+		62E0735125535E6500BAAADB /* configurations */ = {
+			isa = PBXGroup;
+			children = (
+				62E0735225535E6500BAAADB /* server.json */,
+				62E0735325535E6500BAAADB /* bad.json */,
+				62E0735425535E6500BAAADB /* flat.json */,
+				62E0735525535E6500BAAADB /* hierarchy.json */,
+				62A91C392553710300861508 /* nonjson.json */,
+			);
+			path = configurations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -556,6 +583,7 @@
 			files = (
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
 				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
+				62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */,
 				621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
