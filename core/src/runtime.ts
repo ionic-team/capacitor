@@ -18,7 +18,7 @@ import {
 import { initVendor } from './vendor';
 
 export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
-  let serverUrl = gbl.WEBVIEW_SERVER_URL || '/';
+  let serverUrl = gbl.WEBVIEW_SERVER_URL || '';
 
   const Plugins = gbl?.Capacitor?.Plugins || ({} as any);
 

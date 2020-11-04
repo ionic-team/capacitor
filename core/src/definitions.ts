@@ -311,7 +311,7 @@ export interface GlobalInstance {
     };
   };
   dispatchEvent?: any;
-  Capacitor?: Capacitor;
+  Capacitor?: CapacitorInstance;
 }
 
 export interface CallData {

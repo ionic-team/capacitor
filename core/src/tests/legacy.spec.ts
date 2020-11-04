@@ -24,7 +24,7 @@ describe('legacy', () => {
     };
     instance = createCapacitor(gbl);
 
-    const MockNativePlugin = {};
+    const MockNativePlugin = {} as any;
     instance.Plugins['Legacy'] = MockNativePlugin;
 
     const Legacy = new LegacyWebPlugin({
@@ -43,7 +43,7 @@ describe('legacy', () => {
     };
     instance = createCapacitor(gbl);
 
-    const MockNativePlugin = {};
+    const MockNativePlugin = {} as any;
     instance.Plugins['Legacy'] = MockNativePlugin;
 
     const Legacy = new LegacyWebPlugin({ name: 'Legacy' });
