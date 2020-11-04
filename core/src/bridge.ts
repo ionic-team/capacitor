@@ -8,6 +8,16 @@ import type {
 } from './definitions';
 import { initLogger } from './logger';
 
+export const getPlatformId = (gbl: GlobalInstance): string => {
+  if (gbl.androidBridge) {
+    return 'android';
+  }
+  if (gbl.webkit?.messageHandlers?.bridge) {
+    return 'ios';
+  }
+  return 'web';
+};
+
 export const initBridge = (
   gbl: GlobalInstance,
   instance: CapacitorInstance,
@@ -33,20 +43,16 @@ export const initBridge = (
         gbl?.console?.error(e);
       }
     };
-    state.isNative = true;
-    state.platform = 'android';
   } else if (gbl.webkit?.messageHandlers?.bridge) {
     // ios platform
     postToNative = (data: any) => {
-      data.type = 'message';
       try {
+        data.type = 'message';
         gbl.webkit.messageHandlers.bridge.postMessage(data);
       } catch (e) {
         gbl?.console?.error(e);
       }
     };
-    state.isNative = true;
-    state.platform = 'ios';
   }
 
   const logger = initLogger(gbl, instance, state, postToNative);

@@ -8,6 +8,8 @@ export type {
   PluginResultError,
 } from './definitions';
 
+export { NativePlugin } from './definitions';
+
 export type {
   CallbackID,
   CancellableCallback,
@@ -19,8 +21,6 @@ export type {
   WebViewPath,
   WebViewPlugin,
 } from './legacy/core-plugin-definitions';
-
-export { NativePlugin } from './plugins';
 
 export { Capacitor, Plugins, registerPlugin } from './global';
 

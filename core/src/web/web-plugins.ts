@@ -1,22 +1,25 @@
-import { Capacitor, Plugins } from '../global';
+import { Capacitor } from '../global';
 
 import type { WebPlugin } from '.';
 import { SplashScreen } from './splash-screen';
 
 /**
- * TODO
+ * Provided for backwards compatibility.
  *
- * @deprecated Don't use this.
+ * @deprecated Deprecated in v3, will be removed from v4.
  */
 export const mergeWebPlugin = (plugin: WebPlugin): void => {
   if (
-    Object.prototype.hasOwnProperty.call(Plugins, plugin.config.name) &&
+    Object.prototype.hasOwnProperty.call(
+      Capacitor.Plugins,
+      plugin.config.name,
+    ) &&
     !shouldMergeWebPlugin(plugin)
   ) {
     return;
   }
 
-  Plugins[plugin.config.name] = plugin;
+  Capacitor.Plugins[plugin.config.name] = plugin;
 };
 
 const shouldMergeWebPlugin = (plugin: WebPlugin): boolean => {
@@ -27,9 +30,9 @@ const shouldMergeWebPlugin = (plugin: WebPlugin): boolean => {
 };
 
 /**
- * TODO
+ * Provided for backwards compatibility.
  *
- * @deprecated Don't use this.
+ * @deprecated Deprecated in v3, will be removed from v4.
  */
 export const registerWebPlugin = (_plugin: WebPlugin): void => {
   // console.warn(

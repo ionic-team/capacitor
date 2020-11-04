@@ -1,10 +1,9 @@
-import type { Capacitor, GlobalInstance, InternalState } from '../definitions';
+import type { Capacitor, GlobalInstance } from '../definitions';
 import { noop } from '../util';
 
 export const initLegacyHandlers = (
   gbl: GlobalInstance,
   instance: Capacitor,
-  state: InternalState,
 ): void => {
   // define cordova if it's not there already
   gbl.cordova = gbl.cordova || {};
@@ -36,6 +35,6 @@ export const initLegacyHandlers = (
   }
 
   // deprecated in v3, remove from v4
-  instance.platform = state.platform;
-  instance.isNative = state.isNative;
+  instance.platform = instance.getPlatform();
+  instance.isNative = instance.isNativePlatform();
 };

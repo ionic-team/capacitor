@@ -39,10 +39,9 @@ public class JSExport {
 
         lines.append("""
             (function(w) {
-            w.Capacitor = w.Capacitor || {};
-            w.Capacitor.Plugins = w.Capacitor.Plugins || {};
-            var a = w.Capacitor; var p = a.Plugins;
-            var t = p['\(pluginClassName)'] = {};
+            var a = (w.Capacitor = w.Capacitor || {});
+            var p = (a.Plugins = a.Plugins || {});
+            var t = (p['\(pluginClassName)'] = {});
             t.addListener = function(eventName, callback) {
             return w.Capacitor.addListener('\(pluginClassName)', eventName, callback);
             }

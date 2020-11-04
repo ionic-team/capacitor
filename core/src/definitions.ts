@@ -180,6 +180,7 @@ export interface Capacitor {
   /**
    * Called when a plugin method is not available. Defaults to console
    * logging a warning.
+   * @deprecated
    */
   pluginMethodNoop: (
     target: any,
@@ -294,9 +295,6 @@ export const NativePlugin = Symbol('NativePlugin');
 export interface PlatformImplementation {}
 
 export interface InternalState {
-  platform: string;
-  isNative: boolean;
-  plugins: { [pluginName: string]: Plugin };
   serverUrl: string;
 }
 

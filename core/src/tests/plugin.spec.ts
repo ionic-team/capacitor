@@ -4,6 +4,7 @@ import type {
   Plugin,
   PluginResultError,
 } from '../definitions';
+import { NativePlugin } from '../definitions';
 import { createCapacitor } from '../runtime';
 
 describe('plugin', () => {
@@ -12,6 +13,72 @@ describe('plugin', () => {
 
   beforeEach(() => {
     gbl = {};
+  });
+
+  it('error from missing method from native implementation', async done => {
+    // mock the global with the android bridge
+    mockAndroidBridge();
+
+    // simulate native adding the bridge before the core runtime
+    // but it's not adding the mph() method
+    mockNativeImplementationJsBridge('Awesome', 'whatever');
+
+    // core runtime creates the actual Capacitor instance
+    instance = createCapacitor(gbl);
+
+    try {
+      const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+        android: NativePlugin,
+      });
+      await Awesome.mph();
+      done('did not throw');
+    } catch (e) {
+      expect(e.message).toBe(
+        `"Awesome" plugin for "android" implementation missing "mph" method`,
+      );
+      done();
+    }
+  });
+
+  it('native implementation', async () => {
+    // mock the global with the android bridge
+    mockAndroidBridge();
+
+    // simulate native adding the bridge before the core runtime
+    mockNativeImplementationJsBridge('Awesome', 'mph');
+
+    // core runtime creates the actual Capacitor instance
+    instance = createCapacitor(gbl);
+
+    // user runtime registers the plugin
+    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+      android: NativePlugin,
+    });
+
+    const results = await Awesome.mph();
+    expect(results).toBe(88);
+  });
+
+  it('error from missing native implementation', async done => {
+    // mock the global with the android bridge
+    mockAndroidBridge();
+
+    // do not simulate native adding the bridge before the core runtime
+
+    // core runtime creates the actual Capacitor instance
+    instance = createCapacitor(gbl);
+
+    try {
+      instance.registerPlugin<AwesomePlugin>('Awesome', {
+        android: NativePlugin,
+      });
+      done('did not throw');
+    } catch (e) {
+      expect(e.message).toBe(
+        `"Awesome" plugin missing from "android" implementation`,
+      );
+      done();
+    }
   });
 
   it('error lazy loading implementation', async done => {
@@ -171,6 +238,30 @@ describe('plugin', () => {
         });
       },
     };
+  };
+
+  const mockNativeImplementationJsBridge = (
+    pluginClassName: string,
+    methodName: string,
+  ) => {
+    // mocking how native code adds their plugin js bridge to the global
+    // ios/Capacitor/Capacitor/JSExport.swift
+    // android/capacitor/src/main/java/com/getcapacitor/JSExport.java
+
+    (function (w) {
+      const a = (w.Capacitor = w.Capacitor || {});
+      const p = (a.Plugins = a.Plugins || {});
+      const t = (p[pluginClassName] = {}) as any;
+      t.addListener = function (eventName: any, callback: any) {
+        return w.Capacitor.addListener(pluginClassName, eventName, callback);
+      };
+
+      t[methodName] = function () {
+        return new Promise(resolve => {
+          resolve(88);
+        });
+      };
+    })(gbl as any);
   };
 });
 
