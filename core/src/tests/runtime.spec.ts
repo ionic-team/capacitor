@@ -2,7 +2,7 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor } from '../runtime';
+import { createCapacitor, initGlobal } from '../runtime';
 
 describe('runtime', () => {
   let win: WindowCapacitor;
@@ -41,18 +41,34 @@ describe('runtime', () => {
     expect(cap.DEBUG).toBe(true);
   });
 
+  it('cannot reset server url after initializing capacitor', () => {
+    win.WEBVIEW_SERVER_URL = 'whatever://home';
+    cap = createCapacitor(win);
+    win.WEBVIEW_SERVER_URL = 'CHANGED!!!';
+    expect(cap.getServerUrl()).toBe('whatever://home');
+  });
+
   it('server url set from window.WEBVIEW_SERVER_URL', () => {
     win.WEBVIEW_SERVER_URL = 'whatever://home';
     cap = createCapacitor(win);
-    expect(cap.getServerUrl()).toBe('whatever://home');
-
-    // after Capacitor is created, changing WEBVIEW_SERVER_URL doesn't matter
-    win.WEBVIEW_SERVER_URL = 'CHANGED!!!';
     expect(cap.getServerUrl()).toBe('whatever://home');
   });
 
   it('server url default w/out window.WEBVIEW_SERVER_URL set', () => {
     cap = createCapacitor(win);
     expect(cap.getServerUrl()).toBe('');
+  });
+
+  it('new Capacitor global created', () => {
+    expect(win.Capacitor).not.toBeDefined();
+    cap = initGlobal(win) as any;
+    expect(win.Capacitor).toBe(cap);
+  });
+
+  it('existing Capacitor global replaced', () => {
+    const old = (win.Capacitor = {} as any);
+    cap = initGlobal(win) as any;
+    expect(win.Capacitor).toBe(cap);
+    expect(win.Capacitor).not.toBe(old);
   });
 });

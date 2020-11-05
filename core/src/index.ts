@@ -1,6 +1,5 @@
 // Type Definitions
 export type {
-  CapacitorException,
   CapacitorGlobal,
   PermissionState,
   Plugin,
@@ -24,7 +23,7 @@ export { WebView } from './core-plugins';
 export type { WebViewPath, WebViewPlugin } from './core-plugins';
 
 // Constants
-export { ExceptionCode, NativePlugin } from './util';
+export { CapacitorException, ExceptionCode, NativePlugin } from './util';
 
 // Legcay Global APIs
 export { Plugins, registerWebPlugin } from './global';

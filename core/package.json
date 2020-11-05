@@ -17,7 +17,8 @@
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc",
     "test": "jest",
-    "test.watch": "jest --watchAll"
+    "test.watch": "jest --watchAll",
+    "test.treeshaking": "node src/tests/build-treeshaking.js"
   },
   "main": "dist/index.js",
   "typings": "types/index.d.ts",

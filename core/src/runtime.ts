@@ -1,5 +1,6 @@
 import { getPlatformId, initBridge } from './bridge';
 import type {
+  CapacitorGlobal,
   PluginCallback,
   PluginImplementations,
   PluginListenerHandle,
@@ -11,6 +12,7 @@ import type {
 import { initEvents } from './events';
 import { initLegacyHandlers } from './legacy/legacy-handlers';
 import {
+  CapacitorException,
   convertFileSrcServerUrl,
   ExceptionCode,
   NativePlugin,
@@ -221,8 +223,5 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   return cap;
 };
 
-class CapacitorException extends Error {
-  constructor(readonly message: string, readonly code: ExceptionCode) {
-    super(message);
-  }
-}
+export const initCapacitorGlobal = (win: any): CapacitorGlobal =>
+  (win.Capacitor = createCapacitor(win));

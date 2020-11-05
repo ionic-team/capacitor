@@ -1,23 +1,18 @@
-import type { CapacitorGlobal } from './definitions';
 import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
-import { createCapacitor } from './runtime';
+import { initCapacitorGlobal } from './runtime';
 import type { WebPlugin } from './web-plugin';
 
-// figure out the current globalThis, such as "window", "self" or "global"
-// ensure errors are not thrown in an node SSR environment or web worker
-const win = /*#__PURE__*/ (typeof globalThis !== 'undefined'
-  ? globalThis
-  : typeof self !== 'undefined'
-  ? self
-  : typeof window !== 'undefined'
-  ? window
-  : typeof global !== 'undefined'
-  ? global
-  : {}) as any;
-
-export const Capacitor = (win.Capacitor = /*#__PURE__*/ createCapacitor(
-  win,
-)) as CapacitorGlobal;
+export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(
+  (typeof globalThis !== 'undefined'
+    ? globalThis
+    : typeof self !== 'undefined'
+    ? self
+    : typeof window !== 'undefined'
+    ? window
+    : typeof global !== 'undefined'
+    ? global
+    : {}) as any,
+);
 
 export const registerPlugin = Capacitor.registerPlugin;
 
