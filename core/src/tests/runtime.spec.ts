@@ -2,7 +2,7 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { createCapacitor, initGlobal } from '../runtime';
+import { createCapacitor, initCapacitorGlobal } from '../runtime';
 
 describe('runtime', () => {
   let win: WindowCapacitor;
@@ -61,13 +61,13 @@ describe('runtime', () => {
 
   it('new Capacitor global created', () => {
     expect(win.Capacitor).not.toBeDefined();
-    cap = initGlobal(win) as any;
+    cap = initCapacitorGlobal(win) as any;
     expect(win.Capacitor).toBe(cap);
   });
 
   it('existing Capacitor global replaced', () => {
     const old = (win.Capacitor = {} as any);
-    cap = initGlobal(win) as any;
+    cap = initCapacitorGlobal(win) as any;
     expect(win.Capacitor).toBe(cap);
     expect(win.Capacitor).not.toBe(old);
   });

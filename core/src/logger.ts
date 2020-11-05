@@ -71,7 +71,7 @@ export const initLogger = (
     });
   }
 
-  cap.handleWindowError = (msg, url, lineNo, columnNo, error) => {
+  cap.handleWindowError = (msg, url, lineNo, columnNo, err) => {
     const str = msg.toLowerCase();
     const substring = 'script error';
 
@@ -85,12 +85,12 @@ export const initLogger = (
           url: url,
           line: lineNo,
           col: columnNo,
-          errorObject: JSON.stringify(error),
+          errorObject: JSON.stringify(err),
         },
       };
 
-      if (error !== null) {
-        cap.handleError(error);
+      if (err !== null) {
+        cap.handleError(err);
       }
 
       if (postToNative) {

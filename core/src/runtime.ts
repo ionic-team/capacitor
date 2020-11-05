@@ -53,7 +53,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     }
   };
 
-  const handleError = (e: Error) => win.console.error(e);
+  const handleError = (err: Error) => win.console.error(err);
 
   const pluginMethodNoop = (
     _target: any,

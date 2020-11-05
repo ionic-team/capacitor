@@ -2,68 +2,10 @@
 import type { PluginRegistry } from './legacy/legacy-definitions';
 import type { ExceptionCode, NativePlugin } from './util';
 
-export interface Plugin {
-  addListener(
-    eventName: string,
-    listenerFunc: (...args: any[]) => any,
-  ): PluginListenerHandle;
-  removeAllListeners(): void;
-}
-
-export type PermissionState =
-  | 'prompt'
-  | 'prompt-with-rationale'
-  | 'granted'
-  | 'denied';
-
-export interface PluginListenerHandle {
-  remove: () => void;
-}
-
-export interface PluginResultData {
-  [key: string]: any;
-}
-
-export interface PluginResultError {
-  message: string;
-}
-
-export type PluginCallback = (
-  data: PluginResultData,
-  error?: PluginResultError,
-) => void;
-
-export interface CapacitorException extends Error {
-  code?: ExceptionCode;
-}
-
-declare const CapacitorException: {
-  prototype: CapacitorException;
-  new (message: string, code?: ExceptionCode): CapacitorException;
-};
-
-/**
- * Register plugin implementations with Capacitor.
- *
- * This function will create and register an instance that contains the
- * implementations of the plugin.
- *
- * Each plugin has multiple implementations, one per platform. Each
- * implementation must adhere to a common interface to ensure client code
- * behaves consistently across each platform.
- *
- * @param pluginName The unique CamelCase name of this plugin.
- * @param implementations The map of plugin implementations.
- */
-export type RegisterPlugin = <T>(
-  pluginName: string,
-  implementations: Readonly<PluginImplementations>,
-) => T;
-
 export interface CapacitorGlobal {
   /**
-   * Utility function to convert a file path into
-   * a useful src depending on the value and environment.
+   * Utility function to convert a file path into a usable src depending
+   * on the native WebView implementation value and environment.
    */
   convertFileSrc: (filePath: string) => string;
 
@@ -88,6 +30,12 @@ export interface CapacitorGlobal {
    * Gets the name of the platform, such as `android`, `ios`, or `web`.
    */
   getPlatform: () => string;
+
+  /**
+   * Gets the WebView server urls set by the native web view. Defaults
+   * to "" if not running from a native platform.
+   */
+  getServerUrl: () => string;
 
   /**
    * Sends data over the bridge to the native layer.
@@ -130,6 +78,30 @@ export interface CapacitorGlobal {
     callback: PluginCallback,
   ) => void;
 
+  handleError: (err: Error) => void;
+
+  handleWindowError: (
+    msg: string,
+    url: string,
+    lineNo: number,
+    columnNo: number,
+    err: Error,
+  ) => void;
+
+  registerPlugin: RegisterPlugin;
+
+  uuidv4: () => string;
+
+  DEBUG?: boolean;
+
+  // Deprecated in v3, will be removed from v4
+
+  /**
+   * @deprecated Plugins should be imported instead. Deprecated in
+   * v3 and Capacitor.Plugins property definition will not be exported in v4.
+   */
+  Plugins: PluginRegistry;
+
   /**
    * Called when a plugin method is not available. Defaults to console
    * logging a warning. Provided for backwards compatibility.
@@ -141,39 +113,34 @@ export interface CapacitorGlobal {
     pluginName: PropertyKey,
   ) => void;
 
-  handleError: (error: Error) => void;
-
-  handleWindowError: (
-    msg: string,
-    url: string,
-    lineNo: number,
-    columnNo: number,
-    error: Error,
-  ) => void;
-
   /**
-   * @deprecated Plugins should be imported instead. Deprecated in
-   * v3 and Capacitor.Plugins property definition will not be exported in v4.
+   * @deprecated Use `isNativePlatform()` instead
    */
-  Plugins: PluginRegistry;
-
-  registerPlugin: RegisterPlugin;
-
-  getServerUrl: () => string;
-
-  uuidv4: () => string;
-
-  DEBUG?: boolean;
+  isNative?: boolean;
 
   /**
    * @deprecated Use `getPlatform()` instead
    */
   platform?: string;
-  /**
-   * @deprecated Use `isNativePlatform()` instead
-   */
-  isNative?: boolean;
 }
+
+/**
+ * Register plugin implementations with Capacitor.
+ *
+ * This function will create and register an instance that contains the
+ * implementations of the plugin.
+ *
+ * Each plugin has multiple implementations, one per platform. Each
+ * implementation must adhere to a common interface to ensure client code
+ * behaves consistently across each platform.
+ *
+ * @param pluginName The unique CamelCase name of this plugin.
+ * @param implementations The map of plugin implementations.
+ */
+export type RegisterPlugin = <T>(
+  pluginName: string,
+  implementations: Readonly<PluginImplementations>,
+) => T;
 
 /**
  * A map of plugin implementations.
@@ -184,4 +151,44 @@ export interface CapacitorGlobal {
  */
 export type PluginImplementations = {
   [platform: string]: (() => Promise<any>) | any | typeof NativePlugin;
+};
+
+export interface Plugin {
+  addListener(
+    eventName: string,
+    listenerFunc: (...args: any[]) => any,
+  ): PluginListenerHandle;
+  removeAllListeners(): void;
+}
+
+export type PermissionState =
+  | 'prompt'
+  | 'prompt-with-rationale'
+  | 'granted'
+  | 'denied';
+
+export interface PluginListenerHandle {
+  remove: () => void;
+}
+
+export interface PluginResultData {
+  [key: string]: any;
+}
+
+export interface PluginResultError {
+  message: string;
+}
+
+export type PluginCallback = (
+  data: PluginResultData,
+  error?: PluginResultError,
+) => void;
+
+export interface CapacitorException extends Error {
+  code?: ExceptionCode;
+}
+
+declare const CapacitorException: {
+  prototype: CapacitorException;
+  new (message: string, code?: ExceptionCode): CapacitorException;
 };
