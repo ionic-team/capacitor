@@ -30,7 +30,7 @@
 [methods addObject:[[CAPPluginMethod alloc] initWithName:@#method_name returnType:method_return_type]]
 
 #define CAP_PLUGIN(objc_name, js_name, methods_body) \
-@interface objc_name : NSObject \
+@interface objc_name : CAPPlugin \
 @end \
 @interface objc_name (CAPPluginCategory) <CAPBridgedPlugin> \
 @end \
