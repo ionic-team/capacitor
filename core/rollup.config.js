@@ -10,6 +10,7 @@ export default {
       file: 'dist/capacitor.js',
       format: 'iife',
       name: 'capacitorExports',
+      preferConst: true,
       banner,
       sourcemap: true,
       plugins: [terser()],
@@ -17,6 +18,7 @@ export default {
     {
       file: 'dist/index.js',
       format: 'esm',
+      preferConst: true,
       banner,
       sourcemap: true,
     },

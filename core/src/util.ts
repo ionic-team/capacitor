@@ -52,6 +52,6 @@ export const enum ExceptionCode {
 
 /**
  * Symbol used by the registerPlugin() function to identify
- * if a platform has a native plugin implementation.
+ * that a platform uses a native plugin implementation.
  */
-export const NativePlugin = Symbol('NativePlugin');
+export const NativePlugin = /*#__PURE__*/ Symbol('NativePlugin');

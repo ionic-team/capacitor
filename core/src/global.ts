@@ -5,7 +5,7 @@ import type { WebPlugin } from './web-plugin';
 
 // figure out the current globalThis, such as "window", "self" or "global"
 // ensure errors are not thrown in an node SSR environment or web worker
-const win = (typeof globalThis !== 'undefined'
+const win = /*#__PURE__*/ (typeof globalThis !== 'undefined'
   ? globalThis
   : typeof self !== 'undefined'
   ? self
@@ -15,7 +15,7 @@ const win = (typeof globalThis !== 'undefined'
   ? global
   : {}) as any;
 
-export const Capacitor = (win.Capacitor = createCapacitor(
+export const Capacitor = (win.Capacitor = /*#__PURE__*/ createCapacitor(
   win,
 )) as CapacitorGlobal;
 

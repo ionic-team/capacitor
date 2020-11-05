@@ -12,7 +12,7 @@ export interface WebViewPath {
   path: string;
 }
 
-export const WebView = registerPlugin<WebViewPlugin>('WebView', {
+export const WebView = /*#__PURE__*/ registerPlugin<WebViewPlugin>('WebView', {
   android: NativePlugin,
   ios: NativePlugin,
 });
