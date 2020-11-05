@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
@@ -21,8 +20,8 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import com.getcapacitor.util.PermissionHelper;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -45,7 +44,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
     static final int FILE_CHOOSER_CAMERA_PERMISSION = PluginRequestCodes.FILE_CHOOSER_CAMERA_PERMISSION;
     static final int GET_USER_MEDIA_PERMISSIONS = PluginRequestCodes.GET_USER_MEDIA_PERMISSIONS;
     static final int GEOLOCATION_REQUEST_PERMISSIONS = PluginRequestCodes.GEOLOCATION_REQUEST_PERMISSIONS;
-    static final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
 
     private Bridge bridge;
 
@@ -262,7 +260,9 @@ public class BridgeWebChromeClient extends WebChromeClient {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         Logger.debug("onGeolocationPermissionsShowPrompt: DOING IT HERE FOR ORIGIN: " + origin);
 
-        if (!hasPermissions(geoPermissions)) {
+        final String[] geoPermissions = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION };
+
+        if (!PermissionHelper.hasPermissions(bridge.getContext(), geoPermissions)) {
             this.bridge.cordovaInterface.requestPermissions(
                     new CordovaPlugin() {
                         @Override
@@ -333,7 +333,10 @@ public class BridgeWebChromeClient extends WebChromeClient {
 
     private boolean isMediaCaptureSupported() {
         String[] permissions = { Manifest.permission.CAMERA };
-        return hasPermissions(permissions) || !hasDefinedPermission(Manifest.permission.CAMERA);
+        return (
+            PermissionHelper.hasPermissions(bridge.getContext(), permissions) ||
+            !PermissionHelper.hasDefinedPermission(bridge.getContext(), Manifest.permission.CAMERA)
+        );
     }
 
     private void showMediaCaptureOrFilePicker(ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams, boolean isVideo) {
@@ -512,40 +515,5 @@ public class BridgeWebChromeClient extends WebChromeClient {
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         return image;
-    }
-
-    private boolean hasPermissions(String[] permissions) {
-        for (String perm : permissions) {
-            if (ActivityCompat.checkSelfPermission(this.bridge.getActivity(), perm) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean hasDefinedPermission(String permission) {
-        boolean hasPermission = false;
-        String[] requestedPermissions = getManifestPermissions();
-        if (requestedPermissions != null && requestedPermissions.length > 0) {
-            List<String> requestedPermissionsList = Arrays.asList(requestedPermissions);
-            ArrayList<String> requestedPermissionsArrayList = new ArrayList<>(requestedPermissionsList);
-            if (requestedPermissionsArrayList.contains(permission)) {
-                hasPermission = true;
-            }
-        }
-        return hasPermission;
-    }
-
-    private String[] getManifestPermissions() {
-        String[] requestedPermissions = null;
-        try {
-            PackageManager pm = bridge.getContext().getPackageManager();
-            PackageInfo packageInfo = pm.getPackageInfo(bridge.getContext().getPackageName(), PackageManager.GET_PERMISSIONS);
-
-            if (packageInfo != null) {
-                requestedPermissions = packageInfo.requestedPermissions;
-            }
-        } catch (Exception ex) {}
-        return requestedPermissions;
     }
 }

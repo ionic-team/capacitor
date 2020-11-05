@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 import type { PluginRegistry } from './legacy/legacy-definitions';
 import type { ExceptionCode, NativePlugin } from './util';
 
@@ -9,12 +8,13 @@ export interface Plugin {
     listenerFunc: (...args: any[]) => any,
   ): PluginListenerHandle;
   removeAllListeners(): void;
-  requestPermissions?: () => Promise<PermissionsRequestResult>;
 }
 
-export interface PermissionsRequestResult {
-  results: any[];
-}
+export type PermissionState =
+  | 'prompt'
+  | 'prompt-with-rationale'
+  | 'granted'
+  | 'denied';
 
 export interface PluginListenerHandle {
   remove: () => void;

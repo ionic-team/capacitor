@@ -1,7 +1,6 @@
 import type {
   CapacitorException,
   PluginListenerHandle,
-  PermissionsRequestResult,
   Plugin,
 } from './definitions';
 import { Capacitor } from './global';
@@ -128,10 +127,6 @@ export class WebPlugin implements Plugin {
         this.notifyListeners(pluginEventName, event);
       },
     };
-  }
-
-  requestPermissions(): Promise<PermissionsRequestResult> {
-    return Promise.resolve({ results: [] });
   }
 
   load(): void {

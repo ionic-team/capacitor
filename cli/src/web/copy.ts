@@ -1,4 +1,4 @@
-import { copy } from 'fs-extra';
+import { copy } from '@ionic/utils-fs';
 import { join } from 'path';
 
 import c from '../colors';
