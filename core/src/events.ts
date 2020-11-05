@@ -1,14 +1,17 @@
-import type { CapacitorInstance, GlobalInstance } from './definitions';
+import type {
+  CapacitorInstance,
+  WindowCapacitor,
+} from './definitions-internal';
 
 export const initEvents = (
-  gbl: GlobalInstance,
-  instance: CapacitorInstance,
+  win: WindowCapacitor,
+  cap: CapacitorInstance,
 ): void => {
-  const doc: Document = gbl.document;
-  const cordova = gbl.cordova;
+  const doc: Document = win.document;
+  const cordova = win.cordova;
 
-  instance.addListener = (pluginName, eventName, callback) => {
-    const callbackId = instance.nativeCallback(
+  cap.addListener = (pluginName, eventName, callback) => {
+    const callbackId = cap.nativeCallback(
       pluginName,
       'addListener',
       {
@@ -18,14 +21,14 @@ export const initEvents = (
     );
     return {
       remove: () => {
-        gbl?.console?.debug('Removing listener', pluginName, eventName);
-        instance.removeListener(pluginName, callbackId, eventName, callback);
+        win?.console?.debug('Removing listener', pluginName, eventName);
+        cap.removeListener(pluginName, callbackId, eventName, callback);
       },
     };
   };
 
-  instance.removeListener = (pluginName, callbackId, eventName, callback) => {
-    instance.nativeCallback(
+  cap.removeListener = (pluginName, callbackId, eventName, callback) => {
+    cap.nativeCallback(
       pluginName,
       'removeListener',
       {
@@ -36,7 +39,7 @@ export const initEvents = (
     );
   };
 
-  instance.createEvent = (eventName, eventData) => {
+  cap.createEvent = (eventName, eventData) => {
     if (doc) {
       const ev = doc.createEvent('Events');
       ev.initEvent(eventName, false, false);
@@ -53,9 +56,9 @@ export const initEvents = (
     return null;
   };
 
-  instance.triggerEvent = (eventName, target, eventData) => {
+  cap.triggerEvent = (eventName, target, eventData) => {
     eventData = eventData || {};
-    const ev = instance.createEvent(eventName, eventData);
+    const ev = cap.createEvent(eventName, eventData);
 
     if (ev) {
       if (target === 'document') {
@@ -65,8 +68,8 @@ export const initEvents = (
         } else if (doc?.dispatchEvent) {
           return doc.dispatchEvent(ev);
         }
-      } else if (target === 'window' && gbl.dispatchEvent) {
-        return (gbl as Window).dispatchEvent(ev);
+      } else if (target === 'window' && win.dispatchEvent) {
+        return (win as Window).dispatchEvent(ev);
       } else if (doc?.querySelector) {
         const targetEl: Element = doc.querySelector(target);
         if (targetEl) {

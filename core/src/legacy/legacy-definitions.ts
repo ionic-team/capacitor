@@ -12,6 +12,14 @@ export interface PluginRegistry {
 /**
  * @deprecated
  */
+export interface PluginConfig {
+  id: string;
+  name: string;
+}
+
+/**
+ * @deprecated
+ */
 export type ISODateString = string;
 
 /**

@@ -1,24 +1,18 @@
 import type {
   CallData,
   CapacitorInstance,
-  GlobalInstance,
+  WindowCapacitor,
   Logger,
-} from './definitions';
+} from './definitions-internal';
 
 export const initLogger = (
-  gbl: GlobalInstance,
-  instance: CapacitorInstance,
+  win: WindowCapacitor,
+  cap: CapacitorInstance,
   postToNative: (data: any) => void | null,
 ): Logger => {
   // patch window.console on iOS and store original console fns
-  const isIos = instance.getPlatform() === 'ios';
-  const orgConsole = (isIos ? {} : gbl.console) as any;
-
-  const useFallbackLogging =
-    !!gbl.console && Object.keys(gbl.console).length === 0;
-  if (useFallbackLogging && gbl.console) {
-    gbl.console.warn('Advance console logging disabled.');
-  }
+  const isIos = cap.getPlatform() === 'ios';
+  const orgConsole = (isIos ? {} : win.console) as any;
 
   // list log functions bridged to native log
   const bridgedLevels: { [key: string]: boolean } = {
@@ -30,16 +24,23 @@ export const initLogger = (
     warn: true,
   };
 
-  if (isIos && gbl.console) {
-    Object.keys(gbl.console).forEach(level => {
-      if (typeof gbl.console[level] === 'function') {
+  const useFallbackLogging =
+    !!win.console && Object.keys(win.console).length === 0;
+
+  if (useFallbackLogging && win.console) {
+    win.console.warn('Advance console logging disabled.');
+  }
+
+  if (isIos && win.console) {
+    Object.keys(win.console).forEach(level => {
+      if (typeof win.console[level] === 'function') {
         // loop through all the console functions and keep references to the original
-        orgConsole[level] = gbl.console[level];
-        gbl.console[level] = (...args: any[]) => {
+        orgConsole[level] = win.console[level];
+        win.console[level] = (...args: any[]) => {
           let msgs: any[] = Array.prototype.slice.call(args);
 
           // console log to browser
-          orgConsole[level].apply(gbl.console, msgs);
+          orgConsole[level].apply(win.console, msgs);
 
           if (bridgedLevels[level]) {
             // send log to native to print
@@ -56,13 +57,13 @@ export const initLogger = (
                 // convert to string
                 return String(arg);
               });
-              instance.toNative('Console', 'log', {
+              cap.toNative('Console', 'log', {
                 level: level,
                 message: msgs.join(' '),
               });
             } catch (e) {
               // error converting/posting console messages
-              orgConsole.error.apply(gbl.console, e);
+              orgConsole.error.apply(win.console, e);
             }
           }
         };
@@ -70,7 +71,7 @@ export const initLogger = (
     });
   }
 
-  instance.handleWindowError = (msg, url, lineNo, columnNo, error) => {
+  cap.handleWindowError = (msg, url, lineNo, columnNo, error) => {
     const str = msg.toLowerCase();
     const substring = 'script error';
 
@@ -89,7 +90,7 @@ export const initLogger = (
       };
 
       if (error !== null) {
-        instance.handleError(error);
+        cap.handleError(error);
       }
 
       if (postToNative) {
@@ -100,11 +101,11 @@ export const initLogger = (
     return false;
   };
 
-  if (instance.DEBUG) {
-    window.onerror = instance.handleWindowError;
+  if (cap.DEBUG) {
+    window.onerror = cap.handleWindowError;
   }
 
-  instance.logToNative = (call: CallData) => {
+  cap.logToNative = (call: CallData) => {
     if (!useFallbackLogging) {
       orgConsole.groupCollapsed(
         '%cnative %c' +
@@ -120,20 +121,20 @@ export const initLogger = (
       orgConsole.dir(call);
       orgConsole.groupEnd();
     } else {
-      gbl.console.log('LOG TO NATIVE: ', call);
-      if (instance.getPlatform() === 'ios') {
+      win.console.log('LOG TO NATIVE: ', call);
+      if (cap.getPlatform() === 'ios') {
         try {
-          instance.toNative('Console', 'log', {
+          cap.toNative('Console', 'log', {
             message: JSON.stringify(call),
           });
         } catch (e) {
-          gbl.console.log('Error converting/posting console messages');
+          win.console.log('Error converting/posting console messages');
         }
       }
     }
   };
 
-  instance.logFromNative = result => {
+  cap.logFromNative = result => {
     if (!useFallbackLogging) {
       const success = result.success === true;
 
@@ -160,9 +161,9 @@ export const initLogger = (
       orgConsole.groupEnd();
     } else {
       if (result.success === false) {
-        gbl.console.error(result.error);
+        win.console.error(result.error);
       } else {
-        gbl.console.log(result.data);
+        win.console.log(result.data);
       }
     }
   };
@@ -170,9 +171,9 @@ export const initLogger = (
   return (level: string, msg: any) => {
     if (orgConsole) {
       if (typeof orgConsole[level] === 'function') {
-        orgConsole[level].call(gbl.console, msg);
+        orgConsole[level].call(win.console, msg);
       } else if (orgConsole.log) {
-        orgConsole.log.call(gbl.console, msg);
+        orgConsole.log.call(win.console, msg);
       }
     }
   };

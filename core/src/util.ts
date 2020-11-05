@@ -1,25 +1,8 @@
-/* eslint-disable */
-export const extend = (target: any, ...objs: any[]) => {
-  objs.forEach(o => {
-    if (o && typeof o === 'object') {
-      for (const k in o) {
-        if (o.hasOwnProperty(k)) {
-          target[k] = o[k];
-        }
-      }
-    }
-  });
-  return target;
-};
-
 export const convertFileSrcServerUrl = (
   webviewServerUrl: string,
   filePath: string,
-) => {
+): string => {
   if (typeof filePath === 'string') {
-    if (typeof webviewServerUrl !== 'string') {
-      webviewServerUrl = '';
-    }
     if (filePath.startsWith('/')) {
       return webviewServerUrl + '/_capacitor_file_' + filePath;
     }
@@ -37,14 +20,16 @@ export const convertFileSrcServerUrl = (
   return filePath;
 };
 
-export const uuidv4 = () =>
+export const uuidv4 = (): string =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0,
       v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 
-export const noop = () => {};
+export const noop = (): void => {
+  /**/
+};
 
 export const enum ExceptionCode {
   /**

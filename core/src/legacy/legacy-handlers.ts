@@ -1,20 +1,23 @@
-import type { Capacitor, GlobalInstance } from '../definitions';
+import type {
+  CapacitorInstance,
+  WindowCapacitor,
+} from '../definitions-internal';
 import { noop } from '../util';
 
 export const initLegacyHandlers = (
-  gbl: GlobalInstance,
-  instance: Capacitor,
+  win: WindowCapacitor,
+  cap: CapacitorInstance,
 ): void => {
   // define cordova if it's not there already
-  gbl.cordova = gbl.cordova || {};
+  win.cordova = win.cordova || {};
 
-  const doc = gbl.document;
-  const nav = gbl.navigator;
+  const doc = win.document;
+  const nav = win.navigator;
 
   if (nav) {
     nav.app = nav.app || {};
     nav.app.exitApp = () => {
-      instance.nativeCallback('App', 'exitApp', {});
+      cap.nativeCallback('App', 'exitApp', {});
     };
   }
 
@@ -25,16 +28,16 @@ export const initLegacyHandlers = (
       const handler = args[1];
       if (eventName === 'deviceready' && handler) {
         Promise.resolve(handler);
-      } else if (eventName === 'backbutton' && instance.Plugins.App) {
+      } else if (eventName === 'backbutton' && cap.Plugins.App) {
         // Add a dummy listener so Capacitor doesn't do the default
         // back button action
-        instance.Plugins.App.addListener('backButton', noop);
+        cap.Plugins.App.addListener('backButton', noop);
       }
       return docAddEventListener.apply(doc, args);
     };
   }
 
   // deprecated in v3, remove from v4
-  instance.platform = instance.getPlatform();
-  instance.isNative = instance.isNativePlatform();
+  cap.platform = cap.getPlatform();
+  cap.isNative = cap.isNativePlatform();
 };

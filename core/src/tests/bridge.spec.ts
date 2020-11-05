@@ -1,16 +1,16 @@
 import type {
   CapacitorInstance,
-  GlobalInstance,
   PluginResult,
-} from '../definitions';
+  WindowCapacitor,
+} from '../definitions-internal';
 import { createCapacitor } from '../runtime';
 
 describe('bridge', () => {
-  let instance: CapacitorInstance;
-  let gbl: GlobalInstance;
+  let win: WindowCapacitor;
+  let cap: CapacitorInstance;
 
   beforeEach(() => {
-    gbl = {};
+    win = {};
   });
 
   it('android nativePromise error', done => {
@@ -20,11 +20,11 @@ describe('bridge', () => {
       error: { message: 'darn it' },
     });
 
-    instance = createCapacitor(gbl);
-    expect(instance.getPlatform()).toBe('android');
-    expect(instance.isNativePlatform()).toBe(true);
+    cap = createCapacitor(win);
+    expect(cap.getPlatform()).toBe('android');
+    expect(cap.isNativePlatform()).toBe(true);
 
-    instance
+    cap
       .nativePromise('id', 'method')
       .then(() => {
         done('should throw error');
@@ -45,11 +45,11 @@ describe('bridge', () => {
       data: { mph: 88 },
     });
 
-    instance = createCapacitor(gbl);
-    expect(instance.getPlatform()).toBe('android');
-    expect(instance.isNativePlatform()).toBe(true);
+    cap = createCapacitor(win);
+    expect(cap.getPlatform()).toBe('android');
+    expect(cap.isNativePlatform()).toBe(true);
 
-    instance
+    cap
       .nativePromise('id', 'method')
       .then(data => {
         try {
@@ -69,11 +69,11 @@ describe('bridge', () => {
       error: { message: 'darn it' },
     });
 
-    instance = createCapacitor(gbl);
-    expect(instance.getPlatform()).toBe('ios');
-    expect(instance.isNativePlatform()).toBe(true);
+    cap = createCapacitor(win);
+    expect(cap.getPlatform()).toBe('ios');
+    expect(cap.isNativePlatform()).toBe(true);
 
-    instance.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
+    cap.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
       try {
         expect(data).toEqual(null);
         expect(err.message).toBe('darn it');
@@ -90,11 +90,11 @@ describe('bridge', () => {
       success: true,
     });
 
-    instance = createCapacitor(gbl);
-    expect(instance.getPlatform()).toBe('ios');
-    expect(instance.isNativePlatform()).toBe(true);
+    cap = createCapacitor(win);
+    expect(cap.getPlatform()).toBe('ios');
+    expect(cap.isNativePlatform()).toBe(true);
 
-    instance.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
+    cap.nativeCallback('pluginName', 'methodName', {}, (data, err) => {
       try {
         expect(data).toEqual({ mph: 88 });
         expect(err).toBe(undefined);
@@ -106,27 +106,27 @@ describe('bridge', () => {
   });
 
   const mockAndroidPluginResult = (pluginResult: PluginResult) => {
-    gbl.androidBridge = {
+    win.androidBridge = {
       postMessage: m => {
         const d = JSON.parse(m);
         Promise.resolve().then(() => {
           pluginResult.callbackId = d.callbackId;
           pluginResult.methodName = d.methodName;
-          instance.fromNative(pluginResult);
+          cap.fromNative(pluginResult);
         });
       },
     };
   };
 
   const mockIosPluginResult = (pluginResult: PluginResult) => {
-    gbl.webkit = {
+    win.webkit = {
       messageHandlers: {
         bridge: {
           postMessage: m => {
             Promise.resolve().then(() => {
               pluginResult.callbackId = m.callbackId;
               pluginResult.methodName = m.methodName;
-              instance.fromNative(pluginResult);
+              cap.fromNative(pluginResult);
             });
           },
         },

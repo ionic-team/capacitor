@@ -1,4 +1,5 @@
 /* eslint-disable */
+
 import type { PluginRegistry } from './legacy/legacy-definitions';
 import type { ExceptionCode, NativePlugin } from './util';
 
@@ -32,34 +33,6 @@ export type PluginCallback = (
   error?: PluginResultError,
 ) => void;
 
-/**
- * Callback data kept on the client
- * to be called after native response
- */
-export interface StoredCallback {
-  callback?: PluginCallback;
-  resolve?: (...args: any[]) => any;
-  reject?: (...args: any[]) => any;
-}
-
-/**
- * A resulting call back from the native layer.
- */
-export interface PluginResult {
-  callbackId?: string;
-  methodName?: string;
-  data: PluginResultData;
-  success: boolean;
-  error?: PluginResultError;
-  pluginId?: string;
-  save?: boolean;
-}
-
-export interface PluginConfig {
-  id: string;
-  name: string;
-}
-
 export interface CapacitorException extends Error {
   code?: ExceptionCode;
 }
@@ -87,7 +60,7 @@ export type RegisterPlugin = <T>(
   implementations: Readonly<PluginImplementations>,
 ) => T;
 
-export interface Capacitor {
+export interface CapacitorGlobal {
   /**
    * Utility function to convert a file path into
    * a useful src depending on the value and environment.
@@ -159,18 +132,14 @@ export interface Capacitor {
 
   /**
    * Called when a plugin method is not available. Defaults to console
-   * logging a warning.
-   * @deprecated
+   * logging a warning. Provided for backwards compatibility.
+   * @deprecated Deprecated in v3, will be removed from v4
    */
   pluginMethodNoop: (
     target: any,
     key: PropertyKey,
     pluginName: PropertyKey,
   ) => void;
-
-  logToNative: (data: CallData) => void;
-
-  logFromNative: (results: PluginResult) => void;
 
   handleError: (error: Error) => void;
 
@@ -190,9 +159,7 @@ export interface Capacitor {
 
   registerPlugin: RegisterPlugin;
 
-  getServerUrl: () => void;
-
-  setServerUrl: (url: string) => void;
+  getServerUrl: () => string;
 
   uuidv4: () => string;
 
@@ -209,62 +176,6 @@ export interface Capacitor {
 }
 
 /**
- * Has all instance properties that are available and used
- * by the native layer. The "Capacitor" interface it extends
- * is the public one.
- */
-export interface CapacitorInstance extends Capacitor {
-  /**
-   * Internal registry for all plugins assigned to the Capacitor global.
-   * Legacy Capacitor referenced this property directly, but as of v3
-   * it should be an internal API. Still exporting on the Capacitor
-   * type, but with the deprecated JSDoc tag.
-   */
-  Plugins: PluginRegistry;
-  /**
-   * Low-level API to send data to the native layer.
-   * Prefer using `nativeCallback()` or `nativePromise()` instead.
-   * Returns the Callback Id.
-   */
-  toNative?: (
-    pluginName: string,
-    methodName: string,
-    options: any,
-    storedCallback?: StoredCallback,
-  ) => string;
-
-  /**
-   * Low-level API used by the native layers to send
-   * data back to the webview runtime.
-   */
-  fromNative?: (result: PluginResult) => void;
-
-  /**
-   * Low-level API for backwards compatibility.
-   */
-  createEvent?: (eventName: string, eventData?: any) => Event;
-
-  /**
-   * Low-level API triggered from native implementations.
-   */
-  triggerEvent?: (
-    eventName: string,
-    target: string,
-    eventData?: any,
-  ) => boolean;
-
-  /**
-   * Low-level API used by the native bridge.
-   */
-  withPlugin: (pluginName: string, fn: (...args: any[]) => any) => void;
-
-  /**
-   * Low-level API used by the native bridge to log messages.
-   */
-  logJs: (message: string, level: 'error' | 'warn' | 'info' | 'log') => void;
-}
-
-/**
  * A map of plugin implementations.
  *
  * Each key should be the lowercased platform name as recognized by Capacitor,
@@ -272,56 +183,5 @@ export interface CapacitorInstance extends Capacitor {
  * implementation for the respective platform.
  */
 export type PluginImplementations = {
-  [platform: string]:
-    | (() => Promise<PlatformImplementation>)
-    | PlatformImplementation
-    | typeof NativePlugin;
+  [platform: string]: (() => Promise<any>) | any | typeof NativePlugin;
 };
-
-export interface PlatformImplementation {}
-
-export interface GlobalInstance {
-  androidBridge?: {
-    postMessage(data: string): void;
-  };
-  webkit?: {
-    messageHandlers?: {
-      bridge: {
-        postMessage(data: any): void;
-      };
-    };
-  };
-  cordova?: {
-    fireDocumentEvent?: (eventName: string, eventData: any) => void;
-  };
-  document?: any;
-  navigator?: {
-    app?: {
-      exitApp?: () => void;
-    };
-  };
-  console?: any;
-  WEBVIEW_SERVER_URL?: string;
-  Ionic?: {
-    WebView?: {
-      getServerBasePath?: any;
-      setServerBasePath?: any;
-      persistServerBasePath?: any;
-      convertFileSrc?: any;
-    };
-  };
-  dispatchEvent?: any;
-  Capacitor?: CapacitorInstance;
-}
-
-export interface CallData {
-  callbackId: string;
-  pluginId: string;
-  methodName: string;
-  options: any;
-}
-
-export type Logger = (
-  level: 'debug' | 'error' | 'info' | 'log' | 'trace' | 'warn',
-  msg: any,
-) => void;

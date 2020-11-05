@@ -1,12 +1,12 @@
-import type { CapacitorInstance } from '../definitions';
+import type { CapacitorGlobal } from '../definitions';
 import type { WebPlugin } from '../web-plugin';
 
 export const legacyRegisterWebPlugin = (
-  instance: CapacitorInstance,
+  cap: CapacitorGlobal,
   webPlugin: WebPlugin,
 ): void => {
   const config = webPlugin.config;
-  const Plugins = instance.Plugins;
+  const Plugins = cap.Plugins;
 
   if (!config || !config.name) {
     // TODO: add link to upgrade guide
@@ -20,10 +20,7 @@ export const legacyRegisterWebPlugin = (
     `Capacitor plugin "${config.name}" is using the deprecated "registerWebPlugin()" function`,
   );
 
-  if (
-    !Plugins[config.name] ||
-    config?.platforms?.includes(instance.getPlatform())
-  ) {
+  if (!Plugins[config.name] || config?.platforms?.includes(cap.getPlatform())) {
     // Add the web plugin into the plugins registry if there already isn't
     // an existing one. If it doesn't already exist, that means
     // there's no existing native implementation for it.

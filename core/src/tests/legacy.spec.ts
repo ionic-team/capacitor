@@ -1,12 +1,13 @@
-import type { CapacitorInstance, GlobalInstance } from '../definitions';
+import type { CapacitorGlobal } from '../definitions';
+import type { WindowCapacitor } from '../definitions-internal';
 import { legacyRegisterWebPlugin } from '../legacy/legacy-web-plugin-merge';
 import { createCapacitor } from '../runtime';
 import { noop } from '../util';
 import { WebPlugin } from '../web-plugin';
 
 describe('legacy', () => {
-  let instance: CapacitorInstance;
-  let gbl: GlobalInstance;
+  let win: WindowCapacitor;
+  let cap: CapacitorGlobal;
   const LegacyWebPlugin = class extends WebPlugin {};
   const orgConsoleWarn = console.warn;
 
@@ -19,109 +20,110 @@ describe('legacy', () => {
   });
 
   it('registerWebPlugin() when native implementation already provided, and same platform config provided', () => {
-    gbl = {
+    win = {
       androidBridge: { postMessage: noop },
     };
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win) as any;
 
     const MockNativePlugin = {} as any;
-    instance.Plugins['Legacy'] = MockNativePlugin;
+    cap.Plugins['Legacy'] = MockNativePlugin;
 
     const Legacy = new LegacyWebPlugin({
       name: 'Legacy',
       platforms: ['android'],
     });
-    legacyRegisterWebPlugin(instance, Legacy);
+    legacyRegisterWebPlugin(cap, Legacy);
 
     expect(Legacy.config.name).toBe('Legacy');
-    expect(instance.Plugins['Legacy']).toBe(Legacy);
+    expect(cap.Plugins['Legacy']).toBe(Legacy);
   });
 
   it('do not registerWebPlugin() when native implementation already provided', () => {
-    gbl = {
+    win = {
       androidBridge: { postMessage: noop },
     };
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win) as any;
 
     const MockNativePlugin = {} as any;
-    instance.Plugins['Legacy'] = MockNativePlugin;
+    cap.Plugins['Legacy'] = MockNativePlugin;
 
     const Legacy = new LegacyWebPlugin({ name: 'Legacy' });
-    legacyRegisterWebPlugin(instance, Legacy);
+    legacyRegisterWebPlugin(cap, Legacy);
 
     expect(Legacy.config.name).toBe('Legacy');
-    expect(instance.Plugins['Legacy']).toBe(MockNativePlugin);
+    expect(cap.Plugins['Legacy']).toBe(MockNativePlugin);
   });
 
   it('registerWebPlugin() when platforms provided and no native implementation', () => {
-    gbl = {};
-    instance = createCapacitor(gbl);
+    win = {};
+    cap = createCapacitor(win) as any;
 
     const Legacy = new LegacyWebPlugin({ name: 'Legacy', platforms: ['web'] });
-    legacyRegisterWebPlugin(instance, Legacy);
+    legacyRegisterWebPlugin(cap, Legacy);
 
     expect(Legacy.config.name).toBe('Legacy');
-    expect(instance.Plugins['Legacy']).toBe(Legacy);
+    expect(cap.Plugins['Legacy']).toBe(Legacy);
   });
 
   it('registerWebPlugin() when platforms not provided and no native implementation', () => {
-    gbl = {};
-    instance = createCapacitor(gbl);
+    win = {};
+    cap = createCapacitor(win) as any;
 
     const Legacy = new LegacyWebPlugin({ name: 'Legacy' });
-    legacyRegisterWebPlugin(instance, Legacy);
+    legacyRegisterWebPlugin(cap, Legacy);
 
     expect(Legacy.config.name).toBe('Legacy');
-    expect(instance.Plugins['Legacy']).toBe(Legacy);
+    expect(cap.Plugins['Legacy']).toBe(Legacy);
   });
 
   it('error registerWebPlugin() w/out config.name', () => {
-    gbl = {};
-    instance = createCapacitor(gbl);
+    win = {};
+    cap = createCapacitor(win) as any;
 
     expect(() => {
-      legacyRegisterWebPlugin(instance, new LegacyWebPlugin({} as any));
+      legacyRegisterWebPlugin(cap, new LegacyWebPlugin({} as any));
     }).toThrowError(
       'Capacitor WebPlugin is using the deprecated "registerWebPlugin()" function, but without the config. Please use "registerPlugin()" instead to register this web plugin."',
     );
   });
 
   it('error registerWebPlugin() w/out config', () => {
-    gbl = {};
-    instance = createCapacitor(gbl);
+    win = {};
+    cap = createCapacitor(win) as any;
 
     expect(() => {
-      legacyRegisterWebPlugin(instance, new LegacyWebPlugin());
+      legacyRegisterWebPlugin(cap, new LegacyWebPlugin());
     }).toThrowError(
       'Capacitor WebPlugin is using the deprecated "registerWebPlugin()" function, but without the config. Please use "registerPlugin()" instead to register this web plugin."',
     );
   });
 
   it('add navigator.app.exitApp', () => {
-    gbl = {
+    win = {
       navigator: {},
     };
-    instance = createCapacitor(gbl);
-    expect(gbl.navigator.app.exitApp).toBeDefined();
+    createCapacitor(win);
+    expect(win.navigator.app.exitApp).toBeDefined();
   });
 
   it('cordova global', () => {
-    gbl = {};
-    instance = createCapacitor(gbl);
-    expect(gbl.cordova).toBeDefined();
+    win = {};
+    createCapacitor(win);
+    expect(win.cordova).toBeDefined();
   });
 
   it('use existing cordova global', () => {
     const existingCordova: any = {};
-    gbl = {
+    win = {
       cordova: existingCordova,
     };
-    instance = createCapacitor(gbl);
-    expect(gbl.cordova).toBe(existingCordova);
+    createCapacitor(win);
+    expect(win.cordova).toBe(existingCordova);
   });
 
   it('deprecated props', () => {
-    expect((instance as any).platform).toBe('web');
-    expect((instance as any).isNative).toBe(false);
+    cap = createCapacitor(win) as any;
+    expect((cap as any).platform).toBe('web');
+    expect((cap as any).isNative).toBe(false);
   });
 });

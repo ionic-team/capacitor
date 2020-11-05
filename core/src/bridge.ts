@@ -1,25 +1,15 @@
 import type {
   CallData,
   CapacitorInstance,
-  GlobalInstance,
+  WindowCapacitor,
   PluginResult,
   StoredCallback,
-} from './definitions';
+} from './definitions-internal';
 import { initLogger } from './logger';
 
-export const getPlatformId = (gbl: GlobalInstance): string => {
-  if (gbl.androidBridge) {
-    return 'android';
-  }
-  if (gbl.webkit?.messageHandlers?.bridge) {
-    return 'ios';
-  }
-  return 'web';
-};
-
 export const initBridge = (
-  gbl: GlobalInstance,
-  instance: CapacitorInstance,
+  win: WindowCapacitor,
+  cap: CapacitorInstance,
 ): void => {
   // keep a collection of callbacks for native response data
   const callbacks = new Map<string, StoredCallback>();
@@ -32,33 +22,33 @@ export const initBridge = (
   let postToNative: (data: CallData) => void | null = null;
 
   // create the postToNative() fn if needed
-  if (gbl.androidBridge) {
+  if (win.androidBridge) {
     // android platform
     postToNative = (data: any) => {
       try {
-        gbl.androidBridge.postMessage(JSON.stringify(data));
+        win.androidBridge.postMessage(JSON.stringify(data));
       } catch (e) {
-        gbl?.console?.error(e);
+        win?.console?.error(e);
       }
     };
-  } else if (gbl.webkit?.messageHandlers?.bridge) {
+  } else if (win.webkit?.messageHandlers?.bridge) {
     // ios platform
     postToNative = (data: any) => {
       try {
         data.type = 'message';
-        gbl.webkit.messageHandlers.bridge.postMessage(data);
+        win.webkit.messageHandlers.bridge.postMessage(data);
       } catch (e) {
-        gbl?.console?.error(e);
+        win?.console?.error(e);
       }
     };
   }
 
-  const logger = initLogger(gbl, instance, postToNative);
+  const logger = initLogger(win, cap, postToNative);
 
   /**
    * Send a plugin method call to the native layer
    */
-  instance.toNative = (
+  cap.toNative = (
     pluginName: string,
     methodName: string,
     options: any,
@@ -86,11 +76,11 @@ export const initBridge = (
         };
 
         if (
-          instance.DEBUG &&
+          cap.DEBUG &&
           pluginName !== 'Console' &&
-          typeof instance.logToNative === 'function'
+          typeof cap.logToNative === 'function'
         ) {
-          instance.logToNative(callData);
+          cap.logToNative(callData);
         }
 
         // post the call data to native
@@ -110,13 +100,13 @@ export const initBridge = (
   /**
    * Process a response from the native layer.
    */
-  instance.fromNative = (result: PluginResult) => {
+  cap.fromNative = (result: PluginResult) => {
     if (
-      instance.DEBUG &&
+      cap.DEBUG &&
       result.pluginId !== 'Console' &&
-      typeof instance.logFromNative === 'function'
+      typeof cap.logFromNative === 'function'
     ) {
-      instance.logFromNative(result);
+      cap.logFromNative(result);
     }
 
     // get the stored call, if it exists
@@ -131,7 +121,7 @@ export const initBridge = (
           result.error = Object.keys(result.error).reduce((err, key) => {
             err[key] = (result.error as any)[key];
             return err;
-          }, new instance.Exception('') as any);
+          }, new cap.Exception('') as any);
         }
 
         if (typeof storedCall.callback === 'function') {
@@ -171,22 +161,32 @@ export const initBridge = (
     delete result.error;
   };
 
-  instance.nativeCallback = (pluginName, methodName, options, callback) => {
+  cap.nativeCallback = (pluginName, methodName, options, callback) => {
     if (typeof options === 'function') {
       callback = options;
       options = null;
     }
-    return instance.toNative(pluginName, methodName, options, {
+    return cap.toNative(pluginName, methodName, options, {
       callback: callback,
     });
   };
 
-  instance.nativePromise = (pluginName, methodName, options) => {
+  cap.nativePromise = (pluginName, methodName, options) => {
     return new Promise((resolve, reject) => {
-      instance.toNative(pluginName, methodName, options, {
+      cap.toNative(pluginName, methodName, options, {
         resolve: resolve,
         reject: reject,
       });
     });
   };
+};
+
+export const getPlatformId = (win: WindowCapacitor): string => {
+  if (win.androidBridge) {
+    return 'android';
+  }
+  if (win.webkit?.messageHandlers?.bridge) {
+    return 'ios';
+  }
+  return 'web';
 };

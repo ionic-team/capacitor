@@ -1,11 +1,13 @@
 import { getPlatformId, initBridge } from './bridge';
 import type {
-  CapacitorInstance,
-  GlobalInstance,
   PluginCallback,
   PluginImplementations,
   PluginListenerHandle,
 } from './definitions';
+import type {
+  CapacitorInstance,
+  WindowCapacitor,
+} from './definitions-internal';
 import { initEvents } from './events';
 import { initLegacyHandlers } from './legacy/legacy-handlers';
 import {
@@ -17,26 +19,40 @@ import {
 } from './util';
 import { initVendor } from './vendor';
 
-export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
-  let serverUrl = gbl.WEBVIEW_SERVER_URL || '';
+export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
+  const webviewServerUrl =
+    typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
 
-  const Plugins = gbl?.Capacitor?.Plugins || ({} as any);
+  const Plugins = win?.Capacitor?.Plugins || ({} as any);
 
-  const getPlatform = () => getPlatformId(gbl);
+  const getPlatform = () => getPlatformId(win);
 
-  const isNativePlatform = () => getPlatformId(gbl) !== 'web';
+  const isNativePlatform = () => getPlatformId(win) !== 'web';
 
   const isPluginAvailable = (pluginName: string) =>
     Object.prototype.hasOwnProperty.call(Plugins, pluginName);
 
   const convertFileSrc = (filePath: string) =>
-    convertFileSrcServerUrl(serverUrl, filePath);
+    convertFileSrcServerUrl(webviewServerUrl, filePath);
 
-  /**
-   * Provided for backwards compatibility
-   *
-   * @deprecated Deprecated in v3, will be removed from v4
-   */
+  const logJs = (msg: string, level: 'error' | 'warn' | 'info' | 'log') => {
+    switch (level) {
+      case 'error':
+        win.console.error(msg);
+        break;
+      case 'warn':
+        win.console.warn(msg);
+        break;
+      case 'info':
+        win.console.info(msg);
+        break;
+      default:
+        win.console.log(msg);
+    }
+  };
+
+  const handleError = (e: Error) => win.console.error(e);
+
   const pluginMethodNoop = (
     _target: any,
     prop: PropertyKey,
@@ -47,25 +63,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     );
   };
 
-  const logJs = (msg: string, level: 'error' | 'warn' | 'info' | 'log') => {
-    switch (level) {
-      case 'error':
-        gbl.console.error(msg);
-        break;
-      case 'warn':
-        gbl.console.warn(msg);
-        break;
-      case 'info':
-        gbl.console.info(msg);
-        break;
-      default:
-        gbl.console.log(msg);
-    }
-  };
-
-  const handleError = (e: Error) => gbl.console.error(e);
-
-  const instance: CapacitorInstance = {
+  const cap: CapacitorInstance = {
     convertFileSrc,
     getPlatform,
     handleError,
@@ -76,10 +74,9 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     Plugins,
     withPlugin: noop,
     uuidv4,
-    getServerUrl: () => serverUrl,
-    setServerUrl: url => (serverUrl = url),
+    getServerUrl: () => webviewServerUrl,
     Exception: CapacitorException,
-    DEBUG: !!gbl?.Capacitor?.DEBUG,
+    DEBUG: !!win?.Capacitor?.DEBUG,
     // values to be set later
     logFromNative: null,
     logToNative: null,
@@ -87,7 +84,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     registerPlugin: null,
   };
 
-  instance.registerPlugin = (
+  cap.registerPlugin = (
     pluginName: string,
     impls: PluginImplementations,
   ): any => {
@@ -98,7 +95,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
       // using NativePlugin symbol to identify that the native build
       // would have already placed the JS methods on the global
       // Capacitor.Plugins.PLUGINNAME.method();
-      const nativePluginImpl = instance.Plugins[pluginName];
+      const nativePluginImpl = cap.Plugins[pluginName];
 
       if (nativePluginImpl != null) {
         // the native implementation is already on the global
@@ -113,7 +110,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
                 return (nativePluginImpl as any)[prop];
               }
 
-              throw new instance.Exception(
+              throw new cap.Exception(
                 `"${pluginName}" plugin for "${platform}" implementation missing "${
                   prop as any
                 }" method`,
@@ -124,7 +121,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
         );
       }
 
-      throw new instance.Exception(
+      throw new cap.Exception(
         `"${pluginName}" plugin missing from "${platform}" implementation`,
         ExceptionCode.Unimplemented,
       );
@@ -146,7 +143,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
             // Plugin.addListener()
             // does not return a promise
             return (eventName: string, callback: PluginCallback) => {
-              const listenerHandle = instance.addListener(
+              const listenerHandle = cap.addListener(
                 pluginName,
                 eventName,
                 callback,
@@ -178,7 +175,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
                   if (typeof (loadedImpl as any)[prop] === 'function') {
                     return (loadedImpl as any)[prop].apply(loadedImpl, args);
                   }
-                  throw new instance.Exception(
+                  throw new cap.Exception(
                     `"${pluginName}" plugin implementation missing "${
                       prop as any
                     }"`,
@@ -199,7 +196,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
               };
             }
 
-            throw new instance.Exception(
+            throw new cap.Exception(
               `"${pluginName}" plugin implementation missing "${
                 prop as any
               }" method`,
@@ -207,7 +204,7 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
             );
           }
 
-          throw new instance.Exception(
+          throw new cap.Exception(
             `"${pluginName}" plugin implementation not available for "${platform}"`,
             ExceptionCode.Unimplemented,
           );
@@ -216,16 +213,13 @@ export const createCapacitor = (gbl: GlobalInstance): CapacitorInstance => {
     );
   };
 
-  initBridge(gbl, instance);
-  initEvents(gbl, instance);
-  initVendor(gbl, instance);
-  initLegacyHandlers(gbl, instance);
+  initBridge(win, cap);
+  initEvents(win, cap);
+  initVendor(win, cap);
+  initLegacyHandlers(win, cap);
 
-  return instance;
+  return cap;
 };
-
-export const initGlobal = (gbl: GlobalInstance): CapacitorInstance =>
-  (gbl.Capacitor = createCapacitor(gbl));
 
 class CapacitorException extends Error {
   constructor(readonly message: string, readonly code: ExceptionCode) {

@@ -1,8 +1,10 @@
 // Type Definitions
 export type {
+  CapacitorGlobal,
+  CapacitorException,
+  PermissionsRequestResult,
   Plugin,
   PluginCallback,
-  PluginConfig,
   PluginImplementations,
   PluginListenerHandle,
   PluginResultData,
@@ -32,5 +34,6 @@ export type {
   CallbackID,
   CancellableCallback,
   ISODateString,
+  PluginConfig,
   PluginRegistry,
 } from './legacy/legacy-definitions';

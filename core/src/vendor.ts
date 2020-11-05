@@ -1,13 +1,16 @@
 import type { WebViewPlugin } from './core-plugins';
-import type { CapacitorInstance, GlobalInstance } from './definitions';
+import type {
+  CapacitorInstance,
+  WindowCapacitor,
+} from './definitions-internal';
 
 export const initVendor = (
-  gbl: GlobalInstance,
-  instance: CapacitorInstance,
+  win: WindowCapacitor,
+  cap: CapacitorInstance,
 ): void => {
-  const Ionic = (gbl.Ionic = gbl.Ionic || {});
+  const Ionic = (win.Ionic = win.Ionic || {});
   const IonicWebView = (Ionic.WebView = Ionic.WebView || {});
-  const Plugins = (instance.Plugins as any) as { WebView: WebViewPlugin };
+  const Plugins = (cap.Plugins as any) as { WebView: WebViewPlugin };
 
   IonicWebView.getServerBasePath = (callback: (path: string) => void) => {
     Plugins?.WebView?.getServerBasePath().then(result => {
@@ -23,5 +26,5 @@ export const initVendor = (
     Plugins?.WebView?.persistServerBasePath();
   };
 
-  IonicWebView.convertFileSrc = (url: string) => instance.convertFileSrc(url);
+  IonicWebView.convertFileSrc = (url: string) => cap.convertFileSrc(url);
 };

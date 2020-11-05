@@ -1,18 +1,17 @@
+import type { Plugin, PluginResultError } from '../definitions';
 import type {
   CapacitorInstance,
-  GlobalInstance,
-  Plugin,
-  PluginResultError,
-} from '../definitions';
+  WindowCapacitor,
+} from '../definitions-internal';
 import { createCapacitor } from '../runtime';
 import { NativePlugin } from '../util';
 
 describe('plugin', () => {
-  let instance: CapacitorInstance;
-  let gbl: GlobalInstance;
+  let win: WindowCapacitor;
+  let cap: CapacitorInstance;
 
   beforeEach(() => {
-    gbl = {};
+    win = {};
   });
 
   it('error from missing method from native implementation', async done => {
@@ -24,10 +23,10 @@ describe('plugin', () => {
     mockNativeImplementationJsBridge('Awesome', 'whatever');
 
     // core runtime creates the actual Capacitor instance
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
     try {
-      const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+      const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
         android: NativePlugin,
       });
       await Awesome.mph();
@@ -48,10 +47,10 @@ describe('plugin', () => {
     mockNativeImplementationJsBridge('Awesome', 'mph');
 
     // core runtime creates the actual Capacitor instance
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
     // user runtime registers the plugin
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: NativePlugin,
     });
 
@@ -66,10 +65,10 @@ describe('plugin', () => {
     // do not simulate native adding the bridge before the core runtime
 
     // core runtime creates the actual Capacitor instance
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
     try {
-      instance.registerPlugin<AwesomePlugin>('Awesome', {
+      cap.registerPlugin<AwesomePlugin>('Awesome', {
         android: NativePlugin,
       });
       done('did not throw');
@@ -83,9 +82,9 @@ describe('plugin', () => {
 
   it('error lazy loading implementation', async done => {
     mockAndroidBridge();
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: () => Promise.reject('unable to load module'),
     });
 
@@ -100,9 +99,9 @@ describe('plugin', () => {
 
   it('call method on lazy loaded implementation', async () => {
     mockAndroidBridge();
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: () =>
         // lazy load implementation
         Promise.resolve().then(() => {
@@ -121,9 +120,9 @@ describe('plugin', () => {
 
   it('call method on already loaded implementation', async () => {
     mockAndroidBridge();
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: {
         // implementation already ready
         mph: () => 88,
@@ -139,9 +138,9 @@ describe('plugin', () => {
 
   it('call method that had an error', async () => {
     mockAndroidBridge();
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: {
         mph: () => {
           throw new Error('nope!');
@@ -156,9 +155,9 @@ describe('plugin', () => {
 
   it('missing method on lazy loaded implementation', async done => {
     mockAndroidBridge();
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: () =>
         Promise.resolve().then(() => {
           return {};
@@ -176,9 +175,9 @@ describe('plugin', () => {
 
   it('missing method on already loaded implementation', async () => {
     mockAndroidBridge();
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: {},
     });
 
@@ -188,9 +187,9 @@ describe('plugin', () => {
   });
 
   it('no platform implementation', async () => {
-    instance = createCapacitor(gbl);
+    cap = createCapacitor(win);
 
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {});
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {});
 
     expect(() => {
       Awesome.mph();
@@ -199,8 +198,8 @@ describe('plugin', () => {
 
   it('addListener, w/out addListener on implementation', done => {
     mockAndroidBridge({ mph: 88 });
-    instance = createCapacitor(gbl);
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {});
+    cap = createCapacitor(win);
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {});
 
     const rtn = Awesome.addListener('eventName', data => {
       try {
@@ -216,19 +215,19 @@ describe('plugin', () => {
   });
 
   it('removeAllListeners', () => {
-    instance = createCapacitor(gbl);
-    const Awesome = instance.registerPlugin<AwesomePlugin>('Awesome', {});
+    cap = createCapacitor(win);
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {});
 
     const rtn = Awesome.removeAllListeners();
     expect(rtn).toBeUndefined();
   });
 
   const mockAndroidBridge = (responseData?: any, err?: PluginResultError) => {
-    gbl.androidBridge = {
+    win.androidBridge = {
       postMessage: m => {
         const d = JSON.parse(m);
         Promise.resolve().then(() => {
-          instance.fromNative({
+          cap.fromNative({
             callbackId: d.callbackId,
             methodName: d.methodName,
             data: responseData,
@@ -261,7 +260,7 @@ describe('plugin', () => {
           resolve(88);
         });
       };
-    })(gbl as any);
+    })(win as any);
   };
 });
 
