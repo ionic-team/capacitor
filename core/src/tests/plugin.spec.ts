@@ -4,7 +4,7 @@ import type {
   WindowCapacitor,
 } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
-import { NativePlugin } from '../util';
+import { ExceptionCode, NativePlugin } from '../util';
 
 describe('plugin', () => {
   let win: WindowCapacitor;
@@ -35,6 +35,7 @@ describe('plugin', () => {
       expect(e.message).toBe(
         `"Awesome" plugin for "android" implementation missing "mph" method`,
       );
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
   });
@@ -76,6 +77,7 @@ describe('plugin', () => {
       expect(e.message).toBe(
         `"Awesome" plugin missing from "android" implementation`,
       );
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
   });
@@ -169,11 +171,12 @@ describe('plugin', () => {
       done('did not throw error');
     } catch (e) {
       expect(e.message).toBe('"Awesome" plugin implementation missing "mph"');
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
   });
 
-  it('missing method on already loaded implementation', async () => {
+  it('missing method on already loaded implementation', done => {
     mockAndroidBridge();
     cap = createCapacitor(win);
 
@@ -181,19 +184,59 @@ describe('plugin', () => {
       android: {},
     });
 
-    expect(() => {
+    try {
       Awesome.mph();
-    }).toThrowError(`"Awesome" plugin implementation missing "mph"`);
+      done('should throw error');
+    } catch (e) {
+      expect(e.message).toBe(
+        `"Awesome" plugin implementation missing "mph" method`,
+      );
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
+      done();
+    }
   });
 
-  it('no platform implementation', async () => {
+  it('no web platform implementation', done => {
     cap = createCapacitor(win);
+    expect(cap.getPlatform()).toBe('web');
 
-    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {});
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
+      android: NativePlugin,
+      ios: NativePlugin,
+    });
 
-    expect(() => {
+    try {
       Awesome.mph();
-    }).toThrowError(`"Awesome" plugin implementation not available for "web"`);
+      done('should throw error');
+    } catch (e) {
+      expect(e.message).toBe(
+        `"Awesome" plugin implementation not available for "web"`,
+      );
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
+      done();
+    }
+  });
+
+  it('no native platform implementation', done => {
+    mockAndroidBridge({ mph: 88 });
+    cap = createCapacitor(win);
+    expect(cap.getPlatform()).toBe('android');
+
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
+      ios: NativePlugin,
+      web: { mph: () => 88 },
+    });
+
+    try {
+      Awesome.mph();
+      done('should throw error');
+    } catch (e) {
+      expect(e.message).toBe(
+        `"Awesome" plugin implementation not available for "android"`,
+      );
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
+      done();
+    }
   });
 
   it('addListener, w/out addListener on implementation', done => {
