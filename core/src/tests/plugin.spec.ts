@@ -32,9 +32,7 @@ describe('plugin', () => {
       await Awesome.mph();
       done('did not throw');
     } catch (e) {
-      expect(e.message).toBe(
-        `"Awesome" plugin for "android" implementation missing "mph" method`,
-      );
+      expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
@@ -75,7 +73,7 @@ describe('plugin', () => {
       done('did not throw');
     } catch (e) {
       expect(e.message).toBe(
-        `"Awesome" plugin missing from "android" implementation`,
+        `"Awesome" plugin is not implementated on android`,
       );
       expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
@@ -156,11 +154,10 @@ describe('plugin', () => {
   });
 
   it('missing method on lazy loaded implementation', async done => {
-    mockAndroidBridge();
     cap = createCapacitor(win);
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
-      android: () =>
+      web: () =>
         Promise.resolve().then(() => {
           return {};
         }),
@@ -170,7 +167,7 @@ describe('plugin', () => {
       await Awesome.mph();
       done('did not throw error');
     } catch (e) {
-      expect(e.message).toBe('"Awesome" plugin implementation missing "mph"');
+      expect(e.message).toBe(`"Awesome.mph()" is not implemented on web`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
@@ -188,9 +185,7 @@ describe('plugin', () => {
       Awesome.mph();
       done('should throw error');
     } catch (e) {
-      expect(e.message).toBe(
-        `"Awesome" plugin implementation missing "mph" method`,
-      );
+      expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
@@ -209,9 +204,7 @@ describe('plugin', () => {
       Awesome.mph();
       done('should throw error');
     } catch (e) {
-      expect(e.message).toBe(
-        `"Awesome" plugin implementation not available for "web"`,
-      );
+      expect(e.message).toBe(`"Awesome" plugin is not implemented on web`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
@@ -231,9 +224,7 @@ describe('plugin', () => {
       Awesome.mph();
       done('should throw error');
     } catch (e) {
-      expect(e.message).toBe(
-        `"Awesome" plugin implementation not available for "android"`,
-      );
+      expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }

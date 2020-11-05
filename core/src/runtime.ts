@@ -113,9 +113,9 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
               }
 
               throw new cap.Exception(
-                `"${pluginName}" plugin for "${platform}" implementation missing "${
+                `"${pluginName}.${
                   prop as any
-                }" method`,
+                }()" is not implemented on ${platform}`,
                 ExceptionCode.Unimplemented,
               );
             },
@@ -124,7 +124,7 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
       }
 
       throw new cap.Exception(
-        `"${pluginName}" plugin missing from "${platform}" implementation`,
+        `"${pluginName}" plugin is not implementated on ${platform}`,
         ExceptionCode.Unimplemented,
       );
     }
@@ -178,9 +178,9 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                     return (loadedImpl as any)[prop].apply(loadedImpl, args);
                   }
                   throw new cap.Exception(
-                    `"${pluginName}" plugin implementation missing "${
+                    `"${pluginName}.${
                       prop as any
-                    }"`,
+                    }()" is not implemented on ${platform}`,
                     ExceptionCode.Unimplemented,
                   );
                 });
@@ -199,15 +199,15 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
             }
 
             throw new cap.Exception(
-              `"${pluginName}" plugin implementation missing "${
+              `"${pluginName}.${
                 prop as any
-              }" method`,
+              }()" is not implemented on ${platform}`,
               ExceptionCode.Unimplemented,
             );
           }
 
           throw new cap.Exception(
-            `"${pluginName}" plugin implementation not available for "${platform}"`,
+            `"${pluginName}" plugin is not implemented on ${platform}`,
             ExceptionCode.Unimplemented,
           );
         },
