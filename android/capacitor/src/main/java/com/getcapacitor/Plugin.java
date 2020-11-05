@@ -560,6 +560,20 @@ public class Plugin {
             return;
         }
 
+        this.handlePermissions(permissions, grantResults);
+
+        savedCall.resolve(getPermissionStates());
+        savedCall.release(bridge);
+    }
+
+    /**
+     * Plugin overriding onRequestPermissionsResult should call this method to
+     * handle the permission status correctly
+     *
+     * @param permissions
+     * @param grantResults
+     */
+    public void handlePermissions(String[] permissions, int[] grantResults) {
         SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -588,9 +602,6 @@ public class Plugin {
                 editor.apply();
             }
         }
-
-        savedCall.resolve(getPermissionStates());
-        savedCall.release(bridge);
     }
 
     /**
