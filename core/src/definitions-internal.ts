@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 import type {
   CapacitorGlobal,
   PluginCallback,

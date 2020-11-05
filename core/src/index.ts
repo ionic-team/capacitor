@@ -1,8 +1,8 @@
 // Type Definitions
 export type {
-  CapacitorGlobal,
   CapacitorException,
-  PermissionsRequestResult,
+  CapacitorGlobal,
+  PermissionState,
   Plugin,
   PluginCallback,
   PluginImplementations,
