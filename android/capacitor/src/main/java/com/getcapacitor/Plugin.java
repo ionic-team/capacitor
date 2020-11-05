@@ -566,6 +566,13 @@ public class Plugin {
         savedCall.release(bridge);
     }
 
+    /**
+     * Plugin overriding onRequestPermissionsResult should call this method to
+     * handle the permission status correctly
+     *
+     * @param permissions
+     * @param grantResults
+     */
     public void handlePermissions(String[] permissions, int[] grantResults) {
         SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
 
