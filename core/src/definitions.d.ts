@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { PluginRegistry } from './legacy/legacy-definitions';
-import type { ExceptionCode, NativePlugin } from './util';
+import type { ExceptionCode } from './util';
 
 export interface CapacitorGlobal {
   /**
@@ -139,7 +139,7 @@ export interface CapacitorGlobal {
  */
 export type RegisterPlugin = <T>(
   pluginName: string,
-  implementations: Readonly<PluginImplementations>,
+  implementations?: Readonly<PluginImplementations>,
 ) => T;
 
 /**
@@ -150,7 +150,7 @@ export type RegisterPlugin = <T>(
  * implementation for the respective platform.
  */
 export type PluginImplementations = {
-  [platform: string]: (() => Promise<any>) | any | typeof NativePlugin;
+  [platform: string]: (() => Promise<any>) | any;
 };
 
 export interface Plugin {

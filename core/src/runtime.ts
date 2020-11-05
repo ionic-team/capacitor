@@ -15,7 +15,6 @@ import {
   CapacitorException,
   convertFileSrcServerUrl,
   ExceptionCode,
-  NativePlugin,
   noop,
   uuidv4,
 } from './util';
@@ -88,44 +87,31 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
   cap.registerPlugin = (
     pluginName: string,
-    impls: PluginImplementations,
+    impls: PluginImplementations = {},
   ): any => {
-    const platform = getPlatform();
-    const pltImplementation = impls[platform];
+    const nativePluginImpl = cap.Plugins[pluginName];
+    if (nativePluginImpl) {
+      // the native implementation is already on the global
+      // return a proxy that'll also handle any missing methods
 
-    if (pltImplementation === NativePlugin) {
-      // using NativePlugin symbol to identify that the native build
-      // would have already placed the JS methods on the global
-      // Capacitor.Plugins.PLUGINNAME.method();
-      const nativePluginImpl = cap.Plugins[pluginName];
+      return new Proxy<any>(
+        {},
+        {
+          get(_, prop) {
+            if (typeof (nativePluginImpl as any)[prop] === 'function') {
+              // call the plugin method, Plugin.method(args)
+              // platform implementation already ready to go
+              return (nativePluginImpl as any)[prop];
+            }
 
-      if (nativePluginImpl != null) {
-        // the native implementation is already on the global
-        // return a proxy that'll also handle any missing methods
-        return new Proxy<any>(
-          {},
-          {
-            get(_, prop) {
-              if (typeof (nativePluginImpl as any)[prop] === 'function') {
-                // call the plugin method, Plugin.method(args)
-                // platform implementation already ready to go
-                return (nativePluginImpl as any)[prop];
-              }
-
-              throw new cap.Exception(
-                `"${pluginName}.${
-                  prop as any
-                }()" is not implemented on ${platform}`,
-                ExceptionCode.Unimplemented,
-              );
-            },
+            throw new cap.Exception(
+              `"${pluginName}.${
+                prop as any
+              }()" is not implemented on ${getPlatform()}`,
+              ExceptionCode.Unimplemented,
+            );
           },
-        );
-      }
-
-      throw new cap.Exception(
-        `"${pluginName}" plugin is not implementated on ${platform}`,
-        ExceptionCode.Unimplemented,
+        },
       );
     }
 

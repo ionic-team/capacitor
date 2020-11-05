@@ -4,7 +4,7 @@ import type {
   WindowCapacitor,
 } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
-import { ExceptionCode, NativePlugin } from '../util';
+import { ExceptionCode } from '../util';
 
 describe('plugin', () => {
   let win: WindowCapacitor;
@@ -26,9 +26,7 @@ describe('plugin', () => {
     cap = createCapacitor(win);
 
     try {
-      const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
-        android: NativePlugin,
-      });
+      const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
       await Awesome.mph();
       done('did not throw');
     } catch (e) {
@@ -49,9 +47,7 @@ describe('plugin', () => {
     cap = createCapacitor(win);
 
     // user runtime registers the plugin
-    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
-      android: NativePlugin,
-    });
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
 
     const results = await Awesome.mph();
     expect(results).toBe(88);
@@ -67,14 +63,11 @@ describe('plugin', () => {
     cap = createCapacitor(win);
 
     try {
-      cap.registerPlugin<AwesomePlugin>('Awesome', {
-        android: NativePlugin,
-      });
+      const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
+      await Awesome.mph();
       done('did not throw');
     } catch (e) {
-      expect(e.message).toBe(
-        `"Awesome" plugin is not implementated on android`,
-      );
+      expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
@@ -111,8 +104,10 @@ describe('plugin', () => {
         }),
     });
 
-    const rtn1 = await Awesome.mph();
-    expect(rtn1).toBe(88);
+    const p1 = Awesome.mph();
+    const p2 = Awesome.mph();
+    expect(await p1).toBe(88);
+    expect(await p2).toBe(88);
 
     const rtn2 = await Awesome.mph();
     expect(rtn2).toBe(88);
@@ -195,10 +190,7 @@ describe('plugin', () => {
     cap = createCapacitor(win);
     expect(cap.getPlatform()).toBe('web');
 
-    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
-      android: NativePlugin,
-      ios: NativePlugin,
-    });
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
 
     try {
       Awesome.mph();
@@ -216,7 +208,6 @@ describe('plugin', () => {
     expect(cap.getPlatform()).toBe('android');
 
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
-      ios: NativePlugin,
       web: { mph: () => 88 },
     });
 

@@ -50,12 +50,6 @@ export const enum ExceptionCode {
   Unavailable = 'UNAVAILABLE',
 }
 
-/**
- * Symbol used by the registerPlugin() function to identify
- * that a platform uses a native plugin implementation.
- */
-export const NativePlugin = /*#__PURE__*/ Symbol('NativePlugin');
-
 export class CapacitorException extends Error {
   constructor(readonly message: string, readonly code: ExceptionCode) {
     super(message);
