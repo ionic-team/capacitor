@@ -1,8 +1,4 @@
-import type {
-  CapacitorException,
-  PluginListenerHandle,
-  PermissionsRequestResult,
-} from '../definitions';
+import type { CapacitorException, PluginListenerHandle } from '../definitions';
 import { ExceptionCode } from '../definitions';
 import { Capacitor } from '../global';
 
@@ -134,18 +130,6 @@ export class WebPlugin {
         this.notifyListeners(pluginEventName, event);
       },
     };
-  }
-
-  requestPermissions(): Promise<PermissionsRequestResult> {
-    if (Capacitor.isNative) {
-      return Capacitor.nativePromise(
-        this.config.name,
-        'requestPermissions',
-        {},
-      );
-    } else {
-      return Promise.resolve({ results: [] });
-    }
   }
 
   load(): void {

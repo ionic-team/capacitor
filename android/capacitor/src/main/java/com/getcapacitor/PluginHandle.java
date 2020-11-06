@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import com.getcapacitor.annotation.CapacitorPlugin;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -19,25 +20,39 @@ public class PluginHandle {
 
     private final String pluginId;
 
-    private NativePlugin pluginAnnotation;
+    private NativePlugin legacyPluginAnnotation;
+    private CapacitorPlugin pluginAnnotation;
+
     private Plugin instance;
 
     public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException, PluginLoadException {
         this.bridge = bridge;
         this.pluginClass = pluginClass;
 
-        NativePlugin pluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+        CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
         if (pluginAnnotation == null) {
-            throw new InvalidPluginException("No @NativePlugin annotation found for plugin " + pluginClass.getName());
-        }
+            // Check for legacy plugin annotation, @NativePlugin
+            NativePlugin legacyPluginAnnotation = pluginClass.getAnnotation(NativePlugin.class);
+            if (legacyPluginAnnotation == null) {
+                throw new InvalidPluginException("No @CapacitorPlugin annotation found for plugin " + pluginClass.getName());
+            }
 
-        if (!pluginAnnotation.name().equals("")) {
-            this.pluginId = pluginAnnotation.name();
+            if (!legacyPluginAnnotation.name().equals("")) {
+                this.pluginId = legacyPluginAnnotation.name();
+            } else {
+                this.pluginId = pluginClass.getSimpleName();
+            }
+
+            this.legacyPluginAnnotation = legacyPluginAnnotation;
         } else {
-            this.pluginId = pluginClass.getSimpleName();
-        }
+            if (!pluginAnnotation.name().equals("")) {
+                this.pluginId = pluginAnnotation.name();
+            } else {
+                this.pluginId = pluginClass.getSimpleName();
+            }
 
-        this.pluginAnnotation = pluginAnnotation;
+            this.pluginAnnotation = pluginAnnotation;
+        }
 
         this.indexMethods(pluginClass);
 
@@ -52,7 +67,11 @@ public class PluginHandle {
         return this.pluginId;
     }
 
-    public NativePlugin getPluginAnnotation() {
+    public NativePlugin getLegacyPluginAnnotation() {
+        return this.legacyPluginAnnotation;
+    }
+
+    public CapacitorPlugin getPluginAnnotation() {
         return this.pluginAnnotation;
     }
 

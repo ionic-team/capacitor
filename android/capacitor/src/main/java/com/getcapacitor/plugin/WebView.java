@@ -3,12 +3,12 @@ package com.getcapacitor.plugin;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.annotation.CapacitorPlugin;
 
-@NativePlugin
+@CapacitorPlugin
 public class WebView extends Plugin {
 
     public static final String WEBVIEW_PREFS_NAME = "CapWebViewSettings";

@@ -46,19 +46,15 @@ enum BridgeError: Error {
     // Background dispatch queue for plugin calls
     public var dispatchQueue = DispatchQueue(label: "bridge")
 
-    public var notificationDelegationHandler: CAPUNUserNotificationCenterDelegate
-
     public init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
         self.bridgeDelegate = bridgeDelegate
         self.messageHandlerWrapper = messageHandlerWrapper
-        self.notificationDelegationHandler = CAPUNUserNotificationCenterDelegate()
         self.config = config
         self.scheme = scheme
 
         super.init()
 
         self.messageHandlerWrapper.bridge = self
-        self.notificationDelegationHandler.bridge = self
         localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
         exportCoreJS(localUrl: localUrl!)
         registerPlugins()
