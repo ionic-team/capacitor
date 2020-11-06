@@ -11,7 +11,6 @@ import {
   convertFileSrcServerUrl,
   ExceptionCode,
   noop,
-  uuidv4,
 } from './util';
 import { initVendor } from './vendor';
 
@@ -232,7 +231,6 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
     Plugins,
     registerPlugin,
     withPlugin: noop,
-    uuidv4,
     getServerUrl: () => webviewServerUrl,
     Exception: CapacitorException,
     DEBUG: !!win?.Capacitor?.DEBUG,

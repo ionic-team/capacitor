@@ -23,6 +23,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
       [prop: string]: any;
     };
   };
+
   /**
    * Low-level API to send data to the native layer.
    * Prefer using `nativeCallback()` or `nativePromise()` instead.
@@ -55,10 +56,15 @@ export interface CapacitorInstance extends CapacitorGlobal {
     eventData?: any,
   ) => boolean;
 
-  /**
-   * Low-level API used by the native bridge.
-   */
-  withPlugin: (pluginName: string, fn: (...args: any[]) => any) => void;
+  handleError: (err: Error) => void;
+
+  handleWindowError: (
+    msg: string,
+    url: string,
+    lineNo: number,
+    columnNo: number,
+    err: Error,
+  ) => void;
 
   /**
    * Low-level API used by the native bridge to log messages.
@@ -68,6 +74,11 @@ export interface CapacitorInstance extends CapacitorGlobal {
   logToNative: (data: CallData) => void;
 
   logFromNative: (results: PluginResult) => void;
+
+  /**
+   * Low-level API used by the native bridge.
+   */
+  withPlugin: (pluginName: string, fn: (...args: any[]) => any) => void;
 }
 
 export interface CallData {

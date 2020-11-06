@@ -16,17 +16,6 @@ export interface CapacitorGlobal {
   Exception: typeof CapacitorException;
 
   /**
-   * Boolean if the platform is native or not. `android` and `ios`
-   * would return `true`, otherwise `false`.
-   */
-  isNativePlatform: () => boolean;
-
-  /**
-   * Used to check if a platform is registered and available.
-   */
-  isPluginAvailable: (name: string) => boolean;
-
-  /**
    * Gets the name of the platform, such as `android`, `ios`, or `web`.
    */
   getPlatform: () => string;
@@ -36,6 +25,17 @@ export interface CapacitorGlobal {
    * to "" if not running from a native platform.
    */
   getServerUrl: () => string;
+
+  /**
+   * Boolean if the platform is native or not. `android` and `ios`
+   * would return `true`, otherwise `false`.
+   */
+  isNativePlatform: () => boolean;
+
+  /**
+   * Used to check if a platform is registered and available.
+   */
+  isPluginAvailable: (name: string) => boolean;
 
   /**
    * Sends data over the bridge to the native layer.
@@ -59,6 +59,8 @@ export interface CapacitorGlobal {
     options?: any,
   ) => Promise<any>;
 
+  registerPlugin: RegisterPlugin;
+
   /**
    * Add a listener for a plugin event.
    */
@@ -77,20 +79,6 @@ export interface CapacitorGlobal {
     eventName: string,
     callback: PluginCallback,
   ) => void;
-
-  handleError: (err: Error) => void;
-
-  handleWindowError: (
-    msg: string,
-    url: string,
-    lineNo: number,
-    columnNo: number,
-    err: Error,
-  ) => void;
-
-  registerPlugin: RegisterPlugin;
-
-  uuidv4: () => string;
 
   DEBUG?: boolean;
 
