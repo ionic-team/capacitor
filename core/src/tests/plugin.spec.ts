@@ -5,6 +5,7 @@ import type {
 } from '../definitions-internal';
 import { createCapacitor } from '../runtime';
 import { ExceptionCode } from '../util';
+import { WebPlugin } from '../web-plugin';
 
 describe('plugin', () => {
   let win: WindowCapacitor;
@@ -32,6 +33,14 @@ describe('plugin', () => {
     } catch (e) {
       expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
+    }
+
+    try {
+      await cap.Plugins.Awesome.mph();
+      done('did not throw');
+    } catch (e) {
+      expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
   });
@@ -49,8 +58,11 @@ describe('plugin', () => {
     // user runtime registers the plugin
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
 
-    const results = await Awesome.mph();
-    expect(results).toBe(88);
+    const results1 = await Awesome.mph();
+    expect(results1).toBe(88);
+
+    const results2 = await cap.Plugins.Awesome.mph();
+    expect(results2).toBe(88);
   });
 
   it('error from missing native implementation', async done => {
@@ -65,6 +77,14 @@ describe('plugin', () => {
     try {
       const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
       await Awesome.mph();
+      done('did not throw');
+    } catch (e) {
+      expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
+    }
+
+    try {
+      await cap.Plugins.Awesome.mph();
       done('did not throw');
     } catch (e) {
       expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
@@ -86,6 +106,13 @@ describe('plugin', () => {
       done('did not throw');
     } catch (e) {
       expect(e).toBe('unable to load module');
+    }
+
+    try {
+      await cap.Plugins.Awesome.mph();
+      done('did not throw');
+    } catch (e) {
+      expect(e).toBe('unable to load module');
       done();
     }
   });
@@ -94,18 +121,21 @@ describe('plugin', () => {
     mockAndroidBridge();
     cap = createCapacitor(win);
 
+    const AwesomePlugin = class {
+      val = 88;
+      mph() {
+        return this.val;
+      }
+    };
+
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
       android: () =>
         // lazy load implementation
-        Promise.resolve().then(() => {
-          return {
-            mph: () => 88,
-          };
-        }),
+        Promise.resolve().then(() => new AwesomePlugin()),
     });
 
     const p1 = Awesome.mph();
-    const p2 = Awesome.mph();
+    const p2 = cap.Plugins.Awesome.mph();
     expect(await p1).toBe(88);
     expect(await p2).toBe(88);
 
@@ -117,11 +147,15 @@ describe('plugin', () => {
     mockAndroidBridge();
     cap = createCapacitor(win);
 
+    const AwesomePlugin = class {
+      val = 88;
+      mph() {
+        return this.val;
+      }
+    };
+
     const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
-      android: {
-        // implementation already ready
-        mph: () => 88,
-      },
+      android: new AwesomePlugin(),
     });
 
     const rtn1 = await Awesome.mph();
@@ -129,6 +163,9 @@ describe('plugin', () => {
 
     const rtn2 = await Awesome.mph();
     expect(rtn2).toBe(88);
+
+    const rtn3 = await cap.Plugins.Awesome.mph();
+    expect(rtn3).toBe(88);
   });
 
   it('call method that had an error', async () => {
@@ -146,6 +183,10 @@ describe('plugin', () => {
     expect(() => {
       Awesome.mph();
     }).toThrowError('nope!');
+
+    expect(() => {
+      cap.Plugins.Awesome.mph();
+    }).toThrowError('nope!');
   });
 
   it('missing method on lazy loaded implementation', async done => {
@@ -160,6 +201,14 @@ describe('plugin', () => {
 
     try {
       await Awesome.mph();
+      done('did not throw error');
+    } catch (e) {
+      expect(e.message).toBe(`"Awesome.mph()" is not implemented on web`);
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
+    }
+
+    try {
+      await cap.Plugins.Awesome.mph();
       done('did not throw error');
     } catch (e) {
       expect(e.message).toBe(`"Awesome.mph()" is not implemented on web`);
@@ -182,8 +231,40 @@ describe('plugin', () => {
     } catch (e) {
       expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
+    }
+
+    try {
+      cap.Plugins.Awesome.mph();
+      done('should throw error');
+    } catch (e) {
+      expect(e.message).toBe(`"Awesome.mph()" is not implemented on android`);
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
+  });
+
+  it('automatically register native plugins on global', async () => {
+    mockAndroidBridge();
+
+    let count = 88;
+    win.Capacitor = {
+      Plugins: {
+        Awesome: {
+          mph: () => {
+            return count++;
+          },
+        },
+      },
+    } as any;
+
+    cap = createCapacitor(win);
+
+    const results1 = await cap.Plugins.Awesome.mph();
+    expect(results1).toBe(88);
+
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome');
+    const results2 = await Awesome.mph();
+    expect(results2).toBe(89);
   });
 
   it('no web platform implementation', done => {
@@ -194,6 +275,14 @@ describe('plugin', () => {
 
     try {
       Awesome.mph();
+      done('should throw error');
+    } catch (e) {
+      expect(e.message).toBe(`"Awesome" plugin is not implemented on web`);
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
+    }
+
+    try {
+      cap.Plugins.Awesome.mph();
       done('should throw error');
     } catch (e) {
       expect(e.message).toBe(`"Awesome" plugin is not implemented on web`);
@@ -217,18 +306,51 @@ describe('plugin', () => {
     } catch (e) {
       expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
       expect(e.code).toBe(ExceptionCode.Unimplemented);
+    }
+
+    try {
+      cap.Plugins.Awesome.mph();
+      done('should throw error');
+    } catch (e) {
+      expect(e.message).toBe(`"Awesome" plugin is not implemented on android`);
+      expect(e.code).toBe(ExceptionCode.Unimplemented);
       done();
     }
   });
 
-  it('addListener, w/out addListener on implementation', done => {
+  it('do not double register a plugin', () => {
     mockAndroidBridge({ mph: 88 });
     cap = createCapacitor(win);
-    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {});
+    expect(cap.getPlatform()).toBe('android');
+
+    const Awesome1 = cap.registerPlugin<AwesomePlugin>('Awesome');
+    const Awesome2 = cap.registerPlugin<AwesomePlugin>('Awesome');
+
+    expect(Awesome1).toBe(Awesome2);
+  });
+
+  it('addListener, w/out addListener on implementation', done => {
+    const LazyWeb = class {
+      val = 88;
+      addListener(_eventName: string, fn: any) {
+        fn(this.val);
+      }
+    };
+
+    cap = createCapacitor(win);
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
+      web: () =>
+        new Promise(resolve => {
+          setTimeout(() => {
+            const lazyWeb = new LazyWeb();
+            resolve(lazyWeb);
+          }, 100);
+        }),
+    });
 
     const rtn = Awesome.addListener('eventName', data => {
       try {
-        expect(data).toEqual({ mph: 88 });
+        expect(data).toEqual(88);
         done();
       } catch (e) {
         done(e);
@@ -239,12 +361,25 @@ describe('plugin', () => {
     expect(typeof rtn.remove === 'function').toBe(true);
   });
 
-  it('removeAllListeners', () => {
+  it('removeAllListeners, return void, lazy load and call implementation', done => {
+    let called = false;
+    const AwesomeWeb = class extends WebPlugin {
+      removeAllListeners() {
+        called = true;
+      }
+    };
     cap = createCapacitor(win);
-    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {});
+    const Awesome = cap.registerPlugin<AwesomePlugin>('Awesome', {
+      web: () => Promise.resolve(new AwesomeWeb()),
+    });
 
     const rtn = Awesome.removeAllListeners();
     expect(rtn).toBeUndefined();
+
+    setTimeout(() => {
+      expect(called).toBe(true);
+      done();
+    }, 100);
   });
 
   const mockAndroidBridge = (responseData?: any, err?: PluginResultError) => {
