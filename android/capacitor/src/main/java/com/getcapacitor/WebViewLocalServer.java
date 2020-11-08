@@ -173,7 +173,7 @@ public class WebViewLocalServer {
 
         if (
             isLocalFile(loadingUrl) ||
-            (bridge.getConfig().serverUrl == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))
+            (bridge.getConfig().getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))
         ) {
             Logger.debug("Handling local request: " + request.getUrl().toString());
             return handleLocalRequest(request, handler);

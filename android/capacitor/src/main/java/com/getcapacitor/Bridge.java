@@ -118,7 +118,7 @@ public class Bridge {
         CordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
-        JSONObject config
+        CapConfig config
     ) {
         this.app = new App();
         this.context = context;
@@ -132,12 +132,7 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        boolean defaultDebuggable = false;
-        if (isDevMode()) {
-            defaultDebuggable = true;
-        }
-
-        this.config = new CapConfig(getActivity().getAssets(), config, defaultDebuggable);
+        this.config = config != null ? config : new CapConfig(getActivity().getAssets(), isDevMode());
         Logger.init(this.config);
 
         // Display splash screen if configured

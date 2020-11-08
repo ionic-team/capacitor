@@ -33,20 +33,13 @@ public class CapConfig {
 
     private JSONObject configJSON = new JSONObject();
 
-    public CapConfig(AssetManager assetManager, JSONObject configJSON) {
-        this(assetManager, configJSON, false);
-    }
+    public CapConfig() {}
 
-    public CapConfig(AssetManager assetManager, JSONObject configJSON, boolean defaultDebuggable) {
+    public CapConfig(AssetManager assetManager, boolean defaultDebuggable) {
         this.webContentsDebuggingEnabled = defaultDebuggable;
 
-        if (configJSON != null) {
-            this.configJSON = configJSON;
-        } else {
-            // Load our capacitor.config.json
-            loadConfig(assetManager);
-        }
-
+        // Load capacitor.config.json
+        loadConfig(assetManager);
         deserializeConfig();
     }
 

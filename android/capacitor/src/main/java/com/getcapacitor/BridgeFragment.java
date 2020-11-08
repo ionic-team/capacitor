@@ -40,7 +40,7 @@ public class BridgeFragment extends Fragment {
     private MockCordovaWebViewImpl mockWebView;
 
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    private JSONObject config = new JSONObject();
+    private CapConfig config = null;
 
     public BridgeFragment() {
         // Required empty public constructor

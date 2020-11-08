@@ -27,7 +27,7 @@ public class BridgeActivity extends AppCompatActivity {
     private PluginManager pluginManager;
     private CordovaPreferences preferences;
     private MockCordovaWebViewImpl mockWebView;
-    private JSONObject config;
+    private CapConfig config;
 
     private int activityDepth = 0;
 
@@ -44,7 +44,7 @@ public class BridgeActivity extends AppCompatActivity {
         this.init(savedInstanceState, plugins, null);
     }
 
-    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
+    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, CapConfig config) {
         this.initialPlugins = plugins;
         this.config = config;
         loadConfig(this.getApplicationContext(), this);
