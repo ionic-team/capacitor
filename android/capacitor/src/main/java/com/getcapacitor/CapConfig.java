@@ -11,18 +11,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Management interface for accessing values in capacitor.config.json
+ * Represents the configuration options for Capacitor
  */
 public class CapConfig {
 
-    // Server Config Values
+    // Server Config
     private boolean html5mode = true;
     private String serverUrl;
     private String hostname = "localhost";
     private String androidScheme = CAPACITOR_HTTP_SCHEME;
-    private String[] allowNagivation;
+    private String[] allowNavigation;
 
-    // Android Config Values
+    // Android Config
     private String overriddenUserAgentString;
     private String appendedUserAgentString;
     private String backgroundColor;
@@ -33,14 +33,41 @@ public class CapConfig {
 
     private JSONObject configJSON = new JSONObject();
 
-    public CapConfig() {}
-
+    /**
+     * Constructs a Capacitor Configuration from file
+     *
+     * @param assetManager
+     * @param defaultDebuggable
+     */
     public CapConfig(AssetManager assetManager, boolean defaultDebuggable) {
         this.webContentsDebuggingEnabled = defaultDebuggable;
 
         // Load capacitor.config.json
         loadConfig(assetManager);
         deserializeConfig();
+    }
+
+    /**
+     * Constructs a Capacitor Configuration using ConfigBuilder
+     *
+     * @param builder
+     */
+    private CapConfig(ConfigBuilder builder) {
+        // Server Config
+        this.html5mode = builder.html5mode;
+        this.serverUrl = builder.serverUrl;
+        this.hostname = builder.hostname;
+        this.androidScheme = builder.androidScheme;
+        this.allowNavigation = builder.allowNavigation;
+
+        // Android Config
+        this.overriddenUserAgentString = builder.overriddenUserAgentString;
+        this.appendedUserAgentString = builder.appendedUserAgentString;
+        this.backgroundColor = builder.backgroundColor;
+        this.allowMixedContent = builder.allowMixedContent;
+        this.captureInput = builder.captureInput;
+        this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
+        this.hideLogs = builder.hideLogs;
     }
 
     private void loadConfig(AssetManager assetManager) {
@@ -77,7 +104,7 @@ public class CapConfig {
         serverUrl = getString("server.url");
         hostname = getString("server.hostname", hostname);
         androidScheme = getString("server.androidScheme", androidScheme);
-        allowNagivation = getArray("server.allowNavigation");
+        allowNavigation = getArray("server.allowNavigation");
 
         // Android
         overriddenUserAgentString = getString("android.overrideUserAgent", getString("overrideUserAgent"));
@@ -93,56 +120,28 @@ public class CapConfig {
         return html5mode;
     }
 
-    public void setHtml5mode(boolean html5mode) {
-        this.html5mode = html5mode;
-    }
-
     public String getServerUrl() {
         return serverUrl;
-    }
-
-    public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
     }
 
     public String getHostname() {
         return hostname;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
-
     public String getAndroidScheme() {
         return androidScheme;
     }
 
-    public void setAndroidScheme(String androidScheme) {
-        this.androidScheme = androidScheme;
-    }
-
-    public String[] getAllowNagivation() {
-        return allowNagivation;
-    }
-
-    public void setAllowNagivation(String[] allowNagivation) {
-        this.allowNagivation = allowNagivation;
+    public String[] getAllowNavigation() {
+        return allowNavigation;
     }
 
     public String getOverriddenUserAgentString() {
         return overriddenUserAgentString;
     }
 
-    public void setOverriddenUserAgentString(String overriddenUserAgentString) {
-        this.overriddenUserAgentString = overriddenUserAgentString;
-    }
-
     public String getAppendedUserAgentString() {
         return appendedUserAgentString;
-    }
-
-    public void setAppendedUserAgentString(String appendedUserAgentString) {
-        this.appendedUserAgentString = appendedUserAgentString;
     }
 
     public String getBackgroundColor() {
@@ -157,32 +156,16 @@ public class CapConfig {
         return allowMixedContent;
     }
 
-    public void setAllowMixedContent(boolean allowMixedContent) {
-        this.allowMixedContent = allowMixedContent;
-    }
-
     public boolean captureInput() {
         return captureInput;
-    }
-
-    public void setCaptureInput(boolean captureInput) {
-        this.captureInput = captureInput;
     }
 
     public Boolean getWebContentsDebuggingEnabled() {
         return webContentsDebuggingEnabled;
     }
 
-    public void setWebContentsDebuggingEnabled(Boolean webContentsDebuggingEnabled) {
-        this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
-    }
-
     public boolean hideLogs() {
         return hideLogs;
-    }
-
-    public void setHideLogs(boolean hideLogs) {
-        this.hideLogs = hideLogs;
     }
 
     public JSONObject getObject(String key) {
@@ -276,5 +259,91 @@ public class CapConfig {
             return value;
         } catch (Exception ex) {}
         return defaultValue;
+    }
+
+    /**
+     * Builds a Capacitor Configuration in code
+     */
+    public static class ConfigBuilder {
+
+        // Server Config Values
+        private boolean html5mode = true;
+        private String serverUrl;
+        private String hostname = "localhost";
+        private String androidScheme = CAPACITOR_HTTP_SCHEME;
+        private String[] allowNavigation;
+
+        // Android Config Values
+        private String overriddenUserAgentString;
+        private String appendedUserAgentString;
+        private String backgroundColor;
+        private boolean allowMixedContent = false;
+        private boolean captureInput = false;
+        private Boolean webContentsDebuggingEnabled;
+        private boolean hideLogs = false;
+
+        public CapConfig build() {
+            return new CapConfig(this);
+        }
+
+        public ConfigBuilder html5mode(boolean html5mode) {
+            this.html5mode = html5mode;
+            return this;
+        }
+
+        public ConfigBuilder serverUrl(String serverUrl) {
+            this.serverUrl = serverUrl;
+            return this;
+        }
+
+        public ConfigBuilder hostname(String hostname) {
+            this.hostname = hostname;
+            return this;
+        }
+
+        public ConfigBuilder androidScheme(String androidScheme) {
+            this.androidScheme = androidScheme;
+            return this;
+        }
+
+        public ConfigBuilder allowNavigation(String[] allowNavigation) {
+            this.allowNavigation = allowNavigation;
+            return this;
+        }
+
+        public ConfigBuilder overriddenUserAgentString(String overriddenUserAgentString) {
+            this.overriddenUserAgentString = overriddenUserAgentString;
+            return this;
+        }
+
+        public ConfigBuilder appendedUserAgentString(String appendedUserAgentString) {
+            this.appendedUserAgentString = appendedUserAgentString;
+            return this;
+        }
+
+        public ConfigBuilder backgroundColor(String backgroundColor) {
+            this.backgroundColor = backgroundColor;
+            return this;
+        }
+
+        public ConfigBuilder allowMixedContent(boolean allowMixedContent) {
+            this.allowMixedContent = allowMixedContent;
+            return this;
+        }
+
+        public ConfigBuilder captureInput(boolean captureInput) {
+            this.captureInput = captureInput;
+            return this;
+        }
+
+        public ConfigBuilder webContentsDebuggingEnabled(Boolean webContentsDebuggingEnabled) {
+            this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
+            return this;
+        }
+
+        public ConfigBuilder hideLogs(boolean hideLogs) {
+            this.hideLogs = hideLogs;
+            return this;
+        }
     }
 }

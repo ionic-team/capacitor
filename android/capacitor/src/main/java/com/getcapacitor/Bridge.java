@@ -30,7 +30,6 @@ import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * The Bridge class is the main engine of Capacitor. It manages
@@ -161,7 +160,7 @@ public class Bridge {
 
     private void loadWebView() {
         appUrlConfig = this.config.getServerUrl();
-        String[] appAllowNavigationConfig = this.config.getAllowNagivation();
+        String[] appAllowNavigationConfig = this.config.getAllowNavigation();
 
         ArrayList<String> authorities = new ArrayList<>();
         if (appAllowNavigationConfig != null) {
