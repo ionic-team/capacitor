@@ -1,5 +1,7 @@
 package com.getcapacitor;
 
+import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
+
 import android.content.res.AssetManager;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,15 +15,39 @@ import org.json.JSONObject;
  */
 public class CapConfig {
 
-    private JSONObject config = new JSONObject();
+    // Server Config Values
+    private boolean html5mode = true;
+    private String serverUrl;
+    private String hostname = "localhost";
+    private String androidScheme = CAPACITOR_HTTP_SCHEME;
+    private String[] allowNagivation;
 
-    public CapConfig(AssetManager assetManager, JSONObject config) {
-        if (config != null) {
-            this.config = config;
+    // Android Config Values
+    private String overriddenUserAgentString;
+    private String appendedUserAgentString;
+    private String backgroundColor;
+    private boolean allowMixedContent = false;
+    private boolean captureInput = false;
+    private Boolean webContentsDebuggingEnabled;
+    private boolean hideLogs = false;
+
+    private JSONObject configJSON = new JSONObject();
+
+    public CapConfig(AssetManager assetManager, JSONObject configJSON) {
+        this(assetManager, configJSON, false);
+    }
+
+    public CapConfig(AssetManager assetManager, JSONObject configJSON, boolean defaultDebuggable) {
+        this.webContentsDebuggingEnabled = defaultDebuggable;
+
+        if (configJSON != null) {
+            this.configJSON = configJSON;
         } else {
             // Load our capacitor.config.json
-            this.loadConfig(assetManager);
+            loadConfig(assetManager);
         }
+
+        deserializeConfig();
     }
 
     private void loadConfig(AssetManager assetManager) {
@@ -38,7 +64,7 @@ public class CapConfig {
             }
 
             String jsonString = b.toString();
-            this.config = new JSONObject(jsonString);
+            this.configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
         } catch (JSONException ex) {
@@ -52,9 +78,123 @@ public class CapConfig {
         }
     }
 
+    private void deserializeConfig() {
+        // Server
+        html5mode = getBoolean("server.html5mode", html5mode);
+        serverUrl = getString("server.url");
+        hostname = getString("server.hostname", hostname);
+        androidScheme = getString("server.androidScheme", androidScheme);
+        allowNagivation = getArray("server.allowNavigation");
+
+        // Android
+        overriddenUserAgentString = getString("android.overrideUserAgent", getString("overrideUserAgent"));
+        appendedUserAgentString = getString("android.appendUserAgent", getString("appendUserAgent"));
+        backgroundColor = getString("android.backgroundColor", getString("backgroundColor"));
+        allowMixedContent = getBoolean("android.allowMixedContent", getBoolean("allowMixedContent", allowMixedContent));
+        captureInput = getBoolean("android.captureInput", captureInput);
+        webContentsDebuggingEnabled = getBoolean("android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
+        hideLogs = getBoolean("android.hideLogs", getBoolean("hideLogs", hideLogs));
+    }
+
+    public boolean html5mode() {
+        return html5mode;
+    }
+
+    public void setHtml5mode(boolean html5mode) {
+        this.html5mode = html5mode;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public String getAndroidScheme() {
+        return androidScheme;
+    }
+
+    public void setAndroidScheme(String androidScheme) {
+        this.androidScheme = androidScheme;
+    }
+
+    public String[] getAllowNagivation() {
+        return allowNagivation;
+    }
+
+    public void setAllowNagivation(String[] allowNagivation) {
+        this.allowNagivation = allowNagivation;
+    }
+
+    public String getOverriddenUserAgentString() {
+        return overriddenUserAgentString;
+    }
+
+    public void setOverriddenUserAgentString(String overriddenUserAgentString) {
+        this.overriddenUserAgentString = overriddenUserAgentString;
+    }
+
+    public String getAppendedUserAgentString() {
+        return appendedUserAgentString;
+    }
+
+    public void setAppendedUserAgentString(String appendedUserAgentString) {
+        this.appendedUserAgentString = appendedUserAgentString;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public boolean allowMixedContent() {
+        return allowMixedContent;
+    }
+
+    public void setAllowMixedContent(boolean allowMixedContent) {
+        this.allowMixedContent = allowMixedContent;
+    }
+
+    public boolean captureInput() {
+        return captureInput;
+    }
+
+    public void setCaptureInput(boolean captureInput) {
+        this.captureInput = captureInput;
+    }
+
+    public Boolean getWebContentsDebuggingEnabled() {
+        return webContentsDebuggingEnabled;
+    }
+
+    public void setWebContentsDebuggingEnabled(Boolean webContentsDebuggingEnabled) {
+        this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
+    }
+
+    public boolean hideLogs() {
+        return hideLogs;
+    }
+
+    public void setHideLogs(boolean hideLogs) {
+        this.hideLogs = hideLogs;
+    }
+
     public JSONObject getObject(String key) {
         try {
-            return this.config.getJSONObject(key);
+            return this.configJSON.getJSONObject(key);
         } catch (Exception ex) {}
         return null;
     }
@@ -63,7 +203,7 @@ public class CapConfig {
         // Split on periods
         String[] parts = key.split("\\.");
 
-        JSONObject o = this.config;
+        JSONObject o = this.configJSON;
         // Search until the second to last part of the key
         for (int i = 0; i < parts.length - 1; i++) {
             String k = parts[i];

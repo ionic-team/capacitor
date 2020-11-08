@@ -132,7 +132,12 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        this.config = new CapConfig(getActivity().getAssets(), config);
+        boolean defaultDebuggable = false;
+        if (isDevMode()) {
+            defaultDebuggable = true;
+        }
+
+        this.config = new CapConfig(getActivity().getAssets(), config, defaultDebuggable);
         Logger.init(this.config);
 
         // Display splash screen if configured
@@ -160,8 +165,8 @@ public class Bridge {
     }
 
     private void loadWebView() {
-        appUrlConfig = this.config.getString("server.url");
-        String[] appAllowNavigationConfig = this.config.getArray("server.allowNavigation");
+        appUrlConfig = this.config.getServerUrl();
+        String[] appAllowNavigationConfig = this.config.getAllowNagivation();
 
         ArrayList<String> authorities = new ArrayList<>();
         if (appAllowNavigationConfig != null) {
@@ -169,7 +174,7 @@ public class Bridge {
         }
         this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
 
-        String authority = this.config.getString("server.hostname", "localhost");
+        String authority = this.config.getHostname();
         authorities.add(authority);
 
         String scheme = this.getScheme();
@@ -191,7 +196,7 @@ public class Bridge {
             }
         }
 
-        final boolean html5mode = this.config.getBoolean("server.html5mode", true);
+        final boolean html5mode = this.config.html5mode();
 
         // Start the local web server
         localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
@@ -324,7 +329,7 @@ public class Bridge {
      * @return
      */
     public String getScheme() {
-        return this.config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
+        return this.config.getAndroidScheme();
     }
 
     public CapConfig getConfig() {
@@ -347,21 +352,21 @@ public class Bridge {
         settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        if (this.config.getBoolean("android.allowMixedContent", false)) {
+        if (this.config.allowMixedContent()) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
-        String appendUserAgent = this.config.getString("android.appendUserAgent", this.config.getString("appendUserAgent", null));
+        String appendUserAgent = this.config.getAppendedUserAgentString();
         if (appendUserAgent != null) {
             String defaultUserAgent = settings.getUserAgentString();
             settings.setUserAgentString(defaultUserAgent + " " + appendUserAgent);
         }
-        String overrideUserAgent = this.config.getString("android.overrideUserAgent", this.config.getString("overrideUserAgent", null));
+        String overrideUserAgent = this.config.getOverriddenUserAgentString();
         if (overrideUserAgent != null) {
             settings.setUserAgentString(overrideUserAgent);
         }
 
-        String backgroundColor = this.config.getString("android.backgroundColor", this.config.getString("backgroundColor", null));
+        String backgroundColor = this.config.getBackgroundColor();
         try {
             if (backgroundColor != null) {
                 webView.setBackgroundColor(Color.parseColor(backgroundColor));
@@ -369,12 +374,9 @@ public class Bridge {
         } catch (IllegalArgumentException ex) {
             Logger.debug("WebView background color not applied");
         }
-        boolean defaultDebuggable = false;
-        if (isDevMode()) {
-            defaultDebuggable = true;
-        }
+
         webView.requestFocusFromTouch();
-        WebView.setWebContentsDebuggingEnabled(this.config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+        WebView.setWebContentsDebuggingEnabled(this.config.getWebContentsDebuggingEnabled());
     }
 
     /**
