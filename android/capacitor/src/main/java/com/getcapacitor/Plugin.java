@@ -560,47 +560,27 @@ public class Plugin {
             return;
         }
 
-        this.handlePermissions(permissions, grantResults);
-
-        if (rejectMissingManifestPermissions(permissions)) {
-            return;
-        } else {
+        if (validatePermissions(permissions, grantResults)) {
             savedCall.resolve(getPermissionStates());
+        } else {
+            return;
         }
 
         savedCall.release(bridge);
     }
 
     /**
-     * Checks to see if the permission is missing from the AndroidManifest.xml
+     * Saves permission states and rejects if permissions were not correctly defined in
+     * the AndroidManifest.xml file.
      *
-     * @param permissions permissions to check in the manifest
-     * @return true if the permission is missing and call was rejected
-     */
-    public boolean rejectMissingManifestPermissions(String[] permissions) {
-        if (!hasDefinedPermissions(permissions)) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
-            for (String perm : missing) {
-                builder.append(perm + "\n");
-            }
-            savedLastCall.reject(builder.toString());
-            savedLastCall = null;
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Plugin overriding onRequestPermissionsResult should call this method to
-     * handle the permission status correctly
+     * Plugins overriding {@link #onRequestPermissionsResult(int, String[], int[])} should call
+     * this method to save permission states correctly.
      *
      * @param permissions
      * @param grantResults
+     * @return true if permissions were saved and defined correctly, false if not
      */
-    public void handlePermissions(String[] permissions, int[] grantResults) {
+    public boolean validatePermissions(String[] permissions, int[] grantResults) {
         SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -629,6 +609,20 @@ public class Plugin {
                 editor.apply();
             }
         }
+
+        if (!hasDefinedPermissions(permissions)) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
+            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
+            for (String perm : missing) {
+                builder.append(perm + "\n");
+            }
+            savedLastCall.reject(builder.toString());
+            savedLastCall = null;
+            return false;
+        }
+
+        return true;
     }
 
     /**
