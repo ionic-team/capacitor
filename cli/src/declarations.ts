@@ -181,11 +181,11 @@ export interface CapacitorPluginClassConfig {
 
 export interface CapacitorConfig {
   /**
-   * The Package ID of your app.
+   * The unique identifier of your packaged app.
    *
-   * Package IDs (aka Bundle ID in iOS and Application ID in Android) are
-   * unique identifiers for apps. They must be in reverse domain name notation,
-   * generally representing a domain name that you or your company owns.
+   * This is also known as the Bundle ID in iOS and the Application ID in
+   * Android. It must be in reverse domain name notation, generally
+   * representing a domain name that you or your company owns.
    *
    * @since 1.0.0
    */
@@ -213,9 +213,9 @@ export interface CapacitorConfig {
   /**
    * Whether to copy the Capacitor runtime bundle or not.
    *
-   * If your app is using a bundler, this should be `false`. If you added
-   * `capacitor.js` as a script in your `index.html` file, this should be
-   * `true`.
+   * If your app is not using a bundler, set this to `true`, then Capacitor
+   * will create a `capacitor.js` file that you'll need to add as a script in
+   * your `index.html` file.
    *
    * @since 1.0.0
    * @default false
@@ -225,7 +225,7 @@ export interface CapacitorConfig {
   /**
    * Hide or show the native logs for iOS and Android.
    *
-   * @since 1.0.0
+   * @since 2.1.0
    * @default false
    */
   hideLogs?: boolean;
@@ -233,7 +233,7 @@ export interface CapacitorConfig {
   /**
    * User agent of Capacitor Web View.
    *
-   * @since 1.0.0
+   * @since 1.4.0
    */
   overrideUserAgent?: string;
 
@@ -242,14 +242,14 @@ export interface CapacitorConfig {
    *
    * This is disregarded if `overrideUserAgent` is used.
    *
-   * @since 1.0.0
+   * @since 1.4.0
    */
   appendUserAgent?: string;
 
   /**
    * Background color of the Capacitor Web View.
    *
-   * @since 1.0.0
+   * @since 1.1.0
    */
   backgroundColor?: string;
 
@@ -267,7 +267,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `overrideUserAgent` option.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     overrideUserAgent?: string;
 
@@ -278,7 +278,7 @@ export interface CapacitorConfig {
      *
      * This is disregarded if `overrideUserAgent` is used.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     appendUserAgent?: string;
 
@@ -287,7 +287,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `backgroundColor` option.
      *
-     * @since 1.0.0
+     * @since 1.1.0
      */
     backgroundColor?: string;
 
@@ -301,6 +301,7 @@ export interface CapacitorConfig {
      *
      * **This is not intended for use in production.**
      *
+     * @since 1.0.0
      * @default false
      */
     allowMixedContent?: boolean;
@@ -331,7 +332,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `hideLogs` option.
      *
-     * @since 1.0.0
+     * @since 2.1.0
      * @default false
      */
     hideLogs?: boolean;
@@ -351,7 +352,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `overrideUserAgent` option.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     overrideUserAgent?: string;
 
@@ -362,7 +363,7 @@ export interface CapacitorConfig {
      *
      * This is disregarded if `overrideUserAgent` is used.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     appendUserAgent?: string;
 
@@ -371,7 +372,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `backgroundColor` option.
      *
-     * @since 1.0.0
+     * @since 1.1.0
      */
     backgroundColor?: string;
 
@@ -383,10 +384,22 @@ export interface CapacitorConfig {
      * property on the Web View's
      * [`UIScrollView`](https://developer.apple.com/documentation/uikit/uiscrollview).
      *
-     * @since 1.0.0
+     * @since 2.0.0
      * @default never
      */
     contentInset?: 'automatic' | 'scrollableAxes' | 'never' | 'always';
+
+    /**
+     * Configure whether the scroll view is scrollable.
+     *
+     * This will set the
+     * [`isScrollEnabled`](https://developer.apple.com/documentation/uikit/uiscrollview/1619395-isscrollenabled)
+     * property on the Web View's
+     * [`UIScrollView`](https://developer.apple.com/documentation/uikit/uiscrollview).
+     *
+     * @since 1.0.0
+     */
+    scrollEnabled?: boolean;
 
     /**
      * Configure the Swift version to be used in Cordova plugins.
@@ -415,8 +428,11 @@ export interface CapacitorConfig {
     /**
      * Allow destination previews when pressing on links.
      *
-     * @since 1.0.0
-     * @default false
+     * This will set the
+     * [`allowsLinkPreview`](https://developer.apple.com/documentation/webkit/wkwebview/1415000-allowslinkpreview)
+     * property on the Web View, instead of using the default value.
+     *
+     * @since 2.0.0
      */
     allowsLinkPreview?: boolean;
 
@@ -425,7 +441,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `hideLogs` option.
      *
-     * @since 1.0.0
+     * @since 1.1.0
      * @default false
      */
     hideLogs?: boolean;
@@ -455,7 +471,7 @@ export interface CapacitorConfig {
      * [`cordova-plugin-ionic-webview`](https://github.com/ionic-team/cordova-plugin-ionic-webview),
      * where the default scheme on iOS is `ionic`.
      *
-     * @since 1.0.0
+     * @since 1.2.0
      * @default capacitor
      */
     iosScheme?: string;
@@ -463,7 +479,7 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on Android.
      *
-     * @since 1.0.0
+     * @since 1.2.0
      * @default http
      */
     androidScheme?: string;
@@ -489,7 +505,7 @@ export interface CapacitorConfig {
      *
      * **This is not intended for use in production.**
      *
-     * @since 1.0.0
+     * @since 1.5.0
      * @default false
      */
     cleartext?: boolean;
@@ -512,7 +528,7 @@ export interface CapacitorConfig {
     /**
      * Configure Cordova preferences.
      *
-     * @since 1.0.0
+     * @since 1.3.0
      */
     preferences?: { [key: string]: string | undefined };
   };
