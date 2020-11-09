@@ -562,8 +562,35 @@ public class Plugin {
 
         this.handlePermissions(permissions, grantResults);
 
-        savedCall.resolve(getPermissionStates());
+        if (rejectMissingManifestPermissions(permissions)) {
+            return;
+        } else {
+            savedCall.resolve(getPermissionStates());
+        }
+
         savedCall.release(bridge);
+    }
+
+    /**
+     * Checks to see if the permission is missing from the AndroidManifest.xml
+     *
+     * @param permissions permissions to check in the manifest
+     * @return true if the permission is missing and call was rejected
+     */
+    public boolean rejectMissingManifestPermissions(String[] permissions) {
+        if (!hasDefinedPermissions(permissions)) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
+            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
+            for (String perm : missing) {
+                builder.append(perm + "\n");
+            }
+            savedLastCall.reject(builder.toString());
+            savedLastCall = null;
+            return true;
+        }
+
+        return false;
     }
 
     /**

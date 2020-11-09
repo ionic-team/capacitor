@@ -714,18 +714,6 @@ public class Bridge {
         }
 
         if (plugin.getPluginAnnotation() != null) {
-            // Warn if permission requested is not present in the manifest
-            if (!plugin.getInstance().hasDefinedPermissions(permissions)) {
-                StringBuilder builder = new StringBuilder();
-                builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-                String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
-                for (String perm : missing) {
-                    builder.append(perm + "\n");
-                }
-
-                Logger.error(builder.toString());
-            }
-
             plugin.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else {
             // Call deprecated method if using deprecated NativePlugin annotation
