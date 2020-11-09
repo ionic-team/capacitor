@@ -1,10 +1,10 @@
 export interface CapacitorConfig {
   /**
-   * The Package ID of your app.
+   * The unique identifier of your packaged app.
    *
-   * Package IDs (aka Bundle ID in iOS and Application ID in Android) are
-   * unique identifiers for apps. They must be in reverse domain name notation,
-   * generally representing a domain name that you or your company owns.
+   * This is also known as the Bundle ID in iOS and the Application ID in
+   * Android. It must be in reverse domain name notation, generally
+   * representing a domain name that you or your company owns.
    *
    * @since 1.0.0
    */
@@ -31,8 +31,6 @@ export interface CapacitorConfig {
 
   /**
    * Whether to copy the Capacitor runtime bundle or not.
-   *
-   * If your app is using a bundler, this should be `false`.
    *
    * If your app is not using a bundler, set this to `true`, then Capacitor
    * will create a `capacitor.js` file that you'll need to add as a script in
