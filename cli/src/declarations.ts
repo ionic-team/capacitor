@@ -32,9 +32,11 @@ export interface CapacitorConfig {
   /**
    * Whether to copy the Capacitor runtime bundle or not.
    *
-   * If your app is using a bundler, this should be `false`. If you added
-   * `capacitor.js` as a script in your `index.html` file, this should be
-   * `true`.
+   * If your app is using a bundler, this should be `false`.
+   *
+   * If your app is not using a bundler, set this to `true`, then Capacitor
+   * will create a `capacitor.js` file that you'll need to add as a script in
+   * your `index.html` file.
    *
    * @since 1.0.0
    * @default false
