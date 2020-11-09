@@ -11,7 +11,8 @@
   "engines": {
     "node": ">=10.3.0"
   },
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/declarations.d.ts",
   "scripts": {
     "build": "npm run clean && npm run assets && tsc",
     "clean": "rimraf ./dist",
@@ -23,7 +24,8 @@
   "files": [
     "assets/",
     "bin/",
-    "dist/"
+    "dist/**/*.js",
+    "dist/declarations.d.ts"
   ],
   "keywords": [
     "ionic",
