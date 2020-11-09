@@ -249,8 +249,11 @@ export interface CapacitorConfig {
     /**
      * Allow destination previews when pressing on links.
      *
+     * This will set the
+     * [`allowsLinkPreview`](https://developer.apple.com/documentation/webkit/wkwebview/1415000-allowslinkpreview)
+     * property on the Web View, instead of using the default value.
+     *
      * @since 2.0.0
-     * @default false
      */
     allowsLinkPreview?: boolean;
 
