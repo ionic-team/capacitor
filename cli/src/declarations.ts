@@ -209,6 +209,18 @@ export interface CapacitorConfig {
     contentInset?: 'automatic' | 'scrollableAxes' | 'never' | 'always';
 
     /**
+     * Configure whether the scroll view is scrollable.
+     *
+     * This will set the
+     * [`isScrollEnabled`](https://developer.apple.com/documentation/uikit/uiscrollview/1619395-isscrollenabled)
+     * property on the Web View's
+     * [`UIScrollView`](https://developer.apple.com/documentation/uikit/uiscrollview).
+     *
+     * @since 1.0.0
+     */
+    scrollEnabled?: boolean;
+
+    /**
      * Configure the Swift version to be used in Cordova plugins.
      *
      * @since 1.0.0
