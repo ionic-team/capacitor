@@ -121,7 +121,7 @@ async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
   const nativeConfigFilePath = join(nativeAbsDir, nativeConfigFile);
 
   await runTask(
-    `Creating ${c.strong(nativeConfigFile)} to ${nativeRelDir}`,
+    `Creating ${c.strong(nativeConfigFile)} in ${nativeRelDir}`,
     async () => {
       await writeJSON(nativeConfigFilePath, config.app.extConfig, {
         spaces: '\t',
