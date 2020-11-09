@@ -44,7 +44,7 @@ export interface CapacitorConfig {
   /**
    * Hide or show the native logs for iOS and Android.
    *
-   * @since 1.0.0
+   * @since 2.1.0
    * @default false
    */
   hideLogs?: boolean;
@@ -52,7 +52,7 @@ export interface CapacitorConfig {
   /**
    * User agent of Capacitor Web View.
    *
-   * @since 1.0.0
+   * @since 1.4.0
    */
   overrideUserAgent?: string;
 
@@ -61,14 +61,14 @@ export interface CapacitorConfig {
    *
    * This is disregarded if `overrideUserAgent` is used.
    *
-   * @since 1.0.0
+   * @since 1.4.0
    */
   appendUserAgent?: string;
 
   /**
    * Background color of the Capacitor Web View.
    *
-   * @since 1.0.0
+   * @since 1.1.0
    */
   backgroundColor?: string;
 
@@ -86,7 +86,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `overrideUserAgent` option.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     overrideUserAgent?: string;
 
@@ -97,7 +97,7 @@ export interface CapacitorConfig {
      *
      * This is disregarded if `overrideUserAgent` is used.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     appendUserAgent?: string;
 
@@ -106,7 +106,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `backgroundColor` option.
      *
-     * @since 1.0.0
+     * @since 1.1.0
      */
     backgroundColor?: string;
 
@@ -120,6 +120,7 @@ export interface CapacitorConfig {
      *
      * **This is not intended for use in production.**
      *
+     * @since 1.0.0
      * @default false
      */
     allowMixedContent?: boolean;
@@ -150,7 +151,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `hideLogs` option.
      *
-     * @since 1.0.0
+     * @since 2.1.0
      * @default false
      */
     hideLogs?: boolean;
@@ -170,7 +171,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `overrideUserAgent` option.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     overrideUserAgent?: string;
 
@@ -181,7 +182,7 @@ export interface CapacitorConfig {
      *
      * This is disregarded if `overrideUserAgent` is used.
      *
-     * @since 1.0.0
+     * @since 1.4.0
      */
     appendUserAgent?: string;
 
@@ -190,7 +191,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `backgroundColor` option.
      *
-     * @since 1.0.0
+     * @since 1.1.0
      */
     backgroundColor?: string;
 
@@ -202,7 +203,7 @@ export interface CapacitorConfig {
      * property on the Web View's
      * [`UIScrollView`](https://developer.apple.com/documentation/uikit/uiscrollview).
      *
-     * @since 1.0.0
+     * @since 2.0.0
      * @default never
      */
     contentInset?: 'automatic' | 'scrollableAxes' | 'never' | 'always';
@@ -234,7 +235,7 @@ export interface CapacitorConfig {
     /**
      * Allow destination previews when pressing on links.
      *
-     * @since 1.0.0
+     * @since 2.0.0
      * @default false
      */
     allowsLinkPreview?: boolean;
@@ -244,7 +245,7 @@ export interface CapacitorConfig {
      *
      * Overrides global `hideLogs` option.
      *
-     * @since 1.0.0
+     * @since 1.1.0
      * @default false
      */
     hideLogs?: boolean;
@@ -274,7 +275,7 @@ export interface CapacitorConfig {
      * [`cordova-plugin-ionic-webview`](https://github.com/ionic-team/cordova-plugin-ionic-webview),
      * where the default scheme on iOS is `ionic`.
      *
-     * @since 1.0.0
+     * @since 1.2.0
      * @default capacitor
      */
     iosScheme?: string;
@@ -282,7 +283,7 @@ export interface CapacitorConfig {
     /**
      * Configure the local scheme on Android.
      *
-     * @since 1.0.0
+     * @since 1.2.0
      * @default http
      */
     androidScheme?: string;
@@ -308,7 +309,7 @@ export interface CapacitorConfig {
      *
      * **This is not intended for use in production.**
      *
-     * @since 1.0.0
+     * @since 1.5.0
      * @default false
      */
     cleartext?: boolean;
@@ -331,7 +332,7 @@ export interface CapacitorConfig {
     /**
      * Configure Cordova preferences.
      *
-     * @since 1.0.0
+     * @since 1.3.0
      */
     preferences?: { [key: string]: string | undefined };
   };
