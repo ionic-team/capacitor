@@ -30,7 +30,7 @@
 }
 
 -(void)nofity_handleTapAction:(id)arg1 {
-  [[NSNotificationCenter defaultCenter] postNotification:CAPBridge.statusBarTappedNotification];
+  [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:NSNotification.capacitorStatusBarTapped object:nil]];
   [self nofity_handleTapAction:arg1];
 }
 
