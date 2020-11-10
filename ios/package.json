@@ -6,8 +6,8 @@
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "files": [
-    "Capacitor/",
-    "CapacitorCordova/",
+    "Capacitor/Capacitor/",
+    "CapacitorCordova/CapacitorCordova/",
     "Capacitor.podspec",
     "CapacitorCordova.podspec"
   ],
