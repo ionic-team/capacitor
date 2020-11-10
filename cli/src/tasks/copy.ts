@@ -1,5 +1,5 @@
-import { copy as fsCopy, pathExists, remove, writeJSON } from '@ionic/utils-fs';
-import { basename, join, relative, resolve } from 'path';
+import { copy as fsCopy, remove, writeJSON } from '@ionic/utils-fs';
+import { basename, join, relative } from 'path';
 
 import c from '../colors';
 import {
