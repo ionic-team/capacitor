@@ -1,5 +1,4 @@
 import { pathExists, writeFile } from '@ionic/utils-fs';
-import { homedir } from 'os';
 import { join } from 'path';
 
 import c from '../colors';
@@ -23,6 +22,7 @@ export async function addAndroid(config: Config): Promise<void> {
 }
 
 async function createLocalProperties(platformDir: string) {
+  const { homedir } = await import('os');
   const defaultAndroidPath = join(homedir(), 'Library/Android/sdk');
   if (await pathExists(defaultAndroidPath)) {
     const localSettings = `

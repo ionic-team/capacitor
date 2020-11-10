@@ -8,8 +8,6 @@ import {
 } from '@ionic/utils-fs';
 import { basename, extname, join, resolve } from 'path';
 import type { PlistObject } from 'plist';
-import plist from 'plist';
-import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
@@ -352,6 +350,7 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
   );
   const xmlMeta = await readXML(plistPath);
   const data = await readFile(plistPath, { encoding: 'utf-8' });
+  const plist = await import('plist');
   const plistData = plist.parse(data) as PlistObject;
   const dict = xmlMeta.plist.dict.pop();
   if (!dict.key.includes(configElement.$.parent)) {
@@ -545,7 +544,8 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
     );
     if (answers.confirm) {
       if (config.app.extConfig?.cordova?.preferences) {
-        const answers = await prompts(
+        const prompts = await import('prompts');
+        const answers = await prompts.default(
           [
             {
               type: 'confirm',

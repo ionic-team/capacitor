@@ -1,12 +1,7 @@
 import { wordWrap } from '@ionic/cli-framework-output';
 import { copy, move, writeJSON, readFile, pathExists } from '@ionic/utils-fs';
-import { Subprocess, SubprocessError, which } from '@ionic/utils-subprocess';
-import { spawn } from 'child_process';
 import { dirname, join } from 'path';
 import type { Answers, PromptObject } from 'prompts';
-import prompts from 'prompts';
-import semver from 'semver';
-import { setTimeout } from 'timers';
 import xml2js from 'xml2js';
 
 import c from './colors';
@@ -227,7 +222,8 @@ export async function logPrompt<T extends string>(
     logger,
     format: false,
   });
-  return prompts(prompt, { onCancel: () => process.exit(1) });
+  const prompts = await import('prompts');
+  return prompts.default(prompt, { onCancel: () => process.exit(1) });
 }
 
 export function logSuccess(msg: string): void {
@@ -241,6 +237,7 @@ export function logFatal(msg: string): never {
 
 export async function isInstalled(command: string): Promise<boolean> {
   try {
+    const { which } = await import('@ionic/utils-subprocess');
     await which(command);
   } catch (e) {
     return false;
@@ -264,6 +261,7 @@ export async function runPlatformHook(
     return;
   }
 
+  const { spawn } = await import('child_process');
   return new Promise((resolve, reject) => {
     const p = spawn(cmd, {
       stdio: 'inherit',
@@ -292,6 +290,10 @@ export async function runCommand(
   args: readonly string[],
   options: RunCommandOptions = {},
 ): Promise<string> {
+  const { Subprocess, SubprocessError } = await import(
+    '@ionic/utils-subprocess'
+  );
+
   const p = new Subprocess(command, args, options);
 
   try {
@@ -500,7 +502,8 @@ export async function promptForPlatform(
   selectedPlatformName?: string,
 ): Promise<string> {
   if (!selectedPlatformName) {
-    const answers = await prompts(
+    const prompts = await import('prompts');
+    const answers = await prompts.default(
       [
         {
           type: 'select',
@@ -537,7 +540,8 @@ export async function promptForPlatformTarget(
     if (targets.length === 1) {
       return targets[0];
     } else {
-      const answers = await prompts(
+      const prompts = await import('prompts');
+      const answers = await prompts.default(
         [
           {
             type: 'select',
@@ -589,6 +593,7 @@ export async function checkPlatformVersions(
   config: Config,
   platform: string,
 ): Promise<void> {
+  const semver = await import('semver');
   const coreVersion = await getCoreVersion(config);
   const platformVersion = await getCapacitorPackageVersion(config, platform);
   if (

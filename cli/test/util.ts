@@ -5,7 +5,6 @@ import {
   pathExists,
   writeFile,
 } from '@ionic/utils-fs';
-import { exec } from 'child_process';
 import { join, resolve } from 'path';
 import type { DirCallback } from 'tmp';
 import tmp from 'tmp';
@@ -31,6 +30,7 @@ export async function run(
   appRoot: string,
   capCommand: string,
 ): Promise<string> {
+  const { exec } = await import('child_process');
   return new Promise((resolve, reject) => {
     exec(
       `cd "${appRoot}" && "${cwd}/bin/capacitor" ${capCommand}`,

@@ -1,6 +1,5 @@
 import { pathExists } from '@ionic/utils-fs';
 import Debug from 'debug';
-import open from 'open';
 
 import c from '../colors';
 import type { Config } from '../definitions';
@@ -17,7 +16,8 @@ export async function openAndroid(config: Config): Promise<void> {
       throw new Error(`Android Studio does not exist at: ${androidStudioPath}`);
     }
 
-    await open(dir, { app: androidStudioPath, wait: false });
+    const open = await import('open');
+    await open.default(dir, { app: androidStudioPath, wait: false });
     logger.info(
       `Opening Android project at: ${c.strong(config.android.platformDir)}.`,
     );

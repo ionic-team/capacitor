@@ -1,5 +1,3 @@
-import open from 'open';
-
 import c from '../colors';
 import { wait, logFatal } from '../common';
 import type { Config } from '../definitions';
@@ -16,6 +14,7 @@ export async function openIOS(config: Config): Promise<void> {
     );
   }
 
-  await open(xcodeProject, { wait: false });
+  const open = await import('open');
+  await open.default(xcodeProject, { wait: false });
   await wait(3000);
 }

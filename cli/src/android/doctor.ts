@@ -1,5 +1,4 @@
-import { pathExists, readFile } from '@ionic/utils-fs';
-import { accessSync } from 'fs';
+import { accessSync, pathExists, readFile } from '@ionic/utils-fs';
 import { join } from 'path';
 
 import c from '../colors';
