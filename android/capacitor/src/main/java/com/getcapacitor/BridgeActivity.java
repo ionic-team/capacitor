@@ -40,6 +40,12 @@ public class BridgeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
+    protected void init(Bundle savedInstanceState) {
+        PluginLoader loader = new PluginLoader(getAssets());
+        List<Class<? extends Plugin>> pluginsList = loader.getPlugins();
+        this.init(savedInstanceState, pluginsList);
+    }
+
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
         this.init(savedInstanceState, plugins, null);
     }
