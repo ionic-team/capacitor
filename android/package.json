@@ -5,6 +5,10 @@
   "homepage": "https://capacitorjs.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
+  "files": [
+    "capacitor/build.gradle",
+    "capacitor/src/main/"
+  ],
   "scripts": {
     "verify": "./gradlew clean build test -b capacitor/build.gradle -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true"
   },
