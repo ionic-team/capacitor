@@ -1,4 +1,4 @@
-import c from '../colors';
+import { input, strong } from '../colors';
 import {
   check,
   checkAppId,
@@ -27,10 +27,10 @@ export async function initCommand(
 
     if (config.app.extConfigType !== 'json') {
       logFatal(
-        `Cannot run ${c.input(
+        `Cannot run ${input(
           'init',
         )} for a project using a non-JSON configuration file.\n` +
-          `Delete ${c.strong(config.app.extConfigName)} and try again.`,
+          `Delete ${strong(config.app.extConfigName)} and try again.`,
       );
     }
 
@@ -48,7 +48,7 @@ export async function initCommand(
     const cordova = await getCordovaPreferences(config);
 
     await runTask(
-      `Creating ${c.strong(config.app.extConfigName)} in ${c.input(
+      `Creating ${strong(config.app.extConfigName)} in ${input(
         config.app.rootDir,
       )}`,
       async () => {
@@ -73,12 +73,12 @@ export async function initCommand(
 }
 
 function printNextSteps(config: Config) {
-  logSuccess(`${c.strong(config.app.extConfigName)} created!`);
+  logSuccess(`${strong(config.app.extConfigName)} created!`);
   output.write(
-    `\nAdd platforms using ${c.input('npx cap add')}:\n` +
-      `  ${c.input('npx cap add android')}\n` +
-      `  ${c.input('npx cap add ios')}\n\n` +
-      `Follow the Developer Workflow guide to get building:\n${c.strong(
+    `\nAdd platforms using ${input('npx cap add')}:\n` +
+      `  ${input('npx cap add android')}\n` +
+      `  ${input('npx cap add ios')}\n\n` +
+      `Follow the Developer Workflow guide to get building:\n${strong(
         `https://capacitorjs.com/docs/basics/workflow`,
       )}\n`,
   );
@@ -87,7 +87,7 @@ function printNextSteps(config: Config) {
 async function getName(config: Config, name: string) {
   if (!name) {
     const answers = await logPrompt(
-      `${c.strong(`What is the name of your app?`)}\n` +
+      `${strong(`What is the name of your app?`)}\n` +
         `This should be a human-friendly app name, like what you'd see in the App Store.`,
       {
         type: 'text',
@@ -106,7 +106,7 @@ async function getName(config: Config, name: string) {
 async function getAppId(config: Config, id: string) {
   if (!id) {
     const answers = await logPrompt(
-      `${c.strong(`What should be the Package ID for your app?`)}\n` +
+      `${strong(`What should be the Package ID for your app?`)}\n` +
         `Package IDs (aka Bundle ID in iOS and Application ID in Android) are unique identifiers for apps. They must be in reverse domain name notation, generally representing a domain name that you or your company owns.`,
       {
         type: 'text',
@@ -123,8 +123,8 @@ async function getAppId(config: Config, id: string) {
 async function getWebDir(config: Config, webDir?: string) {
   if (!webDir) {
     const answers = await logPrompt(
-      `${c.strong(`What is the web asset directory for your app?`)}\n` +
-        `This directory should contain the final ${c.strong(
+      `${strong(`What is the web asset directory for your app?`)}\n` +
+        `This directory should contain the final ${strong(
           'index.html',
         )} of your app.`,
       {

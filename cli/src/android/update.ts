@@ -1,7 +1,7 @@
 import { copy, remove, pathExists, readFile, writeFile } from '@ionic/utils-fs';
 import { dirname, join, relative, resolve } from 'path';
 
-import c from '../colors';
+import { strong } from '../colors';
 import {
   checkPlatformVersions,
   logFatal,
@@ -77,7 +77,7 @@ export async function installGradlePlugins(
   if (!capacitorAndroidPackagePath) {
     logFatal(
       `Unable to find node_modules/@capacitor/android\n` +
-        `Are you sure ${c.strong('@capacitor/android')} is installed?`,
+        `Are you sure ${strong('@capacitor/android')} is installed?`,
     );
   }
 

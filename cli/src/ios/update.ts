@@ -1,7 +1,7 @@
 import { copy, remove, readFile, realpath, writeFile } from '@ionic/utils-fs';
 import { dirname, join, relative, resolve } from 'path';
 
-import c from '../colors';
+import { input, strong } from '../colors';
 import {
   checkPlatformVersions,
   logFatal,
@@ -69,7 +69,7 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
 ): Promise<void> {
   await runTask(
-    `Updating iOS native dependencies with ${c.input('pod install')}`,
+    `Updating iOS native dependencies with ${input('pod install')}`,
     () => {
       return updatePodfile(config, plugins, deployment);
     },
@@ -121,7 +121,7 @@ async function generatePodFile(
   if (!capacitoriOSPath) {
     logFatal(
       `Unable to find node_modules/@capacitor/ios.\n` +
-        `Are you sure ${c.strong('@capacitor/ios')} is installed?`,
+        `Are you sure ${strong('@capacitor/ios')} is installed?`,
     );
   }
 

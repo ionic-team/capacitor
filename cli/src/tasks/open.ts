@@ -1,5 +1,5 @@
 import { openAndroid } from '../android/open';
-import c from '../colors';
+import { input } from '../colors';
 import {
   logFatal,
   resolvePlatform,
@@ -22,7 +22,7 @@ export async function openCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:open');
     } else {
-      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
+      logger.error(`Platform ${input(selectedPlatformName)} not found.`);
     }
   } else {
     const platforms = await selectPlatforms(config, selectedPlatformName);
@@ -30,7 +30,7 @@ export async function openCommand(
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to open yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
+          `Add platforms with ${input('npx cap add')}.`,
       );
       return;
     } else if (platforms.length === 1) {

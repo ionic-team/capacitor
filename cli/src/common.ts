@@ -4,7 +4,7 @@ import { dirname, join } from 'path';
 import type { Answers, PromptObject } from 'prompts';
 import xml2js from 'xml2js';
 
-import c from './colors';
+import { input, strong, success, weak } from './colors';
 import type { Config, ExternalConfig, PackageJson } from './definitions';
 import { output, logger } from './log';
 
@@ -26,16 +26,16 @@ export async function checkWebDir(config: Config): Promise<string | null> {
   if (!(await pathExists(config.app.webDirAbs))) {
     return (
       `Could not find the web assets directory: ${config.app.webDirAbs}.\n` +
-      `Please create it and make sure it has an ${c.strong(
+      `Please create it and make sure it has an ${strong(
         'index.html',
-      )} file. You can change the path of this directory in ${c.strong(
+      )} file. You can change the path of this directory in ${strong(
         config.app.extConfigName,
-      )} (${c.input(
+      )} (${input(
         'webDir',
-      )} option). You may need to compile the web assets for your app (typically ${c.input(
+      )} option). You may need to compile the web assets for your app (typically ${input(
         'npm run build',
       )}).\n` +
-      `More info: ${c.strong(
+      `More info: ${strong(
         'https://capacitorjs.com/docs/basics/building-your-app',
       )}`
     );
@@ -45,7 +45,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
     return (
       `The web assets directory (${
         config.app.webDirAbs
-      }) must contain an ${c.strong('index.html')} file.\n` +
+      }) must contain an ${strong('index.html')} file.\n` +
       `It will be the entry point for the web portion of the Capacitor app.`
     );
   }
@@ -57,7 +57,7 @@ export async function checkPackage(): Promise<string | null> {
     return (
       `The Capacitor CLI needs to run at the root of an npm package.\n` +
       `Make sure you have a package.json file in the directory where you run the Capacitor CLI.\n` +
-      `More info: ${c.strong('https://docs.npmjs.com/cli/init')}`
+      `More info: ${strong('https://docs.npmjs.com/cli/init')}`
     );
   }
   return null;
@@ -70,7 +70,7 @@ export async function checkCapacitorPlatform(
   const pkg = await getCapacitorPackage(config, platform);
 
   if (!pkg) {
-    return `Could not find the ${c.input(
+    return `Could not find the ${input(
       platform,
     )} platform. Does it need to be installed?\n`;
   }
@@ -81,16 +81,16 @@ export async function checkCapacitorPlatform(
 export async function checkAppConfig(config: Config): Promise<string | null> {
   if (!config.app.appId) {
     return (
-      `Missing ${c.input('appId')} for new platform.\n` +
-      `Please add it in ${config.app.extConfigName} or run ${c.input(
+      `Missing ${input('appId')} for new platform.\n` +
+      `Please add it in ${config.app.extConfigName} or run ${input(
         'npx cap init',
       )}.`
     );
   }
   if (!config.app.appName) {
     return (
-      `Missing ${c.input('appName')} for new platform.\n` +
-      `Please add it in ${config.app.extConfigName} or run ${c.input(
+      `Missing ${input('appName')} for new platform.\n` +
+      `Please add it in ${config.app.extConfigName} or run ${input(
         'npx cap init',
       )}.`
     );
@@ -218,7 +218,7 @@ export async function logPrompt<T extends string>(
   prompt: PromptObject<T>,
 ): Promise<Answers<T>> {
   logger.log({
-    msg: `${c.input('[?]')} ${wordWrap(msg, { indentation: 4 })}`,
+    msg: `${input('[?]')} ${wordWrap(msg, { indentation: 4 })}`,
     logger,
     format: false,
   });
@@ -227,7 +227,7 @@ export async function logPrompt<T extends string>(
 }
 
 export function logSuccess(msg: string): void {
-  logger.msg(`${c.success('[success]')} ${msg}`);
+  logger.msg(`${success('[success]')} ${msg}`);
 }
 
 export function logFatal(msg: string): never {
@@ -319,7 +319,7 @@ export async function runNativeRun(
   );
 
   if (!p) {
-    logFatal(`${c.input('native-run')} not found.`);
+    logFatal(`${input('native-run')} not found.`);
   }
 
   return await runCommand(p, args, options);
@@ -397,7 +397,7 @@ export async function requireCapacitorPackage(
   if (!pkg) {
     logFatal(
       `Unable to find node_modules/@capacitor/${name}.\n` +
-        `Are you sure ${c.strong(`@capacitor/${name}`)} is installed?`,
+        `Are you sure ${strong(`@capacitor/${name}`)} is installed?`,
     );
   }
   return pkg;
@@ -453,17 +453,17 @@ export async function selectPlatforms(
     const platformName = selectedPlatformName.toLowerCase().trim();
 
     if (!(await isValidPlatform(platformName))) {
-      logFatal(`Invalid platform: ${c.input(platformName)}`);
+      logFatal(`Invalid platform: ${input(platformName)}`);
     } else if (!(await getProjectPlatformDirectory(config, platformName))) {
       if (platformName === 'web') {
         logFatal(
           `Could not find the web platform directory.\n` +
-            `Make sure ${c.strong(config.app.webDir)} exists.`,
+            `Make sure ${strong(config.app.webDir)} exists.`,
         );
       }
       logFatal(
-        `${c.strong(platformName)} platform has not been added yet.\n` +
-          `Use ${c.input(
+        `${strong(platformName)} platform has not been added yet.\n` +
+          `Use ${input(
             `npx cap add ${platformName}`,
           )} to add the platform to your project.`,
       );
@@ -524,7 +524,7 @@ export async function promptForPlatform(
     const knownPlatforms = await getKnownPlatforms();
 
     logFatal(
-      `Invalid platform: ${c.input(platformName)}.\n` +
+      `Invalid platform: ${input(platformName)}.\n` +
         `Valid platforms include: ${knownPlatforms.join(', ')}`,
     );
   }
@@ -565,7 +565,7 @@ export async function promptForPlatformTarget(
 
   if (!target) {
     logFatal(
-      `Invalid target ID: ${c.input(targetID)}.\n` +
+      `Invalid target ID: ${input(targetID)}.\n` +
         `Valid targets are: ${targets.map(t => t.id).join(', ')}`,
     );
   }
@@ -601,12 +601,12 @@ export async function checkPlatformVersions(
     semver.diff(coreVersion, platformVersion) === 'major'
   ) {
     logger.warn(
-      `${c.strong('@capacitor/core')}${c.weak(
+      `${strong('@capacitor/core')}${weak(
         `@${coreVersion}`,
-      )} version doesn't match ${c.strong(`@capacitor/${platform}`)}${c.weak(
+      )} version doesn't match ${strong(`@capacitor/${platform}`)}${weak(
         `@${platformVersion}`,
       )} version.\n` +
-        `Consider updating to a matching version, e.g. w/ ${c.input(
+        `Consider updating to a matching version, e.g. w/ ${input(
           `npm install @capacitor/core@${platformVersion}`,
         )}`,
     );

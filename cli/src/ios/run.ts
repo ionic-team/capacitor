@@ -1,7 +1,7 @@
 import Debug from 'debug';
 import { resolve } from 'path';
 
-import c from '../colors';
+import { input, strong } from '../colors';
 import {
   getPlatformTargets,
   promptForPlatformTarget,
@@ -63,7 +63,7 @@ export async function runIOS(
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
   await runTask(
-    `Deploying ${c.strong(appName)} to ${c.input(target.id)}`,
+    `Deploying ${strong(appName)} to ${input(target.id)}`,
     async () => runNativeRun(nativeRunArgs),
   );
 }

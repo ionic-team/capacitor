@@ -2,7 +2,7 @@ import { pathExists, readJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
 import { dirname, join, resolve } from 'path';
 
-import c from './colors';
+import { input, strong } from './colors';
 import { logFatal, resolveNode, runCommand } from './common';
 import type {
   AndroidConfig,
@@ -70,9 +70,9 @@ async function loadExtConfigTS(
     if (!tsPath) {
       logFatal(
         'Could not find installation of TypeScript.\n' +
-          `To use ${c.strong(
+          `To use ${strong(
             extConfigName,
-          )} files, you must install TypeScript in your project, e.g. w/ ${c.input(
+          )} files, you must install TypeScript in your project, e.g. w/ ${input(
             'npm install -D typescript',
           )}`,
       );
@@ -87,7 +87,7 @@ async function loadExtConfigTS(
       extConfig: requireTS(ts, extConfigFilePath) as any,
     };
   } catch (e) {
-    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    logFatal(`Parsing ${strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }
 
@@ -104,7 +104,7 @@ async function loadExtConfigJS(
       extConfig: require(extConfigFilePath),
     };
   } catch (e) {
-    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+    logFatal(`Parsing ${strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
   }
 }
 

@@ -1,7 +1,7 @@
 import Debug from 'debug';
 import { resolve } from 'path';
 
-import c from '../colors';
+import { input, strong } from '../colors';
 import {
   getPlatformTargets,
   promptForPlatformTarget,
@@ -41,7 +41,7 @@ export async function runAndroid(
   debug('Invoking native-run with args: %O', nativeRunArgs);
 
   await runTask(
-    `Deploying ${c.strong(apkName)} to ${c.input(target.id)}`,
+    `Deploying ${strong(apkName)} to ${input(target.id)}`,
     async () => runNativeRun(nativeRunArgs),
   );
 }

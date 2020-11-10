@@ -1,7 +1,7 @@
 import { copy } from '@ionic/utils-fs';
 import { join } from 'path';
 
-import c from '../colors';
+import { strong } from '../colors';
 import { logFatal, resolveNode, runTask } from '../common';
 import type { Config } from '../definitions';
 
@@ -16,11 +16,11 @@ export async function copyWeb(config: Config): Promise<void> {
     if (!runtimePath) {
       logFatal(
         `Unable to find node_modules/@capacitor/core/dist/capacitor.js.\n` +
-          `Are you sure ${c.strong('@capacitor/core')} is installed?`,
+          `Are you sure ${strong('@capacitor/core')} is installed?`,
       );
     }
 
-    return runTask(`Copying ${c.strong('capacitor.js')} to web dir`, () => {
+    return runTask(`Copying ${strong('capacitor.js')} to web dir`, () => {
       return copy(runtimePath, join(config.app.webDirAbs, 'capacitor.js'));
     });
   }

@@ -1,6 +1,6 @@
 import { dirname, join } from 'path';
 
-import c from './colors';
+import { strong, weak } from './colors';
 import { logFatal, readJSON, readXML, resolveNode } from './common';
 import type { Config } from './definitions';
 import { logger } from './log';
@@ -55,7 +55,7 @@ export async function resolvePlugin(
     if (!packagePath) {
       logFatal(
         `Unable to find node_modules/${name}.\n` +
-          `Are you sure ${c.strong(name)} is installed?`,
+          `Are you sure ${strong(name)} is installed?`,
       );
     }
 
@@ -120,25 +120,25 @@ export function printPlugins(
 
   switch (type) {
     case 'cordova':
-      msg = `Found ${plugins.length} Cordova plugin${plural} for ${c.strong(
+      msg = `Found ${plugins.length} Cordova plugin${plural} for ${strong(
         platform,
       )}:\n`;
       break;
     case 'incompatible':
       msg = `Found ${
         plugins.length
-      } incompatible Cordova plugin${plural} for ${c.strong(
+      } incompatible Cordova plugin${plural} for ${strong(
         platform,
       )}, skipped install:\n`;
       break;
     case 'capacitor':
-      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${c.strong(
+      msg = `Found ${plugins.length} Capacitor plugin${plural} for ${strong(
         platform,
       )}:\n`;
       break;
   }
 
-  msg += plugins.map(p => `${p.id}${c.weak(`@${p.version}`)}`).join('\n');
+  msg += plugins.map(p => `${p.id}${weak(`@${p.version}`)}`).join('\n');
 
   logger.info(msg);
 }

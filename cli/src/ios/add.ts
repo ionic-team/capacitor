@@ -1,10 +1,10 @@
-import c from '../colors';
+import { strong } from '../colors';
 import { copyTemplate, runTask } from '../common';
 import type { Config } from '../definitions';
 
 export async function addIOS(config: Config): Promise<void> {
   await runTask(
-    `Adding native Xcode project in ${c.strong(config.ios.platformDir)}`,
+    `Adding native Xcode project in ${strong(config.ios.platformDir)}`,
     () => {
       return copyTemplate(
         config.ios.assets.templateDir,

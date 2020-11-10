@@ -1,5 +1,5 @@
 import { getAndroidPlugins } from '../android/common';
-import c from '../colors';
+import { input } from '../colors';
 import { selectPlatforms } from '../common';
 import type { Config } from '../definitions';
 import { getIOSPlugins } from '../ios/common';
@@ -16,7 +16,7 @@ export async function listCommand(
   if (platforms.length === 0) {
     logger.info(
       `There are no platforms to list yet.\n` +
-        `Add platforms with ${c.input('npx cap add')}.`,
+        `Add platforms with ${input('npx cap add')}.`,
     );
     return;
   }
@@ -37,10 +37,10 @@ export async function list(config: Config, platform: string): Promise<void> {
   } else if (platform === config.android.name) {
     plugins = await getAndroidPlugins(allPlugins);
   } else if (platform === config.web.name) {
-    logger.info(`Listing plugins for ${c.input(platform)} is not possible.`);
+    logger.info(`Listing plugins for ${input(platform)} is not possible.`);
     return;
   } else {
-    throw `Platform ${c.input(platform)} is not valid.`;
+    throw `Platform ${input(platform)} is not valid.`;
   }
 
   const capacitorPlugins = plugins.filter(

@@ -1,5 +1,5 @@
 import { doctorAndroid } from '../android/doctor';
-import c from '../colors';
+import { strong, weak } from '../colors';
 import {
   readJSON,
   resolveNode,
@@ -16,7 +16,7 @@ export async function doctorCommand(
   selectedPlatformName: string,
 ): Promise<void> {
   output.write(
-    `${_e('💊', '')}   ${c.strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
+    `${_e('💊', '')}   ${strong('Capacitor Doctor')}  ${_e('💊', '')} \n\n`,
   );
 
   await doctorCore(config);
@@ -43,12 +43,12 @@ export async function doctorCore(config: Config): Promise<void> {
   ]);
 
   output.write(
-    `${c.strong('Latest Dependencies:')}\n\n` +
-      `  @capacitor/cli: ${c.weak(cliVersion ?? 'unknown')}\n` +
-      `  @capacitor/core: ${c.weak(coreVersion ?? 'unknown')}\n` +
-      `  @capacitor/android: ${c.weak(androidVersion ?? 'unknown')}\n` +
-      `  @capacitor/ios: ${c.weak(iosVersion ?? 'unknown')}\n\n` +
-      `${c.strong('Installed Dependencies:')}\n\n`,
+    `${strong('Latest Dependencies:')}\n\n` +
+      `  @capacitor/cli: ${weak(cliVersion ?? 'unknown')}\n` +
+      `  @capacitor/core: ${weak(coreVersion ?? 'unknown')}\n` +
+      `  @capacitor/android: ${weak(androidVersion ?? 'unknown')}\n` +
+      `  @capacitor/ios: ${weak(iosVersion ?? 'unknown')}\n\n` +
+      `${strong('Installed Dependencies:')}\n\n`,
   );
 
   await printInstalledPackages(config);
@@ -83,7 +83,7 @@ async function printPackageVersion(
   if (packagePath) {
     version = (await readJSON(packagePath)).version;
   }
-  output.write(`  ${packageName}: ${c.weak(version || 'not installed')}\n`);
+  output.write(`  ${packageName}: ${weak(version || 'not installed')}\n`);
 }
 
 export async function doctor(

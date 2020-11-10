@@ -1,4 +1,4 @@
-import c from '../colors';
+import { input } from '../colors';
 import {
   check,
   checkPackage,
@@ -35,7 +35,7 @@ export async function syncCommand(
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to sync yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
+          `Add platforms with ${input('npx cap add')}.`,
       );
       return;
     }

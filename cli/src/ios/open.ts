@@ -1,4 +1,4 @@
-import c from '../colors';
+import { input } from '../colors';
 import { wait, logFatal } from '../common';
 import type { Config } from '../definitions';
 
@@ -10,7 +10,7 @@ export async function openIOS(config: Config): Promise<void> {
   if (!xcodeProject) {
     logFatal(
       'Xcode workspace does not exist.\n' +
-        `Run ${c.input('npx cap add ios')} to bootstrap a new iOS project.`,
+        `Run ${input('npx cap add ios')} to bootstrap a new iOS project.`,
     );
   }
 

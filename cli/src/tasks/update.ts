@@ -1,5 +1,5 @@
 import { updateAndroid } from '../android/update';
-import c from '../colors';
+import { input, strong, success } from '../colors';
 import type { CheckFunction } from '../common';
 import {
   check,
@@ -27,7 +27,7 @@ export async function updateCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:update');
     } else {
-      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
+      logger.error(`Platform ${input(selectedPlatformName)} not found.`);
     }
   } else {
     const then = +new Date();
@@ -35,7 +35,7 @@ export async function updateCommand(
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to update yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
+          `Add platforms with ${input('npx cap add')}.`,
       );
       return;
     }
@@ -83,7 +83,7 @@ export async function update(
   platformName: string,
   deployment: boolean,
 ): Promise<void> {
-  await runTask(c.success(c.strong(`update ${platformName}`)), async () => {
+  await runTask(success(strong(`update ${platformName}`)), async () => {
     if (platformName === config.ios.name) {
       await updateIOS(config, deployment);
     } else if (platformName === config.android.name) {

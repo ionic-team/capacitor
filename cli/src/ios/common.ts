@@ -1,7 +1,7 @@
 import { readdir, readFile, writeFile } from '@ionic/utils-fs';
 import { join, resolve } from 'path';
 
-import c from '../colors';
+import { input, strong } from '../colors';
 import {
   isInstalled,
   checkCapacitorPlatform,
@@ -40,7 +40,7 @@ export async function checkCocoaPods(config: Config): Promise<string | null> {
   if (!(await isInstalled('pod')) && config.cli.os === OS.Mac) {
     return (
       `CocoaPods is not installed.\n` +
-      `See this install guide: ${c.strong(
+      `See this install guide: ${strong(
         'https://guides.cocoapods.org/using/getting-started.html#installation',
       )}`
     );
@@ -52,8 +52,8 @@ export async function checkIOSProject(config: Config): Promise<string | null> {
   const platformDir = await getProjectPlatformDirectory(config, 'ios');
   if (!platformDir) {
     return (
-      `${c.strong('ios')} platform has not been added yet.\n` +
-      `Use ${c.input(`npx cap add ios`)} to add the platform to your project.`
+      `${strong('ios')} platform has not been added yet.\n` +
+      `Use ${input(`npx cap add ios`)} to add the platform to your project.`
     );
   }
   return null;

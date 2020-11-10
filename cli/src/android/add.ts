@@ -1,13 +1,13 @@
 import { pathExists, writeFile } from '@ionic/utils-fs';
 import { join } from 'path';
 
-import c from '../colors';
+import { strong } from '../colors';
 import { copyTemplate, runCommand, runTask } from '../common';
 import type { Config } from '../definitions';
 
 export async function addAndroid(config: Config): Promise<void> {
   await runTask(
-    `Adding native android project in ${c.strong(config.android.platformDir)}`,
+    `Adding native android project in ${strong(config.android.platformDir)}`,
     async () => {
       return copyTemplate(
         config.android.assets.templateDir,

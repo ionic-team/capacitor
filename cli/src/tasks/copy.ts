@@ -1,7 +1,7 @@
 import { copy as fsCopy, remove, writeJSON } from '@ionic/utils-fs';
 import { basename, join, relative } from 'path';
 
-import c from '../colors';
+import { input, strong, success } from '../colors';
 import {
   checkWebDir,
   logFatal,
@@ -31,14 +31,14 @@ export async function copyCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:copy');
     } else {
-      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
+      logger.error(`Platform ${input(selectedPlatformName)} not found.`);
     }
   } else {
     const platforms = await selectPlatforms(config, selectedPlatformName);
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to copy yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
+          `Add platforms with ${input('npx cap add')}.`,
       );
       return;
     }
@@ -56,7 +56,7 @@ export async function copy(
   config: Config,
   platformName: string,
 ): Promise<void> {
-  await runTask(c.success(c.strong(`copy ${platformName}`)), async () => {
+  await runTask(success(strong(`copy ${platformName}`)), async () => {
     const result = await checkWebDir(config);
     if (result) {
       throw result;
@@ -103,12 +103,12 @@ async function copyNativeBridge(rootDir: string, nativeAbsDir: string) {
   if (!bridgePath) {
     logFatal(
       `Unable to find node_modules/@capacitor/core/native-bridge.js.\n` +
-        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
+        `Are you sure ${strong('@capacitor/core')} is installed?`,
     );
   }
 
   await runTask(
-    `Copying ${c.strong('native-bridge.js')} to ${nativeRelDir}`,
+    `Copying ${strong('native-bridge.js')} to ${nativeRelDir}`,
     async () => {
       return fsCopy(bridgePath!, join(nativeAbsDir, 'native-bridge.js'));
     },
@@ -121,7 +121,7 @@ async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
   const nativeConfigFilePath = join(nativeAbsDir, nativeConfigFile);
 
   await runTask(
-    `Creating ${c.strong(nativeConfigFile)} in ${nativeRelDir}`,
+    `Creating ${strong(nativeConfigFile)} in ${nativeRelDir}`,
     async () => {
       await writeJSON(nativeConfigFilePath, config.app.extConfig, {
         spaces: '\t',
@@ -136,7 +136,7 @@ async function copyWebDir(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
 
   await runTask(
-    `Copying web assets from ${c.strong(webRelDir)} to ${nativeRelDir}`,
+    `Copying web assets from ${strong(webRelDir)} to ${nativeRelDir}`,
     async () => {
       await remove(nativeAbsDir);
       return fsCopy(webAbsDir, nativeAbsDir);

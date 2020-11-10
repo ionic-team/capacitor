@@ -3,7 +3,7 @@ import {
   editProjectSettingsAndroid,
   checkAndroidPackage,
 } from '../android/common';
-import c from '../colors';
+import { input, strong, success } from '../colors';
 import type { CheckFunction } from '../common';
 import {
   getKnownPlatforms,
@@ -41,10 +41,10 @@ export async function addCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:add');
     } else {
-      let msg = `Platform ${c.input(selectedPlatformName)} not found.`;
+      let msg = `Platform ${input(selectedPlatformName)} not found.`;
 
       if (await isValidCommunityPlatform(selectedPlatformName)) {
-        msg += `\nTry installing ${c.strong(
+        msg += `\nTry installing ${strong(
           `@capacitor-community/${selectedPlatformName}`,
         )} and adding the platform again.`;
       }
@@ -71,9 +71,9 @@ export async function addCommand(
 
     if (existingPlatformDir) {
       logFatal(
-        `${c.input(platformName)} platform already exists.\n` +
+        `${input(platformName)} platform already exists.\n` +
           `To re-add this platform, first remove ${existingPlatformDir}, then run this command again.\n` +
-          `${c.strong(
+          `${strong(
             'WARNING',
           )}: Your native project will be completely removed.`,
       );
@@ -98,7 +98,7 @@ export async function addCommand(
         platformName === config.android.name
       ) {
         logger.info(
-          `Run ${c.input(`npx cap open ${platformName}`)} to launch ${
+          `Run ${input(`npx cap open ${platformName}`)} to launch ${
             platformName === config.ios.name ? 'Xcode' : 'Android Studio'
           }`,
         );
@@ -128,7 +128,7 @@ export async function doAdd(
   config: Config,
   platformName: string,
 ): Promise<void> {
-  await runTask(c.success(c.strong('add')), async () => {
+  await runTask(success(strong('add')), async () => {
     if (platformName === config.ios.name) {
       await addIOS(config);
     } else if (platformName === config.android.name) {
@@ -155,9 +155,9 @@ function shouldSync(config: Config, platformName: string) {
 
 function webWarning() {
   logger.error(
-    `Not adding platform ${c.strong('web')}.\n` +
+    `Not adding platform ${strong('web')}.\n` +
       `In Capacitor, the web platform is just your web app! For example, if you have a React or Angular project, the web platform is that project.\n` +
-      `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: ${c.strong(
+      `To add Capacitor functionality to your web app, follow the Web Getting Started Guide: ${strong(
         'https://capacitorjs.com/docs/web',
       )}`,
   );

@@ -1,7 +1,7 @@
 import { columnar } from '@ionic/utils-terminal';
 
 import { runAndroid } from '../android/run';
-import c from '../colors';
+import { input } from '../colors';
 import {
   isValidPlatform,
   resolvePlatform,
@@ -33,7 +33,7 @@ export async function runCommand(
     if (platformDir) {
       await runPlatformHook(platformDir, 'capacitor:run');
     } else {
-      logger.error(`Platform ${c.input(selectedPlatformName)} not found.`);
+      logger.error(`Platform ${input(selectedPlatformName)} not found.`);
     }
   } else {
     const platforms = await selectPlatforms(config, selectedPlatformName);
@@ -41,7 +41,7 @@ export async function runCommand(
     if (platforms.length === 0) {
       logger.info(
         `There are no platforms to run yet.\n` +
-          `Add platforms with ${c.input('npx cap add')}.`,
+          `Add platforms with ${input('npx cap add')}.`,
       );
       return;
     } else if (platforms.length === 1) {

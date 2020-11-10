@@ -4,10 +4,10 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "lib": ["es2019"],
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noEmitHelpers": true,
-    "outDir": "build",
+    "outDir": "dist",
     "pretty": true,
     "strict": true,
     "target": "es2019"

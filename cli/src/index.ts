@@ -1,6 +1,6 @@
-import program from 'commander';
+import { program } from 'commander';
 
-import c from './colors';
+import { failure, input, strong } from './colors';
 import { logFatal } from './common';
 import { loadConfig } from './config';
 import { output } from './log';
@@ -19,7 +19,7 @@ import { updateCommand } from './tasks/update';
 import { emoji as _e } from './util/emoji';
 
 process.on('unhandledRejection', error => {
-  console.error(c.failure('[fatal]'), error);
+  console.error(failure('[fatal]'), error);
 });
 
 export async function run(): Promise<void> {
@@ -36,7 +36,7 @@ export async function run(): Promise<void> {
 
   program
     .command('init [appName] [appId]')
-    .description(`create a ${c.strong('capacitor.config.json')} file`)
+    .description(`create a ${strong('capacitor.config.json')} file`)
     .option(
       '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
@@ -54,7 +54,7 @@ export async function run(): Promise<void> {
 
   program
     .command('sync [platform]')
-    .description(`${c.input('copy')} + ${c.input('update')}`)
+    .description(`${input('copy')} + ${input('update')}`)
     .option(
       '--deployment',
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
@@ -66,7 +66,7 @@ export async function run(): Promise<void> {
   program
     .command('update [platform]')
     .description(
-      `updates the native plugins and dependencies based on ${c.strong(
+      `updates the native plugins and dependencies based on ${strong(
         'package.json',
       )}`,
     )
@@ -88,7 +88,7 @@ export async function run(): Promise<void> {
   program
     .command(`run [platform]`)
     .description(
-      `runs ${c.input('copy')}, then builds and deploys the native app`,
+      `runs ${input('copy')}, then builds and deploys the native app`,
     )
     .option('--list', 'list targets, then quit')
     .option('--target <id>', 'use a specific target')
@@ -134,13 +134,13 @@ export async function run(): Promise<void> {
   program.arguments('[command]').action(cmd => {
     if (typeof cmd === 'undefined') {
       output.write(
-        `\n  ${_e('⚡️', '--')}  ${c.strong(
+        `\n  ${_e('⚡️', '--')}  ${strong(
           'Capacitor - Cross-Platform apps with JavaScript and the Web',
         )}  ${_e('⚡️', '--')}\n\n`,
       );
       program.outputHelp();
     } else {
-      logFatal(`Unknown command: ${c.input(cmd)}`);
+      logFatal(`Unknown command: ${input(cmd)}`);
     }
   });
 

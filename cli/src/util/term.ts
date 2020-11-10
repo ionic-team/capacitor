@@ -1,6 +1,6 @@
 import { TERMINAL_INFO } from '@ionic/utils-terminal';
 
-import c from '../colors';
+import { input } from '../colors';
 import { logger } from '../log';
 
 // Given input variables to a command, make sure all are provided if the terminal
@@ -21,7 +21,7 @@ export const checkInteractive = (...args: string[]): boolean => {
   if (args.filter(arg => !arg).length) {
     logger.error(
       `Non-interactive shell detected.\n` +
-        `Run the command with ${c.input(
+        `Run the command with ${input(
           '--help',
         )} to see a list of arguments that must be provided.`,
     );

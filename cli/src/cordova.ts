@@ -10,7 +10,7 @@ import { basename, extname, join, resolve } from 'path';
 import type { PlistObject } from 'plist';
 
 import { getAndroidPlugins } from './android/common';
-import c from './colors';
+import { failure, input, strong, weak } from './colors';
 import {
   buildXmlElement,
   logFatal,
@@ -188,7 +188,7 @@ export async function copyCordovaJS(
   if (!cordovaPath) {
     logFatal(
       `Unable to find node_modules/@capacitor/core/cordova.js.\n` +
-        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
+        `Are you sure ${strong('@capacitor/core')} is installed?`,
     );
   }
 
@@ -357,7 +357,7 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
     let xml = buildConfigFileXml(configElement);
     xml = `<key>${configElement.$.parent}</key>${getConfigFileTagContent(xml)}`;
     logger.warn(
-      `Configuration required for ${c.strong(plugin.id)}.\n` +
+      `Configuration required for ${strong(plugin.id)}.\n` +
         `Add the following to Info.plist:\n` +
         xml,
     );
@@ -376,8 +376,8 @@ async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
       });
       if (xml.length > 0) {
         logger.warn(
-          `Configuration required for ${c.strong(plugin.id)}.\n` +
-            `Add the following in the existing ${c.strong(
+          `Configuration required for ${strong(plugin.id)}.\n` +
+            `Add the following in the existing ${strong(
               configElement.$.parent,
             )} array of your Info.plist:\n` +
             xml,
@@ -394,8 +394,8 @@ function logPossibleMissingItem(configElement: any, plugin: Plugin) {
   xml = getConfigFileTagContent(xml);
   xml = removeOuterTags(xml);
   logger.warn(
-    `Configuration might be missing for ${c.strong(plugin.id)}.\n` +
-      `Add the following to the existing ${c.strong(
+    `Configuration might be missing for ${strong(plugin.id)}.\n` +
+      `Add the following to the existing ${strong(
         configElement.$.parent,
       )} entry of Info.plist:\n` +
       xml,
@@ -460,7 +460,7 @@ export async function checkPluginDependencies(
                 version = dep.$.commit;
               }
               const deps = pluginDeps.get(p.id) || [];
-              deps.push(`${plugin}${version ? c.weak(` (${version})`) : ''}`);
+              deps.push(`${plugin}${version ? weak(` (${version})`) : ''}`);
               pluginDeps.set(p.id, deps);
             }
           }),
@@ -471,13 +471,13 @@ export async function checkPluginDependencies(
 
   if (pluginDeps.size > 0) {
     let msg =
-      `${c.failure(c.strong('Plugins are missing dependencies.'))}\n` +
-      `Cordova plugin dependencies must be installed in your project (e.g. w/ ${c.input(
+      `${failure(strong('Plugins are missing dependencies.'))}\n` +
+      `Cordova plugin dependencies must be installed in your project (e.g. w/ ${input(
         'npm install',
       )}).\n`;
     for (const [plugin, deps] of pluginDeps.entries()) {
       msg +=
-        `\n  ${c.strong(plugin)} is missing dependencies:\n` +
+        `\n  ${strong(plugin)} is missing dependencies:\n` +
         deps.map(d => `    - ${d}`).join('\n');
     }
 
@@ -524,15 +524,15 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
   }
   if (cordova.preferences && Object.keys(cordova.preferences).length > 0) {
     const answers = await logPrompt(
-      `${c.strong(
-        `Cordova preferences can be automatically ported to ${c.strong(
+      `${strong(
+        `Cordova preferences can be automatically ported to ${strong(
           config.app.extConfigName,
         )}.`,
       )}\n` +
-        `Keep in mind: Not all values can be automatically migrated from ${c.strong(
+        `Keep in mind: Not all values can be automatically migrated from ${strong(
           'config.xml',
         )}. There may be more work to do.\n` +
-        `More info: ${c.strong(
+        `More info: ${strong(
           'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
         )}`,
       {
@@ -620,7 +620,7 @@ export async function writeCordovaAndroidManifest(
                 }
               } else {
                 logger.warn(
-                  `Configuration required for ${c.strong(p.id)}.\n` +
+                  `Configuration required for ${strong(p.id)}.\n` +
                     `Add the following to AndroidManifest.xml:\n` +
                     xmlElement,
                 );
