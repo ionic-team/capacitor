@@ -1,12 +1,12 @@
 import Foundation
 
-public protocol CAPBridgeDelegate: class {
+internal protocol CAPBridgeDelegate: class {
     var bridgedWebView: WKWebView? { get }
     var bridgedViewController: UIViewController? { get }
 }
 
 extension CAPBridgeDelegate {
-    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, bridge: CAPBridge) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, bridge: CapacitorBridge) {
         let body = message.body
         if let dict = body as? [String: Any] {
             let type = dict["type"] as? String ?? ""

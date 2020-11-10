@@ -33,14 +33,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     private var isStatusBarVisible = true
     private var statusBarStyle: UIStatusBarStyle = .default
-    private var statusBarAnimation: UIStatusBarAnimation = .slide
+    private(set) var statusBarAnimation: UIStatusBarAnimation = .slide
     @objc public var supportedOrientations: [Int] = []
 
     @objc public var startDir = ""
     @objc public var config: String?
 
     // Construct the Capacitor runtime
-    public var bridge: CAPBridge?
+    private var capacitorBridge: CapacitorBridge?
+    var bridge: CAPBridgeProtocol? {
+        return capacitorBridge
+    }
     private var handler: CAPAssetHandler?
 
     override public func loadView() {
@@ -61,8 +64,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         let messageHandler = CAPMessageHandlerWrapper()
         self.handler = CAPAssetHandler()
         self.handler!.setAssetPath(startPath)
-        var specifiedScheme = CAPBridge.defaultScheme
-        let configScheme = capConfig.getString("server.iosScheme") ?? CAPBridge.defaultScheme
+        var specifiedScheme = CapacitorBridge.defaultScheme
+        let configScheme = capConfig.getString("server.iosScheme") ?? CapacitorBridge.defaultScheme
         // check if WebKit handles scheme and if it is valid according to Apple's documentation
         if !WKWebView.handlesURLScheme(configScheme) && configScheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
             specifiedScheme = configScheme.lowercased()
@@ -96,7 +99,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
         setKeyboardRequiresUserInteraction(false)
 
-        bridge = CAPBridge(self, messageHandler, capConfig, specifiedScheme)
+        capacitorBridge = CapacitorBridge(self, messageHandler, capConfig, specifiedScheme)
 
         if let scrollEnabled = bridge!.config.getValue("ios.scrollEnabled") as? Bool {
             webView?.scrollView.isScrollEnabled = scrollEnabled
@@ -201,7 +204,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
             fatalLoadError()
         }
 
-        hostname = bridge!.config.getString("server.url") ?? "\(bridge!.getLocalUrl())"
+        hostname = capacitorBridge!.config.getString("server.url") ?? "\(capacitorBridge!.getLocalUrl())"
         allowNavigationConfig = bridge!.config.getValue("server.allowNavigation") as? [String]
 
         CAPLog.print("⚡️  Loading app at \(hostname!)...")
@@ -268,17 +271,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         // Reset the bridge on each navigation
-        bridge!.reset()
+        capacitorBridge!.reset()
     }
 
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DecidePolicyForNavigationAction.name()), object: navigationAction)
+        NotificationCenter.default.post(name: .capacitorDecidePolicyForNavigationAction, object: navigationAction)
         let navUrl = navigationAction.request.url!
 
         /*
          * Give plugins the chance to handle the url
          */
-        if let plugins = bridge?.plugins {
+        if let plugins = capacitorBridge?.plugins {
             for pluginObject in plugins {
                 let plugin = pluginObject.value
                 let selector = NSSelectorFromString("shouldOverrideLoad:")

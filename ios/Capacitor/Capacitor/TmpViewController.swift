@@ -1,6 +1,6 @@
 import UIKit
 
-class TmpViewController: UIViewController {
+internal class TmpViewController: UIViewController {
     var count = 0
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -14,7 +14,7 @@ class TmpViewController: UIViewController {
             count += 1
         }
         if count > 1 {
-            NotificationCenter.default.post(CAPBridge.tmpVCAppeared)
+            NotificationCenter.default.post(CapacitorBridge.tmpVCAppeared)
         }
     }
 }
