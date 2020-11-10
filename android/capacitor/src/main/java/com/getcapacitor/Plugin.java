@@ -45,9 +45,23 @@ public class Plugin {
     // Reference to the PluginHandle wrapper for this Plugin
     protected PluginHandle handle;
 
-    // A way for plugins to quickly save a call that they will
-    // need to reference between activity/permissions starts/requests
+    /**
+     * A way for plugins to quickly save a call that they will need to reference
+     * between activity/permissions starts/requests
+     *
+     * @deprecated use {@link #savedLastCallId} instead in conjunction with bridge methods
+     * {@link com.getcapacitor.Bridge#saveCall(PluginCall)},
+     * {@link com.getcapacitor.Bridge#getSavedCall(String)} and
+     * {@link com.getcapacitor.Bridge#releaseCall(PluginCall)}
+     */
+    @Deprecated
     protected PluginCall savedLastCall;
+
+    /**
+     * The call ID of a saved plugin call on the Bridge. This can be used to persist a call
+     * between activity lifecycle changes or permission requests.
+     */
+    protected String savedLastCallId;
 
     // Stored event listeners
     private final Map<String, List<PluginCall>> eventListeners;
@@ -134,6 +148,8 @@ public class Plugin {
      */
     public void saveCall(PluginCall lastCall) {
         this.savedLastCall = lastCall;
+        this.savedLastCallId = lastCall.getCallbackId();
+        bridge.saveCall(lastCall);
     }
 
     /**
@@ -144,6 +160,16 @@ public class Plugin {
             this.savedLastCall.release(bridge);
         }
         this.savedLastCall = null;
+
+        PluginCall lastCall = bridge.getSavedCall(savedLastCallId);
+        if (lastCall != null) {
+            if (!lastCall.isReleased()) {
+                lastCall.release(bridge);
+            }
+
+            bridge.releaseCall(lastCall);
+        }
+        savedLastCallId = null;
     }
 
     /**
@@ -151,6 +177,11 @@ public class Plugin {
      * @return
      */
     public PluginCall getSavedCall() {
+        PluginCall lastCall = bridge.getSavedCall(savedLastCallId);
+        if (lastCall != null) {
+            return lastCall;
+        }
+
         return this.savedLastCall;
     }
 

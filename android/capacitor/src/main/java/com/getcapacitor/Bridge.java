@@ -603,6 +603,10 @@ public class Bridge {
      * @return the stored call
      */
     public PluginCall getSavedCall(String callbackId) {
+        if (callbackId == null) {
+            return null;
+        }
+
         return this.savedCalls.get(callbackId);
     }
 
