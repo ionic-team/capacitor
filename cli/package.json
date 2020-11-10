@@ -2,7 +2,7 @@
   "name": "@capacitor/cli",
   "version": "3.0.0-alpha.6",
   "description": "Capacitor: Cross-platform apps with JavaScript and the web",
-  "homepage": "https://capacitor.ionicframework.com/",
+  "homepage": "https://capacitorjs.com/",
   "author": "Ionic Team <hi@ionicframework.com> (https://ionicframework.com) ",
   "bin": {
     "capacitor": "./bin/capacitor",

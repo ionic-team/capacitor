@@ -1,7 +1,7 @@
 import Foundation
 import MobileCoreServices
 
-class CAPAssetHandler: NSObject, WKURLSchemeHandler {
+internal class CAPAssetHandler: NSObject, WKURLSchemeHandler {
 
     private var basePath: String = ""
 
@@ -14,8 +14,8 @@ class CAPAssetHandler: NSObject, WKURLSchemeHandler {
         let url = urlSchemeTask.request.url!
         let stringToLoad = url.path
 
-        if stringToLoad.starts(with: CAPBridge.fileStartIdentifier) {
-            startPath = stringToLoad.replacingOccurrences(of: CAPBridge.fileStartIdentifier, with: "")
+        if stringToLoad.starts(with: CapacitorBridge.fileStartIdentifier) {
+            startPath = stringToLoad.replacingOccurrences(of: CapacitorBridge.fileStartIdentifier, with: "")
         } else if stringToLoad.isEmpty || url.pathExtension.isEmpty {
             startPath.append("/index.html")
         } else {
