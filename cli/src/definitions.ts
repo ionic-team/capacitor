@@ -69,6 +69,10 @@ export interface AppConfig {
 export interface AndroidConfig extends PlatformConfig {
   readonly studioPath: string;
   readonly minVersion: string;
+  readonly srcDir: string;
+  readonly srcDirAbs: string;
+  readonly assetsDir: string;
+  readonly assetsDirAbs: string;
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly resDir: string;

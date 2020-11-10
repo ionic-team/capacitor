@@ -154,8 +154,10 @@ async function loadAndroidConfig(
   const name = 'android';
   const platformDir = extConfig.android?.path ?? 'android';
   const platformDirAbs = resolve(rootDir, platformDir);
-  const webDir = 'app/src/main/assets/public';
-  const resDir = 'app/src/main/res';
+  const srcDir = 'app/src/main';
+  const assetsDir = 'app/src/main/assets';
+  const webDir = `${assetsDir}/public`;
+  const resDir = `${srcDir}/res`;
   const buildOutputDir = 'app/build/outputs/apk/debug';
 
   const templateName = 'android-template';
@@ -168,6 +170,10 @@ async function loadAndroidConfig(
     studioPath,
     platformDir,
     platformDirAbs,
+    srcDir,
+    srcDirAbs: resolve(platformDir, srcDir),
+    assetsDir,
+    assetsDirAbs: resolve(platformDir, assetsDir),
     webDir,
     webDirAbs: resolve(platformDir, webDir),
     resDir,
