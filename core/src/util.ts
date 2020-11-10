@@ -24,7 +24,7 @@ export const noop = (): void => {
   /**/
 };
 
-export const enum ExceptionCode {
+export enum ExceptionCode {
   /**
    * API is not implemented.
    *
