@@ -10,15 +10,16 @@ import {
   CapacitorException,
   convertFileSrcServerUrl,
   ExceptionCode,
-  noop,
 } from './util';
 import { initVendor } from './vendor';
 
 export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
+  const cap: CapacitorInstance = win.Capacitor || ({} as any);
+
+  const Plugins = (cap.Plugins = cap.Plugins || ({} as any));
+
   const webviewServerUrl =
     typeof win.WEBVIEW_SERVER_URL === 'string' ? win.WEBVIEW_SERVER_URL : '';
-
-  const Plugins = win?.Capacitor?.Plugins || ({} as any);
 
   const getPlatform = () => getPlatformId(win);
 
@@ -220,25 +221,17 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
   // object into proxies automatically
   Object.keys(Plugins).forEach(pluginName => registerPlugin(pluginName));
 
-  const cap: CapacitorInstance = {
-    convertFileSrc,
-    getPlatform,
-    handleError,
-    isNativePlatform,
-    isPluginAvailable,
-    logJs,
-    pluginMethodNoop,
-    Plugins,
-    registerPlugin,
-    withPlugin: noop,
-    getServerUrl: () => webviewServerUrl,
-    Exception: CapacitorException,
-    DEBUG: !!win?.Capacitor?.DEBUG,
-    // values to be set later
-    logFromNative: null,
-    logToNative: null,
-    handleWindowError: null,
-  };
+  cap.convertFileSrc = convertFileSrc;
+  cap.getPlatform = getPlatform;
+  cap.getServerUrl = () => webviewServerUrl;
+  cap.handleError = handleError;
+  cap.isNativePlatform = isNativePlatform;
+  cap.isPluginAvailable = isPluginAvailable;
+  cap.logJs = logJs;
+  cap.pluginMethodNoop = pluginMethodNoop;
+  cap.registerPlugin = registerPlugin;
+  cap.Exception = CapacitorException;
+  cap.DEBUG = !!cap.DEBUG;
 
   initBridge(win, cap);
   initEvents(win, cap);

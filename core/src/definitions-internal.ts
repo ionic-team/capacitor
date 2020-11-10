@@ -78,7 +78,7 @@ export interface CapacitorInstance extends CapacitorGlobal {
   /**
    * Low-level API used by the native bridge.
    */
-  withPlugin: (pluginName: string, fn: (...args: any[]) => any) => void;
+  withPlugin?: (pluginName: string, fn: (...args: any[]) => any) => void;
 }
 
 export interface CallData {

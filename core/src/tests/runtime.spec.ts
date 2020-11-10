@@ -63,12 +63,15 @@ describe('runtime', () => {
     expect(win.Capacitor).not.toBeDefined();
     cap = initCapacitorGlobal(win) as any;
     expect(win.Capacitor).toBe(cap);
+    expect(win.Capacitor.Plugins).toEqual({});
   });
 
-  it('existing Capacitor global replaced', () => {
-    const old = (win.Capacitor = {} as any);
+  it('existing Capacitor global updated', () => {
+    const Plugins: any = {};
+    const old = (win.Capacitor = { Plugins: Plugins } as any);
     cap = initCapacitorGlobal(win) as any;
     expect(win.Capacitor).toBe(cap);
-    expect(win.Capacitor).not.toBe(old);
+    expect(win.Capacitor).toBe(old);
+    expect(win.Capacitor.Plugins).toBe(Plugins);
   });
 });
