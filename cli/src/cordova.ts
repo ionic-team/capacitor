@@ -527,7 +527,7 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
     const answers = await logPrompt(
       `${c.strong(
         `Cordova preferences can be automatically ported to ${c.strong(
-          'capacitor.config.json',
+          config.app.extConfigName,
         )}.`,
       )}\n` +
         `Keep in mind: Not all values can be automatically migrated from ${c.strong(
@@ -550,8 +550,7 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
             {
               type: 'confirm',
               name: 'confirm',
-              message:
-                'capacitor.config.json already contains Cordova preferences. Overwrite?',
+              message: `${config.app.extConfigName} already contains Cordova preferences. Overwrite?`,
             },
           ],
           { onCancel: () => process.exit(1) },

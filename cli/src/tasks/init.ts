@@ -24,6 +24,16 @@ export async function initCommand(
     if (!checkInteractive(name, id)) {
       return;
     }
+
+    if (config.app.extConfigType !== 'json') {
+      logFatal(
+        `Cannot run ${c.input(
+          'init',
+        )} for a project using a non-JSON configuration file.\n` +
+          `Delete ${c.strong(config.app.extConfigName)} and try again.`,
+      );
+    }
+
     const appName = await getName(config, name);
     const appId = await getAppId(config, id);
     const webDir = isInteractive()
@@ -38,7 +48,7 @@ export async function initCommand(
     const cordova = await getCordovaPreferences(config);
 
     await runTask(
-      `Creating ${c.strong('capacitor.config.json')} in ${c.input(
+      `Creating ${c.strong(config.app.extConfigName)} in ${c.input(
         config.app.rootDir,
       )}`,
       async () => {
@@ -52,7 +62,7 @@ export async function initCommand(
       },
     );
 
-    printNextSteps();
+    printNextSteps(config);
   } catch (e) {
     output.write(
       'Usage: npx cap init appName appId\n' +
@@ -62,8 +72,8 @@ export async function initCommand(
   }
 }
 
-function printNextSteps() {
-  logSuccess(`${c.strong('capacitor.config.json')} created!`);
+function printNextSteps(config: Config) {
+  logSuccess(`${c.strong(config.app.extConfigName)} created!`);
   output.write(
     `\nAdd platforms using ${c.input('npx cap add')}:\n` +
       `  ${c.input('npx cap add android')}\n` +
