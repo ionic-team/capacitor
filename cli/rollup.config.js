@@ -23,7 +23,7 @@ export default {
     nodeResolve(),
     {
       name: 'copyDts',
-      generateBundle() {
+      writeBundle() {
         fs.copyFileSync(
           './build/declarations.d.ts',
           './dist/declarations.d.ts',
