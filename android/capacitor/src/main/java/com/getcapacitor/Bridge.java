@@ -628,7 +628,7 @@ public class Bridge {
             String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
 
             return new JSInjector(globalJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
-        } catch (JSExportException ex) {
+        } catch (Exception ex) {
             Logger.error("Unable to export Capacitor JS. App will not function!", ex);
         }
         return null;
