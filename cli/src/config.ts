@@ -2,37 +2,36 @@ import { pathExists, readJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
 import { dirname, join, resolve } from 'path';
 
-import { runCommand } from './common';
+import c from './colors';
+import { logFatal, resolveNode, runCommand } from './common';
 import type {
+  AndroidConfig,
+  AppConfig,
+  CLIConfig,
   Config,
   ExternalConfig,
-  CLIConfig,
-  AndroidConfig,
   IOSConfig,
-  PackageJson,
   WebConfig,
 } from './definitions';
 import { OS } from './definitions';
+import { tryFn } from './util/fn';
+import { requireTS } from './util/node';
 
 const debug = Debug('capacitor:config');
-
-export const EXTERNAL_CONFIG_FILE = 'capacitor.config.json';
 
 export async function loadConfig(): Promise<Config> {
   const appRootDir = process.cwd();
   const cliRootDir = dirname(__dirname);
-  const extConfig = await loadExternalConfig(
-    resolve(appRootDir, EXTERNAL_CONFIG_FILE),
-  );
+  const conf = await loadExtConfig(appRootDir);
 
-  const appId = extConfig.appId ?? '';
-  const appName = extConfig.appName ?? '';
-  const webDir = extConfig.webDir ?? 'www';
+  const appId = conf.extConfig.appId ?? '';
+  const appName = conf.extConfig.appName ?? '';
+  const webDir = conf.extConfig.webDir ?? 'www';
   const cli = await loadCLIConfig(cliRootDir);
 
-  const config = {
-    android: await loadAndroidConfig(appRootDir, extConfig, cli),
-    ios: await loadIOSConfig(appRootDir, extConfig, cli),
+  const config: Config = {
+    android: await loadAndroidConfig(appRootDir, conf.extConfig, cli),
+    ios: await loadIOSConfig(appRootDir, conf.extConfig, cli),
     web: await loadWebConfig(appRootDir, webDir),
     cli,
     app: {
@@ -41,20 +40,98 @@ export async function loadConfig(): Promise<Config> {
       appName,
       webDir,
       webDirAbs: resolve(appRootDir, webDir),
-      package: (await readPackageJSON(resolve(appRootDir, 'package.json'))) ?? {
+      package: (await tryFn(readJSON, resolve(appRootDir, 'package.json'))) ?? {
         name: appName,
         version: '1.0.0',
       },
-      extConfigName: EXTERNAL_CONFIG_FILE,
-      extConfigFilePath: resolve(appRootDir, EXTERNAL_CONFIG_FILE),
-      extConfig,
-      bundledWebRuntime: extConfig.bundledWebRuntime ?? false,
+      ...conf,
+      bundledWebRuntime: conf.extConfig.bundledWebRuntime ?? false,
     },
   };
 
   debug('config: %O', config);
 
   return config;
+}
+
+type ExtConfigPairs = Pick<
+  AppConfig,
+  'extConfigType' | 'extConfigName' | 'extConfigFilePath' | 'extConfig'
+>;
+
+async function loadExtConfigTS(
+  rootDir: string,
+  extConfigName: string,
+  extConfigFilePath: string,
+): Promise<ExtConfigPairs> {
+  try {
+    const tsPath = resolveNode(rootDir, 'typescript');
+
+    if (!tsPath) {
+      logFatal(
+        'Could not find installation of TypeScript.\n' +
+          `To use ${c.strong(
+            extConfigName,
+          )} files, you must install TypeScript in your project, e.g. w/ ${c.input(
+            'npm install -D typescript',
+          )}`,
+      );
+    }
+
+    const ts = require(tsPath); // eslint-disable-line @typescript-eslint/no-var-requires
+
+    return {
+      extConfigType: 'ts',
+      extConfigName,
+      extConfigFilePath: extConfigFilePath,
+      extConfig: requireTS(ts, extConfigFilePath) as any,
+    };
+  } catch (e) {
+    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+  }
+}
+
+async function loadExtConfigJS(
+  rootDir: string,
+  extConfigName: string,
+  extConfigFilePath: string,
+): Promise<ExtConfigPairs> {
+  try {
+    return {
+      extConfigType: 'js',
+      extConfigName,
+      extConfigFilePath: extConfigFilePath,
+      extConfig: require(extConfigFilePath),
+    };
+  } catch (e) {
+    logFatal(`Parsing ${c.strong(extConfigName)} failed.\n\n${e.stack ?? e}`);
+  }
+}
+
+async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
+  const extConfigNameTS = 'capacitor.config.ts';
+  const extConfigFilePathTS = resolve(rootDir, extConfigNameTS);
+
+  if (await pathExists(extConfigFilePathTS)) {
+    return loadExtConfigTS(rootDir, extConfigNameTS, extConfigFilePathTS);
+  }
+
+  const extConfigNameJS = 'capacitor.config.js';
+  const extConfigFilePathJS = resolve(rootDir, extConfigNameJS);
+
+  if (await pathExists(extConfigFilePathJS)) {
+    return loadExtConfigJS(rootDir, extConfigNameJS, extConfigFilePathJS);
+  }
+
+  const extConfigName = 'capacitor.config.json';
+  const extConfigFilePath = resolve(rootDir, extConfigName);
+
+  return {
+    extConfigType: 'json',
+    extConfigName,
+    extConfigFilePath: extConfigFilePath,
+    extConfig: (await tryFn(readJSON, extConfigFilePath)) ?? {},
+  };
 }
 
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
@@ -201,20 +278,4 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   }
 
   return '';
-}
-
-async function loadExternalConfig(p: string): Promise<ExternalConfig> {
-  try {
-    return await readJSON(p);
-  } catch (e) {
-    return {};
-  }
-}
-
-async function readPackageJSON(p: string): Promise<PackageJson | null> {
-  try {
-    return await readJSON(p);
-  } catch (e) {
-    return null;
-  }
 }

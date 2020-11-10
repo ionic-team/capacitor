@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "esModuleInterop": true,
     "importHelpers": true,
     "lib": ["es2019"],

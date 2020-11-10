@@ -1,7 +1,6 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
 
-const banner =
-  '/*! Capacitor: https://capacitor.ionicframework.com/ - MIT License */';
+const banner = '/*! Capacitor: https://capacitorjs.com/ - MIT License */';
 
 export default {
   input: 'dist/esm/index.js',

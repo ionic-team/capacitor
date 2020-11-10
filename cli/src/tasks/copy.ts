@@ -1,4 +1,4 @@
-import { copy as fsCopy, pathExists, remove } from '@ionic/utils-fs';
+import { copy as fsCopy, pathExists, remove, writeJSON } from '@ionic/utils-fs';
 import { basename, join, relative, resolve } from 'path';
 
 import c from '../colors';
@@ -117,15 +117,15 @@ async function copyNativeBridge(rootDir: string, nativeAbsDir: string) {
 
 async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
   const nativeRelDir = relative(config.app.rootDir, nativeAbsDir);
-  const configPath = resolve(config.app.extConfigFilePath);
-  if (!(await pathExists(configPath))) {
-    return;
-  }
+  const nativeConfigFile = 'capacitor.config.json';
+  const nativeConfigFilePath = join(nativeAbsDir, nativeConfigFile);
 
   await runTask(
-    `Copying ${c.strong('capacitor.config.json')} to ${nativeRelDir}`,
+    `Creating ${c.strong(nativeConfigFile)} in ${nativeRelDir}`,
     async () => {
-      return fsCopy(configPath, join(nativeAbsDir, 'capacitor.config.json'));
+      await writeJSON(nativeConfigFilePath, config.app.extConfig, {
+        spaces: '\t',
+      });
     },
   );
 }
