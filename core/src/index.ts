@@ -1,10 +1,11 @@
 export {
   ExceptionCode,
+  PermissionState,
   PluginCallback,
+  PluginConfig,
   PluginListenerHandle,
   PluginResultData,
   PluginResultError,
-  PluginConfig,
 } from './definitions';
 
 export * from './core-plugin-definitions';
