@@ -1,4 +1,3 @@
-/* eslint-disable */
 import type { PluginRegistry } from './legacy/legacy-definitions';
 import type { ExceptionCode } from './util';
 

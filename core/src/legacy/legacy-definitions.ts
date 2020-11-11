@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /**
  * @deprecated
  */
@@ -39,5 +37,5 @@ export interface CancellableCallback {
    *
    * @deprecated
    */
-  cancel: Function;
+  cancel: (...args: any[]) => any;
 }
