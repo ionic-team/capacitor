@@ -6,6 +6,7 @@ import WebKit
     var viewController: UIViewController? { get }
     var config: CAPConfig { get }
     var webView: WKWebView? { get }
+    var userNotificationDelegate: UserNotificationCenterDelegate { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
     @available(iOS 12.0, *)
