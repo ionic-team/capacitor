@@ -2,7 +2,7 @@ import Foundation
 
 @objc(CAPApplicationDelegateProxy)
 public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
-    static let shared = ApplicationDelegateProxy()
+    public static let shared = ApplicationDelegateProxy()
 
     private(set) var lastURL: URL?
 
