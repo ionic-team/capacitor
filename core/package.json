@@ -21,7 +21,7 @@
     "test.treeshaking": "node src/tests/build-treeshaking.js"
   },
   "main": "dist/index.js",
-  "typings": "types/index.d.ts",
+  "types": "types/index.d.ts",
   "unpkg": "dist/capacitor.js",
   "dependencies": {
     "tslib": "^2.0.3"
