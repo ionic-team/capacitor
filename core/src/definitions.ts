@@ -1,5 +1,5 @@
 import type { PluginRegistry } from './legacy/legacy-definitions';
-import type { ExceptionCode } from './util';
+import type { CapacitorException } from './util';
 
 export interface CapacitorGlobal {
   /**
@@ -170,12 +170,3 @@ export type PluginCallback = (
   data: PluginResultData,
   error?: PluginResultError,
 ) => void;
-
-export interface CapacitorException extends Error {
-  code?: ExceptionCode;
-}
-
-declare const CapacitorException: {
-  prototype: CapacitorException;
-  new (message: string, code?: ExceptionCode): CapacitorException;
-};
