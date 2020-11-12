@@ -562,11 +562,9 @@ public class Plugin {
 
         if (validatePermissions(permissions, grantResults)) {
             savedCall.resolve(getPermissionStates());
-        } else {
-            return;
         }
 
-        savedCall.release(bridge);
+        freeSavedCall();
     }
 
     /**
@@ -618,7 +616,6 @@ public class Plugin {
                 builder.append(perm + "\n");
             }
             savedLastCall.reject(builder.toString());
-            savedLastCall = null;
             return false;
         }
 

@@ -18,7 +18,6 @@ import android.webkit.WebView;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
-import com.getcapacitor.util.PermissionHelper;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
