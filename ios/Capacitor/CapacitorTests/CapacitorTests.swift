@@ -10,14 +10,14 @@ class MockBridgeMessageHandler: CAPMessageHandlerWrapper {
 class MockConfig: CAPConfig {
 }
 
-class MockBridge: CAPBridge {
+class MockBridge: CapacitorBridge {
     override public func registerPlugins() {
-        print("REGISTER PLUGINS")
+        Swift.print("REGISTER PLUGINS")
     }
 }
 class CapacitorTests: XCTestCase {
     var bridge: MockBridge?
-    
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.

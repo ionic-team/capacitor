@@ -2,7 +2,7 @@
  * PluginExport handles defining JS APIs that map to registered
  * plugins and are responsible for proxying calls to our bridge.
  */
-public class JSExport {
+internal class JSExport {
     static let catchallOptionsParameter = "_options"
     static let callbackParameter = "_callback"
 
@@ -15,18 +15,18 @@ public class JSExport {
     public static func exportCordovaJS(userContentController: WKUserContentController) throws {
         guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
             CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
-            throw BridgeError.errorExportingCoreJS
+            throw CapacitorBridgeError.errorExportingCoreJS
         }
         guard let cordovaPluginsUrl = Bundle.main.url(forResource: "public/cordova_plugins", withExtension: "js") else {
             CAPLog.print("ERROR: Required cordova_plugins.js file not found. Cordova plugins  will not function!")
-            throw BridgeError.errorExportingCoreJS
+            throw CapacitorBridgeError.errorExportingCoreJS
         }
         do {
             try self.injectFile(fileURL: cordovaUrl, userContentController: userContentController)
             try self.injectFile(fileURL: cordovaPluginsUrl, userContentController: userContentController)
         } catch {
             CAPLog.print("ERROR: Unable to read required cordova files. Cordova plugins will not function!")
-            throw BridgeError.errorExportingCoreJS
+            throw CapacitorBridgeError.errorExportingCoreJS
         }
 
     }
