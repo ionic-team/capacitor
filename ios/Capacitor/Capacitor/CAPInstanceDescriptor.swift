@@ -6,6 +6,7 @@ public enum InstanceDescriptorDefaults {
 }
 
 internal extension InstanceDescriptor {
+    // swiftlint:disable:next identifier_name
     @objc func _parseConfiguration(at capacitorURL: URL?, cordovaConfiguration cordovaURL: URL?) {
         // sanity check that the app directory is valid
         var isDirectory: ObjCBool = ObjCBool(false)
@@ -97,7 +98,8 @@ extension InstanceDescriptor {
     @objc public func normalize() {
         // first, make sure the scheme is valid
         var schemeValid = false
-        if let scheme = urlScheme, WKWebView.handlesURLScheme(scheme) == false, scheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil  {
+        if let scheme = urlScheme, WKWebView.handlesURLScheme(scheme) == false,
+           scheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil  {
             schemeValid = true
         }
         if !schemeValid {
