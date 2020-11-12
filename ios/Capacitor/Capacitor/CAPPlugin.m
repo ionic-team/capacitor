@@ -1,13 +1,12 @@
 #import "CAPPlugin.h"
 #import <Capacitor/Capacitor-Swift.h>
-
 #import <Foundation/Foundation.h>
 
 @implementation CAPPlugin
 
--(instancetype) initWithBridge:(CAPBridge *)bridge pluginId:(NSString *)pluginId pluginName:(NSString *)pluginName {
+-(instancetype) initWithBridge:(id<CAPBridgeProtocol>)bridge pluginId:(NSString *)pluginId pluginName:(NSString *)pluginName {
   self.bridge = bridge;
-  self.webView = bridge.getWebView;
+  self.webView = bridge.webView;
   self.pluginId = pluginId;
   self.pluginName = pluginName;
   self.eventListeners = [[NSMutableDictionary alloc] init];
