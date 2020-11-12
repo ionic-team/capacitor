@@ -25,7 +25,7 @@ export type { WebViewPath, WebViewPlugin } from './core-plugins';
 // Constants
 export { CapacitorException, ExceptionCode } from './util';
 
-// Legcay Global APIs
+// Legacy Global APIs
 export { Plugins, registerWebPlugin } from './global';
 
 // Legacy Type Definitions
