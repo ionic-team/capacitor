@@ -13,7 +13,7 @@ internal extension InstanceDescriptor {
         if warnings.contains(.missingAppDir) == false, (FileManager.default.fileExists(atPath: appLocation.path, isDirectory: &isDirectory) == false || isDirectory.boolValue == false) {
             warnings.update(with: .missingAppDir)
         }
-        
+
         // parse the capacitor configuration
         var config: JSObject?
         if let capacitorURL = capacitorURL, FileManager.default.fileExists(atPath: capacitorURL.path, isDirectory: &isDirectory), isDirectory.boolValue == false {
@@ -23,17 +23,15 @@ internal extension InstanceDescriptor {
             } catch {
                 warnings.update(with: .invalidFile)
             }
-        }
-        else {
+        } else {
             warnings.update(with: .missingFile)
         }
-        
+
         // parse the cordova configuration
         var configParser: XMLParser?
         if let cordovaURL = cordovaURL, FileManager.default.fileExists(atPath: cordovaURL.path, isDirectory: &isDirectory), isDirectory.boolValue == false {
             configParser = XMLParser(contentsOf: cordovaURL)
-        }
-        else {
+        } else {
             warnings.update(with: .missingCordovaFile)
             if let cordovaXML = "<?xml version='1.0' encoding='utf-8'?><widget version=\"1.0.0\" xmlns=\"http://www.w3.org/ns/widgets\" xmlns:cdv=\"http://cordova.apache.org/ns/1.0\"><access origin=\"*\" /></widget>".data(using: .utf8) {
                 configParser = XMLParser(data: cordovaXML)
@@ -41,12 +39,12 @@ internal extension InstanceDescriptor {
         }
         configParser?.delegate = cordovaConfiguration
         configParser?.parse()
-        
+
         // extract our configuration values
         if let config = config {
             // to be removed
-            legacyConfig = config;
-            
+            legacyConfig = config
+
             if let agentString = (config[keyPath: "ios.appendUserAgent"] as? String) ?? (config[keyPath: "appendUserAgent"] as? String) {
                 appendedUserAgentString = agentString
             }
@@ -74,15 +72,15 @@ internal extension InstanceDescriptor {
             }
             if let insetBehavior = config[keyPath: "ios.contentInset"] as? String {
                 let availableInsets: [String: UIScrollView.ContentInsetAdjustmentBehavior] = ["automatic": .automatic,
-                                                                                             "scrollableAxes": .scrollableAxes,
-                                                                                             "never": .never,
-                                                                                             "always": .always]
+                                                                                              "scrollableAxes": .scrollableAxes,
+                                                                                              "never": .never,
+                                                                                              "always": .always]
                 if let option = availableInsets[insetBehavior] {
                     contentInsetAdjustmentBehavior = option
                 }
             }
             if let allowPreviews = config[keyPath: "ios.allowsLinkPreview"] as? Bool {
-               allowLinkPreviews = allowPreviews
+                allowLinkPreviews = allowPreviews
             }
             if let scrollEnabled = config[keyPath: "ios.scrollEnabled"] as? Bool {
                 enableScrolling = scrollEnabled
@@ -99,7 +97,7 @@ extension InstanceDescriptor {
         // first, make sure the scheme is valid
         var schemeValid = false
         if let scheme = urlScheme, WKWebView.handlesURLScheme(scheme) == false,
-           scheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil  {
+           scheme.range(of: "^[a-z][a-z0-9.+-]*$", options: [.regularExpression, .caseInsensitive], range: nil, locale: nil) != nil {
             schemeValid = true
         }
         if !schemeValid {
@@ -124,4 +122,3 @@ extension InstanceDescriptor {
         legacyConfig = JSTypes.coerceDictionaryToJSObject(legacyConfig) ?? [:]
     }
 }
-

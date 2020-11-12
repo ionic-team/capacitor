@@ -1,21 +1,21 @@
 import Foundation
 
-public struct KeyPath  {
+public struct KeyPath {
     var segments: [String]
     var isEmpty: Bool { return segments.isEmpty }
     var path: String {
         return segments.joined(separator: ".")
     }
-    
+
     // initializers
     init(_ string: String) {
         self.segments = string.components(separatedBy: ".")
     }
-    
+
     init(segments: [String]) {
         self.segments = segments
     }
-    
+
     // returns a tuple of the first segment and the remaining key path. result is nil if the key path has no segments.
     func headAndRemainder() -> (head: String, remainder: KeyPath)? {
         guard !isEmpty else {
@@ -31,11 +31,11 @@ extension KeyPath: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(value)
     }
-    
+
     public init(unicodeScalarLiteral value: String) {
         self.init(value)
     }
-    
+
     public init(extendedGraphemeClusterLiteral value: String) {
         self.init(value)
     }

@@ -96,7 +96,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     // Wheter to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
-    
+
     // Background dispatch queue for plugin calls
     var dispatchQueue = DispatchQueue(label: "bridge")
 
@@ -162,7 +162,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     // MARK: - Initialization
-    
+
     init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, messageHandler messageHandlerWrapper: CAPMessageHandlerWrapper) {
         self.bridgeDelegate = bridgeDelegate
         self.messageHandlerWrapper = messageHandlerWrapper
@@ -170,9 +170,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         self.cordovaParser = cordovaConfiguration
 
         super.init()
-        
+
         self.messageHandlerWrapper.bridge = self
-        
+
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
         setupCordovaCompatibility()
@@ -529,7 +529,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
     }
-    
+
     // MARK: - CAPBridgeProtocol: Logging
 
     public func print(message: String, for plugin: CAPPlugin) {

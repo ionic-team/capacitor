@@ -50,14 +50,14 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         let configuration = InstanceConfiguration(with: configDescriptor)
         CAPLog.enableLogging = configuration.enableLogging
         logWarnings(for: configDescriptor)
-        
+
         // get the starting path and configure our environment
         guard let startPath = self.getStartPath(deployDisabled: configuration.cordovaDeployDisabled) else {
             return
         }
         setStatusBarDefaults()
         setScreenOrientationDefaults()
-        
+
         // get the web view
         let assetHandler = CAPAssetHandler()
         assetHandler.setAssetPath(startPath)
@@ -70,7 +70,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         let messageHandler = CAPMessageHandlerWrapper()
         capacitorBridge = CapacitorBridge(with: configuration, delegate: self, cordovaConfiguration: configDescriptor.cordovaConfiguration, messageHandler: messageHandler)
     }
-    
+
     private func prepareWebView(with configuration: InstanceConfiguration, assetHandler: CAPAssetHandler) -> WKWebView {
         // set the cookie policy
         HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
@@ -101,15 +101,14 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         if let backgroundColor = configuration.backgroundColor {
             webView.backgroundColor = backgroundColor
             webView.scrollView.backgroundColor = backgroundColor
-        }
-        else if #available(iOS 13, *) {
+        } else if #available(iOS 13, *) {
             // Use the system background colors if background is not set by user
             webView.backgroundColor = UIColor.systemBackground
             webView.scrollView.backgroundColor = UIColor.systemBackground
         }
         return webView
     }
-    
+
     private func logWarnings(for descriptor: InstanceDescriptor) {
         if descriptor.warnings.contains(.missingAppDir) {
             CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
@@ -209,13 +208,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         if Bundle.main.path(forResource: fullStartPath.relativePath, ofType: "html") == nil {
             fatalLoadError()
         }
-        
+
         guard let url = bridge?.config.serverURL else {
             CAPLog.print("⚡️  Unable to load app: Missing URL!")
             return
         }
         hostname = url.absoluteString
-        
+
         CAPLog.print("⚡️  Loading app at \(hostname!)...")
         _ = webView?.load(URLRequest(url: url))
     }
