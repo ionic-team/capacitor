@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.5...3.0.0-alpha.6) (2020-10-30)
+
+
+### Features
+
+* **cli:** add `capacitor run` command ([#3599](https://github.com/ionic-team/capacitor/issues/3599)) ([8576b0f](https://github.com/ionic-team/capacitor/commit/8576b0ff6a048981a07cab91135a0071b724e043))
+
+
+
+
+
 # [3.0.0-alpha.5](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.4...3.0.0-alpha.5) (2020-10-06)
 
 **Note:** Version bump only for package @capacitor/cli

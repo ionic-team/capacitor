@@ -1,3 +1,9 @@
+import type { CapacitorConfig } from './declarations';
+
+type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
+
+export type ExternalConfig = DeepReadonly<CapacitorConfig>;
+
 export const enum OS {
   Unknown = 'unknown',
   Mac = 'mac',
@@ -10,31 +16,6 @@ export interface PackageJson {
   readonly version: string;
   readonly dependencies?: { readonly [key: string]: string | undefined };
   readonly devDependencies?: { readonly [key: string]: string | undefined };
-}
-
-export interface ExternalConfig {
-  readonly windowsAndroidStudioPath?: string;
-  readonly linuxAndroidStudioPath?: string;
-  readonly appId?: string;
-  readonly appName?: string;
-  readonly webDir?: string;
-  readonly bundledWebRuntime?: boolean;
-  readonly android?: {
-    readonly path?: string;
-  };
-  readonly ios?: {
-    readonly path?: string;
-    readonly cordovaSwiftVersion?: string;
-    readonly minVersion?: string;
-    readonly cordovaLinkerFlags?: string[];
-  };
-  readonly cordova?: {
-    readonly preferences?: { readonly [key: string]: string | undefined };
-  };
-  readonly plugins?: { readonly [key: string]: any };
-  readonly server?: {
-    readonly cleartext?: boolean;
-  };
 }
 
 export interface WindowsConfig {
@@ -73,6 +54,7 @@ export interface AppConfig {
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly package: PackageJson;
+  readonly extConfigType: 'json' | 'js' | 'ts';
   readonly extConfigName: string;
   readonly extConfigFilePath: string;
   readonly extConfig: ExternalConfig;
@@ -85,6 +67,7 @@ export interface AppConfig {
 }
 
 export interface AndroidConfig extends PlatformConfig {
+  readonly studioPath: string;
   readonly minVersion: string;
   readonly webDir: string;
   readonly webDirAbs: string;
@@ -107,8 +90,6 @@ export interface IOSConfig extends PlatformConfig {
 export type WebConfig = PlatformConfig;
 
 export interface Config {
-  readonly windows: WindowsConfig;
-  readonly linux: LinuxConfig;
   readonly android: AndroidConfig;
   readonly ios: IOSConfig;
   readonly web: WebConfig;
