@@ -14,16 +14,16 @@ public struct GeolocationCoords {
 class GetLocationHandler: NSObject, CLLocationManagerDelegate {
   var locationManager = CLLocationManager()
   var call: CAPPluginCall
+  var shouldWatch: Bool
+  var hasPendingOperation: Bool
 
   init(call: CAPPluginCall, options: [String:Any]) {
     self.call = call
-    
+    self.shouldWatch = options["watch"] as! Bool
+    self.hasPendingOperation = true
     super.init()
-    
     // TODO: Allow user to configure accuracy, request/authorization mode
     self.locationManager.delegate = self
-    self.locationManager.requestWhenInUseAuthorization()
-    let shouldWatch = options["watch"] as! Bool
     if call.getBool("enableHighAccuracy", false)! {
       if shouldWatch {
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
@@ -34,6 +34,19 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
       self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
     }
 
+    if CLLocationManager.authorizationStatus() == .notDetermined {
+      self.locationManager.requestWhenInUseAuthorization()
+    } else {
+      getLocation();
+    }
+  }
+
+  public func stopUpdating() {
+    self.locationManager.stopUpdatingLocation()
+  }
+
+  public func getLocation() {
+    hasPendingOperation = false
     if shouldWatch {
       self.locationManager.startUpdatingLocation()
     } else {
@@ -41,10 +54,6 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
     }
   }
 
-  public func stopUpdating() {
-    self.locationManager.stopUpdatingLocation()
-  }
-  
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
     call.error(error.localizedDescription, error, [
       "message": error.localizedDescription
@@ -61,7 +70,13 @@ class GetLocationHandler: NSObject, CLLocationManagerDelegate {
       call.success()
     }
   }
-  
+
+  public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    if status != .notDetermined && hasPendingOperation {
+      getLocation()
+    }
+  }
+
   func makePosition(_ location: CLLocation) -> JSObject {
     var ret = JSObject()
     var coords = JSObject()
