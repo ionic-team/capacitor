@@ -20,10 +20,6 @@ export const convertFileSrcServerUrl = (
   return filePath;
 };
 
-export const noop = (): void => {
-  /**/
-};
-
 export enum ExceptionCode {
   /**
    * API is not implemented.

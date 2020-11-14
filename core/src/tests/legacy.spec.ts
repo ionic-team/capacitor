@@ -2,7 +2,6 @@ import type { CapacitorGlobal } from '../definitions';
 import type { WindowCapacitor } from '../definitions-internal';
 import { legacyRegisterWebPlugin } from '../legacy/legacy-web-plugin-merge';
 import { createCapacitor } from '../runtime';
-import { noop } from '../util';
 import { WebPlugin } from '../web-plugin';
 
 describe('legacy', () => {
@@ -10,6 +9,9 @@ describe('legacy', () => {
   let cap: CapacitorGlobal;
   const LegacyWebPlugin = class extends WebPlugin {};
   const orgConsoleWarn = console.warn;
+  const noop = () => {
+    /**/
+  };
 
   beforeAll(() => {
     console.warn = noop;
@@ -96,6 +98,43 @@ describe('legacy', () => {
     }).toThrowError(
       'Capacitor WebPlugin is using the deprecated "registerWebPlugin()" function, but without the config. Please use "registerPlugin()" instead to register this web plugin."',
     );
+  });
+
+  it('doc.addEventListener backbutton', done => {
+    const AppWeb = class {
+      addListener(eventName: string) {
+        expect(eventName).toBe('backButton');
+        done();
+      }
+    };
+    const bbCallback = () => {
+      /**/
+    };
+    win = {
+      document: {
+        addEventListener(eventName: string) {
+          expect(eventName).toBe('backbutton');
+        },
+      },
+    };
+    cap = createCapacitor(win);
+    cap.registerPlugin<any>('App', {
+      web: new AppWeb(),
+    });
+
+    win.document.addEventListener('backbutton', bbCallback);
+  });
+
+  it('doc.addEventListener deviceready', done => {
+    win = {
+      document: {
+        addEventListener() {
+          /**/
+        },
+      },
+    };
+    createCapacitor(win);
+    win.document.addEventListener('deviceready', done);
   });
 
   it('add navigator.app.exitApp', () => {

@@ -2,7 +2,6 @@ import type {
   CapacitorInstance,
   WindowCapacitor,
 } from '../definitions-internal';
-import { noop } from '../util';
 
 export const initLegacyHandlers = (
   win: WindowCapacitor,
@@ -27,11 +26,13 @@ export const initLegacyHandlers = (
       const eventName = args[0];
       const handler = args[1];
       if (eventName === 'deviceready' && handler) {
-        Promise.resolve(handler);
+        Promise.resolve().then(handler);
       } else if (eventName === 'backbutton' && cap.Plugins.App) {
         // Add a dummy listener so Capacitor doesn't do the default
         // back button action
-        cap.Plugins.App.addListener('backButton', noop);
+        cap.Plugins.App.addListener('backButton', () => {
+          /**/
+        });
       }
       return docAddEventListener.apply(doc, args);
     };
