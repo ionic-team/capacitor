@@ -3,8 +3,10 @@ import { accessSync } from 'fs';
 import { join } from 'path';
 
 import c from '../colors';
-import { check, logFatal, logSuccess, readXML } from '../common';
+import { check } from '../common';
 import type { Config } from '../definitions';
+import { logFatal, logSuccess } from '../log';
+import { readXML } from '../util/xml';
 
 export async function doctorAndroid(config: Config): Promise<void> {
   try {

@@ -1,11 +1,9 @@
-import { copy as fsCopy, pathExists, remove, writeJSON } from '@ionic/utils-fs';
-import { basename, join, relative, resolve } from 'path';
+import { copy as fsCopy, remove, writeJSON } from '@ionic/utils-fs';
+import { basename, join, relative } from 'path';
 
 import c from '../colors';
 import {
   checkWebDir,
-  logFatal,
-  resolveNode,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -18,7 +16,8 @@ import {
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
-import { logger } from '../log';
+import { logger, logFatal } from '../log';
+import { resolveNode } from '../util/node';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 

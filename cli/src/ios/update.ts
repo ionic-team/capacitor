@@ -2,19 +2,14 @@ import { copy, remove, readFile, realpath, writeFile } from '@ionic/utils-fs';
 import { dirname, join, relative, resolve } from 'path';
 
 import c from '../colors';
-import {
-  checkPlatformVersions,
-  logFatal,
-  resolveNode,
-  runCommand,
-  runTask,
-} from '../common';
+import { checkPlatformVersions, runTask } from '../common';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   logCordovaManualSteps,
 } from '../cordova';
 import type { Config } from '../definitions';
+import { logFatal } from '../log';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -26,6 +21,8 @@ import {
   printPlugins,
 } from '../plugin';
 import { convertToUnixPath } from '../util/fs';
+import { resolveNode } from '../util/node';
+import { runCommand } from '../util/subprocess';
 
 import { getIOSPlugins } from './common';
 

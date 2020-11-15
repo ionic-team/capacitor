@@ -8,13 +8,12 @@ import {
   runPlatformHook,
   selectPlatforms,
   promptForPlatform,
-  logFatal,
-  getPlatformTargets,
   getPlatformTargetName,
 } from '../common';
 import type { Config } from '../definitions';
 import { runIOS } from '../ios/run';
-import { logger, output } from '../log';
+import { logger, output, logFatal } from '../log';
+import { getPlatformTargets } from '../util/native-run';
 
 import { copy } from './copy';
 

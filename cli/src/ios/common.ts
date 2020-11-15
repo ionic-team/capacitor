@@ -2,16 +2,13 @@ import { readdir, readFile, writeFile } from '@ionic/utils-fs';
 import { join, resolve } from 'path';
 
 import c from '../colors';
-import {
-  isInstalled,
-  checkCapacitorPlatform,
-  getProjectPlatformDirectory,
-} from '../common';
+import { checkCapacitorPlatform, getProjectPlatformDirectory } from '../common';
 import { getIncompatibleCordovaPlugins } from '../cordova';
 import type { Config } from '../definitions';
 import { OS } from '../definitions';
 import type { Plugin } from '../plugin';
 import { PluginType, getPluginPlatform } from '../plugin';
+import { isInstalled } from '../util/subprocess';
 
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
