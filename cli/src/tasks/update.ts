@@ -68,9 +68,9 @@ export function updateChecks(
         () => checkIOSProject(config),
       );
     } else if (platformName === config.android.name) {
-      return [];
+      continue;
     } else if (platformName === config.web.name) {
-      return [];
+      continue;
     } else {
       throw `Platform ${platformName} is not valid.`;
     }
