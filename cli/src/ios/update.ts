@@ -69,7 +69,9 @@ export async function installCocoaPodsPlugins(
   deployment: boolean,
 ): Promise<void> {
   await runTask(
-    `Updating iOS native dependencies with ${c.input(`${config.ios.podPath} install`)}`,
+    `Updating iOS native dependencies with ${c.input(
+      `${config.ios.podPath} install`,
+    )}`,
     () => {
       return updatePodfile(config, plugins, deployment);
     },
