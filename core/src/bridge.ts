@@ -6,6 +6,7 @@ import type {
   StoredCallback,
 } from './definitions-internal';
 import { initLogger } from './logger';
+import { CapacitorException, ExceptionCode } from './util';
 
 export const initBridge = (
   win: WindowCapacitor,
@@ -161,24 +162,42 @@ export const initBridge = (
     delete result.error;
   };
 
-  cap.nativeCallback = (pluginName, methodName, options, callback) => {
-    if (typeof options === 'function') {
-      callback = options;
-      options = null;
-    }
-    return cap.toNative(pluginName, methodName, options, {
-      callback: callback,
-    });
-  };
-
-  cap.nativePromise = (pluginName, methodName, options) => {
-    return new Promise((resolve, reject) => {
-      cap.toNative(pluginName, methodName, options, {
-        resolve: resolve,
-        reject: reject,
+  if (typeof postToNative === 'function') {
+    // toNative bridge found
+    cap.nativeCallback = (pluginName, methodName, options, callback) => {
+      if (typeof options === 'function') {
+        callback = options;
+        options = null;
+      }
+      return cap.toNative(pluginName, methodName, options, {
+        callback: callback,
       });
-    });
-  };
+    };
+
+    cap.nativePromise = (pluginName, methodName, options) => {
+      return new Promise((resolve, reject) => {
+        cap.toNative(pluginName, methodName, options, {
+          resolve: resolve,
+          reject: reject,
+        });
+      });
+    };
+  } else {
+    // no native bridge created
+    cap.nativeCallback = () => {
+      throw new CapacitorException(
+        `nativeCallback() not implemented`,
+        ExceptionCode.Unimplemented,
+      );
+    };
+    cap.nativePromise = () =>
+      Promise.reject(
+        new CapacitorException(
+          `nativePromise() not implemented`,
+          ExceptionCode.Unimplemented,
+        ),
+      );
+  }
 };
 
 export const getPlatformId = (win: WindowCapacitor): string => {
