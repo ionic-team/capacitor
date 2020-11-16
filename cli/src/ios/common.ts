@@ -37,7 +37,7 @@ export async function checkIOSPackage(config: Config): Promise<string | null> {
 }
 
 export async function checkCocoaPods(config: Config): Promise<string | null> {
-  if (!(await isInstalled('pod')) && config.cli.os === OS.Mac) {
+  if (!(await isInstalled(config.ios.podPath)) && config.cli.os === OS.Mac) {
     return (
       `CocoaPods is not installed.\n` +
       `See this install guide: ${c.strong(
