@@ -64,23 +64,13 @@ export async function copy(
     if (platformName === config.ios.name) {
       await copyWebDir(config, config.ios.webDirAbs);
       await copyNativeBridge(config.app.rootDir, config.ios.webDirAbs);
-      await copyCapacitorConfig(
-        config,
-        join(
-          config.ios.platformDirAbs,
-          config.ios.nativeProjectName,
-          config.ios.nativeProjectName,
-        ),
-      );
+      await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
       await copyWebDir(config, config.android.webDirAbs);
       await copyNativeBridge(config.app.rootDir, config.android.webDirAbs);
-      await copyCapacitorConfig(
-        config,
-        join(config.android.platformDirAbs, 'app/src/main/assets'),
-      );
+      await copyCapacitorConfig(config, config.android.assetsDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
       await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
