@@ -80,6 +80,7 @@ export interface AndroidConfig extends PlatformConfig {
 
 export interface IOSConfig extends PlatformConfig {
   readonly minVersion: string;
+  readonly podPath: string;
   readonly cordovaSwiftVersion: string;
   readonly webDir: string;
   readonly webDirAbs: string;
