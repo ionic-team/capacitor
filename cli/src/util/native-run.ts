@@ -14,7 +14,6 @@ export async function runNativeRun(
 ): Promise<string> {
   const p = resolveNode(
     __dirname,
-    '..',
     dirname('native-run/package'),
     'bin/native-run',
   );
