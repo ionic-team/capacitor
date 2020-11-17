@@ -1,21 +1,8 @@
 import program from 'commander';
 
 import c from './colors';
-import { logFatal } from './common';
 import { loadConfig } from './config';
-import { output } from './log';
-import { addCommand } from './tasks/add';
-import { copyCommand } from './tasks/copy';
-import { createCommand } from './tasks/create';
-import { doctorCommand } from './tasks/doctor';
-import { initCommand } from './tasks/init';
-import { listCommand } from './tasks/list';
-import { newPluginCommand } from './tasks/new-plugin';
-import { openCommand } from './tasks/open';
-import { runCommand } from './tasks/run';
-import { serveCommand } from './tasks/serve';
-import { syncCommand } from './tasks/sync';
-import { updateCommand } from './tasks/update';
+import { output, logFatal } from './log';
 import { emoji as _e } from './util/emoji';
 
 process.on('unhandledRejection', error => {
@@ -30,8 +17,9 @@ export async function run(): Promise<void> {
   program
     .command('create [directory] [name] [id]', { hidden: true })
     .description('Creates a new Capacitor project')
-    .action(() => {
-      return createCommand();
+    .action(async () => {
+      const { createCommand } = await import('./tasks/create');
+      await createCommand();
     });
 
   program
@@ -41,15 +29,17 @@ export async function run(): Promise<void> {
       '--web-dir <value>',
       'Optional: Directory of your projects built web assets',
     )
-    .action((appName, appId, { webDir }) => {
-      return initCommand(config, appName, appId, webDir);
+    .action(async (appName, appId, { webDir }) => {
+      const { initCommand } = await import('./tasks/init');
+      await initCommand(config, appName, appId, webDir);
     });
 
   program
     .command('serve', { hidden: true })
     .description('Serves a Capacitor Progressive Web App in the browser')
-    .action(() => {
-      return serveCommand();
+    .action(async () => {
+      const { serveCommand } = await import('./tasks/serve');
+      await serveCommand();
     });
 
   program
@@ -59,8 +49,9 @@ export async function run(): Promise<void> {
       '--deployment',
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
     )
-    .action((platform, { deployment }) => {
-      return syncCommand(config, platform, deployment);
+    .action(async (platform, { deployment }) => {
+      const { syncCommand } = await import('./tasks/sync');
+      await syncCommand(config, platform, deployment);
     });
 
   program
@@ -74,15 +65,17 @@ export async function run(): Promise<void> {
       '--deployment',
       "Optional: if provided, Podfile.lock won't be deleted and pod install will use --deployment option",
     )
-    .action((platform, { deployment }) => {
-      return updateCommand(config, platform, deployment);
+    .action(async (platform, { deployment }) => {
+      const { updateCommand } = await import('./tasks/update');
+      await updateCommand(config, platform, deployment);
     });
 
   program
     .command('copy [platform]')
     .description('copies the web app build into the native app')
-    .action(platform => {
-      return copyCommand(config, platform);
+    .action(async platform => {
+      const { copyCommand } = await import('./tasks/copy');
+      await copyCommand(config, platform);
     });
 
   program
@@ -92,46 +85,52 @@ export async function run(): Promise<void> {
     )
     .option('--list', 'list targets, then quit')
     .option('--target <id>', 'use a specific target')
-    .action((platform, { list, target }) => {
-      return runCommand(config, platform, { list, target });
+    .action(async (platform, { list, target }) => {
+      const { runCommand } = await import('./tasks/run');
+      await runCommand(config, platform, { list, target });
     });
 
   program
     .command('open [platform]')
     .description('opens the native project workspace (Xcode for iOS)')
-    .action(platform => {
-      return openCommand(config, platform);
+    .action(async platform => {
+      const { openCommand } = await import('./tasks/open');
+      await openCommand(config, platform);
     });
 
   program
     .command('add [platform]')
     .description('add a native platform project')
-    .action(platform => {
-      return addCommand(config, platform);
+    .action(async platform => {
+      const { addCommand } = await import('./tasks/add');
+      await addCommand(config, platform);
     });
 
   program
     .command('ls [platform]')
     .description('list installed Cordova and Capacitor plugins')
-    .action(platform => {
-      return listCommand(config, platform);
+    .action(async platform => {
+      const { listCommand } = await import('./tasks/list');
+      await listCommand(config, platform);
     });
 
   program
     .command('doctor [platform]')
     .description('checks the current setup for common errors')
-    .action(platform => {
-      return doctorCommand(config, platform);
+    .action(async platform => {
+      const { doctorCommand } = await import('./tasks/doctor');
+      await doctorCommand(config, platform);
     });
 
   program
     .command('plugin:generate', { hidden: true })
     .description('start a new Capacitor plugin')
-    .action(() => {
-      return newPluginCommand();
+    .action(async () => {
+      const { newPluginCommand } = await import('./tasks/new-plugin');
+      await newPluginCommand();
     });
 
-  program.arguments('[command]').action(cmd => {
+  program.arguments('[command]').action(async cmd => {
     if (typeof cmd === 'undefined') {
       output.write(
         `\n  ${_e('⚡️', '--')}  ${c.strong(
