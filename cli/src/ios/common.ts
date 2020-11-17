@@ -90,7 +90,7 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 
-  const pbxPath = `${config.ios.nativeProjectDirAbs}.xcodeproj/project.pbxproj`;
+  const pbxPath = `${config.ios.nativeTargetDirAbs}.xcodeproj/project.pbxproj`;
   const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
 
   let plistContent = await readFile(plistPath, { encoding: 'utf-8' });
