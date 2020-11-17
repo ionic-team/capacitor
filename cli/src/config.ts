@@ -189,6 +189,7 @@ async function loadIOSConfig(
   cliConfig: CLIConfig,
 ): Promise<IOSConfig> {
   const name = 'ios';
+  const podPath = determineCocoapodPath();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const webDir = 'public';
@@ -211,6 +212,7 @@ async function loadIOSConfig(
       templateDir: resolve(cliConfig.assetsDir, templateName),
       pluginsDir: resolve(cliConfig.assetsDir, pluginsFolderName),
     },
+    podPath,
   };
 }
 
@@ -278,4 +280,12 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   }
 
   return '';
+}
+
+function determineCocoapodPath(): string {
+  if (process.env.CAPACITOR_COCOAPODS_PATH) {
+    return process.env.CAPACITOR_COCOAPODS_PATH;
+  }
+
+  return 'pod';
 }
