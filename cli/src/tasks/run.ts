@@ -20,6 +20,7 @@ import { sync } from './sync';
 export interface RunCommandOptions {
   list?: boolean;
   target?: string;
+  sync?: boolean;
 }
 
 export async function runCommand(
@@ -71,7 +72,10 @@ export async function runCommand(
     }
 
     try {
-      await sync(config, platformName, false);
+      if (options.sync) {
+        await sync(config, platformName, false);
+      }
+
       await run(config, platformName, options);
     } catch (e) {
       logFatal(e.stack ?? e);
