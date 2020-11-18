@@ -81,13 +81,14 @@ export async function run(): Promise<void> {
   program
     .command(`run [platform]`)
     .description(
-      `runs ${c.input('copy')}, then builds and deploys the native app`,
+      `runs ${c.input('sync')}, then builds and deploys the native app`,
     )
     .option('--list', 'list targets, then quit')
     .option('--target <id>', 'use a specific target')
-    .action(async (platform, { list, target }) => {
+    .option('--no-sync', `do not run ${c.input('sync')}`)
+    .action(async (platform, { list, target, sync }) => {
       const { runCommand } = await import('./tasks/run');
-      await runCommand(config, platform, { list, target });
+      await runCommand(config, platform, { list, target, sync });
     });
 
   program
