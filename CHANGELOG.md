@@ -1,3 +1,14 @@
+## [2.4.3](https://github.com/ionic-team/capacitor/compare/2.4.2...2.4.3) (2020-11-18)
+
+
+### Bug Fixes
+
+* fix(ios): Don't get location if permission is not determined (#3802) ([4fb9d348](https://github.com/ionic-team/capacitor/commit/4fb9d348)), closes [#3789](https://github.com/ionic-team/capacitor/issues/3789)
+* fix(Filesystem): avoid directory already exists on append (#3629) ([249073d6](https://github.com/ionic-team/capacitor/commit/249073d6)), closes [#3620](https://github.com/ionic-team/capacitor/issues/3620)
+* fix(android): Avoid SecurityError on Android 10 file share (#3655) ([1c47e15f](https://github.com/ionic-team/capacitor/commit/1c47e15f)), closes [#3638](https://github.com/ionic-team/capacitor/issues/3638)
+
+
+
 ## [2.4.2](https://github.com/ionic-team/capacitor/compare/2.4.1...2.4.2) (2020-09-24)
 
 
