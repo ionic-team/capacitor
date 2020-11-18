@@ -13,18 +13,9 @@ import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
-import {
-  buildXmlElement,
-  logFatal,
-  logPrompt,
-  parseXML,
-  readXML,
-  resolveNode,
-  writeXML,
-} from './common';
 import type { Config } from './definitions';
 import { getIOSPlugins } from './ios/common';
-import { logger } from './log';
+import { logger, logFatal, logPrompt } from './log';
 import type { Plugin } from './plugin';
 import {
   PluginType,
@@ -37,6 +28,8 @@ import {
   printPlugins,
 } from './plugin';
 import { copy as copyTask } from './tasks/copy';
+import { resolveNode } from './util/node';
+import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
@@ -221,6 +214,7 @@ export async function autoGenerateConfig(
   cordovaPlugins: Plugin[],
   platform: string,
 ): Promise<void> {
+  const xml2js = await import('xml2js');
   let xmlDir = join(config.android.resDirAbs, 'xml');
   const fileName = 'config.xml';
   if (platform === 'ios') {

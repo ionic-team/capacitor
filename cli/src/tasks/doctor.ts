@@ -1,15 +1,14 @@
+import { readJSON } from '@ionic/utils-fs';
+
 import { doctorAndroid } from '../android/doctor';
 import c from '../colors';
-import {
-  readJSON,
-  resolveNode,
-  getCommandOutput,
-  selectPlatforms,
-} from '../common';
+import { selectPlatforms } from '../common';
 import type { Config } from '../definitions';
 import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
+import { resolveNode } from '../util/node';
+import { getCommandOutput } from '../util/subprocess';
 
 export async function doctorCommand(
   config: Config,

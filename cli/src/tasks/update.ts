@@ -4,7 +4,6 @@ import type { CheckFunction } from '../common';
 import {
   check,
   checkPackage,
-  logFatal,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -14,7 +13,7 @@ import {
 import type { Config } from '../definitions';
 import { checkCocoaPods, checkIOSProject } from '../ios/common';
 import { updateIOS } from '../ios/update';
-import { logger } from '../log';
+import { logger, logFatal } from '../log';
 import { allSerial } from '../util/promise';
 
 export async function updateCommand(

@@ -8,19 +8,19 @@ import {
   runPlatformHook,
   selectPlatforms,
   promptForPlatform,
-  logFatal,
-  getPlatformTargets,
   getPlatformTargetName,
 } from '../common';
 import type { Config } from '../definitions';
 import { runIOS } from '../ios/run';
-import { logger, output } from '../log';
+import { logger, output, logFatal } from '../log';
+import { getPlatformTargets } from '../util/native-run';
 
-import { copy } from './copy';
+import { sync } from './sync';
 
 export interface RunCommandOptions {
   list?: boolean;
   target?: string;
+  sync?: boolean;
 }
 
 export async function runCommand(
@@ -72,7 +72,10 @@ export async function runCommand(
     }
 
     try {
-      await copy(config, platformName);
+      if (options.sync) {
+        await sync(config, platformName, false);
+      }
+
       await run(config, platformName, options);
     } catch (e) {
       logFatal(e.stack ?? e);

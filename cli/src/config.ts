@@ -3,7 +3,6 @@ import Debug from 'debug';
 import { dirname, join, resolve } from 'path';
 
 import c from './colors';
-import { logFatal, resolveNode, runCommand } from './common';
 import type {
   AndroidConfig,
   AppConfig,
@@ -14,8 +13,9 @@ import type {
   WebConfig,
 } from './definitions';
 import { OS } from './definitions';
+import { logFatal } from './log';
 import { tryFn } from './util/fn';
-import { requireTS } from './util/node';
+import { resolveNode, requireTS } from './util/node';
 
 const debug = Debug('capacitor:config');
 
@@ -189,6 +189,7 @@ async function loadIOSConfig(
   cliConfig: CLIConfig,
 ): Promise<IOSConfig> {
   const name = 'ios';
+  const podPath = determineCocoapodPath();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
   const webDir = 'public';
@@ -211,6 +212,7 @@ async function loadIOSConfig(
       templateDir: resolve(cliConfig.assetsDir, templateName),
       pluginsDir: resolve(cliConfig.assetsDir, pluginsFolderName),
     },
+    podPath,
   };
 }
 
@@ -250,6 +252,8 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
     case OS.Mac:
       return '/Applications/Android Studio.app';
     case OS.Windows: {
+      const { runCommand } = await import('./util/subprocess');
+
       let p = 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe';
 
       try {
@@ -278,4 +282,12 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   }
 
   return '';
+}
+
+function determineCocoapodPath(): string {
+  if (process.env.CAPACITOR_COCOAPODS_PATH) {
+    return process.env.CAPACITOR_COCOAPODS_PATH;
+  }
+
+  return 'pod';
 }
