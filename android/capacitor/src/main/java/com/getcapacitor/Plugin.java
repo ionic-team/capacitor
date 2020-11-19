@@ -13,6 +13,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.util.PermissionHelper;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -188,8 +189,10 @@ public class Plugin {
      */
     public boolean hasDefinedPermissions(Permission[] permissions) {
         for (Permission perm : permissions) {
-            if (!PermissionHelper.hasDefinedPermission(getContext(), perm.permission())) {
-                return false;
+            for (String permString : perm.strings()) {
+                if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -241,8 +244,10 @@ public class Plugin {
         }
 
         for (Permission perm : annotation.permissions()) {
-            if (!hasPermission(perm.permission())) {
-                return false;
+            for (String permString : perm.strings()) {
+                if (!hasPermission(permString)) {
+                    return false;
+                }
             }
         }
 
@@ -272,24 +277,40 @@ public class Plugin {
         JSObject permissionsResults = new JSObject();
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
-            String key = perm.alias().isEmpty() ? perm.permission() : perm.alias();
-            String permissionStatus = hasPermission(perm.permission()) ? "granted" : "prompt";
+            // If a permission is defined with no permission constants, return "granted" for it.
+            // Otherwise, get its true state.
+            if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+                String key = perm.alias();
+                if (!key.isEmpty()) {
+                    String existingResult = permissionsResults.getString(key);
 
-            // Check if there is a cached permission state for the "Never ask again" state
-            if (permissionStatus.equals("prompt")) {
-                SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
-                String state = prefs.getString(perm.permission(), null);
-
-                if (state != null) {
-                    permissionStatus = state;
+                    // auto set permission state to granted if the alias is empty.
+                    if (existingResult == null) {
+                        permissionsResults.put(key, "granted");
+                    }
                 }
-            }
+            } else {
+                for (String permString : perm.strings()) {
+                    String key = perm.alias().isEmpty() ? permString : perm.alias();
+                    String permissionStatus = hasPermission(permString) ? "granted" : "prompt";
 
-            String existingResult = permissionsResults.getString(key);
+                    // Check if there is a cached permission state for the "Never ask again" state
+                    if (permissionStatus.equals("prompt")) {
+                        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
+                        String state = prefs.getString(permString, null);
 
-            // multiple permissions with the same alias must all be true, otherwise all false.
-            if (existingResult == null || existingResult.equals("granted")) {
-                permissionsResults.put(key, permissionStatus);
+                        if (state != null) {
+                            permissionStatus = state;
+                        }
+                    }
+
+                    String existingResult = permissionsResults.getString(key);
+
+                    // multiple permissions with the same alias must all be true, otherwise all false.
+                    if (existingResult == null || existingResult.equals("granted")) {
+                        permissionsResults.put(key, permissionStatus);
+                    }
+                }
             }
         }
 
@@ -316,12 +337,12 @@ public class Plugin {
             return;
         }
 
-        String[] perms = new String[annotation.permissions().length];
-        for (int i = 0; i < perms.length; i++) {
-            perms[i] = annotation.permissions()[i].permission();
+        HashSet<String> perms = new HashSet<>();
+        for (Permission perm : annotation.permissions()) {
+            perms.addAll(Arrays.asList(perm.strings()));
         }
 
-        ActivityCompat.requestPermissions(getActivity(), perms, annotation.permissionRequestCode());
+        ActivityCompat.requestPermissions(getActivity(), perms.toArray(new String[0]), annotation.permissionRequestCode());
     }
 
     /**
@@ -470,6 +491,7 @@ public class Plugin {
     @PluginMethod
     public void requestPermissions(PluginCall call) {
         String[] perms = null;
+        Set<String> autoGrantPerms = new HashSet<>();
         int permissionRequestCode;
 
         // If call was made with a list of permissions to request, save them to be requested
@@ -489,15 +511,27 @@ public class Plugin {
         } else {
             // If call was made without any custom permissions, request all from plugin annotation
             if (providedPermsList == null || providedPermsList.isEmpty()) {
-                perms = new String[annotation.permissions().length];
-                for (int i = 0; i < perms.length; i++) {
-                    perms[i] = annotation.permissions()[i].permission();
+                HashSet<String> permsSet = new HashSet<>();
+                for (Permission perm : annotation.permissions()) {
+                    // If a permission is defined with no permission constants, separate it for auto-granting.
+                    // Otherwise, it is added to the list to be requested.
+                    if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+                        if (!perm.alias().isEmpty()) {
+                            autoGrantPerms.add(perm.alias());
+                        }
+                    } else {
+                        permsSet.addAll(Arrays.asList(perm.strings()));
+                    }
                 }
+
+                perms = permsSet.toArray(new String[0]);
             } else {
                 Set<String> permsSet = new HashSet<>();
                 for (Permission perm : annotation.permissions()) {
-                    if (providedPermsList.contains(perm.alias()) || providedPermsList.contains(perm.permission())) {
-                        permsSet.add(perm.permission());
+                    for (String permString : perm.strings()) {
+                        if (providedPermsList.contains(perm.alias()) || providedPermsList.contains(permString)) {
+                            permsSet.add(permString);
+                        }
                     }
                 }
 
@@ -517,7 +551,18 @@ public class Plugin {
 
             pluginRequestPermissions(perms, permissionRequestCode);
         } else {
-            call.resolve();
+            // if the plugin only has auto-grant permissions, return those
+            if (!autoGrantPerms.isEmpty()) {
+                JSObject permissionsResults = new JSObject();
+
+                for (String perm : autoGrantPerms) {
+                    permissionsResults.put(perm, "granted");
+                }
+
+                call.resolve(permissionsResults);
+            } else {
+                call.resolve();
+            }
         }
     }
 
@@ -578,7 +623,7 @@ public class Plugin {
      * @param grantResults
      * @return true if permissions were saved and defined correctly, false if not
      */
-    public boolean validatePermissions(String[] permissions, int[] grantResults) {
+    protected boolean validatePermissions(String[] permissions, int[] grantResults) {
         SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
