@@ -12,16 +12,10 @@ import { isInstalled } from '../util/subprocess';
 
 export async function findXcodePath(config: Config): Promise<string | null> {
   try {
-    const files = await readdir(
-      join(config.ios.platformDirAbs, config.ios.nativeProjectName),
-    );
+    const files = await readdir(config.ios.nativeProjectDirAbs);
     const xcodeProject = files.find(file => file.endsWith('.xcworkspace'));
     if (xcodeProject) {
-      return join(
-        config.ios.platformDirAbs,
-        config.ios.nativeProjectName,
-        xcodeProject,
-      );
+      return join(config.ios.nativeProjectDirAbs, xcodeProject);
     }
     return null;
   } catch {
@@ -96,16 +90,8 @@ export async function editProjectSettingsIOS(config: Config): Promise<void> {
   const appId = config.app.appId;
   const appName = config.app.appName;
 
-  const pbxPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.nativeProjectName,
-    'App.xcodeproj/project.pbxproj',
-  );
-  const plistPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.nativeProjectName,
-    'App/Info.plist',
-  );
+  const pbxPath = `${config.ios.nativeTargetDirAbs}.xcodeproj/project.pbxproj`;
+  const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
 
   let plistContent = await readFile(plistPath, { encoding: 'utf-8' });
 
