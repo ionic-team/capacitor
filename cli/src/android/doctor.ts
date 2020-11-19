@@ -28,9 +28,9 @@ async function checkAppSrcDirs(config: Config) {
     )} directory is missing in ${c.strong(config.android.platformDir)}`;
   }
 
-  if (!(await pathExists(config.android.srcDirAbs))) {
+  if (!(await pathExists(config.android.srcMainDirAbs))) {
     return `${c.strong(
-      config.android.srcDir,
+      config.android.srcMainDir,
     )} directory is missing in ${c.strong(config.android.platformDir)}`;
   }
 
@@ -61,11 +61,11 @@ async function checkAppSrcDirs(config: Config) {
 
 async function checkAndroidManifestFile(config: Config) {
   const manifestFileName = 'AndroidManifest.xml';
-  const manifestFilePath = join(config.android.srcDirAbs, manifestFileName);
+  const manifestFilePath = join(config.android.srcMainDirAbs, manifestFileName);
 
   if (!(await pathExists(manifestFilePath))) {
     return `${c.strong(manifestFileName)} is missing in ${c.strong(
-      config.android.srcDir,
+      config.android.srcMainDir,
     )}`;
   }
 
@@ -81,14 +81,14 @@ async function checkAndroidManifestData(config: Config, xmlData: any) {
   const manifestNode: any = xmlData.manifest;
   if (!manifestNode) {
     return `Missing ${c.input('<manifest>')} XML node in ${c.strong(
-      config.android.srcDir,
+      config.android.srcMainDir,
     )}`;
   }
 
   const packageId = manifestNode.$['package'];
   if (!packageId) {
     return `Missing ${c.input('<manifest package="">')} attribute in ${c.strong(
-      config.android.srcDir,
+      config.android.srcMainDir,
     )}`;
   }
 
@@ -97,7 +97,7 @@ async function checkAndroidManifestData(config: Config, xmlData: any) {
     return `Missing ${c.input(
       '<application>',
     )} XML node as a child node of ${c.input('<manifest>')} in ${c.strong(
-      config.android.srcDir,
+      config.android.srcMainDir,
     )}`;
   }
 
@@ -154,14 +154,16 @@ async function checkAndroidManifestData(config: Config, xmlData: any) {
 
   if (!mainApplicationNode) {
     return `Missing main ${c.input('<activity>')} XML node in ${c.strong(
-      config.android.srcDir,
+      config.android.srcMainDir,
     )}`;
   }
 
   if (!mainActivityClassPath) {
     return `Missing ${c.input(
       '<activity android:name="">',
-    )} attribute for MainActivity class in ${c.strong(config.android.srcDir)}`;
+    )} attribute for MainActivity class in ${c.strong(
+      config.android.srcMainDir,
+    )}`;
   }
 
   return checkPackage(config, packageId, mainActivityClassPath);
@@ -180,7 +182,7 @@ async function checkPackage(
     );
   }
 
-  const appSrcMainJavaDir = join(config.android.srcDirAbs, 'java');
+  const appSrcMainJavaDir = join(config.android.srcMainDirAbs, 'java');
   if (!(await pathExists(appSrcMainJavaDir))) {
     return `${c.strong('java')} directory is missing in ${c.strong(
       appSrcMainJavaDir,
