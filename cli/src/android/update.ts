@@ -84,7 +84,7 @@ export async function installGradlePlugins(
   );
 
   const settingsPath = config.android.platformDirAbs;
-  const dependencyPath = join(config.android.platformDirAbs, 'app');
+  const dependencyPath = config.android.appDirAbs;
   const relativeCapcitorAndroidPath = convertToUnixPath(
     relative(settingsPath, capacitorAndroidPath),
   );

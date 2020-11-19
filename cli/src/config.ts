@@ -154,9 +154,12 @@ async function loadAndroidConfig(
   const name = 'android';
   const platformDir = extConfig.android?.path ?? 'android';
   const platformDirAbs = resolve(rootDir, platformDir);
-  const webDir = 'app/src/main/assets/public';
-  const resDir = 'app/src/main/res';
-  const buildOutputDir = 'app/build/outputs/apk/debug';
+  const appDir = 'app';
+  const srcDir = `${appDir}/src/main`;
+  const assetsDir = `${srcDir}/assets`;
+  const webDir = `${assetsDir}/public`;
+  const resDir = `${srcDir}/res`;
+  const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
 
   const templateName = 'android-template';
   const pluginsFolderName = 'capacitor-cordova-android-plugins';
@@ -168,6 +171,12 @@ async function loadAndroidConfig(
     studioPath,
     platformDir,
     platformDirAbs,
+    appDir,
+    appDirAbs: resolve(platformDir, appDir),
+    srcDir,
+    srcDirAbs: resolve(platformDir, srcDir),
+    assetsDir,
+    assetsDirAbs: resolve(platformDir, assetsDir),
     webDir,
     webDirAbs: resolve(platformDir, webDir),
     resDir,
@@ -192,8 +201,9 @@ async function loadIOSConfig(
   const podPath = determineCocoapodPath();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
-  const webDir = 'public';
-  const nativeProjectName = 'App';
+  const nativeProjectDir = 'App';
+  const nativeTargetDir = `${nativeProjectDir}/App`;
+  const webDir = `${nativeProjectDir}/public`;
   const templateName = 'ios-template';
   const pluginsFolderName = 'capacitor-cordova-ios-plugins';
 
@@ -203,9 +213,12 @@ async function loadIOSConfig(
     cordovaSwiftVersion: '5.1',
     platformDir,
     platformDirAbs,
+    nativeProjectDir,
+    nativeProjectDirAbs: resolve(platformDir, nativeProjectDir),
+    nativeTargetDir,
+    nativeTargetDirAbs: resolve(platformDir, nativeTargetDir),
     webDir,
-    webDirAbs: resolve(platformDir, nativeProjectName, webDir),
-    nativeProjectName,
+    webDirAbs: resolve(platformDir, webDir),
     assets: {
       templateName,
       pluginsFolderName,

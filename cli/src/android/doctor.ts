@@ -1,6 +1,6 @@
 import { pathExists, readFile } from '@ionic/utils-fs';
 import { accessSync } from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
 
 import c from '../colors';
 import { check } from '../common';
@@ -22,88 +22,83 @@ export async function doctorAndroid(config: Config): Promise<void> {
 }
 
 async function checkAppSrcDirs(config: Config) {
-  const appDir = join(config.android.platformDirAbs, 'app');
-  if (!(await pathExists(appDir))) {
-    return `${c.strong('app')} directory is missing in ${
-      config.android.platformDir
-    }`;
-  }
-
-  const appSrcDir = join(appDir, 'src');
-  if (!(await pathExists(appSrcDir))) {
-    return `${c.strong('src')} directory is missing in ${appDir}`;
-  }
-
-  const appSrcMainDir = join(appSrcDir, 'main');
-  if (!(await pathExists(appSrcMainDir))) {
-    return `${c.strong('main')} directory is missing in ${appSrcDir}`;
-  }
-
-  const appSrcMainAssetsDir = join(appSrcMainDir, 'assets');
-  if (!(await pathExists(appSrcMainAssetsDir))) {
-    return `${c.strong('assets')} directory is missing in ${appSrcMainDir}`;
-  }
-
-  const appSrcMainAssetsWwwDir = join(appSrcMainAssetsDir, 'public');
-  if (!(await pathExists(appSrcMainAssetsWwwDir))) {
+  if (!(await pathExists(config.android.appDirAbs))) {
     return `${c.strong(
-      'public',
-    )} directory is missing in ${appSrcMainAssetsDir}`;
+      config.android.appDir,
+    )} directory is missing in ${c.strong(config.android.platformDir)}`;
+  }
+
+  if (!(await pathExists(config.android.srcDirAbs))) {
+    return `${c.strong(
+      config.android.srcDir,
+    )} directory is missing in ${c.strong(config.android.platformDir)}`;
+  }
+
+  if (!(await pathExists(config.android.assetsDirAbs))) {
+    return `${c.strong(
+      config.android.assetsDir,
+    )} directory is missing in ${c.strong(config.android.platformDir)}`;
+  }
+
+  if (!(await pathExists(config.android.webDirAbs))) {
+    return `${c.strong(
+      config.android.webDir,
+    )} directory is missing in ${c.strong(config.android.platformDir)}`;
   }
 
   const appSrcMainAssetsWwwIndexHtmlDir = join(
-    appSrcMainAssetsWwwDir,
+    config.android.webDirAbs,
     'index.html',
   );
   if (!(await pathExists(appSrcMainAssetsWwwIndexHtmlDir))) {
-    return `${c.strong(
-      'index.html',
-    )} file is missing in ${appSrcMainAssetsWwwDir}`;
+    return `${c.strong('index.html')} file is missing in ${c.strong(
+      config.android.webDirAbs,
+    )}`;
   }
 
-  return checkAndroidManifestFile(config, appSrcMainDir);
+  return checkAndroidManifestFile(config);
 }
 
-async function checkAndroidManifestFile(config: Config, appSrcMainDir: string) {
+async function checkAndroidManifestFile(config: Config) {
   const manifestFileName = 'AndroidManifest.xml';
-  const manifestFilePath = join(appSrcMainDir, manifestFileName);
+  const manifestFilePath = join(config.android.srcDirAbs, manifestFileName);
 
   if (!(await pathExists(manifestFilePath))) {
-    return `${c.strong(manifestFileName)} is missing in ${appSrcMainDir}`;
+    return `${c.strong(manifestFileName)} is missing in ${c.strong(
+      config.android.srcDir,
+    )}`;
   }
 
   try {
     const xmlData = await readXML(manifestFilePath);
-    return checkAndroidManifestData(config, appSrcMainDir, xmlData);
+    return checkAndroidManifestData(config, xmlData);
   } catch (e) {
     return e;
   }
 }
 
-async function checkAndroidManifestData(
-  config: Config,
-  appSrcMainDir: string,
-  xmlData: any,
-) {
+async function checkAndroidManifestData(config: Config, xmlData: any) {
   const manifestNode: any = xmlData.manifest;
   if (!manifestNode) {
-    return `Missing ${c.input('<manifest>')} XML node in ${appSrcMainDir}`;
+    return `Missing ${c.input('<manifest>')} XML node in ${c.strong(
+      config.android.srcDir,
+    )}`;
   }
 
   const packageId = manifestNode.$['package'];
   if (!packageId) {
-    return `Missing ${c.input(
-      '<manifest package="">',
-    )} attribute in ${appSrcMainDir}`;
+    return `Missing ${c.input('<manifest package="">')} attribute in ${c.strong(
+      config.android.srcDir,
+    )}`;
   }
 
   const applicationChildNodes: any[] = manifestNode.application;
   if (!Array.isArray(manifestNode.application)) {
     return `Missing ${c.input(
       '<application>',
-    )} XML node as a child node of ${c.input(
-      '<manifest>',
-    )} in ${appSrcMainDir}`;
+    )} XML node as a child node of ${c.input('<manifest>')} in ${c.strong(
+      config.android.srcDir,
+    )}`;
   }
 
   let mainActivityClassPath = '';
@@ -158,21 +153,22 @@ async function checkAndroidManifestData(
   );
 
   if (!mainApplicationNode) {
-    return `Missing main ${c.input('<activity>')} XML node in ${appSrcMainDir}`;
+    return `Missing main ${c.input('<activity>')} XML node in ${c.strong(
+      config.android.srcDir,
+    )}`;
   }
 
   if (!mainActivityClassPath) {
     return `Missing ${c.input(
       '<activity android:name="">',
-    )} attribute for MainActivity class in ${appSrcMainDir}`;
+    )} attribute for MainActivity class in ${c.strong(config.android.srcDir)}`;
   }
 
-  return checkPackage(config, appSrcMainDir, packageId, mainActivityClassPath);
+  return checkPackage(config, packageId, mainActivityClassPath);
 }
 
 async function checkPackage(
   config: Config,
-  appSrcMainDir: string,
   packageId: string,
   mainActivityClassPath: string,
 ) {
@@ -184,9 +180,11 @@ async function checkPackage(
     );
   }
 
-  const appSrcMainJavaDir = join(appSrcMainDir, 'java');
+  const appSrcMainJavaDir = join(config.android.srcDirAbs, 'java');
   if (!(await pathExists(appSrcMainJavaDir))) {
-    return `${c.strong('java')} directory is missing in ${appSrcMainDir}`;
+    return `${c.strong('java')} directory is missing in ${c.strong(
+      appSrcMainJavaDir,
+    )}`;
   }
 
   let checkPath = appSrcMainJavaDir;
@@ -218,12 +216,13 @@ async function checkPackage(
 }
 
 async function checkBuildGradle(config: Config, packageId: string) {
-  const appDir = join(config.android.platformDirAbs, 'app');
   const fileName = 'build.gradle';
-  const filePath = join(appDir, fileName);
+  const filePath = join(config.android.appDirAbs, fileName);
 
   if (!(await pathExists(filePath))) {
-    return `${fileName} file is missing in ${appDir}`;
+    return `${c.strong(fileName)} file is missing in ${c.strong(
+      config.android.appDir,
+    )}`;
   }
 
   let fileContent = await readFile(filePath, { encoding: 'utf-8' });
@@ -246,9 +245,9 @@ async function checkGradlew(config: Config) {
   const filePath = join(config.android.platformDirAbs, fileName);
 
   if (!(await pathExists(filePath))) {
-    return `${c.strong(fileName)} file is missing in ${
-      config.android.platformDir
-    }`;
+    return `${c.strong(fileName)} file is missing in ${c.strong(
+      config.android.platformDir,
+    )}`;
   }
   return null;
 }
