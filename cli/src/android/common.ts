@@ -73,7 +73,10 @@ export async function editProjectSettingsAndroid(
   const appId = config.app.appId;
   const appName = config.app.appName;
 
-  const manifestPath = resolve(config.android.srcDirAbs, 'AndroidManifest.xml');
+  const manifestPath = resolve(
+    config.android.srcMainDirAbs,
+    'AndroidManifest.xml',
+  );
   const buildGradlePath = resolve(config.android.appDirAbs, 'build.gradle');
 
   let manifestContent = await readFile(manifestPath, { encoding: 'utf-8' });
@@ -86,7 +89,10 @@ export async function editProjectSettingsAndroid(
 
   const domainPath = appId.split('.').join('/');
   // Make the package source path to the new plugin Java file
-  const newJavaPath = resolve(config.android.srcDirAbs, `java/${domainPath}`);
+  const newJavaPath = resolve(
+    config.android.srcMainDirAbs,
+    `java/${domainPath}`,
+  );
 
   if (!(await pathExists(newJavaPath))) {
     await mkdirp(newJavaPath);
@@ -94,19 +100,21 @@ export async function editProjectSettingsAndroid(
 
   await copy(
     resolve(
-      config.android.srcDirAbs,
+      config.android.srcMainDirAbs,
       'java/com/getcapacitor/myapp/MainActivity.java',
     ),
     resolve(newJavaPath, 'MainActivity.java'),
   );
 
   if (appId.split('.')[1] !== 'getcapacitor') {
-    await remove(resolve(config.android.srcDirAbs, 'java/com/getcapacitor'));
+    await remove(
+      resolve(config.android.srcMainDirAbs, 'java/com/getcapacitor'),
+    );
   }
 
   // Remove our template 'com' folder if their ID doesn't have it
   if (appId.split('.')[0] !== 'com') {
-    await remove(resolve(config.android.srcDirAbs, 'java/com/'));
+    await remove(resolve(config.android.srcMainDirAbs, 'java/com/'));
   }
 
   // Update the package in the MainActivity java file

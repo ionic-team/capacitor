@@ -15,6 +15,15 @@ export async function run(): Promise<void> {
   program.version(config.cli.package.version);
 
   program
+    .command('config', { hidden: true })
+    .description(`print evaluated Capacitor config`)
+    .option('--json', 'Print in JSON format')
+    .action(async ({ json }) => {
+      const { configCommand } = await import('./tasks/config');
+      await configCommand(config, json);
+    });
+
+  program
     .command('create [directory] [name] [id]', { hidden: true })
     .description('Creates a new Capacitor project')
     .action(async () => {
