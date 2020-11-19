@@ -277,6 +277,8 @@ public class Plugin {
         JSObject permissionsResults = new JSObject();
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
+            // If a permission is defined with no permission constants, return "granted" for it.
+            // Otherwise, get its true state.
             if (perm.permission().length == 0 || (perm.permission().length == 1 && perm.permission()[0].isEmpty())) {
                 String key = perm.alias();
                 if (!key.isEmpty()) {
@@ -511,6 +513,8 @@ public class Plugin {
             if (providedPermsList == null || providedPermsList.isEmpty()) {
                 HashSet<String> permsSet = new HashSet<>();
                 for (Permission perm : annotation.permissions()) {
+                    // If a permission is defined with no permission constants, separate it for auto-granting.
+                    // Otherwise, it is added to the list to be requested.
                     if (perm.permission().length == 0 || (perm.permission().length == 1 && perm.permission()[0].isEmpty())) {
                         if (!perm.alias().isEmpty()) {
                             autoGrantPerms.add(perm.alias());
