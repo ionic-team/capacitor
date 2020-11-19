@@ -55,18 +55,25 @@ export async function runCommand(
 
     if (options.list) {
       const targets = await getPlatformTargets(platformName);
-      const rows = targets.map(t => [
-        getPlatformTargetName(t),
-        `${t.platform === 'ios' ? 'iOS' : 'API'} ${t.sdkVersion}`,
-        t.id ?? '?',
-      ]);
+      const outputTargets = targets.map(t => ({
+        name: getPlatformTargetName(t),
+        api: `${t.platform === 'ios' ? 'iOS' : 'API'} ${t.sdkVersion}`,
+        id: t.id ?? '?',
+      }));
 
-      output.write(
-        `${columnar(rows, {
-          headers: ['Name', 'API', 'Target ID'],
-          vsep: ' ',
-        })}\n`,
-      );
+      // TODO: make hidden commander option (https://github.com/tj/commander.js/issues/1106)
+      if (process.argv.includes('--json')) {
+        output.write(JSON.stringify(outputTargets));
+      } else {
+        const rows = outputTargets.map(t => [t.name, t.api, t.id]);
+
+        output.write(
+          `${columnar(rows, {
+            headers: ['Name', 'API', 'Target ID'],
+            vsep: ' ',
+          })}\n`,
+        );
+      }
 
       return;
     }
