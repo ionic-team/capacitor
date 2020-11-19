@@ -73,6 +73,8 @@ export interface AndroidConfig extends PlatformConfig {
   readonly appDirAbs: string;
   readonly srcDir: string;
   readonly srcDirAbs: string;
+  readonly srcMainDir: string;
+  readonly srcMainDirAbs: string;
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly assetsDir: string;
