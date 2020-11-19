@@ -214,15 +214,10 @@ export async function autoGenerateConfig(
   cordovaPlugins: Plugin[],
   platform: string,
 ): Promise<void> {
-  const xml2js = await import('xml2js');
   let xmlDir = join(config.android.resDirAbs, 'xml');
   const fileName = 'config.xml';
   if (platform === 'ios') {
-    xmlDir = join(
-      config.ios.platformDirAbs,
-      config.ios.nativeProjectName,
-      config.ios.nativeProjectName,
-    );
+    xmlDir = config.ios.nativeTargetDirAbs;
   }
   await ensureDir(xmlDir);
   const cordovaConfigXMLFile = join(xmlDir, fileName);
@@ -338,12 +333,7 @@ export async function logCordovaManualSteps(
 }
 
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
-  const plistPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.nativeProjectName,
-    config.ios.nativeProjectName,
-    'Info.plist',
-  );
+  const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
   const xmlMeta = await readXML(plistPath);
   const data = await readFile(plistPath, { encoding: 'utf-8' });
   const plistData = plist.parse(data) as PlistObject;
