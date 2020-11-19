@@ -69,8 +69,14 @@ export interface AppConfig {
 export interface AndroidConfig extends PlatformConfig {
   readonly studioPath: string;
   readonly minVersion: string;
+  readonly appDir: string;
+  readonly appDirAbs: string;
+  readonly srcDir: string;
+  readonly srcDirAbs: string;
   readonly webDir: string;
   readonly webDirAbs: string;
+  readonly assetsDir: string;
+  readonly assetsDirAbs: string;
   readonly resDir: string;
   readonly resDirAbs: string;
   readonly buildOutputDir: string;
@@ -84,7 +90,10 @@ export interface IOSConfig extends PlatformConfig {
   readonly cordovaSwiftVersion: string;
   readonly webDir: string;
   readonly webDirAbs: string;
-  readonly nativeProjectName: string;
+  readonly nativeProjectDir: string;
+  readonly nativeProjectDirAbs: string;
+  readonly nativeTargetDir: string;
+  readonly nativeTargetDirAbs: string;
   readonly assets: PlatformAssetsConfig;
 }
 

@@ -42,7 +42,7 @@ export async function runIOS(
 
   await runTask('Running xcodebuild', async () =>
     runCommand('xcrun', ['xcodebuild', ...xcodebuildArgs], {
-      cwd: resolve(config.ios.platformDirAbs, 'App'),
+      cwd: config.ios.nativeProjectDirAbs,
     }),
   );
 
