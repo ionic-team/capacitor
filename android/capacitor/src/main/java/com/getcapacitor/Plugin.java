@@ -189,7 +189,7 @@ public class Plugin {
      */
     public boolean hasDefinedPermissions(Permission[] permissions) {
         for (Permission perm : permissions) {
-            for (String permString : perm.permission()) {
+            for (String permString : perm.strings()) {
                 if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
                     return false;
                 }
@@ -244,7 +244,7 @@ public class Plugin {
         }
 
         for (Permission perm : annotation.permissions()) {
-            for (String permString : perm.permission()) {
+            for (String permString : perm.strings()) {
                 if (!hasPermission(permString)) {
                     return false;
                 }
@@ -279,7 +279,7 @@ public class Plugin {
         for (Permission perm : annotation.permissions()) {
             // If a permission is defined with no permission constants, return "granted" for it.
             // Otherwise, get its true state.
-            if (perm.permission().length == 0 || (perm.permission().length == 1 && perm.permission()[0].isEmpty())) {
+            if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
                 String key = perm.alias();
                 if (!key.isEmpty()) {
                     String existingResult = permissionsResults.getString(key);
@@ -290,7 +290,7 @@ public class Plugin {
                     }
                 }
             } else {
-                for (String permString : perm.permission()) {
+                for (String permString : perm.strings()) {
                     String key = perm.alias().isEmpty() ? permString : perm.alias();
                     String permissionStatus = hasPermission(permString) ? "granted" : "prompt";
 
@@ -339,7 +339,7 @@ public class Plugin {
 
         HashSet<String> perms = new HashSet<>();
         for (Permission perm : annotation.permissions()) {
-            perms.addAll(Arrays.asList(perm.permission()));
+            perms.addAll(Arrays.asList(perm.strings()));
         }
 
         ActivityCompat.requestPermissions(getActivity(), perms.toArray(new String[0]), annotation.permissionRequestCode());
@@ -515,12 +515,12 @@ public class Plugin {
                 for (Permission perm : annotation.permissions()) {
                     // If a permission is defined with no permission constants, separate it for auto-granting.
                     // Otherwise, it is added to the list to be requested.
-                    if (perm.permission().length == 0 || (perm.permission().length == 1 && perm.permission()[0].isEmpty())) {
+                    if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
                         if (!perm.alias().isEmpty()) {
                             autoGrantPerms.add(perm.alias());
                         }
                     } else {
-                        permsSet.addAll(Arrays.asList(perm.permission()));
+                        permsSet.addAll(Arrays.asList(perm.strings()));
                     }
                 }
 
@@ -528,7 +528,7 @@ public class Plugin {
             } else {
                 Set<String> permsSet = new HashSet<>();
                 for (Permission perm : annotation.permissions()) {
-                    for (String permString : perm.permission()) {
+                    for (String permString : perm.strings()) {
                         if (providedPermsList.contains(perm.alias()) || providedPermsList.contains(permString)) {
                             permsSet.add(permString);
                         }

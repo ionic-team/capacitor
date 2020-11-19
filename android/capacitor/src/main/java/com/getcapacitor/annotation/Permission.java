@@ -13,7 +13,7 @@ public @interface Permission {
      * Eg: {Manifest.permission.ACCESS_COARSE_LOCATION}
      *     or {"android.permission.ACCESS_COARSE_LOCATION"}
      */
-    String[] permission() default {};
+    String[] strings() default {};
 
     /**
      * An optional name to use instead of the Android permission string.
