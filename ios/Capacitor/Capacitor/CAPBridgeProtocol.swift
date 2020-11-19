@@ -33,6 +33,9 @@ import WebKit
     @available(iOS 12.0, *)
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
+    
+    @available(*, deprecated, message: "will be moved to config")
+    func getLocalUrl() -> String
 
     // MARK: Call Management
     func getSavedCall(_ callbackId: String) -> CAPPluginCall?
