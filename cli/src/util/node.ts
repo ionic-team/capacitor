@@ -48,3 +48,14 @@ export const requireTS = (ts: typeof typescript, p: string): unknown => {
 
   return m;
 };
+
+export function resolveNode(
+  root: string,
+  ...pathSegments: string[]
+): string | null {
+  try {
+    return require.resolve(pathSegments.join('/'), { paths: [root] });
+  } catch (e) {
+    return null;
+  }
+}

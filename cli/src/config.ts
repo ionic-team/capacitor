@@ -3,7 +3,6 @@ import Debug from 'debug';
 import { dirname, join, resolve } from 'path';
 
 import c from './colors';
-import { logFatal, resolveNode, runCommand } from './common';
 import type {
   AndroidConfig,
   AppConfig,
@@ -14,8 +13,9 @@ import type {
   WebConfig,
 } from './definitions';
 import { OS } from './definitions';
+import { logFatal } from './log';
 import { tryFn } from './util/fn';
-import { requireTS } from './util/node';
+import { resolveNode, requireTS } from './util/node';
 
 const debug = Debug('capacitor:config');
 
@@ -154,9 +154,13 @@ async function loadAndroidConfig(
   const name = 'android';
   const platformDir = extConfig.android?.path ?? 'android';
   const platformDirAbs = resolve(rootDir, platformDir);
-  const webDir = 'app/src/main/assets/public';
-  const resDir = 'app/src/main/res';
-  const buildOutputDir = 'app/build/outputs/apk/debug';
+  const appDir = 'app';
+  const srcDir = `${appDir}/src`;
+  const srcMainDir = `${srcDir}/main`;
+  const assetsDir = `${srcMainDir}/assets`;
+  const webDir = `${assetsDir}/public`;
+  const resDir = `${srcMainDir}/res`;
+  const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
 
   const templateName = 'android-template';
   const pluginsFolderName = 'capacitor-cordova-android-plugins';
@@ -168,6 +172,14 @@ async function loadAndroidConfig(
     studioPath,
     platformDir,
     platformDirAbs,
+    appDir,
+    appDirAbs: resolve(platformDir, appDir),
+    srcDir,
+    srcDirAbs: resolve(platformDir, srcDir),
+    srcMainDir,
+    srcMainDirAbs: resolve(platformDir, srcMainDir),
+    assetsDir,
+    assetsDirAbs: resolve(platformDir, assetsDir),
     webDir,
     webDirAbs: resolve(platformDir, webDir),
     resDir,
@@ -189,10 +201,12 @@ async function loadIOSConfig(
   cliConfig: CLIConfig,
 ): Promise<IOSConfig> {
   const name = 'ios';
+  const podPath = determineCocoapodPath();
   const platformDir = extConfig.ios?.path ?? 'ios';
   const platformDirAbs = resolve(rootDir, platformDir);
-  const webDir = 'public';
-  const nativeProjectName = 'App';
+  const nativeProjectDir = 'App';
+  const nativeTargetDir = `${nativeProjectDir}/App`;
+  const webDir = `${nativeProjectDir}/public`;
   const templateName = 'ios-template';
   const pluginsFolderName = 'capacitor-cordova-ios-plugins';
 
@@ -202,15 +216,19 @@ async function loadIOSConfig(
     cordovaSwiftVersion: '5.1',
     platformDir,
     platformDirAbs,
+    nativeProjectDir,
+    nativeProjectDirAbs: resolve(platformDir, nativeProjectDir),
+    nativeTargetDir,
+    nativeTargetDirAbs: resolve(platformDir, nativeTargetDir),
     webDir,
-    webDirAbs: resolve(platformDir, nativeProjectName, webDir),
-    nativeProjectName,
+    webDirAbs: resolve(platformDir, webDir),
     assets: {
       templateName,
       pluginsFolderName,
       templateDir: resolve(cliConfig.assetsDir, templateName),
       pluginsDir: resolve(cliConfig.assetsDir, pluginsFolderName),
     },
+    podPath,
   };
 }
 
@@ -250,6 +268,8 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
     case OS.Mac:
       return '/Applications/Android Studio.app';
     case OS.Windows: {
+      const { runCommand } = await import('./util/subprocess');
+
       let p = 'C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe';
 
       try {
@@ -278,4 +298,12 @@ async function determineAndroidStudioPath(os: OS): Promise<string> {
   }
 
   return '';
+}
+
+function determineCocoapodPath(): string {
+  if (process.env.CAPACITOR_COCOAPODS_PATH) {
+    return process.env.CAPACITOR_COCOAPODS_PATH;
+  }
+
+  return 'pod';
 }

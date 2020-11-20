@@ -1,17 +1,10 @@
+import { writeJSON } from '@ionic/utils-fs';
+
 import c from '../colors';
-import {
-  check,
-  checkAppId,
-  checkAppName,
-  logFatal,
-  mergeConfig,
-  runTask,
-  logSuccess,
-  logPrompt,
-} from '../common';
+import { check, checkAppId, checkAppName, runTask } from '../common';
 import { getCordovaPreferences } from '../cordova';
-import type { Config } from '../definitions';
-import { output } from '../log';
+import type { Config, ExternalConfig } from '../definitions';
+import { output, logFatal, logSuccess, logPrompt } from '../log';
 import { checkInteractive, isInteractive } from '../util/term';
 
 export async function initCommand(
@@ -137,4 +130,24 @@ async function getWebDir(config: Config, webDir?: string) {
     return answers.webDir;
   }
   return webDir;
+}
+
+async function mergeConfig(
+  config: Config,
+  extConfig: ExternalConfig,
+): Promise<void> {
+  const oldConfig = { ...config.app.extConfig };
+
+  await writeJSON(
+    config.app.extConfigFilePath,
+    {
+      ...oldConfig,
+      ...extConfig,
+      ...{
+        plugins: extConfig.plugins ??
+          oldConfig.plugins ?? { SplashScreen: { launchShowDuration: 0 } },
+      },
+    },
+    { spaces: 2 },
+  );
 }

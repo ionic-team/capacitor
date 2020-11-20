@@ -3,12 +3,11 @@ import {
   check,
   checkPackage,
   checkWebDir,
-  logFatal,
   selectPlatforms,
   isValidPlatform,
 } from '../common';
 import type { Config } from '../definitions';
-import { logger } from '../log';
+import { logger, logFatal } from '../log';
 import { allSerial } from '../util/promise';
 
 import { copy, copyCommand } from './copy';

@@ -1,9 +1,11 @@
+import { readJSON } from '@ionic/utils-fs';
 import { dirname, join } from 'path';
 
 import c from './colors';
-import { logFatal, readJSON, readXML, resolveNode } from './common';
 import type { Config } from './definitions';
-import { logger } from './log';
+import { logger, logFatal } from './log';
+import { resolveNode } from './util/node';
+import { readXML } from './util/xml';
 
 export const enum PluginType {
   Core,

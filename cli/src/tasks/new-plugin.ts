@@ -1,5 +1,5 @@
 import c from '../colors';
-import { logFatal } from '../common';
+import { logFatal } from '../log';
 
 export async function newPluginCommand(): Promise<void> {
   logFatal(

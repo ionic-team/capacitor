@@ -9,11 +9,11 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permission {
     /**
-     * The Android string for the permission.
-     * Eg: Manifest.permission.ACCESS_COARSE_LOCATION
-     *     or "android.permission.ACCESS_COARSE_LOCATION"
+     * An array of Android permission strings.
+     * Eg: {Manifest.permission.ACCESS_COARSE_LOCATION}
+     *     or {"android.permission.ACCESS_COARSE_LOCATION"}
      */
-    String permission() default "";
+    String[] strings() default {};
 
     /**
      * An optional name to use instead of the Android permission string.
