@@ -179,7 +179,7 @@ public class Plugin {
     }
 
     /**
-     * Gets the earliest saved call that occurred prior to a permissions request
+     * Gets the earliest saved call prior to a permissions request
      *
      * @return The saved plugin call
      */
@@ -189,7 +189,7 @@ public class Plugin {
     }
 
     /**
-     * Save a call to be retrieved after requesting permissions. Calls are saved in order in queue.
+     * Save a call to be retrieved after requesting permissions. Calls are saved in order.
      *
      * @param call The plugin call to save.
      */
@@ -201,7 +201,8 @@ public class Plugin {
     }
 
     /**
-     * Frees the current saved call for permissions
+     * Frees the earliest saved call for permissions. Should be called when the permission
+     * response has been handled.
      */
     protected void freePermissionCall() {
         String savedCallId = permissionCallIds.poll();
@@ -604,7 +605,11 @@ public class Plugin {
 
         if (perms != null && perms.length > 0) {
             // Save the call so we can return data back once the permission request has completed
-            savePermissionCall(call);
+            if (annotation == null) {
+                saveCall(call);
+            } else {
+                savePermissionCall(call);
+            }
 
             pluginRequestPermissions(perms, permissionRequestCode);
         } else {
