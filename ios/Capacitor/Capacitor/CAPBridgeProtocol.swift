@@ -70,13 +70,13 @@ import WebKit
  */
 extension CAPBridgeProtocol {
     // variadic parameters cannot be exposed to Obj-C
-    func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
+    public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
         let output = items.map { String(describing: $0) }.joined(separator: " ")
         print(message: output, for: plugin)
     }
 
     // default arguments are not permitted in protocol declarations
-    func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
+    public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
         showAlertWith(title: title, message: message, buttonTitle: buttonTitle)
     }
 
