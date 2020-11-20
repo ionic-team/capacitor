@@ -424,6 +424,10 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKScr
   }
 
   func matchHost(host: String, pattern: String) -> Bool {
+    if pattern == "*" {
+      return true
+    }
+
     var host = host.split(separator: ".")
     var pattern = pattern.split(separator: ".")
 
