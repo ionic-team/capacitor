@@ -48,7 +48,7 @@ public interface HostMask {
             List<String> hostParts = Util.splitAndReverse(host);
             int hostSize = hostParts.size();
             int maskSize = maskParts.size();
-            if(hostSize != maskSize) {
+            if(maskSize > 1 && hostSize != maskSize) {
                 return false;
             }
 
