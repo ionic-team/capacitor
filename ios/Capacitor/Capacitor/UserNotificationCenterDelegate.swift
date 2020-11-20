@@ -10,7 +10,7 @@ import Foundation
         }
     }
     
-    weak var pushNotificationHandler: NotificationHandlerProtocol? {
+    public weak var pushNotificationHandler: NotificationHandlerProtocol? {
         didSet {
             if pushNotificationHandler != nil, oldValue != nil {
                 CAPLog.print("Push notification handler overriding previous instance: \(String(describing: type(of: oldValue)))")
@@ -18,7 +18,7 @@ import Foundation
         }
     }
     
-    weak var localNotificationHandler: NotificationHandlerProtocol? {
+    public weak var localNotificationHandler: NotificationHandlerProtocol? {
         didSet {
             if localNotificationHandler != nil, oldValue != nil {
                 CAPLog.print("Local notification handler overriding previous instance: \(String(describing: type(of: oldValue)))")
