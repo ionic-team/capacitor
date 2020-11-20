@@ -740,6 +740,7 @@ public class Bridge {
             return;
         }
 
+        // deprecated, to be removed
         PluginCall lastCall = plugin.getInstance().getSavedCall();
 
         // If we don't have a saved last call (because our app was killed and restarted, for example),
@@ -750,7 +751,7 @@ public class Bridge {
             plugin.getInstance().saveCall(pluginCallForLastActivity);
         }
 
-        plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+        plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data, pluginCallForLastActivity);
 
         // Clear the plugin call we may have re-hydrated on app launch
         pluginCallForLastActivity = null;

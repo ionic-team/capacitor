@@ -769,8 +769,9 @@ public class Plugin {
      * @param requestCode
      * @param resultCode
      * @param data
+     * @param lastPluginCall
      */
-    protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {}
+    protected void handleOnActivityResult(int requestCode, int resultCode, Intent data, PluginCall lastPluginCall) {}
 
     /**
      * Handle onNewIntent
