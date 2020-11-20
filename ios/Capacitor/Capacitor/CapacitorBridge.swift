@@ -537,12 +537,6 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         }
     }
 
-    // MARK: - CAPBridgeProtocol: Logging
-
-    public func print(message: String, for plugin: CAPPlugin) {
-        CAPLog.print("⚡️ ", plugin.pluginId, "-", message)
-    }
-
     // MARK: - CAPBridgeProtocol: View Presentation
 
     @objc public func showAlertWith(title: String, message: String, buttonTitle: String) {

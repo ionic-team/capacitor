@@ -55,9 +55,6 @@ import WebKit
     func triggerDocumentJSEvent(eventName: String)
     func triggerDocumentJSEvent(eventName: String, data: String)
 
-    // MARK: - Logging
-    func print(message: String, for plugin: CAPPlugin)
-
     // MARK: View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
@@ -73,9 +70,10 @@ import WebKit
  */
 extension CAPBridgeProtocol {
     // variadic parameters cannot be exposed to Obj-C
+    @available(*, deprecated, message: "Use CAPLog directly")
     public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
         let output = items.map { String(describing: $0) }.joined(separator: " ")
-        print(message: output, for: plugin)
+        CAPLog.print("⚡️ ", plugin.pluginId, "-", output)
     }
 
     // default arguments are not permitted in protocol declarations
