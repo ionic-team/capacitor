@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,7 +52,7 @@ public class Plugin {
      * A way for plugins to quickly save a call that they will need to reference
      * between activity/permissions starts/requests
      *
-     * @deprecated use {@link #savedLastCallId} instead in conjunction with bridge methods
+     * @deprecated store calls on the bridge using the methods
      * {@link com.getcapacitor.Bridge#saveCall(PluginCall)},
      * {@link com.getcapacitor.Bridge#getSavedCall(String)} and
      * {@link com.getcapacitor.Bridge#releaseCall(PluginCall)}
@@ -59,10 +61,9 @@ public class Plugin {
     protected PluginCall savedLastCall;
 
     /**
-     * The call ID of a saved plugin call on the Bridge. This can be used to persist a call
-     * between activity lifecycle changes or permission requests.
+     * The call IDs of saved plugin calls for handling permissions.
      */
-    protected String savedLastCallId;
+    protected Queue<String> permissionCallIds = new LinkedList<>();
 
     // Stored event listeners
     private final Map<String, List<PluginCall>> eventListeners;
@@ -145,45 +146,70 @@ public class Plugin {
     /**
      * Called to save a {@link PluginCall} in order to reference it
      * later, such as in an activity or permissions result handler
+     * @deprecated in favor of using {@link Bridge#saveCall(PluginCall)}
+     *
      * @param lastCall
      */
+    @Deprecated
     public void saveCall(PluginCall lastCall) {
         this.savedLastCall = lastCall;
-        this.savedLastCallId = lastCall.getCallbackId();
-        bridge.saveCall(lastCall);
     }
 
     /**
      * Set the last saved call to null to free memory
+     * @deprecated in favor of using {@link PluginCall#release(Bridge)}
      */
+    @Deprecated
     public void freeSavedCall() {
         if (!this.savedLastCall.isReleased()) {
             this.savedLastCall.release(bridge);
         }
         this.savedLastCall = null;
-
-        PluginCall lastCall = bridge.getSavedCall(savedLastCallId);
-        if (lastCall != null) {
-            if (!lastCall.isReleased()) {
-                lastCall.release(bridge);
-            }
-
-            bridge.releaseCall(lastCall);
-        }
-        savedLastCallId = null;
     }
 
     /**
      * Get the last saved call, if any
+     * @deprecated in favor of using {@link Bridge#getSavedCall(String)}
+     *
      * @return
      */
+    @Deprecated
     public PluginCall getSavedCall() {
-        PluginCall lastCall = bridge.getSavedCall(savedLastCallId);
-        if (lastCall != null) {
-            return lastCall;
-        }
-
         return this.savedLastCall;
+    }
+
+    /**
+     * Gets the earliest saved call that occurred prior to a permissions request
+     *
+     * @return The saved plugin call
+     */
+    protected PluginCall getPermissionCall() {
+        String savedCallId = permissionCallIds.peek();
+        return bridge.getSavedCall(savedCallId);
+    }
+
+    /**
+     * Save a call to be retrieved after requesting permissions. Calls are saved in order in queue.
+     *
+     * @param call The plugin call to save.
+     */
+    protected void savePermissionCall(PluginCall call) {
+        if (call != null) {
+            permissionCallIds.add(call.getCallbackId());
+            bridge.saveCall(call);
+        }
+    }
+
+    /**
+     * Frees the current saved call for permissions
+     */
+    protected void freePermissionCall() {
+        String savedCallId = permissionCallIds.poll();
+        PluginCall savedPermissionCall = bridge.getSavedCall(savedCallId);
+
+        if (savedPermissionCall != null) {
+            savedPermissionCall.release(bridge);
+        }
     }
 
     public Object getConfigValue(String key) {
@@ -578,7 +604,7 @@ public class Plugin {
 
         if (perms != null && perms.length > 0) {
             // Save the call so we can return data back once the permission request has completed
-            saveCall(call);
+            savePermissionCall(call);
 
             pluginRequestPermissions(perms, permissionRequestCode);
         } else {
@@ -631,7 +657,7 @@ public class Plugin {
      * @param grantResults
      */
     protected void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        PluginCall savedCall = getSavedCall();
+        PluginCall savedCall = getPermissionCall();
         if (savedCall == null) {
             return;
         }
@@ -640,7 +666,7 @@ public class Plugin {
             savedCall.resolve(getPermissionStates());
         }
 
-        freeSavedCall();
+        freePermissionCall();
     }
 
     /**
