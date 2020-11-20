@@ -93,6 +93,8 @@ export async function run(): Promise<void> {
       `runs ${c.input('sync')}, then builds and deploys the native app`,
     )
     .option('--list', 'list targets, then quit')
+    // TODO: remove once --json is a hidden option (https://github.com/tj/commander.js/issues/1106)
+    .allowUnknownOption(true)
     .option('--target <id>', 'use a specific target')
     .option('--no-sync', `do not run ${c.input('sync')}`)
     .action(async (platform, { list, target, sync }) => {
