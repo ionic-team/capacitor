@@ -1,5 +1,5 @@
 public class CAPFile {
-    var url: URL
+    public let url: URL
 
     public init(url: URL) {
         self.url = url
@@ -11,7 +11,7 @@ public class CAPFile {
  * disk, in a bundle, or in another location.
  */
 @objc public class CAPFileManager: NSObject {
-    static func get(path: String) -> CAPFile? {
+    public static func get(path: String) -> CAPFile? {
         let handlers: [String: CAPFileResolver.Type] = [
             "res://": CAPFileResolverResource.self,
             "file://": CAPFileResolverFile.self,
