@@ -3,7 +3,6 @@ package com.getcapacitor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,10 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,9 +36,6 @@ public class Plugin {
     // for a plugin call options.
     private static final String BUNDLE_PERSISTED_OPTIONS_JSON_KEY = "_json";
 
-    // The name of the Shared Preferences file for permission use
-    private static final String PERMISSION_PREFS = "PluginPermStates";
-
     // Reference to the Bridge
     protected Bridge bridge;
 
@@ -59,11 +53,6 @@ public class Plugin {
      */
     @Deprecated
     protected PluginCall savedLastCall;
-
-    /**
-     * The call IDs of saved plugin calls for handling permissions.
-     */
-    protected Queue<String> permissionCallIds = new LinkedList<>();
 
     // Stored event listeners
     private final Map<String, List<PluginCall>> eventListeners;
@@ -178,28 +167,6 @@ public class Plugin {
         return this.savedLastCall;
     }
 
-    /**
-     * Gets the earliest saved call prior to a permissions request
-     *
-     * @return The saved plugin call
-     */
-    protected PluginCall getPermissionCall() {
-        String savedCallId = permissionCallIds.poll();
-        return bridge.getSavedCall(savedCallId);
-    }
-
-    /**
-     * Save a call to be retrieved after requesting permissions. Calls are saved in order.
-     *
-     * @param call The plugin call to save.
-     */
-    protected void savePermissionCall(PluginCall call) {
-        if (call != null) {
-            permissionCallIds.add(call.getCallbackId());
-            bridge.saveCall(call);
-        }
-    }
-
     public Object getConfigValue(String key) {
         try {
             JSONObject plugins = bridge.getConfig().getObject("plugins");
@@ -308,58 +275,8 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        JSObject permissionsResult = getPermissionStates();
+        JSObject permissionsResult = bridge.getPermissionStates(this);
         pluginCall.resolve(permissionsResult);
-    }
-
-    /**
-     * Helper to check all permissions and see the current states of each permission.
-     *
-     * @since 3.0.0
-     * @return A mapping of permissions to the associated granted status.
-     */
-    public JSObject getPermissionStates() {
-        JSObject permissionsResults = new JSObject();
-        CapacitorPlugin annotation = handle.getPluginAnnotation();
-        for (Permission perm : annotation.permissions()) {
-            // If a permission is defined with no permission constants, return "granted" for it.
-            // Otherwise, get its true state.
-            if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
-                String key = perm.alias();
-                if (!key.isEmpty()) {
-                    String existingResult = permissionsResults.getString(key);
-
-                    // auto set permission state to granted if the alias is empty.
-                    if (existingResult == null) {
-                        permissionsResults.put(key, "granted");
-                    }
-                }
-            } else {
-                for (String permString : perm.strings()) {
-                    String key = perm.alias().isEmpty() ? permString : perm.alias();
-                    String permissionStatus = hasPermission(permString) ? "granted" : "prompt";
-
-                    // Check if there is a cached permission state for the "Never ask again" state
-                    if (permissionStatus.equals("prompt")) {
-                        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
-                        String state = prefs.getString(permString, null);
-
-                        if (state != null) {
-                            permissionStatus = state;
-                        }
-                    }
-
-                    String existingResult = permissionsResults.getString(key);
-
-                    // multiple permissions with the same alias must all be true, otherwise all false.
-                    if (existingResult == null || existingResult.equals("granted")) {
-                        permissionsResults.put(key, permissionStatus);
-                    }
-                }
-            }
-        }
-
-        return permissionsResults;
     }
 
     /**
@@ -595,7 +512,7 @@ public class Plugin {
             if (annotation == null) {
                 saveCall(call);
             } else {
-                savePermissionCall(call);
+                bridge.savePermissionCall(call);
             }
 
             pluginRequestPermissions(perms, permissionRequestCode);
@@ -641,80 +558,13 @@ public class Plugin {
 
     /**
      * Handle request permissions result. A plugin using the {@link CapacitorPlugin} annotation
-     * can override this to handle the result, or this method will handle the result for
-     * our convenient requestPermissions call.
+     * can override this to handle the result.
      *
      * @param requestCode
      * @param permissions
      * @param grantResults
      */
-    protected void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        PluginCall savedCall = getPermissionCall();
-        if (savedCall == null) {
-            return;
-        }
-
-        if (validatePermissions(permissions, grantResults)) {
-            savedCall.resolve(getPermissionStates());
-        }
-
-        savedCall.release(bridge);
-    }
-
-    /**
-     * Saves permission states and rejects if permissions were not correctly defined in
-     * the AndroidManifest.xml file.
-     *
-     * Plugins overriding {@link #onRequestPermissionsResult(int, String[], int[])} should call
-     * this method to save permission states correctly.
-     *
-     * @param permissions
-     * @param grantResults
-     * @return true if permissions were saved and defined correctly, false if not
-     */
-    protected boolean validatePermissions(String[] permissions, int[] grantResults) {
-        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS, Activity.MODE_PRIVATE);
-
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Permission granted. If previously denied, remove cached state
-            for (String permission : permissions) {
-                String state = prefs.getString(permission, null);
-
-                if (state != null) {
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.remove(permission);
-                    editor.apply();
-                }
-            }
-        } else {
-            for (String permission : permissions) {
-                SharedPreferences.Editor editor = prefs.edit();
-
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
-                    // Permission denied, can prompt again with rationale
-                    editor.putString(permission, "prompt-with-rationale");
-                } else {
-                    // Permission denied permanently, store this state for future reference
-                    editor.putString(permission, "denied");
-                }
-
-                editor.apply();
-            }
-        }
-
-        if (!hasDefinedPermissions(permissions)) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
-            for (String perm : missing) {
-                builder.append(perm + "\n");
-            }
-            savedLastCall.reject(builder.toString());
-            return false;
-        }
-
-        return true;
-    }
+    protected void onRequestPermissionsResult(PluginCall savedCall, int requestCode, String[] permissions, int[] grantResults) {}
 
     /**
      * Called before the app is destroyed to give a plugin the chance to
@@ -753,12 +603,12 @@ public class Plugin {
 
     /**
      * Handle activity result, should be overridden by each plugin
+     * @param lastPluginCall
      * @param requestCode
      * @param resultCode
      * @param data
-     * @param lastPluginCall
      */
-    protected void handleOnActivityResult(int requestCode, int resultCode, Intent data, PluginCall lastPluginCall) {}
+    protected void handleOnActivityResult(PluginCall lastPluginCall, int requestCode, int resultCode, Intent data) {}
 
     /**
      * Handle onNewIntent
