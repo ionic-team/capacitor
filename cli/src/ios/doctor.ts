@@ -1,11 +1,7 @@
-import {
-  check,
-  checkWebDir,
-  isInstalled,
-  logFatal,
-  logSuccess,
-} from '../common';
+import { check, checkWebDir } from '../common';
 import type { Config } from '../definitions';
+import { logFatal, logSuccess } from '../log';
+import { isInstalled } from '../util/subprocess';
 
 import { checkCocoaPods, checkIOSProject } from './common';
 
