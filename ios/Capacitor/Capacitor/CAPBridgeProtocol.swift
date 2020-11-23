@@ -33,6 +33,9 @@ import WebKit
     @available(iOS 12.0, *)
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
+    
+    @available(*, deprecated, message: "will be moved to config")
+    func getLocalUrl() -> String
 
     // MARK: Call Management
     func getSavedCall(_ callbackId: String) -> CAPPluginCall?
@@ -52,9 +55,6 @@ import WebKit
     func triggerDocumentJSEvent(eventName: String)
     func triggerDocumentJSEvent(eventName: String, data: String)
 
-    // MARK: - Logging
-    func print(message: String, for plugin: CAPPlugin)
-
     // MARK: View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
@@ -70,13 +70,14 @@ import WebKit
  */
 extension CAPBridgeProtocol {
     // variadic parameters cannot be exposed to Obj-C
-    func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
+    @available(*, deprecated, message: "Use CAPLog directly")
+    public func modulePrint(_ plugin: CAPPlugin, _ items: Any...) {
         let output = items.map { String(describing: $0) }.joined(separator: " ")
-        print(message: output, for: plugin)
+        CAPLog.print("⚡️ ", plugin.pluginId, "-", output)
     }
 
     // default arguments are not permitted in protocol declarations
-    func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
+    public func alert(_ title: String, _ message: String, _ buttonTitle: String = "OK") {
         showAlertWith(title: title, message: message, buttonTitle: buttonTitle)
     }
 
