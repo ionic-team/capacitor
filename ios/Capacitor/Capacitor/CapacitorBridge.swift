@@ -136,11 +136,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
         return userInterfaceStyle
     }
-    
+
     public func getLocalUrl() -> String {
         return localUrl!
     }
-    
+
     @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
         statusBarAnimation = animation
     }
