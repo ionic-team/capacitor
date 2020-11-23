@@ -59,9 +59,6 @@ import WebKit
     func localURL(fromWebURL webURL: URL?) -> URL?
     func portablePath(fromLocalURL localURL: URL?) -> String?
 
-    // MARK: - Logging
-    func print(message: String, for plugin: CAPPlugin)
-
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
