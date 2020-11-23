@@ -648,7 +648,7 @@ public class Bridge {
      *
      * @param call The plugin call to save.
      */
-    public void savePermissionCall(PluginCall call) {
+    protected void savePermissionCall(PluginCall call) {
         if (call != null) {
             if (!savedPermissionCallIds.containsKey(call.getPluginId())) {
                 savedPermissionCallIds.put(call.getPluginId(), new LinkedList<>());
@@ -785,9 +785,6 @@ public class Bridge {
      * Saves permission states and rejects if permissions were not correctly defined in
      * the AndroidManifest.xml file.
      *
-     * Plugins overriding {@link #onRequestPermissionsResult(int, String[], int[])} should call
-     * this method to save permission states correctly.
-     *
      * @param plugin
      * @param savedCall
      * @param permissions
@@ -844,7 +841,7 @@ public class Bridge {
      * @since 3.0.0
      * @return A mapping of permissions to the associated granted status.
      */
-    public JSObject getPermissionStates(Plugin plugin) {
+    protected JSObject getPermissionStates(Plugin plugin) {
         JSObject permissionsResults = new JSObject();
         CapacitorPlugin annotation = plugin.getPluginHandle().getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
