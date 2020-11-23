@@ -344,6 +344,12 @@ public class Plugin {
         ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
     }
 
+    /**
+     * Helper to check all permissions defined on a plugin and see the state of each.
+     *
+     * @since 3.0.0
+     * @return an object containing the permission names and the permission result
+     */
     public JSObject getPermissionStates() {
         return bridge.getPermissionStates(this);
     }
