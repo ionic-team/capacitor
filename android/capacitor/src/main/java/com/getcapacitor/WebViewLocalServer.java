@@ -172,7 +172,7 @@ public class WebViewLocalServer {
       return null;
     }
 
-    if (isLocalFile(loadingUrl) || loadingUrl.getHost().contains(bridge.getHost()) || (bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
+    if (isLocalFile(loadingUrl) || loadingUrl.getHost().equalsIgnoreCase(bridge.getHost()) || (bridge.getServerUrl() == null && !bridge.getAppAllowNavigationMask().matches(loadingUrl.getHost()))) {
       Logger.debug("Handling local request: " + request.getUrl().toString());
       return handleLocalRequest(request, handler);
     } else {
