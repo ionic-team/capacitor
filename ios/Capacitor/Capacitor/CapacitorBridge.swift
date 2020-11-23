@@ -574,6 +574,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return url
     }
 
+    /**
+     * Translate a file URL for native iOS into a URL to load in the web view.
+     */
     public func portablePath(fromLocalURL localURL: URL?) -> String? {
         guard let inputURL = localURL else {
             return nil
