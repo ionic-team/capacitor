@@ -133,7 +133,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
         return userInterfaceStyle
     }
-
+    
+    public func getLocalUrl() -> String {
+        return config.localURL.absoluteString
+    }
+    
     @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
         statusBarAnimation = animation
     }
@@ -528,12 +532,6 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 }
             }
         }
-    }
-
-    // MARK: - CAPBridgeProtocol: Logging
-
-    public func print(message: String, for plugin: CAPPlugin) {
-        CAPLog.print("⚡️ ", plugin.pluginId, "-", message)
     }
 
     // MARK: - CAPBridgeProtocol: View Presentation
