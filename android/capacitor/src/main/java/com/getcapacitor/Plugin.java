@@ -267,7 +267,7 @@ public class Plugin {
     }
 
     /**
-     * Helper to make requesting individual permissions easy
+     * Helper for requesting a specific permission
      *
      * @since 3.0.0
      * @param call the plugin call
@@ -279,7 +279,7 @@ public class Plugin {
     }
 
     /**
-     * Helper to make requesting permissions
+     * Helper for requesting specific permissions
      *
      * @since 3.0.0
      * @param call the plugin call
@@ -311,7 +311,7 @@ public class Plugin {
     }
 
     /**
-     * Helper to make requesting permissions easy
+     * Helper for requesting specific permissions
      * @deprecated use {@link #requestPermissions(PluginCall)} in conjunction with @CapacitorPlugin
      *
      * @param permissions the set of permissions to request
@@ -333,7 +333,7 @@ public class Plugin {
     }
 
     /**
-     * Helper to make requesting individual permissions easy
+     * Helper for requesting a specific permission
      * @deprecated use {@link #requestPermission(PluginCall, String, int)} in conjunction with @CapacitorPlugin
      *
      * @param permission the permission to request
@@ -493,7 +493,10 @@ public class Plugin {
 
     /**
      * Exported plugin call to request all permissions for this plugin.
-     * To manually request permissions within a plugin use {@link #requestPermissions(PluginCall, String[], int)}
+     * To manually request permissions within a plugin use:
+     *  {@link #requestPermission(PluginCall, String, int)}, or
+     *  {@link #requestPermissions(PluginCall, String[], int)}, or
+     *  {@link #requestAllPermissions(PluginCall)}
      *
      * @param call
      */
