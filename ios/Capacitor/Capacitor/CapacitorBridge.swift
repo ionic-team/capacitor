@@ -537,6 +537,57 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return localUrl!
     }
 
+    // MARK: - CAPBridgeProtocol: Paths, Files, Assets
+
+    /**
+     * Translate a URL from the web view into a file URL for native iOS.
+     *
+     * The web view may be handling several different types of URLs:
+     *   - res:// (shortcut scheme to web assets)
+     *   - file:// (fully qualified URL to file on the local device)
+     *   - base64:// (to be implemented)
+     *   - [web view scheme]:// (already converted once to load in the web view, to be implemented)
+     */
+    public func localURL(fromWebURL webURL: URL?) -> URL? {
+        guard let inputURL = webURL else {
+            return nil
+        }
+
+        let manager = FileManager.default
+        let url: URL
+
+        switch inputURL.scheme {
+        case "res":
+            let bundle = Bundle.main
+            let resourcePath = bundle.resourcePath!
+            url = URL(fileURLWithPath: resourcePath + "/public" + inputURL.path)
+        case "file":
+            url = inputURL
+        default:
+            return nil
+        }
+
+        guard manager.fileExists(atPath: url.absoluteString.replacingOccurrences(of: "file://", with: "")) else {
+            return nil
+        }
+
+        return url
+    }
+
+    public func portablePath(fromLocalURL localURL: URL?) -> String? {
+        guard let inputURL = localURL else {
+            return nil
+        }
+
+        guard let portableSchemeAndHost = self.localUrl else {
+            return nil
+        }
+
+        let url = URL(string: portableSchemeAndHost + CapacitorBridge.fileStartIdentifier + inputURL.path)
+
+        return url?.absoluteString
+    }
+
     // MARK: - CAPBridgeProtocol: Logging
 
     public func print(message: String, for plugin: CAPPlugin) {

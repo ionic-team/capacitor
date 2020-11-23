@@ -2,7 +2,7 @@ import Foundation
 import WebKit
 
 @objc public protocol CAPBridgeProtocol: NSObjectProtocol {
-    // MARK: Environment Properties
+    // MARK: - Environment Properties
     var viewController: UIViewController? { get }
     var config: CAPConfig { get }
     var webView: WKWebView? { get }
@@ -34,12 +34,12 @@ import WebKit
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
 
-    // MARK: Call Management
+    // MARK: - Call Management
     func getSavedCall(_ callbackId: String) -> CAPPluginCall?
     func releaseCall(_ call: CAPPluginCall)
     func releaseCall(callbackId: String)
 
-    // MARK: JavaScript Handling
+    // MARK: - JavaScript Handling
     func evalWithPlugin(_ plugin: CAPPlugin, js: String)
     func eval(js: String)
 
@@ -52,10 +52,14 @@ import WebKit
     func triggerDocumentJSEvent(eventName: String)
     func triggerDocumentJSEvent(eventName: String, data: String)
 
+    // MARK: - Paths, Files, Assets
+    func localURL(fromWebURL webURL: URL?) -> URL?
+    func portablePath(fromLocalURL localURL: URL?) -> String?
+
     // MARK: - Logging
     func print(message: String, for plugin: CAPPlugin)
 
-    // MARK: View Presentation
+    // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
     func presentVC(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
     func dismissVC(animated flag: Bool, completion: (() -> Void)?)
