@@ -1,37 +1,31 @@
-import type { CapacitorException, PluginListenerHandle } from '../definitions';
-import { ExceptionCode } from '../definitions';
-import { Capacitor } from '../global';
+import type { PluginListenerHandle, Plugin } from './definitions';
+import { Capacitor } from './global';
+import type { CapacitorException } from './util';
+import { ExceptionCode } from './util';
 
-export type ListenerCallback = (err: any, ...args: any[]) => void;
-
-export interface WindowListenerHandle {
-  registered: boolean;
-  windowEventName: string;
-  pluginEventName: string;
-  handler: (event: any) => void;
-}
-
-export interface WebPluginConfig {
+/**
+ * Base class web plugins should extend.
+ */
+export class WebPlugin implements Plugin {
   /**
-   * The name of the plugin
+   * @deprecated WebPluginConfig deprecated in v3 and will be removed in v4.
    */
-  readonly name: string;
+  config?: WebPluginConfig;
 
-  /**
-   * TODO
-   *
-   * @deprecated Don't use this.
-   */
-  readonly platforms?: string[];
-}
-
-export class WebPlugin {
   loaded = false;
 
   listeners: { [eventName: string]: ListenerCallback[] } = {};
   windowListeners: { [eventName: string]: WindowListenerHandle } = {};
 
-  constructor(public config: WebPluginConfig) {}
+  constructor(config?: WebPluginConfig) {
+    if (config) {
+      // TODO: add link to upgrade guide
+      console.warn(
+        `Capacitor WebPlugin "${config.name}" config object was deprecated in v3 and will be removed in v4.`,
+      );
+      this.config = config;
+    }
+  }
 
   protected unimplemented(msg = 'not implemented'): CapacitorException {
     return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
@@ -135,4 +129,27 @@ export class WebPlugin {
   load(): void {
     this.loaded = true;
   }
+}
+
+export type ListenerCallback = (err: any, ...args: any[]) => void;
+
+export interface WindowListenerHandle {
+  registered: boolean;
+  windowEventName: string;
+  pluginEventName: string;
+  handler: (event: any) => void;
+}
+
+/**
+ * @deprecated Deprecated in v3, removing in v4.
+ */
+export interface WebPluginConfig {
+  /**
+   * @deprecated Deprecated in v3, removing in v4.
+   */
+  readonly name: string;
+  /**
+   * @deprecated Deprecated in v3, removing in v4.
+   */
+  platforms?: string[];
 }

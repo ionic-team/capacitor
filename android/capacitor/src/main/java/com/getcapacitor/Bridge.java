@@ -666,15 +666,14 @@ public class Bridge {
     private JSInjector getJSInjector() {
         try {
             String globalJS = JSExport.getGlobalJS(context, isDevMode());
-            String coreJS = JSExport.getCoreJS(context);
             String pluginJS = JSExport.getPluginJS(plugins.values());
             String cordovaJS = JSExport.getCordovaJS(context);
             String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
             String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
             String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
 
-            return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
-        } catch (JSExportException ex) {
+            return new JSInjector(globalJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
+        } catch (Exception ex) {
             Logger.error("Unable to export Capacitor JS. App will not function!", ex);
         }
         return null;
