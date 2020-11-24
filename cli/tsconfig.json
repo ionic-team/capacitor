@@ -12,7 +12,5 @@
     "strict": true,
     "target": "es2019"
   },
-  "files": [
-    "src/index.ts"
-  ]
+  "files": ["src/index.ts"]
 }
