@@ -16,8 +16,7 @@ import {
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
-import { logger, logFatal } from '../log';
-import { resolveNode } from '../util/node';
+import { logger } from '../log';
 import { allSerial } from '../util/promise';
 import { copyWeb } from '../web/copy';
 
@@ -63,13 +62,11 @@ export async function copy(
 
     if (platformName === config.ios.name) {
       await copyWebDir(config, config.ios.webDirAbs);
-      await copyNativeBridge(config.app.rootDir, config.ios.webDirAbs);
       await copyCapacitorConfig(config, config.ios.nativeTargetDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
     } else if (platformName === config.android.name) {
       await copyWebDir(config, config.android.webDirAbs);
-      await copyNativeBridge(config.app.rootDir, config.android.webDirAbs);
       await copyCapacitorConfig(config, config.android.assetsDirAbs);
       const cordovaPlugins = await getCordovaPlugins(config, platformName);
       await handleCordovaPluginsJS(cordovaPlugins, config, platformName);
@@ -80,28 +77,6 @@ export async function copy(
       throw `Platform ${platformName} is not valid.`;
     }
   });
-}
-
-async function copyNativeBridge(rootDir: string, nativeAbsDir: string) {
-  const nativeRelDir = relative(rootDir, nativeAbsDir);
-  const bridgePath = resolveNode(
-    rootDir,
-    '@capacitor/core',
-    'native-bridge.js',
-  );
-  if (!bridgePath) {
-    logFatal(
-      `Unable to find node_modules/@capacitor/core/native-bridge.js.\n` +
-        `Are you sure ${c.strong('@capacitor/core')} is installed?`,
-    );
-  }
-
-  await runTask(
-    `Copying ${c.strong('native-bridge.js')} to ${nativeRelDir}`,
-    async () => {
-      return fsCopy(bridgePath!, join(nativeAbsDir, 'native-bridge.js'));
-    },
-  );
 }
 
 async function copyCapacitorConfig(config: Config, nativeAbsDir: string) {
