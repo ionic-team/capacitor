@@ -575,11 +575,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             return nil
         }
 
-        guard let urlString = self.localUrl, let portableURL = URL(string: urlString) else {
-            return nil
-        }
-
-        return portableURL.appendingPathComponent(CapacitorBridge.fileStartIdentifier).appendingPathComponent(inputURL.path)
+        return self.config.localURL.appendingPathComponent(CapacitorBridge.fileStartIdentifier).appendingPathComponent(inputURL.path)
     }
 
     // MARK: - CAPBridgeProtocol: View Presentation
