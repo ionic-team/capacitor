@@ -264,7 +264,13 @@ public class Plugin {
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
         JSObject permissionsResult = getPermissionStates();
-        pluginCall.resolve(permissionsResult);
+
+        if (permissionsResult.length() == 0) {
+            // if no permissions are defined on the plugin, resolve undefined
+            pluginCall.resolve();
+        } else {
+            pluginCall.resolve(permissionsResult);
+        }
     }
 
     /**
@@ -561,6 +567,7 @@ public class Plugin {
 
                 call.resolve(permissionsResults);
             } else {
+                // no permissions are defined on the plugin, resolve undefined
                 call.resolve();
             }
         }
