@@ -141,11 +141,11 @@
 }
 
 - (void)checkPermissions:(CAPPluginCall *)call {
-    [call resolve];
+  [call resolve];
 }
 
 - (void)requestPermissions:(CAPPluginCall *)call {
-    [call resolve];
+  [call resolve];
 }
 
 /**
