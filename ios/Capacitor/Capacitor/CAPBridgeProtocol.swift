@@ -4,7 +4,7 @@ import WebKit
 @objc public protocol CAPBridgeProtocol: NSObjectProtocol {
     // MARK: Environment Properties
     var viewController: UIViewController? { get }
-    var config: CAPConfig { get }
+    var config: InstanceConfiguration { get }
     var webView: WKWebView? { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
@@ -34,7 +34,7 @@ import WebKit
     @available(*, deprecated, renamed: "userInterfaceStyle")
     func getUserInterfaceStyle() -> UIUserInterfaceStyle
     
-    @available(*, deprecated, message: "will be moved to config")
+    @available(*, deprecated, message: "Moved - equivalent is found on config.localURL")
     func getLocalUrl() -> String
 
     // MARK: Call Management

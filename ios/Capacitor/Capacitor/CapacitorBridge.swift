@@ -82,11 +82,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return bridgeDelegate?.bridgedViewController
     }
 
-    private var localUrl: String?
-
     var lastPlugin: CAPPlugin?
 
-    @objc public var config: CAPConfig
+    @objc public var config: InstanceConfiguration
     // Map of all loaded and instantiated plugins by pluginId -> instance
     var plugins =  [String: CAPPlugin]()
     // List of known plugins by pluginId -> Plugin Type
@@ -95,10 +93,9 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var cordovaPluginManager: CDVPluginManager?
     // Calls we are storing to resolve later
     var storedCalls = [String: CAPPluginCall]()
-    // Scheme to use when serving content
-    var scheme: String
     // Wheter to inject the Cordova files
     private var injectCordovaFiles = false
+    private var cordovaParser: CDVConfigParser?
 
     // Background dispatch queue for plugin calls
     var dispatchQueue = DispatchQueue(label: "bridge")
@@ -138,7 +135,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
     
     public func getLocalUrl() -> String {
-        return localUrl!
+        return config.localURL.absoluteString
     }
     
     @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
@@ -170,17 +167,17 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - Initialization
 
-    init(_ bridgeDelegate: CAPBridgeDelegate, _ messageHandlerWrapper: CAPMessageHandlerWrapper, _ config: CAPConfig, _ scheme: String) {
+    init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, messageHandler messageHandlerWrapper: CAPMessageHandlerWrapper) {
         self.bridgeDelegate = bridgeDelegate
         self.messageHandlerWrapper = messageHandlerWrapper
-        self.config = config
-        self.scheme = scheme
+        self.config = configuration
+        self.cordovaParser = cordovaConfiguration
 
         super.init()
 
         self.messageHandlerWrapper.bridge = self
-        localUrl = "\(self.scheme)://\(config.getString("server.hostname") ?? "localhost")"
-        exportCoreJS(localUrl: localUrl!)
+
+        exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
         setupCordovaCompatibility()
         NotificationCenter.default.addObserver(forName: type(of: self).tmpVCAppeared.name, object: .none, queue: .none) { [weak self] _ in
@@ -319,12 +316,12 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     }
 
     func registerCordovaPlugins() {
-        guard let bridgeVC = self.viewController as? CAPBridgeViewController else {
+        guard let cordovaParser = cordovaParser else {
             return
         }
-        cordovaPluginManager = CDVPluginManager.init(parser: bridgeVC.cordovaParser, viewController: self.viewController, webView: self.getWebView())
-        if bridgeVC.cordovaParser.startupPluginNames.count > 0 {
-            for pluginName in bridgeVC.cordovaParser.startupPluginNames {
+        cordovaPluginManager = CDVPluginManager.init(parser: cordovaParser, viewController: self.viewController, webView: self.getWebView())
+        if cordovaParser.startupPluginNames.count > 0 {
+            for pluginName in cordovaParser.startupPluginNames {
                 _ = cordovaPluginManager?.getCommandInstance(pluginName as? String)
             }
         }
