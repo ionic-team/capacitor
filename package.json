@@ -26,7 +26,7 @@
     "husky": "^4.3.0",
     "lerna": "^3.22.1",
     "prettier": "~2.2.0",
-    "prettier-plugin-java": "~0.8.3",
+    "prettier-plugin-java": "~1.0.0",
     "swiftlint": "^1.0.1"
   }
 }
