@@ -768,7 +768,7 @@ public class Bridge {
                         // handle permission requests by other methods on the plugin
                         plugin.getInstance().onRequestPermissionsResult(savedPermissionCall, requestCode, permissions, grantResults);
 
-                        if (!savedPermissionCall.isReleased()) {
+                        if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
                             savedPermissionCall.release(this);
                         }
                     }
