@@ -1,5 +1,6 @@
 .idea/
-dist
+dist/
+types/
 .sourcemaps
 xcuserdata/
 node_modules/

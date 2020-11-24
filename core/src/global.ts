@@ -1,25 +1,38 @@
-import type { Capacitor as _Capacitor } from './definitions';
-import { CapacitorWeb } from './web-runtime';
+import { legacyRegisterWebPlugin } from './legacy/legacy-web-plugin-merge';
+import { initCapacitorGlobal } from './runtime';
+import type { WebPlugin } from './web-plugin';
 
-// Create our default Capacitor instance, which will be
-// overridden on native platforms
-const Capacitor = ((globalThis: any): _Capacitor => {
-  // Create a new CapacitorWeb instance if one doesn't already exist on globalThis
-  // Ensure the global is assigned the same Capacitor instance,
-  // then export Capacitor so it can be imported in other modules
-  return (globalThis.Capacitor = globalThis.Capacitor || new CapacitorWeb());
-})(
-  // figure out the current globalThis, such as "window", "self" or "global"
-  // ensure errors are not thrown in an node SSR environment or web worker
-  typeof self !== 'undefined'
+export const Capacitor = /*#__PURE__*/ initCapacitorGlobal(
+  (typeof globalThis !== 'undefined'
+    ? globalThis
+    : typeof self !== 'undefined'
     ? self
     : typeof window !== 'undefined'
     ? window
     : typeof global !== 'undefined'
     ? global
-    : {},
+    : {}) as any,
 );
 
-const Plugins = Capacitor.Plugins;
+export const registerPlugin = Capacitor.registerPlugin;
 
-export { Capacitor, Plugins };
+/**
+ * @deprecated Provided for backwards compatibility for Capacitor v2 plugins.
+ * Capacitor v3 plugins should import the plugin directly. This "Plugins"
+ * export is deprecated in v3, and will be removed in v4.
+ */
+export const Plugins = Capacitor.Plugins;
+
+/**
+ * Provided for backwards compatibility. Use the registerPlugin() API
+ * instead, and provide the web plugin as the "web" implmenetation.
+ * For example
+ *
+ * export const Example = registerPlugin('Example', {
+ *   web: () => import('./web').then(m => new m.Example())
+ * })
+ *
+ * @deprecated Deprecated in v3, will be removed from v4.
+ */
+export const registerWebPlugin = (plugin: WebPlugin): void =>
+  legacyRegisterWebPlugin(Capacitor, plugin);

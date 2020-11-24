@@ -14,20 +14,18 @@ import java.nio.charset.StandardCharsets;
 class JSInjector {
 
     private String globalJS;
-    private String coreJS;
     private String pluginJS;
     private String cordovaJS;
     private String cordovaPluginsJS;
     private String cordovaPluginsFileJS;
     private String localUrlJS;
 
-    public JSInjector(String globalJS, String coreJS, String pluginJS) {
-        this(globalJS, coreJS, pluginJS, ""/* cordovaJS */, ""/* cordovaPluginsJS */, ""/* cordovaPluginsFileJS */, ""/* localUrlJS */);
+    public JSInjector(String globalJS, String pluginJS) {
+        this(globalJS, pluginJS, ""/* cordovaJS */, ""/* cordovaPluginsJS */, ""/* cordovaPluginsFileJS */, ""/* localUrlJS */);
     }
 
     public JSInjector(
         String globalJS,
-        String coreJS,
         String pluginJS,
         String cordovaJS,
         String cordovaPluginsJS,
@@ -35,7 +33,6 @@ class JSInjector {
         String localUrlJS
     ) {
         this.globalJS = globalJS;
-        this.coreJS = coreJS;
         this.pluginJS = pluginJS;
         this.cordovaJS = cordovaJS;
         this.cordovaPluginsJS = cordovaPluginsJS;
@@ -51,8 +48,6 @@ class JSInjector {
     public String getScriptString() {
         return (
             globalJS +
-            "\n\n" +
-            coreJS +
             "\n\n" +
             pluginJS +
             "\n\n" +
