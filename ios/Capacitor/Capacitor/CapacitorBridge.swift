@@ -553,21 +553,18 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             return nil
         }
 
-        let manager = FileManager.default
         let url: URL
 
         switch inputURL.scheme {
         case "res":
-            let bundle = Bundle.main
-            let resourcePath = bundle.resourcePath!
-            url = URL(fileURLWithPath: resourcePath + "/public" + inputURL.path)
+            guard let resourcePath = Bundle.main.resourcePath else {
+                return nil
+            }
+
+            url = URL(fileURLWithPath: resourcePath).appendingPathComponent("public").appendingPathComponent(inputURL.path)
         case "file":
             url = inputURL
         default:
-            return nil
-        }
-
-        guard manager.fileExists(atPath: url.absoluteString.replacingOccurrences(of: "file://", with: "")) else {
             return nil
         }
 
@@ -577,18 +574,16 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     /**
      * Translate a file URL for native iOS into a URL to load in the web view.
      */
-    public func portablePath(fromLocalURL localURL: URL?) -> String? {
+    public func portablePath(fromLocalURL localURL: URL?) -> URL? {
         guard let inputURL = localURL else {
             return nil
         }
 
-        guard let portableSchemeAndHost = self.localUrl else {
+        guard let urlString = self.localUrl, let portableURL = URL(string: urlString) else {
             return nil
         }
 
-        let url = URL(string: portableSchemeAndHost + CapacitorBridge.fileStartIdentifier + inputURL.path)
-
-        return url?.absoluteString
+        return portableURL.appendingPathComponent(CapacitorBridge.fileStartIdentifier).appendingPathComponent(inputURL.path)
     }
 
     // MARK: - CAPBridgeProtocol: View Presentation

@@ -57,7 +57,7 @@ import WebKit
 
     // MARK: - Paths, Files, Assets
     func localURL(fromWebURL webURL: URL?) -> URL?
-    func portablePath(fromLocalURL localURL: URL?) -> String?
+    func portablePath(fromLocalURL localURL: URL?) -> URL?
 
     // MARK: - View Presentation
     func showAlertWith(title: String, message: String, buttonTitle: String)
