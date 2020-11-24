@@ -15,15 +15,7 @@ public class JSExport {
     private static String CALLBACK_PARAM = "_callback";
 
     public static String getGlobalJS(Context context, boolean isDebug) {
-        return "window.Capacitor = { DEBUG: " + isDebug + " };";
-    }
-
-    public static String getCoreJS(Context context) throws JSExportException {
-        try {
-            return getJS(context, "public/native-bridge.js");
-        } catch (IOException ex) {
-            throw new JSExportException("Unable to load native-bridge.js. Capacitor will not function!", ex);
-        }
+        return "window.Capacitor = { DEBUG: " + isDebug + ", Plugins: {} };";
     }
 
     private static String getJS(Context context, String fileName) throws IOException {
@@ -70,10 +62,11 @@ public class JSExport {
         for (PluginHandle plugin : plugins) {
             lines.add(
                 "(function(w) {\n" +
-                "var a = w.Capacitor; var p = a.Plugins;\n" +
-                "var t = p['" +
+                "var a = (w.Capacitor = w.Capacitor || {});\n" +
+                "var p = (a.Plugins = a.Plugins || {});\n" +
+                "var t = (p['" +
                 plugin.getId() +
-                "'] = {};\n" +
+                "'] = {});\n" +
                 "t.addListener = function(eventName, callback) {\n" +
                 "  return w.Capacitor.addListener('" +
                 plugin.getId() +
