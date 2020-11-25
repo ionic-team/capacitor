@@ -6,6 +6,7 @@ import WebKit
     var viewController: UIViewController? { get }
     var config: InstanceConfiguration { get }
     var webView: WKWebView? { get }
+    var notificationRouter: NotificationRouter { get }
     var isSimEnvironment: Bool { get }
     var isDevEnvironment: Bool { get }
     @available(iOS 12.0, *)

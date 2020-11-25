@@ -16,6 +16,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return bridgeDelegate?.bridgedWebView
     }
 
+    public var notificationRouter: NotificationRouter
+
     public var isSimEnvironment: Bool {
         #if targetEnvironment(simulator)
         return true
@@ -172,6 +174,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         self.messageHandlerWrapper = messageHandlerWrapper
         self.config = configuration
         self.cordovaParser = cordovaConfiguration
+        self.notificationRouter = NotificationRouter()
+        self.notificationRouter.handleApplicationNotifications = configuration.handleApplicationNotifications
 
         super.init()
 
