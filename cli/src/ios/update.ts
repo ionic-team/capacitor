@@ -511,7 +511,7 @@ function removeNoSystem(library: string, sourceFrameworks: string[]) {
 
 async function getPluginsTask(config: Config) {
   return await runTask('Updating iOS plugins', async () => {
-    const allPlugins = await getPlugins(config);
+    const allPlugins = await getPlugins(config, 'ios');
     const iosPlugins = await getIOSPlugins(allPlugins);
     return iosPlugins;
   });
