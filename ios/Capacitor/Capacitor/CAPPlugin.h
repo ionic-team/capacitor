@@ -24,6 +24,11 @@
 - (void)removeListener:(CAPPluginCall* _Nonnull)call;
 - (void)removeAllListeners:(CAPPluginCall* _Nonnull)call;
 /**
+ * Default implementation of the capacitor 3.0 permission pattern
+ */
+- (void)checkPermissions:(CAPPluginCall* _Nonnull)call;
+- (void)requestPermissions:(CAPPluginCall* _Nonnull)call;
+/**
  * Give the plugins a chance to take control when a URL is about to be loaded in the WebView.
  * Returning true causes the WebView to abort loading the URL.
  * Returning false causes the WebView to continue loading the URL.
