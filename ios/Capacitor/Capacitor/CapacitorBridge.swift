@@ -175,11 +175,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         self.config = configuration
         self.cordovaParser = cordovaConfiguration
         self.userNotificationDelegate = UserNotificationCenterDelegate()
-
-        if configuration.assignUserNotificationCenterDelegate {
-            let center = UNUserNotificationCenter.current()
-            center.delegate = userNotificationDelegate
-        }
+        self.userNotificationDelegate.handleNotifications = configuration.assignUserNotificationCenterDelegate
 
         super.init()
 

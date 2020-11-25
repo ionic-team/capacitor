@@ -1,6 +1,21 @@
 import Foundation
 
 @objc(CAPUNUserNotificationCenterDelegate) public class UserNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
+    var handleNotifications: Bool {
+        get {
+            return UNUserNotificationCenter.current().delegate === self
+        }
+        set {
+            let center = UNUserNotificationCenter.current()
+
+            if newValue {
+                center.delegate = self
+            } else if center.delegate === self {
+                center.delegate = nil
+            }
+        }
+    }
+
     public weak var pushNotificationHandler: NotificationHandlerProtocol? {
         didSet {
             if pushNotificationHandler != nil, oldValue != nil {
