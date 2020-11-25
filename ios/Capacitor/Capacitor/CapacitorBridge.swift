@@ -16,7 +16,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return bridgeDelegate?.bridgedWebView
     }
 
-    private(set) var userNotificationDelegate: UserNotificationCenterDelegate
+    private(set) weak var userNotificationDelegate: UserNotificationCenterDelegate
 
     public var isSimEnvironment: Bool {
         #if targetEnvironment(simulator)
@@ -175,6 +175,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         self.config = configuration
         self.cordovaParser = cordovaConfiguration
         self.userNotificationDelegate = UserNotificationCenterDelegate()
+
+        if configuration.assignUserNotificationCenterDelegate {
+            let center = UNUserNotificationCenter.current()
+            center.delegate = userNotificationDelegate
+        }
 
         super.init()
 

@@ -1,15 +1,6 @@
 import Foundation
 
-@objc(CAPUNUserNotificationCenterDelegate) public class UserNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate  {
-    override init() {
-        // TODO: make better
-        super.init()
-        let center = UNUserNotificationCenter.current()
-        if center.delegate == nil {
-            center.delegate = self
-        }
-    }
-    
+@objc(CAPUNUserNotificationCenterDelegate) public class UserNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     public weak var pushNotificationHandler: NotificationHandlerProtocol? {
         didSet {
             if pushNotificationHandler != nil, oldValue != nil {
@@ -17,7 +8,7 @@ import Foundation
             }
         }
     }
-    
+
     public weak var localNotificationHandler: NotificationHandlerProtocol? {
         didSet {
             if localNotificationHandler != nil, oldValue != nil {
@@ -36,7 +27,7 @@ import Foundation
         } else {
             presentationOptions = localNotificationHandler?.willPresent(notification: notification)
         }
-        
+
         completionHandler(presentationOptions ?? [])
     }
 
@@ -48,7 +39,7 @@ import Foundation
         } else {
             localNotificationHandler?.didReceive(response: response)
         }
-        
+
         completionHandler()
     }
 }

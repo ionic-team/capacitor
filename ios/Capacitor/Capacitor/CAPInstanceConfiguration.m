@@ -15,6 +15,7 @@
         _enableLogging = descriptor.enableLogging;
         _enableScrolling = descriptor.enableScrolling;
         _allowLinkPreviews = descriptor.allowLinkPreviews;
+        _assignUserNotificationCenterDelegate = descriptor.assignUserNotificationCenterDelegate;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
         _appLocation = descriptor.appLocation;
         _pluginConfigurations = descriptor.pluginConfigurations;
