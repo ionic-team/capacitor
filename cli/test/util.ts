@@ -10,9 +10,9 @@ import { join, resolve } from 'path';
 import type { DirCallback } from 'tmp';
 import tmp from 'tmp';
 
-import { runCommand } from '../src/common';
 import { loadConfig } from '../src/config';
 import type { Config } from '../src/definitions';
+import { runCommand } from '../src/util/subprocess';
 
 const cwd = process.cwd();
 

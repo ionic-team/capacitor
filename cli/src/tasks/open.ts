@@ -1,7 +1,6 @@
 import { openAndroid } from '../android/open';
 import c from '../colors';
 import {
-  logFatal,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -11,7 +10,7 @@ import {
 } from '../common';
 import type { Config } from '../definitions';
 import { openIOS } from '../ios/open';
-import { logger } from '../log';
+import { logger, logFatal } from '../log';
 
 export async function openCommand(
   config: Config,

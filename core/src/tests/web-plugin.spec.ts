@@ -1,9 +1,6 @@
-import { WebPlugin } from '../index';
+import { WebPlugin } from '../web-plugin';
 
 class MockPlugin extends WebPlugin {
-  constructor() {
-    super({ name: 'Mock' });
-  }
   trigger() {
     this.notifyListeners('test', {
       value: 'Capacitors on top of toast!',

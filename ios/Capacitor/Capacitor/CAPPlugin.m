@@ -140,6 +140,14 @@
   return [listeners count] > 0;
 }
 
+- (void)checkPermissions:(CAPPluginCall *)call {
+  [call resolve];
+}
+
+- (void)requestPermissions:(CAPPluginCall *)call {
+  [call resolve];
+}
+
 /**
  * Configure popover sourceRect, sourceView and permittedArrowDirections to show it centered
  */

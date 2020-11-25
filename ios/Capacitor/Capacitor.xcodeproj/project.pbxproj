@@ -10,15 +10,21 @@
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
 		50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
 		50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* CapacitorTests.swift */; };
+		6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */; };
 		621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */; };
-		621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */; };
+		621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCBB2542046400D3D615 /* JSTypes.swift */; };
 		621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */; };
 		621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */; };
 		621ECCD6254205BD00D3D615 /* CAPBridgeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */; };
 		621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCD9254205C400D3D615 /* CapacitorBridge.swift */; };
 		621ECCE3254206A600D3D615 /* CAPApplicationDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */; };
-		622BB9C42541FE3000A5DBCA /* capacitor.config.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */; };
+		623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D68F9254C5037002D01D1 /* KeyPath.swift */; };
+		623D6909254C6FDF002D01D1 /* CAPInstanceDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		623D690A254C6FDF002D01D1 /* CAPInstanceDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */; };
+		623D6914254C7030002D01D1 /* CAPInstanceDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */; };
+		623D691D254C7462002D01D1 /* CAPInstanceConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */; };
 		62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE32524DA7700A3D7F1 /* JSExport.swift */; };
 		62959B192524DA7800A3D7F1 /* CAPBridgedPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -34,7 +40,6 @@
 		62959B312524DA7800A3D7F1 /* JS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AFF2524DA7700A3D7F1 /* JS.swift */; };
 		62959B332524DA7800A3D7F1 /* CAPPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B012524DA7700A3D7F1 /* CAPPlugin.m */; };
 		62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */; };
-		62959B372524DA7800A3D7F1 /* CAPConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B052524DA7700A3D7F1 /* CAPConfig.swift */; };
 		62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 62959B062524DA7700A3D7F1 /* CAPPluginCall.m */; };
 		62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B072524DA7700A3D7F1 /* CapacitorExtension.swift */; };
 		62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B082524DA7700A3D7F1 /* CAPLog.swift */; };
@@ -56,6 +61,12 @@
 		6296A785253A2E49005A202A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A783253A2E49005A202A /* Main.storyboard */; };
 		6296A787253A2E49005A202A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6296A786253A2E49005A202A /* Assets.xcassets */; };
 		6296A78A253A2E49005A202A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6296A788253A2E49005A202A /* LaunchScreen.storyboard */; };
+		62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A91C3325535F5700861508 /* ConfigurationTests.swift */; };
+		62A91C3F2553710E00861508 /* nonjson.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62A91C392553710300861508 /* nonjson.json */; };
+		62E0736125535E8700BAAADB /* server.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735225535E6500BAAADB /* server.json */; };
+		62E0736225535E8700BAAADB /* bad.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735325535E6500BAAADB /* bad.json */; };
+		62E0736325535E8700BAAADB /* flat.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735425535E6500BAAADB /* flat.json */; };
+		62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735525535E6500BAAADB /* hierarchy.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,10 +97,14 @@
 		622BB9C32541FE1900A5DBCA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
+			dstPath = configurations;
 			dstSubfolderSpec = 1;
 			files = (
-				622BB9C42541FE3000A5DBCA /* capacitor.config.json in CopyFiles */,
+				62A91C3F2553710E00861508 /* nonjson.json in CopyFiles */,
+				62E0736125535E8700BAAADB /* server.json in CopyFiles */,
+				62E0736225535E8700BAAADB /* bad.json in CopyFiles */,
+				62E0736325535E8700BAAADB /* flat.json in CopyFiles */,
+				62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +126,7 @@
 		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EED1FC08595003606DC /* CapacitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapacitorTests.swift; sourceTree = "<group>"; };
+		6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceConfiguration.swift; sourceTree = "<group>"; };
 		621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
 		621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPBridgedJSTypes.h; sourceTree = "<group>"; };
 		621ECCBB2542046400D3D615 /* JSTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSTypes.swift; sourceTree = "<group>"; };
@@ -121,7 +137,12 @@
 		621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeProtocol.swift; sourceTree = "<group>"; };
 		621ECCD9254205C400D3D615 /* CapacitorBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorBridge.swift; sourceTree = "<group>"; };
 		621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPApplicationDelegateProxy.swift; sourceTree = "<group>"; };
-		622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
+		623D68F9254C5037002D01D1 /* KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPath.swift; sourceTree = "<group>"; };
+		623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPInstanceDescriptor.h; sourceTree = "<group>"; };
+		623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceDescriptor.m; sourceTree = "<group>"; };
+		623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceDescriptor.swift; sourceTree = "<group>"; };
+		623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPInstanceConfiguration.h; sourceTree = "<group>"; };
+		623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceConfiguration.m; sourceTree = "<group>"; };
 		62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginCall.h; sourceTree = "<group>"; };
 		62959AE32524DA7700A3D7F1 /* JSExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
 		62959AE42524DA7700A3D7F1 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
@@ -138,7 +159,6 @@
 		62959AFF2524DA7700A3D7F1 /* JS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JS.swift; sourceTree = "<group>"; };
 		62959B012524DA7700A3D7F1 /* CAPPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPlugin.m; sourceTree = "<group>"; };
 		62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeViewController.swift; sourceTree = "<group>"; };
-		62959B052524DA7700A3D7F1 /* CAPConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPConfig.swift; sourceTree = "<group>"; };
 		62959B062524DA7700A3D7F1 /* CAPPluginCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPPluginCall.m; sourceTree = "<group>"; };
 		62959B072524DA7700A3D7F1 /* CapacitorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CapacitorExtension.swift; sourceTree = "<group>"; };
 		62959B082524DA7700A3D7F1 /* CAPLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPLog.swift; sourceTree = "<group>"; };
@@ -165,6 +185,12 @@
 		6296A786253A2E49005A202A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6296A789253A2E49005A202A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6296A78B253A2E49005A202A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62A91C3325535F5700861508 /* ConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
+		62A91C392553710300861508 /* nonjson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nonjson.json; sourceTree = "<group>"; };
+		62E0735225535E6500BAAADB /* server.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = server.json; sourceTree = "<group>"; };
+		62E0735325535E6500BAAADB /* bad.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bad.json; sourceTree = "<group>"; };
+		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
+		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +258,7 @@
 			children = (
 				50503EED1FC08595003606DC /* CapacitorTests.swift */,
 				621ECCC2254204B700D3D615 /* BridgedTypesTests.swift */,
+				62A91C3325535F5700861508 /* ConfigurationTests.swift */,
 				621ECCC7254204BE00D3D615 /* JSONSerializationWrapper.h */,
 				621ECCC6254204BE00D3D615 /* JSONSerializationWrapper.m */,
 				621ECCCD254204C400D3D615 /* CapacitorTests-Bridging-Header.h */,
@@ -263,6 +290,7 @@
 				621ECCBB2542046400D3D615 /* JSTypes.swift */,
 				621ECCB62542045900D3D615 /* CAPBridgedJSTypes.h */,
 				621ECCB42542045900D3D615 /* CAPBridgedJSTypes.m */,
+				623D68F9254C5037002D01D1 /* KeyPath.swift */,
 				62959AFF2524DA7700A3D7F1 /* JS.swift */,
 				62959AE32524DA7700A3D7F1 /* JSExport.swift */,
 				621ECCD4254205BD00D3D615 /* CAPBridgeProtocol.swift */,
@@ -272,11 +300,15 @@
 				621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */,
 				62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */,
 				62959AEA2524DA7700A3D7F1 /* Plugins */,
-				62959B052524DA7700A3D7F1 /* CAPConfig.swift */,
+				623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */,
+				623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */,
+				623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */,
+				623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */,
+				623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */,
+				6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */,
 				62959B082524DA7700A3D7F1 /* CAPLog.swift */,
 				62959AE72524DA7700A3D7F1 /* CAPFile.swift */,
 				62959B0B2524DA7700A3D7F1 /* CAPMessageHandlerWrapper.swift */,
-				62959B022524DA7700A3D7F1 /* CAPUNUserNotificationCenterDelegate.swift */,
 				62959B0D2524DA7700A3D7F1 /* CAPAssetHandler.swift */,
 				62959B0E2524DA7700A3D7F1 /* TmpViewController.swift */,
 				62959B102524DA7700A3D7F1 /* DocLinks.swift */,
@@ -315,13 +347,25 @@
 			children = (
 				6296A77D253A2E49005A202A /* AppDelegate.swift */,
 				6296A781253A2E49005A202A /* ViewController.swift */,
-				622BB9BE2541FDFE00A5DBCA /* capacitor.config.json */,
+				62E0735125535E6500BAAADB /* configurations */,
 				6296A783253A2E49005A202A /* Main.storyboard */,
 				6296A786253A2E49005A202A /* Assets.xcassets */,
 				6296A788253A2E49005A202A /* LaunchScreen.storyboard */,
 				6296A78B253A2E49005A202A /* Info.plist */,
 			);
 			path = TestsHostApp;
+			sourceTree = "<group>";
+		};
+		62E0735125535E6500BAAADB /* configurations */ = {
+			isa = PBXGroup;
+			children = (
+				62E0735225535E6500BAAADB /* server.json */,
+				62E0735325535E6500BAAADB /* bad.json */,
+				62E0735425535E6500BAAADB /* flat.json */,
+				62E0735525535E6500BAAADB /* hierarchy.json */,
+				62A91C392553710300861508 /* nonjson.json */,
+			);
+			path = configurations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -335,8 +379,10 @@
 				62959B452524DA7800A3D7F1 /* CAPPlugin.h in Headers */,
 				62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */,
 				62959B3B2524DA7800A3D7F1 /* CAPPluginMethod.h in Headers */,
-				621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */,
+				623D691D254C7462002D01D1 /* CAPInstanceConfiguration.h in Headers */,
+				623D6909254C6FDF002D01D1 /* CAPInstanceDescriptor.h in Headers */,
 				62959B192524DA7800A3D7F1 /* CAPBridgedPlugin.h in Headers */,
+				621ECCB82542045900D3D615 /* CAPBridgedJSTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -497,12 +543,12 @@
 				62959B362524DA7800A3D7F1 /* CAPBridgeViewController.swift in Sources */,
 				621ECCB72542045900D3D615 /* CAPBridgedJSTypes.m in Sources */,
 				62959B402524DA7800A3D7F1 /* TmpViewController.swift in Sources */,
-				62959B372524DA7800A3D7F1 /* CAPConfig.swift in Sources */,
 				621ECCD6254205BD00D3D615 /* CAPBridgeProtocol.swift in Sources */,
 				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
 				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
 				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
+				623D690A254C6FDF002D01D1 /* CAPInstanceDescriptor.m in Sources */,
 				62959B1B2524DA7800A3D7F1 /* CAPFile.swift in Sources */,
 				62959B462524DA7800A3D7F1 /* CAPBridge.swift in Sources */,
 				62959B1D2524DA7800A3D7F1 /* UIColor.swift in Sources */,
@@ -520,8 +566,12 @@
 				62959B3F2524DA7800A3D7F1 /* CAPAssetHandler.swift in Sources */,
 				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
 				62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */,
+				623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */,
+				623D68FA254C5037002D01D1 /* KeyPath.swift in Sources */,
 				62959B222524DA7800A3D7F1 /* Console.swift in Sources */,
 				62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */,
+				6214934725509C3F006C36F9 /* CAPInstanceConfiguration.swift in Sources */,
+				623D6914254C7030002D01D1 /* CAPInstanceDescriptor.swift in Sources */,
 				621ECCE3254206A600D3D615 /* CAPApplicationDelegateProxy.swift in Sources */,
 				62959B262524DA7800A3D7F1 /* WebView.swift in Sources */,
 			);
@@ -533,6 +583,7 @@
 			files = (
 				50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */,
 				621ECCC8254204BE00D3D615 /* JSONSerializationWrapper.m in Sources */,
+				62A91C3425535F5700861508 /* ConfigurationTests.swift in Sources */,
 				621ECCC3254204B700D3D615 /* BridgedTypesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

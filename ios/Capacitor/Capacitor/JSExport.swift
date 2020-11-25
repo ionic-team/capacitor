@@ -12,20 +12,6 @@ internal class JSExport {
         userContentController.addUserScript(userScript)
     }
 
-    public static func exportCapacitorJS(userContentController: WKUserContentController) throws {
-        guard let jsUrl = Bundle.main.url(forResource: "public/native-bridge", withExtension: "js") else {
-            CAPLog.print("ERROR: Required native-bridge.js file in Capacitor not found. Bridge will not function!")
-            throw CapacitorBridgeError.errorExportingCoreJS
-        }
-
-        do {
-            try self.injectFile(fileURL: jsUrl, userContentController: userContentController)
-        } catch {
-            CAPLog.print("ERROR: Unable to read required native-bridge.js file from the Capacitor framework. Bridge will not function!")
-            throw CapacitorBridgeError.errorExportingCoreJS
-        }
-    }
-
     public static func exportCordovaJS(userContentController: WKUserContentController) throws {
         guard let cordovaUrl = Bundle.main.url(forResource: "public/cordova", withExtension: "js") else {
             CAPLog.print("ERROR: Required cordova.js file not found. Cordova plugins will not function!")
@@ -53,10 +39,9 @@ internal class JSExport {
 
         lines.append("""
             (function(w) {
-            w.Capacitor = w.Capacitor || {};
-            w.Capacitor.Plugins = w.Capacitor.Plugins || {};
-            var a = w.Capacitor; var p = a.Plugins;
-            var t = p['\(pluginClassName)'] = {};
+            var a = (w.Capacitor = w.Capacitor || {});
+            var p = (a.Plugins = a.Plugins || {});
+            var t = (p['\(pluginClassName)'] = {});
             t.addListener = function(eventName, callback) {
             return w.Capacitor.addListener('\(pluginClassName)', eventName, callback);
             }

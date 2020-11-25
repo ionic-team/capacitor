@@ -13,18 +13,9 @@ import prompts from 'prompts';
 
 import { getAndroidPlugins } from './android/common';
 import c from './colors';
-import {
-  buildXmlElement,
-  logFatal,
-  logPrompt,
-  parseXML,
-  readXML,
-  resolveNode,
-  writeXML,
-} from './common';
 import type { Config } from './definitions';
 import { getIOSPlugins } from './ios/common';
-import { logger } from './log';
+import { logger, logFatal, logPrompt } from './log';
 import type { Plugin } from './plugin';
 import {
   PluginType,
@@ -37,6 +28,8 @@ import {
   printPlugins,
 } from './plugin';
 import { copy as copyTask } from './tasks/copy';
+import { resolveNode } from './util/node';
+import { buildXmlElement, parseXML, readXML, writeXML } from './util/xml';
 
 /**
  * Build the root cordova_plugins.js file referencing each Plugin JS file.
@@ -224,11 +217,7 @@ export async function autoGenerateConfig(
   let xmlDir = join(config.android.resDirAbs, 'xml');
   const fileName = 'config.xml';
   if (platform === 'ios') {
-    xmlDir = join(
-      config.ios.platformDirAbs,
-      config.ios.nativeProjectName,
-      config.ios.nativeProjectName,
-    );
+    xmlDir = config.ios.nativeTargetDirAbs;
   }
   await ensureDir(xmlDir);
   const cordovaConfigXMLFile = join(xmlDir, fileName);
@@ -344,12 +333,7 @@ export async function logCordovaManualSteps(
 }
 
 async function logiOSPlist(configElement: any, config: Config, plugin: Plugin) {
-  const plistPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.nativeProjectName,
-    config.ios.nativeProjectName,
-    'Info.plist',
-  );
+  const plistPath = resolve(config.ios.nativeTargetDirAbs, 'Info.plist');
   const xmlMeta = await readXML(plistPath);
   const data = await readFile(plistPath, { encoding: 'utf-8' });
   const plistData = plist.parse(data) as PlistObject;
