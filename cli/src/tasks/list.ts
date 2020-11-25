@@ -30,7 +30,7 @@ export async function listCommand(
 }
 
 export async function list(config: Config, platform: string): Promise<void> {
-  const allPlugins = await getPlugins(config);
+  const allPlugins = await getPlugins(config, platform);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
     plugins = await getIOSPlugins(allPlugins);

@@ -40,24 +40,26 @@ export interface Plugin {
   };
 }
 
-export async function getPlugins(config: Config): Promise<Plugin[]> {
-  const { plugins } = config.app.extConfig;
+export function getIncludedPluginPackages(
+  config: Config,
+  platform: string,
+): readonly string[] | undefined {
+  const { extConfig } = config.app;
 
-  if (plugins && !Array.isArray(plugins)) {
-    logger.warn(
-      `Using the ${c.strong(
-        'plugins',
-      )} key for plugin configuration is deprecated (use ${c.strong(
-        'pluginsConfig',
-      )} instead).\n` +
-        `Learn more: ${c.strong('https://capacitorjs.com/docs/config')}`,
-    );
+  switch (platform) {
+    case 'android':
+      return extConfig.android?.includePlugins ?? extConfig.includePlugins;
+    case 'ios':
+      return extConfig.ios?.includePlugins ?? extConfig.includePlugins;
   }
+}
 
-  const possiblePlugins = Array.isArray(plugins)
-    ? plugins
-    : getDependencies(config);
-
+export async function getPlugins(
+  config: Config,
+  platform: string,
+): Promise<Plugin[]> {
+  const possiblePlugins =
+    getIncludedPluginPackages(config, platform) ?? getDependencies(config);
   const resolvedPlugins = await Promise.all(
     possiblePlugins.map(async p => resolvePlugin(config, p)),
   );
