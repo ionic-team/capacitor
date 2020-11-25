@@ -40,10 +40,26 @@ export interface Plugin {
   };
 }
 
-export async function getPlugins(config: Config): Promise<Plugin[]> {
-  const { includePlugins } = config.app.extConfig;
+export function getIncludedPluginPackages(
+  config: Config,
+  platform: string,
+): readonly string[] | undefined {
+  const { extConfig } = config.app;
 
-  const possiblePlugins = includePlugins ?? getDependencies(config);
+  switch (platform) {
+    case 'android':
+      return extConfig.android?.includePlugins ?? extConfig.includePlugins;
+    case 'ios':
+      return extConfig.ios?.includePlugins ?? extConfig.includePlugins;
+  }
+}
+
+export async function getPlugins(
+  config: Config,
+  platform: string,
+): Promise<Plugin[]> {
+  const possiblePlugins =
+    getIncludedPluginPackages(config, platform) ?? getDependencies(config);
   const resolvedPlugins = await Promise.all(
     possiblePlugins.map(async p => resolvePlugin(config, p)),
   );
