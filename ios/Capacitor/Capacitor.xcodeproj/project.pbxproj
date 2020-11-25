@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */; };
+		373A69F2255C95D0000A6F44 /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373A69F1255C95D0000A6F44 /* NotificationRouter.swift */; };
 		501CBAA71FC0A723009B0D4D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501CBAA61FC0A723009B0D4D /* WebKit.framework */; };
 		50503EE91FC08595003606DC /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50503EDF1FC08594003606DC /* Capacitor.framework */; };
 		50503EEE1FC08595003606DC /* CapacitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50503EED1FC08595003606DC /* CapacitorTests.swift */; };
@@ -122,6 +124,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerProtocol.swift; sourceTree = "<group>"; };
+		373A69F1255C95D0000A6F44 /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		501CBAA61FC0A723009B0D4D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		50503EDF1FC08594003606DC /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50503EE81FC08595003606DC /* CapacitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapacitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -319,6 +323,8 @@
 				62959AFE2524DA7700A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m */,
 				62959B122524DA7700A3D7F1 /* Info.plist */,
 				62959B8225253A9500A3D7F1 /* Capacitor.modulemap */,
+				373A69C0255C9360000A6F44 /* NotificationHandlerProtocol.swift */,
+				373A69F1255C95D0000A6F44 /* NotificationRouter.swift */,
 			);
 			path = Capacitor;
 			sourceTree = "<group>";
@@ -557,12 +563,14 @@
 				62959B472524DA7800A3D7F1 /* CAPNotifications.swift in Sources */,
 				62959B312524DA7800A3D7F1 /* JS.swift in Sources */,
 				62959B292524DA7800A3D7F1 /* SplashScreen.swift in Sources */,
+				373A69F2255C95D0000A6F44 /* NotificationRouter.swift in Sources */,
 				62959B1A2524DA7800A3D7F1 /* CAPPluginCall.swift in Sources */,
 				62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */,
 				62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */,
 				62959B3D2524DA7800A3D7F1 /* CAPMessageHandlerWrapper.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
+				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
 				62959B3F2524DA7800A3D7F1 /* CAPAssetHandler.swift in Sources */,
 				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
 				62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */,
