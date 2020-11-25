@@ -31,16 +31,20 @@ public class CapConfig {
     private Boolean webContentsDebuggingEnabled;
     private boolean hideLogs = false;
 
+    // Plugins
+    private JSONObject pluginConfigurations = new JSONObject();
+
+    // Config Object JSON (legacy)
     private JSONObject configJSON = new JSONObject();
 
     /**
-     * Constructs a Capacitor Configuration from file
+     * Constructs a Capacitor Configuration from file.
      *
-     * @param assetManager
-     * @param defaultDebuggable
+     * @param assetManager Android asset manager
+     * @param defaultDebuggable Enable dev mode flag
      */
     public CapConfig(AssetManager assetManager, boolean defaultDebuggable) {
-        this.webContentsDebuggingEnabled = defaultDebuggable;
+        webContentsDebuggingEnabled = defaultDebuggable;
 
         // Load capacitor.config.json
         loadConfig(assetManager);
@@ -48,9 +52,9 @@ public class CapConfig {
     }
 
     /**
-     * Constructs a Capacitor Configuration using ConfigBuilder
+     * Constructs a Capacitor Configuration using ConfigBuilder.
      *
-     * @param builder
+     * @param builder A config builder initialized with values
      */
     private CapConfig(ConfigBuilder builder) {
         // Server Config
@@ -68,8 +72,15 @@ public class CapConfig {
         this.captureInput = builder.captureInput;
         this.webContentsDebuggingEnabled = builder.webContentsDebuggingEnabled;
         this.hideLogs = builder.hideLogs;
+
+        // Plugins Config
+        this.pluginConfigurations = builder.pluginConfigurations;
     }
 
+    /**
+     * Loads a Capacitor Configuration JSON file into a Capacitor Configuration object.
+     * @param assetManager
+     */
     private void loadConfig(AssetManager assetManager) {
         BufferedReader reader = null;
         try {
@@ -84,7 +95,7 @@ public class CapConfig {
             }
 
             String jsonString = b.toString();
-            this.configJSON = new JSONObject(jsonString);
+            configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
         } catch (JSONException ex) {
@@ -98,6 +109,9 @@ public class CapConfig {
         }
     }
 
+    /**
+     * Deserializes the config from JSON into a Capacitor Configuration object.
+     */
     private void deserializeConfig() {
         // Server
         html5mode = getBoolean("server.html5mode", html5mode);
@@ -114,6 +128,9 @@ public class CapConfig {
         captureInput = getBoolean("android.captureInput", captureInput);
         webContentsDebuggingEnabled = getBoolean("android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
         hideLogs = getBoolean("android.hideLogs", getBoolean("hideLogs", hideLogs));
+
+        // Plugins
+        pluginConfigurations = getObject("plugins");
     }
 
     public boolean html5mode() {
@@ -148,10 +165,6 @@ public class CapConfig {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(String backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
     public boolean allowMixedContent() {
         return allowMixedContent;
     }
@@ -168,24 +181,90 @@ public class CapConfig {
         return hideLogs;
     }
 
-    public JSONObject getObject(String key) {
+    public JSONObject getPluginObject(String pluginId, String configKey) {
         try {
-            return this.configJSON.getJSONObject(key);
+            return getDeepestObject(pluginConfigurations, String.format("plugins.%s.%s", pluginId, configKey));
         } catch (Exception ex) {}
         return null;
     }
 
-    private JSONObject getConfigObjectDeepest(String key) throws JSONException {
-        // Split on periods
-        String[] parts = key.split("\\.");
+    public String getPluginString(String pluginId, String configKey) {
+        return getPluginString(pluginId, configKey, null);
+    }
 
-        JSONObject o = this.configJSON;
-        // Search until the second to last part of the key
-        for (int i = 0; i < parts.length - 1; i++) {
-            String k = parts[i];
-            o = o.getJSONObject(k);
+    public String getPluginString(String pluginId, String configKey, String defaultValue) {
+        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String lastKey = getDeepestKey(keyPath);
+
+        try {
+            JSONObject o = getDeepestObject(pluginConfigurations, keyPath);
+
+            String value = o.getString(lastKey);
+            if (value == null) {
+                return defaultValue;
+            }
+            return value;
+        } catch (Exception ex) {}
+        return defaultValue;
+    }
+
+    public boolean getPluginBool(String pluginId, String configKey, boolean defaultValue) {
+        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String lastKey = getDeepestKey(keyPath);
+
+        try {
+            JSONObject o = getDeepestObject(pluginConfigurations, keyPath);
+            return o.getBoolean(lastKey);
+        } catch (Exception ex) {}
+        return defaultValue;
+    }
+
+    public int getPluginInt(String pluginId, String configKey, int defaultValue) {
+        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String lastKey = getDeepestKey(keyPath);
+
+        try {
+            JSONObject o = getDeepestObject(pluginConfigurations, keyPath);
+            return o.getInt(lastKey);
+        } catch (Exception ignore) {
+            // value was not found
         }
-        return o;
+        return defaultValue;
+    }
+
+    public String[] getPluginArray(String pluginId, String configKey) {
+        return getPluginArray(pluginId, configKey, null);
+    }
+
+    public String[] getPluginArray(String pluginId, String configKey, String[] defaultValue) {
+        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String lastKey = getDeepestKey(keyPath);
+
+        try {
+            JSONObject o = getDeepestObject(pluginConfigurations, lastKey);
+
+            JSONArray a = o.getJSONArray(lastKey);
+            if (a == null) {
+                return defaultValue;
+            }
+
+            int l = a.length();
+            String[] value = new String[l];
+
+            for (int i = 0; i < l; i++) {
+                value[i] = (String) a.get(i);
+            }
+
+            return value;
+        } catch (Exception ex) {}
+        return defaultValue;
+    }
+
+    public JSONObject getObject(String key) {
+        try {
+            return configJSON.getJSONObject(key);
+        } catch (Exception ex) {}
+        return null;
     }
 
     public String getString(String key) {
@@ -193,9 +272,9 @@ public class CapConfig {
     }
 
     public String getString(String key, String defaultValue) {
-        String k = getConfigKey(key);
+        String k = getDeepestKey(key);
         try {
-            JSONObject o = this.getConfigObjectDeepest(key);
+            JSONObject o = getDeepestObject(configJSON, key);
 
             String value = o.getString(k);
             if (value == null) {
@@ -207,9 +286,9 @@ public class CapConfig {
     }
 
     public boolean getBoolean(String key, boolean defaultValue) {
-        String k = getConfigKey(key);
+        String k = getDeepestKey(key);
         try {
-            JSONObject o = this.getConfigObjectDeepest(key);
+            JSONObject o = getDeepestObject(configJSON, key);
 
             return o.getBoolean(k);
         } catch (Exception ex) {}
@@ -217,9 +296,9 @@ public class CapConfig {
     }
 
     public int getInt(String key, int defaultValue) {
-        String k = getConfigKey(key);
+        String k = getDeepestKey(key);
         try {
-            JSONObject o = this.getConfigObjectDeepest(key);
+            JSONObject o = getDeepestObject(configJSON, key);
             return o.getInt(k);
         } catch (Exception ignore) {
             // value was not found
@@ -227,22 +306,14 @@ public class CapConfig {
         return defaultValue;
     }
 
-    private String getConfigKey(String key) {
-        String[] parts = key.split("\\.");
-        if (parts.length > 0) {
-            return parts[parts.length - 1];
-        }
-        return null;
-    }
-
     public String[] getArray(String key) {
         return getArray(key, null);
     }
 
     public String[] getArray(String key, String[] defaultValue) {
-        String k = getConfigKey(key);
+        String k = getDeepestKey(key);
         try {
-            JSONObject o = this.getConfigObjectDeepest(key);
+            JSONObject o = getDeepestObject(configJSON, key);
 
             JSONArray a = o.getJSONArray(k);
             if (a == null) {
@@ -259,6 +330,42 @@ public class CapConfig {
             return value;
         } catch (Exception ex) {}
         return defaultValue;
+    }
+
+    /**
+     * Given a JSON key path, gets the deepest key.
+     *
+     * @param key The key path
+     * @return The deepest key
+     */
+    private String getDeepestKey(String key) {
+        String[] parts = key.split("\\.");
+        if (parts.length > 0) {
+            return parts[parts.length - 1];
+        }
+
+        return null;
+    }
+
+    /**
+     * Given a JSON Object and key path, gets the deepest object in the path.
+     *
+     * @param jsonObject A JSON Object
+     * @param key The key path to follow
+     * @return The deepest object along the key path
+     * @throws JSONException Thrown if any JSON errors
+     */
+    private JSONObject getDeepestObject(JSONObject jsonObject, String key) throws JSONException {
+        String[] parts = key.split("\\.");
+
+        JSONObject o = jsonObject;
+        // Search until the second to last part of the key
+        for (int i = 0; i < parts.length - 1; i++) {
+            String k = parts[i];
+            o = o.getJSONObject(k);
+        }
+
+        return o;
     }
 
     /**
@@ -282,8 +389,21 @@ public class CapConfig {
         private Boolean webContentsDebuggingEnabled;
         private boolean hideLogs = false;
 
+        // Plugins Config Object
+        private JSONObject pluginConfigurations = new JSONObject();
+
+        /**
+         * Builds a Capacitor Config from the builder.
+         *
+         * @return A new Capacitor Config
+         */
         public CapConfig build() {
             return new CapConfig(this);
+        }
+
+        public ConfigBuilder pluginConfigurations(JSONObject pluginConfigurations) {
+            this.pluginConfigurations = pluginConfigurations;
+            return this;
         }
 
         public ConfigBuilder html5mode(boolean html5mode) {
