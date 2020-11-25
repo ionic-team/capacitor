@@ -2,9 +2,6 @@ ext {
     androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.1.0'
     androidxCoreVersion =  project.hasProperty('androidxCoreVersion') ? rootProject.ext.androidxCoreVersion : '1.2.0'
     androidxMaterialVersion =  project.hasProperty('androidxMaterialVersion') ? rootProject.ext.androidxMaterialVersion : '1.1.0-rc02'
-    androidxBrowserVersion =  project.hasProperty('androidxBrowserVersion') ? rootProject.ext.androidxBrowserVersion : '1.2.0'
-    androidxExifInterfaceVersion =  project.hasProperty('androidxExifInterfaceVersion') ? rootProject.ext.androidxExifInterfaceVersion : '1.2.0'
-    playServicesLocationVersion =  project.hasProperty('playServicesLocationVersion') ? rootProject.ext.playServicesLocationVersion : '17.0.0'
     junitVersion =  project.hasProperty('junitVersion') ? rootProject.ext.junitVersion : '4.12'
     androidxJunitVersion =  project.hasProperty('androidxJunitVersion') ? rootProject.ext.androidxJunitVersion : '1.1.1'
     androidxEspressoCoreVersion =  project.hasProperty('androidxEspressoCoreVersion') ? rootProject.ext.androidxEspressoCoreVersion : '3.2.0'
@@ -61,9 +58,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.core:core:$androidxCoreVersion"
     implementation "com.google.android.material:material:$androidxMaterialVersion"
-    implementation "androidx.browser:browser:$androidxBrowserVersion"
-    implementation "androidx.exifinterface:exifinterface:$androidxExifInterfaceVersion"
-    implementation "com.google.android.gms:play-services-location:$playServicesLocationVersion"
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
