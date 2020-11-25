@@ -38,6 +38,10 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (this.bridge == null) {
+            this.init(savedInstanceState);
+        }
     }
 
     protected void init(Bundle savedInstanceState) {
