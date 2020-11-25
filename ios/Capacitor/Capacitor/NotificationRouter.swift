@@ -1,7 +1,7 @@
 import Foundation
 
-@objc(CAPUNUserNotificationCenterDelegate) public class UserNotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
-    var handleNotifications: Bool {
+@objc(CAPNotificationRouter) public class NotificationRouter: NSObject, UNUserNotificationCenterDelegate {
+    var handleApplicationNotifications: Bool {
         get {
             return UNUserNotificationCenter.current().delegate === self
         }
