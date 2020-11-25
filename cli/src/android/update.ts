@@ -305,7 +305,7 @@ async function removePluginsNativeFiles(config: Config) {
 
 async function getPluginsTask(config: Config) {
   return await runTask('Updating Android plugins', async () => {
-    const allPlugins = await getPlugins(config);
+    const allPlugins = await getPlugins(config, 'android');
     const androidPlugins = await getAndroidPlugins(allPlugins);
     return androidPlugins;
   });

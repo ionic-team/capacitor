@@ -302,7 +302,7 @@ export async function getCordovaPlugins(
   config: Config,
   platform: string,
 ): Promise<Plugin[]> {
-  const allPlugins = await getPlugins(config);
+  const allPlugins = await getPlugins(config, platform);
   let plugins: Plugin[] = [];
   if (platform === config.ios.name) {
     plugins = await getIOSPlugins(allPlugins);
