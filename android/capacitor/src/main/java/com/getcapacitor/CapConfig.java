@@ -114,23 +114,24 @@ public class CapConfig {
      */
     private void deserializeConfig() {
         // Server
-        html5mode = getBoolean("server.html5mode", html5mode);
-        serverUrl = getString("server.url");
-        hostname = getString("server.hostname", hostname);
-        androidScheme = getString("server.androidScheme", androidScheme);
-        allowNavigation = getArray("server.allowNavigation");
+        html5mode = getBoolean(configJSON, "server.html5mode", html5mode);
+        serverUrl = getString(configJSON, "server.url", null);
+        hostname = getString(configJSON, "server.hostname", hostname);
+        androidScheme = getString(configJSON, "server.androidScheme", androidScheme);
+        allowNavigation = getArray(configJSON, "server.allowNavigation", null);
 
         // Android
-        overriddenUserAgentString = getString("android.overrideUserAgent", getString("overrideUserAgent"));
-        appendedUserAgentString = getString("android.appendUserAgent", getString("appendUserAgent"));
-        backgroundColor = getString("android.backgroundColor", getString("backgroundColor"));
-        allowMixedContent = getBoolean("android.allowMixedContent", getBoolean("allowMixedContent", allowMixedContent));
-        captureInput = getBoolean("android.captureInput", captureInput);
-        webContentsDebuggingEnabled = getBoolean("android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
-        hideLogs = getBoolean("android.hideLogs", getBoolean("hideLogs", hideLogs));
+        overriddenUserAgentString = getString(configJSON, "android.overrideUserAgent", getString(configJSON, "overrideUserAgent", null));
+        appendedUserAgentString = getString(configJSON, "android.appendUserAgent", getString(configJSON, "appendUserAgent", null));
+        backgroundColor = getString(configJSON, "android.backgroundColor", getString(configJSON, "backgroundColor", null));
+        allowMixedContent =
+            getBoolean(configJSON, "android.allowMixedContent", getBoolean(configJSON, "allowMixedContent", allowMixedContent));
+        captureInput = getBoolean(configJSON, "android.captureInput", captureInput);
+        webContentsDebuggingEnabled = getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
+        hideLogs = getBoolean(configJSON, "android.hideLogs", getBoolean(configJSON, "hideLogs", hideLogs));
 
         // Plugins
-        pluginConfigurations = getObject("plugins");
+        pluginConfigurations = getObject(configJSON, "plugins");
     }
 
     public boolean html5mode() {
@@ -181,85 +182,104 @@ public class CapConfig {
         return hideLogs;
     }
 
-    public JSONObject getPluginObject(String pluginId, String configKey) {
-        try {
-            return getDeepestObject(pluginConfigurations, String.format("plugins.%s.%s", pluginId, configKey));
-        } catch (Exception ex) {}
-        return null;
+    public JSONObject getPluginConfigurations() {
+        return pluginConfigurations;
     }
 
+    /**
+     * Get a string value for a plugin in the Capacitor config.
+     *
+     * @param pluginId The ID of the plugin used in the config
+     * @param configKey The key of the value to retrieve
+     * @return The value from the config, if exists. Null if not
+     */
     public String getPluginString(String pluginId, String configKey) {
         return getPluginString(pluginId, configKey, null);
     }
 
+    /**
+     * Get a string value for a plugin in the Capacitor config.
+     *
+     * @param pluginId The ID of the plugin used in the config
+     * @param configKey The key of the value to retrieve
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
     public String getPluginString(String pluginId, String configKey, String defaultValue) {
         String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
-        String lastKey = getDeepestKey(keyPath);
-
-        try {
-            JSONObject o = getDeepestObject(pluginConfigurations, keyPath);
-
-            String value = o.getString(lastKey);
-            if (value == null) {
-                return defaultValue;
-            }
-            return value;
-        } catch (Exception ex) {}
-        return defaultValue;
+        return getString(pluginConfigurations, keyPath, defaultValue);
     }
 
-    public boolean getPluginBool(String pluginId, String configKey, boolean defaultValue) {
+    /**
+     * Get a boolean value for a plugin in the Capacitor config.
+     *
+     * @param pluginId The ID of the plugin used in the config
+     * @param configKey The key of the value to retrieve
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
+    public boolean getPluginBoolean(String pluginId, String configKey, boolean defaultValue) {
         String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
-        String lastKey = getDeepestKey(keyPath);
-
-        try {
-            JSONObject o = getDeepestObject(pluginConfigurations, keyPath);
-            return o.getBoolean(lastKey);
-        } catch (Exception ex) {}
-        return defaultValue;
+        return getBoolean(pluginConfigurations, keyPath, defaultValue);
     }
 
+    /**
+     * Get an integer value for a plugin in the Capacitor config.
+     *
+     * @param pluginId The ID of the plugin used in the config
+     * @param configKey The key of the value to retrieve
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
     public int getPluginInt(String pluginId, String configKey, int defaultValue) {
         String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
-        String lastKey = getDeepestKey(keyPath);
-
-        try {
-            JSONObject o = getDeepestObject(pluginConfigurations, keyPath);
-            return o.getInt(lastKey);
-        } catch (Exception ignore) {
-            // value was not found
-        }
-        return defaultValue;
+        return getInt(pluginConfigurations, keyPath, defaultValue);
     }
 
+    /**
+     * Get a string array value for a plugin in the Capacitor config.
+     *
+     * @param pluginId The ID of the plugin used in the config
+     * @param configKey The key of the value to retrieve
+     * @return The value from the config, if exists. Null if not
+     */
     public String[] getPluginArray(String pluginId, String configKey) {
         return getPluginArray(pluginId, configKey, null);
     }
 
+    /**
+     * Get a string array value for a plugin in the Capacitor config.
+     *
+     * @param pluginId The ID of the plugin used in the config
+     * @param configKey The key of the value to retrieve
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
     public String[] getPluginArray(String pluginId, String configKey, String[] defaultValue) {
         String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
-        String lastKey = getDeepestKey(keyPath);
-
-        try {
-            JSONObject o = getDeepestObject(pluginConfigurations, lastKey);
-
-            JSONArray a = o.getJSONArray(lastKey);
-            if (a == null) {
-                return defaultValue;
-            }
-
-            int l = a.length();
-            String[] value = new String[l];
-
-            for (int i = 0; i < l; i++) {
-                value[i] = (String) a.get(i);
-            }
-
-            return value;
-        } catch (Exception ex) {}
-        return defaultValue;
+        return getArray(pluginConfigurations, keyPath, defaultValue);
     }
 
+    /**
+     * Get a JSON object value for a plugin in the Capacitor config.
+     *
+     * @param pluginId The ID of the plugin used in the config
+     * @param configKey The key of the value to retrieve
+     * @return The value from the config, if exists. Null if not
+     */
+    public JSONObject getPluginObject(String pluginId, String configKey) {
+        return getObject(pluginConfigurations, String.format("plugins.%s.%s", pluginId, configKey));
+    }
+
+    /**
+     * Get a JSON object value from the Capacitor config.
+     * @deprecated use {@link #getPluginObject(String, String)} to access plugin config values.
+     * For main Capacitor config values, use the appropriate getter.
+     *
+     * @param key A key to fetch from the config
+     * @return The value from the config, if exists. Null if not
+     */
+    @Deprecated
     public JSONObject getObject(String key) {
         try {
             return configJSON.getJSONObject(key);
@@ -267,38 +287,144 @@ public class CapConfig {
         return null;
     }
 
+    /**
+     * Get a string value from the Capacitor config.
+     * @deprecated use {@link #getPluginString(String, String)} to access plugin config
+     * values. For main Capacitor config values, use the appropriate getter.
+     *
+     * @param key A key to fetch from the config
+     * @return The value from the config, if exists. Null if not
+     */
+    @Deprecated
     public String getString(String key) {
-        return getString(key, null);
+        return getString(configJSON, key, null);
     }
 
+    /**
+     * Get a string value from the Capacitor config.
+     * @deprecated use {@link #getPluginString(String, String, String)} to access plugin config
+     * values. For main Capacitor config values, use the appropriate getter.
+     *
+     * @param key A key to fetch from the config
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
+    @Deprecated
     public String getString(String key, String defaultValue) {
+        return getString(configJSON, key, defaultValue);
+    }
+
+    /**
+     * Get a boolean value from the Capacitor config.
+     * @deprecated use {@link #getPluginBoolean(String, String, boolean)} to access plugin config
+     * values. For main Capacitor config values, use the appropriate getter.
+     *
+     * @param key A key to fetch from the config
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
+    @Deprecated
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return getBoolean(configJSON, key, defaultValue);
+    }
+
+    /**
+     * Get an integer value from the Capacitor config.
+     * @deprecated use {@link #getPluginInt(String, String, int)} to access the plugin config
+     * values. For main Capacitor config values, use the appropriate getter.
+     *
+     * @param key A key to fetch from the config
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
+    @Deprecated
+    public int getInt(String key, int defaultValue) {
+        return getInt(configJSON, key, defaultValue);
+    }
+
+    /**
+     * Get a string array value from the Capacitor config.
+     * @deprecated use {@link #getPluginArray(String, String)} to access the plugin config
+     * values. For main Capacitor config values, use the appropriate getter.
+     *
+     * @param key A key to fetch from the config
+     * @return The value from the config, if exists. Null if not
+     */
+    @Deprecated
+    public String[] getArray(String key) {
+        return getArray(configJSON, key, null);
+    }
+
+    /**
+     * Get a string array value from the Capacitor config.
+     * @deprecated use {@link #getPluginArray(String, String, String[])} to access the plugin
+     * config values. For main Capacitor config values, use the appropriate getter.
+     *
+     * @param key A key to fetch from the config
+     * @param defaultValue A default value to return if the key does not exist in the config
+     * @return The value from the config, if key exists. Default value returned if not
+     */
+    @Deprecated
+    public String[] getArray(String key, String[] defaultValue) {
+        return getArray(configJSON, key, defaultValue);
+    }
+
+    /**
+     * Get a string value from the given JSON object.
+     *
+     * @param jsonObject A JSON object to search
+     * @param key A key to fetch from the JSON object
+     * @param defaultValue A default value to return if the key cannot be found
+     * @return The value at the given key in the JSON object, or the default value
+     */
+    private String getString(JSONObject jsonObject, String key, String defaultValue) {
         String k = getDeepestKey(key);
         try {
-            JSONObject o = getDeepestObject(configJSON, key);
+            JSONObject o = getDeepestObject(jsonObject, key);
 
             String value = o.getString(k);
             if (value == null) {
                 return defaultValue;
             }
             return value;
-        } catch (Exception ex) {}
+        } catch (Exception ignore) {
+            // value was not found
+        }
         return defaultValue;
     }
 
-    public boolean getBoolean(String key, boolean defaultValue) {
+    /**
+     * Get a boolean value from the given JSON object.
+     *
+     * @param jsonObject A JSON object to search
+     * @param key A key to fetch from the JSON object
+     * @param defaultValue A default value to return if the key cannot be found
+     * @return The value at the given key in the JSON object, or the default value
+     */
+    private boolean getBoolean(JSONObject jsonObject, String key, boolean defaultValue) {
         String k = getDeepestKey(key);
         try {
-            JSONObject o = getDeepestObject(configJSON, key);
+            JSONObject o = getDeepestObject(jsonObject, key);
 
             return o.getBoolean(k);
-        } catch (Exception ex) {}
+        } catch (Exception ignore) {
+            // value was not found
+        }
         return defaultValue;
     }
 
-    public int getInt(String key, int defaultValue) {
+    /**
+     * Get an int value from the given JSON object.
+     *
+     * @param jsonObject A JSON object to search
+     * @param key A key to fetch from the JSON object
+     * @param defaultValue A default value to return if the key cannot be found
+     * @return The value at the given key in the JSON object, or the default value
+     */
+    private int getInt(JSONObject jsonObject, String key, int defaultValue) {
         String k = getDeepestKey(key);
         try {
-            JSONObject o = getDeepestObject(configJSON, key);
+            JSONObject o = getDeepestObject(jsonObject, key);
             return o.getInt(k);
         } catch (Exception ignore) {
             // value was not found
@@ -306,14 +432,18 @@ public class CapConfig {
         return defaultValue;
     }
 
-    public String[] getArray(String key) {
-        return getArray(key, null);
-    }
-
-    public String[] getArray(String key, String[] defaultValue) {
+    /**
+     * Get a string array value from the given JSON object.
+     *
+     * @param jsonObject A JSON object to search
+     * @param key A key to fetch from the JSON object
+     * @param defaultValue A default value to return if the key cannot be found
+     * @return The value at the given key in the JSON object, or the default value
+     */
+    private String[] getArray(JSONObject jsonObject, String key, String[] defaultValue) {
         String k = getDeepestKey(key);
         try {
-            JSONObject o = getDeepestObject(configJSON, key);
+            JSONObject o = getDeepestObject(jsonObject, key);
 
             JSONArray a = o.getJSONArray(k);
             if (a == null) {
@@ -328,8 +458,26 @@ public class CapConfig {
             }
 
             return value;
-        } catch (Exception ex) {}
+        } catch (Exception ignore) {
+            // value was not found
+        }
         return defaultValue;
+    }
+
+    /**
+     * Get a JSON object value from the given JSON object.
+     *
+     * @param jsonObject A JSON object to search
+     * @param key A key to fetch from the JSON object
+     * @return The value from the config, if exists. Null if not
+     */
+    private JSONObject getObject(JSONObject jsonObject, String key) {
+        try {
+            return getDeepestObject(jsonObject, key);
+        } catch (Exception ignore) {
+            // value was not found
+        }
+        return null;
     }
 
     /**
@@ -348,21 +496,26 @@ public class CapConfig {
     }
 
     /**
-     * Given a JSON Object and key path, gets the deepest object in the path.
+     * Given a JSON object and key path, gets the deepest object in the path.
      *
-     * @param jsonObject A JSON Object
+     * @param jsonObject A JSON object
      * @param key The key path to follow
      * @return The deepest object along the key path
      * @throws JSONException Thrown if any JSON errors
      */
     private JSONObject getDeepestObject(JSONObject jsonObject, String key) throws JSONException {
         String[] parts = key.split("\\.");
-
         JSONObject o = jsonObject;
-        // Search until the second to last part of the key
-        for (int i = 0; i < parts.length - 1; i++) {
-            String k = parts[i];
-            o = o.getJSONObject(k);
+
+        if (parts.length == 1) {
+            // If object is in the root, return it.
+            o = o.getJSONObject(parts[0]);
+        } else {
+            // Search until the second to last part of the key
+            for (int i = 0; i < parts.length - 1; i++) {
+                String k = parts[i];
+                o = o.getJSONObject(k);
+            }
         }
 
         return o;
