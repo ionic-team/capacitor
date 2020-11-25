@@ -16,7 +16,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
         return bridgeDelegate?.bridgedWebView
     }
 
-    private(set) weak var userNotificationDelegate: UserNotificationCenterDelegate
+    public var userNotificationDelegate: UserNotificationCenterDelegate
 
     public var isSimEnvironment: Bool {
         #if targetEnvironment(simulator)
