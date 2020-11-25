@@ -206,7 +206,7 @@ public class CapConfig {
      * @return The value from the config, if key exists. Default value returned if not
      */
     public String getPluginString(String pluginId, String configKey, String defaultValue) {
-        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String keyPath = String.format("%s.%s", pluginId, configKey);
         return getString(pluginConfigurations, keyPath, defaultValue);
     }
 
@@ -219,7 +219,7 @@ public class CapConfig {
      * @return The value from the config, if key exists. Default value returned if not
      */
     public boolean getPluginBoolean(String pluginId, String configKey, boolean defaultValue) {
-        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String keyPath = String.format("%s.%s", pluginId, configKey);
         return getBoolean(pluginConfigurations, keyPath, defaultValue);
     }
 
@@ -232,7 +232,7 @@ public class CapConfig {
      * @return The value from the config, if key exists. Default value returned if not
      */
     public int getPluginInt(String pluginId, String configKey, int defaultValue) {
-        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String keyPath = String.format("%s.%s", pluginId, configKey);
         return getInt(pluginConfigurations, keyPath, defaultValue);
     }
 
@@ -256,7 +256,7 @@ public class CapConfig {
      * @return The value from the config, if key exists. Default value returned if not
      */
     public String[] getPluginArray(String pluginId, String configKey, String[] defaultValue) {
-        String keyPath = String.format("plugins.%s.%s", pluginId, configKey);
+        String keyPath = String.format("%s.%s", pluginId, configKey);
         return getArray(pluginConfigurations, keyPath, defaultValue);
     }
 
@@ -268,7 +268,7 @@ public class CapConfig {
      * @return The value from the config, if exists. Null if not
      */
     public JSONObject getPluginObject(String pluginId, String configKey) {
-        return getObject(pluginConfigurations, String.format("plugins.%s.%s", pluginId, configKey));
+        return getObject(pluginConfigurations, String.format("%s.%s", pluginId, configKey));
     }
 
     /**
@@ -472,8 +472,11 @@ public class CapConfig {
      * @return The value from the config, if exists. Null if not
      */
     private JSONObject getObject(JSONObject jsonObject, String key) {
+        String k = getDeepestKey(key);
         try {
-            return getDeepestObject(jsonObject, key);
+            JSONObject o = getDeepestObject(jsonObject, key);
+
+            return o.getJSONObject(k);
         } catch (Exception ignore) {
             // value was not found
         }
@@ -507,15 +510,10 @@ public class CapConfig {
         String[] parts = key.split("\\.");
         JSONObject o = jsonObject;
 
-        if (parts.length == 1) {
-            // If object is in the root, return it.
-            o = o.getJSONObject(parts[0]);
-        } else {
-            // Search until the second to last part of the key
-            for (int i = 0; i < parts.length - 1; i++) {
-                String k = parts[i];
-                o = o.getJSONObject(k);
-            }
+        // Search until the second to last part of the key
+        for (int i = 0; i < parts.length - 1; i++) {
+            String k = parts[i];
+            o = o.getJSONObject(k);
         }
 
         return o;
