@@ -7,36 +7,33 @@
   "license": "MIT",
   "files": [
     "dist/",
-    "cordova.js",
-    "native-bridge.js"
+    "types/",
+    "cordova.js"
   ],
   "scripts": {
-    "docs": "./node_modules/.bin/typedoc --exclude **/__test__/*.ts --json dist/docs.json --mode modules src/core-plugin-definitions.ts && node scripts/docs.js",
-    "build": "npm run clean && npm run transpile && npm run rollup && npm run minify",
+    "build": "npm run clean && npm run transpile && npm run rollup",
     "clean": "rimraf dist",
-    "minify": "terser --mangle --compress --source-map \"content='dist/capacitor.js.map',url='capacitor.js.map'\" --comments '/^/*!/' --output dist/capacitor.js dist/capacitor.js",
     "prepublishOnly": "npm run build",
     "rollup": "rollup --config rollup.config.js",
     "transpile": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "test.watch": "jest --watchAll",
+    "test.treeshaking": "node src/tests/build-treeshaking.js"
   },
   "main": "dist/index.js",
-  "module": "dist/esm/index.js",
+  "types": "types/index.d.ts",
   "unpkg": "dist/capacitor.js",
-  "typings": "dist/esm/index.d.ts",
   "dependencies": {
     "tslib": "^2.0.3"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
     "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.21.0",
-    "terser": "^5.3.8",
-    "ts-jest": "^26.1.3",
-    "typedoc": "^0.19.2",
-    "typescript": "~4.0.3"
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.0.5"
   },
   "repository": {
     "type": "git",

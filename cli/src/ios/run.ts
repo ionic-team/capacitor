@@ -2,15 +2,11 @@ import Debug from 'debug';
 import { resolve } from 'path';
 
 import c from '../colors';
-import {
-  getPlatformTargets,
-  promptForPlatformTarget,
-  runCommand,
-  runNativeRun,
-  runTask,
-} from '../common';
+import { promptForPlatformTarget, runTask } from '../common';
 import type { Config } from '../definitions';
 import type { RunCommandOptions } from '../tasks/run';
+import { runNativeRun, getPlatformTargets } from '../util/native-run';
+import { runCommand } from '../util/subprocess';
 
 const debug = Debug('capacitor:ios:run');
 
@@ -46,7 +42,7 @@ export async function runIOS(
 
   await runTask('Running xcodebuild', async () =>
     runCommand('xcrun', ['xcodebuild', ...xcodebuildArgs], {
-      cwd: resolve(config.ios.platformDirAbs, 'App'),
+      cwd: config.ios.nativeProjectDirAbs,
     }),
   );
 

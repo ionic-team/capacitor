@@ -11,18 +11,14 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from '../colors';
-import {
-  checkPlatformVersions,
-  logFatal,
-  resolveNode,
-  runTask,
-} from '../common';
+import { checkPlatformVersions, runTask } from '../common';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
+import { logFatal } from '../log';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -35,6 +31,7 @@ import {
   printPlugins,
 } from '../plugin';
 import { convertToUnixPath } from '../util/fs';
+import { resolveNode } from '../util/node';
 
 import { getAndroidPlugins } from './common';
 
@@ -191,7 +188,7 @@ export async function installGradlePlugins(
   );
 
   const settingsPath = config.android.platformDirAbs;
-  const dependencyPath = join(config.android.platformDirAbs, 'app');
+  const dependencyPath = config.android.appDirAbs;
   const relativeCapcitorAndroidPath = convertToUnixPath(
     relative(settingsPath, capacitorAndroidPath),
   );

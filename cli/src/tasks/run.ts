@@ -8,19 +8,19 @@ import {
   runPlatformHook,
   selectPlatforms,
   promptForPlatform,
-  logFatal,
-  getPlatformTargets,
   getPlatformTargetName,
 } from '../common';
 import type { Config } from '../definitions';
 import { runIOS } from '../ios/run';
-import { logger, output } from '../log';
+import { logger, output, logFatal } from '../log';
+import { getPlatformTargets } from '../util/native-run';
 
-import { copy } from './copy';
+import { sync } from './sync';
 
 export interface RunCommandOptions {
   list?: boolean;
   target?: string;
+  sync?: boolean;
 }
 
 export async function runCommand(
@@ -55,24 +55,34 @@ export async function runCommand(
 
     if (options.list) {
       const targets = await getPlatformTargets(platformName);
-      const rows = targets.map(t => [
-        getPlatformTargetName(t),
-        `${t.platform === 'ios' ? 'iOS' : 'API'} ${t.sdkVersion}`,
-        t.id ?? '?',
-      ]);
+      const outputTargets = targets.map(t => ({
+        name: getPlatformTargetName(t),
+        api: `${t.platform === 'ios' ? 'iOS' : 'API'} ${t.sdkVersion}`,
+        id: t.id ?? '?',
+      }));
 
-      output.write(
-        `${columnar(rows, {
-          headers: ['Name', 'API', 'Target ID'],
-          vsep: ' ',
-        })}\n`,
-      );
+      // TODO: make hidden commander option (https://github.com/tj/commander.js/issues/1106)
+      if (process.argv.includes('--json')) {
+        output.write(JSON.stringify(outputTargets));
+      } else {
+        const rows = outputTargets.map(t => [t.name, t.api, t.id]);
+
+        output.write(
+          `${columnar(rows, {
+            headers: ['Name', 'API', 'Target ID'],
+            vsep: ' ',
+          })}\n`,
+        );
+      }
 
       return;
     }
 
     try {
-      await copy(config, platformName);
+      if (options.sync) {
+        await sync(config, platformName, false);
+      }
+
       await run(config, platformName, options);
     } catch (e) {
       logFatal(e.stack ?? e);
