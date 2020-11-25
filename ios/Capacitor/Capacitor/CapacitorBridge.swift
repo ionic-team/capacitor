@@ -553,11 +553,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         switch inputURL.scheme {
         case "res":
-            guard let resourcePath = Bundle.main.resourcePath else {
-                return nil
-            }
-
-            url = URL(fileURLWithPath: resourcePath).appendingPathComponent("public").appendingPathComponent(inputURL.path)
+            url = config.appLocation.appendingPathComponent(inputURL.path)
         case "file":
             url = inputURL
         default:
