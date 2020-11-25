@@ -155,6 +155,15 @@ export interface CapacitorConfig {
      * @default false
      */
     hideLogs?: boolean;
+
+    /**
+     * Allowlist of plugins to include during `npx cap sync` for Android.
+     *
+     * Overrides global `includePlugins` option.
+     *
+     * @since 3.0.0
+     */
+    includePlugins?: string[];
   };
 
   ios?: {
@@ -264,6 +273,15 @@ export interface CapacitorConfig {
      * @default false
      */
     hideLogs?: boolean;
+
+    /**
+     * Allowlist of plugins to include during `npx cap sync` for iOS.
+     *
+     * Overrides global `includePlugins` option.
+     *
+     * @since 3.0.0
+     */
+    includePlugins?: string[];
   };
 
   server?: {
@@ -353,4 +371,15 @@ export interface CapacitorConfig {
   };
 
   plugins?: { [key: string]: any };
+
+  /**
+   * Allowlist of plugins to include during `npx cap sync`.
+   *
+   * This should be an array of strings representing the npm package name of
+   * plugins to include when running `npx cap sync`. If unset, Capacitor will
+   * inspect `package.json` for a list of potential plugins.
+   *
+   * @since 3.0.0
+   */
+  includePlugins?: string[];
 }
