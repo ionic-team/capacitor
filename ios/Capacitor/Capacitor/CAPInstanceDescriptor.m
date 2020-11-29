@@ -38,6 +38,7 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
     _enableLogging = YES;
     _enableScrolling = YES;
     _allowLinkPreviews = YES;
+    _handleApplicationNotifications = YES;
     _contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     _appLocation = location;
     _cordovaConfiguration = [[CDVConfigParser alloc] init];

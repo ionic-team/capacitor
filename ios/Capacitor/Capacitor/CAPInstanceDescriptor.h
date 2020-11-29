@@ -34,6 +34,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, assign) BOOL enableLogging;
 @property (nonatomic, assign) BOOL enableScrolling;
 @property (nonatomic, assign) BOOL allowLinkPreviews;
+@property (nonatomic, assign) BOOL handleApplicationNotifications;
 @property (nonatomic, assign) UIScrollViewContentInsetAdjustmentBehavior contentInsetAdjustmentBehavior;
 @property (nonatomic, copy, nonnull) NSURL *appLocation;
 @property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;
