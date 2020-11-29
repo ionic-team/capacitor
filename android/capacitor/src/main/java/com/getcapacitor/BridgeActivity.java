@@ -23,16 +23,18 @@ public class BridgeActivity extends AppCompatActivity {
         bridgeBuilder.setInstanceState(savedInstanceState);
     }
 
-    protected void init(Bundle savedInstanceState) {
-        PluginLoader loader = new PluginLoader(getAssets());
-        List<Class<? extends Plugin>> pluginsList = loader.getPlugins();
-        this.init(savedInstanceState, pluginsList);
-    }
-
+    /**
+     * @deprecated TODO
+     */
+    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
         this.init(savedInstanceState, plugins, null);
     }
 
+    /**
+     * @deprecated TODO
+     */
+    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
         this.initialPlugins = plugins;
         this.config = config;
@@ -41,9 +43,14 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     /**
-     * Load the WebView and create the Bridge
+     * @deprecated TODO
      */
+    @Deprecated
     protected void load(Bundle savedInstanceState) {
+        this.load();
+    }
+
+    private void load() {
         getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(R.style.AppTheme_NoActionBar);
@@ -70,6 +77,14 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+        // Preferred behavior: init() was not called, so we construct the bridge with auto-loaded plugins.
+        if (bridge == null) {
+            PluginLoader loader = new PluginLoader(getAssets());
+            bridgeBuilder.addPlugins(loader.getPlugins());
+            this.load();
+        }
+
         activityDepth++;
         this.bridge.onStart();
         Logger.debug("App started");
