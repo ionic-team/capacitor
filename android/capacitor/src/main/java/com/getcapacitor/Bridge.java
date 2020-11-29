@@ -19,6 +19,7 @@ import android.webkit.WebView;
 import androidx.core.app.ActivityCompat;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
@@ -31,8 +32,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.apache.cordova.CordovaInterfaceImpl;
 import org.apache.cordova.CordovaPreferences;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +83,8 @@ public class Bridge {
     private HostMask appAllowNavigationMask;
     // A reference to the main WebView for the app
     private final WebView webView;
-    public final CordovaInterfaceImpl cordovaInterface;
+    public final MockCordovaInterfaceImpl cordovaInterface;
+    private CordovaWebView cordovaWebView;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
     private App app;
@@ -119,12 +121,14 @@ public class Bridge {
      * app, and a reference to the {@link WebView} our app will use.
      * @param context
      * @param webView
+     * @deprecated Use {@link BridgeBuilder} to create Bridge instances
      */
+    @Deprecated
     public Bridge(
         Activity context,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
-        CordovaInterfaceImpl cordovaInterface,
+        MockCordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
         JSONObject config
@@ -280,6 +284,10 @@ public class Bridge {
         return preferences.getBoolean("DisableDeploy", false);
     }
 
+    public boolean shouldKeepRunning() {
+        return preferences.getBoolean("KeepRunning", true);
+    }
+
     public void handleAppUrlLoadError(Exception ex) {
         if (ex instanceof SocketTimeoutException) {
             Logger.error(
@@ -294,6 +302,10 @@ public class Bridge {
 
     public boolean isDevMode() {
         return (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    }
+
+    protected void setCordovaWebView(CordovaWebView cordovaWebView) {
+        this.cordovaWebView = cordovaWebView;
     }
 
     /**
@@ -925,6 +937,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnNewIntent(intent);
         }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.onNewIntent(intent);
+        }
     }
 
     /**
@@ -943,6 +959,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStart();
         }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleStart();
+        }
     }
 
     /**
@@ -951,6 +971,10 @@ public class Bridge {
     public void onResume() {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnResume();
+        }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleResume(this.shouldKeepRunning());
         }
     }
 
@@ -963,6 +987,11 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnPause();
         }
+
+        if (cordovaWebView != null) {
+            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
+            cordovaWebView.handlePause(keepRunning);
+        }
     }
 
     /**
@@ -971,6 +1000,10 @@ public class Bridge {
     public void onStop() {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStop();
+        }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleStop();
         }
     }
 
@@ -983,6 +1016,18 @@ public class Bridge {
         }
 
         handlerThread.quitSafely();
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleDestroy();
+        }
+    }
+
+    /**
+     * Handle onDetachedFromWindow lifecycle event
+     */
+    public void onDetachedFromWindow() {
+        webView.removeAllViews();
+        webView.destroy();
     }
 
     public void onBackPressed() {
