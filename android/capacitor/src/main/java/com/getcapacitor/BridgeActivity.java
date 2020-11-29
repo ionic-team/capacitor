@@ -37,7 +37,7 @@ public class BridgeActivity extends AppCompatActivity {
     /**
      * Load the WebView and create the Bridge
      */
-    private void load() {
+    protected void load(Bundle savedInstanceState) {
         getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(R.style.AppTheme_NoActionBar);
