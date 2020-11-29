@@ -31,7 +31,7 @@ public class BridgeActivity extends AppCompatActivity {
         this.initialPlugins = plugins;
         this.config = config;
 
-        this.load();
+        this.load(savedInstanceState);
     }
 
     /**
