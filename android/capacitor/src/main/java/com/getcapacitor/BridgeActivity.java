@@ -23,18 +23,10 @@ public class BridgeActivity extends AppCompatActivity {
         bridgeBuilder.setInstanceState(savedInstanceState);
     }
 
-    /**
-     * @deprecated TODO
-     */
-    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
         this.init(savedInstanceState, plugins, null);
     }
 
-    /**
-     * @deprecated TODO
-     */
-    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
         this.initialPlugins = plugins;
         this.config = config;
@@ -72,12 +64,6 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
-        // Preferred behavior: init() was not called, so we set up the bridge here
-        if (bridge == null) {
-            this.load();
-        }
-
         activityDepth++;
         this.bridge.onStart();
         Logger.debug("App started");
