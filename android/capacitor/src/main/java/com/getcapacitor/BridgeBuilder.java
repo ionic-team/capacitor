@@ -55,6 +55,14 @@ public class BridgeBuilder {
         return this;
     }
 
+    public BridgeBuilder addPlugins(List<Class<? extends Plugin>> plugins) {
+        for (Class<? extends Plugin> cls : plugins) {
+            this.addPlugin(cls);
+        }
+
+        return this;
+    }
+
     public Bridge build() {
         // Cordova initialization
         ConfigXmlParser parser = new ConfigXmlParser();
