@@ -62,7 +62,8 @@ public class BridgeFragment extends Fragment {
             startDir = getArguments().getString(ARG_START_DIR);
         }
 
-        bridge = BridgeBuilder.newInstance(getActivity()).setInstanceState(savedInstanceState).setPlugins(initialPlugins).build();
+        bridge =
+            BridgeBuilder.newInstance().setActivity(getActivity()).setInstanceState(savedInstanceState).setPlugins(initialPlugins).build();
 
         if (startDir != null) {
             bridge.setServerAssetPath(startDir);

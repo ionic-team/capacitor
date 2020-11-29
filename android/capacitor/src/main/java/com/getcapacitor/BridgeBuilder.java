@@ -17,22 +17,22 @@ import org.json.JSONObject;
 
 public class BridgeBuilder {
 
-    private final Activity activity;
-    private final Context context;
-    private final WebView webView;
-
     private Bundle instanceState = null;
     private JSONObject config = new JSONObject();
     private List<Class<? extends Plugin>> plugins = new ArrayList<>();
+    private Activity activity = null;
+    private Context context = null;
+    private WebView webView = null;
 
-    public static BridgeBuilder newInstance(Activity activity) {
-        return new BridgeBuilder(activity);
+    public static BridgeBuilder newInstance() {
+        return new BridgeBuilder();
     }
 
-    protected BridgeBuilder(Activity activity) {
+    protected BridgeBuilder setActivity(Activity activity) {
         this.activity = activity;
         this.context = activity.getApplicationContext();
         this.webView = activity.findViewById(R.id.webview);
+        return this;
     }
 
     public BridgeBuilder setInstanceState(Bundle instanceState) {
