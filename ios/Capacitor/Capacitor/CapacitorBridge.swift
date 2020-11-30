@@ -135,11 +135,11 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public func getUserInterfaceStyle() -> UIUserInterfaceStyle {
         return userInterfaceStyle
     }
-    
+
     public func getLocalUrl() -> String {
         return config.localURL.absoluteString
     }
-    
+
     @nonobjc public func setStatusBarAnimation(_ animation: UIStatusBarAnimation) {
         statusBarAnimation = animation
     }
@@ -535,6 +535,47 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
                 }
             }
         }
+    }
+
+    // MARK: - CAPBridgeProtocol: Paths, Files, Assets
+
+    /**
+     * Translate a URL from the web view into a file URL for native iOS.
+     *
+     * The web view may be handling several different types of URLs:
+     *   - res:// (shortcut scheme to web assets)
+     *   - file:// (fully qualified URL to file on the local device)
+     *   - base64:// (to be implemented)
+     *   - [web view scheme]:// (already converted once to load in the web view, to be implemented)
+     */
+    public func localURL(fromWebURL webURL: URL?) -> URL? {
+        guard let inputURL = webURL else {
+            return nil
+        }
+
+        let url: URL
+
+        switch inputURL.scheme {
+        case "res":
+            url = config.appLocation.appendingPathComponent(inputURL.path)
+        case "file":
+            url = inputURL
+        default:
+            return nil
+        }
+
+        return url
+    }
+
+    /**
+     * Translate a file URL for native iOS into a URL to load in the web view.
+     */
+    public func portablePath(fromLocalURL localURL: URL?) -> URL? {
+        guard let inputURL = localURL else {
+            return nil
+        }
+
+        return self.config.localURL.appendingPathComponent(CapacitorBridge.fileStartIdentifier).appendingPathComponent(inputURL.path)
     }
 
     // MARK: - CAPBridgeProtocol: View Presentation
