@@ -17,9 +17,11 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import androidx.core.app.ActivityCompat;
+import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
+import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
@@ -32,8 +34,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,7 +125,7 @@ public class Bridge {
      * app, and a reference to the {@link WebView} our app will use.
      * @param context
      * @param webView
-     * @deprecated Use {@link BridgeBuilder} to create Bridge instances
+     * @deprecated Use {@link Bridge.Builder} to create Bridge instances
      */
     @Deprecated
     public Bridge(
@@ -1085,5 +1089,77 @@ public class Bridge {
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
+    }
+
+    public static class Builder {
+
+        private Bundle instanceState = null;
+        private JSONObject config = new JSONObject();
+        private List<Class<? extends Plugin>> plugins = new ArrayList<>();
+        private Activity activity = null;
+        private Context context = null;
+        private WebView webView = null;
+
+        protected Builder setActivity(Activity activity) {
+            this.activity = activity;
+            this.context = activity.getApplicationContext();
+            this.webView = activity.findViewById(R.id.webview);
+            return this;
+        }
+
+        public Builder setInstanceState(Bundle instanceState) {
+            this.instanceState = instanceState;
+            return this;
+        }
+
+        public Builder setConfig(JSONObject config) {
+            this.config = config;
+            return this;
+        }
+
+        public Builder setPlugins(List<Class<? extends Plugin>> plugins) {
+            this.plugins = plugins;
+            return this;
+        }
+
+        public Builder addPlugin(Class<? extends Plugin> plugin) {
+            this.plugins.add(plugin);
+            return this;
+        }
+
+        public Builder addPlugins(List<Class<? extends Plugin>> plugins) {
+            for (Class<? extends Plugin> cls : plugins) {
+                this.addPlugin(cls);
+            }
+
+            return this;
+        }
+
+        public Bridge build() {
+            // Cordova initialization
+            ConfigXmlParser parser = new ConfigXmlParser();
+            parser.parse(context);
+            CordovaPreferences preferences = parser.getPreferences();
+            preferences.setPreferencesBundle(activity.getIntent().getExtras());
+            List<PluginEntry> pluginEntries = parser.getPluginEntries();
+            MockCordovaInterfaceImpl cordovaInterface = new MockCordovaInterfaceImpl(activity);
+            if (instanceState != null) {
+                cordovaInterface.restoreInstanceState(instanceState);
+            }
+            MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(context);
+            mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
+            PluginManager pluginManager = mockWebView.getPluginManager();
+            cordovaInterface.onCordovaInit(pluginManager);
+
+            // Bridge initialization
+            Bridge bridge = new Bridge(activity, webView, plugins, cordovaInterface, pluginManager, preferences, config);
+            bridge.setCordovaWebView(mockWebView);
+
+            if (instanceState != null) {
+                bridge.restoreInstanceState(instanceState);
+            }
+
+            return bridge;
+        }
     }
 }
