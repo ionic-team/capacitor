@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.util.PermissionHelper;
@@ -83,12 +82,10 @@ public class Plugin {
 
     /**
      * Get the main {@link Activity} for the app
-     * @deprecated Use {@link Bridge#getActivity()}
      * @return the Activity for the current app
      */
-    @Deprecated
     public AppCompatActivity getActivity() {
-        return (AppCompatActivity) this.bridge.getActivity();
+        return this.bridge.getActivity();
     }
 
     /**
@@ -291,7 +288,7 @@ public class Plugin {
      */
     public void requestPermissions(PluginCall call, String[] permissions, int requestCode) {
         bridge.savePermissionCall(call);
-        ActivityCompat.requestPermissions(bridge.getActivity(), permissions, requestCode);
+        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
     }
 
     /**
@@ -309,7 +306,7 @@ public class Plugin {
             }
 
             bridge.savePermissionCall(call);
-            ActivityCompat.requestPermissions(bridge.getActivity(), perms.toArray(new String[0]), annotation.permissionRequestCode());
+            ActivityCompat.requestPermissions(getActivity(), perms.toArray(new String[0]), annotation.permissionRequestCode());
         }
     }
 
@@ -322,7 +319,7 @@ public class Plugin {
      */
     @Deprecated
     public void pluginRequestPermissions(String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(bridge.getActivity(), permissions, requestCode);
+        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
     }
 
     /**
@@ -332,7 +329,7 @@ public class Plugin {
     @Deprecated
     public void pluginRequestAllPermissions() {
         NativePlugin legacyAnnotation = handle.getLegacyPluginAnnotation();
-        ActivityCompat.requestPermissions(bridge.getActivity(), legacyAnnotation.permissions(), legacyAnnotation.permissionRequestCode());
+        ActivityCompat.requestPermissions(getActivity(), legacyAnnotation.permissions(), legacyAnnotation.permissionRequestCode());
     }
 
     /**
@@ -344,7 +341,7 @@ public class Plugin {
      */
     @Deprecated
     public void pluginRequestPermission(String permission, int requestCode) {
-        ActivityCompat.requestPermissions(bridge.getActivity(), new String[] { permission }, requestCode);
+        ActivityCompat.requestPermissions(getActivity(), new String[] { permission }, requestCode);
     }
 
     /**

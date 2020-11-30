@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
@@ -98,7 +99,16 @@ public class BridgeFragment extends Fragment {
             preferences = new CordovaPreferences();
         }
 
-        bridge = new Bridge(this.getActivity(), webView, initialPlugins, cordovaInterface, pluginManager, preferences, config);
+        bridge =
+            new Bridge(
+                (AppCompatActivity) this.getActivity(),
+                webView,
+                initialPlugins,
+                cordovaInterface,
+                pluginManager,
+                preferences,
+                config
+            );
 
         if (startDir != null) {
             bridge.setServerAssetPath(startDir);
