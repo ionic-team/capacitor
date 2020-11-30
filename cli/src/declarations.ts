@@ -370,7 +370,15 @@ export interface CapacitorConfig {
     preferences?: { [key: string]: string | undefined };
   };
 
-  plugins?: { [key: string]: any };
+  /**
+   * Configure plugins.
+   *
+   * This is an object with configuration values specified by plugin class
+   * name.
+   *
+   * @since 1.0.0
+   */
+  plugins?: PluginsConfig;
 
   /**
    * Allowlist of plugins to include during `npx cap sync`.
@@ -382,4 +390,17 @@ export interface CapacitorConfig {
    * @since 3.0.0
    */
   includePlugins?: string[];
+}
+
+export interface PluginsConfig {
+  /**
+   * Plugin configuration by class name.
+   *
+   * @since 1.0.0
+   */
+  [key: string]:
+    | {
+        [key: string]: any;
+      }
+    | undefined;
 }
