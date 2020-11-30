@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.util.PermissionHelper;
@@ -84,8 +84,8 @@ public class Plugin {
      * Get the main {@link Activity} for the app
      * @return the Activity for the current app
      */
-    public AppCompatActivity getActivity() {
-        return (AppCompatActivity) this.bridge.getActivity();
+    public FragmentActivity getActivity() {
+        return this.bridge.getActivity();
     }
 
     /**

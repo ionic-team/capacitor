@@ -17,6 +17,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.plugin.SplashScreen;
@@ -74,7 +75,7 @@ public class Bridge {
     private CapConfig config;
 
     // A reference to the main activity for the app
-    private final Activity context;
+    private final FragmentActivity context;
     private WebViewLocalServer localServer;
     private String localUrl;
     private String appUrl;
@@ -121,7 +122,7 @@ public class Bridge {
      * @param webView
      */
     public Bridge(
-        Activity context,
+        FragmentActivity context,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
         CordovaInterfaceImpl cordovaInterface,
@@ -308,7 +309,7 @@ public class Bridge {
      * Get the activity for the app
      * @return
      */
-    public Activity getActivity() {
+    public FragmentActivity getActivity() {
         return this.context;
     }
 
