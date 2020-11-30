@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { Plugin, PluginType, getAssets, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
+import { Plugin, PluginType, getAllElements, getAssets, getJSModules, getPlatformElement, getPluginPlatform, getPluginType, getPlugins, printPlugins } from './plugin';
 import { copySync, ensureDirSync, readFileAsync, removeSync, writeFileAsync } from './util/fs';
 import { basename, extname, join, resolve } from 'path';
 import { buildXmlElement, installDeps, log, logError, logFatal, logInfo, logWarn, parseXML, readXML, resolveNode, writeXML } from './common';
@@ -381,9 +381,11 @@ export async function writeCordovaAndroidManifest(cordovaPlugins: Plugin[], conf
   let rootXMLEntries: Array<any> = [];
   let applicationXMLEntries: Array<any> = [];
   let applicationXMLAttributes: Array<any> = [];
+  let prefsArray: Array<any> = [];
   cordovaPlugins.map(async p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
+    prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
     editConfig.concat(configFile).map(async (configElement: any) => {
       if (configElement.$ && (configElement.$.target && configElement.$.target.includes('AndroidManifest.xml') || configElement.$.file && configElement.$.file.includes('AndroidManifest.xml'))) {
         const keys = Object.keys(configElement).filter(k  => k !== '$');
@@ -425,6 +427,9 @@ ${applicationXMLEntries.join('\n')}
 ${rootXMLEntries.join('\n')}
 </manifest>`;
   content = content.replace(new RegExp(('$PACKAGE_NAME').replace('$', '\\$&'), 'g'), '${applicationId}');
+  prefsArray.map((preference: any) => {
+    content = content.replace(new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'), preference.$.default);
+  });
   if (existsSync(manifestPath)) {
     await writeFileAsync(manifestPath, content);
   }
