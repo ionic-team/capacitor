@@ -1135,7 +1135,7 @@ public class Bridge {
             return this;
         }
 
-        public Bridge build() {
+        public Bridge create() {
             // Cordova initialization
             ConfigXmlParser parser = new ConfigXmlParser();
             parser.parse(context);
