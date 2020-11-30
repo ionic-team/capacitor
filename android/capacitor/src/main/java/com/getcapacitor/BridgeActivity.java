@@ -80,8 +80,14 @@ public class BridgeActivity extends AppCompatActivity {
 
         // Preferred behavior: init() was not called, so we construct the bridge with auto-loaded plugins.
         if (bridge == null) {
-            PluginLoader loader = new PluginLoader(getAssets());
-            bridgeBuilder.addPlugins(loader.getPlugins());
+            PluginManager loader = new PluginManager(getAssets());
+
+            try {
+                bridgeBuilder.addPlugins(loader.loadPluginClasses());
+            } catch (PluginLoadException ex) {
+                Logger.error("Error loading plugins.", ex);
+            }
+
             this.load();
         }
 

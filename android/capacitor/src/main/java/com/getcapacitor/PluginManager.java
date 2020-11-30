@@ -10,15 +10,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PluginLoader {
+public class PluginManager {
 
-    private JSONArray pluginsJSON = new JSONArray();
+    private final AssetManager assetManager;
 
-    public PluginLoader(AssetManager assetManager) {
-        this.loadPlugins(assetManager);
+    public PluginManager(AssetManager assetManager) {
+        this.assetManager = assetManager;
     }
 
-    public List<Class<? extends Plugin>> getPlugins() {
+    public List<Class<? extends Plugin>> loadPluginClasses() throws PluginLoadException {
+        JSONArray pluginsJSON = parsePluginsJSON();
         ArrayList<Class<? extends Plugin>> pluginList = new ArrayList<>();
 
         try {
@@ -29,15 +30,15 @@ public class PluginLoader {
                 pluginList.add(c.asSubclass(Plugin.class));
             }
         } catch (JSONException e) {
-            Logger.error("Could not parse capacitor.plugins.json as JSON");
+            throw new PluginLoadException("Could not parse capacitor.plugins.json as JSON");
         } catch (ClassNotFoundException e) {
-            Logger.error("Could not find class by class path: " + e.getMessage());
+            throw new PluginLoadException("Could not find class by class path: " + e.getMessage());
         }
 
         return pluginList;
     }
 
-    private void loadPlugins(AssetManager assetManager) {
+    private JSONArray parsePluginsJSON() throws PluginLoadException {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.plugins.json")))) {
             StringBuilder b = new StringBuilder();
             String line;
@@ -45,11 +46,11 @@ public class PluginLoader {
                 b.append(line);
             }
             String jsonString = b.toString();
-            pluginsJSON = new JSONArray(jsonString);
+            return new JSONArray(jsonString);
         } catch (IOException e) {
-            Logger.error("Could not load capacitor.plugins.json");
+            throw new PluginLoadException("Could not load capacitor.plugins.json");
         } catch (JSONException e) {
-            Logger.error("Could not parse capacitor.plugins.json as JSON");
+            throw new PluginLoadException("Could not parse capacitor.plugins.json as JSON");
         }
     }
 }
