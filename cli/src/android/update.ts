@@ -116,7 +116,7 @@ async function findAndroidPluginClassesInPlugin(
       ['.java', '.kt'].includes(extname(entry.path)),
   });
 
-  const classRegex = /^@CapacitorPlugin[\s\S]+?class ([\w]+)/gm;
+  const classRegex = /^@(?:CapacitorPlugin|NativePlugin)[\s\S]+?class ([\w]+)/gm;
   const packageRegex = /^package ([\w.]+);?$/gm;
 
   debug(
