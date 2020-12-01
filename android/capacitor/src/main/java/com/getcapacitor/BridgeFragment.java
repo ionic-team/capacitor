@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.getcapacitor.android.R;
 import java.util.ArrayList;
@@ -62,7 +63,12 @@ public class BridgeFragment extends Fragment {
             startDir = getArguments().getString(ARG_START_DIR);
         }
 
-        bridge = new Bridge.Builder().setActivity(getActivity()).setInstanceState(savedInstanceState).setPlugins(initialPlugins).create();
+        bridge =
+            new Bridge.Builder()
+                .setActivity((AppCompatActivity) getActivity())
+                .setInstanceState(savedInstanceState)
+                .setPlugins(initialPlugins)
+                .create();
 
         if (startDir != null) {
             bridge.setServerAssetPath(startDir);

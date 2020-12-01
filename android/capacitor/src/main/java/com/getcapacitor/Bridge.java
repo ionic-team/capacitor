@@ -16,6 +16,7 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -79,7 +80,7 @@ public class Bridge {
     private CapConfig config;
 
     // A reference to the main activity for the app
-    private final Activity context;
+    private final AppCompatActivity context;
     private WebViewLocalServer localServer;
     private String localUrl;
     private String appUrl;
@@ -129,7 +130,7 @@ public class Bridge {
      */
     @Deprecated
     public Bridge(
-        Activity context,
+        AppCompatActivity context,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
         MockCordovaInterfaceImpl cordovaInterface,
@@ -324,7 +325,7 @@ public class Bridge {
      * Get the activity for the app
      * @return
      */
-    public Activity getActivity() {
+    public AppCompatActivity getActivity() {
         return this.context;
     }
 
@@ -1096,11 +1097,11 @@ public class Bridge {
         private Bundle instanceState = null;
         private JSONObject config = new JSONObject();
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
-        private Activity activity = null;
+        private AppCompatActivity activity = null;
         private Context context = null;
         private WebView webView = null;
 
-        protected Builder setActivity(Activity activity) {
+        protected Builder setActivity(AppCompatActivity activity) {
             this.activity = activity;
             this.context = activity.getApplicationContext();
             this.webView = activity.findViewById(R.id.webview);
