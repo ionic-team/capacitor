@@ -2,14 +2,16 @@
   "name": "capacitor",
   "private": true,
   "scripts": {
+    "sync-peer-dependencies": "node scripts/sync-peer-dependencies.mjs",
     "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
     "fmt": "npm run eslint -- --fix && npm run prettier -- --write && npm run swiftlint -- autocorrect --format",
-    "prettier": "prettier \"**/*.{css,html,java,js,ts}\"",
+    "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
     "postinstall": "husky install && lerna bootstrap",
     "prepublish": "pinst --disable",
     "postpublish": "pinst --enable"
+    "version": "npm run sync-peer-dependencies"
   },
   "prettier": "@ionic/prettier-config",
   "eslintConfig": {
