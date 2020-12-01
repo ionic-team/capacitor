@@ -7,13 +7,18 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
+import androidx.core.app.ActivityCompat;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 public class ConfigReadingTest {
 
@@ -23,8 +28,8 @@ public class ConfigReadingTest {
     private static final String NONJSON_TEST = "configs/nonjson.json";
     private static final String SERVER_TEST = "configs/server.json";
 
-    Context context = mock(Context.class);
-    AssetManager assetManager = mock(AssetManager.class);
+    Activity context = Mockito.mock(Activity.class);
+    AssetManager assetManager = Mockito.mock(AssetManager.class);
 
     private InputStream getTestInputStream(String testPath) {
         return this.getClass().getClassLoader().getResourceAsStream(testPath);
