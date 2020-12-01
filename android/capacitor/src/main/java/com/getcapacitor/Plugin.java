@@ -85,7 +85,7 @@ public class Plugin {
      * @return the Activity for the current app
      */
     public AppCompatActivity getActivity() {
-        return (AppCompatActivity) this.bridge.getActivity();
+        return this.bridge.getActivity();
     }
 
     /**

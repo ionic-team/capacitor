@@ -16,9 +16,13 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
+import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
@@ -31,8 +35,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.apache.cordova.CordovaInterfaceImpl;
+import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 
@@ -73,7 +79,7 @@ public class Bridge {
     private CapConfig config;
 
     // A reference to the main activity for the app
-    private final Activity context;
+    private final AppCompatActivity context;
     private WebViewLocalServer localServer;
     private String localUrl;
     private String appUrl;
@@ -81,7 +87,8 @@ public class Bridge {
     private HostMask appAllowNavigationMask;
     // A reference to the main WebView for the app
     private final WebView webView;
-    public final CordovaInterfaceImpl cordovaInterface;
+    public final MockCordovaInterfaceImpl cordovaInterface;
+    private CordovaWebView cordovaWebView;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
     private App app;
@@ -118,12 +125,14 @@ public class Bridge {
      * app, and a reference to the {@link WebView} our app will use.
      * @param context
      * @param webView
+     * @deprecated Use {@link Bridge.Builder} to create Bridge instances
      */
+    @Deprecated
     public Bridge(
-        Activity context,
+        AppCompatActivity context,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
-        CordovaInterfaceImpl cordovaInterface,
+        MockCordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
         CapConfig config
@@ -279,6 +288,10 @@ public class Bridge {
         return preferences.getBoolean("DisableDeploy", false);
     }
 
+    public boolean shouldKeepRunning() {
+        return preferences.getBoolean("KeepRunning", true);
+    }
+
     public void handleAppUrlLoadError(Exception ex) {
         if (ex instanceof SocketTimeoutException) {
             Logger.error(
@@ -295,6 +308,10 @@ public class Bridge {
         return (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 
+    protected void setCordovaWebView(CordovaWebView cordovaWebView) {
+        this.cordovaWebView = cordovaWebView;
+    }
+
     /**
      * Get the Context for the App
      * @return
@@ -307,7 +324,7 @@ public class Bridge {
      * Get the activity for the app
      * @return
      */
-    public Activity getActivity() {
+    public AppCompatActivity getActivity() {
         return this.context;
     }
 
@@ -921,6 +938,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnNewIntent(intent);
         }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.onNewIntent(intent);
+        }
     }
 
     /**
@@ -939,6 +960,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStart();
         }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleStart();
+        }
     }
 
     /**
@@ -947,6 +972,10 @@ public class Bridge {
     public void onResume() {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnResume();
+        }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleResume(this.shouldKeepRunning());
         }
     }
 
@@ -959,6 +988,11 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnPause();
         }
+
+        if (cordovaWebView != null) {
+            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
+            cordovaWebView.handlePause(keepRunning);
+        }
     }
 
     /**
@@ -967,6 +1001,10 @@ public class Bridge {
     public void onStop() {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStop();
+        }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleStop();
         }
     }
 
@@ -979,6 +1017,18 @@ public class Bridge {
         }
 
         handlerThread.quitSafely();
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleDestroy();
+        }
+    }
+
+    /**
+     * Handle onDetachedFromWindow lifecycle event
+     */
+    public void onDetachedFromWindow() {
+        webView.removeAllViews();
+        webView.destroy();
     }
 
     public void onBackPressed() {
@@ -1036,5 +1086,77 @@ public class Bridge {
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
+    }
+
+    public static class Builder {
+
+        private Bundle instanceState = null;
+        private CapConfig config = null;
+        private List<Class<? extends Plugin>> plugins = new ArrayList<>();
+        private AppCompatActivity activity = null;
+        private Context context = null;
+        private WebView webView = null;
+
+        protected Builder setActivity(AppCompatActivity activity) {
+            this.activity = activity;
+            this.context = activity.getApplicationContext();
+            this.webView = activity.findViewById(R.id.webview);
+            return this;
+        }
+
+        public Builder setInstanceState(Bundle instanceState) {
+            this.instanceState = instanceState;
+            return this;
+        }
+
+        public Builder setConfig(CapConfig config) {
+            this.config = config;
+            return this;
+        }
+
+        public Builder setPlugins(List<Class<? extends Plugin>> plugins) {
+            this.plugins = plugins;
+            return this;
+        }
+
+        public Builder addPlugin(Class<? extends Plugin> plugin) {
+            this.plugins.add(plugin);
+            return this;
+        }
+
+        public Builder addPlugins(List<Class<? extends Plugin>> plugins) {
+            for (Class<? extends Plugin> cls : plugins) {
+                this.addPlugin(cls);
+            }
+
+            return this;
+        }
+
+        public Bridge create() {
+            // Cordova initialization
+            ConfigXmlParser parser = new ConfigXmlParser();
+            parser.parse(context);
+            CordovaPreferences preferences = parser.getPreferences();
+            preferences.setPreferencesBundle(activity.getIntent().getExtras());
+            List<PluginEntry> pluginEntries = parser.getPluginEntries();
+            MockCordovaInterfaceImpl cordovaInterface = new MockCordovaInterfaceImpl(activity);
+            if (instanceState != null) {
+                cordovaInterface.restoreInstanceState(instanceState);
+            }
+            MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(context);
+            mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
+            PluginManager pluginManager = mockWebView.getPluginManager();
+            cordovaInterface.onCordovaInit(pluginManager);
+
+            // Bridge initialization
+            Bridge bridge = new Bridge(activity, webView, plugins, cordovaInterface, pluginManager, preferences, config);
+            bridge.setCordovaWebView(mockWebView);
+
+            if (instanceState != null) {
+                bridge.restoreInstanceState(instanceState);
+            }
+
+            return bridge;
+        }
     }
 }
