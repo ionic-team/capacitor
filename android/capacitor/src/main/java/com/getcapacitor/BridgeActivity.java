@@ -15,7 +15,7 @@ public class BridgeActivity extends AppCompatActivity {
     private JSONObject config;
     private int activityDepth = 0;
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    protected Bridge.Builder bridgeBuilder = new Bridge.Builder();
+    private final Bridge.Builder bridgeBuilder = new Bridge.Builder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +66,14 @@ public class BridgeActivity extends AppCompatActivity {
 
         this.keepRunning = bridge.shouldKeepRunning();
         this.onNewIntent(getIntent());
+    }
+
+    public void registerPlugin(Class<? extends Plugin> plugin) {
+        bridgeBuilder.addPlugin(plugin);
+    }
+
+    public void registerPlugins(List<Class<? extends Plugin>> plugins) {
+        bridgeBuilder.addPlugins(plugins);
     }
 
     public Bridge getBridge() {
