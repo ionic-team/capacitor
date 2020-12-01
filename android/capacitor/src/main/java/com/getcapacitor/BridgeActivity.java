@@ -24,7 +24,9 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
+     * initialized automatically. If you need to add additional plugins during initialization,
+     * use {@link BridgeActivity#bridgeBuilder}.
      */
     @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
@@ -32,18 +34,20 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
+     * initialized automatically. If you need to add additional plugins during initialization,
+     * use {@link BridgeActivity#bridgeBuilder}.
      */
     @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
         this.initialPlugins = plugins;
         this.config = config;
 
-        this.load(savedInstanceState);
+        this.load();
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated This method should not be called manually.
      */
     @Deprecated
     protected void load(Bundle savedInstanceState) {
