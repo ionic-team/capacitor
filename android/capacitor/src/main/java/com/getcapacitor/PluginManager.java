@@ -39,13 +39,13 @@ public class PluginManager {
     }
 
     private JSONArray parsePluginsJSON() throws PluginLoadException {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.plugins.json")))) {
-            StringBuilder b = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.plugins.json")))) {
+            StringBuilder builder = new StringBuilder();
             String line;
-            while ((line = br.readLine()) != null) {
-                b.append(line);
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
             }
-            String jsonString = b.toString();
+            String jsonString = builder.toString();
             return new JSONArray(jsonString);
         } catch (IOException e) {
             throw new PluginLoadException("Could not load capacitor.plugins.json");
