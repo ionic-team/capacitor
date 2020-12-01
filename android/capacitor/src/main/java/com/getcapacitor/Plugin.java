@@ -673,6 +673,18 @@ public class Plugin {
     protected void handleOnActivityResult(PluginCall lastPluginCall, int requestCode, int resultCode, Intent data) {}
 
     /**
+     * Handle activity result, should be overridden by each plugin
+     * @deprecated use {@link #handleOnActivityResult(PluginCall, int, int, Intent)} in
+     * conjunction with @CapacitorPlugin
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Deprecated
+    protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {}
+
+    /**
      * Handle onNewIntent
      * @param intent
      */

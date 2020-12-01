@@ -928,7 +928,13 @@ public class Bridge {
             plugin.getInstance().saveCall(pluginCallForLastActivity);
         }
 
-        plugin.getInstance().handleOnActivityResult(pluginCallForLastActivity, requestCode, resultCode, data);
+        CapacitorPlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(CapacitorPlugin.class);
+        if (pluginAnnotation != null) {
+            // Use new callback with new @CapacitorPlugin plugins
+            plugin.getInstance().handleOnActivityResult(pluginCallForLastActivity, requestCode, resultCode, data);
+        } else {
+            plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+        }
 
         // Clear the plugin call we may have re-hydrated on app launch
         pluginCallForLastActivity = null;
