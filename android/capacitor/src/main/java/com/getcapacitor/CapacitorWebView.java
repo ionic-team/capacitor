@@ -18,7 +18,7 @@ public class CapacitorWebView extends WebView {
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        CapConfig config = new CapConfig(getContext().getAssets(), false);
+        CapConfig config = new CapConfig(getContext(), false);
         boolean captureInput = config.captureInput();
         if (captureInput) {
             if (capInputConnection == null) {

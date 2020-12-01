@@ -2,6 +2,7 @@ package com.getcapacitor;
 
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,10 +41,11 @@ public class CapConfig {
     /**
      * Constructs a Capacitor Configuration from file.
      *
-     * @param assetManager Android asset manager
+     * @param context The current context
      * @param defaultDebuggable Enable dev mode flag
      */
-    public CapConfig(AssetManager assetManager, boolean defaultDebuggable) {
+    public CapConfig(Context context, boolean defaultDebuggable) {
+        AssetManager assetManager = context.getAssets();
         webContentsDebuggingEnabled = defaultDebuggable;
 
         // Load capacitor.config.json

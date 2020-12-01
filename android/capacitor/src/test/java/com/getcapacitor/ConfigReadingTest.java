@@ -7,9 +7,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
@@ -21,10 +23,16 @@ public class ConfigReadingTest {
     private static final String NONJSON_TEST = "configs/nonjson.json";
     private static final String SERVER_TEST = "configs/server.json";
 
+    Context context = mock(Context.class);
     AssetManager assetManager = mock(AssetManager.class);
 
     private InputStream getTestInputStream(String testPath) {
         return this.getClass().getClassLoader().getResourceAsStream(testPath);
+    }
+
+    @Before
+    public void before() {
+        when(context.getAssets()).thenReturn(assetManager);
     }
 
     @Test
@@ -32,7 +40,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(BAD_TEST));
 
-            CapConfig config = new CapConfig(assetManager, false);
+            CapConfig config = new CapConfig(context, false);
             assertEquals("not a real domain", config.getServerUrl());
             assertNull(config.getBackgroundColor());
             assertFalse(config.hideLogs());
@@ -46,7 +54,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(FLAT_TEST));
 
-            CapConfig config = new CapConfig(assetManager, false);
+            CapConfig config = new CapConfig(context, false);
             assertEquals("level 1 override", config.getOverriddenUserAgentString());
             assertEquals("level 1 append", config.getAppendedUserAgentString());
             assertEquals("#ffffff", config.getBackgroundColor());
@@ -62,7 +70,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(HIERARCHY_TEST));
 
-            CapConfig config = new CapConfig(assetManager, false);
+            CapConfig config = new CapConfig(context, false);
             assertEquals("level 2 override", config.getOverriddenUserAgentString());
             assertEquals("level 2 append", config.getAppendedUserAgentString());
             assertEquals("#000000", config.getBackgroundColor());
@@ -80,7 +88,7 @@ public class ConfigReadingTest {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(NONJSON_TEST));
 
             try (MockedStatic<Logger> logger = mockStatic(Logger.class)) {
-                CapConfig config = new CapConfig(assetManager, false);
+                CapConfig config = new CapConfig(context, false);
                 logger.verify(times(1), () -> Logger.error(eq(errText), any()));
             }
         } catch (IOException e) {
@@ -93,7 +101,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(SERVER_TEST));
 
-            CapConfig config = new CapConfig(assetManager, false);
+            CapConfig config = new CapConfig(context, false);
             assertEquals("myhost", config.getHostname());
             assertEquals("http://192.168.100.1:2057", config.getServerUrl());
             assertEquals("override", config.getAndroidScheme());
