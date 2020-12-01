@@ -51,6 +51,10 @@ public class BridgeFragment extends Fragment {
         this.initialPlugins.add(plugin);
     }
 
+    public void configure(CapConfig config) {
+        this.config = config;
+    }
+
     /**
      * Load the WebView and create the Bridge
      */
