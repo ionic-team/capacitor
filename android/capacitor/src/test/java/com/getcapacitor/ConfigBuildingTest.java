@@ -2,7 +2,6 @@ package com.getcapacitor;
 
 import static org.junit.Assert.*;
 
-import com.getcapacitor.CapConfig;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -37,60 +36,69 @@ public class ConfigBuildingTest {
 
             pluginConfig.put(TEST_PLUGIN_NAME, testPluginObject);
 
-            config = new CapConfig.ConfigBuilder().pluginConfigurations(pluginConfig).build();
+            config =
+                new CapConfig.Builder()
+                    .allowMixedContent(true)
+                    .allowNavigation(new String[] { "http://www.google.com" })
+                    .androidScheme("test")
+                    .captureInput(true)
+                    .hideLogs(true)
+                    .html5mode(false)
+                    .overriddenUserAgentString("test-user-agent")
+                    .appendedUserAgentString("test-append")
+                    .webContentsDebuggingEnabled(true)
+                    .backgroundColor("red")
+                    .pluginConfigurations(pluginConfig)
+                    .serverUrl("http://www.google.com")
+                    .create();
         } catch (Exception e) {
             fail();
         }
+    }
+
+    @Test
+    public void getCoreConfigValues() {
+        assertTrue(config.allowMixedContent());
+        assertArrayEquals(new String[] { "http://www.google.com" }, config.getAllowNavigation());
+        assertEquals("test", config.getAndroidScheme());
+        assertTrue(config.captureInput());
+        assertTrue(config.hideLogs());
+        assertFalse(config.html5mode());
+        assertEquals("test-user-agent", config.getOverriddenUserAgentString());
+        assertEquals("test-append", config.getAppendedUserAgentString());
+        assertTrue(config.getWebContentsDebuggingEnabled());
+        assertEquals("red", config.getBackgroundColor());
+        assertEquals("http://www.google.com", config.getServerUrl());
     }
 
     @Test
     public void getPluginString() {
-        try {
-            String testString = config.getPluginString(TEST_PLUGIN_NAME, "var2");
-            assertEquals("hello", testString);
-        } catch (Exception e) {
-            fail();
-        }
+        String testString = config.getPluginString(TEST_PLUGIN_NAME, "var2");
+        assertEquals("hello", testString);
     }
 
     @Test
     public void getPluginBoolean() {
-        try {
-            boolean testBool = config.getPluginBoolean(TEST_PLUGIN_NAME, "var1", false);
-            assertEquals(true, testBool);
-        } catch (Exception e) {
-            fail();
-        }
+        boolean testBool = config.getPluginBoolean(TEST_PLUGIN_NAME, "var1", false);
+        assertTrue(testBool);
     }
 
     @Test
     public void getPluginInt() {
-        try {
-            int testInt = config.getPluginInt(TEST_PLUGIN_NAME, "var4", -1);
-            assertEquals(2, testInt);
-        } catch (Exception e) {
-            fail();
-        }
+        int testInt = config.getPluginInt(TEST_PLUGIN_NAME, "var4", -1);
+        assertEquals(2, testInt);
     }
 
     @Test
     public void getPluginArray() {
-        try {
-            String[] comparison = new String[] { "5", "6", "7", "8" };
-            String[] testArray = config.getPluginArray(TEST_PLUGIN_NAME, "var5");
-            assertArrayEquals(comparison, testArray);
-        } catch (Exception e) {
-            fail();
-        }
+        String[] comparison = new String[] { "5", "6", "7", "8" };
+        String[] testArray = config.getPluginArray(TEST_PLUGIN_NAME, "var5");
+        assertArrayEquals(comparison, testArray);
     }
 
     @Test
     public void getPluginObject() {
-        try {
-            JSONObject testObject = config.getPluginObject(TEST_PLUGIN_NAME, "var3");
-            assertEquals(testPluginNestedObject, testObject);
-        } catch (Exception e) {
-            fail();
-        }
+        JSONObject testObject = config.getPluginObject(TEST_PLUGIN_NAME, "var3");
+        assertEquals(testPluginNestedObject, testObject);
     }
 }

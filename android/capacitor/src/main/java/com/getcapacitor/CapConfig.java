@@ -56,7 +56,7 @@ public class CapConfig {
      *
      * @param builder A config builder initialized with values
      */
-    private CapConfig(ConfigBuilder builder) {
+    private CapConfig(Builder builder) {
         // Server Config
         this.html5mode = builder.html5mode;
         this.serverUrl = builder.serverUrl;
@@ -522,7 +522,7 @@ public class CapConfig {
     /**
      * Builds a Capacitor Configuration in code
      */
-    public static class ConfigBuilder {
+    public static class Builder {
 
         // Server Config Values
         private boolean html5mode = true;
@@ -548,71 +548,71 @@ public class CapConfig {
          *
          * @return A new Capacitor Config
          */
-        public CapConfig build() {
+        public CapConfig create() {
             return new CapConfig(this);
         }
 
-        public ConfigBuilder pluginConfigurations(JSONObject pluginConfigurations) {
+        public Builder pluginConfigurations(JSONObject pluginConfigurations) {
             this.pluginConfigurations = pluginConfigurations;
             return this;
         }
 
-        public ConfigBuilder html5mode(boolean html5mode) {
+        public Builder html5mode(boolean html5mode) {
             this.html5mode = html5mode;
             return this;
         }
 
-        public ConfigBuilder serverUrl(String serverUrl) {
+        public Builder serverUrl(String serverUrl) {
             this.serverUrl = serverUrl;
             return this;
         }
 
-        public ConfigBuilder hostname(String hostname) {
+        public Builder hostname(String hostname) {
             this.hostname = hostname;
             return this;
         }
 
-        public ConfigBuilder androidScheme(String androidScheme) {
+        public Builder androidScheme(String androidScheme) {
             this.androidScheme = androidScheme;
             return this;
         }
 
-        public ConfigBuilder allowNavigation(String[] allowNavigation) {
+        public Builder allowNavigation(String[] allowNavigation) {
             this.allowNavigation = allowNavigation;
             return this;
         }
 
-        public ConfigBuilder overriddenUserAgentString(String overriddenUserAgentString) {
+        public Builder overriddenUserAgentString(String overriddenUserAgentString) {
             this.overriddenUserAgentString = overriddenUserAgentString;
             return this;
         }
 
-        public ConfigBuilder appendedUserAgentString(String appendedUserAgentString) {
+        public Builder appendedUserAgentString(String appendedUserAgentString) {
             this.appendedUserAgentString = appendedUserAgentString;
             return this;
         }
 
-        public ConfigBuilder backgroundColor(String backgroundColor) {
+        public Builder backgroundColor(String backgroundColor) {
             this.backgroundColor = backgroundColor;
             return this;
         }
 
-        public ConfigBuilder allowMixedContent(boolean allowMixedContent) {
+        public Builder allowMixedContent(boolean allowMixedContent) {
             this.allowMixedContent = allowMixedContent;
             return this;
         }
 
-        public ConfigBuilder captureInput(boolean captureInput) {
+        public Builder captureInput(boolean captureInput) {
             this.captureInput = captureInput;
             return this;
         }
 
-        public ConfigBuilder webContentsDebuggingEnabled(Boolean webContentsDebuggingEnabled) {
+        public Builder webContentsDebuggingEnabled(Boolean webContentsDebuggingEnabled) {
             this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
             return this;
         }
 
-        public ConfigBuilder hideLogs(boolean hideLogs) {
+        public Builder hideLogs(boolean hideLogs) {
             this.hideLogs = hideLogs;
             return this;
         }
