@@ -45,6 +45,11 @@ public class CapConfig {
      * @param defaultDebuggable Enable dev mode flag
      */
     public CapConfig(Context context, boolean defaultDebuggable) {
+        if (context == null) {
+            Logger.error("Capacitor Config could not be created. Context must not be null.");
+            return;
+        }
+
         AssetManager assetManager = context.getAssets();
         webContentsDebuggingEnabled = defaultDebuggable;
 
