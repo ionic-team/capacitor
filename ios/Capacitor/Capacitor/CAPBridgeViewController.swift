@@ -61,17 +61,17 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         // get the web view
         let assetHandler = CAPAssetHandler()
         assetHandler.setAssetPath(startPath)
-        webView = prepareWebView(with: configuration, assetHandler: assetHandler)
+        let messageHandler = CAPMessageHandlerWrapper()
+        webView = prepareWebView(with: configuration, assetHandler: assetHandler, messageHandler: messageHandler)
         view = webView
         self.handler = assetHandler
         // configure the web view
         setKeyboardRequiresUserInteraction(false)
         // create the bridge
-        let messageHandler = CAPMessageHandlerWrapper()
         capacitorBridge = CapacitorBridge(with: configuration, delegate: self, cordovaConfiguration: configDescriptor.cordovaConfiguration, messageHandler: messageHandler)
     }
 
-    private func prepareWebView(with configuration: InstanceConfiguration, assetHandler: CAPAssetHandler) -> WKWebView {
+    private func prepareWebView(with configuration: InstanceConfiguration, assetHandler: CAPAssetHandler, messageHandler: CAPMessageHandlerWrapper) -> WKWebView {
         // set the cookie policy
         HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
         // setup the web view configuration
@@ -84,7 +84,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
             webViewConfiguration.applicationNameForUserAgent = appendUserAgent
         }
         webViewConfiguration.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
-        let messageHandler = CAPMessageHandlerWrapper()
         webViewConfiguration.userContentController = messageHandler.contentController
         // create the web view and set its properties
         let webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
