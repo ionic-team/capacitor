@@ -178,7 +178,7 @@ public class Bridge {
     }
 
     private void loadWebView() {
-        appUrlConfig = this.config.getString("server.url");
+        appUrlConfig = this.getServerUrl();
         String[] appAllowNavigationConfig = this.config.getArray("server.allowNavigation");
 
         ArrayList<String> authorities = new ArrayList<>();
@@ -187,7 +187,7 @@ public class Bridge {
         }
         this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
 
-        String authority = this.config.getString("server.hostname", "localhost");
+        String authority = this.getHost();
         authorities.add(authority);
 
         String scheme = this.getScheme();
@@ -351,6 +351,22 @@ public class Bridge {
      */
     public String getScheme() {
         return this.config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
+    }
+
+    /**
+     * Get host name that is used to serve content
+     * @return
+     */
+    public String getHost() {
+        return this.config.getString("server.hostname", "localhost");
+    }
+
+    /**
+     * Get the server url that is used to serve content
+     * @return
+     */
+    public String getServerUrl() {
+        return this.config.getString("server.url");
     }
 
     public CapConfig getConfig() {

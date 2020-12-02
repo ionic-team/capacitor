@@ -73,7 +73,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.2...3.0.0-alpha.0) (2020-07-23)
+# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.4...3.0.0-alpha.0) (2020-07-23)
 
 
 ### Features
@@ -86,6 +86,29 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * refactor(android): remove unused interaction listener on BridgeFragment (#3552) ([fae50b6](https://github.com/ionic-team/capacitor/commit/fae50b6)), closes [#3552](https://github.com/ionic-team/capacitor/issues/3552)
 
 
+
+## [2.4.4](https://github.com/ionic-team/capacitor/compare/2.4.3...2.4.4) (2020-12-01)
+
+
+### Bug Fixes
+
+* fix: wildcard in allowNavigation (#3833) ([de1eac8](https://github.com/ionic-team/capacitor/commit/de1eac8)), closes [#3833](https://github.com/ionic-team/capacitor/issues/3833)
+* fix(android): load local assets when using wildcard on allowNavigation (#3834) ([66f2efb](https://github.com/ionic-team/capacitor/commit/66f2efb)), closes [#3834](https://github.com/ionic-team/capacitor/issues/3834)
+* fix(cli): replace AndroidManifest.xml Cordova variables with default value (#3863) ([9965d58](https://github.com/ionic-team/capacitor/commit/9965d58)), closes [#3863](https://github.com/ionic-team/capacitor/issues/3863)
+
+
+
+## [2.4.3](https://github.com/ionic-team/capacitor/compare/2.4.2...2.4.3) (2020-11-18)
+
+
+### Bug Fixes
+
+* fix(ios): Don't get location if permission is not determined (#3802) ([4fb9d348](https://github.com/ionic-team/capacitor/commit/4fb9d348)), closes [#3789](https://github.com/ionic-team/capacitor/issues/3789)
+* fix(Filesystem): avoid directory already exists on append (#3629) ([249073d6](https://github.com/ionic-team/capacitor/commit/249073d6)), closes [#3620](https://github.com/ionic-team/capacitor/issues/3620)
+* fix(android): Avoid SecurityError on Android 10 file share (#3655) ([1c47e15f](https://github.com/ionic-team/capacitor/commit/1c47e15f)), closes [#3638](https://github.com/ionic-team/capacitor/issues/3638)
+
+
+
 ## [2.4.2](https://github.com/ionic-team/capacitor/compare/2.4.1...2.4.2) (2020-09-24)
 
 
@@ -95,6 +118,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * fix(android): move splash screen trigger before the webview render to prevent flicker (2.x) (#3608) ([cbab54c](https://github.com/ionic-team/capacitor/commit/cbab54c)), closes [#3608](https://github.com/ionic-team/capacitor/issues/3608)
 * fix(cli): halt update upon failure (#3595) ([ec086b0](https://github.com/ionic-team/capacitor/commit/ec086b0)), closes [#3595](https://github.com/ionic-team/capacitor/issues/3595)
 * fix(ios): iterate listeners to avoid mutated while being enumerated (#3572) ([fbaab54](https://github.com/ionic-team/capacitor/commit/fbaab54)), closes [#3572](https://github.com/ionic-team/capacitor/issues/3572)
+
+
+### Chores
+
+* refactor(android): remove unused interaction listener on BridgeFragment (#3552) ([fae50b6](https://github.com/ionic-team/capacitor/commit/fae50b6)), closes [#3552](https://github.com/ionic-team/capacitor/issues/3552)
+
 
 
 ## [2.4.1](https://github.com/ionic-team/capacitor/compare/2.4.0...2.4.1) (2020-09-09)
@@ -109,6 +138,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Chores
 
 * chore(cli): remove cordova-plugin-googlemaps from skip list (#3436) ([cfb74af](https://github.com/ionic-team/capacitor/commit/cfb74af)), closes [#3436](https://github.com/ionic-team/capacitor/issues/3436)
+
 
 
 ## [2.4.0](https://github.com/ionic-team/capacitor/compare/2.3.0...2.4.0) (2020-07-27)
@@ -134,6 +164,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * chore: make deploy script push to 2.x branch (#3337) ([d0d30d6](https://github.com/ionic-team/capacitor/commit/d0d30d6)), closes [#3337](https://github.com/ionic-team/capacitor/issues/3337)
 * chore(ci): hook up workflows for 2.x ([89f8ae8](https://github.com/ionic-team/capacitor/commit/89f8ae8))
 * chore(readme): add contributors manually ([519ead8](https://github.com/ionic-team/capacitor/commit/519ead8))
+
 
 
 ## [2.3.0](https://github.com/ionic-team/capacitor/compare/2.2.1...2.3.0) (2020-07-16)

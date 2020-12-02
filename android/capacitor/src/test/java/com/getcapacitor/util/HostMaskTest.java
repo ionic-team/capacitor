@@ -16,13 +16,25 @@ public class HostMaskTest {
 
     @Test
     public void testAny() {
-        HostMask mask = HostMask.Any.parse("*", "*.example.org", "example.org");
-        assertTrue(mask.matches("org"));
+        HostMask mask = HostMask.Any.parse("*.example.org", "example.org");
+        assertFalse(mask.matches("org"));
         assertTrue(mask.matches("example.org"));
         assertTrue(mask.matches("www.example.org"));
         assertFalse(mask.matches("imap.mail.example.org"));
         assertFalse(mask.matches("another.org"));
         assertFalse(mask.matches("www.another.org"));
+        assertFalse(mask.matches(null));
+    }
+
+    @Test
+    public void testAnyWildcard() {
+        HostMask mask = HostMask.Any.parse("*");
+        assertTrue(mask.matches("org"));
+        assertTrue(mask.matches("example.org"));
+        assertTrue(mask.matches("www.example.org"));
+        assertTrue(mask.matches("imap.mail.example.org"));
+        assertTrue(mask.matches("another.org"));
+        assertTrue(mask.matches("www.another.org"));
         assertFalse(mask.matches(null));
     }
 
@@ -44,7 +56,7 @@ public class HostMaskTest {
     @Test
     public void testSimpleExample2() {
         HostMask mask = HostMask.Simple.parse("*");
-        assertFalse("Single star does not match with 2nd level domain", mask.matches("example.org"));
+        assertTrue("Single star matches everything", mask.matches("example.org"));
     }
 
     @Test
