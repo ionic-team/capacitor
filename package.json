@@ -10,7 +10,7 @@
     "swiftlint": "node-swiftlint",
     "postinstall": "husky install && lerna bootstrap",
     "prepublish": "pinst --disable",
-    "postpublish": "pinst --enable"
+    "postpublish": "pinst --enable",
     "version": "npm run sync-peer-dependencies"
   },
   "prettier": "@ionic/prettier-config",
