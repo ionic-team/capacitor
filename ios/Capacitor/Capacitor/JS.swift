@@ -86,7 +86,7 @@ public class JSResultError {
             return nil
         }
 
-        return "\(CAPBridge.capacitorSite)error/ios?m=\(data)"
+        return "\(CapacitorBridge.capacitorSite)error/ios?m=\(data)"
     }
 
     public func toJson() -> String {

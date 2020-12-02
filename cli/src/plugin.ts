@@ -1,9 +1,11 @@
+import { readJSON } from '@ionic/utils-fs';
 import { dirname, join } from 'path';
 
 import c from './colors';
-import { logFatal, readJSON, readXML, resolveNode } from './common';
 import type { Config } from './definitions';
-import { logger } from './log';
+import { logger, logFatal } from './log';
+import { resolveNode } from './util/node';
+import { readXML } from './util/xml';
 
 export const enum PluginType {
   Core,
@@ -38,12 +40,31 @@ export interface Plugin {
   };
 }
 
-export async function getPlugins(config: Config): Promise<Plugin[]> {
-  const deps = getDependencies(config);
-  const plugins = await Promise.all(
-    deps.map(async p => resolvePlugin(config, p)),
+export function getIncludedPluginPackages(
+  config: Config,
+  platform: string,
+): readonly string[] | undefined {
+  const { extConfig } = config.app;
+
+  switch (platform) {
+    case 'android':
+      return extConfig.android?.includePlugins ?? extConfig.includePlugins;
+    case 'ios':
+      return extConfig.ios?.includePlugins ?? extConfig.includePlugins;
+  }
+}
+
+export async function getPlugins(
+  config: Config,
+  platform: string,
+): Promise<Plugin[]> {
+  const possiblePlugins =
+    getIncludedPluginPackages(config, platform) ?? getDependencies(config);
+  const resolvedPlugins = await Promise.all(
+    possiblePlugins.map(async p => resolvePlugin(config, p)),
   );
-  return plugins.filter(p => !!p) as Plugin[];
+
+  return resolvedPlugins.filter((p): p is Plugin => !!p);
 }
 
 export async function resolvePlugin(
@@ -91,9 +112,10 @@ export async function resolvePlugin(
 }
 
 export function getDependencies(config: Config): string[] {
-  const dependencies = config.app.package.dependencies ?? [];
-  const devDependencies = config.app.package.devDependencies ?? [];
-  return Object.keys(dependencies).concat(Object.keys(devDependencies));
+  return [
+    ...Object.keys(config.app.package.dependencies ?? {}),
+    ...Object.keys(config.app.package.devDependencies ?? {}),
+  ];
 }
 
 export function fixName(name: string): string {

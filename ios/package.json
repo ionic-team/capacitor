@@ -1,10 +1,16 @@
 {
   "name": "@capacitor/ios",
-  "version": "3.0.0-alpha.6",
+  "version": "3.0.0-alpha.7",
   "description": "Capacitor: cross-platform mobile apps with the web",
-  "homepage": "https://capacitor.ionicframework.com/",
+  "homepage": "https://capacitorjs.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
+  "files": [
+    "Capacitor/Capacitor/",
+    "CapacitorCordova/CapacitorCordova/",
+    "Capacitor.podspec",
+    "CapacitorCordova.podspec"
+  ],
   "scripts": {
     "verify": "npm run xc:build:Capacitor && npm run xc:build:CapacitorCordova && npm run pod:lint:Capacitor && npm run pod:lint:CapacitorCordova",
     "xc:build:Capacitor": "cd Capacitor && xcodebuild -workspace Capacitor.xcworkspace -scheme Capacitor && cd ..",
@@ -23,6 +29,6 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@capacitor/core": "^3.0.0-alpha.2"
+    "@capacitor/core": "~3.0.0-alpha.7"
   }
 }

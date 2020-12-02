@@ -11,7 +11,6 @@ import {
   checkAppConfig,
   checkPackage,
   checkWebDir,
-  logFatal,
   resolvePlatform,
   runPlatformHook,
   runTask,
@@ -28,7 +27,7 @@ import {
   checkIOSPackage,
   checkCocoaPods,
 } from '../ios/common';
-import { logger } from '../log';
+import { logger, logFatal } from '../log';
 
 import { sync } from './sync';
 

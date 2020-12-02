@@ -3,8 +3,10 @@ import { homedir } from 'os';
 import { join } from 'path';
 
 import c from '../colors';
-import { copyTemplate, runCommand, runTask } from '../common';
+import { runTask } from '../common';
 import type { Config } from '../definitions';
+import { runCommand } from '../util/subprocess';
+import { copyTemplate } from '../util/template';
 
 export async function addAndroid(config: Config): Promise<void> {
   await runTask(

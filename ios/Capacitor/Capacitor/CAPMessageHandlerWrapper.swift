@@ -5,12 +5,12 @@
 import Foundation
 import WebKit
 
-public class CAPMessageHandlerWrapper: NSObject, WKScriptMessageHandler {
-    weak var bridge: CAPBridge?
+internal class CAPMessageHandlerWrapper: NSObject, WKScriptMessageHandler {
+    weak var bridge: CapacitorBridge?
     fileprivate(set) var contentController = WKUserContentController()
     let handlerName = "bridge"
 
-    public init(bridge: CAPBridge? = nil) {
+    init(bridge: CapacitorBridge? = nil) {
         super.init()
         self.bridge = bridge
         contentController.add(self, name: handlerName)
@@ -20,7 +20,7 @@ public class CAPMessageHandlerWrapper: NSObject, WKScriptMessageHandler {
         contentController.removeScriptMessageHandler(forName: handlerName)
     }
 
-    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let bridge = bridge else {
             return
         }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,19 +16,29 @@ import android.os.HandlerThread;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import com.getcapacitor.android.R;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
+import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
+import com.getcapacitor.util.PermissionHelper;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.apache.cordova.CordovaInterfaceImpl;
+import org.apache.cordova.ConfigXmlParser;
 import org.apache.cordova.CordovaPreferences;
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +61,7 @@ import org.json.JSONObject;
 public class Bridge {
 
     private static final String PREFS_NAME = "CapacitorSettings";
+    private static final String PERMISSION_PREFS_NAME = "PluginPermStates";
     private static final String BUNDLE_LAST_PLUGIN_ID_KEY = "capacitorLastActivityPluginId";
     private static final String BUNDLE_LAST_PLUGIN_CALL_METHOD_NAME_KEY = "capacitorLastActivityPluginMethod";
     private static final String BUNDLE_PLUGIN_CALL_OPTIONS_SAVED_KEY = "capacitorLastPluginCallOptions";
@@ -68,7 +80,7 @@ public class Bridge {
     private CapConfig config;
 
     // A reference to the main activity for the app
-    private final Activity context;
+    private final AppCompatActivity context;
     private WebViewLocalServer localServer;
     private String localUrl;
     private String appUrl;
@@ -76,7 +88,8 @@ public class Bridge {
     private HostMask appAllowNavigationMask;
     // A reference to the main WebView for the app
     private final WebView webView;
-    public final CordovaInterfaceImpl cordovaInterface;
+    public final MockCordovaInterfaceImpl cordovaInterface;
+    private CordovaWebView cordovaWebView;
     private CordovaPreferences preferences;
     private BridgeWebViewClient webViewClient;
     private App app;
@@ -98,6 +111,9 @@ public class Bridge {
     // Stored plugin calls that we're keeping around to call again someday
     private Map<String, PluginCall> savedCalls = new HashMap<>();
 
+    // The call IDs of saved plugin calls with associated plugin id for handling permissions
+    private Map<String, LinkedList<String>> savedPermissionCallIds = new HashMap<>();
+
     // Store a plugin that started a new activity, in case we need to resume
     // the app and return that data back
     private PluginCall pluginCallForLastActivity;
@@ -110,12 +126,14 @@ public class Bridge {
      * app, and a reference to the {@link WebView} our app will use.
      * @param context
      * @param webView
+     * @deprecated Use {@link Bridge.Builder} to create Bridge instances
      */
+    @Deprecated
     public Bridge(
-        Activity context,
+        AppCompatActivity context,
         WebView webView,
         List<Class<? extends Plugin>> initialPlugins,
-        CordovaInterfaceImpl cordovaInterface,
+        MockCordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
         JSONObject config
@@ -159,7 +177,7 @@ public class Bridge {
     }
 
     private void loadWebView() {
-        appUrlConfig = this.config.getString("server.url");
+        appUrlConfig = this.getServerUrl();
         String[] appAllowNavigationConfig = this.config.getArray("server.allowNavigation");
 
         ArrayList<String> authorities = new ArrayList<>();
@@ -168,7 +186,7 @@ public class Bridge {
         }
         this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
 
-        String authority = this.config.getString("server.hostname", "localhost");
+        String authority = this.getHost();
         authorities.add(authority);
 
         String scheme = this.getScheme();
@@ -270,6 +288,10 @@ public class Bridge {
         return preferences.getBoolean("DisableDeploy", false);
     }
 
+    public boolean shouldKeepRunning() {
+        return preferences.getBoolean("KeepRunning", true);
+    }
+
     public void handleAppUrlLoadError(Exception ex) {
         if (ex instanceof SocketTimeoutException) {
             Logger.error(
@@ -286,6 +308,10 @@ public class Bridge {
         return (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 
+    protected void setCordovaWebView(CordovaWebView cordovaWebView) {
+        this.cordovaWebView = cordovaWebView;
+    }
+
     /**
      * Get the Context for the App
      * @return
@@ -298,7 +324,7 @@ public class Bridge {
      * Get the activity for the app
      * @return
      */
-    public Activity getActivity() {
+    public AppCompatActivity getActivity() {
         return this.context;
     }
 
@@ -324,6 +350,22 @@ public class Bridge {
      */
     public String getScheme() {
         return this.config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
+    }
+
+    /**
+     * Get host name that is used to serve content
+     * @return
+     */
+    public String getHost() {
+        return this.config.getString("server.hostname", "localhost");
+    }
+
+    /**
+     * Get the server url that is used to serve content
+     * @return
+     */
+    public String getServerUrl() {
+        return this.config.getString("server.url");
     }
 
     public CapConfig getConfig() {
@@ -602,6 +644,10 @@ public class Bridge {
      * @return the stored call
      */
     public PluginCall getSavedCall(String callbackId) {
+        if (callbackId == null) {
+            return null;
+        }
+
         return this.savedCalls.get(callbackId);
     }
 
@@ -614,21 +660,52 @@ public class Bridge {
     }
 
     /**
+     * Removes the earliest saved call prior to a permissions request for a given plugin and
+     * returns it.
+     *
+     * @return The saved plugin call
+     */
+    protected PluginCall getPermissionCall(String pluginId) {
+        LinkedList<String> permissionCallIds = this.savedPermissionCallIds.get(pluginId);
+        String savedCallId = null;
+        if (permissionCallIds != null) {
+            savedCallId = permissionCallIds.poll();
+        }
+
+        return getSavedCall(savedCallId);
+    }
+
+    /**
+     * Save a call to be retrieved after requesting permissions. Calls are saved in order.
+     *
+     * @param call The plugin call to save.
+     */
+    protected void savePermissionCall(PluginCall call) {
+        if (call != null) {
+            if (!savedPermissionCallIds.containsKey(call.getPluginId())) {
+                savedPermissionCallIds.put(call.getPluginId(), new LinkedList<>());
+            }
+
+            savedPermissionCallIds.get(call.getPluginId()).add(call.getCallbackId());
+            saveCall(call);
+        }
+    }
+
+    /**
      * Build the JSInjector that will be used to inject JS into files served to the app,
      * to ensure that Capacitor's JS and the JS for all the plugins is loaded each time.
      */
     private JSInjector getJSInjector() {
         try {
             String globalJS = JSExport.getGlobalJS(context, isDevMode());
-            String coreJS = JSExport.getCoreJS(context);
             String pluginJS = JSExport.getPluginJS(plugins.values());
             String cordovaJS = JSExport.getCordovaJS(context);
             String cordovaPluginsJS = JSExport.getCordovaPluginJS(context);
             String cordovaPluginsFileJS = JSExport.getCordovaPluginsFileJS(context);
             String localUrlJS = "window.WEBVIEW_SERVER_URL = '" + localUrl + "';";
 
-            return new JSInjector(globalJS, coreJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
-        } catch (JSExportException ex) {
+            return new JSInjector(globalJS, pluginJS, cordovaJS, cordovaPluginsJS, cordovaPluginsFileJS, localUrlJS);
+        } catch (Exception ex) {
             Logger.error("Unable to export Capacitor JS. App will not function!", ex);
         }
         return null;
@@ -712,11 +789,131 @@ public class Bridge {
         }
 
         if (plugin.getPluginAnnotation() != null) {
-            plugin.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+            // Handle for @CapacitorPlugin permissions
+            PluginCall savedPermissionCall = getPermissionCall(plugin.getId());
+            if (savedPermissionCall != null) {
+                if (validatePermissions(plugin.getInstance(), savedPermissionCall, permissions, grantResults)) {
+                    // handle request permissions call
+                    if (savedPermissionCall.getMethodName().equals("requestPermissions")) {
+                        savedPermissionCall.resolve(getPermissionStates(plugin.getInstance()));
+                    } else {
+                        // handle permission requests by other methods on the plugin
+                        plugin.getInstance().onRequestPermissionsResult(savedPermissionCall, requestCode, permissions, grantResults);
+
+                        if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
+                            savedPermissionCall.release(this);
+                        }
+                    }
+                }
+            }
         } else {
             // Call deprecated method if using deprecated NativePlugin annotation
             plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    /**
+     * Saves permission states and rejects if permissions were not correctly defined in
+     * the AndroidManifest.xml file.
+     *
+     * @param plugin
+     * @param savedCall
+     * @param permissions
+     * @param grantResults
+     * @return true if permissions were saved and defined correctly, false if not
+     */
+    protected boolean validatePermissions(Plugin plugin, PluginCall savedCall, String[] permissions, int[] grantResults) {
+        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS_NAME, Activity.MODE_PRIVATE);
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted. If previously denied, remove cached state
+            for (String permission : permissions) {
+                String state = prefs.getString(permission, null);
+
+                if (state != null) {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.remove(permission);
+                    editor.apply();
+                }
+            }
+        } else {
+            for (String permission : permissions) {
+                SharedPreferences.Editor editor = prefs.edit();
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+                    // Permission denied, can prompt again with rationale
+                    editor.putString(permission, "prompt-with-rationale");
+                } else {
+                    // Permission denied permanently, store this state for future reference
+                    editor.putString(permission, "denied");
+                }
+
+                editor.apply();
+            }
+        }
+
+        if (!plugin.hasDefinedPermissions(permissions)) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Missing the following permissions in AndroidManifest.xml:\n");
+            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
+            for (String perm : missing) {
+                builder.append(perm + "\n");
+            }
+            savedCall.reject(builder.toString());
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Helper to check all permissions and see the current states of each permission.
+     *
+     * @since 3.0.0
+     * @return A mapping of permissions to the associated granted status.
+     */
+    protected JSObject getPermissionStates(Plugin plugin) {
+        JSObject permissionsResults = new JSObject();
+        CapacitorPlugin annotation = plugin.getPluginHandle().getPluginAnnotation();
+        for (Permission perm : annotation.permissions()) {
+            // If a permission is defined with no permission constants, return "granted" for it.
+            // Otherwise, get its true state.
+            if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+                String key = perm.alias();
+                if (!key.isEmpty()) {
+                    String existingResult = permissionsResults.getString(key);
+
+                    // auto set permission state to granted if the alias is empty.
+                    if (existingResult == null) {
+                        permissionsResults.put(key, "granted");
+                    }
+                }
+            } else {
+                for (String permString : perm.strings()) {
+                    String key = perm.alias().isEmpty() ? permString : perm.alias();
+                    String permissionStatus = plugin.hasPermission(permString) ? "granted" : "prompt";
+
+                    // Check if there is a cached permission state for the "Never ask again" state
+                    if (permissionStatus.equals("prompt")) {
+                        SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS_NAME, Activity.MODE_PRIVATE);
+                        String state = prefs.getString(permString, null);
+
+                        if (state != null) {
+                            permissionStatus = state;
+                        }
+                    }
+
+                    String existingResult = permissionsResults.getString(key);
+
+                    // multiple permissions with the same alias must all be true, otherwise all false.
+                    if (existingResult == null || existingResult.equals("granted")) {
+                        permissionsResults.put(key, permissionStatus);
+                    }
+                }
+            }
+        }
+
+        return permissionsResults;
     }
 
     /**
@@ -735,6 +932,7 @@ public class Bridge {
             return;
         }
 
+        // deprecated, to be removed
         PluginCall lastCall = plugin.getInstance().getSavedCall();
 
         // If we don't have a saved last call (because our app was killed and restarted, for example),
@@ -745,7 +943,13 @@ public class Bridge {
             plugin.getInstance().saveCall(pluginCallForLastActivity);
         }
 
-        plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+        CapacitorPlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(CapacitorPlugin.class);
+        if (pluginAnnotation != null) {
+            // Use new callback with new @CapacitorPlugin plugins
+            plugin.getInstance().handleOnActivityResult(pluginCallForLastActivity, requestCode, resultCode, data);
+        } else {
+            plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+        }
 
         // Clear the plugin call we may have re-hydrated on app launch
         pluginCallForLastActivity = null;
@@ -758,6 +962,10 @@ public class Bridge {
     public void onNewIntent(Intent intent) {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnNewIntent(intent);
+        }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.onNewIntent(intent);
         }
     }
 
@@ -777,6 +985,10 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStart();
         }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleStart();
+        }
     }
 
     /**
@@ -785,6 +997,10 @@ public class Bridge {
     public void onResume() {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnResume();
+        }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleResume(this.shouldKeepRunning());
         }
     }
 
@@ -797,6 +1013,11 @@ public class Bridge {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnPause();
         }
+
+        if (cordovaWebView != null) {
+            boolean keepRunning = this.shouldKeepRunning() || cordovaInterface.getActivityResultCallback() != null;
+            cordovaWebView.handlePause(keepRunning);
+        }
     }
 
     /**
@@ -805,6 +1026,10 @@ public class Bridge {
     public void onStop() {
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnStop();
+        }
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleStop();
         }
     }
 
@@ -817,6 +1042,18 @@ public class Bridge {
         }
 
         handlerThread.quitSafely();
+
+        if (cordovaWebView != null) {
+            cordovaWebView.handleDestroy();
+        }
+    }
+
+    /**
+     * Handle onDetachedFromWindow lifecycle event
+     */
+    public void onDetachedFromWindow() {
+        webView.removeAllViews();
+        webView.destroy();
     }
 
     public void onBackPressed() {
@@ -874,5 +1111,77 @@ public class Bridge {
 
     public void setWebViewClient(BridgeWebViewClient client) {
         this.webViewClient = client;
+    }
+
+    public static class Builder {
+
+        private Bundle instanceState = null;
+        private JSONObject config = new JSONObject();
+        private List<Class<? extends Plugin>> plugins = new ArrayList<>();
+        private AppCompatActivity activity = null;
+        private Context context = null;
+        private WebView webView = null;
+
+        protected Builder setActivity(AppCompatActivity activity) {
+            this.activity = activity;
+            this.context = activity.getApplicationContext();
+            this.webView = activity.findViewById(R.id.webview);
+            return this;
+        }
+
+        public Builder setInstanceState(Bundle instanceState) {
+            this.instanceState = instanceState;
+            return this;
+        }
+
+        public Builder setConfig(JSONObject config) {
+            this.config = config;
+            return this;
+        }
+
+        public Builder setPlugins(List<Class<? extends Plugin>> plugins) {
+            this.plugins = plugins;
+            return this;
+        }
+
+        public Builder addPlugin(Class<? extends Plugin> plugin) {
+            this.plugins.add(plugin);
+            return this;
+        }
+
+        public Builder addPlugins(List<Class<? extends Plugin>> plugins) {
+            for (Class<? extends Plugin> cls : plugins) {
+                this.addPlugin(cls);
+            }
+
+            return this;
+        }
+
+        public Bridge create() {
+            // Cordova initialization
+            ConfigXmlParser parser = new ConfigXmlParser();
+            parser.parse(context);
+            CordovaPreferences preferences = parser.getPreferences();
+            preferences.setPreferencesBundle(activity.getIntent().getExtras());
+            List<PluginEntry> pluginEntries = parser.getPluginEntries();
+            MockCordovaInterfaceImpl cordovaInterface = new MockCordovaInterfaceImpl(activity);
+            if (instanceState != null) {
+                cordovaInterface.restoreInstanceState(instanceState);
+            }
+            MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(context);
+            mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
+            PluginManager pluginManager = mockWebView.getPluginManager();
+            cordovaInterface.onCordovaInit(pluginManager);
+
+            // Bridge initialization
+            Bridge bridge = new Bridge(activity, webView, plugins, cordovaInterface, pluginManager, preferences, config);
+            bridge.setCordovaWebView(mockWebView);
+
+            if (instanceState != null) {
+                bridge.restoreInstanceState(instanceState);
+            }
+
+            return bridge;
+        }
     }
 }

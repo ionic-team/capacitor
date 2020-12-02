@@ -1,20 +1,19 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WebKit.h>
 
-@class CAPBridge;
+@protocol CAPBridgeProtocol;
 @class CAPPluginCall;
-@class CAPConfig;
 
 @interface CAPPlugin : NSObject
 
 @property (nonatomic, weak, nullable) WKWebView *webView;
-@property (nonatomic, weak, nullable) CAPBridge *bridge;
+@property (nonatomic, weak, nullable) id<CAPBridgeProtocol> bridge;
 @property (nonatomic, strong, nonnull) NSString *pluginId;
 @property (nonatomic, strong, nonnull) NSString *pluginName;
 @property (nonatomic, strong, nullable) NSMutableDictionary<NSString *, NSMutableArray<CAPPluginCall *>*> *eventListeners;
 @property (nonatomic, strong, nullable) NSMutableDictionary<NSString *, id> *retainedEventArguments;
 
-- (instancetype _Nonnull) initWithBridge:(CAPBridge* _Nonnull) bridge pluginId:(NSString* _Nonnull) pluginId pluginName:(NSString* _Nonnull) pluginName;
+- (instancetype _Nonnull) initWithBridge:(id<CAPBridgeProtocol> _Nonnull) bridge pluginId:(NSString* _Nonnull) pluginId pluginName:(NSString* _Nonnull) pluginName;
 - (void)addEventListener:(NSString* _Nonnull)eventName listener:(CAPPluginCall* _Nonnull)listener;
 - (void)removeEventListener:(NSString* _Nonnull)eventName listener:(CAPPluginCall* _Nonnull)listener;
 - (void)notifyListeners:(NSString* _Nonnull)eventName data:(NSDictionary<NSString *, id>* _Nullable)data;
@@ -24,6 +23,11 @@
 - (void)addListener:(CAPPluginCall* _Nonnull)call;
 - (void)removeListener:(CAPPluginCall* _Nonnull)call;
 - (void)removeAllListeners:(CAPPluginCall* _Nonnull)call;
+/**
+ * Default implementation of the capacitor 3.0 permission pattern
+ */
+- (void)checkPermissions:(CAPPluginCall* _Nonnull)call;
+- (void)requestPermissions:(CAPPluginCall* _Nonnull)call;
 /**
  * Give the plugins a chance to take control when a URL is about to be loaded in the WebView.
  * Returning true causes the WebView to abort loading the URL.

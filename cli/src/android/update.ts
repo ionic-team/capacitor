@@ -1,19 +1,24 @@
-import { copy, remove, pathExists, readFile, writeFile } from '@ionic/utils-fs';
-import { dirname, join, relative, resolve } from 'path';
+import {
+  copy,
+  remove,
+  pathExists,
+  readdirp,
+  readFile,
+  writeFile,
+  writeJSON,
+} from '@ionic/utils-fs';
+import Debug from 'debug';
+import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from '../colors';
-import {
-  checkPlatformVersions,
-  logFatal,
-  resolveNode,
-  runTask,
-} from '../common';
+import { checkPlatformVersions, runTask } from '../common';
 import {
   checkPluginDependencies,
   handleCordovaPluginsJS,
   writeCordovaAndroidManifest,
 } from '../cordova';
 import type { Config } from '../definitions';
+import { logFatal } from '../log';
 import type { Plugin } from '../plugin';
 import {
   PluginType,
@@ -26,10 +31,12 @@ import {
   printPlugins,
 } from '../plugin';
 import { convertToUnixPath } from '../util/fs';
+import { resolveNode } from '../util/node';
 
 import { getAndroidPlugins } from './common';
 
 const platform = 'android';
+const debug = Debug('capacitor:android:update');
 
 export async function updateAndroid(config: Config): Promise<void> {
   const plugins = await getPluginsTask(config);
@@ -40,6 +47,7 @@ export async function updateAndroid(config: Config): Promise<void> {
 
   printPlugins(capacitorPlugins, 'android');
 
+  await writePluginsJson(config, capacitorPlugins);
   await removePluginsNativeFiles(config);
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
@@ -62,6 +70,99 @@ export async function updateAndroid(config: Config): Promise<void> {
 
 function getGradlePackageName(id: string): string {
   return id.replace('@', '').replace('/', '-');
+}
+
+interface PluginsJsonEntry {
+  pkg: string;
+  classpath: string;
+}
+
+async function writePluginsJson(
+  config: Config,
+  plugins: Plugin[],
+): Promise<void> {
+  const classes = await findAndroidPluginClasses(plugins);
+  const pluginsJsonPath = resolve(
+    config.android.assetsDirAbs,
+    'capacitor.plugins.json',
+  );
+
+  await writeJSON(pluginsJsonPath, classes, { spaces: '\t' });
+}
+
+async function findAndroidPluginClasses(
+  plugins: Plugin[],
+): Promise<PluginsJsonEntry[]> {
+  const entries: PluginsJsonEntry[] = [];
+
+  for (const plugin of plugins) {
+    entries.push(...(await findAndroidPluginClassesInPlugin(plugin)));
+  }
+
+  return entries;
+}
+
+async function findAndroidPluginClassesInPlugin(
+  plugin: Plugin,
+): Promise<PluginsJsonEntry[]> {
+  if (!plugin.android || getPluginType(plugin, platform) !== PluginType.Core) {
+    return [];
+  }
+
+  const srcPath = resolve(plugin.rootPath, plugin.android.path, 'src/main');
+  const srcFiles = await readdirp(srcPath, {
+    filter: entry =>
+      !entry.stats.isDirectory() &&
+      ['.java', '.kt'].includes(extname(entry.path)),
+  });
+
+  const classRegex = /^@(?:CapacitorPlugin|NativePlugin)[\s\S]+?class ([\w]+)/gm;
+  const packageRegex = /^package ([\w.]+);?$/gm;
+
+  debug(
+    'Searching %O source files in %O by %O regex',
+    srcFiles.length,
+    srcPath,
+    classRegex,
+  );
+
+  const entries = await Promise.all(
+    srcFiles.map(
+      async (srcFile): Promise<PluginsJsonEntry | undefined> => {
+        const srcFileContents = await readFile(srcFile, { encoding: 'utf-8' });
+        const classMatch = classRegex.exec(srcFileContents);
+
+        if (classMatch) {
+          const className = classMatch[1];
+
+          debug('Searching %O for package by %O regex', srcFile, packageRegex);
+
+          const packageMatch = packageRegex.exec(
+            srcFileContents.substring(0, classMatch.index),
+          );
+
+          if (!packageMatch) {
+            logFatal(
+              `Package could not be parsed from Android plugin.\n` +
+                `Location: ${c.strong(srcFile)}`,
+            );
+          }
+
+          const packageName = packageMatch[1];
+          const classpath = `${packageName}.${className}`;
+
+          debug('%O is a suitable plugin class', classpath);
+
+          return {
+            pkg: plugin.id,
+            classpath,
+          };
+        }
+      },
+    ),
+  );
+
+  return entries.filter((entry): entry is PluginsJsonEntry => !!entry);
 }
 
 export async function installGradlePlugins(
@@ -87,7 +188,7 @@ export async function installGradlePlugins(
   );
 
   const settingsPath = config.android.platformDirAbs;
-  const dependencyPath = join(config.android.platformDirAbs, 'app');
+  const dependencyPath = config.android.appDirAbs;
   const relativeCapcitorAndroidPath = convertToUnixPath(
     relative(settingsPath, capacitorAndroidPath),
   );
@@ -308,7 +409,7 @@ async function removePluginsNativeFiles(config: Config) {
 
 async function getPluginsTask(config: Config) {
   return await runTask('Updating Android plugins', async () => {
-    const allPlugins = await getPlugins(config);
+    const allPlugins = await getPlugins(config, 'android');
     const androidPlugins = await getAndroidPlugins(allPlugins);
     return androidPlugins;
   });

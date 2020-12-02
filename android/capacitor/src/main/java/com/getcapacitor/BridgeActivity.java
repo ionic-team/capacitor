@@ -1,88 +1,79 @@
 package com.getcapacitor;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.webkit.WebView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.android.R;
-import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
-import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.cordova.ConfigXmlParser;
-import org.apache.cordova.CordovaPreferences;
-import org.apache.cordova.PluginEntry;
-import org.apache.cordova.PluginManager;
 import org.json.JSONObject;
 
 public class BridgeActivity extends AppCompatActivity {
 
     protected Bridge bridge;
-    private WebView webView;
-    protected MockCordovaInterfaceImpl cordovaInterface;
     protected boolean keepRunning = true;
-    private ArrayList<PluginEntry> pluginEntries;
-    private PluginManager pluginManager;
-    private CordovaPreferences preferences;
-    private MockCordovaWebViewImpl mockWebView;
     private JSONObject config;
-
     private int activityDepth = 0;
-
-    private String lastActivityPlugin;
-
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
+    private final Bridge.Builder bridgeBuilder = new Bridge.Builder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        bridgeBuilder.setInstanceState(savedInstanceState);
     }
 
+    /**
+     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
+     * initialized automatically. If you need to add additional plugins during initialization,
+     * use {@link BridgeActivity#bridgeBuilder}.
+     */
+    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
         this.init(savedInstanceState, plugins, null);
     }
 
+    /**
+     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
+     * initialized automatically. If you need to add additional plugins during initialization,
+     * use {@link BridgeActivity#bridgeBuilder}.
+     */
+    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
         this.initialPlugins = plugins;
         this.config = config;
-        loadConfig(this.getApplicationContext(), this);
 
-        getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
-        setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
-        setTheme(R.style.AppTheme_NoActionBar);
-
-        setContentView(R.layout.bridge_layout_main);
-
-        this.load(savedInstanceState);
+        this.load();
     }
 
     /**
-     * Load the WebView and create the Bridge
+     * @deprecated This method should not be called manually.
      */
+    @Deprecated
     protected void load(Bundle savedInstanceState) {
+        this.load();
+    }
+
+    private void load() {
+        getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+        setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
+        setTheme(R.style.AppTheme_NoActionBar);
+        setContentView(R.layout.bridge_layout_main);
+
         Logger.debug("Starting BridgeActivity");
 
-        webView = findViewById(R.id.webview);
+        bridge = bridgeBuilder.setActivity(this).addPlugins(initialPlugins).setConfig(config).create();
 
-        cordovaInterface = new MockCordovaInterfaceImpl(this);
-        if (savedInstanceState != null) {
-            cordovaInterface.restoreInstanceState(savedInstanceState);
-        }
-
-        mockWebView = new MockCordovaWebViewImpl(this.getApplicationContext());
-        mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
-
-        pluginManager = mockWebView.getPluginManager();
-        cordovaInterface.onCordovaInit(pluginManager);
-        bridge = new Bridge(this, webView, initialPlugins, cordovaInterface, pluginManager, preferences, this.config);
-
-        if (savedInstanceState != null) {
-            bridge.restoreInstanceState(savedInstanceState);
-        }
-        this.keepRunning = preferences.getBoolean("KeepRunning", true);
+        this.keepRunning = bridge.shouldKeepRunning();
         this.onNewIntent(getIntent());
+    }
+
+    public void registerPlugin(Class<? extends Plugin> plugin) {
+        bridgeBuilder.addPlugin(plugin);
+    }
+
+    public void registerPlugins(List<Class<? extends Plugin>> plugins) {
+        bridgeBuilder.addPlugins(plugins);
     }
 
     public Bridge getBridge() {
@@ -99,11 +90,21 @@ public class BridgeActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+        // Preferred behavior: init() was not called, so we construct the bridge with auto-loaded plugins.
+        if (bridge == null) {
+            PluginManager loader = new PluginManager(getAssets());
+
+            try {
+                bridgeBuilder.addPlugins(loader.loadPluginClasses());
+            } catch (PluginLoadException ex) {
+                Logger.error("Error loading plugins.", ex);
+            }
+
+            this.load();
+        }
+
         activityDepth++;
-
         this.bridge.onStart();
-        mockWebView.handleStart();
-
         Logger.debug("App started");
     }
 
@@ -117,26 +118,15 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
         bridge.getApp().fireStatusChange(true);
-
         this.bridge.onResume();
-
-        mockWebView.handleResume(this.keepRunning);
-
         Logger.debug("App resumed");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         this.bridge.onPause();
-        if (this.mockWebView != null) {
-            boolean keepRunning = this.keepRunning || this.cordovaInterface.getActivityResultCallback() != null;
-            this.mockWebView.handlePause(keepRunning);
-        }
-
         Logger.debug("App paused");
     }
 
@@ -150,11 +140,6 @@ public class BridgeActivity extends AppCompatActivity {
         }
 
         this.bridge.onStop();
-
-        if (mockWebView != null) {
-            mockWebView.handleStop();
-        }
-
         Logger.debug("App stopped");
     }
 
@@ -162,19 +147,13 @@ public class BridgeActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         this.bridge.onDestroy();
-        if (this.mockWebView != null) {
-            mockWebView.handleDestroy();
-        }
         Logger.debug("App destroyed");
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (webView != null) {
-            webView.removeAllViews();
-            webView.destroy();
-        }
+        this.bridge.onDetachedFromWindow();
     }
 
     @Override
@@ -191,6 +170,7 @@ public class BridgeActivity extends AppCompatActivity {
         if (this.bridge == null) {
             return;
         }
+
         this.bridge.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -201,7 +181,6 @@ public class BridgeActivity extends AppCompatActivity {
         }
 
         this.bridge.onNewIntent(intent);
-        mockWebView.onNewIntent(intent);
     }
 
     @Override
@@ -211,13 +190,5 @@ public class BridgeActivity extends AppCompatActivity {
         }
 
         this.bridge.onBackPressed();
-    }
-
-    public void loadConfig(Context context, Activity activity) {
-        ConfigXmlParser parser = new ConfigXmlParser();
-        parser.parse(context);
-        preferences = parser.getPreferences();
-        preferences.setPreferencesBundle(activity.getIntent().getExtras());
-        pluginEntries = parser.getPluginEntries();
     }
 }
