@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.7](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.6...3.0.0-alpha.7) (2020-12-02)
+
+
+### Bug Fixes
+
+* **core:** export PermissionState ([#3775](https://github.com/ionic-team/capacitor/issues/3775)) ([2d5ac96](https://github.com/ionic-team/capacitor/commit/2d5ac963d131a704628f8a421be8429b9f63cf61))
+
+
+
 # [3.0.0-alpha.6](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.5...3.0.0-alpha.6) (2020-10-30)
 
 
