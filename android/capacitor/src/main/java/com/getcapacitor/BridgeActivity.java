@@ -15,7 +15,7 @@ public class BridgeActivity extends AppCompatActivity {
     private JSONObject config;
     private int activityDepth = 0;
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    protected Bridge.Builder bridgeBuilder = new Bridge.Builder();
+    private final Bridge.Builder bridgeBuilder = new Bridge.Builder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,21 +23,38 @@ public class BridgeActivity extends AppCompatActivity {
         bridgeBuilder.setInstanceState(savedInstanceState);
     }
 
+    /**
+     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
+     * initialized automatically. If you need to add additional plugins during initialization,
+     * use {@link BridgeActivity#bridgeBuilder}.
+     */
+    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
         this.init(savedInstanceState, plugins, null);
     }
 
+    /**
+     * @deprecated It is preferred not to call this method. If it is not called, the bridge is
+     * initialized automatically. If you need to add additional plugins during initialization,
+     * use {@link BridgeActivity#bridgeBuilder}.
+     */
+    @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
         this.initialPlugins = plugins;
         this.config = config;
 
-        this.load(savedInstanceState);
+        this.load();
     }
 
     /**
-     * Load the WebView and create the Bridge
+     * @deprecated This method should not be called manually.
      */
+    @Deprecated
     protected void load(Bundle savedInstanceState) {
+        this.load();
+    }
+
+    private void load() {
         getApplication().setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(getResources().getIdentifier("AppTheme_NoActionBar", "style", getPackageName()));
         setTheme(R.style.AppTheme_NoActionBar);
@@ -49,6 +66,14 @@ public class BridgeActivity extends AppCompatActivity {
 
         this.keepRunning = bridge.shouldKeepRunning();
         this.onNewIntent(getIntent());
+    }
+
+    public void registerPlugin(Class<? extends Plugin> plugin) {
+        bridgeBuilder.addPlugin(plugin);
+    }
+
+    public void registerPlugins(List<Class<? extends Plugin>> plugins) {
+        bridgeBuilder.addPlugins(plugins);
     }
 
     public Bridge getBridge() {
@@ -64,6 +89,20 @@ public class BridgeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+        // Preferred behavior: init() was not called, so we construct the bridge with auto-loaded plugins.
+        if (bridge == null) {
+            PluginManager loader = new PluginManager(getAssets());
+
+            try {
+                bridgeBuilder.addPlugins(loader.loadPluginClasses());
+            } catch (PluginLoadException ex) {
+                Logger.error("Error loading plugins.", ex);
+            }
+
+            this.load();
+        }
+
         activityDepth++;
         this.bridge.onStart();
         Logger.debug("App started");
