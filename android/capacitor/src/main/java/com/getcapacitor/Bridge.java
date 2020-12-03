@@ -177,7 +177,7 @@ public class Bridge {
     }
 
     private void loadWebView() {
-        appUrlConfig = this.config.getServerUrl();
+        appUrlConfig = this.getServerUrl();
         String[] appAllowNavigationConfig = this.config.getAllowNavigation();
 
         ArrayList<String> authorities = new ArrayList<>();
@@ -186,7 +186,7 @@ public class Bridge {
         }
         this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
 
-        String authority = this.config.getHostname();
+        String authority = this.getHost();
         authorities.add(authority);
 
         String scheme = this.getScheme();
@@ -350,6 +350,22 @@ public class Bridge {
      */
     public String getScheme() {
         return this.config.getAndroidScheme();
+    }
+
+    /**
+     * Get host name that is used to serve content
+     * @return
+     */
+    public String getHost() {
+        return this.config.getHostname();
+    }
+
+    /**
+     * Get the server url that is used to serve content
+     * @return
+     */
+    public String getServerUrl() {
+        return this.config.getServerUrl();
     }
 
     public CapConfig getConfig() {
@@ -924,7 +940,13 @@ public class Bridge {
             plugin.getInstance().saveCall(pluginCallForLastActivity);
         }
 
-        plugin.getInstance().handleOnActivityResult(pluginCallForLastActivity, requestCode, resultCode, data);
+        CapacitorPlugin pluginAnnotation = plugin.getPluginClass().getAnnotation(CapacitorPlugin.class);
+        if (pluginAnnotation != null) {
+            // Use new callback with new @CapacitorPlugin plugins
+            plugin.getInstance().handleOnActivityResult(pluginCallForLastActivity, requestCode, resultCode, data);
+        } else {
+            plugin.getInstance().handleOnActivityResult(requestCode, resultCode, data);
+        }
 
         // Clear the plugin call we may have re-hydrated on app launch
         pluginCallForLastActivity = null;

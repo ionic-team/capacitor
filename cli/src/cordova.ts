@@ -19,6 +19,7 @@ import { logger, logFatal, logPrompt } from './log';
 import type { Plugin } from './plugin';
 import {
   PluginType,
+  getAllElements,
   getAssets,
   getJSModules,
   getPlatformElement,
@@ -570,9 +571,11 @@ export async function writeCordovaAndroidManifest(
   const rootXMLEntries: any[] = [];
   const applicationXMLEntries: any[] = [];
   const applicationXMLAttributes: any[] = [];
+  let prefsArray: any[] = [];
   cordovaPlugins.map(async p => {
     const editConfig = getPlatformElement(p, platform, 'edit-config');
     const configFile = getPlatformElement(p, platform, 'config-file');
+    prefsArray = prefsArray.concat(getAllElements(p, platform, 'preference'));
     editConfig.concat(configFile).map(async (configElement: any) => {
       if (
         configElement.$ &&
@@ -641,6 +644,12 @@ ${rootXMLEntries.join('\n')}
     new RegExp('$PACKAGE_NAME'.replace('$', '\\$&'), 'g'),
     '${applicationId}',
   );
+  for (const preference of prefsArray) {
+    content = content.replace(
+      new RegExp(('$' + preference.$.name).replace('$', '\\$&'), 'g'),
+      preference.$.default,
+    );
+  }
   if (await pathExists(manifestPath)) {
     await writeFile(manifestPath, content);
   }
