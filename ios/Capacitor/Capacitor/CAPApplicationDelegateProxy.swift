@@ -4,7 +4,7 @@ import Foundation
 public class ApplicationDelegateProxy: NSObject, UIApplicationDelegate {
     public static let shared = ApplicationDelegateProxy()
 
-    private(set) var lastURL: URL?
+    public private(set) var lastURL: URL?
 
     public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         NotificationCenter.default.post(name: .capacitorOpenURL, object: [
