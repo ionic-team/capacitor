@@ -9,8 +9,6 @@
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
     "postinstall": "husky install && lerna bootstrap",
-    "prepublish": "pinst --disable",
-    "postpublish": "pinst --enable",
     "version": "npm run sync-peer-dependencies"
   },
   "prettier": "@ionic/prettier-config",
@@ -24,7 +22,6 @@
     "eslint": "^7.11.0",
     "husky": "^5.0.4",
     "lerna": "^3.22.1",
-    "pinst": "^2.1.1",
     "prettier": "~2.2.0",
     "prettier-plugin-java": "~1.0.0",
     "swiftlint": "^1.0.1"
