@@ -12,7 +12,7 @@ class CapacitorCordovaCookieManager implements ICordovaCookieManager {
     public CapacitorCordovaCookieManager(WebView webview) {
         webView = webview;
         cookieManager = CookieManager.getInstance();
-        cookieManager.setAcceptFileSchemeCookies(true);
+        CookieManager.setAcceptFileSchemeCookies(true);
         cookieManager.setAcceptThirdPartyCookies(webView, true);
     }
 

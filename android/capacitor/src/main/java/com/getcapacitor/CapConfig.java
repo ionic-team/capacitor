@@ -25,10 +25,7 @@ public class CapConfig {
     }
 
     private void loadConfig(AssetManager assetManager) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.config.json")));
-
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.config.json")))) {
             // do reading, usually loop until end of file reading
             StringBuilder b = new StringBuilder();
             String line;
@@ -43,12 +40,6 @@ public class CapConfig {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
         } catch (JSONException ex) {
             Logger.error("Unable to parse capacitor.config.json. Make sure it's valid json", ex);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {}
-            }
         }
     }
 

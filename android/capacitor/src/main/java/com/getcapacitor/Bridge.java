@@ -164,8 +164,7 @@ public class Bridge {
 
         // Grab any intent info that our app was launched with
         Intent intent = context.getIntent();
-        Uri intentData = intent.getData();
-        this.intentUri = intentData;
+        this.intentUri = intent.getData();
 
         // Register our core plugins
         this.registerAllPlugins();

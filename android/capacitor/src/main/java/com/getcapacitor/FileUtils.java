@@ -59,8 +59,6 @@ public class FileUtils {
         String path = getFileUrlForUri(c, u);
         if (path.startsWith("file://")) {
             path = path.replace("file://", "");
-        } else if (path.startsWith("/")) {
-            path = path;
         }
         return host + Bridge.CAPACITOR_FILE_START + path;
     }

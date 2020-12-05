@@ -145,7 +145,7 @@ public class WebViewLocalServer {
             return null;
         }
         String path = uri.getPath();
-        if (path == null || path.length() == 0) {
+        if (path == null || path.isEmpty()) {
             Logger.error("URL does not have a path: " + url);
             return null;
         }
@@ -284,7 +284,7 @@ public class WebViewLocalServer {
 
         int periodIndex = path.lastIndexOf(".");
         if (periodIndex >= 0) {
-            String ext = path.substring(path.lastIndexOf("."), path.length());
+            String ext = path.substring(path.lastIndexOf("."));
 
             InputStream responseStream = new LollipopLazyInputStream(handler, request);
 
@@ -357,8 +357,6 @@ public class WebViewLocalServer {
                         responseStream
                     );
                 }
-            } catch (SocketTimeoutException ex) {
-                bridge.handleAppUrlLoadError(ex);
             } catch (Exception ex) {
                 bridge.handleAppUrlLoadError(ex);
             }
