@@ -26,7 +26,7 @@ public class BridgeActivity extends AppCompatActivity {
     /**
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link BridgeActivity#bridgeBuilder}.
+     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
      */
     @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
@@ -36,7 +36,7 @@ public class BridgeActivity extends AppCompatActivity {
     /**
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link BridgeActivity#bridgeBuilder}.
+     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
      */
     @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
