@@ -876,16 +876,19 @@ public class Bridge {
         JSObject permissionsResults = new JSObject();
         CapacitorPlugin annotation = plugin.getPluginHandle().getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
-            // If a permission is defined with no permission constants, return "granted" for it.
-            // Otherwise, get its true state.
-            if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+            // First, check if a run-time override exists.
+            String override = plugin.overrideStateForPermission(perm);
+            // Otherwise, treat it as "granted" if the permission is defined with no permission constants.
+            if (override == null && (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty()))) {
+                override = "granted";
+            }
+            // If there is a run-time or compile-time override, use it.
+            if (override != null) {
                 String key = perm.alias();
                 if (!key.isEmpty()) {
-                    String existingResult = permissionsResults.getString(key);
-
-                    // auto set permission state to granted if the alias is empty.
-                    if (existingResult == null) {
-                        permissionsResults.put(key, "granted");
+                    // Set the permission state if it's not already set
+                    if (permissionsResults.getString(key) == null) {
+                        permissionsResults.put(key, override);
                     }
                 }
             } else {

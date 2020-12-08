@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -311,6 +312,18 @@ public class Plugin {
     }
 
     /**
+     * Conditionally override the state of a permission instead of checking with the system or prompting the user.
+     *
+     * @since 3.0.0
+     * @param permission the permission to evaluate
+     * @return a valid state (e.g. "granted") or null if it should be handled normally
+     */
+    @Nullable
+    protected String overrideStateForPermission(Permission permission) {
+        return null;
+    }
+
+    /**
      * Helper for requesting specific permissions
      * @deprecated use {@link #requestPermissions(PluginCall)} in conjunction with @CapacitorPlugin
      *
@@ -515,7 +528,7 @@ public class Plugin {
     @PluginMethod
     public void requestPermissions(PluginCall call) {
         String[] perms = null;
-        Set<String> autoGrantPerms = new HashSet<>();
+        JSObject overriddenPermissions = new JSObject();
         int permissionRequestCode;
 
         // If call was made with a list of permissions to request, save them to be requested
@@ -537,13 +550,21 @@ public class Plugin {
             if (providedPermsList == null || providedPermsList.isEmpty()) {
                 HashSet<String> permsSet = new HashSet<>();
                 for (Permission perm : annotation.permissions()) {
-                    // If a permission is defined with no permission constants, separate it for auto-granting.
-                    // Otherwise, it is added to the list to be requested.
-                    if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+                    // If there is an override for a permission, record it separately.
+                    String override = overrideStateForPermission(perm);
+                    if (override != null) {
                         if (!perm.alias().isEmpty()) {
-                            autoGrantPerms.add(perm.alias());
+                            overriddenPermissions.put(perm.alias(), override);
                         }
-                    } else {
+                    }
+                    // Else, if a permission is defined with no permission constants, auto-grant it separately.
+                    else if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
+                        if (!perm.alias().isEmpty()) {
+                            overriddenPermissions.put(perm.alias(), "granted");
+                        }
+                    }
+                    // Otherwise, add it to the list to be requested.
+                    else {
                         permsSet.addAll(Arrays.asList(perm.strings()));
                     }
                 }
@@ -578,15 +599,9 @@ public class Plugin {
                 requestPermissions(call, perms, permissionRequestCode);
             }
         } else {
-            // if the plugin only has auto-grant permissions, return those
-            if (!autoGrantPerms.isEmpty()) {
-                JSObject permissionsResults = new JSObject();
-
-                for (String perm : autoGrantPerms) {
-                    permissionsResults.put(perm, "granted");
-                }
-
-                call.resolve(permissionsResults);
+            // if the plugin only has overridden permissions, return those
+            if (overriddenPermissions.length() > 0) {
+                call.resolve(overriddenPermissions);
             } else {
                 // no permissions are defined on the plugin, resolve undefined
                 call.resolve();
