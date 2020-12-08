@@ -142,7 +142,7 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
     'capacitor-cordova-ios-plugins.tar.gz';
   const androidPlatformTemplateArchive = 'android-template.tar.gz';
   const androidCordovaPluginsTemplateArchive =
-    'capacitor-cordova-ios-plugins.tar.gz';
+    'capacitor-cordova-android-plugins.tar.gz';
 
   return {
     rootDir,
