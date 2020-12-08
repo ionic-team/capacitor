@@ -48,7 +48,7 @@ public class ConfigBuildingTest {
                     .setAppendedUserAgentString("test-append")
                     .setWebContentsDebuggingEnabled(true)
                     .setBackgroundColor("red")
-                    .setPluginConfigurations(pluginConfig)
+                    .setPluginsConfiguration(pluginConfig)
                     .setServerUrl("http://www.google.com")
                     .create();
         } catch (Exception e) {

@@ -34,7 +34,7 @@ public class CapConfig {
     private boolean hideLogs = false;
 
     // Plugins
-    private JSONObject pluginConfigurations = new JSONObject();
+    private JSONObject pluginsConfiguration = new JSONObject();
 
     // Config Object JSON (legacy)
     private JSONObject configJSON = new JSONObject();
@@ -80,7 +80,7 @@ public class CapConfig {
         this.hideLogs = builder.hideLogs;
 
         // Plugins Config
-        this.pluginConfigurations = builder.pluginConfigurations;
+        this.pluginsConfiguration = builder.pluginsConfiguration;
     }
 
     /**
@@ -140,7 +140,7 @@ public class CapConfig {
         webContentsDebuggingEnabled = getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
 
         // Plugins
-        pluginConfigurations = getObject(configJSON, "plugins");
+        pluginsConfiguration = getObject(configJSON, "plugins");
     }
 
     public boolean isHTML5Mode() {
@@ -191,8 +191,8 @@ public class CapConfig {
         return hideLogs;
     }
 
-    public JSONObject getPluginConfigurations() {
-        return pluginConfigurations;
+    public JSONObject getPluginsConfiguration() {
+        return pluginsConfiguration;
     }
 
     /**
@@ -216,7 +216,7 @@ public class CapConfig {
      */
     public String getPluginString(String pluginId, String configKey, String defaultValue) {
         String keyPath = String.format("%s.%s", pluginId, configKey);
-        return getString(pluginConfigurations, keyPath, defaultValue);
+        return getString(pluginsConfiguration, keyPath, defaultValue);
     }
 
     /**
@@ -229,7 +229,7 @@ public class CapConfig {
      */
     public boolean getPluginBoolean(String pluginId, String configKey, boolean defaultValue) {
         String keyPath = String.format("%s.%s", pluginId, configKey);
-        return getBoolean(pluginConfigurations, keyPath, defaultValue);
+        return getBoolean(pluginsConfiguration, keyPath, defaultValue);
     }
 
     /**
@@ -242,7 +242,7 @@ public class CapConfig {
      */
     public int getPluginInt(String pluginId, String configKey, int defaultValue) {
         String keyPath = String.format("%s.%s", pluginId, configKey);
-        return getInt(pluginConfigurations, keyPath, defaultValue);
+        return getInt(pluginsConfiguration, keyPath, defaultValue);
     }
 
     /**
@@ -266,7 +266,7 @@ public class CapConfig {
      */
     public String[] getPluginArray(String pluginId, String configKey, String[] defaultValue) {
         String keyPath = String.format("%s.%s", pluginId, configKey);
-        return getArray(pluginConfigurations, keyPath, defaultValue);
+        return getArray(pluginsConfiguration, keyPath, defaultValue);
     }
 
     /**
@@ -277,7 +277,7 @@ public class CapConfig {
      * @return The value from the config, if exists. Null if not
      */
     public JSONObject getPluginObject(String pluginId, String configKey) {
-        return getObject(pluginConfigurations, String.format("%s.%s", pluginId, configKey));
+        return getObject(pluginsConfiguration, String.format("%s.%s", pluginId, configKey));
     }
 
     /**
@@ -550,7 +550,7 @@ public class CapConfig {
         private boolean hideLogs = false;
 
         // Plugins Config Object
-        private JSONObject pluginConfigurations = new JSONObject();
+        private JSONObject pluginsConfiguration = new JSONObject();
 
         /**
          * Builds a Capacitor Config from the builder.
@@ -561,8 +561,8 @@ public class CapConfig {
             return new CapConfig(this);
         }
 
-        public Builder setPluginConfigurations(JSONObject pluginConfigurations) {
-            this.pluginConfigurations = pluginConfigurations;
+        public Builder setPluginsConfiguration(JSONObject pluginsConfiguration) {
+            this.pluginsConfiguration = pluginsConfiguration;
             return this;
         }
 

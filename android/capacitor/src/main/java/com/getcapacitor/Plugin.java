@@ -169,7 +169,7 @@ public class Plugin {
 
     public Object getConfigValue(String key) {
         try {
-            JSONObject plugins = bridge.getConfig().getPluginConfigurations();
+            JSONObject plugins = bridge.getConfig().getPluginsConfiguration();
             if (plugins == null) {
                 return null;
             }
