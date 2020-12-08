@@ -88,10 +88,10 @@ class PluginHandle {
         return this.pluginMethods.values();
     }
 
-    public void init(AppCompatActivity activity) {
+    public void init(Bridge bridge) {
         if (initMethod != null) {
             try {
-                initMethod.invoke(null, activity);
+                initMethod.invoke(null, bridge);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 // ignore
             }

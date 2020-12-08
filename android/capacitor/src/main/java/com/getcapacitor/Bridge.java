@@ -479,7 +479,7 @@ public class Bridge {
         try {
             PluginHandle handle = new PluginHandle(pluginClass);
             this.plugins.put(pluginId, handle);
-            handle.init(getActivity());
+            handle.init(this);
         } catch (InvalidPluginException ex) {
             Logger.error(
                 "NativePlugin " +
