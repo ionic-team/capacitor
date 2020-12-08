@@ -153,11 +153,6 @@ public class Bridge {
         this.config = new CapConfig(getActivity().getAssets(), config);
         Logger.init(this.config);
 
-        // Display splash screen if configured
-        if (context instanceof BridgeActivity) {
-            Splash.showOnLaunch((BridgeActivity) context, this.config);
-        }
-
         // Initialize web view and message handler for it
         this.initWebView();
         this.msgHandler = new MessageHandler(this, webView, pluginManager);
@@ -1008,8 +1003,6 @@ public class Bridge {
      * Handle onPause lifecycle event and notify the plugins
      */
     public void onPause() {
-        Splash.onPause();
-
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnPause();
         }

@@ -1,5 +1,6 @@
 package com.getcapacitor.plugin;
 
+import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -8,6 +9,12 @@ import com.getcapacitor.Splash;
 
 @NativePlugin
 public class SplashScreen extends Plugin {
+
+    public void load() {
+        if (getContext() instanceof BridgeActivity) {
+            Splash.showOnLaunch((BridgeActivity) getContext(), bridge.getConfig());
+        }
+    }
 
     @PluginMethod
     public void show(final PluginCall call) {
@@ -42,5 +49,10 @@ public class SplashScreen extends Plugin {
         int fadeDuration = call.getInt("fadeOutDuration", Splash.DEFAULT_FADE_OUT_DURATION);
         Splash.hide(getContext(), fadeDuration);
         call.resolve();
+    }
+
+    @Override
+    protected void handleOnPause() {
+        Splash.onPause();
     }
 }
