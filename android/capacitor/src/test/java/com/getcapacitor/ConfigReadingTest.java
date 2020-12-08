@@ -8,17 +8,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.AssetManager;
-import androidx.core.app.ActivityCompat;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 public class ConfigReadingTest {
 
