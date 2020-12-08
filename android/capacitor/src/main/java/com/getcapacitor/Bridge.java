@@ -477,7 +477,9 @@ public class Bridge {
         Logger.debug("Registering plugin: " + pluginId);
 
         try {
-            this.plugins.put(pluginId, new PluginHandle(pluginClass));
+            PluginHandle handle = new PluginHandle(pluginClass);
+            this.plugins.put(pluginId, handle);
+            handle.init(getActivity());
         } catch (InvalidPluginException ex) {
             Logger.error(
                 "NativePlugin " +

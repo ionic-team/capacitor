@@ -1,5 +1,6 @@
 package com.getcapacitor;
 
+import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,6 +17,7 @@ class PluginHandle {
     private final Class<? extends Plugin> pluginClass;
 
     private Map<String, PluginMethodHandle> pluginMethods = new HashMap<>();
+    private Method initMethod = null;
 
     private final String pluginId;
 
@@ -86,6 +88,16 @@ class PluginHandle {
         return this.pluginMethods.values();
     }
 
+    public void init(AppCompatActivity activity) {
+        if (initMethod != null) {
+            try {
+                initMethod.invoke(null, activity);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                // ignore
+            }
+        }
+    }
+
     public void load(Bridge bridge) {
         this.instance.setBridge(bridge);
         this.instance.load();
@@ -116,6 +128,10 @@ class PluginHandle {
         Method[] methods = pluginClass.getMethods();
 
         for (Method methodReflect : methods) {
+            if (methodReflect.getName().equals("init")) {
+                initMethod = methodReflect;
+            }
+
             PluginMethod method = methodReflect.getAnnotation(PluginMethod.class);
 
             if (method == null) {
