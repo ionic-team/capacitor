@@ -16,7 +16,7 @@
   "scripts": {
     "build": "npm run clean && npm run assets && tsc",
     "clean": "rimraf ./dist",
-    "assets": "node scripts/copy-assets.js",
+    "assets": "node ../scripts/pack-cli-assets.mjs",
     "prepublishOnly": "npm run build",
     "test": "jest -i",
     "watch": "npm run assets && tsc -w"
