@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 import android.app.Activity;
+import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ public class ConfigReadingTest {
 
     Activity context = Mockito.mock(Activity.class);
     AssetManager assetManager = Mockito.mock(AssetManager.class);
+    ApplicationInfo applicationInfo = Mockito.mock(ApplicationInfo.class);
 
     private InputStream getTestInputStream(String testPath) {
         return this.getClass().getClassLoader().getResourceAsStream(testPath);
@@ -34,6 +36,7 @@ public class ConfigReadingTest {
     @Before
     public void before() {
         when(context.getAssets()).thenReturn(assetManager);
+        when(context.getApplicationInfo()).thenReturn(applicationInfo);
     }
 
     @Test
@@ -41,10 +44,10 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(BAD_TEST));
 
-            CapConfig config = new CapConfig(context, false);
+            CapConfig config = new CapConfig(context);
             assertEquals("not a real domain", config.getServerUrl());
             assertNull(config.getBackgroundColor());
-            assertFalse(config.hideLogs());
+            assertFalse(config.areLogsHidden());
         } catch (IOException e) {
             fail();
         }
@@ -55,11 +58,11 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(FLAT_TEST));
 
-            CapConfig config = new CapConfig(context, false);
+            CapConfig config = new CapConfig(context);
             assertEquals("level 1 override", config.getOverriddenUserAgentString());
             assertEquals("level 1 append", config.getAppendedUserAgentString());
             assertEquals("#ffffff", config.getBackgroundColor());
-            assertTrue(config.hideLogs());
+            assertTrue(config.areLogsHidden());
             assertEquals(1, config.getPluginInt("SplashScreen", "launchShowDuration", 0));
         } catch (IOException e) {
             fail();
@@ -71,11 +74,11 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(HIERARCHY_TEST));
 
-            CapConfig config = new CapConfig(context, false);
+            CapConfig config = new CapConfig(context);
             assertEquals("level 2 override", config.getOverriddenUserAgentString());
             assertEquals("level 2 append", config.getAppendedUserAgentString());
             assertEquals("#000000", config.getBackgroundColor());
-            assertFalse(config.hideLogs());
+            assertFalse(config.areLogsHidden());
         } catch (IOException e) {
             fail();
         }
@@ -89,7 +92,7 @@ public class ConfigReadingTest {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(NONJSON_TEST));
 
             try (MockedStatic<Logger> logger = mockStatic(Logger.class)) {
-                CapConfig config = new CapConfig(context, false);
+                CapConfig config = new CapConfig(context);
                 logger.verify(times(1), () -> Logger.error(eq(errText), any()));
             }
         } catch (IOException e) {
@@ -102,7 +105,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(SERVER_TEST));
 
-            CapConfig config = new CapConfig(context, false);
+            CapConfig config = new CapConfig(context);
             assertEquals("myhost", config.getHostname());
             assertEquals("http://192.168.100.1:2057", config.getServerUrl());
             assertEquals("override", config.getAndroidScheme());

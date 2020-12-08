@@ -149,7 +149,7 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        this.config = config != null ? config : new CapConfig(getActivity(), isDevMode());
+        this.config = config != null ? config : new CapConfig(getActivity());
         Logger.init(this.config);
 
         // Display splash screen if configured
@@ -208,7 +208,7 @@ public class Bridge {
             }
         }
 
-        final boolean html5mode = this.config.html5mode();
+        final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
         localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
@@ -388,7 +388,7 @@ public class Bridge {
         settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        if (this.config.allowMixedContent()) {
+        if (this.config.isMixedContentAllowed()) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 

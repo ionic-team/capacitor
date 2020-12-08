@@ -38,18 +38,18 @@ public class ConfigBuildingTest {
 
             config =
                 new CapConfig.Builder()
-                    .allowMixedContent(true)
-                    .allowNavigation(new String[] { "http://www.google.com" })
-                    .androidScheme("test")
-                    .captureInput(true)
-                    .hideLogs(true)
-                    .html5mode(false)
-                    .overriddenUserAgentString("test-user-agent")
-                    .appendedUserAgentString("test-append")
-                    .webContentsDebuggingEnabled(true)
-                    .backgroundColor("red")
-                    .pluginConfigurations(pluginConfig)
-                    .serverUrl("http://www.google.com")
+                    .setAllowMixedContent(true)
+                    .setAllowNavigation(new String[] { "http://www.google.com" })
+                    .setAndroidScheme("test")
+                    .setCaptureInput(true)
+                    .setHideLogs(true)
+                    .setHTML5mode(false)
+                    .setOverriddenUserAgentString("test-user-agent")
+                    .setAppendedUserAgentString("test-append")
+                    .setWebContentsDebuggingEnabled(true)
+                    .setBackgroundColor("red")
+                    .setPluginConfigurations(pluginConfig)
+                    .setServerUrl("http://www.google.com")
                     .create();
         } catch (Exception e) {
             fail();
@@ -58,12 +58,12 @@ public class ConfigBuildingTest {
 
     @Test
     public void getCoreConfigValues() {
-        assertTrue(config.allowMixedContent());
+        assertTrue(config.isMixedContentAllowed());
         assertArrayEquals(new String[] { "http://www.google.com" }, config.getAllowNavigation());
         assertEquals("test", config.getAndroidScheme());
-        assertTrue(config.captureInput());
-        assertTrue(config.hideLogs());
-        assertFalse(config.html5mode());
+        assertTrue(config.isInputCaptured());
+        assertTrue(config.areLogsHidden());
+        assertFalse(config.isHTML5Mode());
         assertEquals("test-user-agent", config.getOverriddenUserAgentString());
         assertEquals("test-append", config.getAppendedUserAgentString());
         assertTrue(config.getWebContentsDebuggingEnabled());

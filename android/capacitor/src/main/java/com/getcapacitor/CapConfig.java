@@ -3,6 +3,7 @@ package com.getcapacitor;
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class CapConfig {
     private String backgroundColor;
     private boolean allowMixedContent = false;
     private boolean captureInput = false;
-    private Boolean webContentsDebuggingEnabled;
+    private boolean webContentsDebuggingEnabled = false;
     private boolean hideLogs = false;
 
     // Plugins
@@ -42,20 +43,18 @@ public class CapConfig {
      * Constructs a Capacitor Configuration from file.
      *
      * @param context The current context
-     * @param defaultDebuggable Enable dev mode flag
      */
-    public CapConfig(Context context, boolean defaultDebuggable) {
+    public CapConfig(Context context) {
         if (context == null) {
             Logger.error("Capacitor Config could not be created. Context must not be null.");
             return;
         }
 
         AssetManager assetManager = context.getAssets();
-        webContentsDebuggingEnabled = defaultDebuggable;
 
         // Load capacitor.config.json
         loadConfig(assetManager);
-        deserializeConfig();
+        deserializeConfig(context);
     }
 
     /**
@@ -119,7 +118,7 @@ public class CapConfig {
     /**
      * Deserializes the config from JSON into a Capacitor Configuration object.
      */
-    private void deserializeConfig() {
+    private void deserializeConfig(Context context) {
         // Server
         html5mode = getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = getString(configJSON, "server.url", null);
@@ -134,14 +133,15 @@ public class CapConfig {
         allowMixedContent =
             getBoolean(configJSON, "android.allowMixedContent", getBoolean(configJSON, "allowMixedContent", allowMixedContent));
         captureInput = getBoolean(configJSON, "android.captureInput", captureInput);
-        webContentsDebuggingEnabled = getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
         hideLogs = getBoolean(configJSON, "android.hideLogs", getBoolean(configJSON, "hideLogs", hideLogs));
+        webContentsDebuggingEnabled = (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        webContentsDebuggingEnabled = getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
 
         // Plugins
         pluginConfigurations = getObject(configJSON, "plugins");
     }
 
-    public boolean html5mode() {
+    public boolean isHTML5Mode() {
         return html5mode;
     }
 
@@ -173,11 +173,11 @@ public class CapConfig {
         return backgroundColor;
     }
 
-    public boolean allowMixedContent() {
+    public boolean isMixedContentAllowed() {
         return allowMixedContent;
     }
 
-    public boolean captureInput() {
+    public boolean isInputCaptured() {
         return captureInput;
     }
 
@@ -185,7 +185,7 @@ public class CapConfig {
         return webContentsDebuggingEnabled;
     }
 
-    public boolean hideLogs() {
+    public boolean areLogsHidden() {
         return hideLogs;
     }
 
@@ -544,7 +544,7 @@ public class CapConfig {
         private String backgroundColor;
         private boolean allowMixedContent = false;
         private boolean captureInput = false;
-        private Boolean webContentsDebuggingEnabled;
+        private boolean webContentsDebuggingEnabled = false;
         private boolean hideLogs = false;
 
         // Plugins Config Object
@@ -559,67 +559,67 @@ public class CapConfig {
             return new CapConfig(this);
         }
 
-        public Builder pluginConfigurations(JSONObject pluginConfigurations) {
+        public Builder setPluginConfigurations(JSONObject pluginConfigurations) {
             this.pluginConfigurations = pluginConfigurations;
             return this;
         }
 
-        public Builder html5mode(boolean html5mode) {
+        public Builder setHTML5mode(boolean html5mode) {
             this.html5mode = html5mode;
             return this;
         }
 
-        public Builder serverUrl(String serverUrl) {
+        public Builder setServerUrl(String serverUrl) {
             this.serverUrl = serverUrl;
             return this;
         }
 
-        public Builder hostname(String hostname) {
+        public Builder setHostname(String hostname) {
             this.hostname = hostname;
             return this;
         }
 
-        public Builder androidScheme(String androidScheme) {
+        public Builder setAndroidScheme(String androidScheme) {
             this.androidScheme = androidScheme;
             return this;
         }
 
-        public Builder allowNavigation(String[] allowNavigation) {
+        public Builder setAllowNavigation(String[] allowNavigation) {
             this.allowNavigation = allowNavigation;
             return this;
         }
 
-        public Builder overriddenUserAgentString(String overriddenUserAgentString) {
+        public Builder setOverriddenUserAgentString(String overriddenUserAgentString) {
             this.overriddenUserAgentString = overriddenUserAgentString;
             return this;
         }
 
-        public Builder appendedUserAgentString(String appendedUserAgentString) {
+        public Builder setAppendedUserAgentString(String appendedUserAgentString) {
             this.appendedUserAgentString = appendedUserAgentString;
             return this;
         }
 
-        public Builder backgroundColor(String backgroundColor) {
+        public Builder setBackgroundColor(String backgroundColor) {
             this.backgroundColor = backgroundColor;
             return this;
         }
 
-        public Builder allowMixedContent(boolean allowMixedContent) {
+        public Builder setAllowMixedContent(boolean allowMixedContent) {
             this.allowMixedContent = allowMixedContent;
             return this;
         }
 
-        public Builder captureInput(boolean captureInput) {
+        public Builder setCaptureInput(boolean captureInput) {
             this.captureInput = captureInput;
             return this;
         }
 
-        public Builder webContentsDebuggingEnabled(Boolean webContentsDebuggingEnabled) {
+        public Builder setWebContentsDebuggingEnabled(boolean webContentsDebuggingEnabled) {
             this.webContentsDebuggingEnabled = webContentsDebuggingEnabled;
             return this;
         }
 
-        public Builder hideLogs(boolean hideLogs) {
+        public Builder setHideLogs(boolean hideLogs) {
             this.hideLogs = hideLogs;
             return this;
         }
