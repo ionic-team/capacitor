@@ -4,21 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.android.R;
-import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.cordova.CordovaPreferences;
-import org.apache.cordova.PluginEntry;
-import org.apache.cordova.PluginManager;
 
 public class BridgeActivity extends AppCompatActivity {
 
     protected Bridge bridge;
     protected boolean keepRunning = true;
-    private ArrayList<PluginEntry> pluginEntries;
-    private PluginManager pluginManager;
-    private CordovaPreferences preferences;
-    private MockCordovaWebViewImpl mockWebView;
     private CapConfig config;
 
     private int activityDepth = 0;
