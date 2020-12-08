@@ -11,9 +11,8 @@ import java.util.Map;
  * PluginHandle is an instance of a plugin that has been registered
  * and indexed. Think of it as a Plugin instance with extra metadata goodies
  */
-public class PluginHandle {
+class PluginHandle {
 
-    private final Bridge bridge;
     private final Class<? extends Plugin> pluginClass;
 
     private Map<String, PluginMethodHandle> pluginMethods = new HashMap<>();
@@ -25,8 +24,7 @@ public class PluginHandle {
 
     private Plugin instance;
 
-    public PluginHandle(Bridge bridge, Class<? extends Plugin> pluginClass) throws InvalidPluginException, PluginLoadException {
-        this.bridge = bridge;
+    public PluginHandle(Class<? extends Plugin> pluginClass) throws InvalidPluginException, PluginLoadException {
         this.pluginClass = pluginClass;
 
         CapacitorPlugin pluginAnnotation = pluginClass.getAnnotation(CapacitorPlugin.class);
@@ -56,7 +54,12 @@ public class PluginHandle {
 
         this.indexMethods(pluginClass);
 
-        this.load();
+        try {
+            this.instance = this.pluginClass.newInstance();
+            this.instance.setPluginHandle(this);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
+        }
     }
 
     public Class<? extends Plugin> getPluginClass() {
@@ -83,20 +86,9 @@ public class PluginHandle {
         return this.pluginMethods.values();
     }
 
-    public Plugin load() throws PluginLoadException {
-        if (this.instance != null) {
-            return this.instance;
-        }
-
-        try {
-            this.instance = this.pluginClass.newInstance();
-            this.instance.setPluginHandle(this);
-            this.instance.setBridge(this.bridge);
-            this.instance.load();
-            return this.instance;
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new PluginLoadException("Unable to load plugin instance. Ensure plugin is publicly accessible");
-        }
+    public void load(Bridge bridge) {
+        this.instance.setBridge(bridge);
+        this.instance.load();
     }
 
     /**
@@ -106,12 +98,7 @@ public class PluginHandle {
      * @throws InvalidPluginMethodException if no method was found on that plugin
      */
     public void invoke(String methodName, PluginCall call)
-        throws PluginLoadException, InvalidPluginMethodException, InvocationTargetException, IllegalAccessException {
-        if (this.instance == null) {
-            // Can throw PluginLoadException
-            this.load();
-        }
-
+        throws InvalidPluginMethodException, InvocationTargetException, IllegalAccessException {
         PluginMethodHandle methodMeta = pluginMethods.get(methodName);
         if (methodMeta == null) {
             throw new InvalidPluginMethodException("No method " + methodName + " found for plugin " + pluginClass.getName());

@@ -109,7 +109,7 @@ public class Plugin {
      * as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
      * @param pluginHandle
      */
-    public void setPluginHandle(PluginHandle pluginHandle) {
+    void setPluginHandle(PluginHandle pluginHandle) {
         this.handle = pluginHandle;
     }
 
@@ -120,7 +120,7 @@ public class Plugin {
      * such as indexed methods for reflection, and {@link CapacitorPlugin} annotation data).
      * @return
      */
-    public PluginHandle getPluginHandle() {
+    PluginHandle getPluginHandle() {
         return this.handle;
     }
 

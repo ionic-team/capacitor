@@ -158,6 +158,8 @@ public class Bridge {
             Splash.showOnLaunch((BridgeActivity) context, this.config);
         }
 
+        this.initPlugins();
+
         // Initialize web view and message handler for it
         this.initWebView();
         this.msgHandler = new MessageHandler(this, webView, pluginManager);
@@ -166,9 +168,7 @@ public class Bridge {
         Intent intent = context.getIntent();
         this.intentUri = intent.getData();
 
-        // Register our core plugins
-        this.registerAllPlugins();
-
+        this.loadPlugins();
         this.loadWebView();
     }
 
@@ -229,6 +229,12 @@ public class Bridge {
         }
         // Get to work
         webView.loadUrl(appUrl);
+    }
+
+    private void loadPlugins() {
+        for (PluginHandle plugin : plugins.values()) {
+            plugin.load(this);
+        }
     }
 
     public boolean launchIntent(Uri url) {
@@ -421,7 +427,7 @@ public class Bridge {
     /**
      * Register our core Plugin APIs
      */
-    private void registerAllPlugins() {
+    private void initPlugins() {
         this.registerPlugin(SplashScreen.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 
@@ -471,7 +477,7 @@ public class Bridge {
         Logger.debug("Registering plugin: " + pluginId);
 
         try {
-            this.plugins.put(pluginId, new PluginHandle(this, pluginClass));
+            this.plugins.put(pluginId, new PluginHandle(pluginClass));
         } catch (InvalidPluginException ex) {
             Logger.error(
                 "NativePlugin " +
@@ -561,7 +567,7 @@ public class Bridge {
                     if (call.isSaved()) {
                         saveCall(call);
                     }
-                } catch (PluginLoadException | InvalidPluginMethodException ex) {
+                } catch (InvalidPluginMethodException ex) {
                     Logger.error("Unable to execute plugin method", ex);
                 } catch (Exception ex) {
                     Logger.error("Serious error executing plugin", ex);
