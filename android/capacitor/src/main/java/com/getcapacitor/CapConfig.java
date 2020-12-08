@@ -93,14 +93,14 @@ public class CapConfig {
             reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.config.json")));
 
             // do reading, usually loop until end of file reading
-            StringBuilder b = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 //process line
-                b.append(line);
+                builder.append(line);
             }
 
-            String jsonString = b.toString();
+            String jsonString = builder.toString();
             configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
@@ -110,7 +110,9 @@ public class CapConfig {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                    // Ignored
+                }
             }
         }
     }
@@ -394,7 +396,7 @@ public class CapConfig {
                 return defaultValue;
             }
             return value;
-        } catch (Exception ignore) {
+        } catch (JSONException ignore) {
             // value was not found
         }
         return defaultValue;
@@ -414,7 +416,7 @@ public class CapConfig {
             JSONObject o = getDeepestObject(jsonObject, key);
 
             return o.getBoolean(k);
-        } catch (Exception ignore) {
+        } catch (JSONException ignore) {
             // value was not found
         }
         return defaultValue;
@@ -433,7 +435,7 @@ public class CapConfig {
         try {
             JSONObject o = getDeepestObject(jsonObject, key);
             return o.getInt(k);
-        } catch (Exception ignore) {
+        } catch (JSONException ignore) {
             // value was not found
         }
         return defaultValue;
@@ -465,7 +467,7 @@ public class CapConfig {
             }
 
             return value;
-        } catch (Exception ignore) {
+        } catch (JSONException ignore) {
             // value was not found
         }
         return defaultValue;
@@ -484,7 +486,7 @@ public class CapConfig {
             JSONObject o = getDeepestObject(jsonObject, key);
 
             return o.getJSONObject(k);
-        } catch (Exception ignore) {
+        } catch (JSONException ignore) {
             // value was not found
         }
         return null;
