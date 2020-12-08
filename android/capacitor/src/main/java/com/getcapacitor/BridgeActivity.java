@@ -167,6 +167,8 @@ public class BridgeActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (this.bridge == null) {
             return;
         }
@@ -176,6 +178,8 @@ public class BridgeActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
         if (this.bridge == null || intent == null) {
             return;
         }

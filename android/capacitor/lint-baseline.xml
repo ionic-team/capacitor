@@ -2,28 +2,6 @@
 <issues format="5" by="lint 4.1.1" client="gradle" variant="all" version="4.1.1">
 
     <issue
-        id="MissingSuperCall"
-        message="Overriding method should call `super.onActivityResult`"
-        errorLine1="    protected void onActivityResult(int requestCode, int resultCode, Intent data) {"
-        errorLine2="                   ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/getcapacitor/BridgeActivity.java"
-            line="169"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="MissingSuperCall"
-        message="Overriding method should call `super.onNewIntent`"
-        errorLine1="    protected void onNewIntent(Intent intent) {"
-        errorLine2="                   ~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/getcapacitor/BridgeActivity.java"
-            line="178"
-            column="20"/>
-    </issue>
-
-    <issue
         id="DefaultLocale"
         message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
         errorLine1="            String msg = String.format("
