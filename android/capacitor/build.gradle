@@ -39,7 +39,9 @@ android {
         }
     }
     lintOptions {
-        abortOnError false
+        baseline file("lint-baseline.xml")
+        abortOnError true
+        warningsAsErrors true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
