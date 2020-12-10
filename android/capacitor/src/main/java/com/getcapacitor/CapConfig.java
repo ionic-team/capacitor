@@ -177,7 +177,7 @@ public class CapConfig {
         return webContentsDebuggingEnabled;
     }
 
-    public boolean areLogsHidden() {
+    public boolean isLogsHidden() {
         return hideLogs;
     }
 
