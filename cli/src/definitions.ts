@@ -33,16 +33,20 @@ export interface PlatformConfig {
 }
 
 export interface PlatformAssetsConfig {
-  readonly templateName: string;
-  readonly pluginsFolderName: string;
-  readonly templateDir: string;
-  readonly pluginsDir: string;
+  readonly platformTemplateArchive: string;
+  readonly platformTemplateArchiveAbs: string;
+  readonly cordovaPluginsTemplateArchive: string;
+  readonly cordovaPluginsTemplateArchiveAbs: string;
 }
 
 export interface CLIConfig {
   readonly rootDir: string;
-  readonly assetsName: string;
   readonly assetsDir: string;
+  readonly assetsDirAbs: string;
+  readonly assets: {
+    readonly ios: PlatformAssetsConfig;
+    readonly android: PlatformAssetsConfig;
+  };
   readonly package: PackageJson;
   readonly os: OS;
 }
@@ -67,6 +71,8 @@ export interface AppConfig {
 }
 
 export interface AndroidConfig extends PlatformConfig {
+  readonly cordovaPluginsDir: string;
+  readonly cordovaPluginsDirAbs: string;
   readonly studioPath: string;
   readonly minVersion: string;
   readonly appDir: string;
@@ -83,10 +89,11 @@ export interface AndroidConfig extends PlatformConfig {
   readonly resDirAbs: string;
   readonly buildOutputDir: string;
   readonly buildOutputDirAbs: string;
-  readonly assets: PlatformAssetsConfig;
 }
 
 export interface IOSConfig extends PlatformConfig {
+  readonly cordovaPluginsDir: string;
+  readonly cordovaPluginsDirAbs: string;
   readonly minVersion: string;
   readonly podPath: string;
   readonly cordovaSwiftVersion: string;
@@ -96,7 +103,6 @@ export interface IOSConfig extends PlatformConfig {
   readonly nativeProjectDirAbs: string;
   readonly nativeTargetDir: string;
   readonly nativeTargetDirAbs: string;
-  readonly assets: PlatformAssetsConfig;
 }
 
 export type WebConfig = PlatformConfig;

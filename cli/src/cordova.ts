@@ -558,12 +558,8 @@ export async function writeCordovaAndroidManifest(
   config: Config,
   platform: string,
 ): Promise<void> {
-  const pluginsFolder = resolve(
-    config.android.platformDirAbs,
-    config.android.assets.pluginsFolderName,
-  );
   const manifestPath = join(
-    pluginsFolder,
+    config.android.cordovaPluginsDirAbs,
     'src',
     'main',
     'AndroidManifest.xml',
