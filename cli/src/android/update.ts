@@ -32,6 +32,7 @@ import {
 } from '../plugin';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
+import { extractTemplate } from '../util/template';
 
 import { getAndroidPlugins } from './common';
 
@@ -278,18 +279,17 @@ export async function handleCordovaPluginsGradle(
   config: Config,
   cordovaPlugins: Plugin[],
 ): Promise<void> {
-  const pluginsFolder = resolve(
-    config.android.platformDirAbs,
-    config.android.assets.pluginsFolderName,
+  const pluginsGradlePath = join(
+    config.android.cordovaPluginsDirAbs,
+    'build.gradle',
   );
-  const pluginsGradlePath = join(pluginsFolder, 'build.gradle');
   const frameworksArray: any[] = [];
   let prefsArray: any[] = [];
   const applyArray: any[] = [];
   applyArray.push(`apply from: "cordova.variables.gradle"`);
   cordovaPlugins.map(p => {
     const relativePluginPath = convertToUnixPath(
-      relative(pluginsFolder, p.rootPath),
+      relative(config.android.cordovaPluginsDirAbs, p.rootPath),
     );
     const frameworks = getPlatformElement(p, platform, 'framework');
     frameworks.map((framework: any) => {
@@ -336,7 +336,7 @@ ext {
   cdvPluginPostBuildExtras = []
 }`;
   await writeFile(
-    join(pluginsFolder, 'cordova.variables.gradle'),
+    join(config.android.cordovaPluginsDirAbs, 'cordova.variables.gradle'),
     cordovaVariables,
   );
 }
@@ -345,11 +345,7 @@ async function copyPluginsNativeFiles(
   config: Config,
   cordovaPlugins: Plugin[],
 ) {
-  const pluginsRoot = resolve(
-    config.android.platformDirAbs,
-    config.android.assets.pluginsFolderName,
-  );
-  const pluginsPath = join(pluginsRoot, 'src', 'main');
+  const pluginsPath = join(config.android.cordovaPluginsDirAbs, 'src', 'main');
   for (const p of cordovaPlugins) {
     const androidPlatform = getPluginPlatform(p, platform);
     if (androidPlatform) {
@@ -399,12 +395,11 @@ async function copyPluginsNativeFiles(
 }
 
 async function removePluginsNativeFiles(config: Config) {
-  const pluginsRoot = resolve(
-    config.android.platformDirAbs,
-    config.android.assets.pluginsFolderName,
+  await remove(config.android.cordovaPluginsDirAbs);
+  await extractTemplate(
+    config.cli.assets.android.cordovaPluginsTemplateArchiveAbs,
+    config.android.cordovaPluginsDirAbs,
   );
-  await remove(pluginsRoot);
-  await copy(config.android.assets.pluginsDir, pluginsRoot);
 }
 
 async function getPluginsTask(config: Config) {

@@ -23,6 +23,7 @@ import {
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { runCommand } from '../util/subprocess';
+import { extractTemplate } from '../util/template';
 
 import { getIOSPlugins } from './common';
 
@@ -207,10 +208,6 @@ async function generateCordovaPodspec(
   config: Config,
   isStatic: boolean,
 ) {
-  const pluginsPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.assets.pluginsFolderName,
-  );
   const weakFrameworks: string[] = [];
   const linkedFrameworks: string[] = [];
   const customFrameworks: string[] = [];
@@ -356,7 +353,10 @@ async function generateCordovaPodspec(
     s.swift_version  = '${config.ios.cordovaSwiftVersion}'
     ${frameworksString}
   end`;
-  await writeFile(join(pluginsPath, `${name}.podspec`), content);
+  await writeFile(
+    join(config.ios.cordovaPluginsDirAbs, `${name}.podspec`),
+    content,
+  );
 }
 
 function getLinkerFlags(config: Config) {
@@ -372,10 +372,6 @@ async function copyPluginsNativeFiles(
   config: Config,
   cordovaPlugins: Plugin[],
 ) {
-  const pluginsPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.assets.pluginsFolderName,
-  );
   for (const p of cordovaPlugins) {
     const sourceFiles = getPlatformElement(p, platform, 'source-file');
     const headerFiles = getPlatformElement(p, platform, 'header-file');
@@ -389,7 +385,11 @@ async function copyPluginsNativeFiles(
     if (podFrameworks.length > 0 || podspecs.length > 0) {
       sourcesFolderName += 'static';
     }
-    const sourcesFolder = join(pluginsPath, sourcesFolderName, p.name);
+    const sourcesFolder = join(
+      config.ios.cordovaPluginsDirAbs,
+      sourcesFolderName,
+      p.name,
+    );
     for (const codeFile of codeFiles) {
       let fileName = codeFile.$.src.split('/').pop();
       const fileExt = codeFile.$.src.split('.').pop();
@@ -404,7 +404,12 @@ async function copyPluginsNativeFiles(
         destFolder = 'noarc';
       }
       const filePath = getFilePath(config, p, codeFile.$.src);
-      const fileDest = join(pluginsPath, destFolder, p.name, fileName);
+      const fileDest = join(
+        config.ios.cordovaPluginsDirAbs,
+        destFolder,
+        p.name,
+        fileName,
+      );
       await copy(filePath, fileDest);
       if (!codeFile.$.framework) {
         let fileContent = await readFile(fileDest, { encoding: 'utf-8' });
@@ -455,7 +460,7 @@ async function copyPluginsNativeFiles(
       const fileName = resourceFile.$.src.split('/').pop();
       await copy(
         getFilePath(config, p, resourceFile.$.src),
-        join(pluginsPath, 'resources', fileName),
+        join(config.ios.cordovaPluginsDirAbs, 'resources', fileName),
       );
     }
     for (const framework of frameworks) {
@@ -470,12 +475,11 @@ async function copyPluginsNativeFiles(
 }
 
 async function removePluginsNativeFiles(config: Config) {
-  const pluginsPath = resolve(
-    config.ios.platformDirAbs,
-    config.ios.assets.pluginsFolderName,
+  await remove(config.ios.cordovaPluginsDirAbs);
+  await extractTemplate(
+    config.cli.assets.ios.cordovaPluginsTemplateArchiveAbs,
+    config.ios.cordovaPluginsDirAbs,
   );
-  await remove(pluginsPath);
-  await copy(config.ios.assets.pluginsDir, pluginsPath);
 }
 
 function filterNoPods(plugin: Plugin) {

@@ -1,16 +1,7 @@
-import { copy, move, pathExists } from '@ionic/utils-fs';
-import { join } from 'path';
+import { mkdirp } from '@ionic/utils-fs';
+import tar from 'tar';
 
-export async function copyTemplate(src: string, dst: string): Promise<void> {
-  await copy(src, dst);
-  await renameGitignore(dst);
-}
-
-async function renameGitignore(dst: string): Promise<void> {
-  // npm renames .gitignore to something else, so our templates
-  // have .gitignore as gitignore, we need to rename it here.
-  const gitignorePath = join(dst, 'gitignore');
-  if (await pathExists(gitignorePath)) {
-    await move(gitignorePath, join(dst, '.gitignore'));
-  }
+export async function extractTemplate(src: string, dir: string): Promise<void> {
+  await mkdirp(dir);
+  await tar.extract({ file: src, cwd: dir });
 }
