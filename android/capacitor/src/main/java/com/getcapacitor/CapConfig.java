@@ -1,6 +1,7 @@
 package com.getcapacitor;
 
 import static com.getcapacitor.Bridge.CAPACITOR_HTTP_SCHEME;
+import static com.getcapacitor.FileUtils.readFile;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -40,22 +41,28 @@ public class CapConfig {
     private JSONObject configJSON = new JSONObject();
 
     /**
-     * Constructs a Capacitor Configuration from file.
+     * Constructs a Capacitor Configuration from config.json file.
      *
-     * @param context The current context
+     * @param context The context.
+     * @return A loaded config file, if successful.
      */
-    public CapConfig(Context context) {
+    static CapConfig fromFile(Context context) {
+        CapConfig config = new CapConfig();
+
         if (context == null) {
-            Logger.error("Capacitor Config could not be created. Context must not be null.");
-            return;
+            Logger.error("Capacitor Config could not be created from file. Context must not be null.");
+            return config;
         }
 
-        AssetManager assetManager = context.getAssets();
-
-        // Load capacitor.config.json
-        loadConfig(assetManager);
-        deserializeConfig(context);
+        config.loadConfig(context);
+        config.deserializeConfig(context);
+        return config;
     }
+
+    /**
+     * Constructs an empty config file.
+     */
+    private CapConfig() {}
 
     /**
      * Constructs a Capacitor Configuration using ConfigBuilder.
@@ -85,35 +92,15 @@ public class CapConfig {
 
     /**
      * Loads a Capacitor Configuration JSON file into a Capacitor Configuration object.
-     * @param assetManager
      */
-    private void loadConfig(AssetManager assetManager) {
-        BufferedReader reader = null;
+    private void loadConfig(Context context) {
         try {
-            reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.config.json")));
-
-            // do reading, usually loop until end of file reading
-            StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                //process line
-                builder.append(line);
-            }
-
-            String jsonString = builder.toString();
+            String jsonString = readFile(context, "capacitor.config.json");
             configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
         } catch (JSONException ex) {
             Logger.error("Unable to parse capacitor.config.json. Make sure it's valid json", ex);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // Ignored
-                }
-            }
         }
     }
 

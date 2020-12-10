@@ -149,7 +149,7 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        this.config = config != null ? config : new CapConfig(getActivity());
+        this.config = config != null ? config : CapConfig.fromFile(getActivity());
         Logger.init(this.config);
 
         // Display splash screen if configured
