@@ -169,11 +169,11 @@ public class Plugin {
 
     public Object getConfigValue(String key) {
         try {
-            JSONObject plugins = bridge.getConfig().getPluginsConfiguration();
+            PluginsConfig plugins = bridge.getConfig().getPluginsConfiguration();
             if (plugins == null) {
                 return null;
             }
-            JSONObject pluginConfig = plugins.getJSONObject(getPluginHandle().getId());
+            JSONObject pluginConfig = plugins.getPluginConfig(getPluginHandle().getId());
             return pluginConfig.get(key);
         } catch (JSONException ex) {
             return null;

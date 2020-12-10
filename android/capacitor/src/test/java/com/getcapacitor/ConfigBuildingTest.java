@@ -73,32 +73,32 @@ public class ConfigBuildingTest {
 
     @Test
     public void getPluginString() {
-        String testString = config.getPluginString(TEST_PLUGIN_NAME, "var2");
+        String testString = config.getPluginsConfiguration().getString(TEST_PLUGIN_NAME, "var2");
         assertEquals("hello", testString);
     }
 
     @Test
     public void getPluginBoolean() {
-        boolean testBool = config.getPluginBoolean(TEST_PLUGIN_NAME, "var1", false);
+        boolean testBool = config.getPluginsConfiguration().getBoolean(TEST_PLUGIN_NAME, "var1", false);
         assertTrue(testBool);
     }
 
     @Test
     public void getPluginInt() {
-        int testInt = config.getPluginInt(TEST_PLUGIN_NAME, "var4", -1);
+        int testInt = config.getPluginsConfiguration().getInt(TEST_PLUGIN_NAME, "var4", -1);
         assertEquals(2, testInt);
     }
 
     @Test
     public void getPluginArray() {
         String[] comparison = new String[] { "5", "6", "7", "8" };
-        String[] testArray = config.getPluginArray(TEST_PLUGIN_NAME, "var5");
+        String[] testArray = config.getPluginsConfiguration().getArray(TEST_PLUGIN_NAME, "var5");
         assertArrayEquals(comparison, testArray);
     }
 
     @Test
     public void getPluginObject() {
-        JSONObject testObject = config.getPluginObject(TEST_PLUGIN_NAME, "var3");
+        JSONObject testObject = config.getPluginsConfiguration().getObject(TEST_PLUGIN_NAME, "var3");
         assertEquals(testPluginNestedObject, testObject);
     }
 }
