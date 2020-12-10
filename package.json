@@ -8,7 +8,7 @@
     "prettier": "prettier \"**/*.{css,html,java,js,mjs,ts}\"",
     "eslint": "eslint . --ext ts",
     "swiftlint": "node-swiftlint",
-    "postinstall": "husky install && lerna bootstrap",
+    "postinstall": "lerna bootstrap",
     "version": "npm run sync-peer-dependencies"
   },
   "prettier": "@ionic/prettier-config",
@@ -20,7 +20,6 @@
     "@ionic/prettier-config": "~1.0.1",
     "@ionic/swiftlint-config": "^1.1.2",
     "eslint": "^7.11.0",
-    "husky": "^5.0.4",
     "lerna": "^3.22.1",
     "prettier": "~2.2.0",
     "prettier-plugin-java": "~1.0.0",
