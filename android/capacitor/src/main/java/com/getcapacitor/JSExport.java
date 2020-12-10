@@ -1,13 +1,13 @@
 package com.getcapacitor;
 
+import static com.getcapacitor.FileUtils.readFile;
+
 import android.content.Context;
 import android.text.TextUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static com.getcapacitor.FileUtils.readFile;
 
 public class JSExport {
 
