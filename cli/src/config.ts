@@ -135,12 +135,45 @@ async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
 }
 
 async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
-  const assetsName = 'assets';
+  const assetsDir = 'assets';
+  const assetsDirAbs = join(rootDir, assetsDir);
+  const iosPlatformTemplateArchive = 'ios-template.tar.gz';
+  const iosCordovaPluginsTemplateArchive =
+    'capacitor-cordova-ios-plugins.tar.gz';
+  const androidPlatformTemplateArchive = 'android-template.tar.gz';
+  const androidCordovaPluginsTemplateArchive =
+    'capacitor-cordova-android-plugins.tar.gz';
 
   return {
     rootDir,
-    assetsName,
-    assetsDir: join(rootDir, assetsName),
+    assetsDir,
+    assetsDirAbs,
+    assets: {
+      ios: {
+        platformTemplateArchive: iosPlatformTemplateArchive,
+        platformTemplateArchiveAbs: resolve(
+          assetsDirAbs,
+          iosPlatformTemplateArchive,
+        ),
+        cordovaPluginsTemplateArchive: iosCordovaPluginsTemplateArchive,
+        cordovaPluginsTemplateArchiveAbs: resolve(
+          assetsDirAbs,
+          iosCordovaPluginsTemplateArchive,
+        ),
+      },
+      android: {
+        platformTemplateArchive: androidPlatformTemplateArchive,
+        platformTemplateArchiveAbs: resolve(
+          assetsDirAbs,
+          androidPlatformTemplateArchive,
+        ),
+        cordovaPluginsTemplateArchive: androidCordovaPluginsTemplateArchive,
+        cordovaPluginsTemplateArchiveAbs: resolve(
+          assetsDirAbs,
+          androidCordovaPluginsTemplateArchive,
+        ),
+      },
+    },
     package: await readJSON(resolve(rootDir, 'package.json')),
     os: determineOS(process.platform),
   };
@@ -161,9 +194,8 @@ async function loadAndroidConfig(
   const webDir = `${assetsDir}/public`;
   const resDir = `${srcMainDir}/res`;
   const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
+  const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
 
-  const templateName = 'android-template';
-  const pluginsFolderName = 'capacitor-cordova-android-plugins';
   const studioPath = await determineAndroidStudioPath(cliConfig.os);
 
   return {
@@ -172,26 +204,22 @@ async function loadAndroidConfig(
     studioPath,
     platformDir,
     platformDirAbs,
+    cordovaPluginsDir,
+    cordovaPluginsDirAbs: resolve(platformDirAbs, cordovaPluginsDir),
     appDir,
-    appDirAbs: resolve(platformDir, appDir),
+    appDirAbs: resolve(platformDirAbs, appDir),
     srcDir,
-    srcDirAbs: resolve(platformDir, srcDir),
+    srcDirAbs: resolve(platformDirAbs, srcDir),
     srcMainDir,
-    srcMainDirAbs: resolve(platformDir, srcMainDir),
+    srcMainDirAbs: resolve(platformDirAbs, srcMainDir),
     assetsDir,
-    assetsDirAbs: resolve(platformDir, assetsDir),
+    assetsDirAbs: resolve(platformDirAbs, assetsDir),
     webDir,
-    webDirAbs: resolve(platformDir, webDir),
+    webDirAbs: resolve(platformDirAbs, webDir),
     resDir,
-    resDirAbs: resolve(platformDir, resDir),
+    resDirAbs: resolve(platformDirAbs, resDir),
     buildOutputDir,
-    buildOutputDirAbs: resolve(platformDir, buildOutputDir),
-    assets: {
-      templateName,
-      pluginsFolderName,
-      templateDir: resolve(cliConfig.assetsDir, templateName),
-      pluginsDir: resolve(cliConfig.assetsDir, pluginsFolderName),
-    },
+    buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
   };
 }
 
@@ -207,8 +235,11 @@ async function loadIOSConfig(
   const nativeProjectDir = 'App';
   const nativeTargetDir = `${nativeProjectDir}/App`;
   const webDir = `${nativeProjectDir}/public`;
-  const templateName = 'ios-template';
-  const pluginsFolderName = 'capacitor-cordova-ios-plugins';
+
+  const platformTemplateName = 'ios-template';
+  const platformTemplateArchive = `${platformTemplateName}.tar.gz`;
+  const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
+  const cordovaPluginsTemplateArchive = `${cordovaPluginsDir}.tar.gz`;
 
   return {
     name,
@@ -216,18 +247,14 @@ async function loadIOSConfig(
     cordovaSwiftVersion: '5.1',
     platformDir,
     platformDirAbs,
+    cordovaPluginsDir,
+    cordovaPluginsDirAbs: resolve(platformDirAbs, cordovaPluginsDir),
     nativeProjectDir,
-    nativeProjectDirAbs: resolve(platformDir, nativeProjectDir),
+    nativeProjectDirAbs: resolve(platformDirAbs, nativeProjectDir),
     nativeTargetDir,
-    nativeTargetDirAbs: resolve(platformDir, nativeTargetDir),
+    nativeTargetDirAbs: resolve(platformDirAbs, nativeTargetDir),
     webDir,
-    webDirAbs: resolve(platformDir, webDir),
-    assets: {
-      templateName,
-      pluginsFolderName,
-      templateDir: resolve(cliConfig.assetsDir, templateName),
-      pluginsDir: resolve(cliConfig.assetsDir, pluginsFolderName),
-    },
+    webDirAbs: resolve(platformDirAbs, webDir),
     podPath,
   };
 }
