@@ -24,9 +24,12 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     /**
+     * Initializes the Capacitor Bridge with the Activity.
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
      * use {@link BridgeActivity#bridgeBuilder}.
+     *
+     * @param plugins A list of plugins to initialize with Capacitor
      */
     @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
@@ -34,9 +37,13 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     /**
+     * Initializes the Capacitor Bridge with the Activity.
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
      * use {@link BridgeActivity#bridgeBuilder}.
+     *
+     * @param plugins A list of plugins to initialize with Capacitor
+     * @param config An instance of a Capacitor Configuration to use. If null, will load from file
      */
     @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, CapConfig config) {
