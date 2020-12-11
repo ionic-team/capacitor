@@ -199,10 +199,12 @@ public class BridgeActivity extends AppCompatActivity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
         if (this.bridge == null) {
             return;
         }
 
-        this.bridge.onActivityResult(requestCode, resultCode, data);
+        this.bridge.onConfigurationChanged(newConfig);
     }
 }
