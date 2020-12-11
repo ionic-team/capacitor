@@ -27,7 +27,7 @@ public class BridgeActivity extends AppCompatActivity {
      * Initializes the Capacitor Bridge with the Activity.
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link BridgeActivity#bridgeBuilder}.
+     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
      *
      * @param plugins A list of plugins to initialize with Capacitor
      */
@@ -40,7 +40,7 @@ public class BridgeActivity extends AppCompatActivity {
      * Initializes the Capacitor Bridge with the Activity.
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
-     * use {@link BridgeActivity#bridgeBuilder}.
+     * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
      *
      * @param plugins A list of plugins to initialize with Capacitor
      * @param config An instance of a Capacitor Configuration to use. If null, will load from file
@@ -174,6 +174,8 @@ public class BridgeActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (this.bridge == null) {
             return;
         }
@@ -183,6 +185,8 @@ public class BridgeActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
         if (this.bridge == null || intent == null) {
             return;
         }

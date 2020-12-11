@@ -23,7 +23,6 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
-import com.getcapacitor.plugin.SplashScreen;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
 import java.io.File;
@@ -152,19 +151,13 @@ public class Bridge {
         this.config = config != null ? config : CapConfig.fromFile(getActivity());
         Logger.init(this.config);
 
-        // Display splash screen if configured
-        if (context instanceof BridgeActivity) {
-            Splash.showOnLaunch((BridgeActivity) context, this.config);
-        }
-
         // Initialize web view and message handler for it
         this.initWebView();
         this.msgHandler = new MessageHandler(this, webView, pluginManager);
 
         // Grab any intent info that our app was launched with
         Intent intent = context.getIntent();
-        Uri intentData = intent.getData();
-        this.intentUri = intentData;
+        this.intentUri = intent.getData();
 
         // Register our core plugins
         this.registerAllPlugins();
@@ -419,7 +412,6 @@ public class Bridge {
      * Register our core Plugin APIs
      */
     private void registerAllPlugins() {
-        this.registerPlugin(SplashScreen.class);
         this.registerPlugin(com.getcapacitor.plugin.WebView.class);
 
         for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
@@ -1005,8 +997,6 @@ public class Bridge {
      * Handle onPause lifecycle event and notify the plugins
      */
     public void onPause() {
-        Splash.onPause();
-
         for (PluginHandle plugin : plugins.values()) {
             plugin.getInstance().handleOnPause();
         }

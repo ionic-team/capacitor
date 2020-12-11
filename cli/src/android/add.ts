@@ -6,14 +6,14 @@ import c from '../colors';
 import { runTask } from '../common';
 import type { Config } from '../definitions';
 import { runCommand } from '../util/subprocess';
-import { copyTemplate } from '../util/template';
+import { extractTemplate } from '../util/template';
 
 export async function addAndroid(config: Config): Promise<void> {
   await runTask(
     `Adding native android project in ${c.strong(config.android.platformDir)}`,
     async () => {
-      return copyTemplate(
-        config.android.assets.templateDir,
+      return extractTemplate(
+        config.cli.assets.android.platformTemplateArchiveAbs,
         config.android.platformDirAbs,
       );
     },

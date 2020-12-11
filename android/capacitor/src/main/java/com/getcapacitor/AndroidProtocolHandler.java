@@ -60,8 +60,7 @@ public class AndroidProtocolHandler {
         throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
         Class<?> d = context.getClassLoader().loadClass(context.getPackageName() + ".R$" + assetType);
         java.lang.reflect.Field field = d.getField(assetName);
-        int id = field.getInt(null);
-        return id;
+        return field.getInt(null);
     }
 
     public InputStream openFile(String filePath) throws IOException {

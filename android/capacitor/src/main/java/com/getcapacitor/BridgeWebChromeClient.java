@@ -512,8 +512,6 @@ public class BridgeWebChromeClient extends WebChromeClient {
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-
-        return image;
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 }
