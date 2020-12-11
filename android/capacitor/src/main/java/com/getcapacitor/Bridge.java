@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -959,6 +960,16 @@ public class Bridge {
 
         if (cordovaWebView != null) {
             cordovaWebView.onNewIntent(intent);
+        }
+    }
+
+    /**
+     * Handle an onConfigurationChanged event and notify the plugins
+     * @param newConfig
+     */
+    public void onConfigurationChanged(Configuration newConfig) {
+        for (PluginHandle plugin : plugins.values()) {
+            plugin.getInstance().handleOnConfigurationChanged(newConfig);
         }
     }
 
