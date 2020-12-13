@@ -1,6 +1,7 @@
 package com.getcapacitor;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.android.R;
@@ -194,5 +195,16 @@ public class BridgeActivity extends AppCompatActivity {
         }
 
         this.bridge.onBackPressed();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (this.bridge == null) {
+            return;
+        }
+
+        this.bridge.onConfigurationChanged(newConfig);
     }
 }
