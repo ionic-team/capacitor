@@ -789,7 +789,7 @@ public class Bridge {
                 if (validatePermissions(plugin.getInstance(), savedPermissionCall, permissions, grantResults)) {
                     // handle request permissions call
                     if (savedPermissionCall.getMethodName().equals("requestPermissions")) {
-                        savedPermissionCall.resolve(getPermissionStates(plugin.getInstance()));
+                        savedPermissionCall.resolve(plugin.getInstance().getPermissionStates());
                     } else {
                         // handle permission requests by other methods on the plugin
                         plugin.getInstance().onRequestPermissionsResult(savedPermissionCall, requestCode, permissions, grantResults);

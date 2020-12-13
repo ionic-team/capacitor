@@ -494,7 +494,7 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        JSObject permissionsResult = bridge.getPermissionStates(this);
+        JSObject permissionsResult = getPermissionStates();
 
         if (permissionsResult.length() == 0) {
             // if no permissions are defined on the plugin, resolve undefined
