@@ -30,7 +30,7 @@ export async function openAndroid(config: Config): Promise<void> {
           androidStudioPath,
         )}\n` +
         `You can configure this with the ${c.input(
-          'STUDIO_PATH',
+          'CAPACITOR_ANDROID_STUDIO_PATH',
         )} environment variable.`,
     );
   }

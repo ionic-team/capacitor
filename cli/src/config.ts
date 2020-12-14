@@ -287,8 +287,8 @@ function determineOS(os: NodeJS.Platform): OS {
 }
 
 async function determineAndroidStudioPath(os: OS): Promise<string> {
-  if (process.env.STUDIO_PATH) {
-    return process.env.STUDIO_PATH;
+  if (process.env.CAPACITOR_ANDROID_STUDIO_PATH) {
+    return process.env.CAPACITOR_ANDROID_STUDIO_PATH;
   }
 
   switch (os) {
