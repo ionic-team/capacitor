@@ -17,7 +17,7 @@ public class WebColor {
         if (formattedColor.length() != 7 && formattedColor.length() != 9) {
             throw new IllegalArgumentException("The encoded color space is invalid or unknown");
         } else if (formattedColor.length() == 7) {
-            return Color.parseColor(colorString);
+            return Color.parseColor(formattedColor);
         } else {
             // Convert to Android format #AARRGGBB from #RRGGBBAA
             formattedColor = "#" + formattedColor.substring(7) + formattedColor.substring(1, 7);
