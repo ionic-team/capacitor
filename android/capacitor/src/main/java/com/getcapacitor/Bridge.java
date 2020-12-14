@@ -26,6 +26,7 @@ import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
+import com.getcapacitor.util.WebColor;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -400,7 +401,7 @@ public class Bridge {
         String backgroundColor = this.config.getString("android.backgroundColor", this.config.getString("backgroundColor", null));
         try {
             if (backgroundColor != null) {
-                webView.setBackgroundColor(Color.parseColor(backgroundColor));
+                webView.setBackgroundColor(WebColor.parseColor(backgroundColor));
             }
         } catch (IllegalArgumentException ex) {
             Logger.debug("WebView background color not applied");
