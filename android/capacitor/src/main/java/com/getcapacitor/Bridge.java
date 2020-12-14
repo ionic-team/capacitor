@@ -43,7 +43,7 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import main.java.com.getcapacitor.util.WebColor;
+import com.getcapacitor.util.WebColor;
 
 /**
  * The Bridge class is the main engine of Capacitor. It manages
