@@ -1,4 +1,4 @@
-package main.java.com.getcapacitor.util;
+package com.getcapacitor.util;
 
 import android.graphics.Color;
 
