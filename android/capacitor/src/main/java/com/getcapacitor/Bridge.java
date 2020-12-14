@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
+import com.getcapacitor.util.WebColor;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -398,7 +400,7 @@ public class Bridge {
         String backgroundColor = this.config.getBackgroundColor();
         try {
             if (backgroundColor != null) {
-                webView.setBackgroundColor(Color.parseColor(backgroundColor));
+                webView.setBackgroundColor(WebColor.parseColor(backgroundColor));
             }
         } catch (IllegalArgumentException ex) {
             Logger.debug("WebView background color not applied");
@@ -784,7 +786,7 @@ public class Bridge {
                 if (validatePermissions(plugin.getInstance(), savedPermissionCall, permissions, grantResults)) {
                     // handle request permissions call
                     if (savedPermissionCall.getMethodName().equals("requestPermissions")) {
-                        savedPermissionCall.resolve(getPermissionStates(plugin.getInstance()));
+                        savedPermissionCall.resolve(plugin.getInstance().getPermissionStates());
                     } else {
                         // handle permission requests by other methods on the plugin
                         plugin.getInstance().onRequestPermissionsResult(savedPermissionCall, requestCode, permissions, grantResults);
@@ -955,6 +957,16 @@ public class Bridge {
 
         if (cordovaWebView != null) {
             cordovaWebView.onNewIntent(intent);
+        }
+    }
+
+    /**
+     * Handle an onConfigurationChanged event and notify the plugins
+     * @param newConfig
+     */
+    public void onConfigurationChanged(Configuration newConfig) {
+        for (PluginHandle plugin : plugins.values()) {
+            plugin.getInstance().handleOnConfigurationChanged(newConfig);
         }
     }
 
