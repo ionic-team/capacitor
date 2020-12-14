@@ -144,15 +144,15 @@ public class FileUtils {
      * @throws IOException Thrown if any issues reading the provided file path.
      */
     static String readFile(Context context, String fileName) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)))) {
+            StringBuffer buffer = new StringBuffer();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
 
-        StringBuffer buffer = new StringBuffer();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
+            return buffer.toString();
         }
-
-        return buffer.toString();
     }
 
     /**

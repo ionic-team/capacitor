@@ -1,4 +1,4 @@
-package com.getcapacitor;
+package com.getcapacitor.util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +17,7 @@ public class JSONUtils {
      * @param defaultValue A default value to return if the key cannot be found
      * @return The value at the given key in the JSON object, or the default value
      */
-    static String getString(JSONObject jsonObject, String key, String defaultValue) {
+    public static String getString(JSONObject jsonObject, String key, String defaultValue) {
         String k = getDeepestKey(key);
         try {
             JSONObject o = getDeepestObject(jsonObject, key);
@@ -42,7 +42,7 @@ public class JSONUtils {
      * @param defaultValue A default value to return if the key cannot be found
      * @return The value at the given key in the JSON object, or the default value
      */
-    static boolean getBoolean(JSONObject jsonObject, String key, boolean defaultValue) {
+    public static boolean getBoolean(JSONObject jsonObject, String key, boolean defaultValue) {
         String k = getDeepestKey(key);
         try {
             JSONObject o = getDeepestObject(jsonObject, key);
@@ -63,7 +63,7 @@ public class JSONUtils {
      * @param defaultValue A default value to return if the key cannot be found
      * @return The value at the given key in the JSON object, or the default value
      */
-    static int getInt(JSONObject jsonObject, String key, int defaultValue) {
+    public static int getInt(JSONObject jsonObject, String key, int defaultValue) {
         String k = getDeepestKey(key);
         try {
             JSONObject o = getDeepestObject(jsonObject, key);
@@ -82,7 +82,7 @@ public class JSONUtils {
      * @param key A key to fetch from the JSON object
      * @return The value from the config, if exists. Null if not
      */
-    static JSONObject getObject(JSONObject jsonObject, String key) {
+    public static JSONObject getObject(JSONObject jsonObject, String key) {
         String k = getDeepestKey(key);
         try {
             JSONObject o = getDeepestObject(jsonObject, key);
@@ -103,7 +103,7 @@ public class JSONUtils {
      * @param defaultValue A default value to return if the key cannot be found
      * @return The value at the given key in the JSON object, or the default value
      */
-    static String[] getArray(JSONObject jsonObject, String key, String[] defaultValue) {
+    public static String[] getArray(JSONObject jsonObject, String key, String[] defaultValue) {
         String k = getDeepestKey(key);
         try {
             JSONObject o = getDeepestObject(jsonObject, key);

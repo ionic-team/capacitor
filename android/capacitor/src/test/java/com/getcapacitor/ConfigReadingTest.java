@@ -63,7 +63,7 @@ public class ConfigReadingTest {
             assertEquals("level 1 append", config.getAppendedUserAgentString());
             assertEquals("#ffffff", config.getBackgroundColor());
             assertTrue(config.isLogsHidden());
-            assertEquals(1, config.getPluginsConfiguration().getInt("SplashScreen", "launchShowDuration", 0));
+            assertEquals(1, config.getPluginConfiguration("SplashScreen").getInt("launchShowDuration", 0));
         } catch (IOException e) {
             fail();
         }

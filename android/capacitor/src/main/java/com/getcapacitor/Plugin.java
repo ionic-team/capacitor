@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Plugin is the base class for all plugins, containing a number of
@@ -167,14 +166,32 @@ public class Plugin {
         return this.savedLastCall;
     }
 
+    /**
+     * Get the config options for this plugin.
+     *
+     * @return a config object representing the plugin config options
+     */
+    public PluginConfig getConfig() {
+        return bridge.getConfig().getPluginConfiguration(handle.getId());
+    }
+
+    /**
+     * Get the value for a key on the config for this plugin.
+     * @deprecated use {@link #getConfig()} and access config values using the methods available
+     * depending on the type.
+     *
+     * on the {@link PluginConfig} class
+     * @param key the key for the config value
+     * @return some object containing the value from the config
+     */
     public Object getConfigValue(String key) {
         try {
-            PluginsConfig plugins = bridge.getConfig().getPluginsConfiguration();
-            if (plugins == null) {
+            PluginConfig pluginConfig = bridge.getConfig().getPluginConfiguration(handle.getId());
+            if (pluginConfig == null) {
                 return null;
             }
-            JSONObject pluginConfig = plugins.getPluginConfig(getPluginHandle().getId());
-            return pluginConfig.get(key);
+
+            return pluginConfig.getConfigJSON().get(key);
         } catch (JSONException ex) {
             return null;
         }

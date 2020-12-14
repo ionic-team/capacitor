@@ -42,7 +42,7 @@ public class ConfigBuildingTest {
                     .setAllowNavigation(new String[] { "http://www.google.com" })
                     .setAndroidScheme("test")
                     .setCaptureInput(true)
-                    .setHideLogs(true)
+                    .setLogsHidden(true)
                     .setHTML5mode(false)
                     .setOverriddenUserAgentString("test-user-agent")
                     .setAppendedUserAgentString("test-append")
@@ -66,39 +66,39 @@ public class ConfigBuildingTest {
         assertFalse(config.isHTML5Mode());
         assertEquals("test-user-agent", config.getOverriddenUserAgentString());
         assertEquals("test-append", config.getAppendedUserAgentString());
-        assertTrue(config.getWebContentsDebuggingEnabled());
+        assertTrue(config.isWebContentsDebuggingEnabled());
         assertEquals("red", config.getBackgroundColor());
         assertEquals("http://www.google.com", config.getServerUrl());
     }
 
     @Test
     public void getPluginString() {
-        String testString = config.getPluginsConfiguration().getString(TEST_PLUGIN_NAME, "var2");
+        String testString = config.getPluginConfiguration(TEST_PLUGIN_NAME).getString("var2");
         assertEquals("hello", testString);
     }
 
     @Test
     public void getPluginBoolean() {
-        boolean testBool = config.getPluginsConfiguration().getBoolean(TEST_PLUGIN_NAME, "var1", false);
+        boolean testBool = config.getPluginConfiguration(TEST_PLUGIN_NAME).getBoolean("var1", false);
         assertTrue(testBool);
     }
 
     @Test
     public void getPluginInt() {
-        int testInt = config.getPluginsConfiguration().getInt(TEST_PLUGIN_NAME, "var4", -1);
+        int testInt = config.getPluginConfiguration(TEST_PLUGIN_NAME).getInt("var4", -1);
         assertEquals(2, testInt);
     }
 
     @Test
     public void getPluginArray() {
         String[] comparison = new String[] { "5", "6", "7", "8" };
-        String[] testArray = config.getPluginsConfiguration().getArray(TEST_PLUGIN_NAME, "var5");
+        String[] testArray = config.getPluginConfiguration(TEST_PLUGIN_NAME).getArray("var5");
         assertArrayEquals(comparison, testArray);
     }
 
     @Test
     public void getPluginObject() {
-        JSONObject testObject = config.getPluginsConfiguration().getObject(TEST_PLUGIN_NAME, "var3");
+        JSONObject testObject = config.getPluginConfiguration(TEST_PLUGIN_NAME).getObject("var3");
         assertEquals(testPluginNestedObject, testObject);
     }
 }

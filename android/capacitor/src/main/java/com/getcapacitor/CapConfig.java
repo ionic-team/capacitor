@@ -5,7 +5,11 @@ import static com.getcapacitor.FileUtils.readFile;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import com.getcapacitor.util.JSONUtils;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,7 +35,7 @@ public class CapConfig {
     private boolean hideLogs = false;
 
     // Plugins
-    private PluginsConfig pluginsConfiguration = null;
+    private Map<String, PluginConfig> pluginsConfiguration = null;
 
     // Config Object JSON (legacy)
     private JSONObject configJSON = new JSONObject();
@@ -83,7 +87,7 @@ public class CapConfig {
         this.hideLogs = builder.hideLogs;
 
         // Plugins Config
-        this.pluginsConfiguration = new PluginsConfig(builder.pluginsConfiguration);
+        this.pluginsConfiguration = builder.pluginsConfiguration;
     }
 
     /**
@@ -130,7 +134,7 @@ public class CapConfig {
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
 
         // Plugins
-        pluginsConfiguration = new PluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
+        pluginsConfiguration = deserializePluginsConfig(JSONUtils.getObject(configJSON, "plugins"));
     }
 
     public boolean isHTML5Mode() {
@@ -173,7 +177,7 @@ public class CapConfig {
         return captureInput;
     }
 
-    public Boolean getWebContentsDebuggingEnabled() {
+    public boolean isWebContentsDebuggingEnabled() {
         return webContentsDebuggingEnabled;
     }
 
@@ -181,13 +185,13 @@ public class CapConfig {
         return hideLogs;
     }
 
-    public PluginsConfig getPluginsConfiguration() {
-        return pluginsConfiguration;
+    public PluginConfig getPluginConfiguration(String pluginId) {
+        return pluginsConfiguration.get(pluginId);
     }
 
     /**
      * Get a JSON object value from the Capacitor config.
-     * @deprecated use {@link PluginsConfig#getObject(String, String)}  to access plugin config values.
+     * @deprecated use {@link PluginConfig#getObject(String)}  to access plugin config values.
      * For main Capacitor config values, use the appropriate getter.
      *
      * @param key A key to fetch from the config
@@ -203,7 +207,7 @@ public class CapConfig {
 
     /**
      * Get a string value from the Capacitor config.
-     * @deprecated use {@link PluginsConfig#getString(String, String)} to access plugin config
+     * @deprecated use {@link PluginConfig#getString(String, String)} to access plugin config
      * values. For main Capacitor config values, use the appropriate getter.
      *
      * @param key A key to fetch from the config
@@ -216,7 +220,7 @@ public class CapConfig {
 
     /**
      * Get a string value from the Capacitor config.
-     * @deprecated use {@link PluginsConfig#getString(String, String, String)} to access plugin config
+     * @deprecated use {@link PluginConfig#getString(String, String)} to access plugin config
      * values. For main Capacitor config values, use the appropriate getter.
      *
      * @param key A key to fetch from the config
@@ -230,7 +234,7 @@ public class CapConfig {
 
     /**
      * Get a boolean value from the Capacitor config.
-     * @deprecated use {@link PluginsConfig#getBoolean(String, String, boolean)} to access plugin config
+     * @deprecated use {@link PluginConfig#getBoolean(String, boolean)} to access plugin config
      * values. For main Capacitor config values, use the appropriate getter.
      *
      * @param key A key to fetch from the config
@@ -244,7 +248,7 @@ public class CapConfig {
 
     /**
      * Get an integer value from the Capacitor config.
-     * @deprecated use {@link PluginsConfig#getInt(String, String, int)}  to access the plugin config
+     * @deprecated use {@link PluginConfig#getInt(String, int)}  to access the plugin config
      * values. For main Capacitor config values, use the appropriate getter.
      *
      * @param key A key to fetch from the config
@@ -258,7 +262,7 @@ public class CapConfig {
 
     /**
      * Get a string array value from the Capacitor config.
-     * @deprecated use {@link PluginsConfig#getArray(String, String)}  to access the plugin config
+     * @deprecated use {@link PluginConfig#getArray(String)}  to access the plugin config
      * values. For main Capacitor config values, use the appropriate getter.
      *
      * @param key A key to fetch from the config
@@ -271,7 +275,7 @@ public class CapConfig {
 
     /**
      * Get a string array value from the Capacitor config.
-     * @deprecated use {@link PluginsConfig#getArray(String, String, String[])}  to access the plugin
+     * @deprecated use {@link PluginConfig#getArray(String, String[])}  to access the plugin
      * config values. For main Capacitor config values, use the appropriate getter.
      *
      * @param key A key to fetch from the config
@@ -281,6 +285,32 @@ public class CapConfig {
     @Deprecated
     public String[] getArray(String key, String[] defaultValue) {
         return JSONUtils.getArray(configJSON, key, defaultValue);
+    }
+
+    private static Map<String, PluginConfig> deserializePluginsConfig(JSONObject pluginsConfig) {
+        Map<String, PluginConfig> pluginsMap = new HashMap<>();
+
+        // return an empty map if there is no pluginsConfig json
+        if (pluginsConfig == null) {
+            return pluginsMap;
+        }
+
+        Iterator<String> pluginIds = pluginsConfig.keys();
+
+        while (pluginIds.hasNext()) {
+            String pluginId = pluginIds.next();
+            JSONObject value = null;
+
+            try {
+                value = pluginsConfig.getJSONObject(pluginId);
+                PluginConfig pluginConfig = new PluginConfig(value);
+                pluginsMap.put(pluginId, pluginConfig);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return pluginsMap;
     }
 
     /**
@@ -305,7 +335,7 @@ public class CapConfig {
         private boolean hideLogs = false;
 
         // Plugins Config Object
-        private JSONObject pluginsConfiguration = new JSONObject();
+        private Map<String, PluginConfig> pluginsConfiguration = new HashMap<>();
 
         /**
          * Builds a Capacitor Config from the builder.
@@ -317,7 +347,7 @@ public class CapConfig {
         }
 
         public Builder setPluginsConfiguration(JSONObject pluginsConfiguration) {
-            this.pluginsConfiguration = pluginsConfiguration;
+            this.pluginsConfiguration = deserializePluginsConfig(pluginsConfiguration);
             return this;
         }
 
@@ -376,7 +406,7 @@ public class CapConfig {
             return this;
         }
 
-        public Builder setHideLogs(boolean hideLogs) {
+        public Builder setLogsHidden(boolean hideLogs) {
             this.hideLogs = hideLogs;
             return this;
         }

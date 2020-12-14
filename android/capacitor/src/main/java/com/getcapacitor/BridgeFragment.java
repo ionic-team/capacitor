@@ -51,7 +51,7 @@ public class BridgeFragment extends Fragment {
         this.initialPlugins.add(plugin);
     }
 
-    public void configure(CapConfig config) {
+    public void setConfig(CapConfig config) {
         this.config = config;
     }
 

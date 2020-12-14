@@ -405,7 +405,7 @@ public class Bridge {
         }
 
         webView.requestFocusFromTouch();
-        WebView.setWebContentsDebuggingEnabled(this.config.getWebContentsDebuggingEnabled());
+        WebView.setWebContentsDebuggingEnabled(this.config.isWebContentsDebuggingEnabled());
     }
 
     /**
