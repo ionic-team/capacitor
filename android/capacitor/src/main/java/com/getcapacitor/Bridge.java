@@ -43,7 +43,7 @@ import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import main.java.com.getcapacitor.util.ColorExtended;
+import main.java.com.getcapacitor.util.WebColor;
 
 /**
  * The Bridge class is the main engine of Capacitor. It manages
@@ -402,7 +402,7 @@ public class Bridge {
         String backgroundColor = this.config.getString("android.backgroundColor", this.config.getString("backgroundColor", null));
         try {
             if (backgroundColor != null) {
-                webView.setBackgroundColor(ColorExtended.parseColor(backgroundColor, ColorExtended.ColorFormat.RGBA));
+                webView.setBackgroundColor(WebColor.parseColorRGBA(backgroundColor));
             }
         } catch (IllegalArgumentException ex) {
             Logger.debug("WebView background color not applied");
