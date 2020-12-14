@@ -181,10 +181,10 @@ public class Plugin {
      * @deprecated use {@link #getConfig()} and access config values using the methods available
      * depending on the type.
      *
-     * on the {@link PluginConfig} class
      * @param key the key for the config value
      * @return some object containing the value from the config
      */
+    @Deprecated
     public Object getConfigValue(String key) {
         try {
             PluginConfig pluginConfig = bridge.getConfig().getPluginConfiguration(handle.getId());
