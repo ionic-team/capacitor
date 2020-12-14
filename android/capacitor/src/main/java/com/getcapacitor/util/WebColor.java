@@ -8,7 +8,7 @@ public class WebColor {
      * @param colorString The hexadecimal color string. The format is an RGB or RGBA hex string.
      * @return The corresponding color as an int.
      */
-    public static int parseColorRGBA(String colorString) {
+    public static int parseColor(String colorString) {
         String formattedColor = colorString;
         if (colorString.charAt(0) != '#') {
             formattedColor = "#" + formattedColor;

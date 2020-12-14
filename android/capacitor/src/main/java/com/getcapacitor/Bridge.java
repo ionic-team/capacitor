@@ -402,7 +402,7 @@ public class Bridge {
         String backgroundColor = this.config.getString("android.backgroundColor", this.config.getString("backgroundColor", null));
         try {
             if (backgroundColor != null) {
-                webView.setBackgroundColor(WebColor.parseColorRGBA(backgroundColor));
+                webView.setBackgroundColor(WebColor.parseColor(backgroundColor));
             }
         } catch (IllegalArgumentException ex) {
             Logger.debug("WebView background color not applied");
