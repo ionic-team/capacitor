@@ -201,7 +201,7 @@
 		2F5C86D31FE94845004B09C7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = jcesarmobile;
 				TargetAttributes = {
 					2F5C86DB1FE94845004B09C7 = {
