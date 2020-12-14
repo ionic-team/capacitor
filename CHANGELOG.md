@@ -1,3 +1,12 @@
+## [2.4.5](https://github.com/ionic-team/capacitor/compare/2.4.4...2.4.5) (2020-12-14)
+
+
+### Bug Fixes
+
+* fix(ios): avoid crash on portrait apps after taking a photo (#3926) ([f182868](https://github.com/ionic-team/capacitor/commit/f182868)), closes [#3926](https://github.com/ionic-team/capacitor/issues/3926)
+
+
+
 ## [2.4.4](https://github.com/ionic-team/capacitor/compare/2.4.3...2.4.4) (2020-12-01)
 
 
