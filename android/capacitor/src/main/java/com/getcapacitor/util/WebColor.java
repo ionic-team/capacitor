@@ -3,6 +3,7 @@ package com.getcapacitor.util;
 import android.graphics.Color;
 
 public class WebColor {
+
     /**
      * Parse the color string, and return the corresponding color-int. If the string cannot be parsed, throws an IllegalArgumentException exception.
      * @param colorString The hexadecimal color string. The format is an RGB or RGBA hex string.

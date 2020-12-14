@@ -26,6 +26,7 @@ import com.getcapacitor.cordova.MockCordovaInterfaceImpl;
 import com.getcapacitor.cordova.MockCordovaWebViewImpl;
 import com.getcapacitor.util.HostMask;
 import com.getcapacitor.util.PermissionHelper;
+import com.getcapacitor.util.WebColor;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -42,8 +43,6 @@ import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.getcapacitor.util.WebColor;
 
 /**
  * The Bridge class is the main engine of Capacitor. It manages
