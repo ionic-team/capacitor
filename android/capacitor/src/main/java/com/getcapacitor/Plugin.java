@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Plugin is the base class for all plugins, containing a number of
@@ -170,10 +171,16 @@ public class Plugin {
     /**
      * Get the config options for this plugin.
      *
-     * @return a config object representing the plugin config options
+     * @return a config object representing the plugin config options, or an empty config
+     * if none exists
      */
     public PluginConfig getConfig() {
-        return bridge.getConfig().getPluginConfiguration(handle.getId());
+        PluginConfig pluginConfig = bridge.getConfig().getPluginConfiguration(handle.getId());
+        if (pluginConfig == null) {
+            pluginConfig = new PluginConfig(new JSONObject());
+        }
+
+        return pluginConfig;
     }
 
     /**
@@ -187,11 +194,7 @@ public class Plugin {
     @Deprecated
     public Object getConfigValue(String key) {
         try {
-            PluginConfig pluginConfig = bridge.getConfig().getPluginConfiguration(handle.getId());
-            if (pluginConfig == null) {
-                return null;
-            }
-
+            PluginConfig pluginConfig = getConfig();
             return pluginConfig.getConfigJSON().get(key);
         } catch (JSONException ex) {
             return null;
