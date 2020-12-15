@@ -65,6 +65,6 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation "org.apache.cordova:framework:$cordovaAndroidVersion"
     testImplementation 'org.json:json:20140107'
-    testImplementation 'org.mockito:mockito-inline:2.25.1'
+    testImplementation 'org.mockito:mockito-inline:3.6.28'
 }
 

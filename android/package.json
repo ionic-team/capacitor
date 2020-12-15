@@ -1,12 +1,14 @@
 {
   "name": "@capacitor/android",
-  "version": "3.0.0-alpha.7",
+  "version": "3.0.0-alpha.10",
   "description": "Capacitor: cross-platform mobile apps with the web",
   "homepage": "https://capacitorjs.com/",
   "author": "Ionic Team <hi@ionic.io> (https://ionicframework.com) ",
   "license": "MIT",
   "files": [
     "capacitor/build.gradle",
+    "capacitor/lint-baseline.xml",
+    "capacitor/lint.xml",
     "capacitor/src/main/"
   ],
   "scripts": {
@@ -20,6 +22,6 @@
     "url": "https://github.com/ionic-team/capacitor/issues"
   },
   "peerDependencies": {
-    "@capacitor/core": "~3.0.0-alpha.7"
+    "@capacitor/core": "~3.0.0-alpha.9"
   }
 }
