@@ -143,10 +143,6 @@ async function mergeConfig(
     {
       ...oldConfig,
       ...extConfig,
-      ...{
-        plugins: extConfig.plugins ??
-          oldConfig.plugins ?? { SplashScreen: { launchShowDuration: 0 } },
-      },
     },
     { spaces: 2 },
   );
