@@ -175,12 +175,7 @@ public class Plugin {
      * if none exists
      */
     public PluginConfig getConfig() {
-        PluginConfig pluginConfig = bridge.getConfig().getPluginConfiguration(handle.getId());
-        if (pluginConfig == null) {
-            pluginConfig = new PluginConfig(new JSONObject());
-        }
-
-        return pluginConfig;
+        return bridge.getConfig().getPluginConfiguration(handle.getId());
     }
 
     /**

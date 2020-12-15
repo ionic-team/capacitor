@@ -186,7 +186,12 @@ public class CapConfig {
     }
 
     public PluginConfig getPluginConfiguration(String pluginId) {
-        return pluginsConfiguration.get(pluginId);
+        PluginConfig pluginConfig = pluginsConfiguration.get(pluginId);
+        if (pluginConfig == null) {
+            pluginConfig = new PluginConfig(new JSONObject());
+        }
+
+        return pluginConfig;
     }
 
     /**

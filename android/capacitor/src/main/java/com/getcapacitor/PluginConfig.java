@@ -97,6 +97,15 @@ public class PluginConfig {
     }
 
     /**
+     * Check if the PluginConfig is empty.
+     *
+     * @return true if the plugin config has no entries
+     */
+    public boolean isEmpty() {
+        return config.length() == 0;
+    }
+
+    /**
      * Gets the JSON Object containing the config of the the provided plugin ID.
      *
      * @return The config for that plugin
