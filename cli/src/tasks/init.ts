@@ -144,8 +144,7 @@ async function mergeConfig(
       ...oldConfig,
       ...extConfig,
       ...{
-        plugins: extConfig.plugins ??
-          oldConfig.plugins,
+        plugins: extConfig.plugins ?? oldConfig.plugins,
       },
     },
     { spaces: 2 },
