@@ -168,14 +168,29 @@ public class Plugin {
         return this.savedLastCall;
     }
 
+    /**
+     * Get the config options for this plugin.
+     *
+     * @return a config object representing the plugin config options, or an empty config
+     * if none exists
+     */
+    public PluginConfig getConfig() {
+        return bridge.getConfig().getPluginConfiguration(handle.getId());
+    }
+
+    /**
+     * Get the value for a key on the config for this plugin.
+     * @deprecated use {@link #getConfig()} and access config values using the methods available
+     * depending on the type.
+     *
+     * @param key the key for the config value
+     * @return some object containing the value from the config
+     */
+    @Deprecated
     public Object getConfigValue(String key) {
         try {
-            JSONObject plugins = bridge.getConfig().getObject("plugins");
-            if (plugins == null) {
-                return null;
-            }
-            JSONObject pluginConfig = plugins.getJSONObject(getPluginHandle().getId());
-            return pluginConfig.get(key);
+            PluginConfig pluginConfig = getConfig();
+            return pluginConfig.getConfigJSON().get(key);
         } catch (JSONException ex) {
             return null;
         }

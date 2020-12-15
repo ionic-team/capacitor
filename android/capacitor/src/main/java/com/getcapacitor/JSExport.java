@@ -1,10 +1,10 @@
 package com.getcapacitor;
 
+import static com.getcapacitor.FileUtils.readFile;
+
 import android.content.Context;
 import android.text.TextUtils;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,26 +18,10 @@ public class JSExport {
         return "window.Capacitor = { DEBUG: " + isDebug + ", Plugins: {} };";
     }
 
-    private static String getJS(Context context, String fileName) throws IOException {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
-
-            StringBuffer b = new StringBuffer();
-            String line;
-            while ((line = br.readLine()) != null) {
-                b.append(line + "\n");
-            }
-
-            return b.toString();
-        } catch (IOException ex) {
-            throw ex;
-        }
-    }
-
     public static String getCordovaJS(Context context) {
         String fileContent = "";
         try {
-            fileContent = getJS(context, "public/cordova.js");
+            fileContent = readFile(context, "public/cordova.js");
         } catch (IOException ex) {
             Logger.error("Unable to read public/cordova.js file, Cordova plugins will not work");
         }
@@ -47,7 +31,7 @@ public class JSExport {
     public static String getCordovaPluginsFileJS(Context context) {
         String fileContent = "";
         try {
-            fileContent = getJS(context, "public/cordova_plugins.js");
+            fileContent = readFile(context, "public/cordova_plugins.js");
         } catch (IOException ex) {
             Logger.error("Unable to read public/cordova_plugins.js file, Cordova plugins will not work");
         }
@@ -103,7 +87,7 @@ public class JSExport {
                     builder.append(getFilesContent(context, path + "/" + file));
                 }
             } else {
-                return getJS(context, path);
+                return readFile(context, path);
             }
         } catch (IOException ex) {
             Logger.error("Unable to read file at path " + path);

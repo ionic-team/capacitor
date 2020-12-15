@@ -7,13 +7,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.getcapacitor.android.R;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONObject;
 
 public class BridgeActivity extends AppCompatActivity {
 
     protected Bridge bridge;
     protected boolean keepRunning = true;
-    private JSONObject config;
+    private CapConfig config;
+
     private int activityDepth = 0;
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
     private final Bridge.Builder bridgeBuilder = new Bridge.Builder();
@@ -25,9 +25,12 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     /**
+     * Initializes the Capacitor Bridge with the Activity.
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
      * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
+     *
+     * @param plugins A list of plugins to initialize with Capacitor
      */
     @Deprecated
     protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins) {
@@ -35,12 +38,16 @@ public class BridgeActivity extends AppCompatActivity {
     }
 
     /**
+     * Initializes the Capacitor Bridge with the Activity.
      * @deprecated It is preferred not to call this method. If it is not called, the bridge is
      * initialized automatically. If you need to add additional plugins during initialization,
      * use {@link #registerPlugin(Class)} or {@link #registerPlugins(List)}.
+     *
+     * @param plugins A list of plugins to initialize with Capacitor
+     * @param config An instance of a Capacitor Configuration to use. If null, will load from file
      */
     @Deprecated
-    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, JSONObject config) {
+    protected void init(Bundle savedInstanceState, List<Class<? extends Plugin>> plugins, CapConfig config) {
         this.initialPlugins = plugins;
         this.config = config;
 

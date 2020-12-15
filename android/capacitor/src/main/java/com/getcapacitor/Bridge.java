@@ -42,7 +42,6 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginEntry;
 import org.apache.cordova.PluginManager;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * The Bridge class is the main engine of Capacitor. It manages
@@ -137,7 +136,7 @@ public class Bridge {
         MockCordovaInterfaceImpl cordovaInterface,
         PluginManager pluginManager,
         CordovaPreferences preferences,
-        JSONObject config
+        CapConfig config
     ) {
         this.app = new App();
         this.context = context;
@@ -151,7 +150,7 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        this.config = new CapConfig(getActivity().getAssets(), config);
+        this.config = config != null ? config : CapConfig.fromFile(getActivity());
         Logger.init(this.config);
 
         // Initialize web view and message handler for it
@@ -174,7 +173,7 @@ public class Bridge {
 
     private void loadWebView() {
         appUrlConfig = this.getServerUrl();
-        String[] appAllowNavigationConfig = this.config.getArray("server.allowNavigation");
+        String[] appAllowNavigationConfig = this.config.getAllowNavigation();
 
         ArrayList<String> authorities = new ArrayList<>();
         if (appAllowNavigationConfig != null) {
@@ -204,7 +203,7 @@ public class Bridge {
             }
         }
 
-        final boolean html5mode = this.config.getBoolean("server.html5mode", true);
+        final boolean html5mode = this.config.isHTML5Mode();
 
         // Start the local web server
         localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
@@ -345,7 +344,7 @@ public class Bridge {
      * @return
      */
     public String getScheme() {
-        return this.config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
+        return this.config.getAndroidScheme();
     }
 
     /**
@@ -353,7 +352,7 @@ public class Bridge {
      * @return
      */
     public String getHost() {
-        return this.config.getString("server.hostname", "localhost");
+        return this.config.getHostname();
     }
 
     /**
@@ -361,7 +360,7 @@ public class Bridge {
      * @return
      */
     public String getServerUrl() {
-        return this.config.getString("server.url");
+        return this.config.getServerUrl();
     }
 
     public CapConfig getConfig() {
@@ -384,21 +383,21 @@ public class Bridge {
         settings.setAppCacheEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        if (this.config.getBoolean("android.allowMixedContent", false)) {
+        if (this.config.isMixedContentAllowed()) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
-        String appendUserAgent = this.config.getString("android.appendUserAgent", this.config.getString("appendUserAgent", null));
+        String appendUserAgent = this.config.getAppendedUserAgentString();
         if (appendUserAgent != null) {
             String defaultUserAgent = settings.getUserAgentString();
             settings.setUserAgentString(defaultUserAgent + " " + appendUserAgent);
         }
-        String overrideUserAgent = this.config.getString("android.overrideUserAgent", this.config.getString("overrideUserAgent", null));
+        String overrideUserAgent = this.config.getOverriddenUserAgentString();
         if (overrideUserAgent != null) {
             settings.setUserAgentString(overrideUserAgent);
         }
 
-        String backgroundColor = this.config.getString("android.backgroundColor", this.config.getString("backgroundColor", null));
+        String backgroundColor = this.config.getBackgroundColor();
         try {
             if (backgroundColor != null) {
                 webView.setBackgroundColor(WebColor.parseColor(backgroundColor));
@@ -406,12 +405,9 @@ public class Bridge {
         } catch (IllegalArgumentException ex) {
             Logger.debug("WebView background color not applied");
         }
-        boolean defaultDebuggable = false;
-        if (isDevMode()) {
-            defaultDebuggable = true;
-        }
+
         webView.requestFocusFromTouch();
-        WebView.setWebContentsDebuggingEnabled(this.config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+        WebView.setWebContentsDebuggingEnabled(this.config.isWebContentsDebuggingEnabled());
     }
 
     /**
@@ -1119,7 +1115,7 @@ public class Bridge {
     public static class Builder {
 
         private Bundle instanceState = null;
-        private JSONObject config = new JSONObject();
+        private CapConfig config = null;
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
         private AppCompatActivity activity = null;
         private Context context = null;
@@ -1137,7 +1133,7 @@ public class Bridge {
             return this;
         }
 
-        public Builder setConfig(JSONObject config) {
+        public Builder setConfig(CapConfig config) {
             this.config = config;
             return this;
         }

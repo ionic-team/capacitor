@@ -26,6 +26,7 @@ public class BridgeFragment extends Fragment {
     protected boolean keepRunning = true;
 
     private final List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
+    private CapConfig config = null;
 
     public BridgeFragment() {
         // Required empty public constructor
@@ -50,6 +51,10 @@ public class BridgeFragment extends Fragment {
         this.initialPlugins.add(plugin);
     }
 
+    public void setConfig(CapConfig config) {
+        this.config = config;
+    }
+
     /**
      * Load the WebView and create the Bridge
      */
@@ -68,6 +73,7 @@ public class BridgeFragment extends Fragment {
                 .setActivity((AppCompatActivity) getActivity())
                 .setInstanceState(savedInstanceState)
                 .setPlugins(initialPlugins)
+                .setConfig(config)
                 .create();
 
         if (startDir != null) {

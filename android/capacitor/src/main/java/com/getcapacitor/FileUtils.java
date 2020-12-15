@@ -33,9 +33,12 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Common File utilities, such as resolve content URIs and
@@ -130,6 +133,26 @@ public class FileUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Read a plaintext file.
+     *
+     * @param context Used to get access to the asset manager to open the file.
+     * @param fileName The path of the file to read.
+     * @return The contents of the file path.
+     * @throws IOException Thrown if any issues reading the provided file path.
+     */
+    static String readFile(Context context, String fileName) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)))) {
+            StringBuffer buffer = new StringBuffer();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+
+            return buffer.toString();
+        }
     }
 
     /**
