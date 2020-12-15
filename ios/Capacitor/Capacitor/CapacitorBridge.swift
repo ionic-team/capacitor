@@ -78,7 +78,8 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     public static let fileStartIdentifier = "/_capacitor_file_"
     public static let defaultScheme = "capacitor"
 
-    var messageHandlerWrapper: CAPMessageHandlerWrapper
+    var webViewAssetHandler: WebViewAssetHandler
+    var webViewDelegationHandler: WebViewDelegationHandler
     weak var bridgeDelegate: CAPBridgeDelegate?
     @objc public var viewController: UIViewController? {
         return bridgeDelegate?.bridgedViewController
@@ -95,7 +96,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     var cordovaPluginManager: CDVPluginManager?
     // Calls we are storing to resolve later
     var storedCalls = [String: CAPPluginCall]()
-    // Wheter to inject the Cordova files
+    // Whether to inject the Cordova files
     private var injectCordovaFiles = false
     private var cordovaParser: CDVConfigParser?
 
@@ -169,9 +170,10 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     // MARK: - Initialization
 
-    init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, messageHandler messageHandlerWrapper: CAPMessageHandlerWrapper) {
+    init(with configuration: InstanceConfiguration, delegate bridgeDelegate: CAPBridgeDelegate, cordovaConfiguration: CDVConfigParser, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler) {
         self.bridgeDelegate = bridgeDelegate
-        self.messageHandlerWrapper = messageHandlerWrapper
+        self.webViewAssetHandler = assetHandler
+        self.webViewDelegationHandler = delegationHandler
         self.config = configuration
         self.cordovaParser = cordovaConfiguration
         self.notificationRouter = NotificationRouter()
@@ -179,7 +181,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
         super.init()
 
-        self.messageHandlerWrapper.bridge = self
+        self.webViewDelegationHandler.bridge = self
 
         exportCoreJS(localUrl: configuration.localURL.absoluteString)
         registerPlugins()
@@ -191,7 +193,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
 
     deinit {
         // the message handler needs to removed to avoid any retain cycles
-        messageHandlerWrapper.cleanUp()
+        webViewDelegationHandler.cleanUp()
     }
 
     // MARK: - Plugins
@@ -200,7 +202,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func exportCoreJS(localUrl: String) {
         do {
-            try JSExport.exportCapacitorGlobalJS(userContentController: self.messageHandlerWrapper.contentController, isDebug: isDevMode(), localUrl: localUrl)
+            try JSExport.exportCapacitorGlobalJS(userContentController: webViewDelegationHandler.contentController, isDebug: isDevMode(), localUrl: localUrl)
         } catch {
             type(of: self).fatalError(error, error)
         }
@@ -222,7 +224,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
      */
     func exportCordovaJS() {
         do {
-            try JSExport.exportCordovaJS(userContentController: self.messageHandlerWrapper.contentController)
+            try JSExport.exportCordovaJS(userContentController: webViewDelegationHandler.contentController)
         } catch {
             type(of: self).fatalError(error, error)
         }
@@ -266,7 +268,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
     func registerPlugin(_ pluginClassName: String, _ jsName: String, _ pluginType: CAPPlugin.Type) {
         // let bridgeType = pluginType as! CAPBridgedPlugin.Type
         knownPlugins[jsName] = pluginType
-        JSExport.exportJS(userContentController: self.messageHandlerWrapper.contentController, pluginClassName: jsName, pluginType: pluginType)
+        JSExport.exportJS(userContentController: webViewDelegationHandler.contentController, pluginClassName: jsName, pluginType: pluginType)
         _ = loadPlugin(pluginName: jsName)
     }
 
@@ -330,7 +332,7 @@ internal class CapacitorBridge: NSObject, CAPBridgeProtocol {
             }
         }
         do {
-            try JSExport.exportCordovaPluginsJS(userContentController: self.messageHandlerWrapper.contentController)
+            try JSExport.exportCordovaPluginsJS(userContentController: webViewDelegationHandler.contentController)
         } catch {
             type(of: self).fatalError(error, error)
         }
