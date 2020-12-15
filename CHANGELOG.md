@@ -107,7 +107,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.4...3.0.0-alpha.0) (2020-07-23)
+# [3.0.0-alpha.0](https://github.com/ionic-team/capacitor/compare/2.4.5...3.0.0-alpha.0) (2020-07-23)
 
 
 ### Features
@@ -118,6 +118,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Chores
 
 * refactor(android): remove unused interaction listener on BridgeFragment (#3552) ([fae50b6](https://github.com/ionic-team/capacitor/commit/fae50b6)), closes [#3552](https://github.com/ionic-team/capacitor/issues/3552)
+
+
+
+## [2.4.5](https://github.com/ionic-team/capacitor/compare/2.4.4...2.4.5) (2020-12-14)
+
+
+### Bug Fixes
+
+* fix(ios): avoid crash on portrait apps after taking a photo (#3926) ([f182868](https://github.com/ionic-team/capacitor/commit/f182868)), closes [#3926](https://github.com/ionic-team/capacitor/issues/3926)
 
 
 
