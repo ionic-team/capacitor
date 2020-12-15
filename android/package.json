@@ -8,6 +8,7 @@
   "files": [
     "capacitor/build.gradle",
     "capacitor/lint-baseline.xml",
+    "capacitor/lint.xml",
     "capacitor/src/main/"
   ],
   "scripts": {
