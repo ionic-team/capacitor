@@ -70,7 +70,7 @@
     "@types/slice-ansi": "^4.0.0",
     "@types/tar": "^4.0.4",
     "@types/tmp": "^0.2.0",
-    "@types/xml2js": "0.4.5",
+    "@types/xml2js": "0.4.7",
     "jest": "^26.1.0",
     "rimraf": "^3.0.2",
     "tmp": "^0.2.1",
