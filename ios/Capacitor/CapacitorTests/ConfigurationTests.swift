@@ -130,4 +130,18 @@ class ConfigurationTests: XCTestCase {
         value = configuration.getValue("ios.overrideUserAgent") as? String
         XCTAssertEqual(value, "level 2 override")
     }
+    
+    func testNavigationRules() throws {
+        let url = Bundle.main.url(forResource: "configurations", withExtension: "")!
+        let descriptor = InstanceDescriptor.init(at: url, configuration: ConfigurationTests.files[.server], cordovaConfiguration: nil)
+        let configuration = InstanceConfiguration(with: descriptor)
+        XCTAssertTrue(configuration.shouldAllowNavigation(to: "ionic.io"))
+        XCTAssertTrue(configuration.shouldAllowNavigation(to: "ionic.io".uppercased()))
+        XCTAssertTrue(configuration.shouldAllowNavigation(to: "test.capacitorjs.com"))
+        XCTAssertTrue(configuration.shouldAllowNavigation(to: "192.168.0.1"))
+        XCTAssertTrue(configuration.shouldAllowNavigation(to: "subdomain.test.ionicframework.com"))
+        XCTAssertFalse(configuration.shouldAllowNavigation(to: "google.com"))
+        XCTAssertFalse(configuration.shouldAllowNavigation(to: "192.168.0.2"))
+        XCTAssertFalse(configuration.shouldAllowNavigation(to: "ionicframework.com"))
+    }
 }
