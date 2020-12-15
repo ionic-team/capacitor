@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.10](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.9...3.0.0-alpha.10) (2020-12-15)
+
+
+### Bug Fixes
+
+* **android:** include lint.xml for downstream lint tasks ([efa72f3](https://github.com/ionic-team/capacitor/commit/efa72f38c5f64d3b91cc4c4c7d4d87ab38219893))
+
+
+
+
+
 # [3.0.0-alpha.9](https://github.com/ionic-team/capacitor/compare/3.0.0-alpha.8...3.0.0-alpha.9) (2020-12-15)
 
 
