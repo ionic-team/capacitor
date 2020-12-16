@@ -95,7 +95,7 @@ public class CapConfig {
      */
     private void loadConfig(Context context) {
         try {
-            String jsonString = readFile(context, "capacitor.config.json");
+            String jsonString = readFile(context.getAssets(), "capacitor.config.json");
             configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
