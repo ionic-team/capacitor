@@ -1117,14 +1117,10 @@ public class Bridge {
         private Bundle instanceState = null;
         private CapConfig config = null;
         private List<Class<? extends Plugin>> plugins = new ArrayList<>();
-        private AppCompatActivity activity = null;
-        private Context context = null;
-        private WebView webView = null;
+        private final AppCompatActivity activity;
 
         Builder(AppCompatActivity activity) {
             this.activity = activity;
-            this.context = activity.getApplicationContext();
-            this.webView = activity.findViewById(R.id.webview);
         }
 
         public Builder setInstanceState(Bundle instanceState) {
@@ -1158,15 +1154,18 @@ public class Bridge {
         public Bridge create() {
             // Cordova initialization
             ConfigXmlParser parser = new ConfigXmlParser();
-            parser.parse(context);
+            parser.parse(activity.getApplicationContext());
             CordovaPreferences preferences = parser.getPreferences();
             preferences.setPreferencesBundle(activity.getIntent().getExtras());
             List<PluginEntry> pluginEntries = parser.getPluginEntries();
+
             MockCordovaInterfaceImpl cordovaInterface = new MockCordovaInterfaceImpl(activity);
             if (instanceState != null) {
                 cordovaInterface.restoreInstanceState(instanceState);
             }
-            MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(context);
+
+            WebView webView = activity.findViewById(R.id.webview);
+            MockCordovaWebViewImpl mockWebView = new MockCordovaWebViewImpl(activity.getApplicationContext());
             mockWebView.init(cordovaInterface, pluginEntries, preferences, webView);
             PluginManager pluginManager = mockWebView.getPluginManager();
             cordovaInterface.onCordovaInit(pluginManager);
