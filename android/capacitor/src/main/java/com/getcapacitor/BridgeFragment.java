@@ -69,8 +69,7 @@ public class BridgeFragment extends Fragment {
         }
 
         bridge =
-            new Bridge.Builder()
-                .setActivity((AppCompatActivity) getActivity())
+            new Bridge.Builder((AppCompatActivity) getActivity())
                 .setInstanceState(savedInstanceState)
                 .setPlugins(initialPlugins)
                 .setConfig(config)
