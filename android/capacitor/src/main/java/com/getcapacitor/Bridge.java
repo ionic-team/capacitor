@@ -150,7 +150,7 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        this.config = config != null ? config : CapConfig.fromFile(getActivity());
+        this.config = config != null ? config : CapConfig.loadDefault(getActivity());
         Logger.init(this.config);
 
         // Initialize web view and message handler for it
@@ -1112,7 +1112,7 @@ public class Bridge {
         this.webViewClient = client;
     }
 
-    public static class Builder {
+    static class Builder {
 
         private Bundle instanceState = null;
         private CapConfig config = null;
@@ -1121,11 +1121,10 @@ public class Bridge {
         private Context context = null;
         private WebView webView = null;
 
-        protected Builder setActivity(AppCompatActivity activity) {
+        Builder(AppCompatActivity activity) {
             this.activity = activity;
             this.context = activity.getApplicationContext();
             this.webView = activity.findViewById(R.id.webview);
-            return this;
         }
 
         public Builder setInstanceState(Bundle instanceState) {
