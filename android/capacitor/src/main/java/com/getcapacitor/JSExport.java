@@ -21,7 +21,7 @@ public class JSExport {
     public static String getCordovaJS(Context context) {
         String fileContent = "";
         try {
-            fileContent = readFile(context, "public/cordova.js");
+            fileContent = readFile(context.getAssets(), "public/cordova.js");
         } catch (IOException ex) {
             Logger.error("Unable to read public/cordova.js file, Cordova plugins will not work");
         }
@@ -31,7 +31,7 @@ public class JSExport {
     public static String getCordovaPluginsFileJS(Context context) {
         String fileContent = "";
         try {
-            fileContent = readFile(context, "public/cordova_plugins.js");
+            fileContent = readFile(context.getAssets(), "public/cordova_plugins.js");
         } catch (IOException ex) {
             Logger.error("Unable to read public/cordova_plugins.js file, Cordova plugins will not work");
         }
@@ -87,7 +87,7 @@ public class JSExport {
                     builder.append(getFilesContent(context, path + "/" + file));
                 }
             } else {
-                return readFile(context, path);
+                return readFile(context.getAssets(), path);
             }
         } catch (IOException ex) {
             Logger.error("Unable to read file at path " + path);
