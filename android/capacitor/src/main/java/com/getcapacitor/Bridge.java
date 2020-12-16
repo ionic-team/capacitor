@@ -1112,7 +1112,7 @@ public class Bridge {
         this.webViewClient = client;
     }
 
-    public static class Builder {
+    static class Builder {
 
         private Bundle instanceState = null;
         private CapConfig config = null;
