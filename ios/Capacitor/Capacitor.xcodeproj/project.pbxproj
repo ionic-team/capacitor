@@ -27,6 +27,7 @@
 		623D6914254C7030002D01D1 /* CAPInstanceDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */; };
 		623D691D254C7462002D01D1 /* CAPInstanceConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */; };
+		625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625AF1EC258963C700869675 /* WebViewAssetHandler.swift */; };
 		62959B162524DA7800A3D7F1 /* CAPPluginCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959AE32524DA7700A3D7F1 /* JSExport.swift */; };
 		62959B192524DA7800A3D7F1 /* CAPBridgedPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959AE52524DA7700A3D7F1 /* CAPBridgedPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -46,8 +47,6 @@
 		62959B3A2524DA7800A3D7F1 /* CAPLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B082524DA7700A3D7F1 /* CAPLog.swift */; };
 		62959B3B2524DA7800A3D7F1 /* CAPPluginMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959B092524DA7700A3D7F1 /* CAPPluginMethod.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */; };
-		62959B3D2524DA7800A3D7F1 /* CAPMessageHandlerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B0B2524DA7700A3D7F1 /* CAPMessageHandlerWrapper.swift */; };
-		62959B3F2524DA7800A3D7F1 /* CAPAssetHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B0D2524DA7700A3D7F1 /* CAPAssetHandler.swift */; };
 		62959B402524DA7800A3D7F1 /* TmpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B0E2524DA7700A3D7F1 /* TmpViewController.swift */; };
 		62959B412524DA7800A3D7F1 /* Capacitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 62959B0F2524DA7700A3D7F1 /* Capacitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62959B102524DA7700A3D7F1 /* DocLinks.swift */; };
@@ -70,6 +69,7 @@
 		62E0736225535E8700BAAADB /* bad.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735325535E6500BAAADB /* bad.json */; };
 		62E0736325535E8700BAAADB /* flat.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735425535E6500BAAADB /* flat.json */; };
 		62E0736425535E8700BAAADB /* hierarchy.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 62E0735525535E6500BAAADB /* hierarchy.json */; };
+		62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +148,7 @@
 		623D6913254C7030002D01D1 /* CAPInstanceDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CAPInstanceDescriptor.swift; sourceTree = "<group>"; };
 		623D691B254C7462002D01D1 /* CAPInstanceConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAPInstanceConfiguration.h; sourceTree = "<group>"; };
 		623D691C254C7462002D01D1 /* CAPInstanceConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CAPInstanceConfiguration.m; sourceTree = "<group>"; };
+		625AF1EC258963C700869675 /* WebViewAssetHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewAssetHandler.swift; sourceTree = "<group>"; };
 		62959AE22524DA7700A3D7F1 /* CAPPluginCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginCall.h; sourceTree = "<group>"; };
 		62959AE32524DA7700A3D7F1 /* JSExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSExport.swift; sourceTree = "<group>"; };
 		62959AE42524DA7700A3D7F1 /* CAPBridgedJSTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAPBridgedJSTypes.m; sourceTree = "<group>"; };
@@ -168,8 +169,6 @@
 		62959B082524DA7700A3D7F1 /* CAPLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPLog.swift; sourceTree = "<group>"; };
 		62959B092524DA7700A3D7F1 /* CAPPluginMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAPPluginMethod.h; sourceTree = "<group>"; };
 		62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPBridgeDelegate.swift; sourceTree = "<group>"; };
-		62959B0B2524DA7700A3D7F1 /* CAPMessageHandlerWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPMessageHandlerWrapper.swift; sourceTree = "<group>"; };
-		62959B0D2524DA7700A3D7F1 /* CAPAssetHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CAPAssetHandler.swift; sourceTree = "<group>"; };
 		62959B0E2524DA7700A3D7F1 /* TmpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmpViewController.swift; sourceTree = "<group>"; };
 		62959B0F2524DA7700A3D7F1 /* Capacitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Capacitor.h; sourceTree = "<group>"; };
 		62959B102524DA7700A3D7F1 /* DocLinks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocLinks.swift; sourceTree = "<group>"; };
@@ -197,6 +196,7 @@
 		62E0735325535E6500BAAADB /* bad.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bad.json; sourceTree = "<group>"; };
 		62E0735425535E6500BAAADB /* flat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = flat.json; sourceTree = "<group>"; };
 		62E0735525535E6500BAAADB /* hierarchy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = hierarchy.json; sourceTree = "<group>"; };
+		62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegationHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,6 +305,8 @@
 				62959B042524DA7700A3D7F1 /* CAPBridgeViewController.swift */,
 				621ECCE2254206A600D3D615 /* CAPApplicationDelegateProxy.swift */,
 				62959B0A2524DA7700A3D7F1 /* CAPBridgeDelegate.swift */,
+				62E207AD2588234500A78983 /* WebViewDelegationHandler.swift */,
+				625AF1EC258963C700869675 /* WebViewAssetHandler.swift */,
 				62959AEA2524DA7700A3D7F1 /* Plugins */,
 				623D6907254C6FDF002D01D1 /* CAPInstanceDescriptor.h */,
 				623D6908254C6FDF002D01D1 /* CAPInstanceDescriptor.m */,
@@ -314,8 +316,6 @@
 				6214934625509C3F006C36F9 /* CAPInstanceConfiguration.swift */,
 				62959B082524DA7700A3D7F1 /* CAPLog.swift */,
 				62959AE72524DA7700A3D7F1 /* CAPFile.swift */,
-				62959B0B2524DA7700A3D7F1 /* CAPMessageHandlerWrapper.swift */,
-				62959B0D2524DA7700A3D7F1 /* CAPAssetHandler.swift */,
 				62959B0E2524DA7700A3D7F1 /* TmpViewController.swift */,
 				62959B102524DA7700A3D7F1 /* DocLinks.swift */,
 				62959B152524DA7700A3D7F1 /* CAPNotifications.swift */,
@@ -555,6 +555,7 @@
 				621ECCD6254205BD00D3D615 /* CAPBridgeProtocol.swift in Sources */,
 				62D43AF02581817500673C24 /* WKWebView+Capacitor.swift in Sources */,
 				62959B432524DA7800A3D7F1 /* Data+Capacitor.swift in Sources */,
+				62E207AE2588234500A78983 /* WebViewDelegationHandler.swift in Sources */,
 				621ECCBC2542046400D3D615 /* JSTypes.swift in Sources */,
 				621ECCDA254205C400D3D615 /* CapacitorBridge.swift in Sources */,
 				62959B382524DA7800A3D7F1 /* CAPPluginCall.m in Sources */,
@@ -571,11 +572,10 @@
 				62959B1A2524DA7800A3D7F1 /* CAPPluginCall.swift in Sources */,
 				62959B302524DA7800A3D7F1 /* UIStatusBarManager+CAPHandleTapAction.m in Sources */,
 				62959B392524DA7800A3D7F1 /* CapacitorExtension.swift in Sources */,
-				62959B3D2524DA7800A3D7F1 /* CAPMessageHandlerWrapper.swift in Sources */,
 				62959B422524DA7800A3D7F1 /* DocLinks.swift in Sources */,
 				62959B172524DA7800A3D7F1 /* JSExport.swift in Sources */,
 				373A69C1255C9360000A6F44 /* NotificationHandlerProtocol.swift in Sources */,
-				62959B3F2524DA7800A3D7F1 /* CAPAssetHandler.swift in Sources */,
+				625AF1ED258963C700869675 /* WebViewAssetHandler.swift in Sources */,
 				62959B3C2524DA7800A3D7F1 /* CAPBridgeDelegate.swift in Sources */,
 				62959B2F2524DA7800A3D7F1 /* DefaultPlugins.m in Sources */,
 				623D691E254C7462002D01D1 /* CAPInstanceConfiguration.m in Sources */,

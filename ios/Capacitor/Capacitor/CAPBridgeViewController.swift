@@ -7,7 +7,7 @@ import UIKit
 import WebKit
 import Cordova
 
-public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUIDelegate, WKNavigationDelegate {
+public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate {
 
     private var webView: WKWebView?
 
@@ -23,13 +23,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     private var basePath: String = ""
     private let assetsFolder = "public"
 
-    private enum WebViewLoadingState {
-        case unloaded
-        case initialLoad(isOpaque: Bool)
-        case subsequentLoad
-    }
-    private var webViewLoadingState = WebViewLoadingState.unloaded
-
     private var isStatusBarVisible = true
     private var statusBarStyle: UIStatusBarStyle = .default
     private(set) var statusBarAnimation: UIStatusBarAnimation = .slide
@@ -42,7 +35,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     var bridge: CAPBridgeProtocol? {
         return capacitorBridge
     }
-    private var handler: CAPAssetHandler?
 
     override public func loadView() {
         // load the configuration and set the logging flag
@@ -59,17 +51,20 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         setScreenOrientationDefaults()
 
         // get the web view
-        let assetHandler = CAPAssetHandler()
+        let assetHandler = WebViewAssetHandler()
         assetHandler.setAssetPath(startPath)
-        let messageHandler = CAPMessageHandlerWrapper()
-        webView = prepareWebView(with: configuration, assetHandler: assetHandler, messageHandler: messageHandler)
+        let delegationHandler = WebViewDelegationHandler()
+        webView = prepareWebView(with: configuration, assetHandler: assetHandler, delegationHandler: delegationHandler)
         view = webView
-        self.handler = assetHandler
         // create the bridge
-        capacitorBridge = CapacitorBridge(with: configuration, delegate: self, cordovaConfiguration: configDescriptor.cordovaConfiguration, messageHandler: messageHandler)
+        capacitorBridge = CapacitorBridge(with: configuration,
+                                          delegate: self,
+                                          cordovaConfiguration: configDescriptor.cordovaConfiguration,
+                                          assetHandler: assetHandler,
+                                          delegationHandler: delegationHandler)
     }
 
-    private func prepareWebView(with configuration: InstanceConfiguration, assetHandler: CAPAssetHandler, messageHandler: CAPMessageHandlerWrapper) -> WKWebView {
+    private func prepareWebView(with configuration: InstanceConfiguration, assetHandler: WebViewAssetHandler, delegationHandler: WebViewDelegationHandler) -> WKWebView {
         // set the cookie policy
         HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
         // setup the web view configuration
@@ -82,13 +77,13 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
             webViewConfiguration.applicationNameForUserAgent = appendUserAgent
         }
         webViewConfiguration.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
-        webViewConfiguration.userContentController = messageHandler.contentController
+        webViewConfiguration.userContentController = delegationHandler.contentController
         // create the web view and set its properties
         let webView = WKWebView(frame: .zero, configuration: webViewConfiguration)
         webView.scrollView.bounces = false
         webView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
+        webView.uiDelegate = delegationHandler
+        webView.navigationDelegate = delegationHandler
         webView.allowsLinkPreview = configuration.allowLinkPreviews
         webView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
         webView.scrollView.isScrollEnabled = configuration.enableScrolling
@@ -192,14 +187,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
     }
 
     func loadWebView() {
-        // Set the webview to be not opaque on the inital load. This prevents
-        // the webview from showing a white background, which is its default
-        // loading display, as that can appear as a screen flash. This might
-        // have already been set by something else, like a plugin, so we want
-        // to save the current value to reset it on success or failure.
-        if let webView = webView, case .unloaded = webViewLoadingState {
-            webViewLoadingState = .initialLoad(isOpaque: webView.isOpaque)
-            webView.isOpaque = false
+        if let webView = webView {
+            capacitorBridge?.webViewDelegationHandler.willLoadWebview(webView)
         }
 
         let fullStartPath = URL(fileURLWithPath: assetsFolder).appendingPathComponent(startDir).appendingPathComponent("index")
@@ -219,7 +208,7 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     func setServerPath(path: String) {
         self.basePath = path
-        self.handler?.setAssetPath(path)
+        capacitorBridge?.webViewAssetHandler.setAssetPath(path)
     }
 
     public func setStatusBarDefaults() {
@@ -267,135 +256,8 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
         }
     }
 
-    public func configureWebView(configuration: WKWebViewConfiguration) {
-        configuration.allowsInlineMediaPlayback = true
-        configuration.suppressesIncrementalRendering = false
-        configuration.allowsAirPlayForMediaPlayback = true
-        configuration.mediaTypesRequiringUserActionForPlayback = []
-    }
-
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        // Reset the bridge on each navigation
-        capacitorBridge!.reset()
-    }
-
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        NotificationCenter.default.post(name: .capacitorDecidePolicyForNavigationAction, object: navigationAction)
-        let navUrl = navigationAction.request.url!
-
-        /*
-         * Give plugins the chance to handle the url
-         */
-        if let plugins = capacitorBridge?.plugins {
-            for pluginObject in plugins {
-                let plugin = pluginObject.value
-                let selector = NSSelectorFromString("shouldOverrideLoad:")
-                if plugin.responds(to: selector) {
-                    let shouldOverrideLoad = plugin.shouldOverrideLoad(navigationAction)
-                    if shouldOverrideLoad != nil {
-                        if shouldOverrideLoad == true {
-                            decisionHandler(.cancel)
-                            return
-                        } else if shouldOverrideLoad == false {
-                            decisionHandler(.allow)
-                            return
-                        }
-                    }
-                }
-            }
-        }
-
-        if let allowNavigation = allowNavigationConfig, let requestHost = navUrl.host {
-            for pattern in allowNavigation {
-                if matchHost(host: requestHost, pattern: pattern.lowercased()) {
-                    decisionHandler(.allow)
-                    return
-                }
-            }
-        }
-
-        if navUrl.absoluteString.range(of: hostname!) == nil && (navigationAction.targetFrame == nil || (navigationAction.targetFrame?.isMainFrame)!) {
-            if UIApplication.shared.applicationState == .active {
-                UIApplication.shared.open(navUrl, options: [:], completionHandler: nil)
-            }
-            decisionHandler(.cancel)
-            return
-        }
-
-        decisionHandler(.allow)
-    }
-
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        if case .initialLoad(let isOpaque) = webViewLoadingState {
-            webView.isOpaque = isOpaque
-            webViewLoadingState = .subsequentLoad
-        }
-        CAPLog.print("⚡️  WebView loaded")
-    }
-
-    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        if case .initialLoad(let isOpaque) = webViewLoadingState {
-            webView.isOpaque = isOpaque
-            webViewLoadingState = .subsequentLoad
-        }
-        CAPLog.print("⚡️  WebView failed to load")
-        CAPLog.print("⚡️  Error: " + error.localizedDescription)
-    }
-
-    public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        CAPLog.print("⚡️  WebView failed provisional navigation")
-        CAPLog.print("⚡️  Error: " + error.localizedDescription)
-    }
-
-    public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-        webView.reload()
-    }
-
     override public func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
         return false
-    }
-
-    func handleJSStartupError(_ error: [String: Any]) {
-        let message = error["message"] ?? "No message"
-        let url = error["url"] as? String ?? ""
-        let line = error["line"] ?? ""
-        let col = error["col"] ?? ""
-        var filename = ""
-        if let filenameIndex = url.range(of: "/", options: .backwards)?.lowerBound {
-            let index = url.index(after: filenameIndex)
-            filename = String(url[index...])
-        }
-
-        CAPLog.print("\n⚡️  ------ STARTUP JS ERROR ------\n")
-        CAPLog.print("⚡️  \(message)")
-        CAPLog.print("⚡️  URL: \(url)")
-        CAPLog.print("⚡️  \(filename):\(line):\(col)")
-        CAPLog.print("\n⚡️  See above for help with debugging blank-screen issues")
-    }
-
-    func matchHost(host: String, pattern: String) -> Bool {
-        if pattern == "*" {
-            return true
-        }
-
-        var host = host.split(separator: ".")
-        var pattern = pattern.split(separator: ".")
-
-        if host.count != pattern.count {
-            return false
-        }
-
-        if host == pattern {
-            return true
-        }
-
-        let wildcards = pattern.enumerated().filter { $0.element == "*" }
-        for wildcard in wildcards.reversed() {
-            host.remove(at: wildcard.offset)
-            pattern.remove(at: wildcard.offset)
-        }
-
-        return host == pattern
     }
 
     override public func didReceiveMemoryWarning() {
@@ -437,65 +299,6 @@ public class CAPBridgeViewController: UIViewController, CAPBridgeDelegate, WKUID
 
     public func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
         self.statusBarAnimation = statusBarAnimation
-    }
-
-    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            completionHandler()
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            completionHandler(true)
-        }))
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
-            completionHandler(false)
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-
-        let alertController = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
-
-        alertController.addTextField { (textField) in
-            textField.text = defaultText
-        }
-
-        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (_) in
-            if let text = alertController.textFields?.first?.text {
-                completionHandler(text)
-            } else {
-                completionHandler(defaultText)
-            }
-
-        }))
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (_) in
-
-            completionHandler(nil)
-
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
-    }
-
-    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.request.url != nil {
-            UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
-        }
-        return nil
     }
 
     public func getWebView() -> WKWebView {

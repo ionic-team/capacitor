@@ -4,7 +4,10 @@ import XCTest
 class MockBridgeViewController: CAPBridgeViewController {
 }
 
-class MockBridgeMessageHandler: CAPMessageHandlerWrapper {
+class MockAssetHandler: WebViewAssetHandler {
+}
+
+class MockDelegationHandler: WebViewDelegationHandler {
 }
 
 class MockBridge: CapacitorBridge {
@@ -12,6 +15,7 @@ class MockBridge: CapacitorBridge {
         Swift.print("REGISTER PLUGINS")
     }
 }
+
 class CapacitorTests: XCTestCase {
     var bridge: MockBridge?
 
@@ -19,7 +23,7 @@ class CapacitorTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let descriptor = InstanceDescriptor.init()
-        bridge = MockBridge(with: InstanceConfiguration(with: descriptor), delegate: MockBridgeViewController(), cordovaConfiguration: descriptor.cordovaConfiguration, messageHandler: MockBridgeMessageHandler())
+        bridge = MockBridge(with: InstanceConfiguration(with: descriptor), delegate: MockBridgeViewController(), cordovaConfiguration: descriptor.cordovaConfiguration, assetHandler: MockAssetHandler(), delegationHandler: MockDelegationHandler())
     }
 
     override func tearDown() {

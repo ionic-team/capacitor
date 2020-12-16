@@ -1,7 +1,8 @@
 import Foundation
 import MobileCoreServices
 
-internal class CAPAssetHandler: NSObject, WKURLSchemeHandler {
+@objc(CAPWebViewAssetHandler)
+internal class WebViewAssetHandler: NSObject, WKURLSchemeHandler {
 
     private var basePath: String = ""
 
