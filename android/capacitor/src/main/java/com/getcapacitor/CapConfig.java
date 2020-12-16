@@ -5,6 +5,7 @@ import static com.getcapacitor.FileUtils.readFile;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.res.AssetManager;
 import com.getcapacitor.util.JSONUtils;
 import java.io.IOException;
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class CapConfig {
             return config;
         }
 
-        config.loadConfig(context);
+        config.loadConfig(context.getAssets());
         config.deserializeConfig(context);
         return config;
     }
@@ -93,9 +94,9 @@ public class CapConfig {
     /**
      * Loads a Capacitor Configuration JSON file into a Capacitor Configuration object.
      */
-    private void loadConfig(Context context) {
+    private void loadConfig(AssetManager assetManager) {
         try {
-            String jsonString = readFile(context, "capacitor.config.json");
+            String jsonString = readFile(assetManager, "capacitor.config.json");
             configJSON = new JSONObject(jsonString);
         } catch (IOException ex) {
             Logger.error("Unable to load capacitor.config.json. Run npx cap copy first", ex);
