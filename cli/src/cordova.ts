@@ -519,7 +519,7 @@ export async function getCordovaPreferences(config: Config): Promise<any> {
           'config.xml',
         )}. There may be more work to do.\n` +
         `More info: ${c.strong(
-          'https://capacitorjs.com/docs/cordova/migrating-from-cordova-to-capacitor',
+          'https://capacitorjs.com/docs/v3/cordova/migrating-from-cordova-to-capacitor',
         )}`,
       {
         type: 'confirm',

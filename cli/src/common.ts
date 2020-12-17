@@ -34,7 +34,7 @@ export async function checkWebDir(config: Config): Promise<string | null> {
         'npm run build',
       )}).\n` +
       `More info: ${c.strong(
-        'https://capacitorjs.com/docs/basics/building-your-app',
+        'https://capacitorjs.com/docs/v3/basics/workflow#sync-your-project',
       )}`
     );
   }
