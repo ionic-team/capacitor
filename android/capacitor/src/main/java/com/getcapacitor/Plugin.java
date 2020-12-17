@@ -211,22 +211,6 @@ public class Plugin {
     }
 
     /**
-     * Check whether any of the given permissions has been defined in the AndroidManifest.xml
-     * @param permissions
-     * @return
-     */
-    public boolean hasDefinedPermissions(Permission[] permissions) {
-        for (Permission perm : permissions) {
-            for (String permString : perm.strings()) {
-                if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Check whether any of annotation permissions has been defined in the AndroidManifest.xml
      * @return
      */
@@ -238,16 +222,55 @@ public class Plugin {
             return hasDefinedPermissions(legacyAnnotation.permissions());
         }
 
-        return hasDefinedPermissions(annotation.permissions());
+        for (Permission perm : annotation.permissions()) {
+            for (String permString : perm.strings()) {
+                if (!PermissionHelper.hasDefinedPermission(getContext(), permString)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
-     * Check whether the given permission has been granted by the user
-     * @param permission
-     * @return
+     * Check whether the given permission has been granted by the user.
+     *
+     * @param permission an Android permission string, such as Manifest.permission.CAMERA
+     * @return true if the permission is granted, false otherwise
      */
     public boolean hasPermission(String permission) {
         return ActivityCompat.checkSelfPermission(this.getContext(), permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * Checks whether the permission(s) paired with the given alias are granted
+     *
+     * @since 3.0.0
+     * @param alias the alias to check
+     * @return true if the alias is present and all the associated permissions are granted
+     */
+    public boolean isPermissionGranted(String alias) {
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation == null) {
+            // Annotation is not present
+            return false;
+        }
+
+        boolean aliasExists = false;
+        for (Permission perm : annotation.permissions()) {
+            if (perm.alias().equals(alias)) {
+                aliasExists = true;
+
+                for (String permString : perm.strings()) {
+                    if (!hasPermission(permString)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return aliasExists;
     }
 
     /**
@@ -287,11 +310,17 @@ public class Plugin {
      *
      * @since 3.0.0
      * @param call the plugin call
-     * @param permission the permission to request
-     * @param requestCode the requestCode to use to associate the result with the plugin
+     * @param alias the alias of the permission(s) to request
      */
-    public void requestPermission(PluginCall call, String permission, int requestCode) {
-        requestPermissions(call, new String[] { permission }, requestCode);
+    public void requestPermission(PluginCall call, String alias) {
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation != null) {
+            for (Permission perm : annotation.permissions()) {
+                if (perm.alias().equals(alias)) {
+                    requestPermissions(call, perm.strings(), annotation.permissionRequestCode());
+                }
+            }
+        }
     }
 
     /**
@@ -302,7 +331,7 @@ public class Plugin {
      * @param permissions the set of permissions to request
      * @param requestCode the requestCode to use to associate the result with the plugin
      */
-    public void requestPermissions(PluginCall call, String[] permissions, int requestCode) {
+    private void requestPermissions(PluginCall call, String[] permissions, int requestCode) {
         bridge.savePermissionCall(call);
         ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
     }
@@ -350,7 +379,7 @@ public class Plugin {
 
     /**
      * Helper for requesting a specific permission
-     * @deprecated use {@link #requestPermission(PluginCall, String, int)} in conjunction with @CapacitorPlugin
+     * @deprecated use {@link #requestPermission(PluginCall, String)} in conjunction with @CapacitorPlugin
      *
      * @param permission the permission to request
      * @param requestCode the requestCode to use to associate the result with the plugin
