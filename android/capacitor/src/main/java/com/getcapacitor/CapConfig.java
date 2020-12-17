@@ -6,6 +6,7 @@ import static com.getcapacitor.FileUtils.readFile;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
+import androidx.annotation.Nullable;
 import com.getcapacitor.util.JSONUtils;
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,12 +48,33 @@ public class CapConfig {
     private CapConfig() {}
 
     /**
+     * Get an instance of the Config file object.
+     * @deprecated use {@link #loadDefault(Context)} to load an instance of the Config object
+     * from the capacitor.config.json file, or use the {@link CapConfig.Builder} to construct
+     * a CapConfig for embedded use.
+     *
+     * @param assetManager The AssetManager used to load the config file
+     * @param config JSON describing a configuration to use
+     */
+    @Deprecated
+    public CapConfig(AssetManager assetManager, JSONObject config) {
+        if (config != null) {
+            this.configJSON = config;
+        } else {
+            // Load the capacitor.config.json
+            loadConfig(assetManager);
+        }
+
+        deserializeConfig(null);
+    }
+
+    /**
      * Constructs a Capacitor Configuration from config.json file.
      *
      * @param context The context.
      * @return A loaded config file, if successful.
      */
-    static CapConfig loadDefault(Context context) {
+    public static CapConfig loadDefault(Context context) {
         CapConfig config = new CapConfig();
 
         if (context == null) {
@@ -108,7 +130,7 @@ public class CapConfig {
     /**
      * Deserializes the config from JSON into a Capacitor Configuration object.
      */
-    private void deserializeConfig(Context context) {
+    private void deserializeConfig(@Nullable Context context) {
         // Server
         html5mode = JSONUtils.getBoolean(configJSON, "server.html5mode", html5mode);
         serverUrl = JSONUtils.getString(configJSON, "server.url", null);
@@ -131,7 +153,7 @@ public class CapConfig {
             );
         captureInput = JSONUtils.getBoolean(configJSON, "android.captureInput", captureInput);
         hideLogs = JSONUtils.getBoolean(configJSON, "android.hideLogs", JSONUtils.getBoolean(configJSON, "hideLogs", hideLogs));
-        webContentsDebuggingEnabled = (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        webContentsDebuggingEnabled = context != null && (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
         webContentsDebuggingEnabled = JSONUtils.getBoolean(configJSON, "android.webContentsDebuggingEnabled", webContentsDebuggingEnabled);
 
         // Plugins
@@ -324,6 +346,8 @@ public class CapConfig {
      */
     public static class Builder {
 
+        private Context context;
+
         // Server Config Values
         private boolean html5mode = true;
         private String serverUrl;
@@ -337,11 +361,20 @@ public class CapConfig {
         private String backgroundColor;
         private boolean allowMixedContent = false;
         private boolean captureInput = false;
-        private boolean webContentsDebuggingEnabled = false;
+        private Boolean webContentsDebuggingEnabled = null;
         private boolean hideLogs = false;
 
         // Plugins Config Object
         private Map<String, PluginConfig> pluginsConfiguration = new HashMap<>();
+
+        /**
+         * Constructs a new CapConfig Builder.
+         *
+         * @param context The context
+         */
+        public Builder(Context context) {
+            this.context = context;
+        }
 
         /**
          * Builds a Capacitor Config from the builder.
@@ -349,6 +382,10 @@ public class CapConfig {
          * @return A new Capacitor Config
          */
         public CapConfig create() {
+            if (webContentsDebuggingEnabled == null) {
+                webContentsDebuggingEnabled = (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+            }
+
             return new CapConfig(this);
         }
 
