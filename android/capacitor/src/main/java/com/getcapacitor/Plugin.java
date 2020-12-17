@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Plugin is the base class for all plugins, containing a number of
@@ -366,7 +365,7 @@ public class Plugin {
      * @since 3.0.0
      * @return an map containing the permission names and the permission state
      */
-    public Map<String, String> getPermissionStates() {
+    public Map<String, PermissionState> getPermissionStates() {
         return bridge.getPermissionStates(this);
     }
 
@@ -509,13 +508,18 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        Map<String, String> permissionsResult = getPermissionStates();
+        Map<String, PermissionState> permissionsResult = getPermissionStates();
 
         if (permissionsResult.size() == 0) {
             // if no permissions are defined on the plugin, resolve undefined
             pluginCall.resolve();
         } else {
-            pluginCall.resolve(new JSObject(permissionsResult));
+            JSObject permissionsResultJSON = new JSObject();
+            for (Map.Entry<String, PermissionState> entry : permissionsResult.entrySet()) {
+                permissionsResultJSON.put(entry.getKey(), entry.getValue());
+            }
+
+            pluginCall.resolve(permissionsResultJSON);
         }
     }
 
