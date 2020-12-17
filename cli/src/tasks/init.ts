@@ -72,7 +72,7 @@ function printNextSteps(config: Config) {
       `  ${c.input('npx cap add android')}\n` +
       `  ${c.input('npx cap add ios')}\n\n` +
       `Follow the Developer Workflow guide to get building:\n${c.strong(
-        `https://capacitorjs.com/docs/basics/workflow`,
+        `https://capacitorjs.com/docs/v3/basics/workflow`,
       )}\n`,
   );
 }
