@@ -638,11 +638,10 @@ public class Plugin {
      * Handle request permissions result. A plugin using the {@link CapacitorPlugin} annotation
      * can override this to handle the result.
      *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
+     * @param savedCall
+     * @param permissionResults
      */
-    protected void onRequestPermissionsResult(PluginCall savedCall, int requestCode, String[] permissions, int[] grantResults) {}
+    protected void onRequestPermissionsResult(PluginCall savedCall, JSObject permissionResults) {}
 
     /**
      * Called before the app is destroyed to give a plugin the chance to
