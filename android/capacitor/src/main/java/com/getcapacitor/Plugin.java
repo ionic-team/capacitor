@@ -509,13 +509,13 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        JSObject permissionsResult = new JSObject(getPermissionStates());
+        Map<String, String> permissionsResult = getPermissionStates();
 
-        if (permissionsResult.length() == 0) {
+        if (permissionsResult.size() == 0) {
             // if no permissions are defined on the plugin, resolve undefined
             pluginCall.resolve();
         } else {
-            pluginCall.resolve(permissionsResult);
+            pluginCall.resolve(new JSObject(permissionsResult));
         }
     }
 
