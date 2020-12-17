@@ -366,7 +366,7 @@ public class Plugin {
      * @since 3.0.0
      * @return an object containing the permission names and the permission result
      */
-    public JSObject getPermissionStates() {
+    public Map<String, String> getPermissionStates() {
         return bridge.getPermissionStates(this);
     }
 
@@ -509,13 +509,13 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        JSObject permissionsResult = getPermissionStates();
+        Map<String, String> permissionsResult = getPermissionStates();
 
-        if (permissionsResult.length() == 0) {
+        if (permissionsResult.size() == 0) {
             // if no permissions are defined on the plugin, resolve undefined
             pluginCall.resolve();
         } else {
-            pluginCall.resolve(permissionsResult);
+            pluginCall.resolve(new JSObject(permissionsResult));
         }
     }
 

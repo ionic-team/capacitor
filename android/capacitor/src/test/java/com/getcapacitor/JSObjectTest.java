@@ -2,6 +2,8 @@ package com.getcapacitor;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONException;
 import org.junit.Test;
 
@@ -12,6 +14,15 @@ public class JSObjectTest {
         JSObject jsObject = new JSObject();
 
         String actualValue = jsObject.getString("should be null");
+
+        assertNull(actualValue);
+    }
+
+    @Test
+    public void getStringReturnsNull_WhenJSObject_IsConstructed_WithEmptyMap() {
+        Map<String, Object> map = new HashMap<>();
+        JSObject jsObject = new JSObject(map);
+        String actualValue = jsObject.getString("thisKeyExists");
 
         assertNull(actualValue);
     }
@@ -44,6 +55,17 @@ public class JSObjectTest {
         String actualValue = "default value";
 
         assertEquals(expectedValue, actualValue);
+    }
+
+    @Test
+    public void getStringReturnsDefaultValue_WhenJSObject_IsConstructed_WithAMap() throws JSONException {
+        Map<String, Object> map = new HashMap<>();
+        map.put("thisKeyExists", "hello");
+
+        JSObject jsObject = new JSObject(map);
+        String actualValue = jsObject.getString("thisKeyExists");
+
+        assertEquals("hello", actualValue);
     }
 
     @Test
