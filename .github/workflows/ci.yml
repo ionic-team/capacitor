@@ -120,7 +120,7 @@ jobs:
         working-directory: ./android
   deploy:
     runs-on: macos-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     timeout-minutes: 30
     needs:
       - setup
