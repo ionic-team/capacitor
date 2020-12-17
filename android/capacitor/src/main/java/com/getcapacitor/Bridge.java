@@ -150,7 +150,7 @@ public class Bridge {
         handlerThread.start();
         taskHandler = new Handler(handlerThread.getLooper());
 
-        this.config = config != null ? config : CapConfig.fromFile(getActivity());
+        this.config = config != null ? config : CapConfig.loadDefault(getActivity());
         Logger.init(this.config);
 
         // Initialize web view and message handler for it
