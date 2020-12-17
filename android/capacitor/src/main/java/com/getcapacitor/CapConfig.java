@@ -52,7 +52,7 @@ public class CapConfig {
      * @param context The context.
      * @return A loaded config file, if successful.
      */
-    static CapConfig fromFile(Context context) {
+    static CapConfig loadDefault(Context context) {
         CapConfig config = new CapConfig();
 
         if (context == null) {
