@@ -863,8 +863,8 @@ public class Bridge {
      * @since 3.0.0
      * @return A mapping of permissions to the associated granted status.
      */
-    protected JSObject getPermissionStates(Plugin plugin) {
-        JSObject permissionsResults = new JSObject();
+    protected Map<String, String> getPermissionStates(Plugin plugin) {
+        Map<String, String> permissionsResults = new HashMap<>();
         CapacitorPlugin annotation = plugin.getPluginHandle().getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
             // If a permission is defined with no permission constants, return "granted" for it.
@@ -872,7 +872,7 @@ public class Bridge {
             if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
                 String key = perm.alias();
                 if (!key.isEmpty()) {
-                    String existingResult = permissionsResults.getString(key);
+                    String existingResult = permissionsResults.get(key);
 
                     // auto set permission state to granted if the alias is empty.
                     if (existingResult == null) {
@@ -894,7 +894,7 @@ public class Bridge {
                         }
                     }
 
-                    String existingResult = permissionsResults.getString(key);
+                    String existingResult = permissionsResults.get(key);
 
                     // multiple permissions with the same alias must all be true, otherwise all false.
                     if (existingResult == null || existingResult.equals("granted")) {

@@ -364,9 +364,9 @@ public class Plugin {
      * Helper to check all permissions defined on a plugin and see the state of each.
      *
      * @since 3.0.0
-     * @return an object containing the permission names and the permission result
+     * @return an map containing the permission names and the permission state
      */
-    public JSObject getPermissionStates() {
+    public Map<String, String> getPermissionStates() {
         return bridge.getPermissionStates(this);
     }
 
@@ -509,7 +509,7 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        JSObject permissionsResult = getPermissionStates();
+        JSObject permissionsResult = new JSObject(getPermissionStates());
 
         if (permissionsResult.length() == 0) {
             // if no permissions are defined on the plugin, resolve undefined
