@@ -25,6 +25,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly, nonnull) NSDictionary *legacyConfig DEPRECATED_MSG_ATTRIBUTE("Use direct properties instead");
 
 - (instancetype _Nonnull)initWithDescriptor:(CAPInstanceDescriptor* _Nonnull)descriptor NS_SWIFT_NAME(init(with:));
+- (instancetype _Nonnull)updatingAppLocation:(NSURL* _Nonnull)location NS_SWIFT_NAME(updatingAppLocation(_:));
 @end
 
 #endif /* CAPInstanceConfiguration_h */

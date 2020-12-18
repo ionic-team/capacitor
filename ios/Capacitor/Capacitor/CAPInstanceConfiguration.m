@@ -1,6 +1,11 @@
 #import "CAPInstanceConfiguration.h"
 #import <Capacitor/Capacitor-Swift.h>
 
+@interface CAPInstanceConfiguration (Internal)
+- (instancetype)initWithConfiguration:(CAPInstanceConfiguration*)configuration andLocation:(NSURL*)location;
+@end
+
+
 @implementation CAPInstanceConfiguration
 
 - (instancetype)initWithDescriptor:(CAPInstanceDescriptor *)descriptor {
@@ -32,6 +37,31 @@
         _cordovaDeployDisabled = [descriptor cordovaDeployDisabled];
     }
     return self;
+}
+
+- (instancetype)initWithConfiguration:(CAPInstanceConfiguration*)configuration andLocation:(NSURL*)location {
+    if (self = [super init]) {
+        _appendedUserAgentString = [[configuration appendedUserAgentString] copy];
+        _overridenUserAgentString = [[configuration overridenUserAgentString] copy];
+        _backgroundColor = configuration.backgroundColor;
+        _allowedNavigationHostnames = [[configuration allowedNavigationHostnames] copy];
+        _localURL = [[configuration localURL] copy];
+        _serverURL = [[configuration serverURL] copy];
+        _pluginConfigurations = [[configuration pluginConfigurations] copy];
+        _enableLogging = configuration.enableLogging;
+        _enableScrolling = configuration.enableScrolling;
+        _allowLinkPreviews = configuration.allowLinkPreviews;
+        _handleApplicationNotifications = configuration.handleApplicationNotifications;
+        _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
+        _contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior;
+        _legacyConfig = [[configuration legacyConfig] copy];
+        _appLocation = [location copy];
+    }
+    return self;
+}
+
+- (instancetype)updatingAppLocation:(NSURL*)location {
+    return [[CAPInstanceConfiguration alloc] initWithConfiguration:self andLocation:location];
 }
 
 @end
