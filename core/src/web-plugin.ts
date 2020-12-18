@@ -130,8 +130,8 @@ export class WebPlugin implements Plugin {
     this.loaded = true;
   }
 
-  callNative(methodName: string, parameters?: any): Promise<string|any> {
-    const pluginName = this.constructor.name
+  callNative(methodName: string, parameters?: any): Promise<any> {
+    const pluginName = this.constructor.name;
     return Capacitor.nativePromise(pluginName, methodName, parameters);
   }
 }
