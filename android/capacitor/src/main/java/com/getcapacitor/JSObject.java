@@ -20,10 +20,6 @@ public class JSObject extends JSONObject {
         super();
     }
 
-    public JSObject(@NonNull Map map) {
-        super(map);
-    }
-
     public JSObject(String json) throws JSONException {
         super(json);
     }

@@ -834,10 +834,10 @@ public class Bridge {
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
                     // Permission denied, can prompt again with rationale
-                    editor.putString(permission, "prompt-with-rationale");
+                    editor.putString(permission, PermissionState.PROMPT_WITH_RATIONALE.toString());
                 } else {
                     // Permission denied permanently, store this state for future reference
-                    editor.putString(permission, "denied");
+                    editor.putString(permission, PermissionState.DENIED.toString());
                 }
 
                 editor.apply();

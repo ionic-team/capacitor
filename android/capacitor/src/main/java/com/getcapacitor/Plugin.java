@@ -603,7 +603,7 @@ public class Plugin {
                 JSObject permissionsResults = new JSObject();
 
                 for (String perm : autoGrantPerms) {
-                    permissionsResults.put(perm, "granted");
+                    permissionsResults.put(perm, PermissionState.GRANTED.toString());
                 }
 
                 call.resolve(permissionsResults);
@@ -645,7 +645,7 @@ public class Plugin {
      * @param savedCall
      * @param permissionResults
      */
-    protected void onRequestPermissionsResult(PluginCall savedCall, JSObject permissionResults) {}
+    protected void onRequestPermissionsResult(PluginCall savedCall, Map<String, PermissionState> permissionResults) {}
 
     /**
      * Called before the app is destroyed to give a plugin the chance to

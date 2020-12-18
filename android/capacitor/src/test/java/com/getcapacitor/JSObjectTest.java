@@ -19,15 +19,6 @@ public class JSObjectTest {
     }
 
     @Test
-    public void getStringReturnsNull_WhenJSObject_IsConstructed_WithEmptyMap() {
-        Map<String, Object> map = new HashMap<>();
-        JSObject jsObject = new JSObject(map);
-        String actualValue = jsObject.getString("thisKeyExists");
-
-        assertNull(actualValue);
-    }
-
-    @Test
     public void getStringReturnsExpectedValue_WhenJSObject_IsConstructed_WithAValidJSONObject() throws JSONException {
         JSObject jsObject = new JSObject("{\"thisKeyExists\": \"this is the key value\"}");
 
@@ -55,17 +46,6 @@ public class JSObjectTest {
         String actualValue = "default value";
 
         assertEquals(expectedValue, actualValue);
-    }
-
-    @Test
-    public void getStringReturnsDefaultValue_WhenJSObject_IsConstructed_WithAMap() throws JSONException {
-        Map<String, Object> map = new HashMap<>();
-        map.put("thisKeyExists", "hello");
-
-        JSObject jsObject = new JSObject(map);
-        String actualValue = jsObject.getString("thisKeyExists");
-
-        assertEquals("hello", actualValue);
     }
 
     @Test

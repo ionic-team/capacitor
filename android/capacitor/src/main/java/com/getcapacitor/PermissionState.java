@@ -12,7 +12,8 @@ public enum PermissionState {
         this.state = state;
     }
 
-    public String getState() {
+    @Override
+    public String toString() {
         return state;
     }
 }
