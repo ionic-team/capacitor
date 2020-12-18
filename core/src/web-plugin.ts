@@ -129,6 +129,11 @@ export class WebPlugin implements Plugin {
   load(): void {
     this.loaded = true;
   }
+
+  callNative(methodName: string, parameters?: any): Promise<string|any> {
+    const pluginName = this.constructor.name
+    return Capacitor.nativePromise(pluginName, methodName, parameters);
+  }
 }
 
 export type ListenerCallback = (err: any, ...args: any[]) => void;
