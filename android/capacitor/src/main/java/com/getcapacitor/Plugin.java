@@ -363,7 +363,7 @@ public class Plugin {
      * Helper to check all permissions defined on a plugin and see the state of each.
      *
      * @since 3.0.0
-     * @return an map containing the permission names and the permission state
+     * @return A mapping of permission aliases to the associated granted status.
      */
     public Map<String, PermissionState> getPermissionStates() {
         return bridge.getPermissionStates(this);

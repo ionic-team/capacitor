@@ -862,7 +862,7 @@ public class Bridge {
      * Helper to check all permissions and see the current states of each permission.
      *
      * @since 3.0.0
-     * @return A mapping of permissions to the associated granted status.
+     * @return A mapping of permission aliases to the associated granted status.
      */
     protected Map<String, PermissionState> getPermissionStates(Plugin plugin) {
         Map<String, PermissionState> permissionsResults = new HashMap<>();
