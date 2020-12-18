@@ -1,5 +1,10 @@
 package com.getcapacitor;
 
+/**
+ * Represents the state of a permission
+ *
+ * @since 3.0.0
+ */
 public enum PermissionState {
     GRANTED("granted"),
     DENIED("denied"),

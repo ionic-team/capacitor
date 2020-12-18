@@ -2,8 +2,6 @@ package com.getcapacitor;
 
 import static org.junit.Assert.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.json.JSONException;
 import org.junit.Test;
 
