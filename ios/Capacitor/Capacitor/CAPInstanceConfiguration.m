@@ -29,13 +29,7 @@
             _serverURL = _localURL;
         }
         // extract the one value we care about from the cordova configuration
-        id value = [descriptor.cordovaConfiguration.settings objectForKey:[@"DisableDeploy" lowercaseString]];
-        if (value != nil && [value isKindOfClass:[NSString class]]) {
-            _cordovaDeployDisabled = [(NSString*)value boolValue];
-        }
-        else {
-            _cordovaDeployDisabled = false;
-        }
+        _cordovaDeployDisabled = [descriptor cordovaDeployDisabled];
     }
     return self;
 }

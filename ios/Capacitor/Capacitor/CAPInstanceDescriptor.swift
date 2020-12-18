@@ -93,6 +93,10 @@ internal extension InstanceDescriptor {
 }
 
 extension InstanceDescriptor {
+    @objc public var cordovaDeployDisabled: Bool {
+        return (cordovaConfiguration.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false
+    }
+    
     @objc public func normalize() {
         // first, make sure the scheme is valid
         var schemeValid = false
