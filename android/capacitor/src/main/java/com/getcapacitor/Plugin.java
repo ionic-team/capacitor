@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Plugin is the base class for all plugins, containing a number of
@@ -393,9 +392,9 @@ public class Plugin {
      * Helper to check all permissions defined on a plugin and see the state of each.
      *
      * @since 3.0.0
-     * @return an object containing the permission names and the permission result
+     * @return A mapping of permission aliases to the associated granted status.
      */
-    public JSObject getPermissionStates() {
+    public Map<String, PermissionState> getPermissionStates() {
         return bridge.getPermissionStates(this);
     }
 
@@ -538,13 +537,18 @@ public class Plugin {
      */
     @PluginMethod
     public void checkPermissions(PluginCall pluginCall) {
-        JSObject permissionsResult = getPermissionStates();
+        Map<String, PermissionState> permissionsResult = getPermissionStates();
 
-        if (permissionsResult.length() == 0) {
+        if (permissionsResult.size() == 0) {
             // if no permissions are defined on the plugin, resolve undefined
             pluginCall.resolve();
         } else {
-            pluginCall.resolve(permissionsResult);
+            JSObject permissionsResultJSON = new JSObject();
+            for (Map.Entry<String, PermissionState> entry : permissionsResult.entrySet()) {
+                permissionsResultJSON.put(entry.getKey(), entry.getValue());
+            }
+
+            pluginCall.resolve(permissionsResultJSON);
         }
     }
 
@@ -628,7 +632,7 @@ public class Plugin {
                 JSObject permissionsResults = new JSObject();
 
                 for (String perm : autoGrantPerms) {
-                    permissionsResults.put(perm, "granted");
+                    permissionsResults.put(perm, PermissionState.GRANTED.toString());
                 }
 
                 call.resolve(permissionsResults);
@@ -667,11 +671,10 @@ public class Plugin {
      * Handle request permissions result. A plugin using the {@link CapacitorPlugin} annotation
      * can override this to handle the result.
      *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
+     * @param savedCall
+     * @param permissionResults
      */
-    protected void onRequestPermissionsResult(PluginCall savedCall, int requestCode, String[] permissions, int[] grantResults) {}
+    protected void onRequestPermissionsResult(PluginCall savedCall, Map<String, PermissionState> permissionResults) {}
 
     /**
      * Called before the app is destroyed to give a plugin the chance to

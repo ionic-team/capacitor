@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -786,10 +787,10 @@ public class Bridge {
                 if (validatePermissions(plugin.getInstance(), savedPermissionCall, permissions, grantResults)) {
                     // handle request permissions call
                     if (savedPermissionCall.getMethodName().equals("requestPermissions")) {
-                        savedPermissionCall.resolve(plugin.getInstance().getPermissionStates());
+                        plugin.getInstance().checkPermissions(savedPermissionCall);
                     } else {
                         // handle permission requests by other methods on the plugin
-                        plugin.getInstance().onRequestPermissionsResult(savedPermissionCall, requestCode, permissions, grantResults);
+                        plugin.getInstance().onRequestPermissionsResult(savedPermissionCall, plugin.getInstance().getPermissionStates());
 
                         if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
                             savedPermissionCall.release(this);
@@ -833,10 +834,10 @@ public class Bridge {
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
                     // Permission denied, can prompt again with rationale
-                    editor.putString(permission, "prompt-with-rationale");
+                    editor.putString(permission, PermissionState.PROMPT_WITH_RATIONALE.toString());
                 } else {
                     // Permission denied permanently, store this state for future reference
-                    editor.putString(permission, "denied");
+                    editor.putString(permission, PermissionState.DENIED.toString());
                 }
 
                 editor.apply();
@@ -861,10 +862,10 @@ public class Bridge {
      * Helper to check all permissions and see the current states of each permission.
      *
      * @since 3.0.0
-     * @return A mapping of permissions to the associated granted status.
+     * @return A mapping of permission aliases to the associated granted status.
      */
-    protected JSObject getPermissionStates(Plugin plugin) {
-        JSObject permissionsResults = new JSObject();
+    protected Map<String, PermissionState> getPermissionStates(Plugin plugin) {
+        Map<String, PermissionState> permissionsResults = new HashMap<>();
         CapacitorPlugin annotation = plugin.getPluginHandle().getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
             // If a permission is defined with no permission constants, return "granted" for it.
@@ -872,32 +873,32 @@ public class Bridge {
             if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
                 String key = perm.alias();
                 if (!key.isEmpty()) {
-                    String existingResult = permissionsResults.getString(key);
+                    PermissionState existingResult = permissionsResults.get(key);
 
                     // auto set permission state to granted if the alias is empty.
                     if (existingResult == null) {
-                        permissionsResults.put(key, "granted");
+                        permissionsResults.put(key, PermissionState.GRANTED);
                     }
                 }
             } else {
                 for (String permString : perm.strings()) {
                     String key = perm.alias().isEmpty() ? permString : perm.alias();
-                    String permissionStatus = plugin.hasPermission(permString) ? "granted" : "prompt";
+                    PermissionState permissionStatus = plugin.hasPermission(permString) ? PermissionState.GRANTED : PermissionState.PROMPT;
 
                     // Check if there is a cached permission state for the "Never ask again" state
-                    if (permissionStatus.equals("prompt")) {
+                    if (permissionStatus == PermissionState.PROMPT) {
                         SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS_NAME, Activity.MODE_PRIVATE);
                         String state = prefs.getString(permString, null);
 
                         if (state != null) {
-                            permissionStatus = state;
+                            permissionStatus = PermissionState.valueOf(state);
                         }
                     }
 
-                    String existingResult = permissionsResults.getString(key);
+                    PermissionState existingResult = permissionsResults.get(key);
 
                     // multiple permissions with the same alias must all be true, otherwise all false.
-                    if (existingResult == null || existingResult.equals("granted")) {
+                    if (existingResult == null || existingResult == PermissionState.GRANTED) {
                         permissionsResults.put(key, permissionStatus);
                     }
                 }
