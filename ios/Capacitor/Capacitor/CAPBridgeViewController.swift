@@ -131,7 +131,7 @@ import Cordova
             return
         }
 
-        guard FileManager.default.isReadableFile(atPath: bridge.config.appStartFileURL.path) else {
+        guard FileManager.default.fileExists(atPath: bridge.config.appStartFileURL.path) else {
             fatalLoadError()
         }
 
