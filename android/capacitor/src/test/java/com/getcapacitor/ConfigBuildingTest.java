@@ -2,14 +2,18 @@ package com.getcapacitor;
 
 import static org.junit.Assert.*;
 
+import android.app.Activity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ConfigBuildingTest {
 
     final String TEST_PLUGIN_NAME = "TestPlugin";
+
+    Activity context = Mockito.mock(Activity.class);
 
     JSONObject pluginConfig = new JSONObject();
     JSONObject testPluginObject = new JSONObject();
@@ -37,7 +41,7 @@ public class ConfigBuildingTest {
             pluginConfig.put(TEST_PLUGIN_NAME, testPluginObject);
 
             config =
-                new CapConfig.Builder()
+                new CapConfig.Builder(context)
                     .setAllowMixedContent(true)
                     .setAllowNavigation(new String[] { "http://www.google.com" })
                     .setAndroidScheme("test")

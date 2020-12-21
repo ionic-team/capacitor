@@ -44,7 +44,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(BAD_TEST));
 
-            CapConfig config = CapConfig.fromFile(context);
+            CapConfig config = CapConfig.loadDefault(context);
             assertEquals("not a real domain", config.getServerUrl());
             assertNull(config.getBackgroundColor());
             assertFalse(config.isLogsHidden());
@@ -58,7 +58,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(FLAT_TEST));
 
-            CapConfig config = CapConfig.fromFile(context);
+            CapConfig config = CapConfig.loadDefault(context);
             assertEquals("level 1 override", config.getOverriddenUserAgentString());
             assertEquals("level 1 append", config.getAppendedUserAgentString());
             assertEquals("#ffffff", config.getBackgroundColor());
@@ -74,7 +74,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(HIERARCHY_TEST));
 
-            CapConfig config = CapConfig.fromFile(context);
+            CapConfig config = CapConfig.loadDefault(context);
             assertEquals("level 2 override", config.getOverriddenUserAgentString());
             assertEquals("level 2 append", config.getAppendedUserAgentString());
             assertEquals("#000000", config.getBackgroundColor());
@@ -92,7 +92,7 @@ public class ConfigReadingTest {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(NONJSON_TEST));
 
             try (MockedStatic<Logger> logger = mockStatic(Logger.class)) {
-                CapConfig config = CapConfig.fromFile(context);
+                CapConfig config = CapConfig.loadDefault(context);
                 logger.verify(times(1), () -> Logger.error(eq(errText), any()));
             }
         } catch (IOException e) {
@@ -105,7 +105,7 @@ public class ConfigReadingTest {
         try {
             when(assetManager.open("capacitor.config.json")).thenReturn(getTestInputStream(SERVER_TEST));
 
-            CapConfig config = CapConfig.fromFile(context);
+            CapConfig config = CapConfig.loadDefault(context);
             assertEquals("myhost", config.getHostname());
             assertEquals("http://192.168.100.1:2057", config.getServerUrl());
             assertEquals("override", config.getAndroidScheme());

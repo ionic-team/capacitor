@@ -27,6 +27,7 @@ package com.getcapacitor;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -138,13 +139,13 @@ public class FileUtils {
     /**
      * Read a plaintext file.
      *
-     * @param context Used to get access to the asset manager to open the file.
+     * @param assetManager Used to open the file.
      * @param fileName The path of the file to read.
      * @return The contents of the file path.
      * @throws IOException Thrown if any issues reading the provided file path.
      */
-    static String readFile(Context context, String fileName) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)))) {
+    static String readFile(AssetManager assetManager, String fileName) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open(fileName)))) {
             StringBuffer buffer = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {

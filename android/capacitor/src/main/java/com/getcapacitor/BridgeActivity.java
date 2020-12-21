@@ -16,7 +16,7 @@ public class BridgeActivity extends AppCompatActivity {
 
     private int activityDepth = 0;
     private List<Class<? extends Plugin>> initialPlugins = new ArrayList<>();
-    private final Bridge.Builder bridgeBuilder = new Bridge.Builder();
+    private final Bridge.Builder bridgeBuilder = new Bridge.Builder(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class BridgeActivity extends AppCompatActivity {
 
         Logger.debug("Starting BridgeActivity");
 
-        bridge = bridgeBuilder.setActivity(this).addPlugins(initialPlugins).setConfig(config).create();
+        bridge = bridgeBuilder.addPlugins(initialPlugins).setConfig(config).create();
 
         this.keepRunning = bridge.shouldKeepRunning();
         this.onNewIntent(getIntent());
