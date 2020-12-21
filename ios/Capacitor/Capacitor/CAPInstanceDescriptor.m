@@ -14,6 +14,7 @@ NSString* const CAPInstanceDescriptorDefaultHostname = @"localhost";
 - (instancetype)initAsDefault {
     if (self = [super init]) {
         _instanceType = CAPInstanceTypeFixed;
+        _appStartPath = @"index.html";
         [self _setDefaultsWithAppLocation:[[NSBundle mainBundle] URLForResource:@"public" withExtension:nil]];
         [self _parseConfigurationAt:[[NSBundle mainBundle] URLForResource:@"capacitor.config" withExtension:@"json"] cordovaConfiguration:[[NSBundle mainBundle] URLForResource:@"config" withExtension:@"xml"]];
     }
