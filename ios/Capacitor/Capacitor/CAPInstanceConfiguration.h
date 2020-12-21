@@ -21,6 +21,7 @@ NS_SWIFT_NAME(InstanceConfiguration)
 @property (nonatomic, readonly) BOOL cordovaDeployDisabled;
 @property (nonatomic, readonly) UIScrollViewContentInsetAdjustmentBehavior contentInsetAdjustmentBehavior;
 @property (nonatomic, readonly, nonnull) NSURL *appLocation;
+@property (nonatomic, readonly, nullable) NSString *appStartPath;
 
 @property (nonatomic, readonly, nonnull) NSDictionary *legacyConfig DEPRECATED_MSG_ATTRIBUTE("Use direct properties instead");
 

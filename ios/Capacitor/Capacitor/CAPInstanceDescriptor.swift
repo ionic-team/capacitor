@@ -120,6 +120,10 @@ extension InstanceDescriptor {
         if !urlValid {
             serverURL = nil
         }
+        // reset the path if it's not valid
+        if let path = appStartPath?.trimmingCharacters(in: .whitespacesAndNewlines), path.isEmpty {
+            appStartPath = nil
+        }
         // if the plugin configuration was programmatically modified, the necessary type information may have been lost.
         // so perform a coercion here to make sure that casting will work as expected
         pluginConfigurations = JSTypes.coerceDictionaryToJSObject(pluginConfigurations) ?? [:]

@@ -23,6 +23,7 @@
         _handleApplicationNotifications = descriptor.handleApplicationNotifications;
         _contentInsetAdjustmentBehavior = descriptor.contentInsetAdjustmentBehavior;
         _appLocation = descriptor.appLocation;
+        _appStartPath = descriptor.appStartPath;
         _pluginConfigurations = descriptor.pluginConfigurations;
         _legacyConfig = descriptor.legacyConfig;
         // construct the necessary URLs
@@ -55,6 +56,7 @@
         _cordovaDeployDisabled = configuration.cordovaDeployDisabled;
         _contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior;
         _legacyConfig = [[configuration legacyConfig] copy];
+        _appStartPath = configuration.appStartPath;
         _appLocation = [location copy];
     }
     return self;

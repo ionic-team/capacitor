@@ -37,6 +37,7 @@ NS_SWIFT_NAME(InstanceDescriptor)
 @property (nonatomic, assign) BOOL handleApplicationNotifications;
 @property (nonatomic, assign) UIScrollViewContentInsetAdjustmentBehavior contentInsetAdjustmentBehavior;
 @property (nonatomic, copy, nonnull) NSURL *appLocation;
+@property (nonatomic, copy, nullable) NSString *appStartPath;
 @property (nonatomic, copy, nonnull) CDVConfigParser *cordovaConfiguration;
 @property (nonatomic, assign) CAPInstanceWarning warnings;
 @property (nonatomic, readonly) CAPInstanceType instanceType;
