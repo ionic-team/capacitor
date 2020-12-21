@@ -7,15 +7,15 @@ import Cordova
     public final var bridge: CAPBridgeProtocol? {
         return capacitorBridge
     }
-    
-    fileprivate(set) public var webView: WKWebView?
+
+    public fileprivate(set) var webView: WKWebView?
 
     public var isStatusBarVisible = true
     public var statusBarStyle: UIStatusBarStyle = .default
     public var statusBarAnimation: UIStatusBarAnimation = .slide
     public var supportedOrientations: [Int] = []
 
-    public final lazy var isNewBinary: Bool = {
+    public lazy final var isNewBinary: Bool = {
         if let curVersionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
            let curVersionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
             if let lastVersionCode = UserDefaults.standard.string(forKey: "lastBinaryVersionCode"),
@@ -25,10 +25,10 @@ import Cordova
         }
         return false
     }()
-    
+
     /**
      Returns the class used to create the webview for instances of this class.
-     
+
      This method returns the WKWebView class object by default. Subclasses can override this method
      and return a subclass of WKWebView if needed.
      */
@@ -36,20 +36,20 @@ import Cordova
         return WKWebView.self
     }
 
-    public override final func loadView() {
+    override public final func loadView() {
         // load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
         let configuration = InstanceConfiguration(with: configDescriptor)
         CAPLog.enableLogging = configuration.enableLogging
         logWarnings(for: configDescriptor)
-        
+
         if configDescriptor.instanceType == .fixed {
             updateBinaryVersion()
         }
-        
+
         setStatusBarDefaults()
         setScreenOrientationDefaults()
-        
+
         // get the web view
         let assetHandler = WebViewAssetHandler()
         assetHandler.setAssetPath(configuration.appLocation.path)
@@ -64,24 +64,24 @@ import Cordova
                                           delegationHandler: delegationHandler)
         capacitorDidLoad()
     }
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad()
         self.becomeFirstResponder()
         loadWebView()
     }
-    
+
     override open func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
         return false
     }
-    
+
     // MARK: - Initialization
-    
+
     /**
      The InstanceDescriptor that should be used for the Capacitor environment.
 
      - Returns: `InstanceDescriptor`
-     
+
      - Note: This is called early in the View Controller's lifecycle. Not all properties will be set at invocation.
      */
     open func instanceDescriptor() -> InstanceDescriptor {
@@ -103,9 +103,9 @@ import Cordova
      The WKWebViewConfiguration to use for the webview.
 
      - Parameter instanceConfiguration: the configuration that will define the capacitor environment.
-     
+
      - Returns: `WKWebViewConfiguration`
-     
+
      It is recommended to call super's implementation and modify the result, rather than creating a new object.
      */
     open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
@@ -119,13 +119,13 @@ import Cordova
         }
         return webViewConfiguration
     }
-    
+
     /**
      Allows any additional configuration to be performed. The `webView` and `bridge` properties will be set by this point.
-    */
+     */
     open func capacitorDidLoad() {
     }
-    
+
     public final func loadWebView() {
         guard let bridge = capacitorBridge else {
             return
@@ -134,15 +134,15 @@ import Cordova
         guard FileManager.default.isReadableFile(atPath: bridge.config.appStartFileURL.path) else {
             fatalLoadError()
         }
-        
+
         let url = bridge.config.appStartServerURL
         CAPLog.print("⚡️  Loading app at \(url.absoluteString)...")
         bridge.webViewDelegationHandler.willLoadWebview(webView)
         _ = webView?.load(URLRequest(url: url))
     }
-    
+
     // MARK: - System Integration
-    
+
     open func setStatusBarDefaults() {
         if let plist = Bundle.main.infoDictionary {
             if let statusBarHidden = plist["UIStatusBarHidden"] as? Bool {
@@ -187,7 +187,7 @@ import Cordova
             }
         }
     }
-    
+
     override open var prefersStatusBarHidden: Bool {
         get {
             return !isStatusBarVisible
@@ -223,7 +223,7 @@ import Cordova
     open func setStatusBarAnimation(_ statusBarAnimation: UIStatusBarAnimation) {
         self.statusBarAnimation = statusBarAnimation
     }
-    
+
     override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         var ret = 0
         if self.supportedOrientations.contains(UIInterfaceOrientation.portrait.rawValue) {
@@ -299,7 +299,7 @@ extension CAPBridgeViewController {
         aWebView.uiDelegate = delegationHandler
         aWebView.navigationDelegate = delegationHandler
     }
-    
+
     private func updateBinaryVersion() {
         guard isNewBinary else {
             return
@@ -314,7 +314,7 @@ extension CAPBridgeViewController {
         prefs.set("", forKey: "serverBasePath")
         prefs.synchronize()
     }
-    
+
     private func logWarnings(for descriptor: InstanceDescriptor) {
         if descriptor.warnings.contains(.missingAppDir) {
             CAPLog.print("⚡️  ERROR: Unable to find application directory at: \"\(descriptor.appLocation.absoluteString)\"!")
@@ -334,10 +334,10 @@ extension CAPBridgeViewController {
             }
         }
     }
-    
+
     func printLoadError() {
         let fullStartPath = bridge?.config.appStartFileURL.path ?? ""
-        
+
         CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath)")
         CAPLog.print("⚡️  This file is the root of your web app and must exist before")
         CAPLog.print("⚡️  Capacitor can run. Ensure you've run capacitor copy at least")

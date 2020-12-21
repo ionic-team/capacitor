@@ -7,14 +7,14 @@ extension InstanceConfiguration {
         }
         return appLocation
     }
-    
+
     @objc var appStartServerURL: URL {
         if let path = appStartPath {
             return serverURL.appendingPathComponent(path)
         }
         return serverURL
     }
-    
+
     @objc public func getPluginConfigValue(_ pluginId: String, _ configKey: String) -> Any? {
         return (pluginConfigurations as? JSObject)?[keyPath: KeyPath("\(pluginId).\(configKey)")]
     }
