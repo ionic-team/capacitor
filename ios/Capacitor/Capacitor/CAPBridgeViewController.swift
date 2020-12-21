@@ -335,7 +335,7 @@ extension CAPBridgeViewController {
         }
     }
 
-    func printLoadError() {
+    private func printLoadError() {
         let fullStartPath = bridge?.config.appStartFileURL.path ?? ""
 
         CAPLog.print("⚡️  ERROR: Unable to load \(fullStartPath)")
@@ -344,7 +344,7 @@ extension CAPBridgeViewController {
         CAPLog.print("⚡️  or, if embedding, that this directory exists as a resource directory.")
     }
 
-    func fatalLoadError() -> Never {
+    private func fatalLoadError() -> Never {
         printLoadError()
         exit(1)
     }
