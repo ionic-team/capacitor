@@ -24,13 +24,13 @@ internal class WebViewDelegationHandler: NSObject, WKNavigationDelegate, WKUIDel
         contentController.removeScriptMessageHandler(forName: handlerName)
     }
 
-    func willLoadWebview(_ webView: WKWebView) {
+    func willLoadWebview(_ webView: WKWebView?) {
         // Set the webview to be not opaque on the inital load. This prevents
         // the webview from showing a white background, which is its default
         // loading display, as that can appear as a screen flash. The opacity
         // might have been set by something else, like a plugin, so we want
         // to save the current value so it can be reset on success or failure.
-        if case .unloaded = webViewLoadingState {
+        if let webView = webView, case .unloaded = webViewLoadingState {
             webViewLoadingState = .initialLoad(isOpaque: webView.isOpaque)
             webView.isOpaque = false
         }
