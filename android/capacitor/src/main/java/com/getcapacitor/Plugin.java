@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -280,6 +282,87 @@ public class Plugin {
         }
 
         return true;
+    }
+
+    private final Map<Integer, ActivityResultLauncher<String[]>> permissionLaunchers = new HashMap<>();
+
+    protected void registerPermissionCallback(int id, PermissionCallback permissionCallback) {
+        permissionLaunchers.put(
+            id,
+            bridge
+                .getActivity()
+                .registerForActivityResult(
+                    new ActivityResultContracts.RequestMultiplePermissions(),
+                    permissions -> {
+                        PluginCall call = bridge.getPermissionCall(handle.getId());
+                        permissionCallback.onResult(call, getPermissionStates());
+                    }
+                )
+        );
+    }
+
+    public void requestAllPermissions(PluginCall call, int callbackId) {
+        if (!permissionLaunchers.containsKey(callbackId)) {
+            // error handle because permission callback was not registered
+            return;
+        }
+
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        if (annotation != null) {
+            HashSet<String> perms = new HashSet<>();
+            for (Permission perm : annotation.permissions()) {
+                perms.addAll(Arrays.asList(perm.strings()));
+            }
+
+            bridge.savePermissionCall(call);
+            permissionLaunchers.get(callbackId).launch(perms.toArray(new String[0]));
+        }
+    }
+
+    protected void requestPermissionForAlias(String alias, PluginCall call, int callbackId) {
+        if (!permissionLaunchers.containsKey(callbackId)) {
+            // error handle because permission callback was not registered
+            return;
+        }
+
+        // get permissions for alias
+        // Todo: replace with new helper!!
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        HashSet<String> perms = new HashSet<>();
+        for (Permission perm : annotation.permissions()) {
+            if (perm.alias().equals(alias)) {
+                perms.addAll(Arrays.asList(perm.strings()));
+            }
+        }
+
+        if (!perms.isEmpty()) {
+            String[] permissions = perms.toArray(new String[0]);
+            bridge.savePermissionCall(call);
+            permissionLaunchers.get(callbackId).launch(permissions);
+        }
+    }
+
+    protected void requestPermissionForAliases(String[] aliases, PluginCall call, int callbackId) {
+        if (!permissionLaunchers.containsKey(callbackId) || aliases == null || aliases.length == 0) {
+            // error handle due to missing parameters or unregistered callback
+            return;
+        }
+
+        // get permissions for alias
+        // Todo: replace with new helper!!
+        CapacitorPlugin annotation = handle.getPluginAnnotation();
+        HashSet<String> perms = new HashSet<>();
+        for (Permission perm : annotation.permissions()) {
+            if (Arrays.asList(aliases).contains(perm.alias())) {
+                perms.addAll(Arrays.asList(perm.strings()));
+            }
+        }
+
+        if (!perms.isEmpty()) {
+            String[] permissions = perms.toArray(new String[0]);
+            bridge.savePermissionCall(call);
+            permissionLaunchers.get(callbackId).launch(permissions);
+        }
     }
 
     /**
