@@ -80,10 +80,11 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
         {},
         {
           get(_, prop) {
-            if (typeof (nativePluginImpl as any)[prop] === 'function') {
+            const func = Reflect.get(nativePluginImpl, prop);
+            if (typeof func === 'function') {
               // call the plugin method, Plugin.method(args)
               // platform implementation already ready to go
-              return (nativePluginImpl as any)[prop];
+              return func;
             }
 
             throw new CapacitorException(
@@ -138,8 +139,10 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
 
             if (loadedImpl) {
               // implementation loaded and has the methd to call ready
-              if (typeof (loadedImpl as any)[prop] === 'function') {
-                return (...args: any[]) => loadedImpl[prop](...args);
+              const func = Reflect.get(loadedImpl, prop);
+              if (typeof func === 'function') {
+                return (...args: any[]) =>
+                  Reflect.apply(func, loadedImpl, args);
               }
               throw new CapacitorException(
                 `"${pluginName}.${
@@ -160,7 +163,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                   let loadedRtn: any = null;
                   lazyLoadingImpl.then(lazyLoadedImpl => {
                     loadedImpl = lazyLoadedImpl;
-                    loadedRtn = loadedImpl[prop](...args);
+                    const func = Reflect.get(loadedImpl, prop);
+                    loadedRtn = Reflect.apply(func, loadedImpl, args);
                   });
                   return {
                     remove: () => {
@@ -181,7 +185,8 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                 return () => {
                   lazyLoadingImpl.then(lazyLoadedImpl => {
                     loadedImpl = lazyLoadedImpl;
-                    return loadedImpl[prop]();
+                    const func = Reflect.get(loadedImpl, prop);
+                    return Reflect.apply(func, loadedImpl, []);
                   });
                 };
               }
@@ -191,8 +196,9 @@ export const createCapacitor = (win: WindowCapacitor): CapacitorInstance => {
                   // implementation is now loaded and has the methd to call ready
                   loadedImpl = lazyLoadedImpl;
 
-                  if (typeof loadedImpl[prop] === 'function') {
-                    return loadedImpl[prop](...args);
+                  const func = Reflect.get(loadedImpl, prop);
+                  if (typeof func === 'function') {
+                    return Reflect.apply(func, loadedImpl, args);
                   }
 
                   throw new CapacitorException(
