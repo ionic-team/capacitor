@@ -241,7 +241,7 @@ export interface CapacitorConfig {
      * Configure the minimum iOS version supported.
      *
      * @since 1.0.0
-     * @default 11.0
+     * @default 12.0
      */
     minVersion?: string;
 

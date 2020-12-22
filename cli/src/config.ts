@@ -243,7 +243,7 @@ async function loadIOSConfig(
 
   return {
     name,
-    minVersion: '11.0',
+    minVersion: '12.0',
     cordovaSwiftVersion: '5.1',
     platformDir,
     platformDirAbs,
