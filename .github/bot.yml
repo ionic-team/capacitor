@@ -40,3 +40,11 @@ tasks:
       exclude-patterns:
         - '^Ionitron$'
         - '\[bot\]$'
+  - name: assign-to-project
+    on:
+      issues:
+        types: [opened]
+    condition: 'config.users.includes(payload.issue.user.login)'
+    config:
+      column-id: 10495656
+      users: [jthoms1, elylucas, dwieeb, jcesarmobile, carlpoole, ikeith, thomasvidas, theproducer]
