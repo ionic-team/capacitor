@@ -26,16 +26,6 @@ import Cordova
         return false
     }()
 
-    /**
-     Returns the class used to create the webview for instances of this class.
-
-     This method returns the WKWebView class object by default. Subclasses can override this method
-     and return a subclass of WKWebView if needed.
-     */
-    open class var webViewClass: WKWebView.Type {
-        return WKWebView.self
-    }
-
     override public final func loadView() {
         // load the configuration and set the logging flag
         let configDescriptor = instanceDescriptor()
@@ -118,6 +108,15 @@ import Cordova
             webViewConfiguration.applicationNameForUserAgent = appendUserAgent
         }
         return webViewConfiguration
+    }
+
+    /**
+     Returns a WKWebView initialized with the frame and configuration.
+
+     Subclasses can override this method to return a subclass of WKWebView if needed.
+     */
+    open func webView(with frame: CGRect, configuration: WKWebViewConfiguration) -> WKWebView {
+        return WKWebView(frame: frame, configuration: configuration)
     }
 
     /**
@@ -275,7 +274,7 @@ extension CAPBridgeViewController {
         webConfig.setURLSchemeHandler(assetHandler, forURLScheme: configuration.localURL.scheme ?? InstanceDescriptorDefaults.scheme)
         webConfig.userContentController = delegationHandler.contentController
         // create the web view and set its properties
-        let aWebView = (type(of: self).webViewClass).init(frame: .zero, configuration: webConfig)
+        let aWebView = webView(with: .zero, configuration: webConfig)
         aWebView.scrollView.bounces = false
         aWebView.scrollView.contentInsetAdjustmentBehavior = configuration.contentInsetAdjustmentBehavior
         aWebView.allowsLinkPreview = configuration.allowLinkPreviews
