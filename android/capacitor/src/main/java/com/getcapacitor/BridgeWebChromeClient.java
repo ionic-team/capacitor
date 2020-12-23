@@ -1,6 +1,7 @@
 package com.getcapacitor;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -357,6 +358,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         }
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private boolean showImageCapturePicker(final ValueCallback<Uri[]> filePathCallback) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(bridge.getActivity().getPackageManager()) == null) {
@@ -390,6 +392,7 @@ public class BridgeWebChromeClient extends WebChromeClient {
         return true;
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private boolean showVideoCapturePicker(final ValueCallback<Uri[]> filePathCallback) {
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         if (takeVideoIntent.resolveActivity(bridge.getActivity().getPackageManager()) == null) {
