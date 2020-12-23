@@ -779,26 +779,8 @@ public class Bridge {
             return;
         }
 
-        if (plugin.getPluginAnnotation() != null) {
-            // Handle for @CapacitorPlugin permissions
-            PluginCall savedPermissionCall = getPermissionCall(plugin.getId());
-            if (savedPermissionCall != null) {
-                if (validatePermissions(plugin.getInstance(), savedPermissionCall, permissions, grantResults)) {
-                    // handle request permissions call
-                    if (savedPermissionCall.getMethodName().equals("requestPermissions")) {
-                        savedPermissionCall.resolve(plugin.getInstance().getPermissionStates());
-                    } else {
-                        // handle permission requests by other methods on the plugin
-                        plugin.getInstance().onRequestPermissionsResult(savedPermissionCall, requestCode, permissions, grantResults);
-
-                        if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
-                            savedPermissionCall.release(this);
-                        }
-                    }
-                }
-            }
-        } else {
-            // Call deprecated method if using deprecated NativePlugin annotation
+        // Call deprecated method if using deprecated NativePlugin annotation
+        if (plugin.getPluginAnnotation() == null) {
             plugin.getInstance().handleRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
@@ -810,43 +792,45 @@ public class Bridge {
      * @param plugin
      * @param savedCall
      * @param permissions
-     * @param grantResults
      * @return true if permissions were saved and defined correctly, false if not
      */
-    protected boolean validatePermissions(Plugin plugin, PluginCall savedCall, String[] permissions, int[] grantResults) {
+    protected boolean validatePermissions(Plugin plugin, PluginCall savedCall, Map<String, Boolean> permissions) {
         SharedPreferences prefs = getContext().getSharedPreferences(PERMISSION_PREFS_NAME, Activity.MODE_PRIVATE);
 
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Permission granted. If previously denied, remove cached state
-            for (String permission : permissions) {
-                String state = prefs.getString(permission, null);
+        for (Map.Entry<String, Boolean> permission : permissions.entrySet()) {
+            String permString = permission.getKey();
+            boolean isGranted = permission.getValue();
+
+            if (isGranted) {
+                // Permission granted. If previously denied, remove cached state
+                String state = prefs.getString(permString, null);
 
                 if (state != null) {
                     SharedPreferences.Editor editor = prefs.edit();
-                    editor.remove(permission);
+                    editor.remove(permString);
                     editor.apply();
                 }
-            }
-        } else {
-            for (String permission : permissions) {
+            } else {
                 SharedPreferences.Editor editor = prefs.edit();
 
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permString)) {
                     // Permission denied, can prompt again with rationale
-                    editor.putString(permission, "prompt-with-rationale");
+                    editor.putString(permString, PermissionState.PROMPT_WITH_RATIONALE.toString());
                 } else {
                     // Permission denied permanently, store this state for future reference
-                    editor.putString(permission, "denied");
+                    editor.putString(permString, PermissionState.DENIED.toString());
                 }
 
                 editor.apply();
             }
         }
 
-        if (!plugin.hasDefinedPermissions(permissions)) {
+        String[] permStrings = permissions.keySet().toArray(new String[0]);
+
+        if (!plugin.hasDefinedPermissions(permStrings)) {
             StringBuilder builder = new StringBuilder();
             builder.append("Missing the following permissions in AndroidManifest.xml:\n");
-            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permissions);
+            String[] missing = PermissionHelper.getUndefinedPermissions(getContext(), permStrings);
             for (String perm : missing) {
                 builder.append(perm + "\n");
             }

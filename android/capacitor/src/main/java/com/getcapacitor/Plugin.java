@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -60,6 +61,16 @@ public class Plugin {
     // Stored event listeners
     private final Map<String, List<PluginCall>> eventListeners;
 
+    /**
+     * Base activity result launcher used by the {@link #requestPermissions(PluginCall)} plugin call
+     */
+    private ActivityResultLauncher<String[]> basePermissionLauncher = null;
+
+    /**
+     * Launchers used by the plugin to request permissions
+     */
+    private final Map<Integer, ActivityResultLauncher<String[]>> permissionLaunchers = new HashMap<>();
+
     // Stored results of an event if an event was fired and
     // no listeners were attached yet. Only stores the last value.
     private final Map<String, JSObject> retainedEventArguments;
@@ -74,6 +85,22 @@ public class Plugin {
      * and is ready to start initializing.
      */
     public void load() {}
+
+    /**
+     * Registers the base permission launcher used by the {@link #requestPermissions(PluginCall)} plugin call
+     */
+    void initializeBasePermissionLauncher() {
+        basePermissionLauncher =
+            bridge
+                .getActivity()
+                .registerForActivityResult(
+                    new ActivityResultContracts.RequestMultiplePermissions(),
+                    permissions -> {
+                        PluginCall call = bridge.getPermissionCall(handle.getId());
+                        checkPermissions(call);
+                    }
+                );
+    }
 
     /**
      * Get the main {@link Context} for the current Activity (your app)
@@ -229,8 +256,9 @@ public class Plugin {
     }
 
     /**
-     * Check whether any of annotation permissions has been defined in the AndroidManifest.xml
-     * @return
+     * Check if all annotated permissions have been defined in the AndroidManifest.xml
+     *
+     * @return true if permissions are all defined in the Manifest
      */
     public boolean hasDefinedRequiredPermissions() {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
@@ -284,9 +312,13 @@ public class Plugin {
         return true;
     }
 
-    private final Map<Integer, ActivityResultLauncher<String[]>> permissionLaunchers = new HashMap<>();
-
-    protected void registerPermissionCallback(int id, PermissionCallback permissionCallback) {
+    /**
+     * Register a permission callback for use after a permission request
+     *
+     * @param id an id to associate with the method for retrieval
+     * @param permissionCallback the method to call back after a permission request
+     */
+    protected void registerPermissionCallback(int id, @NonNull PermissionCallback permissionCallback) {
         permissionLaunchers.put(
             id,
             bridge
@@ -294,14 +326,29 @@ public class Plugin {
                 .registerForActivityResult(
                     new ActivityResultContracts.RequestMultiplePermissions(),
                     permissions -> {
-                        PluginCall call = bridge.getPermissionCall(handle.getId());
-                        permissionCallback.onResult(call, getPermissionStates());
+                        PluginCall savedPermissionCall = bridge.getPermissionCall(handle.getId());
+
+                        if (bridge.validatePermissions(this, savedPermissionCall, permissions)) {
+                            // handle request permissions call
+                            permissionCallback.onResult(savedPermissionCall, getPermissionStates());
+
+                            if (!savedPermissionCall.isReleased() && !savedPermissionCall.isSaved()) {
+                                savedPermissionCall.release(bridge);
+                            }
+                        }
                     }
                 )
         );
     }
 
-    public void requestAllPermissions(PluginCall call, int callbackId) {
+    /**
+     * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
+     *
+     * @since 3.0.0
+     * @param call the plugin call
+     * @param callbackId the ID of a registered permission callback method to respond to
+     */
+    protected void requestAllPermissions(@NonNull PluginCall call, int callbackId) {
         if (!permissionLaunchers.containsKey(callbackId)) {
             // error handle because permission callback was not registered
             return;
@@ -319,37 +366,45 @@ public class Plugin {
         }
     }
 
-    protected void requestPermissionForAlias(String alias, PluginCall call, int callbackId) {
-        if (!permissionLaunchers.containsKey(callbackId)) {
-            // error handle because permission callback was not registered
-            return;
-        }
-
-        // get permissions for alias
-        // Todo: replace with new helper!!
-        CapacitorPlugin annotation = handle.getPluginAnnotation();
-        HashSet<String> perms = new HashSet<>();
-        for (Permission perm : annotation.permissions()) {
-            if (perm.alias().equals(alias)) {
-                perms.addAll(Arrays.asList(perm.strings()));
-            }
-        }
-
-        if (!perms.isEmpty()) {
-            String[] permissions = perms.toArray(new String[0]);
-            bridge.savePermissionCall(call);
-            permissionLaunchers.get(callbackId).launch(permissions);
-        }
+    /**
+     * Request permissions using an alias defined on the plugin
+     * @param alias
+     * @param call
+     * @param callbackId the ID of a registered permission callback method to respond to
+     */
+    protected void requestPermissionForAlias(@NonNull String alias, @NonNull PluginCall call, int callbackId) {
+        requestPermissionForAliases(new String[] { alias }, call, callbackId);
     }
 
-    protected void requestPermissionForAliases(String[] aliases, PluginCall call, int callbackId) {
-        if (!permissionLaunchers.containsKey(callbackId) || aliases == null || aliases.length == 0) {
+    /**
+     *
+     * @param aliases
+     * @param call
+     * @param callbackId the ID of a registered permission callback method to respond to
+     */
+    protected void requestPermissionForAliases(@NonNull String[] aliases, @NonNull PluginCall call, int callbackId) {
+        if (!permissionLaunchers.containsKey(callbackId) || aliases.length == 0) {
             // error handle due to missing parameters or unregistered callback
             return;
         }
 
-        // get permissions for alias
-        // Todo: replace with new helper!!
+        requestPermissionForAliases(aliases, call, permissionLaunchers.get(callbackId));
+    }
+
+    private void requestPermissionForAliases(
+        @NonNull String[] aliases,
+        @NonNull PluginCall call,
+        ActivityResultLauncher<String[]> activityResultLauncher
+    ) {
+        String[] permissions = getPermissionStringsForAliases(aliases);
+
+        if (permissions.length > 0) {
+            bridge.savePermissionCall(call);
+            activityResultLauncher.launch(permissions);
+        }
+    }
+
+    private String[] getPermissionStringsForAliases(@NonNull String[] aliases) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         HashSet<String> perms = new HashSet<>();
         for (Permission perm : annotation.permissions()) {
@@ -358,55 +413,7 @@ public class Plugin {
             }
         }
 
-        if (!perms.isEmpty()) {
-            String[] permissions = perms.toArray(new String[0]);
-            bridge.savePermissionCall(call);
-            permissionLaunchers.get(callbackId).launch(permissions);
-        }
-    }
-
-    /**
-     * Helper for requesting a specific permission
-     *
-     * @since 3.0.0
-     * @param call the plugin call
-     * @param permission the permission to request
-     * @param requestCode the requestCode to use to associate the result with the plugin
-     */
-    public void requestPermission(PluginCall call, String permission, int requestCode) {
-        requestPermissions(call, new String[] { permission }, requestCode);
-    }
-
-    /**
-     * Helper for requesting specific permissions
-     *
-     * @since 3.0.0
-     * @param call the plugin call
-     * @param permissions the set of permissions to request
-     * @param requestCode the requestCode to use to associate the result with the plugin
-     */
-    public void requestPermissions(PluginCall call, String[] permissions, int requestCode) {
-        bridge.savePermissionCall(call);
-        ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
-    }
-
-    /**
-     * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
-     *
-     * @since 3.0.0
-     * @param call the plugin call
-     */
-    public void requestAllPermissions(PluginCall call) {
-        CapacitorPlugin annotation = handle.getPluginAnnotation();
-        if (annotation != null) {
-            HashSet<String> perms = new HashSet<>();
-            for (Permission perm : annotation.permissions()) {
-                perms.addAll(Arrays.asList(perm.strings()));
-            }
-
-            bridge.savePermissionCall(call);
-            ActivityCompat.requestPermissions(getActivity(), perms.toArray(new String[0]), annotation.permissionRequestCode());
-        }
+        return perms.toArray(new String[0]);
     }
 
     /**
@@ -423,7 +430,7 @@ public class Plugin {
 
     /**
      * Request all of the specified permissions in the CapacitorPlugin annotation (if any)
-     * @deprecated use {@link #requestAllPermissions(PluginCall)} in conjunction with @CapacitorPlugin
+     * @deprecated use {@link #requestAllPermissions(PluginCall, int)} in conjunction with @CapacitorPlugin
      */
     @Deprecated
     public void pluginRequestAllPermissions() {
@@ -433,7 +440,7 @@ public class Plugin {
 
     /**
      * Helper for requesting a specific permission
-     * @deprecated use {@link #requestPermission(PluginCall, String, int)} in conjunction with @CapacitorPlugin
+     * @deprecated use {@link #requestPermissionForAlias(String, PluginCall, int)} in conjunction with @CapacitorPlugin
      *
      * @param permission the permission to request
      * @param requestCode the requestCode to use to associate the result with the plugin
@@ -605,11 +612,22 @@ public class Plugin {
     /**
      * Exported plugin call to request all permissions for this plugin.
      * To manually request permissions within a plugin use:
-     *  {@link #requestPermission(PluginCall, String, int)}, or
-     *  {@link #requestPermissions(PluginCall, String[], int)}, or
-     *  {@link #requestAllPermissions(PluginCall)}
+     *  {@link #requestAllPermissions(PluginCall, int)}, or
+     *  {@link #requestPermissionForAlias(String, PluginCall, int)}, or
+     *  {@link #requestPermissionForAliases(String[], PluginCall, int)}
      *
-     * @param call
+     * @param call the plugin call
+     */
+    public void requestPermissions(PluginCall call) {}
+
+    /**
+     * Exported plugin call to request all permissions for this plugin.
+     * To manually request permissions within a plugin use:
+     *  {@link #requestAllPermissions(PluginCall, int)}, or
+     *  {@link #requestPermissionForAlias(String, PluginCall, int)}, or
+     *  {@link #requestPermissionForAliases(String[], PluginCall, int)}
+     *
+     * @param call the plugin call
      */
     @PluginMethod
     public void requestPermissions(PluginCall call) {
@@ -674,6 +692,7 @@ public class Plugin {
                 saveCall(call);
                 pluginRequestPermissions(perms, permissionRequestCode);
             } else {
+                //requestPermissionForAliases(perms, call, basePermissionLauncher);
                 requestPermissions(call, perms, permissionRequestCode);
             }
         } else {
@@ -697,7 +716,7 @@ public class Plugin {
      * Handle request permissions result. A plugin using the deprecated {@link NativePlugin}
      * should override this to handle the result, or this method will handle the result
      * for our convenient requestPermissions call.
-     * @deprecated in favor of using {@link #onRequestPermissionsResult} in conjunction with {@link CapacitorPlugin}
+     * @deprecated in favor of using callbacks in conjunction with {@link CapacitorPlugin}
      *
      * @param requestCode
      * @param permissions
@@ -716,16 +735,6 @@ public class Plugin {
             savedLastCall = null;
         }
     }
-
-    /**
-     * Handle request permissions result. A plugin using the {@link CapacitorPlugin} annotation
-     * can override this to handle the result.
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    protected void onRequestPermissionsResult(PluginCall savedCall, int requestCode, String[] permissions, int[] grantResults) {}
 
     /**
      * Called before the app is destroyed to give a plugin the chance to
