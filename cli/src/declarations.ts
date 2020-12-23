@@ -230,14 +230,6 @@ export interface CapacitorConfig {
     scrollEnabled?: boolean;
 
     /**
-     * Configure the Swift version to be used in Cordova plugins.
-     *
-     * @since 1.0.0
-     * @default 5.1
-     */
-    cordovaSwiftVersion?: string;
-
-    /**
      * Configure the minimum iOS version supported.
      *
      * @since 1.0.0
