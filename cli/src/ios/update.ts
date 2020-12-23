@@ -142,18 +142,16 @@ async function generatePodFile(
     p => getPluginType(p, platform) === PluginType.Core,
   );
   const pods = await Promise.all(
-    capacitorPlugins.map(
-      async p => {
-        if (!p.ios) {
-          return '';
-        }
+    capacitorPlugins.map(async p => {
+      if (!p.ios) {
+        return '';
+      }
 
-        return `  pod '${p.ios.name}', :path => '${relative(
-          podfilePath,
-          await realpath(p.rootPath),
-        )}'\n`;
-      },
-    ),
+      return `  pod '${p.ios.name}', :path => '${relative(
+        podfilePath,
+        await realpath(p.rootPath),
+      )}'\n`;
+    }),
   );
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
