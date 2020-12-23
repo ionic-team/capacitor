@@ -350,7 +350,7 @@ async function generateCordovaPodspec(
     s.ios.deployment_target  = '${config.ios.minVersion}'
     s.xcconfig = {'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 WK_WEB_VIEW_ONLY=1' }
     s.dependency 'CapacitorCordova'${getLinkerFlags(config)}
-    s.swift_version  = '${config.ios.cordovaSwiftVersion}'
+    s.swift_version  = '5.1'
     ${frameworksString}
   end`;
   await writeFile(
