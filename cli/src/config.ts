@@ -31,7 +31,7 @@ export async function loadConfig(): Promise<Config> {
 
   const config: Config = {
     android: await loadAndroidConfig(appRootDir, conf.extConfig, cli),
-    ios: await loadIOSConfig(appRootDir, conf.extConfig, cli),
+    ios: await loadIOSConfig(appRootDir, conf.extConfig),
     web: await loadWebConfig(appRootDir, webDir),
     cli,
     app: {
@@ -195,7 +195,6 @@ async function loadAndroidConfig(
   const resDir = `${srcMainDir}/res`;
   const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
-
   const studioPath = await determineAndroidStudioPath(cliConfig.os);
 
   return {
@@ -226,7 +225,6 @@ async function loadAndroidConfig(
 async function loadIOSConfig(
   rootDir: string,
   extConfig: ExternalConfig,
-  cliConfig: CLIConfig,
 ): Promise<IOSConfig> {
   const name = 'ios';
   const podPath = determineCocoapodPath();
@@ -235,11 +233,7 @@ async function loadIOSConfig(
   const nativeProjectDir = 'App';
   const nativeTargetDir = `${nativeProjectDir}/App`;
   const webDir = `${nativeProjectDir}/public`;
-
-  const platformTemplateName = 'ios-template';
-  const platformTemplateArchive = `${platformTemplateName}.tar.gz`;
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
-  const cordovaPluginsTemplateArchive = `${cordovaPluginsDir}.tar.gz`;
 
   return {
     name,

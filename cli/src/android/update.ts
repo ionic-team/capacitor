@@ -198,14 +198,19 @@ include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('${relativeCapcitorAndroidPath}')
 ${capacitorPlugins
   .map(p => {
+    if (!p.android) {
+      return '';
+    }
+
     const relativePluginPath = convertToUnixPath(
       relative(settingsPath, p.rootPath),
     );
+
     return `
 include ':${getGradlePackageName(p.id)}'
 project(':${getGradlePackageName(
       p.id,
-    )}').projectDir = new File('${relativePluginPath}/${p.android!.path}')
+    )}').projectDir = new File('${relativePluginPath}/${p.android.path}')
 `;
   })
   .join('')}`;
