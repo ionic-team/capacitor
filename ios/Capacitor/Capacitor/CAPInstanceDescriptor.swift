@@ -93,6 +93,10 @@ internal extension InstanceDescriptor {
 }
 
 extension InstanceDescriptor {
+    @objc public var cordovaDeployDisabled: Bool {
+        return (cordovaConfiguration.settings?["DisableDeploy".lowercased()] as? NSString)?.boolValue ?? false
+    }
+
     @objc public func normalize() {
         // first, make sure the scheme is valid
         var schemeValid = false
@@ -115,6 +119,10 @@ extension InstanceDescriptor {
         }
         if !urlValid {
             serverURL = nil
+        }
+        // reset the path if it's not valid
+        if let path = appStartPath?.trimmingCharacters(in: .whitespacesAndNewlines), path.isEmpty {
+            appStartPath = nil
         }
         // if the plugin configuration was programmatically modified, the necessary type information may have been lost.
         // so perform a coercion here to make sure that casting will work as expected
