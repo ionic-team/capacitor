@@ -850,14 +850,14 @@ public class Bridge {
         Map<String, PermissionState> permissionsResults = new HashMap<>();
         CapacitorPlugin annotation = plugin.getPluginHandle().getPluginAnnotation();
         for (Permission perm : annotation.permissions()) {
-            // If a permission is defined with no permission constants, return "granted" for it.
+            // If a permission is defined with no permission constants, return GRANTED for it.
             // Otherwise, get its true state.
             if (perm.strings().length == 0 || (perm.strings().length == 1 && perm.strings()[0].isEmpty())) {
                 String key = perm.alias();
                 if (!key.isEmpty()) {
                     PermissionState existingResult = permissionsResults.get(key);
 
-                    // auto set permission state to granted if the alias is empty.
+                    // auto set permission state to GRANTED if the alias is empty.
                     if (existingResult == null) {
                         permissionsResults.put(key, PermissionState.GRANTED);
                     }
