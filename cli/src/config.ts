@@ -1,6 +1,6 @@
-import { pathExists, readJSON } from '@ionic/utils-fs';
+import { pathExists, readJSON, writeFile, writeJSON } from '@ionic/utils-fs';
 import Debug from 'debug';
-import { dirname, join, resolve } from 'path';
+import { dirname, extname, join, resolve } from 'path';
 
 import c from './colors';
 import type {
@@ -15,9 +15,14 @@ import type {
 import { OS } from './definitions';
 import { logFatal } from './log';
 import { tryFn } from './util/fn';
+import { formatJSObject } from './util/js';
 import { resolveNode, requireTS } from './util/node';
 
 const debug = Debug('capacitor:config');
+
+export const CONFIG_FILE_NAME_TS = 'capacitor.config.ts';
+export const CONFIG_FILE_NAME_JS = 'capacitor.config.js';
+export const CONFIG_FILE_NAME_JSON = 'capacitor.config.json';
 
 export async function loadConfig(): Promise<Config> {
   const appRootDir = process.cwd();
@@ -52,6 +57,22 @@ export async function loadConfig(): Promise<Config> {
   debug('config: %O', config);
 
   return config;
+}
+
+export async function writeConfig(
+  extConfig: ExternalConfig,
+  extConfigFilePath: string,
+): Promise<void> {
+  switch (extname(extConfigFilePath)) {
+    case '.json': {
+      await writeJSON(extConfigFilePath, extConfig, { spaces: 2 });
+      break;
+    }
+    case '.ts': {
+      await writeFile(extConfigFilePath, formatConfigTS(extConfig));
+      break;
+    }
+  }
 }
 
 type ExtConfigPairs = Pick<
@@ -109,26 +130,23 @@ async function loadExtConfigJS(
 }
 
 async function loadExtConfig(rootDir: string): Promise<ExtConfigPairs> {
-  const extConfigNameTS = 'capacitor.config.ts';
-  const extConfigFilePathTS = resolve(rootDir, extConfigNameTS);
+  const extConfigFilePathTS = resolve(rootDir, CONFIG_FILE_NAME_TS);
 
   if (await pathExists(extConfigFilePathTS)) {
-    return loadExtConfigTS(rootDir, extConfigNameTS, extConfigFilePathTS);
+    return loadExtConfigTS(rootDir, CONFIG_FILE_NAME_TS, extConfigFilePathTS);
   }
 
-  const extConfigNameJS = 'capacitor.config.js';
-  const extConfigFilePathJS = resolve(rootDir, extConfigNameJS);
+  const extConfigFilePathJS = resolve(rootDir, CONFIG_FILE_NAME_JS);
 
   if (await pathExists(extConfigFilePathJS)) {
-    return loadExtConfigJS(rootDir, extConfigNameJS, extConfigFilePathJS);
+    return loadExtConfigJS(rootDir, CONFIG_FILE_NAME_JS, extConfigFilePathJS);
   }
 
-  const extConfigName = 'capacitor.config.json';
-  const extConfigFilePath = resolve(rootDir, extConfigName);
+  const extConfigFilePath = resolve(rootDir, CONFIG_FILE_NAME_JSON);
 
   return {
     extConfigType: 'json',
-    extConfigName,
+    extConfigName: CONFIG_FILE_NAME_JSON,
     extConfigFilePath: extConfigFilePath,
     extConfig: (await tryFn(readJSON, extConfigFilePath)) ?? {},
   };
@@ -326,4 +344,13 @@ function determineCocoapodPath(): string {
   }
 
   return 'pod';
+}
+
+function formatConfigTS(extConfig: ExternalConfig): string {
+  // TODO: <reference> tags
+  return `import { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = ${formatJSObject(extConfig)};
+
+export = config;\n`;
 }
