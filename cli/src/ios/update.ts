@@ -1,5 +1,5 @@
 import { copy, remove, readFile, realpath, writeFile } from '@ionic/utils-fs';
-import { basename, dirname, join, relative, resolve } from 'path';
+import { basename, dirname, join, relative } from 'path';
 
 import c from '../colors';
 import { checkPlatformVersions, runTask } from '../common';
@@ -142,13 +142,16 @@ async function generatePodFile(
     p => getPluginType(p, platform) === PluginType.Core,
   );
   const pods = await Promise.all(
-    capacitorPlugins.map(
-      async p =>
-        `pod '${p.ios!.name}', :path => '${relative(
-          podfilePath,
-          await realpath(p.rootPath),
-        )}'`,
-    ),
+    capacitorPlugins.map(async p => {
+      if (!p.ios) {
+        return '';
+      }
+
+      return `  pod '${p.ios.name}', :path => '${relative(
+        podfilePath,
+        await realpath(p.rootPath),
+      )}'\n`;
+    }),
   );
   const cordovaPlugins = plugins.filter(
     p => getPluginType(p, platform) === PluginType.Cordova,
@@ -156,25 +159,25 @@ async function generatePodFile(
   const noPodPlugins = cordovaPlugins.filter(filterNoPods);
   if (noPodPlugins.length > 0) {
     pods.push(
-      `pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'`,
+      `  pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   const podPlugins = cordovaPlugins.filter(el => !noPodPlugins.includes(el));
   if (podPlugins.length > 0) {
     pods.push(
-      `pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'`,
+      `  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   const resourcesPlugins = cordovaPlugins.filter(filterResources);
   if (resourcesPlugins.length > 0) {
     pods.push(
-      `pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'`,
+      `  pod 'CordovaPluginsResources', :path => '../capacitor-cordova-ios-plugins'\n`,
     );
   }
   return `
   pod 'Capacitor', :path => '${relativeCapacitoriOSPath}'
   pod 'CapacitorCordova', :path => '${relativeCapacitoriOSPath}'
-  ${pods.join('\n  ')}`;
+${pods.join('').trimRight()}`;
 }
 
 function getFrameworkName(framework: any) {
