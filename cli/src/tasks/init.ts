@@ -11,6 +11,7 @@ import {
 import { getCordovaPreferences } from '../cordova';
 import type { Config, ExternalConfig } from '../definitions';
 import { output, logFatal, logSuccess, logPrompt } from '../log';
+import { resolveNode } from '../util/node';
 import { checkInteractive, isInteractive } from '../util/term';
 
 export async function initCommand(
@@ -34,6 +35,7 @@ export async function initCommand(
     }
 
     const isNewConfig = Object.keys(config.app.extConfig).length === 0;
+    const tsInstalled = !!resolveNode(config.app.rootDir, 'typescript');
     const appName = await getName(config, name);
     const appId = await getAppId(config, id);
     const webDir = isInteractive()
@@ -55,7 +57,7 @@ export async function initCommand(
         webDir,
         cordova,
       },
-      isNewConfig ? 'ts' : 'json',
+      isNewConfig && tsInstalled ? 'ts' : 'json',
     );
   } catch (e) {
     output.write(
