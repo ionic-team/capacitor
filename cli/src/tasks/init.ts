@@ -55,6 +55,7 @@ export async function initCommand(
         appId,
         appName,
         webDir,
+        bundledWebRuntime: false,
         cordova,
       },
       isNewConfig && tsInstalled ? 'ts' : 'json',
