@@ -1,11 +1,13 @@
-import { readJSON } from '@ionic/utils-fs';
+import { pathExists, readJSON, unlink } from '@ionic/utils-fs';
+import { dirname, resolve } from 'path';
 
 import { doctorAndroid } from '../android/doctor';
 import c from '../colors';
 import { selectPlatforms } from '../common';
+import { CONFIG_FILE_NAME_TS, writeConfig } from '../config';
 import type { Config } from '../definitions';
 import { doctorIOS } from '../ios/doctor';
-import { output } from '../log';
+import { logPrompt, output } from '../log';
 import { emoji as _e } from '../util/emoji';
 import { resolveNode } from '../util/node';
 import { getCommandOutput } from '../util/subprocess';
@@ -29,6 +31,38 @@ export async function doctorCommand(
 }
 
 export async function doctorCore(config: Config): Promise<void> {
+  if (
+    config.app.extConfigType === 'json' &&
+    (await pathExists(config.app.extConfigFilePath))
+  ) {
+    const answers = await logPrompt(
+      `${c.strong(
+        `Switch to a ${CONFIG_FILE_NAME_TS} file for your configuration?`,
+      )}\n` +
+        `It looks like you're using a ${c.strong(
+          config.app.extConfigName,
+        )} file. As of Capacitor 3, you can use a TypeScript configuration file, which allows for autocomplete in your editor and dynamic configuration values.`,
+      {
+        type: 'confirm',
+        name: 'confirm',
+        message: 'Switch to TS configuration?',
+        initial: true,
+      },
+    );
+
+    if (answers.confirm) {
+      const newExtConfigFilePath = resolve(
+        dirname(config.app.extConfigFilePath),
+        CONFIG_FILE_NAME_TS,
+      );
+
+      await writeConfig(config.app.extConfig, newExtConfigFilePath);
+      await unlink(config.app.extConfigFilePath);
+    }
+
+    output.write('\n');
+  }
+
   const [
     cliVersion,
     coreVersion,
