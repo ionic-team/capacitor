@@ -63,7 +63,7 @@ public class Plugin {
     /**
      * Base activity result launcher used by the {@link #requestPermissions(PluginCall)} plugin call
      */
-    private ActivityResultLauncher<String[]> basePermissionLauncher = null;
+    protected ActivityResultLauncher<String[]> basePermissionLauncher = null;
 
     /**
      * Launchers used by the plugin to request permissions
@@ -390,7 +390,7 @@ public class Plugin {
         requestPermissionForAliases(aliases, call, permissionLaunchers.get(callbackId));
     }
 
-    private void requestPermissionForAliases(
+    protected void requestPermissionForAliases(
         @NonNull String[] aliases,
         @NonNull PluginCall call,
         ActivityResultLauncher<String[]> activityResultLauncher
@@ -622,6 +622,7 @@ public class Plugin {
      *
      * @param call the plugin call
      */
+    @PluginMethod
     public void requestPermissions(PluginCall call) {
         CapacitorPlugin annotation = handle.getPluginAnnotation();
         if (annotation == null) {
