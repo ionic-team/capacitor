@@ -232,7 +232,7 @@ async function loadIOSConfig(
   const platformDirAbs = resolve(rootDir, platformDir);
   const nativeProjectDir = 'App';
   const nativeTargetDir = `${nativeProjectDir}/App`;
-  const webDir = `${nativeProjectDir}/public`;
+  const webDir = `${nativeTargetDir}/public`;
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
 
   return {
