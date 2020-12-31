@@ -31,7 +31,7 @@ describe.each([false, true])('Update: iOS (monoRepoLike: %p)', monoRepoLike => {
 
   it('Should install Cordova plugin JS', async () => {
     const cordovaPluginJSContent = await FS.read(
-      'ios/App/public/cordova_plugins.js',
+      'ios/App/App/public/cordova_plugins.js',
     );
     const regex = new RegExp(CORDOVA_PLUGIN_ID);
     expect(regex.test(cordovaPluginJSContent)).toBe(true);
