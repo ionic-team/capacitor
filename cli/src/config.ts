@@ -16,6 +16,7 @@ import { OS } from './definitions';
 import { logFatal } from './log';
 import { tryFn } from './util/fn';
 import { resolveNode, requireTS } from './util/node';
+import { lazy } from './util/promise';
 
 const debug = Debug('capacitor:config');
 
@@ -235,7 +236,7 @@ async function loadIOSConfig(
   const webDir = `${nativeProjectDir}/public`;
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
 
-  return {
+  const ios = {
     name,
     minVersion: '12.0',
     platformDir,
@@ -249,6 +250,14 @@ async function loadIOSConfig(
     webDir,
     webDirAbs: resolve(platformDirAbs, webDir),
     podPath,
+  };
+
+  return {
+    ...ios,
+    nativeProjectDir: lazy(() => ios.nativeProjectDir),
+    nativeProjectDirAbs: lazy(() => ios.nativeProjectDirAbs),
+    nativeTargetDir: lazy(() => ios.nativeTargetDir),
+    nativeTargetDirAbs: lazy(() => ios.nativeTargetDirAbs),
   };
 }
 

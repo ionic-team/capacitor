@@ -82,8 +82,11 @@ async function updatePodfile(
   deployment: boolean,
 ): Promise<void> {
   const dependenciesContent = await generatePodFile(config, plugins);
-  const podfilePath = join(config.ios.nativeProjectDirAbs, 'Podfile');
-  const podfileLockPath = join(config.ios.nativeProjectDirAbs, 'Podfile.lock');
+  const podfilePath = join(await config.ios.nativeProjectDirAbs, 'Podfile');
+  const podfileLockPath = join(
+    await config.ios.nativeProjectDirAbs,
+    'Podfile.lock',
+  );
   let podfileContent = await readFile(podfilePath, { encoding: 'utf-8' });
   podfileContent = podfileContent.replace(
     /(def capacitor_pods)[\s\S]+?(\nend)/,
@@ -101,18 +104,18 @@ async function updatePodfile(
   await runCommand(
     config.ios.podPath,
     ['install', ...(deployment ? ['--deployment'] : [])],
-    { cwd: config.ios.nativeProjectDirAbs },
+    { cwd: await config.ios.nativeProjectDirAbs },
   );
 
   await runCommand(
     'xcodebuild',
     [
       '-project',
-      basename(`${config.ios.nativeTargetDirAbs}.xcodeproj`),
+      basename(`${await config.ios.nativeTargetDirAbs}.xcodeproj`),
       'clean',
     ],
     {
-      cwd: config.ios.nativeProjectDirAbs,
+      cwd: await config.ios.nativeProjectDirAbs,
     },
   );
 }
@@ -133,7 +136,7 @@ async function generatePodFile(
     );
   }
 
-  const podfilePath = config.ios.nativeProjectDirAbs;
+  const podfilePath = await config.ios.nativeProjectDirAbs;
   const relativeCapacitoriOSPath = convertToUnixPath(
     relative(podfilePath, await realpath(dirname(capacitoriOSPath))),
   );
