@@ -196,7 +196,7 @@ async function loadAndroidConfig(
   const resDir = `${srcMainDir}/res`;
   const buildOutputDir = `${appDir}/build/outputs/apk/debug`;
   const cordovaPluginsDir = 'capacitor-cordova-android-plugins';
-  const studioPath = await determineAndroidStudioPath(cliConfig.os);
+  const studioPath = lazy(() => determineAndroidStudioPath(cliConfig.os));
 
   return {
     name,
