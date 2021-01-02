@@ -98,10 +98,10 @@ export interface IOSConfig extends PlatformConfig {
   readonly podPath: string;
   readonly webDir: string;
   readonly webDirAbs: string;
-  readonly nativeProjectDir: Promise<string>;
-  readonly nativeProjectDirAbs: Promise<string>;
-  readonly nativeTargetDir: Promise<string>;
-  readonly nativeTargetDirAbs: Promise<string>;
+  readonly nativeProjectDir: string;
+  readonly nativeProjectDirAbs: string;
+  readonly nativeTargetDir: string;
+  readonly nativeTargetDirAbs: string;
 }
 
 export type WebConfig = PlatformConfig;

@@ -236,7 +236,7 @@ async function loadIOSConfig(
   const webDir = `${nativeProjectDir}/public`;
   const cordovaPluginsDir = 'capacitor-cordova-ios-plugins';
 
-  const ios = {
+  return {
     name,
     minVersion: '12.0',
     platformDir,
@@ -250,14 +250,6 @@ async function loadIOSConfig(
     webDir,
     webDirAbs: resolve(platformDirAbs, webDir),
     podPath,
-  };
-
-  return {
-    ...ios,
-    nativeProjectDir: lazy(() => ios.nativeProjectDir),
-    nativeProjectDirAbs: lazy(() => ios.nativeProjectDirAbs),
-    nativeTargetDir: lazy(() => ios.nativeTargetDir),
-    nativeTargetDirAbs: lazy(() => ios.nativeTargetDirAbs),
   };
 }
 
